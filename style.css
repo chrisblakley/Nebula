@@ -1,0 +1,462 @@
+/*
+	Theme Name: PHG Nebula
+	Author: Pinckney Hugo Group
+	Author URI: http://www.pinckneyhugo.com
+	Description: A boilerplate theme compiled by the Pinckney Hugo Group Interactive Team.
+	Version: 1.3
+*/
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+html, button, input, select, textarea {color: #222;}
+::-moz-selection {background: #b3d4fc; text-shadow: none;}
+::selection {background: #b3d4fc; text-shadow: none;}
+hr {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use if backgrounds are predominantly light grey (specifically the WYSIWYG). Delete this line otherwise. */
+hr {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use if backgrounds are predominantly white (specifically the WYSIWYG). Delete this line otherwise. */
+hr.ongrey {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use on a light grey background */
+hr.onwhite {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use on a white background */
+img {vertical-align: middle;}
+fieldset {border: 0; margin: 0; padding: 0;}
+textarea {resize: vertical;}
+ul {padding: 0;}
+
+h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
+h1, h2, h3, h4, h5, h6 {}
+h1 {}
+h2 {}
+h3 {}
+h4 {}
+h5 {}
+h6 {}
+p {}
+span {}
+
+/* ==========================================================================
+   Chrome Frame prompt
+   ========================================================================== */
+.chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
+
+/* ==========================================================================
+   PHG Nebula custom styles
+   ========================================================================== */
+::selection {background: #d5f3ff; color: black;}
+::-moz-selection {background: #d5f3ff; color: black;}
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7;}
+a {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	a:hover,
+	a.hover {color: #95D600;}
+body {overflow-x: hidden;}
+.inner {width: 100%; max-width: 980px; padding: 0 20px; margin: 0 auto; border: 1px solid red;}
+ul.menu {padding: 0;}
+
+/* File type dotted underlines */
+a[href$='.doc'],
+a[href$='.docx'] {text-decoration: none; border-bottom: 1px dotted #2b5797;}
+a[href$='.xls'] {text-decoration: none; border-bottom: 1px dotted #1e7145;}
+a[href$='.ppt'] {text-decoration: none; border-bottom: 1px dotted #d04525;}
+a[href$='.pdf'] {text-decoration: none; border-bottom: 1px dotted #eb3b00;}
+
+
+/* Table styles - Restyle here as needed */
+table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Sets a fixed width for all cells, and removes cellspacing. */ background: #fff;}
+	/* Table Rows */
+	table tr {}
+	table tr.odd {background: #f5f5f5;}
+	table tr:hover,
+	table tr.hover {background: #e2e2e2;}
+	/* Table Cells */
+	table tr td {text-align: center; border: none; border: 1px solid #ddd;}
+	table tr td:first-child {font-weight: inherit;}
+	table tr td {padding: 0; font-size: inherit;}
+	table tr td, table tbody tr td {font-size: inherit;}
+	table thead tr:first-child td,
+	table thead tr.first-child td {font-weight: bold; color: #fff;}
+	table tr td:hover,
+	table tr td.hover {background: #d2d2d2;}
+	/* Table Heading Cells */
+	table tr th {background: #95d600 !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff;}
+	/* Table Heading Rows */
+	table thead tr td {background: #0098D7 !important; padding: 10px 0;}
+	/* Table Footer Rows */
+	table tfoot tr td {background: grey !important; color: #fff;}
+
+.nebula_the_excerpt {white-space: nowrap;}
+.wp_search_submit {color: #444 !important;}
+	.wp_search_submit:hover,
+	.wp_search_submit.hover {color: #000 !important;}
+
+.js .unhideonload {visibility: hidden;}
+	.loaded .unhideonload {visibility: visible;}
+
+/* ==========================================================================
+   Specific Gumby feature modifications
+   ========================================================================== */
+/* Allows tab text to wrap to a new line */
+.tab-nav > li.active > a {height: auto; line-height: inherit;}
+    .tab-nav > li > a {height: auto; line-height: inherit; padding-top: 7px; padding-bottom: 7px;}
+.tab-content {padding-top: 0;}
+    .tab-content p:first-child {margin-top: 0;}
+    .tab-content ul {padding-left: 20px;}
+        .tab-content ul li {list-style: disc;}
+body .video {padding-bottom: 0px !important;} /* Overrides Gumby video setting */
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+/* 
+@TODO: Find/Replace the following HTML colors: 
+	lightgrey
+	grey
+	#0098D7 (Primary Brand Color)
+	#95D600 (Secondary Brand Color)
+	
+Also be sure to find the other @TODO: items within the stylesheet.
+*/
+
+/* @TODO: Delete these debug styles before launching */
+/*
+.column, .columns {border: 1px solid gainsboro;}
+.row {border: 1px solid blanchedalmond;}
+*/
+
+/***** HEADER *****/
+.mobilenavcon {display: none;}
+	.directions div {line-height: 12px; padding-left: 35px;}
+
+#topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; transition: all 0.5s ease 0s; overflow: hidden;}
+	#topbarcon a {font-size: 24px; line-height: 28px; color: #fff; text-decoration: underline;}
+		#topbarcon a:hover,
+		#topbarcon a.hover {color: grey;}
+	#topbarcon .rightside {text-align: right;}
+
+.fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s ease 0s;}
+	.fixedbar > div {display: none;}
+	.fixedbar.active {height: 20px;}
+		.fixedbar.active > div {display: block;}
+	.fixedbar a {display: block; padding-top: 4px; font-size: 11px; line-height: 12px; color: #fff;}
+		.fixedbar a:hover,
+		.fixedbar a.hover {color: #ccc;}
+	.fixedbar i {font-size: 13px;}
+
+#mobilenav {visibility: hidden; height: 0;}
+	#mobilenav.mm-menu {visibility: visible; height: 100%;}
+
+/* Nebula Wordpress top navigation style defaults */
+nav#topnav {position: relative; z-index: 1000;}
+	nav#topnav ul {}
+		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px; float: right;}
+			nav#topnav ul li.menu-item:first-child,
+			nav#topnav ul li.menu-item.first-child {margin-right: 0;}
+			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
+				nav#topnav ul li.menu-item a:hover,
+				nav#topnav ul li.menu-item a.hover {color: #95D600;}
+			nav#topnav ul li.menu-item ul.sub-menu {display: none;}
+
+/* Nebula Wordpress main navigation style defaults */
+#logonavcon {padding-top: 20px;}
+	nav#mainnav {position: relative; z-index: 1000;}
+		nav#mainnav ul {}
+		nav#mainnav ul:first-child,
+		nav#mainnav ul.first-child {float: right; margin-top: 26px;}
+			nav#mainnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
+			.ie7 nav#mainnav ul li.menu-item {float: left;}
+				nav#mainnav ul li.menu-item:last-child,
+				nav#mainnav ul li.menu-item.last-child {margin-right: 0;}
+				nav#mainnav ul li.menu-item a {display: block;}
+					nav#mainnav ul li.menu-item a:hover,
+					nav#mainnav ul li.menu-item a.hover {}
+				nav#mainnav ul li.menu-item ul.sub-menu {position: absolute; top: 20px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; transition: top 0.25s ease 0s, opacity 0.25s ease 0s; background: lightgrey; background: linear-gradient(to bottom, white, lightgrey); z-index: 1001; border: 1px solid grey;}
+				.no-js nav#mainnav ul li.menu-item ul.sub-menu {width: 400px;}	
+					nav#mainnav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
+						nav#mainnav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
+							nav#mainnav ul li.menu-item ul.sub-menu li a:hover,
+							nav#mainnav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
+						nav#mainnav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
+				nav#mainnav ul li.menu-item:hover .sub-menu,
+				nav#mainnav ul li.menu-item.hover .sub-menu {left: 0; top: 25px; opacity: 1;}
+				.no-js nav#mainnav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
+			
+#heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg_nebula.jpg') fixed center center; background-size: cover; transition: all 0.5s ease 0s;}
+	#heroslidercon h3 {text-align: center; color: #fff; font-size: 48px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8); transition: all 0.5s ease 0s;}
+
+
+/***** CONTENT AREA *****/
+div#bcrumbs {position: relative; z-index: 1;}
+
+.entry-content {}
+	.entry-content ul {padding-left: 20px; list-style: disc;}
+
+
+/* wp-pagenavi Pagination */
+div.wp-pagenavi {float: right; margin-top: 20px;}
+	div.wp-pagenavi span.pages {}
+	div.wp-pagenavi span.current {}
+	div.wp-pagenavi a.page {}
+	div.wp-pagenavi a.nextpostslink {}
+	div.wp-pagenavi a.previouspostslink {}
+
+
+/***** SIDEBAR *****/
+.xoxo {padding: 0;}
+	.xoxo ul {margin: 0; padding: 0;}
+		.xoxo ul.menu a {display: block; padding-right: 20px;}
+		.xoxo ul.menu li.current-menu-item a {color: #95D600;}
+		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
+		.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
+			.xoxo ul.menu li.menu-item ul.sub-menu {padding-left: 20px;}
+				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
+
+.widget-container {margin: 10px 0 15px 0;}
+
+/* Nebula expandable sidebar subnav style defaults */
+a.toplevelvert_expander {position: absolute; top: 0; right: 0; padding-right: 0 !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
+	a.toplevelvert_expander.plus {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
+	a.toplevelvert_expander i {font-size: 24px;}
+
+
+.xoxo form.search input[type="text"] {font-size: 16px; width: 77% !important; font-size: 14px !important; line-height: 24px !important; height: auto !important; vertical-align: top;}
+
+input[type="submit"] {color: #fff;}
+form.search .submit.btn {line-height: 24px !important; width: 22% !important; height: auto !important;}
+
+#cform7-container {margin: 0;}
+	#cform7-container input[type="text"],
+	#cform7-container input[type="email"] {font-size: 16px; width: 100% !important; font-size: 14px !important; line-height: 24px !important; height: auto !important;}
+	#cform7-container .cform7-name { font-size: 14px;}
+	#cform7-container .cform7-email { font-size: 14px;}
+	#cform7-container .cform7-phone-area {width: 20%; font-size: 14px;}
+	#cform7-container .cform7-phone-prefix {width: 20%; font-size: 14px;}
+	#cform7-container .cform7-phone-line {width: 25%; font-size: 14px;}
+	#cform7-container .cform7-phone-ext {width: 22%; font-size: 14px;}
+	#cform7-container .cform7-message {font-size: 14px; line-height: 16px !important; padding-top: 7px; resize: vertical !important;}
+
+#cform7-container .warning input {color: #000 !important; background: #ffd !important; border: 1px solid #d8d8d8 !important;}
+#cform7-container .success input,
+#cform7-container .success textarea {color: #000 !important; background: #efe !important; border: 1px solid #d8d8d8 !important;}
+.wpcf7-not-valid-tip {display: none !important;}
+
+.field.danger:after, .field.warning:after, .field.success:after {top: 1px !important;}
+
+div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
+div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
+
+
+/***** MOBILE MENUS *****/
+.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
+.mm-list a.mm-subopen {width: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
+.mm-list a.mm-subopen + a, .mm-list a.mm-subopen + span {margin-right: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
+.mm-list a.mm-subopen:hover {background: rgba(0, 0, 0, 0.1);}
+.mm-list > li > a:hover {background: rgba(0, 0, 0, 0.1);}
+.mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; background: rgba(0, 0, 0, 0.05);}
+.clearsearch {text-align: center;}
+	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
+
+/***** FOOTER *****/
+.twitterago {font-size: 12px; text-decoration: underline;}
+
+.widget-container {list-style: none;}
+
+nav#powerfooter {position: relative; z-index: 1000;}
+	nav#powerfooter ul {}
+		nav#powerfooter ul li.menu-item {position: relative; display: inline-block; float: left; margin: 0 5px; padding: 0 10px; width: 180px;}
+			nav#powerfooter ul li.menu-item:first-child,
+			nav#powerfooter ul li.menu-item.first-child {margin-left: 0; padding-left: 0;}
+			nav#powerfooter ul li.menu-item:last-child,
+			nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
+			nav#powerfooter ul li.menu-item a {display: block; border-bottom: 1px solid #95D600;}
+			nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
+				nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
+					nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; padding: 5px 0; border-bottom: none;}
+					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
+
+
+div.copyright p {font-size: 12px;}
+
+.footerlinks form.search input[type="text"] {font-size: 16px; width: 77% !important; font-size: 14px !important; line-height: 24px !important; height: auto !important; vertical-align: top;}
+
+/* Nebula Desktop Helper Styles */
+.disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;}
+.disallowed.notallowed {cursor: not-allowed !important;}
+.focusError {background-color: #fcc !important; border: 1px solid #f88 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+
+
+@media only screen and (max-width: 767px) {
+
+	/* @TODO: Delete these debug styles before launching */
+	/*
+.column, .columns {border: 1px solid mintcream;}
+	.row {border: 1px solid plum;}
+*/
+
+	#topbarcon {min-height: 30px;}
+		.mobilenavcon {display: block;}
+
+	.topnavcon {display: none;}
+
+	.logocon {display: block; text-align: center;}
+	
+	/* Nebula Wordpress main navigation responsive style defaults */
+	nav#mainnav {display: none;}
+		nav#mainnav ul {}
+			nav#mainnav ul li.menu-item {display: block; width: 100%; text-align: center;}
+				nav#mainnav ul li.menu-item:last-child,
+				nav#mainnav ul li.menu-item.last-child {}
+				nav#mainnav ul li.menu-item a {min-height: 44px; line-height: 44px;}
+					nav#mainnav ul li.menu-item a:hover,
+					nav#mainnav ul li.menu-item a.hover {}
+				nav#mainnav ul li.menu-item ul.sub-menu {position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;}
+					nav#mainnav ul li.menu-item ul.sub-menu li {}
+						nav#mainnav ul li.menu-item ul.sub-menu li a {padding: 0;}
+							nav#mainnav ul li.menu-item ul.sub-menu li a:hover,
+							nav#mainnav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
+						nav#mainnav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
+				nav#mainnav ul li.menu-item:hover .sub-menu,
+				nav#mainnav ul li.menu-item.hover .sub-menu {left: auto; top: 0; display: block; width: 100% !important;}
+	
+	.fixedbar {display: none;}
+	
+	#heroslidercon {height: 100px; overflow: hidden; background-size: cover;}
+		#heroslidercon h3 {font-size: 36px; line-height: 100px;}
+	
+	.xoxo .search {display: none;}
+	
+	/* Nebula Wordpress power footer navigation responsive style defaults */
+	.powerfootercon {display: none;}
+	nav#powerfooter {}
+	nav#powerfooter ul {}
+		nav#powerfooter ul li.menu-item {display: block; margin: 0; padding: 0; width: 100% !important;}
+			nav#powerfooter ul li.menu-item a {border-bottom: none;}
+			nav#powerfooter ul li.menu-item ul.sub-menu {padding: 5px 0 5px 35px;}
+				nav#powerfooter ul li.menu-item ul.sub-menu li {padding: 0 0 0 10px; border-left: 1px solid #95D600;}
+					nav#powerfooter ul li.menu-item ul.sub-menu li a {}
+					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {}
+	
+	div.copyright p {font-size: 11px;}
+	
+	.footerlinks .search {display: none;}
+	
+	/* Nebula Responsive Helper Styles */
+	.ipadblock {width: 100% !important;} /* Add this class to column divs that get stuck inline on iPad*/
+
+} /* End tablet media query */
+
+
+@media only screen and (max-width: 641px) {
+
+	/* @TODO: Delete these debug styles before launching */
+	/*
+.column, .columns {border: 1px solid lightgreen;}
+	.row {border: 1px solid pink;}
+*/
+
+
+} /* End mobile landscape media query */
+
+
+@media only screen and (max-width: 361px) {
+
+	/* @TODO: Delete these debug styles before launching */
+	/*
+.column, .columns {border: 1px solid yellow;}
+	.row {border: 1px solid lightgrey;}
+*/
+
+
+} /* End mobile portrait media query */
+
+
+/* This feature is not currently supported by browsers, but will be eventually. */
+@media (luminosity: dim) {
+    /* CSS here for dark settings. These should not be drastically different than normal, but make everything easier to read when it's dark. */
+}
+
+
+/* IE7 Gumby Adjustments */
+.ie7 .column, .ie7 .columns {margin-left: 1.7% !important;}
+.ie7 .column.first-child, .ie7 .columns.first-child, .ie7 .alpha {margin-left: 0px !important;}
+.ie7 .row .push_one {margin-left: 8.1% !important;}
+
+
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*Image replacement */
+.ir {background-color: transparent; border: 0; overflow: hidden; /* IE 6/7 fallback */ *text-indent: -9999px;}
+.ir:before {content: ""; display: block; width: 0; height: 100%;}
+/* Hide from both screenreaders and browsers: h5bp.com/u */
+.hidden {display: none !important;visibility: hidden;}
+/* Hide only visually, but have it available for screenreaders: h5bp.com/v */
+.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;}
+/* Extends the .visuallyhidden class to allow the element to be focusable when navigated to via the keyboard: h5bp.com/p */
+.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;}
+/* Hide visually and from screenreaders, but maintain layout */
+.invisible {visibility: hidden;}
+/* Clearfix: contain floats. For modern browsers. 1. The space content is one way to avoid an Opera bug when the `contenteditable` attribute is included anywhere else in the document. Otherwise it causes space to appear at the top and bottom of elements that receive the `clearfix` class. 2. The use of `table` rather than `block` is only necessary if using `:before` to contain the top-margins of child elements. */
+.clearfix:before, .clearfix:after {content: " "; /* 1 */ display: table; /* 2 */}
+.clearfix:after {clear: both;}
+/* For IE 6/7 only. Include this rule to trigger hasLayout and contain floats. */
+.clearfix {*zoom: 1;}
+
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+@media print {
+    * {background: transparent !important; color: #000 !important; /* Black prints faster: h5bp.com/s */ box-shadow:none !important; text-shadow: none !important;}
+    a, a:visited {text-decoration: underline;}
+    a[href]:after {content: " (" attr(href) ")";}
+    abbr[title]:after {content: " (" attr(title) ")";}
+    /* Don't show links for images, or javascript/internal links */
+    .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {content: "";}
+    pre, blockquote {border: 1px solid #999; page-break-inside: avoid;}
+    thead {display: table-header-group; /* h5bp.com/t */}
+    tr, img {page-break-inside: avoid;}
+    img {max-width: 100% !important;}
+    @page {margin: 0.5cm;}
+    p, h2, h3 {orphans: 3; widows: 3;}
+    h2, h3 {page-break-after: avoid;}
+    
+    /* Override Gumby displaying hrefs */
+    p a[href]:after {content: '';}
+}
+
+
+.aligncenter { display:block; margin:0 auto }
+.alignleft { float:left }
+.alignright { float:right }
+.wp-caption { border:1px solid #666; text-align:center; background:#ccc; padding:10px; margin:10px }
+
+
+/** START WordPress-Defined CSS Classes **/
+.wp-caption-text{}
+.gallery-caption{}
+.bypostauthor{}
+.sticky{}
+/** Keep drop-downs working **/
+#access li {float: left; position: relative;}
+#access ul ul {display: none; float: left; position: absolute; top: 3.333em; left: 0; z-index: 99999;}
+#access ul ul ul {left: 100%; top: 0;}
+#access ul li:hover > ul {display: block;}
+/** END WordPress-Defined CSS Classes **/
+
+
+/* Nebula Debug Classes */
+.border-red, .outline-red {outline: 1px solid red;}
+.border-orange, .outline-orange {outline: 1px solid orange;}
+.border-yellow, .outline-yellow {outline: 1px solid yellow;}
+.border-green, .outline-green {outline: 1px solid green;}
+.border-blue, .border-indigo, .outline-blue, .outline-indigo {outline: 1px solid blue;}
+.border-purple, .border-violet, .outline-purple, .outline-violet {outline: 1px solid purple;}
+
+.background-red, .bg-red {background: red;}
+.background-orange, .bg-orange {background: orange;}
+.background-yellow, .bg-yellow {background: yellow;}
+.background-green, .bg-green {background: green;}
+.background-blue, .bg-blue, .background-indigo, .bg-indigo {background: blue;}
+.background-purple, .bg-purple, .background-violet, .bg-violet {background: purple;}

@@ -1,0 +1,13 @@
+#pluginwarning {}
+	#pluginwarning a {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+		#pluginwarning a:hover {color: #95D600;}
+
+.update-nag a,	
+.update-core-php input#upgrade,
+.update-core-php input#upgrade-plugins,
+.update-core-php input#upgrade-plugins-2,
+.plugins-php .update-message a,
+.plugins-php .deactivate a {cursor: not-allowed;}
+
+a.phg {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	a.phg:hover {color: #95D600;}

@@ -1,0 +1,56 @@
+a {color: #0098D7 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s; text-decoration: none;}
+a:hover {color: #95D600 !important; text-decoration: underline;}
+
+/*body*/
+body.login {background: #f2f2f2; background: linear-gradient(to bottom, #f2f2f2, #ddd);}
+
+/*content area*/
+body.login div#login h1 {}
+	body.login div#login h1 a {width:auto;}
+
+.login form {margin-top: 0;}
+
+.ipcon {margin: 20px 0 -20px 0;}
+	.ipcon p {font-size: 12px; margin: 0; padding: 0; color: #888;}
+
+.centertext {text-align: center;}
+
+/*logo*/
+body.login div#login h1 a {background: url('../images/logo.png') center center no-repeat;}
+.svg body.login div#login h1 a {background: url('../images/logo.svg') center center no-repeat;}
+
+/*message (ex: You are now logged out)*/
+body.login p.message {}
+
+body.login div#login_error {}
+
+/*form*/
+body.login div#login form#loginform {}
+body.login div#login form#loginform p {}
+body.login div#login form#loginform p label {}
+body.login div#login form#loginform input {}
+body.login div#login form#loginform input#user_login {}
+body.login div#login form#loginform input#user_pass {}
+body.login div#login form#loginform p.forgetmenot {}
+body.login div#login form#loginform p.forgetmenot input#rememberme {}
+body.login div#login form#loginform p.submit {}
+body.login div#login form#loginform p.submit input#wp-submit {}
+body.login div#login form#loginform p.submit input.button-primary {background-image: linear-gradient(to bottom, #0098D7/*1*/, #005c82/*2*/); border: 1px solid #004460/*3*/;} /* 1=Brand color, 2=Brand-5, 3=Brand-7 */
+body.login div#login form#loginform p.submit input.button-primary:hover {background-image: linear-gradient(to bottom, #005c82/*1*/, #00202d/*2*/); border: 1px solid #00080b/*3*/;} /* 1=Brand-5, 2=Brand-10, 3=Brand-12 */
+body.login div#login form#loginform p.submit input.button-primary:active {}
+
+/*Lost your password?*/
+body.login div#login p#nav {}
+body.login div#login p#nav a {color: #0098D7 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s; text-decoration: none;}
+body.login div#login p#nav a:hover {color: #95D600 !important; text-decoration: underline;}
+
+
+/*Back to site*/
+body.login div#login p#backtoblog {}
+body.login div#login p#backtoblog a {color: #0098D7 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s; text-decoration: none;}
+body.login div#login p#backtoblog a:hover {color: #95D600 !important; text-decoration: underline;}
+
+
+.clearfix:before, .clearfix:after {content: " "; display: table;}
+.clearfix:after {clear: both;}
+.clearfix {*zoom: 1;}
