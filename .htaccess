@@ -63,6 +63,13 @@ Header set Cache-Control "max-age=172800, proxy-revalidate"
 Header unset Cache-Control
 </FilesMatch>
 
+# 301 Redirects Here
+
+
+#Block certain webcrawlers from showing up as actual visitors
+RewriteCond %{HTTP_REFERER} semalt.com [NC]
+RewriteRule .* - [F]
+
 
 # disable directory browsing
 Options All -Indexes
