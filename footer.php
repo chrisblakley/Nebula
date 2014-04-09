@@ -110,6 +110,23 @@
 			}); //End Window Load
 		</script>
 		
+		<script type="text/javascript">
+			try {
+				(function() {
+					var afterPrint = function() {
+						ga('send', 'event', 'Print Intent', document.location.pathname);
+					};
+					if (window.matchMedia) {
+						var mediaQueryList = window.matchMedia('print');
+						mediaQueryList.addListener(function(mql) {
+							if (!mql.matches)
+							afterPrint();
+						});
+					}
+					window.onafterprint = afterPrint;
+				}());
+			} catch(e) {}
+		</script>
 		
 		<?php if ( array_key_exists('debug', $_GET) ) : //Render-blocking method of loading scripts for debug purposes. These should be identical to the normal site! ?>
 		
