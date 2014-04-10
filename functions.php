@@ -943,6 +943,19 @@ function fix_empty_search($query){
 add_action('pre_get_posts','fix_empty_search');
 
 
+//Redirect if only single search result
+function redirect_single_post() {
+    if (is_search()) {
+        global $wp_query;
+        if ($wp_query->post_count == 1 && $wp_query->max_num_pages == 1) {
+            wp_redirect( get_permalink( $wp_query->posts['0']->ID ) );
+            exit;
+        }
+    }
+}
+add_action('template_redirect', 'redirect_single_post');
+
+
 //Remove extraneous <head> from Wordpress
 remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wp_generator');
