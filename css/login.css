@@ -16,8 +16,8 @@ body.login div#login h1 {}
 .centertext {text-align: center;}
 
 /*logo*/
-body.login div#login h1 a {background: url('../images/logo.png') center center no-repeat;}
-.svg body.login div#login h1 a {background: url('../images/logo.svg') center center no-repeat;}
+body.login div#login h1 a {background: url('../images/logo.png') center center no-repeat; background-size: contain;}
+.svg body.login div#login h1 a {background: url('../images/logo.svg') center center no-repeat; background-size: contain;}
 
 /*message (ex: You are now logged out)*/
 body.login p.message {}
