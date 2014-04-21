@@ -135,7 +135,7 @@
 			<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 			<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script> -->
 			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js"></script> -->
-			<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js"></script>
+			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js"></script>-->
 			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js"></script>
 				
 			<!--[if lt IE 9]>
@@ -143,8 +143,7 @@
 				<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js"></script>
 			<![endif]-->
 				
-			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js"></script>
-			<script src="<?php bloginfo('template_directory');?>/js/libs/plugins.js"></script>		
+			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js"></script>-->
 			<script src="<?php bloginfo('template_directory');?>/js/main.js"></script>
 		
 		<?php else : //HTML5 Asynchronous/Deferred method of loading scripts ?>
@@ -154,7 +153,7 @@
 			<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" async></script>
 			<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" async></script> -->
 			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" async></script> -->
-			<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" async></script>
+			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" async></script>-->
 			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js" defer></script>
 			
 			<!--[if lt IE 9]>
@@ -163,8 +162,7 @@
 			<![endif]-->
 			
 			<!-- Defer loading external scripts using HTML5 -->
-			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js" defer></script>
-			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/plugins.js" defer></script> -->		
+			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js" defer></script>-->
 			<script src="<?php bloginfo('template_directory');?>/js/main.js" defer></script>
 				
 		<?php endif; ?>
