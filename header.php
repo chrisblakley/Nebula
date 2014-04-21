@@ -7,7 +7,7 @@
 <!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lt-ie7 lt-ie8 lt-ie9"><![endif]-->
 <!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lt-ie8 lt-ie9"><![endif]-->
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lt-ie9"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="<?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js "><!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="<?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ''; ?> no-js"><!--<![endif]-->
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 		<meta charset="<?php bloginfo('charset'); ?>" />
