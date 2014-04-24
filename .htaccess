@@ -1,3 +1,5 @@
+#@TODO: Move to root directory if possible.
+
 <IfModule mod_deflate.c>
   #Force deflate for mangled headers
   <IfModule mod_setenvif.c>
