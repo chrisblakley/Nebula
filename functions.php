@@ -757,9 +757,9 @@ add_action( 'after_setup_theme', 'nav_menu_locations' );
 function nebula_the_excerpt( $more=false, $length=20, $hellip=false ) {
 	global $post;
 	if ( !get_the_excerpt() ) {
-		$string = get_the_excerpt();
+		$string = strip_tags(get_the_excerpt(), '<p>');
 	} else {
-		$string = get_the_content();
+		$string = strip_tags(get_the_content(), '<p>');
 	}
 	$string = string_limit_words($string, $length);
 	if ( $hellip ) {
