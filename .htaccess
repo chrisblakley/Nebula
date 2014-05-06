@@ -69,7 +69,8 @@ Header unset Cache-Control
 
 
 #Block certain webcrawlers from showing up as actual visitors
-RewriteCond %{HTTP_REFERER} ^http://semalt\.com
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} semalt\.com [NC]
 RewriteRule .* - [F]
 
 
