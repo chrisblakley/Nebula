@@ -756,7 +756,7 @@ add_action( 'after_setup_theme', 'nav_menu_locations' );
 //The first parameter is the custom "Read More" link (it can be anything), the second is the number of words to use, and the third is a true/false to show the ellipsis.
 function nebula_the_excerpt( $more=false, $length=20, $hellip=false ) {
 	global $post;
-	if ( !get_the_excerpt() ) {
+	if ( get_the_excerpt() ) {
 		$string = strip_tags(get_the_excerpt(), '<p>');
 	} else {
 		$string = strip_tags(get_the_content(), '<p>');
