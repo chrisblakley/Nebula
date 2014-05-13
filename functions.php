@@ -751,27 +751,67 @@ function nav_menu_locations() {
 add_action( 'after_setup_theme', 'nav_menu_locations' );
 
 
-//Use this instead of the_excerpt(); so we can have better control over the excerpt.
-//To implement this, use: echo nebula_the_excerpt('Read more &raquo;', 20, 1);
-//The first parameter is the custom "Read More" link (it can be anything), the second is the number of words to use, and the third is a true/false to show the ellipsis.
-function nebula_the_excerpt( $more=false, $length=20, $hellip=false ) {
-	global $post;
-	if ( get_the_excerpt() ) {
-		$string = strip_tags(get_the_excerpt(), '<p>');
-	} else {
-		$string = strip_tags(get_the_content(), '<p>');
-	}
+//Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.
+//Pulls the excerpt for the current (or designated post ID). If no excerpt is present, it pulls from the content instead.
+//Several ways to implement this:
+	//Inside the loop: echo nebula_the_excerpt('Read more &raquo;', 20, 1);
+	//Outside the loop: echo nebula_the_excerpt(572, 'Read more &raquo;', 20, 1);
+//First parameter is the post ID (optional). Allows it to be called outside the loop. Must be an integer (do not use quotes)!
+//Second parameter is the "Read More" text (optional).
+//Third parameter is the length (optional). Default is 55 words if left blank.
+//Fourth parameter is the ellipsis (optional). Boolean, so 1 or 0. Default is off (0).
+function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=false ) {
+	
+	if ( $postID ) {
+		if ( !is_int($postID) ) {
+			if ( $length == 0 || $length == 1 ) {
+				$hellip = $length;
+			} else {
+				$hellip = false;
+			}
+			
+			if ( is_int($more) ) {
+				$length = $more;
+			} else {
+				$length = 55;
+			}
+			
+			$more = $postID;
+			$postID = false;
+		} else {
+			$the_post = get_post($postID);
+		}
+	} 
+	
+	if ( $the_post ) { //Find a better way to pull the post_content without formatting. strip_tags() isn't working properly, and can't get_the_excerpt() using post ID...
+        //if the post ID has an excerpt
+        //else try the post ID content
+        $string = $the_post->post_content;
+    } else {
+        if ( get_the_excerpt() ) {
+            $string = strip_tags(get_the_excerpt(), '<p>');
+        } else {
+            $string = strip_tags(get_the_content(), '<p>');
+        }
+    }
+		
+	//Strip tags here from $string instead of 4 times above?
+	    
 	$string = string_limit_words($string, $length);
+		
 	if ( $hellip ) {
 		if ( $string[1] == 1 ) {
 			$string[0] .= '&hellip; ';
 		}
 	}
+		
 	if ( isset($more) && $more != '' ) {
-		$string[0] .= ' <a class="nebula_the_excerpt" href="' . get_permalink() . '">' . $more . '</a>';
+		$string[0] .= ' <a class="nebula_the_excerpt" href="' . get_permalink($postID) . '">' . $more . '</a>';
 	}
+	
 	return $string[0];
 }
+
 
 
 //Text limiter by words
