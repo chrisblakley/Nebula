@@ -27,11 +27,12 @@
 		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt">
 		
 		<!-- Facebook Metadata -->
-		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
+		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
 		<meta property="og:description" content=""/>
 		<meta property="og:url" content="<?php the_permalink(); ?>"/>
 		<meta property="og:title" content="<?php bloginfo('name'); ?>"/>
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg"/> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 200x200px -->
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-temp.png"/> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg"/>
 	    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb2.jpg"/>
 		
 		<!-- Google+ Metadata -->
