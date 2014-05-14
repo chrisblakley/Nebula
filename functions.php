@@ -783,10 +783,12 @@ function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=fal
 		}
 	} 
 	
-	if ( $the_post ) { //Find a better way to pull the post_content without formatting. strip_tags() isn't working properly, and can't get_the_excerpt() using post ID...
-        //if the post ID has an excerpt
-        //else try the post ID content
-        $string = $the_post->post_content;
+	if ( $the_post ) {
+        if ( $the_post->post_excerpt ) {
+	        $string = strip_tags($the_post->post_excerpt, '<p>');
+        } else {
+	        $string = strip_tags($the_post->post_content, '<p>');
+        }
     } else {
         if ( get_the_excerpt() ) {
             $string = strip_tags(get_the_excerpt(), '<p>');
@@ -794,9 +796,7 @@ function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=fal
             $string = strip_tags(get_the_content(), '<p>');
         }
     }
-		
-	//Strip tags here from $string instead of 4 times above?
-	    
+			    
 	$string = string_limit_words($string, $length);
 		
 	if ( $hellip ) {
@@ -811,6 +811,7 @@ function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=fal
 	
 	return $string[0];
 }
+
 
 
 
