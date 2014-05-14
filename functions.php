@@ -1026,10 +1026,9 @@ function my_theme_wrapper_end() {
 }
 *****/
 
-//PHP-Mobile-Detect - http://mobiledetect.net
+//PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
 //Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic.
-//For an example of this, see the footer.php of the theme.
-//Logic can fire from "isMobile()" or "isTablet()" or "is('AndroidOS')". View the Mobile_Detect.php file in /includes/ to see the full list.
+//Logic can fire from "isMobile()" or "isTablet()" or "is('AndroidOS')".
 require_once 'includes/Mobile_Detect.php';
 
 
