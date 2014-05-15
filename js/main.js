@@ -108,6 +108,14 @@ jQuery(document).ready(function() {
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value;
 	//});
 	
+	//PDF View/Download
+	//PDF View/Download
+	jQuery("a[href$='.pdf']").on('click', function(){
+		var linkText = jQuery(this).text();
+		_gaq.push(['_trackEvent', 'PDF View', 'Click', linkText]);
+		ga('send', 'event', 'PDF View', 'Click', linkText);
+	});
+	
 	//Contact Form Submissions
 	jQuery('.wpcf7-form').on('submit', function() {
 		var currentPage = jQuery(document).attr('title');
