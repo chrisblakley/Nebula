@@ -111,8 +111,20 @@ jQuery(document).ready(function() {
 	//PDF View/Download
 	jQuery("a[href$='.pdf']").on('click', function(){
 		var linkText = jQuery(this).text();
-		_gaq.push(['_trackEvent', 'PDF View', 'Click', linkText]);
 		ga('send', 'event', 'PDF View', 'Click', linkText);
+	});
+	
+	//PDF View/Download
+	jQuery("a[href$='.pdf']").on('click', function(){
+		var title= jQuery('title').text()
+		var linkText = jQuery(this).text();
+		var fileName = jQuery(this).attr('href');
+		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
+		if ( linkText == '' || linkText == 'Download') {
+			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
+		} else {
+			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
+		}
 	});
 	
 	//Contact Form Submissions
