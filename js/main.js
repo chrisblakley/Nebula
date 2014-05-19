@@ -110,12 +110,6 @@ jQuery(document).ready(function() {
 	
 	//PDF View/Download
 	jQuery("a[href$='.pdf']").on('click', function(){
-		var linkText = jQuery(this).text();
-		ga('send', 'event', 'PDF View', 'Click', linkText);
-	});
-	
-	//PDF View/Download
-	jQuery("a[href$='.pdf']").on('click', function(){
 		var title= jQuery('title').text()
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
