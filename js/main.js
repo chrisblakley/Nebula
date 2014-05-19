@@ -109,7 +109,6 @@ jQuery(document).ready(function() {
 	//});
 	
 	//PDF View/Download
-	//PDF View/Download
 	jQuery("a[href$='.pdf']").on('click', function(){
 		var linkText = jQuery(this).text();
 		_gaq.push(['_trackEvent', 'PDF View', 'Click', linkText]);
@@ -122,23 +121,56 @@ jQuery(document).ready(function() {
 		ga('send', 'event', 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
 	});
 
-	//Searches
+	//Generic Interal Search Tracking
 	jQuery('.search').on('submit', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
 	});
 	
+	//Mailto link tracking
 	jQuery('a[href^="mailto"]').on('click', function(){
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
 		ga('send', 'event', 'Contact Us', 'Email: ' + emailAddress);
 	});
 	
+	//Telephone link tracking
 	jQuery('a[href^="tel"]').on('click', function(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 	});
+
+	//Word copy tracking
+	var copyCount = 0;
+	var copyOver = 0;
+	jQuery(document).on('cut copy', function(){
+		copyCount++;
+		var currentPage = jQuery(document).attr('title');
+		var words = [];
+		var selection = window.getSelection() + '';
+		words = selection.split(' ');
+		wordsLength = words.length;
+		
+		if ( copyCount < 13 ) {
+			if (words.length > 8) {
+				words = words.slice(0, 8).join(' ');
+				ga('send', 'event', 'Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
+			} else {
+				if ( selection == '' || selection == ' ' ) {
+					ga('send', 'event', 'Copied Text', currentPage, '[0 words]');
+				} else {
+					ga('send', 'event', 'Copied Text', currentPage, selection);
+				}
+			}
+		} else {
+			if ( copyOver == 0 ) {
+				ga('send', 'event', 'Copied Text', currentPage, '[Copy limit reached]');
+			}
+			copyOver = 1;
+		}
+	});
+
 
 
 }); //End Document Ready
