@@ -60,7 +60,7 @@ jQuery(document).ready(function() {
     jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
     jQuery('.current-menu-item').children('.toplevelvert_expander').click();
 
-	
+	initialWindowSize = jQuery(window).width();
 	//Window Resize (Waits for window to finish resizing before triggering.
 	jQuery(window).resize(function() {
 		waitForFinalEvent(function(){
@@ -68,6 +68,14 @@ jQuery(document).ready(function() {
 	    	//Window resize functions here.
 	    	PowerFooterWidthDist();
 	    	
+	    	//Track size change
+	    	finalWindowSize = jQuery(window).width();
+	    	if ( initialWindowSize > finalWindowSize ) {
+	    		ga('send', 'event', 'Window Resize', 'Smaller', initialWindowSize + 'px to ' + finalWindowSize + 'px';
+	    	} else if ( initialWindowSize < finalWindowSize ) {
+	    		ga('send', 'event', 'Window Resize', 'Bigger', initialWindowSize + 'px to ' + finalWindowSize + 'px';
+	    	}
+	    	initialWindowSize = jQuery(window).width();
 		}, 500, "global window resize"); //String is a unique string that waitForFinalEvent looks for. It can be anything as long as it doesn't conflict with another one being used.
 	});
 	
@@ -108,6 +116,12 @@ jQuery(document).ready(function() {
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value;
 	//});
 	
+	//External links
+	jQuery("a[rel*='external']").on('click', function(){
+		var linkText = jQuery(this).text();
+		ga('send', 'event', 'External Link', linkText);
+	});
+
 	//PDF View/Download
 	jQuery("a[href$='.pdf']").on('click', function(){
 		var title= jQuery('title').text()
