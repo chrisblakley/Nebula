@@ -15,6 +15,10 @@ get_header(); ?>
 			<?php else : ?>
 				<h1><?php _e( 'No Results Found', 'boilerplate' ); ?></h1>
 				<?php get_search_form(); ?>
+				<script defer>
+					var badSearchTerm = jQuery('#s').val();
+					ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm);
+				</script>
 			<?php endif; ?>
 			<?php if ( have_posts() ) : ?>
 				<?php get_template_part( 'loop', 'search' ); ?>
