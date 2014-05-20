@@ -13,6 +13,10 @@
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<title><?php wp_title( '|', true, 'right' ); ?></title>
+		<meta name="description" content="#"><!-- @TODO: Add description here, or generate it with PHP -->
+		<meta name="keywords" content="#"><!-- @TODO: Add keywords here, or generate them with PHP -->
+
+		
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/normalize.css" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/gumby.css" />
@@ -28,7 +32,7 @@
 		
 		<!-- Facebook Metadata -->
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
-		<meta property="og:description" content=""/>
+		<meta property="og:description" content="#"/><!-- @TODO: Add description here, or generate it with PHP -->
 		<meta property="og:url" content="<?php the_permalink(); ?>"/>
 		<meta property="og:title" content="<?php bloginfo('name'); ?>"/>
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-temp.png"/> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
@@ -37,8 +41,8 @@
 		
 		<!-- Google+ Metadata -->
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>">
-		<meta itemprop="description" content="">
-		<meta itemprop="image" content="">
+		<meta itemprop="description" content="#"><!-- @TODO: Add description here, or generate it with PHP -->
+		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg">
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>"/>
