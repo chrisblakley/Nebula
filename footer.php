@@ -167,6 +167,49 @@
 				
 		<?php endif; ?>
 		
+		<script>
+			<?php
+			// Call the iframe like this:
+			/* <iframe id="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/RnHktv51M8k?wmode=transparent&enablejsapi=1&origin=http://domain.com" frameborder="0" allowfullscreen=""></iframe> */
+			// If pulling the Youtube video ID dynamically, add a class to the iframe of "video-id-[php variable here]" to track by ID
+			?>
+			if ( jQuery('#youtubeplayer').length ) {
+				var tag = document.createElement('script');
+				tag.src = "http://www.youtube.com/iframe_api";
+				var firstScriptTag = document.getElementsByTagName('script')[0];
+				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+			}
+	
+			function onYouTubeIframeAPIReady(event) {
+			  player = new YT.Player('youtubeplayer', {
+			    events: {
+			      'onReady': onPlayerReady,
+			      'onStateChange': onPlayerStateChange
+			    }
+			  });
+			}
+	
+			//Track Youtube Video Events
+			var pauseFlag = false;
+			function onPlayerReady(event) {
+			   //Do nothing
+			}
+			function onPlayerStateChange(event) {
+			    if (event.data == YT.PlayerState.PLAYING) {
+			        ga('send', 'event', 'Videos', 'Play');
+			        pauseFlag = true;
+			    }
+			    if (event.data == YT.PlayerState.PAUSED && pauseFlag) {
+			        ga('send', 'event', 'Videos', 'Pause');
+			        pauseFlag = false;
+			    }
+			    if (event.data == YT.PlayerState.ENDED) {
+			        ga('send', 'event', 'Videos', 'Finished');
+			    }
+			}
+		</script>
+
+		
 		</div><!--/fullbodywrapper-->
 	</body>
 </html>
