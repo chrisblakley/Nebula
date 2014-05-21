@@ -12,8 +12,8 @@
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
-		<title><?php wp_title( '|', true, 'right' ); ?></title>
-		<meta name="description" content="#" /><!-- @TODO: Add description here, or generate it with PHP -->
+		<title><?php wp_title( '-', true, 'right' ); ?></title>
+		<meta name="description" content="<?php echo nebula_the_excerpt(get_the_ID(), '', 30, 1); ?>" />
 		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
 
 		
