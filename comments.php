@@ -14,7 +14,7 @@
 ?>
 
 <?php if ( post_password_required() ) : ?>
-				<p><?php _e( 'This post is password protected. Enter the password to view any comments.', 'boilerplate' ); ?></p>
+				<p>This post is password protected. Enter the password to view any comments.</p>
 <?php
 		/* Stop the rest of comments.php from being processed,
 		 * but don't kill the script entirely -- we still have
@@ -36,8 +36,8 @@
 			?></h3>
 
 <?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
-				<?php previous_comments_link( __( '&larr; Older Comments', 'boilerplate' ) ); ?>
-				<?php next_comments_link( __( 'Newer Comments &rarr;', 'boilerplate' ) ); ?>
+				<?php previous_comments_link( '&larr; Older Comments' ); ?>
+				<?php next_comments_link( 'Newer Comments &rarr;' ); ?>
 <?php endif; // check for comment navigation ?>
 
 			<ol>
@@ -53,8 +53,8 @@
 			</ol>
 
 <?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
-				<?php previous_comments_link( __( '&larr; Older Comments', 'boilerplate' ) ); ?>
-				<?php next_comments_link( __( 'Newer Comments &rarr;', 'boilerplate' ) ); ?>
+				<?php previous_comments_link( '&larr; Older Comments' ); ?>
+				<?php next_comments_link( 'Newer Comments &rarr;' ); ?>
 <?php endif; // check for comment navigation ?>
 
 <?php else : // or, if we don't have comments:
@@ -64,7 +64,7 @@
 	 */
 	if ( ! comments_open() ) :
 ?>
-	<p><?php _e( 'Comments are closed.', 'boilerplate' ); ?></p>
+	<p>Comments are closed.</p>
 <?php endif; // end ! comments_open() ?>
 
 <?php endif; // end have_comments() ?>
