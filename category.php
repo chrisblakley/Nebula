@@ -9,7 +9,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="ten columns">
 			<? the_breadcrumb(); ?>
-			<h1><?php printf( __( 'Category Archives: %s', 'boilerplate' ), '' . single_cat_title( '', false ) . '' ); ?></h1>
+			<h1><?php printf( 'Category Archives: %s', '' . single_cat_title( '', false ) . '' ); ?></h1>
 				<?php
 					$category_description = category_description();
 					if ( ! empty( $category_description ) )
