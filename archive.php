@@ -26,13 +26,13 @@ get_header(); ?>
 			<h1 class="page-title"><?php
 				if ( is_day() ) :
                     header( 'Location: ' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' ) ; //This does not work on all servers (because it's called after headers are already sent).
-                    printf( __( 'Archive for %s', 'boilerplate' ), get_the_date() );
+                    printf( 'Archive for %s', get_the_date() );
                 elseif ( is_month() ) :
-                    printf( __( 'Archive for %s', 'boilerplate' ), get_the_date('F Y') );
+                    printf( 'Archive for %s', get_the_date('F Y') );
                 elseif ( is_year() ) :
-                    printf( __( 'Archive for %s', 'boilerplate' ), get_the_date('Y') );
+                    printf( 'Archive for %s', get_the_date('Y') );
                 else :
-                    _e( 'Archives', 'boilerplate' );
+                    echo 'Archives';
                 endif;
 			?></h1>
 			<?php
