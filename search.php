@@ -10,10 +10,10 @@ get_header(); ?>
 		<div class="ten columns">
 			<? the_breadcrumb(); ?>
 			<?php if ( have_posts() ) : ?>
-				<h1><?php printf( __( 'Search Results', 'boilerplate' ), '' . get_search_query() . '' ); ?></h1>
+				<h1><?php printf( 'Search Results', '' . get_search_query() . '' ); ?></h1>
 				<?php get_search_form(); ?>
 			<?php else : ?>
-				<h1><?php _e( 'No Results Found', 'boilerplate' ); ?></h1>
+				<h1>No Results Found</h1>
 				<?php get_search_form(); ?>
 				<script defer>
 					var badSearchTerm = jQuery('#s').val();
@@ -23,7 +23,7 @@ get_header(); ?>
 			<?php if ( have_posts() ) : ?>
 				<?php get_template_part( 'loop', 'search' ); ?>
 			<?php else : ?>
-				<p><?php _e( 'Your search criteria returned 0 results.', 'boilerplate' ); ?></p>
+				<p>Your search criteria returned 0 results.</p>
 			<?php endif; ?>
 		</div><!--/columns-->
 		<div class="five columns push_one">
