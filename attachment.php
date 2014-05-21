@@ -10,16 +10,16 @@
 get_header(); ?>
 <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 				<?php if ( ! empty( $post->post_parent ) ) : ?>
-					<p class="page-title"><a href="<?php echo get_permalink( $post->post_parent ); ?>" title="<?php esc_attr( printf( __( 'Return to %s', 'boilerplate' ), get_the_title( $post->post_parent ) ) ); ?>" rel="gallery"><?php
+					<p class="page-title"><a href="<?php echo get_permalink( $post->post_parent ); ?>" title="<?php esc_attr( printf( 'Return to %s', get_the_title( $post->post_parent ) ) ); ?>" rel="gallery"><?php
 						/* translators: %s - title of parent post */
-						printf( __( '<span class="meta-nav">&larr;</span> %s', 'boilerplate' ), get_the_title( $post->post_parent ) );
+						printf( '<span class="meta-nav">&larr;</span> %s', get_the_title( $post->post_parent ) );
 					?></a></p>
 				<?php endif; ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<h2 class="entry-title"><?php the_title(); ?></h2>
 					<div class="entry-meta">
 						<?php
-							printf(__('By %2$s', 'boilerplate'),
+							printf('By %2$s',
 								'meta-prep meta-prep-author',
 								sprintf( '<a class="url fn n" href="%1$s" title="%2$s">%3$s</a>',
 									get_author_posts_url( get_the_author_meta( 'ID' ) ),
@@ -30,7 +30,7 @@ get_header(); ?>
 						?>
 						<span>|</span>
 						<?php
-							printf( __('Published %2$s', 'boilerplate'),
+							printf( 'Published %2$s',
 								'meta-prep meta-prep-entry-date',
 								sprintf( '<abbr title="%1$s">%2$s</abbr>',
 									esc_attr( get_the_time() ),
@@ -40,7 +40,7 @@ get_header(); ?>
 							if ( wp_attachment_is_image() ) {
 								echo ' | ';
 								$metadata = wp_get_attachment_metadata();
-								printf( __( 'Full size is %s pixels', 'boilerplate'),
+								printf( 'Full size is %s pixels',
 									sprintf( '<a href="%1$s" title="%2$s">%3$s &times; %4$s</a>',
 										wp_get_attachment_url(),
 										esc_attr( __('Link to full-size image', 'boilerplate') ),
@@ -50,7 +50,7 @@ get_header(); ?>
 								);
 							}
 						?>
-						<?php edit_post_link( __( 'Edit', 'boilerplate' ), '', '' ); ?>
+						<?php edit_post_link( 'Edit', '', '' ); ?>
 					</div><!-- .entry-meta -->
 					<div class="entry-content">
 						<div class="entry-attachment">
@@ -87,11 +87,11 @@ get_header(); ?>
 <?php endif; ?>
 						</div><!-- .entry-attachment -->
 						<div class="entry-caption"><?php if ( !empty( $post->post_excerpt ) ) the_excerpt(); ?></div>
-<?php the_content( __( 'Continue reading &rarr;', 'boilerplate' ) ); ?>
-<?php wp_link_pages( array( 'before' => '' . __( 'Pages:', 'boilerplate' ), 'after' => '' ) ); ?>
+<?php the_content( 'Continue reading &rarr;' ); ?>
+<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
 						<footer class="entry-utility">
 							<?php boilerplate_posted_in(); ?>
-							<?php edit_post_link( __( 'Edit', 'boilerplate' ), ' <span class="edit-link">', '</span>' ); ?>
+							<?php edit_post_link( 'Edit', ' <span class="edit-link">', '</span>' ); ?>
 						</footer><!-- .entry-utility -->
 <?php comments_template(); ?>
 					</div><!-- .entry-content -->
