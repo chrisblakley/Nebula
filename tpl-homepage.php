@@ -21,7 +21,7 @@ get_header(); ?>
 								<h2 class="entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
 								<div class="entry-content">
 									<?php echo nebula_the_excerpt('Read more &raquo;', 20, 1); ?>
-									<p><?php edit_post_link( __( 'Edit', 'boilerplate' ), '', '' ); ?></p>
+									<p><?php edit_post_link( 'Edit', '', '' ); ?></p>
 								</div><!-- .entry-content -->
 							</article><!-- #post-## -->
 						</li>
