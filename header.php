@@ -9,12 +9,12 @@
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="<?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ''; ?> no-js"><!--<![endif]-->
 	<head>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<title><?php wp_title( '|', true, 'right' ); ?></title>
-		<meta name="description" content="#"><!-- @TODO: Add description here, or generate it with PHP -->
-		<meta name="keywords" content="#"><!-- @TODO: Add keywords here, or generate them with PHP -->
+		<meta name="description" content="#" /><!-- @TODO: Add description here, or generate it with PHP -->
+		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
 
 		
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
@@ -28,29 +28,29 @@
         
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		
-		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt">
+		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
 		
 		<!-- Facebook Metadata -->
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
-		<meta property="og:description" content="#"/><!-- @TODO: Add description here, or generate it with PHP -->
-		<meta property="og:url" content="<?php the_permalink(); ?>"/>
-		<meta property="og:title" content="<?php bloginfo('name'); ?>"/>
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-temp.png"/> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg"/>
-	    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb2.jpg"/>
+		<meta property="og:description" content="#" /><!-- @TODO: Add description here, or generate it with PHP -->
+		<meta property="og:url" content="<?php the_permalink(); ?>" />
+		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-temp.png" /> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
+	    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb2.jpg" />
 		
 		<!-- Google+ Metadata -->
-		<meta itemprop="name" content="<?php bloginfo('name'); ?>">
-		<meta itemprop="description" content="#"><!-- @TODO: Add description here, or generate it with PHP -->
-		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg">
+		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
+		<meta itemprop="description" content="#" /><!-- @TODO: Add description here, or generate it with PHP -->
+		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
 
 		<!--Microsoft Windows 8 Tiles /-->
-		<meta name="application-name" content="<?php bloginfo('name'); ?>"/>
-		<meta name="msapplication-TileColor" content="#ffffff"/>
-		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png"/><!--128x128-->
-		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png"/><!--270x270-->
-		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png"/><!--558x270-->
-		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png"/><!--517x516-->
+		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
+		<meta name="msapplication-TileColor" content="#ffffff" />
+		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png" /><!--128x128-->
+		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!--270x270-->
+		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!--558x270-->
+		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!--517x516-->
 
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" defer></script>
 		
