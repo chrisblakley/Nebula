@@ -3,19 +3,65 @@ jQuery.noConflict();
 jQuery(document).ready(function() {	
 
 	//Init Custom Functions
+	gaEventTracking();
+	
+	helperFunctions();
+	socialSharing();
+	dropdownWidthController();
+	overflowDetector();
+	subnavExpanders();
+	
+	nebulaFixeder();
+	windowResize();
+	
 	mmenu();
 	PowerFooterWidthDist();
-	SearchValidator();
+	searchValidator();
 	
-	//Zebra-striper, First/Last Child, Hover
+	/*
+	//Gumby Modals event trigger
+	jQuery.on('gumby.trigger', function(){
+		//Modal event trigger functions here.
+	})
+	*/
+	
+	
+}); //End Document Ready
+
+
+
+
+jQuery(window).on('load', function() {
+	
+	conditionalJSLoading();
+	
+	jQuery('html').addClass('loaded');
+	jQuery('.unhideonload').removeClass('hidden');	
+	
+}); //End Window Load
+
+
+
+
+/*==========================
+ 
+ Functions
+ 
+ ===========================*/
+
+//Zebra-striper, First-child/Last-child, Hover helper functions
+function helperFunctions(){
 	jQuery('li:even, tr:even').addClass('even');
 	jQuery('li:odd, tr:odd').addClass('odd');
 	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child');
 	jQuery('li:last-child, tr:last-child').addClass('last-child');
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
 	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
-		
-	//Social sharing buttons
+} //end helperFunctions()
+
+
+//Social sharing buttons
+function socialSharing() {
     var loc = window.location;
     var title = jQuery(document).attr('title');
     var encloc = encodeURI(loc);
@@ -25,8 +71,11 @@ jQuery(document).ready(function() {
     jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank');
     jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr('target', '_blank');
     jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank');
-    
-	//Main dropdown nav dynamic width controller
+} //end socialSharing()
+
+
+//Main dropdown nav dynamic width controller
+function dropdownWidthController() {
 	jQuery('#mainnav .sub-menu').each(function(){
 		var bigWidth = 100;
 			if ( jQuery(this).children().width() > bigWidth ) {
@@ -34,8 +83,11 @@ jQuery(document).ready(function() {
 			}
 		jQuery(this).css('width', bigWidth+15 + 'px');
 	});
-    
-    //Sub-menu viewport overflow detector
+} //end dropdownWidthController()
+
+
+//Sub-menu viewport overflow detector
+function overflowDetector() {
     jQuery('#mainnav .menu > .menu-item').hover(function(){
     	var viewportWidth = jQuery(window).width();
     	var submenuLeft = jQuery(this).offset().left;
@@ -48,8 +100,11 @@ jQuery(document).ready(function() {
     }, function(){
 	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
     });
-    
-    //Vertical subnav expanders
+} //end overflowDetector()
+
+
+//Vertical subnav expanders
+function subnavExpanders() {
     jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="icon-left-dir"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
     jQuery('.toplevelvert_expander').on('click', function(){
@@ -59,27 +114,11 @@ jQuery(document).ready(function() {
     //Automatically expand subnav to show current page
     jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
     jQuery('.current-menu-item').children('.toplevelvert_expander').click();
+} //end subnavExpanders()
 
-	initialWindowSize = jQuery(window).width();
-	//Window Resize (Waits for window to finish resizing before triggering.
-	jQuery(window).resize(function() {
-		waitForFinalEvent(function(){
-		
-	    	//Window resize functions here.
-	    	PowerFooterWidthDist();
-	    	
-	    	//Track size change
-	    	finalWindowSize = jQuery(window).width();
-	    	if ( initialWindowSize > finalWindowSize ) {
-	    		ga('send', 'event', 'Window Resize', 'Smaller', initialWindowSize + 'px to ' + finalWindowSize + 'px';
-	    	} else if ( initialWindowSize < finalWindowSize ) {
-	    		ga('send', 'event', 'Window Resize', 'Bigger', initialWindowSize + 'px to ' + finalWindowSize + 'px';
-	    	}
-	    	initialWindowSize = jQuery(window).width();
-		}, 500, "global window resize"); //String is a unique string that waitForFinalEvent looks for. It can be anything as long as it doesn't conflict with another one being used.
-	});
-	
-	//Show fixed bar when scrolling passed the header	
+
+//Show fixed bar when scrolling passed the header
+function nebulaFixeder() {
 	jQuery(window).on('scroll resize', function() {
 		if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').length ) {
 			var fixedBarBottom = jQuery('#logonavcon img').position().top + jQuery('#logonavcon img').outerHeight();
@@ -96,21 +135,34 @@ jQuery(document).ready(function() {
 	        }
 		}	
 	});
+} //end nebulaFixeder()
+
+
+//Window Resize (Waits for window to finish resizing before triggering.
+function windowResize() {
+    initialWindowSize = jQuery(window).width();
 	
-	/*
-//Gumby Modals event trigger
-	jQuery.on('gumby.trigger', function(){
-		//Modal event trigger functions here.
-	})
-*/
-	
-	
-	/*==========================
-	 
-	 Google Analytics Universal Analytics Event Trackers
-	 
-	 ===========================*/
-	
+	jQuery(window).resize(function() {
+		waitForFinalEvent(function(){
+		
+	    	//Window resize functions here.
+	    	powerFooterWidthDist();
+	    	
+	    	//Track size change
+	    	finalWindowSize = jQuery(window).width();
+	    	if ( initialWindowSize > finalWindowSize ) {
+	    		ga('send', 'event', 'Window Resize', 'Smaller', initialWindowSize + 'px to ' + finalWindowSize + 'px';
+	    	} else if ( initialWindowSize < finalWindowSize ) {
+	    		ga('send', 'event', 'Window Resize', 'Bigger', initialWindowSize + 'px to ' + finalWindowSize + 'px';
+	    	}
+	    	initialWindowSize = jQuery(window).width();
+		}, 500, "global window resize"); //String is a unique string that waitForFinalEvent looks for. It can be anything as long as it doesn't conflict with another one being used.
+	});
+} //end windowResize()
+
+
+//Google Analytics Universal Analytics Event Trackers
+function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string.)
 	//jQuery('.selector').on('click', function() {
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value;
@@ -121,7 +173,7 @@ jQuery(document).ready(function() {
 		var linkText = jQuery(this).text();
 		ga('send', 'event', 'External Link', linkText);
 	});
-
+	
 	//PDF View/Download
 	jQuery("a[href$='.pdf']").on('click', function(){
 		var title= jQuery('title').text()
@@ -140,7 +192,7 @@ jQuery(document).ready(function() {
 		var currentPage = jQuery(document).attr('title');
 		ga('send', 'event', 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
 	});
-
+	
 	//Generic Interal Search Tracking
 	jQuery('.search').on('submit', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
@@ -160,7 +212,7 @@ jQuery(document).ready(function() {
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 	});
-
+	
 	//Word copy tracking
 	var copyCount = 0;
 	var copyOver = 0;
@@ -190,72 +242,8 @@ jQuery(document).ready(function() {
 			copyOver = 1;
 		}
 	});
-
-
-
-}); //End Document Ready
-
-jQuery(window).on('load', function() {
-
-	jQuery('html').addClass('loaded');
-	jQuery('.unhideonload').removeClass('hidden');
 	
-	/*==========================
-	
-	 Conditional JS Library Loading
-	 
-	 ===========================*/
-		
-	//Only load Twitter if Twitter wrapper exists.
-	if ( jQuery('#twittercon').length ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
-			twitterFeed();
-		}).fail(function(){
-			console.log('twitter.js could not be loaded.');
-			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
-		});
-	}
-	//Only load maskedinput.js library if phone or bday field exists.
-	if ( jQuery('.cform7-phone').length || jQuery('.cform7-bday').length ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
-			cFormPreValidator();
-		}).fail(function(){
-			console.log('jquery.maskedinput.js could not be loaded.');
-		});
-	} else {
-		cFormPreValidator();
-	}
-	//Only load dataTables library if dataTables table exists.
-	if ( jQuery('.dataTables_wrapper').length ) {
-		
-	jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){
-			cFormPreValidator();
-		}).fail(function(){
-			console.log('jquery.dataTables.min.js could not be loaded.');
-		});
-		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
-	}
-	
-	//Load Gumby UI scripts as needed
-	//THIS IS STILL IN THE TESTING PHASE!
-		//WE NEED TO DETERMINE: Does this work? Is it easier than uncommenting <script> calls in the footer? Is it slower than using links?
-	if ( jQuery('.tab-nav').length ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/ui/gumby.tabs.js').done(function(){
-			//Success
-		}).fail(function(){
-			console.log('gumby.tabs.js could not be loaded.');
-		});
-	}
-	
-	
-}); //End Window Load
-
-
-/*==========================
- 
- Functions
- 
- ===========================*/
+} //End gaEventTracking()
 
 function mmenu() {
 	jQuery("#mobilenav").mmenu({
@@ -300,7 +288,7 @@ function mmenu() {
 		jQuery('.clearsearch').addClass('hidden');
 		return false;
 	});
-}
+} //end mmenu()
 
 //Power Footer Width Distributor
 function PowerFooterWidthDist() {
@@ -315,10 +303,10 @@ function PowerFooterWidthDist() {
 	} else {
 		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
 	}
-} //End PowerFooterWidthDist
+} //end PowerFooterWidthDist
 
 //Search Validator
-function SearchValidator() {
+function searchValidator() {
 	jQuery('.lt-ie9 form.search .btn.submit').val('Search');
 	jQuery('.input.search').each(function(){
 		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
@@ -546,7 +534,7 @@ function cFormPreValidator() {
 			}
         }, 100);
 	});
-} //End cFormPreValidator
+} //end cFormPreValidator()
 
 //CForm7 submit success callback
 //Add on_sent_ok: "cFormSuccess('EnterTheFormNameHere');" to Additional Settings in WP Admin.
@@ -575,10 +563,56 @@ var waitForFinalEvent = (function () {
 		}
 		timers[uniqueId] = setTimeout(callback, ms);
 	};
-})();
+})(); //end waitForFinalEvent()
+
+
+//Conditional JS Library Loading
+function conditionalJSLoading() {
+	//Only load Twitter if Twitter wrapper exists.
+	if ( jQuery('#twittercon').length ) {
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
+			twitterFeed();
+		}).fail(function(){
+			console.log('twitter.js could not be loaded.');
+			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
+		});
+	}
+	//Only load maskedinput.js library if phone or bday field exists.
+	if ( jQuery('.cform7-phone').length || jQuery('.cform7-bday').length ) {
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
+			cFormPreValidator();
+		}).fail(function(){
+			console.log('jquery.maskedinput.js could not be loaded.');
+		});
+	} else {
+		cFormPreValidator();
+	}
+	//Only load dataTables library if dataTables table exists.
+	if ( jQuery('.dataTables_wrapper').length ) {
+		
+	jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){
+			cFormPreValidator();
+		}).fail(function(){
+			console.log('jquery.dataTables.min.js could not be loaded.');
+		});
+		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
+	}
+	
+	//Load Gumby UI scripts as needed
+	//THIS IS STILL IN THE TESTING PHASE!
+		//WE NEED TO DETERMINE: Does this work? Is it easier than uncommenting <script> calls in the footer? Is it slower than using links?
+	if ( jQuery('.tab-nav').length ) {
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/ui/gumby.tabs.js').done(function(){
+			//Success
+		}).fail(function(){
+			console.log('gumby.tabs.js could not be loaded.');
+		});
+	}
+} //end conditionalJSLoading()
+
 
 //Twitter Feed integration
-function twitterFeed(){
+function twitterFeed() {
     if(jQuery('.twitter-feed').length){
         JQTWEET = JQTWEET || {};
         //JQTWEET.search = '#hashtag';
@@ -588,4 +622,4 @@ function twitterFeed(){
         JQTWEET.appendTo = '#twitter_update_list';
         JQTWEET.loadTweets();
     }
-}
+} //end twitterFeed()
