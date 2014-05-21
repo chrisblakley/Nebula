@@ -19,17 +19,17 @@
 <?php /* Display navigation to next/previous pages when applicable */ ?>
 <?php if ( $wp_query->max_num_pages > 1 ) : ?>
 	<nav id="nav-above" class="navigation">
-		<div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'boilerplate' ) ); ?></div>
-		<div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'boilerplate' ) ); ?></div>
+		<div class="nav-previous"><?php next_posts_link( '<span class="meta-nav">&larr;</span> Older posts' ); ?></div>
+		<div class="nav-next"><?php previous_posts_link( 'Newer posts <span class="meta-nav">&rarr;</span>' ); ?></div>
 	</nav><!-- #nav-above -->
 <?php endif; ?>
 
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
 <?php if ( ! have_posts() ) : ?>
 	<article id="post-0" class="post error404 not-found">
-		<h1 class="entry-title"><?php _e( 'Not Found', 'boilerplate' ); ?></h1>
+		<h1 class="entry-title">Not Found</h1>
 		<div class="entry-content">
-			<p><?php _e( 'No results were found for the requested archive.', 'boilerplate' ); ?></p>
+			<p>No results were found for the requested archive.</p>
 			<?php get_search_form(); ?>
 		</div><!-- .entry-content -->
 	</article><!-- #post-0 -->
@@ -57,7 +57,7 @@
 							<div class="gallery-thumb">
 								<a class="size-thumbnail" href="<?php the_permalink(); ?>"><?php echo $image_img_tag; ?></a>
 							</div><!-- .gallery-thumb -->
-							<p><em><?php printf( __( '<i class="icon-picture"></i> <a %1$s>%2$s photos</a>.', 'boilerplate' ), 'href="' . get_permalink() . '" title="' . sprintf( esc_attr__( 'Permalink to %s', 'boilerplate' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark"', $total_images); ?></em></p>
+							<p><em><?php printf( '<i class="icon-picture"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '" title="' . sprintf( esc_attr__( 'Permalink to %s', 'boilerplate' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark"', $total_images); ?></em></p>
 						<?php endif; ?>
 						<?php the_excerpt(); ?>
 					<?php endif; ?>
@@ -66,7 +66,7 @@
 			<footer class="entry-utility">
 				<a href="<?php echo get_term_link( _x('gallery', 'gallery category slug', 'boilerplate'), 'category' ); ?>" title="<?php esc_attr_e( 'View posts in the Gallery category', 'boilerplate' ); ?>"><?php _e( 'More Galleries', 'boilerplate' ); ?></a>
 				<?php //comments_popup_link( __( 'Leave a comment', 'boilerplate' ), __( '1 Comment', 'boilerplate' ), __( '% Comments', 'boilerplate' ) ); ?>
-				<?php edit_post_link( __( 'Edit', 'boilerplate' ), '<p class="edit-link">', '</p>' ); ?>
+				<?php edit_post_link( 'Edit', '<p class="edit-link">', '</p>' ); ?>
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
 
@@ -86,14 +86,14 @@
 				</div><!-- .entry-summary -->
 			<?php else : ?>
 				<div class="entry-content">
-					<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'boilerplate' ) ); ?>
-					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'boilerplate' ), 'after' => '</div>' ) ); ?>
+					<?php the_content( 'Continue reading <span class="meta-nav">&rarr;</span>' ); ?>
+					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>' ) ); ?>
 				</div><!-- .entry-content -->
 			<?php endif; ?>
 
 			<footer class="entry-utility">
 				<?php //comments_popup_link( __( 'Leave a comment', 'boilerplate' ), __( '1 Comment', 'boilerplate' ), __( '% Comments', 'boilerplate' ) ); ?>
-				<?php edit_post_link( __( 'Edit', 'boilerplate' ), '<p class="edit-link">', '</p>' ); ?>
+				<?php edit_post_link( 'Edit', '<p class="edit-link">', '</p>' ); ?>
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
 
@@ -106,7 +106,7 @@
 <?php /* Display navigation to next/previous pages when applicable */ ?>
 <?php if (  $wp_query->max_num_pages > 1 ) : ?>
 	<nav id="nav-below" class="navigation">
-		<?php next_posts_link( __( '&larr; Older posts', 'boilerplate' ) ); ?>
-		<?php previous_posts_link( __( 'Newer posts &rarr;', 'boilerplate' ) ); ?>
+		<?php next_posts_link( '&larr; Older posts' ); ?>
+		<?php previous_posts_link( 'Newer posts &rarr;' ); ?>
 	</nav><!-- #nav-below -->
 <?php endif; ?>
