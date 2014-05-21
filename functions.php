@@ -785,15 +785,15 @@ function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=fal
 	
 	if ( $the_post ) {
         if ( $the_post->post_excerpt ) {
-	        $string = strip_tags($the_post->post_excerpt, '<p>');
+	        $string = strip_tags(strip_shortcodes($the_post->post_excerpt), '<p>');
         } else {
-	        $string = strip_tags($the_post->post_content, '<p>');
+	        $string = strip_tags(strip_shortcodes($the_post->post_content), '<p>');
         }
     } else {
         if ( get_the_excerpt() ) {
-            $string = strip_tags(get_the_excerpt(), '<p>');
+            $string = strip_tags(strip_shortcodes(get_the_excerpt()), '<p>');
         } else {
-            $string = strip_tags(get_the_content(), '<p>');
+            $string = strip_tags(strip_shortcodes(get_the_content()), '<p>');
         }
     }
 			    
