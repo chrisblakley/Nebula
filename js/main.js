@@ -15,7 +15,7 @@ jQuery(document).ready(function() {
 	windowResize();
 	
 	mmenu();
-	PowerFooterWidthDist();
+	powerFooterWidthDist();
 	searchValidator();
 	
 	/*
