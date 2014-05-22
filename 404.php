@@ -20,5 +20,13 @@ get_header(); ?>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
-			
+
+<script>
+	if ( document.referrer.length ) {
+		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
+	} else {
+		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown');
+	}
+</script>
+
 <?php get_footer(); ?>
