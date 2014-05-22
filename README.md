@@ -79,6 +79,16 @@ These can be downloaded from Wordpress.org, or installed from the Wordpress Admi
 #####PHP
 - [Mobile Detect](http://mobiledetect.net/)
 
+##Optional Libraries
+#####JavaScript
+- [Favico.js](http://lab.ejci.net/favico.js/)
+- [Noty](http://ned.im/noty/)
+- [HoverIntent](http://cherne.net/brian/resources/jquery.hoverIntent.html)
+- [Skrollr](https://github.com/Prinzhorn/skrollr)
+
+#####PHP
+- [PHP Mailer](https://github.com/PHPMailer/PHPMailer)
+
 ##Included API Integrations
 - [Facebook SDK for JavaScript](https://developers.facebook.com/docs/javascript)
 - [Google Analytics (analytics.js)](https://developers.google.com/analytics/devguides/collection/analyticsjs/)
