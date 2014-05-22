@@ -37,7 +37,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 
 
 ##Recommended Plugins
-These can be downloaded from Wordpress.org, or installed from the Wordpress Admin under the Plugins > Add New.
+When activated, WP Nebula will prompt to install the recommended and optional plugins. Following the instructions will install them all (or selected ones) at once. These can also be downloaded from Wordpress.org, or manually installed from the Wordpress Admin under the Plugins > Add New.
 - [Admin Menu Tree Page View](http://wordpress.org/plugins/admin-menu-tree-page-view/)
 - [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
 - [Contact Form 7](http://wordpress.org/plugins/contact-form-7/)
