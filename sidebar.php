@@ -22,7 +22,15 @@
 	</li>
 	
 	<li>
-		<?php wp_nav_menu(array('theme_location' => 'sidebar')); ?>
+		<?php 
+			if ( has_nav_menu('sidebar') ) {
+				wp_nav_menu(array('theme_location' => 'sidebar'));
+			} elseif (has_nav_menu('header') ) {
+				wp_nav_menu(array('theme_location' => 'header'));
+			} else {
+				echo '<p>@TODO: Set a default menu or something</p>';
+			}
+		?>
 	</li>
 		
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Secondary Widget Area') ) : ?>
