@@ -159,27 +159,27 @@ nav#topnav {position: relative; z-index: 1000;}
 
 /* Nebula Wordpress main navigation style defaults */
 #logonavcon {padding-top: 20px;}
-	nav#mainnav {position: relative; z-index: 1000;}
-		nav#mainnav ul {}
-		nav#mainnav ul:first-child,
-		nav#mainnav ul.first-child {float: right; margin-top: 26px;}
-			nav#mainnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
-			.ie7 nav#mainnav ul li.menu-item {float: left;}
-				nav#mainnav ul li.menu-item:last-child,
-				nav#mainnav ul li.menu-item.last-child {margin-right: 0;}
-				nav#mainnav ul li.menu-item a {display: block;}
-					nav#mainnav ul li.menu-item a:hover,
-					nav#mainnav ul li.menu-item a.hover {}
-				nav#mainnav ul li.menu-item ul.sub-menu {position: absolute; top: 20px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; transition: top 0.25s ease 0s, opacity 0.25s ease 0s; background: lightgrey; background: linear-gradient(to bottom, white, lightgrey); z-index: 1001; border: 1px solid grey;}
-				.no-js nav#mainnav ul li.menu-item ul.sub-menu {width: 400px;}	
-					nav#mainnav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
-						nav#mainnav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
-							nav#mainnav ul li.menu-item ul.sub-menu li a:hover,
-							nav#mainnav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
-						nav#mainnav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
-				nav#mainnav ul li.menu-item:hover .sub-menu,
-				nav#mainnav ul li.menu-item.hover .sub-menu {left: 0; top: 25px; opacity: 1;}
-				.no-js nav#mainnav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
+	nav#primarynav {position: relative; z-index: 1000;}
+		nav#primarynav ul {}
+		nav#primarynav ul:first-child,
+		nav#primarynav ul.first-child {float: right; margin-top: 26px;}
+			nav#primarynav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
+			.ie7 nav#primarynav ul li.menu-item {float: left;}
+				nav#primarynav ul li.menu-item:last-child,
+				nav#primarynav ul li.menu-item.last-child {margin-right: 0;}
+				nav#primarynav ul li.menu-item a {display: block;}
+					nav#primarynav ul li.menu-item a:hover,
+					nav#primarynav ul li.menu-item a.hover {}
+				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 20px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; transition: top 0.25s ease 0s, opacity 0.25s ease 0s; background: lightgrey; background: linear-gradient(to bottom, white, lightgrey); z-index: 1001; border: 1px solid grey;}
+				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}	
+					nav#primarynav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
+						nav#primarynav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
+							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
+							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
+						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
+				nav#primarynav ul li.menu-item:hover .sub-menu,
+				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 25px; opacity: 1;}
+				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
 			
 #heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg_nebula.jpg') fixed center center; background-size: cover; transition: all 0.5s ease 0s;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 48px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8); transition: all 0.5s ease 0s;}
@@ -301,22 +301,22 @@ div.copyright p {font-size: 12px;}
 	.logocon {display: block; text-align: center;}
 	
 	/* Nebula Wordpress main navigation responsive style defaults */
-	nav#mainnav {display: none;}
-		nav#mainnav ul {}
-			nav#mainnav ul li.menu-item {display: block; width: 100%; text-align: center;}
-				nav#mainnav ul li.menu-item:last-child,
-				nav#mainnav ul li.menu-item.last-child {}
-				nav#mainnav ul li.menu-item a {min-height: 44px; line-height: 44px;}
-					nav#mainnav ul li.menu-item a:hover,
-					nav#mainnav ul li.menu-item a.hover {}
-				nav#mainnav ul li.menu-item ul.sub-menu {position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;}
-					nav#mainnav ul li.menu-item ul.sub-menu li {}
-						nav#mainnav ul li.menu-item ul.sub-menu li a {padding: 0;}
-							nav#mainnav ul li.menu-item ul.sub-menu li a:hover,
-							nav#mainnav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
-						nav#mainnav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
-				nav#mainnav ul li.menu-item:hover .sub-menu,
-				nav#mainnav ul li.menu-item.hover .sub-menu {left: auto; top: 0; display: block; width: 100% !important;}
+	nav#primarynav {display: none;}
+		nav#primarynav ul {}
+			nav#primarynav ul li.menu-item {display: block; width: 100%; text-align: center;}
+				nav#primarynav ul li.menu-item:last-child,
+				nav#primarynav ul li.menu-item.last-child {}
+				nav#primarynav ul li.menu-item a {min-height: 44px; line-height: 44px;}
+					nav#primarynav ul li.menu-item a:hover,
+					nav#primarynav ul li.menu-item a.hover {}
+				nav#primarynav ul li.menu-item ul.sub-menu {position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;}
+					nav#primarynav ul li.menu-item ul.sub-menu li {}
+						nav#primarynav ul li.menu-item ul.sub-menu li a {padding: 0;}
+							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
+							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
+						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
+				nav#primarynav ul li.menu-item:hover .sub-menu,
+				nav#primarynav ul li.menu-item.hover .sub-menu {left: auto; top: 0; display: block; width: 100% !important;}
 	
 	.fixedbar {display: none;}
 	
