@@ -925,7 +925,8 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 			
 			$more = $postID;
 		}
-		$the_post = get_post(get_the_ID());
+		$postID = get_the_ID();
+		$the_post = get_post($postID);
 	}
 	
 	if ( $the_post->post_excerpt ) {
