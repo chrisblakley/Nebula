@@ -21,9 +21,14 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Permalinks Settings
 	- Select "Post name"
 - Set (at least) Primary Menu (Appearance > Menus)
-- Google Analytics tracking number
+- logo.svg and logo.png (and edit alt tag in header.php)
+- Social sharing thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center)*
+- Windows 8 Tiles *(128x128px "tiny.png", 270x270px "square.png", 558x270px "wide.png", 517x516px "large.png")*
+- Google Analytics tracking number (header.php)
+- Facebook appID (if applicable) (header.php)
 - [Theme development goes here]
 - Update screenshot.png
+- Search for any remaining @TODO tags
 - Uncheck "Discourage search engines from indexing this site" (Reading Settings)
 - Launch website
 - Enable W3 Total Cache
@@ -31,14 +36,14 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 
 ##Recommended Plugins
 These can be downloaded from Wordpress.org, or installed from the Wordpress Admin under the Plugins > Add New.
-- Admin Menu Tree Page View
-- Contact Form 7
-- Contact Form 7 DB
-- Custom Field Suite or Advanced Custom Fields
-- Regenerate Thumbnails
-- Reveal IDs
-- W3 Total Cache
-- WP-PageNavi
+- [Admin Menu Tree Page View](http://wordpress.org/plugins/admin-menu-tree-page-view/)
+- [Contact Form 7](http://wordpress.org/plugins/contact-form-7/)
+- [Contact Form 7 DB](http://wordpress.org/plugins/contact-form-7-to-database-extension/)
+- [Custom Field Suite](http://wordpress.org/plugins/custom-field-suite/) or [Advanced Custom Fields](http://wordpress.org/plugins/advanced-custom-fields/)
+- [Regenerate Thumbnails](http://wordpress.org/plugins/regenerate-thumbnails/)
+- [Reveal IDs](http://wordpress.org/plugins/reveal-ids-for-wp-admin-25/)
+- [W3 Total Cache](http://wordpress.org/plugins/w3-total-cache/)
+- [WP-PageNavi](http://wordpress.org/plugins/wp-pagenavi/)
 
 ##Documentation
 
