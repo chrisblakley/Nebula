@@ -9,6 +9,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 ##Setup
 
 - Rename theme in style.css
+- Move .htaccess to root (or combine with existing)
 - Activate theme
 - Make "Home" page (set as Homepage template)
 - General Settings
@@ -22,15 +23,16 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 	- Select "Post name"
 - Set (at least) Primary Menu (Appearance > Menus)
 - logo.svg and logo.png (and edit alt tag in header.php)
-- Social sharing thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center)*
+- Social sharing thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use fb-temp.png as a template. Then delete from header.php!)*
 - Windows 8 Tiles *(128x128px "tiny.png", 270x270px "square.png", 558x270px "wide.png", 517x516px "large.png")*
 - Google Analytics tracking number (header.php)
 - Facebook appID (if applicable) (header.php)
 - [Theme development goes here]
 - Update screenshot.png
 - Search for any remaining @TODO tags
+- [Testing](https://docs.google.com/document/d/17nmeSsa-4SSfX8bzWWUXcFDTyz3o2-oSgX4ayCgGm7Y/)
 - Uncheck "Discourage search engines from indexing this site" (Reading Settings)
-- Launch website
+- [Launch/Migration](https://docs.google.com/document/d/1jEaImmelk5bitFdh01WU_vm0WctYfhYEAKNZfwWJY0M/)
 - Enable W3 Total Cache
 
 
