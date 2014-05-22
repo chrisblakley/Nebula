@@ -16,22 +16,21 @@ This function is a replacement for both the_excerpt() and get_the_excerpt() beca
 
 #####Parameters
 
-$postID
+**$postID**
 (optional) The post ID (integer). Used when outside the loop.
-Default: None @TODO: Should this default to the current post/page?
+Default: *None* @TODO: Should this default to the current post/page?
 
-$more
+**$more**
 (optional) The linked string for the custom "Continue Reading" text.
-Default: None
+Default: *None*
 
-$length
+**$length**
 (optional) How many words are pulled for the excerpt (integer).
 Default: 55
 
-$hellip
+**$hellip**
 (optional) Whether to show an ellipses at the end of the excerpt if there are more words than the $length specifies (boolean).
 Default: 0
-
 
 #####Examples
 To call nebula_the_excerpt() from outside the loop, but for the current post/page
