@@ -10,8 +10,8 @@ This function is a replacement for both the_excerpt() and get_the_excerpt() beca
 
 #####Usage
 
-```php
-<?php nebula_the_excerpt( $postID, $more, $length, $hellip ); ?>
+```html
+<?php echo nebula_the_excerpt( $postID, $more, $length, $hellip ); ?>
 ```
 
 #####Parameters
