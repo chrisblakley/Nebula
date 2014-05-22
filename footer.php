@@ -108,9 +108,19 @@
 			</div><!--/row-->
 		</div><!--/container-->
 
-		<?php //jQuery itself is called through Wordpress Core. ?>
+
+
+		<script>
+			//If Wordpress can't call jQuery, load it from Google's CDN 
+			if (typeof jQuery == 'undefined') {
+			    var script = document.createElement('script');
+			    script.type = "text/javascript";
+			    script.src = "http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"; <?php //@TODO: Always verify this is the desired version of jQuery! ?>
+			    document.getElementsByTagName('head')[0].appendChild(script);
+			}
+		</script>
 				
-		<script type="text/javascript">
+		<script>
 			try { (function() {
 					var afterPrint = function() {
 						ga('send', 'event', 'Print (Intent)', document.location.pathname);
