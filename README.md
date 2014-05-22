@@ -2,6 +2,43 @@
 
 A Wordpress theme starting point that utilizes many libraries and custom functions for extremely fast development by acting as a "Living Repository".
 
+##Installation
+
+To install, simply download the .zip, extract its contents, and upload to the /themes directory via FTP.
+
+##Setup
+
+- Rename theme in style.css
+- Activate theme
+- Make "Home" page (set as Homepage template)
+- General Settings
+	- Remove Tagline
+	- Timezone "New York" (or appropriate timezone)
+	- Week Starts On Sunday
+- Reading Settings
+	- Front page displays "A static page" > Front page: "Home"
+	- Check "Discourage search engines from indexing this site"
+- Permalinks Settings
+	- Select "Post name"
+- Set (at least) Primary Menu (Appearance > Menus)
+- Google Analytics tracking number
+- [Theme development goes here]
+- Update screenshot.png
+- Uncheck "Discourage search engines from indexing this site" (Reading Settings)
+- Launch website
+- Enable W3 Total Cache
+
+
+##Recommended Plugins
+These can be downloaded from Wordpress.org, or installed from the Wordpress Admin under the Plugins > Add New.
+- Admin Menu Tree Page View
+- Contact Form 7
+- Contact Form 7 DB
+- Custom Field Suite or Advanced Custom Fields
+- Regenerate Thumbnails
+- Reveal IDs
+- W3 Total Cache
+- WP-PageNavi
 
 ##Documentation
 
