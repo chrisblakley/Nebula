@@ -13,14 +13,14 @@ This function is a replacement for both the_excerpt() and get_the_excerpt() beca
 #####Usage
 
 ```html
-<?php echo nebula_the_excerpt( $postID, $more, $length, $hellip ); ?>
+<?php nebula_the_excerpt( $postID, $more, $length, $hellip ); ?>
 ```
 
 #####Parameters
 
 **$postID**
 (optional) The post ID (integer). Used when outside the loop.
-Default: *None* @TODO: Should this default to the current post/page?
+Default: *None*
 
 **$more**
 (optional) The linked string for the custom "Continue Reading" text.
@@ -35,7 +35,12 @@ Default: 55
 Default: 0
 
 #####Examples
-To call nebula_the_excerpt() from outside the loop, but for the current post/page
+To call nebula_the_excerpt() from inside the loop, or outside the loop (for current post/page)
 ```html
-<?php echo nebula_the_excerpt(get_the_ID(), 'Read More &raquo;', 30, 1); ?>
+<?php nebula_the_excerpt('Read More &raquo;', 30, 1); ?>
+```
+
+To call nebula_the_excerpt() from outside the loop (for a specific post/page)
+```html
+<?php nebula_the_excerpt(572, 'Read More &raquo;', 30, 1); ?>
 ```
