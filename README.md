@@ -103,12 +103,10 @@ These can be downloaded from Wordpress.org, or installed from the Wordpress Admi
 #####Description
 This function is a replacement for both the_excerpt() and get_the_excerpt() because it can be called both inside or outside the loop! This function queries the specified excerpt of the requested post and if it is empty, it looks for the content instead. Unlike the_excerpt() and get_the_excerpt(), the "Read More" text and word count can be changed on an individual basis (instead of globally).
 
-*As of May 21, 2014 this function automatically echos (instead of returning)! Be careful when retrofitting (change function to return instead of echo)!!*
-
 #####Usage
 
 ```html
-<?php nebula_the_excerpt( $postID, $more, $length, $hellip ); ?>
+<?php echo nebula_the_excerpt( $postID, $more, $length, $hellip ); ?>
 ```
 
 #####Parameters
@@ -132,10 +130,10 @@ Default: 0
 #####Examples
 To call nebula_the_excerpt() from inside the loop, or outside the loop (for current post/page)
 ```html
-<?php nebula_the_excerpt('Read More &raquo;', 30, 1); ?>
+<?php echo nebula_the_excerpt('Read More &raquo;', 30, 1); ?>
 ```
 
 To call nebula_the_excerpt() from outside the loop (for a specific post/page)
 ```html
-<?php nebula_the_excerpt(572, 'Read More &raquo;', 30, 1); ?>
+<?php echo nebula_the_excerpt(572, 'Read More &raquo;', 30, 1); ?>
 ```
