@@ -89,11 +89,6 @@ if ( ! function_exists( 'boilerplate_setup' ) ):
 		if ( is_readable( $locale_file ) )
 			require_once( $locale_file );
 
-		// This theme uses wp_nav_menu() in one location.
-		register_nav_menus( array(
-			'primary' => __( 'Primary Navigation', 'boilerplate' ),
-		) );
-
 		// This theme allows users to set a custom background
 		// add_custom_background was deprecated as of 3.4, so testing for existence, but keeping add_custom_background for backward-compatibility
 		if ( function_exists( 'add_theme_support' ) ) {
@@ -741,7 +736,7 @@ function nav_menu_locations() {
 	// Register nav menu locations
 	register_nav_menus( array(
 		'topnav' => 'Top Nav Menu',
-		'header' => 'Header Menu',
+		'header' => 'Header Menu [Primary]',
 		'mobile' => 'Mobile Menu',
 		'sidebar' => 'Sidebar Menu',
 		'footer' => 'Footer Menu'
