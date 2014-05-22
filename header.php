@@ -13,7 +13,7 @@
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<title><?php wp_title( '-', true, 'right' ); ?></title>
-		<meta name="description" content="<?php echo nebula_the_excerpt(get_the_ID(), '', 30, 1); ?>" />
+		<meta name="description" content="<?php nebula_the_excerpt('', 30, 1); ?>" />
 		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
 
 		
@@ -32,7 +32,7 @@
 		
 		<!-- Facebook Metadata -->
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
-		<meta property="og:description" content="#" /><!-- @TODO: Add description here, or generate it with PHP -->
+		<meta property="og:description" content="<?php nebula_the_excerpt('', 30, 1); ?>" />
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
 		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-temp.png" /> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
@@ -41,16 +41,16 @@
 		
 		<!-- Google+ Metadata -->
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
-		<meta itemprop="description" content="#" /><!-- @TODO: Add description here, or generate it with PHP -->
+		<meta itemprop="description" content="<?php nebula_the_excerpt('', 30, 1); ?>" />
 		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
 		<meta name="msapplication-TileColor" content="#ffffff" />
-		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png" /><!--128x128-->
-		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!--270x270-->
-		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!--558x270-->
-		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!--517x516-->
+		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png" /><!--128x128px-->
+		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!--270x270px-->
+		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!--558x270px-->
+		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!--517x516px-->
 
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" defer></script>
 		
