@@ -151,9 +151,9 @@ function windowResize() {
 	    	//Track size change
 	    	finalWindowSize = jQuery(window).width();
 	    	if ( initialWindowSize > finalWindowSize ) {
-	    		ga('send', 'event', 'Window Resize', 'Smaller', initialWindowSize + 'px to ' + finalWindowSize + 'px';
+	    		ga('send', 'event', 'Window Resize', 'Smaller', initialWindowSize + 'px to ' + finalWindowSize + 'px');
 	    	} else if ( initialWindowSize < finalWindowSize ) {
-	    		ga('send', 'event', 'Window Resize', 'Bigger', initialWindowSize + 'px to ' + finalWindowSize + 'px';
+	    		ga('send', 'event', 'Window Resize', 'Bigger', initialWindowSize + 'px to ' + finalWindowSize + 'px');
 	    	}
 	    	initialWindowSize = jQuery(window).width();
 		}, 500, "global window resize"); //String is a unique string that waitForFinalEvent looks for. It can be anything as long as it doesn't conflict with another one being used.
@@ -291,7 +291,7 @@ function mmenu() {
 } //end mmenu()
 
 //Power Footer Width Distributor
-function PowerFooterWidthDist() {
+function powerFooterWidthDist() {
 	var powerFooterWidth = jQuery('#powerfooter').width();
 	var topLevelFooterItems = 0;
 	jQuery('#powerfooter ul.menu > li').each(function(){
