@@ -39,6 +39,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 ##Recommended Plugins
 These can be downloaded from Wordpress.org, or installed from the Wordpress Admin under the Plugins > Add New.
 - [Admin Menu Tree Page View](http://wordpress.org/plugins/admin-menu-tree-page-view/)
+- [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
 - [Contact Form 7](http://wordpress.org/plugins/contact-form-7/)
 - [Contact Form 7 DB](http://wordpress.org/plugins/contact-form-7-to-database-extension/)
 - [Custom Field Suite](http://wordpress.org/plugins/custom-field-suite/) or [Advanced Custom Fields](http://wordpress.org/plugins/advanced-custom-fields/)
@@ -46,6 +47,35 @@ These can be downloaded from Wordpress.org, or installed from the Wordpress Admi
 - [Reveal IDs](http://wordpress.org/plugins/reveal-ids-for-wp-admin-25/)
 - [W3 Total Cache](http://wordpress.org/plugins/w3-total-cache/)
 - [WP-PageNavi](http://wordpress.org/plugins/wp-pagenavi/)
+
+##Optional Plugins
+- [Custom Facebook Feed](https://wordpress.org/plugins/custom-facebook-feed/)
+- [Ultimate TinyMCE](https://wordpress.org/plugins/ultimate-tinymce/)
+- [WooCommerce](https://wordpress.org/plugins/woocommerce/)
+
+##Included Libraries
+#####HTML/CSS
+- [Entypo](http://www.entypo.com/)
+- [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
+- [HTML5 Boilerplate](http://html5boilerplate.com/)
+- [Normalize](http://necolas.github.io/normalize.css/)
+
+#####JavaScript
+- [CSS Browser Selector](http://cssbs.altervista.org/css-browser-selector.html)
+- [DataTables](https://datatables.net/)
+- [Gumby](http://gumbyframework.com/)
+- [HTML5 Shiv](https://github.com/aFarkas/html5shiv)
+- [jQuery](http://jquery.com/)
+- [jQuery Mobile](http://jquerymobile.com/)
+- [jQuery UI](http://jqueryui.com/)
+- [Masked Input](http://digitalbush.com/projects/masked-input-plugin/)
+- [Mmenu](http://mmenu.frebsite.nl/)
+- [Modernizr](http://modernizr.com/)
+- [Respond](https://github.com/scottjehl/Respond)
+- [SWF Object](https://code.google.com/p/swfobject/)
+
+#####PHP
+- [Mobile Detect](http://mobiledetect.net/)
 
 ##Documentation
 
