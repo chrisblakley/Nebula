@@ -747,18 +747,15 @@ add_action( 'after_setup_theme', 'nav_menu_locations' );
 
 
 //Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.
-//Pulls the excerpt for the current (or designated post ID). If no excerpt is present, it pulls from the content instead.
 //Several ways to implement this:
-	//Inside the loop: echo nebula_the_excerpt('Read more &raquo;', 20, 1);
-	//Outside the loop: echo nebula_the_excerpt(572, 'Read more &raquo;', 20, 1);
-//First parameter is the post ID (optional). Allows it to be called outside the loop. Must be an integer (do not use quotes)!
-//Second parameter is the "Read More" text (optional).
-//Third parameter is the length (optional). Default is 55 words if left blank.
-//Fourth parameter is the ellipsis (optional). Boolean, so 1 or 0. Default is off (0).
-function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=false ) {
+	//Inside the loop (or outside the loop for current post/page): nebula_the_excerpt('Read more &raquo;', 20, 1);
+	//Outside the loop: nebula_the_excerpt(572, 'Read more &raquo;', 20, 1);
+function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 	
-	if ( $postID ) {
-		if ( !is_int($postID) ) {
+	if ( $postID && is_int($postID) ) {
+		$the_post = get_post($postID);
+	} else {
+		if ( $postID != 0 || is_string($postID) ) {
 			if ( $length == 0 || $length == 1 ) {
 				$hellip = $length;
 			} else {
@@ -772,28 +769,18 @@ function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=fal
 			}
 			
 			$more = $postID;
-			$postID = false;
-		} else {
-			$the_post = get_post($postID);
 		}
-	} 
+		$the_post = get_post(get_the_ID());
+	}
 	
-	if ( $the_post ) {
-        if ( $the_post->post_excerpt ) {
-	        $string = strip_tags(strip_shortcodes($the_post->post_excerpt), '<p>');
-        } else {
-	        $string = strip_tags(strip_shortcodes($the_post->post_content), '<p>');
-        }
-    } else {
-        if ( get_the_excerpt() ) {
-            $string = strip_tags(strip_shortcodes(get_the_excerpt()), '<p>');
-        } else {
-            $string = strip_tags(strip_shortcodes(get_the_content()), '<p>');
-        }
-    }
-			    
+	if ( $the_post->post_excerpt ) {
+		$string = strip_tags(strip_shortcodes($the_post->post_excerpt), '');
+	} else {
+		$string = strip_tags(strip_shortcodes($the_post->post_content), '');
+	}
+	
 	$string = string_limit_words($string, $length);
-		
+	
 	if ( $hellip ) {
 		if ( $string[1] == 1 ) {
 			$string[0] .= '&hellip; ';
@@ -804,9 +791,8 @@ function nebula_the_excerpt( $postID=false, $more=false, $length=55, $hellip=fal
 		$string[0] .= ' <a class="nebula_the_excerpt" href="' . get_permalink($postID) . '">' . $more . '</a>';
 	}
 	
-	return $string[0];
+	echo $string[0];
 }
-
 
 
 
