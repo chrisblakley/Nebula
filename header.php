@@ -212,7 +212,7 @@
 					</a>
 				</div><!--/columns-->
 				<div class="ten columns">
-					<nav id="mainnav" class="clearfix">
+					<nav id="primarynav" class="clearfix">
 	        			<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
 	        		</nav>
 	        	</div><!--/columns-->
