@@ -53,6 +53,7 @@ These can be downloaded from Wordpress.org, or installed from the Wordpress Admi
 - [Really Simple CAPTCHA](http://wordpress.org/plugins/really-simple-captcha/)
 - [Ultimate TinyMCE](https://wordpress.org/plugins/ultimate-tinymce/)
 - [WooCommerce](https://wordpress.org/plugins/woocommerce/)
+- [Wordpress SEO by Yoast](http://wordpress.org/plugins/wordpress-seo/)
 
 ##Included Libraries
 #####HTML/CSS
