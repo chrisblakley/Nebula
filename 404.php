@@ -21,7 +21,7 @@ get_header(); ?>
 	</div><!--/row-->
 </div><!--/container-->
 
-<script>
+<script defer>
 	if ( document.referrer.length ) {
 		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
 	} else {
