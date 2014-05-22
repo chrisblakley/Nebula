@@ -72,14 +72,22 @@
 	<?php endif; ?>
 	
 		<div class="container footerlinks">
-			<div class="row powerfootercon">
-				<div class="sixteen columns">
-					<p>This is the power footer. Simply change the menu array and the CSS/JS does the rest.</p>
-					<nav id="powerfooter">
-						<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2')); ?>
-					</nav>
-				</div><!--/columns-->
-			</div><!--/row-->
+			<? if ( has_nav_menu('footer') || has_nav_menu('header') ) : ?>
+				<div class="row powerfootercon">
+					<div class="sixteen columns">
+						<p>This is the power footer. Simply change the menu array and the CSS/JS does the rest.</p>
+						<nav id="powerfooter">
+							<?php
+								if ( has_nav_menu('footer') ) {
+									wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2'));
+								} elseif ( has_nav_menu('header') ) {
+									wp_nav_menu(array('theme_location' => 'header', 'depth' => '2'));
+								}
+							?>
+						</nav>
+					</div><!--/columns-->
+				</div><!--/row-->
+			<?php endif; ?>
 			<div class="row">
 				<div class="ten columns copyright">
 					<p>
