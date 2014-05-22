@@ -13,7 +13,7 @@
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<title><?php wp_title( '-', true, 'right' ); ?></title>
-		<meta name="description" content="<?php nebula_the_excerpt('', 30, 1); ?>" />
+		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
 
 		
@@ -32,7 +32,7 @@
 		
 		<!-- Facebook Metadata -->
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
-		<meta property="og:description" content="<?php nebula_the_excerpt('', 30, 1); ?>" />
+		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
 		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-temp.png" /> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
@@ -41,7 +41,7 @@
 		
 		<!-- Google+ Metadata -->
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
-		<meta itemprop="description" content="<?php nebula_the_excerpt('', 30, 1); ?>" />
+		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
 
 		<!--Microsoft Windows 8 Tiles /-->
