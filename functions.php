@@ -791,7 +791,7 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 		$string[0] .= ' <a class="nebula_the_excerpt" href="' . get_permalink($postID) . '">' . $more . '</a>';
 	}
 	
-	echo $string[0];
+	return $string[0];
 }
 
 
