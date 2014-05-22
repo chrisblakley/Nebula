@@ -10,7 +10,7 @@ A Wordpress theme starting point that utilizes many libraries and custom functio
 #####Description
 This function is a replacement for both the_excerpt() and get_the_excerpt() because it can be called both inside or outside the loop! This function queries the specified excerpt of the requested post and if it is empty, it looks for the content instead. Unlike the_excerpt() and get_the_excerpt(), the "Read More" text and word count can be changed on an individual basis (instead of globally).
 
-*As of May 21, 2014 this function automatically echos (instead of returning)!*
+*As of May 21, 2014 this function automatically echos (instead of returning)! Be careful when retrofitting (change function to return instead of echo)!!*
 
 #####Usage
 
