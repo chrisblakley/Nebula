@@ -111,10 +111,9 @@
 		<?php //jQuery itself is called through Wordpress Core. ?>
 				
 		<script type="text/javascript">
-			try {
-				(function() {
+			try { (function() {
 					var afterPrint = function() {
-						ga('send', 'event', 'Print Intent', document.location.pathname);
+						ga('send', 'event', 'Print (Intent)', document.location.pathname);
 					};
 					if (window.matchMedia) {
 						var mediaQueryList = window.matchMedia('print');
