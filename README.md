@@ -50,6 +50,7 @@ These can be downloaded from Wordpress.org, or installed from the Wordpress Admi
 
 ##Optional Plugins
 - [Custom Facebook Feed](https://wordpress.org/plugins/custom-facebook-feed/)
+- [Really Simple CAPTCHA](http://wordpress.org/plugins/really-simple-captcha/)
 - [Ultimate TinyMCE](https://wordpress.org/plugins/ultimate-tinymce/)
 - [WooCommerce](https://wordpress.org/plugins/woocommerce/)
 
