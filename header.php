@@ -160,7 +160,13 @@
 						
 						<a class="alignleft" href="#mobilenav"><i class="icon-menu"></i></a>
 						<nav id="mobilenav">
-							<?php wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999')); ?>
+							<?php 
+								if ( has_nav_menu('mobile') ) {
+									wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
+								} elseif ( has_nav_menu('header') ) {
+									wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
+								}
+							?>
 						</nav><!--/mobilenav-->
 						
 						
@@ -189,16 +195,17 @@
 			</div><!--/container-->
 		</div><!--/topbarcon-->
 
-		<div class="container topnavcon">
-			<div class="row">
-				<div class="sixteen columns">
-					<nav id="topnav">
-	        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '1')); ?>
-	        		</nav>
-				</div><!--/columns-->
-			</div><!--/row-->
-		</div><!--/container-->
-		
+		<?php if ( has_nav_menu('topnav') ) : ?>
+			<div class="container topnavcon">
+				<div class="row">
+					<div class="sixteen columns">
+						<nav id="topnav">
+		        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '1')); ?>
+		        		</nav>
+					</div><!--/columns-->
+				</div><!--/row-->
+			</div><!--/container-->
+		<?php endif; ?>
 		
 		<div id="logonavcon" class="container">
 			<div class="row">
@@ -211,11 +218,13 @@
 						<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php bloginfo('template_directory');?>/images/logo.png'" alt="Pinckney Hugo Group"/>
 					</a>
 				</div><!--/columns-->
-				<div class="ten columns">
-					<nav id="primarynav" class="clearfix">
-	        			<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-	        		</nav>
-	        	</div><!--/columns-->
+				<?php if ( has_nav_menu('header') ) : ?>
+					<div class="ten columns">
+						<nav id="primarynav" class="clearfix">
+							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
+		        		</nav>
+		        	</div><!--/columns-->
+	        	<?php endif; ?>
 			</div><!--/row-->
 		</div><!--/container-->
 		
