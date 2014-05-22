@@ -11,7 +11,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Rename theme in style.css
 - Move .htaccess to root (or combine with existing)
 - Activate theme
-- Make "Home" page (set as Homepage template)
+- Install prompted plugins (as needed)
 - General Settings
 	- Remove Tagline
 	- Timezone "New York" (or appropriate timezone)
