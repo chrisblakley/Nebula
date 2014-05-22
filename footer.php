@@ -92,7 +92,7 @@
 				<div class="ten columns copyright">
 					<p>
 						<?php date("Y"); ?> &copy; <a href="<?php echo get_permalink(6); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
-						<a href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204">760 West Genesee Street, Syracuse, NY 13204</a>
+						<a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a>
 					</p>
 				</div><!--/columns-->
 				<div class="five columns push_one">
@@ -109,15 +109,7 @@
 		</div><!--/container-->
 
 		<?php //jQuery itself is called through Wordpress Core. ?>
-		
-		<script>
-			jQuery('.unhideonload').addClass('hidden');
-			jQuery(window).load(function() {	
-				jQuery('.unhideonload').removeClass('hidden');
-				jQuery('html').addClass('loaded');				
-			}); //End Window Load
-		</script>
-		
+				
 		<script type="text/javascript">
 			try {
 				(function() {
