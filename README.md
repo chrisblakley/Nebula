@@ -77,6 +77,13 @@ These can be downloaded from Wordpress.org, or installed from the Wordpress Admi
 #####PHP
 - [Mobile Detect](http://mobiledetect.net/)
 
+##Included API Integrations
+- [Facebook SDK for JavaScript](https://developers.facebook.com/docs/javascript)
+- [Google Analytics (analytics.js)](https://developers.google.com/analytics/devguides/collection/analyticsjs/)
+- [Google Maps API](https://developers.google.com/maps/)
+- [Twitter API](https://dev.twitter.com/docs)
+- [Youtube Iframe API](https://developers.google.com/youtube/iframe_api_reference)
+
 ##Documentation
 
 ####nebula_the_excerpt()
