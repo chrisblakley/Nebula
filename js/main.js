@@ -76,7 +76,7 @@ function socialSharing() {
 
 //Main dropdown nav dynamic width controller
 function dropdownWidthController() {
-	jQuery('#mainnav .sub-menu').each(function(){
+	jQuery('#primarynav .sub-menu').each(function(){
 		var bigWidth = 100;
 			if ( jQuery(this).children().width() > bigWidth ) {
 				bigWidth = jQuery(this).children().width();
@@ -88,7 +88,7 @@ function dropdownWidthController() {
 
 //Sub-menu viewport overflow detector
 function overflowDetector() {
-    jQuery('#mainnav .menu > .menu-item').hover(function(){
+    jQuery('#primarynav .menu > .menu-item').hover(function(){
     	var viewportWidth = jQuery(window).width();
     	var submenuLeft = jQuery(this).offset().left;
     	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
