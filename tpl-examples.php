@@ -31,24 +31,25 @@ get_header(); ?>
 		<div class="sixteen columns">
 			<hr/>
 				<h2>Basic WP Query</h2>
-				<p>This is a basic Wordpress query posts, but also shows how Gumby columns can be integrated into the logic.</p>
+				<h5><a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">Documentation &raquo;</a></h5>
+				<p>This is a basic Wordpress query posts, but also shows how Gumby columns can be integrated into the logic. This also shows the Wordpress plugin WP-PageNavi.</p>
 				<div class="container">
 					<div class="row">
 					    <?php $count = 0; ?>
-					    <?php query_posts( array ( 'category_name' => 'Examples', 'showposts' => 4 ) ); ?>
+					    <?php query_posts( array( 'category_name' => 'Examples', 'showposts' => 4, 'paged' => get_query_var('paged') ) ); ?>
 					        <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					            <?php if ( $count%2 == 0 && $count != 0 ) : ?>
 					                </div><!--/row-->
 					                <div class="row">
 					            <?php endif; ?>
 					                     
-					            <div class="eight columns"><!--This example uses Gumby columns-->
+					            <div class="eight columns">
 							        <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 							            <h5 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h5>
 							            <span class="newsdate"><em><a href="#"><?php the_time('F j, Y'); ?></a></em></span>
 							            <div class="entry-content">
 							                <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
-							                <p><?php edit_post_link( 'Edit', '', '' ); ?></p>
+							                <p><?php edit_post_link('Edit'); ?></p>
 							            </div><!-- .entry-content -->
 							        </article><!-- #post-## -->
 							    </div><!--/columns-->
@@ -56,6 +57,7 @@ get_header(); ?>
 					            <?php $count++; ?>
 					                         
 					        <?php endwhile; ?>
+					        <?php wp_pagenavi(); ?>
 					    <?php wp_reset_query(); ?>
 					</div><!--/row-->
 					
@@ -70,6 +72,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="sixteen columns">
 				<h2>Google Map Iframe</h2>
+				<h5><a href="https://developers.google.com/maps/documentation/embed/guide" target="_blank">Documentation &raquo;</a></h5>
 				<p>This is an iframe integration of Google Maps. Not as flexible as the JavaScript API, but very easy to use.</p>
 				<iframe
 					width="100%"
@@ -92,6 +95,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="sixteen columns">
 				<h2>Google Map API v3</h2>
+				<h5><a href="https://developers.google.com/maps/documentation/javascript/tutorial" target="_blank">Documentation &raquo;</a></h5>
 				<p>This is the full integration of Google Maps using the API v3.</p>
 				
 			<hr/>
@@ -106,8 +110,10 @@ get_header(); ?>
 	<div class="row">
 		<div class="sixteen columns">
 				<h2>Youtube Embed</h2>
+				<h5><a href="https://developers.google.com/youtube/player_parameters" target="_blank">Documentation &raquo;</a></h5>
 				<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics.</p>
-				
+				<p><strong>Important:</strong> Make sure to include the query parameter of "origin=http://domain.com" and "enablejsapi=1" for tracking to work (The ID "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
+				<iframe id="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/fjh61K3hyY0?wmode=transparent&amp;enablejsapi=1&amp;origin=http://domain.com" frameborder="0" allowfullscreen=""></iframe>
 			<hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
@@ -118,6 +124,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="sixteen columns">
 				<h2>HTML5 Video</h2>
+				<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
 				<p>This is a local video embed that works cross-browser, and soon enough on iOS and mobile devices. File types and codecs will be described here as well.</p>
 				
 			<hr/>
@@ -131,6 +138,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="sixteen columns fb-like-box-con">
 			<h2>Facebook Feed</h2>
+			<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
 			<p>This is an integrated Facebook feed from a page using the Wordpress plugin Custom Facebook Feed.</p>
 			<div id="fbcon">
 				<div class="fbhead">
@@ -162,6 +170,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="sixteen columns">
 			<h2>Twitter Feed</h2>
+			<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
 			<p>This is a Twitter integration using twitter.js to pull.</p>
 			<div id="twittercon">
 				<div class="twitterhead">
