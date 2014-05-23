@@ -3,33 +3,51 @@
 	.welcome-panel-content {margin: 0;}
 		.welcome-panel .about-description {font-size: 14px;}
 			.welcome-panel h4 {margin-top: 8px;}
+			.welcome-panel li {color: #444;}
+				.welcome-panel li strong {color: #000;}
 	.admin-user-info {text-transform: capitalize;}
 	
 	#phg-welcome {}
-		#welcome-photo {position: absolute; top: 0; right: 0; background: green; height: 100%; width: 40%; padding: 5px 20px; background: url('../images/phg/welcome.jpg') center bottom no-repeat; background-size: cover;}
-			#welcome-photo p {font-family: 'Open Sans', sans-serif; color: #fff; margin: 0; text-align: right; font-size: 18px; line-height: 28px; font-weight: 300; text-transform: uppercase;}
-				#welcome-photo p strong {font-family: 'Open Sans', sans-serif; font-size: 36px; font-weight: 700;}
-		#welcome-content {width: 55%;}
+		
+		#welcome-photo {position: absolute; top: 0; right: 0; height: 100%; width: 47%; padding: 5px 20px;}
+			.phg-info {position: relative; background: rgba(0,0,0,0.6); position: absolute; bottom: 10px; left: 0; width: 100%; padding: 5px 12px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+				.phg-info:hover {background: rgba(0,0,0,0.8);}
+				.phg-info h4 {margin: 0;}
+				.phg-info a {color: #fff; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+					.phg-info a:hover {color: #0098d7;}
+				.phg-info p {color: #fff; margin: 0;}
+				.phg-info.maininfo {z-index: 50;}
+				.phg-info.mapinfo {z-index: 25;}
+		.welcome-photo-bg {position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: url('../images/phg/welcome.jpg') center 90% no-repeat; background-size: cover; z-index: 40;}
+		
+		.weclome-map {position: absolute; top: 0; left: 0; height: 100%; width: 100%; padding: 0;}
+		
+		#welcome-content {width: 50%;}
+			.welcome-panel .welcome-panel-column:first-child {width: 33% !important;}
+			.welcome-panel .welcome-panel-column {min-width: 100px;}
 			#welcome-content .logocon {float: left; max-width: 22%; max-height: 56px; margin-right: 15px;}
 				#welcome-content .logocon a {}
 					#welcome-content .logocon a img {width: 100%;}
-			#welcome-content hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee;}
+			#welcome-content hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
+
+#dashboard_right_now a[href$='options-reading.php'] {color: red !important; font-weight: 700;}
+	#dashboard_right_now a[href$='options-reading.php']:before {content: '!'; background: red; color: white; padding: 0 7px; margin-right: 5px;}
 
 @media only screen and (max-width: 1800px) and (min-width: 1500px) {
-	#welcome-photo {width: 29.5%;}
-	#welcome-content {width: 70%;}
+	#welcome-photo {width: 30%;}
+	#welcome-content {width: 67%;}
 }
 
 @media only screen and (max-width: 1499px) and (min-width: 800px) {
-	#welcome-photo {width: 46%;}
+	#welcome-photo {width: 46.35%;}
 	#welcome-content {width: 50%;}
+	.welcome-panel .welcome-panel-column {width: 31% !important;}
 }
 
 @media only screen and (max-width: 900px) {
-	#welcome-photo {position: relative; top: -23px; left: -23px; width: 100%; height: 50px; background: url('../images/phg/welcome.jpg') center center no-repeat;}
-		#welcome-photo p {font-size: 16px; line-height: 18px;}
-			#welcome-photo p strong {font-size: 24px;}
+	#welcome-photo {display: none;}
 	#welcome-content {width: 100%;}
+	.welcome-panel .welcome-panel-column:first-child {width: 100% !important;}
 }
 
 #pluginwarning {}
@@ -45,3 +63,5 @@
 
 a.phg {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	a.phg:hover {color: #95D600;}
+
+.hidden {display: none; visibility: hidden; opacity: 0;}
