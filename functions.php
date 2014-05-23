@@ -818,6 +818,7 @@ add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes' );
 
 
 //PHG Metabox
+/*
 function my_custom_dashboard_widgets() {
 	global $wp_meta_boxes;
 	$theme = wp_get_theme();
@@ -828,6 +829,7 @@ function custom_dashboard_help() {
 	echo '<p>This theme was designed and developed by <br/><h2><a class="phg" href="#" target="_blank">Pinckney Hugo Group</a><h2> <br/><a href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> <br/><a href="tel:3154786700" target="_blank">(315) 478-6700</a></p>';
 }
 add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
+*/
 
 
 //Admin Footer Enhancements
