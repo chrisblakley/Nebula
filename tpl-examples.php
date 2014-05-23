@@ -66,9 +66,72 @@ get_header(); ?>
 </div><!--/container-->
 
 
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+				<h2>Google Map Iframe</h2>
+				<p>This is an iframe integration of Google Maps. Not as flexible as the JavaScript API, but very easy to use.</p>
+				<iframe
+					width="100%"
+					height="250"
+					frameborder="0" style="border:0"
+					src="https://www.google.com/maps/embed/v1/place
+					?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E
+					&q=Pinckney+Hugo+Group
+					&zoom=14
+					&maptype=roadmap">
+				</iframe>
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+				<h2>Google Map API v3</h2>
+				<p>This is the full integration of Google Maps using the API v3.</p>
+				
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+				<h2>Youtube Embed</h2>
+				<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics.</p>
+				
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+				<h2>HTML5 Video</h2>
+				<p>This is a local video embed that works cross-browser, and soon enough on iOS and mobile devices. File types and codecs will be described here as well.</p>
+				
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+
 <div class="container socialcon">
 	<div class="row">
-		<div class="eight columns fb-like-box-con">
+		<div class="sixteen columns fb-like-box-con">
+			<h2>Facebook Feed</h2>
+			<p>This is an integrated Facebook feed from a page using the Wordpress plugin Custom Facebook Feed.</p>
 			<div id="fbcon">
 				<div class="fbhead">
 					<p><a href="https://www.facebook.com/PinckneyHugo" target="_blank"><i class="icon-facebook"></i>Facebook</a></p>
@@ -85,7 +148,7 @@ get_header(); ?>
 										<a href="https://www.facebook.com/PinckneyHugo" target="_blank">Pinckney Hugo Group</a>
 									</div><!--/fbuser-->
 									<div class="fbpost">
-										<?php echo do_shortcode('[custom-facebook-feed id=PinckneyHugo num=1]'); //This is currently using one of my access tokens. We need to create one for WineGuardian using their FB login creds. ?>
+										<?php echo do_shortcode('[custom-facebook-feed id=PinckneyHugo num=3]'); ?>
 									</div><!--/fbpost-->
 								</div><!--/columns-->
 							</div><!--/row-->
@@ -93,8 +156,13 @@ get_header(); ?>
 					</div><!--/container-->
 				</div><!--/fbbody-->
 			</div><!--/fbcon-->
+			<hr/>
 		</div><!--/columns-->
-		<div class="eight columns">
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>Twitter Feed</h2>
+			<p>This is a Twitter integration using twitter.js to pull.</p>
 			<div id="twittercon">
 				<div class="twitterhead">
 					<p><a href="https://twitter.com/pinckneyhugo" target="_blank"><i class="icon-twitter"></i>Tweets</a></p>
@@ -107,6 +175,7 @@ get_header(); ?>
 					</div><!--/container-->
 				</div><!--/twitterbody-->
 			</div><!--/twittercon-->
+			<hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
