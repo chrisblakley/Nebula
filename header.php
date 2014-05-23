@@ -215,7 +215,7 @@
 						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
 					?>
 					<a class="logocon" href="<?php echo home_url(); ?>">
-						<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php bloginfo('template_directory');?>/images/logo.png'" alt="Pinckney Hugo Group"/>
+						<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php bloginfo('template_directory');?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
 					</a>
 				</div><!--/columns-->
 				<?php if ( has_nav_menu('header') ) : ?>
