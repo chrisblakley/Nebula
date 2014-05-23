@@ -1,14 +1,11 @@
 <div id="phg-welcome" class="welcome-panel-content gearside-welcome">
-	<div id="welcome-photo">
-		<p>
-			Designed &amp; developed by<br/>
-			<strong>Pinckney Hugo Group</strong>
-		</p>
-	</div>
 	
 	<div id="welcome-content">
-		<h3><a href="http://domain.com" target="_blank" style="padding-left: 45px;"><img src="../images/logo.svg" onerror="this.onerror=null; this.src=""../images/logo.png" alt="#" style="position: absolute; margin-left: -45px; margin-top: -5px; max-width: 36px;"/> Site Name</a></h3>
-		<p class="about-description">Designed and Developed by Pinckney Hugo Group</p>
+		<h3>
+			<a href="http://domain.com" target="_blank" style="padding-left: 45px;"><img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src=""<?php bloginfo('template_directory');?>/images/logo.png" alt="#" style="position: absolute; margin-left: -45px; margin-top: -5px; max-width: 36px;"/></a><br/>
+			<a href="http://domain.com" target="_blank">Site Name</a>
+		</h3>
+		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/">Pinckney Hugo Group</a></p>
 		<div class="welcome-panel-column-container">
 			<div class="welcome-panel-column">
 				<h4>Information</h4>
@@ -40,6 +37,18 @@
 				</ul>
 			</div>
 		</div>
+	</div>
+	
+	
+	<div id="welcome-photo">
+		<p>
+			<strong>Pinckney Hugo Group</strong>
+			-Address
+			-Phone
+		</p>
+		<p>
+			-Twitter feed?
+		</p>
 	</div>
 </div>
 
