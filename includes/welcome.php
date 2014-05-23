@@ -15,20 +15,15 @@
 		<div class="welcome-panel-column-container">
 			
 			<div class="welcome-panel-column">
-				<h4>Information</h4>
+				<h4>Your Information</h4>
 				
-				
-				<?php
-					//$user_ID = get_current_user_id();
-					$user_info = get_userdata( get_current_user_id() );
-				?>
+				<?php $user_info = get_userdata( get_current_user_id() ); ?>
 				
 				<ul>
 					<li>User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong></li>
 					<li>Role: <strong class="admin-user-info admin-user-role"><?php echo array_shift($user_info->roles); ?></strong></li>
-					<li>Your IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong></li>
+					<li>IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong></li>
 				</ul>
-				<a class="button button-primary button-hero analytics" href="<?php echo home_url(); ?>" target="_blank">Visit Site</a>
 			</div>
 			
 			<?php if ( 1==1 ) : //If user is an administrator ?>
@@ -56,14 +51,24 @@
 	
 	
 	<div id="welcome-photo">
-		<p>
-			<strong>Pinckney Hugo Group</strong>
-			-Address
-			-Phone
-		</p>
-		<p>
-			-Twitter feed?
-		</p>
+		<div class="phg-info maininfo no-map">
+			<h4><a href="http://www.pinckneyhugo.com/">Pinckney Hugo Group</a></h4>
+			<p class="addressphone"><a class="maptoggle showmap" href="#">760 West Genesee Street, Syracuse, NY 13204</a> <span class="hideformap">&bull; <a href="tel:3154786700">(315) 478-6700</a></span></p>
+		</div>
+		<div class="welcome-photo-bg"></div>
+		
+		<div class="weclome-map">
+			<iframe
+				width="100%"
+				height="100%"
+				frameborder="0" style="border:0"
+				src="https://www.google.com/maps/embed/v1/place
+				?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E
+				&q=Pinckney+Hugo+Group
+				&zoom=14
+				&maptype=roadmap">
+			</iframe>
+		</div>
 	</div>
 </div>
 
@@ -71,4 +76,30 @@
 	jQuery('#welcome-panel').removeClass('hidden');
 	jQuery('.welcome-panel-close').addClass('hidden');
 	jQuery('#wp_welcome_panel-hide').parent().addClass('hidden').css('display', 'none');
+	
+	jQuery('.showmap').hover(function(){
+		jQuery('.welcome-photo-bg').fadeOut();
+	}, function(){
+		jQuery('.welcome-photo-bg').fadeIn();
+	});
+	
+	var address = jQuery('.maptoggle').text();
+	jQuery('.maptoggle').on('click', function(e){
+		if ( jQuery('.maininfo').hasClass('no-map') ) {
+			console.log('showing the map!');
+			jQuery('.maininfo').removeClass('no-map');
+			jQuery('.welcome-photo-bg').addClass('hidden');
+			jQuery('.maptoggle').text('« Back');
+			jQuery('.maininfo h4 a').addClass('hidden');
+			jQuery('.hideformap').addClass('hidden');
+		} else {
+			console.log('hiding the map!');
+			jQuery('.maininfo').addClass('no-map');
+			jQuery('.welcome-photo-bg').removeClass('hidden');
+			jQuery('.maptoggle').text(address);
+			jQuery('.maininfo h4 a').removeClass('hidden');
+			jQuery('.hideformap').removeClass('hidden');
+		}
+		return false;
+	});	
 </script>
