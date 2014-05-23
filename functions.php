@@ -780,6 +780,8 @@ function custom_login_css() {
 	    //echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/libs/cssbs.js"></script>';
 	    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/libs/modernizr.custom.42059.js"></script>';
 	    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/login.js"></script>';
+	    
+	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-00000000-1', 'domain.com');</script>";
 	}
 }
 add_action('login_head', 'custom_login_css');
@@ -793,6 +795,13 @@ function new_wp_login_title() {
     return get_option('blogname');
 }
 add_filter('login_headertitle', 'new_wp_login_title');
+
+//Welcome Panel
+function nebula_welcome_panel() {
+	include('includes/welcome.php');
+}
+remove_action('welcome_panel','wp_welcome_panel');
+add_action('welcome_panel','nebula_welcome_panel');
 
 
 //Remove unnecessary Dashboard metaboxes
