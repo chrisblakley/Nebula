@@ -25,6 +25,47 @@ get_header(); ?>
 	</div><!--/row-->
 </div><!--/container-->
 
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<hr/>
+				<h2>Basic WP Query</h2>
+				<p>This is a basic Wordpress query posts, but also shows how Gumby columns can be integrated into the logic.</p>
+				<div class="container">
+					<div class="row">
+					    <?php $count = 0; ?>
+					    <?php query_posts( array ( 'category_name' => 'Examples', 'showposts' => 4 ) ); ?>
+					        <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+					            <?php if ( $count%2 == 0 && $count != 0 ) : ?>
+					                </div><!--/row-->
+					                <div class="row">
+					            <?php endif; ?>
+					                     
+					            <div class="eight columns"><!--This example uses Gumby columns-->
+							        <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							            <h5 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h5>
+							            <span class="newsdate"><em><a href="#"><?php the_time('F j, Y'); ?></a></em></span>
+							            <div class="entry-content">
+							                <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
+							                <p><?php edit_post_link( 'Edit', '', '' ); ?></p>
+							            </div><!-- .entry-content -->
+							        </article><!-- #post-## -->
+							    </div><!--/columns-->
+					                         
+					            <?php $count++; ?>
+					                         
+					        <?php endwhile; ?>
+					    <?php wp_reset_query(); ?>
+					</div><!--/row-->
+					
+				</div><!--/container-->
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
 <div class="container socialcon">
 	<div class="row">
 		<div class="eight columns fb-like-box-con">
