@@ -709,7 +709,7 @@ function nebulaActivation() {
 }
 add_action('after_switch_theme', 'nebulaActivation');
 
-if ( isset($_GET['nebula-reset']) ) {
+if ( is_admin() && isset($_GET['nebula-reset']) ) {
 	nebulaActivation();
 }
 
