@@ -778,12 +778,12 @@ add_action('init','are_you_an_admin');
 $filename = basename($_SERVER['REQUEST_URI']);
 if ( $filename == 'plugins.php' ) {
 	function plugin_warning(){
-		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: (315) 478-6700</p></div>";
+		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
 	}
 	add_action('admin_notices','plugin_warning');
 } elseif ( $filename == 'update-core.php') {
 	function plugin_warning(){
-		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: (315) 478-6700</p></div>";
+		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
 	}
 	add_action('admin_notices','plugin_warning');
 }
