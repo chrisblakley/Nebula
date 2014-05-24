@@ -31,7 +31,7 @@
 				</ul>
 			</div>
 			
-			<?php if ( 1==1 ) : //If user is an administrator ?>
+			<?php if ( is_admin() ) : //If user is an administrator ?>
 			<div class="welcome-panel-column">
 				<h4>Administration</h4>
 				<ul>
