@@ -73,9 +73,9 @@
 </div>
 
 <script>
-	jQuery('#welcome-panel').removeClass('hidden');
-	jQuery('.welcome-panel-close').addClass('hidden');
-	jQuery('#wp_welcome_panel-hide').parent().addClass('hidden').css('display', 'none');
+	jQuery('#welcome-panel').removeClass('myhidden');
+	jQuery('.welcome-panel-close').addClass('myhidden');
+	jQuery('#wp_welcome_panel-hide').parent().addClass('myhidden').css('display', 'none');
 	
 	jQuery('.showmap').hover(function(){
 		jQuery('.welcome-photo-bg').fadeOut();
@@ -88,17 +88,17 @@
 		if ( jQuery('.maininfo').hasClass('no-map') ) {
 			console.log('showing the map!');
 			jQuery('.maininfo').removeClass('no-map');
-			jQuery('.welcome-photo-bg').addClass('hidden');
+			jQuery('.welcome-photo-bg').addClass('myhidden');
 			jQuery('.maptoggle').text('« Back');
-			jQuery('.maininfo h4 a').addClass('hidden');
-			jQuery('.hideformap').addClass('hidden');
+			jQuery('.maininfo h4 a').addClass('myhidden');
+			jQuery('.hideformap').addClass('myhidden');
 		} else {
 			console.log('hiding the map!');
 			jQuery('.maininfo').addClass('no-map');
-			jQuery('.welcome-photo-bg').removeClass('hidden');
+			jQuery('.welcome-photo-bg').removeClass('myhidden');
 			jQuery('.maptoggle').text(address);
-			jQuery('.maininfo h4 a').removeClass('hidden');
-			jQuery('.hideformap').removeClass('hidden');
+			jQuery('.maininfo h4 a').removeClass('myhidden');
+			jQuery('.hideformap').removeClass('myhidden');
 		}
 		return false;
 	});	
