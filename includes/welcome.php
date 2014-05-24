@@ -22,7 +22,12 @@
 				<ul>
 					<li>User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong></li>
 					<li>Role: <strong class="admin-user-info admin-user-role"><?php echo array_shift($user_info->roles); ?></strong></li>
-					<li>IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong></li>
+					<li>
+						IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong>
+						<?php if ($_SERVER["REMOTE_ADDR"] == '72.43.235.106'): ?>
+							<small> (PHG)</small>
+						<?php endif; ?>
+					</li>
 				</ul>
 			</div>
 			
