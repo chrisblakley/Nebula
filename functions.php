@@ -686,14 +686,15 @@ function my_theme_register_required_plugins() {
 
 function nebulaActivation() {
 	$theme = wp_get_theme();
-	if ( $theme['Name'] == 'WP Nebula' ) {
-		
+	if ( $theme['Name'] == 'WP Nebula' && (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset']) ) ) {
+
 		//Create Homepage
 		$nebula_home = array(
 			'ID' => 1,
+			'post_type' => 'page',
 			'post_title' => 'Home',
 			'post_name' => 'home',
-			'post_type' => 'page',
+			'post_content'   => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fringilla auctor est, non elementum est iaculis id. Suspendisse vel tortor vitae diam dignissim vestibulum. Aliquam auctor est vitae accumsan lacinia. Vivamus dapibus, leo eget eleifend posuere, nunc lacus elementum libero, sed imperdiet ante nunc non dui.',
 			'post_status' => 'publish',
 			'post_author' => 1,
 			'page_template' => 'tpl-homepage.php'
@@ -702,14 +703,32 @@ function nebulaActivation() {
 		// Insert the post into the database
 		wp_insert_post($nebula_home);
 		
-		function nebulaActivateSuccess(){
-			echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been activated!</strong><br/>A new Home page has been created. Be sure to set it as the static front page in <a href='options-reading.php'>Settings > Reading</a></p></div>";			
-		}
-		add_action('admin_notices','nebulaActivateSuccess');
+		add_action('admin_notices','nebulaActivateComplete');
 	}
 	return;
 }
 add_action('after_switch_theme', 'nebulaActivation');
+
+if ( isset($_GET['nebula-reset']) ) {
+	nebulaActivation();
+}
+
+if ( is_admin() && isset($_GET['activated'] ) && $pagenow == 'themes.php' ) {
+	$theme = wp_get_theme();
+	if ( $theme['Name'] == 'WP Nebula' ) {
+		add_action('admin_notices','nebulaActivateComplete');
+	}
+}
+
+function nebulaActivateComplete(){
+	if ( isset($_GET['nebula-reset']) ) {
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been reset!</strong><br/>You have reset WP Nebula. The Home page has been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
+	} elseif ( get_post_meta(1, '_wp_page_template', 1) == 'tpl-homepage.php' ) {
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been re-activated!</strong><br/>The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: red;'>Reset the Home page.</a></p></div>";
+	} else {
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been activated!</strong><br/>A new Home page has been created. Be sure to set it as the static front page in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
+	}
+}
 
 
 /*==========================
