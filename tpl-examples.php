@@ -114,6 +114,16 @@ get_header(); ?>
 				<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics.</p>
 				<p><strong>Important:</strong> Make sure to include the query parameter of "origin=http://domain.com" and "enablejsapi=1" for tracking to work (The ID "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
 				<iframe id="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/fjh61K3hyY0?wmode=transparent&amp;enablejsapi=1&amp;origin=http://domain.com" frameborder="0" allowfullscreen=""></iframe>
+				
+				<?php //@TODO: USE THIS TO SEND THE VIDEO TITLE TO THE GOOGLE TRACKER IN THE FOOTER!!!!!
+				    //$vidID = types_render_field('youtube-url', array('raw' => 'true'));
+				    //$vidID = parse_str( parse_url( $vidID, PHP_URL_QUERY ), $my_array_of_vars );
+				    //$url = "http://gdata.youtube.com/feeds/api/videos/". $my_array_of_vars['v'];
+				    //$doc = new DOMDocument;
+				    //$doc->load($url);
+				    //$title = $doc->getElementsByTagName("title")->item(0)->nodeValue;
+				?>
+				
 			<hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
@@ -132,6 +142,19 @@ get_header(); ?>
 	</div><!--/row-->
 </div><!--/container-->
 
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+				<h2>CSS Browser Selector</h2>
+				<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
+				<p>Useful for debugging, but should only be enabled if feature detection (using Modernizr) will not work!</p>
+				
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
 
 
 <div class="container socialcon">
