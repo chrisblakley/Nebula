@@ -101,7 +101,7 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
     .tab-content p:first-child {margin-top: 0;}
     .tab-content ul {padding-left: 20px;}
         .tab-content ul li {list-style: disc;}
-body .video {padding-bottom: 0px !important;} /* Overrides Gumby video setting */
+body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby video setting */
 
 
 /* ==========================================================================
