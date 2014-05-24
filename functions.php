@@ -1215,6 +1215,24 @@ function page_name_class($classes) {
 add_filter('body_class', 'page_name_class');
 
 
+
+
+function youtubeMeta($vidID) {
+	global $vidMeta;
+	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $vidID));
+	$vidMeta['id'] = $vidID;
+	$vidMeta['title'] = $xml->title;
+	$vidMeta['content'] = $xml->content;
+	$vidMeta['href'] = $xml->link['href'];
+	$vidMeta['author'] = $xml->author->name;
+	$vidMeta['seconds'] = strval($xml->xpath('//yt:duration[@seconds]')[0]->attributes()->seconds);
+	$vidMeta['duration'] = intval(gmdate("i", $vidMeta['seconds'])) . gmdate(":s", $vidMeta['seconds']);
+	return $vidMeta;
+}
+
+
+
+
 //Traverse multidimensional arrays
 function in_array_r($needle, $haystack, $strict = true) {
     foreach ($haystack as $item) {
