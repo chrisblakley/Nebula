@@ -64,4 +64,4 @@
 a.phg {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	a.phg:hover {color: #95D600;}
 
-.hidden {display: none; visibility: hidden; opacity: 0;}
+.myhidden {display: none; visibility: hidden; opacity: 0;}
