@@ -16,7 +16,7 @@ get_header(); ?>
 						<?php the_content(); ?>
 						
 						<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-						<?php edit_post_link( 'Edit', '<p class="edit-link">', '</p>' ); ?>
+						<?php edit_post_link('Edit'); ?>
 					</div><!-- .entry-content -->
 				</article><!-- #post-## -->
 				<?php //comments_template( '', true ); ?>
