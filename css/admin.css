@@ -1,9 +1,9 @@
 .welcome-panel {display: block; padding: 8px 12px; overflow: hidden;}
 	
 	.welcome-panel-content {margin: 0;}
-		.welcome-panel .about-description {font-size: 14px;}
+		.welcome-panel .about-description {font-size: 13px;}
 			.welcome-panel h4 {margin-top: 8px;}
-			.welcome-panel li {color: #444;}
+			.welcome-panel li {color: #444; font-size: 13px;}
 				.welcome-panel li strong {color: #000;}
 	.admin-user-info {text-transform: capitalize;}
 	
