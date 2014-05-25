@@ -104,13 +104,11 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 This function is a replacement for both the_excerpt() and get_the_excerpt() because it can be called both inside or outside the loop! This function queries the specified excerpt of the requested post and if it is empty, it looks for the content instead. Unlike the_excerpt() and get_the_excerpt(), the "Read More" text and word count can be changed on an individual basis (instead of globally).
 
 #####Usage
-
 ```html
 <?php echo nebula_the_excerpt( $postID, $more, $length, $hellip ); ?>
 ```
 
 #####Parameters
-
 **$postID**
 (optional) The post ID (integer). Used when outside the loop.
 Default: *None*
@@ -137,3 +135,28 @@ To call nebula_the_excerpt() from outside the loop (for a specific post/page)
 ```html
 <?php echo nebula_the_excerpt(572, 'Read More &raquo;', 30, 1); ?>
 ```
+
+####youtubeMeta()
+
+#####Description
+This function pulls the metadata from the passed Youtube video ID. This metadata is stored in a global associative array where things like the video title, author, description, duration, etc. can be accessed.
+
+#####Usage
+```html
+<?php youtubeMeta( $vidID ); ?>
+```
+
+#####Parameters
+**$vidID**
+(required) The Youtube video ID (string).
+Default: *None*
+
+#####Examples
+Call the function once, and then use the variables as needed.
+```html
+<?php youtubeMeta('jtip7Gdcf0Q'); ?>
+<article class="youtube video">
+	<iframe id="<?php echo $vidMeta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $vidMeta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $vidMeta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+</article>
+```
+Note that the automatic Google Analytics tracking requires the class "youtubeplayer" and uses the iframe ID as the title of the video (for the event label).
