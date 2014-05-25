@@ -1,4 +1,31 @@
-#@TODO: Move to root directory if possible.
+# @TODO: Move to root directory if possible.
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteRule ^index\.php$ - [L]
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+###################
+# @TODO: Pick one of the following: Force no-www -or- Force www
+
+# Force no-www
+#RewriteEngine On
+#RewriteBase /
+#RewriteCond %{HTTP_HOST} !^domain.com$ [NC]
+#RewriteRule ^(.*)$ http://domain.com/$1 [L,R=301]
+
+# Force www
+#RewriteEngine On
+#RewriteBase /
+#RewriteCond %{HTTP_HOST} !^www.domain.com$ [NC]
+#RewriteRule ^(.*)$ http://www.domain.com/$1 [L,R=301]
+###################
 
 <IfModule mod_deflate.c>
   #Force deflate for mangled headers
@@ -67,12 +94,10 @@ Header unset Cache-Control
 
 # 301 Redirects Here
 
-
 #Block certain webcrawlers from showing up as actual visitors
 RewriteEngine on
 RewriteCond %{HTTP_REFERER} semalt\.com [NC]
 RewriteRule .* - [F]
-
 
 # disable directory browsing
 Options All -Indexes
