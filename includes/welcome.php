@@ -56,7 +56,7 @@
 	
 	
 	<div id="welcome-photo">
-		<div class="phg-info maininfo no-map">
+		<div class="phg-info maininfo no-map jsinfo">
 			<h4><a href="http://www.pinckneyhugo.com/">Pinckney Hugo Group</a></h4>
 			<p class="addressphone"><a class="maptoggle showmap" href="#">760 West Genesee Street, Syracuse, NY 13204</a> <span class="hideformap">&bull; <a href="tel:3154786700">(315) 478-6700</a></span></p>
 		</div>
@@ -78,6 +78,12 @@
 </div>
 
 <script>
+	jQuery(window).on('load', function(){
+		setTimeout(function(){
+			jQuery('.jsinfo').removeClass('jsinfo');
+		}, 350);
+	});
+	
 	jQuery('#welcome-panel').removeClass('myhidden');
 	jQuery('.welcome-panel-close').addClass('myhidden');
 	jQuery('#wp_welcome_panel-hide').parent().addClass('myhidden').css('display', 'none');
@@ -91,19 +97,15 @@
 	var address = jQuery('.maptoggle').text();
 	jQuery('.maptoggle').on('click', function(e){
 		if ( jQuery('.maininfo').hasClass('no-map') ) {
-			console.log('showing the map!');
 			jQuery('.maininfo').removeClass('no-map');
 			jQuery('.welcome-photo-bg').addClass('myhidden');
 			jQuery('.maptoggle').text('« Back');
-			jQuery('.maininfo h4 a').addClass('myhidden');
-			jQuery('.hideformap').addClass('myhidden');
+			jQuery('.maininfo h4, .hideformap').addClass('noheight');
 		} else {
-			console.log('hiding the map!');
 			jQuery('.maininfo').addClass('no-map');
 			jQuery('.welcome-photo-bg').removeClass('myhidden');
 			jQuery('.maptoggle').text(address);
-			jQuery('.maininfo h4 a').removeClass('myhidden');
-			jQuery('.hideformap').removeClass('myhidden');
+			jQuery('.maininfo h4, .hideformap').removeClass('noheight');
 		}
 		return false;
 	});	
