@@ -97,7 +97,6 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 - [Youtube Iframe API](https://developers.google.com/youtube/iframe_api_reference)
 
 ##Documentation
----
 
 ###nebula_the_excerpt()
 
