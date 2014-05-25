@@ -97,9 +97,10 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 - [Youtube Iframe API](https://developers.google.com/youtube/iframe_api_reference)
 
 ##Documentation
+---
 
 ###nebula_the_excerpt()
----
+
 #####Description
 This function is a replacement for both the_excerpt() and get_the_excerpt() because it can be called both inside or outside the loop! This function queries the specified excerpt of the requested post and if it is empty, it looks for the content instead. Unlike the_excerpt() and get_the_excerpt(), the "Read More" text and word count can be changed on an individual basis (instead of globally).
 
@@ -135,9 +136,10 @@ To call nebula_the_excerpt() from outside the loop (for a specific post/page)
 ```html
 <?php echo nebula_the_excerpt(572, 'Read More &raquo;', 30, 1); ?>
 ```
+---
 
 ###youtubeMeta()
----
+
 #####Description
 This function pulls the metadata from the passed Youtube video ID. This metadata is stored in a global associative array where things like the video title, author, description, duration, etc. can be accessed.
 
