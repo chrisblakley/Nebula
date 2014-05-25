@@ -11,9 +11,11 @@
 		
 		#welcome-photo {position: absolute; top: 0; right: 0; height: 100%; width: 47%; padding: 5px 20px;}
 			.phg-info {position: relative; background: rgba(0,0,0,0.6); position: absolute; bottom: 10px; left: 0; width: 100%; padding: 5px 12px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+			.js .jsinfo {bottom: -50px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 				.phg-info:hover {background: rgba(0,0,0,0.8);}
-				.phg-info h4 {margin: 0;}
-				.phg-info a {color: #fff; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+				.phg-info h4 {margin: 0; height: 25px; overflow: hidden; opacity: 1; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+				.phg-info span,
+				.phg-info a {display: inline-block; color: #fff; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 					.phg-info a:hover {color: #0098d7;}
 				.phg-info p {color: #fff; margin: 0;}
 				.phg-info.maininfo {z-index: 50;}
@@ -65,3 +67,4 @@ a.phg {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: a
 	a.phg:hover {color: #95D600;}
 
 .myhidden {display: none; visibility: hidden; opacity: 0;}
+.noheight {height: 0 !important; overflow: hidden; opacity: 0 !important;}
