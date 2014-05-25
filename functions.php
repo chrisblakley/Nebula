@@ -1220,8 +1220,10 @@ add_filter('body_class', 'page_name_class');
 function youtubeMeta($vidID) {
 	global $vidMeta;
 	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $vidID));
+	$vidMeta['origin'] = baseDomain();
 	$vidMeta['id'] = $vidID;
 	$vidMeta['title'] = $xml->title;
+	$vidMeta['safetitle'] = str_replace(" ", "-", $vidMeta['title']);
 	$vidMeta['content'] = $xml->content;
 	$vidMeta['href'] = $xml->link['href'];
 	$vidMeta['author'] = $xml->author->name;
@@ -1231,7 +1233,17 @@ function youtubeMeta($vidID) {
 }
 
 
-
+function baseDomain( $str='' ) {
+	if ( $str == '' ) {
+		$str = home_url();
+	}
+    $url = @parse_url( $str );
+    if ( empty( $url['host'] ) ) return;
+    $parts = explode( '.', $url['host'] );
+    $slice = ( strlen( reset( array_slice( $parts, -2, 1 ) ) ) == 2 ) && ( count( $parts ) > 2 ) ? 3 : 2;
+    $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+    return $protocol . implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
+}
 
 //Traverse multidimensional arrays
 function in_array_r($needle, $haystack, $strict = true) {
