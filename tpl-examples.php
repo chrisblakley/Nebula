@@ -207,6 +207,32 @@ get_header(); ?>
 </div><!--/container-->
 
 
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+				<h2>Retina Images</h2>
+				<h5><a href="http://gumbyframework.com/docs/components/#!/retina-images" target="_blank">Documentation &raquo;</a></h5>
+				<p>Useful for debugging, but should only be enabled if feature detection (using Modernizr) will not work!</p>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="eight columns">
+				<p>This image is only a standard-resolution.</p>
+				<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" />
+		</div><!--/columns-->
+		<div class="eight columns">
+				<p>This image has a retina backup.</p>
+				<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" gumby-retina />
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
 <div class="container socialcon">
 	<div class="row">
 		<div class="sixteen columns fb-like-box-con">
