@@ -177,43 +177,45 @@
 		<?php endif; ?>
 		
 		<script>
-			<?php
-			// Call the iframe like this:
-			/* <iframe id="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/RnHktv51M8k?wmode=transparent&enablejsapi=1&origin=http://domain.com" frameborder="0" allowfullscreen=""></iframe> */
-			// If pulling the Youtube video ID dynamically, add a class to the iframe of "video-id-[php variable here]" to track by ID
-			?>
-			if ( jQuery('#youtubeplayer').length ) {
+			if ( jQuery('.youtubeplayer').length ) {
+				var players = {};
 				var tag = document.createElement('script');
 				tag.src = "http://www.youtube.com/iframe_api";
 				var firstScriptTag = document.getElementsByTagName('script')[0];
 				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 			}
 	
-			function onYouTubeIframeAPIReady(event) {
-			  player = new YT.Player('youtubeplayer', {
-			    events: {
-			      'onReady': onPlayerReady,
-			      'onStateChange': onPlayerStateChange
-			    }
-			  });
+			function onYouTubeIframeAPIReady(e) {
+				jQuery('iframe.youtubeplayer').each(function(i){
+					var iframeClass = jQuery(this).attr('id');
+					players[iframeClass] = new YT.Player(iframeClass, {
+						events: {
+							'onReady': onPlayerReady,
+							'onStateChange': onPlayerStateChange
+						}
+					});
+				});
 			}
 	
 			//Track Youtube Video Events
 			var pauseFlag = false;
-			function onPlayerReady(event) {
+			function onPlayerReady(e) {
 			   //Do nothing
 			}
-			function onPlayerStateChange(event) {
-			    if (event.data == YT.PlayerState.PLAYING) {
-			        ga('send', 'event', 'Videos', 'Play');
+			function onPlayerStateChange(e) {
+			    if (e.data == YT.PlayerState.PLAYING) {
+			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+			        ga('send', 'event', 'Videos', 'Play', videoTitle);
 			        pauseFlag = true;
 			    }
-			    if (event.data == YT.PlayerState.PAUSED && pauseFlag) {
-			        ga('send', 'event', 'Videos', 'Pause');
+			    if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
+			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+			        ga('send', 'event', 'Videos', 'Pause', videoTitle);
 			        pauseFlag = false;
 			    }
-			    if (event.data == YT.PlayerState.ENDED) {
-			        ga('send', 'event', 'Videos', 'Finished');
+			    if (e.data == YT.PlayerState.ENDED) {
+			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+			        ga('send', 'event', 'Videos', 'Finished', videoTitle);
 			    }
 			}
 		</script>
