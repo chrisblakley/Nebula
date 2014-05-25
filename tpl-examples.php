@@ -113,27 +113,26 @@ get_header(); ?>
 				<h2>Youtube Embed</h2>
 				<h5><a href="https://developers.google.com/youtube/player_parameters" target="_blank">Documentation &raquo;</a></h5>
 				<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics. Using the Youtube Data API, we can pull information out of the video dynamically. The Gumby wrapper with the class "video" allows for fluid width videos, so it is best to wrap the iframe with that (along with the class of "youtube" (in this case), "vimeo", or "twitch"</p>
-				<p><strong>Important:</strong> Make sure to include the query parameter of "origin=http://domain.com" and "enablejsapi=1" for tracking to work (The ID "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
+				<p><strong>Important:</strong> Make sure to include the query parameter of "enablejsapi=1" for tracking to work (The class "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
 				
 				<div class="container">
 					<div class="row">
 						<div class="eight columns">
-							<p>This video calls youtubeMeta() after the iframe embed (must declare video ID twice).</p>
-							
-							<article class="youtube video">
-								<iframe id="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/jtip7Gdcf0Q?wmode=transparent&amp;enablejsapi=1&amp;origin=http://domain.com" frameborder="0" allowfullscreen=""></iframe>
-							</article>
-							
+														
 							<?php youtubeMeta('jtip7Gdcf0Q'); ?>
 							
+							<article class="youtube video">
+								<iframe id="<?php echo $vidMeta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $vidMeta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $vidMeta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+							</article>
+														
 							<br/>
 							<div class="container">
 								<div class="row">
 									<div class="four columns">
-										<img src="http://i1.ytimg.com/vi/<?php echo $vidMeta['id']; ?>/hqdefault.jpg" width="100" style="float: left;"/>
+										<a href="<?php echo $vidMeta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $vidMeta['id']; ?>/hqdefault.jpg" width="100"/></a>
 									</div><!--/columns-->
 									<div class="twelve columns">
-											<a href="<?php echo $vidMeta['href']; ?>"><?php echo $vidMeta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vidMeta['duration']; ?>)</span>
+											<a href="<?php echo $vidMeta['href']; ?>" target="_blank"><?php echo $vidMeta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vidMeta['duration']; ?>)</span>
 											<span style="display: block; font-size: 12px; line-height: 18px;">
 												by <?php echo $vidMeta['author']; ?><br/>
 												<?php echo $vidMeta['content']; ?>
@@ -143,21 +142,19 @@ get_header(); ?>
 							</div><!--/container-->
 							
 						</div><!--/columns-->
-						
 						<div class="eight columns">
-							<p>This video calls youtubeMeta() before the iframe embed (only declares video ID once).</p>
 							
 							<?php youtubeMeta('fjh61K3hyY0'); ?>
 							
 							<article class="youtube video">
-								<iframe id="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $vidMeta['id']; ?>?wmode=transparent&amp;enablejsapi=1&amp;origin=http://domain.com" frameborder="0" allowfullscreen=""></iframe>
+								<iframe id="<?php echo $vidMeta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $vidMeta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $vidMeta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
 							</article>
 														
 							<br/>
 							<div class="container">
 								<div class="row">
 									<div class="four columns">
-										<img src="http://i1.ytimg.com/vi/<?php echo $vidMeta['id']; ?>/hqdefault.jpg" width="100" style="float: left;"/>
+										<a href="<?php echo $vidMeta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $vidMeta['id']; ?>/hqdefault.jpg" width="100"/></a>
 									</div><!--/columns-->
 									<div class="twelve columns">
 											<a href="<?php echo $vidMeta['href']; ?>"><?php echo $vidMeta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vidMeta['duration']; ?>)</span>
@@ -168,7 +165,6 @@ get_header(); ?>
 									</div><!--/columns-->
 								</div><!--/row-->
 							</div><!--/container-->
-							
 							
 						</div><!--/columns-->
 					</div><!--/row-->
