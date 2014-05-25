@@ -853,7 +853,7 @@ add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
 
 //Admin Footer Enhancements
 function change_admin_footer_left() {
-    $leftfooter = '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; <a href="tel:3154786700" target="_blank">(315) 478-6700</a>';
+    $leftfooter = '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; <a href="tel:3154786700" target="_blank">(315) 478-6700</a>';
     return $leftfooter;
 }
 add_filter('admin_footer_text', 'change_admin_footer_left');
