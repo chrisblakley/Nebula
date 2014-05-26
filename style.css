@@ -14,10 +14,9 @@
 html, button, input, select, textarea {color: #222;}
 ::-moz-selection {background: #b3d4fc; text-shadow: none;}
 ::selection {background: #b3d4fc; text-shadow: none;}
-hr {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use if backgrounds are predominantly light grey (specifically the WYSIWYG). Delete this line otherwise. */
-hr {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use if backgrounds are predominantly white (specifically the WYSIWYG). Delete this line otherwise. */
-hr.ongrey {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use on a light grey background */
-hr.onwhite {display: block; height: 2px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use on a white background */
+hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;}
+hr.ongrey {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use on a light grey background */
+hr.onwhite {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use on a white background */
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
@@ -48,7 +47,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7;}
 a {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	a:hover,
 	a.hover {color: #95D600;}
-body {overflow-x: hidden;}
+body {overflow-x: hidden; background: #f6f6f6;}
 .inner {width: 100%; max-width: 980px; padding: 0 20px; margin: 0 auto; border: 1px solid red;}
 ul.menu {padding: 0;}
 
@@ -181,7 +180,7 @@ nav#topnav {position: relative; z-index: 1000;}
 				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 25px; opacity: 1;}
 				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
 
-#heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg_nebula.jpg') fixed center center; background-size: cover; transition: all 0.5s ease 0s;}
+#heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; transition: all 0.5s ease 0s;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 48px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8); transition: all 0.5s ease 0s;}
 
 
@@ -257,22 +256,25 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 
 /***** FOOTER *****/
+.footer {margin-top: 20px; padding-top: 20px; background: #e7e7e7;}
+
 .twitterago {font-size: 12px; text-decoration: underline;}
 
 .widget-container {list-style: none;}
 
-nav#powerfooter {position: relative; z-index: 1000;}
-	nav#powerfooter ul {}
-		nav#powerfooter ul li.menu-item {position: relative; display: inline-block; float: left; margin: 0 5px; padding: 0 10px; width: 180px;}
-			nav#powerfooter ul li.menu-item:first-child,
-			nav#powerfooter ul li.menu-item.first-child {margin-left: 0; padding-left: 0;}
-			nav#powerfooter ul li.menu-item:last-child,
-			nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
-			nav#powerfooter ul li.menu-item a {display: block; border-bottom: 1px solid #95D600;}
-			nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
-				nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
-					nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; padding: 5px 0; border-bottom: none;}
-					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
+.row.powerfootercon {margin-bottom: 30px;}
+	nav#powerfooter {position: relative; z-index: 1000;}
+		nav#powerfooter ul {}
+			nav#powerfooter ul li.menu-item {position: relative; display: inline-block; float: left; margin: 0 5px; padding: 0 10px; width: 180px;}
+				nav#powerfooter ul li.menu-item:first-child,
+				nav#powerfooter ul li.menu-item.first-child {margin-left: 0; padding-left: 0;}
+				nav#powerfooter ul li.menu-item:last-child,
+				nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
+				nav#powerfooter ul li.menu-item a {display: block; border-bottom: 1px solid #95D600;}
+				nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
+					nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
+						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; padding: 5px 0; border-bottom: none;}
+						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 
 
 div.copyright p {font-size: 12px;}
