@@ -32,6 +32,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Google Analytics tracking number/domain (header.php)
 - Facebook appID (if applicable) (header.php)
 - [Theme development goes here]
+- Enter global site meta description into homepage excerpt (or content).
 - Update screenshot.png
 - Search for any remaining @TODO tags
 - [Testing](https://docs.google.com/document/d/17nmeSsa-4SSfX8bzWWUXcFDTyz3o2-oSgX4ayCgGm7Y/)
