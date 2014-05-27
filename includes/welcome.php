@@ -89,9 +89,9 @@
 	jQuery('#wp_welcome_panel-hide').parent().addClass('myhidden').css('display', 'none');
 	
 	jQuery('.showmap').hover(function(){
-		jQuery('.welcome-photo-bg').fadeOut();
+		jQuery('.welcome-photo-bg').stop().fadeOut();
 	}, function(){
-		jQuery('.welcome-photo-bg').fadeIn();
+		jQuery('.welcome-photo-bg').stop().fadeIn();
 	});
 	
 	var address = jQuery('.maptoggle').text();
