@@ -1,41 +1,6 @@
 <?php
 /**
- * Boilerplate functions and definitions
- *
- * Sets up the theme and provides some helper functions. Some helper functions
- * are used in the theme as custom template tags. Others are attached to action and
- * filter hooks in WordPress to change core functionality.
- *
- * The first function, boilerplate_setup(), sets up the theme by registering support
- * for various features in WordPress, such as post thumbnails, navigation menus, and the like.
- *
- * When using a child theme (see http://codex.wordpress.org/Theme_Development and
- * http://codex.wordpress.org/Child_Themes), you can override certain functions
- * (those wrapped in a function_exists() call) by defining them first in your child theme's
- * functions.php file. The child theme's functions.php file is included before the parent
- * theme's file, so the child theme functions would be used.
- *
- * Functions that are not pluggable (not wrapped in function_exists()) are instead attached
- * to a filter or action hook. The hook can be removed by using remove_action() or
- * remove_filter() and you can attach your own function to the hook.
- *
- * We can remove the parent theme's hook only after it is attached, which means we need to
- * wait until setting up the child theme:
- *
- * <code>
- * add_action( 'after_setup_theme', 'my_child_theme_setup' );
- * function my_child_theme_setup() {
- *     // We are providing our own filter for excerpt_length (or using the unfiltered value)
- *     remove_filter( 'excerpt_length', 'boilerplate_excerpt_length' );
- *     ...
- * }
- * </code>
- *
- * For more information on hooks, actions, and filters, see http://codex.wordpress.org/Plugin_API.
- *
- * @package WordPress
- * @subpackage Boilerplate
- * @since Boilerplate 1.0
+ * Functions
  */
 
 /**
@@ -50,24 +15,6 @@ if ( ! isset( $content_width ) )
 if ( ! function_exists( 'boilerplate_setup' ) ):
 	/**
 	 * Sets up theme defaults and registers support for various WordPress features.
-	 *
-	 * Note that this function is hooked into the after_setup_theme hook, which runs
-	 * before the init hook. The init hook is too late for some features, such as indicating
-	 * support post thumbnails.
-	 *
-	 * To override boilerplate_setup() in a child theme, add your own boilerplate_setup to your child theme's
-	 * functions.php file.
-	 *
-	 * @uses add_theme_support() To add support for post thumbnails and automatic feed links.
-	 * @uses register_nav_menus() To add support for navigation menus.
-	 * @uses add_custom_background() To add support for a custom background.
-	 * @uses add_editor_style() To style the visual editor.
-	 * @uses load_theme_textdomain() For translation/localization support.
-	 * @uses add_theme_support()/add_custom_image_header() To add support for a custom header.
-	 * @uses register_default_headers() To register the default custom header images provided with the theme.
-	 * @uses set_post_thumbnail_size() To set a custom post thumbnail size.
-	 *
-	 * @since Twenty Ten 1.0
 	 */
 	function boilerplate_setup() {
 
@@ -1215,6 +1162,16 @@ function page_name_class($classes) {
 add_filter('body_class', 'page_name_class');
 
 
+//Add category IDs to body/post classes.
+//@TODO: Possibly combine this with the above ancestor ID classes
+function category_id_class($classes) {
+	global $post;
+	foreach((get_the_category($post->ID)) as $category)
+		$classes [] = 'cat-' . $category->cat_ID . '-id';
+		return $classes;
+}
+add_filter('post_class', 'category_id_class');
+add_filter('body_class', 'category_id_class');
 
 
 function youtubeMeta($vidID) {
