@@ -54,9 +54,12 @@
 		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!-- 150x150px -->
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
-
 		
-		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" defer></script>
+		<?php if ( array_key_exists('debug', $_GET) ) : ?>
+			<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js"></script>
+		<?php else : ?>
+			<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" defer></script>
+		<?php endif; ?>
 		
 		<script>
 			var bloginfo = [];
