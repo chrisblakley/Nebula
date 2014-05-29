@@ -18,6 +18,7 @@ jQuery(document).ready(function() {
 	
 	
 	viewport = updateViewportDimensions();
+	console.debug(viewport);
 	jQuery(window).resize(function() {
 		waitForFinalEvent(function(){
 		
@@ -28,10 +29,11 @@ jQuery(document).ready(function() {
 	    	viewportResized = updateViewportDimensions();
 	    	if ( viewport.width > viewportResized.width ) {
 	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    	} else if ( viewport.width < finalWindowSize ) {
+	    	} else if ( viewport.width < viewportResized.width ) {
 	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	}
 	    	viewport = updateViewportDimensions();
+	    	console.debug(viewport);
 		}, 500, "unique resize ID 1");
 	});
 	
@@ -86,8 +88,38 @@ function socialSharing() {
 
 //Create an object of the viewport dimensions
 function updateViewportDimensions() {
-    var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
-    return { width:x,height:y };
+	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
+	if ( typeof viewport === 'undefined' ) {
+		var viewportHistory = 0;
+		console.log('creating viewport History: ' + viewportHistory);
+	} else {
+		viewportHistory = viewportHistory+1; //NaN????????
+		viewport.prevWidth = viewport.width;
+		viewport.prevHeight = viewport.height;
+		console.log('increasing viewport History: ' + viewportHistory);
+	}
+	
+	var x = w.innerWidth || e.clientWidth || g.clientWidth;
+	var y = w.innerHeight || e.clientHeight || g.clientHeight;
+	
+	if ( viewportHistory == 0 ) {
+		var viewportObject = {
+			initialWidth: x,
+			initialHeight: y,
+			width: x,
+			height: y
+		};
+	} else {
+		viewportObject = {
+		    initialWidth: viewport.initialWidth,
+			initialHeight: viewport.initialHeight,
+		    width: x,
+		    height: y,
+		    history: viewportHistory
+		};
+	}
+	
+	return viewportObject;
 }
 
 //Main dropdown nav dynamic width controller
