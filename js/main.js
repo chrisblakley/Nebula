@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
 	    	
 	    	//Track size change
 	    	viewportResized = updateViewportDimensions();
-	    	if ( viewport.width > finalWindowSize ) {
+	    	if ( viewport.width > viewportResized.width ) {
 	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	} else if ( viewport.width < finalWindowSize ) {
 	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
