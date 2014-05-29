@@ -9,21 +9,31 @@ jQuery(document).ready(function() {
 	socialSharing();
 	dropdownWidthController();
 	overflowDetector();
-	subnavExpanders();
-	
+	subnavExpanders();	
 	nebulaFixeder();
-	windowResize();
 	
 	mmenu();
 	powerFooterWidthDist();
 	searchValidator();
 	
-	/*
-	//Gumby Modals event trigger
-	jQuery.on('gumby.trigger', function(){
-		//Modal event trigger functions here.
-	})
-	*/
+	
+	viewport = updateViewportDimensions();
+	jQuery(window).resize(function() {
+		waitForFinalEvent(function(){
+		
+	    	//Window resize functions here.
+	    	powerFooterWidthDist();
+	    	
+	    	//Track size change
+	    	viewportResized = updateViewportDimensions();
+	    	if ( viewport.width > finalWindowSize ) {
+	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    	} else if ( viewport.width < finalWindowSize ) {
+	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    	}
+	    	viewport = updateViewportDimensions();
+		}, 500, "unique resize ID 1");
+	});
 	
 	
 }); //End Document Ready
@@ -36,8 +46,8 @@ jQuery(window).on('load', function() {
 	conditionalJSLoading();
 	
 	jQuery('html').addClass('loaded');
-	jQuery('.unhideonload').removeClass('hidden');	
-	
+	jQuery('.unhideonload').removeClass('hidden');
+		
 }); //End Window Load
 
 
@@ -73,6 +83,12 @@ function socialSharing() {
     jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank');
 } //end socialSharing()
 
+
+//Create an object of the viewport dimensions
+function updateViewportDimensions() {
+    var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
+    return { width:x,height:y };
+}
 
 //Main dropdown nav dynamic width controller
 function dropdownWidthController() {
@@ -136,29 +152,6 @@ function nebulaFixeder() {
 		}	
 	});
 } //end nebulaFixeder()
-
-
-//Window Resize (Waits for window to finish resizing before triggering.
-function windowResize() {
-    initialWindowSize = jQuery(window).width();
-	
-	jQuery(window).resize(function() {
-		waitForFinalEvent(function(){
-		
-	    	//Window resize functions here.
-	    	powerFooterWidthDist();
-	    	
-	    	//Track size change
-	    	finalWindowSize = jQuery(window).width();
-	    	if ( initialWindowSize > finalWindowSize ) {
-	    		ga('send', 'event', 'Window Resize', 'Smaller', initialWindowSize + 'px to ' + finalWindowSize + 'px');
-	    	} else if ( initialWindowSize < finalWindowSize ) {
-	    		ga('send', 'event', 'Window Resize', 'Bigger', initialWindowSize + 'px to ' + finalWindowSize + 'px');
-	    	}
-	    	initialWindowSize = jQuery(window).width();
-		}, 500, "global window resize"); //String is a unique string that waitForFinalEvent looks for. It can be anything as long as it doesn't conflict with another one being used.
-	});
-} //end windowResize()
 
 
 //Google Analytics Universal Analytics Event Trackers

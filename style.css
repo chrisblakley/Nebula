@@ -196,8 +196,6 @@ div.wp-pagenavi {float: right; margin-top: 20px;}
 	div.wp-pagenavi span.pages {}
 	div.wp-pagenavi span.current {}
 	div.wp-pagenavi a.page {}
-		div.wp-pagenavi a.page:hover,
-		div.wp-pagenavi a.page.hover {}
 	div.wp-pagenavi a.nextpostslink {}
 	div.wp-pagenavi a.previouspostslink {}
 

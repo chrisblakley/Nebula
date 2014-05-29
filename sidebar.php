@@ -89,11 +89,12 @@
 
 ?>
 
-<h3>Contact Us</h3>
-<ul id="cform7-container">
-	<?php echo do_shortcode('[contact-form-7 id="161" title="Sample Message"]'); ?>
-</ul>		
-		
+<?php if ( is_plugin_active('contact-form-7') ) : ?>
+	<h3>Contact Us</h3>
+	<ul id="cform7-container">
+		<?php echo do_shortcode('[contact-form-7 id="161" title="Sample Message"]'); ?>
+	</ul>		
+<?php endif; ?>
 		
 		
 		

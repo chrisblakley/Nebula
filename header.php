@@ -1,8 +1,4 @@
-<?php
-/**
- * Theme Header
- */
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if lt IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie6 lt-ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
@@ -13,22 +9,28 @@
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<title><?php wp_title( '-', true, 'right' ); ?></title>
+		
+		
 		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
-
+		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
 		
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		
+
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/normalize.css" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/gumby.css" />
 		<!--<link rel="stylesheet" href="<?php //bloginfo('template_directory');?>/css/font-awesome.min.css">--> <!-- @TODO: Remove if not using Font Awesome! -->
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/jquery.mmenu.all.css" /> <!-- @TODO: Remove if not using mmenu! -->
 		<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" />
-        
-        <meta name="viewport" content="width=device-width, initial-scale=1" /><?php if (1==2): //@TODO: Determine if maximum-scale should be omitted! ?> <!-- , maximum-scale=1 --> <?php endif; ?>
-        
+                
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		
-		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
+		<link rel="icon" href="<?php bloginfo('template_directory');?>/images/favicon.ico">
+		<link rel="apple-touch-icon" href="<?php bloginfo('template_directory');?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
 		
 		<!-- Facebook Metadata -->
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
@@ -46,12 +48,14 @@
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
+		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>">
 		<meta name="msapplication-TileColor" content="#ffffff" />
-		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png" /><!--128x128px-->
-		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!--270x270px-->
-		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!--558x270px-->
-		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!--517x516px-->
+		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png" /><!-- 70x70px -->
+		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!-- 150x150px -->
+		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
+		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 
+		
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" defer></script>
 		
 		<script>

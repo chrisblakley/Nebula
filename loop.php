@@ -1,22 +1,10 @@
 <?php
 /**
  * The loop that displays posts.
- *
- * The loop displays the posts and the post content.  See
- * http://codex.wordpress.org/The_Loop to understand it and
- * http://codex.wordpress.org/Template_Tags to understand
- * the tags used in it.
- *
- * This can be overridden in child themes with loop.php or
- * loop-template.php, where 'template' is the loop context
- * requested by a template. For example, loop-index.php would
- * be used if it exists and we ask for the loop with:
- * <code>get_template_part( 'loop', 'index' );</code>
- *
  */
 ?>
 
-<?php /* Display navigation to next/previous pages when applicable */ ?>
+<?php /* Display navigation to next/previous pages when applicable @TODO: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
 <?php if ( $wp_query->max_num_pages > 1 ) : ?>
 	<nav id="nav-above" class="navigation">
 		<div class="nav-previous"><?php next_posts_link( '<span class="meta-nav">&larr;</span> Older posts' ); ?></div>
@@ -35,73 +23,97 @@
 	</article><!-- #post-0 -->
 <?php endif; ?>
 
-<?php while ( have_posts() ) : the_post(); //Begin the Loop ?>
 
-	<?php if ( in_category( _x('gallery', 'gallery category slug', 'boilerplate') ) ) : //Display posts in a Gallery ?>
+<?php
+	/* ==========================================================================
+	   Begin the Loop
+	   ========================================================================== */
+?>
+
+<?php while ( have_posts() ) : the_post();?>
+
+	<?php //Display posts in a Gallery ?>
+	<?php if ( in_category('gallery') : ?>
+		
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-			<h2 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'boilerplate' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
+			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+			
 			<div class="entry-meta">
 				<?php boilerplate_posted_on(); ?> <?php boilerplate_posted_in(); ?>
-			</div><!-- .entry-meta -->
+			</div>
+			
 			<div class="entry-content">
 				<?php if ( post_password_required() ) : ?>
 					<?php the_content(); ?>
 				<?php else : ?>
-					<?php
-						$images = get_children( array( 'post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => 'image', 'orderby' => 'menu_order', 'order' => 'ASC', 'numberposts' => 999 ) );
-						if ( $images ) :
+					<?php $images = get_children( array( 'post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => 'image', 'orderby' => 'menu_order', 'order' => 'ASC', 'numberposts' => 999 ) ); ?>
+					<?php if ($images) : ?>
+						<?php 
 							$total_images = count( $images );
 							$image = array_shift( $images );
 							$image_img_tag = wp_get_attachment_image( $image->ID, 'thumbnail' );
 						?>
-							<div class="gallery-thumb">
-								<a class="size-thumbnail" href="<?php the_permalink(); ?>"><?php echo $image_img_tag; ?></a>
-							</div><!-- .gallery-thumb -->
-							<p><em><?php printf( '<i class="icon-picture"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '" title="' . sprintf( esc_attr__( 'Permalink to %s', 'boilerplate' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark"', $total_images); ?></em></p>
-						<?php endif; ?>
-						<?php the_excerpt(); ?>
-					<?php endif; ?>
-			</div><!-- .entry-content -->
+					
+						<div class="gallery-thumb">
+							<a class="size-thumbnail" href="<?php the_permalink(); ?>"><?php echo $image_img_tag; ?></a>
+						</div>
+					
+						<p><em><?php printf( '<i class="icon-picture"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
+					
+					<?php endif; // if $images ?>
+				
+				<?php the_excerpt(); ?>
+				
+				<?php endif; //post_password_required. ?>
+			</div>
 
 			<footer class="entry-utility">
-				<a href="<?php echo get_term_link( _x('gallery', 'gallery category slug', 'boilerplate'), 'category' ); ?>" title="<?php esc_attr_e( 'View posts in the Gallery category', 'boilerplate' ); ?>"><?php _e( 'More Galleries', 'boilerplate' ); ?></a>
-				<?php //comments_popup_link( __( 'Leave a comment', 'boilerplate' ), __( '1 Comment', 'boilerplate' ), __( '% Comments', 'boilerplate' ) ); ?>
-				<?php edit_post_link( 'Edit', '<p class="edit-link">', '</p>' ); ?>
+				<a href="<?php echo get_term_link('gallery', 'category'); ?>">More Galleries</a>
+				<?php //comments_popup_link('Leave a comment', '1 Comment', '% Comments'); ?>
+				<?php edit_post_link('Edit'); ?>
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
 
-	<?php else : //Display all other posts ?>
+	<?php //Display all other posts (Non-Gallery) ?>
+	<?php else : ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-			<h2 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'boilerplate' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
+			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 						
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
 			<div class="entry-meta">
 				<?php boilerplate_posted_on(); ?> <?php boilerplate_posted_in(); ?>
-			</div><!-- .entry-meta -->
+			</div>
 			<?php endif; ?>
 			
-			<?php if ( is_archive() || is_search() ) : // Only display excerpts for archives and search. ?>
+			<?php if ( is_archive() || is_search() ) : ?>
 				<div class="entry-summary">
-					<?php the_excerpt(); ?>
-				</div><!-- .entry-summary -->
+					<?php the_excerpt(); //@TODO: Replace w/ nebula the excerpt (no read more text) ?>
+				</div>
 			<?php else : ?>
 				<div class="entry-content">
 					<?php the_content( 'Continue reading <span class="meta-nav">&rarr;</span>' ); ?>
-					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>' ) ); ?>
-				</div><!-- .entry-content -->
+					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>' ) ); //@TODO: Pagenavi ?>
+				</div>
 			<?php endif; ?>
 
 			<footer class="entry-utility">
-				<?php //comments_popup_link( __( 'Leave a comment', 'boilerplate' ), __( '1 Comment', 'boilerplate' ), __( '% Comments', 'boilerplate' ) ); ?>
-				<?php edit_post_link( 'Edit', '<p class="edit-link">', '</p>' ); ?>
-			</footer><!-- .entry-utility -->
-		</article><!-- #post-## -->
+				<?php //comments_popup_link('Leave a comment', '1 Comment', '% Comments'); ?>
+				<?php edit_post_link('Edit'); ?>
+			</footer>
+		</article>
 
-		<?php //comments_template( '', true ); ?>
+		<?php //comments_template('', true); ?>
 
-	<?php endif; // This was the if statement that broke the loop into two parts based on categories. ?>
+	<?php endif; //End if in Gallery ?>
 
-<?php endwhile; // End the Loop ?>
+<?php endwhile; ?>
+
+<?php
+	/* ==========================================================================
+	   End the Loop
+	   ========================================================================== */
+?>
+
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
 <?php if (  $wp_query->max_num_pages > 1 ) : ?>
