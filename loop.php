@@ -4,14 +4,6 @@
  */
 ?>
 
-<?php /* Display navigation to next/previous pages when applicable @TODO: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
-<?php if ( $wp_query->max_num_pages > 1 ) : ?>
-	<nav id="nav-above" class="navigation">
-		<div class="nav-previous"><?php next_posts_link( '<span class="meta-nav">&larr;</span> Older posts' ); ?></div>
-		<div class="nav-next"><?php previous_posts_link( 'Newer posts <span class="meta-nav">&rarr;</span>' ); ?></div>
-	</nav><!-- #nav-above -->
-<?php endif; ?>
-
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
 <?php if ( ! have_posts() ) : ?>
 	<article id="post-0" class="post error404 not-found">
