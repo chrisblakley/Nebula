@@ -62,7 +62,7 @@
 					
 					<?php endif; // if $images ?>
 				
-				<?php the_excerpt(); ?>
+				<?php echo nebula_the_excerpt('Read More &raquo;', 50, 1); ?>
 				
 				<?php endif; //post_password_required. ?>
 			</div>
@@ -87,11 +87,11 @@
 			
 			<?php if ( is_archive() || is_search() ) : ?>
 				<div class="entry-summary">
-					<?php the_excerpt(); //@TODO: Replace w/ nebula the excerpt (no read more text) ?>
+					<?php echo nebula_the_excerpt('Read More &raquo;', 50, 1); ?>
 				</div>
 			<?php else : ?>
 				<div class="entry-content">
-					<?php the_content( 'Continue reading <span class="meta-nav">&rarr;</span>' ); ?>
+					<?php echo nebula_the_excerpt('Read More &raquo;', 70, 1); ?>
 					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>' ) ); //@TODO: Pagenavi ?>
 				</div>
 			<?php endif; ?>
