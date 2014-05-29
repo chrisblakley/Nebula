@@ -8,7 +8,7 @@
 		</div>
 		
 		<h3><a href="<?php echo home_url(); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
-		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/">Pinckney Hugo Group</a>.</p>
+		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank">Pinckney Hugo Group</a>.</p>
 		
 		<hr/>
 		
@@ -57,7 +57,7 @@
 	
 	<div id="welcome-photo">
 		<div class="phg-info maininfo no-map jsinfo">
-			<h4><a href="http://www.pinckneyhugo.com/">Pinckney Hugo Group</a></h4>
+			<h4><a href="http://www.pinckneyhugo.com/" target="_blank">Pinckney Hugo Group</a></h4>
 			<p class="addressphone"><a class="maptoggle showmap" href="#">760 West Genesee Street, Syracuse, NY 13204</a> <span class="hideformap">&bull; <a href="tel:3154786700">(315) 478-6700</a></span></p>
 		</div>
 		<div class="welcome-photo-bg"></div>
