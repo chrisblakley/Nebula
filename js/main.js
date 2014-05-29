@@ -12,7 +12,10 @@ jQuery(document).ready(function() {
 	subnavExpanders();	
 	nebulaFixeder();
 	
+	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
 	mmenu();
+	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
+	
 	powerFooterWidthDist();
 	searchValidator();
 	

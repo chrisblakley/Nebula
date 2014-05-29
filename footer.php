@@ -4,6 +4,8 @@
  */
 ?>
 
+<div class="footer">
+
 <?php wp_footer(); ?>
 
 	<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not even generate. ?>
@@ -108,7 +110,7 @@
 			</div><!--/row-->
 		</div><!--/container-->
 
-
+</div><!--/footer-->
 
 		<script>
 			//If Wordpress can't call jQuery, load it from Google's CDN 
@@ -145,6 +147,7 @@
 			<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script> -->
 			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js"></script> -->
 			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js"></script>-->
+			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js"></script> -->
 			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js"></script>
 				
 			<!--[if lt IE 9]>
@@ -163,6 +166,7 @@
 			<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" async></script> -->
 			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" async></script> -->
 			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" async></script>-->
+			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" defer></script> -->
 			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js" defer></script>
 			
 			<!--[if lt IE 9]>
