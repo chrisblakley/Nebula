@@ -27,7 +27,7 @@
 		#welcome-content {width: 50%;}
 			.welcome-panel .welcome-panel-column:first-child {width: 33% !important;}
 			.welcome-panel .welcome-panel-column {min-width: 100px;}
-			#welcome-content .logocon {float: left; max-width: 22%; max-height: 56px; margin-right: 15px;}
+			#welcome-content .logocon {float: left; max-width: 22%; /* max-height: 56px; */ margin-right: 15px;}
 				#welcome-content .logocon a {}
 					#welcome-content .logocon a img {width: 100%;}
 			#welcome-content hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
@@ -41,14 +41,24 @@
 }
 
 @media only screen and (max-width: 1499px) and (min-width: 800px) {
-	#welcome-photo {width: 46.35%;}
+	#welcome-photo {width: 45%;}
 	#welcome-content {width: 50%;}
 	.welcome-panel .welcome-panel-column {width: 31% !important;}
 }
 
-@media only screen and (max-width: 900px) {
+@media screen and (max-width: 1110px) {
 	#welcome-photo {display: none;}
 	#welcome-content {width: 100%;}
+}
+
+@media only screen and (max-width: 900px) and (min-width: 501px) {
+	.welcome-panel .welcome-panel-column:first-child {width: 33%; float: left;}
+	.welcome-panel .welcome-panel-column {width: 33%; float: left;}
+	.welcome-panel .welcome-panel-column li {display: block;}
+}
+
+@media only screen and (max-width: 500px) {
+	#welcome-content .logocon {display: none;}
 	.welcome-panel .welcome-panel-column:first-child {width: 100% !important;}
 }
 
