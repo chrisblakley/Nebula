@@ -58,7 +58,7 @@
 	<div id="welcome-photo">
 		<div class="phg-info maininfo no-map jsinfo">
 			<h4><a href="http://www.pinckneyhugo.com/" target="_blank">Pinckney Hugo Group</a></h4>
-			<p class="addressphone"><a class="maptoggle showmap" href="#">760 West Genesee Street, Syracuse, NY 13204</a> <span class="hideformap">&bull; <a href="tel:3154786700">(315) 478-6700</a></span></p>
+			<p class="addressphone"><a class="maptoggle showmap" href="#">760 West Genesee Street, Syracuse, NY 13204</a> <span class="hideformap">&bull; (315) 478-6700</span></p>
 		</div>
 		<div class="welcome-photo-bg"></div>
 		
