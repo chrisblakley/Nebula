@@ -24,11 +24,12 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Set (at least) Primary Menu (Appearance > Menus)
 - Modify logo.svg and logo.png
 - Social sharing thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use fb-temp.png as a template. Then delete from header.php!)*
-- Windows 8 Tiles 
-	- 128x128px "tiny.png"
-	- 270x270px "square.png"
-	- 558x270px "wide.png"
-	- 517x516px "large.png"
+- Apple Touch Icon 129x129px *(This will automatically have rounded corners and a "gloss" effect added)*
+- Windows 8 Tiles
+	- 70x70px "tiny.png"
+	- 150x150px "square.png"
+	- 310x150px "wide.png"
+	- 310x310px "large.png"
 - Google Analytics tracking number/domain (header.php)
 - Facebook appID (if applicable) (header.php)
 - [Theme development goes here]
