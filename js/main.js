@@ -89,14 +89,15 @@ function socialSharing() {
 //Create an object of the viewport dimensions
 function updateViewportDimensions() {
 	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
+	
 	if ( typeof viewport === 'undefined' ) {
 		var viewportHistory = 0;
 		console.log('creating viewport History: ' + viewportHistory);
 	} else {
-		viewportHistory = viewportHistory+1; //NaN????????
-		viewport.prevWidth = viewport.width;
-		viewport.prevHeight = viewport.height;
-		console.log('increasing viewport History: ' + viewportHistory);
+		var viewportHistory = viewport.history+1;
+		viewport.prevWidth = viewport.width; //Not pushing to the object...
+		viewport.prevHeight = viewport.height; //Not pushing to the object...
+		console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
 	}
 	
 	var x = w.innerWidth || e.clientWidth || g.clientWidth;
@@ -107,7 +108,8 @@ function updateViewportDimensions() {
 			initialWidth: x,
 			initialHeight: y,
 			width: x,
-			height: y
+			height: y,
+			history: viewportHistory
 		};
 	} else {
 		viewportObject = {
