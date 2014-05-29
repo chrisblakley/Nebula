@@ -23,6 +23,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 	- Select "Post name"
 - Set (at least) Primary Menu (Appearance > Menus)
 - Modify logo.svg and logo.png
+- Apple touch icon (129x129px) *(Rounded corners and glossy effect are automatically applied.)*
 - Social sharing thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use fb-temp.png as a template. Then delete from header.php!)*
 - Windows 8 Tiles 
 	- 128x128px "tiny.png"
