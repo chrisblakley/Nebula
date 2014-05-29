@@ -24,23 +24,20 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Set (at least) Primary Menu (Appearance > Menus)
 - Modify logo.svg and logo.png
 - Social sharing thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use fb-temp.png as a template. Then delete from header.php!)*
-- Apple Touch Icon 129x129px *(This will automatically have rounded corners and a "gloss" effect added)*
-- Windows 8 Tiles
-	- 70x70px "tiny.png"
-	- 150x150px "square.png"
-	- 310x150px "wide.png"
-	- 310x310px "large.png"
+- Windows 8 Tiles 
+	- 128x128px "tiny.png"
+	- 270x270px "square.png"
+	- 558x270px "wide.png"
+	- 517x516px "large.png"
 - Google Analytics tracking number/domain (header.php)
 - Facebook appID (if applicable) (header.php)
 - [Theme development goes here]
-- Enter global site meta description into homepage excerpt (or content).
 - Update screenshot.png
 - Search for any remaining @TODO tags
 - [Testing](https://docs.google.com/document/d/17nmeSsa-4SSfX8bzWWUXcFDTyz3o2-oSgX4ayCgGm7Y/)
 - Uncheck "Discourage search engines from indexing this site" (Reading Settings)
 - [Launch/Migration](https://docs.google.com/document/d/1jEaImmelk5bitFdh01WU_vm0WctYfhYEAKNZfwWJY0M/)
 - Enable W3 Total Cache
-
 
 ##Recommended Plugins
 When activated, WP Nebula will prompt to install the recommended and optional plugins. Following the instructions will install them all (or selected ones) at once. These can also be downloaded from Wordpress.org, or manually installed from the Wordpress Admin under the Plugins > Add New.
@@ -71,6 +68,7 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 #####JavaScript
 - [CSS Browser Selector](http://cssbs.altervista.org/css-browser-selector.html)
 - [DataTables](https://datatables.net/)
+- [DoubleTapToGo](http://osvaldas.info/drop-down-navigation-responsive-and-touch-friendly)
 - [Gumby](http://gumbyframework.com/)
 - [HTML5 Shiv](https://github.com/aFarkas/html5shiv)
 - [jQuery](http://jquery.com/)
