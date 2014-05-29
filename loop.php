@@ -33,7 +33,7 @@
 <?php while ( have_posts() ) : the_post();?>
 
 	<?php //Display posts in a Gallery ?>
-	<?php if ( in_category('gallery') : ?>
+	<?php if ( in_category('gallery') ) : ?>
 		
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
