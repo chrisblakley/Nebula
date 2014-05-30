@@ -158,7 +158,7 @@ This function pulls metadata from a post. Note: the function calls for certain s
 Default: *None*
 
 **$day**
-(optional) Whether the day should link to an archive of that day [1], or that month [0] (boolean).
+(optional) Whether the day should link to an archive of that day (true), or that month (false) (boolean).
 Default: True
 
 #####Examples
