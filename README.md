@@ -143,6 +143,34 @@ To call nebula_the_excerpt() from outside the loop (for a specific post/page)
 ```
 ---
 
+###nebula_meta()
+
+#####Description
+This function pulls metadata from a post. Note: the function calls for certain strings of which meta to return, but variants of those strings will also work. For example "categories", "cats", and "cat" will all echo the categories meta.
+
+#####Usage
+```html
+<?php echo nebula_the_excerpt( $meta, $day ); ?>
+```
+#####Parameters
+**$meta**
+(required) The meta type to echo. Strings include "on", "cat", "by", "tags" (string)
+Default: *None*
+
+**$day**
+(optional) Whether the day should link to an archive of that day [1], or that month [0] (boolean).
+Default: True
+
+#####Examples
+The following shows each data type that this function can return.
+```html
+<div class="entry-meta">
+	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
+</div>
+```
+
+---
+
 ###youtubeMeta()
 
 #####Description
