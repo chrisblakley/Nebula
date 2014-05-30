@@ -994,19 +994,19 @@ add_filter('post_class', 'category_id_class');
 add_filter('body_class', 'category_id_class');
 
 
-function youtubeMeta($vidID) {
-	global $vidMeta;
-	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $vidID));
-	$vidMeta['origin'] = baseDomain();
-	$vidMeta['id'] = $vidID;
-	$vidMeta['title'] = $xml->title;
-	$vidMeta['safetitle'] = str_replace(" ", "-", $vidMeta['title']);
-	$vidMeta['content'] = $xml->content;
-	$vidMeta['href'] = $xml->link['href'];
-	$vidMeta['author'] = $xml->author->name;
-	$vidMeta['seconds'] = strval($xml->xpath('//yt:duration[@seconds]')[0]->attributes()->seconds);
-	$vidMeta['duration'] = intval(gmdate("i", $vidMeta['seconds'])) . gmdate(":s", $vidMeta['seconds']);
-	return $vidMeta;
+function youtube_meta($videoID) {
+	global $youtube_meta;
+	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $videoID));
+	$youtube_meta['origin'] = baseDomain();
+	$youtube_meta['id'] = $videoID;
+	$youtube_meta['title'] = $xml->title;
+	$youtube_meta['safetitle'] = str_replace(" ", "-", $youtube_meta['title']);
+	$youtube_meta['content'] = $xml->content;
+	$youtube_meta['href'] = $xml->link['href'];
+	$youtube_meta['author'] = $xml->author->name;
+	$youtube_meta['seconds'] = strval($xml->xpath('//yt:duration[@seconds]')[0]->attributes()->seconds);
+	$youtube_meta['duration'] = intval(gmdate("i", $youtube_meta['seconds'])) . gmdate(":s", $youtube_meta['seconds']);
+	return $youtube_meta;
 }
 
 
