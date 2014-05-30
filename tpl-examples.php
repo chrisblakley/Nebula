@@ -6,18 +6,18 @@
 
 get_header(); ?>
 
-<div class="container">
+<div class="container" style="background: #0098d7; margin-bottom: 25px;">
 	<div class="row">
 		<div class="sixteen columns">
-			<? the_breadcrumb(); ?>
+			
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<h1 class="entry-title"><?php the_title(); ?></h1>
-					<div class="entry-content">
+					<h1 class="entry-title" style="color: #fff;"><?php the_title(); ?></h1>
+					<div class="entry-content" style="color: #fff;">
 						<?php the_content(); ?>
 						
 						<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-						<?php edit_post_link( 'Edit', '<p class="edit-link">', '</p>' ); ?>
+						<?php edit_post_link('Edit'); ?>
 					</div><!-- .entry-content -->
 				</article><!-- #post-## -->
 				<?php //comments_template( '', true ); ?>
@@ -26,39 +26,50 @@ get_header(); ?>
 	</div><!--/row-->
 </div><!--/container-->
 
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<? the_breadcrumb(); ?>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
 
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
 			<hr/>
-				<h2>Basic WP Query</h2>
-				<h5><a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">Documentation &raquo;</a></h5>
-				<p>This is a basic Wordpress query posts, but also shows how Gumby columns can be integrated into the logic. This also shows the Wordpress plugin WP-PageNavi.</p>
-				<div class="container">
-					<div class="row">
-					    <?php $count = 0; ?>
-					    <?php query_posts( array( 'category_name' => 'Examples', 'showposts' => 4, 'paged' => get_query_var('paged') ) ); ?>
-					        <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-					            <?php if ( $count%2 == 0 && $count != 0 ) : ?>
-					                </div><!--/row-->
-					                <div class="row">
-					            <?php endif; ?>
+			<h2>Basic WP Query</h2>
+			<h5><a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">Documentation &raquo;</a></h5>
+			<p>This is a basic Wordpress query posts, but also shows how Gumby columns can be integrated into the logic. The function nebula_meta() is shown as well. This also shows the Wordpress plugin WP-PageNavi.</p>
+			<div class="container">
+				<div class="row">
+					<?php $count = 0; ?>
+					<?php query_posts( array( 'category_name' => 'Examples', 'showposts' => 4, 'paged' => get_query_var('paged') ) ); ?>
+						<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+					        <?php if ( $count%2 == 0 && $count != 0 ) : ?>
+					            </div><!--/row-->
+					            <div class="row">
+					        <?php endif; ?>
 					                     
-					            <div class="eight columns">
-							        <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-							            <h5 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h5>
-							            <span class="newsdate"><em><a href="#"><?php the_time('F j, Y'); ?></a></em></span>
-							            <div class="entry-content">
-							                <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
-							                <p><?php edit_post_link('Edit'); ?></p>
-							            </div><!-- .entry-content -->
-							        </article><!-- #post-## -->
-							    </div><!--/columns-->
+					        <div class="eight columns">
+							    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+							        <h5 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h5>
+							        							        
+							        <div class="entry-meta">
+							        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
+							        </div>
+							        
+							        <div class="entry-content">
+							            <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
+							            <p><?php edit_post_link('Edit'); ?></p>
+							        </div><!-- .entry-content -->
+							    </article><!-- #post-## -->
+							</div><!--/columns-->
 					                         
-					            <?php $count++; ?>
+					        <?php $count++; ?>
 					                         
-					        <?php endwhile; ?>
-					        <?php wp_pagenavi(); ?>
+					    <?php endwhile; ?>
+					    <?php wp_pagenavi(); ?>
 					    <?php wp_reset_query(); ?>
 					</div><!--/row-->
 					
@@ -227,6 +238,53 @@ get_header(); ?>
 	</div><!--/row-->
 	<div class="row">
 		<div class="sixteen columns">
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>About the Author</h2>
+			<p>These boxes are useful for blog posts with multiple authors.</p>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="ten columns">
+			<p>Below content</p>
+		</div><!--/columns-->
+		<div class="five columns push_one">
+			<p>Sidebar</p>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>Native Social Buttons</h2>
+			<p>These are social sharing buttons that are generated by loading scripts from the social network's remote servers.</p>
+			<p>Facebook Like, Facebook Share, Twitter, Google+, LinkedIn</p>
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>Custom Social Buttons</h2>
+			<p>These are locally stored social sharing buttons that have hard-coded hrefs. These hrefs can also be modified with javascript to dynamically pull in page titles, etc.</p>
+			<p>Facebook Share, Twitter, Google+, LinkedIn, Email</p>
 			<hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
