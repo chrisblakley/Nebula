@@ -600,8 +600,8 @@ add_filter('admin_footer_text', 'change_admin_footer_left');
  
  ===========================*/
 
-date_default_timezone_set('America/New_York');
-
+//Set server timezone to match Wordpress
+date_default_timezone_set( get_option('timezone_string') );
 
 //Disable Pingbacks to prevent security issues
 add_filter( 'xmlrpc_methods', function( $methods ) {
