@@ -666,6 +666,36 @@ function nav_menu_locations() {
 add_action( 'after_setup_theme', 'nav_menu_locations' );
 
 
+//Show different meta data information about the post. Typically used inside the loop.
+//Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
+//Example: nebula_meta('by');
+function nebula_meta($meta, $day=1) {
+	if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ) {
+		$the_day = '';
+		if ( $day ) {
+			$the_day = get_the_date('d') . '/';
+		}
+		echo '<span class="posted-on"><i class="icon-calendar"></i> <span class="entry-date">' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+	} elseif ( $meta == 'author' || $meta == 'by' ) {
+		echo '<span class="posted-by"><i class="icon-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
+	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ) {
+		if ( is_object_in_taxonomy(get_post_type(), 'category') ) {
+			$post_categories = '<span class="posted-in post-categories"><i class="icon-bookmarks"></i> ' . get_the_category_list(', ') . '</span>';
+		} else {
+			$post_categories = '';
+		}
+		echo $post_categories;
+	} elseif ( $meta == 'tags' || $meta == 'tag' ) {
+		$tag_list = get_the_tag_list('', ', ');
+		if ( $tag_list ) {
+			$post_tags = '<span class="posted-in post-tags"><i class="icon-tag"></i> ' . $tag_list . '</span>';
+		} else {
+			$post_tags = '';
+		}
+		echo $post_tags;
+	}
+}
+
 //Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.
 //Several ways to implement this:
 	//Inside the loop (or outside the loop for current post/page): nebula_the_excerpt('Read more &raquo;', 20, 1);
@@ -991,6 +1021,16 @@ function baseDomain( $str='' ) {
     $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
     return $protocol . implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
 }
+
+//Control how scripts are loaded for debugging
+if ( array_key_exists('debug', $_GET) ) {
+	$defer = '';
+	$async = '';
+} else {
+	$defer = 'defer';
+	$async = 'async';
+}
+
 
 //Traverse multidimensional arrays
 function in_array_r($needle, $haystack, $strict = true) {
