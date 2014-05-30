@@ -171,18 +171,18 @@ The following shows each data type that this function can return.
 
 ---
 
-###youtubeMeta()
+###youtube_meta()
 
 #####Description
 This function pulls the metadata from the passed Youtube video ID. This metadata is stored in a global associative array where things like the video title, author, description, duration, etc. can be accessed.
 
 #####Usage
 ```html
-<?php youtubeMeta( $vidID ); ?>
+<?php youtube_meta( $videoID ); ?>
 ```
 
 #####Parameters
-**$vidID**
+**$videoID**
 (required) The Youtube video ID (string).
 Default: *None*
 
@@ -191,7 +191,7 @@ Call the function once, and then use the variables as needed.
 ```html
 <?php youtubeMeta('jtip7Gdcf0Q'); ?>
 <article class="youtube video">
-	<iframe id="<?php echo $vidMeta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $vidMeta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $vidMeta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+	<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
 </article>
 ```
 Note that the automatic Google Analytics tracking requires the class "youtubeplayer" and uses the iframe ID as the title of the video (for the event label).
