@@ -10,7 +10,6 @@
 
 		<title><?php wp_title( '-', true, 'right' ); ?></title>
 		
-		
 		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
 		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
@@ -19,7 +18,6 @@
 		<meta name="MobileOptimized" content="320">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		
-
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/normalize.css" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/gumby.css" />
@@ -55,11 +53,8 @@
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 		
-		<?php if ( array_key_exists('debug', $_GET) ) : ?>
-			<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js"></script>
-		<?php else : ?>
-			<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" defer></script>
-		<?php endif; ?>
+		<?php global $defer; global $async; ?>
+		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $defer; ?>></script>
 		
 		<script>
 			var bloginfo = [];
