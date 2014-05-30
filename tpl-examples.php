@@ -130,23 +130,23 @@ get_header(); ?>
 					<div class="row">
 						<div class="eight columns">
 														
-							<?php youtubeMeta('jtip7Gdcf0Q'); ?>
+							<?php youtube_meta('jtip7Gdcf0Q'); ?>
 							
 							<article class="youtube video">
-								<iframe id="<?php echo $vidMeta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $vidMeta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $vidMeta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+								<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
 							</article>
 														
 							<br/>
 							<div class="container">
 								<div class="row">
 									<div class="four columns">
-										<a href="<?php echo $vidMeta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $vidMeta['id']; ?>/hqdefault.jpg" width="100"/></a>
+										<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
 									</div><!--/columns-->
 									<div class="twelve columns">
-											<a href="<?php echo $vidMeta['href']; ?>" target="_blank"><?php echo $vidMeta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vidMeta['duration']; ?>)</span>
+											<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
 											<span style="display: block; font-size: 12px; line-height: 18px;">
-												by <?php echo $vidMeta['author']; ?><br/>
-												<?php echo $vidMeta['content']; ?>
+												by <?php echo $youtube_meta['author']; ?><br/>
+												<?php echo $youtube_meta['content']; ?>
 											</span>
 									</div><!--/columns-->
 								</div><!--/row-->
@@ -155,23 +155,23 @@ get_header(); ?>
 						</div><!--/columns-->
 						<div class="eight columns">
 							
-							<?php youtubeMeta('fjh61K3hyY0'); ?>
+							<?php youtube_meta('fjh61K3hyY0'); ?>
 							
 							<article class="youtube video">
-								<iframe id="<?php echo $vidMeta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $vidMeta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $vidMeta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+								<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
 							</article>
 														
 							<br/>
 							<div class="container">
 								<div class="row">
 									<div class="four columns">
-										<a href="<?php echo $vidMeta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $vidMeta['id']; ?>/hqdefault.jpg" width="100"/></a>
+										<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
 									</div><!--/columns-->
 									<div class="twelve columns">
-											<a href="<?php echo $vidMeta['href']; ?>"><?php echo $vidMeta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vidMeta['duration']; ?>)</span>
+											<a href="<?php echo $youtube_meta['href']; ?>"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
 											<span style="display: block; font-size: 12px; line-height: 18px;">
-												by <?php echo $vidMeta['author']; ?><br/>
-												<?php echo $vidMeta['content']; ?>
+												by <?php echo $youtube_meta['author']; ?><br/>
+												<?php echo $youtube_meta['content']; ?>
 											</span>
 									</div><!--/columns-->
 								</div><!--/row-->
