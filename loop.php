@@ -4,6 +4,14 @@
  */
 ?>
 
+<?php /* Display navigation to next/previous pages when applicable @TODO: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
+<?php if ( $wp_query->max_num_pages > 1 ) : ?>
+	<nav id="nav-above" class="navigation">
+		<div class="nav-previous"><?php next_posts_link( '<span class="meta-nav">&larr;</span> Older posts' ); ?></div>
+		<div class="nav-next"><?php previous_posts_link( 'Newer posts <span class="meta-nav">&rarr;</span>' ); ?></div>
+	</nav><!-- #nav-above -->
+<?php endif; ?>
+
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
 <?php if ( ! have_posts() ) : ?>
 	<article id="post-0" class="post error404 not-found">
@@ -31,7 +39,7 @@
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 			
 			<div class="entry-meta">
-				<?php boilerplate_posted_on(); ?> <?php boilerplate_posted_in(); ?>
+				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
 			</div>
 			
 			<div class="entry-content">
@@ -73,7 +81,7 @@
 						
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
 			<div class="entry-meta">
-				<?php boilerplate_posted_on(); ?> <?php boilerplate_posted_in(); ?>
+				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
 			</div>
 			<?php endif; ?>
 			
