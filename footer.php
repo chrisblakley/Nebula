@@ -139,46 +139,23 @@
 			} catch(e) {}
 		</script>
 		
-		<?php if ( array_key_exists('debug', $_GET) ) : //Render-blocking method of loading scripts for debug purposes. These should be identical to the normal site! ?>
+		<?php global $defer; global $async; ?>
+		<script src="<?php bloginfo('template_directory');?>/js/libs/jquery.mmenu.min.all.js"></script> <!-- @TODO: Have to make sure this one loads before main.js! Can it be deferred? -->
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $async; ?>></script>
+		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $async; ?>></script> -->
+		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $async; ?>></script> -->
+		<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $async; ?>></script>-->
+		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $defer; ?>></script> -->
+		<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js" <?php echo $defer; ?>></script>
 		
-			<script src="<?php bloginfo('template_directory');?>/js/libs/jquery.mmenu.min.all.js"></script>
+		<!--[if lt IE 9]>
+			<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js" <?php echo $defer; ?>></script>
+			<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js" <?php echo $defer; ?>></script>
+		<![endif]-->
 		
-			<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-			<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script> -->
-			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js"></script> -->
-			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js"></script>-->
-			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js"></script> -->
-			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js"></script>
-				
-			<!--[if lt IE 9]>
-				<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js"></script>
-				<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js"></script>
-			<![endif]-->
-				
-			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js"></script>-->
-			<script src="<?php bloginfo('template_directory');?>/js/main.js"></script>
-		
-		<?php else : //HTML5 Asynchronous/Deferred method of loading scripts ?>
-		
-			<!-- Asynchronously load external scripts using HTML5 -->
-			<script src="<?php bloginfo('template_directory');?>/js/libs/jquery.mmenu.min.all.js"></script> <!-- @TODO: Have to make sure this one loads before main.js! Can it be deferred? -->
-			<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" async></script>
-			<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" async></script> -->
-			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" async></script> -->
-			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" async></script>-->
-			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" defer></script> -->
-			<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js" defer></script>
-			
-			<!--[if lt IE 9]>
-				<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js" defer></script>
-				<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js" defer></script>
-			<![endif]-->
-			
-			<!-- Defer loading external scripts using HTML5 -->
-			<!--<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js" defer></script>-->
-			<script src="<?php bloginfo('template_directory');?>/js/main.js" defer></script>
-				
-		<?php endif; ?>
+		<!-- Defer loading external scripts using HTML5 -->
+		<!--<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js" <?php echo $defer; ?>></script>-->
+		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $defer; ?>></script>
 		
 		<script>
 			if ( jQuery('.youtubeplayer').length ) {
