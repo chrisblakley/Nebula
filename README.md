@@ -150,7 +150,7 @@ This function pulls metadata from a post. Note: the function calls for certain s
 
 #####Usage
 ```html
-<?php echo nebula_meta( $meta, $day ); ?>
+<?php nebula_meta( $meta, $day ); ?>
 ```
 #####Parameters
 **$meta**
