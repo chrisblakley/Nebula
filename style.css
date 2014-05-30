@@ -101,6 +101,7 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
     .tab-content ul {padding-left: 20px;}
         .tab-content ul li {list-style: disc;}
 body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby video setting */
+i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 
 
 /* ==========================================================================
@@ -186,6 +187,11 @@ nav#topnav {position: relative; z-index: 1000;}
 
 /***** CONTENT AREA *****/
 div#bcrumbs {position: relative; z-index: 1;}
+
+.entry-meta {font-size: 12px; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; box-shadow: inset 0 1px 0 0 #fff, inset 0 -1px 0 0 #ccc;}
+	.posted-on,
+	.posted-in,
+	.posted-by {display: inline-block; margin-right: 10px;}
 
 .entry-content {}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
