@@ -11,12 +11,12 @@
 /* ==========================================================================
    Base styles: opinionated defaults
    ========================================================================== */
-html, button, input, select, textarea {color: #222;}
+html, button, input, select, textarea {color: #444; font-size: 14px;}
 ::-moz-selection {background: #b3d4fc; text-shadow: none;}
 ::selection {background: #b3d4fc; text-shadow: none;}
 hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;}
-hr.ongrey {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use on a light grey background */
-hr.onwhite {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use on a white background */
+hr.ongrey {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use on a light grey background @TODO: Remove these for RGBA support */
+hr.onwhite {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use on a white background @TODO: Remove these for RGBA support */
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
@@ -24,12 +24,12 @@ ul {padding: 0;}
 
 h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
 h1, h2, h3, h4, h5, h6 {}
-h1 {font-size: 32px;}
-h2 {font-size: 24px;}
-h3 {font-size: 18px;}
-h4 {font-size: 16px;}
-h5 {font-size: 13px;}
-h6 {font-size: 10px;}
+h1 {font-size: 32px; line-height: 40px;}
+h2 {font-size: 24px; line-height: 32px;}
+h3 {font-size: 18px; line-height: 26px;}
+h4 {font-size: 16px; line-height: 24px;}
+h5 {font-size: 13px; line-height: 21px;}
+h6 {font-size: 10px; line-height: 18px;}
 p {}
 span {font-size: inherit;}
 
@@ -188,15 +188,17 @@ nav#topnav {position: relative; z-index: 1000;}
 /***** CONTENT AREA *****/
 div#bcrumbs {position: relative; z-index: 1;}
 
+.row.multi-column-query {margin-bottom: 30px;}
+
 .entry-meta {font-size: 12px; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; box-shadow: inset 0 1px 0 0 #fff, inset 0 -1px 0 0 #ccc;}
 	.posted-on,
 	.posted-in,
 	.posted-by {display: inline-block; margin-right: 10px;}
 
-.entry-content {}
+.entry-content {margin-top: 10px;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
 
-.entry-manage {font-size: 12px; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; box-shadow: inset 0 1px 0 0 #fff, inset 0 -1px 0 0 #ccc;}
+.entry-manage {margin-top: 15px; font-size: 12px; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; box-shadow: inset 0 1px 0 0 #fff, inset 0 -1px 0 0 #ccc;}
 	.entry-edit {}
 	.entry-modified {float: right;}
 
