@@ -24,14 +24,14 @@ ul {padding: 0;}
 
 h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
 h1, h2, h3, h4, h5, h6 {}
-h1 {}
-h2 {}
-h3 {}
-h4 {}
-h5 {}
-h6 {}
+h1 {font-size: 32px;}
+h2 {font-size: 24px;}
+h3 {font-size: 18px;}
+h4 {font-size: 16px;}
+h5 {font-size: 13px;}
+h6 {font-size: 10px;}
 p {}
-span {}
+span {font-size: inherit;}
 
 /* ==========================================================================
    Chrome Frame prompt
@@ -196,6 +196,9 @@ div#bcrumbs {position: relative; z-index: 1;}
 .entry-content {}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
 
+.entry-manage {font-size: 12px; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; box-shadow: inset 0 1px 0 0 #fff, inset 0 -1px 0 0 #ccc;}
+	.entry-edit {}
+	.entry-modified {float: right;}
 
 /* wp-pagenavi Pagination */
 div.wp-pagenavi {float: right; margin-top: 20px;}
