@@ -171,7 +171,6 @@
 							?>
 						</nav><!--/mobilenav-->
 						
-						
 						<a class="alignright" href="#mobilecontact"><i class="icon-users"></i></a>
 						<nav id="mobilecontact" class="unhideonload hidden">
 							<ul>
@@ -233,7 +232,7 @@
 		<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
 			<div class="row">
 				<div class="three columns">
-					<a href="<?php echo home_url(); ?>"><i class="icon-home"></i><?php echo bloginfo('name'); ?></a>
+					<a href="<?php echo home_url(); ?>"><i class="icon-home"></i> <?php echo bloginfo('name'); ?></a>
 				</div>
 			</div>
 		</div>
