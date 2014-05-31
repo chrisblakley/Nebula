@@ -5,7 +5,14 @@
 ?>
 
 <ul class="xoxo">
-
+	
+	<?php if ( is_author() ) : ?>
+		<li>
+			<h3>About the Author</h3>
+		</li>
+	<?php endif; ?>
+	
+	
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ) : ?>
 		<?php //Primary Widget Area ?>
 	<?php endif; ?>
