@@ -70,7 +70,19 @@
 			<footer class="entry-utility">
 				<a href="<?php echo get_term_link('gallery', 'category'); ?>">More Galleries</a>
 				<?php //comments_popup_link('Leave a comment', '1 Comment', '% Comments'); ?>
-				<?php edit_post_link('Edit'); ?>
+				
+				<?php if ( current_user_can('manage_options') ) : ?>
+					<div class="container entry-manage">
+						<div class="row">
+							<div class="six columns entry-edit">
+								<a href="<?php echo get_admin_url(); ?>" target="_blank">Admin</a> | <?php edit_post_link('Edit'); ?>
+							</div><!--/columns-->
+							<div class="ten columns">
+								<span class="entry-modified">Last Modified: <strong><?php the_modified_date(); ?></strong> by <strong><?php the_modified_author(); ?></strong></span>
+							</div><!--/columns-->
+						</div>
+					</div>
+				<?php endif; ?>
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
 
@@ -81,7 +93,7 @@
 						
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
 			<div class="entry-meta">
-				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
+				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
 			</div>
 			<?php endif; ?>
 			
@@ -96,10 +108,18 @@
 				</div>
 			<?php endif; ?>
 
-			<footer class="entry-utility">
-				<?php //comments_popup_link('Leave a comment', '1 Comment', '% Comments'); ?>
-				<?php edit_post_link('Edit'); ?>
-			</footer>
+			<?php if ( current_user_can('manage_options') ) : ?>
+				<div class="container entry-manage">
+					<div class="row">
+						<div class="six columns entry-edit">
+							<a href="<?php echo get_admin_url(); ?>" target="_blank">Admin</a> | <?php edit_post_link('Edit'); ?>
+						</div><!--/columns-->
+						<div class="ten columns">
+							<span class="entry-modified">Last Modified: <strong><?php the_modified_date(); ?></strong> by <strong><?php the_modified_author(); ?></strong></span>
+						</div><!--/columns-->
+					</div>
+				</div>
+			<?php endif; ?>
 		</article>
 
 		<?php //comments_template('', true); ?>
