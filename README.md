@@ -32,6 +32,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 	- 517x516px "large.png"
 - Google Analytics tracking number/domain (header.php)
 - Facebook appID (if applicable) (header.php)
+- Strip out all unplanned HTML/CSS/JS (Do this before any other development! You can always add pieces back in from the Nebula.)
 - [Theme development goes here]
 - Update screenshot.png
 - Search for any remaining @TODO tags
