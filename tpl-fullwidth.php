@@ -16,7 +16,15 @@ get_header(); ?>
 						<?php the_content(); ?>
 						
 						<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-						<?php edit_post_link( 'Edit', '<p class="edit-link">', '</p>' ); ?>
+						<?php if ( current_user_can('manage_options') ) : ?>
+							<div class="container entry-manage">
+								<div class="row">
+									<div class="sixteen columns">
+										<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+									</div><!--/columns-->
+								</div>
+							</div>
+						<?php endif; ?>
 					</div><!-- .entry-content -->
 				</article><!-- #post-## -->
 				<?php //comments_template( '', true ); ?>
