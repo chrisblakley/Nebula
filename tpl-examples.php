@@ -6,25 +6,23 @@
 
 get_header(); ?>
 
-<div class="container" style="background: #0098d7; margin-bottom: 25px;">
-	<div class="row">
-		<div class="sixteen columns">
-			
-			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<h1 class="entry-title" style="color: #fff;"><?php the_title(); ?></h1>
-					<div class="entry-content" style="color: #fff;">
-						<?php the_content(); ?>
-						
-						<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-						<?php edit_post_link('Edit'); ?>
-					</div><!-- .entry-content -->
-				</article><!-- #post-## -->
-				<?php //comments_template( '', true ); ?>
-			<?php endwhile; ?>
-		</div><!--/columns-->
-	</div><!--/row-->
-</div><!--/container-->
+<section><!-- Do not duplicate this section because it has inline styles. -->
+	<div class="container" style="background: #0098d7; margin-bottom: 25px;">
+		<div class="row">
+			<div class="sixteen columns">
+				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<h1 class="entry-title" style="color: #fff;"><?php the_title(); ?></h1>
+						<div class="entry-content" style="color: #fff;">
+							<?php the_content(); ?>						
+						</div><!-- .entry-content -->
+					</article><!-- #post-## -->
+					<?php //comments_template( '', true ); ?>
+				<?php endwhile; ?>
+			</div><!--/columns-->
+		</div><!--/row-->
+	</div><!--/container-->
+</section>
 
 <div class="container">
 	<div class="row">
@@ -42,18 +40,18 @@ get_header(); ?>
 			<h5><a href="http://codex.wordpress.org/Function_Reference/query_posts" target="_blank">Documentation &raquo;</a></h5>
 			<p>This is a basic Wordpress query posts, but also shows how Gumby columns can be integrated into the logic. The function nebula_meta() is shown as well. This also shows the Wordpress plugin WP-PageNavi.</p>
 			<div class="container">
-				<div class="row">
+				<div class="row multi-column-query">
 					<?php $count = 0; ?>
 					<?php query_posts( array( 'category_name' => 'Examples', 'showposts' => 4, 'paged' => get_query_var('paged') ) ); ?>
 						<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					        <?php if ( $count%2 == 0 && $count != 0 ) : ?>
 					            </div><!--/row-->
-					            <div class="row">
+					            <div class="row multi-column-query">
 					        <?php endif; ?>
 					                     
 					        <div class="eight columns">
 							    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-							        <h5 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h5>
+							        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
 							        							        
 							        <div class="entry-meta">
 							        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
