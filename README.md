@@ -172,6 +172,32 @@ The following shows each data type that this function can return.
 
 ---
 
+###nebula_manage()
+
+#####Description
+This function allows management links and information to appear about the current post. Can be used inside or outside the loop. Currently there are only two options for information displayed. *Important:* Generally this function should be inside of a "current_user_can('manage_options')" conditional so the links do not appear to the public.
+
+#####Usage
+```html
+<?php nebula_manage( $thing ); ?>
+```
+#####Parameters
+**$thing**
+(required) Which management action should be displayed. Strings include "admin" or "edit", and "modified" or "mod" (string)
+Default: *None*
+
+#####Examples
+The following shows each data type that this function can return.
+```html
+<?php if ( current_user_can('manage_options') ) : ?>
+	<div class="entry-manage">
+		<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+	</div>
+<?php endif; ?>
+```
+
+---
+
 ###youtube_meta()
 
 #####Description
