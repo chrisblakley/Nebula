@@ -745,6 +745,15 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 	return $string[0];
 }
 
+//Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
+//Important! Don't this function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
+function nebula_manage($thing) {
+	if ( $thing == 'edit' || $thing == 'admin' ) {
+		echo '<span class="post-admin"><i class="icon-tools"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="icon-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span>';
+	} elseif ( $thing == 'modified' || $thing == 'mod' ) {
+		echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . get_the_modified_author() . '</strong></span>';
+	}
+}
 
 
 //Text limiter by words
