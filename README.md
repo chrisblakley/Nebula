@@ -33,12 +33,12 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Google Analytics tracking number/domain (header.php)
 - Facebook appID (if applicable) (header.php)
 - Strip out all unplanned HTML/CSS/JS (Do this before any other development! You can always add pieces back in from the Nebula.)
-- [Theme development goes here]
+- *[Theme development goes here]*
 - Update screenshot.png
 - Search for any remaining @TODO tags
-- [Testing](https://docs.google.com/document/d/17nmeSsa-4SSfX8bzWWUXcFDTyz3o2-oSgX4ayCgGm7Y/)
+- *[Testing](https://docs.google.com/document/d/17nmeSsa-4SSfX8bzWWUXcFDTyz3o2-oSgX4ayCgGm7Y/)*
 - Uncheck "Discourage search engines from indexing this site" (Reading Settings)
-- [Launch/Migration](https://docs.google.com/document/d/1jEaImmelk5bitFdh01WU_vm0WctYfhYEAKNZfwWJY0M/)
+- *[Launch/Migration](https://docs.google.com/document/d/1jEaImmelk5bitFdh01WU_vm0WctYfhYEAKNZfwWJY0M/)*
 - Enable W3 Total Cache
 
 ##Recommended Plugins
