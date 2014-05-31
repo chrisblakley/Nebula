@@ -231,8 +231,13 @@
 		
 		<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
 			<div class="row">
-				<div class="three columns">
+				<div class="four columns">
 					<a href="<?php echo home_url(); ?>"><i class="icon-home"></i> <?php echo bloginfo('name'); ?></a>
-				</div>
+				</div><!--/columns-->
+				<div class="twelve columns">
+					<nav id="fixednav">
+						<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
+	        		</nav>
+				</div><!--/columns-->
 			</div>
 		</div>
