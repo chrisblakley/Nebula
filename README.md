@@ -175,7 +175,7 @@ The following shows each data type that this function can return.
 ###nebula_manage()
 
 #####Description
-This function allows management links and information to appear about the current post. Can be used inside or outside the loop. Currently there are only two options for information displayed. *Important:* Generally this function should be inside of a "current_user_can('manage_options')" conditional so the links do not appear to the public.
+This function allows management links and information to appear about the current post. Can be used inside or outside the loop. Currently there are only two options for information displayed. **Important:** Generally this function should be inside of a "current_user_can('manage_options')" conditional so the links do not appear to the public.
 
 #####Usage
 ```html
