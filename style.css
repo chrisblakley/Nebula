@@ -134,22 +134,13 @@ Also be sure to find the other @TODO: items within the stylesheet.
 		#topbarcon a.hover {color: grey;}
 	#topbarcon .rightside {text-align: right;}
 
-.fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s ease 0s;}
-	.fixedbar > div {display: none;}
-	.fixedbar.active {height: 20px;}
-		.fixedbar.active > div {display: block;}
-	.fixedbar a {display: block; padding-top: 4px; font-size: 11px; line-height: 12px; color: #fff;}
-		.fixedbar a:hover,
-		.fixedbar a.hover {color: #ccc;}
-	.fixedbar i {font-size: 13px;}
-
 #mobilenav {visibility: hidden; height: 0;}
 	#mobilenav.mm-menu {visibility: visible; height: 100%;}
 
 /* Nebula Wordpress top navigation style defaults */
 nav#topnav {position: relative; z-index: 1000;}
 	nav#topnav ul {}
-		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px; float: right;}
+		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px; float: right;} /* @TODO: Change this float: right to be on the parent */
 			nav#topnav ul li.menu-item:first-child,
 			nav#topnav ul li.menu-item.first-child {margin-right: 0;}
 			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
@@ -181,12 +172,34 @@ nav#topnav {position: relative; z-index: 1000;}
 				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 25px; opacity: 1;}
 				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
 
+.fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s ease 0s;}
+	.fixedbar > div {display: none;}
+	.fixedbar.active {height: 20px;}
+		.fixedbar.active > div {display: block;}
+	.fixedbar a {display: block; font-size: 11px; color: #fff;}
+		.fixedbar a:hover,
+		.fixedbar a.hover {color: #ccc;}
+	.fixedbar i {font-size: 13px;}
+
+/* Nebula Wordpress fixed navigation style defaults */
+nav#fixednav {position: relative; z-index: 1000;}
+	nav#fixednav ul {float: right;}
+		nav#fixednav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px;}
+			nav#fixednav ul li.menu-item:last-child,
+			nav#fixednav ul li.menu-item.last-child {margin-right: 0;}
+			nav#fixednav ul li.menu-item a {}
+				nav#fixednav ul li.menu-item a:hover,
+				nav#fixednav ul li.menu-item a.hover {}
+			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
+
+
 #heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; transition: all 0.5s ease 0s;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 48px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8); transition: all 0.5s ease 0s;}
 
 
 /***** CONTENT AREA *****/
 div#bcrumbs {position: relative; z-index: 1;}
+	nav.breadcrumbs {font-size: 12px;}
 
 .row.multi-column-query {margin-bottom: 30px;}
 
