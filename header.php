@@ -63,7 +63,7 @@
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 		
-		<?php global $defer, $async; ?>
+		<?php global $defer, $async, $gumby_debug; ?>
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $defer; ?>></script>
 		
 		<script>

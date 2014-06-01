@@ -208,6 +208,13 @@ div#bcrumbs {position: relative; z-index: 1;}
 	.posted-in,
 	.posted-by {display: inline-block; margin-right: 10px;}
 
+.entry-social {}
+	.entry-social ul {}
+		.entry-social ul li {display: inline;}
+			.entry-social ul li.facebook-like {}
+			.entry-social ul li.facebook-share {}
+			.entry-social ul li.twitter {}
+
 .entry-content {margin-top: 10px;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
 

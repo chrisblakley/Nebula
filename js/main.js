@@ -21,7 +21,7 @@ jQuery(document).ready(function() {
 	
 	
 	viewport = updateViewportDimensions();
-	console.debug(viewport);
+	//console.debug(viewport);
 	jQuery(window).resize(function() {
 		waitForFinalEvent(function(){
 		
@@ -36,7 +36,7 @@ jQuery(document).ready(function() {
 	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	}
 	    	viewport = updateViewportDimensions();
-	    	console.debug(viewport);
+	    	//console.debug(viewport);
 		}, 500, "unique resize ID 1");
 	});
 	
@@ -96,12 +96,12 @@ function updateViewportDimensions() {
 	
 	if ( typeof viewport === 'undefined' ) {
 		var viewportHistory = 0;
-		console.log('creating viewport History: ' + viewportHistory);
+		//console.log('creating viewport History: ' + viewportHistory);
 	} else {
 		var viewportHistory = viewport.history+1;
 		viewport.prevWidth = viewport.width; //Not pushing to the object...
 		viewport.prevHeight = viewport.height; //Not pushing to the object...
-		console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
+		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
 	}
 	
 	var x = w.innerWidth || e.clientWidth || g.clientWidth;
@@ -276,6 +276,18 @@ function gaEventTracking(){
 	
 } //End gaEventTracking()
 
+
+function googlePlusCallback(jsonParam) {
+	var currentPage = jQuery(document).attr('title');
+	if ( jsonParam.state == 'on' ) {
+		ga('send', 'event', 'Social', 'Google+ Like', currentPage);
+	} else if ( jsonParam.state == 'off' ) {
+		ga('send', 'event', 'Social', 'Google+ Unlike', currentPage);
+	} else {
+		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]', currentPage);
+	}
+}
+
 function mmenu() {
 	jQuery("#mobilenav").mmenu({
 	    //Options
@@ -418,10 +430,10 @@ function cFormPreValidator() {
 	});
 	jQuery('.cform7-email').blur(function(){ //NOT WORKING YET - Want to remove spaces from the input on blur (the val doesnt have spaces, but the input does...?)
 		var removeSpace = jQuery(this).val();
-		console.log('before trimming: ', removeSpace);
+		//console.log('before trimming: ', removeSpace);
 		removeSpace = removeSpace.replace(/ /g, '_');
 		jQuery(this).val(removeSpace);
-		console.log('after trimming: ', removeSpace);
+		//console.log('after trimming: ', removeSpace);
 		
 		if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ) {
 			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');

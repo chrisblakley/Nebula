@@ -113,7 +113,7 @@
 </div><!--/footer-->
 
 		<script>
-			//If Wordpress can't call jQuery, load it from Google's CDN 
+			//If jQuery has not been intialized, load it from Google's CDN 
 			if (typeof jQuery == 'undefined') {
 			    var script = document.createElement('script');
 			    script.type = "text/javascript";
@@ -123,6 +123,7 @@
 		</script>
 				
 		<script>
+			//Capture Print Intent
 			try { (function() {
 					var afterPrint = function() {
 						ga('send', 'event', 'Print (Intent)', document.location.pathname);
@@ -139,25 +140,24 @@
 			} catch(e) {}
 		</script>
 		
-		<?php global $defer, $async; ?>
+		<?php global $defer, $async, $gumby_debug; ?>
 		<script src="<?php bloginfo('template_directory');?>/js/libs/jquery.mmenu.min.all.js"></script> <!-- @TODO: Have to make sure this one loads before main.js! Can it be deferred? -->
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $async; ?>></script>
 		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $async; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $async; ?>></script> -->
 		<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $async; ?>></script>-->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $defer; ?>></script> -->
-		<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.js" <?php echo $defer; ?>></script>
+		<script <?php echo $gumby_debug; ?> src="<?php bloginfo('template_directory');?>/js/libs/gumby.min.js" <?php echo $defer; ?>></script>
 		
 		<!--[if lt IE 9]>
 			<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js" <?php echo $defer; ?>></script>
 			<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js" <?php echo $defer; ?>></script>
 		<![endif]-->
 		
-		<!-- Defer loading external scripts using HTML5 -->
-		<!--<script src="<?php bloginfo('template_directory');?>/js/libs/gumby.init.js" <?php echo $defer; ?>></script>-->
 		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $defer; ?>></script>
 		
 		<script>
+			//Check for Youtube Videos
 			if ( jQuery('.youtubeplayer').length ) {
 				var players = {};
 				var tag = document.createElement('script');

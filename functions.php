@@ -1035,9 +1035,11 @@ function baseDomain( $str='' ) {
 if ( array_key_exists('debug', $_GET) ) {
 	$defer = '';
 	$async = '';
+	$gumby_debug = 'gumby-debug';
 } else {
 	$defer = 'defer';
 	$async = 'async';
+	$gumby_debug = '';
 }
 
 
