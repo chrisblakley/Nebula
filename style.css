@@ -217,13 +217,19 @@ div#bcrumbs {position: relative; z-index: 1;}
 	.post-modified {float: right;}
 
 /* wp-pagenavi Pagination */
-div.wp-pagenavi {float: right; margin-top: 20px;}
+div.wp-pagenavi {float: right; margin-bottom: 20px;}
 	div.wp-pagenavi span.pages {}
 	div.wp-pagenavi span.current {}
 	div.wp-pagenavi a.page {}
 	div.wp-pagenavi a.nextpostslink {}
 	div.wp-pagenavi a.previouspostslink {}
 
+/* WP Core Pagination */
+div.wp-pagination {float: right; margin-bottom: 20px;}
+	div.wp-pagination a.page-numbers {}
+	div.wp-pagination span.page-numbers.current {}
+	div.wp-pagination a.page-numbers.next {}
+	div.wp-pagination a.page-numbers.prev {}
 
 /***** SIDEBAR *****/
 .xoxo {padding: 0;}

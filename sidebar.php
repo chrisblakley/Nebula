@@ -96,11 +96,11 @@
 
 ?>
 
-<?php if ( is_plugin_active('contact-form-7') ) : ?>
+<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
 	<h3>Contact Us</h3>
 	<ul id="cform7-container">
 		<?php echo do_shortcode('[contact-form-7 id="161" title="Sample Message"]'); ?>
-	</ul>		
+	</ul>
 <?php endif; ?>
 		
 		

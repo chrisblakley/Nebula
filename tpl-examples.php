@@ -79,11 +79,26 @@ get_header(); ?>
 							</div><!--/columns-->
 					                         
 					        <?php $count++; ?>
-					                         
 					    <?php endwhile; ?>
-					    <?php wp_pagenavi(); ?>
-					    <?php wp_reset_query(); ?>
+					    
 					</div><!--/row-->
+					
+					<?php if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ) : ?>
+				    	<?php wp_pagenavi(); ?>
+				    <?php else : ?>
+				    	<?php
+							global $wp_query;
+							$big = 999999999; //An unlikely integer
+							echo '<div class="wp-pagination">' . paginate_links(array(
+								'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+								'format' => '?paged=%#%',
+								'current' => max(1, get_query_var('paged')),
+								'total' => $wp_query->max_num_pages
+							)) . '</div>';
+						?>
+				    <?php endif; ?>
+				    
+				    <?php wp_reset_query(); ?>
 					
 				</div><!--/container-->
 			<hr/>

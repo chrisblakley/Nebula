@@ -132,7 +132,7 @@ if ( ! function_exists( 'boilerplate_comment' ) ) :
 	}
 endif;
 
-if ( ! function_exists( 'boilerplate_widgets_init' ) ) :
+if ( !function_exists( 'boilerplate_widgets_init' ) ) :
 	/**
 	 * Register widgetized areas, including two sidebars and four widget-ready columns in the footer.
 	 *
@@ -297,7 +297,6 @@ endif;
 require_once dirname( __FILE__ ) . '/includes/class-tgm-plugin-activation.php';
 
 add_action( 'tgmpa_register', 'my_theme_register_required_plugins' );
-
 function my_theme_register_required_plugins() {
 
     $plugins = array(
@@ -412,6 +411,7 @@ function my_theme_register_required_plugins() {
     tgmpa( $plugins, $config );
 	
 	/* 
+		Until there is support for Required, Recommended, AND Optional plugins:
 		When updating the class file (in the /includes directory, be sure to edit the text on the following line to be 'Recommended' and 'Optional' in the installation table.
 		$table_data[$i]['type'] = isset( $plugin['required'] ) && $plugin['required'] ? __( 'Recommended', 'tgmpa' ) : __( 'Optional', 'tgmpa' );
 	*/
