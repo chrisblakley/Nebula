@@ -39,7 +39,9 @@
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 			
 			<div class="entry-meta">
+				<hr/>
 				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
+				<hr/>
 			</div>
 			
 			<div class="entry-content">
@@ -75,7 +77,9 @@
 					<div class="container entry-manage">
 						<div class="row">
 							<div class="sixteen columns">
+								<hr/>
 								<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+								<hr/>
 							</div><!--/columns-->
 						</div>
 					</div>
@@ -90,7 +94,9 @@
 						
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
 			<div class="entry-meta">
+				<hr/>
 				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
+				<hr/>
 			</div>
 			<?php endif; ?>
 			
@@ -109,7 +115,9 @@
 				<div class="container entry-manage">
 					<div class="row">
 						<div class="sixteen columns">
+							<hr/>
 							<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+							<hr/>
 						</div><!--/columns-->
 					</div>
 				</div>

@@ -14,9 +14,9 @@
 html, button, input, select, textarea {color: #444; font-size: 14px;}
 ::-moz-selection {background: #b3d4fc; text-shadow: none;}
 ::selection {background: #b3d4fc; text-shadow: none;}
-hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;}
-hr.ongrey {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 1em 0; padding: 0;} /* Use on a light grey background @TODO: Remove these for RGBA support */
-hr.onwhite {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #e7e7e7; margin: 1em 0; padding: 0;} /* Use on a white background @TODO: Remove these for RGBA support */
+hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 3px 0; padding: 0;}
+.rgba hr {display: block; height: 1px; border: 0; background: rgba(255,255,255,1); margin: 3px 0; padding: 0; mix-blend-mode: screen;}
+	.rgba hr:before {content: ''; position: relative; top: -1px; height: 1px; display: block; background: rgba(0,0,0,0.2); mix-blend-mode: multiply;}
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
@@ -139,10 +139,10 @@ Also be sure to find the other @TODO: items within the stylesheet.
 
 /* Nebula Wordpress top navigation style defaults */
 nav#topnav {position: relative; z-index: 1000;}
-	nav#topnav ul {}
-		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px; float: right;} /* @TODO: Change this float: right to be on the parent */
-			nav#topnav ul li.menu-item:first-child,
-			nav#topnav ul li.menu-item.first-child {margin-right: 0;}
+	nav#topnav ul {float: right;}
+		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
+			nav#topnav ul li.menu-item:last-child,
+			nav#topnav ul li.menu-item.last-child {margin-right: 0;}
 			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
 				nav#topnav ul li.menu-item a:hover,
 				nav#topnav ul li.menu-item a.hover {color: #95D600;}
@@ -203,7 +203,7 @@ div#bcrumbs {position: relative; z-index: 1;}
 
 .row.multi-column-query {margin-bottom: 30px;}
 
-.entry-meta {font-size: 12px; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; box-shadow: inset 0 1px 0 0 #fff, inset 0 -1px 0 0 #ccc;}
+.entry-meta {font-size: 12px;}
 	.posted-on,
 	.posted-in,
 	.posted-by {display: inline-block; margin-right: 10px;}
@@ -211,7 +211,7 @@ div#bcrumbs {position: relative; z-index: 1;}
 .entry-content {margin-top: 10px;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
 
-.entry-manage {margin-top: 15px; font-size: 12px; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; box-shadow: inset 0 1px 0 0 #fff, inset 0 -1px 0 0 #ccc;}
+.entry-manage {font-size: 12px; margin-top: 15px;}
 	.post-edit,
 	.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;}
