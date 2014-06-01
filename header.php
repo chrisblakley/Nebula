@@ -30,7 +30,11 @@
 		<link rel="icon" href="<?php bloginfo('template_directory');?>/images/favicon.ico">
 		<link rel="apple-touch-icon" href="<?php bloginfo('template_directory');?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
 		
+		<?php global $social; ?>
+		
 		<!-- Facebook Metadata -->
+		<?php $social['facebook_url'] = 'https://www.facebook.com/PinckneyHugo'; //@TODO: Enter the URL of the Facebook page here. ?>
+		<?php $social['facebook_app_id'] = ''; //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!)?>
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
 		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
@@ -40,9 +44,15 @@
 	    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb2.jpg" />
 		
 		<!-- Google+ Metadata -->
+		<?php $social['google_plus_url'] = ''; //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
 		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
+
+		<!-- Other Social Metadata -->
+		<?php $social['twitter_url'] = 'https://twitter.com/pinckneyhugo'; //@TODO: Enter the URL of the Twitter page here. ?>
+		<?php $social['linkedin_url'] = ''; //@TODO: Enter the URL of the LinkedIn page here. ?>
+		<?php $social['youtube_url'] = ''; //@TODO: Enter the URL of the Youtube page here. ?>
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
@@ -53,7 +63,7 @@
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 		
-		<?php global $defer; global $async; ?>
+		<?php global $defer, $async; ?>
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $defer; ?>></script>
 		
 		<script>
@@ -62,6 +72,13 @@
 			bloginfo['template_directory'] = "<?php echo bloginfo('template_directory'); ?>";
 			bloginfo['stylesheet_url'] = "<?php echo bloginfo('stylesheet_url'); ?>";
 			bloginfo['home_url'] = "<?php echo home_url(); ?>";
+			
+			var social = [];
+			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
+			social['twitter_url'] = "<?php echo $social['twitter_url']; ?>";
+			social['google_plus_url'] = "<?php echo $social['google_plus_url']; ?>";
+			social['linkedin_url'] = "<?php echo $social['linkedin_url']; ?>";
+			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
 		</script>
 		
 		<script> //Universal Analytics
@@ -78,14 +95,13 @@
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
-		
-		<?php //Facebook App ID: ###############, Access Token: ######################## ?>
+				
 		<div id="fb-root"></div>
 		<script type="text/javascript">
 			window.fbAsyncInit = function() {
 		    //Initialize the Facebook JavaScript SDK
 		    FB.init({
-		      appId      : '###############', //@TODO: Replace with client's FB App ID!
+		      appId      : '<?php echo $social['facebook_app_id']; //@TODO: Come up with a backup App ID to use. ?>',
 		      channelUrl : '<?php bloginfo("template_directory");?>/includes/channel.html',
 		      status     : true,
 		      xfbml      : true

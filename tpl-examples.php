@@ -323,32 +323,42 @@ get_header(); ?>
 		<div class="sixteen columns fb-like-box-con">
 			<h2>Facebook Feed</h2>
 			<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
-			<p>This is an integrated Facebook feed from a page using the Wordpress plugin Custom Facebook Feed.</p>
-			<div id="fbcon">
-				<div class="fbhead">
-					<p><a href="https://www.facebook.com/PinckneyHugo" target="_blank"><i class="icon-facebook"></i>Facebook</a></p>
-				</div><!--/fbhead-->
-				<div class="fbbody">
-					<div class="container">
-						<div class="fb-feed">
-							<div class="row tweetcon">
-								<div class="four columns">
-									<div class="fbicon"><a href="https://www.facebook.com/PinckneyHugo" target="_blank"><img src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/s160x160/64307_10150605580729671_377991150_a.jpg"/></a></div>
-								</div><!--/columns-->
-								<div class="twelve columns">
-									<div class="fbuser">
-										<a href="https://www.facebook.com/PinckneyHugo" target="_blank">Pinckney Hugo Group</a>
-									</div><!--/fbuser-->
-									<div class="fbpost">
-										<?php echo do_shortcode('[custom-facebook-feed id=PinckneyHugo num=3]'); ?>
-									</div><!--/fbpost-->
-								</div><!--/columns-->
-							</div><!--/row-->
-						</div><!--/fb-feed-->
-					</div><!--/container-->
-				</div><!--/fbbody-->
-			</div><!--/fbcon-->
-			<hr/>
+			<p>This is an integrated Facebook feed from a page using the Wordpress plugin Custom Facebook Feed. Also shown is the native Facebook Like Box. If the Custom Facebook Feed is not installed/active, a Like Box will appear instead.</p>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="ten columns">
+			<?php if ( is_plugin_active('custom-facebook-feed/custom-facebook-feed.php') ) : ?>
+				<div id="fbcon">
+					<div class="fbhead">
+						<p><a href="<?php echo $social['facebook_url']; ?>" target="_blank"><i class="icon-facebook"></i> Facebook</a></p>
+					</div><!--/fbhead-->
+					<div class="fbbody">
+						<div class="container">
+							<div class="fb-feed">
+								<div class="row tweetcon">
+									<div class="four columns">
+										<div class="fbicon"><a href="<?php echo $social['facebook_url']; ?>" target="_blank"><img src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/s160x160/64307_10150605580729671_377991150_a.jpg"/></a></div>
+									</div><!--/columns-->
+									<div class="twelve columns">
+										<div class="fbuser">
+											<a href="<?php echo $social['facebook_url']; ?>" target="_blank"><?php echo bloginfo('name'); ?></a>
+										</div><!--/fbuser-->
+										<div class="fbpost">
+											<?php echo do_shortcode('[custom-facebook-feed id=PinckneyHugo num=3]'); ?>
+										</div><!--/fbpost-->
+									</div><!--/columns-->
+								</div><!--/row-->
+							</div><!--/fb-feed-->
+						</div><!--/container-->
+					</div><!--/fbbody-->
+				</div><!--/fbcon-->
+			<?php else : ?>
+				<div class="fb-like-box" data-href="<?php echo $social['facebook_url']; ?>" data-width="100%" data-colorscheme="light" data-show-faces="false" data-header="true" data-stream="true" data-show-border="true"></div>
+			<?php endif; ?>
+		</div><!--/columns-->
+		<div class="five columns push_one">
+			<div class="fb-like-box" data-href="<?php echo $social['facebook_url']; ?>" data-width="100%" data-colorscheme="light" data-show-faces="false" data-header="true" data-stream="true" data-show-border="true"></div>
 		</div><!--/columns-->
 	</div><!--/row-->
 	<div class="row">
@@ -356,18 +366,22 @@ get_header(); ?>
 			<h2>Twitter Feed</h2>
 			<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
 			<p>This is a Twitter integration using twitter.js to pull.</p>
-			<div id="twittercon">
-				<div class="twitterhead">
-					<p><a href="https://twitter.com/pinckneyhugo" target="_blank"><i class="icon-twitter"></i>Tweets</a></p>
-				</div><!--/twitterhead-->
-				<div class="twitterbody">
-					<div class="container">
-						<div class="twitter-feed">		
-							<div id="twitter_update_list"></div>
-						</div><!--/twitter-feed-->
-					</div><!--/container-->
-				</div><!--/twitterbody-->
-			</div><!--/twittercon-->
+			
+			<?php if ( $social['twitter_url'] ) : ?>
+				<div id="twittercon">
+					<div class="twitterhead">
+						<p><a href="<?php echo $social['twitter_url']; ?>" target="_blank"><i class="icon-twitter"></i> Tweets</a></p>
+					</div><!--/twitterhead-->
+					<div class="twitterbody">
+						<div class="container">
+							<div class="twitter-feed">		
+								<div id="twitter_update_list"></div>
+							</div><!--/twitter-feed-->
+						</div><!--/container-->
+					</div><!--/twitterbody-->
+				</div><!--/twittercon-->
+			<?php endif; ?>
+			
 			<hr/>
 		</div><!--/columns-->
 	</div><!--/row-->

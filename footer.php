@@ -139,7 +139,7 @@
 			} catch(e) {}
 		</script>
 		
-		<?php global $defer; global $async; ?>
+		<?php global $defer, $async; ?>
 		<script src="<?php bloginfo('template_directory');?>/js/libs/jquery.mmenu.min.all.js"></script> <!-- @TODO: Have to make sure this one loads before main.js! Can it be deferred? -->
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $async; ?>></script>
 		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $async; ?>></script> -->
