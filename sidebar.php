@@ -108,7 +108,7 @@
 					<?php //@TODO: Eventually change this to use WP Mail with a hard-coded form. ?>
 					<?php $admin_user = get_userdata(1); ?>
 					<div class="medium primary btn icon-left entypo icon-mail">
-						<a class="cform-disabled" href="mailto:<?php echo get_option('admin_email', $admin_user->user_email); ?>?subject=Email%20submission%20from%20<?php the_permalink(); ?>">Email Us</a>
+						<a class="cform-disabled" href="mailto:<?php echo get_option('admin_email', $admin_user->user_email); ?>?subject=Email%20submission%20from%20<?php the_permalink(); ?>" target="_blank">Email Us</a>
 					</div><!--/button-->
 				</div><!--/columns-->
 			</div><!--/row-->

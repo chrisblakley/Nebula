@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
 	
 	powerFooterWidthDist();
 	searchValidator();
-	
+	errorLogAndFallback();
 	
 	viewport = updateViewportDimensions();
 	//console.debug(viewport);
@@ -284,13 +284,7 @@ function gaEventTracking(){
 			copyOver = 1;
 		}
 	});
-	
-	if ( jQuery('.cform-disabled').length ) {
-		var currentPage = jQuery(document).attr('title');
-		ga('send', 'event', 'Contact Form 7 Disabled', currentPage);
-		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
-	}
-	
+		
 } //End gaEventTracking()
 
 
@@ -305,6 +299,21 @@ function googlePlusCallback(jsonParam) {
 	} else {
 		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]', currentPage);
 		Gumby.log('Sending GA event: ' + 'Social', 'Google+ [JSON Unavailable]', currentPage);
+	}
+}
+
+//Detect and log errors, and fallback fixes
+function errorLogAndFallback() {
+	
+	//Check if Contact Form 7 is active and if the selected form ID exists
+	if ( jQuery('.cform-disabled').length ) {
+		var currentPage = jQuery(document).attr('title');
+		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage);
+		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
+	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
+		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo icon-mail"><a class="cform-disabled" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
+		ga('send', 'event', 'Error', 'Contact Form 7 Not Found', currentPage);
+		Gumby.warn('Warning: Contact Form 7 is not found! Reverting to mailto link.');
 	}
 }
 

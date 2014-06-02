@@ -81,13 +81,14 @@
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $defer; ?>></script>
 		
 		<script>
-			var bloginfo = [];
+			bloginfo = [];
 			bloginfo['name'] = "<?php echo bloginfo('name'); ?>";
 			bloginfo['template_directory'] = "<?php echo bloginfo('template_directory'); ?>";
 			bloginfo['stylesheet_url'] = "<?php echo bloginfo('stylesheet_url'); ?>";
 			bloginfo['home_url'] = "<?php echo home_url(); ?>";
+			bloginfo['admin_email'] = "<?php echo get_option('admin_email', $admin_user->user_email); ?>";
 			
-			var social = [];
+			social = [];
 			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
 			social['twitter_url'] = "<?php echo $social['twitter_url']; ?>";
 			social['google_plus_url'] = "<?php echo $social['google_plus_url']; ?>";
