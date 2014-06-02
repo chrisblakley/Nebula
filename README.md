@@ -25,7 +25,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Modify logo.svg and logo.png
 - Apple touch icon (129x129px) *(Rounded corners and glossy effect are automatically applied.)*
 - Open Graph metadata (and remove comments)
-- Open Graph thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use fb-temp.png as a template. Then delete from header.php!)*
+- Open Graph thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. Then delete from header.php!)*
 - Windows 8 Tiles 
 	- 128x128px "tiny.png"
 	- 270x270px "square.png"
