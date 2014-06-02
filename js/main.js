@@ -203,6 +203,7 @@ function gaEventTracking(){
 	jQuery("a[rel*='external']").on('click', function(){
 		var linkText = jQuery(this).text();
 		ga('send', 'event', 'External Link', linkText);
+		Gumby.log('Sending GA event: ' + 'External Link', linkText);
 	});
 	
 	//PDF View/Download
@@ -213,8 +214,10 @@ function gaEventTracking(){
 		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
 		if ( linkText == '' || linkText == 'Download') {
 			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
+			Gumby.log('Sending GA event: ' + 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
 		} else {
 			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
+			Gumby.log('Sending GA event: ' + 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
 		}
 	});
 	
@@ -222,12 +225,14 @@ function gaEventTracking(){
 	jQuery('.wpcf7-form').on('submit', function() {
 		var currentPage = jQuery(document).attr('title');
 		ga('send', 'event', 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
+		Gumby.log('Sending GA event: ' + 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
 	});
 	
 	//Generic Interal Search Tracking
 	jQuery('.search').on('submit', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
+		Gumby.log('Sending GA event: ' + 'Internal Search', 'Submit', searchQuery);
 	});
 	
 	//Mailto link tracking
@@ -235,6 +240,7 @@ function gaEventTracking(){
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
 		ga('send', 'event', 'Contact Us', 'Email: ' + emailAddress);
+		Gumby.log('Sending GA event: ' + 'Contact Us', 'Email: ' + emailAddress);
 	});
 	
 	//Telephone link tracking
@@ -242,6 +248,7 @@ function gaEventTracking(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
+		Gumby.log('Sending GA event: ' + 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 	});
 	
 	//Word copy tracking
@@ -259,20 +266,30 @@ function gaEventTracking(){
 			if (words.length > 8) {
 				words = words.slice(0, 8).join(' ');
 				ga('send', 'event', 'Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
+				Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
 			} else {
 				if ( selection == '' || selection == ' ' ) {
 					ga('send', 'event', 'Copied Text', currentPage, '[0 words]');
+					Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, '[0 words]');
 				} else {
 					ga('send', 'event', 'Copied Text', currentPage, selection);
+					Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, selection);
 				}
 			}
 		} else {
 			if ( copyOver == 0 ) {
 				ga('send', 'event', 'Copied Text', currentPage, '[Copy limit reached]');
+				Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, '[Copy limit reached]');
 			}
 			copyOver = 1;
 		}
 	});
+	
+	if ( jQuery('.cform-disabled').length ) {
+		var currentPage = jQuery(document).attr('title');
+		ga('send', 'event', 'Contact Form 7 Disabled', currentPage);
+		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
+	}
 	
 } //End gaEventTracking()
 
@@ -281,10 +298,13 @@ function googlePlusCallback(jsonParam) {
 	var currentPage = jQuery(document).attr('title');
 	if ( jsonParam.state == 'on' ) {
 		ga('send', 'event', 'Social', 'Google+ Like', currentPage);
+		Gumby.log('Sending GA event: ' + 'Social', 'Google+ Like', currentPage);
 	} else if ( jsonParam.state == 'off' ) {
 		ga('send', 'event', 'Social', 'Google+ Unlike', currentPage);
+		Gumby.log('Sending GA event: ' + 'Social', 'Google+ Unlike', currentPage);
 	} else {
 		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]', currentPage);
+		Gumby.log('Sending GA event: ' + 'Social', 'Google+ [JSON Unavailable]', currentPage);
 	}
 }
 

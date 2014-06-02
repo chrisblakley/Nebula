@@ -127,6 +127,7 @@
 			try { (function() {
 					var afterPrint = function() {
 						ga('send', 'event', 'Print (Intent)', document.location.pathname);
+						Gumby.log('Sending GA event: ' + 'Print (Intent)', document.location.pathname);
 					};
 					if (window.matchMedia) {
 						var mediaQueryList = window.matchMedia('print');
@@ -187,16 +188,19 @@
 			    if (e.data == YT.PlayerState.PLAYING) {
 			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
 			        ga('send', 'event', 'Videos', 'Play', videoTitle);
+			        Gumby.log('Sending GA event: ' + 'Videos', 'Play', videoTitle);
 			        pauseFlag = true;
 			    }
 			    if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
 			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
 			        ga('send', 'event', 'Videos', 'Pause', videoTitle);
+			        Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
 			        pauseFlag = false;
 			    }
 			    if (e.data == YT.PlayerState.ENDED) {
 			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
 			        ga('send', 'event', 'Videos', 'Finished', videoTitle);
+			        Gumby.log('Sending GA event: ' + 'Videos', 'Finished', videoTitle);
 			    }
 			}
 		</script>

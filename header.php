@@ -32,17 +32,31 @@
 		
 		<?php global $social; ?>
 		
+		<!-- Open Graph Metadata -->
+		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
+		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
+		<meta property="og:url" content="<?php the_permalink(); ?>" />
+		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-temp.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.jpg" />
+    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.jpg" />
+		<meta property="og:email" content="<?php echo get_option('admin_email', $admin_user->user_email); ?>" />
+		<meta property="og:phone_number" content="" /> <!-- Ex: "+1-315-478-6700" -->
+		<meta property="og:fax_number" content="" /> <!-- Ex: "+1-315-478-6700" -->
+		<meta property="og:latitude" content="" />
+		<meta property="og:longitude" content="" />
+		<meta property="og:street-address" content="" />
+		<meta property="og:locality" content="" /> <!-- City -->
+		<meta property="og:region" content="" /> <!-- State -->
+		<meta property="og:postal-code" content="" />
+		<meta property="og:country-name" content="" /> <!-- USA -->
+		
 		<!-- Facebook Metadata -->
 		<?php $social['facebook_url'] = 'https://www.facebook.com/PinckneyHugo'; //@TODO: Enter the URL of the Facebook page here. ?>
 		<?php $social['facebook_app_id'] = ''; //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!)?>
-		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page... is this meta deprecated? -->
-		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta property="og:url" content="<?php the_permalink(); ?>" />
-		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-temp.png" /> <!-- @TODO: Create at least one new Facebook Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
-	    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/fb-thumb2.jpg" />
-		
+		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
+		<meta property="fb:admins" content="" /><!-- @TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" -->
+				
 		<!-- Google+ Metadata -->
 		<?php $social['google_plus_url'] = ''; //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
@@ -87,7 +101,7 @@
 		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 		
-		  ga('create', 'UA-00000000-1', 'domainnamegoeshere.com');
+		  ga('create', 'UA-00000000-1', 'domainnamegoeshere.com'); <?php //@TODO: Don't forget to update the Google Analytics ID in the functions.php file too! ?>
 		  ga('send', 'pageview');
 		</script>
 		
@@ -118,6 +132,7 @@
 					'page': currentPage
 				});
 				ga('send', 'event', 'Social', 'Facebook Like', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Like', currentPage);
 			});
 			
 			//Facebook Unlikes
@@ -131,6 +146,7 @@
 					'page': currentPage
 				});
 				ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Unlike', currentPage);
 			});
 			
 			//Facebook Send/Share
@@ -144,6 +160,7 @@
 					'page': currentPage
 				});
 				ga('send', 'event', 'Social', 'Facebook Share', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Share', currentPage);
 			});
 			
 			//Facebook Comments
@@ -157,6 +174,7 @@
 					'page': currentPage
 				});
 				ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
 			});
 				
 		  };
