@@ -1,697 +1,278 @@
-jQuery.noConflict();
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie6 lt-ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="<?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ''; ?> no-js"><!--<![endif]-->
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+		<meta charset="<?php bloginfo('charset'); ?>" />
 
-jQuery(document).ready(function() {	
-
-	//Init Custom Functions
-	gaEventTracking();
-	
-	helperFunctions();
-	socialSharing();
-	dropdownWidthController();
-	overflowDetector();
-	subnavExpanders();	
-	nebulaFixeder();
-	
-	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
-	mmenu();
-	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
-	
-	powerFooterWidthDist();
-	searchValidator();
-	errorLogAndFallback();
-	
-	viewport = updateViewportDimensions();
-	//console.debug(viewport);
-	jQuery(window).resize(function() {
-		waitForFinalEvent(function(){
+		<title><?php wp_title( '-', true, 'right' ); ?></title>
 		
-	    	//Window resize functions here.
-	    	powerFooterWidthDist();
-	    	
-	    	//Track size change
-	    	viewportResized = updateViewportDimensions();
-	    	if ( viewport.width > viewportResized.width ) {
-	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    	} else if ( viewport.width < viewportResized.width ) {
-	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    	}
-	    	viewport = updateViewportDimensions();
-	    	//console.debug(viewport);
-		}, 500, "unique resize ID 1");
-	});
-	
-	
-}); //End Document Ready
-
-
-
-
-jQuery(window).on('load', function() {
-	
-	conditionalJSLoading();
-	
-	jQuery('a, li, tr').removeClass('hover');
-	jQuery('html').addClass('loaded');
-	jQuery('.unhideonload').removeClass('hidden');
+		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
+		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
 		
-}); //End Window Load
-
-
-
-
-/*==========================
- 
- Functions
- 
- ===========================*/
-
-//Zebra-striper, First-child/Last-child, Hover helper functions
-function helperFunctions(){
-	jQuery('li:even, tr:even').addClass('even');
-	jQuery('li:odd, tr:odd').addClass('odd');
-	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child');
-	jQuery('li:last-child, tr:last-child').addClass('last-child');
-	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
-	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
-} //end helperFunctions()
-
-
-//Social sharing buttons
-function socialSharing() {
-    var loc = window.location;
-    var title = jQuery(document).attr('title');
-    var encloc = encodeURI(loc);
-    var enctitle = encodeURI(title);
-    jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank');
-    jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr('target', '_blank');
-    jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank');
-    jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr('target', '_blank');
-    jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank');
-} //end socialSharing()
-
-
-//Create an object of the viewport dimensions
-function updateViewportDimensions() {
-	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
-	
-	if ( typeof viewport === 'undefined' ) {
-		var viewportHistory = 0;
-		//console.log('creating viewport History: ' + viewportHistory);
-	} else {
-		var viewportHistory = viewport.history+1;
-		viewport.prevWidth = viewport.width; //Not pushing to the object...
-		viewport.prevHeight = viewport.height; //Not pushing to the object...
-		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
-	}
-	
-	var x = w.innerWidth || e.clientWidth || g.clientWidth;
-	var y = w.innerHeight || e.clientHeight || g.clientHeight;
-	
-	if ( viewportHistory == 0 ) {
-		var viewportObject = {
-			initialWidth: x,
-			initialHeight: y,
-			width: x,
-			height: y,
-			history: viewportHistory
-		};
-	} else {
-		viewportObject = {
-		    initialWidth: viewport.initialWidth,
-			initialHeight: viewport.initialHeight,
-		    width: x,
-		    height: y,
-		    history: viewportHistory
-		};
-	}
-	
-	return viewportObject;
-}
-
-//Main dropdown nav dynamic width controller
-function dropdownWidthController() {
-	jQuery('#primarynav .sub-menu').each(function(){
-		var bigWidth = 100;
-			if ( jQuery(this).children().width() > bigWidth ) {
-				bigWidth = jQuery(this).children().width();
-			}
-		jQuery(this).css('width', bigWidth+15 + 'px');
-	});
-} //end dropdownWidthController()
-
-
-//Sub-menu viewport overflow detector
-function overflowDetector() {
-    jQuery('#primarynav .menu > .menu-item').hover(function(){
-    	var viewportWidth = jQuery(window).width();
-    	var submenuLeft = jQuery(this).offset().left;
-    	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-    	if (submenuRight > viewportWidth) {
-			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
-    	} else {
-			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
-    	}    	
-    }, function(){
-	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
-    });
-} //end overflowDetector()
-
-
-//Vertical subnav expanders
-function subnavExpanders() {
-    jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="icon-left-dir"></i></a>');
-    jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    jQuery('.toplevelvert_expander').on('click', function(){
-        jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
-        return false;
-    });
-    //Automatically expand subnav to show current page
-    jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
-    jQuery('.current-menu-item').children('.toplevelvert_expander').click();
-} //end subnavExpanders()
-
-
-//Show fixed bar when scrolling passed the header
-function nebulaFixeder() {
-	jQuery(window).on('scroll resize', function() {
-		if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').length ) {
-			var fixedBarBottom = jQuery('#logonavcon img').position().top + jQuery('#logonavcon img').outerHeight();
-	        var windowBottom = jQuery(window).scrollTop();
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		
-	        if( windowBottom > fixedBarBottom ){
-	        	if ( !jQuery('.fixedbar').hasClass('active') ) {
-		        	jQuery('.fixedbar').addClass('active');
-				}
-	        } else {
-	        	if ( !jQuery('.fixedbar').hasClass('hidden') ) {
-		        	jQuery('.fixedbar').removeClass('active');
-	        	}
-	        }
-		}	
-	});
-} //end nebulaFixeder()
-
-
-//Google Analytics Universal Analytics Event Trackers
-function gaEventTracking(){
-	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string.)
-	//jQuery('.selector').on('click', function() {
-	//	ga('send', 'event', 'Category', 'Action', 'Label', Value;
-	//});
-	
-	//External links
-	jQuery("a[rel*='external']").on('click', function(){
-		var linkText = jQuery(this).text();
-		ga('send', 'event', 'External Link', linkText);
-		Gumby.log('Sending GA event: ' + 'External Link', linkText);
-	});
-	
-	//PDF View/Download
-	jQuery("a[href$='.pdf']").on('click', function(){
-		var title= jQuery('title').text()
-		var linkText = jQuery(this).text();
-		var fileName = jQuery(this).attr('href');
-		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
-		if ( linkText == '' || linkText == 'Download') {
-			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
-			Gumby.log('Sending GA event: ' + 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
-		} else {
-			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
-			Gumby.log('Sending GA event: ' + 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
-		}
-	});
-	
-	//Contact Form Submissions
-	jQuery('.wpcf7-form').on('submit', function() {
-		var currentPage = jQuery(document).attr('title');
-		ga('send', 'event', 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
-		Gumby.log('Sending GA event: ' + 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
-	});
-	
-	//Generic Interal Search Tracking
-	jQuery('.search').on('submit', function(){
-		var searchQuery = jQuery(this).find('input[name="s"]').val();
-		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
-		Gumby.log('Sending GA event: ' + 'Internal Search', 'Submit', searchQuery);
-	});
-	
-	//Mailto link tracking
-	jQuery('a[href^="mailto"]').on('click', function(){
-		var emailAddress = jQuery(this).attr('href');
-		emailAddress = emailAddress.replace('mailto:', '');
-		ga('send', 'event', 'Contact Us', 'Email: ' + emailAddress);
-		Gumby.log('Sending GA event: ' + 'Contact Us', 'Email: ' + emailAddress);
-	});
-	
-	//Telephone link tracking
-	jQuery('a[href^="tel"]').on('click', function(){
-		var phoneNumber = jQuery(this).attr('href');
-		phoneNumber = phoneNumber.replace('tel:+', '');
-		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
-		Gumby.log('Sending GA event: ' + 'Click-to-Call', 'Phone Number: ' + phoneNumber);
-	});
-	
-	//Word copy tracking
-	var copyCount = 0;
-	var copyOver = 0;
-	jQuery(document).on('cut copy', function(){
-		copyCount++;
-		var currentPage = jQuery(document).attr('title');
-		var words = [];
-		var selection = window.getSelection() + '';
-		words = selection.split(' ');
-		wordsLength = words.length;
+		<link rel="profile" href="http://gmpg.org/xfn/11" />
+		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/normalize.css" />
+		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/gumby.css" />
+		<!--<link rel="stylesheet" href="<?php //bloginfo('template_directory');?>/css/font-awesome.min.css">--> <!-- @TODO: Remove if not using Font Awesome! -->
+		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/jquery.mmenu.all.css" /> <!-- @TODO: Remove if not using mmenu! -->
+		<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" />
+                
+		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		
-		if ( copyCount < 13 ) {
-			if (words.length > 8) {
-				words = words.slice(0, 8).join(' ');
-				ga('send', 'event', 'Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
-				Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
-			} else {
-				if ( selection == '' || selection == ' ' ) {
-					ga('send', 'event', 'Copied Text', currentPage, '[0 words]');
-					Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, '[0 words]');
-				} else {
-					ga('send', 'event', 'Copied Text', currentPage, selection);
-					Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, selection);
-				}
-			}
-		} else {
-			if ( copyOver == 0 ) {
-				ga('send', 'event', 'Copied Text', currentPage, '[Copy limit reached]');
-				Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, '[Copy limit reached]');
-			}
-			copyOver = 1;
-		}
-	});
+		<link rel="icon" href="<?php bloginfo('template_directory');?>/images/favicon.ico">
+		<link rel="apple-touch-icon" href="<?php bloginfo('template_directory');?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
 		
-} //End gaEventTracking()
-
-
-function googlePlusCallback(jsonParam) {
-	var currentPage = jQuery(document).attr('title');
-	if ( jsonParam.state == 'on' ) {
-		ga('send', 'event', 'Social', 'Google+ Like', currentPage);
-		Gumby.log('Sending GA event: ' + 'Social', 'Google+ Like', currentPage);
-	} else if ( jsonParam.state == 'off' ) {
-		ga('send', 'event', 'Social', 'Google+ Unlike', currentPage);
-		Gumby.log('Sending GA event: ' + 'Social', 'Google+ Unlike', currentPage);
-	} else {
-		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]', currentPage);
-		Gumby.log('Sending GA event: ' + 'Social', 'Google+ [JSON Unavailable]', currentPage);
-	}
-}
-
-//Detect and log errors, and fallback fixes
-function errorLogAndFallback() {
-	
-	//Check if Contact Form 7 is active and if the selected form ID exists
-	if ( jQuery('.cform-disabled').length ) {
-		var currentPage = jQuery(document).attr('title');
-		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage);
-		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
-	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
-		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo icon-mail"><a class="cform-disabled" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
-		ga('send', 'event', 'Error', 'Contact Form 7 Not Found', currentPage);
-		Gumby.warn('Warning: Contact Form 7 is not found! Reverting to mailto link.');
-	}
-}
-
-function mmenu() {
-	jQuery("#mobilenav").mmenu({
-	    //Options
-	    searchfield: { //This is for searching through the menu itself (NOT for site search)
-	    	add: true,
-	    	search: true,
-	    	placeholder: 'Search',
-	    	noResults: 'No navigation items found.',
-	    	showLinksOnly: false //"true" searches only <a> links, "false" includes spans in search results
-	    },
-	    counters: true, //Display count of sub-menus
-	    classes: "mm-light"
-	}, {
-		//Configuration
-	});
-	
-	jQuery("#mobilecontact").mmenu({
-		//Options
-	    position: 'right',
-	    classes: "mm-light",
-	    header: {
-			add: true,
-			update: true, //Change the header text when navigating to sub-menus
-			title: 'Contact Us'
-		}
-	}, {
-		//Configuration
-	});
-	
-	jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
-	jQuery('.mm-search input').on('keyup', function(){
-		if ( jQuery(this).val().length > 0 ) {
-			jQuery('.clearsearch').removeClass('hidden');
-		} else {
-			jQuery('.clearsearch').addClass('hidden');
-		}
-	});
-	jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="icon-cancel-circled"></i>Reset Search</a></div>');
-	jQuery('.clearsearch a').on('click', function(){
-		jQuery('.mm-search input').val('').keyup();
-		jQuery('.clearsearch').addClass('hidden');
-		return false;
-	});
-} //end mmenu()
-
-//Power Footer Width Distributor
-function powerFooterWidthDist() {
-	var powerFooterWidth = jQuery('#powerfooter').width();
-	var topLevelFooterItems = 0;
-	jQuery('#powerfooter ul.menu > li').each(function(){
-		topLevelFooterItems = topLevelFooterItems+1;
-	});
-	var footerItemWidth = powerFooterWidth/topLevelFooterItems-8;
-	if ( topLevelFooterItems == 0 ) {
-		jQuery('.powerfootercon').addClass('hidden');
-	} else {
-		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
-	}
-} //end PowerFooterWidthDist
-
-//Search Validator
-function searchValidator() {
-	jQuery('.lt-ie9 form.search .btn.submit').val('Search');
-	jQuery('.input.search').each(function(){
-		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().children('.btn.submit').addClass('disallowed');		
-		} else {
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
-			jQuery(this).parent().find('.input.search').removeClass('focusError');
-		}
-	});
-	jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
-		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
-			jQuery(this).parent().find('.btn.submit').val('Go');
-		} else {
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-			jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', 'Search');
-			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-		}
-		if(e.type == 'paste'){
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-			jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
-			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-		}
-	})
-	jQuery('form.search').submit(function(){
-		if ( jQuery(this).find('.input.search').val() == '' || jQuery(this).find('.input.search').val().trim().length === 0 ) {
-			jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
-			jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
-			return false;
-		} else {
-			return true;
-		}
-	});
-} //End searchValidator
-
-//Contact form pre-validator
-function cFormPreValidator() {
-	jQuery('.cform7-text').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().parent().removeClass('success').addClass('danger');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger').addClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid');
-		}
-	});
-	jQuery('.cform7-name').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid').attr('placeholder', 'Your Name*');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().parent().removeClass('success').addClass('danger');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger').addClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid');
-		}
-	});
-	jQuery('.cform7-email').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Email Address*');
-		} else if ( jQuery(this).val().trim().length === 0 || jQuery(this).val().indexOf(' ') > 0 ) {
-			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');
-		} else if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ) {
-			jQuery(this).parent().parent().removeClass('success').removeClass('danger').addClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Email Address*');
-		} else {
-				jQuery(this).parent().parent().addClass('success');
-				jQuery(this).parent().parent().removeClass('danger');
-				jQuery(this).removeClass('wpcf7-not-valid');
-				jQuery(this).parent().parent().removeClass('warning');
-				jQuery(this).attr('placeholder', 'Email Address*');
-		}
-	});
-	jQuery('.cform7-email').blur(function(){ //NOT WORKING YET - Want to remove spaces from the input on blur (the val doesnt have spaces, but the input does...?)
-		var removeSpace = jQuery(this).val();
-		//console.log('before trimming: ', removeSpace);
-		removeSpace = removeSpace.replace(/ /g, '_');
-		jQuery(this).val(removeSpace);
-		//console.log('after trimming: ', removeSpace);
+		<?php global $social; ?>
 		
-		if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ) {
-			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');
-		}
-	});
-	
-	if ( jQuery('.cform7-phone').length || jQuery('.cform7-bday').length ) {
-		jQuery('.cform7-phone').mask("(999) 999-9999? x99999");
-		jQuery('.cform7-phone').keyup(function(){
-			if ( jQuery(this).val().replace(/\D/g,'').length >= 10 ) {
-				jQuery(this).parent().parent().addClass('success');
-			} else {
-				jQuery(this).parent().parent().removeClass('success');
-			}
-		});
-		jQuery.mask.definitions['m'] = "[0-1]";
-		jQuery.mask.definitions['d'] = "[0-3]";
-		jQuery.mask.definitions['y'] = "[1-2]";
-		jQuery('.cform7-bday').mask("m9/d9/y999");
-		currentYear = (new Date).getFullYear();
-		jQuery('.cform7-bday').keyup(function(){
-			if ( jQuery(this).val().replace(/\D/g,'').length === 8 ) {
-				jQuery(this).parent().parent().addClass('success');
-			} else {
-				jQuery(this).parent().parent().removeClass('success');
-			}
-			var checkMonth = jQuery(this).val().substr(0, 2);
-			var checkDay = jQuery(this).val().substr(3, 2);
-			var checkYear = jQuery(this).val().substr(jQuery(this).val().length - 4);
-			if ( checkYear != '____' ) {
-				if ( checkYear < 1900 || checkYear > currentYear) {
-					jQuery(this).parent().parent().removeClass('success').addClass('badyear');
-				} else {
-					jQuery(this).parent().parent().removeClass('badyear');
-				}
-			}
-			if ( checkMonth != '__' ) {
-				if ( checkMonth < 1 || checkMonth > 12) {
-					jQuery(this).parent().parent().removeClass('success').addClass('badmonth');
-				} else {
-					jQuery(this).parent().parent().removeClass('badmonth');
-				}
-			}
-			if ( checkDay != '__' ) {
-				if ( checkDay < 1 || checkDay > 31) {
-					jQuery(this).parent().parent().removeClass('success').addClass('badday');
-				} else {
-					jQuery(this).parent().parent().removeClass('badday');
-				}
-				//We could add specific checks for each individual month using checkMonth vs. checkDay.
-			}
-			if ( checkYear == '____' && checkMonth == '__' && checkDay == '__' ) {
-				jQuery(this).parent().parent().removeClass('success').removeClass('danger').removeClass('badyear').removeClass('badmonth').removeClass('badday');
-			}
-			if ( jQuery(this).parent().parent().hasClass('badmonth') ) {
-				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else if ( jQuery(this).parent().parent().hasClass('badday') ) {
-				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else if ( jQuery(this).parent().parent().hasClass('badyear') ) {
-				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else {
-				jQuery(this).parent().parent().removeClass('danger');
-			}
-		});
-	} //Close of if phone or bday input exists
-	jQuery('.cform7-message').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
-			jQuery(this).parent().parent().removeClass('danger');
-			jQuery(this).parent().parent().removeClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Enter your message here.*');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().parent().addClass('warning');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger');
-			jQuery(this).parent().parent().removeClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Enter your message here.*');
-		}
-	});
-	jQuery('.cform7-message').blur(function(){
-		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().parent().removeClass('warning').addClass('danger');
-		} else if ( jQuery(this).val() == '' ) {
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger').addClass('success');
-		}
-	});
-	jQuery('.cform7-message').focus(function(){
-		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().parent().removeClass('danger').addClass('warning');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger').removeClass('warning').removeClass('success');
-		}
-	});
-	var reqFieldsEmpty = 0;
-	jQuery('.wpcf7-validates-as-required').each(function() {
-		if ( jQuery(this).val() == '' ) {
-			reqFieldsEmpty++;
-		}
-	});
-	if ( reqFieldsEmpty > 0 ) {
-		jQuery('#cform7-container').parent().find('.wpcf7-submit').addClass('disallowed');
-	} else {
-		jQuery('#cform7-container').parent().find('.wpcf7-submit').removeClass('disallowed');
-	}
-	jQuery('#cform7-container').keyup(function(){
-		var obj = {};
-		var dangers = 0;
-		jQuery("#cform7-container li.danger").each(function() {
-		var cl = jQuery(this).attr("class");
-			if(!obj[cl]) {
-				obj[cl] = {};
-				dangers++;
-				}
+		<!-- Open Graph Metadata -->
+		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
+		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
+		<meta property="og:url" content="<?php the_permalink(); ?>" />
+		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-temp.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.jpg" />
+    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.jpg" />
+		<meta property="og:email" content="<?php echo get_option('admin_email', $admin_user->user_email); ?>" />
+		<meta property="og:phone_number" content="" /> <!-- Ex: "+1-315-478-6700" -->
+		<meta property="og:fax_number" content="" /> <!-- Ex: "+1-315-478-6700" -->
+		<meta property="og:latitude" content="" />
+		<meta property="og:longitude" content="" />
+		<meta property="og:street-address" content="" />
+		<meta property="og:locality" content="" /> <!-- City -->
+		<meta property="og:region" content="" /> <!-- State -->
+		<meta property="og:postal-code" content="" />
+		<meta property="og:country-name" content="" /> <!-- USA -->
+		
+		<!-- Facebook Metadata -->
+		<?php $social['facebook_url'] = 'https://www.facebook.com/PinckneyHugo'; //@TODO: Enter the URL of the Facebook page here. ?>
+		<?php $social['facebook_app_id'] = ''; //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!)?>
+		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
+		<meta property="fb:admins" content="" /><!-- @TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" -->
+				
+		<!-- Google+ Metadata -->
+		<?php $social['google_plus_url'] = ''; //@TODO: Enter the URL of the Google+ page here. ?>
+		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
+		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
+
+		<!-- Other Social Metadata -->
+		<?php $social['twitter_url'] = 'https://twitter.com/pinckneyhugo'; //@TODO: Enter the URL of the Twitter page here. ?>
+		<?php $social['linkedin_url'] = ''; //@TODO: Enter the URL of the LinkedIn page here. ?>
+		<?php $social['youtube_url'] = ''; //@TODO: Enter the URL of the Youtube page here. ?>
+
+		<!--Microsoft Windows 8 Tiles /-->
+		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
+		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>">
+		<meta name="msapplication-TileColor" content="#ffffff" />
+		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png" /><!-- 70x70px -->
+		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!-- 150x150px -->
+		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
+		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
+		
+		<?php global $defer, $async, $gumby_debug; ?>
+		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $defer; ?>></script>
+		
+		<script>
+			bloginfo = [];
+			bloginfo['name'] = "<?php echo bloginfo('name'); ?>";
+			bloginfo['template_directory'] = "<?php echo bloginfo('template_directory'); ?>";
+			bloginfo['stylesheet_url'] = "<?php echo bloginfo('stylesheet_url'); ?>";
+			bloginfo['home_url'] = "<?php echo home_url(); ?>";
+			bloginfo['admin_email'] = "<?php echo get_option('admin_email', $admin_user->user_email); ?>";
+			
+			social = [];
+			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
+			social['twitter_url'] = "<?php echo $social['twitter_url']; ?>";
+			social['google_plus_url'] = "<?php echo $social['google_plus_url']; ?>";
+			social['linkedin_url'] = "<?php echo $social['linkedin_url']; ?>";
+			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
+		</script>
+		
+		<script> //Universal Analytics
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		
+		  ga('create', 'UA-00000000-1', 'domainnamegoeshere.com'); <?php //@TODO: Don't forget to update the Google Analytics ID in the functions.php file too! ?>
+		  ga('send', 'pageview');
+		</script>
+		
+		<?php wp_head(); ?>
+	</head>
+	<body <?php body_class(); ?>>
+		<div id="fullbodywrapper">
+				
+		<div id="fb-root"></div>
+		<script type="text/javascript">
+			window.fbAsyncInit = function() {
+		    //Initialize the Facebook JavaScript SDK
+		    FB.init({
+		      appId      : '<?php echo $social['facebook_app_id']; //@TODO: Come up with a backup App ID to use. ?>',
+		      channelUrl : '<?php bloginfo("template_directory");?>/includes/channel.html',
+		      status     : true,
+		      xfbml      : true
+		    });
+		    							
+			//Facebook Likes
+			FB.Event.subscribe('edge.create', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Like',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Like', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Like', currentPage);
 			});
-		if ( dangers > 0 ) {
-			jQuery(this).parent().find('.wpcf7-submit').addClass('disallowed').addClass('notallowed');
-		} else {
-			jQuery(this).parent().find('.wpcf7-submit').removeClass('disallowed').removeClass('notallowed');
-		}
-	});
-	jQuery('.wpcf7-form').submit(function(){
-		var intervalID = setInterval(function(){
-			if ( jQuery('input').hasClass('wpcf7-not-valid') ) {
-				clearInterval(intervalID);
-				jQuery('.wpcf7-not-valid').parent().parent().addClass('danger');
-				jQuery('#cform7-container').parent().find('.wpcf7-submit').addClass('notallowed');
-				if ( jQuery('.cform7-name.wpcf7-not-valid').val() == '' ) {
-					jQuery('.cform7-name').attr('placeholder', 'Your name is required.');
-				}
-				if ( jQuery('.cform7-email.wpcf7-not-valid').val() == '' ) {
-					jQuery('.cform7-email').attr('placeholder', 'Your email is required.');
-				}
-				if ( jQuery('.cform7-message.wpcf7-not-valid').val() == '' ) {
-					jQuery('.cform7-message').attr('placeholder', 'Your message is required.');
-				}
-			} else {
-				jQuery('.wpcf7-not-valid').parent().parent().removeClass('danger');
-			}
-        }, 100);
-	});
-} //end cFormPreValidator()
+			
+			//Facebook Unlikes
+			FB.Event.subscribe('edge.remove', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Unlike',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Unlike', currentPage);
+			});
+			
+			//Facebook Send/Share
+			FB.Event.subscribe('message.send', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Send',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Share', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Share', currentPage);
+			});
+			
+			//Facebook Comments
+			FB.Event.subscribe('comment.create', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Comment',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
+			});
+				
+		  };
+		 
+		  //Load the SDK asynchronously
+		  (function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = "//connect.facebook.net/en_GB/all.js";
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+		</script>
+										
+		<div id="topbarcon">
+			<div class="container mobilenavcon">
+				<div class="row">
+					<div class="sixteen columns clearfix">
+						
+						<a class="alignleft" href="#mobilenav"><i class="icon-menu"></i></a>
+						<nav id="mobilenav">
+							<?php 
+								if ( has_nav_menu('mobile') ) {
+									wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
+								} elseif ( has_nav_menu('header') ) {
+									wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
+								}
+							?>
+						</nav><!--/mobilenav-->
+						
+						<a class="alignright" href="#mobilecontact"><i class="icon-users"></i></a>
+						<nav id="mobilecontact" class="unhideonload hidden">
+							<ul>
+					    		<li>
+					    			<a href="#"><i class="icon-phone"></i> (315) 123-4567</a>
+					    		</li>
+					    		<li>
+					    			<a href="#"><i class="icon-phone"></i> (800) 456-7890</a>
+					    		</li>
+					    		<li>
+					    			<a href="#"><i class="icon-mail"></i> info@testing.com</a>
+					    		</li>
+					    		<li>
+					    			<a class="directions" href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">
+					    				<i class="icon-direction"></i> Directions <br/><div><small>760 West Genesee Street<br/>Syracuse, NY 13204</small></div>
+					    			</a>
+					    		</li>
+					    	</ul>
+						</nav><!--/mobilecontact-->
+						
+					</div><!--/columns-->
+				</div><!--/row-->
+			</div><!--/container-->
+		</div><!--/topbarcon-->
 
-//CForm7 submit success callback
-//Add on_sent_ok: "cFormSuccess('EnterTheFormNameHere');" to Additional Settings in WP Admin.
-function cFormSuccess(formName){
-    //Contact Form 7 Submit Success actions here.
-}
-
-//Allows only numerical input on specified inputs. Call this on keyUp? @TODO: Make the selector into oThis and pass that to the function from above.
-//The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
-function onlyNumbers() {
-	jQuery(".leftcolumn input[type='text']").each(function(){
-		this.value = this.value.replace(/[^0-9\.]/g,'');
-	});
-}
-
-
-//Waits until event (generally resize) finishes before triggering. Call with waitForFinalEvent();
-var waitForFinalEvent = (function () {
-	var timers = {};
-	return function (callback, ms, uniqueId) {
-		if (!uniqueId) {
-			uniqueId = "Don't call this twice without a uniqueId";
-		}
-		if (timers[uniqueId]) {
-			clearTimeout (timers[uniqueId]);
-		}
-		timers[uniqueId] = setTimeout(callback, ms);
-	};
-})(); //end waitForFinalEvent()
-
-
-//Conditional JS Library Loading
-function conditionalJSLoading() {
-	//Only load Twitter if Twitter wrapper exists.
-	if ( jQuery('#twittercon').length ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
-			twitterFeed();
-		}).fail(function(){
-			console.log('twitter.js could not be loaded.');
-			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
-		});
-	}
-	//Only load maskedinput.js library if phone or bday field exists.
-	if ( jQuery('.cform7-phone').length || jQuery('.cform7-bday').length ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
-			cFormPreValidator();
-		}).fail(function(){
-			console.log('jquery.maskedinput.js could not be loaded.');
-		});
-	} else {
-		cFormPreValidator();
-	}
-	//Only load dataTables library if dataTables table exists.
-	if ( jQuery('.dataTables_wrapper').length ) {
+		<?php if ( has_nav_menu('topnav') ) : ?>
+			<div class="container topnavcon">
+				<div class="row">
+					<div class="sixteen columns">
+						<nav id="topnav">
+		        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '1')); ?>
+		        		</nav>
+					</div><!--/columns-->
+				</div><!--/row-->
+			</div><!--/container-->
+		<?php endif; ?>
 		
-	jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){
-			cFormPreValidator();
-		}).fail(function(){
-			console.log('jquery.dataTables.min.js could not be loaded.');
-		});
-		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
-	}
-	
-	//Load Gumby UI scripts as needed
-	//THIS IS STILL IN THE TESTING PHASE!
-		//WE NEED TO DETERMINE: Does this work? Is it easier than uncommenting <script> calls in the footer? Is it slower than using links?
-	if ( jQuery('.tab-nav').length ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/ui/gumby.tabs.js').done(function(){
-			//Success
-		}).fail(function(){
-			console.log('gumby.tabs.js could not be loaded.');
-		});
-	}
-} //end conditionalJSLoading()
-
-
-//Twitter Feed integration
-function twitterFeed() {
-    if(jQuery('.twitter-feed').length){
-        JQTWEET = JQTWEET || {};
-        //JQTWEET.search = '#hashtag';
-        JQTWEET.user = 'pinckneyhugo';
-        JQTWEET.numTweets = 3;
-        JQTWEET.template = '<div class="row tweetcon"><div class="four columns"><div class="twittericon">{AVA}</div></div><div class="twelve columns"><div class="twitteruser"><a href="{URL}" target="_blank">@{USER}</a></div><div class="twittertweet">{TEXT} <a class="twitterago" href="{URL}" target="_blank">{AGO}</a></div></div></div>',
-        JQTWEET.appendTo = '#twitter_update_list';
-        JQTWEET.loadTweets();
-    }
-} //end twitterFeed()
+		<div id="logonavcon" class="container">
+			<div class="row">
+				<div class="six columns">
+					<?php
+						//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths (and alt text) below.
+						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
+					?>
+					<a class="logocon" href="<?php echo home_url(); ?>">
+						<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php bloginfo('template_directory');?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
+					</a>
+				</div><!--/columns-->
+				<?php if ( has_nav_menu('header') ) : ?>
+					<div class="ten columns">
+						<nav id="primarynav" class="clearfix">
+							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
+		        		</nav>
+		        	</div><!--/columns-->
+	        	<?php endif; ?>
+			</div><!--/row-->
+		</div><!--/container-->
+		
+		<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
+			<div class="row">
+				<div class="four columns">
+					<a href="<?php echo home_url(); ?>"><i class="icon-home"></i> <?php echo bloginfo('name'); ?></a>
+				</div><!--/columns-->
+				<div class="twelve columns">
+					<nav id="fixednav">
+						<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
+	        		</nav>
+				</div><!--/columns-->
+			</div>
+		</div>
