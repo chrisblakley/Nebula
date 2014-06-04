@@ -8,6 +8,17 @@ jQuery(document).ready(function() {
 	//Set these CSS properties with JS so login is still possible with JS disabled.
 	jQuery('#login').css('display', 'none');
 	
+	if ( jQuery('#login_error').text().indexOf('password') > -1 ) {
+		var userError = jQuery('#login_error strong:nth-of-type(2)').text();
+		var fromIP = jQuery('.theIP').text();
+		ga('send', 'event', 'Login Error', 'User: ' + userError, 'From: ' + fromIP);
+	}
+	
+	jQuery('#lostpasswordform').submit(function(){
+		var resetUser = jQuery('#user_login').val();
+		ga('send', 'event', 'Password Reset', 'User: ' + resetUser);
+	});
+	
 }); //End Document Ready
 
 
