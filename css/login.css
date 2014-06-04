@@ -5,6 +5,7 @@ a:hover {color: #95D600 !important; text-decoration: underline;}
 body.login {background: #f2f2f2; background: linear-gradient(to bottom, #f2f2f2, #ddd);}
 
 /*content area*/
+.js #login {display: none;}
 body.login div#login h1 {}
 	body.login div#login h1 a {width:auto;}
 
