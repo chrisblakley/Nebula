@@ -5,9 +5,6 @@ jQuery(document).ready(function() {
 	jQuery('.forgetmenot, .submit').addClass('clearfix');
 	jQuery('#loginform').append('<div class="centertext ipcon"><p>Your IP Address: <span class="theIP">' + window.userIP + '</span></p></div>');
 		
-	//Set these CSS properties with JS so login is still possible with JS disabled.
-	jQuery('#login').css('display', 'none');
-	
 	if ( jQuery('#login_error').text().indexOf('password') > -1 ) {
 		var userError = jQuery('#login_error strong:nth-of-type(2)').text();
 		var fromIP = jQuery('.theIP').text();
