@@ -141,21 +141,20 @@
 			} catch(e) {}
 		</script>
 		
-		<?php global $defer, $async, $gumby_debug; ?>
 		<script src="<?php bloginfo('template_directory');?>/js/libs/jquery.mmenu.min.all.js"></script> <!-- @TODO: Have to make sure this one loads before main.js! Can it be deferred? -->
-		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $async; ?>></script>
-		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $async; ?>></script> -->
-		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $async; ?>></script> -->
-		<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $async; ?>></script>-->
-		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $defer; ?>></script> -->
-		<script <?php echo $gumby_debug; ?> src="<?php bloginfo('template_directory');?>/js/libs/gumby.min.js" <?php echo $defer; ?>></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $GLOBALS["async"]; ?>></script>
+		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $GLOBALS["async"]; ?>></script> -->
+		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $GLOBALS["async"]; ?>></script> -->
+		<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script>-->
+		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $GLOBALS["defer"]; ?>></script> -->
+		<script <?php echo $GLOBALS["gumby_debug"]; ?> src="<?php bloginfo('template_directory');?>/js/libs/gumby.min.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
 		<!--[if lt IE 9]>
-			<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js" <?php echo $defer; ?>></script>
-			<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js" <?php echo $defer; ?>></script>
+			<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js" <?php echo $GLOBALS["defer"]; ?>></script>
+			<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		<![endif]-->
 		
-		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $defer; ?>></script>
+		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
 		<script>
 			//Check for Youtube Videos

@@ -3,7 +3,7 @@
 <!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="<?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ''; ?> no-js"><!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="<?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ''; ?> <?php mobile_classes(); ?> no-js"><!--<![endif]-->
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
@@ -11,7 +11,7 @@
 		<title><?php wp_title( '-', true, 'right' ); ?></title>
 		
 		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here, or generate them with PHP -->
+		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here. -->
 		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
 		
 		<meta name="HandheldFriendly" content="True">
@@ -77,8 +77,7 @@
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 		
-		<?php global $defer, $async, $gumby_debug; ?>
-		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $defer; ?>></script>
+		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
 		<script>
 			bloginfo = [];
@@ -110,7 +109,7 @@
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
-				
+		
 		<div id="fb-root"></div>
 		<script type="text/javascript">
 			window.fbAsyncInit = function() {

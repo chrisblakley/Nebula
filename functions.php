@@ -535,7 +535,8 @@ function custom_login_css() {
 	    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/libs/modernizr.custom.42059.js"></script>';
 	    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/login.js"></script>';
 	    
-	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-00000000-1', 'domain.com');</script>";
+	    //@TODO: Need to figure out a way to automate the Google Analytics account number and domain!
+	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-00000000-1', 'domainnamegoeshere.com');</script>";
 	}
 }
 add_action('login_head', 'custom_login_css');
@@ -967,10 +968,43 @@ function my_theme_wrapper_end() {
 }
 *****/
 
+
 //PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
 //Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic.
-//Logic can fire from "isMobile()" or "isTablet()" or "is('AndroidOS')".
+//Logic can fire from "$detect->isMobile()" or "$detect->isTablet()" or "$detect->is('AndroidOS')".
 require_once 'includes/Mobile_Detect.php';
+$GLOBALS["mobile_detect"] = new Mobile_Detect();
+
+function mobile_classes() {
+	$mobile_classes = '';
+	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
+		$mobile_classes .= ' mobile';
+	} else {
+		$mobile_classes .= ' no-mobile';
+	}
+	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
+		$mobile_classes .= ' tablet';
+	}
+	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
+		$mobile_classes .= ' ios';
+	}
+	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
+		$mobile_classes .= ' androidos';
+	}
+	echo $mobile_classes;
+}
+
+//Control how scripts are loaded for debugging
+if ( array_key_exists('debug', $_GET) ) {
+	$GLOBALS["defer"] = '';
+	$GLOBALS["async"] = '';
+	$GLOBALS["gumby_debug"] = 'gumby-debug';
+} else {
+	$GLOBALS["defer"] = 'defer';
+	$GLOBALS["async"] = 'async';
+	$GLOBALS["gumby_debug"] = '';
+}
+
 
 //Used to detect if plugins are active. Enabled use of is_plugin_active($plugin)
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
@@ -1029,17 +1063,6 @@ function baseDomain( $str='' ) {
     $slice = ( strlen( reset( array_slice( $parts, -2, 1 ) ) ) == 2 ) && ( count( $parts ) > 2 ) ? 3 : 2;
     $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
     return $protocol . implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
-}
-
-//Control how scripts are loaded for debugging
-if ( array_key_exists('debug', $_GET) ) {
-	$defer = '';
-	$async = '';
-	$gumby_debug = 'gumby-debug';
-} else {
-	$defer = 'defer';
-	$async = 'async';
-	$gumby_debug = '';
 }
 
 

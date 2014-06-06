@@ -25,13 +25,13 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Modify logo.svg and logo.png
 - Apple touch icon (129x129px) *(Rounded corners and glossy effect are automatically applied.)*
 - Open Graph metadata (and remove comments)
-- Open Graph thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use fb-temp.png as a template. Then delete from header.php!)*
+- Open Graph thumbnails *(Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. Then delete from header.php!)*
 - Windows 8 Tiles 
 	- 128x128px "tiny.png"
 	- 270x270px "square.png"
 	- 558x270px "wide.png"
 	- 517x516px "large.png"
-- Google Analytics tracking number/domain (header.php)
+- Google Analytics tracking number/domain (header.php and functions.php[for now])
 - Strip out all unplanned HTML/CSS/JS (Do this before any other development! You can always add pieces back in from the Nebula.)
 - *[Theme development goes here]*
 - Update screenshot.png
