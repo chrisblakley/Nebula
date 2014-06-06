@@ -474,6 +474,7 @@ function nebulaActivateComplete(){
 
 //Add custom admin.css stylesheet to WP Admin
 function custom_admin_css() {
+	echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/font-awesome.min.css" />';
     echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/admin.css" />';
 }
 add_action('admin_head', 'custom_admin_css');
@@ -747,7 +748,7 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 }
 
 //Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
-//Important! Don't this function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
+//Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
 function nebula_manage($thing) {
 	if ( $thing == 'edit' || $thing == 'admin' ) {
 		echo '<span class="post-admin"><i class="icon-tools"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="icon-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span>';
@@ -1115,4 +1116,58 @@ function footerWidgetCounter() {
 }
 
 
-?>
+/*==========================
+ 
+ Custom Shortcodes 
+ 
+ ===========================*/
+
+
+//Divider [divider scroll_text="Go To Top"]
+add_shortcode('divider', 'divider_shortcode');
+function divider_shortcode($atts){
+	extract( shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts) );
+	if ( $space ) {
+		$above = $space;
+		$below = $space;
+	}
+	$divider = '<hr class="nebula-divider" style="margin-top: ' . $above . 'px; margin-bottom: ' . $below . 'px;"/>';
+	return $divider;
+}
+
+
+//Icon [icon family="entypo" type="icon-adjust" color="#222" size="12px"]
+add_shortcode('icon', 'icon_shortcode');
+function icon_shortcode($atts){	
+	extract( shortcode_atts(array('type'=>'', 'color'=>'#333', 'size'=>'13px'), $atts) );
+	if ( $atts[0] == 'fontawesome' || $atts[0] == 'fa' || $atts[0] == 'font-awesome' ) {
+		$fa = 'fa ';
+	}
+	$extra_style = !empty($color) ? 'color:' . $color . ';' :'';
+	$extra_style .= !empty($size) ? 'font-size:' . $size . ';' :'';
+	return '<i class="nebula-icon-shortcode ' . $fa . $type . '" style="' . $extra_style . '"></i>';
+}
+
+
+//Space [space height=8]
+add_shortcode('space', 'space_shortcode');
+function space_shortcode($atts){
+	extract( shortcode_atts(array("height" => '20'), $atts) );  	
+	return '<div class="space" style=" height:' . $height . 'px;" ></div>';
+}
+
+
+//Youtube [youtube height="500" width="760"]http://www.youtube.com/watch?v=5Yn1-xEXTk0[/youtube]
+add_shortcode('youtube', 'youtube_shortcode');
+function youtube_shortcode($atts){
+	extract( shortcode_atts(array("id" => null, "height" => '', "width" => ''), $atts) ); 
+	$width = 'width="' . $width . '"';
+	$height = 'height="' . $height . '"';
+	youtube_meta($id);
+	global $youtube_meta;
+	$youtube = '<article class="youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="http://www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '" frameborder="0" allowfullscreen=""></iframe></article>';
+	return $youtube;
+}
+
+
+//Close functions.php. Do not add anything after this closing tag!! ?>

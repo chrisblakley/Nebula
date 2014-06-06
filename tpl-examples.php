@@ -6,6 +6,44 @@
 
 get_header(); ?>
 
+<style>
+	pre {position: relative; display: block; font: normal 12px/22px Monaco,Monospace !important; color:#222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
+.no-js pre {margin: 10px 0 20px 0;}
+	.pretitle {display: block; text-align: right; color: #f1672c; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
+
+.pretitle.html {color: #f1672c;}
+pre.html {border: 1px solid #f1672c; border-left: 5px solid #f1672c;}
+	pre.html::selection {background: #fbcebb;}
+
+.pretitle.shortcode {color: #bbb;}
+pre.shortcode {border: 1px solid #bbb; border-left: 5px solid #bbb;}
+	pre.shortcode::selection {background: #ddd;}
+
+.pretitle.css {color: #30a9dc;}
+pre.css {border: 1px solid #30a9dc; border-left: 5px solid #30a9dc;}
+	pre.css::selection {background: #c1e5f5;}
+
+.pretitle.js, .pretitle.javascript {color: #f1bf26;}
+pre.js, pre.javascript {border: 1px solid #f1bf26; border-left: 5px solid #f1bf26;}
+	pre.js::selection, pre.javascript::selection {background: #fae9b6;}
+
+.pretitle.php {color: #5a68a5;}
+pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
+	pre.php::selection {background: #c8cde1;}
+</style>
+
+<script>
+	jQuery(document).ready(function() {	
+		//Pre syntax notation (to preserve x-scroll)
+		jQuery('pre.html').before('<span class="pretitle html">HTML</span>');
+		jQuery('pre.shortcode').before('<span class="pretitle shortcode">Shortcode</span>');
+		jQuery('pre.css').before('<span class="pretitle css">CSS</span>');
+		jQuery('pre.js').before('<span class="pretitle js">JS</span>');
+		jQuery('pre.javascript').before('<span class="pretitle javascript">Javascript</span>');
+		jQuery('pre.php').before('<span class="pretitle php">PHP</span>');
+	});
+</script>
+
 <section><!-- Do not duplicate this section because it has inline styles. -->
 	<div class="container" style="background: #0098d7; margin-bottom: 25px;">
 		<div class="row">
@@ -101,6 +139,51 @@ get_header(); ?>
 				    <?php wp_reset_query(); ?>
 					
 				</div><!--/container-->
+			<br/><br/><hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>Custom Shortcodes</h2>
+			<p>These are custom shortcodes that can be used in the Wordpress WYSIWYG Editor. As seen below, they are used via PHP.</p>
+			
+			<div class="container">
+				<div class="row">
+					<div class="eight columns">
+						<h3>Space</h3>
+						<p>Allows vertical space to be added without needing to use any code.</p>
+						<pre class="shortcode">[space height=25]</pre>
+						<br/>
+					</div><!--/columns-->
+					<div class="eight columns">
+						<h3>Divider</h3>
+						<p>Adds a stylized horizontal rule without needing to use code. "Space" (optional) adds equal margin above and below, otherwise declare "above" (optional) and "below" (optional) separately.</p>
+						<pre class="shortcode">[divider space=5]</pre>
+						<pre class="shortcode">[divider above=10 below=30]</pre>
+						<br/>
+					</div><!--/columns-->
+				</div><!--/row-->
+				<div class="row">
+					<div class="eight columns">
+						<h3>Icon</h3>
+						<p>Allows usage of Entypo or Font Awesome icons without needing code.</p>
+						<pre class="shortcode">[icon type="icon-adjust" color="#222" size="12px"]</pre>
+						<pre class="shortcode">[icon fontawesome type="icon-adjust" color="#222" size="12px"]</pre>
+						<br/>
+					</div><!--/columns-->
+					<div class="eight columns">
+						<h3>Youtube</h3>
+						<p>Provides an easy way to insert Youtube videos without needing code (using the necessary syntax for tracking). "height" and "width" attributes are optional.</p>
+						<pre class="shortcode">[youtube id="jtip7Gdcf0Q" height="500" width="760"]</pre>
+						<br/>
+					</div><!--/columns-->
+				</div><!--/row-->
+			</div><!--/container-->
+			
 			<hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
@@ -110,20 +193,22 @@ get_header(); ?>
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
-				<h2>Google Map Iframe</h2>
-				<h5><a href="https://developers.google.com/maps/documentation/embed/guide" target="_blank">Documentation &raquo;</a></h5>
-				<p>This is an iframe integration of Google Maps. Not as flexible as the JavaScript API, but very easy to use.</p>
-				<iframe
-					width="100%"
-					height="250"
-					frameborder="0" style="border:0"
-					src="https://www.google.com/maps/embed/v1/place
-					?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E
-					&q=Pinckney+Hugo+Group
-					&zoom=14
-					&maptype=roadmap">
-				</iframe>
-			<hr/>
+			<h2>Google Map Iframe</h2>
+			<h5><a href="https://developers.google.com/maps/documentation/embed/guide" target="_blank">Documentation &raquo;</a></h5>
+			<p>This is an iframe integration of Google Maps. Not as flexible as the JavaScript API, but very easy to use.</p>
+			<pre class="html">&lt;iframe width="100%" height="250" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E&q=Pinckney+Hugo+Group&zoom=14&maptype=roadmap"&gt;&lt;/iframe&gt;</pre>
+			<br/>
+			<iframe
+				width="100%"
+				height="250"
+				frameborder="0" style="border:0"
+				src="https://www.google.com/maps/embed/v1/place
+				?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E
+				&q=Pinckney+Hugo+Group
+				&zoom=14
+				&maptype=roadmap">
+			</iframe>
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -133,11 +218,10 @@ get_header(); ?>
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
-				<h2>Google Map API v3</h2>
-				<h5><a href="https://developers.google.com/maps/documentation/javascript/tutorial" target="_blank">Documentation &raquo;</a></h5>
-				<p>This is the full integration of Google Maps using the API v3.</p>
-				
-			<hr/>
+			<h2>Google Map API v3</h2>
+			<h5><a href="https://developers.google.com/maps/documentation/javascript/tutorial" target="_blank">Documentation &raquo;</a></h5>
+			<p>This is the full integration of Google Maps using the API v3.</p>				
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -148,71 +232,71 @@ get_header(); ?>
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
-				<h2>Youtube Embed</h2>
-				<h5><a href="https://developers.google.com/youtube/player_parameters" target="_blank">Documentation &raquo;</a></h5>
-				<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics. Using the Youtube Data API, we can pull information out of the video dynamically. The Gumby wrapper with the class "video" allows for fluid width videos, so it is best to wrap the iframe with that (along with the class of "youtube" (in this case), "vimeo", or "twitch"</p>
-				<p><strong>Important:</strong> Make sure to include the query parameter of "enablejsapi=1" for tracking to work (The class "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
-				
-				<div class="container">
-					<div class="row">
-						<div class="eight columns">
-														
-							<?php youtube_meta('jtip7Gdcf0Q'); ?>
-							
-							<article class="youtube video">
-								<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
-							</article>
-														
-							<br/>
-							<div class="container">
-								<div class="row">
-									<div class="four columns">
-										<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
-									</div><!--/columns-->
-									<div class="twelve columns">
-											<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
-											<span style="display: block; font-size: 12px; line-height: 18px;">
-												by <?php echo $youtube_meta['author']; ?><br/>
-												<?php echo $youtube_meta['content']; ?>
-											</span>
-									</div><!--/columns-->
-								</div><!--/row-->
-							</div><!--/container-->
-							
-						</div><!--/columns-->
-						<div class="eight columns">
-							
-							<?php youtube_meta('fjh61K3hyY0'); ?>
-							
-							<article class="youtube video">
-								<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
-							</article>
-														
-							<br/>
-							<div class="container">
-								<div class="row">
-									<div class="four columns">
-										<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
-									</div><!--/columns-->
-									<div class="twelve columns">
-											<a href="<?php echo $youtube_meta['href']; ?>"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
-											<span style="display: block; font-size: 12px; line-height: 18px;">
-												by <?php echo $youtube_meta['author']; ?><br/>
-												<?php echo $youtube_meta['content']; ?>
-											</span>
-									</div><!--/columns-->
-								</div><!--/row-->
-							</div><!--/container-->
-							
-						</div><!--/columns-->
-					</div><!--/row-->
-				</div><!--/container-->
-				
-				
-				
-				
-				
-			<hr/>
+			<h2>Youtube Embed</h2>
+			<h5><a href="https://developers.google.com/youtube/player_parameters" target="_blank">Documentation &raquo;</a></h5>
+			<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics. Using the Youtube Data API, we can pull information out of the video dynamically. The Gumby wrapper with the class "video" allows for fluid width videos, so it is best to wrap the iframe with that (along with the class of "youtube" (in this case), "vimeo", or "twitch"</p>
+			<p><strong>Important:</strong> Make sure to include the query parameter of "enablejsapi=1" for tracking to work (The class "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
+			
+			<pre class="html">&lt;article class="youtube video"&gt;<br/>    &lt;iframe id="&lt;?php echo $youtube_meta['safetitle']; ?&gt;" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/&lt;?php echo $youtube_meta['id']; ?&gt;?wmode=transparent&enablejsapi=1&origin=&lt;?php echo $youtube_meta['origin']; ?&gt;" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;<br/>&lt;/article&gt;</pre>
+			
+			<br/>
+			
+			<div class="container">
+				<div class="row">
+					<div class="eight columns">
+													
+						<?php youtube_meta('jtip7Gdcf0Q'); ?>
+						
+						<article class="youtube video">
+							<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+						</article>
+									
+						<br/>
+						<div class="container">
+							<div class="row">
+								<div class="four columns">
+									<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
+								</div><!--/columns-->
+								<div class="twelve columns">
+										<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
+										<span style="display: block; font-size: 12px; line-height: 18px;">
+											by <?php echo $youtube_meta['author']; ?><br/>
+											<?php echo $youtube_meta['content']; ?>
+										</span>
+								</div><!--/columns-->
+							</div><!--/row-->
+						</div><!--/container-->
+												
+					</div><!--/columns-->
+					<div class="eight columns">
+						
+						<?php youtube_meta('fjh61K3hyY0'); ?>
+						
+						<article class="youtube video">
+							<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+						</article>
+													
+						<br/>
+						<div class="container">
+							<div class="row">
+								<div class="four columns">
+									<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
+								</div><!--/columns-->
+								<div class="twelve columns">
+										<a href="<?php echo $youtube_meta['href']; ?>"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
+										<span style="display: block; font-size: 12px; line-height: 18px;">
+											by <?php echo $youtube_meta['author']; ?><br/>
+											<?php echo $youtube_meta['content']; ?>
+										</span>
+								</div><!--/columns-->
+							</div><!--/row-->
+						</div><!--/container-->
+						
+					</div><!--/columns-->
+				</div><!--/row-->
+			</div><!--/container-->
+			
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -221,11 +305,10 @@ get_header(); ?>
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
-				<h2>HTML5 Video</h2>
-				<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
-				<p>This is a local video embed that works cross-browser, and soon enough on iOS and mobile devices. File types and codecs will be described here as well.</p>
-				
-			<hr/>
+			<h2>HTML5 Video</h2>
+			<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
+			<p>This is a local video embed that works cross-browser, and soon enough on iOS and mobile devices. File types and codecs will be described here as well.</p>			
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -235,11 +318,10 @@ get_header(); ?>
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
-				<h2>CSS Browser Selector</h2>
-				<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
-				<p>Useful for debugging, but should only be enabled if feature detection (using Modernizr) will not work!</p>
-				
-			<hr/>
+			<h2>CSS Browser Selector</h2>
+			<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
+			<p>Useful for debugging, but should only be enabled if feature detection (using Modernizr) will not work!</p>
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -248,24 +330,24 @@ get_header(); ?>
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
-				<h2>Retina Images</h2>
-				<h5><a href="http://gumbyframework.com/docs/components/#!/retina-images" target="_blank">Documentation &raquo;</a></h5>
-				<p>Useful for debugging, but should only be enabled if feature detection (using Modernizr) will not work!</p>
+			<h2>Retina Images</h2>
+			<h5><a href="http://gumbyframework.com/docs/components/#!/retina-images" target="_blank">Documentation &raquo;</a></h5>
+			<p>Swaps images for a higher resolution on devices with higher pixel density.</p>
 		</div><!--/columns-->
 	</div><!--/row-->
 	<div class="row">
 		<div class="eight columns">
-				<p>This image is only a standard-resolution.</p>
-				<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" />
+			<p>This image is only a standard-resolution.</p>
+			<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" />
 		</div><!--/columns-->
 		<div class="eight columns">
-				<p>This image has a retina backup.</p>
-				<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" gumby-retina />
+			<p>This image has a retina backup.</p>
+			<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" gumby-retina />
 		</div><!--/columns-->
 	</div><!--/row-->
 	<div class="row">
 		<div class="sixteen columns">
-			<hr/>
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -288,7 +370,7 @@ get_header(); ?>
 	</div><!--/row-->
 	<div class="row">
 		<div class="sixteen columns">
-			<hr/>
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -329,7 +411,7 @@ get_header(); ?>
 						<script type="IN/Share" data-url="<?php the_permalink(); ?>" data-counter="right"></script>
 					</li><!-- /linkedin -->
 				</ul>
-				<hr/>
+				<br/><br/><hr/>
 			</div>
 			
 		</div><!--/columns-->
@@ -343,7 +425,7 @@ get_header(); ?>
 			<h2>Custom Social Buttons</h2>
 			<p>These are locally stored social sharing buttons that have hard-coded hrefs. These hrefs can also be modified with javascript to dynamically pull in page titles, etc.</p>
 			<p>Facebook Share, Twitter, Google+, LinkedIn, Email</p>
-			<hr/>
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
@@ -416,7 +498,7 @@ get_header(); ?>
 				</div><!--/twittercon-->
 			<?php endif; ?>
 			
-			<hr/>
+			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->

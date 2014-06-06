@@ -21,7 +21,7 @@
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/normalize.css" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/gumby.css" />
-		<!--<link rel="stylesheet" href="<?php //bloginfo('template_directory');?>/css/font-awesome.min.css">--> <!-- @TODO: Remove if not using Font Awesome! -->
+		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/font-awesome.min.css"> <!-- @TODO: Remove if not using Font Awesome! -->
 		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/jquery.mmenu.all.css" /> <!-- @TODO: Remove if not using mmenu! -->
 		<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" />
                 

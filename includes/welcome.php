@@ -8,7 +8,7 @@
 		</div>
 		
 		<h3><a href="<?php echo home_url(); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
-		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank">Pinckney Hugo Group</a>.</p>
+		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank" style="color: #0098d7;"><img src="<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/> Pinckney Hugo Group</a>.</p>
 		
 		<hr/>
 		
@@ -20,13 +20,25 @@
 				<?php $user_info = get_userdata( get_current_user_id() ); ?>
 				
 				<ul>
-					<li>User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong></li>
-					<li>Role: <strong class="admin-user-info admin-user-role"><?php echo array_shift($user_info->roles); ?></strong></li>
+					<li><i class="fa fa-user"></i> User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong></li>
+					<?php
+						switch ($user_info->roles[0]) {
+						    case 'administrator' : $fa_role = 'fa-key'; break;
+						    case 'editor' : $fa_role = 'fa-scissors'; break;
+						    case 'author' : $fa_role = 'fa-pencil-square'; break;
+						    case 'contributor' : $fa_role = 'fa-send'; break;
+						    case 'subscriber' : $fa_role = 'fa-ticket'; break;
+						    default : $fa_role = 'fa-recycle'; break;
+						}
+					?>
+					<li><i class="fa <?php echo $fa_role; ?>"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo $user_info->roles[0]; ?></strong></li>
 					<li>
-						IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong>
 						<?php if ($_SERVER["REMOTE_ADDR"] == '72.43.235.106'): ?>
-							<small> (PHG)</small>
+							<img src="<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
+						<?php else: ?>
+							<i class="fa fa-laptop"></i>
 						<?php endif; ?>
+						IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong>
 					</li>
 				</ul>
 			</div>
@@ -35,9 +47,9 @@
 			<div class="welcome-panel-column">
 				<h4>Administration</h4>
 				<ul>
-					<li><a class="welcome-icon welcome-widgets-menus" href="#" target="_blank">cPanel</a></li>
-					<li><a class="welcome-icon welcome-widgets-menus" href="#" target="_blank">Hosting</a></li>
-					<li><a class="welcome-icon welcome-widgets-menus" href="#" target="_blank">Domain</a></li>
+					<li><i class="fa fa-gears"></i> <a href="#" target="_blank">cPanel</a></li>
+					<li><i class="fa fa-hdd-o"></i> <a href="#" target="_blank">Hosting</a></li>
+					<li><i class="fa fa-globe"></i> <a href="#" target="_blank">Registrar</a></li>
 				</ul>
 			</div>
 			<?php endif; ?>
@@ -45,9 +57,9 @@
 			<div class="welcome-panel-column">
 				<h4>Social</h4>
 				<ul>
-					<li><a class="welcome-icon welcome-comments" href="#" target="_blank">Facebook</a></li>
-					<li><a class="welcome-icon welcome-comments" href="#" target="_blank">Twitter</a></li>
-					<li><a class="welcome-icon welcome-comments" href="#" target="_blank">Google+</a></li>
+					<li><i class="fa fa-facebook-square"></i> <a href="#" target="_blank">Facebook</a></li>
+					<li><i class="fa fa-twitter-square"></i> <a href="#" target="_blank">Twitter</a></li>
+					<li><i class="fa fa-google-plus-square"></i> <a href="#" target="_blank">Google+</a></li>
 				</ul>
 			</div>
 			
