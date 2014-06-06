@@ -222,3 +222,13 @@ Call the function once, and then use the variables as needed.
 </article>
 ```
 Note that the automatic Google Analytics tracking requires the class "youtubeplayer" and uses the iframe ID as the title of the video (for the event label).
+
+##Shortcodes
+
+[space height=25]
+[divider space=5]
+[divider above=10 below=30]
+[icon type="icon-adjust" color="#222" size="12px"]
+[icon fontawesome type="icon-adjust" color="#222" size="12px"]
+[youtube id="jtip7Gdcf0Q"]
+[youtube id="jtip7Gdcf0Q" height="500" width="760"]
