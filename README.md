@@ -226,9 +226,15 @@ Note that the automatic Google Analytics tracking requires the class "youtubepla
 ##Shortcodes
 
 [space height=25]
+
 [divider space=5]
+
 [divider above=10 below=30]
+
 [icon type="icon-adjust" color="#222" size="12px"]
+
 [icon fontawesome type="icon-adjust" color="#222" size="12px"]
+
 [youtube id="jtip7Gdcf0Q"]
+
 [youtube id="jtip7Gdcf0Q" height="500" width="760"]
