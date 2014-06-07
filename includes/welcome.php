@@ -90,35 +90,39 @@
 </div>
 
 <script>
+	jQuery(document).ready(function() {	
+		if ( jQuery('.index-php').length ) {
+			jQuery('#welcome-panel').removeClass('myhidden');
+			jQuery('.welcome-panel-close').addClass('myhidden');
+			jQuery('#wp_welcome_panel-hide').parent().addClass('myhidden').css('display', 'none');
+			
+			jQuery('.showmap').hover(function(){
+				jQuery('.welcome-photo-bg').stop().fadeOut();
+			}, function(){
+				jQuery('.welcome-photo-bg').stop().fadeIn();
+			});
+			
+			var address = jQuery('.maptoggle').text();
+			jQuery('.maptoggle').on('click', function(e){
+				if ( jQuery('.maininfo').hasClass('no-map') ) {
+					jQuery('.maininfo').removeClass('no-map');
+					jQuery('.welcome-photo-bg').addClass('myhidden');
+					jQuery('.maptoggle').text('« Back');
+					jQuery('.maininfo h4, .hideformap').addClass('noheight');
+				} else {
+					jQuery('.maininfo').addClass('no-map');
+					jQuery('.welcome-photo-bg').removeClass('myhidden');
+					jQuery('.maptoggle').text(address);
+					jQuery('.maininfo h4, .hideformap').removeClass('noheight');
+				}
+				return false;
+			});
+		}
+	});
+	
 	jQuery(window).on('load', function(){
 		setTimeout(function(){
 			jQuery('.jsinfo').removeClass('jsinfo');
 		}, 350);
 	});
-	
-	jQuery('#welcome-panel').removeClass('myhidden');
-	jQuery('.welcome-panel-close').addClass('myhidden');
-	jQuery('#wp_welcome_panel-hide').parent().addClass('myhidden').css('display', 'none');
-	
-	jQuery('.showmap').hover(function(){
-		jQuery('.welcome-photo-bg').stop().fadeOut();
-	}, function(){
-		jQuery('.welcome-photo-bg').stop().fadeIn();
-	});
-	
-	var address = jQuery('.maptoggle').text();
-	jQuery('.maptoggle').on('click', function(e){
-		if ( jQuery('.maininfo').hasClass('no-map') ) {
-			jQuery('.maininfo').removeClass('no-map');
-			jQuery('.welcome-photo-bg').addClass('myhidden');
-			jQuery('.maptoggle').text('« Back');
-			jQuery('.maininfo h4, .hideformap').addClass('noheight');
-		} else {
-			jQuery('.maininfo').addClass('no-map');
-			jQuery('.welcome-photo-bg').removeClass('myhidden');
-			jQuery('.maptoggle').text(address);
-			jQuery('.maininfo h4, .hideformap').removeClass('noheight');
-		}
-		return false;
-	});	
 </script>

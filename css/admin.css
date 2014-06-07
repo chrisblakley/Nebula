@@ -1,10 +1,10 @@
-.welcome-panel {display: block; padding: 8px 12px; overflow: hidden;}
+.index-php .welcome-panel {display: block; padding: 8px 12px; overflow: hidden;}
 	
-	.welcome-panel-content {margin: 0;}
-		.welcome-panel .about-description {font-size: 13px;}
-			.welcome-panel h4 {margin-top: 8px;}
-			.welcome-panel li {color: #444; font-size: 13px;}
-				.welcome-panel li strong {color: #000;}
+	.index-php .welcome-panel-content {margin: 0;}
+		.index-php .welcome-panel .about-description {font-size: 13px;}
+			.index-php .welcome-panel h4 {margin-top: 8px;}
+			.index-php .welcome-panel li {color: #444; font-size: 13px;}
+				.index-php .welcome-panel li strong {color: #000;}
 	.admin-user-info {text-transform: capitalize;}
 	
 	#phg-welcome {}
@@ -25,8 +25,8 @@
 		.weclome-map {position: absolute; top: 0; left: 0; height: 100%; width: 100%; padding: 0;}
 		
 		#welcome-content {width: 50%;}
-			.welcome-panel .welcome-panel-column:first-child {width: 33% !important;}
-			.welcome-panel .welcome-panel-column {min-width: 100px;}
+			.index-php .welcome-panel .welcome-panel-column:first-child {width: 33% !important;}
+			.index-php .welcome-panel .welcome-panel-column {min-width: 100px;}
 			#welcome-content .logocon {float: left; max-width: 22%; /* max-height: 56px; */ margin-right: 15px;}
 				#welcome-content .logocon a {}
 					#welcome-content .logocon a img {width: 100%;}
@@ -43,7 +43,7 @@
 @media only screen and (max-width: 1499px) and (min-width: 800px) {
 	#welcome-photo {width: 45%;}
 	#welcome-content {width: 50%;}
-	.welcome-panel .welcome-panel-column {width: 31% !important;}
+	.index-php .welcome-panel .welcome-panel-column {width: 31% !important;}
 }
 
 @media screen and (max-width: 1110px) {
@@ -52,14 +52,14 @@
 }
 
 @media only screen and (max-width: 900px) and (min-width: 501px) {
-	.welcome-panel .welcome-panel-column:first-child {width: 33%; float: left;}
-	.welcome-panel .welcome-panel-column {width: 33%; float: left;}
-	.welcome-panel .welcome-panel-column li {display: block;}
+	.index-php .welcome-panel .welcome-panel-column:first-child {width: 33%; float: left;}
+	.index-php .welcome-panel .welcome-panel-column {width: 33%; float: left;}
+	.index-php .welcome-panel .welcome-panel-column li {display: block;}
 }
 
 @media only screen and (max-width: 500px) {
 	#welcome-content .logocon {display: none;}
-	.welcome-panel .welcome-panel-column:first-child {width: 100% !important;}
+	.index-php .welcome-panel .welcome-panel-column:first-child {width: 100% !important;}
 }
 
 #pluginwarning {}
