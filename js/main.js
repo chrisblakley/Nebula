@@ -2,6 +2,43 @@ jQuery.noConflict();
 
 jQuery(document).ready(function() {	
 
+	mapInfo = [];
+	getAllLocations();
+	mapEnhancements();
+
+	/* To be vetted. Turn these into functions.
+	
+		//Pull query strings from URL
+		var queries = new Array(); 
+	    var q = document.URL.split('?')[1];
+	    if(q != undefined){
+	        q = q.split('&');
+	        for(var i = 0; i < q.length; i++){
+	            hash = q[i].split('=');
+	            queries.push(hash[1]);
+	            queries[hash[0]] = hash[1];
+	        }
+		} //End pull query strings from URL
+
+	
+		//Search term highlighter
+		var theSearchTerm = document.URL.split('?s=')[1];
+		if (typeof theSearchTerm != 'undefined' ) {
+			theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
+			//console.log('the search is: ' + theSearchTerm);
+			jQuery('.searchcon .entry-title a, .searchcon .entry-summary').each(function(i){
+				var searchFinder = jQuery(this).text().replace( new RegExp( '(' + preg_quote( theSearchTerm ) + ')' , 'gi' ), '<span class="searchresultword">$1</span>' );
+				jQuery(this).html(searchFinder);
+			});
+		}
+		function preg_quote( str ) {
+			return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+		} //End Search term highlighter
+	
+	/*
+
+
+
 	//Init Custom Functions
 	gaEventTracking();
 	
@@ -695,3 +732,242 @@ function twitterFeed() {
         JQTWEET.loadTweets();
     }
 } //end twitterFeed()
+
+
+
+
+
+
+function mapEnhancements() {
+	jQuery('.mapweather').on('click', function(){
+		if ( mapInfo['weather'] == 1 ) {
+			mapInfo['weather'] = 0;
+			console.log('DISABLING WEATHER: ' + mapInfo['weather']);
+			jQuery(this).find('i').removeClass('icon-cloud-thunder').addClass('icon-cloud').attr('title', 'Show weather');
+		} else {
+			mapInfo['weather'] = 1;
+			console.log('WEATHER BACK ON GOOD FOR YOU: ' + mapInfo['weather']);
+			jQuery(this).find('i').removeClass('icon-cloud').addClass('icon-cloud-thunder').attr('title', 'Hide weather');
+		}
+		renderMap(mapInfo);
+		return false;
+	});
+	
+	jQuery('.detectlocation').on('click', function(){
+		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
+			console.log('detecting location');
+			jQuery('.detectlocation').removeClass('inactive').append('<span class="currentlydetecting">...</span>').attr('title', 'Requesting location...');			
+			requestPosition();
+		} else {
+			console.log('removing detected location');
+			jQuery(this).removeClass('success failure').addClass('inactive').attr('title', 'Detect current location').css('color', '');
+			mapInfo['detectLoc'] = new Array(0, 0);
+			renderMap(mapInfo);
+		}
+		return false; //Not returning false :C
+	});
+	
+	jQuery('.refreshmap').on('click', function(){
+		console.log('refreshing the map');
+		renderMap(mapInfo);
+		jQuery('.refreshmapicon').addClass('fa-spin');
+		jQuery('.refreshmap').addClass('timeout', function(){ //Hide the refresh button for 20 seconds to prevent spamming it
+			setTimeout(function(){
+				jQuery('.refreshmap').removeClass('timeout');
+				jQuery('.refreshmapicon').removeClass('fa-spin');
+			}, 5000);
+		});
+		return false;
+	});
+}
+
+
+
+
+
+function requestPosition() {
+	console.log('now requesting location... this is where you come in, bro...');
+    var nav = null;
+    if (nav == null) {
+        nav = window.navigator;
+    }
+    var geoloc = nav.geolocation;
+    if (geoloc != null) {
+        geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true});
+    }
+}
+
+function successCallback(position) {
+	console.log('success! got your location data.');
+	
+	jQuery('.detectlocation').removeClass('failure').addClass('success');
+	jQuery('.currentlydetecting').remove();
+	
+	mapInfo['detectLoc'] = [];
+	mapInfo['detectLoc'][0] = position.coords.latitude;
+	mapInfo['detectLoc'][1] = position.coords.longitude;
+	mapInfo['detectLoc']['accMeters'] = position.coords.accuracy;
+	mapInfo['detectLoc']['alt'] = position.coords.altitude;
+	mapInfo['detectLoc']['speed'] = position.coords.speed;
+
+	if ( ( mapInfo['detectLoc']['accMeters'] <= 25 ) ) {
+		mapInfo['detectLoc']['accColor'] = '#00bb00';
+	} else if ( mapInfo['detectLoc']['accMeters'] > 25 && mapInfo['detectLoc']['accMeters'] <= 50 ) {
+		mapInfo['detectLoc']['accColor'] = '#46d100';
+	} else if ( mapInfo['detectLoc']['accMeters'] > 51 && mapInfo['detectLoc']['accMeters'] <= 150 ) {
+		mapInfo['detectLoc']['accColor'] = '#a4ed00';
+	} else if ( mapInfo['detectLoc']['accMeters'] > 151 && mapInfo['detectLoc']['accMeters'] <= 400 ) {
+		mapInfo['detectLoc']['accColor'] = '#f2ee00';
+	} else if ( mapInfo['detectLoc']['accMeters'] > 401 && mapInfo['detectLoc']['accMeters'] <= 800 ) {
+		mapInfo['detectLoc']['accColor'] = '#ffc600';
+	} else if ( mapInfo['detectLoc']['accMeters'] > 801 && mapInfo['detectLoc']['accMeters'] <= 1500 ) {
+		mapInfo['detectLoc']['accColor'] = '#ff6f00';
+	} else if ( mapInfo['detectLoc']['accMeters'] > 1501 && mapInfo['detectLoc']['accMeters'] <= 3000 ) {
+		mapInfo['detectLoc']['accColor'] = '#ff1900';
+	} else if ( mapInfo['detectLoc']['accMeters'] > 3001 ) {
+		mapInfo['detectLoc']['accColor'] = '#ff0000';
+	} else {
+		mapInfo['detectLoc']['accColor'] = '#ff0000';
+	}
+	renderMap(mapInfo);
+	
+	mapInfo['detectLoc']['accMiles'] = (mapInfo['detectLoc']['accMeters']*0.000621371).toFixed(2);
+	
+	if ( mapInfo['detectLoc']['accMeters'] > 400 ) {
+		lowAccText = 'Your location accuracy is ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).';
+		//Some kind of notification here...
+	}
+	
+	jQuery('.detectlocation').css('color', mapInfo['detectLoc']['accColor']).attr('title', 'Accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles');
+}
+
+function errorCallback(error) {
+	console.log('failure. not sure if it was you or me... lets find out...');
+    var strMessage = "";
+    // Check for known errors
+    switch (error.code) {
+        case error.PERMISSION_DENIED:
+            strMessage = 'Access to your location is turned off. Change your settings to report location data.';
+            break;
+        case error.POSITION_UNAVAILABLE:
+            strMessage = "Data from location services is currently unavailable.";
+            break;
+        case error.TIMEOUT:
+            strMessage = "Location could not be determined within a specified timeout period.";
+            break;
+        default:
+            break;
+    }
+    console.log(strMessage);
+    jQuery('.detectlocation').removeClass('success').addClass('failure inactive').attr('title', strMessage);
+}
+
+
+
+//Google Maps
+function getAllLocations() {
+	mapInfo['markers'] = [];
+	jQuery('.latlngcon').each(function(i){
+		var alat = jQuery(this).find('.lat').text();
+		var alng = jQuery(this).find('.lng').text();
+		//console.log(i + ': found location! lat: ' + alat + ', lng: ' + alng);
+		mapInfo['markers'][i] = [alat, alng];
+	});
+	renderMap(mapInfo);
+}
+
+
+function renderMap(mapInfo) {
+    var myOptions = {
+		zoom: 11,
+		scrollwheel: false,
+		zoomControl: true,
+		scaleControl: true,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	}
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    var bounds = new google.maps.LatLngBounds();
+
+	if ( typeof mapInfo['traffic'] !== 'undefined' ) {
+		console.log('weather is: ' + mapInfo['traffic']);
+		var trafficLayer = new google.maps.TrafficLayer();
+		trafficLayer.setMap(map);
+	}
+	
+	//Map weather
+	if ( typeof mapInfo['weather'] !== 'undefined' ) {
+		console.log('weather is: ' + mapInfo['weather']);
+		if ( mapInfo['weather'] == 1 ) {
+			var weatherLayer = new google.maps.weather.WeatherLayer({
+				temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
+			});
+			weatherLayer.setMap(map);
+			
+			var cloudLayer = new google.maps.weather.CloudLayer();
+			cloudLayer.setMap(map); 
+		}
+	}
+    
+    
+   	//Hard-Coded Custom Marker
+	//http://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
+	var phg = new google.maps.LatLng('43.0536608', '-76.1656');
+	bounds.extend(phg);
+	marker = new google.maps.Marker({
+        position: phg,
+        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
+        clickable: false,
+        map: map
+    });
+
+
+	//Dynamic Markers (passed from getAllLocations()
+	if ( typeof mapInfo['markers'] !== 'undefined' ) {
+		var marker, i;
+	    for (i = 0; i < mapInfo['markers'].length; i++) {
+	        var pos = new google.maps.LatLng(mapInfo['markers'][i][0], mapInfo['markers'][i][1]);
+	        bounds.extend(pos);
+	        marker = new google.maps.Marker({
+	            position: pos,
+	            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
+	            clickable: false,
+	            map: map
+	        });
+	    }(marker, i);
+    }
+
+   
+	//Detected Location Marker
+	if ( typeof mapInfo['detectLoc'] !== 'undefined' ) {
+		if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
+			console.log('marking detected location.');
+			//Detected location marker
+			var detectLoc = new google.maps.LatLng(mapInfo['detectLoc'][0], mapInfo['detectLoc'][1]);
+			marker = new google.maps.Marker({
+		        position: detectLoc,
+		        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
+		        //animation: google.maps.Animation.DROP,
+		        clickable: false,
+		        map: map
+		    });
+		    var circle = new google.maps.Circle({
+				strokeColor: mapInfo['detectLoc']['accColor'],
+				strokeOpacity: 0.7,
+				strokeWeight: 1,
+				fillColor: mapInfo['detectLoc']['accColor'],
+				fillOpacity: 0.15,
+				map: map,
+				radius: mapInfo['detectLoc']['accMeters']
+			});
+			circle.bindTo('center', marker, 'position');
+			var detectbounds = new google.maps.LatLngBounds();
+			detectbounds.extend(phg);
+			detectbounds.extend(detectLoc);
+			map.fitBounds(detectbounds);
+		}
+	}
+
+	google.maps.event.trigger(map, "resize");
+    map.fitBounds(bounds);
+	
+}
