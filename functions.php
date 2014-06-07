@@ -1126,6 +1126,8 @@ function footerWidgetCounter() {
 
 //Divider [divider scroll_text="Go To Top"]
 add_shortcode('divider', 'divider_shortcode');
+add_shortcode('hr', 'divider_shortcode');
+add_shortcode('line', 'divider_shortcode');
 function divider_shortcode($atts){
 	extract( shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts) );
 	if ( $space ) {
