@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="<?php echo get_stylesheet_directory_uri(); ?>/css/font-awesome.min.css" />
+
 <div id="phg-welcome" class="welcome-panel-content gearside-welcome">
 	
 	<div id="welcome-content">
@@ -50,6 +52,8 @@
 					<li><i class="fa fa-gears"></i> <a href="#" target="_blank">cPanel</a></li>
 					<li><i class="fa fa-hdd-o"></i> <a href="#" target="_blank">Hosting</a></li>
 					<li><i class="fa fa-globe"></i> <a href="#" target="_blank">Registrar</a></li>
+					<li><i class="fa fa-bar-chart-o"></i> <a href="#" target="_blank">Google Analytics</a></li>
+					<li><i class="fa fa-google"></i> <a href="#" target="_blank">Google Webmaster Tools</a></li>
 				</ul>
 			</div>
 			<?php endif; ?>
@@ -60,6 +64,7 @@
 					<li><i class="fa fa-facebook-square"></i> <a href="#" target="_blank">Facebook</a></li>
 					<li><i class="fa fa-twitter-square"></i> <a href="#" target="_blank">Twitter</a></li>
 					<li><i class="fa fa-google-plus-square"></i> <a href="#" target="_blank">Google+</a></li>
+					<li><i class="fa fa-linkedin-square"></i> <a href="#" target="_blank">LinkedIn</a></li>
 				</ul>
 			</div>
 			
