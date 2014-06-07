@@ -22,7 +22,7 @@
 				<?php $user_info = get_userdata( get_current_user_id() ); ?>
 				
 				<ul>
-					<li><i class="fa fa-user"></i> User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong></li>
+					<li><i class="fa fa-user fa-fw"></i> User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong></li>
 					<?php
 						switch ($user_info->roles[0]) {
 						    case 'administrator' : $fa_role = 'fa-key'; break;
@@ -33,12 +33,12 @@
 						    default : $fa_role = 'fa-recycle'; break;
 						}
 					?>
-					<li><i class="fa <?php echo $fa_role; ?>"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo $user_info->roles[0]; ?></strong></li>
+					<li><i class="fa <?php echo $fa_role; ?> fa-fw"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo $user_info->roles[0]; ?></strong></li>
 					<li>
 						<?php if ($_SERVER["REMOTE_ADDR"] == '72.43.235.106'): ?>
 							<img src="<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
 						<?php else: ?>
-							<i class="fa fa-laptop"></i>
+							<i class="fa fa-laptop fa-fw"></i>
 						<?php endif; ?>
 						IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong>
 					</li>
@@ -49,11 +49,11 @@
 			<div class="welcome-panel-column">
 				<h4>Administration</h4>
 				<ul>
-					<li><i class="fa fa-gears"></i> <a href="#" target="_blank">cPanel</a></li>
-					<li><i class="fa fa-hdd-o"></i> <a href="#" target="_blank">Hosting</a></li>
-					<li><i class="fa fa-globe"></i> <a href="#" target="_blank">Registrar</a></li>
-					<li><i class="fa fa-bar-chart-o"></i> <a href="#" target="_blank">Google Analytics</a></li>
-					<li><i class="fa fa-google"></i> <a href="#" target="_blank">Google Webmaster Tools</a></li>
+					<li><i class="fa fa-gears fa-fw"></i> <a href="#" target="_blank">cPanel</a></li>
+					<li><i class="fa fa-hdd-o fa-fw"></i> <a href="#" target="_blank">Hosting</a></li>
+					<li><i class="fa fa-globe fa-fw"></i> <a href="#" target="_blank">Registrar</a></li>
+					<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="#" target="_blank">Google Analytics</a></li>
+					<li><i class="fa fa-google fa-fw"></i> <a href="#" target="_blank">Google Webmaster Tools</a></li>
 				</ul>
 			</div>
 			<?php endif; ?>
@@ -61,10 +61,10 @@
 			<div class="welcome-panel-column">
 				<h4>Social</h4>
 				<ul>
-					<li><i class="fa fa-facebook-square"></i> <a href="#" target="_blank">Facebook</a></li>
-					<li><i class="fa fa-twitter-square"></i> <a href="#" target="_blank">Twitter</a></li>
-					<li><i class="fa fa-google-plus-square"></i> <a href="#" target="_blank">Google+</a></li>
-					<li><i class="fa fa-linkedin-square"></i> <a href="#" target="_blank">LinkedIn</a></li>
+					<li><i class="fa fa-facebook-square fa-fw"></i> <a href="#" target="_blank">Facebook</a></li>
+					<li><i class="fa fa-twitter-square fa-fw"></i> <a href="#" target="_blank">Twitter</a></li>
+					<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="#" target="_blank">Google+</a></li>
+					<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="#" target="_blank">LinkedIn</a></li>
 				</ul>
 			</div>
 			
