@@ -170,9 +170,9 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 				<div class="row">
 					<div class="eight columns">
 						<h3>Icon</h3>
-						<p>Allows usage of Entypo or Font Awesome icons without needing code.</p>
-						<pre class="shortcode">[icon type="icon-adjust" color="#222" size="12px"]</pre>
-						<pre class="shortcode">[icon fontawesome type="icon-adjust" color="#222" size="12px"]</pre>
+						<p>Allows usage of <a href="http://gumbyframework.com/docs/ui-kit/#!/icons" target="_blank">Gumby/Entypo</a> or <a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font Awesome icons without needing code.</p>
+						<pre class="shortcode">[icon type="icon-home" color="#222" size="12px"]</pre>
+						<pre class="shortcode">[icon fontawesome type="fa-home" color="#222" size="12px"]</pre>
 						<br/>
 					</div><!--/columns-->
 					<div class="eight columns">
