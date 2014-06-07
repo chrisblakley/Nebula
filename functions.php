@@ -1140,18 +1140,19 @@ function divider_shortcode($atts){
 //Icon [icon family="entypo" type="icon-adjust" color="#222" size="12px"]
 add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){	
-	extract( shortcode_atts(array('type'=>'', 'color'=>'#333', 'size'=>'13px'), $atts) );
-	if ( $atts[0] == 'fontawesome' || $atts[0] == 'fa' || $atts[0] == 'font-awesome' ) {
-		$fa = 'fa ';
+	extract( shortcode_atts(array('type'=>'', 'color'=>'#333', 'size'=>'13px', 'class'=>''), $atts) );		
+	if (strpos($type, 'fa-') !== false) {
+	    $fa = 'fa ';
 	}
 	$extra_style = !empty($color) ? 'color:' . $color . ';' :'';
 	$extra_style .= !empty($size) ? 'font-size:' . $size . ';' :'';
-	return '<i class="nebula-icon-shortcode ' . $fa . $type . '" style="' . $extra_style . '"></i>';
+	return '<i class="' . $class . ' nebula-icon-shortcode ' . $fa . $type . '" style="' . $extra_style . '"></i>';
 }
 
 
-//Space [space height=8]
+//Space (aka Gap) [space height=8]
 add_shortcode('space', 'space_shortcode');
+add_shortcode('gap', 'space_shortcode');
 function space_shortcode($atts){
 	extract( shortcode_atts(array("height" => '20'), $atts) );  	
 	return '<div class="space" style=" height:' . $height . 'px;" ></div>';
