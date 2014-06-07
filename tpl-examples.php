@@ -170,9 +170,9 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 				<div class="row">
 					<div class="eight columns">
 						<h3>Icon</h3>
-						<p>Allows usage of <a href="http://gumbyframework.com/docs/ui-kit/#!/icons" target="_blank">Gumby/Entypo</a> or <a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font Awesome</a> icons without needing code. Works with <a href="http://fortawesome.github.io/Font-Awesome/examples/" target="_blank">supplemental Font Awesome</a> classes like "fa-spin" too.</p>
-						<pre class="shortcode">[icon type="icon-home" color="#222" size="12px"]</pre>
-						<pre class="shortcode">[icon fontawesome type="fa-home fa-spin" color="red"]</pre>
+						<p>Allows usage of <a href="http://gumbyframework.com/docs/ui-kit/#!/icons" target="_blank">Gumby/Entypo</a> or <a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font Awesome</a> icons without needing code. Works with <a href="http://fortawesome.github.io/Font-Awesome/examples/" target="_blank">supplemental Font Awesome</a> classes like "fa-spin" too. Add additional classes with the "class" attribute.</p>
+						<pre class="shortcode">[icon type="icon-home" color="#222" size="12px" class="special"]</pre>
+						<pre class="shortcode">[icon type="fa-home fa-spin" color="red"]</pre>
 						<br/>
 					</div><!--/columns-->
 					<div class="eight columns">
