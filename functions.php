@@ -474,7 +474,8 @@ function nebulaActivateComplete(){
 
 //Add custom admin.css stylesheet to WP Admin
 function custom_admin_css() {
-	echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/font-awesome.min.css" />';
+	//Font Awesome is called inside welcome.php- uncomment below to enable throughout WP Admin.
+	//echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/font-awesome.min.css" />';
     echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/admin.css" />';
 }
 add_action('admin_head', 'custom_admin_css');
