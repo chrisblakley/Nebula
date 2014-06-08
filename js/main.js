@@ -840,7 +840,7 @@ function mapActions() {
 	
 	//Geolocation Success listener
 	jQuery(document).on('geolocationSuccess', function(){		
-		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles</span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
+		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles <small>(' + mapInfo['detectLoc']['accMeters'] + ' meters)</small></span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').addClass('active').attr('title', '');
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin').addClass('fa-location-arrow success');
@@ -1040,7 +1040,6 @@ function renderMap(mapInfo) {
 			Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
 			
 			var detectbounds = new google.maps.LatLngBounds();
-			detectbounds.extend(phg);
 			detectbounds.extend(detectLoc);
 			map.fitBounds(detectbounds);
 		}
