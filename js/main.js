@@ -2,10 +2,6 @@ jQuery.noConflict();
 
 jQuery(document).ready(function() {	
 
-	mapInfo = [];
-	getAllLocations();
-	mapEnhancements();
-
 	/* To be vetted. Turn these into functions.
 	
 		//Pull query strings from URL
@@ -56,6 +52,10 @@ jQuery(document).ready(function() {
 	powerFooterWidthDist();
 	searchValidator();
 	errorLogAndFallback();
+	
+	mapInfo = [];
+	getAllLocations();
+	mapActions();
 	
 	viewport = updateViewportDimensions();
 	//console.debug(viewport);
@@ -740,29 +740,35 @@ function twitterFeed() {
    ========================================================================== */
 
 //Interactive Functions of the Google Map
-function mapEnhancements() {
+function mapActions() {
+	originalWeatherText = jQuery('.mapweather').text();
 	jQuery('.mapweather').on('click', function(){
 		if ( mapInfo['weather'] == 1 ) {
 			mapInfo['weather'] = 0;
-			jQuery('.mapweather').removeClass('active').addClass('inactive');
+			jQuery('.mapweather').removeClass('active').addClass('inactive').text(originalWeatherText);
+			jQuery('.mapweather-icon').removeClass('active').addClass('inactive');
 			Gumby.log('Disabling weather layer.');
 		} else {
 			mapInfo['weather'] = 1;
-			jQuery('.mapweather').addClass('active').removeClass('inactive');
+			jQuery('.mapweather').addClass('active').removeClass('inactive').text('Disable Weather');
+			jQuery('.mapweather-icon').addClass('active').removeClass('inactive');
 			Gumby.log('Enabling weather layer.');
 		}
 		renderMap(mapInfo);
 		return false;
 	});
 	
+	originalTrafficText = jQuery('.maptraffic').text();
 	jQuery('.maptraffic').on('click', function(){
 		if ( mapInfo['traffic'] == 1 ) {
 			mapInfo['traffic'] = 0;
-			jQuery('.maptraffic').removeClass('active').addClass('inactive');
+			jQuery('.maptraffic').removeClass('active').addClass('inactive').text(originalTrafficText);
+			jQuery('.maptraffic-icon').removeClass('active').addClass('inactive');
 			Gumby.log('Disabling traffic layer.');
 		} else {
 			mapInfo['traffic'] = 1;
-			jQuery('.maptraffic').addClass('active').removeClass('inactive');
+			jQuery('.maptraffic').addClass('active').removeClass('inactive').text('Disable Traffic');
+			jQuery('.maptraffic-icon').addClass('active').removeClass('inactive');
 			Gumby.log('Enabling traffic layer.');
 		}
 		renderMap(mapInfo);
@@ -796,6 +802,7 @@ function mapEnhancements() {
 	});
 	
 	originalRefreshText = jQuery('.maprefresh').text();
+	pleaseWait = 0;
 	jQuery('.maprefresh').on('click', function(){
 		if ( !jQuery(this).hasClass('timeout') ) {
 			pleaseWait = 0;
@@ -803,7 +810,7 @@ function mapEnhancements() {
 			renderMap(mapInfo);
 			jQuery('.maprefresh').addClass('timeout', function(){ 
 				jQuery('.maprefresh').text('Refreshing...');
-				jQuery('.maprefresh-icon').addClass('fa-spin');
+				jQuery('.maprefresh-icon').removeClass('inactive').addClass('fa-spin');
 			});
 		} else {
 			pleaseWait++;
@@ -822,17 +829,18 @@ function mapEnhancements() {
 	jQuery(document).on('mapRendered', function(){		
 		setTimeout(function(){
 			jQuery('.maprefresh').addClass('timeout').text('Refreshed!');
-			jQuery('.maprefresh-icon').removeClass('fa-refresh fa-spin').addClass('fa-check-circle success');
+			jQuery('.maprefresh-icon').removeClass('fa-refresh fa-spin inactive').addClass('fa-check-circle success');
 		}, 500);
 		
 		setTimeout(function(){ //Hide the refresh button to prevent spamming it
 			jQuery('.maprefresh').removeClass('timeout').text(originalRefreshText);
-			jQuery('.maprefresh-icon').removeClass('fa-check-circle success').addClass('fa-refresh');
+			jQuery('.maprefresh-icon').removeClass('fa-check-circle success').addClass('fa-refresh inactive');
 		}, 10000);
 	});
 	
 	//Geolocation Success listener
 	jQuery(document).on('geolocationSuccess', function(){		
+		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles</span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').addClass('active').attr('title', '');
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin').addClass('fa-location-arrow success');
@@ -841,12 +849,13 @@ function mapEnhancements() {
 	
 	//Geolocation Error listener
 	jQuery(document).on('geolocationError', function(){		
+		jQuery('.mapgeolocation').removeClass('success').text(geolocationErrorMessage);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').attr('title', '');
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin success').addClass('fa-location-arrow error');
 		}, 500);		
 	});
-}
+} //End mapActions()
 
 //Request Geolocation
 function requestPosition() {
@@ -904,34 +913,30 @@ function successCallback(position) {
 	}
 	
 	jQuery(document).trigger('geolocationSuccess');
-	jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles</span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
-	
 	ga('send', 'event', 'Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']);
 }
 
 //Geolocation Error
 function errorCallback(error) {
-	Gumby.warn('Error!');
-    var strMessage = "";
+    geolocationErrorMessage = "";
     // Check for known errors
     switch (error.code) {
         case error.PERMISSION_DENIED:
-            strMessage = 'Access to your location is turned off. Change your settings to report location data.';
+            geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
             break;
         case error.POSITION_UNAVAILABLE:
-            strMessage = "Data from location services is currently unavailable.";
+            geolocationErrorMessage = "Data from location services is currently unavailable.";
             break;
         case error.TIMEOUT:
-            strMessage = "Location could not be determined within a specified timeout period.";
+            geolocationErrorMessage = "Location could not be determined within a specified timeout period.";
             break;
         default:
-        	strMessage = "An unknown error has occurred.";
+        	geolocationErrorMessage = "An unknown error has occurred.";
             break;
     }
-    Gumby.warn(strMessage);
-    ga('send', 'event', 'Geolocation', 'Error', strMessage);
+    Gumby.warn(geolocationErrorMessage);
     jQuery(document).trigger('geolocationError');
-    jQuery('.mapgeolocation').removeClass('success').text(strMessage);
+    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage);
 }
 
 //Retreive Lat/Lng locations
