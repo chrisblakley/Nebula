@@ -196,18 +196,19 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 			<h2>Google Map Iframe</h2>
 			<h5><a href="https://developers.google.com/maps/documentation/embed/guide" target="_blank">Documentation &raquo;</a></h5>
 			<p>This is an iframe integration of Google Maps. Not as flexible as the JavaScript API, but very easy to use.</p>
-			<pre class="html">&lt;iframe width="100%" height="250" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E&q=Pinckney+Hugo+Group&zoom=14&maptype=roadmap"&gt;&lt;/iframe&gt;</pre>
+			<pre class="html">&lt;iframe class="googlemap" width="100%" height="250" frameborder="0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E&q=Pinckney+Hugo+Group&zoom=14&maptype=roadmap"&gt;&lt;/iframe&gt;</pre>
 			<br/>
-			<iframe
+			<iframe class="googlemap nebulaborder"
 				width="100%"
 				height="250"
-				frameborder="0" style="border:0"
+				frameborder="0"
 				src="https://www.google.com/maps/embed/v1/place
 				?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E
 				&q=Pinckney+Hugo+Group
 				&zoom=14
 				&maptype=roadmap">
 			</iframe>
+			<div class="nebulashadow"></div>
 			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
@@ -242,12 +243,11 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 					</div><!--/columns-->
 				</div><!--/row-->
 			</div><!--/container-->
-
 			
-			<div class="googlemapcon">
+			<div class="googlemapcon nebulaframe">
 				<div id="map_canvas" class="googlemap"></div>
 			</div>
-						
+					
 			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
