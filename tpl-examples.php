@@ -237,7 +237,7 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 							<li><i class="mapweather-icon fa fa-cloud fa-fw inactive"></i> <a class="mapweather" href="#">Enable Weather</a></li>
 							<li><i class="maptraffic-icon fa fa-car fa-fw inactive"></i> <a class="maptraffic" href="#">Enable Traffic</a></li>
 							<li><i class="mapgeolocation-icon fa fa-location-arrow fa-fw inactive"></i> <a class="mapgeolocation" href="#">Detect Location</a></li>
-							<li><i class="maprefresh-icon fa fa-refresh fa-fw"></i> <a class="maprefresh" href="#">Refresh Map</a></li>
+							<li><i class="maprefresh-icon fa fa-refresh fa-fw inactive"></i> <a class="maprefresh" href="#">Refresh Map</a></li>
 						</ul>
 					</div><!--/columns-->
 				</div><!--/row-->
