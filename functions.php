@@ -996,11 +996,16 @@ function mobile_classes() {
 	echo $mobile_classes;
 }
 
-//Control how scripts are loaded for debugging
+//Control how scripts are loaded, and force clear cache for debugging
 if ( array_key_exists('debug', $_GET) ) {
 	$GLOBALS["defer"] = '';
 	$GLOBALS["async"] = '';
 	$GLOBALS["gumby_debug"] = 'gumby-debug';
+	header("Expires: Fri, 28 Mar 1986 02:40:00 GMT");
+	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+	header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+	header("Cache-Control: post-check=0, pre-check=0", false);
+	header("Pragma: no-cache");
 } else {
 	$GLOBALS["defer"] = 'defer';
 	$GLOBALS["async"] = 'async';

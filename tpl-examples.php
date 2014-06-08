@@ -220,23 +220,24 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 		<div class="sixteen columns">
 			<h2>Google Map API v3</h2>
 			<h5><a href="https://developers.google.com/maps/documentation/javascript/tutorial" target="_blank">Documentation &raquo;</a></h5>
-			<p>This is the full integration of Google Maps using the API v3.</p>
+			<p>This is the full integration of Google Maps using the API v3. For more advanced functionality, consider using the <a href="https://github.com/HPNeo/gmaps" target="_blank">gmaps library</a>.</p>
 			
 			<div class="container">
 				<div class="row">
 					<div class="eight columns">
 						<ul>
-							<li class="latlngcon"><i class="icon-location"></i> <span class="lat">43.13456</span>, <span class="lng">-76.12345</span></li>
-							<li class="latlngcon"><i class="icon-location"></i> <span class="lat">43.01234</span>, <span class="lng">-76.23456</span></li>
-							<li class="latlngcon"><i class="icon-location"></i> <span class="lat">43.12345</span>, <span class="lng">-76.34567</span></li>
+							<li><strong>Example Locations</strong></li>
+							<li class="latlngcon"><i class="icon-location" style="color: #fe7569;"></i> <span class="lat">43.109205</span>, <span class="lng">-76.095831</span></li>
+							<li class="latlngcon"><i class="icon-location" style="color: #fe7569;"></i> <span class="lat">43.093068</span>, <span class="lng">-76.163809</span></li>
+							<li class="latlngcon"><i class="icon-location" style="color: #fe7569;"></i> <span class="lat">43.100150</span>, <span class="lng">-76.207207</span></li>
 						</ul>
 					</div><!--/columns-->
 					<div class="eight columns">
 						<ul>
-							<li><i class="weathermapicon fa fa-cloud fa-fw"></i> <a class="mapweather" href="#">Toggle Weather</a></li>
-							<li><i class="trafficmapicon fa fa-car fa-fw"></i> <a class="maptraffic" href="#">Toggle Traffic</a></li>
-							<li><i class="locationmapicon fa fa-location-arrow fa-fw"></i> <a class="detectlocation" href="#">Detect Location</a></li>
-							<li><i class="refreshmapicon fa fa-refresh fa-fw"></i> <a class="refreshmap" href="#">Refresh Map</a></li>
+							<li><i class="mapweather-icon fa fa-cloud fa-fw inactive"></i> <a class="mapweather" href="#">Enable Weather</a></li>
+							<li><i class="maptraffic-icon fa fa-car fa-fw inactive"></i> <a class="maptraffic" href="#">Enable Traffic</a></li>
+							<li><i class="mapgeolocation-icon fa fa-location-arrow fa-fw inactive"></i> <a class="mapgeolocation" href="#">Detect Location</a></li>
+							<li><i class="maprefresh-icon fa fa-refresh fa-fw"></i> <a class="maprefresh" href="#">Refresh Map</a></li>
 						</ul>
 					</div><!--/columns-->
 				</div><!--/row-->

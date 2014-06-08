@@ -735,58 +735,122 @@ function twitterFeed() {
 
 
 
+/* ==========================================================================
+   Google Maps API v3 Functions
+   ========================================================================== */
 
-
-
+//Interactive Functions of the Google Map
 function mapEnhancements() {
 	jQuery('.mapweather').on('click', function(){
 		if ( mapInfo['weather'] == 1 ) {
 			mapInfo['weather'] = 0;
-			console.log('DISABLING WEATHER: ' + mapInfo['weather']);
-			jQuery(this).find('i').removeClass('icon-cloud-thunder').addClass('icon-cloud').attr('title', 'Show weather');
+			jQuery('.mapweather').removeClass('active').addClass('inactive');
+			Gumby.log('Disabling weather layer.');
 		} else {
 			mapInfo['weather'] = 1;
-			console.log('WEATHER BACK ON GOOD FOR YOU: ' + mapInfo['weather']);
-			jQuery(this).find('i').removeClass('icon-cloud').addClass('icon-cloud-thunder').attr('title', 'Hide weather');
+			jQuery('.mapweather').addClass('active').removeClass('inactive');
+			Gumby.log('Enabling weather layer.');
 		}
 		renderMap(mapInfo);
 		return false;
 	});
 	
-	jQuery('.detectlocation').on('click', function(){
+	jQuery('.maptraffic').on('click', function(){
+		if ( mapInfo['traffic'] == 1 ) {
+			mapInfo['traffic'] = 0;
+			jQuery('.maptraffic').removeClass('active').addClass('inactive');
+			Gumby.log('Disabling traffic layer.');
+		} else {
+			mapInfo['traffic'] = 1;
+			jQuery('.maptraffic').addClass('active').removeClass('inactive');
+			Gumby.log('Enabling traffic layer.');
+		}
+		renderMap(mapInfo);
+		return false;
+	});
+	
+	jQuery('.mapgeolocation').on('click', function(){
 		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
-			console.log('detecting location');
-			jQuery('.detectlocation').removeClass('inactive').append('<span class="currentlydetecting">...</span>').attr('title', 'Requesting location...');			
+			Gumby.log('Enabling location detection.');
+			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
+			jQuery('.mapgeolocation').removeClass('inactive').attr('title', 'Requesting location...').text('Detecting Location...');			
 			requestPosition();
 		} else {
-			console.log('removing detected location');
-			jQuery(this).removeClass('success failure').addClass('inactive').attr('title', 'Detect current location').css('color', '');
+			Gumby.log('Removing detected location.');
+			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-ban success error').addClass('inactive fa-location-arrow');
+			jQuery(this).removeClass('active success failure').text('Detect Location').addClass('inactive').attr('title', 'Detect current location').css('color', '');
 			mapInfo['detectLoc'] = new Array(0, 0);
 			renderMap(mapInfo);
 		}
-		return false; //Not returning false :C
+		return false;
 	});
 	
-	jQuery('.refreshmap').on('click', function(){
-		console.log('refreshing the map');
-		renderMap(mapInfo);
-		jQuery('.refreshmapicon').addClass('fa-spin');
-		jQuery('.refreshmap').addClass('timeout', function(){ //Hide the refresh button for 20 seconds to prevent spamming it
-			setTimeout(function(){
-				jQuery('.refreshmap').removeClass('timeout');
-				jQuery('.refreshmapicon').removeClass('fa-spin');
-			}, 5000);
-		});
+	jQuery('.mapgeolocation').hover(function(){
+		if ( jQuery(this).hasClass('active') ) {
+			jQuery('.mapgeolocation-icon').removeClass('fa-location-arrow').addClass('fa-ban');
+		}
+	}, function(){
+		if ( jQuery(this).hasClass('active') ) {
+			jQuery('.mapgeolocation-icon').removeClass('fa-ban').addClass('fa-location-arrow');
+		}
+	});
+	
+	originalRefreshText = jQuery('.maprefresh').text();
+	jQuery('.maprefresh').on('click', function(){
+		if ( !jQuery(this).hasClass('timeout') ) {
+			pleaseWait = 0;
+			Gumby.log('Refreshing the map.');
+			renderMap(mapInfo);
+			jQuery('.maprefresh').addClass('timeout', function(){ 
+				jQuery('.maprefresh').text('Refreshing...');
+				jQuery('.maprefresh-icon').addClass('fa-spin');
+			});
+		} else {
+			pleaseWait++;
+			if ( pleaseWait < 10 ) {
+				jQuery('.maprefresh').text('Please wait...');
+			} else {
+				jQuery('.maprefresh').text('Hold your horses!');
+			}
+		}
 		return false;
+	});
+	
+	//Event Listeners
+	
+	//Refresh listener	
+	jQuery(document).on('mapRendered', function(){		
+		setTimeout(function(){
+			jQuery('.maprefresh').addClass('timeout').text('Refreshed!');
+			jQuery('.maprefresh-icon').removeClass('fa-refresh fa-spin').addClass('fa-check-circle success');
+		}, 500);
+		
+		setTimeout(function(){ //Hide the refresh button to prevent spamming it
+			jQuery('.maprefresh').removeClass('timeout').text(originalRefreshText);
+			jQuery('.maprefresh-icon').removeClass('fa-check-circle success').addClass('fa-refresh');
+		}, 10000);
+	});
+	
+	//Geolocation Success listener
+	jQuery(document).on('geolocationSuccess', function(){		
+		setTimeout(function(){
+			jQuery('.mapgeolocation').addClass('active').attr('title', '');
+			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin').addClass('fa-location-arrow success');
+		}, 500);		
+	});
+	
+	//Geolocation Error listener
+	jQuery(document).on('geolocationError', function(){		
+		setTimeout(function(){
+			jQuery('.mapgeolocation').attr('title', '');
+			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin success').addClass('fa-location-arrow error');
+		}, 500);		
 	});
 }
 
-
-
-
-
+//Request Geolocation
 function requestPosition() {
-	console.log('now requesting location... this is where you come in, bro...');
+	Gumby.log('Requesting location... May need to be accepted.');
     var nav = null;
     if (nav == null) {
         nav = window.navigator;
@@ -797,11 +861,11 @@ function requestPosition() {
     }
 }
 
+//Geolocation Success
 function successCallback(position) {
-	console.log('success! got your location data.');
+	Gumby.log('Success! got your location data.');
 	
-	jQuery('.detectlocation').removeClass('failure').addClass('success');
-	jQuery('.currentlydetecting').remove();
+	jQuery('.mapgeolocation').removeClass('failure').addClass('success');
 	
 	mapInfo['detectLoc'] = [];
 	mapInfo['detectLoc'][0] = position.coords.latitude;
@@ -835,14 +899,19 @@ function successCallback(position) {
 	
 	if ( mapInfo['detectLoc']['accMeters'] > 400 ) {
 		lowAccText = 'Your location accuracy is ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).';
+		Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).');
 		//Some kind of notification here...
 	}
 	
-	jQuery('.detectlocation').css('color', mapInfo['detectLoc']['accColor']).attr('title', 'Accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles');
+	jQuery(document).trigger('geolocationSuccess');
+	jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles</span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
+	
+	ga('send', 'event', 'Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']);
 }
 
+//Geolocation Error
 function errorCallback(error) {
-	console.log('failure. not sure if it was you or me... lets find out...');
+	Gumby.warn('Error!');
     var strMessage = "";
     // Check for known errors
     switch (error.code) {
@@ -856,28 +925,30 @@ function errorCallback(error) {
             strMessage = "Location could not be determined within a specified timeout period.";
             break;
         default:
+        	strMessage = "An unknown error has occurred.";
             break;
     }
-    console.log(strMessage);
-    jQuery('.detectlocation').removeClass('success').addClass('failure inactive').attr('title', strMessage);
+    Gumby.warn(strMessage);
+    ga('send', 'event', 'Geolocation', 'Error', strMessage);
+    jQuery(document).trigger('geolocationError');
+    jQuery('.mapgeolocation').removeClass('success').text(strMessage);
 }
 
-
-
-//Google Maps
+//Retreive Lat/Lng locations
 function getAllLocations() {
 	mapInfo['markers'] = [];
 	jQuery('.latlngcon').each(function(i){
 		var alat = jQuery(this).find('.lat').text();
 		var alng = jQuery(this).find('.lng').text();
-		//console.log(i + ': found location! lat: ' + alat + ', lng: ' + alng);
+		Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng);
 		mapInfo['markers'][i] = [alat, alng];
 	});
 	renderMap(mapInfo);
 }
 
-
+//Render the Google Map
 function renderMap(mapInfo) {
+    Gumby.log('Rendering Google Map');
     var myOptions = {
 		zoom: 11,
 		scrollwheel: false,
@@ -889,15 +960,17 @@ function renderMap(mapInfo) {
     var bounds = new google.maps.LatLngBounds();
 
 	if ( typeof mapInfo['traffic'] !== 'undefined' ) {
-		console.log('weather is: ' + mapInfo['traffic']);
-		var trafficLayer = new google.maps.TrafficLayer();
-		trafficLayer.setMap(map);
+		if ( mapInfo['traffic'] == 1 ) {
+			Gumby.log('Traffic is enabled.');
+			var trafficLayer = new google.maps.TrafficLayer();
+			trafficLayer.setMap(map);
+		}
 	}
 	
 	//Map weather
 	if ( typeof mapInfo['weather'] !== 'undefined' ) {
-		console.log('weather is: ' + mapInfo['weather']);
 		if ( mapInfo['weather'] == 1 ) {
+			Gumby.log('Weather is enabled.');
 			var weatherLayer = new google.maps.weather.WeatherLayer({
 				temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
 			});
@@ -933,6 +1006,7 @@ function renderMap(mapInfo) {
 	            clickable: false,
 	            map: map
 	        });
+	        Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]);
 	    }(marker, i);
     }
 
@@ -940,8 +1014,6 @@ function renderMap(mapInfo) {
 	//Detected Location Marker
 	if ( typeof mapInfo['detectLoc'] !== 'undefined' ) {
 		if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
-			console.log('marking detected location.');
-			//Detected location marker
 			var detectLoc = new google.maps.LatLng(mapInfo['detectLoc'][0], mapInfo['detectLoc'][1]);
 			marker = new google.maps.Marker({
 		        position: detectLoc,
@@ -960,6 +1032,8 @@ function renderMap(mapInfo) {
 				radius: mapInfo['detectLoc']['accMeters']
 			});
 			circle.bindTo('center', marker, 'position');
+			Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
+			
 			var detectbounds = new google.maps.LatLngBounds();
 			detectbounds.extend(phg);
 			detectbounds.extend(detectLoc);
@@ -970,4 +1044,5 @@ function renderMap(mapInfo) {
 	google.maps.event.trigger(map, "resize");
     map.fitBounds(bounds);
 	
+	jQuery(document).trigger('mapRendered');
 }
