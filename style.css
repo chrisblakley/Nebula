@@ -106,7 +106,8 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 		
 	.mapweather-icon.inactive,
 	.maptraffic-icon.inactive,
-	.mapgeolocation-icon.inactive {opacity: 0.5;}
+	.maprefresh-icon.inactive,
+	.mapgeolocation-icon.inactive {opacity: 0.4;}
 
 
 /* ==========================================================================
