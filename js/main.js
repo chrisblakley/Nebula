@@ -35,7 +35,7 @@ jQuery(document).ready(function() {
 			return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
 		} //End Search term highlighter
 	
-	/*
+	*/
 
 
 
