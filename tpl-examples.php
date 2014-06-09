@@ -208,12 +208,11 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 				&zoom=14
 				&maptype=roadmap">
 			</iframe>
-			<div class="nebulashadow"></div>
+			<div class="nebulashadow" offset="-6"></div>
 			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
-
 
 
 <div class="container">
