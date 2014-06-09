@@ -1014,8 +1014,7 @@ function renderMap(mapInfo) {
 	        Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]);
 	    }(marker, i);
     }
-
-   
+	   
 	//Detected Location Marker
 	if ( typeof mapInfo['detectLoc'] !== 'undefined' ) {
 		if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
@@ -1039,14 +1038,14 @@ function renderMap(mapInfo) {
 			circle.bindTo('center', marker, 'position');
 			Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
 			
-			var detectbounds = new google.maps.LatLngBounds();
-			detectbounds.extend(detectLoc);
-			map.fitBounds(detectbounds);
+			//var detectbounds = new google.maps.LatLngBounds();
+			bounds.extend(detectLoc);
+			//map.fitBounds(detectbounds); //Use this instead of the one below to center on detected location only (ignoring other markers)
 		}
 	}
 
+	map.fitBounds(bounds);
 	google.maps.event.trigger(map, "resize");
-    map.fitBounds(bounds);
 	
 	jQuery(document).trigger('mapRendered');
 }
