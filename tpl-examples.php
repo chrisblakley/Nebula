@@ -32,7 +32,7 @@ pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 	pre.php::selection {background: #c8cde1;}
 	
 /* CSS Browser Selector Example Styles */
-div.cssbs {position: relative; display: table; height: 150px; border: 1px solid #222;}
+div.cssbs {position: relative; display: table; height: 150px; border: 2px solid #222;}
 	div.cssbs:after {width: 100%; height: 100%; line-height: 17px; color: #fff; text-align: center; font-family: 'FontAwesome'; white-space: pre; display: table-cell; vertical-align: middle;}
 	div.cssbs:before {content: ''; position: absolute; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.2));}
 	.win.chrome div.cssbs {background: #4884b8;} .win.chrome div.cssbs:after {content: '\f17a \00A0 Chrome on Windows \A 2008-';}
@@ -71,40 +71,6 @@ div.cssbs {position: relative; display: table; height: 150px; border: 1px solid 
 		jQuery('pre.javascript').before('<span class="pretitle javascript">Javascript</span>');
 		jQuery('pre.php').before('<span class="pretitle php">PHP</span>');
 	});
-</script>
-
-<script>
-		var finalResult = [];
-			jQuery.ajax({
-			  url:'https://api.chartbeat.com/cbtotal/?v=3'
-			, type:'POST'
-			, dataType:'jsonp'
-			, async:true
-			, success:function(result){
-				var browser = result['bt'];
-				var live_count = result['n'];	
-				console.log(result);
-
-				jQuery.each(browser, function(i, k){
-					switch(i){
-						case 'chrome': var bt = 'Chrome'; break;
-						case 'ie': var bt = 'Internet Explorer'; break;
-						case 'ff': var bt = 'Firefox'; break;
-						case 'safari': var bt = 'Safari'; break;
-						default: var bt = 'Chrome'; break;
-					}
-					var percentage = Math.round(k / live_count * 100);
-					//console.log(percentage);
-					var obj = {};
-					obj.content = bt;
-					obj.description = "<match>"+bt+"</match><dim> : </dim><url>"+percentage+"%</url>"; 
-
-					finalResult.push(obj);
-
-				});
-					suggest(finalResult);
-				}
-			});
 </script>
 
 <section><!-- Do not duplicate this section because it has inline styles. -->
