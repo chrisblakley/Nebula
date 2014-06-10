@@ -104,7 +104,6 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 	.googlemapcon a,
 	.googlemapcon i {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	
-	.mapgeolocation-icon.success {color: green;}
 	.mapgeolocation-icon.error {color: red;}
 	
 	.maprefresh {overflow: hidden; white-space: nowrap;}
