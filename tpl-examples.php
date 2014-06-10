@@ -570,4 +570,50 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 	</div><!--/row-->
 </div><!--/container-->
 
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>Weather Detection</h2>
+			<h5><a href="#" target="_blank">Documentation &raquo;</a></h5>
+			<p>This is not bundled with Nebula core, but shows how to detect current weather conditions using the Yahoo! Weather feed... It is a small enough script that it could easily be bundled with Nebula... Maybe I'll consider it...</p>
+			
+			<?php
+				//Detect weather for Zip Code (using Yahoo! Weather)
+				$locationzip = 13204;
+				$url = 'http://weather.yahooapis.com/forecastrss?p=' . $locationzip;
+				$use_errors = libxml_use_internal_errors(true);
+				$xml = simplexml_load_file($url);
+				if (!$xml) {
+				  $xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors
+				}
+				libxml_clear_errors();
+				libxml_use_internal_errors($use_errors);
+				
+				$currentweather = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
+				$currenttemp = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;
+				
+				//Location from zip code
+				$weathercity = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
+				$weatherstate = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
+				
+				//Sunrise & Sunset
+				$XMLsunrise = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
+				$XMLsunset = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
+				$dayTime["sunrise"] = strtotime($XMLsunrise)-strtotime('today'); //Sunrise in seconds
+				$dayTime["sunset"] = strtotime($XMLsunset)-strtotime('today'); //Sunset in seconds
+				$dayTime["noon"] = (($dayTime["sunset"]-$dayTime["sunrise"])/2)+$dayTime["sunrise"]; //Solar noon in seconds				
+				
+				//Determine time of day photo to display
+				$currentDayTime = time()-strtotime("today");
+			?>
+			
+			<p>It is currently <strong><?php echo $currenttemp; ?>&deg;F</strong> and <strong><?php echo $currentweather; ?></strong> in <strong><?php echo $weathercity; ?></strong>, <strong><?php echo $weatherstate; ?></strong>.</p>
+			<p>Sunrise: <strong><?php echo $XMLsunrise; ?></strong>, Sunset: <strong><?php echo $XMLsunset; ?></strong></p>
+			
+			<hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
 <?php get_footer(); ?>
