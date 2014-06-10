@@ -840,10 +840,10 @@ function mapActions() {
 	
 	//Geolocation Success listener
 	jQuery(document).on('geolocationSuccess', function(){		
-		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles <small>(' + mapInfo['detectLoc']['accMeters'] + ' meters)</small></span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
+		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles <small>(' + mapInfo['detectLoc']['accMeters'].toFixed(2) + ' meters)</small></span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').addClass('active').attr('title', '');
-			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin').addClass('fa-location-arrow success');
+			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin inactive').addClass('fa-location-arrow');
 		}, 500);		
 	});
 	
@@ -852,7 +852,7 @@ function mapActions() {
 		jQuery('.mapgeolocation').removeClass('success').text(geolocationErrorMessage);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').attr('title', '');
-			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin success').addClass('fa-location-arrow error');
+			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin').addClass('fa-location-arrow error');
 		}, 500);		
 	});
 } //End mapActions()
@@ -872,8 +872,6 @@ function requestPosition() {
 
 //Geolocation Success
 function successCallback(position) {
-	Gumby.log('Success! got your location data.');
-	
 	jQuery('.mapgeolocation').removeClass('failure').addClass('success');
 	
 	mapInfo['detectLoc'] = [];
@@ -914,6 +912,7 @@ function successCallback(position) {
 	
 	jQuery(document).trigger('geolocationSuccess');
 	ga('send', 'event', 'Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']);
+	Gumby.log('Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1] + '. Accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (' + mapInfo['detectLoc']['accMeters'].toFixed(2) + ' meters)');
 }
 
 //Geolocation Error
