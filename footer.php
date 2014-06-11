@@ -114,7 +114,7 @@
 
 		<script>
 			//If jQuery has not been intialized, load it from Google's CDN 
-			if (typeof jQuery == 'undefined') {
+			if (typeof jQuery === 'undefined') {
 			    var script = document.createElement('script');
 			    script.type = "text/javascript";
 			    script.src = "http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"; <?php //@TODO: Always verify this is the desired version of jQuery! ?>
