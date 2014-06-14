@@ -1,8 +1,6 @@
 (function($) {
 $(function() {		
-				
 	JQTWEET = {
-	     
 	    // Set twitter hash/user, number of tweets & id/class to append tweets
 	    // You need to clear tweet-date.txt before toggle between hash and user
 	    // for multiple hashtags, you can separate the hashtag with OR, eg:
@@ -15,13 +13,10 @@ $(function() {
 	    template: '<div class="item">{IMG}<br />{AVA}<div class="tweet-wrapper"><span class="text">{TEXT}</span>\
 	               <span class="time"><a href="{URL}" target="_blank">{AGO}</a></span>\
 	               by <span class="user">{USER}</span></div></div>',
-	     
 	    // core function of jqtweet
 	    // https://dev.twitter.com/docs/using-search
 	    loadTweets: function() {
-
 	        var request;
-	         
 	        // different JSON request {hash|user}
 	        if (JQTWEET.search) {
 	            request = {
@@ -37,35 +32,24 @@ $(function() {
 	                api: 'statuses_userTimeline'
 	            }
 	        }
-	        
 	        //console.debug(request);
-
-	        $.ajax({
-	            url: 'http://twitter.pinckneyhugo.net/twitter-oauth/grabtweets.php',
-	            //url: 'http://gearsidecreative.com/phg/twttr/grabtweets.php',
-	            type: 'POST',
-	            dataType: 'jsonp',
-	            contentType: 'application/json',
-	            data: request,
-	            success: function(data, textStatus, xhr) {
-		            
-		            if (data.httpstatus == 200) {
-		            	
-		            	JQTWEET.renderTweets(data, textStatus, xhr);
-	                    
-	               } else alert('no data returned');
-            		/**
-            		  *	@IMPORTANT:
-            		  * This rotator requires another library
-            		  */
-            		//jQuery.easy.rotate();
-	            }
-	 
-	        });
-	 
-	    }, 
+			$.ajax({
+				url: 'http://twitter.pinckneyhugo.net/twitter-oauth/grabtweets.php',
+				//url: bloginfo['template_directory'] + '/includes/grabtweets.php',
+				type: 'GET',
+				dataType: 'jsonp',
+				contentType: 'application/json',
+				data: request,
+				success: function(data, textStatus, xhr) {
+					if (data.httpstatus == 200) {
+						JQTWEET.renderTweets(data, textStatus, xhr);
+					} else {
+						console.warn('twitter.js: No data returned!');
+					}
+				}
+			});
+		}, 
 	     
-	         
 	    /**
 	      * relative time calculator FROM TWITTER
 	      * @param {string} twitter date string returned from Twitter API

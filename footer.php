@@ -114,7 +114,7 @@
 
 		<script>
 			//If jQuery has not been intialized, load it from Google's CDN 
-			if (typeof jQuery === 'undefined') {
+			if (typeof jQuery == 'undefined') {
 			    var script = document.createElement('script');
 			    script.type = "text/javascript";
 			    script.src = "http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"; <?php //@TODO: Always verify this is the desired version of jQuery! ?>
@@ -145,7 +145,7 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $GLOBALS["async"]; ?>></script>
 		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $GLOBALS["async"]; ?>></script> -->
-		<!--<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script>-->
+		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $GLOBALS["defer"]; ?>></script> -->
 		<script <?php echo $GLOBALS["gumby_debug"]; ?> src="<?php bloginfo('template_directory');?>/js/libs/gumby.min.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
@@ -190,16 +190,15 @@
 			        Gumby.log('Sending GA event: ' + 'Videos', 'Play', videoTitle);
 			        pauseFlag = true;
 			    }
-			    if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
-			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-			        ga('send', 'event', 'Videos', 'Pause', videoTitle);
-			        Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
-			        pauseFlag = false;
-			    }
 			    if (e.data == YT.PlayerState.ENDED) {
 			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
 			        ga('send', 'event', 'Videos', 'Finished', videoTitle);
 			        Gumby.log('Sending GA event: ' + 'Videos', 'Finished', videoTitle);
+			    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
+			        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+			        ga('send', 'event', 'Videos', 'Pause', videoTitle);
+			        Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
+			        pauseFlag = false;
 			    }
 			}
 		</script>

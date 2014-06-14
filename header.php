@@ -34,7 +34,6 @@
 		
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
-		<meta property="og:type" content="place" /> <!-- https://developers.facebook.com/docs/reference/opengraph -->
 		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
 		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />

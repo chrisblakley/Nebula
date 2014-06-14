@@ -7,6 +7,11 @@
 get_header(); ?>
 
 <style>
+	.jscookie, .phpcookie {background: red; color: white; padding: 5px;}
+		.jscookie:hover, .phpcookie:hover {background: grey; color: white;}
+		.jscookie.cookie-on, .phpcookie.cookie-on {background: green; color: white;}
+			.jscookie.cookie-on:hover, .phpcookie.cookie-on:hover {background: grey; color: white;}
+	
 	pre {position: relative; display: block; font: normal 12px/22px Monaco,Monospace !important; color:#222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
 .no-js pre {margin: 10px 0 20px 0;}
 	.pretitle {display: block; text-align: right; color: #f1672c; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
@@ -206,8 +211,19 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 					</div><!--/columns-->
 					<div class="eight columns">
 						<h3>Youtube</h3>
-						<p>Provides an easy way to insert Youtube videos without needing code (using the necessary syntax for tracking). "height" and "width" attributes are optional.</p>
-						<pre class="shortcode">[youtube id="jtip7Gdcf0Q" height="500" width="760"]</pre>
+						<p>Provides an easy way to insert Youtube videos without needing code (using the necessary syntax for tracking). "height" and "width" attributes are optional. The "rel" attribute (optional) will toggle related videos at the end (default: 0).</p>
+						<pre class="shortcode">[youtube id="jtip7Gdcf0Q" height="500" width="760" rel="1"]</pre>
+						<pre class="shortcode">[youtube id="jtip7Gdcf0Q"]</pre>
+						<br/>
+					</div><!--/columns-->
+				</div><!--/row-->
+				<div class="row">
+					<div class="eight columns">
+						<h3>Div</h3>
+						<p>A way to create div tags inside the content area. Be careful using this as it is possible to open a div without closing it (and vice-versa)!</p>
+						<pre class="shortcode">[div class="look-here aclass" style="background: red;"]Content goes here![/div]</pre>
+						<pre class="shortcode">[div]</pre>
+						<pre class="shortcode">[div close]</pre>
 						<br/>
 					</div><!--/columns-->
 				</div><!--/row-->
@@ -237,7 +253,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 				&zoom=14
 				&maptype=roadmap">
 			</iframe>
-			<div class="nebulashadow" offset="-6"></div>
+			<div class="nebulashadow floating" offset="-6"></div>
 			<br/><br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
@@ -292,7 +308,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 			<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics. Using the Youtube Data API, we can pull information out of the video dynamically. The Gumby wrapper with the class "video" allows for fluid width videos, so it is best to wrap the iframe with that (along with the class of "youtube" (in this case), "vimeo", or "twitch"</p>
 			<p><strong>Important:</strong> Make sure to include the query parameter of "enablejsapi=1" for tracking to work (The class "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
 			
-			<pre class="html">&lt;article class="youtube video"&gt;<br/>    &lt;iframe id="&lt;?php echo $youtube_meta['safetitle']; ?&gt;" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/&lt;?php echo $youtube_meta['id']; ?&gt;?wmode=transparent&enablejsapi=1&origin=&lt;?php echo $youtube_meta['origin']; ?&gt;" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;<br/>&lt;/article&gt;</pre>
+			<pre class="html">&lt;article class="youtube video"&gt;<br/>    &lt;iframe id="&lt;?php echo $youtube_meta['safetitle']; ?&gt;" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/&lt;?php echo $youtube_meta['id']; ?&gt;?wmode=transparent&enablejsapi=1&origin=&lt;?php echo $youtube_meta['origin']; ?&gt;&rel=0" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;<br/>&lt;/article&gt;</pre>
 			
 			<br/>
 			
@@ -303,7 +319,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 						<?php youtube_meta('jtip7Gdcf0Q'); ?>
 						
 						<article class="youtube video">
-							<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+							<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>&rel=0" frameborder="0" allowfullscreen=""></iframe>
 						</article>
 									
 						<br/>
@@ -443,9 +459,104 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 </div><!--/container-->
 
 
+<div class="container phpcookiecon">
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>Cookies (PHP)</h2>
+			<p>This shows how cookies can be set using server-side PHP (with AJAX). If toggled on, it should stay on between visits for 30 days (unless cookies are cleared). The benefit here is that there is no FOUC.</p>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<!-- <p>The cookie is <a class="phpcookie" href="#">OFF</a> <small>(Click to toggle)</small>.</p> -->
+						
+			<br/><hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
 <div class="container">
 	<div class="row">
 		<div class="sixteen columns">
+			<h2>Cookies (Javascript)</h2>
+			<p>This shows how to easily set, read, and erase cookies using JavaScript. If toggled on, it should stay on between visits for 30 days (unless cookies are cleared).</p>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<p>Toggle cookie: <a class="jscookie" href="#">OFF</a></p>
+			
+			<script>
+				jQuery(document).ready(function() {	
+					checkExample();
+					function checkExample() {
+						if ( readCookie('examplejs') ) {
+							jQuery('.jscookie').text('ON').addClass('cookie-on');
+						} else {
+							jQuery('.jscookie').text('OFF').removeClass('cookie-on');
+						}
+					}
+					
+					jQuery('.jscookie').on('click', function(){
+						if ( jQuery(this).hasClass('cookie-on') ) {
+							eraseCookie('examplejs');
+							checkExample();
+						} else {
+							createCookie('examplejs', 'true', 30);
+							checkExample();
+						}
+						return false;
+					});
+				});
+			</script>
+			
+			<br/><hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="sixteen columns">
+			<h2>Custom Shadows and Nebula Frame</h2>
+			<p>Just a couple quick ways to apply elegant shadows. Currently there are two: "Floating" and "Bulging". <a href="http://www.w3.org/TR/css3-values/#attr-value" target="_blank">Once browsers begin to support it</a>, the data attribute of "offset" will allow vertical margin to be applied to the shadow div (current support is for pseudo elements only). <em>Until this happens, shadows will not work properly under iframes.</em>@TODO: Pull bulging.svg onto server!</p>
+			<p><pre class="html">&lt;div class="nebulashadow floating"&gt;&lt;/div&gt;</pre></p>
+			<p><pre class="html">&lt;div class="nebulashadow bulging" offset="-6"&gt;&lt;/div&gt;</pre></p>
+			<p><pre class="html">&lt;div class="nebulaframe bulging""&gt;&lt;/div&gt;</pre></p>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<div style="background: #fff; outline: 1px solid #f2f2f2;"><h3 style="text-align: center;">Floating</h3></div>
+			<div class="nebulashadow floating"></div>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<div style="background: #fff; outline: 1px solid #f2f2f2;"><h3 style="text-align: center;">Bulging</h3></div>
+			<div class="nebulashadow bulging"></div>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<div class="nebulaframe bulging"><h3 style="text-align: center; background: #e2e2e2;">Nebula Frame</h3></div>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<div class="row">
+		<div class="sixteen columns">
+			<br/><hr/>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="eight columns">
 			<h2>Native Social Buttons</h2>
 			<p>These are social sharing buttons that are generated by loading scripts from the social network's remote servers.</p>
 			<p>Documentation: <a href="https://developers.facebook.com/docs/plugins/like-button" target="_blank">Facebook Like</a>, <a href="https://developers.facebook.com/docs/plugins/share-button" target="_blank">Facebook Share</a>, <a href="https://dev.twitter.com/docs/tweet-button" target="_blank">Twitter</a>, <a href="https://developers.google.com/+/web/+1button/" target="_blank">Google+</a>, <a href="https://developer.linkedin.com/plugins/share-plugin-generator" target="_blank">LinkedIn</a></p>
@@ -478,24 +589,27 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 						<script type="IN/Share" data-url="<?php the_permalink(); ?>" data-counter="right"></script>
 					</li><!-- /linkedin -->
 				</ul>
-				<br/><br/><hr/>
 			</div>
-			
+		</div><!--/columns-->
+		<div class="eight columns">
+			<h2>Custom Social Buttons</h2>
+			<p>These are locally stored social sharing buttons that have hard-coded hrefs. These hrefs can also be modified with javascript to dynamically pull in page titles, etc. There should always be backup hrefs hard-coded in case JS is disabled, these can at least share something.</p>
+			<p>
+				<a class="fbshare" href="http://www.facebook.com/sharer.php?u=<?php echo the_permalink(); ?>&t=<?php wp_title( '-', true, 'right' ); ?>" target="_blank">Facebook Share</a>,
+				<a class="twshare" href="https://twitter.com/intent/tweet?text=<?php wp_title( '-', true, 'right' ); ?>&url=<?php echo the_permalink(); ?>" target="_blank">Twitter</a>,
+				<a class="gshare" href="https://plus.google.com/share?url=<?php echo the_permalink(); ?>" target="_blank">Google+</a>,
+				<a class="lishare" href="http://www.linkedin.com/shareArticle?mini=true&url=<?php echo the_permalink(); ?>&title=<?php wp_title( '-', true, 'right' ); ?>" target="_blank">LinkedIn</a>,
+				<a class="emshare" href="mailto:?subject=<?php wp_title( '-', true, 'right' ); ?>&body=<?php echo the_permalink(); ?>" target="_blank">Email</a>
+			</p>
 		</div><!--/columns-->
 	</div><!--/row-->
-</div><!--/container-->
-
-
-<div class="container">
 	<div class="row">
 		<div class="sixteen columns">
-			<h2>Custom Social Buttons</h2>
-			<p>These are locally stored social sharing buttons that have hard-coded hrefs. These hrefs can also be modified with javascript to dynamically pull in page titles, etc.</p>
-			<p>Facebook Share, Twitter, Google+, LinkedIn, Email</p>
-			<br/><br/><hr/>
+			<br/><hr/>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
+
 
 
 <div class="container socialcon">

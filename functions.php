@@ -574,7 +574,7 @@ function remove_dashboard_metaboxes() {
 add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes' );
 
 
-//PHG Metabox
+//Custom Metabox
 /*
 function my_custom_dashboard_widgets() {
 	global $wp_meta_boxes;
@@ -587,6 +587,15 @@ function custom_dashboard_help() {
 }
 add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
 */
+
+//Change default values for the upload media box
+//These can also be changed by navigating to .../wp-admin/options.php
+function custom_media_display_settings() {
+	//update_option('image_default_align', 'center');
+	update_option('image_default_link_type', 'none');
+	//update_option('image_default_size', 'large');
+}
+add_action('after_setup_theme', 'custom_media_display_settings');
 
 
 //Admin Footer Enhancements
@@ -1128,6 +1137,21 @@ function footerWidgetCounter() {
  
  ===========================*/
 
+add_shortcode('div', 'div_shortcode');
+function div_shortcode($atts, $content=''){
+	extract( shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts) );
+	if ( $content ) {
+		$div = '<div class="nebula-div ' . $class . '" style="' . $style . '">' . $content . '</div>';
+	} else {
+		if ( $close ) {
+			$div = '</div><!-- /nebula-div -->';
+		} else {
+			$div = '<div class="nebula-div nebula-div-open' . $class . '" style="' . $style . '">';
+		}
+	}
+	return $div;
+}
+
 
 //Divider [divider scroll_text="Go To Top"]
 add_shortcode('divider', 'divider_shortcode');
@@ -1169,12 +1193,12 @@ function space_shortcode($atts){
 //Youtube [youtube height="500" width="760"]http://www.youtube.com/watch?v=5Yn1-xEXTk0[/youtube]
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
-	extract( shortcode_atts(array("id" => null, "height" => '', "width" => ''), $atts) ); 
+	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0), $atts) ); 
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
 	youtube_meta($id);
 	global $youtube_meta;
-	$youtube = '<article class="youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="http://www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '" frameborder="0" allowfullscreen=""></iframe></article>';
+	$youtube = '<article class="youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="http://www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
 	return $youtube;
 }
 

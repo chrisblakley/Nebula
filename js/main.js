@@ -121,8 +121,8 @@ function socialSharing() {
     var enctitle = encodeURI(title);
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank');
     jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr('target', '_blank');
-    jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank');
     jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr('target', '_blank');
+    jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank');
     jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank');
 } //end socialSharing()
 
@@ -732,6 +732,56 @@ function twitterFeed() {
         JQTWEET.loadTweets();
     }
 } //end twitterFeed()
+
+
+function cookieActions() {
+	
+	/*
+		createCookie('example', 'true', 30);
+		
+		if ( readCookie('example') ) {
+			//Stuff here if cookie exists
+		}
+		
+		eraseCookie('example');
+	*/
+	
+	//Cookie actions here
+	
+
+} //end cookieActions()
+
+//Cookie Management
+function createCookie(name, value, days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	} else {
+		var expires = "";
+	}
+	document.cookie = name+"="+value+expires+"; path=/";
+	Gumby.log('Created cookie: ' + name + ', with the value: ' + value + ', and expires on: ' + expires);
+}
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for (var i=0; i<ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1, c.length);
+			if (c.indexOf(nameEQ) == 0) {
+				Gumby.log('Cookie "' + name + '" exists.');
+				return c.substring(nameEQ.length, c.length);
+			}
+		}
+	}
+	return null;
+}
+function eraseCookie(name) {
+	createCookie(name,"",-1);
+	Gumby.warn('Erased cookie: ' + name);
+}
 
 
 
