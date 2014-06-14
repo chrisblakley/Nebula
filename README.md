@@ -39,7 +39,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - *[Testing](https://docs.google.com/document/d/17nmeSsa-4SSfX8bzWWUXcFDTyz3o2-oSgX4ayCgGm7Y/)*
 - Uncheck "Discourage search engines from indexing this site" (Reading Settings)
 - *[Launch/Migration](https://docs.google.com/document/d/1jEaImmelk5bitFdh01WU_vm0WctYfhYEAKNZfwWJY0M/)*
-- (If using Twitter Feed): Create Twitter app for domain, add API/access tokens to /includes/grabtweets.php, and swap "url:" parameter in /js/libs/twitter.js
+- (If using Twitter Feed): [Create Twitter app for domain](https://apps.twitter.com/), add API/access tokens to /includes/grabtweets.php, and swap "url:" parameter in /js/libs/twitter.js
 - Enable W3 Total Cache
 - Post-Launch testing
 
