@@ -1,7 +1,9 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function() {	
-
+	
+	conditionalJSLoading();
+	
 	/* To be vetted. Turn these into functions.
 	
 		//Pull query strings from URL
@@ -85,7 +87,7 @@ jQuery(document).ready(function() {
 
 jQuery(window).on('load', function() {
 	
-	conditionalJSLoading();
+	//conditionalJSLoading();
 	
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
@@ -676,6 +678,7 @@ var waitForFinalEvent = (function () {
 
 
 //Conditional JS Library Loading
+//This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading() {
 	//Only load Twitter if Twitter wrapper exists.
 	if ( jQuery('#twittercon').length ) {
@@ -686,6 +689,7 @@ function conditionalJSLoading() {
 			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
 		});
 	}
+	
 	//Only load maskedinput.js library if phone or bday field exists.
 	if ( jQuery('.cform7-phone').length || jQuery('.cform7-bday').length ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
@@ -696,6 +700,7 @@ function conditionalJSLoading() {
 	} else {
 		cFormPreValidator();
 	}
+	
 	//Only load dataTables library if dataTables table exists.
 	if ( jQuery('.dataTables_wrapper').length ) {
 		
