@@ -265,7 +265,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 		<div class="sixteen columns">
 			<h2>Google Map API v3</h2>
 			<h5><a href="https://developers.google.com/maps/documentation/javascript/tutorial" target="_blank">Documentation &raquo;</a></h5>
-			<p>This is the full integration of Google Maps using the API v3. For more advanced functionality, consider using the <a href="https://github.com/HPNeo/gmaps" target="_blank">gmaps library</a>.</p>
+			<p>This is the full integration of Google Maps using the API v3. For more advanced functionality, consider using the <a href="https://github.com/HPNeo/gmaps" target="_blank">gmaps library</a>. The Google Maps script only needs to be loaded once per page (Move it to header.php if using it quite a bit, but only load it on required pages!).</p>
 			
 			<div class="container">
 				<div class="row">
@@ -288,6 +288,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 				</div><!--/row-->
 			</div><!--/container-->
 			
+			<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>
 			<div class="googlemapcon nebulaframe">
 				<div id="map_canvas" class="googlemap"></div>
 			</div>
