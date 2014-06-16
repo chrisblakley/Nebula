@@ -588,6 +588,16 @@ function custom_dashboard_help() {
 add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
 */
 
+
+//Remove Comments column
+function remove_pages_count_columns($defaults) {
+	unset($defaults['comments']);
+	return $defaults;
+}
+add_filter('manage_posts_columns', 'remove_pages_count_columns');
+add_filter('manage_pages_columns', 'remove_pages_count_columns');
+add_filter( 'manage_media_columns', 'remove_pages_count_columns' );
+
 //Change default values for the upload media box
 //These can also be changed by navigating to .../wp-admin/options.php
 function custom_media_display_settings() {
@@ -596,6 +606,21 @@ function custom_media_display_settings() {
 	//update_option('image_default_size', 'large');
 }
 add_action('after_setup_theme', 'custom_media_display_settings');
+
+
+//Show File URL column on Media Library listings
+function muc_column( $cols ) {
+	$cols["media_url"] = "File URL";
+	return $cols;
+}
+function muc_value( $column_name, $id ) {
+	if ( $column_name == "media_url" ) {
+		echo '<input type="text" width="100%" value="' . wp_get_attachment_url( $id ) . '" readonly />';
+		//echo '<input type="text" width="100%" onclick="jQuery(this).select();" value="'. wp_get_attachment_url( $id ). '" readonly />'; //This selects the text on click
+	}
+}
+add_filter( 'manage_media_columns', 'muc_column' );
+add_action( 'manage_media_custom_column', 'muc_value', 10, 2 );
 
 
 //Admin Footer Enhancements
