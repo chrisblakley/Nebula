@@ -78,7 +78,6 @@
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 		
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $GLOBALS["defer"]; ?>></script>
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>
 		
 		<script>
 			bloginfo = [];
