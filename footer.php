@@ -145,7 +145,7 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $GLOBALS["async"]; ?>></script>
 		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $GLOBALS["async"]; ?>></script> -->
-		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script> -->
+		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $GLOBALS["defer"]; ?>></script> -->
 		<script <?php echo $GLOBALS["gumby_debug"]; ?> src="<?php bloginfo('template_directory');?>/js/libs/gumby.min.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
