@@ -11,6 +11,7 @@ get_header(); ?>
 			<? the_breadcrumb(); ?>
 			<hr/>
 		</div><!--/columns-->
+	</div><!--/row-->
 	<div class="row">
 		
 		<div class="ten columns">
