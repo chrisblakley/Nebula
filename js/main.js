@@ -59,7 +59,7 @@ jQuery(document).ready(function() {
 	getAllLocations();
 	mapActions();
 	
-	viewport = updateViewportDimensions();
+	//viewport = updateViewportDimensions(); //@TODO: This breaks in IE8
 	//console.debug(viewport);
 	jQuery(window).resize(function() {
 		waitForFinalEvent(function(){
@@ -68,14 +68,15 @@ jQuery(document).ready(function() {
 	    	powerFooterWidthDist();
 	    	
 	    	//Track size change
-	    	viewportResized = updateViewportDimensions();
+	    	/* viewportResized = updateViewportDimensions();  //@TODO: This breaks in IE8
 	    	if ( viewport.width > viewportResized.width ) {
 	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	} else if ( viewport.width < viewportResized.width ) {
 	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	}
 	    	viewport = updateViewportDimensions();
-	    	//console.debug(viewport);
+	    	//console.debug(viewport); */
+	    	
 		}, 500, "unique resize ID 1");
 	});
 	
