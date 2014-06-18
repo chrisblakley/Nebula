@@ -523,7 +523,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 	<div class="row">
 		<div class="sixteen columns">
 			<h2>Custom Shadows and Nebula Frame</h2>
-			<p>Just a couple quick ways to apply elegant shadows. Currently there are two: "Floating" and "Bulging". <a href="http://www.w3.org/TR/css3-values/#attr-value" target="_blank">Once browsers begin to support it</a>, the data attribute of "offset" will allow vertical margin to be applied to the shadow div (current support is for pseudo elements only). <em>Until this happens, shadows will not work properly under iframes.</em>@TODO: Pull bulging.svg onto server!</p>
+			<p>Just a couple quick ways to apply elegant shadows. Currently there are two: "Floating" and "Bulging". <a href="http://www.w3.org/TR/css3-values/#attr-value" target="_blank">Once browsers begin to support it</a>, the data attribute of "offset" will allow vertical margin to be applied to the shadow div (current support is for pseudo elements only). <em>Until this happens, shadows will not work properly under iframes.</em></p>
 			<p><pre class="html">&lt;div class="nebulashadow floating"&gt;&lt;/div&gt;</pre></p>
 			<p><pre class="html">&lt;div class="nebulashadow bulging" offset="-6"&gt;&lt;/div&gt;</pre></p>
 			<p><pre class="html">&lt;div class="nebulaframe bulging""&gt;&lt;/div&gt;</pre></p>
