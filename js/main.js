@@ -415,7 +415,7 @@ function powerFooterWidthDist() {
 	} else {
 		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
 	}
-} //end PowerFooterWidthDist
+} //end powerFooterWidthDist
 
 //Search Validator
 function searchValidator() {
