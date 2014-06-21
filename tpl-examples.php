@@ -11,31 +11,7 @@ get_header(); ?>
 		.jscookie:hover, .phpcookie:hover {background: grey; color: white;}
 		.jscookie.cookie-on, .phpcookie.cookie-on {background: green; color: white;}
 			.jscookie.cookie-on:hover, .phpcookie.cookie-on:hover {background: grey; color: white;}
-	
-	pre {position: relative; display: block; font: normal 12px/22px Monaco,Monospace !important; color:#222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
-.no-js pre {margin: 10px 0 20px 0;}
-	.pretitle {display: block; text-align: right; color: #f1672c; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
-
-.pretitle.html {color: #f1672c;}
-pre.html {border: 1px solid #f1672c; border-left: 5px solid #f1672c;}
-	pre.html::selection {background: #fbcebb;}
-
-.pretitle.shortcode {color: #bbb;}
-pre.shortcode {border: 1px solid #bbb; border-left: 5px solid #bbb;}
-	pre.shortcode::selection {background: #ddd;}
-
-.pretitle.css {color: #30a9dc;}
-pre.css {border: 1px solid #30a9dc; border-left: 5px solid #30a9dc;}
-	pre.css::selection {background: #c1e5f5;}
-
-.pretitle.js, .pretitle.javascript {color: #f1bf26;}
-pre.js, pre.javascript {border: 1px solid #f1bf26; border-left: 5px solid #f1bf26;}
-	pre.js::selection, pre.javascript::selection {background: #fae9b6;}
-
-.pretitle.php {color: #5a68a5;}
-pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
-	pre.php::selection {background: #c8cde1;}
-	
+		
 /* CSS Browser Selector Example Styles */
 div.cssbs {position: relative; display: table; height: 150px; border: 2px solid #222;}
 	div.cssbs:after {width: 100%; height: 100%; line-height: 17px; color: #fff; text-align: center; font-family: 'FontAwesome'; white-space: pre; display: table-cell; vertical-align: middle;}
@@ -65,18 +41,6 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 </style>
 
 <script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script> <!-- This script is found in the footer. It is disabled by default, so it needs to be called again here to show the CSS Browser Selector example section. -->
-
-<script>
-	jQuery(document).ready(function() {	
-		//Pre syntax notation (to preserve x-scroll)
-		jQuery('pre.html').before('<span class="pretitle html">HTML</span>');
-		jQuery('pre.shortcode').before('<span class="pretitle shortcode">Shortcode</span>');
-		jQuery('pre.css').before('<span class="pretitle css">CSS</span>');
-		jQuery('pre.js').before('<span class="pretitle js">JS</span>');
-		jQuery('pre.javascript').before('<span class="pretitle javascript">Javascript</span>');
-		jQuery('pre.php').before('<span class="pretitle php">PHP</span>');
-	});
-</script>
 
 <section><!-- Do not duplicate this section because it has inline styles. -->
 	<div class="container" style="background: #0098d7; margin-bottom: 25px;">
@@ -190,14 +154,14 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 					<div class="eight columns">
 						<h3>Space</h3>
 						<p>Allows vertical space to be added without needing to use any code.</p>
-						<pre class="shortcode">[space height=25]</pre>
+						<?php echo do_shortcode('[pre lang="shortcode"][space height=25][/pre]'); ?>
 						<br/>
 					</div><!--/columns-->
 					<div class="eight columns">
 						<h3>Divider</h3>
 						<p>Adds a stylized horizontal rule without needing to use code. "Space" (optional) adds equal margin above and below, otherwise declare "above" (optional) and "below" (optional) separately.</p>
-						<pre class="shortcode">[divider space=5]</pre>
-						<pre class="shortcode">[divider above=10 below=30]</pre>
+						<?php echo do_shortcode('[pre lang="shortcode"][divider space=5][/pre]'); ?>
+						<?php echo do_shortcode('[pre lang="shortcode"][divider above=10 below=30][/pre]'); ?>
 						<br/>
 					</div><!--/columns-->
 				</div><!--/row-->
@@ -205,15 +169,15 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 					<div class="eight columns">
 						<h3>Icon</h3>
 						<p>Allows usage of <a href="http://gumbyframework.com/docs/ui-kit/#!/icons" target="_blank">Gumby/Entypo</a> or <a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font Awesome</a> icons without needing code. Works with <a href="http://fortawesome.github.io/Font-Awesome/examples/" target="_blank">supplemental Font Awesome</a> classes like "fa-spin" too. Add additional classes with the "class" attribute.</p>
-						<pre class="shortcode">[icon type="icon-home" color="#222" size="12px" class="special"]</pre>
-						<pre class="shortcode">[icon type="fa-home fa-spin" color="red"]</pre>
+						<?php echo do_shortcode('[pre lang="shortcode"][icon type="icon-home" color="#222" size="12px" class="special"][/pre]'); ?>
+						<?php echo do_shortcode('[pre lang="shortcode"][icon type="fa-home fa-spin" color="red"][/pre]'); ?>
 						<br/>
 					</div><!--/columns-->
 					<div class="eight columns">
 						<h3>Youtube</h3>
 						<p>Provides an easy way to insert Youtube videos without needing code (using the necessary syntax for tracking). "height" and "width" attributes are optional. The "rel" attribute (optional) will toggle related videos at the end (default: 0).</p>
-						<pre class="shortcode">[youtube id="jtip7Gdcf0Q" height="500" width="760" rel="1"]</pre>
-						<pre class="shortcode">[youtube id="jtip7Gdcf0Q"]</pre>
+						<?php echo do_shortcode('[pre lang="shortcode"][youtube id="jtip7Gdcf0Q" height="500" width="760" rel="1"][/pre]'); ?>
+						<?php echo do_shortcode('[pre lang="shortcode"][youtube id="jtip7Gdcf0Q"][/pre]'); ?>
 						<br/>
 					</div><!--/columns-->
 				</div><!--/row-->
@@ -221,10 +185,62 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 					<div class="eight columns">
 						<h3>Div</h3>
 						<p>A way to create div tags inside the content area. Be careful using this as it is possible to open a div without closing it (and vice-versa)!</p>
-						<pre class="shortcode">[div class="look-here aclass" style="background: red;"]Content goes here![/div]</pre>
-						<pre class="shortcode">[div]</pre>
-						<pre class="shortcode">[div close]</pre>
+						<?php echo do_shortcode('[pre lang="shortcode"][div class="look-here aclass" style="background: red;"]Content goes here![/div][/pre]'); ?>
+						<?php echo do_shortcode('[pre lang="shortcode"][div][/pre]'); ?>
+						<?php echo do_shortcode('[pre lang="shortcode"][div close][/pre]'); ?>
 						<br/>
+					</div><!--/columns-->
+					<div class="eight columns">
+						<h3>Buttons</h3>
+						<p>This shortcode integrates with Gumby buttons. Required parameters include href and the content itself. All others are options- these include size, type, icon, target, and metro/pretty.</p>
+						<?php echo do_shortcode('[pre lang="shortcode"][button size="medium" type="success" pretty icon="icon-mail" href="http://www.google.com/" target="_blank"]Click Here[/button][/pre]'); ?>
+						<br/><br/>
+						<?php echo do_shortcode('[button size="medium" type="success" metro icon="fa-bomb" href="http://www.google.com/" target="_blank"]Click Here[/button]'); ?>
+						<br/><br/>
+						<?php echo do_shortcode('[button size="medium" type="success" metro icon="icon-mail" href="http://www.google.com/" target="_blank"]Click Here[/button]'); ?>
+						<br/><br/>
+						<?php echo do_shortcode('[button href="http://www.google.com/"]Another[/button]'); ?>
+						<br/><br/>
+						<?php echo do_shortcode('[button size="medium" href="http://www.google.com/"]Another[/button]'); ?>
+						<br/><br/>
+					</div><!--/columns-->
+				</div><!--/row-->
+				<div class="row">
+					<div class="sixteen columns">
+						<h3>Gumby Grid</h3>
+						<p>Using this shortcode allows you to add Gumby grids into the Wordpress WYSIWYG area. All shortcodes allow for custom classes and styles.</p>
+						<?php echo do_shortcode('[pre lang="shortcode"][colspan twelve]
+	[container style="background: blue;"]
+		[row class="special"]
+			[columns six]Content Here[/columns]
+			[columns four push="two"]Content Here[/columns]
+		[/row]
+	[/container]
+[/colspan][/pre]'); ?>
+						<br/><br/>
+					</div><!--/columns-->
+				</div><!--/row-->
+				<div class="row">
+					<div class="four columns">
+						<h4>Colspan</h4>
+						<p>(Optional) Use if needing to declare the hybrid grid.</p>
+						<?php echo do_shortcode('[pre lang="shortcode"][colspan twelve][/colspan][/pre]'); ?>
+					</div><!--/columns-->
+					<div class="four columns">
+						<h4>Container</h4>
+						<p>(Optional) Use if needing to have a full-width section (possibly for a background color).</p>
+						<?php echo do_shortcode('[pre lang="shortcode"][container style="background blue;"][/container][/pre]'); ?>
+					</div><!--/columns-->
+					<div class="four columns">
+						<h4>Row</h4>
+						<p>(Required) Wraps the columns and resets the column counter.</p>
+						<?php echo do_shortcode('[pre lang="shortcode"][row][/row][/pre]'); ?>
+					</div><!--/columns-->
+					<div class="four columns">
+						<h4>Column</h4>
+						<p>(Required) The individual columns within each row. Can be pushed or centered. Manually adding "first" or "last" will reset the column counter.</p>
+						<?php echo do_shortcode('[pre lang="shortcode"][column eight push="two"]Content Here[/column][/pre]'); ?>
+						<?php echo do_shortcode('[pre lang="shortcode"][column ten centered]Content Here[/column][/pre]'); ?>
 					</div><!--/columns-->
 				</div><!--/row-->
 			</div><!--/container-->
@@ -241,7 +257,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 			<h2>Google Map Iframe</h2>
 			<h5><a href="https://developers.google.com/maps/documentation/embed/guide" target="_blank">Documentation &raquo;</a></h5>
 			<p>This is an iframe integration of Google Maps. Not as flexible as the JavaScript API, but very easy to use.</p>
-			<pre class="html">&lt;iframe class="googlemap" width="100%" height="250" frameborder="0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E&q=Pinckney+Hugo+Group&zoom=14&maptype=roadmap"&gt;&lt;/iframe&gt;</pre>
+			<?php echo do_shortcode('[pre lang="html"]<iframe class="googlemap" width="100%" height="250" frameborder="0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E&q=Pinckney+Hugo+Group&zoom=14&maptype=roadmap"></iframe>[/pre]'); ?>
 			<br/>
 			<iframe class="googlemap nebulaborder"
 				width="100%"
@@ -309,7 +325,9 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 			<p>This shows how a Youtube video can be embedded. This iframe integration has corresponding scripts in the footer to track interactions with this video in Google Analytics. Using the Youtube Data API, we can pull information out of the video dynamically. The Gumby wrapper with the class "video" allows for fluid width videos, so it is best to wrap the iframe with that (along with the class of "youtube" (in this case), "vimeo", or "twitch"</p>
 			<p><strong>Important:</strong> Make sure to include the query parameter of "enablejsapi=1" for tracking to work (The class "youtubeplayer" must also be present on the iframe element)! It is also recommended to use the query parameter of "wmode=transparent" too.</p>
 			
-			<pre class="html">&lt;article class="youtube video"&gt;<br/>    &lt;iframe id="&lt;?php echo $youtube_meta['safetitle']; ?&gt;" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/&lt;?php echo $youtube_meta['id']; ?&gt;?wmode=transparent&enablejsapi=1&origin=&lt;?php echo $youtube_meta['origin']; ?&gt;&rel=0" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;<br/>&lt;/article&gt;</pre>
+			<?php echo do_shortcode('[pre lang="html"]<article class="youtube video">
+	<iframe id="<?php echo $youtube_meta["safetitle"]; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta["id"]; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta["origin"]; ?>&rel=0" frameborder="0" allowfullscreen=""></iframe>
+</article>[/pre]'); ?>
 			
 			<br/>
 			
@@ -524,9 +542,9 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 		<div class="sixteen columns">
 			<h2>Custom Shadows and Nebula Frame</h2>
 			<p>Just a couple quick ways to apply elegant shadows. Currently there are two: "Floating" and "Bulging". <a href="http://www.w3.org/TR/css3-values/#attr-value" target="_blank">Once browsers begin to support it</a>, the data attribute of "offset" will allow vertical margin to be applied to the shadow div (current support is for pseudo elements only). <em>Until this happens, shadows will not work properly under iframes.</em></p>
-			<p><pre class="html">&lt;div class="nebulashadow floating"&gt;&lt;/div&gt;</pre></p>
-			<p><pre class="html">&lt;div class="nebulashadow bulging" offset="-6"&gt;&lt;/div&gt;</pre></p>
-			<p><pre class="html">&lt;div class="nebulaframe bulging""&gt;&lt;/div&gt;</pre></p>
+			<p><?php echo do_shortcode('[pre lang="html"]&lt;div class="nebulashadow floating"&gt;&lt;/div&gt;[/pre]'); ?></p>
+			<p><?php echo do_shortcode('[pre lang="html"]&lt;div class="nebulashadow bulging" offset="-6"&gt;&lt;/div&gt;[/pre]'); ?></p>
+			<p><?php echo do_shortcode('[pre lang="html"]&lt;div class="nebulaframe bulging""&gt;&lt;/div&gt;[/pre]'); ?></p>
 		</div><!--/columns-->
 	</div><!--/row-->
 	<div class="row">

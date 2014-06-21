@@ -1162,6 +1162,26 @@ function footerWidgetCounter() {
  
  ===========================*/
 
+//Get flags where a parameter is declared in $atts that exists without a declared value
+/* Usage:
+	$flags = get_flags($atts);
+	if (in_array('your_flag', $flags) {
+	    // Flag is present
+	}
+*/
+function get_flags($atts) {
+	$flags = array();
+	if (is_array($atts)) {
+		foreach ($atts as $key => $value) {
+			if ($value != '' && is_numeric($key)) {
+				array_push($flags, $value);
+			}
+		}
+	}
+	return $flags;
+}
+
+
 add_shortcode('div', 'div_shortcode');
 function div_shortcode($atts, $content=''){
 	extract( shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts) );
@@ -1176,6 +1196,109 @@ function div_shortcode($atts, $content=''){
 	}
 	return $div;
 }
+
+
+//Gumby Grid Shortcodes
+
+//Colgrid
+// [colgrid twelve]
+if ( shortcode_exists( 'colgrid' ) ) {
+	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
+} else {
+	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
+	add_shortcode('colgrid', 'colgrid_shortcode');
+}
+function colgrid_shortcode($atts, $content=''){	
+	extract( shortcode_atts( array('grid' => '', 'class' => '', 'style' => ''), $atts) );	
+	$flags = get_flags($atts);
+	$grid = array_values($flags);
+	return '<section class="nebula-colgrid ' . $grid[0] . ' colgrid ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</section><!--/' . $grid[0] . ' colgrid-->';
+} //end colgrid_grid()
+
+//Container
+// [container]
+// [container class="special" style="background: yellow;"]
+if ( shortcode_exists( 'container' ) ) {
+	add_shortcode('gumby_container', 'container_shortcode');
+} else {
+	add_shortcode('gumby_container', 'container_shortcode');
+	add_shortcode('container', 'container_shortcode');
+}
+function container_shortcode($atts, $content=''){	
+	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
+	return '<div class="nebula-container container ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/container-->';
+} //end container_grid()
+
+//Rows
+// [row]
+// [row class="special" style="border: 1px solid red;"]
+if ( shortcode_exists( 'row' ) ) {
+	add_shortcode('gumby_row', 'row_shortcode');
+} else {
+	add_shortcode('gumby_row', 'row_shortcode');
+	add_shortcode('row', 'row_shortcode');
+}
+function row_shortcode($atts, $content=''){	
+	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
+	$GLOBALS['col_counter'] = 0;
+	return '<div class="nebula-row row ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/row-->';
+} //end row_grid()
+
+//Columns
+// [columns eight]Content Here[/columns]
+// [columns six push="two"]Content Here[/columns]
+// [columns ten centered]Content Here[/columns]
+// [columns eight first]Content Here[/columns]
+// [columns eight last]Content Here[/columns]
+if ( shortcode_exists( 'columns' ) || shortcode_exists( 'column' ) || shortcode_exists( 'cols' ) || shortcode_exists( 'col' ) ) {
+	add_shortcode('gumby_column', 'column_shortcode');
+	add_shortcode('gumby_columns', 'column_shortcode');
+	add_shortcode('gumby_col', 'column_shortcode');
+	add_shortcode('gumby_cols', 'column_shortcode');
+} else {
+	add_shortcode('gumby_column', 'column_shortcode');
+	add_shortcode('gumby_columns', 'column_shortcode');
+	add_shortcode('gumby_col', 'column_shortcode');
+	add_shortcode('gumby_cols', 'column_shortcode');
+	add_shortcode('column', 'column_shortcode');
+	add_shortcode('columns', 'column_shortcode');
+	add_shortcode('col', 'column_shortcode');
+	add_shortcode('cols', 'column_shortcode');
+}
+function column_shortcode($atts, $content=''){	
+	extract( shortcode_atts( array('columns' => '', 'push' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts) );
+	
+	$flags = get_flags($atts);
+	if ( in_array('centered', $flags) ) {
+		$centered = 'centered';
+		$key = array_search('centered', $flags);
+		unset($flags[$key]);
+	} elseif ( in_array('first', $flags) ) {
+		$GLOBALS['col_counter'] = 1;
+		$first = 'margin-left: 0;';
+		$key = array_search('first', $flags);
+	} elseif ( $GLOBALS['col_counter'] == 0 ) {
+		$GLOBALS['col_counter'] = 1;
+		$first = 'margin-left: 0;';
+	} else {
+		$GLOBALS['col_counter']++;
+	}
+	
+	if ( in_array('last', $flags) ) {
+		$GLOBALS['col_counter'] = 0;
+		$key = array_search('last', $flags);
+		unset($flags[$key]);
+	}
+	
+	$columns = array_values($flags);
+	
+	if ( $push ) {
+		$push = 'push_' . $push;
+	}
+	
+	return '<div class="nebula-columns ' . $columns[0] . ' columns ' . $push . ' ' . $centered . ' ' . $class . '" style="' . $style . ' ' . $first . '">' . do_shortcode($content) . '</div>';
+	
+} //end column_grid()
 
 
 //Divider [divider scroll_text="Go To Top"]
@@ -1206,6 +1329,41 @@ function icon_shortcode($atts){
 }
 
 
+//Button
+//[button size="medium" type="success" pretty icon="icon-mail" href="http://www.google.com/" target="_blank"]Click Here[/button]
+add_shortcode('button', 'button_shortcode');
+function button_shortcode($atts, $content=''){
+	extract( shortcode_atts( array('size' => 'medium', 'type' => 'info', 'pretty' => false, 'metro' => false, 'icon' => 0, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
+
+	if ( $pretty ) {
+		$btnstyle = ' pretty';
+	} elseif ( $metro ) {
+		$btnstyle = ' metro';
+	}
+
+	if ( $icon ) {
+		$side = 'icon-' . $side;
+		if (strpos($icon, 'fa-') !== false) {
+		    $icon_family = 'fa ';
+		} else {
+			$icon_family = 'entypo ';
+		}
+	} else {
+		$icon = '';
+		$size = '';
+	}
+	
+	if ( $target ) {
+		$target = ' target="' . $target . '"';
+	}
+	
+	//Figure out if the extra classes and styles should go in the <div> or the <a>
+	
+	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
+
+} //end button_shortcode()
+
+
 //Space (aka Gap) [space height=8]
 add_shortcode('space', 'space_shortcode');
 add_shortcode('gap', 'space_shortcode');
@@ -1226,6 +1384,28 @@ function youtube_shortcode($atts){
 	$youtube = '<article class="youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="http://www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
 	return $youtube;
 }
+
+
+//Pre (aka Code) [pre lang="php"]<div>This is a "test"!</div>[/pre]
+add_shortcode('pre', 'pre_shortcode');
+add_shortcode('code', 'pre_shortcode');
+function pre_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'class' => '', 'style' => ''), $atts) );  	
+	echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
+	$content = htmlspecialchars($content);
+	if ( $lang == '' && $language != '' ) {
+		$lang = $language;	
+	}
+	$search = array('actionscript', 'apache', 'as', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
+	$replace = array('ActionScript', 'Apache', 'ActionScript', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
+	$vislang = str_replace($search, $replace, $lang);
+	
+	if ( $color != '' ) {
+		return '<span class="nebula-pre pretitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-pre ' . $lang . ' ' . $class . '" style="border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';' . $style . '" >' . $content . '</pre>';
+	} else {
+		return '<span class="nebula-pre pretitle ' . $lang . '">' . $vislang . '</span><pre class="nebula-pre ' . $lang . ' ' . $class . '" style="' . $style . '" >' . $content . '</pre>';
+	}
+} //end pre_shortcode()
 
 
 //Close functions.php. Do not add anything after this closing tag!! ?>
