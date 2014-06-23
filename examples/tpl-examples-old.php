@@ -110,8 +110,8 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 											</div>
 										<?php endif; ?>
 							            
-							        </div><!-- .entry-content -->
-							    </article><!-- #post-## -->
+							        </div><!-- /entry-content -->
+							    </article><!-- /post-<?php the_ID(); ?> -->
 							</div><!--/columns-->
 					                         
 					        <?php $count++; ?>
@@ -440,11 +440,11 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 	<div class="row">
 		<div class="eight columns">
 			<p>This image is only a standard-resolution.</p>
-			<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" />
+			<img src="<?php bloginfo('template_directory');?>/examples/images/phg/standard.jpg" />
 		</div><!--/columns-->
 		<div class="eight columns">
 			<p>This image has a retina backup.</p>
-			<img src="<?php bloginfo('template_directory');?>/images/phg/welcome.jpg" gumby-retina />
+			<img src="<?php bloginfo('template_directory');?>/examples/images/phg/retina.jpg" gumby-retina />
 		</div><!--/columns-->
 	</div><!--/row-->
 	<div class="row">

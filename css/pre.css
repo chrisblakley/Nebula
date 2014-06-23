@@ -12,10 +12,12 @@ pre.nebula-pre.as, pre.nebula-pre.actionscript {border: 1px solid #a42222; borde
 	pre.nebula-pre.as::selection, pre.nebula-pre.actionscript::selection {background: #f8dede;}
 
 .nebula-pre.pretitle.css {color: #30a9dc;}
+	.nebula-pre.pretitle.css:after {content: "\f13c"; font-family: 'FontAwesome'; margin-left: 5px;}
 pre.nebula-pre.css {border: 1px solid #30a9dc; border-left: 5px solid #30a9dc;}
 	pre.nebula-pre.css::selection {background: #c1e5f5;}
 
 .nebula-pre.pretitle.html {color: #f1672c;}
+	.nebula-pre.pretitle.html:before {content: "\f13b"; font-family: 'FontAwesome'; margin-right: 3px;}
 pre.nebula-pre.html {border: 1px solid #f1672c; border-left: 5px solid #f1672c;}
 	pre.nebula-pre.html::selection {background: #fbcebb;}
 
@@ -27,9 +29,10 @@ pre.nebula-pre.js, pre.nebula-pre.javascript, pre.nebula-pre.jquery {border: 1px
 pre.nebula-pre.php {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 	pre.nebula-pre.php::selection {background: #c8cde1;}
 	
-.nebula-pre.pretitle.shortcode {color: #bbb;}
-pre.nebula-pre.shortcode {border: 1px solid #bbb; border-left: 5px solid #bbb;}
-	pre.nebula-pre.shortcode::selection {background: #ddd;}
+.nebula-pre.pretitle.shortcode {color: #287DA2;}
+	.nebula-pre.pretitle.shortcode:before {content: "\f19a"; font-family: 'FontAwesome'; margin-right: 3px;}
+pre.nebula-pre.shortcode {border: 1px solid #287DA2; border-left: 5px solid #287DA2;}
+	pre.nebula-pre.shortcode::selection {background: #d4ebf4;}
 
 .nebula-pre.pretitle.sql, .nebula-pre.pretitle.mysql {color: #116285;}
 pre.nebula-pre.sql, pre.nebula-pre.mysql {border: 1px solid #116285; border-left: 5px solid #116285;}

@@ -829,8 +829,8 @@ function word_limit_chars($string, $charlimit, $continue=false){
 //Breadcrumbs
 function the_breadcrumb() {
   $showOnHome = 0; // 1 - show breadcrumbs on the homepage, 0 - don't show
-  $delimiter = '<span class="arrow">&raquo;</span>'; // delimiter between crumbs
-  $home = 'Home'; // text for the 'Home' link
+  $delimiter = '<span class="arrow">&rsaquo;</span>'; // delimiter between crumbs
+  $home = '<i class="fa fa-home"></i>'; // text for the 'Home' link
   $showCurrent = 1; // 1 - show current post/page title in breadcrumbs, 0 - don't show
   $before = '<span class="current">'; // tag before the current crumb
   $after = '</span>'; // tag after the current crumb
@@ -963,7 +963,7 @@ add_action('pre_get_posts','fix_empty_search');
 
 
 //Redirect if only single search result
-function redirect_single_post() {
+function redirect_single_result() {
     if (is_search()) {
         global $wp_query;
         if ($wp_query->post_count == 1 && $wp_query->max_num_pages == 1) {
@@ -972,7 +972,7 @@ function redirect_single_post() {
         }
     }
 }
-add_action('template_redirect', 'redirect_single_post');
+add_action('template_redirect', 'redirect_single_result');
 
 
 //Remove extraneous <head> from Wordpress
@@ -1229,10 +1229,10 @@ function container_shortcode($atts, $content=''){
 	return '<div class="nebula-container container ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/container-->';
 } //end container_grid()
 
-//Rows
+//Row
 // [row]
 // [row class="special" style="border: 1px solid red;"]
-if ( shortcode_exists( 'row' ) ) {
+if ( shortcode_exists('row') ) {
 	add_shortcode('gumby_row', 'row_shortcode');
 } else {
 	add_shortcode('gumby_row', 'row_shortcode');
@@ -1250,7 +1250,7 @@ function row_shortcode($atts, $content=''){
 // [columns ten centered]Content Here[/columns]
 // [columns eight first]Content Here[/columns]
 // [columns eight last]Content Here[/columns]
-if ( shortcode_exists( 'columns' ) || shortcode_exists( 'column' ) || shortcode_exists( 'cols' ) || shortcode_exists( 'col' ) ) {
+if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exists('cols') || shortcode_exists('col') ) {
 	add_shortcode('gumby_column', 'column_shortcode');
 	add_shortcode('gumby_columns', 'column_shortcode');
 	add_shortcode('gumby_col', 'column_shortcode');
@@ -1301,7 +1301,7 @@ function column_shortcode($atts, $content=''){
 } //end column_grid()
 
 
-//Divider [divider scroll_text="Go To Top"]
+//Divider [divider space="20"]
 add_shortcode('divider', 'divider_shortcode');
 add_shortcode('hr', 'divider_shortcode');
 add_shortcode('line', 'divider_shortcode');
@@ -1319,7 +1319,7 @@ function divider_shortcode($atts){
 //Icon [icon family="entypo" type="icon-adjust" color="#222" size="12px"]
 add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){	
-	extract( shortcode_atts(array('type'=>'', 'color'=>'#333', 'size'=>'13px', 'class'=>''), $atts) );		
+	extract( shortcode_atts(array('type'=>'', 'color'=>'inherit', 'size'=>'inherit', 'class'=>''), $atts) );		
 	if (strpos($type, 'fa-') !== false) {
 	    $fa = 'fa ';
 	}
@@ -1333,7 +1333,7 @@ function icon_shortcode($atts){
 //[button size="medium" type="success" pretty icon="icon-mail" href="http://www.google.com/" target="_blank"]Click Here[/button]
 add_shortcode('button', 'button_shortcode');
 function button_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('size' => 'medium', 'type' => 'info', 'pretty' => false, 'metro' => false, 'icon' => 0, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
+	extract( shortcode_atts( array('size' => 'medium', 'type' => 'default', 'pretty' => false, 'metro' => false, 'icon' => false, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
 
 	if ( $pretty ) {
 		$btnstyle = ' pretty';
@@ -1389,10 +1389,23 @@ function youtube_shortcode($atts){
 //Pre (aka Code) [pre lang="php"]<div>This is a "test"!</div>[/pre]
 add_shortcode('pre', 'pre_shortcode');
 add_shortcode('code', 'pre_shortcode');
+$GLOBALS['pre'] = 0;
 function pre_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'class' => '', 'style' => ''), $atts) );  	
-	echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
+	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );  	
+	
+	if ( $GLOBALS['pre'] == 0 ) {
+		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
+		$GLOBALS['pre'] = 1;
+	}
+	
+	$flags = get_flags($atts);
+	if ( !in_array('br', $flags) ) {
+		$content = preg_replace('#<br\s*/?>#', '', $content);
+	}
+	
 	$content = htmlspecialchars($content);
+	
+	
 	if ( $lang == '' && $language != '' ) {
 		$lang = $language;	
 	}

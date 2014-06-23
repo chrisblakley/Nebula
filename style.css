@@ -232,7 +232,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 
 /***** CONTENT AREA *****/
 div#bcrumbs {position: relative; z-index: 1;}
-	nav.breadcrumbs {font-size: 12px;}
+	nav.breadcrumbs {font-size: 10px;}
 
 .row.multi-column-query {margin-bottom: 30px;}
 
@@ -278,7 +278,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 		.xoxo ul.menu li.current-menu-item a {color: #95D600;}
 		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
 		.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
-			.xoxo ul.menu li.menu-item ul.sub-menu {padding-left: 20px;}
+			.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
 				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
 
 .widget-container {margin: 10px 0 15px 0;}
@@ -286,7 +286,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 /* Nebula expandable sidebar subnav style defaults */
 a.toplevelvert_expander {position: absolute; top: 0; right: 0; padding-right: 0 !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
 	a.toplevelvert_expander.plus {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
-	a.toplevelvert_expander i {font-size: 24px;}
+	a.toplevelvert_expander i {font-size: 18px;}
 
 
 .xoxo form.search input[type="text"] {font-size: 16px; width: 77% !important; font-size: 14px !important; line-height: 24px !important; height: auto !important; vertical-align: top;}
@@ -476,7 +476,7 @@ div.copyright p {font-size: 12px;}
 .clearfix:after {clear: both;}
 /* For IE 6/7 only. Include this rule to trigger hasLayout and contain floats. */
 .clearfix {*zoom: 1;}
-.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
+div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
 .avoid-clicks {pointer-events: none;} /* Only supported in IE11+ */
 .allow-clicks {pointer-events: all;}
 
