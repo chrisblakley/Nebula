@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: Examples
- * @TODO: Delete this file before launching the site!
+ * @TODO: Delete this file before launching the site!!
  */
 
 get_header(); ?>
