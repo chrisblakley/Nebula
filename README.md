@@ -108,4 +108,4 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 
 ##Documentation
 
-Documentation is available at http://gearside.com/nebula
+Documentation is available at [http://gearside.com/nebula](http://gearside.com/nebula)
