@@ -205,6 +205,19 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 							</div><!--/row-->
 					<?php endif; //End Google Maps Iframe ?>
 					
+					<?php if ( is_page(277) ) : //Retina ?>
+						<div class="row">
+							<div class="eight columns">
+								<p>This image is only a standard-resolution.</p>
+								<img src="<?php bloginfo('template_directory');?>/examples/images/example.jpg" />
+							</div><!--/columns-->
+							<div class="eight columns">
+								<p>This image has a retina backup.</p>
+								<img src="<?php bloginfo('template_directory');?>/examples/images/example.jpg" gumby-retina />
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Retina ?>
+	
 				
 					<?php if ( is_page(89) ) : //Google Maps Iframe ?>
 							<div class="row">
