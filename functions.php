@@ -346,6 +346,11 @@ function my_theme_register_required_plugins() {
             'required'  => true,
         ),
         array(
+            'name'      => 'WP Smush.it',
+            'slug'      => 'wp-smushit',
+            'required'  => false,
+        ),
+        array(
             'name'      => 'Custom Facebook Feed',
             'slug'      => 'custom-facebook-feed',
             'required'  => false,
@@ -1371,6 +1376,59 @@ function space_shortcode($atts){
 	extract( shortcode_atts(array("height" => '20'), $atts) );  	
 	return '<div class="space" style=" height:' . $height . 'px;" ></div>';
 }
+
+
+//Clear (aka Clearfix) [clear]
+add_shortcode('clear', 'clear_shortcode');
+add_shortcode('clearfix', 'clear_shortcode');
+function clear_shortcode(){
+	return '<div class="clearfix" style="clear: both;" ></div>';
+}
+
+
+//Map [map q="" lat="" lng="" long=""]
+add_shortcode('map', 'map_shortcode');
+function map_shortcode($atts){
+	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '250', "class" => '', "style" => ''), $atts) );  	
+	if ( $key == '' ) {
+		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO: Replace with your own key to avoid designating a key every time.
+	}
+	if ( $q != '' ) {
+		$q = str_replace(' ', '+', $q);
+		$q = '&q=' . $q;
+	}
+	if ( $mode == 'directions' ) {
+		if ( $origin != '' ) {
+			$origin = str_replace(' ', '+', $origin);
+			$origin = '&origin=' . $origin;
+		}
+		if ( $destination != '' ) {
+			$destination = str_replace(' ', '+', $destination);
+			$destination = '&destination=' . $destination;
+		}
+		if ( $waypoints != '' ) {
+			$waypoints = str_replace(' ', '+', $waypoints);
+			$waypoints = '&waypoints=' . $waypoints;
+		}
+		if ( $avoid != '' ) {
+			$avoid = '&avoid=' . $avoid;
+		}
+	}
+	if ( $center != '' ) {
+		$center = '&center=' . $center;
+	}
+	if ( $language != '' ) {
+		$language = '&language=' . $language;
+	}
+	if ( $region != '' ) {
+		$region = '&region=' . $region;
+	}
+	if ( $zoom != '' ) {
+		$zoom = '&zoom=' . $zoom;
+	}
+	return '<iframe class="nebula-googlemap-shortcode googlemap ' . $class . '" width="' . $width . '" height="' . $height . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="' . $style . '"></iframe>';
+}
+
 
 
 //Youtube [youtube height="500" width="760"]http://www.youtube.com/watch?v=5Yn1-xEXTk0[/youtube]
