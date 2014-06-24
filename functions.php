@@ -478,13 +478,19 @@ function nebulaActivateComplete(){
  ===========================*/
 
 //Add custom admin.css stylesheet to WP Admin
-function custom_admin_css() {
+function custom_admin_scripts() {
 	//Font Awesome is called inside welcome.php- uncomment below to enable throughout WP Admin.
 	//echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/font-awesome.min.css" />';
     echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/admin.css" />';
+    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/admin.js"></script>';
+    
 }
-add_action('admin_head', 'custom_admin_css');
+add_action('admin_head', 'custom_admin_scripts');
 
+//Disable auto curly quotes
+remove_filter('the_content', 'wptexturize');
+remove_filter('the_excerpt', 'wptexturize');
+remove_filter('comment_text', 'wptexturize');
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
 function are_you_an_admin() {
@@ -1386,7 +1392,7 @@ function clear_shortcode(){
 }
 
 
-//Map [map q="" lat="" lng="" long=""]
+//Map
 add_shortcode('map', 'map_shortcode');
 function map_shortcode($atts){
 	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '250', "class" => '', "style" => ''), $atts) );  	
@@ -1444,9 +1450,8 @@ function youtube_shortcode($atts){
 }
 
 
-//Pre (aka Code) [pre lang="php"]<div>This is a "test"!</div>[/pre]
+//Pre [pre lang="php"]<div>This is a "test"!</div>[/pre]
 add_shortcode('pre', 'pre_shortcode');
-add_shortcode('code', 'pre_shortcode');
 $GLOBALS['pre'] = 0;
 function pre_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );  	
@@ -1463,7 +1468,6 @@ function pre_shortcode($atts, $content=''){
 	
 	$content = htmlspecialchars($content);
 	
-	
 	if ( $lang == '' && $language != '' ) {
 		$lang = $language;	
 	}
@@ -1478,5 +1482,14 @@ function pre_shortcode($atts, $content=''){
 	}
 } //end pre_shortcode()
 
+//Code [code][/code]
+add_shortcode('code', 'code_shortcode');
+function code_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
+	
+	//$content = htmlspecialchars($content);
+	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . $content . '</code>';
+
+} //end code_shortcode()
 
 //Close functions.php. Do not add anything after this closing tag!! ?>
