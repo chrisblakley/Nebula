@@ -482,8 +482,7 @@ function custom_admin_scripts() {
 	//Font Awesome is called inside welcome.php- uncomment below to enable throughout WP Admin.
 	//echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/font-awesome.min.css" />';
     echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/admin.css" />';
-    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/admin.js"></script>';
-    
+    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/admin.js" defer></script>';
 }
 add_action('admin_head', 'custom_admin_scripts');
 
@@ -1388,7 +1387,7 @@ function space_shortcode($atts){
 add_shortcode('clear', 'clear_shortcode');
 add_shortcode('clearfix', 'clear_shortcode');
 function clear_shortcode(){
-	return '<div class="clearfix" style="clear: both;" ></div>';
+	return '<div class="clearfix" style="clear: both;"></div>';
 }
 
 
@@ -1437,7 +1436,7 @@ function map_shortcode($atts){
 
 
 
-//Youtube [youtube height="500" width="760"]http://www.youtube.com/watch?v=5Yn1-xEXTk0[/youtube]
+//Youtube
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0), $atts) ); 
@@ -1448,6 +1447,7 @@ function youtube_shortcode($atts){
 	$youtube = '<article class="youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="http://www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
 	return $youtube;
 }
+
 
 
 //Pre [pre lang="php"]<div>This is a "test"!</div>[/pre]
@@ -1491,5 +1491,38 @@ function code_shortcode($atts, $content=''){
 	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . $content . '</code>';
 
 } //end code_shortcode()
+
+
+//Add buttons to visual editor
+add_action('init', 'add_shortcode_button');
+function add_shortcode_button(){
+    if ( current_user_can('edit_posts') ||  current_user_can('edit_pages') ){  
+         add_filter('mce_external_plugins', 'add_shortcode_plugin');  
+         add_filter('mce_buttons_3', 'register_shortcode_button');  
+       }    
+
+}
+function register_shortcode_button($buttons){
+    array_push($buttons, "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulayoutube");
+    return $buttons;
+}
+function add_shortcode_plugin($plugin_array) {  
+	$plugin_array['nebulabutton'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulaclear'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulacode'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebuladiv'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulacolgrid'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulacontainer'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebularow'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulacolumn'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulaicon'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulaline'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulamap'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulapre'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulaspace'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulayoutube'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	return $plugin_array;  
+}
+
 
 //Close functions.php. Do not add anything after this closing tag!! ?>
