@@ -18,7 +18,7 @@ jQuery(window).on('load', function() {
             ed.addButton('nebulabutton', {  
                 title : 'Add Button',  
                 image : url+'/youtube.png', //@TODO: Need to fix image path!
-                //image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',
+                //image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulabutton.png',
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[button size="medium" type="success" pretty icon="icon-mail" href="http://pinckneyhugo.com/" target="_blank"]Click Here[/button]<br/>');  
@@ -41,7 +41,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulaclear', {  
                 title : 'Add Clear',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaclear.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[clear]<br/>');  
@@ -64,7 +64,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulacode', {  
                 title : 'Add Code',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacode.png',  
                 onclick : function() {  
 					if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
@@ -97,7 +97,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebuladiv', {  
                 title : 'Add Div',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebuladiv.png',  
                 onclick : function() {  
                 	if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
@@ -129,7 +129,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulacolgrid', {  
                 title : 'Add Colgrid',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacolgrid.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]<br/>');  
@@ -152,7 +152,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulacontainer', {  
                 title : 'Add Container',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacontainer.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]<br/>');  
@@ -175,7 +175,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebularow', {  
                 title : 'Add Row',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebularow.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]<br/>');  
@@ -198,7 +198,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulacolumn', {  
                 title : 'Add Column',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacolumn.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');  
@@ -221,7 +221,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulaicon', {  
                 title : 'Add Icon',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaicon.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[icon type="icon-home" color="COLOR" size="SIZE" class="CLASSES"]');  
@@ -244,7 +244,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulaline', {  
                 title : 'Add Line',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaline.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[line space="5"]<br/>');  
@@ -267,7 +267,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulamap', {  
                 title : 'Add Google Map',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulamap.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');  
@@ -290,7 +290,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulapre', {  
                 title : 'Add Pre',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulapre.png',  
                 onclick : function() {  
                     if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
@@ -322,7 +322,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulaspace', {  
                 title : 'Add Vertical Space',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaspace.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[space height=25]<br/>');  
@@ -345,7 +345,7 @@ jQuery(window).on('load', function() {
         init : function(ed, url) {  
             ed.addButton('nebulayoutube', {  
                 title : 'Add Youtube Video',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/youtube.png',  
+                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulayoutube.png',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');  
