@@ -656,6 +656,17 @@ add_filter( 'xmlrpc_methods', function( $methods ) {
    return $methods;
 });
 
+//Add bloginfo variable for JavaScript
+function js_bloginfo() {
+	echo '<script>bloginfo = [];
+	bloginfo["name"] = "' . get_bloginfo("name") . '";
+	bloginfo["template_directory"] = "' . get_bloginfo("template_directory") . '";
+	bloginfo["stylesheet_url"] = "' . get_bloginfo("stylesheet_url") . '";
+	bloginfo["home_url"] = "' . home_url() . '";
+	bloginfo["admin_email"] = "' . get_option("admin_email", $admin_user->user_email) . '";</script>';
+}
+add_action('admin_head', 'js_bloginfo');
+add_action('wp_head', 'js_bloginfo');
 
 //Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
 function theme_favicon() {
@@ -1503,24 +1514,11 @@ function add_shortcode_button(){
 
 }
 function register_shortcode_button($buttons){
-    array_push($buttons, "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulayoutube");
+    array_push($buttons, "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulavideo");
     return $buttons;
 }
 function add_shortcode_plugin($plugin_array) {  
-	$plugin_array['nebulabutton'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulaclear'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulacode'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebuladiv'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulacolgrid'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulacontainer'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebularow'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulacolumn'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulaicon'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulaline'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulamap'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulapre'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulaspace'] = get_bloginfo('template_url') . '/js/shortcodes.js';
-	$plugin_array['nebulayoutube'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulatoolbar'] = get_bloginfo('template_url') . '/js/shortcodes.js';
 	return $plugin_array;  
 }
 

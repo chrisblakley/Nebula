@@ -10,61 +10,33 @@ jQuery(window).on('load', function() {
 
 
 /*==========================
- Button 
+ Nebula TinyMCE Toolbar 
  ===========================*/
 (function() {  
-    tinymce.create('tinymce.plugins.nebulabutton', {  
+    tinymce.create('tinymce.plugins.nebulatoolbar', {  
         init : function(ed, url) {  
             ed.addButton('nebulabutton', {  
-                title : 'Add Button',  
-                image : url+'/youtube.png', //@TODO: Need to fix image path!
-                //image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulabutton.png',
+                title : 'Insert Button',  
+                image : bloginfo['template_directory'] + '/images/admin/nebulabutton.png',
+                classes : 'widget btn nebula-icon',
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[button size="medium" type="success" pretty icon="icon-mail" href="http://pinckneyhugo.com/" target="_blank"]Click Here[/button]<br/>');  
                 }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulabutton', tinymce.plugins.nebulabutton);  
-})();
-
-
-/*==========================
- Clear 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulaclear', {  
-        init : function(ed, url) {  
+            }),
             ed.addButton('nebulaclear', {  
-                title : 'Add Clear',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaclear.png',  
+                title : 'Insert Clear',  
+                image : bloginfo['template_directory'] + '/images/admin/nebulaclear.png',
+                classes : 'widget btn nebula-icon',
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[clear]<br/>');  
                 }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulaclear', tinymce.plugins.nebulaclear);  
-})();
-
-
-/*==========================
- Code 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulacode', {  
-        init : function(ed, url) {  
+            }),
             ed.addButton('nebulacode', {  
-                title : 'Add Code',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacode.png',  
+                title : 'Insert Code',  
+                image : bloginfo['template_directory'] + '/images/admin/nebulacode.png',
+                classes : 'widget btn nebula-icon',
                 onclick : function() {  
 					if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
@@ -79,25 +51,11 @@ jQuery(window).on('load', function() {
 	                    ed.selection.setContent('[code]CONTENT_HERE[/code]');
                     }
                 }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulacode', tinymce.plugins.nebulacode);  
-})();
-
-
-/*==========================
- Div 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebuladiv', {  
-        init : function(ed, url) {  
+            }),
             ed.addButton('nebuladiv', {  
-                title : 'Add Div',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebuladiv.png',  
+                title : 'Insert Div',  
+                image : bloginfo['template_directory'] + '/images/admin/nebuladiv.png',
+                classes : 'widget btn nebula-icon',  
                 onclick : function() {  
                 	if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
@@ -111,186 +69,143 @@ jQuery(window).on('load', function() {
 	                    ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]<br/>');
                     }
                 }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebuladiv', tinymce.plugins.nebuladiv);  
-})();
-
-
-/*==========================
- Gumby Colgrid 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulacolgrid', {  
-        init : function(ed, url) {  
+            }),
             ed.addButton('nebulacolgrid', {  
-                title : 'Add Colgrid',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacolgrid.png',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]<br/>');  
-                }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulacolgrid', tinymce.plugins.nebulacolgrid);  
-})();
-
-
-/*==========================
- Gumby Container 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulacontainer', {  
-        init : function(ed, url) {  
-            ed.addButton('nebulacontainer', {  
-                title : 'Add Container',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacontainer.png',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]<br/>');  
-                }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulacontainer', tinymce.plugins.nebulacontainer);  
-})();
-
-
-/*==========================
- Gumby Row 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebularow', {  
-        init : function(ed, url) {  
-            ed.addButton('nebularow', {  
-                title : 'Add Row',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebularow.png',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]<br/>');  
-                }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebularow', tinymce.plugins.nebularow);  
-})();
-
-
-/*==========================
- Gumby Column 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulacolumn', {  
-        init : function(ed, url) {  
-            ed.addButton('nebulacolumn', {  
-                title : 'Add Column',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulacolumn.png',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');  
-                }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulacolumn', tinymce.plugins.nebulacolumn);  
-})();
-
-
-/*==========================
- Icon 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulaicon', {  
-        init : function(ed, url) {  
+                title : 'Insert Grid',  
+                type: 'menubutton',
+                icon: 'nebulacolgrid',
+                classes : 'widget btn nebula-icon', 
+                menu: [{
+                    text: 'Colgrid',
+                    onclick : function() {  
+	                    if (win.getSelection) {
+							var selectedText = win.getSelection().toString();
+						} else if (doc.selection && doc.selection.createRange) {
+							var selectedText = doc.selection.createRange().text;
+						}
+	                    ed.focus();
+	                    if ( typeof selectedText != undefined && selectedText != '' ) {
+		                    ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + selectedText + '[/colspan]<br/>');
+	                    } else {
+		                    ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]<br/>');
+	                    }
+	                }  
+                }, {
+                    text: 'Container',
+                    onclick : function() {  
+	                    if (win.getSelection) {
+							var selectedText = win.getSelection().toString();
+						} else if (doc.selection && doc.selection.createRange) {
+							var selectedText = doc.selection.createRange().text;
+						}
+	                    ed.focus();
+	                    if ( typeof selectedText != undefined && selectedText != '' ) {
+		                    ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + selectedText + '[/container]<br/>');
+	                    } else {
+		                    ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]<br/>');
+	                    }
+	                } 
+                }, {
+                    text: 'Row',
+	                    onclick : function() {  
+	                    if (win.getSelection) {
+							var selectedText = win.getSelection().toString();
+						} else if (doc.selection && doc.selection.createRange) {
+							var selectedText = doc.selection.createRange().text;
+						}
+	                    ed.focus();
+	                    if ( typeof selectedText != undefined && selectedText != '' ) {
+		                    ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + selectedText + '[/row]<br/>');
+	                    } else {
+		                    ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]<br/>');
+	                    }
+	                }
+                }, {
+                    text: 'Column',
+                    onclick : function() {  
+	                    if (win.getSelection) {
+							var selectedText = win.getSelection().toString();
+						} else if (doc.selection && doc.selection.createRange) {
+							var selectedText = doc.selection.createRange().text;
+						}
+	                    ed.focus();
+	                    if ( typeof selectedText != undefined && selectedText != '' ) {
+		                    ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]' + selectedText + '[/columns]<br/>');
+	                    } else {
+		                    ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');
+	                    }
+	                }  
+                }]
+            }),
             ed.addButton('nebulaicon', {  
-                title : 'Add Icon',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaicon.png',  
+                title : 'Insert Icon',  
+                type: 'splitbutton',
+                icon: 'nebulaicon',
+                classes : 'widget btn colorbutton nebula-icon',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[icon type="icon-home" color="COLOR" size="SIZE" class="CLASSES"]');  
-                }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulaicon', tinymce.plugins.nebulaicon);  
-})();
-
-
-/*==========================
- Line 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulaline', {  
-        init : function(ed, url) {  
+                },
+                menu: [{
+                    text: 'View all Entypo icons »',
+                    onclick: function(){
+						 window.open('http://gumbyframework.com/docs/ui-kit/#!/icons','_blank');
+                    }
+                }, {
+                    text: 'View all Font Awesome icons »',
+                    onclick: function(){
+						window.open('http://fortawesome.github.io/Font-Awesome/icons/','_blank');
+                    }
+                }]
+            }),
             ed.addButton('nebulaline', {  
-                title : 'Add Line',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaline.png',  
+                title : 'Insert Line',  
+                image : bloginfo['template_directory'] + '/images/admin/nebulaline.png',
+                classes : 'widget btn nebula-icon',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[line space="5"]<br/>');  
                 }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulaline', tinymce.plugins.nebulaline);  
-})();
-
-
-/*==========================
- Map 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulamap', {  
-        init : function(ed, url) {  
+            }),
             ed.addButton('nebulamap', {  
-                title : 'Add Google Map',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulamap.png',  
+                title : 'Insert Google Map',
+                type: 'splitbutton',
+                icon : 'nebulamap',
+                classes : 'widget btn colorbutton nebula-icon',  
                 onclick : function() {  
                     ed.focus();
                     ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');  
-                }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulamap', tinymce.plugins.nebulamap);  
-})();
-
-
-/*==========================
- Pre 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulapre', {  
-        init : function(ed, url) {  
+                },
+                menu: [{
+                    text: 'Place',
+                    onclick : function() {  
+	                    ed.focus();
+	                    ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');  
+	                } 
+                }, {
+                    text: 'Directions',
+                    onclick : function() {  
+	                    ed.focus();
+	                    ed.selection.setContent('[map mode="directions" origin="Pinckney Hugo Group" destination="Destiny USA"]<br/>');  
+	                }
+                }, {
+                    text: 'Search',
+                    onclick : function() {  
+	                    ed.focus();
+	                    ed.selection.setContent('[map mode="search" q="Food in Syracuse, NY"]<br/>');  
+	                }
+                }, {
+                    text: 'View',
+                    onclick : function() {  
+	                    ed.focus();
+	                    ed.selection.setContent('[map mode="view" center="43.0536364,-76.1657063" zoom="19" maptype="satellite"]<br/>');  
+	                }
+                }]
+            }),
             ed.addButton('nebulapre', {  
-                title : 'Add Pre',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulapre.png',  
+                title : 'Insert Pre',  
+                image : bloginfo['template_directory'] + '/images/admin/nebulapre.png',
+                classes : 'widget btn nebula-icon',  
                 onclick : function() {  
                     if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
@@ -304,57 +219,43 @@ jQuery(window).on('load', function() {
 	                    ed.selection.setContent('[pre lang="LANGUAGE"]CONTENT_HERE[/pre]<br/>');
                     }
                 }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulapre', tinymce.plugins.nebulapre);  
-})();
-
-
-/*==========================
- Space 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulaspace', {  
-        init : function(ed, url) {  
-            ed.addButton('nebulaspace', {  
-                title : 'Add Vertical Space',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulaspace.png',  
-                onclick : function() {  
+            }),
+            ed.addButton('nebulaspace', {
+                title : 'Insert Vertical Space',
+                image : bloginfo['template_directory'] + '/images/admin/nebulaspace.png',
+                classes : 'widget btn nebula-icon',
+                onclick : function() {
                     ed.focus();
-                    ed.selection.setContent('[space height=25]<br/>');  
-                }  
-            });  
-        },  
+                    ed.selection.setContent('[space height=25]<br/>');
+                }
+            }),
+            ed.addButton('nebulavideo', {
+	            title : 'Insert Video',
+	            type: 'splitbutton',
+	            icon: 'nebulavideo',
+	            classes : 'widget btn colorbutton nebula-icon',
+	            onclick: function(){
+                     ed.focus();
+					 ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
+                },
+	            menu: [{
+                    text: 'Youtube',
+                    onclick: function(){
+                         ed.focus();
+						 ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
+                    }
+                }, {
+                    text: 'Vimeo',
+                    onclick: function(){
+						ed.focus();
+						ed.selection.setContent('[vimeo id="VIMEO_VIDEO_ID"]<br/>');
+                    }
+                }]
+	        }); 
+        },
         createControl : function(n, cm) {  
             return null;  
         }
-    });  
-    tinymce.PluginManager.add('nebulaspace', tinymce.plugins.nebulaspace);  
-})();
-
-
-/*==========================
- Youtube 
- ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulayoutube', {  
-        init : function(ed, url) {  
-            ed.addButton('nebulayoutube', {  
-                title : 'Add Youtube Video',  
-                image : 'http://gearside.com/nebula/wp-content/themes/WP-Nebula-master/images/admin/nebulayoutube.png',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');  
-                }  
-            });  
-        },  
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });  
-    tinymce.PluginManager.add('nebulayoutube', tinymce.plugins.nebulayoutube);  
+    });
+    tinymce.PluginManager.add('nebulatoolbar', tinymce.plugins.nebulatoolbar);
 })();

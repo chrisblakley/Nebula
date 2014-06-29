@@ -32,8 +32,38 @@
 					#welcome-content .logocon a img {width: 100%;}
 			#welcome-content hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
 
+/*==========================
+ Nebula TinyMCE Toolbar 
+ ===========================*/
+
 #dashboard_right_now a[href$='options-reading.php'] {color: red !important; font-weight: 700;}
 	#dashboard_right_now a[href$='options-reading.php']:before {content: '!'; background: red; color: white; padding: 0 7px; margin-right: 5px;}
+
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon {background-image: url('../images/admin/nebulaicon.png');}
+
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap {background-image: url('../images/admin/nebulamap.png');}
+
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid {background-image: url('../images/admin/nebulacolgrid.png');}
+
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo {background-image: url('../images/admin/nebulavideo.png');}
+
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i {background-position-y: 0px; background-repeat: no-repeat;}
+
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon:hover button i,
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded='true'] i,
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:hover button i,
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded='true'] i {background-position-y: -20px; background-repeat: no-repeat;}
+
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded='true'],
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded='true'] {background: #ebebeb; border-color: #999; -webkit-box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3); box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3);}
+
 
 @media only screen and (max-width: 1800px) and (min-width: 1500px) {
 	#welcome-photo {width: 30%;}

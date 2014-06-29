@@ -415,7 +415,7 @@ function powerFooterWidthDist() {
 	} else {
 		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
 	}
-} //end powerFooterWidthDist
+} //end PowerFooterWidthDist
 
 //Search Validator
 function searchValidator() {
@@ -1009,6 +1009,12 @@ function getAllLocations() {
 //Render the Google Map
 function renderMap(mapInfo) {
     Gumby.log('Rendering Google Map');
+    
+    if ( typeof google === 'undefined' ) {
+    	Gumby.log('google is not defined. Likely the Google Maps script is not being seen.');
+    	return false;
+    }
+    
     var myOptions = {
 		zoom: 11,
 		scrollwheel: false,

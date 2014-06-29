@@ -80,13 +80,6 @@
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.42059.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
 		<script>
-			bloginfo = [];
-			bloginfo['name'] = "<?php echo bloginfo('name'); ?>";
-			bloginfo['template_directory'] = "<?php echo bloginfo('template_directory'); ?>";
-			bloginfo['stylesheet_url'] = "<?php echo bloginfo('stylesheet_url'); ?>";
-			bloginfo['home_url'] = "<?php echo home_url(); ?>";
-			bloginfo['admin_email'] = "<?php echo get_option('admin_email', $admin_user->user_email); ?>";
-			
 			social = [];
 			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
 			social['twitter_url'] = "<?php echo $social['twitter_url']; ?>";
@@ -95,15 +88,17 @@
 			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
 		</script>
 		
-		<script> //Universal Analytics
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		
-		  ga('create', 'UA-00000000-1', 'domainnamegoeshere.com'); <?php //@TODO: Don't forget to update the Google Analytics ID in the functions.php file too! ?>
-		  ga('send', 'pageview');
-		</script>
+		<!--
+			<script> //Universal Analytics
+			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			
+			  ga('create', 'UA-00000000-1', 'domainnamegoeshere.com'); <?php //@TODO: Uncomment this script, and update the Google Analytics ID and domain. Don't forget to update the ID in the functions.php file too! ?>
+			  ga('send', 'pageview');
+			</script>
+		-->
 		
 		<?php wp_head(); ?>
 	</head>
