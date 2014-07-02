@@ -103,6 +103,7 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 - [Google Analytics (analytics.js)](https://developers.google.com/analytics/devguides/collection/analyticsjs/)
 - [Google Maps API](https://developers.google.com/maps/)
 - [Twitter API](https://dev.twitter.com/docs)
+- [Vimeo API](http://developer.vimeo.com/apis/simple)
 - [Youtube Iframe API](https://developers.google.com/youtube/iframe_api_reference)
 - [Youtube Data API](https://developers.google.com/youtube/v3/)
 
