@@ -28,8 +28,10 @@ get_header(); ?>
 <script <?php echo $defer; ?>>
 	if ( document.referrer.length ) {
 		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
+		Gumby.log('Sending GA event: ' + '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
 	} else {
 		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown');
+		Gumby.log('Sending GA event: ' + '404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown');
 	}
 </script>
 

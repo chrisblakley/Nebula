@@ -21,6 +21,7 @@ get_header(); ?>
 				<script <?php echo $defer; ?>>
 					var badSearchTerm = jQuery('#s').val();
 					ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm);
+					Gumby.log('Sending GA event: ' + 'Internal Search', 'No Results', badSearchTerm);
 				</script>
 			<?php endif; ?>
 			<?php if ( have_posts() ) : ?>

@@ -71,8 +71,10 @@ jQuery(document).ready(function() {
 	    	/* viewportResized = updateViewportDimensions();  //@TODO: This breaks in IE8
 	    	if ( viewport.width > viewportResized.width ) {
 	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    		Gumby.log('Sending GA event: ' + 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	} else if ( viewport.width < viewportResized.width ) {
 	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    		Gumby.log('Sending GA event: ' + 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	}
 	    	viewport = updateViewportDimensions();
 	    	//console.debug(viewport); */
@@ -237,6 +239,7 @@ function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string.)
 	//jQuery('.selector').on('click', function() {
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value;
+	//  Gumby.log('Sending GA event: ' + 'Category', 'Action', 'Label', Value);
 	//});
 	
 	//External links
@@ -992,6 +995,7 @@ function errorCallback(error) {
     Gumby.warn(geolocationErrorMessage);
     jQuery(document).trigger('geolocationError');
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage);
+    Gumby.log('Sending GA event: ' + 'Geolocation', 'Error', geolocationErrorMessage);
 }
 
 //Retreive Lat/Lng locations

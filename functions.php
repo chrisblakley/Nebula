@@ -1027,26 +1027,26 @@ function my_theme_wrapper_end() {
 
 
 //PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
-//Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic.
-//Logic can fire from "$detect->isMobile()" or "$detect->isTablet()" or "$detect->is('AndroidOS')".
+//Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
+//Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
 require_once 'includes/Mobile_Detect.php';
 $GLOBALS["mobile_detect"] = new Mobile_Detect();
 
 function mobile_classes() {
 	$mobile_classes = '';
 	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
-		$mobile_classes .= ' mobile';
+		$mobile_classes .= '  mobile ';
 	} else {
-		$mobile_classes .= ' no-mobile';
+		$mobile_classes .= '  no-mobile ';
 	}
 	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
-		$mobile_classes .= ' tablet';
+		$mobile_classes .= '  tablet ';
 	}
 	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
-		$mobile_classes .= ' ios';
+		$mobile_classes .= '  ios ';
 	}
 	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
-		$mobile_classes .= ' androidos';
+		$mobile_classes .= '  androidos ';
 	}
 	echo $mobile_classes;
 }
@@ -1097,6 +1097,23 @@ function category_id_class($classes) {
 }
 add_filter('post_class', 'category_id_class');
 add_filter('body_class', 'category_id_class');
+
+
+function vimeo_meta($videoID) {
+	global $vimeo_meta;
+	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml"));
+	$vimeo_meta['id'] = $videoID;
+	$vimeo_meta['title'] = $xml->video->title;
+	$vimeo_meta['safetitle'] = str_replace(" ", "-", $vimeo_meta['title']);
+	$vimeo_meta['description'] = $xml->video->description;
+	$vimeo_meta['upload_date'] = $xml->video->upload_date;
+	$vimeo_meta['thumbnail'] = $xml->video->thumbnail_large;
+	$vimeo_meta['url'] = $xml->video->url;
+	$vimeo_meta['user'] = $xml->video->user_name;
+	$vimeo_meta['seconds'] = strval($xml->video->duration);
+	$vimeo_meta['duration'] = intval(gmdate("i", $vimeo_meta['seconds'])) . gmdate(":s", $vimeo_meta['seconds']);
+	return $vimeo_meta;
+}
 
 
 function youtube_meta($videoID) {
@@ -1446,6 +1463,18 @@ function map_shortcode($atts){
 }
 
 
+//Vimeo
+add_shortcode('vimeo', 'vimeo_shortcode');
+function vimeo_shortcode($atts){
+	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );  
+	$width = 'width="' . $width . '"';
+	$height = 'height="' . $height . '"';
+	vimeo_meta($id);
+	global $vimeo_meta;
+	$vimeo = '<article class="vimeo video"><iframe id="' . $vimeo_meta['safetitle'] . '" class="vimeoplayer" src="http://player.vimeo.com/video/' . $vimeo_meta['id'] . '?api=1&player_id=' . $vimeo_meta['safetitle'] . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
+	return $vimeo;
+}
+
 
 //Youtube
 add_shortcode('youtube', 'youtube_shortcode');
@@ -1504,7 +1533,153 @@ function code_shortcode($atts, $content=''){
 } //end code_shortcode()
 
 
-//Add buttons to visual editor
+//Slider
+add_shortcode('slider', 'slider_shortcode');
+function slider_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic'), $atts) );  	
+	
+	if ( !$id ) {
+		$id = 'nebula-slider-' . rand(1, 10000);
+	} else {
+		$id = 'nebula-slider-' . $id;
+	}
+	
+	$slideCount = '4'; //Count the amount of slides inside of the slider.
+		$slideConWidth = $slideCount*100 . '%';
+		$slideWidth = round(100/$slideCount, 3) . '%';
+		
+	$sliderCSS = '<style>div#' . $id . ' {position: relative; overflow: hidden;}';
+	if ( $mode == 'fade' ) { //Fade Mode
+		$sliderCSS .= 'div#' . $id . ' ul.nebula-slide-con {position: relative; width: 100%; left: 0; margin: 0; padding: 0; height: 0px; list-style: none;}
+				div#' . $id . ' ul.nebula-slide-con li.nebula-slide {position: absolute; top: 0; display: block; width: 100%; margin: 0; padding: 0;}
+					div#' . $id . ' ul.nebula-slide-con li.nebula-slide img {width: 100%;}';
+	} else { //Carriage Mode
+		$sliderCSS .= 'div#' . $id . ' ul.nebula-slide-con {position: relative; width: ' . $slideConWidth . '; left: 0; margin: 0; padding: 0; list-style: none;}
+				div#' . $id . ' ul.nebula-slide-con li.nebula-slide {position: relative; display: inline-block; width: ' . $slideWidth . '; margin: 0; padding: 0; float: left;}
+					div#' . $id . ' ul.nebula-slide-con li.nebula-slide img {width: 100%;}';
+	}	
+	$sliderCSS .= '</style>';
+	
+	
+	$sliderJS = '<script>jQuery(document).ready(function() {';
+	if ( $mode == 'fade' ) { //Fade Mode
+		$sliderJS .= ' jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-last-child(2)").addClass("next");
+					jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").addClass("active");';
+	} else { //Carriage Mode
+		$sliderJS .= 'jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").addClass("active");
+					jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(2)").addClass("next");';
+	}
+	$sliderJS .= '});
+		jQuery(window).on("load", function() {
+			var nebulaSlideCount = ' . $slideCount . ';
+			var currentSlide = 1;';
+			
+	if ( $mode == 'fade' ) { //Fade Mode
+		$sliderJS .= 'var activeHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").height();';
+	} else { //Carriage Mode
+		$sliderJS .= 'var activeHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").height();';
+	}
+			
+	$sliderJS .= 'jQuery("div#' . $id . '").css("height", activeHeight);
+			if (nebulaSlideCount > 1) {
+				var nebulaSlider = setInterval(function(){';
+					
+	if ( $mode == 'fade' ) { //Fade Mode
+		$sliderJS .= 'jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").fadeOut(' . $speed . ', function(){
+						jQuery("div#' . $id . ' ul.nebula-slide-con li.next").removeClass("next");
+						jQuery("div#' . $id . ' ul.nebula-slide-con li.active").removeClass("active");
+						jQuery(this).clone().prependTo("div#' . $id . ' ul.nebula-slide-con");
+						jQuery(this).remove();
+						jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").css("display", "block");
+						jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").addClass("active");
+						jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-last-child(2)").addClass("next");
+					});';
+	} else { //Carriage Mode
+		$sliderJS .= 'if ( currentSlide < nebulaSlideCount ) {
+						jQuery("div#' . $id . ' ul.nebula-slide-con").animate({
+							left: "-=100%",
+						}, ' . $speed . ', "' . $easing . '", function() {
+							currentSlide++;
+							jQuery("div#' . $id . ' ul.nebula-slide-con li.next").removeClass("next");
+							jQuery("div#' . $id . ' ul.nebula-slide-con li.active").removeClass("active");
+							jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(" + currentSlide + ")").addClass("active");
+							if ( currentSlide+1 <= nebulaSlideCount ) {
+								jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(" + (currentSlide+1) + ")").addClass("next");
+							} else {
+								jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").addClass("next");
+							}
+						});
+					} else {
+						jQuery("div#' . $id . ' ul.nebula-slide-con").animate({
+							left: "0",
+						}, ' . $speed . ', "' . $easing . '", function() {
+							currentSlide = 1;
+							jQuery("div#' . $id . ' ul.nebula-slide-con li.next").removeClass("next");
+							jQuery("div#' . $id . ' ul.nebula-slide-con li.active").removeClass("active");
+							jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").addClass("active");
+							jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(2)").addClass("next");
+						});
+					}';
+	}			
+	$sliderJS .= 'activeHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li.nebula-slide.active img").height();
+					nextHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li.nebula-slide.next img").height();
+					if ( nextHeight >= activeHeight ) {
+						jQuery("div#' . $id . '").delay(' . $speed/2 . ').animate({
+							height: nextHeight,
+						}, ' . $speed/2 . ', "' . $easing . '");
+					} else {
+						jQuery("div#' . $id . '").animate({
+							height: nextHeight,
+						}, ' . $speed/2 . ', "' . $easing . '");
+					}
+				}, ' . $delay . ');
+			}
+		});
+	</script>';				
+	
+	
+	$sliderHTML = '<div class="nebulaframe"><div id="' . $id . '">
+						<ul class="nebula-slide-con clearfix">' . parse_shortcode_content(do_shortcode($content)) . '</ul>
+					</div></div>';	
+					
+					
+	return $sliderCSS . ' ' . $sliderJS . ' ' . $sliderHTML;
+	
+} //end slider_shortcode()
+
+//Slide
+add_shortcode('slide', 'slide_shortcode');
+function slide_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
+	
+	return '<li class="nebula-slide clearfix"><img src="' . $content . '"/></li>';
+} //end slide_shortcode()
+
+
+//Remove empty <p> tags from Wordpress content (for nested shortcodes)
+function parse_shortcode_content( $content ) {
+
+   /* Parse nested shortcodes and add formatting. */
+    $content = trim( do_shortcode( shortcode_unautop( $content ) ) );
+    /* Remove '' from the start of the string. */
+    if ( substr( $content, 0, 4 ) == '' )
+        $content = substr( $content, 4 );
+    /* Remove '' from the end of the string. */
+    if ( substr( $content, -3, 3 ) == '' )
+        $content = substr( $content, 0, -3 );
+    /* Remove any instances of ''. */
+    $content = str_replace( array( '<p></p>' ), '', $content );
+    $content = str_replace( array( '<p>  </p>' ), '', $content );
+    return $content;
+}
+//move wpautop filter to AFTER shortcode is processed
+remove_filter( 'the_content', 'wpautop' );
+add_filter( 'the_content', 'wpautop' , 99);
+add_filter( 'the_content', 'shortcode_unautop',100 );
+
+
+
+//Add Nebula Toolbar to TinyMCE
 add_action('init', 'add_shortcode_button');
 function add_shortcode_button(){
     if ( current_user_can('edit_posts') ||  current_user_can('edit_pages') ){  

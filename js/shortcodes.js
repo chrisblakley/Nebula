@@ -1,7 +1,7 @@
 jQuery.noConflict();
 
-jQuery(window).on('load', function() {	
-	
+jQuery(window).on('load', function() {
+
 	iframe = document.getElementById("content_ifr");
 	win = iframe.contentWindow;
 	doc = win.document;
@@ -12,250 +12,249 @@ jQuery(window).on('load', function() {
 /*==========================
  Nebula TinyMCE Toolbar 
  ===========================*/
-(function() {  
-    tinymce.create('tinymce.plugins.nebulatoolbar', {  
-        init : function(ed, url) {  
-            ed.addButton('nebulabutton', {  
-                title : 'Insert Button',  
-                image : bloginfo['template_directory'] + '/images/admin/nebulabutton.png',
-                classes : 'widget btn nebula-icon',
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[button size="medium" type="success" pretty icon="icon-mail" href="http://pinckneyhugo.com/" target="_blank"]Click Here[/button]<br/>');  
-                }  
-            }),
-            ed.addButton('nebulaclear', {  
-                title : 'Insert Clear',  
-                image : bloginfo['template_directory'] + '/images/admin/nebulaclear.png',
-                classes : 'widget btn nebula-icon',
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[clear]<br/>');  
-                }  
-            }),
-            ed.addButton('nebulacode', {  
-                title : 'Insert Code',  
-                image : bloginfo['template_directory'] + '/images/admin/nebulacode.png',
-                classes : 'widget btn nebula-icon',
-                onclick : function() {  
+(function() {
+	tinymce.create('tinymce.plugins.nebulatoolbar', {
+		init : function(ed, url) {
+			ed.addButton('nebulabutton', {
+				title: 'Insert Button',
+				image: bloginfo['template_directory'] + '/images/admin/nebulabutton.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[button size="medium" type="success" pretty icon="icon-mail" href="http://pinckneyhugo.com/" target="_blank"]Click Here[/button]<br/>');
+				}
+			}),
+			ed.addButton('nebulaclear', {
+				title : 'Insert Clear',
+				image : bloginfo['template_directory'] + '/images/admin/nebulaclear.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[clear]<br/>');
+				}
+			}),
+			ed.addButton('nebulacode', {
+				title : 'Insert Code',
+				image : bloginfo['template_directory'] + '/images/admin/nebulacode.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
 					if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
 					} else if (doc.selection && doc.selection.createRange) {
 						var selectedText = doc.selection.createRange().text;
 					}
-                    
-                    ed.focus();
-                    if ( typeof selectedText != undefined && selectedText != '' ) {
-	                    ed.selection.setContent('[code]' + selectedText + '[/code]');
-                    } else {
-	                    ed.selection.setContent('[code]CONTENT_HERE[/code]');
-                    }
-                }  
-            }),
-            ed.addButton('nebuladiv', {  
-                title : 'Insert Div',  
-                image : bloginfo['template_directory'] + '/images/admin/nebuladiv.png',
-                classes : 'widget btn nebula-icon',  
-                onclick : function() {  
-                	if (win.getSelection) {
+					ed.focus();
+					if ( typeof selectedText != undefined && selectedText != '' ) {
+						ed.selection.setContent('[code]' + selectedText + '[/code]');
+					} else {
+						ed.selection.setContent('[code]CONTENT_HERE[/code]');
+					}
+				}
+			}),
+			ed.addButton('nebuladiv', {
+				title : 'Insert Div',
+				image : bloginfo['template_directory'] + '/images/admin/nebuladiv.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
 					} else if (doc.selection && doc.selection.createRange) {
 						var selectedText = doc.selection.createRange().text;
 					}
-                    ed.focus();
-                    if ( typeof selectedText != undefined && selectedText != '' ) {
-	                    ed.selection.setContent('[div class="CLASSES" style="STYLES"]' + selectedText + '[/div]<br/>');
-                    } else {
-	                    ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]<br/>');
-                    }
-                }  
-            }),
-            ed.addButton('nebulacolgrid', {  
-                title : 'Insert Grid',  
-                type: 'menubutton',
-                icon: 'nebulacolgrid',
-                classes : 'widget btn nebula-icon', 
-                menu: [{
-                    text: 'Colgrid',
-                    onclick : function() {  
-	                    if (win.getSelection) {
+					ed.focus();
+					if ( typeof selectedText != undefined && selectedText != '' ) {
+						ed.selection.setContent('[div class="CLASSES" style="STYLES"]' + selectedText + '[/div]<br/>');
+					} else {
+						ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]<br/>');
+					}
+				}
+			}),
+			ed.addButton('nebulacolgrid', {
+				title : 'Insert Grid',
+				type: 'menubutton',
+				icon: 'nebulacolgrid',
+				classes : 'widget btn nebula-icon',
+				menu: [{
+					text: 'Colgrid',
+					onclick : function() {
+						if (win.getSelection) {
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
-	                    ed.focus();
-	                    if ( typeof selectedText != undefined && selectedText != '' ) {
-		                    ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + selectedText + '[/colspan]<br/>');
-	                    } else {
-		                    ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]<br/>');
-	                    }
-	                }  
-                }, {
-                    text: 'Container',
-                    onclick : function() {  
-	                    if (win.getSelection) {
+						ed.focus();
+						if ( typeof selectedText != undefined && selectedText != '' ) {
+							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + selectedText + '[/colspan]<br/>');
+						} else {
+							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]<br/>');
+						}
+					}
+				}, {
+					text: 'Container',
+					onclick : function() {
+						if (win.getSelection) {
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
-	                    ed.focus();
-	                    if ( typeof selectedText != undefined && selectedText != '' ) {
-		                    ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + selectedText + '[/container]<br/>');
-	                    } else {
-		                    ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]<br/>');
-	                    }
-	                } 
-                }, {
-                    text: 'Row',
-	                    onclick : function() {  
-	                    if (win.getSelection) {
+						ed.focus();
+						if ( typeof selectedText != undefined && selectedText != '' ) {
+							ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + selectedText + '[/container]<br/>');
+						} else {
+							ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]<br/>');
+						}
+					}
+				}, {
+					text: 'Row',
+					onclick : function() {
+						if (win.getSelection) {
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
-	                    ed.focus();
-	                    if ( typeof selectedText != undefined && selectedText != '' ) {
-		                    ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + selectedText + '[/row]<br/>');
-	                    } else {
-		                    ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]<br/>');
-	                    }
-	                }
-                }, {
-                    text: 'Column',
-                    onclick : function() {  
-	                    if (win.getSelection) {
+						ed.focus();
+						if ( typeof selectedText != undefined && selectedText != '' ) {
+							ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + selectedText + '[/row]<br/>');
+						} else {
+							ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]<br/>');
+						}
+					}
+				}, {
+					text: 'Column',
+					onclick : function() {
+						if (win.getSelection) {
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
-	                    ed.focus();
-	                    if ( typeof selectedText != undefined && selectedText != '' ) {
-		                    ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]' + selectedText + '[/columns]<br/>');
-	                    } else {
-		                    ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');
-	                    }
-	                }  
-                }]
-            }),
-            ed.addButton('nebulaicon', {  
-                title : 'Insert Icon',  
-                type: 'splitbutton',
-                icon: 'nebulaicon',
-                classes : 'widget btn colorbutton nebula-icon',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[icon type="icon-home" color="COLOR" size="SIZE" class="CLASSES"]');  
-                },
-                menu: [{
-                    text: 'View all Entypo icons »',
-                    onclick: function(){
-						 window.open('http://gumbyframework.com/docs/ui-kit/#!/icons','_blank');
-                    }
-                }, {
-                    text: 'View all Font Awesome icons »',
-                    onclick: function(){
+						ed.focus();
+						if ( typeof selectedText != undefined && selectedText != '' ) {
+							ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]' + selectedText + '[/columns]<br/>');
+						} else {
+							ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');
+						}
+					}
+				}]
+			}),
+			ed.addButton('nebulaicon', {
+				title : 'Insert Icon',
+				type: 'splitbutton',
+				icon: 'nebulaicon',
+				classes : 'widget btn colorbutton nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[icon type="icon-home" color="COLOR" size="SIZE" class="CLASSES"]');
+				},
+				menu: [{
+					text: 'View all Entypo icons »',
+					onclick: function(){
+						window.open('http://gumbyframework.com/docs/ui-kit/#!/icons','_blank');
+					}
+				}, {
+					text: 'View all Font Awesome icons »',
+					onclick: function(){
 						window.open('http://fortawesome.github.io/Font-Awesome/icons/','_blank');
-                    }
-                }]
-            }),
-            ed.addButton('nebulaline', {  
-                title : 'Insert Line',  
-                image : bloginfo['template_directory'] + '/images/admin/nebulaline.png',
-                classes : 'widget btn nebula-icon',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[line space="5"]<br/>');  
-                }  
-            }),
-            ed.addButton('nebulamap', {  
-                title : 'Insert Google Map',
-                type: 'splitbutton',
-                icon : 'nebulamap',
-                classes : 'widget btn colorbutton nebula-icon',  
-                onclick : function() {  
-                    ed.focus();
-                    ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');  
-                },
-                menu: [{
-                    text: 'Place',
-                    onclick : function() {  
-	                    ed.focus();
-	                    ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');  
-	                } 
-                }, {
-                    text: 'Directions',
-                    onclick : function() {  
-	                    ed.focus();
-	                    ed.selection.setContent('[map mode="directions" origin="Pinckney Hugo Group" destination="Destiny USA"]<br/>');  
-	                }
-                }, {
-                    text: 'Search',
-                    onclick : function() {  
-	                    ed.focus();
-	                    ed.selection.setContent('[map mode="search" q="Food in Syracuse, NY"]<br/>');  
-	                }
-                }, {
-                    text: 'View',
-                    onclick : function() {  
-	                    ed.focus();
-	                    ed.selection.setContent('[map mode="view" center="43.0536364,-76.1657063" zoom="19" maptype="satellite"]<br/>');  
-	                }
-                }]
-            }),
-            ed.addButton('nebulapre', {  
-                title : 'Insert Pre',  
-                image : bloginfo['template_directory'] + '/images/admin/nebulapre.png',
-                classes : 'widget btn nebula-icon',  
-                onclick : function() {  
-                    if (win.getSelection) {
+					}
+				}]
+			}),
+			ed.addButton('nebulaline', {
+				title : 'Insert Line',
+				image : bloginfo['template_directory'] + '/images/admin/nebulaline.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[line space="5"]<br/>');
+				}
+			}),
+			ed.addButton('nebulamap', {
+				title : 'Insert Google Map',
+				type: 'splitbutton',
+				icon : 'nebulamap',
+				classes : 'widget btn colorbutton nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');
+				},
+				menu: [{
+					text: 'Place',
+					onclick : function() {
+						ed.focus();
+						ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');
+					}
+				}, {
+					text: 'Directions',
+					onclick : function() {
+						ed.focus();
+						ed.selection.setContent('[map mode="directions" origin="Pinckney Hugo Group" destination="Destiny USA"]<br/>');
+					}
+				}, {
+					text: 'Search',
+					onclick : function() {
+						ed.focus();
+						ed.selection.setContent('[map mode="search" q="Food in Syracuse, NY"]<br/>');
+					}
+				}, {
+					text: 'View',
+					onclick : function() {
+						ed.focus();
+						ed.selection.setContent('[map mode="view" center="43.0536364,-76.1657063" zoom="19" maptype="satellite"]<br/>');
+					}
+				}]
+			}),
+			ed.addButton('nebulapre', {
+				title : 'Insert Pre',
+				image : bloginfo['template_directory'] + '/images/admin/nebulapre.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					if (win.getSelection) {
 						var selectedText = win.getSelection().toString();
 					} else if (doc.selection && doc.selection.createRange) {
 						var selectedText = doc.selection.createRange().text;
 					}
-                    ed.focus();
-                    if ( typeof selectedText != undefined && selectedText != '' ) {
-	                    ed.selection.setContent('[pre lang="LANGUAGE"]' + selectedText + '[/pre]<br/>');
-                    } else {
-	                    ed.selection.setContent('[pre lang="LANGUAGE"]CONTENT_HERE[/pre]<br/>');
-                    }
-                }  
-            }),
-            ed.addButton('nebulaspace', {
-                title : 'Insert Vertical Space',
-                image : bloginfo['template_directory'] + '/images/admin/nebulaspace.png',
-                classes : 'widget btn nebula-icon',
-                onclick : function() {
-                    ed.focus();
-                    ed.selection.setContent('[space height=25]<br/>');
-                }
-            }),
-            ed.addButton('nebulavideo', {
-	            title : 'Insert Video',
-	            type: 'splitbutton',
-	            icon: 'nebulavideo',
-	            classes : 'widget btn colorbutton nebula-icon',
-	            onclick: function(){
-                     ed.focus();
-					 ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
-                },
-	            menu: [{
-                    text: 'Youtube',
-                    onclick: function(){
-                         ed.focus();
-						 ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
-                    }
-                }, {
-                    text: 'Vimeo',
-                    onclick: function(){
+					ed.focus();
+					if ( typeof selectedText != undefined && selectedText != '' ) {
+						ed.selection.setContent('[pre lang="LANGUAGE"]' + selectedText + '[/pre]<br/>');
+					} else {
+						ed.selection.setContent('[pre lang="LANGUAGE"]CONTENT_HERE[/pre]<br/>');
+					}
+				}
+			}),
+			ed.addButton('nebulaspace', {
+				title : 'Insert Vertical Space',
+				image : bloginfo['template_directory'] + '/images/admin/nebulaspace.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[space height=25]<br/>');
+				}
+			}),
+			ed.addButton('nebulavideo', {
+				title : 'Insert Video',
+				type: 'splitbutton',
+				icon: 'nebulavideo',
+				classes : 'widget btn colorbutton nebula-icon',
+				onclick: function(){
+					ed.focus();
+					ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
+				},
+				menu: [{
+					text: 'Youtube',
+					onclick: function(){
+						ed.focus();
+						ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
+					}
+				}, {
+					text: 'Vimeo',
+					onclick: function(){
 						ed.focus();
 						ed.selection.setContent('[vimeo id="VIMEO_VIDEO_ID"]<br/>');
-                    }
-                }]
-	        }); 
-        },
-        createControl : function(n, cm) {  
-            return null;  
-        }
-    });
-    tinymce.PluginManager.add('nebulatoolbar', tinymce.plugins.nebulatoolbar);
+					}
+				}]
+			});
+		},
+		createControl : function(n, cm) {
+			return null;
+		}
+	});
+	tinymce.PluginManager.add('nebulatoolbar', tinymce.plugins.nebulatoolbar);
 })();

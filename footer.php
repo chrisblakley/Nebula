@@ -156,6 +156,54 @@
 		
 		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
+		
+		<script src="<?php bloginfo('template_directory');?>/js/libs/froogaloop.min.js"></script><!-- @TODO: Only call this script if vimeoplayer exists! -->
+        <script>
+                if ( jQuery('.vimeoplayer').length ) {
+	                var player = new Array();
+	                jQuery('iframe.vimeoplayer').each(function(i){
+						var vimeoiframeClass = jQuery(this).attr('id');
+						player[i] = $f(vimeoiframeClass);
+						player[i].addEvent('ready', function() {
+					    	Gumby.log('player is ready');
+						    player[i].addEvent('play', onPlay);
+						    player[i].addEvent('pause', onPause);
+						    player[i].addEvent('seek', onSeek);
+						    player[i].addEvent('finish', onFinish);
+						    player[i].addEvent('playProgress', onPlayProgress);
+						});
+					});    
+				}
+				
+				function onPlay(id) {
+				    var videoTitle = id.replace(/-/g, ' ');
+				    ga('send', 'event', 'Videos', 'Play', videoTitle);
+				    Gumby.log('Sending GA event: ' + 'Videos', 'Play', videoTitle);
+				}
+				
+				function onPause(id) {
+				    var videoTitle = id.replace(/-/g, ' ');
+				    ga('send', 'event', 'Videos', 'Pause', videoTitle);
+				    Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
+				}
+				
+				function onSeek(data, id) {
+				    var videoTitle = id.replace(/-/g, ' ');
+				    ga('send', 'event', 'Videos', 'Seek', videoTitle);
+				    Gumby.log('Sending GA event: ' + 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
+				}
+				
+				function onFinish(id) {
+					var videoTitle = id.replace(/-/g, ' ');
+					ga('send', 'event', 'Videos', 'Finished', videoTitle);
+					Gumby.log('Sending GA event: ' + 'Videos', 'Finished', videoTitle);
+				}
+				
+				function onPlayProgress(data, id) {
+					//Gumby.log(data.seconds + 's played');
+				}
+        </script>
+		
 		<script>
 			//Check for Youtube Videos
 			if ( jQuery('.youtubeplayer').length ) {
@@ -168,8 +216,8 @@
 	
 			function onYouTubeIframeAPIReady(e) {
 				jQuery('iframe.youtubeplayer').each(function(i){
-					var iframeClass = jQuery(this).attr('id');
-					players[iframeClass] = new YT.Player(iframeClass, {
+					var youtubeiframeClass = jQuery(this).attr('id');
+					players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
 						events: {
 							'onReady': onPlayerReady,
 							'onStateChange': onPlayerStateChange

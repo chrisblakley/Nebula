@@ -444,12 +444,6 @@ div.copyright p {font-size: 12px;}
 } /* End mobile portrait media query */
 
 
-/* This feature is not currently supported by browsers, but will be eventually. */
-@media (luminosity: dim) {
-    /* CSS here for dark settings. These should not be drastically different than normal, but make everything easier to read when it's dark. */
-}
-
-
 /* IE7 Gumby Adjustments */
 .ie7 .column, .ie7 .columns {margin-left: 1.7% !important;}
 .ie7 .column.first-child, .ie7 .columns.first-child, .ie7 .alpha {margin-left: 0px !important;}

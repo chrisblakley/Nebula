@@ -9,11 +9,13 @@ jQuery(document).ready(function() {
 		var userError = jQuery('#login_error strong:nth-of-type(2)').text();
 		var fromIP = jQuery('.theIP').text();
 		ga('send', 'event', 'Login Error', 'User: ' + userError, 'From: ' + fromIP);
+		Gumby.log('Sending GA event: ' + 'Login Error', 'User: ' + userError, 'From: ' + fromIP);
 	}
 	
 	jQuery('#lostpasswordform').submit(function(){
 		var resetUser = jQuery('#user_login').val();
 		ga('send', 'event', 'Password Reset', 'User: ' + resetUser);
+		Gumby.log('Sending GA event: ' + 'Password Reset', 'User: ' + resetUser);
 	});
 	
 }); //End Document Ready

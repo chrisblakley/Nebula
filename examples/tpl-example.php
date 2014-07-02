@@ -68,8 +68,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 			
 			<div class="container">
 				<div class="row">
-					<div class="sixteen columns">
-						
+					<div class="sixteen columns entry-content">
 						<?php if ( $cfs->get('usage') ) : ?>
 							<h2>Usage</h2>
 							<?php echo do_shortcode($cfs->get('usage')); ?>
@@ -103,7 +102,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 					
 						<div class="row multi-column-query">
 							<?php $count = 0; ?>
-							<?php query_posts( array( 'category_name' => 'Examples', 'showposts' => 4, 'paged' => get_query_var('paged') ) ); ?>
+							<?php query_posts( array( 'category_name' => 'Documentation', 'showposts' => 4, 'paged' => get_query_var('paged') ) ); ?>
 								<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 							        <?php if ( $count%2 == 0 && $count != 0 ) : ?>
 							            </div><!--/row-->
@@ -162,8 +161,118 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 						    <?php wp_reset_query(); ?>
 						    
 					<?php endif; //End Basic Wordpress Query ?>
-				
 					
+					
+					<?php if ( is_page(318) ) : //Vimeo Meta ?>
+							<div class="row">
+								<div class="eight columns">
+									<?php vimeo_meta('97428427'); ?>
+									
+									<article class="vimeo video">
+										<iframe id="<?php echo $vimeo_meta['safetitle']; ?>" class="vimeoplayer" src="http://player.vimeo.com/video/<?php echo $vimeo_meta['id']; ?>?api=1&player_id=<?php echo $vimeo_meta['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+									</article>
+												
+									<br/>
+									<div class="container">
+										<div class="row">
+											<div class="four columns">
+												<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><img src="<?php echo $vimeo_meta['thumbnail']; ?>" width="100"/></a>
+											</div><!--/columns-->
+											<div class="twelve columns">
+													<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><?php echo $vimeo_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vimeo_meta['duration']; ?>)</span>
+													<span style="display: block; font-size: 12px; line-height: 18px;">
+														by <?php echo $vimeo_meta['user']; ?><br/>
+														<?php echo $vimeo_meta['description']; ?>
+													</span>
+											</div><!--/columns-->
+										</div><!--/row-->
+									</div><!--/container-->
+															
+								</div><!--/columns-->
+								<div class="eight columns">
+									
+									<?php vimeo_meta('27855315'); ?>
+									
+									<article class="vimeo video">
+										<iframe id="<?php echo $vimeo_meta['safetitle']; ?>" class="vimeoplayer" src="http://player.vimeo.com/video/<?php echo $vimeo_meta['id']; ?>?api=1&player_id=<?php echo $vimeo_meta['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+									</article>
+																
+									<br/>
+									<div class="container">
+										<div class="row">
+											<div class="four columns">
+												<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><img src="<?php echo $vimeo_meta['thumbnail']; ?>" width="100"/></a>
+											</div><!--/columns-->
+											<div class="twelve columns">
+													<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><?php echo $vimeo_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vimeo_meta['duration']; ?>)</span>
+													<span style="display: block; font-size: 12px; line-height: 18px;">
+														by <?php echo $vimeo_meta['user']; ?><br/>
+														<?php echo $vimeo_meta['description']; ?>
+													</span>
+											</div><!--/columns-->
+										</div><!--/row-->
+									</div><!--/container-->
+									
+								</div><!--/columns-->
+							</div><!--/row-->
+					<?php endif; //End Vimeo Meta ?>
+					
+					
+					<?php if ( is_page(263) ) : //Youtube Meta ?>
+							<div class="row">
+								<div class="eight columns">
+									<?php youtube_meta('jtip7Gdcf0Q'); ?>
+									
+									<article class="youtube video">
+										<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>&rel=0" frameborder="0" allowfullscreen=""></iframe>
+									</article>
+												
+									<br/>
+									<div class="container">
+										<div class="row">
+											<div class="four columns">
+												<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
+											</div><!--/columns-->
+											<div class="twelve columns">
+													<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
+													<span style="display: block; font-size: 12px; line-height: 18px;">
+														by <?php echo $youtube_meta['author']; ?><br/>
+														<?php echo $youtube_meta['content']; ?>
+													</span>
+											</div><!--/columns-->
+										</div><!--/row-->
+									</div><!--/container-->
+															
+								</div><!--/columns-->
+								<div class="eight columns">
+									
+									<?php youtube_meta('fjh61K3hyY0'); ?>
+									
+									<article class="youtube video">
+										<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+									</article>
+																
+									<br/>
+									<div class="container">
+										<div class="row">
+											<div class="four columns">
+												<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
+											</div><!--/columns-->
+											<div class="twelve columns">
+													<a href="<?php echo $youtube_meta['href']; ?>"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
+													<span style="display: block; font-size: 12px; line-height: 18px;">
+														by <?php echo $youtube_meta['author']; ?><br/>
+														<?php echo $youtube_meta['content']; ?>
+													</span>
+											</div><!--/columns-->
+										</div><!--/row-->
+									</div><!--/container-->
+									
+								</div><!--/columns-->
+							</div><!--/row-->
+					<?php endif; //End Youtube Meta ?>
+					
+
 					<?php if ( is_page(214) ) : //Nebula Meta ?>
 							<div class="row">
 								<div class="sixteen columns">
@@ -172,10 +281,10 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 									<hr/>
 								</div><!--/columns-->
 							</div><!--/row-->
-					<?php endif; //End Google Maps Iframe ?>
+					<?php endif; //End Nebula Meta ?>
 					
 					
-					<?php if ( is_page(224) ) : //Nebula Meta ?>
+					<?php if ( is_page(224) ) : //Nebula the Excerpt ?>
 							<div class="row">
 								<div class="sixteen columns">
 									<hr/>
@@ -183,7 +292,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 									<hr/>
 								</div><!--/columns-->
 							</div><!--/row-->
-					<?php endif; //End Google Maps Iframe ?>
+					<?php endif; //End Nebula the Excerpt ?>
 					
 					
 					<?php if ( is_page(228) ) : //Nebula Manage ?>
@@ -194,7 +303,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 									<hr/>
 								</div><!--/columns-->
 							</div><!--/row-->
-					<?php endif; //End Google Maps Iframe ?>
+					<?php endif; //End Nebula Manage ?>
 					
 					
 					<?php if ( is_page(258) ) : //CSS Browser Selector ?>
@@ -203,7 +312,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 									<div class="cssbs"></div>
 								</div><!--/columns-->
 							</div><!--/row-->
-					<?php endif; //End Google Maps Iframe ?>
+					<?php endif; //End CSS Browser Selectore ?>
 					
 					<?php if ( is_page(277) ) : //Retina ?>
 						<div class="row">
@@ -218,6 +327,219 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 						</div><!--/row-->
 					<?php endif; //End Retina ?>
 	
+					
+					<?php if ( is_page(3519) ) : //Slider @TODO: In progress ?>
+						<style>
+							div.nebula-slider {position: relative; overflow: hidden;}
+								
+								ul.nebula-slide-con.reset {position: relative; width: 300%; /* 300% will be calculated in PHP */ left: 0; margin: 0;}
+									ul.nebula-slide-con.reset li.nebula-slide {position: relative; display: inline-block; width: 33.334%; /* width will be calculated in PHP */ margin: 0; padding: 0; float: left;}
+										ul.nebula-slide-con.reset li.nebula-slide img {width: 100%;}
+										
+								ul.nebula-slide-con.fade {position: relative; width: 100%; left: 0; margin: 0; height: 0px;}
+									ul.nebula-slide-con.fade li.nebula-slide {position: absolute; top: 0; display: block; width: 100%; margin: 0; padding: 0;}
+										ul.nebula-slide-con.fade li.nebula-slide img {width: 100%;}
+						</style>
+						
+						<script>
+							//@TODO: All selectors and variables MUST be unique to that slider (have an ID as a required parameter)
+							
+							/*
+								Parameters:
+									[slider]
+										mode
+										transition time
+										hold time
+										
+								
+							*/
+							
+							jQuery(document).ready(function() {
+								jQuery('ul.nebula-slide-con.fade li:nth-last-child(2)').addClass('next'); //nth-child number will have to be calculated via PHP (total-1) [or do css nth from end]
+								jQuery('ul.nebula-slide-con.fade li:last-child').addClass('active');
+							});
+							
+							jQuery(window).on('load', function() {
+								var nebulaSlideCount = 3; //this number will be sent via PHP counting the slides
+								var currentSlide = 1;
+								
+								var activeHeight = jQuery('ul.nebula-slide-con.fade li:last-child').height();
+								jQuery('ul.nebula-slide-con.fade').css('height', activeHeight);
+								
+								if (nebulaSlideCount > 1) {
+									var nebulaSlider = setInterval(function(){
+										
+										//@TODO: Only the chosen mode will actually return to the frontend
+										
+										//With carriage mode animation to first frame
+										if ( currentSlide < nebulaSlideCount ) {
+											jQuery('ul.nebula-slide-con.reset').animate({
+												left: '-=100%',
+											}, 1000, 'easeInOutCubic', function() { //easing can be a parameter, same with transition speed
+												currentSlide++;
+											});
+										} else {
+											jQuery('ul.nebula-slide-con.reset').animate({
+												left: '0',
+											}, 1000, 'easeInOutCubic', function() { //easing can be a parameter, same with transition speed
+												currentSlide = 1;
+											});
+										}
+										
+										//Just keeps going using fade mode
+										jQuery('ul.nebula-slide-con.fade li:last-child').fadeOut(1000, function(){ //transition speed will be a parameter
+											jQuery('ul.nebula-slide-con.fade li.next').removeClass('next');
+											jQuery('ul.nebula-slide-con.fade li.active').removeClass('active');
+											jQuery(this).clone().prependTo('ul.nebula-slide-con.fade');
+											jQuery(this).remove();
+											jQuery('ul.nebula-slide-con.fade li:first-child').css('display', 'block');
+											jQuery('ul.nebula-slide-con.fade li:last-child').addClass('active');
+											jQuery('ul.nebula-slide-con.fade li:nth-child(2)').addClass('next'); //nth-child number will have to be calculated via PHP (total-1)
+										});
+										
+										activeHeight = jQuery('ul.nebula-slide-con.fade li.nebula-slide.active img').height();
+										nextHeight = jQuery('ul.nebula-slide-con.fade li.nebula-slide.next img').height();
+										if ( nextHeight >= activeHeight ) {
+											jQuery('ul.nebula-slide-con.fade').delay(500).animate({ //delay will be calculated based on transition speed
+												height: nextHeight,
+											}, 500, 'easeInOutCubic'); //resize speed will be calculated based on transition speed
+										} else {
+											jQuery('ul.nebula-slide-con.fade').animate({
+												height: nextHeight,
+											}, 500, 'easeInOutCubic'); //resize speed will be calculated based on transition speed
+										}
+																											
+									}, 5000); //Slide time will be a parameter
+								}
+							});
+						</script>
+						
+						<div class="row">
+							<div class="sixteen columns">
+								<div class="nebulaframe">
+									<div class="nebula-slider">
+										<ul class="nebula-slide-con clearfix fade">
+											<li class="nebula-slide clearfix">
+												<img src="http://www.placebear.com/700/300"/>
+											</li>
+											<li class="nebula-slide clearfix">
+												<img src="http://www.placebear.com/700/400"/>
+											</li>
+											<li class="nebula-slide clearfix">
+												<img src="http://placehold.it/700x500"/>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Slider ?>
+					
+					
+					<?php if ( is_page(359) ) : //AJAX @TODO: In progress ?>
+						<style>
+							.level-four-media-query { border: 1px solid red; padding: 5px;}
+								.level-four-media-query:before {content: 'Script not supported'; display: block; text-align: center; color: red;}
+								.level-four-media-query:after {content: 'Luminosity not supported'; display: block; text-align: center; color: red;}
+								.level-four-media-query div:before {content: 'Pointer not supported'; display: block; text-align: center; color: red;}
+								.level-four-media-query div:after {content: 'Hover not supported'; display: block; text-align: center; color: red;}
+							
+							@media (script) {
+								.level-four-media-query { border: 1px solid green; }
+									.level-four-media-query:before {content: 'Scripts Enabled'; color: green;}
+							}
+							
+							@media (luminosity: dim) {
+								.level-four-media-query { background: white; }
+									.level-four-media-query:after {content: 'Dim Luminosity'; color: green;}
+							}
+							
+							@media (luminosity: washed) {
+								.level-four-media-query { background: black; }
+									.level-four-media-query:after {content: 'Washed Luminosity'; color: green;}
+							}
+							
+							@media (luminosity: normal) {
+								.level-four-media-query { background: grey; }
+									.level-four-media-query:after {content: 'Normal Luminosity'; color: green;}
+							}
+							
+							@media (pointer: coarse) {
+								.level-four-media-query { height: 100px; }
+									.level-four-media-query div:before {content: 'Coarse Pointer'; color: green;}
+							}
+							
+							@media (pointer: fine) {
+								.level-four-media-query { height: auto; }
+									.level-four-media-query div:before {content: 'Fine Pointer'; color: green;}
+							}
+							
+							@media (pointer: fine) {
+								.level-four-media-query { height: auto; }
+									.level-four-media-query div:before {content: 'No Pointer...?'; color: green;}
+							}
+							
+							@media (hover) { /* ...or is it (hover: 1) */
+								.level-four-media-query:hover { background: green; border: 2px solid forestgreen; font-weight: bold; text-decoration: underline; }
+									.level-four-media-query div:after {content: 'Hover Available'; color: green;}
+							}							
+						</style>
+						<div class="row">
+							<div class="sixteen columns">
+								<div class="level-four-media-query">
+									<div></div>
+								</div>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End AJAX ?>
+					
+					<?php if ( is_page(356) ) : //AJAX @TODO: In progress ?>
+						<div class="row">
+							<div class="sixteen columns">
+								
+								<p>AJAX Example coming soon</p>
+								
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End AJAX ?>
+					
+					
+					<?php if ( is_page(346) ) : //PHP Mobile Detect ?>
+						<div class="row">
+							<div class="sixteen columns">
+								<?php if ( $GLOBALS["mobile_detect"]->isMobile() ) : ?>
+									<?php if ( $GLOBALS["mobile_detect"]->isTablet() ) : ?>
+										<?php if ( $GLOBALS["mobile_detect"]->isIOS() ) : ?>
+											<p>You are using an <strong>iPad</strong>.</p>
+										<?php elseif ( $GLOBALS["mobile_detect"]->is('AndroidOS') ) : ?>
+											<?php if ( $GLOBALS["mobile_detect"]->isSamsung() ) : ?>
+												<p>You are using a Samsung tablet.</p>
+											<?php else : ?>
+												<p>You are using an Android tablet or other tablet device.</p>
+											<?php endif; ?>
+										<?php else : ?>
+											<p>You are using a tablet.</p>
+										<?php endif; ?>
+									<?php else : ?>
+										<?php if ( $GLOBALS["mobile_detect"]->isIOS() ) : ?>
+											<p>You are using an <strong>iPhone</strong>.</p>
+										<?php elseif ( $GLOBALS["mobile_detect"]->is('AndroidOS') ) : ?>
+											<?php if ( $GLOBALS["mobile_detect"]->isSamsung() ) : ?>
+												<p>You are using a Samsung phone or other Samsung mobile device.</p>
+											<?php else : ?>
+												<p>You are using an Android phone or other mobile device.</p>
+											<?php endif; ?>
+										<?php else : ?>
+											<p>You are using a phone or other mobile device.</p>
+										<?php endif; ?>
+									<?php endif; ?>
+								<?php else : ?>
+									<p>You are <strong>not</strong> using a mobile device or tablet.</p>
+								<?php endif; ?>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End PHP Mobile Detect ?>
+					
 				
 					<?php if ( is_page(89) ) : //Google Maps Iframe ?>
 							<div class="row">
@@ -238,6 +560,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 								</div><!--/columns-->
 							</div><!--/row-->
 					<?php endif; //End Google Maps Iframe ?>
+				
 				
 					<?php if ( is_page(267) ) : //Google Maps Javascript API v3 ?>
 						<div class="row">
@@ -285,7 +608,7 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 		<div class="four columns push_one">
 			<ul class="xoxo">
 				<li>
-					<?php wp_nav_menu(array('menu' => 'Examples', 'depth' => '9999')); ?>
+					<?php wp_nav_menu(array('menu' => 'Documentation', 'depth' => '9999')); ?>
 				</li>
 			</ul>
 		</div><!--/columns-->
