@@ -6,40 +6,6 @@
 
 get_header(); ?>
 
-<style>
-	.jscookie, .phpcookie {background: red; color: white; padding: 5px;}
-		.jscookie:hover, .phpcookie:hover {background: grey; color: white;}
-		.jscookie.cookie-on, .phpcookie.cookie-on {background: green; color: white;}
-			.jscookie.cookie-on:hover, .phpcookie.cookie-on:hover {background: grey; color: white;}
-		
-/* CSS Browser Selector Example Styles */
-div.cssbs {position: relative; display: table; height: 150px; border: 2px solid #222;}
-	div.cssbs:after {width: 100%; height: 100%; line-height: 17px; color: #fff; text-align: center; font-family: 'FontAwesome'; white-space: pre; display: table-cell; vertical-align: middle;}
-	div.cssbs:before {content: ''; position: absolute; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.2));}
-	.win.chrome div.cssbs {background: #4884b8;} .win.chrome div.cssbs:after {content: '\f17a \00A0 Chrome on Windows \A 2008-';}
-	.mac.chrome div.cssbs {background: #4884b8;} .mac.chrome div.cssbs:after {content: '\f179 \00A0 Chrome on Mac \A 2008-';}
-	.linux.chrome div.cssbs {background: #4884b8;} .linux.chrome div.cssbs:after {content: '\f17c \00A0 Chrome on Linux \A 2008-';}
-	.win.firefox div.cssbs {background: #dc5d27; border: 2px solid #b31b27;} .win.firefox div.cssbs:after {content: '\f17a \00A0 Firefox on Windows \A 2002-';}
-	.mac.firefox div.cssbs {background: #dc5d27; border: 2px solid #b31b27;} .mac.firefox div.cssbs:after {content: '\f179 \00A0 Firefox on Mac \A 2002-';}
-	.linux.firefox div.cssbs {background: #dc5d27; border: 2px solid #b31b27;} .linux.firefox div.cssbs:after {content: '\f17c \00A0 Firefox on Linux \A 2002-';}
-	.safari div.cssbs {background: #42aeda; border: 2px solid #a1a1a1;} .safari div.cssbs:after {content: '\f179 \00A0 Safari \A 2003-';}
-	.opera div.cssbs {background: #e53141; border: 2px solid #9b1624;} .opera div.cssbs:after {content: 'Opera \A 1995-';}
-	.ie div.cssbs {background: #2ebaee;} .ie div.cssbs:after {content: '\f17a \00A0 Internet Explorer \A 1995-';}
-	.ie5 div.cssbs {background: #3ea3e2;} .ie5 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 5 \A 1998-';}
-	.ie6 div.cssbs {background: #3696e9; border: 2px solid #72f0fc;} .ie6 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 6 \A 2001-2014';}
-	.ie7 div.cssbs {background: #1374ae; border: 2px solid #f4b619;} .ie7 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 7 \A 2006-2017';}
-	.ie8 div.cssbs {background: #1374ae; border: 2px solid #f4b619;} .ie8 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 8 \A 2009-2020';}
-	.ie9 div.cssbs {background: #3aa8de; border: 2px solid #fbd21e;} .ie9 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 9 \A 2011-2020';}
-	.ie10 div.cssbs {background: #2b6bec;} .ie10 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 10 \A 2012-2023';}
-	.ie11 div.cssbs {background: #2ebaee;} .ie11 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 11 \A 2013-2023';}
-	.android div.cssbs {background: #a5c93a; border: 2px solid #a5c93a;} .android div.cssbs:after {content: '\f17b \00A0 Android \A 2008-';}
-	.android.chrome div.cssbs {background: #4884b8;} .android.chrome div.cssbs:after {content: '\f17b \00A0 Chrome on Android \A 2012-';}
-	.iphone div.cssbs {background: #42aeda; border: 2px solid #a1a1a1;} .iphone div.cssbs:after {content: '\f179 \00A0 iPhone \A 2007-';}
-	.iphone.chrome div.cssbs {background: #4884b8;} .iphone.chrome div.cssbs:after {content: '\f179 \00A0 Chrome on iPhone \A 2012-';}
-	.ipad div.cssbs {background: #42aeda; border: 2px solid #a1a1a1;} .ipad div.cssbs:after {content: '\f179 \00A0 iPad \A 2010-';}
-	.ipad.chrome div.cssbs {background: #4884b8;} .ipad.chrome div.cssbs:after {content: '\f179 \00A0 Chrome on iPad \A 2012-';}
-</style>
-
 <script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script> <!-- This script is found in the footer. It is disabled by default, so it needs to be called again here to show the CSS Browser Selector example section. -->
 
 <section><!-- Do not duplicate this section because it has inline styles. -->
@@ -307,6 +273,34 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 					
 					
 					<?php if ( is_page(258) ) : //CSS Browser Selector ?>
+						<style>
+							div.cssbs {position: relative; display: table; height: 150px; border: 2px solid #222;}
+								div.cssbs:after {width: 100%; height: 100%; line-height: 17px; color: #fff; text-align: center; font-family: 'FontAwesome'; white-space: pre; display: table-cell; vertical-align: middle;}
+								div.cssbs:before {content: ''; position: absolute; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.2));}
+								.win.chrome div.cssbs {background: #4884b8;} .win.chrome div.cssbs:after {content: '\f17a \00A0 Chrome on Windows \A 2008-';}
+								.mac.chrome div.cssbs {background: #4884b8;} .mac.chrome div.cssbs:after {content: '\f179 \00A0 Chrome on Mac \A 2008-';}
+								.linux.chrome div.cssbs {background: #4884b8;} .linux.chrome div.cssbs:after {content: '\f17c \00A0 Chrome on Linux \A 2008-';}
+								.win.firefox div.cssbs {background: #dc5d27; border: 2px solid #b31b27;} .win.firefox div.cssbs:after {content: '\f17a \00A0 Firefox on Windows \A 2002-';}
+								.mac.firefox div.cssbs {background: #dc5d27; border: 2px solid #b31b27;} .mac.firefox div.cssbs:after {content: '\f179 \00A0 Firefox on Mac \A 2002-';}
+								.linux.firefox div.cssbs {background: #dc5d27; border: 2px solid #b31b27;} .linux.firefox div.cssbs:after {content: '\f17c \00A0 Firefox on Linux \A 2002-';}
+								.safari div.cssbs {background: #42aeda; border: 2px solid #a1a1a1;} .safari div.cssbs:after {content: '\f179 \00A0 Safari \A 2003-';}
+								.opera div.cssbs {background: #e53141; border: 2px solid #9b1624;} .opera div.cssbs:after {content: 'Opera \A 1995-';}
+								.ie div.cssbs {background: #2ebaee;} .ie div.cssbs:after {content: '\f17a \00A0 Internet Explorer \A 1995-';}
+								.ie5 div.cssbs {background: #3ea3e2;} .ie5 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 5 \A 1998-';}
+								.ie6 div.cssbs {background: #3696e9; border: 2px solid #72f0fc;} .ie6 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 6 \A 2001-2014';}
+								.ie7 div.cssbs {background: #1374ae; border: 2px solid #f4b619;} .ie7 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 7 \A 2006-2017';}
+								.ie8 div.cssbs {background: #1374ae; border: 2px solid #f4b619;} .ie8 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 8 \A 2009-2020';}
+								.ie9 div.cssbs {background: #3aa8de; border: 2px solid #fbd21e;} .ie9 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 9 \A 2011-2020';}
+								.ie10 div.cssbs {background: #2b6bec;} .ie10 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 10 \A 2012-2023';}
+								.ie11 div.cssbs {background: #2ebaee;} .ie11 div.cssbs:after {content: '\f17a \00A0 Internet Explorer 11 \A 2013-2023';}
+								.android div.cssbs {background: #a5c93a; border: 2px solid #a5c93a;} .android div.cssbs:after {content: '\f17b \00A0 Android \A 2008-';}
+								.android.chrome div.cssbs {background: #4884b8;} .android.chrome div.cssbs:after {content: '\f17b \00A0 Chrome on Android \A 2012-';}
+								.iphone div.cssbs {background: #42aeda; border: 2px solid #a1a1a1;} .iphone div.cssbs:after {content: '\f179 \00A0 iPhone \A 2007-';}
+								.iphone.chrome div.cssbs {background: #4884b8;} .iphone.chrome div.cssbs:after {content: '\f179 \00A0 Chrome on iPhone \A 2012-';}
+								.ipad div.cssbs {background: #42aeda; border: 2px solid #a1a1a1;} .ipad div.cssbs:after {content: '\f179 \00A0 iPad \A 2010-';}
+								.ipad.chrome div.cssbs {background: #4884b8;} .ipad.chrome div.cssbs:after {content: '\f179 \00A0 Chrome on iPad \A 2012-';}
+							</style>
+							
 							<div class="row">
 								<div class="six columns">
 									<div class="cssbs"></div>
@@ -326,9 +320,197 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 							</div><!--/columns-->
 						</div><!--/row-->
 					<?php endif; //End Retina ?>
-	
 					
-					<?php if ( is_page(3519) ) : //Slider @TODO: In progress ?>
+					
+					
+					
+					<?php if ( is_page(351) && 1==2 ) : ?>
+						
+						<style>
+							#theslider {transition: all .5s ease 0s;}
+							#theslider .sliderwrap {position: relative; overflow: hidden;}
+								
+								#theslider .status {position: absolute; display: block; width: 100px; top: 5px; right: 5px; background: rgba(0,0,0,0.4); text-align: center; color: #fff; text-decoration: none; border-radius: 25px; z-index: 1500; cursor: default; opacity: 0; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+								.no-js #theslider .status {display: none;}
+									#theslider .status.pause {opacity: 1; pointer-events: none;}
+									#theslider:hover .status.stop {opacity: 1;}
+										#theslider .status.stop:hover,
+										#theslider .status.stop.hover {cursor: pointer; background: rgba(0,0,0,0.7);}
+								
+							    #theslider .slider-arrow {position: relative; display: inline-block; color: #fff;}
+							    .no-js #theslider .slider-arrow {display: none;}
+							
+							ul#theslides {position: relative; overflow: hidden; margin: 0; padding: 0;}
+							    ul#theslides li {position: absolute; top: 0; left: 0; width: 100%; height: auto; margin-bottom: -7px; /* Don't like this margin... */ opacity: 0; z-index: 0; transition: all 1s ease 0s;}
+							        ul#theslides li.active {position: relative; opacity: 1; z-index: 500;}
+							
+							.no-js .slider-nav-con {display: none;}
+							.slider-nav-con {position: absolute; bottom: -50px; width: 100%; background: rgba(0,0,0,0.7); z-index: 1000; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+							    #slider-nav {position: relative; display: table; margin: 0 auto;}							
+							        #slider-nav li {display: inline-block; margin-right: 15px; padding: 0; text-align: center; vertical-align: middle;}
+							            #slider-nav li:last-child,
+							            #slider-nav li.last-child {margin-right: 0;}
+							            #slider-nav li a {display: table-cell; vertical-align: middle; padding: 5px 0; position: relative; height: 100%; color: #fff;}
+							            	#slider-nav li a:hover {color: #aaa;}
+							                #slider-nav li.active a {color: #fff; font-weight: bold;}
+							                	#slider-nav li.active a:hover {color: #aaa;}
+						</style>
+						
+						<div id="theslider" class="container nebulaframe">
+					        <div class="row">
+					            <div class="sixteen columns sliderwrap">
+					                
+					                <a href="#" class="status">
+					                	<i class="icon-pause"></i> <span>Paused</span>
+					                </a><!--/status-->
+					                
+					                <ul id="theslides">
+				                        <li><img src="http://www.placebear.com/700/300"/></li>
+				                        <li><img src="http://www.placebear.com/700/400"/></li>
+				                        <li><img src="http://placehold.it/700x500"/></li>
+					                </ul>
+					
+					                <div class="slider-nav-con">
+					                    <ul id="slider-nav" class="clearfix">
+				                            <li><a class="slider-arrow slider-left " href="#"><i class="icon-left-open"></i></a></li>
+				                            <li class="slide-nav-item"><a href="#">One</a></li>
+				                            <li class="slide-nav-item"><a href="#">Two</a></li>
+				                            <li class="slide-nav-item"><a href="#">Three</a></li>
+				                            <li><a class="slider-arrow slider-right " href="#"><i class="icon-right-open"></i></a></li>
+					                    </ul>
+					                </div><!--/slider-nav-con-->
+					                					                
+					            </div><!--/columns-->
+					        </div><!--/row-->
+					    </div><!--/container-->
+						
+						<script>
+							jQuery(document).ready(function() {
+							
+							    strictPause = 0;
+							    autoSlider();
+								jQuery("#theslides li").eq(0).addClass("active");
+								jQuery("#slider-nav li.slide-nav-item").eq(0).addClass("active");
+								
+							    function autoSlider() {
+							        autoSlide = setInterval(function(){
+							            theIndex = jQuery("#theslides li.active").index();
+							            if ( strictPause == 0 ) {
+							                activateSlider(theIndex, "next");
+							            }
+							        }, 5000);
+							    } //End autoSlider()
+								
+								jQuery("#theslider").hover(function(){
+							        clearInterval(autoSlide);
+							        jQuery("#slider-nav").addClass("pause");
+							        if ( !jQuery(".status").hasClass("stop") ) {
+							        	jQuery(".status i").removeClass("icon-stop icon-play").addClass("icon-pause");
+										jQuery(".status span").text("Paused");
+								        jQuery(".status").addClass("pause");
+							        }
+							    }, function(){
+							        if ( strictPause == 0 ) {
+							            autoSlider();
+							            jQuery("#slider-nav").removeClass("pause");
+							            jQuery(".status").removeClass("pause");
+							        }
+							    });
+							    
+							    //Navigation
+							    jQuery("#slider-nav li.slide-nav-item a").on("click", function(){       
+							        strictPause = 1;
+							        jQuery(".status i").removeClass("icon-pause").addClass("icon-stop");
+							        jQuery(".status").removeClass("pause").addClass("stop").find("span").text("Stopped");
+							        jQuery("#slider-nav").removeClass("pause").addClass("stop");
+							        theIndex = jQuery(this).parent().index();
+							        activateSlider(theIndex-1, "goto");
+							        return false;
+							    });
+								
+								//Status
+								jQuery("#theslider").on("mouseenter", ".status.stop", function(){
+									jQuery(this).find("i").removeClass("icon-stop").addClass("icon-play");
+									jQuery(this).find("span").text("Resume");
+								});
+								jQuery("#theslider").on("mouseleave", ".status.stop", function(){
+									jQuery(this).find("i").removeClass("icon-play").addClass("icon-stop");
+									jQuery(this).find("span").text("Stopped");
+								});
+								jQuery("#theslider").on("click", ".status.stop", function(){
+									strictPause = 0;
+									jQuery("#slider-nav").removeClass("stop");
+							        jQuery(".status").removeClass("pause stop");
+							        return false;
+								});
+								
+							    //Arrows
+							    jQuery(".slider-arrow").on("click", function(){
+							        strictPause = 1;
+							        jQuery(".status i").removeClass("icon-pause").addClass("icon-stop");
+							        jQuery(".status").addClass("stopped").find("span").text("Stopped");
+							        jQuery("#slider-nav").removeClass("pause").addClass("stop");
+							        jQuery("#slider-nav").removeClass("pause").addClass("stop");
+							        theIndex = jQuery("#theslides li.active").index();
+							        if ( jQuery(this).hasClass("slider-right") ) {
+							            activateSlider(theIndex, "next");
+							        } else {
+							            activateSlider(theIndex, "prev");
+							        }
+							        return false;
+							    });
+							
+							    function activateSlider(theIndex, buttoned) {
+							        slideCount = jQuery("#theslides li").length;
+							        activeHeight = jQuery("#theslides li.active img").height();
+							        
+							        if ( buttoned == "next" ) {
+							            newIndex = ( theIndex+1 >= slideCount ? 0 : theIndex+1 );
+							        } else if ( buttoned == "prev" ) {
+							            newIndex = ( theIndex-1 <= -1 ? slideCount-1 : theIndex-1 );
+							        } else {
+							            newIndex = theIndex;
+							        }
+									
+									nextHeight = jQuery("#theslides li").eq(newIndex).find("img").height();
+									
+									jQuery("#theslides li.active").removeClass("active");
+								    jQuery("#slider-nav li.slide-nav-item.active").removeClass("active");
+								
+								    jQuery("#theslides li").eq(newIndex).addClass("active");
+								    jQuery("#slider-nav li.slide-nav-item").eq(newIndex).addClass("active");
+							        							
+									if ( nextHeight >= activeHeight ) {
+										console.log("delaying then resizing");
+										jQuery("#theslides").delay(500).animate({ //delay will be calculated based on transition speed
+											height: nextHeight,
+										}, 500, "easeInOutCubic"); //resize speed will be calculated based on transition speed
+									} else {
+										console.log("just resizing");
+										jQuery("#theslides").animate({
+											height: nextHeight,
+										}, 500, "easeInOutCubic"); //resize speed will be calculated based on transition speed
+									}
+							    } //End activateSlider()
+							
+						    }); //End Document Ready
+						    
+						    jQuery(window).on("load", function() {
+							    jQuery(".slider-nav-con").css("bottom", "0");
+						    }); //End Window Load
+						</script>
+						
+					<?php endif; ?>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					<?php if ( 1==2 ) : //Old Slider (but still has good carriage) ?>
 						<style>
 							div.nebula-slider {position: relative; overflow: hidden;}
 								
@@ -343,16 +525,6 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 						
 						<script>
 							//@TODO: All selectors and variables MUST be unique to that slider (have an ID as a required parameter)
-							
-							/*
-								Parameters:
-									[slider]
-										mode
-										transition time
-										hold time
-										
-								
-							*/
 							
 							jQuery(document).ready(function() {
 								jQuery('ul.nebula-slide-con.fade li:nth-last-child(2)').addClass('next'); //nth-child number will have to be calculated via PHP (total-1) [or do css nth from end]
@@ -596,6 +768,49 @@ div.cssbs {position: relative; display: table; height: 150px; border: 2px solid 
 						</div><!--/row-->
 					<?php endif; //End Google Maps Javascript API v3 ?>
 				
+					<?php if (is_page(397)) : //Cookies ?>
+						<style>
+							.jscookie, .phpcookie {background: red; color: white; padding: 5px;}
+								.jscookie:hover, .phpcookie:hover {background: grey; color: white;}
+								.jscookie.cookie-on, .phpcookie.cookie-on {background: green; color: white;}
+									.jscookie.cookie-on:hover, .phpcookie.cookie-on:hover {background: grey; color: white;}
+						</style>
+						
+						<div class="row">
+							<div class="sixteen columns">
+								<p>Toggle cookie: <a class="jscookie" href="#">OFF</a></p>
+								
+								<script>
+									jQuery(document).ready(function() {	
+										checkExample();
+										function checkExample() {
+											if ( readCookie('examplejs') ) {
+												jQuery('.jscookie').text('ON').addClass('cookie-on');
+											} else {
+												jQuery('.jscookie').text('OFF').removeClass('cookie-on');
+											}
+										}
+										
+										jQuery('.jscookie').on('click', function(){
+											if ( jQuery(this).hasClass('cookie-on') ) {
+												eraseCookie('examplejs');
+												checkExample();
+											} else {
+												createCookie('examplejs', 'true', 30);
+												checkExample();
+											}
+											return false;
+										});
+									});
+								</script>
+								
+								<br/><hr/>
+							</div><!--/columns-->
+						</div><!--/row-->
+						
+					<?php endif; ///End Cookies?>
+					
+					
 				<?php
 				/*==========================
 				 End Hard-Code Example

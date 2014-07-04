@@ -423,9 +423,11 @@ function my_theme_register_required_plugins() {
 	
 }
 
-
+//When WP Nebula has been activated
+add_action('after_switch_theme', 'nebulaActivation');
 function nebulaActivation() {
 	$theme = wp_get_theme();
+	//Check if this is the initial activation, or if it has been ran before (and the user is just toggling themes)
 	if ( $theme['Name'] == 'WP Nebula' && (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset']) ) ) {
 
 		//Create Homepage
@@ -443,16 +445,19 @@ function nebulaActivation() {
 		// Insert the post into the database
 		wp_insert_post($nebula_home);
 		
+		//Show the Activation Complete message
 		add_action('admin_notices','nebulaActivateComplete');
 	}
 	return;
 }
-add_action('after_switch_theme', 'nebulaActivation');
 
+//When Nebula "Reset" has been clicked
 if ( is_admin() && isset($_GET['nebula-reset']) ) {
 	nebulaActivation();
+	nebulaChangeHomeSetting();
 }
 
+//If WP Nebula has been activated and other actions have heppend, but the user is still on the Themes settings page.
 if ( is_admin() && isset($_GET['activated'] ) && $pagenow == 'themes.php' ) {
 	$theme = wp_get_theme();
 	if ( $theme['Name'] == 'WP Nebula' ) {
@@ -460,13 +465,20 @@ if ( is_admin() && isset($_GET['activated'] ) && $pagenow == 'themes.php' ) {
 	}
 }
 
+//Set the front page to static > Home.
+function nebulaChangeHomeSetting(){
+	$nebula_homepage = get_page_by_title('Home');
+	update_option('page_on_front', $nebula_homepage->ID); //Or set this to ...(..., '1');
+	update_option('show_on_front', 'page');
+}
+
 function nebulaActivateComplete(){
 	if ( isset($_GET['nebula-reset']) ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been reset!</strong><br/>You have reset WP Nebula. The Home page has been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been reset!</strong><br/>You have reset WP Nebula. The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
 	} elseif ( get_post_meta(1, '_wp_page_template', 1) == 'tpl-homepage.php' ) {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been re-activated!</strong><br/>The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: red;'>Reset the Home page.</a></p></div>";
 	} else {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been activated!</strong><br/>A new Home page has been created. Be sure to set it as the static front page in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been activated!</strong><br/>A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
 	}
 }
 
@@ -535,6 +547,14 @@ if ( $filename == 'plugins.php' ) {
 	add_action('admin_notices','plugin_warning');
 }
 
+//Control session time (for the "Remember Me" checkbox)
+add_filter( 'auth_cookie_expiration', 'nebula_session_expire' );
+function nebula_session_expire($expirein) {
+    return 2592000; //30 days (Default is 1209600 (14 days)
+}
+
+//Disable the logged-in monitoring modal
+remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 
 //Custom login screen
 function custom_login_css() {
@@ -1126,7 +1146,8 @@ function youtube_meta($videoID) {
 	$youtube_meta['content'] = $xml->content;
 	$youtube_meta['href'] = $xml->link['href'];
 	$youtube_meta['author'] = $xml->author->name;
-	$youtube_meta['seconds'] = strval($xml->xpath('//yt:duration[@seconds]')[0]->attributes()->seconds);
+	$temp = $xml->xpath('//yt:duration[@seconds]');
+    $youtube_meta['seconds'] = strval($temp[0]->attributes()->seconds);	
 	$youtube_meta['duration'] = intval(gmdate("i", $youtube_meta['seconds'])) . gmdate(":s", $youtube_meta['seconds']);
 	return $youtube_meta;
 }
@@ -1511,8 +1532,8 @@ function pre_shortcode($atts, $content=''){
 	if ( $lang == '' && $language != '' ) {
 		$lang = $language;	
 	}
-	$search = array('actionscript', 'apache', 'as', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
-	$replace = array('ActionScript', 'Apache', 'ActionScript', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
+	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
+	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
 	$vislang = str_replace($search, $replace, $lang);
 	
 	if ( $color != '' ) {
@@ -1533,21 +1554,306 @@ function code_shortcode($atts, $content=''){
 } //end code_shortcode()
 
 
-//Slider
+
+//Bio
+add_shortcode('bio', 'code_shortcode');
+function bio_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
+	
+	/*
+		Parameters to use:
+			Name
+			Title
+			Email
+			Phone
+			Extension
+			vCard path
+			Website
+			Twitter
+			Facebook
+			Instagram
+			LinkedIn
+			Photo path
+			Excerpt ($content)
+	*/
+	
+	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
+
+} //end bio_shortcode()
+
+
+
+//Slider -NEW
 add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic'), $atts) );  	
-	
+	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic', 'status' => false, 'frame' => false, 'titles' => false), $atts) );  	
+
 	if ( !$id ) {
-		$id = 'nebula-slider-' . rand(1, 10000);
-	} else {
-		$id = 'nebula-slider-' . $id;
+		$id = rand(1, 10000);
 	}
 	
-	$slideCount = '4'; //Count the amount of slides inside of the slider.
+	$flags = get_flags($atts);
+	if ( in_array('frame', $flags) ) {
+		$frame = 'nebulaframe';
+	}
+	
+	$slideCount = preg_match_all('[/slide]', $content);
 		$slideConWidth = $slideCount*100 . '%';
 		$slideWidth = round(100/$slideCount, 3) . '%';
+	
+	
+	
+	
+	
+	$sliderCSS = '<style>#theslider-' . $id . ' {transition: all .5s ease 0s;}
+					#theslider-' . $id . ' .sliderwrap {position: relative; overflow: hidden;}';
+	if ( in_array('status', $flags) ) {
+		$sliderCSS .= '#theslider-' . $id . ' .status {position: absolute; display: block; width: 100px; top: 5px; right: 5px; background: rgba(0,0,0,0.4); text-align: center; color: #fff; text-decoration: none; border-radius: 25px; z-index: 1500; cursor: default; opacity: 0; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+		.no-js #theslider-' . $id . ' .status {display: none;}
+		#theslider-' . $id . ' .status.pause {opacity: 1; pointer-events: none;}
+		#theslider-' . $id . ':hover .status.stop {opacity: 1;}
+		#theslider-' . $id . ' .status.stop:hover,
+		#theslider-' . $id . ' .status.stop.hover {cursor: pointer; background: rgba(0,0,0,0.7);}';
+	} else {
+		$sliderCSS .= '#theslider-' . $id . ' .status {display: none !important;}';
+	}
+	$sliderCSS .= '#theslider-' . $id . ' .slider-arrow {position: relative; display: inline-block; color: #fff;}
+	.no-js #theslider-' . $id . ' .slider-arrow {display: none;}
+	#theslider-' . $id . ' ul#theslides {position: relative; overflow: hidden; margin: 0; padding: 0;}
+	#theslider-' . $id . ' ul#theslides li {position: absolute; top: 0; left: 0; width: 100%; height: auto; margin-bottom: -7px; padding: 0; opacity: 0; z-index: 0; transition: all 1s ease 0s;}
+	#theslider-' . $id . ' ul#theslides li a {display: block; width: 100%; height: 100%;}
+	#theslider-' . $id . ' ul#theslides li.active {position: relative; opacity: 1; z-index: 500;}
+	.no-js #theslider-' . $id . ' .slider-nav-con {display: none;}
+	#theslider-' . $id . ' .slider-nav-con {position: absolute; bottom: -50px; width: 100%; background: rgba(0,0,0,0.7); z-index: 1000; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	#theslider-' . $id . ' #slider-nav {position: relative; display: table; margin: 0 auto; padding: 0; list-style: none;}
+	#theslider-' . $id . ' #slider-nav li {display: inline-block; margin-right: 15px; padding: 0; text-align: center; vertical-align: middle;}
+	#theslider-' . $id . ' #slider-nav li:last-child,
+	#theslider-' . $id . ' #slider-nav li.last-child {margin-right: 0;}
+	#theslider-' . $id . ' #slider-nav li a {display: table-cell; vertical-align: middle; padding: 5px 0; position: relative; height: 100%; color: #fff;}';
+	
+	$titles = [];
+	$slideAttrs = attribute_map($content);	
+	foreach ($slideAttrs as $key => $slideAttr) {
+		array_push($titles, $slideAttr['title']);
+		foreach ($slideAttr as $nested){
+			if (isset($nested['title'])) {
+				array_push($titles, $nested['title']);
+			}
+		}
+	}	
 		
+	$titleCount = count($titles);
+	$slideTitles = [];
+	if ( $titleCount != $slideCount ) {
+		$slideTitles[0]['activeUTF'] = '\u25CF';
+		$slideTitles[0]['inactiveUTF'] = '\u25CB';
+		$slideTitles[0]['activeHTML'] = '&#9679;';
+		$slideTitles[0]['inactiveHTML'] = '&#9675;';
+		$sliderCSS .= '#theslider-' . $id . ' #slider-nav li {margin-right: 10px;}
+		#theslider-' . $id . ' #slider-nav li a.slider-arrow i {margin: 0 5px;}
+		#theslider-' . $id . ' #slider-nav li.slide-nav-item a {font-size: 24px;}';
+	} else {
+		$customTitles = 1;
+		$i = 0;
+		while ( $i < $slideCount ) {
+			$slideTitles[$i]['activeUTF'] = $titles[$i];
+			$slideTitles[$i]['inactiveUTF'] = $titles[$i];
+			$slideTitles[$i]['activeHTML'] = $titles[$i];
+			$slideTitles[$i]['inactiveHTML'] = $titles[$i];
+			$i++;
+		}
+	}
+	
+	$sliderCSS .= '#theslider-' . $id . ' #slider-nav li a:hover {color: #aaa;}
+	#theslider-' . $id . ' #slider-nav li.active a {color: #fff; font-weight: bold;}
+	#theslider-' . $id . ' #slider-nav li.active a:hover {color: #aaa;}</style>';
+	
+	$sliderHTML = '<div id="theslider-' . $id . '" class="container ' . $frame . '"><div class="row"><div class="sixteen columns sliderwrap">';
+				                
+	if ( in_array('status', $flags) ) {
+		$sliderHTML .= '<a href="#" class="status"><i class="icon-pause"></i> <span>Paused</span></a>';
+	}			                
+				                
+	$sliderHTML .= '<ul id="theslides">' . parse_shortcode_content(do_shortcode($content)) . '</ul>
+				<div class="slider-nav-con">
+					<ul id="slider-nav" class="clearfix">
+						<li><a class="slider-arrow slider-left " href="#"><i class="icon-left-open"></i></a></li>';
+	
+	$i = 0;
+	while ( $i < $slideCount ) {
+		if ( !$customTitles ) {
+			$sliderHTML .= '<li class="slide-nav-item"><a href="#">' . $slideTitles[0]['inactiveHTML'] . '</a></li>';
+		} else {
+			$sliderHTML .= '<li class="slide-nav-item"><a href="#">' . $slideTitles[$i]['inactiveHTML'] . '</a></li>';
+		}
+		$i++;
+	}
+	
+	$sliderHTML .= '<li><a class="slider-arrow slider-right " href="#"><i class="icon-right-open"></i></a></li>
+					</ul>
+				</div></div></div></div>'; //Each through the li.slide-nav-item and pull the title from its corresponding slide by incrementing .eq()
+		
+	//<p> appearing here. apparently inside $sliderJS, but not attackable using str_replace()... ugh is that even causing the space?
+	//Happens even when minified to one line...
+	$sliderJS = '<script>jQuery(document).ready(function() {
+						jQuery("#theslider-' . $id . ' #theslides li.slide-nav-item").each(function(i){
+							jQuery(this).find("a").text(i);
+						});
+						strictPause = 0;
+						autoSlider();
+						jQuery("#theslider-' . $id . ' #theslides li").eq(0).addClass("active");';
+	if ( !$customTitles ) {
+		$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(0).addClass("active").find("a").text("' . $slideTitles[0]['activeUTF'] . '");';
+	} else {
+		$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(0).addClass("active");';
+	}				
+	$sliderJS .= 'function autoSlider() {
+					        autoSlide = setInterval(function(){
+					            theIndex = jQuery("#theslides li.active").index();
+					            if ( strictPause == 0 ) {
+					                activateSlider(theIndex, "next");
+					            }
+					        }, ' . $delay . ');
+					    } //End autoSlider()
+						jQuery("#theslider-' . $id . '").hover(function(){
+					        clearInterval(autoSlide);
+					        jQuery("#theslider-' . $id . ' #slider-nav").addClass("pause");
+					        if ( !jQuery("#theslider-' . $id . ' .status").hasClass("stop") ) {
+					        	jQuery("#theslider-' . $id . ' .status i").removeClass("icon-stop icon-play").addClass("icon-pause");
+								jQuery("#theslider-' . $id . ' .status span").text("Paused");
+						        jQuery("#theslider-' . $id . ' .status").addClass("pause");
+					        }
+					    }, function(){
+					        if ( strictPause == 0 ) {
+					            autoSlider();
+					            jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause");
+					            jQuery("#theslider-' . $id . ' .status").removeClass("pause");
+					        }
+					    });
+					    //Navigation
+					    jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item a").on("click", function(){       
+					        strictPause = 1;
+					        jQuery("#theslider-' . $id . ' .status i").removeClass("icon-pause").addClass("icon-stop");
+					        jQuery("#theslider-' . $id . ' .status").removeClass("pause").addClass("stop").find("span").text("Stopped");
+					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
+					        theIndex = jQuery(this).parent().index();
+					        activateSlider(theIndex-1, "goto");
+					        return false;
+					    });
+						//Status
+						jQuery("#theslider-' . $id . '").on("mouseenter", ".status.stop", function(){
+							jQuery(this).find("i").removeClass("icon-stop").addClass("icon-play");
+							jQuery(this).find("span").text("Resume");
+						});
+						jQuery("#theslider-' . $id . '").on("mouseleave", ".status.stop", function(){
+							jQuery(this).find("i").removeClass("icon-play").addClass("icon-stop");
+							jQuery(this).find("span").text("Stopped");
+						});
+						jQuery("#theslider-' . $id . '").on("click", ".status.stop", function(){
+							strictPause = 0;
+							jQuery("#theslider-' . $id . ' #slider-nav").removeClass("stop");
+					        jQuery("#theslider-' . $id . ' .status").removeClass("pause stop");
+					        return false;
+						});
+					    //Arrows
+					    jQuery("#theslider-' . $id . ' .slider-arrow").on("click", function(){
+					        strictPause = 1;
+					        jQuery("#theslider-' . $id . ' .status i").removeClass("icon-pause").addClass("icon-stop");
+					        jQuery("#theslider-' . $id . ' .status").addClass("stopped").find("span").text("Stopped");
+					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
+					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
+					        theIndex = jQuery("#theslider-' . $id . ' #theslides li.active").index();
+					        if ( jQuery(this).hasClass("slider-right") ) {
+					            activateSlider(theIndex, "next");
+					        } else {
+					            activateSlider(theIndex, "prev");
+					        }
+					        return false;
+					    });
+					    function activateSlider(theIndex, buttoned) {
+					        slideCount = jQuery("#theslider-' . $id . ' #theslides li").length;
+					        activeHeight = jQuery("#theslider-' . $id . ' #theslides li.active img").height();
+					        if ( buttoned == "next" ) {
+					            newIndex = ( theIndex+1 >= slideCount ? 0 : theIndex+1 );
+					        } else if ( buttoned == "prev" ) {
+					            newIndex = ( theIndex-1 <= -1 ? slideCount-1 : theIndex-1 );
+					        } else {
+					            newIndex = theIndex;
+					        }
+							nextHeight = jQuery("#theslider-' . $id . ' #theslides li").eq(newIndex).find("img").height();	
+							jQuery("#theslider-' . $id . ' #theslides li.active").removeClass("active");';
+						    if ( !$customTitles ) {
+								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item.active").removeClass("active").find("a").text("' . $slideTitles[0]['inactiveUTF'] . '");';
+							} else {
+								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item.active").removeClass("active");';
+							}
+					$sliderJS .= 'jQuery("#theslider-' . $id . ' #theslides li").eq(newIndex).addClass("active");';
+						    if ( !$customTitles ) {
+								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(newIndex).addClass("active").find("a").text("' . $slideTitles[0]['activeUTF'] . '");';
+							} else {
+								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(newIndex).addClass("active");';
+							}
+					$sliderJS .= 'if ( nextHeight >= activeHeight ) {
+								jQuery("#theslider-' . $id . ' #theslides").delay(' . $speed/2 . ').animate({
+									height: nextHeight,
+								}, ' . $speed/2 . ', "' . $easing . '");
+							} else {
+								jQuery("#theslider-' . $id . ' #theslides").animate({
+									height: nextHeight,
+								}, ' . $speed/2 . ', "' . $easing . '");
+							}
+					    } //End activateSlider()
+				    }); //End Document Ready
+				    jQuery(window).on("load", function() {
+					    jQuery("#theslider-' . $id . ' .slider-nav-con").css("bottom", "0");
+				    }); //End Window Load</script>';
+	
+	return $sliderCSS . $sliderHTML . $sliderJS;
+
+}
+
+//Slide
+add_shortcode('slide', 'slide_shortcode');
+function slide_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('title' => '', 'link' => '', 'target' => ''), $atts) );  	
+	
+	if ( $title != '' ) {
+		$alt = 'alt="' . $title . '"';
+	} else {
+		$title = '';
+		$alt = '';
+	}
+	
+	if ( $link == '' ) {
+		$linkopen = '';
+		$linkclose = '';
+	} else {
+		if ( $target == '' ) {
+			$linkopen = '<a href="' . $link . '">';
+		} else {
+			$linkopen = '<a href="' . $link . '" target="' . $target . '">';
+		}
+		$linkclose = '</a>';
+	}
+		
+	$target= '';
+	
+	return '<li class="nebula-slide clearfix">' . $linkopen . '<img src="' . $content . '" ' . $alt . '"/>' . $linkclose . '</li>'; //if title, echo it, else do not
+} //end slide_shortcode()
+
+
+
+
+
+
+
+
+
+//OLD OLD OLDSlider //Keep this until carriage is incorporated into the new slider
+add_shortcode('sliderOLDOLDOLD', 'slider_shortcode');
+function slider2_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic'), $atts) );  	
+	
 	$sliderCSS = '<style>div#' . $id . ' {position: relative; overflow: hidden;}';
 	if ( $mode == 'fade' ) { //Fade Mode
 		$sliderCSS .= 'div#' . $id . ' ul.nebula-slide-con {position: relative; width: 100%; left: 0; margin: 0; padding: 0; height: 0px; list-style: none;}
@@ -1645,20 +1951,39 @@ function slider_shortcode($atts, $content=''){
 					
 	return $sliderCSS . ' ' . $sliderJS . ' ' . $sliderHTML;
 	
-} //end slider_shortcode()
+} //end OLD OLD OLD slider_shortcode()
 
-//Slide
-add_shortcode('slide', 'slide_shortcode');
-function slide_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
-	
-	return '<li class="nebula-slide clearfix"><img src="' . $content . '"/></li>';
-} //end slide_shortcode()
 
+//Map parameters of nested shortcodes
+function attribute_map($str, $att = null) {
+    $res = array();
+    $reg = get_shortcode_regex();
+    preg_match_all('~'.$reg.'~',$str, $matches);
+    foreach($matches[2] as $key => $name) {
+        $parsed = shortcode_parse_atts($matches[3][$key]);
+        $parsed = is_array($parsed) ? $parsed : array();
+
+        if(array_key_exists($name, $res)) {
+            $arr = array();
+            if(is_array($res[$name])) {
+                $arr = $res[$name];
+            } else {
+                $arr[] = $res[$name];
+            }
+
+            $arr[] = array_key_exists($att, $parsed) ? $parsed[$att] : $parsed;
+            $res[$name] = $arr;
+
+        } else {
+            $res[$name] = array_key_exists($att, $parsed) ? $parsed[$att] : $parsed;
+        }
+    }
+
+    return $res;
+}
 
 //Remove empty <p> tags from Wordpress content (for nested shortcodes)
-function parse_shortcode_content( $content ) {
-
+function parse_shortcode_content($content) {
    /* Parse nested shortcodes and add formatting. */
     $content = trim( do_shortcode( shortcode_unautop( $content ) ) );
     /* Remove '' from the start of the string. */
@@ -1689,7 +2014,7 @@ function add_shortcode_button(){
 
 }
 function register_shortcode_button($buttons){
-    array_push($buttons, "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulavideo");
+    array_push($buttons, "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulaslider", "nebulavideo");
     return $buttons;
 }
 function add_shortcode_plugin($plugin_array) {  

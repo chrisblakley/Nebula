@@ -219,6 +219,15 @@ jQuery(window).on('load', function() {
 					}
 				}
 			}),
+			ed.addButton('nebulaslider', {
+				title : 'Insert Slider',
+				image : bloginfo['template_directory'] + '/images/admin/nebulaslider.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[slider frame status]<br/>[slide title="TITLE_HERE" link="http://www.pinckneyhugo.com" target="_blank"]IMAGE_URL_HERE[/slide]<br/>[/slider]<br/>');
+				}
+			}),
 			ed.addButton('nebulaspace', {
 				title : 'Insert Vertical Space',
 				image : bloginfo['template_directory'] + '/images/admin/nebulaspace.png',

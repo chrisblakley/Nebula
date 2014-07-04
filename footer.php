@@ -8,69 +8,65 @@
 
 <?php wp_footer(); ?>
 
-	<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not even generate. ?>
-	<!-- Footer Widgets -->
-		<div class="container footerwidgets">
-			<div class="row">
-				<?php if ( footerWidgetCounter() == 4 ) : ?>
-					<div class="four columns">
-						<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('First Footer Widget Area') ) : ?>
-							<?php //First Footer Widget Area ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-					<div class="four columns">
-						<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Second Footer Widget Area') ) : ?>
-							<?php //Second Footer Widget Area ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-					<div class="four columns">
-						<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Third Footer Widget Area') ) : ?>
-							<?php //Third Footer Widget Area ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-					<div class="four columns">
-						<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
-							<?php //Fourth Footer Widget Area ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-				<?php elseif ( footerWidgetCounter() == 3 ) : ?>
-					<div class="four columns">
-						<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-							<?php //Outputs the first active widget area it finds. ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-					<div class="four columns">
-						<?php if ( dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
-							<?php //Outputs the first active widget area it finds. ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-					<div class="eight columns">
-						<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-							<?php //Outputs the first active widget area it finds. ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-				<?php elseif ( footerWidgetCounter() == 2 ) : ?>
-					<div class="eight columns">
-						<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-							<?php //Outputs the first active widget area it finds (between 1-3). ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-					<div class="eight columns">
-						<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
-							<?php //Outputs the first active widget area it finds (between 4-2). ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-				<?php else : //1 Active Widget ?>
-					<div class="sixteen columns">
-						<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
-							<?php //Outputs the first active widget area it finds. ?>
-						<?php endif; ?>
-					</div><!--/columns-->
-				<?php endif; ?>
-				
-			</div><!--/row-->
-		</div><!--/container-->
-	<!-- END Footer Widgets -->
+	<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
+		<div class="row footerwidgets">
+			<?php if ( footerWidgetCounter() == 4 ) : ?>
+				<div class="four columns">
+					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('First Footer Widget Area') ) : ?>
+						<?php //First Footer Widget Area ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+				<div class="four columns">
+					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Second Footer Widget Area') ) : ?>
+						<?php //Second Footer Widget Area ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+				<div class="four columns">
+					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Third Footer Widget Area') ) : ?>
+						<?php //Third Footer Widget Area ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+				<div class="four columns">
+					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
+						<?php //Fourth Footer Widget Area ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+			<?php elseif ( footerWidgetCounter() == 3 ) : ?>
+				<div class="four columns">
+					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
+						<?php //Outputs the first active widget area it finds. ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+				<div class="four columns">
+					<?php if ( dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
+						<?php //Outputs the first active widget area it finds. ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+				<div class="eight columns">
+					<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
+						<?php //Outputs the first active widget area it finds. ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+			<?php elseif ( footerWidgetCounter() == 2 ) : ?>
+				<div class="eight columns">
+					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
+						<?php //Outputs the first active widget area it finds (between 1-3). ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+				<div class="eight columns">
+					<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
+						<?php //Outputs the first active widget area it finds (between 4-2). ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+			<?php else : //1 Active Widget ?>
+				<div class="sixteen columns">
+					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
+						<?php //Outputs the first active widget area it finds. ?>
+					<?php endif; ?>
+				</div><!--/columns-->
+			<?php endif; ?>
+			
+		</div><!--/row-->
 	<?php endif; ?>
 	
 		<div class="container footerlinks">

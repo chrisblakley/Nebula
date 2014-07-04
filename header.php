@@ -185,78 +185,72 @@
 		</script>
 										
 		<div id="topbarcon">
-			<div class="container mobilenavcon">
-				<div class="row">
-					<div class="sixteen columns clearfix">
-						
-						<a class="alignleft" href="#mobilenav"><i class="icon-menu"></i></a>
-						<nav id="mobilenav">
-							<?php 
-								if ( has_nav_menu('mobile') ) {
-									wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
-								} elseif ( has_nav_menu('header') ) {
-									wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
-								}
-							?>
-						</nav><!--/mobilenav-->
-						
-						<a class="alignright" href="#mobilecontact"><i class="icon-users"></i></a>
-						<nav id="mobilecontact" class="unhideonload hidden">
-							<ul>
-					    		<li>
-					    			<a href="#"><i class="icon-phone"></i> (315) 123-4567</a>
-					    		</li>
-					    		<li>
-					    			<a href="#"><i class="icon-phone"></i> (800) 456-7890</a>
-					    		</li>
-					    		<li>
-					    			<a href="#"><i class="icon-mail"></i> info@testing.com</a>
-					    		</li>
-					    		<li>
-					    			<a class="directions" href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">
-					    				<i class="icon-direction"></i> Directions <br/><div><small>760 West Genesee Street<br/>Syracuse, NY 13204</small></div>
-					    			</a>
-					    		</li>
-					    	</ul>
-						</nav><!--/mobilecontact-->
-						
-					</div><!--/columns-->
-				</div><!--/row-->
-			</div><!--/container-->
+			<div class="row mobilenavcon">
+				<div class="sixteen columns clearfix">
+					
+					<a class="alignleft" href="#mobilenav"><i class="icon-menu"></i></a>
+					<nav id="mobilenav">
+						<?php 
+							if ( has_nav_menu('mobile') ) {
+								wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
+							} elseif ( has_nav_menu('header') ) {
+								wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
+							}
+						?>
+					</nav><!--/mobilenav-->
+					
+					<a class="alignright" href="#mobilecontact"><i class="icon-users"></i></a>
+					<nav id="mobilecontact" class="unhideonload hidden">
+						<ul>
+				    		<li>
+				    			<a href="#"><i class="icon-phone"></i> (315) 123-4567</a>
+				    		</li>
+				    		<li>
+				    			<a href="#"><i class="icon-phone"></i> (800) 456-7890</a>
+				    		</li>
+				    		<li>
+				    			<a href="#"><i class="icon-mail"></i> info@testing.com</a>
+				    		</li>
+				    		<li>
+				    			<a class="directions" href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">
+				    				<i class="icon-direction"></i> Directions <br/><div><small>760 West Genesee Street<br/>Syracuse, NY 13204</small></div>
+				    			</a>
+				    		</li>
+				    	</ul>
+					</nav><!--/mobilecontact-->
+					
+				</div><!--/columns-->
+			</div><!--/row-->
 		</div><!--/topbarcon-->
 
 		<?php if ( has_nav_menu('topnav') ) : ?>
-			<div class="container topnavcon">
-				<div class="row">
-					<div class="sixteen columns">
-						<nav id="topnav">
-		        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '1')); ?>
-		        		</nav>
-					</div><!--/columns-->
-				</div><!--/row-->
-			</div><!--/container-->
+			<div class="row topnavcon">
+				<div class="sixteen columns">
+					<nav id="topnav">
+	        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '1')); ?>
+	        		</nav>
+				</div><!--/columns-->
+			</div><!--/row-->
 		<?php endif; ?>
 		
-		<div id="logonavcon" class="container">
-			<div class="row">
-				<div class="six columns">
-					<?php
-						//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths (and alt text) below.
-						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
-					?>
-					<a class="logocon" href="<?php echo home_url(); ?>">
-						<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php bloginfo('template_directory');?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
-					</a>
-				</div><!--/columns-->
-				<?php if ( has_nav_menu('header') ) : ?>
-					<div class="ten columns">
-						<nav id="primarynav" class="clearfix">
-							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-		        		</nav>
-		        	</div><!--/columns-->
-	        	<?php endif; ?>
-			</div><!--/row-->
-		</div><!--/container-->
+		<div id="logonavcon" class="row">
+			<div class="six columns">
+				<?php
+					//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths (and alt text) below.
+					//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
+				?>
+				<a class="logocon" href="<?php echo home_url(); ?>">
+					<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php bloginfo('template_directory');?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
+				</a>
+			</div><!--/columns-->
+			<?php if ( has_nav_menu('header') ) : ?>
+				<div class="ten columns">
+					<nav id="primarynav" class="clearfix">
+						<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
+	        		</nav>
+	        	</div><!--/columns-->
+        	<?php endif; ?>
+		</div><!--/row-->
 		
 		<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
 			<div class="row">
@@ -268,5 +262,5 @@
 						<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
 	        		</nav>
 				</div><!--/columns-->
-			</div>
-		</div>
+			</div><!--/row-->
+		</div><!--/container-->
