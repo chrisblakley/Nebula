@@ -15,6 +15,24 @@ jQuery(window).on('load', function() {
 (function() {
 	tinymce.create('tinymce.plugins.nebulatoolbar', {
 		init : function(ed, url) {
+			ed.addButton('nebulaaccordion', {
+				title: 'Insert Accordion',
+				image: bloginfo['template_directory'] + '/images/admin/nebulaaccordion.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[accordion]CONTENT_HERE[/accordion]<br/>');
+				}
+			}),
+			ed.addButton('nebulabio', {
+				title: 'Insert Bio',
+				image: bloginfo['template_directory'] + '/images/admin/nebulabio.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[bio]<br/>');
+				}
+			}),
 			ed.addButton('nebulabutton', {
 				title: 'Insert Button',
 				image: bloginfo['template_directory'] + '/images/admin/nebulabutton.png',
@@ -235,6 +253,15 @@ jQuery(window).on('load', function() {
 				onclick : function() {
 					ed.focus();
 					ed.selection.setContent('[space height=25]<br/>');
+				}
+			}),
+			ed.addButton('nebulatooltip', {
+				title: 'Insert Tooltip',
+				image: bloginfo['template_directory'] + '/images/admin/nebulatooltip.png',
+				classes : 'widget btn nebula-icon',
+				onclick : function() {
+					ed.focus();
+					ed.selection.setContent('[tooltip]CONTENT HERE[/tooltip]<br/>');
 				}
 			}),
 			ed.addButton('nebulavideo', {

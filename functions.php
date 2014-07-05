@@ -638,6 +638,85 @@ function custom_media_display_settings() {
 add_action('after_setup_theme', 'custom_media_display_settings');
 
 
+//Duplicate post
+add_action( 'admin_action_duplicate_post_as_draft', 'duplicate_post_as_draft' );
+function duplicate_post_as_draft(){
+	global $wpdb;
+	if (! ( isset( $_GET['post']) || isset( $_POST['post'])  || ( isset($_REQUEST['action']) && 'duplicate_post_as_draft' == $_REQUEST['action'] ) ) ) {
+		wp_die('No post to duplicate has been supplied!');
+	}
+ 
+	//Get the original post id
+	$post_id = (isset($_GET['post']) ? $_GET['post'] : $_POST['post']);
+	//Get all the original post data
+	$post = get_post( $post_id );
+ 
+	//Set post author (default by current user). For original author change to: $new_post_author = $post->post_author;
+	$current_user = wp_get_current_user();
+	$new_post_author = $current_user->ID;
+ 
+	//If post data exists, create the post duplicate
+	if (isset( $post ) && $post != null) {
+		//New post data array
+		$args = array(
+			'comment_status' => $post->comment_status,
+			'ping_status'    => $post->ping_status,
+			'post_author'    => $new_post_author,
+			'post_content'   => $post->post_content,
+			'post_excerpt'   => $post->post_excerpt,
+			'post_name'      => $post->post_name,
+			'post_parent'    => $post->post_parent,
+			'post_password'  => $post->post_password,
+			'post_status'    => 'draft',
+			'post_title'     => $post->post_title,
+			'post_type'      => $post->post_type,
+			'to_ping'        => $post->to_ping,
+			'menu_order'     => $post->menu_order
+		);
+ 
+		//Insert the post by wp_insert_post() function
+		$new_post_id = wp_insert_post( $args );
+ 
+		//Get all current post terms ad set them to the new post draft
+		$taxonomies = get_object_taxonomies($post->post_type); // returns array of taxonomy names for post type, ex array("category", "post_tag");
+		foreach ($taxonomies as $taxonomy) {
+			$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
+			wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
+		}
+ 
+		//Duplicate all post meta
+		$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
+		if (count($post_meta_infos)!=0) {
+			$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
+			foreach ($post_meta_infos as $meta_info) {
+				$meta_key = $meta_info->meta_key;
+				$meta_value = addslashes($meta_info->meta_value);
+				$sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
+			}
+			$sql_query.= implode(" UNION ALL ", $sql_query_sel);
+			$wpdb->query($sql_query);
+		}
+ 
+		//Redirect to the edit post screen for the new draft
+		wp_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
+		exit;
+	} else {
+		wp_die('Post creation failed, could not find original post: ' . $post_id);
+	}
+}
+ 
+//Add the duplicate link to action list for post_row_actions (This works for custom post types too).
+//Additional post types with the following: add_filter('{post type name}_row_actions', 'rd_duplicate_post_link', 10, 2);
+add_filter( 'post_row_actions', 'rd_duplicate_post_link', 10, 2 );
+add_filter('page_row_actions', 'rd_duplicate_post_link', 10, 2);
+function rd_duplicate_post_link( $actions, $post ) {
+	if (current_user_can('edit_posts')) {
+		$actions['duplicate'] = '<a href="admin.php?action=duplicate_post_as_draft&amp;post=' . $post->ID . '" title="Duplicate this item" rel="permalink">Duplicate</a>';
+	}
+	return $actions;
+}
+
+
 //Show File URL column on Media Library listings
 function muc_column( $cols ) {
 	$cols["media_url"] = "File URL";
@@ -654,11 +733,18 @@ add_action( 'manage_media_custom_column', 'muc_value', 10, 2 );
 
 
 //Admin Footer Enhancements
-function change_admin_footer_left() {
-    $leftfooter = '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
-    return $leftfooter;
-}
+//Left Side
 add_filter('admin_footer_text', 'change_admin_footer_left');
+function change_admin_footer_left() {
+    return '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
+}
+//Right Side
+function change_admin_footer_right() {
+    return 'WP Version: <strong>' . get_bloginfo('version') . '</strong> | Server IP: <strong>' . $_SERVER['SERVER_ADDR'] . '</strong>';
+}
+add_filter('update_footer', 'change_admin_footer_right', 11);
+
+
 
 
 /*==========================
@@ -1555,8 +1641,18 @@ function code_shortcode($atts, $content=''){
 
 
 
+//Accordion
+add_shortcode('accordion', 'accordion_shortcode');
+function accordion_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
+	
+	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
+
+} //end accordion_shortcode()
+
+
 //Bio
-add_shortcode('bio', 'code_shortcode');
+add_shortcode('bio', 'bio_shortcode');
 function bio_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
 	
@@ -1580,6 +1676,16 @@ function bio_shortcode($atts, $content=''){
 	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
 
 } //end bio_shortcode()
+
+
+//Tooltip
+add_shortcode('tooltip', 'tooltip_shortcode');
+function tooltip_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
+	
+	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
+
+} //end tooltip_shortcode()
 
 
 
@@ -2014,7 +2120,7 @@ function add_shortcode_button(){
 
 }
 function register_shortcode_button($buttons){
-    array_push($buttons, "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulaslider", "nebulavideo");
+    array_push($buttons, "nebulaaccordion", "nebulabio", "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulaslider", "nebulatooltip", "nebulavideo");
     return $buttons;
 }
 function add_shortcode_plugin($plugin_array) {  

@@ -51,12 +51,35 @@ body {overflow-x: hidden; background: #f6f6f6;}
 .inner {width: 100%; max-width: 980px; padding: 0 20px; margin: 0 auto; border: 1px solid red;}
 ul.menu {padding: 0;}
 
-/* File type dotted underlines */
-a[href$='.doc'],
-a[href$='.docx'] {text-decoration: none; border-bottom: 1px dotted #2b5797;}
-a[href$='.xls'] {text-decoration: none; border-bottom: 1px dotted #1e7145;}
-a[href$='.ppt'] {text-decoration: none; border-bottom: 1px dotted #d04525;}
+/* ==========================================================================
+   Special File Type Indicators
+   ========================================================================== */
+a[href$='.doc'], a[href$='.docx'] {text-decoration: none; border-bottom: 1px dotted #2b5797;}
+a[href$='.xls'], a[href$='.xlsx'] {text-decoration: none; border-bottom: 1px dotted #1e7145;}
+a[href$='.ppt'], a[href$='.pptx'] {text-decoration: none; border-bottom: 1px dotted #d04525;}
 a[href$='.pdf'] {text-decoration: none; border-bottom: 1px dotted #eb3b00;}
+a[href$='.zip'], a[href$='.zipx'], a[href$='.rar'] {text-decoration: none; border-bottom: 1px dotted #777777;}
+a[href$='.txt'], a[href$='.rtf'] {text-decoration: none; border-bottom: 1px dotted #777777;}
+
+li.icon a[href$='.doc']:before, a.icon[href$='.doc']:before, li.icon a[href$='.docx']:before, a.icon[href$='.docx']:before {content: '\f1c2'; font-family: 'FontAwesome'; color: #2b5797; margin-right: 5px;}
+li.icon a[href$='.xls']:before, a.icon[href$='.xls']:before, li.icon a[href$='.xlsx']:before, a.icon[href$='.xlsx']:before {content: '\f1c3'; font-family: 'FontAwesome'; color: #1e7145; margin-right: 5px;}
+li.icon a[href$='.ppt']:before, a.icon[href$='.ppt']:before, li.icon a[href$='.pptx']:before, a.icon[href$='.pptx']:before {content: '\f1c4'; font-family: 'FontAwesome'; color: #eb3b00; margin-right: 5px;}
+li.icon a[href$='.pdf']:before, a.icon[href$='.pdf']:before, li.icon a[href$='.pdfx']:before, a.icon[href$='.pdfx']:before {content: '\f1c1'; font-family: 'FontAwesome'; color: #d04525; margin-right: 5px;}
+li.icon a[href$='.zip']:before, a.icon[href$='.zip']:before, li.icon a[href$='.zipx']:before, a.icon[href$='.zipx']:before, li.icon a[href$='.rar']:before, a.icon[href$='.rar']:before {content: '\f1c6'; font-family: 'FontAwesome'; color: #777777; margin-right: 5px;}
+li.icon a[href$='.txt']:before, a.icon[href$='.txt']:before, li.icon a[href$='.rtf']:before, a.icon[href$='.rtf']:before {content: '\f0f6'; font-family: 'FontAwesome'; color: #777777; margin-right: 5px;}
+a.icon[href$='.html'] {text-decoration: none; border-bottom: 1px dotted #f1672c;}
+	li.icon a[href$='.html']:before, a.icon[href$='.html']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #f1672c; margin-right: 5px;}
+a.icon[href$='.php'] {text-decoration: none; border-bottom: 1px dotted #5a68a5;}
+	li.icon a[href$='.php']:before, a.icon[href$='.php']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #5a68a5; margin-right: 5px;}
+a.icon[href$='.js'] {text-decoration: none; border-bottom: 1px dotted #f1bf26;}
+	li.icon a[href$='.js']:before, a.icon[href$='.js']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #f1bf26; margin-right: 5px;}
+a.icon[href$='.css'] {text-decoration: none; border-bottom: 1px dotted #30a9dc;}
+	li.icon a[href$='.css']:before, a.icon[href$='.css']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #30a9dc; margin-right: 5px;}
+a.icon[href$='.swf'], a.icon[href$='.fla'] {text-decoration: none; border-bottom: 1px dotted #C31E24;}
+	li.icon a[href$='.swf']:before, a.icon[href$='.swf']:before, li.icon a[href$='.fla']:before, a.icon[href$='.fla']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #C31E24; margin-right: 5px;}
+
+a.off {text-decoration: none; border: none;}
+	a.off:before {content: '';}
 
 
 /* Table styles - Restyle here as needed */
@@ -92,13 +115,20 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 
 .nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
 
-.nebulashadow {margin-top: 0; margin-top: attr(offset, px, 0) /* Data attribute not yet supported in browsers. */; height: 24px;}
-	.nebulashadow.floating {background: url('images/shadow-floating.png') no-repeat top center; background-size: contain;}
+.nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0) /* Data attribute not yet supported in browsers. */; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain;}
 	.nebulashadow.bulging {background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
+		.nebulashadow.buldging:before {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%;}
+	.nebulashadow.hovering {background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain; height: 35px;}
+	.nebulashadow.raising-left {background: url('images/shadow-raising-left.png') no-repeat top center; background-size: contain;}
+	.nebulashadow.raising-right {background: url('images/shadow-raising-right.png') no-repeat top center; background-size: contain;}
 
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;}
-	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain;}
+	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain;}
 	.nebulaframe.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
+		.nebulaframe.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%; background: none;}
+	.nebulaframe.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain;}
+	.nebulaframe.raising-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-raising-left.png') no-repeat top center; background-size: contain;}
+	.nebulaframe.raising-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-raising-right.png') no-repeat top center; background-size: contain;}
 
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
 
@@ -154,7 +184,9 @@ Also be sure to find the other @TODO: items within the stylesheet.
 .row {border: 1px solid blanchedalmond;}
 */
 
-/***** HEADER *****/
+/* ==========================================================================
+   Header Area
+   ========================================================================== */
 .mobilenavcon {display: none;}
 	.directions div {line-height: 12px; padding-left: 35px;}
 
@@ -227,7 +259,9 @@ nav#fixednav {position: relative; z-index: 1000;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 48px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8); transition: all 0.5s ease 0s;}
 
 
-/***** CONTENT AREA *****/
+/* ==========================================================================
+   Content Area
+   ========================================================================== */
 div#bcrumbs {position: relative; z-index: 1;}
 	nav.breadcrumbs {font-size: 10px;}
 
@@ -268,7 +302,12 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	div.wp-pagination a.page-numbers.next {}
 	div.wp-pagination a.page-numbers.prev {}
 
-/***** SIDEBAR *****/
+.wpcf7 ul {padding: 0; list-style: none;}
+
+
+/* ==========================================================================
+   Sidebar Area
+   ========================================================================== */
 .xoxo {padding: 0;}
 	.xoxo ul {margin: 0; padding: 0;}
 		.xoxo ul.menu a {display: block; padding-right: 20px;}
@@ -323,7 +362,9 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .clearsearch {text-align: center;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 
-/***** FOOTER *****/
+/* ==========================================================================
+   Footer Area
+   ========================================================================== */
 .footer {margin-top: 20px; padding-top: 20px; background: #e7e7e7;}
 
 .twitterago {font-size: 12px; text-decoration: underline;}

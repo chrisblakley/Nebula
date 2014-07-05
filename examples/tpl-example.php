@@ -502,14 +502,7 @@ get_header(); ?>
 						
 					<?php endif; ?>
 					
-					
-					
-					
-					
-					
-					
-					
-					
+
 					<?php if ( 1==2 ) : //Old Slider (but still has good carriage) ?>
 						<style>
 							div.nebula-slider {position: relative; overflow: hidden;}
@@ -608,7 +601,163 @@ get_header(); ?>
 					<?php endif; //End Slider ?>
 					
 					
-					<?php if ( is_page(359) ) : //AJAX @TODO: In progress ?>
+					<?php if ( is_page(428) ) : //Tooltip Shortcode ?>
+						
+						<style>
+							.nebula-tooltip {position: relative; top: 0; cursor: default;}
+								.nebula-tooltip:before {content: 'The tip.'; position: absolute; display: block; width: auto; min-width: 50px; max-width: 320px; padding: 0 5px; color: #fff; font-size: 12px; text-align: center; background: rgba(0,0,0,0); opacity: 0; top: 0; border-radius: 20px; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+									.nebula-tooltip:hover:before {top: -25px; background: rgba(0,0,0,0.8); opacity: 1;}
+								.nebula-tooltip:after {content: 'v'; position: absolute; display: block; color: #000; top: 0; opacity: 0; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+									.nebula-tooltip:hover:after {top: -15px; opacity: 1;}
+						</style>
+						
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <a class="nebula-tooltip">Vivamus</a> feugiat lorem a enim rhoncus, vitae varius arcu dignissim. Nunc mollis quis orci ut ullamcorper. Praesent rutrum vitae sem eget lacinia. Aenean sem leo, bibendum sit amet velit ut, <a class="nebula-tooltip">condimentum vehicula</a> enim. Duis quis lectus non nibh luctus dignissim vel vitae turpis. Aenean non porttitor leo. Nullam ac diam cursus, pharetra eros ut, iaculis augue. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur rhoncus placerat auctor. Aliquam bibendum hendrerit felis, at pellentesque metus lacinia nec.</p>
+						
+					<?php endif; //End Tooltip Shortcode ?>
+					
+					
+					<?php if ( is_page(460) ) : //File Type Indicators ?>
+						<div class="row">
+							<div class="eight columns">
+								<h3>No Parameters</h3>
+								<a href="document.doc" onclick="return false;">MS Word Document</a><br/><br/>
+								<a href="document.xls" onclick="return false;">MS Excel Document</a><br/><br/>
+								<a href="document.pdf" onclick="return false;">PDF Document</a><br/><br/>
+								<a href="document.ppt" onclick="return false;">MS Powerpoint Document</a><br/><br/>
+								<a href="document.zip" onclick="return false;">Archive</a><br/><br/>
+								<a href="document.txt" onclick="return false;">Text Document</a><br/><br/>
+							</div><!--/columns-->
+							<div class="eight columns">
+								<h3>With Icons</h3>
+								<a class="icon" href="document.doc" onclick="return false;">MS Word Document</a><br/><br/>
+								<a class="icon" href="document.xls" onclick="return false;">MS Excel Document</a><br/><br/>
+								<a class="icon" href="document.pdf" onclick="return false;">PDF Document</a><br/><br/>
+								<a class="icon" href="document.ppt" onclick="return false;">MS Powerpoint Document</a><br/><br/>
+								<a class="icon" href="document.zip" onclick="return false;">Archive</a><br/><br/>
+								<a class="icon" href="document.txt" onclick="return false;">Text Document</a><br/><br/>
+								<a class="icon" href="document.html" onclick="return false;">HTML Document</a> <small>(Only available with declared icon)</small><br/><br/>
+								<a class="icon" href="document.php" onclick="return false;">PHP Document</a> <small>(Only available with declared icon)</small><br/><br/>
+								<a class="icon" href="document.css" onclick="return false;">CSS Document</a> <small>(Only available with declared icon)</small><br/><br/>
+								<a class="icon" href="document.js" onclick="return false;">JS Document</a> <small>(Only available with declared icon)</small><br/><br/>
+								<a class="icon" href="document.swf" onclick="return false;">SWF Document</a> <small>(Only available with declared icon)</small><br/><br/>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; ?>
+					
+					<?php if ( is_page(443) ) : //Shadows ?>
+						<div class="row">
+							<div class="sixteen columns">
+							
+								<div class="nebulaframe floating" style="text-align: center; height: 60px; width: 100%;">
+									Nebula Frame using "floating"
+								</div>
+														
+								<div class="nebulaframe bulging" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+									Nebula Frame using "bulging"
+								</div>
+								
+								<div class="nebulaframe hovering" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+									Nebula Frame using "hovering"
+								</div>
+								
+								<div class="nebulaframe raising-left" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+									Nebula Frame using "raising-left"
+								</div>
+								
+								<div class="nebulaframe raising-right" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+									Nebula Frame using "raising-right"
+								</div>
+								
+								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									Nebula Shadow using "floating"
+								</div>
+								<div class="nebulashadow floating"></div>
+								
+								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									Nebula Shadow using "bulging"
+								</div>
+								<div class="nebulashadow bulging"></div>
+								
+								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									Nebula Shadow using "hovering"
+								</div>
+								<div class="nebulashadow hovering"></div>
+								
+								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									Nebula Shadow using "raising-left"
+								</div>
+								<div class="nebulashadow raising-left"></div>
+								
+								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									Nebula Shadow using "raising-right"
+								</div>
+								<div class="nebulashadow raising-right"></div>
+								
+								<div style="background: lightcoral; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<strong>Offset support:</strong><br/>
+									If there is a space between this box and its shadow, then offset is now supported!
+								</div>
+								<div class="nebulashadow floating" offset="10"></div>						
+					
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Shadows ?>
+					
+					
+					
+					<?php if ( is_page(430) ) : //Accordion Shortcode ?>
+						<div class="row">
+							<div class="sixteen columns">
+								<p>Accordion coming soon</p>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Accordion Shortcode ?>
+					
+					
+					<?php if ( is_page(432) ) : //Bio Shortcode ?>
+						
+						<?php
+							/*
+								Parameters to use:
+									Name
+									Photo path
+									Title
+									Email
+									Phone
+									Extension
+									vCard path
+									
+									External Links/Social (using just icons if they exist)
+										Website
+										Twitter
+										Facebook
+										Instagram
+										LinkedIn
+									
+									
+									Excerpt (shortcode $content)
+							*/
+						?>
+						<div class="row">
+							<div class="sixteen columns">
+								<div class="nebula-bio">
+							
+								</div>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Bio Shortcode ?>
+					
+					
+					<?php if ( is_page(434) ) : //Sticky Post ?>
+						<div class="row">
+							<div class="sixteen columns">
+								<p>Sticky Post Coming Soon</p>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Sticky Post ?>
+					
+					
+					<?php if ( is_page(359) ) : //Level 4 Media Queries ?>
 						<style>
 							.level-four-media-query { border: 1px solid red; padding: 5px;}
 								.level-four-media-query:before {content: 'Script not supported'; display: block; text-align: center; color: red;}
@@ -663,7 +812,17 @@ get_header(); ?>
 								</div>
 							</div><!--/columns-->
 						</div><!--/row-->
-					<?php endif; //End AJAX ?>
+					<?php endif; //End Level 4 Media Queries ?>
+					
+					
+					<?php if ( is_page(436) ) : //Speech Synthesis ?>
+						<div class="row">
+							<div class="sixteen columns">
+								<p>Speech Synthesis coming soon</p>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Speech Synthesis ?>
+					
 					
 					<?php if ( is_page(356) ) : //AJAX @TODO: In progress ?>
 						<div class="row">
