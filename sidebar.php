@@ -12,6 +12,18 @@
 		</li>
 	<?php endif; ?>
 	
+	<li>
+		<h3>Features</h3>
+		<?php 
+			if ( has_nav_menu('sidebar') ) {
+				wp_nav_menu(array('theme_location' => 'sidebar'));
+			} elseif (has_nav_menu('header') ) {
+				wp_nav_menu(array('theme_location' => 'header'));
+			} else {
+				echo '<p>@TODO: Set a default menu or something</p>';
+			}
+		?>
+	</li>
 	
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ) : ?>
 		<?php //Primary Widget Area ?>
@@ -28,18 +40,6 @@
 		</form><!--/search-->
 	</li>
 	
-	<li>
-		<?php 
-			if ( has_nav_menu('sidebar') ) {
-				wp_nav_menu(array('theme_location' => 'sidebar'));
-			} elseif (has_nav_menu('header') ) {
-				wp_nav_menu(array('theme_location' => 'header'));
-			} else {
-				echo '<p>@TODO: Set a default menu or something</p>';
-			}
-		?>
-	</li>
-		
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Secondary Widget Area') ) : ?>
 		<?php //Secondary Widget Area ?>
 	<?php endif; ?>
@@ -49,7 +49,7 @@
 	<h3>Contact Us</h3>
 	<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
 		<ul id="cform7-container">
-			<?php echo do_shortcode('[contact-form-7 id="161"]'); ?>
+			<?php echo do_shortcode('[contact-form-7 id="384" title="Contact Form 7 Documentation"]'); ?>
 		</ul>
 	<?php else : ?>
 		<div class="row">

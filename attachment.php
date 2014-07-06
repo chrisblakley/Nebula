@@ -19,14 +19,11 @@ get_header(); ?>
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 				
 				<div class="entry-meta">
-					By <a class="url fn n" href="<?php echo get_author_posts_url( get_the_author_meta('ID') ); ?>"><?php echo get_the_author(); ?></a>
-					<span>|</span>
-					Published <abbr><?php echo get_the_date(); ?></abbr>
-							
-					<?php if ( wp_attachment_is_image() ) : ?>
-						<?php $metadata = wp_get_attachment_metadata(); ?>
-						| Full size is <a href="<?php echo wp_get_attachment_url();  ?>" ><?php echo $metadata['width']; ?> &times; <?php echo $metadata['height']; ?></a>
-					<?php endif; ?>
+					<hr/>
+					<?php nebula_meta('by'); ?>
+					<?php nebula_meta('on'); ?>
+					<?php nebula_meta('dimensions'); ?>
+					<hr/>
 				</div><!-- .entry-meta -->
 		
 				<div class="entry-content">
@@ -42,16 +39,16 @@ get_header(); ?>
 								if ( count( $attachments ) > 1 ) {
 									if ( isset( $attachments[ $k ] ) )
 										// get the URL of the next image attachment
-										$next_attachment_url = get_attachment_link( $attachments[ $k ]->ID );
+										$next_attachment_url = get_attachment_link( $attachments[$k]->ID );
 									else
 										// or get the URL of the first image attachment
-										$next_attachment_url = get_attachment_link( $attachments[ 0 ]->ID );
+										$next_attachment_url = get_attachment_link( $attachments[0]->ID );
 								} else {
 									// or, if there's only 1 image attachment, get the URL of the image
 									$next_attachment_url = wp_get_attachment_url();
 								}
 							?>
-							<p><a href="<?php echo $next_attachment_url; ?>" title="<?php echo get_the_title(); ?>">
+							<p class="isitthisone"><a href="<?php echo $next_attachment_url; ?>" title="<?php echo get_the_title(); ?>">
 								<?php
 									$attachment_size = apply_filters( 'boilerplate_attachment_size', 900 );
 									echo wp_get_attachment_image( $post->ID, array( $attachment_size, 9999 ) ); // filterable image width with, essentially, no limit for image height.
@@ -72,11 +69,15 @@ get_header(); ?>
 					<div class="entry-caption"><?php if ( !empty( $post->post_excerpt ) ) the_excerpt(); ?></div>
 		
 					<?php the_content( 'Continue reading &rarr;' ); ?>
-					<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
 			
 					<footer class="entry-utility">
-						<?php boilerplate_posted_in(); ?>
-						<?php edit_post_link( 'Edit', ' <span class="edit-link">', '</span>' ); ?>
+						<?php if ( current_user_can('manage_options') ) : ?>
+							<hr/>
+							<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+							<br/>
+							<?php nebula_manage('meta'); ?>
+							<hr/>
+						<?php endif; ?>
 					</footer><!-- .entry-utility -->
 		
 					<?php //comments_template(); ?>

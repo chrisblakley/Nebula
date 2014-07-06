@@ -212,74 +212,8 @@ if ( !function_exists( 'boilerplate_widgets_init' ) ) :
 endif;
 add_action( 'widgets_init', 'boilerplate_widgets_init' );
 
-if ( ! function_exists( 'boilerplate_posted_on' ) ) :
-	/**
-	 * Prints HTML with meta information for the current post—date/time and author.
-	 */
-	function boilerplate_posted_on() {
-		// BP: slight modification to Twenty Ten function, converting single permalink to multi-archival link
-		// Y = 2012
-		// F = September
-		// m = 01–12
-		// j = 1–31
-		// d = 01–31
-		printf( '<i class="icon-calendar"></i> <span class="entry-date">%2$s %3$s, %4$s</span>',
-			// %1$s = container class
-			'meta-prep meta-prep-author',
-			// %2$s = month: /yyyy/mm/
-			sprintf( '<a href="%1$s" title="%2$s" rel="bookmark">%3$s</a>',
-				home_url() . '/' . get_the_date( 'Y' ) . '/' . get_the_date( 'm' ) . '/',
-				esc_attr( 'View Archives for ' . get_the_date( 'F' ) . ' ' . get_the_date( 'Y' ) ),
-				get_the_date( 'F' )
-			),
-			// %3$s = day: /yyyy/mm/dd/
-			sprintf( '<a href="%1$s" title="%2$s" rel="bookmark">%3$s</a>',
-				home_url() . '/' . get_the_date( 'Y' ) . '/' . get_the_date( 'm' ) . '/' . get_the_date( 'd' ) . '/',
-				esc_attr( 'View Archives for ' . get_the_date( 'F' ) . ' ' . get_the_date( 'j' ) . ' ' . get_the_date( 'Y' ) ),
-				get_the_date( 'j' )
-			),
-			// %4$s = year: /yyyy/
-			sprintf( '<a href="%1$s" title="%2$s" rel="bookmark">%3$s</a>',
-				home_url() . '/' . get_the_date( 'Y' ) . '/',
-				esc_attr( 'View Archives for ' . get_the_date( 'Y' ) ),
-				get_the_date( 'Y' )
-			),
-			// %5$s = author vcard
-			sprintf( '',
-				get_author_posts_url( get_the_author_meta( 'ID' ) ),
-				sprintf( 'View all posts by %s', get_the_author() ),
-				get_the_author()
-			)
-		);
-	}
-endif;
 
-if ( ! function_exists( 'boilerplate_posted_in' ) ) :
-	/**
-	 * Prints HTML with meta information for the current post (category, tags and permalink).
-	 */
-	function boilerplate_posted_in() {
-		// Retrieves tag list of current post, separated by commas.
-		$tag_list = get_the_tag_list( '', ', ' );
-		if ( $tag_list ) {
-			$posted_in = '<i class="icon-bookmarks"></i> %1$s <br/><i class="icon-tag"></i> %2$s';
-		} elseif ( is_object_in_taxonomy( get_post_type(), 'category' ) ) {
-			$posted_in = '<i class="icon-bookmarks"></i> %1$s';
-		} else {
-			$posted_in = '';
-		}
-		// Prints the string, replacing the placeholders.
-		printf(
-			$posted_in,
-			get_the_category_list( ', ' ),
-			$tag_list,
-			get_permalink(),
-			the_title_attribute( 'echo=0' )
-		);
-	}
-endif;
-
-// add thumbnail support
+//Add thumbnail support
 if ( function_exists( 'add_theme_support' ) ) :
 	add_theme_support( 'post-thumbnails' );
 endif;
@@ -294,9 +228,9 @@ endif;
  ===========================*/
 
 //Detect and prompt install of Recommended and Optional plugins
-require_once dirname( __FILE__ ) . '/includes/class-tgm-plugin-activation.php';
+require_once dirname(__FILE__) . '/includes/class-tgm-plugin-activation.php';
 
-add_action( 'tgmpa_register', 'my_theme_register_required_plugins' );
+add_action('tgmpa_register', 'my_theme_register_required_plugins');
 function my_theme_register_required_plugins() {
 
     $plugins = array(
@@ -380,17 +314,22 @@ function my_theme_register_required_plugins() {
             'slug'      => 'wordpress-seo',
             'required'  => false,
         ),
+        array(
+            'name'      => 'Search Everything', //Only included until we find the best way to pull this functionality into functions.php
+            'slug'      => 'search-everything',
+            'required'  => false,
+        ),
     );
 
     $config = array(
-        'id'           => 'tgmpa',                 // Unique ID for hashing notices for multiple instances of TGMPA.
-        'default_path' => '',                      // Default absolute path to pre-packaged plugins.
-        'menu'         => 'tgmpa-install-plugins', // Menu slug.
-        'has_notices'  => true,                    // Show admin notices or not.
-        'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
-        'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
-        'is_automatic' => false,                   // Automatically activate plugins after installation or not.
-        'message'      => '',                      // Message to output right before the plugins table.
+        'id'           => 'tgmpa',                 //Unique ID for hashing notices for multiple instances of TGMPA.
+        'default_path' => '',                      //Default absolute path to pre-packaged plugins.
+        'menu'         => 'tgmpa-install-plugins', //Menu slug.
+        'has_notices'  => true,                    //Show admin notices or not.
+        'dismissable'  => true,                    //If false, a user cannot dismiss the nag message.
+        'dismiss_msg'  => '',                      //If 'dismissable' is false, this message will be output at top of nag.
+        'is_automatic' => false,                   //Automatically activate plugins after installation or not.
+        'message'      => '',                      //Message to output right before the plugins table.
         'strings'      => array(
             'page_title'                      => __( 'Install Recommended Plugins', 'tgmpa' ),
             'menu_title'                      => __( 'Install Plugins', 'tgmpa' ),
@@ -427,8 +366,8 @@ function my_theme_register_required_plugins() {
 add_action('after_switch_theme', 'nebulaActivation');
 function nebulaActivation() {
 	$theme = wp_get_theme();
-	//Check if this is the initial activation, or if it has been ran before (and the user is just toggling themes)
-	if ( $theme['Name'] == 'WP Nebula' && (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset']) ) ) {
+	//Check if this is the initial activation, or if initialization has been ran before (and the user is just toggling themes)
+	if ( $theme['Name'] == 'WP Nebula' && (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) {
 
 		//Create Homepage
 		$nebula_home = array(
@@ -436,13 +375,15 @@ function nebulaActivation() {
 			'post_type' => 'page',
 			'post_title' => 'Home',
 			'post_name' => 'home',
-			'post_content'   => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fringilla auctor est, non elementum est iaculis id. Suspendisse vel tortor vitae diam dignissim vestibulum. Aliquam auctor est vitae accumsan lacinia. Vivamus dapibus, leo eget eleifend posuere, nunc lacus elementum libero, sed imperdiet ante nunc non dui.',
+			'post_content'   => "The WP Nebula is a springboard Wordpress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other Wordpress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
+
+Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced Wordpress techniques.",
 			'post_status' => 'publish',
 			'post_author' => 1,
 			'page_template' => 'tpl-homepage.php'
 		);
 		
-		// Insert the post into the database
+		//Insert the post into the database
 		wp_insert_post($nebula_home);
 		
 		//Show the Activation Complete message
@@ -452,13 +393,13 @@ function nebulaActivation() {
 }
 
 //When Nebula "Reset" has been clicked
-if ( is_admin() && isset($_GET['nebula-reset']) ) {
+if ( current_user_can('manage_options') && isset($_GET['nebula-reset']) ) {
 	nebulaActivation();
 	nebulaChangeHomeSetting();
 }
 
-//If WP Nebula has been activated and other actions have heppend, but the user is still on the Themes settings page.
-if ( is_admin() && isset($_GET['activated'] ) && $pagenow == 'themes.php' ) {
+//If WP Nebula has been activated and other actions have heppened, but the user is still on the Themes settings page.
+if ( current_user_can('manage_options') && isset($_GET['activated'] ) && $pagenow == 'themes.php' ) {
 	$theme = wp_get_theme();
 	if ( $theme['Name'] == 'WP Nebula' ) {
 		add_action('admin_notices','nebulaActivateComplete');
@@ -504,9 +445,10 @@ remove_filter('the_excerpt', 'wptexturize');
 remove_filter('comment_text', 'wptexturize');
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-function are_you_an_admin() {
+function admin_only_features() {
 	$user = get_current_user_id();
-	if (!current_user_can('manage_options') || $user == 99999 || TRUE ) { //TRUE=Not Admin (Hide update notification and admin bar), FALSE=Admin (Show update notification and admin bar)
+	if (!current_user_can('manage_options') || $user == 99999 || true ) { //true=Not Admin (Hide update notification and admin bar), false=Admin (Show update notification and admin bar)
+		
 		//For the admin page
 		remove_action('admin_footer', 'wp_admin_bar_render', 1000);
 		//For the front-end
@@ -530,7 +472,7 @@ function are_you_an_admin() {
 		
 	}
 }
-add_action('init','are_you_an_admin');
+add_action('init','admin_only_features');
 
 
 //Show update warning on Wordpress Core/Plugin update admin pages
@@ -618,6 +560,9 @@ function custom_dashboard_help() {
 add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
 */
 
+//Only allow admins to modify Contact Forms
+define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
+define('WPCF7_ADMIN_READ_WRITE_CAPABILITY', 'manage_options');
 
 //Remove Comments column
 function remove_pages_count_columns($defaults) {
@@ -857,6 +802,11 @@ function nebula_meta($meta, $day=1) {
 			$post_tags = '';
 		}
 		echo $post_tags;
+	} elseif ( $meta == 'dimensions' || $meta == 'size' || $meta == 'image' || $meta == 'photo' ) {
+		if ( wp_attachment_is_image() ) {
+			$metadata = wp_get_attachment_metadata();
+			echo '<i class="icon-resize-full"></i><a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a>';
+		}		
 	}
 }
 
@@ -911,11 +861,21 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 
 //Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
 //Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
-function nebula_manage($thing) {
-	if ( $thing == 'edit' || $thing == 'admin' ) {
+function nebula_manage($data) {
+	if ( $data == 'edit' || $data == 'admin' ) {
 		echo '<span class="post-admin"><i class="icon-tools"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="icon-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span>';
-	} elseif ( $thing == 'modified' || $thing == 'mod' ) {
-		echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . get_the_modified_author() . '</strong></span>';
+	} elseif ( $data == 'modified' || $data == 'mod' ) {
+		if ( get_the_modified_author() ) {
+			$manage_author = get_the_modified_author();
+		} else {
+			$manage_author = get_the_author();
+		}
+		echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . $manage_author . '</strong></span>';
+	} elseif ( $data == 'info' ) {
+		if ( wp_attachment_is_image() ) {
+			$metadata = wp_get_attachment_metadata();
+			echo ''; //@TODO: In progress
+		}
 	}
 }
 

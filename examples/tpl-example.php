@@ -648,52 +648,52 @@ get_header(); ?>
 						<div class="row">
 							<div class="sixteen columns">
 							
-								<div class="nebulaframe floating" style="text-align: center; height: 60px; width: 100%;">
+								<div class="nebulaframe floating" style="text-align: center; min-height: 60px; width: 100%;">
 									Nebula Frame using "floating"
 								</div>
 														
-								<div class="nebulaframe bulging" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+								<div class="nebulaframe bulging" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
 									Nebula Frame using "bulging"
 								</div>
 								
-								<div class="nebulaframe hovering" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+								<div class="nebulaframe hovering" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
 									Nebula Frame using "hovering"
 								</div>
 								
-								<div class="nebulaframe raising-left" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+								<div class="nebulaframe raising-left" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
 									Nebula Frame using "raising-left"
 								</div>
 								
-								<div class="nebulaframe raising-right" style="text-align: center; height: 60px; width: 100%; margin-top: 30px;">
+								<div class="nebulaframe raising-right" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
 									Nebula Frame using "raising-right"
 								</div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
 									Nebula Shadow using "floating"
 								</div>
 								<div class="nebulashadow floating"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
 									Nebula Shadow using "bulging"
 								</div>
 								<div class="nebulashadow bulging"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
 									Nebula Shadow using "hovering"
 								</div>
 								<div class="nebulashadow hovering"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
 									Nebula Shadow using "raising-left"
 								</div>
 								<div class="nebulashadow raising-left"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
 									Nebula Shadow using "raising-right"
 								</div>
 								<div class="nebulashadow raising-right"></div>
 								
-								<div style="background: lightcoral; color: #fff; text-align: center; height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+								<div style="background: lightcoral; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
 									<strong>Offset support:</strong><br/>
 									If there is a space between this box and its shadow, then offset is now supported!
 								</div>
@@ -816,9 +816,79 @@ get_header(); ?>
 					
 					
 					<?php if ( is_page(436) ) : //Speech Synthesis ?>
+						<script>
+							jQuery(document).ready(function() {
+									
+								var voiceSelect = document.getElementById('voice');
+								// Check for browser support
+								var supportMsg = document.getElementById('msg');
+																	
+								if ('speechSynthesis' in window) {
+									supportMsg.innerHTML = 'Your browser <strong>supports</strong> speech synthesis.';
+								} else {
+									supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.<br>Try this in <a href="http://www.google.co.uk/intl/en/chrome/browser/canary.html">Chrome Canary</a>.';
+								}
+								
+								jQuery('#speakit').on('click', function(){
+									var textToSay = jQuery('#speaktext').val();
+									speak(textToSay);
+									console.log('sending to speak');
+									return false;
+								});
+								
+								loadVoices();
+								// Fetch the list of voices and populate the voice options.
+								function loadVoices() {
+								  // Fetch the available voices.
+									var voices = speechSynthesis.getVoices();
+								  									  
+								  // Loop through each of the voices.
+									voices.forEach(function(voice, i) {
+								    // Create a new option element.
+										var option = document.createElement('option');
+								    
+								    // Set the options value and text.
+										option.value = voice.name;
+										option.innerHTML = voice.name;
+										  
+								    // Add the option to the voice selector.
+										voiceSelect.appendChild(option);
+									});
+								}
+								
+								// Chrome loads voices asynchronously.
+								window.speechSynthesis.onvoiceschanged = function(e) {
+									loadVoices();
+								};
+								
+								
+								// Create a new utterance for the specified text and add it to the queue.
+								function speak(text) {
+									// Create a new instance of SpeechSynthesisUtterance.
+									var msg = new SpeechSynthesisUtterance();
+									
+									//Remove URLs
+									var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i; //Strip URLs
+								    text = text.replace(exp, "");
+									// Set the text.
+									msg.text = text;
+									
+									var voiceName = jQuery('#voice').val();
+									
+									msg.voice = speechSynthesis.getVoices().filter(function(voice){ return voice.name == voiceName; })[0];
+									
+									window.speechSynthesis.speak(msg);	
+								}
+							});
+						</script>
+						
 						<div class="row">
 							<div class="sixteen columns">
-								<p>Speech Synthesis coming soon</p>
+								<div id="msg">Enable JavaScript to use speech synthesis...</div>
+								
+								<select name="voice" id="voice"></select><br/><br/>
+								<input id="speaktext" type="text" placeholder="Text to speak..."/>
+								<a id="speakit" href="#">Speak It!</a>
 							</div><!--/columns-->
 						</div><!--/row-->
 					<?php endif; //End Speech Synthesis ?>
@@ -834,6 +904,16 @@ get_header(); ?>
 						</div><!--/row-->
 					<?php endif; //End AJAX ?>
 					
+					
+					<?php if ( is_page(481) ) : //Video @TODO: In progress ?>
+						<div class="row">
+							<div class="sixteen columns">
+								
+								<p>Video Example coming soon</p>
+								
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Video ?>
 					
 					<?php if ( is_page(346) ) : //PHP Mobile Detect ?>
 						<div class="row">
@@ -982,6 +1062,7 @@ get_header(); ?>
 		<div class="four columns push_one">
 			<ul class="xoxo">
 				<li>
+					<h3>Documentation</h3>
 					<?php wp_nav_menu(array('menu' => 'Documentation', 'depth' => '9999')); ?>
 				</li>
 			</ul>

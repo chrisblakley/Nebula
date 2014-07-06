@@ -47,6 +47,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7;}
 a {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	a:hover,
 	a.hover {color: #95D600;}
+	.btn > a:hover {color: #fff;}
 body {overflow-x: hidden; background: #f6f6f6;}
 .inner {width: 100%; max-width: 980px; padding: 0 20px; margin: 0 auto; border: 1px solid red;}
 ul.menu {padding: 0;}
@@ -223,15 +224,15 @@ nav#topnav {position: relative; z-index: 1000;}
 				nav#primarynav ul li.menu-item a {display: block;}
 					nav#primarynav ul li.menu-item a:hover,
 					nav#primarynav ul li.menu-item a.hover {}
-				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 20px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; transition: top 0.25s ease 0s, opacity 0.25s ease 0s; background: lightgrey; background: linear-gradient(to bottom, white, lightgrey); z-index: 1001; border: 1px solid grey;}
+				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s ease 0s, opacity 0.25s ease 0s; -moz-transition: top 0.25s ease 0s, opacity 0.25s ease 0s; -o-transition: top 0.25s ease 0s, opacity 0.25s ease 0s; transition: top 0.25s ease 0s, opacity 0.25s ease 0s; background: lightgrey; background: linear-gradient(to bottom, white, gainsboro); z-index: 1001; border: 1px solid grey;}
 				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}	
 					nav#primarynav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
 						nav#primarynav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
 							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
-							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
+							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: lightgrey; color: #fff;}
 						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 				nav#primarynav ul li.menu-item:hover .sub-menu,
-				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 25px; opacity: 1;}
+				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 23px; opacity: 1;}
 				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
 
 .fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s ease 0s;}
@@ -255,8 +256,8 @@ nav#fixednav {position: relative; z-index: 1000;}
 			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
 
 
-#heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; transition: all 0.5s ease 0s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 48px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8); transition: all 0.5s ease 0s;}
+#heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
+	#heroslidercon h3 {text-align: center; color: #fff; font-size: 100px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5); transition: all 0.5s ease 0s;}
 
 
 /* ==========================================================================
@@ -302,7 +303,8 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	div.wp-pagination a.page-numbers.next {}
 	div.wp-pagination a.page-numbers.prev {}
 
-.wpcf7 ul {padding: 0; list-style: none;}
+.wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s ease 0s; -moz-transition: all 0.75s ease 0s; -o-transition: all 0.75s ease 0s; transition: all 0.75s ease 0s;}
+	.wpcf7-form.sent ul {max-height: 0;}
 
 
 /* ==========================================================================
@@ -320,9 +322,9 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .widget-container {margin: 10px 0 15px 0;}
 
 /* Nebula expandable sidebar subnav style defaults */
-a.toplevelvert_expander {position: absolute; top: 0; right: 0; padding-right: 0 !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
+a.toplevelvert_expander {position: absolute; top: 0; right: 0; padding: 0 10px !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
 	a.toplevelvert_expander.plus {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
-	a.toplevelvert_expander i {font-size: 18px;}
+	a.toplevelvert_expander i {font-size: 18px; display: block; width: 100%;}
 
 
 .xoxo form.search input[type="text"] {font-size: 16px; width: 77% !important; font-size: 14px !important; line-height: 24px !important; height: auto !important; vertical-align: top;}

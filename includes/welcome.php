@@ -45,7 +45,7 @@
 				</ul>
 			</div>
 			
-			<?php if ( is_admin() ) : //If user is an administrator ?>
+			<?php if ( current_user_can('manage_options') ) : //If user is an administrator ?>
 			<div class="welcome-panel-column">
 				<h4>Administration</h4>
 				<ul>

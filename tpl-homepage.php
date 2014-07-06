@@ -6,7 +6,7 @@
 get_header(); ?>
 
 <div id="heroslidercon">
-	<h3>PHG Nebula</h3>
+	<h3>Nebula</h3>
 </div><!--/heroslidercon-->
 
 <div class="row">
@@ -17,8 +17,11 @@ get_header(); ?>
 				<div class="entry-content">
 					<?php the_content(); ?>
 					
-					<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-					<?php edit_post_link('Edit'); ?>
+					<?php if ( current_user_can('manage_options') ) : ?>
+						<hr/>
+						<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+						<hr/>
+					<?php endif; ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
 		<?php endwhile; ?>
