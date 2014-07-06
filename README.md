@@ -19,10 +19,10 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 	- Timezone "New York" (or appropriate timezone)
 	- Week Starts On Sunday
 - Reading Settings
-	- Front page displays "A static page" > Front page: "Home"
+	- Front page displays "A static page" > Front page: "Home" (Automated by initial activation)
 	- Check "Discourage search engines from indexing this site"
 - Permalinks Settings
-	- Select "Post name"
+	- Select "Post name" (Automated by initial activation)
 - Set (at least) Primary Menu (Appearance > Menus)
 - Modify logo.svg and logo.png
 - Apple touch icon (129x129px) *(Rounded corners and glossy effect are automatically applied.)*
