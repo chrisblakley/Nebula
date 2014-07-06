@@ -54,11 +54,13 @@ get_header(); ?>
 									echo wp_get_attachment_image( $post->ID, array( $attachment_size, 9999 ) ); // filterable image width with, essentially, no limit for image height.
 								?>
 							</a></p>
-			
-							<nav id="nav-below" class="navigation">
-								<div class="nav-previous"><?php previous_image_link( false ); ?></div>
-								<div class="nav-next"><?php next_image_link( false ); ?></div>
-							</nav><!-- #nav-below -->
+							
+							<?php if (1==2): ?>
+								<nav id="nav-below" class="navigation">
+									<div class="nav-previous"><?php previous_image_link( false ); ?></div>
+									<div class="nav-next"><?php next_image_link( false ); ?></div>
+								</nav><!-- #nav-below -->
+							<?php endif; ?>
 							
 						<?php else : ?>
 						

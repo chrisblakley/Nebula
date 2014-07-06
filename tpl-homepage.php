@@ -6,6 +6,14 @@
 get_header(); ?>
 
 <div id="heroslidercon">
+	<script>
+		jQuery(window).on('load', function() {
+			jQuery('#heroslidercon h3').css('display', 'block');
+			setTimeout(function(){
+				jQuery('#heroslidercon h3').addClass('nebula');
+			}, 1000);
+		});
+	</script>
 	<h3>Nebula</h3>
 </div><!--/heroslidercon-->
 

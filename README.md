@@ -15,15 +15,15 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Move .htaccess to root (or combine with existing)
 - Install prompted plugins (as needed)
 - General Settings
-	- Remove Tagline
-	- Timezone "New York" (or appropriate timezone)
-	- Week Starts On Sunday
+	- Remove Tagline (Automated by initial activation)
+	- Timezone "New York", or appropriate timezone (Automated by initial activation)
+	- Week Starts On Sunday (Automated by initial activation)
 - Reading Settings
 	- Front page displays "A static page" > Front page: "Home" (Automated by initial activation)
 	- Check "Discourage search engines from indexing this site"
 - Permalinks Settings
 	- Select "Post name" (Automated by initial activation)
-- Set (at least) Primary Menu (Appearance > Menus)
+- Set (at least) Primary Menu (Appearance > Menus [Create a menu, then:] > Manage Locations)
 - Modify logo.svg and logo.png
 - Apple touch icon (129x129px) *(Rounded corners and glossy effect are automatically applied.)*
 - Open Graph metadata (and remove comments)
