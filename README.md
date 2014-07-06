@@ -58,6 +58,8 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 
 ##Optional Plugins
 - [Custom Facebook Feed](https://wordpress.org/plugins/custom-facebook-feed/)
+- [Search Everything](http://wordpress.org/plugins/search-everything/)
+- [Smush.it](http://wordpress.org/plugins/wp-smushit/)
 - [Really Simple CAPTCHA](http://wordpress.org/plugins/really-simple-captcha/)
 - [Ultimate TinyMCE](https://wordpress.org/plugins/ultimate-tinymce/)
 - [WooCommerce](https://wordpress.org/plugins/woocommerce/)
