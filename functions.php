@@ -3,6 +3,48 @@
  * Functions
  */
 
+/*========================== 
+ Nebula Stylesheets
+ ===========================*/
+
+//Register stylesheets
+//wp_register_style($handle, $src, $dependencies, $version, $media);
+wp_register_style('normalize', get_template_directory_uri() . '/css/normalize.css', array(), '3.0.1');
+wp_register_style('gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
+wp_register_style('font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
+wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), null);
+wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby'), null);
+wp_register_style('login', get_template_directory_uri() . '/css/login.css', array(), null);
+wp_register_style('admin', get_template_directory_uri() . '/css/admin.css', array(), null);
+
+//Enqueue for frontend
+add_action('wp_enqueue_scripts', 'enqueue_nebula_styles_frontend');
+function enqueue_nebula_styles_frontend() {
+	wp_enqueue_style('normalize');
+	wp_enqueue_style('gumby');
+	wp_enqueue_style('mmenu');
+	wp_enqueue_style('font-awesome');
+	wp_enqueue_style('main');
+}
+
+//Enqueue for WP Login
+add_action('login_enqueue_scripts', 'enqueue_nebula_styles_login');
+function enqueue_nebula_styles_login() {
+	wp_enqueue_style('login');
+}
+
+//Enqueue for WP Admin
+add_action('admin_enqueue_scripts', 'enqueue_nebula_styles_admin');
+function enqueue_nebula_styles_admin() {
+	wp_enqueue_style('admin');
+	if ( is_page(999) ) {
+		wp_enqueue_style('font-awesome');
+	}
+}
+
+
+/*	Begin Boilerplate Remnants */
+
 /**
  * Set the content width based on the theme's design and stylesheet.
  *
@@ -464,9 +506,6 @@ function nebulaActivateComplete(){
 
 //Add custom admin.css stylesheet to WP Admin
 function custom_admin_scripts() {
-	//Font Awesome is called inside welcome.php- uncomment below to enable throughout WP Admin.
-	//echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/font-awesome.min.css" />';
-    echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/admin.css" />';
     echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/admin.js" defer></script>';
 }
 add_action('admin_head', 'custom_admin_scripts');
@@ -534,7 +573,6 @@ remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 function custom_login_css() {
 	//Only use BG image and animation on direct requests (disable for iframe logins after session timeouts).
 	if(empty($_POST['signed_request'])) {
-		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/login.css" />';
 	    echo '<script>window.userIP = "' . $_SERVER["REMOTE_ADDR"] . '";</script>';
 	    echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js?ver=3.5.1"></script>';
 	    //echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/libs/cssbs.js"></script>';
@@ -546,11 +584,13 @@ function custom_login_css() {
 	}
 }
 add_action('login_head', 'custom_login_css');
+
 //Change link of logo to live site
 function custom_login_header_url() {
     return home_url();
 }
 add_filter( 'login_headerurl', 'custom_login_header_url' );
+
 //Change alt of image
 function new_wp_login_title() {
     return get_option('blogname');

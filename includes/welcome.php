@@ -1,5 +1,3 @@
-<link rel="stylesheet" type="text/css" href="<?php echo get_stylesheet_directory_uri(); ?>/css/font-awesome.min.css" />
-
 <div id="phg-welcome" class="welcome-panel-content gearside-welcome">
 	
 	<div id="welcome-content">

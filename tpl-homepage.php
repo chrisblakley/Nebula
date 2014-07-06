@@ -10,7 +10,9 @@ get_header(); ?>
 		jQuery(window).on('load', function() {
 			jQuery('#heroslidercon h3').css('display', 'block');
 			setTimeout(function(){
-				jQuery('#heroslidercon h3').addClass('nebula');
+				jQuery('#heroslidercon h3').animate({letterSpacing:30, opacity: 1}, 1000, function(){
+					jQuery(this).css({'-webkit-transition': 'all 0.5s ease 0s', '-moz-transition': 'all 0.5s ease 0s', '-o-transition': 'all 0.5s ease 0s', 'transition': 'all 0.5s ease 0s'});
+				});
 			}, 1000);
 		});
 	</script>

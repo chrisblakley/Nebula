@@ -19,11 +19,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
-		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/normalize.css" />
-		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/gumby.css" />
-		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/font-awesome.min.css"> <!-- @TODO: Remove if not using Font Awesome! -->
-		<link rel="stylesheet" href="<?php bloginfo('template_directory');?>/css/jquery.mmenu.all.css" /> <!-- @TODO: Remove if not using mmenu! -->
-		<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" />
+		
+		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
                 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		
@@ -209,10 +206,10 @@
 				    			<a href="#"><i class="icon-phone"></i> (800) 456-7890</a>
 				    		</li>
 				    		<li>
-				    			<a href="#"><i class="icon-mail"></i> info@testing.com</a>
+				    			<a href="#"><i class="icon-mail"></i> <?php echo get_option('admin_email', $admin_user->user_email); ?></a>
 				    		</li>
 				    		<li>
-				    			<a class="directions" href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">
+				    			<a class="directions" href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">
 				    				<i class="icon-direction"></i> Directions <br/><div><small>760 West Genesee Street<br/>Syracuse, NY 13204</small></div>
 				    			</a>
 				    		</li>

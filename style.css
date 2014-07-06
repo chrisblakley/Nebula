@@ -256,9 +256,9 @@ nav#fixednav {position: relative; z-index: 1000;}
 			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
 
 /* Sample Hero and on-load animation */
-#heroslidercon {position: relative; margin: 20px 0; height: 400px; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 100px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5); -webkit-transition: all 2s ease 0s; -moz-transition: all 2s ease 0s; -o-transition: all 2s ease 0s; transition: all 2s ease 0s; letter-spacing: 100px; opacity: 0; display: none;}
-		.no-js #heroslidercon h3, #heroslidercon h3.nebula {opacity: 1; letter-spacing: 30px;}
+#heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
+	#heroslidercon h3 {text-align: center; color: #fff; font-size: 100px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5); letter-spacing: 100px; opacity: 0; display: none;}
+		.no-js #heroslidercon h3 {opacity: 1; letter-spacing: 30px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 
 
 /* ==========================================================================
