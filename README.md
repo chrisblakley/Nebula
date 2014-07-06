@@ -1,6 +1,8 @@
 #WP-Nebula
 
-A Wordpress theme starting point that utilizes many libraries and custom functions for extremely fast development by acting as a "Living Repository".
+The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
+
+Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced WordPress techniques.
 
 ##Installation
 
