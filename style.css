@@ -181,8 +181,8 @@ Also be sure to find the other @TODO: items within the stylesheet.
 
 /* @TODO: Delete these debug styles before launching */
 /*
-.column, .columns {border: 1px solid gainsboro;}
-.row {border: 1px solid blanchedalmond;}
+.column, .columns {outline: 1px solid gainsboro;}
+.row {outline: 1px solid blanchedalmond;}
 */
 
 /* ==========================================================================
@@ -257,7 +257,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 
 /* Sample Hero and on-load animation */
 #heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 100px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5); letter-spacing: 100px; opacity: 0; display: none;}
+	#heroslidercon h3 {text-align: center; color: #fff; font-size: 100px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5); letter-spacing: 100px; text-transform: uppercase; opacity: 0; display: none;}
 		.no-js #heroslidercon h3 {opacity: 1; letter-spacing: 30px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 
 
@@ -316,6 +316,8 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 		.xoxo ul.menu a {display: block; padding-right: 20px;}
 		.xoxo ul.menu li.current-menu-item a {color: #95D600;}
 		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
+			.xoxo ul.menu li.current-menu-item .sub-menu a:hover,
+			.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600;}
 		.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
 			.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
 				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
@@ -403,8 +405,8 @@ div.copyright p {font-size: 12px;}
 
 	/* @TODO: Delete these debug styles before launching */
 	/*
-.column, .columns {border: 1px solid mintcream;}
-	.row {border: 1px solid plum;}
+.column, .columns {outline: 1px solid mintcream;}
+	.row {outline: 1px solid plum;}
 */
 
 	#topbarcon {min-height: 30px;}
@@ -464,8 +466,8 @@ div.copyright p {font-size: 12px;}
 
 	/* @TODO: Delete these debug styles before launching */
 	/*
-.column, .columns {border: 1px solid lightgreen;}
-	.row {border: 1px solid pink;}
+.column, .columns {outline: 1px solid lightgreen;}
+	.row {outline: 1px solid pink;}
 */
 
 
@@ -476,8 +478,8 @@ div.copyright p {font-size: 12px;}
 
 	/* @TODO: Delete these debug styles before launching */
 	/*
-.column, .columns {border: 1px solid yellow;}
-	.row {border: 1px solid lightgrey;}
+.column, .columns {outline: 1px solid yellow;}
+	.row {outline: 1px solid lightgrey;}
 */
 
 

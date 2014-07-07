@@ -13,6 +13,7 @@ wp_register_style('normalize', get_template_directory_uri() . '/css/normalize.cs
 wp_register_style('gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
 wp_register_style('font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
 wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), null);
+wp_register_style('datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), null);
 wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby'), null);
 wp_register_style('login', get_template_directory_uri() . '/css/login.css', array(), null);
 wp_register_style('admin', get_template_directory_uri() . '/css/admin.css', array(), null);
@@ -24,6 +25,9 @@ function enqueue_nebula_styles_frontend() {
 	wp_enqueue_style('gumby');
 	wp_enqueue_style('mmenu');
 	wp_enqueue_style('font-awesome');
+	if ( is_page(9999) ) {
+		wp_enqueue_style('datatables');
+	}
 	wp_enqueue_style('main');
 }
 
@@ -37,22 +41,11 @@ function enqueue_nebula_styles_login() {
 add_action('admin_enqueue_scripts', 'enqueue_nebula_styles_admin');
 function enqueue_nebula_styles_admin() {
 	wp_enqueue_style('admin');
-	if ( is_page(999) ) {
-		wp_enqueue_style('font-awesome');
-	}
+	wp_enqueue_style('font-awesome');
 }
 
 
-/*	Begin Boilerplate Remnants */
-
-/**
- * Set the content width based on the theme's design and stylesheet.
- *
- * Used to set the width of images and content. Should be equal to the width the theme
- * is designed for, generally via the style.css stylesheet.
- */
-if ( ! isset( $content_width ) )
-	$content_width = 640;
+/*	Begin Boilerplate remnants */
 
 if ( ! function_exists( 'boilerplate_setup' ) ):
 	/**
@@ -260,7 +253,7 @@ if ( function_exists( 'add_theme_support' ) ) :
 	add_theme_support( 'post-thumbnails' );
 endif;
 
-/*	End Boilerplate */
+/*	End Boilerplate remnants */
 
 
 /*==========================
@@ -618,19 +611,47 @@ function remove_dashboard_metaboxes() {
 add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes' );
 
 
-//Custom Metabox
-/*
-function my_custom_dashboard_widgets() {
-	global $wp_meta_boxes;
-	$theme = wp_get_theme();
-	wp_add_dashboard_widget('custom_help_widget', $theme->get('Name') . ' theme by Pinckney Hugo Group', 'custom_dashboard_help');
+//Custom PHG Metabox
+//If user's email address ends in @pinckneyhugo.com (or my email address for test server dev) and is an administrator
+$current_user = wp_get_current_user();
+list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+if ( $current_user_domain == 'pinckneyhugo.com' || $current_user->user_email == 'greatblakes@gmail.com' && current_user_can('manage_options') ) {
+	add_action('wp_dashboard_setup', 'phg_dev_metabox');
+	function phg_dev_metabox() {
+		global $wp_meta_boxes;
+		wp_add_dashboard_widget('custom_help_widget', 'PHG Developer Info', 'custom_dashboard_help');
+	}
+	function custom_dashboard_help() {
+		//Get last modified filename and date
+		$dir = glob_r( get_template_directory() . '/*.*');
+		$last_date = 0;
+		foreach($dir as $file) {
+			if( is_file($file) ) {
+				$mod_date = filemtime($file);
+				if ( $mod_date > $last_date ) {
+					$last_date = $mod_date;
+					$last_filename = basename($file);
+				}
+			}
+		}
+		$nebula_size = foldersize(get_template_directory());
+		$upload_dir = wp_upload_dir();
+		$uploads_size = foldersize($upload_dir['basedir']);
+		
+		echo '<ul>';
+		echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
+		echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong></li>';
+		echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
+		echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
+		echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
+		echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
+		echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Best estimate)</small></li>';
+		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
+		echo '</ul>';
+	}
+	
 }
-function custom_dashboard_help() {
-	$theme = wp_get_theme();
-	echo '<p>This theme was designed and developed by <br/><h2><a class="phg" href="#" target="_blank">Pinckney Hugo Group</a><h2> <br/><a href="https://www.google.com/maps?saddr=My+Location&daddr=760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> <br/><a href="tel:3154786700" target="_blank">(315) 478-6700</a></p>';
-}
-add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
-*/
+
 
 //Only allow admins to modify Contact Forms
 define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
@@ -1147,22 +1168,22 @@ remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
 
 
 //Declare support for WooCommerce
-/***** Uncomment only if using WooCommerce
-add_theme_support('woocommerce');
-//Remove existing WooCommerce hooks to be replaced with our own
-remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
-remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
-//Replace WooCommerce hooks at our own declared locations
-add_action('woocommerce_before_main_content', 'my_theme_wrapper_start', 10);
-add_action('woocommerce_after_main_content', 'my_theme_wrapper_end', 10);
-function my_theme_wrapper_start() {
-	echo '<section id="WooCommerce">';
+//@TODO: Detect if WooCommerce is active
+if ( is_plugin_active('woocommerce/woocommerce.php') ) {
+	add_theme_support('woocommerce');
+	//Remove existing WooCommerce hooks to be replaced with our own
+	remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
+	remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
+	//Replace WooCommerce hooks at our own declared locations
+	add_action('woocommerce_before_main_content', 'custom_woocommerce_start', 10);
+	add_action('woocommerce_after_main_content', 'custom_woocommerce_end', 10);
+	function custom_woocommerce_start() {
+		echo '<section id="WooCommerce">';
+	}
+	function custom_woocommerce_end() {
+		echo '</section>';
+	}
 }
-function my_theme_wrapper_end() {
-	echo '</section>';
-}
-*****/
-
 
 //PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
 //Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
@@ -1290,6 +1311,36 @@ function in_array_r($needle, $haystack, $strict = true) {
     return false;
 }
 
+//Recursive Glob
+function glob_r($pattern, $flags = 0) {
+	    $files = glob($pattern, $flags); 
+	    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+	        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
+	    }
+	    return $files;
+	}
+	
+//Add up the filesizes of files in a directory (and it's sub-directories)
+function foldersize($path) {
+	$total_size = 0;
+	$files = scandir($path);
+	$cleanPath = rtrim($path, '/') . '/';
+	foreach($files as $t) {
+		if ($t<>"." && $t<>"..") {
+			$currentFile = $cleanPath . $t;
+			if (is_dir($currentFile)) {
+				$size = foldersize($currentFile);
+				$total_size += $size;
+			} else {
+				$size = filesize($currentFile);
+				$total_size += $size;
+			}
+		}   
+	}
+	return $total_size;
+}
+	
+	
 
 //Automatically convert HEX colors to RGB.
 function hex2rgb( $colour ) {
@@ -1374,7 +1425,6 @@ function div_shortcode($atts, $content=''){
 //Gumby Grid Shortcodes
 
 //Colgrid
-// [colgrid twelve]
 if ( shortcode_exists( 'colgrid' ) ) {
 	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
 } else {
@@ -1389,8 +1439,6 @@ function colgrid_shortcode($atts, $content=''){
 } //end colgrid_grid()
 
 //Container
-// [container]
-// [container class="special" style="background: yellow;"]
 if ( shortcode_exists( 'container' ) ) {
 	add_shortcode('gumby_container', 'container_shortcode');
 } else {
@@ -1403,8 +1451,6 @@ function container_shortcode($atts, $content=''){
 } //end container_grid()
 
 //Row
-// [row]
-// [row class="special" style="border: 1px solid red;"]
 if ( shortcode_exists('row') ) {
 	add_shortcode('gumby_row', 'row_shortcode');
 } else {
@@ -1418,11 +1464,6 @@ function row_shortcode($atts, $content=''){
 } //end row_grid()
 
 //Columns
-// [columns eight]Content Here[/columns]
-// [columns six push="two"]Content Here[/columns]
-// [columns ten centered]Content Here[/columns]
-// [columns eight first]Content Here[/columns]
-// [columns eight last]Content Here[/columns]
 if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exists('cols') || shortcode_exists('col') ) {
 	add_shortcode('gumby_column', 'column_shortcode');
 	add_shortcode('gumby_columns', 'column_shortcode');
@@ -1474,7 +1515,7 @@ function column_shortcode($atts, $content=''){
 } //end column_grid()
 
 
-//Divider [divider space="20"]
+//Divider
 add_shortcode('divider', 'divider_shortcode');
 add_shortcode('hr', 'divider_shortcode');
 add_shortcode('line', 'divider_shortcode');
@@ -1489,7 +1530,7 @@ function divider_shortcode($atts){
 }
 
 
-//Icon [icon family="entypo" type="icon-adjust" color="#222" size="12px"]
+//Icon
 add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){	
 	extract( shortcode_atts(array('type'=>'', 'color'=>'inherit', 'size'=>'inherit', 'class'=>''), $atts) );		
@@ -1503,7 +1544,6 @@ function icon_shortcode($atts){
 
 
 //Button
-//[button size="medium" type="success" pretty icon="icon-mail" href="http://www.google.com/" target="_blank"]Click Here[/button]
 add_shortcode('button', 'button_shortcode');
 function button_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('size' => 'medium', 'type' => 'default', 'pretty' => false, 'metro' => false, 'icon' => false, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
@@ -1537,7 +1577,7 @@ function button_shortcode($atts, $content=''){
 } //end button_shortcode()
 
 
-//Space (aka Gap) [space height=8]
+//Space (aka Gap)
 add_shortcode('space', 'space_shortcode');
 add_shortcode('gap', 'space_shortcode');
 function space_shortcode($atts){
@@ -1546,7 +1586,7 @@ function space_shortcode($atts){
 }
 
 
-//Clear (aka Clearfix) [clear]
+//Clear (aka Clearfix)
 add_shortcode('clear', 'clear_shortcode');
 add_shortcode('clearfix', 'clear_shortcode');
 function clear_shortcode(){
@@ -1625,7 +1665,7 @@ function youtube_shortcode($atts){
 
 
 
-//Pre [pre lang="php"]<div>This is a "test"!</div>[/pre]
+//Pre
 add_shortcode('pre', 'pre_shortcode');
 $GLOBALS['pre'] = 0;
 function pre_shortcode($atts, $content=''){
@@ -1657,7 +1697,7 @@ function pre_shortcode($atts, $content=''){
 	}
 } //end pre_shortcode()
 
-//Code [code][/code]
+//Code
 add_shortcode('code', 'code_shortcode');
 function code_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
@@ -1710,14 +1750,11 @@ function bio_shortcode($atts, $content=''){
 add_shortcode('tooltip', 'tooltip_shortcode');
 function tooltip_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
-	
-	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
-
+	return '<div class="nebula-tooltip ' . $class . '" style="' . $style . '" >' . $content . '</code>';
 } //end tooltip_shortcode()
 
 
-
-//Slider -NEW
+//Slider
 add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic', 'status' => false, 'frame' => false, 'titles' => false), $atts) );  	
@@ -1734,10 +1771,6 @@ function slider_shortcode($atts, $content=''){
 	$slideCount = preg_match_all('[/slide]', $content);
 		$slideConWidth = $slideCount*100 . '%';
 		$slideWidth = round(100/$slideCount, 3) . '%';
-	
-	
-	
-	
 	
 	$sliderCSS = '<style>#theslider-' . $id . ' {transition: all .5s ease 0s;}
 					#theslider-' . $id . ' .sliderwrap {position: relative; overflow: hidden;}';
@@ -1946,6 +1979,7 @@ function slider_shortcode($atts, $content=''){
 
 }
 
+
 //Slide
 add_shortcode('slide', 'slide_shortcode');
 function slide_shortcode($atts, $content=''){
@@ -1974,118 +2008,6 @@ function slide_shortcode($atts, $content=''){
 	
 	return '<li class="nebula-slide clearfix">' . $linkopen . '<img src="' . $content . '" ' . $alt . '"/>' . $linkclose . '</li>'; //if title, echo it, else do not
 } //end slide_shortcode()
-
-
-
-
-
-
-
-
-
-//OLD OLD OLDSlider //Keep this until carriage is incorporated into the new slider
-add_shortcode('sliderOLDOLDOLD', 'slider_shortcode');
-function slider2_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic'), $atts) );  	
-	
-	$sliderCSS = '<style>div#' . $id . ' {position: relative; overflow: hidden;}';
-	if ( $mode == 'fade' ) { //Fade Mode
-		$sliderCSS .= 'div#' . $id . ' ul.nebula-slide-con {position: relative; width: 100%; left: 0; margin: 0; padding: 0; height: 0px; list-style: none;}
-				div#' . $id . ' ul.nebula-slide-con li.nebula-slide {position: absolute; top: 0; display: block; width: 100%; margin: 0; padding: 0;}
-					div#' . $id . ' ul.nebula-slide-con li.nebula-slide img {width: 100%;}';
-	} else { //Carriage Mode
-		$sliderCSS .= 'div#' . $id . ' ul.nebula-slide-con {position: relative; width: ' . $slideConWidth . '; left: 0; margin: 0; padding: 0; list-style: none;}
-				div#' . $id . ' ul.nebula-slide-con li.nebula-slide {position: relative; display: inline-block; width: ' . $slideWidth . '; margin: 0; padding: 0; float: left;}
-					div#' . $id . ' ul.nebula-slide-con li.nebula-slide img {width: 100%;}';
-	}	
-	$sliderCSS .= '</style>';
-	
-	
-	$sliderJS = '<script>jQuery(document).ready(function() {';
-	if ( $mode == 'fade' ) { //Fade Mode
-		$sliderJS .= ' jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-last-child(2)").addClass("next");
-					jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").addClass("active");';
-	} else { //Carriage Mode
-		$sliderJS .= 'jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").addClass("active");
-					jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(2)").addClass("next");';
-	}
-	$sliderJS .= '});
-		jQuery(window).on("load", function() {
-			var nebulaSlideCount = ' . $slideCount . ';
-			var currentSlide = 1;';
-			
-	if ( $mode == 'fade' ) { //Fade Mode
-		$sliderJS .= 'var activeHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").height();';
-	} else { //Carriage Mode
-		$sliderJS .= 'var activeHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").height();';
-	}
-			
-	$sliderJS .= 'jQuery("div#' . $id . '").css("height", activeHeight);
-			if (nebulaSlideCount > 1) {
-				var nebulaSlider = setInterval(function(){';
-					
-	if ( $mode == 'fade' ) { //Fade Mode
-		$sliderJS .= 'jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").fadeOut(' . $speed . ', function(){
-						jQuery("div#' . $id . ' ul.nebula-slide-con li.next").removeClass("next");
-						jQuery("div#' . $id . ' ul.nebula-slide-con li.active").removeClass("active");
-						jQuery(this).clone().prependTo("div#' . $id . ' ul.nebula-slide-con");
-						jQuery(this).remove();
-						jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").css("display", "block");
-						jQuery("div#' . $id . ' ul.nebula-slide-con li:last-child").addClass("active");
-						jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-last-child(2)").addClass("next");
-					});';
-	} else { //Carriage Mode
-		$sliderJS .= 'if ( currentSlide < nebulaSlideCount ) {
-						jQuery("div#' . $id . ' ul.nebula-slide-con").animate({
-							left: "-=100%",
-						}, ' . $speed . ', "' . $easing . '", function() {
-							currentSlide++;
-							jQuery("div#' . $id . ' ul.nebula-slide-con li.next").removeClass("next");
-							jQuery("div#' . $id . ' ul.nebula-slide-con li.active").removeClass("active");
-							jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(" + currentSlide + ")").addClass("active");
-							if ( currentSlide+1 <= nebulaSlideCount ) {
-								jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(" + (currentSlide+1) + ")").addClass("next");
-							} else {
-								jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").addClass("next");
-							}
-						});
-					} else {
-						jQuery("div#' . $id . ' ul.nebula-slide-con").animate({
-							left: "0",
-						}, ' . $speed . ', "' . $easing . '", function() {
-							currentSlide = 1;
-							jQuery("div#' . $id . ' ul.nebula-slide-con li.next").removeClass("next");
-							jQuery("div#' . $id . ' ul.nebula-slide-con li.active").removeClass("active");
-							jQuery("div#' . $id . ' ul.nebula-slide-con li:first-child").addClass("active");
-							jQuery("div#' . $id . ' ul.nebula-slide-con li:nth-child(2)").addClass("next");
-						});
-					}';
-	}			
-	$sliderJS .= 'activeHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li.nebula-slide.active img").height();
-					nextHeight = jQuery("div#' . $id . ' ul.nebula-slide-con li.nebula-slide.next img").height();
-					if ( nextHeight >= activeHeight ) {
-						jQuery("div#' . $id . '").delay(' . $speed/2 . ').animate({
-							height: nextHeight,
-						}, ' . $speed/2 . ', "' . $easing . '");
-					} else {
-						jQuery("div#' . $id . '").animate({
-							height: nextHeight,
-						}, ' . $speed/2 . ', "' . $easing . '");
-					}
-				}, ' . $delay . ');
-			}
-		});
-	</script>';				
-	
-	
-	$sliderHTML = '<div class="nebulaframe"><div id="' . $id . '">
-						<ul class="nebula-slide-con clearfix">' . parse_shortcode_content(do_shortcode($content)) . '</ul>
-					</div></div>';	
-					
-					
-	return $sliderCSS . ' ' . $sliderJS . ' ' . $sliderHTML;
-	
-} //end OLD OLD OLD slider_shortcode()
 
 
 //Map parameters of nested shortcodes
@@ -2137,7 +2059,6 @@ add_filter( 'the_content', 'wpautop' , 99);
 add_filter( 'the_content', 'shortcode_unautop',100 );
 
 
-
 //Add Nebula Toolbar to TinyMCE
 add_action('init', 'add_shortcode_button');
 function add_shortcode_button(){
@@ -2155,6 +2076,5 @@ function add_shortcode_plugin($plugin_array) {
 	$plugin_array['nebulatoolbar'] = get_bloginfo('template_url') . '/js/shortcodes.js';
 	return $plugin_array;  
 }
-
 
 //Close functions.php. Do not add anything after this closing tag!! ?>
