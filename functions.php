@@ -15,8 +15,8 @@ wp_register_style('font-awesome', get_template_directory_uri() . '/css/font-awes
 wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), null);
 wp_register_style('datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), null);
 wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby'), null);
-wp_register_style('login', get_template_directory_uri() . '/css/login.css', array(), null);
-wp_register_style('admin', get_template_directory_uri() . '/css/admin.css', array(), null);
+wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
+wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
 
 //Enqueue for frontend
 add_action('wp_enqueue_scripts', 'enqueue_nebula_styles_frontend');
@@ -34,13 +34,13 @@ function enqueue_nebula_styles_frontend() {
 //Enqueue for WP Login
 add_action('login_enqueue_scripts', 'enqueue_nebula_styles_login');
 function enqueue_nebula_styles_login() {
-	wp_enqueue_style('login');
+	wp_enqueue_style('nebula-login');
 }
 
 //Enqueue for WP Admin
 add_action('admin_enqueue_scripts', 'enqueue_nebula_styles_admin');
 function enqueue_nebula_styles_admin() {
-	wp_enqueue_style('admin');
+	wp_enqueue_style('nebula-admin');
 	wp_enqueue_style('font-awesome');
 }
 
@@ -649,7 +649,6 @@ if ( $current_user_domain == 'pinckneyhugo.com' || $current_user->user_email == 
 		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';
 	}
-	
 }
 
 
