@@ -167,16 +167,7 @@ if ( ! function_exists( 'boilerplate_comment' ) ) :
 	}
 endif;
 
-if ( !function_exists( 'boilerplate_widgets_init' ) ) :
-	/**
-	 * Register widgetized areas, including two sidebars and four widget-ready columns in the footer.
-	 *
-	 * To override boilerplate_widgets_init() in a child theme, remove the action hook and add your own
-	 * function tied to the init hook.
-	 *
-	 * @since Twenty Ten 1.0
-	 * @uses register_sidebar
-	 */
+if ( !function_exists('boilerplate_widgets_init') ) :
 	function boilerplate_widgets_init() {
 		//Sidebar 1
 		register_sidebar( array(
