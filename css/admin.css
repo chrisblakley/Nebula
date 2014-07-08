@@ -2,7 +2,7 @@
 	
 	.index-php .welcome-panel-content {margin: 0;}
 		.index-php .welcome-panel .about-description {font-size: 13px;}
-			.index-php .welcome-panel h4 {margin-top: 8px;}
+			.index-php .welcome-panel h4 {/* margin-top: 8px; */}
 			.index-php .welcome-panel li {color: #444; font-size: 13px;}
 				.index-php .welcome-panel li strong {color: #000;}
 	.admin-user-info {text-transform: capitalize;}
