@@ -36,7 +36,6 @@ jQuery(document).ready(function() {
 	*/
 
 
-
 	//Init Custom Functions
 	gaEventTracking();
 	
@@ -53,6 +52,7 @@ jQuery(document).ready(function() {
 	
 	powerFooterWidthDist();
 	searchValidator();
+	searchTermHighlighter();
 	errorLogAndFallback();
 	
 	mapInfo = [];
@@ -95,7 +95,11 @@ jQuery(window).on('load', function() {
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
 	jQuery('.unhideonload').removeClass('hidden');
-		
+	
+	setTimeout(function(){
+		emphasizeSearchTerms();
+	}, 1000);
+	
 }); //End Window Load
 
 
@@ -114,7 +118,7 @@ function helperFunctions(){
 	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child');
 	jQuery('li:last-child, tr:last-child').addClass('last-child');
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
-	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
+	jQuery('a:hover, li:hover, tr:hover').addClass('hover');	
 } //end helperFunctions()
 
 
@@ -456,6 +460,46 @@ function searchValidator() {
 		}
 	});
 } //End searchValidator
+
+
+//Highlight search terms
+function searchTermHighlighter(){
+	var theSearchTerm = document.URL.split('?s=')[1];
+	if (typeof theSearchTerm != 'undefined' ) {
+		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
+		jQuery('article .entry-title a, article .entry-summary').each(function(i){
+			var searchFinder = jQuery(this).text().replace( new RegExp( '(' + preg_quote( theSearchTerm ) + ')' , 'gi' ), '<span class="searchresultword">$1</span>' );
+			jQuery(this).html(searchFinder);
+		});
+	}
+	function preg_quote( str ) {
+		return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+	}
+}
+
+
+//Emphasize the search Terms
+function emphasizeSearchTerms() {
+	var theSearchTerm = document.URL.split('?s=')[1];
+	if (typeof theSearchTerm != 'undefined' ) {
+		var origBGColor = jQuery('.searchresultword').css('background-color');
+		jQuery('.searchresultword').each(function(i) {
+	    	var stallFor = 150 * parseInt(i);
+			jQuery(this).delay(stallFor).animate({
+			    backgroundColor: 'rgba(255, 255, 0, 0.5)',
+			    borderColor: 'rgba(255, 255, 0, 1)',
+			}, 500, 'easeInOutCubic', function() {
+			    jQuery(this).delay(1000).animate({
+				    backgroundColor: origBGColor,
+				}, 1000, 'easeInOutCubic', function(){
+				    jQuery(this).addClass('transitionable');
+				});
+			});
+		});		
+	}
+}
+
+
 
 //Contact form pre-validator
 function cFormPreValidator() {

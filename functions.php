@@ -785,12 +785,14 @@ add_filter('update_footer', 'change_admin_footer_right', 11);
 date_default_timezone_set( get_option('timezone_string') );
 
 //Disable Pingbacks to prevent security issues
-add_filter( 'xmlrpc_methods', function( $methods ) {
+add_filter('xmlrpc_methods', function($methods) {
    unset( $methods['pingback.ping'] );
    return $methods;
 });
 
 //Add bloginfo variable for JavaScript
+add_action('admin_head', 'js_bloginfo');
+add_action('wp_head', 'js_bloginfo');
 function js_bloginfo() {
 	echo '<script>bloginfo = [];
 	bloginfo["name"] = "' . get_bloginfo("name") . '";
@@ -799,25 +801,23 @@ function js_bloginfo() {
 	bloginfo["home_url"] = "' . home_url() . '";
 	bloginfo["admin_email"] = "' . get_option("admin_email", $admin_user->user_email) . '";</script>';
 }
-add_action('admin_head', 'js_bloginfo');
-add_action('wp_head', 'js_bloginfo');
 
 //Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
+add_action('wp_head', 'theme_favicon');
 function theme_favicon() {
 	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_bloginfo('template_directory') . '/images/favicon.ico" />';
 }
-add_action('wp_head', 'theme_favicon');
+add_action('admin_head', 'admin_favicon');
 function admin_favicon() {
 	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_bloginfo('template_directory') . '/images/favicon.ico" />';
 }
-add_action('admin_head', 'admin_favicon');
 
 
 //Remove Wordpress version info from head and feeds
+add_filter('the_generator', 'complete_version_removal');
 function complete_version_removal() {
 	return '';
 }
-add_filter('the_generator', 'complete_version_removal');
 
 
 //Allow pages to have excerpts too
@@ -831,7 +831,8 @@ add_post_type_support( 'page', 'excerpt' );
 
 
 //Override the default Wordpress search form
-function my_search_form( $form ) {
+add_filter( 'get_search_form', 'my_search_form' );
+function my_search_form($form) {
     $form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
 	    <div>
 		    <input type="text" value="' . get_search_query() . '" name="s" id="s" />
@@ -840,10 +841,10 @@ function my_search_form( $form ) {
     </form>';
     return $form;
 }
-add_filter( 'get_search_form', 'my_search_form' );
 
 
 //Name the locations where Navigation Menus will be located (to avoid duplicate IDs)
+add_action( 'after_setup_theme', 'nav_menu_locations' );
 function nav_menu_locations() {
 	// Register nav menu locations
 	register_nav_menus( array(
@@ -855,7 +856,6 @@ function nav_menu_locations() {
 		)
 	);
 }
-add_action( 'after_setup_theme', 'nav_menu_locations' );
 
 
 //Show different meta data information about the post. Typically used inside the loop.
@@ -1121,6 +1121,7 @@ function the_breadcrumb() {
 
 
 //Prevent empty search query error (Show all results instead)
+add_action('pre_get_posts','fix_empty_search');
 function fix_empty_search($query){
     global $wp_query;
     if (isset($_GET['s']) && $_GET['s']==''){ //if search parameter is blank, do not return false
@@ -1129,20 +1130,27 @@ function fix_empty_search($query){
     }
     return $query;
 }
-add_action('pre_get_posts','fix_empty_search');
 
 
 //Redirect if only single search result
-function redirect_single_result() {
+add_action('template_redirect', 'redirect_single_post');
+function redirect_single_post() {
     if (is_search()) {
         global $wp_query;
         if ($wp_query->post_count == 1 && $wp_query->max_num_pages == 1) {
-            wp_redirect( get_permalink( $wp_query->posts['0']->ID ) );
-            exit;
+            if ( isset($_GET['s']) ){
+				//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
+				if ( $wp_query->posts['0']->ID != 1 && get_permalink( $wp_query->posts['0']->ID ) != home_url() . '/' ) {
+					wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?s=' . $_GET['s'] );
+					exit;
+				}
+            } else {
+                wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?s' );
+                exit;
+            }
         }
     }
 }
-add_action('template_redirect', 'redirect_single_result');
 
 
 //Remove extraneous <head> from Wordpress

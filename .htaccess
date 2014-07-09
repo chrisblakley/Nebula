@@ -1,5 +1,9 @@
 # @TODO: Move to root directory if possible.
 
+<IfModule mod_headers.c>
+	Header set Connection keep-alive
+</IfModule>
+
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 	RewriteEngine On
