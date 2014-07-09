@@ -17,21 +17,6 @@ jQuery(document).ready(function() {
 	            queries[hash[0]] = hash[1];
 	        }
 		} //End pull query strings from URL
-
-	
-		//Search term highlighter
-		var theSearchTerm = document.URL.split('?s=')[1];
-		if (typeof theSearchTerm != 'undefined' ) {
-			theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
-			//console.log('the search is: ' + theSearchTerm);
-			jQuery('.searchcon .entry-title a, .searchcon .entry-summary').each(function(i){
-				var searchFinder = jQuery(this).text().replace( new RegExp( '(' + preg_quote( theSearchTerm ) + ')' , 'gi' ), '<span class="searchresultword">$1</span>' );
-				jQuery(this).html(searchFinder);
-			});
-		}
-		function preg_quote( str ) {
-			return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
-		} //End Search term highlighter
 	
 	*/
 
@@ -465,15 +450,15 @@ function searchValidator() {
 //Highlight search terms
 function searchTermHighlighter(){
 	var theSearchTerm = document.URL.split('?s=')[1];
-	if (typeof theSearchTerm != 'undefined' ) {
+	if ( typeof theSearchTerm != 'undefined' ) {
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
 		jQuery('article .entry-title a, article .entry-summary').each(function(i){
-			var searchFinder = jQuery(this).text().replace( new RegExp( '(' + preg_quote( theSearchTerm ) + ')' , 'gi' ), '<span class="searchresultword">$1</span>' );
+			var searchFinder = jQuery(this).text().replace(new RegExp( '(' + preg_quote( theSearchTerm ) + ')' , 'gi' ), '<span class="searchresultword">$1</span>');
 			jQuery(this).html(searchFinder);
 		});
 	}
-	function preg_quote( str ) {
-		return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+	function preg_quote(str) {
+		return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
 	}
 }
 

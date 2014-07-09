@@ -102,8 +102,9 @@
 			
 			<?php if ( is_archive() || is_search() ) : ?>
 				<div class="entry-summary">
-					<?php echo nebula_the_excerpt('Read More &raquo;', 50, 1); ?>
+					<?php echo nebula_the_excerpt('', 50, 1); ?>
 				</div>
+				<a href="<?php the_permalink(); ?>">Read more &raquo;</a>
 			<?php else : ?>
 				<div class="entry-content">
 					<?php echo nebula_the_excerpt('Read More &raquo;', 70, 1); ?>
