@@ -5,6 +5,8 @@
 
 get_header(); ?>
 
+<?php single_result_search_bar(); ?>
+
 <div class="row">
 	<div class="sixteen columns">
 		<? the_breadcrumb(); ?>

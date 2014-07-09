@@ -5,24 +5,14 @@
 
 get_header(); ?>
 
-<div class="container searchresultsingle">
-	<div class="row">
-		<div class="sixteen columns">
-			<?php if ( array_key_exists('rs', $_GET) || array_key_exists('s', $_GET) ) : ?>
-				Your search returned only one result. You have been automatically redirected.
-				<?php get_search_form(); echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>' . PHP_EOL; ?>
-				<a href="<?php the_permalink(); ?>">Close</a>
-			<?php endif; ?>
-		</div><!--/columns-->
-	</div><!--/row-->
-</div><!--/container-->
-
 <div class="row">
 	<div class="sixteen columns">
 		<? the_breadcrumb(); ?>
 		<hr/>
 	</div><!--/columns-->
 </div><!--/row-->
+
+<?php single_result_search_bar(); ?>
 
 <div class="row">
 	

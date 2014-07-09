@@ -1153,6 +1153,24 @@ function redirect_single_post() {
 }
 
 
+//Show search form on pages that were redirected due to a single search result
+//@TODO: Make this more elegant than it is! Might even re-imagine how this will look.
+function single_result_search_bar() {
+	if ( array_key_exists('s', $_GET) ) {
+		echo '<div class="container searchresultsingle">';
+			echo '<div class="row">';
+				echo '<div class="sixteen columns">';
+					echo 'Your search returned only one result. You have been automatically redirected.';
+						echo get_search_form();
+						echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>' . PHP_EOL;
+					echo '<a href="' . get_the_permalink() . '">Close</a>';
+				echo '</div><!--/columns-->';
+			echo '</div><!--/row-->';
+		echo '</div><!--/container-->';		
+	}
+}
+
+
 //Remove extraneous <head> from Wordpress
 remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wp_generator');

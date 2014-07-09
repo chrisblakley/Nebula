@@ -11,6 +11,9 @@ get_header(); ?>
 		<hr/>
 	</div><!--/columns-->
 </div><!--/row-->
+
+<?php single_result_search_bar(); ?>
+
 <div class="row">
 	
 	<div class="ten columns">
