@@ -67,62 +67,7 @@ endif;
 add_action( 'after_setup_theme', 'boilerplate_setup' );
 
 
-if ( ! function_exists( 'boilerplate_filter_wp_title' ) ) :
-	/**
-	 * Makes some changes to the <title> tag, by filtering the output of wp_title().
-	 *
-	 * If we have a site description and we're viewing the home page or a blog posts
-	 * page (when using a static front page), then we will add the site description.
-	 *
-	 * If we're viewing a search result, then we're going to recreate the title entirely.
-	 * We're going to add page numbers to all titles as well, to the middle of a search
-	 * result title and the end of all other titles.
-	 *
-	 * The site title also gets added to all titles.
-	 *
-	 */
-	function boilerplate_filter_wp_title( $title, $separator ) {
-		// Don't affect wp_title() calls in feeds.
-		if ( is_feed() )
-			return $title;
-
-		// The $paged global variable contains the page number of a listing of posts.
-		// The $page global variable contains the page number of a single post that is paged.
-		// We'll display whichever one applies, if we're not looking at the first page.
-		global $paged, $page;
-
-		if ( is_search() ) {
-			// If we're a search, let's start over:
-			$title = sprintf( __( 'Search results for %s', 'boilerplate' ), '"' . get_search_query() . '"' );
-			// Add a page number if we're on page 2 or more:
-			if ( $paged >= 2 )
-				$title .= " $separator " . sprintf( __( 'Page %s', 'boilerplate' ), $paged );
-			// Add the site name to the end:
-			$title .= " $separator " . get_bloginfo( 'name', 'display' );
-			// We're done. Let's send the new title back to wp_title():
-			return $title;
-		}
-
-		// Otherwise, let's start by adding the site name to the end:
-		$title .= get_bloginfo( 'name', 'display' );
-
-		// If we have a site description and we're on the home/front page, add the description:
-		$site_description = get_bloginfo( 'description', 'display' );
-		if ( $site_description && ( is_home() || is_front_page() ) )
-			$title .= " $separator " . $site_description;
-
-		// Add a page number if necessary:
-		if ( $paged >= 2 || $page >= 2 )
-			$title .= " $separator " . sprintf( __( 'Page %s', 'boilerplate' ), max( $paged, $page ) );
-
-		// Return the new title to wp_title():
-		return $title;
-	}
-endif;
-add_filter( 'wp_title', 'boilerplate_filter_wp_title', 10, 2 );
-
-
-if ( ! function_exists( 'boilerplate_comment' ) ) :
+if ( !function_exists( 'boilerplate_comment' ) ) :
 	/**
 	 * Template for comments and pingbacks.
 	 *
@@ -345,7 +290,7 @@ function my_theme_register_required_plugins() {
             'required'  => false,
         ),
         array(
-            'name'      => 'Search Everything', //Only included until we find the best way to pull this functionality into functions.php
+            'name'      => 'Search Everything',
             'slug'      => 'search-everything',
             'required'  => false,
         ),
@@ -824,10 +769,44 @@ function complete_version_removal() {
 add_post_type_support( 'page', 'excerpt' );
 
 
-// Add new image sizes
-//if (function_exists('add_image_size')) {
- 	add_image_size( 'example', 32, 32, 1 );
-//}
+//Add new image sizes
+add_image_size( 'example', 32, 32, 1 );
+
+
+//Dynamic Page Titles
+add_filter('wp_title', 'filter_wp_title', 10, 2);
+function filter_wp_title($title, $separator) {
+	if ( is_feed() ) {
+		return $title;
+	}
+	
+	global $paged, $page;
+
+	if ( is_search() ) {
+		//$title = 'Search results for ' . get_search_query(); //Show search query in title
+		$title = 'Search results';
+
+		if ( $paged >= 2 ) {
+			$title .= $separator . ' Page ' . $paged;
+		}
+
+		$title .= $separator . ' ' . get_bloginfo('name', 'display');
+		return $title;
+	}
+
+	$title .= get_bloginfo('name', 'display');
+
+	$site_description = get_bloginfo('description', 'display');
+	if ( $site_description && (is_home() || is_front_page()) ) {
+		$title .= $separator . ' ' . $site_description;
+	}
+
+	if ( $paged >= 2 || $page >= 2 ) {
+		$title .= $separator . ' Page ' . max($paged, $page);
+	}
+
+	return $title;
+}
 
 
 //Override the default Wordpress search form
@@ -1141,7 +1120,7 @@ function redirect_single_post() {
             if ( isset($_GET['s']) ){
 				//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
 				if ( $wp_query->posts['0']->ID != 1 && get_permalink( $wp_query->posts['0']->ID ) != home_url() . '/' ) {
-					$_GET['s'] = str_replace(' ', '%20', $_GET['s']);
+					$_GET['s'] = str_replace(' ', '+', $_GET['s']); //Which is better: '%20' or '+'? They both work, so I think I like "+"					
 					wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?s=' . $_GET['s'] );
 					exit;
 				}
@@ -1152,26 +1131,6 @@ function redirect_single_post() {
         }
     }
 }
-
-
-//Show search form on pages that were redirected due to a single search result
-//@TODO: Make this more elegant than it is! Might even re-imagine how this will look.
-/*
-function single_result_search_bar() {
-	if ( array_key_exists('s', $_GET) ) {
-		echo '<div class="container searchresultsingle">';
-			echo '<div class="row">';
-				echo '<div class="sixteen columns">';
-					echo 'Your search returned only one result. You have been automatically redirected.';
-						echo get_search_form();
-						echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>' . PHP_EOL;
-					echo '<a href="' . get_the_permalink() . '">Close</a>';
-				echo '</div><!--/columns-->';
-			echo '</div><!--/row-->';
-		echo '</div><!--/container-->';		
-	}
-}
-*/
 
 
 //Remove extraneous <head> from Wordpress

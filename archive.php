@@ -11,12 +11,12 @@ get_header(); ?>
 		<?php if ( have_posts() ) { the_post(); } //Queue the first post, then reset before running the loop. ?>
 		<h1 class="page-title">
 			<?php if ( is_day() ) : ?>
-				<?php header('Location: ' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/') ; //This does not work on all servers (because it's called after headers are already sent). ?>
-				Archive for <?php get_the_date(); ?>
+				<?php //header('Location: ' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/') ; //This does not work on all servers (because it's called after headers are already sent). Uncomment to test if will work on your server. ?>
+				Archive for <?php echo get_the_date(); ?>
 			<?php elseif ( is_month() ) : ?>
-				Archive for <?php get_the_date('F Y') ); ?>
+				Archive for <?php echo get_the_date('F Y'); ?>
 			<?php elseif ( is_year() ) : ?>
-				Archive for <?php get_the_date('Y'); ?>
+				Archive for <?php echo get_the_date('Y'); ?>
 			<?php else : ?>
 				Archives
 			<?php endif; ?>

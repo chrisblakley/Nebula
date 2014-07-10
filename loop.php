@@ -13,7 +13,7 @@
 <?php endif; ?>
 
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
-<?php if ( ! have_posts() ) : ?>
+<?php if ( !have_posts() ) : ?>
 	<article id="post-0" class="post error404 not-found">
 		<h1 class="entry-title">Not Found</h1>
 		<div class="entry-content">
@@ -108,7 +108,7 @@
 			<?php else : ?>
 				<div class="entry-content">
 					<?php echo nebula_the_excerpt('Read More &raquo;', 70, 1); ?>
-					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>' ) ); //@TODO: Pagenavi ?>
+					<?php wp_link_pages( array('before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>') ); //@TODO: Pagenavi ?>
 				</div>
 			<?php endif; ?>
 

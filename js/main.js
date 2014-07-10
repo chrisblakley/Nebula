@@ -414,7 +414,17 @@ function powerFooterWidthDist() {
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.menu-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" placeholder="Search" /></form>');
+	jQuery('li.menu-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" name="s" placeholder="Search" /></form>');
+	jQuery('li.menu-search input').on('focus', function(){
+		jQuery(this).addClass('focus active');
+	});
+	jQuery('li.menu-search input').on('blur', function(){
+		if ( jQuery(this).val() == '' ) {
+			jQuery(this).removeClass('focus active');
+		} else {
+			jQuery(this).removeClass('active');
+		}
+	});
 }
 
 

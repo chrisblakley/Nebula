@@ -209,7 +209,7 @@ Also be sure to find the other @TODO: items within the stylesheet.
 	#mobilenav.mm-menu {visibility: visible; height: 100%;}
 
 /* Nebula Wordpress top navigation style defaults */
-nav#topnav {position: relative; z-index: 1000;}
+nav#topnav {position: relative; z-index: 1000; margin-top: 5px;}
 	nav#topnav ul {float: right;}
 		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
 			nav#topnav ul li.menu-item:last-child,
@@ -221,11 +221,12 @@ nav#topnav {position: relative; z-index: 1000;}
 
 
 /* @TODO: In progress! Combine a bunch of these selectors and clean up the properties! */
-li.menu-search input {outline: none; -webkit-appearance: textfield; -webkit-box-sizing: content-box; font-size: 12px; background: #ededed url('http://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png') no-repeat 9px center; border: solid 1px #ccc; padding: 9px 10px 9px 32px; border-radius: 10em; width: 15px; padding-left: 10px; color: transparent; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+li.menu-search input {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	li.menu-search input:hover,
 	li.menu-search input.hover {background-color: #fff;}
 	li.menu-search input:focus,
-	li.menu-search input.focus {width: 130px; background-color: #fff; border-color: #66CC75; box-shadow: 0 0 5px rgba(109,207,246,.5); padding-left: 32px; color: #000; cursor: auto;}
+	li.menu-search input.focus {max-width: 130px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
+	li.menu-search input.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
 
 	li.menu-search input::-webkit-search-decoration,
 	li.menu-search input::-webkit-search-cancel-button {display: none;}

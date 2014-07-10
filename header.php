@@ -7,7 +7,7 @@
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
-
+		
 		<title><?php wp_title( '-', true, 'right' ); ?></title>
 		
 		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
