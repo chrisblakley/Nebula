@@ -36,8 +36,10 @@ jQuery(document).ready(function() {
 	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
 	
 	powerFooterWidthDist();
+	menuSearchReplacement();
 	searchValidator();
 	searchTermHighlighter();
+	singleResultDrawer();
 	errorLogAndFallback();
 	
 	mapInfo = [];
@@ -409,6 +411,13 @@ function powerFooterWidthDist() {
 	}
 } //end PowerFooterWidthDist
 
+
+//Menu Search Replacement
+function menuSearchReplacement(){
+	jQuery('li.menu-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" placeholder="Search" /></form>');
+}
+
+
 //Search Validator
 function searchValidator() {
 	jQuery('.lt-ie9 form.search .btn.submit').val('Search');
@@ -484,6 +493,15 @@ function emphasizeSearchTerms() {
 	}
 }
 
+//Single search result redirection drawer
+function singleResultDrawer(){
+	jQuery('.searchresultsingle .close').on('click', function(){
+		var permalink = jQuery(this).attr('href');
+		jQuery('.searchresultsinglecon').slideUp();
+		history.replaceState({}, document.title, permalink);
+		return false;
+	});
+}
 
 
 //Contact form pre-validator

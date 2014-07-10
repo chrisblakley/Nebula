@@ -28,8 +28,6 @@ get_header(); ?>
 	<hr/>
 </div><!--/container-->
 
-<?php single_result_search_bar(); ?>
-
 <div class="container">
 	<div class="row">
 		<div class="eleven columns">

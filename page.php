@@ -12,8 +12,6 @@ get_header(); ?>
 	</div><!--/columns-->
 </div><!--/row-->
 
-<?php single_result_search_bar(); ?>
-
 <div class="row">
 	
 	<div class="ten columns">

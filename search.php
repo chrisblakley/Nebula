@@ -24,6 +24,13 @@ get_header(); ?>
 			</script>
 		<?php endif; ?>
 		<?php if ( have_posts() ) : ?>
+			<p>Your search criteria returned
+			<?php
+				$search_results = &new WP_Query("s=$s&showposts=-1");
+				echo $search_results->post_count . ' results.';
+				wp_reset_query();
+			?>
+			</p>
 			<?php get_template_part('loop', 'search'); ?>
 		<?php else : ?>
 			<p>Your search criteria returned 0 results.</p>

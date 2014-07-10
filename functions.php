@@ -1156,6 +1156,7 @@ function redirect_single_post() {
 
 //Show search form on pages that were redirected due to a single search result
 //@TODO: Make this more elegant than it is! Might even re-imagine how this will look.
+/*
 function single_result_search_bar() {
 	if ( array_key_exists('s', $_GET) ) {
 		echo '<div class="container searchresultsingle">';
@@ -1170,6 +1171,7 @@ function single_result_search_bar() {
 		echo '</div><!--/container-->';		
 	}
 }
+*/
 
 
 //Remove extraneous <head> from Wordpress

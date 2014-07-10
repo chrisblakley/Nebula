@@ -261,3 +261,17 @@
 				</div><!--/columns-->
 			</div><!--/row-->
 		</div><!--/container-->
+		
+		<?php if ( !is_search() && array_key_exists('s', $_GET) ) : ?>
+			<div class="container searchresultsinglecon">
+				<hr/>
+				<div class="row">
+					<div class="sixteen columns searchresultsingle">
+						<span>Your search returned only one result. You have been automatically redirected.</span>
+						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="icon-cancel"></i></a>
+						<?php echo get_search_form(); echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>' . PHP_EOL; ?>
+					</div><!--/columns-->
+				</div><!--/row-->
+				<hr/>
+			</div><!--/container-->
+		<?php endif; ?>

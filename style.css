@@ -137,7 +137,9 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 	.searchresultword.transitionable {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;} /* @TODO: Not working */
 
-.searchresultsingle {background: #0098d7; margin: 20px 0; color: #fff;}
+.searchresultsinglecon {background: rgba(0,0,0,0.0225);}
+	.searchresultsinglecon hr {margin: 0;}
+	.searchresultsingle {padding-top: 10px; text-align: center; font-size: 12px;}
 
 /* Google Maps */
 .googlemapcon {width: 100%; height: 250px;}
@@ -197,7 +199,7 @@ Also be sure to find the other @TODO: items within the stylesheet.
 .mobilenavcon {display: none;}
 	.directions div {line-height: 12px; padding-left: 35px;}
 
-#topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; transition: all 0.5s ease 0s; overflow: hidden;}
+#topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s; overflow: hidden;}
 	#topbarcon a {font-size: 24px; line-height: 28px; color: #fff; text-decoration: underline;}
 		#topbarcon a:hover,
 		#topbarcon a.hover {color: grey;}
@@ -216,6 +218,23 @@ nav#topnav {position: relative; z-index: 1000;}
 				nav#topnav ul li.menu-item a:hover,
 				nav#topnav ul li.menu-item a.hover {color: #95D600;}
 			nav#topnav ul li.menu-item ul.sub-menu {display: none;}
+
+
+/* @TODO: In progress! Combine a bunch of these selectors and clean up the properties! */
+li.menu-search input {outline: none; -webkit-appearance: textfield; -webkit-box-sizing: content-box; font-size: 12px; background: #ededed url('http://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png') no-repeat 9px center; border: solid 1px #ccc; padding: 9px 10px 9px 32px; border-radius: 10em; width: 15px; padding-left: 10px; color: transparent; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	li.menu-search input:hover,
+	li.menu-search input.hover {background-color: #fff;}
+	li.menu-search input:focus,
+	li.menu-search input.focus {width: 130px; background-color: #fff; border-color: #66CC75; box-shadow: 0 0 5px rgba(109,207,246,.5); padding-left: 32px; color: #000; cursor: auto;}
+
+	li.menu-search input::-webkit-search-decoration,
+	li.menu-search input::-webkit-search-cancel-button {display: none;}
+	li.menu-search input:-moz-placeholder {color: #999;}
+	li.menu-search input::-webkit-input-placeholder {color: #999;}
+	li.menu-search input:-moz-placeholder {color: transparent;}
+	li.menu-search input::-webkit-input-placeholder {color: transparent;}
+
+
 
 /* Nebula Wordpress main navigation style defaults */
 #logonavcon {padding-top: 20px;}
