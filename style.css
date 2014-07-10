@@ -222,6 +222,7 @@ nav#topnav {position: relative; z-index: 1000; margin-top: 5px;}
 
 /* @TODO: In progress! Combine a bunch of these selectors and clean up the properties! */
 li.menu-search input {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	.svg li.menu-search input {background: #eee url('images/search.svg') no-repeat 6px center;}
 	li.menu-search input:hover,
 	li.menu-search input.hover {background-color: #fff;}
 	li.menu-search input:focus,
