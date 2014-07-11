@@ -200,9 +200,9 @@ Also be sure to find the other @TODO: items within the stylesheet.
 	.directions div {line-height: 12px; padding-left: 35px;}
 
 #topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s; overflow: hidden;}
-	#topbarcon a {font-size: 24px; line-height: 28px; color: #fff; text-decoration: underline;}
+	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
 		#topbarcon a:hover,
-		#topbarcon a.hover {color: grey;}
+		#topbarcon a.hover {color: #ccc;}
 	#topbarcon .rightside {text-align: right;}
 
 #mobilenav {visibility: hidden; height: 0;}
@@ -219,23 +219,21 @@ nav#topnav {position: relative; z-index: 1000; margin-top: 5px;}
 				nav#topnav ul li.menu-item a.hover {color: #95D600;}
 			nav#topnav ul li.menu-item ul.sub-menu {display: none;}
 
-
-/* @TODO: In progress! Combine a bunch of these selectors and clean up the properties! */
 li.menu-search input {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	.svg li.menu-search input {background: #eee url('images/search.svg') no-repeat 6px center;}
-	li.menu-search input:hover,
-	li.menu-search input.hover {background-color: #fff;}
-	li.menu-search input:focus,
-	li.menu-search input.focus {max-width: 130px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.menu-search input.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
-
 	li.menu-search input::-webkit-search-decoration,
 	li.menu-search input::-webkit-search-cancel-button {display: none;}
 	li.menu-search input:-moz-placeholder {color: #999;}
 	li.menu-search input::-webkit-input-placeholder {color: #999;}
 	li.menu-search input:-moz-placeholder {color: transparent;}
 	li.menu-search input::-webkit-input-placeholder {color: transparent;}
-
+	li.menu-search input:hover,
+	li.menu-search input.hover {background-color: #fff;}
+	li.menu-search input:focus,
+	li.menu-search input.focus {max-width: 130px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
+	li.menu-search input.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
+	li.menu-search input.focus:-moz-placeholder {color: #444;}
+	li.menu-search input.focus::-webkit-input-placeholder {color: #444;}
 
 
 /* Nebula Wordpress main navigation style defaults */
@@ -284,7 +282,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 
 /* Sample Hero and on-load animation */
 #heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 100px; line-height: 400px; font-weight: 300; text-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5); letter-spacing: 30px; margin-right: -30px; text-transform: uppercase; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
+	#heroslidercon h3 {text-align: center; color: #fff; font-size: 100px; line-height: 340px; font-weight: 300; text-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5); letter-spacing: 30px; margin-right: -30px; text-transform: uppercase; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 
 
 /* ==========================================================================
@@ -387,6 +385,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 
 /***** MOBILE MENUS *****/
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
+.mm-list a {border: none;}
 .mm-list a.mm-subopen {width: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
 .mm-list a.mm-subopen + a, .mm-list a.mm-subopen + span {margin-right: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
 .mm-list a.mm-subopen:hover {background: rgba(0, 0, 0, 0.1);}
@@ -437,12 +436,13 @@ div.copyright p {font-size: 12px;}
 	.row {outline: 1px solid plum;}
 */
 
-	#topbarcon {min-height: 30px;}
+	#topbarcon {min-height: 42px;}
 		.mobilenavcon {display: block;}
 
 	.topnavcon {display: none;}
 
 	.logocon {display: block; text-align: center;}
+		.logocon img {width: 420px;}
 
 	/* Nebula Wordpress main navigation responsive style defaults */
 	nav#primarynav {display: none;}
@@ -465,7 +465,7 @@ div.copyright p {font-size: 12px;}
 	.fixedbar {display: none;}
 
 	#heroslidercon {height: 100px; overflow: hidden; background-size: cover;}
-		#heroslidercon h3 {font-size: 36px; line-height: 100px;}
+		#heroslidercon h3 {font-size: 36px; line-height: 80px;}
 
 	.xoxo .search {display: none;}
 

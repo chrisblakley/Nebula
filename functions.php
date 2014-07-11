@@ -14,7 +14,7 @@ wp_register_style('gumby', get_template_directory_uri() . '/css/gumby.css', arra
 wp_register_style('font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
 wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), null);
 wp_register_style('datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), null);
-wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby'), null);
+wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby', 'mmenu', 'normalize'), null);
 wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
 wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
 
@@ -46,149 +46,45 @@ function enqueue_nebula_styles_admin() {
 
 
 /*	Begin Boilerplate remnants */
-
-if ( ! function_exists( 'boilerplate_setup' ) ):
-	/**
-	 * Sets up theme defaults and registers support for various WordPress features.
-	 */
-	function boilerplate_setup() {
-
-		//Enable editor-style.css for the WYSIWYG editor.
-		add_editor_style();
-
-		// Uncomment if you choose to use post thumbnails; add the_post_thumbnail() wherever thumbnail should appear
-		//add_theme_support('post-thumbnails');
-
-		// Add default posts and comments RSS feed links to head
-		add_theme_support('automatic-feed-links');
-
-	}
-endif;
-add_action( 'after_setup_theme', 'boilerplate_setup' );
-
-
-if ( !function_exists( 'boilerplate_comment' ) ) :
-	/**
-	 * Template for comments and pingbacks.
-	 *
-	 * Used as a callback by wp_list_comments() for displaying the comments.
-	 */
-	function boilerplate_comment( $comment, $args, $depth ) {
-		$GLOBALS['comment'] = $comment;
-		switch ( $comment->comment_type ) :
-			case '' :
-		?>
-		<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>">
-			<article id="comment-<?php comment_ID(); ?>">
-				<div class="comment-author vcard">
-					<?php echo get_avatar( $comment, 40 ); ?>
-					<?php printf( __( '%s <span class="says">says:</span>', 'boilerplate' ), sprintf( '<cite class="fn">%s</cite>', get_comment_author_link() ) ); ?>
-				</div><!-- .comment-author .vcard -->
-				<?php if ( $comment->comment_approved == '0' ) : ?>
-					<em><?php _e( 'Your comment is awaiting moderation.', 'boilerplate' ); ?></em>
-					<br />
-				<?php endif; ?>
-				<footer class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>">
-					<?php
-						/* translators: 1: date, 2: time */
-						printf( __( '%1$s at %2$s', 'boilerplate' ), get_comment_date(),  get_comment_time() ); ?></a><?php edit_comment_link( __( '(Edit)', 'boilerplate' ), ' ' );
-					?>
-				</footer><!-- .comment-meta .commentmetadata -->
-				<div class="comment-body"><?php comment_text(); ?></div>
-				<div class="reply">
-					<?php comment_reply_link( array_merge( $args, array( 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
-				</div><!-- .reply -->
-			</article><!-- #comment-##  -->
-		<?php
-				break;
-			case 'pingback'  :
-			case 'trackback' :
-		?>
-		<li class="post pingback">
-			<p><?php _e( 'Pingback:', 'boilerplate' ); ?> <?php comment_author_link(); ?><?php edit_comment_link( __('(Edit)', 'boilerplate'), ' ' ); ?></p>
-		<?php
-				break;
-		endswitch;
-	}
-endif;
-
-if ( !function_exists('boilerplate_widgets_init') ) :
-	function boilerplate_widgets_init() {
-		//Sidebar 1
-		register_sidebar( array(
-			'name' => 'Primary Widget Area',
-			'id' => 'primary-widget-area',
-			'description' => 'The primary widget area', 'boilerplate',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		) );
-
-		//Sidebar 2
-		register_sidebar( array(
-			'name' => 'Secondary Widget Area',
-			'id' => 'secondary-widget-area',
-			'description' => 'The secondary widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		) );
-
-		//Footer 1
-		register_sidebar( array(
-			'name' => 'First Footer Widget Area',
-			'id' => 'first-footer-widget-area',
-			'description' => 'The first footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		) );
-
-		//Footer 2
-		register_sidebar( array(
-			'name' => 'Second Footer Widget Area',
-			'id' => 'second-footer-widget-area',
-			'description' => 'The second footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		) );
-
-		//Footer 3
-		register_sidebar( array(
-			'name' => 'Third Footer Widget Area',
-			'id' => 'third-footer-widget-area',
-			'description' => 'The third footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		) );
-
-		//Footer 4
-		register_sidebar( array(
-			'name' => 'Fourth Footer Widget Area',
-			'id' => 'fourth-footer-widget-area',
-			'description' => 'The fourth footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		) );
-	}
-endif;
-add_action( 'widgets_init', 'boilerplate_widgets_init' );
-
-
-//Add thumbnail support
-if ( function_exists( 'add_theme_support' ) ) :
-	add_theme_support( 'post-thumbnails' );
-endif;
-
+//Template for comments and pingbacks.
+//Used as a callback by wp_list_comments() for displaying the comments.
+function boilerplate_comment($comment, $args, $depth) {
+	$GLOBALS['comment'] = $comment;
+	switch ( $comment->comment_type ) :
+		case '' :
+	?>
+	<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>">
+		<article id="comment-<?php comment_ID(); ?>">
+			<div class="comment-author vcard">
+				<?php echo get_avatar($comment, 40); ?>
+				<?php printf( '%s <span class="says">says:</span>', sprintf( '<cite class="fn">%s</cite>', get_comment_author_link() ) ); ?>
+			</div><!-- .comment-author .vcard -->
+			<?php if ( $comment->comment_approved == '0' ) : ?>
+				<em>Your comment is awaiting moderation.</em>
+				<br />
+			<?php endif; ?>
+			<footer class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>">
+				<?php
+					/* translators: 1: date, 2: time */
+					printf( '%1$s at %2$s', get_comment_date(),  get_comment_time() ); ?></a><?php edit_comment_link('(Edit)', ' ');
+				?>
+			</footer><!-- .comment-meta .commentmetadata -->
+			<div class="comment-body"><?php comment_text(); ?></div>
+			<div class="reply">
+				<?php comment_reply_link( array_merge( $args, array( 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
+			</div><!-- .reply -->
+		</article><!-- #comment-##  -->
+	<?php
+			break;
+		case 'pingback'  :
+		case 'trackback' :
+	?>
+	<li class="post pingback">
+		<p>Pingback: <?php comment_author_link(); ?><?php edit_comment_link('(Edit)', ' '); ?></p>
+	<?php
+			break;
+	endswitch;
+}
 /*	End Boilerplate remnants */
 
 
@@ -434,10 +330,11 @@ function nebulaActivateComplete(){
  ===========================*/
 
 //Add custom admin.css stylesheet to WP Admin
+add_action('admin_head', 'custom_admin_scripts');
 function custom_admin_scripts() {
     echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/admin.js" defer></script>';
 }
-add_action('admin_head', 'custom_admin_scripts');
+
 
 //Disable auto curly quotes
 remove_filter('the_content', 'wptexturize');
@@ -445,48 +342,48 @@ remove_filter('the_excerpt', 'wptexturize');
 remove_filter('comment_text', 'wptexturize');
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
+add_action('init','admin_only_features');
 function admin_only_features() {
 	$user = get_current_user_id();
 	if (!current_user_can('manage_options') || $user == 99999 || true ) { //true=Not Admin (Hide update notification and admin bar), false=Admin (Show update notification and admin bar)
 		
-		//For the admin page
-		remove_action('admin_footer', 'wp_admin_bar_render', 1000);
-		//For the front-end
-		remove_action('wp_footer', 'wp_admin_bar_render', 1000);
+		remove_action('admin_footer', 'wp_admin_bar_render', 1000); //For the admin page
+		remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
+		
 		//CSS override for the admin page
+		add_filter('admin_head','remove_admin_bar_style_backend');
 		function remove_admin_bar_style_backend() { 
 			echo '<style>body.admin-bar #wpcontent, body.admin-bar #adminmenu { padding-top: 0px !important; }</style>';
 		}	  
-		add_filter('admin_head','remove_admin_bar_style_backend');
+		
 		//CSS override for the frontend
+		add_filter('wp_head','remove_admin_bar_style_frontend', 99);
 		function remove_admin_bar_style_frontend() {
 			echo '<style type="text/css" media="screen">
 			html { margin-top: 0px !important; }
 			* html body { margin-top: 0px !important; }
 			</style>';
 		}
-		add_filter('wp_head','remove_admin_bar_style_frontend', 99);
 		
 		//Disable Wordpress update notification in WP Admin
 		add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
 		
 	}
 }
-add_action('init','admin_only_features');
 
 
 //Show update warning on Wordpress Core/Plugin update admin pages
 $filename = basename($_SERVER['REQUEST_URI']);
 if ( $filename == 'plugins.php' ) {
+	add_action('admin_notices','plugin_warning');
 	function plugin_warning(){
 		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
 	}
-	add_action('admin_notices','plugin_warning');
 } elseif ( $filename == 'update-core.php') {
+	add_action('admin_notices','plugin_warning');
 	function plugin_warning(){
 		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
 	}
-	add_action('admin_notices','plugin_warning');
 }
 
 //Control session time (for the "Remember Me" checkbox)
@@ -499,6 +396,7 @@ function nebula_session_expire($expirein) {
 remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 
 //Custom login screen
+add_action('login_head', 'custom_login_css');
 function custom_login_css() {
 	//Only use BG image and animation on direct requests (disable for iframe logins after session timeouts).
 	if(empty($_POST['signed_request'])) {
@@ -512,29 +410,32 @@ function custom_login_css() {
 	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-00000000-1', 'domainnamegoeshere.com');</script>";
 	}
 }
-add_action('login_head', 'custom_login_css');
+
 
 //Change link of logo to live site
+add_filter('login_headerurl', 'custom_login_header_url');
 function custom_login_header_url() {
     return home_url();
 }
-add_filter( 'login_headerurl', 'custom_login_header_url' );
+
 
 //Change alt of image
+add_filter('login_headertitle', 'new_wp_login_title');
 function new_wp_login_title() {
     return get_option('blogname');
 }
-add_filter('login_headertitle', 'new_wp_login_title');
+
 
 //Welcome Panel
+remove_action('welcome_panel','wp_welcome_panel');
+add_action('welcome_panel','nebula_welcome_panel');
 function nebula_welcome_panel() {
 	include('includes/welcome.php');
 }
-remove_action('welcome_panel','wp_welcome_panel');
-add_action('welcome_panel','nebula_welcome_panel');
 
 
 //Remove unnecessary Dashboard metaboxes
+add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
 function remove_dashboard_metaboxes() {
     //Globalize the metaboxes array, this holds all the widgets for wp-admin
     global $wp_meta_boxes;
@@ -544,71 +445,72 @@ function remove_dashboard_metaboxes() {
     unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
     unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_recent_comments']);
 }
-add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes' );
 
 
 //Custom PHG Metabox
 //If user's email address ends in @pinckneyhugo.com (or my email address for test server dev) and is an administrator
 $current_user = wp_get_current_user();
 list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
-if ( $current_user_domain == 'pinckneyhugo.com' || $current_user->user_email == 'greatblakes@gmail.com' && current_user_can('manage_options') ) {
+if ( $current_user_domain == 'pinckneyhugo.com' && current_user_can('manage_options') ) {
 	add_action('wp_dashboard_setup', 'phg_dev_metabox');
-	function phg_dev_metabox() {
-		global $wp_meta_boxes;
-		wp_add_dashboard_widget('custom_help_widget', 'PHG Developer Info', 'custom_dashboard_help');
-	}
-	function custom_dashboard_help() {
-		//Get last modified filename and date
-		$dir = glob_r( get_template_directory() . '/*.*');
-		$last_date = 0;
-		foreach($dir as $file) {
-			if( is_file($file) ) {
-				$mod_date = filemtime($file);
-				if ( $mod_date > $last_date ) {
-					$last_date = $mod_date;
-					$last_filename = basename($file);
-				}
+}
+function phg_dev_metabox() {
+	global $wp_meta_boxes;
+	wp_add_dashboard_widget('custom_help_widget', 'PHG Developer Info', 'custom_dashboard_help');
+}
+function custom_dashboard_help() {
+	//Get last modified filename and date
+	$dir = glob_r( get_template_directory() . '/*');
+	$last_date = 0;
+	foreach($dir as $file) {
+		if( is_file($file) ) {
+			$mod_date = filemtime($file);
+			if ( $mod_date > $last_date ) {
+				$last_date = $mod_date;
+				$last_filename = basename($file);
 			}
 		}
-		$nebula_size = foldersize(get_template_directory());
-		$upload_dir = wp_upload_dir();
-		$uploads_size = foldersize($upload_dir['basedir']);
-		
-		echo '<ul>';
-		echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
-		echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong></li>';
-		echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
-		echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
-		echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
-		echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
-		echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Best estimate)</small></li>';
-		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
-		echo '</ul>';
 	}
+	$nebula_size = foldersize(get_template_directory());
+	$upload_dir = wp_upload_dir();
+	$uploads_size = foldersize($upload_dir['basedir']);
+	
+	echo '<ul>';
+	echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
+	echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong></li>';
+	echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
+	echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
+	echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
+	echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
+	echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
+	echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install (WP Admin): <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Best estimate)</small></li>'; //@TODO: Try the wp-config.php file
+	echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
+	echo '</ul>';
 }
-
 
 //Only allow admins to modify Contact Forms
 define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
 define('WPCF7_ADMIN_READ_WRITE_CAPABILITY', 'manage_options');
 
 //Remove Comments column
+add_filter('manage_posts_columns', 'remove_pages_count_columns');
+add_filter('manage_pages_columns', 'remove_pages_count_columns');
+add_filter('manage_media_columns', 'remove_pages_count_columns');
 function remove_pages_count_columns($defaults) {
 	unset($defaults['comments']);
 	return $defaults;
 }
-add_filter('manage_posts_columns', 'remove_pages_count_columns');
-add_filter('manage_pages_columns', 'remove_pages_count_columns');
-add_filter( 'manage_media_columns', 'remove_pages_count_columns' );
+
 
 //Change default values for the upload media box
 //These can also be changed by navigating to .../wp-admin/options.php
+add_action('after_setup_theme', 'custom_media_display_settings');
 function custom_media_display_settings() {
 	//update_option('image_default_align', 'center');
 	update_option('image_default_link_type', 'none');
 	//update_option('image_default_size', 'large');
 }
-add_action('after_setup_theme', 'custom_media_display_settings');
+
 
 
 //Duplicate post
@@ -691,18 +593,23 @@ function rd_duplicate_post_link( $actions, $post ) {
 
 
 //Show File URL column on Media Library listings
+add_filter('manage_media_columns', 'muc_column');
 function muc_column( $cols ) {
 	$cols["media_url"] = "File URL";
 	return $cols;
 }
+add_action('manage_media_custom_column', 'muc_value', 10, 2);
 function muc_value( $column_name, $id ) {
 	if ( $column_name == "media_url" ) {
 		echo '<input type="text" width="100%" value="' . wp_get_attachment_url( $id ) . '" readonly />';
 		//echo '<input type="text" width="100%" onclick="jQuery(this).select();" value="'. wp_get_attachment_url( $id ). '" readonly />'; //This selects the text on click
 	}
 }
-add_filter( 'manage_media_columns', 'muc_column' );
-add_action( 'manage_media_custom_column', 'muc_value', 10, 2 );
+
+
+
+//Enable editor-style.css for the WYSIWYG editor.
+add_editor_style();
 
 
 //Admin Footer Enhancements
@@ -712,10 +619,11 @@ function change_admin_footer_left() {
     return '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
 }
 //Right Side
+add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right() {
     return 'WP Version: <strong>' . get_bloginfo('version') . '</strong> | Server IP: <strong>' . $_SERVER['SERVER_ADDR'] . '</strong>';
 }
-add_filter('update_footer', 'change_admin_footer_right', 11);
+
 
 
 
@@ -769,6 +677,12 @@ function complete_version_removal() {
 add_post_type_support( 'page', 'excerpt' );
 
 
+//Add thumbnail support
+if ( function_exists( 'add_theme_support' ) ) :
+	add_theme_support( 'post-thumbnails' );
+endif;
+
+
 //Add new image sizes
 add_image_size( 'example', 32, 32, 1 );
 
@@ -806,6 +720,76 @@ function filter_wp_title($title, $separator) {
 	}
 
 	return $title;
+}
+
+
+add_action('widgets_init', 'nebula_widgets_init');
+function nebula_widgets_init() {
+	//Sidebar 1
+	register_sidebar( array(
+		'name' => 'Primary Widget Area',
+		'id' => 'primary-widget-area',
+		'description' => 'The primary widget area', 'boilerplate',
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+
+	//Sidebar 2
+	register_sidebar( array(
+		'name' => 'Secondary Widget Area',
+		'id' => 'secondary-widget-area',
+		'description' => 'The secondary widget area',
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+
+	//Footer 1
+	register_sidebar( array(
+		'name' => 'First Footer Widget Area',
+		'id' => 'first-footer-widget-area',
+		'description' => 'The first footer widget area',
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+
+	//Footer 2
+	register_sidebar( array(
+		'name' => 'Second Footer Widget Area',
+		'id' => 'second-footer-widget-area',
+		'description' => 'The second footer widget area',
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+
+	//Footer 3
+	register_sidebar( array(
+		'name' => 'Third Footer Widget Area',
+		'id' => 'third-footer-widget-area',
+		'description' => 'The third footer widget area',
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+
+	//Footer 4
+	register_sidebar( array(
+		'name' => 'Fourth Footer Widget Area',
+		'id' => 'fourth-footer-widget-area',
+		'description' => 'The fourth footer widget area',
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
 }
 
 
@@ -1132,6 +1116,9 @@ function redirect_single_post() {
     }
 }
 
+
+//Add default posts and comments RSS feed links to head
+add_theme_support('automatic-feed-links');
 
 //Remove extraneous <head> from Wordpress
 remove_action('wp_head', 'rsd_link');
