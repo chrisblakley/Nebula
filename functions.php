@@ -437,13 +437,10 @@ function nebula_welcome_panel() {
 //Remove unnecessary Dashboard metaboxes
 add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
 function remove_dashboard_metaboxes() {
-    //Globalize the metaboxes array, this holds all the widgets for wp-admin
-    global $wp_meta_boxes;
-    unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
-    unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
-    unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
-    unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
-    unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_recent_comments']);
+    remove_meta_box('dashboard_primary', 'dashboard', 'side');
+    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
+    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
+    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
 }
 
 
@@ -624,8 +621,43 @@ function change_admin_footer_right() {
     return 'WP Version: <strong>' . get_bloginfo('version') . '</strong> | Server IP: <strong>' . $_SERVER['SERVER_ADDR'] . '</strong>';
 }
 
+/*** If the project uses comments, remove the next four functions! ***/
+//Disable support for comments and trackbacks in post types
+add_action('admin_init', 'disable_comments_post_types');
+function disable_comments_post_types() {
+	$post_types = get_post_types();
+	foreach ($post_types as $post_type) {
+		if(post_type_supports($post_type, 'comments')) {
+			remove_post_type_support($post_type, 'comments');
+			remove_post_type_support($post_type, 'trackbacks');
+		}
+	}
+}
 
+//Close comments on the front-end
+add_filter('comments_open', 'disable_comments_status', 20, 2);
+add_filter('pings_open', 'disable_comments_status', 20, 2);
+function disable_comments_status() {
+	return false;
+}
 
+//Remove comments metabox and comments
+add_action('admin_menu', 'disable_comments_admin');
+function disable_comments_admin() {
+	remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
+	remove_menu_page('edit-comments.php');
+	remove_submenu_page('options-general.php', 'options-discussion.php');
+}
+
+//Redirect any user trying to access comments page
+add_action('admin_init', 'disable_comments_admin_menu_redirect');
+function disable_comments_admin_menu_redirect() {
+	global $pagenow;
+	if ($pagenow === 'edit-comments.php' || $pagenow === 'options-discussion.php') {
+		wp_redirect(admin_url());
+		exit;
+	}
+}
 
 
 /*==========================
