@@ -33,7 +33,7 @@ get_header(); ?>
 							<div class="row">
 								<div class="sixteen columns">
 									<hr/>
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+									<span class="entry-manage-edit"><?php nebula_manage('edit'); ?></span> <?php nebula_manage('modified'); ?>
 									<hr/>
 								</div><!--/columns-->
 							</div>

@@ -289,7 +289,7 @@ nav#fixednav {position: relative; z-index: 1000;}
    Content Area
    ========================================================================== */
 div#bcrumbs {position: relative; z-index: 1;}
-	nav.breadcrumbs {font-size: 10px;}
+	nav.breadcrumbs {font-size: 10px; line-height: 14px;}
 
 .row.multi-column-query {margin-bottom: 30px;}
 
@@ -311,8 +311,9 @@ div#bcrumbs {position: relative; z-index: 1;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
 
 .entry-manage {font-size: 12px; margin-top: 15px;}
-	.post-edit,
-	.post-admin {display: inline-block; margin-right: 10px;}
+	.entry-manage-edit {}
+		.post-edit,
+		.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;}
 
 /* wp-pagenavi Pagination */
@@ -509,6 +510,9 @@ div.copyright p {font-size: 12px;}
 .column, .columns {outline: 1px solid yellow;}
 	.row {outline: 1px solid lightgrey;}
 */
+
+	.entry-manage-edit {display: block; text-align: center;}
+	.post-modified {float: none; display: block; text-align: center;}
 
 
 } /* End mobile portrait media query */

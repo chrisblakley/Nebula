@@ -75,7 +75,7 @@ get_header(); ?>
 					<footer class="entry-utility">
 						<?php if ( current_user_can('manage_options') ) : ?>
 							<hr/>
-							<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+							<span class="entry-manage-edit"><?php nebula_manage('edit'); ?></span> <?php nebula_manage('modified'); ?> <?php nebula_manage('modified'); ?>
 							<br/>
 							<?php nebula_manage('meta'); ?>
 							<hr/>

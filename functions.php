@@ -1098,7 +1098,7 @@ function fix_empty_search($query){
 //Redirect if only single search result
 add_action('template_redirect', 'redirect_single_post');
 function redirect_single_post() {
-    if (is_search()) {
+    if ( is_search() ) {
         global $wp_query;
         if ($wp_query->post_count == 1 && $wp_query->max_num_pages == 1) {
             if ( isset($_GET['s']) ){
@@ -1113,7 +1113,7 @@ function redirect_single_post() {
                 exit;
             }
         }
-    }
+    }    
 }
 
 
