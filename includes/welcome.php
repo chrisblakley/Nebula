@@ -8,7 +8,7 @@
 		</div>
 		
 		<h3><a href="<?php echo home_url(); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
-		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank" style="color: #0098d7;"><img src="<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px; white-space: nowrap;"/> Pinckney Hugo Group</a>.</p>
+		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank" style="color: #0098d7; white-space: nowrap;"><img src="<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/> Pinckney Hugo Group</a>.</p>
 		
 		<hr/>
 		
