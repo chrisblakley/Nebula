@@ -19,7 +19,7 @@ get_header(); ?>
 					
 					<?php if ( current_user_can('manage_options') ) : ?>
 						<hr/>
-						<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+						<span class="entry-manage-edit"><?php nebula_manage('edit'); ?></span> <?php nebula_manage('modified'); ?>
 						<hr/>
 					<?php endif; ?>
 				</div><!-- .entry-content -->
