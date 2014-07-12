@@ -341,8 +341,9 @@ remove_filter('the_content', 'wptexturize');
 remove_filter('the_excerpt', 'wptexturize');
 remove_filter('comment_text', 'wptexturize');
 
+
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-add_action('init','admin_only_features');
+add_action('init', 'admin_only_features');
 function admin_only_features() {
 	$user = get_current_user_id();
 	if (!current_user_can('manage_options') || $user == 99999 || true ) { //true=Not Admin (Hide update notification and admin bar), false=Admin (Show update notification and admin bar)
@@ -366,7 +367,7 @@ function admin_only_features() {
 		}
 		
 		//Disable Wordpress update notification in WP Admin
-		add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
+		//add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
 		
 	}
 }
@@ -480,7 +481,7 @@ function custom_dashboard_help() {
 	echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
 	echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 	echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
-	echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install (WP Admin): <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Best estimate)</small></li>'; //@TODO: Try the wp-config.php file
+	echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install (WP Admin): <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
 	echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 	echo '</ul>';
 }
@@ -488,15 +489,6 @@ function custom_dashboard_help() {
 //Only allow admins to modify Contact Forms
 define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
 define('WPCF7_ADMIN_READ_WRITE_CAPABILITY', 'manage_options');
-
-//Remove Comments column
-add_filter('manage_posts_columns', 'remove_pages_count_columns');
-add_filter('manage_pages_columns', 'remove_pages_count_columns');
-add_filter('manage_media_columns', 'remove_pages_count_columns');
-function remove_pages_count_columns($defaults) {
-	unset($defaults['comments']);
-	return $defaults;
-}
 
 
 //Change default values for the upload media box
@@ -507,7 +499,6 @@ function custom_media_display_settings() {
 	update_option('image_default_link_type', 'none');
 	//update_option('image_default_size', 'large');
 }
-
 
 
 //Duplicate post
@@ -540,7 +531,7 @@ function duplicate_post_as_draft(){
 			'post_parent'    => $post->post_parent,
 			'post_password'  => $post->post_password,
 			'post_status'    => 'draft',
-			'post_title'     => $post->post_title,
+			'post_title'     => $post->post_title . ' copy',
 			'post_type'      => $post->post_type,
 			'to_ping'        => $post->to_ping,
 			'menu_order'     => $post->menu_order
@@ -604,7 +595,6 @@ function muc_value( $column_name, $id ) {
 }
 
 
-
 //Enable editor-style.css for the WYSIWYG editor.
 add_editor_style();
 
@@ -621,17 +611,14 @@ function change_admin_footer_right() {
     return 'WP Version: <strong>' . get_bloginfo('version') . '</strong> | Server IP: <strong>' . $_SERVER['SERVER_ADDR'] . '</strong>';
 }
 
-/*** If the project uses comments, remove the next four functions! ***/
-//Disable support for comments and trackbacks in post types
-add_action('admin_init', 'disable_comments_post_types');
-function disable_comments_post_types() {
-	$post_types = get_post_types();
-	foreach ($post_types as $post_type) {
-		if(post_type_supports($post_type, 'comments')) {
-			remove_post_type_support($post_type, 'comments');
-			remove_post_type_support($post_type, 'trackbacks');
-		}
-	}
+/*** If the project uses comments, remove the next six functions! ***/
+//Remove Comments column
+add_filter('manage_posts_columns', 'remove_pages_count_columns');
+add_filter('manage_pages_columns', 'remove_pages_count_columns');
+add_filter('manage_media_columns', 'remove_pages_count_columns');
+function remove_pages_count_columns($defaults) {
+	unset($defaults['comments']);
+	return $defaults;
 }
 
 //Close comments on the front-end
@@ -639,6 +626,17 @@ add_filter('comments_open', 'disable_comments_status', 20, 2);
 add_filter('pings_open', 'disable_comments_status', 20, 2);
 function disable_comments_status() {
 	return false;
+}
+
+//Remove comments links from admin bar
+add_action('init', 'disable_comments_admin_bar');
+function disable_comments_admin_bar() {
+	if (is_admin_bar_showing()) {
+		//global $wp_admin_bar; //@TODO: NULL
+		//$wp_admin_bar->remove_menu('wp-logo');
+		//$wp_admin_bar->remove_menu('comments');
+		remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO: Not working
+	}
 }
 
 //Remove comments metabox and comments
@@ -649,13 +647,21 @@ function disable_comments_admin() {
 	remove_submenu_page('options-general.php', 'options-discussion.php');
 }
 
-//Redirect any user trying to access comments page
+//Disable support for comments and trackbacks in post types, Redirect any user trying to access comments page
 add_action('admin_init', 'disable_comments_admin_menu_redirect');
 function disable_comments_admin_menu_redirect() {
 	global $pagenow;
 	if ($pagenow === 'edit-comments.php' || $pagenow === 'options-discussion.php') {
 		wp_redirect(admin_url());
 		exit;
+	}
+	
+	$post_types = get_post_types();
+	foreach ($post_types as $post_type) {
+		if(post_type_supports($post_type, 'comments')) {
+			remove_post_type_support($post_type, 'comments');
+			remove_post_type_support($post_type, 'trackbacks');
+		}
 	}
 }
 
@@ -1172,7 +1178,6 @@ function addBackPostFeed() {
 
 
 //Declare support for WooCommerce
-//@TODO: Detect if WooCommerce is active
 if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 	add_theme_support('woocommerce');
 	//Remove existing WooCommerce hooks to be replaced with our own
@@ -1292,7 +1297,7 @@ function youtube_meta($videoID) {
 }
 
 
-function baseDomain( $str='' ) {
+function baseDomain($str='') {
 	if ( $str == '' ) {
 		$str = home_url();
 	}
@@ -1343,7 +1348,6 @@ function foldersize($path) {
 	}
 	return $total_size;
 }
-	
 	
 
 //Automatically convert HEX colors to RGB.
@@ -1773,8 +1777,11 @@ function slider_shortcode($atts, $content=''){
 	}
 	
 	$slideCount = preg_match_all('[/slide]', $content);
-		$slideConWidth = $slideCount*100 . '%';
-		$slideWidth = round(100/$slideCount, 3) . '%';
+	if ( $slideCount == 0 ) {
+		$slideCount = 1;	
+	}
+	$slideConWidth = $slideCount*100 . '%';
+	$slideWidth = round(100/$slideCount, 3) . '%';
 	
 	$sliderCSS = '<style>#theslider-' . $id . ' {transition: all .5s ease 0s;}
 					#theslider-' . $id . ' .sliderwrap {position: relative; overflow: hidden;}';

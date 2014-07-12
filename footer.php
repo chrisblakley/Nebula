@@ -4,6 +4,7 @@
  */
 ?>
 
+<hr class="zero" />
 <div class="footer">
 
 <?php wp_footer(); ?>
@@ -85,22 +86,19 @@
 					</div><!--/columns-->
 				</div><!--/row-->
 			<?php endif; ?>
+		</div><!--/container-->
+		<div class="container copyright">
 			<div class="row">
-				<div class="ten columns copyright">
+				<div class="eleven columns ">
 					<p>
 						<?php date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
 						<a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a>
 					</p>
 				</div><!--/columns-->
-				<div class="five columns push_one">
-					<form class="search" method="get" action="<?php echo home_url('/'); ?>">
-						<ul>
-							<li class="append field">
-							    <input class="xwide text input search" type="text" name="s" placeholder="Search" />
-							    <input type="submit" class="medium primary btn submit" value="Go" />
-						    </li>
-						</ul>
-					</form><!--/search-->
+				<div class="four columns push_one">
+					<form class="search align-right" method="get" action="<?php echo home_url('/'); ?>">
+						<input class="nebula-search open" type="search" name="s" placeholder="Search" />
+					</form>
 				</div><!--/columns-->
 			</div><!--/row-->
 		</div><!--/container-->

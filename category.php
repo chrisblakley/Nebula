@@ -7,7 +7,7 @@ get_header(); ?>
 
 <div class="row">
 	
-	<div class="ten columns">
+	<div class="eleven columns">
 		<? the_breadcrumb(); ?>
 		<h1>Category Archives: <?php echo single_cat_title('', false); ?></h1>
 			<?php
@@ -19,7 +19,7 @@ get_header(); ?>
 			?>
 	</div><!--/columns-->
 	
-	<div class="five columns push_one">
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
 	

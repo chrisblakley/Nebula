@@ -7,7 +7,7 @@ get_header(); ?>
 
 <div class="row">
 	
-	<div class="ten columns">
+	<div class="eleven columns">
 		<? the_breadcrumb(); ?>
 		<article id="post-0" class="post error404 not-found" role="main">
 			<h1>Not Found</h1>
@@ -16,7 +16,7 @@ get_header(); ?>
 		</article>
 	</div><!--/columns-->
 	
-	<div class="five columns push_one">
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
 	

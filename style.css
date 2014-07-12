@@ -15,8 +15,9 @@ html, button, input, select, textarea {color: #444; font-size: 14px;}
 ::-moz-selection {background: #b3d4fc; text-shadow: none;}
 ::selection {background: #b3d4fc; text-shadow: none;}
 hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 3px 0; padding: 0;}
-.rgba hr {display: block; height: 1px; border: 0; background: rgba(255,255,255,1); margin: 3px 0; padding: 0; mix-blend-mode: screen;}
-	.rgba hr:before {content: ''; position: relative; top: -1px; height: 1px; display: block; background: rgba(0,0,0,0.2); mix-blend-mode: multiply;}
+	.rgba hr {display: block; height: 1px; border: 0; background: rgba(255,255,255,1); margin: 3px 0; padding: 0; mix-blend-mode: screen;}
+		.rgba hr:before {content: ''; position: relative; top: -1px; height: 1px; display: block; background: rgba(0,0,0,0.2); mix-blend-mode: multiply;}
+	hr.zero {margin: 0;}
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
@@ -81,6 +82,9 @@ a.icon[href$='.swf'], a.icon[href$='.fla'] {text-decoration: none; border-bottom
 
 a.off {text-decoration: none; border: none;}
 	a.off:before {content: '';}
+a.white {color: #fff;}
+	a.white:hover,
+	a.white.hover {color: #ccc;}
 
 
 /* Table styles - Restyle here as needed */
@@ -219,21 +223,29 @@ nav#topnav {position: relative; z-index: 1000; margin-top: 5px;}
 				nav#topnav ul li.menu-item a.hover {color: #95D600;}
 			nav#topnav ul li.menu-item ul.sub-menu {display: none;}
 
-li.menu-search input {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
-	.svg li.menu-search input {background: #eee url('images/search.svg') no-repeat 6px center;}
-	li.menu-search input::-webkit-search-decoration,
-	li.menu-search input::-webkit-search-cancel-button {display: none;}
-	li.menu-search input:-moz-placeholder {color: #999;}
-	li.menu-search input::-webkit-input-placeholder {color: #999;}
-	li.menu-search input:-moz-placeholder {color: transparent;}
-	li.menu-search input::-webkit-input-placeholder {color: transparent;}
-	li.menu-search input:hover,
-	li.menu-search input.hover {background-color: #fff;}
-	li.menu-search input:focus,
-	li.menu-search input.focus {max-width: 130px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.menu-search input.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
-	li.menu-search input.focus:-moz-placeholder {color: #444;}
-	li.menu-search input.focus::-webkit-input-placeholder {color: #444;}
+li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	.svg li.nebula-search input, .svg input.nebula-search {background: #eee url('images/search.svg') no-repeat 6px center;}
+	li.nebula-search input::-webkit-search-decoration,
+	li.nebula-search input::-webkit-search-cancel-button,
+	input.nebula-search::-webkit-search-decoration,
+	input.nebula-search::-webkit-search-cancel-button {display: none;}
+	li.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: #999;}
+	li.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: #999;}
+	li.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: transparent;}
+	li.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: transparent;}
+	li.nebula-search input:hover,
+	li.nebula-search input.hover,
+	input.nebula-search:hover,
+	input.nebula-search.hover {background-color: #fff;}
+	li.nebula-search input:focus,
+	li.nebula-search input.focus,
+	input.nebula-search:focus,
+	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
+	li.nebula-search input.open,
+	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
+	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
+	li.nebula-search input.focus:-moz-placeholder, input.nebula-search.focus:-moz-placeholder, li.nebula-search input.open:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
+	li.nebula-search input.focus::-webkit-input-placeholder, input.nebula-search.focus::-webkit-input-placeholder, li.nebula-search input.open::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
 
 
 /* Nebula Wordpress main navigation style defaults */
@@ -398,7 +410,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 /* ==========================================================================
    Footer Area
    ========================================================================== */
-.footer {margin-top: 20px; padding-top: 20px; background: #e7e7e7;}
+.footer {padding-top: 20px; background: #e7e7e7; background: rgba(0,0,0,0.0225);}
 
 .twitterago {font-size: 12px; text-decoration: underline;}
 
@@ -418,10 +430,11 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; padding: 5px 0; border-bottom: none;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 
-
-div.copyright p {font-size: 12px;}
-
-.footerlinks form.search input[type="text"] {font-size: 16px; width: 77% !important; font-size: 14px !important; line-height: 24px !important; height: auto !important; vertical-align: top;}
+div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #0098d7;}
+	div.copyright p {font-size: 12px; color: #fff;}
+		div.copyright a {color: #fff;}
+			div.copyright a:hover,
+			div.copyright a.hover {color: #ccc;}
 
 /* Nebula Desktop Helper Styles */
 .disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;}

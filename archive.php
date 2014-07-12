@@ -7,7 +7,7 @@ get_header(); ?>
 
 <div class="row">
 	
-	<div class="ten columns">
+	<div class="eleven columns">
 		<?php if ( have_posts() ) { the_post(); } //Queue the first post, then reset before running the loop. ?>
 		<h1 class="page-title">
 			<?php if ( is_day() ) : ?>
@@ -27,7 +27,7 @@ get_header(); ?>
 		?>
 	</div><!--/columns-->
 	
-	<div class="five columns push_one">
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
 	

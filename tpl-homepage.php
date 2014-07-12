@@ -10,7 +10,7 @@ get_header(); ?>
 </div><!--/heroslidercon-->
 
 <div class="row">
-	<div class="ten columns">
+	<div class="eleven columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<h1 class="entry-title"><?php the_title(); ?></h1>
@@ -26,7 +26,7 @@ get_header(); ?>
 			</article><!-- #post-## -->
 		<?php endwhile; ?>
 	</div><!--/columns-->
-	<div class="five columns push_one">
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
 </div><!--/row-->

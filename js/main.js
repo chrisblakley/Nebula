@@ -414,11 +414,11 @@ function powerFooterWidthDist() {
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.menu-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" name="s" placeholder="Search" /></form>');
-	jQuery('li.menu-search input').on('focus', function(){
+	jQuery('li.nebula-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" name="s" placeholder="Search" /></form>');
+	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
 		jQuery(this).addClass('focus active');
 	});
-	jQuery('li.menu-search input').on('blur', function(){
+	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
 		if ( jQuery(this).val() == '' ) {
 			jQuery(this).removeClass('focus active');
 		} else {

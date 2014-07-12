@@ -7,13 +7,13 @@ get_header(); ?>
 
 <div class="row">
 	
-	<div class="ten columns">
+	<div class="eleven columns">
 		<? the_breadcrumb(); ?>
-		<h1>Tag Archives: <?php single_tag_title('', false); ?></h1>
+		<h1>Tag Archives: <?php echo single_tag_title('', false); ?></h1>
 		<?php get_template_part('loop', 'tag'); ?>
 	</div><!--/columns-->
 	
-	<div class="five columns push_one">
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
 	
