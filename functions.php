@@ -44,48 +44,54 @@ function enqueue_nebula_styles_admin() {
 	wp_enqueue_style('font-awesome');
 }
 
-
-/*	Begin Boilerplate remnants */
-//Template for comments and pingbacks.
-//Used as a callback by wp_list_comments() for displaying the comments.
-function boilerplate_comment($comment, $args, $depth) {
-	$GLOBALS['comment'] = $comment;
-	switch ( $comment->comment_type ) :
-		case '' :
-	?>
-	<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>">
-		<article id="comment-<?php comment_ID(); ?>">
-			<div class="comment-author vcard">
-				<?php echo get_avatar($comment, 40); ?>
-				<?php printf( '%s <span class="says">says:</span>', sprintf( '<cite class="fn">%s</cite>', get_comment_author_link() ) ); ?>
-			</div><!-- .comment-author .vcard -->
-			<?php if ( $comment->comment_approved == '0' ) : ?>
-				<em>Your comment is awaiting moderation.</em>
-				<br />
-			<?php endif; ?>
-			<footer class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>">
-				<?php
-					/* translators: 1: date, 2: time */
-					printf( '%1$s at %2$s', get_comment_date(),  get_comment_time() ); ?></a><?php edit_comment_link('(Edit)', ' ');
-				?>
-			</footer><!-- .comment-meta .commentmetadata -->
-			<div class="comment-body"><?php comment_text(); ?></div>
-			<div class="reply">
-				<?php comment_reply_link( array_merge( $args, array( 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
-			</div><!-- .reply -->
-		</article><!-- #comment-##  -->
-	<?php
-			break;
-		case 'pingback'  :
-		case 'trackback' :
-	?>
-	<li class="post pingback">
-		<p>Pingback: <?php comment_author_link(); ?><?php edit_comment_link('(Edit)', ' '); ?></p>
-	<?php
-			break;
-	endswitch;
+/*========================== 
+ Nebula Settings
+ ===========================*/
+ 
+//Include Nebula Settings page
+if ( is_admin() ) {
+	include_once('includes/nebula-settings.php');	
 }
-/*	End Boilerplate remnants */
+
+//Uncomment to force override the Nebula Settings. This will disable changes made from the Settings page, and only allow edits from this functions file (to revert, comment out and choose "Enabled" in the Nebula Settings page).
+//update_option('nebula_overall', 'override');
+
+//Store global strings as needed
+add_action('init', 'global_nebula_vars');
+add_action('admin_init', 'global_nebula_vars');
+function global_nebula_vars(){
+    $GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', 'UA-00000000-1'); //@TODO: Change Google Analytics Tracking ID here
+    $GLOBALS['full_address'] = get_option('nebula_street_address') . ', ' . get_option('nebula_locality') . ', ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
+    $GLOBALS['enc_address'] = get_option('nebula_street_address') . '+' . get_option('nebula_locality') . '+' . get_option('nebula_region') . '+' . get_option('nebula_postal_code');
+    $GLOBALS['enc_address'] = str_replace(' ', '+', $GLOBALS['enc_address']);
+}
+
+//Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
+function nebula_settings_conditional_text($setting, $default = ''){
+	if ( get_option('nebula_overall') == 'enabled' && get_option($setting) ) {
+		return get_option($setting);
+	} else {
+		return $default;
+	}
+}
+
+//Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
+function nebula_settings_conditional_text_bool($setting, $true, $false = ''){
+	if ( get_option('nebula_overall') == 'enabled' && get_option($setting) ) {
+		return $true;
+	} else {
+		return $false;
+	}
+}
+
+//Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
+function nebula_settings_conditional($setting, $default='enabled') {
+	if ( get_option('nebula_overall') == 'override' || get_option('nebula_overall') == 'disabled' || (get_option('nebula_overall') == 'enabled' && get_option($setting) == 'default') || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
 
 
 /*==========================
@@ -298,6 +304,10 @@ function nebulaWordpressSettings() {
         delete_plugins(array('hello.php'));
     }	
 	
+	//Update Nebula Settings //@TODO: ADD THE REST!
+	update_option('nebula_ga_tracking_id', '');
+	update_option('nebula_admin_bar', 'disabled');
+	
 	//Empty the site tagline
 	update_option('blogdescription', '');
 	
@@ -314,7 +324,7 @@ function nebulaWordpressSettings() {
 
 function nebulaActivateComplete(){
 	if ( isset($_GET['nebula-reset']) ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been reset!</strong><br/>You have reset WP Nebula. Settings have been updated. The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been reset!</strong><br/>You have reset WP Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
 	} elseif ( get_post_meta(1, '_wp_page_template', 1) == 'tpl-homepage.php' ) {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: red;'>Re-initialize Nebula.</a></p></div>";
 	} else {
@@ -343,47 +353,56 @@ remove_filter('comment_text', 'wptexturize');
 
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-add_action('init', 'admin_only_features');
-function admin_only_features() {
-	$user = get_current_user_id();
-	if (!current_user_can('manage_options') || $user == 99999 || true ) { //true=Not Admin (Hide update notification and admin bar), false=Admin (Show update notification and admin bar)
-		
-		remove_action('admin_footer', 'wp_admin_bar_render', 1000); //For the admin page
-		remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
-		
-		//CSS override for the admin page
-		add_filter('admin_head','remove_admin_bar_style_backend');
-		function remove_admin_bar_style_backend() { 
-			echo '<style>body.admin-bar #wpcontent, body.admin-bar #adminmenu { padding-top: 0px !important; }</style>';
-		}	  
-		
-		//CSS override for the frontend
-		add_filter('wp_head','remove_admin_bar_style_frontend', 99);
-		function remove_admin_bar_style_frontend() {
-			echo '<style type="text/css" media="screen">
-			html { margin-top: 0px !important; }
-			* html body { margin-top: 0px !important; }
-			</style>';
+if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ) {
+	add_action('init', 'admin_only_features');
+	function admin_only_features() {
+		$user = get_current_user_id();
+		if (!current_user_can('manage_options') || $user == 99999 || true ) { //true=Not Admin (Hide update notification and admin bar), false=Admin (Show update notification and admin bar)
+			
+			remove_action('admin_footer', 'wp_admin_bar_render', 1000); //For the admin page
+			remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
+			
+			//CSS override for the admin page
+			add_filter('admin_head','remove_admin_bar_style_backend');
+			function remove_admin_bar_style_backend() { 
+				echo '<style>body.admin-bar #wpcontent, body.admin-bar #adminmenu { padding-top: 0px !important; }</style>';
+			}	  
+			
+			//CSS override for the frontend
+			add_filter('wp_head','remove_admin_bar_style_frontend', 99);
+			function remove_admin_bar_style_frontend() {
+				echo '<style type="text/css" media="screen">
+				html { margin-top: 0px !important; }
+				* html body { margin-top: 0px !important; }
+				</style>';
+			}
+			
+			//Disable Wordpress update notification in WP Admin
+			//add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
+			
 		}
-		
-		//Disable Wordpress update notification in WP Admin
-		//add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
-		
 	}
 }
 
 
 //Show update warning on Wordpress Core/Plugin update admin pages
-$filename = basename($_SERVER['REQUEST_URI']);
-if ( $filename == 'plugins.php' ) {
-	add_action('admin_notices','plugin_warning');
-	function plugin_warning(){
-		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
+if ( nebula_settings_conditional('nebula_phg_plugin_update_warning') ) {
+	$filename = basename($_SERVER['REQUEST_URI']);
+	if ( $filename == 'plugins.php' ) {
+		add_action('admin_notices','plugin_warning');
+		function plugin_warning(){
+			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
+		}
+	} elseif ( $filename == 'update-core.php') {
+		add_action('admin_notices','plugin_warning');
+		function plugin_warning(){
+			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
+		}
 	}
-} elseif ( $filename == 'update-core.php') {
-	add_action('admin_notices','plugin_warning');
-	function plugin_warning(){
-		echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
+} else {
+	add_action('admin_head', 'warning_style_unset');
+	function warning_style_unset(){
+		echo '<style>.update-nag a, .update-core-php input#upgrade, .update-core-php input#upgrade-plugins, .update-core-php input#upgrade-plugins-2, .plugins-php .update-message a, .plugins-php .deactivate a {cursor: pointer !important;}</style>';
 	}
 }
 
@@ -408,7 +427,7 @@ function custom_login_css() {
 	    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/login.js"></script>';
 	    
 	    //@TODO: Need to figure out a way to automate the Google Analytics account number and domain!
-	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-00000000-1', 'auto');</script>";
+	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $GLOBALS['ga'] . "', 'auto');</script>";
 	}
 }
 
@@ -428,62 +447,70 @@ function new_wp_login_title() {
 
 
 //Welcome Panel
-remove_action('welcome_panel','wp_welcome_panel');
-add_action('welcome_panel','nebula_welcome_panel');
-function nebula_welcome_panel() {
-	include('includes/welcome.php');
+if ( nebula_settings_conditional('nebula_phg_welcome_panel') ) {
+	remove_action('welcome_panel','wp_welcome_panel');
+	add_action('welcome_panel','nebula_welcome_panel');
+	function nebula_welcome_panel() {
+		include('includes/welcome.php');
+	}
+} else {
+	remove_action('welcome_panel','wp_welcome_panel');
 }
 
 
 //Remove unnecessary Dashboard metaboxes
-add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
-function remove_dashboard_metaboxes() {
-    remove_meta_box('dashboard_primary', 'dashboard', 'side');
-    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
-    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
-    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
+if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
+	add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
+	function remove_dashboard_metaboxes() {
+	    remove_meta_box('dashboard_primary', 'dashboard', 'side');
+	    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
+	    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
+	    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
+	}
 }
 
 
 //Custom PHG Metabox
-//If user's email address ends in @pinckneyhugo.com (or my email address for test server dev) and is an administrator
-$current_user = wp_get_current_user();
-list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
-if ( $current_user_domain == 'pinckneyhugo.com' && current_user_can('manage_options') ) {
-	add_action('wp_dashboard_setup', 'phg_dev_metabox');
-}
-function phg_dev_metabox() {
-	global $wp_meta_boxes;
-	wp_add_dashboard_widget('custom_help_widget', 'PHG Developer Info', 'custom_dashboard_help');
-}
-function custom_dashboard_help() {
-	//Get last modified filename and date
-	$dir = glob_r( get_template_directory() . '/*');
-	$last_date = 0;
-	foreach($dir as $file) {
-		if( is_file($file) ) {
-			$mod_date = filemtime($file);
-			if ( $mod_date > $last_date ) {
-				$last_date = $mod_date;
-				$last_filename = basename($file);
+//If user's email address ends in @pinckneyhugo.com and is an administrator
+if ( nebula_settings_conditional('nebula_phg_metabox') ) {
+	$current_user = wp_get_current_user();
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+	if ( $current_user_domain == 'pinckneyhugo.com' && current_user_can('manage_options') ) {
+		add_action('wp_dashboard_setup', 'phg_dev_metabox');
+	}
+	function phg_dev_metabox() {
+		global $wp_meta_boxes;
+		wp_add_dashboard_widget('custom_help_widget', 'PHG Developer Info', 'custom_dashboard_help');
+	}
+	function custom_dashboard_help() {
+		//Get last modified filename and date
+		$dir = glob_r( get_template_directory() . '/*');
+		$last_date = 0;
+		foreach($dir as $file) {
+			if( is_file($file) ) {
+				$mod_date = filemtime($file);
+				if ( $mod_date > $last_date ) {
+					$last_date = $mod_date;
+					$last_filename = basename($file);
+				}
 			}
 		}
+		$nebula_size = foldersize(get_template_directory());
+		$upload_dir = wp_upload_dir();
+		$uploads_size = foldersize($upload_dir['basedir']);
+		
+		echo '<ul>';
+		echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
+		echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong></li>';
+		echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
+		echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
+		echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
+		echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
+		echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
+		echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install (WP Admin): <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
+		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
+		echo '</ul>';
 	}
-	$nebula_size = foldersize(get_template_directory());
-	$upload_dir = wp_upload_dir();
-	$uploads_size = foldersize($upload_dir['basedir']);
-	
-	echo '<ul>';
-	echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
-	echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong></li>';
-	echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
-	echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
-	echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
-	echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
-	echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
-	echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install (WP Admin): <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
-	echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
-	echo '</ul>';
 }
 
 //Only allow admins to modify Contact Forms
@@ -611,56 +638,100 @@ function change_admin_footer_right() {
     return 'WP Version: <strong>' . get_bloginfo('version') . '</strong> | Server IP: <strong>' . $_SERVER['SERVER_ADDR'] . '</strong>';
 }
 
-/*** If the project uses comments, remove the next six functions! ***/
-//Remove Comments column
-add_filter('manage_posts_columns', 'remove_pages_count_columns');
-add_filter('manage_pages_columns', 'remove_pages_count_columns');
-add_filter('manage_media_columns', 'remove_pages_count_columns');
-function remove_pages_count_columns($defaults) {
-	unset($defaults['comments']);
-	return $defaults;
-}
 
-//Close comments on the front-end
-add_filter('comments_open', 'disable_comments_status', 20, 2);
-add_filter('pings_open', 'disable_comments_status', 20, 2);
-function disable_comments_status() {
-	return false;
+//Template for comments and pingbacks.
+//Used as a callback by wp_list_comments() for displaying the comments.
+function boilerplate_comment($comment, $args, $depth) {
+	$GLOBALS['comment'] = $comment;
+	switch ( $comment->comment_type ) :
+		case '' :
+	?>
+	<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>">
+		<article id="comment-<?php comment_ID(); ?>">
+			<div class="comment-author vcard">
+				<?php echo get_avatar($comment, 40); ?>
+				<?php printf( '%s <span class="says">says:</span>', sprintf( '<cite class="fn">%s</cite>', get_comment_author_link() ) ); ?>
+			</div><!-- .comment-author .vcard -->
+			<?php if ( $comment->comment_approved == '0' ) : ?>
+				<em>Your comment is awaiting moderation.</em>
+				<br />
+			<?php endif; ?>
+			<footer class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>">
+				<?php
+					/* translators: 1: date, 2: time */
+					printf( '%1$s at %2$s', get_comment_date(),  get_comment_time() ); ?></a><?php edit_comment_link('(Edit)', ' ');
+				?>
+			</footer><!-- .comment-meta .commentmetadata -->
+			<div class="comment-body"><?php comment_text(); ?></div>
+			<div class="reply">
+				<?php comment_reply_link( array_merge( $args, array( 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
+			</div><!-- .reply -->
+		</article><!-- #comment-##  -->
+	<?php
+			break;
+		case 'pingback'  :
+		case 'trackback' :
+	?>
+	<li class="post pingback">
+		<p>Pingback: <?php comment_author_link(); ?><?php edit_comment_link('(Edit)', ' '); ?></p>
+	<?php
+			break;
+	endswitch;
 }
+	
+/*** If the project uses comments, remove the next set of functions (six)! ***/
+if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 
-//Remove comments links from admin bar
-add_action('init', 'disable_comments_admin_bar');
-function disable_comments_admin_bar() {
-	if (is_admin_bar_showing()) {
-		//global $wp_admin_bar; //@TODO: NULL
-		//$wp_admin_bar->remove_menu('wp-logo');
-		//$wp_admin_bar->remove_menu('comments');
-		remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO: Not working
-	}
-}
-
-//Remove comments metabox and comments
-add_action('admin_menu', 'disable_comments_admin');
-function disable_comments_admin() {
-	remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
-	remove_menu_page('edit-comments.php');
-	remove_submenu_page('options-general.php', 'options-discussion.php');
-}
-
-//Disable support for comments and trackbacks in post types, Redirect any user trying to access comments page
-add_action('admin_init', 'disable_comments_admin_menu_redirect');
-function disable_comments_admin_menu_redirect() {
-	global $pagenow;
-	if ($pagenow === 'edit-comments.php' || $pagenow === 'options-discussion.php') {
-		wp_redirect(admin_url());
-		exit;
+	//Remove Comments column
+	add_filter('manage_posts_columns', 'remove_pages_count_columns');
+	add_filter('manage_pages_columns', 'remove_pages_count_columns');
+	add_filter('manage_media_columns', 'remove_pages_count_columns');
+	function remove_pages_count_columns($defaults) {
+		unset($defaults['comments']);
+		return $defaults;
 	}
 	
-	$post_types = get_post_types();
-	foreach ($post_types as $post_type) {
-		if(post_type_supports($post_type, 'comments')) {
-			remove_post_type_support($post_type, 'comments');
-			remove_post_type_support($post_type, 'trackbacks');
+	//Close comments on the front-end
+	add_filter('comments_open', 'disable_comments_status', 20, 2);
+	add_filter('pings_open', 'disable_comments_status', 20, 2);
+	function disable_comments_status() {
+		return false;
+	}
+	
+	//Remove comments links from admin bar
+	add_action('init', 'disable_comments_admin_bar');
+	function disable_comments_admin_bar() {
+		if (is_admin_bar_showing()) {
+			//global $wp_admin_bar; //@TODO: NULL
+			//$wp_admin_bar->remove_menu('wp-logo');
+			//$wp_admin_bar->remove_menu('comments');
+			remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO: Not working
+		}
+	}
+	
+	//Remove comments metabox and comments
+	add_action('admin_menu', 'disable_comments_admin');
+	function disable_comments_admin() {
+		remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
+		remove_menu_page('edit-comments.php');
+		remove_submenu_page('options-general.php', 'options-discussion.php');
+	}
+	
+	//Disable support for comments and trackbacks in post types, Redirect any user trying to access comments page
+	add_action('admin_init', 'disable_comments_admin_menu_redirect');
+	function disable_comments_admin_menu_redirect() {
+		global $pagenow;
+		if ($pagenow === 'edit-comments.php' || $pagenow === 'options-discussion.php') {
+			wp_redirect(admin_url());
+			exit;
+		}
+		
+		$post_types = get_post_types();
+		foreach ($post_types as $post_type) {
+			if(post_type_supports($post_type, 'comments')) {
+				remove_post_type_support($post_type, 'comments');
+				remove_post_type_support($post_type, 'trackbacks');
+			}
 		}
 	}
 }
@@ -1122,7 +1193,7 @@ function the_breadcrumb() {
 
 
 //Prevent empty search query error (Show all results instead)
-add_action('pre_get_posts','fix_empty_search');
+add_action('pre_get_posts', 'fix_empty_search');
 function fix_empty_search($query){
     global $wp_query;
     if ( isset($_GET['s']) && $_GET['s'] == '' ){ //if search parameter is blank, do not return false

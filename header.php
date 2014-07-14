@@ -11,7 +11,7 @@
 		<title><?php wp_title( '-', true, 'right' ); ?></title>
 		
 		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta name="keywords" content="#" /><!-- @TODO: Add keywords here. -->
+		<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO: Replace '' with keywords. -->
 		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
 		
 		<meta name="HandheldFriendly" content="True">
@@ -38,32 +38,32 @@
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.jpg" />
     	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.jpg" />
 		<meta property="og:email" content="<?php echo get_option('admin_email', $admin_user->user_email); ?>" />
-		<meta property="og:phone_number" content="" /> <!-- Ex: "+1-315-478-6700" --> <!-- Important: Enter this value as it will be default across the site! @TODO: Make a php variable with this val. -->
-		<meta property="og:fax_number" content="" /> <!-- Ex: "+1-315-478-6700" -->
-		<meta property="og:latitude" content="" />
-		<meta property="og:longitude" content="" />
-		<meta property="og:street-address" content="" />
-		<meta property="og:locality" content="" /> <!-- City -->
-		<meta property="og:region" content="" /> <!-- State -->
-		<meta property="og:postal-code" content="" />
-		<meta property="og:country-name" content="" /> <!-- USA -->
+		<meta property="og:phone_number" content="<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
+		<meta property="og:fax_number" content="<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
+		<meta property="og:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
+		<meta property="og:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
+		<meta property="og:street-address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
+		<meta property="og:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
+		<meta property="og:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
+		<meta property="og:postal-code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
+		<meta property="og:country-name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', ''); ?>" /> <!-- USA -->
 		
 		<!-- Facebook Metadata -->
-		<?php $social['facebook_url'] = 'https://www.facebook.com/PinckneyHugo'; //@TODO: Enter the URL of the Facebook page here. ?>
-		<?php $social['facebook_app_id'] = ''; //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!)?>
+		<?php $social['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
+		<?php $social['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', '');; //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!)?>
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
 		<meta property="fb:admins" content="" /><!-- @TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" -->
 				
 		<!-- Google+ Metadata -->
-		<?php $social['google_plus_url'] = ''; //@TODO: Enter the URL of the Google+ page here. ?>
+		<?php $social['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
 		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
 
 		<!-- Other Social Metadata -->
-		<?php $social['twitter_url'] = 'https://twitter.com/pinckneyhugo'; //@TODO: Enter the URL of the Twitter page here. ?>
-		<?php $social['linkedin_url'] = ''; //@TODO: Enter the URL of the LinkedIn page here. ?>
-		<?php $social['youtube_url'] = ''; //@TODO: Enter the URL of the Youtube page here. ?>
+		<?php $social['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
+		<?php $social['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
+		<?php $social['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO: Enter the URL of the Youtube page here. ?>
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
@@ -85,17 +85,16 @@
 			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
 		</script>
 		
-		<!--
-			<script> //Universal Analytics
+					<script> //Universal Analytics
 			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 			
-			  ga('create', 'UA-00000000-1', 'auto'); <?php //@TODO: Uncomment this script, and update the tracking ID. Don't forget to update the ID in the functions.php file too! ?>
+			  ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //@TODO: Change Tracking ID in Nebula Settings or functions.php! ?>
 			  ga('send', 'pageview');
 			</script>
-		-->
+		
 		
 		<?php wp_head(); ?>
 	</head>
@@ -200,13 +199,10 @@
 					<nav id="mobilecontact" class="unhideonload hidden">
 						<ul>
 				    		<li>
-				    			<a href="#"><i class="icon-phone"></i> (315) 123-4567</a>
+				    			<a href="#"><i class="icon-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here. ?></a>
 				    		</li>
 				    		<li>
-				    			<a href="#"><i class="icon-phone"></i> (800) 456-7890</a>
-				    		</li>
-				    		<li>
-				    			<a href="#"><i class="icon-mail"></i> <?php echo get_option('admin_email', $admin_user->user_email); ?></a>
+				    			<a href="#"><i class="icon-mail"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?></a>
 				    		</li>
 				    		<li>
 				    			<a class="directions" href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">
