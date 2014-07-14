@@ -63,6 +63,7 @@
 			
 			@media only screen and (max-width: 782px) {
 			
+				.form-table th {width: 100%;}
 				input[type="text"] {width: 100% !important;}
 			
 			}
@@ -103,7 +104,7 @@
 				    wp_die('You do not have sufficient permissions to access this page.');
 				}
 			?>
-			<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the function.php file.</p>
+			<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the function.php file. It can also be disabled below, or overridden via functions.php if that makes you feel better.</p>
 			
 			<?php if ( get_option('nebula_overall') == 'override' ) : ?>
 				<div id="setting-error-settings_updated" class="error settings-error"> 

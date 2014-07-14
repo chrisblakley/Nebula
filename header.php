@@ -198,17 +198,21 @@
 					<a class="alignright" href="#mobilecontact"><i class="icon-users"></i></a>
 					<nav id="mobilecontact" class="unhideonload hidden">
 						<ul>
-				    		<li>
-				    			<a href="#"><i class="icon-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here. ?></a>
-				    		</li>
+				    		<?php if ( nebula_settings_conditional_text_bool('nebula_phone_number') ) : ?>
+					    		<li>
+					    			<a href="#"><i class="icon-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here. ?></a>
+					    		</li>
+				    		<?php endif; ?>
 				    		<li>
 				    			<a href="#"><i class="icon-mail"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?></a>
 				    		</li>
-				    		<li>
-				    			<a class="directions" href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">
-				    				<i class="icon-direction"></i> Directions <br/><div><small>760 West Genesee Street<br/>Syracuse, NY 13204</small></div>
-				    			</a>
-				    		</li>
+				    		<?php if ( nebula_settings_conditional_text_bool('nebula_street_address') ) : ?>
+					    		<li>
+					    			<a class="directions" href="https://www.google.com/maps/place/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank">
+					    				<i class="icon-direction"></i> Directions <br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); ?></small></div>
+					    			</a>
+					    		</li>
+				    		<?php endif; ?>
 				    	</ul>
 					</nav><!--/mobilecontact-->
 					
