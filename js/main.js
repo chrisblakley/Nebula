@@ -506,8 +506,10 @@ function emphasizeSearchTerms() {
 //Single search result redirection drawer
 function singleResultDrawer(){
 	var theSearchTerm = document.URL.split('?rs=')[1]; //This is not needed if Search Everything can fix the "?s=" issue.
-	theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //This is not needed if Search Everything can fix the "?s=" issue.
-	jQuery('#searchform input#s').val(theSearchTerm); //This is not needed if Search Everything can fix the "?s=" issue.
+	if ( typeof theSearchTerm != 'undefined' ) {
+		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //This is not needed if Search Everything can fix the "?s=" issue.
+		jQuery('#searchform input#s').val(theSearchTerm); //This is not needed if Search Everything can fix the "?s=" issue.
+	}
 	
 	jQuery('.searchresultsingle .close').on('click', function(){
 		var permalink = jQuery(this).attr('href');
