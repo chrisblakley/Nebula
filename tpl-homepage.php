@@ -6,7 +6,13 @@
 get_header(); ?>
 
 <div id="heroslidercon">
-	<h3>Nebula</h3>
+	<div class="nebulashadow above"></div>
+	<div class="valign row">
+		<div>
+			<h3>Nebula</h3>
+		</div>
+	</div>
+	<div class="nebulashadow below"></div>
 </div><!--/heroslidercon-->
 
 <div class="row">

@@ -1217,12 +1217,12 @@ function redirect_single_post() {
             if ( isset($_GET['s']) ){
 				//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
 				if ( $wp_query->posts['0']->ID != 1 && get_permalink( $wp_query->posts['0']->ID ) != home_url() . '/' ) {
-					$_GET['s'] = str_replace(' ', '+', $_GET['s']); //Which is better: '%20' or '+'? They both work, so I think I like "+"					
-					wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?s=' . $_GET['s'] );
+					$_GET['s'] = str_replace(' ', '+', $_GET['s']);				
+					wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?rs=' . $_GET['s'] ); //Change this back to ?s if Search Everything can fix the "?s=" issue.
 					exit;
 				}
             } else {
-                wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?s' );
+                wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?rs' ); //Change this back to ?s if Search Everything can fix the "?s=" issue.
                 exit;
             }
         }

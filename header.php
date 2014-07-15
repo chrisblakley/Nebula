@@ -258,7 +258,7 @@
 			</div><!--/row-->
 		</div><!--/container-->
 		
-		<?php if ( !is_search() && array_key_exists('s', $_GET) ) : ?>
+		<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ) : ?>
 			<div class="container searchresultsinglecon">
 				<hr/>
 				<div class="row">

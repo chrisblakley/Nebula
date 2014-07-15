@@ -711,57 +711,90 @@ get_header(); ?>
 						<div class="row">
 							<div class="sixteen columns">
 							
-								<div class="nebulaframe floating" style="text-align: center; min-height: 60px; width: 100%;">
-									Nebula Frame using "floating"
+								<div class="nebulaframe floating valign row" style="text-align: center; min-height: 60px; width: 100%;">
+									<div>
+										Nebula Frame using "floating"
+									</div>
 								</div>
-														
-								<div class="nebulaframe bulging" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
-									Nebula Frame using "bulging"
-								</div>
-								
-								<div class="nebulaframe hovering" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
-									Nebula Frame using "hovering"
-								</div>
-								
-								<div class="nebulaframe raising-left" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
-									Nebula Frame using "raising-left"
+							
+								<div class="nebulaframe bulging valign row" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
+									<div>
+										Nebula Frame using "bulging"
+									</div>
 								</div>
 								
-								<div class="nebulaframe raising-right" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
-									Nebula Frame using "raising-right"
+								<div class="nebulaframe hovering valign row" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
+									<div>
+										Nebula Frame using "hovering"
+									</div>
 								</div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
-									Nebula Shadow using "floating"
+								<div class="nebulaframe raising-left valign row" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
+									<div>
+										Nebula Frame using "raising-left"
+									</div>
+								</div>
+								
+								<div class="nebulaframe raising-right valign row" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
+									<div>
+										Nebula Frame using "raising-right"
+									</div>
+								</div>
+								
+								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<div>
+										Nebula Shadow using "floating"
+									</div>
 								</div>
 								<div class="nebulashadow floating"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
-									Nebula Shadow using "bulging"
+								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<div>
+										Nebula Shadow using "bulging"
+									</div>
 								</div>
 								<div class="nebulashadow bulging"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
-									Nebula Shadow using "hovering"
+								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<div>
+										Nebula Shadow using "hovering"
+									</div>
 								</div>
 								<div class="nebulashadow hovering"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
-									Nebula Shadow using "raising-left"
+								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<div>
+										Nebula Shadow using "raising-left"
+									</div>
 								</div>
 								<div class="nebulashadow raising-left"></div>
 								
-								<div style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
-									Nebula Shadow using "raising-right"
+								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<div>
+										Nebula Shadow using "raising-right"
+									</div>
 								</div>
 								<div class="nebulashadow raising-right"></div>
 								
-								<div style="background: lightcoral; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
-									<strong>Offset support:</strong><br/>
-									If there is a space between this box and its shadow, then offset is now supported!
+								<div style="position: relative; background: lightblue; color: #fff; text-align: center; min-height: 120px; width: 100%; margin-top: 30px;">
+									<div class="nebulashadow above"></div>
+									<div class="valign row">
+										<div>
+											<br/><br/>Nebula Shadow using "Above" and "Below"
+										</div>
+									</div>
+									<div class="nebulashadow below"></div>
+								</div>
+								
+								<div class="valign row" style="background: lightcoral; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<div>
+										<strong>Offset support:</strong><br/>
+										If there is a space between this box and its shadow, then offset is now supported!
+									</div>
 								</div>
 								<div class="nebulashadow floating" offset="10"></div>						
-					
+								
+								<p><small>Note: The Gumby "Vertical Align" component is also used in these examples! See the homepage for another example of Gumby Vertical Align.</small></p>
 							</div><!--/columns-->
 						</div><!--/row-->
 					<?php endif; //End Shadows ?>
