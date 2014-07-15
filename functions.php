@@ -76,7 +76,7 @@ function nebula_settings_conditional_text($setting, $default = ''){
 }
 
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
-function nebula_settings_conditional_text_bool($setting, $true, $false = ''){
+function nebula_settings_conditional_text_bool($setting, $true = true, $false = false){
 	if ( get_option('nebula_overall') == 'enabled' && get_option($setting) ) {
 		return $true;
 	} else {
@@ -359,7 +359,7 @@ if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ) {
 		$user = get_current_user_id();
 		if (!current_user_can('manage_options') || $user == 99999 || true ) { //true=Not Admin (Hide update notification and admin bar), false=Admin (Show update notification and admin bar)
 			
-			remove_action('admin_footer', 'wp_admin_bar_render', 1000); //For the admin page
+			//remove_action('admin_footer', 'wp_admin_bar_render', 1000); //For the admin page
 			remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
 			
 			//CSS override for the admin page
@@ -705,7 +705,8 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 			//global $wp_admin_bar; //@TODO: NULL
 			//$wp_admin_bar->remove_menu('wp-logo');
 			//$wp_admin_bar->remove_menu('comments');
-			remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO: Not working
+			//remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO: Not working
+			echo '<style>#wp-admin-bar-comments {display: none;}</style>'; //Temporary fix until PHP removal is possible.
 		}
 	}
 	

@@ -94,10 +94,25 @@
 						jQuery('.dependent').removeClass('override');
 					}
 				}
+				
+				jQuery('.nav-tab').on('click', function(){
+					var tabID = jQuery(this).attr('id');
+					jQuery('.nav-tab-active').removeClass('nav-tab-active').addClass('nav-tab-inactive');
+					jQuery('#' + tabID).removeClass('nav-tab-inactive').addClass('nav-tab-active');
+					jQuery('table.form-table.dependent').each(function(){
+						if ( !jQuery(this).hasClass(tabID) ) {
+							jQuery(this).fadeOut(250);
+						} else {
+							jQuery(this).fadeIn(250);
+						}
+					});
+					return false;
+				});
 			});
 		</script>
 		
-		<div class="wrap">
+		
+		<div class="wrap">			
 			<h2>Nebula Settings</h2>
 			<?php
 				if (!current_user_can('manage_options')) {
@@ -137,9 +152,12 @@
 			        </tr>
 			    </table>
 								
-				<hr/>
+				<h2 class="nav-tab-wrapper">
+		            <a id="metadata" class="nav-tab nav-tab-active" href="#">Metadata</a>
+		            <a id="functions" class="nav-tab nav-tab-inactive" href="#">Functions</a>
+		        </h2>
 				
-				<table class="form-table dependent frontend">
+				<table class="form-table dependent metadata">
 			        <tr valign="top">
 			        	<th scope="row">Contact Email&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
@@ -231,10 +249,8 @@
 						</td>
 			        </tr>
 			    </table>
-				
-				<hr/>
-						
-				<table class="form-table dependent backend">
+										
+				<table class="form-table dependent functions" style="display: none;">
 			        <tr valign="top">
 			        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
@@ -325,7 +341,7 @@
 				<?php endif; ?>
 				
 				<?php submit_button(); ?>
+				
 			</form>
-			
 		</div><!--/wrap-->
 <?php } ?>
