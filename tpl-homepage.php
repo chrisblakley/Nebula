@@ -6,13 +6,14 @@
 get_header(); ?>
 
 <div id="heroslidercon">
-	<div class="nebulashadow above"></div>
-	<div class="valign row">
+	<div class="nebulashadow inner-top"></div>
+	<div class="valign row" style="height: 100%;">
 		<div>
 			<h3>Nebula</h3>
+			<h4>Lorem ipsum dolor sit amet</h4>
 		</div>
 	</div>
-	<div class="nebulashadow below"></div>
+	<div class="nebulashadow inner-bottom"></div>
 </div><!--/heroslidercon-->
 
 <div class="row">

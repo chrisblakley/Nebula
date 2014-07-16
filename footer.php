@@ -4,7 +4,7 @@
  */
 ?>
 
-<hr class="zero" />
+<hr class="zero" style="margin-top: 30px;"/>
 <div class="footer">
 
 <?php wp_footer(); ?>

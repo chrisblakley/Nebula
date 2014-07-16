@@ -499,16 +499,34 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		$upload_dir = wp_upload_dir();
 		$uploads_size = foldersize($upload_dir['basedir']);
 		
-		echo '<ul>';
-		echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
-		echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong></li>';
-		echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
-		echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
-		echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
-		echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
-		echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
-		echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install (WP Admin): <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
-		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
+		$secureServer = '';
+		if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) {
+			$secureServer = '<small><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
+		}
+		
+		echo '<script>var beforeLoad = (new Date()).getTime();
+				function stopTimer(){
+				    var afterLoad = (new Date()).getTime();
+				    var result = (afterLoad - beforeLoad) / 1000;
+				    jQuery(".loadtime").html(result + " seconds");
+				    jQuery(".serverdetections .fa-spin").remove();
+				    jQuery("#testload").remove();
+				    if ( result > 6 ) { jQuery(".slowicon").addClass("fa-warning"); }
+				}
+				</script>';
+		echo '<iframe id="testload" onload="stopTimer();" src="' . home_url('/') . '" style="width: 1200px; height: 0px; pointer-events: none; opacity: 0; visibility: hidden; display: none;"></iframe>';
+		
+		echo '<ul class="serverdetections">';
+			echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
+			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
+			echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
+			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
+			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
+			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
+			echo '<li><i class="fa fa-clock-o fa-fw"></i> Homepage load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank"><strong class="loadtime"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
+			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
+			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';
 	}
 }
@@ -1340,7 +1358,7 @@ add_filter('body_class', 'category_id_class');
 
 function vimeo_meta($videoID) {
 	global $vimeo_meta;
-	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml"));
+	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO: Will this work on a secure server?
 	$vimeo_meta['id'] = $videoID;
 	$vimeo_meta['title'] = $xml->video->title;
 	$vimeo_meta['safetitle'] = str_replace(" ", "-", $vimeo_meta['title']);
@@ -1357,7 +1375,7 @@ function vimeo_meta($videoID) {
 
 function youtube_meta($videoID) {
 	global $youtube_meta;
-	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $videoID));
+	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO: Will this work on a secure server?
 	$youtube_meta['origin'] = baseDomain();
 	$youtube_meta['id'] = $videoID;
 	$youtube_meta['title'] = $xml->title;
@@ -1725,11 +1743,12 @@ function map_shortcode($atts){
 add_shortcode('vimeo', 'vimeo_shortcode');
 function vimeo_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );  
+	$protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
 	vimeo_meta($id);
 	global $vimeo_meta;
-	$vimeo = '<article class="vimeo video"><iframe id="' . $vimeo_meta['safetitle'] . '" class="vimeoplayer" src="http://player.vimeo.com/video/' . $vimeo_meta['id'] . '?api=1&player_id=' . $vimeo_meta['safetitle'] . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
+	$vimeo = '<article class="vimeo video"><iframe id="' . $vimeo_meta['safetitle'] . '" class="vimeoplayer" src="' . $protocol . 'player.vimeo.com/video/' . $vimeo_meta['id'] . '?api=1&player_id=' . $vimeo_meta['safetitle'] . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
 	return $vimeo;
 }
 
@@ -1738,11 +1757,12 @@ function vimeo_shortcode($atts){
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0), $atts) ); 
+	$protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
 	youtube_meta($id);
 	global $youtube_meta;
-	$youtube = '<article class="youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="http://www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
+	$youtube = '<article class="youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="' . $protocol . 'www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
 	return $youtube;
 }
 

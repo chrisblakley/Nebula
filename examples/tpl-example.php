@@ -776,14 +776,22 @@ get_header(); ?>
 								</div>
 								<div class="nebulashadow raising-right"></div>
 								
+								<div class="nebulashadow above" style="margin-top: 30px;"></div>
+								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px;">
+									<div>
+										Nebula Shadow using "Above" and "Below"
+									</div>
+								</div>
+								<div class="nebulashadow below"></div>
+								
 								<div style="position: relative; background: lightblue; color: #fff; text-align: center; min-height: 120px; width: 100%; margin-top: 30px;">
-									<div class="nebulashadow above"></div>
+									<div class="nebulashadow inner-top"></div>
 									<div class="valign row">
 										<div>
-											<br/><br/>Nebula Shadow using "Above" and "Below"
+											<br/><br/>Nebula Shadow using "Inner-Top" and "Inner-Bottom"
 										</div>
 									</div>
-									<div class="nebulashadow below"></div>
+									<div class="nebulashadow inner-bottom"></div>
 								</div>
 								
 								<div class="valign row" style="background: lightcoral; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
@@ -1000,13 +1008,13 @@ get_header(); ?>
 								if ('speechSynthesis' in window) {
 									supportMsg.innerHTML = 'Your browser <strong>supports</strong> speech synthesis.';
 								} else {
-									supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.<br>Try this in <a href="http://www.google.co.uk/intl/en/chrome/browser/canary.html">Chrome Canary</a>.';
+									supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.';
 								}
 								
 								jQuery('#speakit').on('click', function(){
 									var textToSay = jQuery('#speaktext').val();
 									speak(textToSay);
-									console.log('sending to speak');
+									//console.log('sending to speak');
 									return false;
 								});
 								
@@ -1191,7 +1199,7 @@ get_header(); ?>
 						
 						<div class="row">
 							<div class="sixteen columns">
-								<p>Toggle cookie: <a class="jscookie" href="#">OFF</a></p>
+								<p>Toggle cookie: <a class="jscookie" href="#">OFF</a> Last set on: <span class="setdate">(not set)</span></p>
 								
 								<script>
 									jQuery(document).ready(function() {	
@@ -1199,8 +1207,10 @@ get_header(); ?>
 										function checkExample() {
 											if ( readCookie('examplejs') ) {
 												jQuery('.jscookie').text('ON').addClass('cookie-on');
+												jQuery('.setdate').text(readCookie('examplejs'));
 											} else {
 												jQuery('.jscookie').text('OFF').removeClass('cookie-on');
+												jQuery('.setdate').text('(not set)');
 											}
 										}
 										
@@ -1209,7 +1219,26 @@ get_header(); ?>
 												eraseCookie('examplejs');
 												checkExample();
 											} else {
-												createCookie('examplejs', 'true', 30);
+												var weekday = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+												var month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+												var currentTime = new Date();
+												dddd = currentTime.getDay(); //Get day of week (0-6)
+												dddd = weekday[dddd]; //Convert day to named weekday
+												MMMM = currentTime.getMonth(); //Get month (0-11)
+												MMMM = month[MMMM]; //Convert month to named month
+												d = currentTime.getDate(); //Get date (1-31)
+												yyyy = currentTime.getFullYear(); //Get year (2014)
+												h = currentTime.getHours(); //Get hours (0-23)
+												tt = ( h >=12 ? 'pm' : 'am' ); //Determine AM or PM
+												h = ( h > 12 ? h-12 : h ); //Convert hours to 12 hour format
+												h = ( h == 0 ? 12 : h ); //Convert hours to 12 hour format
+												mm = currentTime.getMinutes(); //Get minutes (0-59)
+												mm = ( mm <10 ? '0'+mm : mm ); //Add leading 0 to minutes (as needed)
+												ss = currentTime.getSeconds(); //Get seconds (0-59)
+												ss = ( ss <10 ? '0'+ss : ss ); //Add leading 0 to seconds (as needed)
+												currentTime = dddd + ', ' + MMMM + ' ' + d + ', ' + yyyy + ' @ ' + h + ':' + mm + ' ' + tt;
+												
+												createCookie('examplejs', currentTime);
 												checkExample();
 											}
 											return false;
@@ -1217,7 +1246,7 @@ get_header(); ?>
 									});
 								</script>
 								
-								<br/><hr/>
+								<br/>
 							</div><!--/columns-->
 						</div><!--/row-->
 						
