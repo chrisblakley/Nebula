@@ -511,7 +511,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				    jQuery(".loadtime").html(result + " seconds");
 				    jQuery(".serverdetections .fa-spin").remove();
 				    jQuery("#testload").remove();
-				    if ( result > 6 ) { jQuery(".slowicon").addClass("fa-warning"); }
+				    if ( result > 5 ) { jQuery(".slowicon").addClass("fa-warning"); }
 				}
 				</script>';
 		echo '<iframe id="testload" onload="stopTimer();" src="' . home_url('/') . '" style="width: 1200px; height: 0px; pointer-events: none; opacity: 0; visibility: hidden; display: none;"></iframe>';

@@ -298,7 +298,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 
 /* Sample Hero and on-load animation */
 #heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 30px; margin-right: 0; padding-left: 30px; text-transform: uppercase; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
+	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 #heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 15px; margin-top: 10px; padding-left: 15px; text-transform: uppercase; background: rgba(0,0,0,0.5);}
 
 
