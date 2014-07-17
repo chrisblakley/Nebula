@@ -328,7 +328,7 @@ div#bcrumbs {position: relative; z-index: 1;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
 
 .entry-manage {font-size: 12px; margin-top: 15px;}
-	.entry-manage-edit {}
+	.nebula-manage-edit {}
 		.post-edit,
 		.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;}
@@ -530,7 +530,7 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 	.row {outline: 1px solid lightgrey;}
 */
 
-	.entry-manage-edit {display: block; text-align: center;}
+	.nebula-manage-edit {display: block; text-align: center;}
 	.post-modified {float: none; display: block; text-align: center;}
 
 
