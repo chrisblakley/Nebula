@@ -7,8 +7,8 @@
 <?php /* Display navigation to next/previous pages when applicable @TODO: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
 <?php if ( $wp_query->max_num_pages > 1 ) : ?>
 	<nav id="nav-above" class="navigation">
-		<div class="nav-previous"><?php next_posts_link( '<span class="meta-nav">&larr;</span> Older posts' ); ?></div>
-		<div class="nav-next"><?php previous_posts_link( 'Newer posts <span class="meta-nav">&rarr;</span>' ); ?></div>
+		<div class="nav-previous"><?php next_posts_link('<span class="meta-nav">&larr;</span> Older posts'); ?></div>
+		<div class="nav-next"><?php previous_posts_link('Newer posts <span class="meta-nav">&rarr;</span>'); ?></div>
 	</nav><!-- #nav-above -->
 <?php endif; ?>
 
@@ -48,12 +48,12 @@
 				<?php if ( post_password_required() ) : ?>
 					<?php the_content(); ?>
 				<?php else : ?>
-					<?php $images = get_children( array( 'post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => 'image', 'orderby' => 'menu_order', 'order' => 'ASC', 'numberposts' => 999 ) ); ?>
+					<?php $images = get_children( array('post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => 'image', 'orderby' => 'menu_order', 'order' => 'ASC', 'numberposts' => 999) ); ?>
 					<?php if ($images) : ?>
 						<?php 
-							$total_images = count( $images );
-							$image = array_shift( $images );
-							$image_img_tag = wp_get_attachment_image( $image->ID, 'thumbnail' );
+							$total_images = count($images);
+							$image = array_shift($images);
+							$image_img_tag = wp_get_attachment_image($image->ID, 'thumbnail');
 						?>
 					
 						<div class="gallery-thumb">
@@ -71,14 +71,19 @@
 
 			<footer class="entry-utility">
 				<a href="<?php echo get_term_link('gallery', 'category'); ?>">More Galleries</a>
-				<?php //comments_popup_link('Leave a comment', '1 Comment', '% Comments'); ?>
+				
+				<?php
+					if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
+						comments_popup_link('Leave a comment', '1 Comment', '% Comments');
+					}
+				?>
 				
 				<?php if ( current_user_can('manage_options') ) : ?>
 					<div class="container entry-manage">
 						<div class="row">
 							<div class="sixteen columns">
 								<hr/>
-								<span class="entry-manage-edit"><?php nebula_manage('edit'); ?></span> <?php nebula_manage('modified'); ?>
+								<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
 								<hr/>
 							</div><!--/columns-->
 						</div>
@@ -117,15 +122,19 @@
 					<div class="row">
 						<div class="sixteen columns">
 							<hr/>
-							<span class="entry-manage-edit"><?php nebula_manage('edit'); ?></span> <?php nebula_manage('modified'); ?>
+							<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
 							<hr/>
 						</div><!--/columns-->
 					</div>
 				</div>
 			<?php endif; ?>
 		</article>
-
-		<?php //comments_template('', true); ?>
+		
+		<?php
+			if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
+				comments_template('', true);
+			}
+		?>
 
 	<?php endif; //End if in Gallery ?>
 

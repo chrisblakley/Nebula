@@ -1028,7 +1028,7 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 //Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
 function nebula_manage($data) {
 	if ( $data == 'edit' || $data == 'admin' ) {
-		echo '<span class="post-admin"><i class="icon-tools"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="icon-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span>';
+		echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="icon-tools"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="icon-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
 	} elseif ( $data == 'modified' || $data == 'mod' ) {
 		if ( get_the_modified_author() ) {
 			$manage_author = get_the_modified_author();
