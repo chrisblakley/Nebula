@@ -42,6 +42,12 @@
 		register_setting('nebula_settings_group', 'nebula_phg_welcome_panel');
 		register_setting('nebula_settings_group', 'nebula_unnecessary_metaboxes');
 		register_setting('nebula_settings_group', 'nebula_phg_metabox');
+		
+		register_setting('nebula_settings_group', 'nebula_cpanel_url');
+		register_setting('nebula_settings_group', 'nebula_hosting_url');
+		register_setting('nebula_settings_group', 'nebula_registrar_url');
+		register_setting('nebula_settings_group', 'nebula_ga_url');
+		register_setting('nebula_settings_group', 'nebula_google_webmaster_tools_url');
 	}
 	
 	//Output the settings page
@@ -155,6 +161,7 @@
 				<h2 class="nav-tab-wrapper">
 		            <a id="metadata" class="nav-tab nav-tab-active" href="#">Metadata</a>
 		            <a id="functions" class="nav-tab nav-tab-inactive" href="#">Functions</a>
+		            <a id="administration" class="nav-tab nav-tab-inactive" href="#">Administration</a>
 		        </h2>
 				
 				<table class="form-table dependent metadata">
@@ -249,7 +256,7 @@
 						</td>
 			        </tr>
 			    </table>
-										
+								
 				<table class="form-table dependent functions" style="display: none;">
 			        <tr valign="top">
 			        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
@@ -332,6 +339,58 @@
 								<option value="disabled" <?php selected('disabled', get_option('nebula_phg_metabox')); ?>>Disabled</option>
 							</select>
 							<p class="helper"><small>Control the PHG Developer Metabox with useful server information. Requires a user with a @pinckneyhugo.com email address to view. <em>(Default: Enabled)</em></small></p>
+						</td>
+			        </tr>
+			    </table>
+				
+				<table class="form-table dependent administration">
+			        <tr valign="top">
+			        	<th scope="row">Control Panel&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<?php
+								$serverProtocol = 'http://';
+								if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) {
+									$serverProtocol = 'https://';
+								}
+							?>
+							<input type="text" name="nebula_cpanel_url" value="<?php echo get_option('nebula_cpanel_url'); ?>" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" style="width: 392px;" />
+							<p class="helper"><small>Link to the control panel of the hosting account. cPanel on this domain would be <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a>.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Hosting&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<?php
+								$hostURL = explode(".", gethostname());
+							?>
+							<input type="text" name="nebula_hosting_url" value="<?php echo get_option('nebula_hosting_url'); ?>" placeholder="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>/" style="width: 392px;" />
+							<p class="helper"><small>Link to the server host for easy access to support and other information. Server detected as <a href="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>" target="_blank">http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?></a>.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Domain Registrar&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<?php
+								//$whois = simplexml_load_string(file_get_contents('http://whomsy.com/api/' . $_SERVER['SERVER_NAME'] . '?output=xml'));
+								//$whois = file_get_contents('http://api.sudostuff.com/whois/' . $_SERVER['SERVER_NAME']);
+								//var_dump($whois);
+							?>
+							<input type="text" name="nebula_registrar_url" value="<?php echo get_option('nebula_registrar_url'); ?>" placeholder="http://" style="width: 392px;" />
+							<p class="helper"><small>Link to the domain registrar used for access to pointers, forwarding, and other information.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Google Analytics URL&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_ga_url" value="<?php echo get_option('nebula_ga_url'); ?>" placeholder="http://www.google.com/analytics/..." style="width: 392px;" />
+							<p class="helper"><small>Link directly to this project's Google Analytics report.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Google Webmaster Tools URL&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_google_webmaster_tools_url" value="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
+							<p class="helper"><small>Direct link to this project's Google Webmaster Tools.</small></p>
 						</td>
 			        </tr>
 			    </table>

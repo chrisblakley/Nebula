@@ -47,11 +47,11 @@
 			<div class="welcome-panel-column">
 				<h4>Administration</h4>
 				<ul>
-					<li><i class="fa fa-gears fa-fw"></i> <a href="#" target="_blank">cPanel</a></li>
-					<li><i class="fa fa-hdd-o fa-fw"></i> <a href="#" target="_blank">Hosting</a></li>
-					<li><i class="fa fa-globe fa-fw"></i> <a href="#" target="_blank">Registrar</a></li>
-					<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="#" target="_blank">Google Analytics</a></li>
-					<li><i class="fa fa-google fa-fw"></i> <a href="#" target="_blank">Google Webmaster Tools</a></li>
+					<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_cpanel_url', ''); ?>" target="_blank">cPanel</a></li>
+					<li><i class="fa fa-hdd-o fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_hosting_url', ''); ?>" target="_blank">Hosting</a></li>
+					<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_registrar_url', ''); ?>" target="_blank">Registrar</a></li>
+					<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_ga_url', 'http://www.google.com/analytics/'); ?>" target="_blank">Google Analytics</a></li>
+					<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_google_webmaster_tools_url', 'https://www.google.com/webmasters/tools/'); ?>" target="_blank">Google Webmaster Tools</a></li>
 				</ul>
 			</div>
 			<?php endif; ?>
@@ -59,10 +59,10 @@
 			<div class="welcome-panel-column">
 				<h4>Social</h4>
 				<ul>
-					<li><i class="fa fa-facebook-square fa-fw"></i> <a href="#" target="_blank">Facebook</a></li>
-					<li><i class="fa fa-twitter-square fa-fw"></i> <a href="#" target="_blank">Twitter</a></li>
-					<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="#" target="_blank">Google+</a></li>
-					<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="#" target="_blank">LinkedIn</a></li>
+					<li><i class="fa fa-facebook-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_facebook_url', ''); ?>" target="_blank">Facebook</a></li>
+					<li><i class="fa fa-twitter-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_twitter_url', ''); ?>" target="_blank">Twitter</a></li>
+					<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_google_plus_url', ''); ?>" target="_blank">Google+</a></li>
+					<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_linkedin_url', ''); ?>" target="_blank">LinkedIn</a></li>
 				</ul>
 			</div>
 			

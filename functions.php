@@ -12,8 +12,8 @@
 wp_register_style('normalize', get_template_directory_uri() . '/css/normalize.css', array(), '3.0.1');
 wp_register_style('gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
 wp_register_style('font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
-wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), null);
-wp_register_style('datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), null);
+wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), '4.3');
+wp_register_style('datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), '1.10');
 wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby', 'mmenu', 'normalize'), null);
 wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
 wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
@@ -356,34 +356,23 @@ remove_filter('comment_text', 'wptexturize');
 if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ) {
 	add_action('init', 'admin_only_features');
 	function admin_only_features() {
-		$user = get_current_user_id();
-		if (!current_user_can('manage_options') || $user == 99999 || true ) { //true=Not Admin (Hide update notification and admin bar), false=Admin (Show update notification and admin bar)
+		remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
 			
-			//remove_action('admin_footer', 'wp_admin_bar_render', 1000); //For the admin page
-			remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
-			
-			//CSS override for the admin page
-			add_filter('admin_head','remove_admin_bar_style_backend');
-			function remove_admin_bar_style_backend() { 
-				echo '<style>body.admin-bar #wpcontent, body.admin-bar #adminmenu { padding-top: 0px !important; }</style>';
-			}	  
-			
-			//CSS override for the frontend
-			add_filter('wp_head','remove_admin_bar_style_frontend', 99);
-			function remove_admin_bar_style_frontend() {
-				echo '<style type="text/css" media="screen">
-				html { margin-top: 0px !important; }
-				* html body { margin-top: 0px !important; }
-				</style>';
-			}
-			
-			//Disable Wordpress update notification in WP Admin
-			//add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
-			
+		//CSS override for the frontend
+		add_filter('wp_head','remove_admin_bar_style_frontend', 99);
+		function remove_admin_bar_style_frontend() {
+			echo '<style type="text/css" media="screen">
+			html { margin-top: 0px !important; }
+			* html body { margin-top: 0px !important; }
+			</style>';
 		}
 	}
 }
 
+//Disable Wordpress Core update notifications in WP Admin
+if ( nebula_settings_conditional('nebula_wp_core_updates_notify') ) {
+	add_filter('pre_site_transient_update_core', create_function('$a', "return null;"));
+}
 
 //Show update warning on Wordpress Core/Plugin update admin pages
 if ( nebula_settings_conditional('nebula_phg_plugin_update_warning') ) {
@@ -407,19 +396,19 @@ if ( nebula_settings_conditional('nebula_phg_plugin_update_warning') ) {
 }
 
 //Control session time (for the "Remember Me" checkbox)
-add_filter( 'auth_cookie_expiration', 'nebula_session_expire' );
+add_filter('auth_cookie_expiration', 'nebula_session_expire');
 function nebula_session_expire($expirein) {
     return 2592000; //30 days (Default is 1209600 (14 days)
 }
 
 //Disable the logged-in monitoring modal
-remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
+remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
 
 //Custom login screen
 add_action('login_head', 'custom_login_css');
 function custom_login_css() {
 	//Only use BG image and animation on direct requests (disable for iframe logins after session timeouts).
-	if(empty($_POST['signed_request'])) {
+	if( empty($_POST['signed_request']) ) {
 	    echo '<script>window.userIP = "' . $_SERVER["REMOTE_ADDR"] . '";</script>';
 	    echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js?ver=3.5.1"></script>';
 	    //echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/libs/cssbs.js"></script>';
@@ -504,16 +493,15 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			$secureServer = '<small><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
 		}
 		
-		echo '<script>var beforeLoad = (new Date()).getTime();
+		echo '<script id="testloadscript">
+				var beforeLoad = (new Date()).getTime();
 				function stopTimer(){
 				    var afterLoad = (new Date()).getTime();
-				    var result = (afterLoad - beforeLoad) / 1000;
+				    var result = (afterLoad - beforeLoad)/1000;
 				    jQuery(".loadtime").html(result + " seconds");
-				    jQuery(".serverdetections .fa-spin").remove();
-				    jQuery("#testload").remove();
 				    if ( result > 5 ) { jQuery(".slowicon").addClass("fa-warning"); }
-				}
-				</script>';
+				    jQuery(".serverdetections .fa-spin, #testload, #testloadscript").remove();
+				}</script>';
 		echo '<iframe id="testload" onload="stopTimer();" src="' . home_url('/') . '" style="width: 1200px; height: 0px; pointer-events: none; opacity: 0; visibility: hidden; display: none;"></iframe>';
 		
 		echo '<ul class="serverdetections">';

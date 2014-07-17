@@ -37,7 +37,7 @@
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-temp.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.jpg" />
     	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.jpg" />
-		<meta property="og:email" content="<?php echo get_option('admin_email', $admin_user->user_email); ?>" />
+		<meta property="og:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear. ?>" />
 		<meta property="og:phone_number" content="<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
 		<meta property="og:fax_number" content="<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
 		<meta property="og:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
@@ -46,11 +46,11 @@
 		<meta property="og:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
 		<meta property="og:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
 		<meta property="og:postal-code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
-		<meta property="og:country-name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', ''); ?>" /> <!-- USA -->
+		<meta property="og:country-name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
 		
 		<!-- Facebook Metadata -->
 		<?php $social['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
-		<?php $social['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', '');; //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!)?>
+		<?php $social['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!) ?>
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
 		<meta property="fb:admins" content="" /><!-- @TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" -->
 				
@@ -85,16 +85,15 @@
 			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
 		</script>
 		
-					<script> //Universal Analytics
-			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-			
-			  ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //@TODO: Change Tracking ID in Nebula Settings or functions.php! ?>
-			  ga('send', 'pageview');
-			</script>
+		<script> //Universal Analytics
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 		
+			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //@TODO: Change Tracking ID in Nebula Settings or functions.php! ?>
+			ga('send', 'pageview');
+		</script>
 		
 		<?php wp_head(); ?>
 	</head>
@@ -104,80 +103,79 @@
 		<div id="fb-root"></div>
 		<script type="text/javascript">
 			window.fbAsyncInit = function() {
-		    //Initialize the Facebook JavaScript SDK
-		    FB.init({
-		      appId      : '<?php echo $social['facebook_app_id']; //@TODO: Come up with a backup App ID to use. ?>',
-		      channelUrl : '<?php bloginfo("template_directory");?>/includes/channel.html',
-		      status     : true,
-		      xfbml      : true
-		    });
-		    							
-			//Facebook Likes
-			FB.Event.subscribe('edge.create', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Like',
-					'socialTarget': href,
-					'page': currentPage
+				//Initialize the Facebook JavaScript SDK
+				FB.init({
+					appId: '<?php echo $social['facebook_app_id']; ?>',
+					channelUrl: '<?php bloginfo("template_directory");?>/includes/channel.html',
+					status: true,
+					xfbml: true
 				});
-				ga('send', 'event', 'Social', 'Facebook Like', currentPage);
-				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Like', currentPage);
-			});
+							
+				//Facebook Likes
+				FB.Event.subscribe('edge.create', function(href, widget) {
+					var currentPage = jQuery(document).attr('title');
+					ga('send', {
+						'hitType': 'social',
+						'socialNetwork': 'Facebook',
+						'socialAction': 'Like',
+						'socialTarget': href,
+						'page': currentPage
+					});
+					ga('send', 'event', 'Social', 'Facebook Like', currentPage);
+					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Like', currentPage);
+				});
 			
-			//Facebook Unlikes
-			FB.Event.subscribe('edge.remove', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Unlike',
-					'socialTarget': href,
-					'page': currentPage
+				//Facebook Unlikes
+				FB.Event.subscribe('edge.remove', function(href, widget) {
+					var currentPage = jQuery(document).attr('title');
+					ga('send', {
+						'hitType': 'social',
+						'socialNetwork': 'Facebook',
+						'socialAction': 'Unlike',
+						'socialTarget': href,
+						'page': currentPage
+					});
+					ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
+					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Unlike', currentPage);
 				});
-				ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
-				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Unlike', currentPage);
-			});
 			
-			//Facebook Send/Share
-			FB.Event.subscribe('message.send', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Send',
-					'socialTarget': href,
-					'page': currentPage
+				//Facebook Send/Share
+				FB.Event.subscribe('message.send', function(href, widget) {
+					var currentPage = jQuery(document).attr('title');
+					ga('send', {
+						'hitType': 'social',
+						'socialNetwork': 'Facebook',
+						'socialAction': 'Send',
+						'socialTarget': href,
+						'page': currentPage
+					});
+					ga('send', 'event', 'Social', 'Facebook Share', currentPage);
+					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Share', currentPage);
 				});
-				ga('send', 'event', 'Social', 'Facebook Share', currentPage);
-				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Share', currentPage);
-			});
 			
-			//Facebook Comments
-			FB.Event.subscribe('comment.create', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Comment',
-					'socialTarget': href,
-					'page': currentPage
+				//Facebook Comments
+				FB.Event.subscribe('comment.create', function(href, widget) {
+					var currentPage = jQuery(document).attr('title');
+					ga('send', {
+						'hitType': 'social',
+						'socialNetwork': 'Facebook',
+						'socialAction': 'Comment',
+						'socialTarget': href,
+						'page': currentPage
+					});
+					ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
+					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
 				});
-				ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
-				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
-			});
-				
-		  };
-		 
-		  //Load the SDK asynchronously
-		  (function(d, s, id) {
-		  var js, fjs = d.getElementsByTagName(s)[0];
-		  if (d.getElementById(id)) return;
-		  js = d.createElement(s); js.id = id;
-		  js.src = "//connect.facebook.net/en_GB/all.js";
-		  fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
+			};
+			
+			//Load the SDK asynchronously
+			(function(d, s, id) {
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/en_GB/all.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
 		</script>
 										
 		<div id="topbarcon">
@@ -205,7 +203,7 @@
 				    			<a href="#"><i class="icon-mail"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear. ?></a>
 				    		</li>
 				    		<li>
-				    			<a class="directions" href="https://www.google.com/maps/place/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank">
+				    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank">
 				    				<i class="icon-direction"></i> Directions <br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here. ?></small></div>
 				    			</a>
 				    		</li>
@@ -229,7 +227,7 @@
 		<div id="logonavcon" class="row">
 			<div class="six columns">
 				<?php
-					//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths (and alt text) below.
+					//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
 					//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
 				?>
 				<a class="logocon" href="<?php echo home_url(); ?>">
@@ -265,7 +263,7 @@
 					<div class="sixteen columns searchresultsingle">
 						<span>Your search returned only one result. You have been automatically redirected.</span>
 						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="icon-cancel"></i></a>
-						<?php echo get_search_form(); echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>' . PHP_EOL; ?>
+						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
 					</div><!--/columns-->
 				</div><!--/row-->
 				<hr/>
