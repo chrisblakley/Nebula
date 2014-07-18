@@ -120,9 +120,10 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 
 .nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
 
-.nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0) /* Data attribute not yet supported in browsers. */; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain;}
+.nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0) /* Data attribute not yet supported in browsers. */; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 	.nebulashadow.bulging {background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
 		.nebulashadow.buldging:before {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%;}
+	.nebulashadow.curling {background: url('images/shadow-curling.png') no-repeat top center; background-size: contain;}
 	.nebulashadow.hovering {background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain; height: 35px;}
 	.nebulashadow.raising-left {background: url('images/shadow-raising-left.png') no-repeat top center; background-size: contain;}
 	.nebulashadow.raising-right {background: url('images/shadow-raising-right.png') no-repeat top center; background-size: contain;}
@@ -130,14 +131,17 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 	.nebulashadow.inner-bottom {height: 12px; position: absolute; bottom: 0; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.2));}
 	.nebulashadow.above {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.2));}
 	.nebulashadow.below {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
-
+	
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;}
-	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain;}
+	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 	.nebulaframe.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
 		.nebulaframe.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%; background: none;}
+	.nebulaframe.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-curling.png') no-repeat top center; background-size: contain;}
 	.nebulaframe.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain;}
 	.nebulaframe.raising-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-raising-left.png') no-repeat top center; background-size: contain;}
 	.nebulaframe.raising-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-raising-right.png') no-repeat top center; background-size: contain;}
+	
+	/* .nebulaframe.animate:hover:after {background-position-y: -24px;} */
 
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
 
@@ -518,6 +522,9 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 	.row {outline: 1px solid pink;}
 */
 
+	.nebula-manage-edit {display: block; text-align: center;}
+	.post-modified {float: none; display: block; text-align: center;}
+
 
 } /* End mobile landscape media query */
 
@@ -529,9 +536,6 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 .column, .columns {outline: 1px solid yellow;}
 	.row {outline: 1px solid lightgrey;}
 */
-
-	.nebula-manage-edit {display: block; text-align: center;}
-	.post-modified {float: none; display: block; text-align: center;}
 
 
 } /* End mobile portrait media query */

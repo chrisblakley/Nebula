@@ -394,6 +394,19 @@ function mmenu() {
 		jQuery('.clearsearch').addClass('hidden');
 		return false;
 	});
+	
+	//Close mmenu on back button click
+	history.replaceState(null, document.title, location.pathname + "#!");
+	history.pushState(null, document.title, location.pathname);
+	window.addEventListener("popstate", function(e) {
+		if ( jQuery('html.mm-opened').length ) {
+			jQuery(".mm-menu").trigger("close.mm");
+			history.replaceState(null, document.title, location.pathname + "#!");
+			history.pushState(null, document.title, location.pathname);
+			e.stopPropagation();
+		}
+	}, false);
+	
 } //end mmenu()
 
 //Power Footer Width Distributor

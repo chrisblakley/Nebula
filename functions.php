@@ -2171,4 +2171,5 @@ function add_shortcode_plugin($plugin_array) {
 	return $plugin_array;  
 }
 
+
 //Close functions.php. Do not add anything after this closing tag!! ?>

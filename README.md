@@ -33,7 +33,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 	- 270x270px "square.png"
 	- 558x270px "wide.png"
 	- 517x516px "large.png"
-- Google Analytics tracking number/domain (header.php and functions.php[for now])
+- Google Analytics tracking number (functions.php)
 - Strip out all unplanned HTML/CSS/JS (Do this before any other development! You can always add pieces back in from the Nebula.)
 - *[Theme development goes here]*
 - Update editor-style.css to match front-end

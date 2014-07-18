@@ -55,7 +55,8 @@
 ?>
 		
 		<style>
-			.dependent.override {opacity: 0.4; pointer-events: none;}
+			.dependent.override,
+			.mobiletitle.override {opacity: 0.4; pointer-events: none;}
 			.form-table th {width: 250px;}
 			a {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 			a.help {text-decoration: none; color: #ccc;}
@@ -67,11 +68,19 @@
 				
 			input[type="text"] {width: 206px; font-size: 12px;}
 			
+			.mobiletitle {display: none;}
+						
 			@media only screen and (max-width: 782px) {
 			
 				.form-table th {width: 100%;}
 				input[type="text"] {width: 100% !important;}
 			
+			}
+			
+			@media only screen and (max-width: 400px) {
+				.nav-tab-wrapper {display: none;}
+				.mobiletitle {display: block;}
+				.form-table.dependent {display: block !important;}
 			}
 		</style>
 		
@@ -95,9 +104,9 @@
 				
 				function toggleDependents() {
 					if ( jQuery('#nebula_overall').val() == 'disabled' || jQuery('#nebula_overall').val() == 'override' ) {
-						jQuery('.dependent').addClass('override');
+						jQuery('.dependent, .mobiletitle').addClass('override');
 					} else {
-						jQuery('.dependent').removeClass('override');
+						jQuery('.dependent, .mobiletitle').removeClass('override');
 					}
 				}
 				
@@ -163,6 +172,9 @@
 		            <a id="functions" class="nav-tab nav-tab-inactive" href="#">Functions</a>
 		            <a id="administration" class="nav-tab nav-tab-inactive" href="#">Administration</a>
 		        </h2>
+				
+				<h2 class="mobiletitle">Metadata</h2>
+				<hr class="mobiletitle"/>
 				
 				<table class="form-table dependent metadata">
 			        <tr valign="top">
@@ -256,7 +268,10 @@
 						</td>
 			        </tr>
 			    </table>
-								
+				
+				<h2 class="mobiletitle">Functions</h2>
+				<hr class="mobiletitle"/>
+				
 				<table class="form-table dependent functions" style="display: none;">
 			        <tr valign="top">
 			        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
@@ -342,6 +357,9 @@
 						</td>
 			        </tr>
 			    </table>
+				
+				<h2 class="mobiletitle">Administration</h2>
+				<hr class="mobiletitle"/>
 				
 				<table class="form-table dependent administration">
 			        <tr valign="top">

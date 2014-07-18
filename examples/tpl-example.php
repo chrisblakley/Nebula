@@ -723,6 +723,12 @@ get_header(); ?>
 									</div>
 								</div>
 								
+								<div class="nebulaframe curling valign row" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
+									<div>
+										Nebula Frame using "curling"
+									</div>
+								</div>
+								
 								<div class="nebulaframe hovering valign row" style="text-align: center; min-height: 60px; width: 100%; margin-top: 30px;">
 									<div>
 										Nebula Frame using "hovering"
@@ -754,6 +760,13 @@ get_header(); ?>
 									</div>
 								</div>
 								<div class="nebulashadow bulging"></div>
+								
+								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
+									<div>
+										Nebula Shadow using "curling"
+									</div>
+								</div>
+								<div class="nebulashadow curling"></div>
 								
 								<div class="valign row" style="background: lightblue; color: #fff; text-align: center; min-height: 60px; width: 100%; padding: 3px 10px; margin-top: 30px;">
 									<div>
@@ -1278,7 +1291,7 @@ get_header(); ?>
 			<ul class="xoxo">
 				<li>
 					<h3>Documentation</h3>
-					<?php wp_nav_menu(array('menu' => 'Documentation', 'depth' => '9999')); ?>
+					<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999')); ?>
 				</li>
 			</ul>
 		</div><!--/columns-->
