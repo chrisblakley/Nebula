@@ -365,6 +365,9 @@ function mmenu() {
 	    classes: "mm-light"
 	}, {
 		//Configuration
+	}).on('opened.mm', function(){
+		history.replaceState(null, document.title, location.pathname + "#!");
+		history.pushState(null, document.title, location.pathname);
 	});
 	
 	jQuery("#mobilecontact").mmenu({
@@ -378,6 +381,9 @@ function mmenu() {
 		}
 	}, {
 		//Configuration
+	}).on('opened.mm', function(){
+		history.replaceState(null, document.title, location.pathname + "#!");
+		history.pushState(null, document.title, location.pathname);
 	});
 	
 	jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
@@ -396,8 +402,6 @@ function mmenu() {
 	});
 	
 	//Close mmenu on back button click
-	history.replaceState(null, document.title, location.pathname + "#!");
-	history.pushState(null, document.title, location.pathname);
 	window.addEventListener("popstate", function(e) {
 		if ( jQuery('html.mm-opened').length ) {
 			jQuery(".mm-menu").trigger("close.mm");

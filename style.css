@@ -413,7 +413,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .mm-list a.mm-subopen:hover {background: rgba(0, 0, 0, 0.1);}
 .mm-list > li > a:hover {background: rgba(0, 0, 0, 0.1);}
 .mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; background: rgba(0, 0, 0, 0.05);}
-.clearsearch {text-align: center;}
+.clearsearch {text-align: center; margin-top: 20px;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 
 /* ==========================================================================
