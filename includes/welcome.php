@@ -47,7 +47,7 @@
 			<div class="welcome-panel-column">
 				<h4>Administration</h4>
 				<ul>
-					<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_cpanel_url', ''); ?>" target="_blank">cPanel</a></li>
+					<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_cpanel_url', ''); ?>" target="_blank">Control Panel</a></li>
 					<li><i class="fa fa-hdd-o fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_hosting_url', ''); ?>" target="_blank">Hosting</a></li>
 					<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_registrar_url', ''); ?>" target="_blank">Registrar</a></li>
 					<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_ga_url', 'http://www.google.com/analytics/'); ?>" target="_blank">Google Analytics</a></li>
