@@ -120,6 +120,10 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 
 .nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
 
+.nebulashadow.above {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0)); -moz-transform: scaleY(-1); -o-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: FlipV; -ms-filter: "FlipV";}
+.nebulashadow.below {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
+.nebulashadow.inner-top {height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
+.nebulashadow.inner-bottom {height: 12px; position: absolute; bottom: 0; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0)); -moz-transform: scaleY(-1); -o-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: FlipV; -ms-filter: "FlipV";}
 .nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0) /* Data attribute not yet supported in browsers. */; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 	.nebulashadow.bulging {background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
 		.nebulashadow.buldging:before {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%;}
@@ -127,10 +131,6 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 	.nebulashadow.hovering {background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain; height: 35px;}
 	.nebulashadow.raising-left {background: url('images/shadow-raising-left.png') no-repeat top center; background-size: contain;}
 	.nebulashadow.raising-right {background: url('images/shadow-raising-right.png') no-repeat top center; background-size: contain;}
-	.nebulashadow.inner-top {height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
-	.nebulashadow.inner-bottom {height: 12px; position: absolute; bottom: 0; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.2));}
-	.nebulashadow.above {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.2));}
-	.nebulashadow.below {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
 	
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;}
 	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
