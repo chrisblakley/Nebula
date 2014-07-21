@@ -372,9 +372,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 			.author-email {white-space: nowrap;}
 			.author-phonenumber {white-space: nowrap;}
 
-
-/* PHG INTRANET COMMENT STYLES */
-
+/* Comment Styles */
 .commentcon {padding: 0;}
 	.commentcon.closed {height: 0; overflow: hidden;}
 	.commentlist {}
@@ -407,18 +405,12 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	h3.comment-reply-title {font-size: 12px;}
 	
 	p.comment-form-comment {margin: 0;}
-		p.comment-form-comment textarea {height: auto; min-height: 42px; max-height: 599px; width: 81%; background: #fff url('images/lolfrog.png') 0px 300px no-repeat; background-size: 100% auto;}
+		p.comment-form-comment textarea {height: auto; min-height: 42px; max-height: 599px; width: 81%;}
 	p.form-submit {margin: 5px 0 0 50px;}
 		p.form-submit input {border: 0; background: #0098d7; padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 			p.form-submit input.hover,
 			p.form-submit input:hover {background: #95d600;}
 			p.form-submit input.disabled {background: #ccc !important; cursor: default;}
-
-/* END PHG INTRANET COMMENT STYLES */
-
-
-
-
 
 /* ==========================================================================
    Sidebar Area
