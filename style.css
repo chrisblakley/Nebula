@@ -363,8 +363,9 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 */
 
 #about-the-author {padding-top: 30px; padding-bottom: 30px;}
-	.author-headshot {min-height: 100px;}
-		.author-headshot img {width: 100%; max-width: 250px; border-radius: 500px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2); -webkit-transition: all 0.75s ease 0s; -moz-transition: all 0.75s ease 0s; -o-transition: all 0.75s ease 0s; transition: all 0.75s ease 0s;}
+	.author-headshot {min-height: 100px; margin-bottom: 20px;}
+		.author-headshot img {width: 100%; max-width: 200px; border-radius: 500px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2); -webkit-transition: all 0.75s ease 0s; -moz-transition: all 0.75s ease 0s; -o-transition: all 0.75s ease 0s; transition: all 0.75s ease 0s;}
+	#about-the-author h1 {padding: 0;}
 	.author-meta {font-size: 12px;}
 		.author-jobtitle {}
 		.author-contact {float: right;}

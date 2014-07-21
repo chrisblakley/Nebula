@@ -20,7 +20,21 @@
 				<?php $user_info = get_userdata( get_current_user_id() ); ?>
 				
 				<ul>
-					<li><i class="fa fa-user fa-fw"></i> User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong></li>
+					<li>
+						<?php
+							$headshotURL = esc_attr(get_the_author_meta('headshot_url', get_current_user_id()));
+							$headshot_thumbnail = str_replace('.jpg', '-150x150.jpg' , $headshotURL);
+						?>
+														
+						<?php if ( $headshot_thumbnail ) : ?>
+							<img src="<?php echo esc_attr($headshot_thumbnail); ?>" style="max-width: 14px; border-radius: 100px; outline: 1px solid #fff; box-shadow: 0 0 4px 0 rgba(0,0,0,0.2);" />&nbsp;
+						<?php else: ?>
+							<i class="fa fa-user fa-fw"></i>&nbsp;
+						<?php endif; ?>
+						
+						User: <strong class="admin-user-info admin-user-name"><?php echo $user_info->display_name; ?></strong>
+					</li>
+					
 					<?php
 						switch ($user_info->roles[0]) {
 						    case 'administrator' : $fa_role = 'fa-key'; break;

@@ -25,7 +25,8 @@ get_header(); ?>
 	<?php else : ?>
 		<div class="sixteen columns">
 	<?php endif; ?>
-		<h1 style="padding: 0;"><?php echo get_the_author(); ?></h1>
+		
+		<h1><?php if ( get_the_author_meta('user_url') ) : ?><a href="<?php echo get_the_author_meta('user_url'); ?>" target="_blank"><?php endif; ?><?php echo get_the_author(); ?><?php if ( get_the_author_meta('user_url') ) : ?></a><?php endif; ?></h1>
 		
 		<hr/>
 			<div class="author-meta">
