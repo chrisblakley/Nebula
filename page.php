@@ -7,7 +7,7 @@ get_header(); ?>
 
 <div class="row">
 	<div class="sixteen columns">
-		<? the_breadcrumb(); ?>
+		<?php the_breadcrumb(); ?>
 		<hr/>
 	</div><!--/columns-->
 </div><!--/row-->
@@ -34,7 +34,8 @@ get_header(); ?>
 					<?php endif; ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
-			<?php //comments_template( '', true ); ?>
+			
+			<?php include('comments.php'); ?>
 		<?php endwhile; ?>
 	</div><!--/columns-->
 	

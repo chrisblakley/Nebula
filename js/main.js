@@ -41,6 +41,7 @@ jQuery(document).ready(function() {
 	searchTermHighlighter();
 	singleResultDrawer();
 	errorLogAndFallback();
+	WPcomments();
 	
 	mapInfo = [];
 	getAllLocations();
@@ -487,7 +488,7 @@ function searchTermHighlighter(){
 	if ( typeof theSearchTerm != 'undefined' ) {
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
 		jQuery('article .entry-title a, article .entry-summary').each(function(i){
-			var searchFinder = jQuery(this).text().replace(new RegExp( '(' + preg_quote( theSearchTerm ) + ')' , 'gi' ), '<span class="searchresultword">$1</span>');
+			var searchFinder = jQuery(this).text().replace(new RegExp( '(' + preg_quote(theSearchTerm) + ')' , 'gi' ), '<span class="searchresultword">$1</span>');
 			jQuery(this).html(searchFinder);
 		});
 	}
@@ -741,6 +742,30 @@ function onlyNumbers() {
 	jQuery(".leftcolumn input[type='text']").each(function(){
 		this.value = this.value.replace(/[^0-9\.]/g,'');
 	});
+}
+
+
+function WPcomments() {
+	checkCommentVal();
+	jQuery('#commentform #comment').on('keyup focus blur', function(){
+		checkCommentVal();
+	});
+	
+	jQuery('#commentform').on('submit', function(){
+		if ( jQuery('#commentform #submit').hasClass('disabled') ) {
+			
+			return false;
+		}
+	});
+	
+	function checkCommentVal() {
+		//Count how many required fields there are. If any of them don't have value, then trigger disabled
+		if ( jQuery('#commentform #comment').val() != '' ) {
+			jQuery('#commentform #submit').removeClass('disabled');
+		} else {
+			jQuery('#commentform #submit').addClass('disabled');
+		}
+	}
 }
 
 

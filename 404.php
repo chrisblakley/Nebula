@@ -8,7 +8,7 @@ get_header(); ?>
 <div class="row">
 	
 	<div class="eleven columns">
-		<? the_breadcrumb(); ?>
+		<?php the_breadcrumb(); ?>
 		<article id="post-0" class="post error404 not-found" role="main">
 			<h1>Not Found</h1>
 			<p>The page you requested could not be found.</p>

@@ -293,7 +293,7 @@
 								<option value="enabled" <?php selected('enabled', get_option('nebula_comments')); ?>>Enabled</option>
 								<option value="disabled" <?php selected('disabled', get_option('nebula_comments')); ?>>Disabled</option>
 							</select>
-							<p class="helper"><small>Force comments to be enabled or disabled globally. <em>(Default: Disabled)</em></small></p>
+							<p class="helper"><small>Ability to force disable comments. If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles). <em>(Default: Disabled)</em></small></p>
 						</td>
 			        </tr>
 			        

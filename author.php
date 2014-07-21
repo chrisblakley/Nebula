@@ -6,20 +6,45 @@
 get_header(); ?>
 
 <div class="row">
-	<div class="eleven columns">
+	<div class="sixteen columns">
+		<?php the_breadcrumb(); ?>
+		<hr/>
+	</div><!--/columns-->
+</div><!--/row-->
 
-		<?php if ( have_posts() ) { the_post(); } //Queue the first post then reset it before the loop. ?>
-			<h1>Author Archives: <a href="<?php get_author_posts_url( get_the_author_meta('ID') ); ?>"><?php echo get_the_author(); ?></a></h1>
-		<?php
+<?php if ( have_posts() ) { the_post(); } //Queue the first post then reset it before the loop. ?>
+<div id="about-the-author" class="row">
+	
+	<?php if ( get_the_author_meta('headshot_url') ) : ?>
+		<div class="three columns">
+			<div class="author-headshot">
+				<img src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
+			</div>
+		</div><!--/columns-->
+		<div class="thirteen columns">
+	<?php else : ?>
+		<div class="sixteen columns">
+	<?php endif; ?>
+		<h1 style="padding: 0;"><?php echo get_the_author(); ?></h1>
 		
-		if ( get_the_author_meta('description') ) : ?>
+		<hr/>
+			<div class="author-meta">
+				<span class="author-jobtitle"><?php echo get_the_author_meta('jobtitle'); ?></span>
+				<span class="author-contact">
+					<?php if ( get_the_author_meta('user_email') ) : ?><span class="author-email"><i class="icon-mail"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;<?php endif; ?>
+					<?php if ( get_the_author_meta('phonenumber') ) : ?><span class="author-phonenumber"><i class="icon-phone"></i> <?php echo nebula_tel_link(get_the_author_meta('phonenumber')); ?></span><?php endif; ?>
+				</span>
+			</div>
+		<hr/>
+		<br/>
+		<p class="authorbio"><?php echo the_author_meta('description'); ?></p>
+	</div><!--/columns-->
+</div><!--/row-->
+
+<div class="row">
+	<div class="eleven columns">
 		
-			<?php echo get_avatar( get_the_author_meta('user_email'), apply_filters('boilerplate_author_bio_avatar_size', 60) ); //Update author bio avatar image name ?>
-			<h2>About <?php echo get_the_author(); ?></h2>
-			<?php the_author_meta('description'); ?>
-		
-		<?php endif; ?>
-		
+		<h2>Articles by <?php echo get_the_author_meta('first_name'); ?></h2>
 		<?php
 			rewind_posts();
 			get_template_part('loop', 'author');
@@ -27,7 +52,7 @@ get_header(); ?>
 
 	</div><!--/columns-->
 	
-	<div class="four columns push_one">
+	<div class="four columns push_one">		
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
 	

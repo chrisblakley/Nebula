@@ -7,7 +7,7 @@ get_header(); ?>
 
 <div class="row">
 	<div class="sixteen columns">
-		<? the_breadcrumb(); ?>
+		<?php the_breadcrumb(); ?>
 		<hr/>
 	</div><!--/columns-->
 </div><!--/row-->

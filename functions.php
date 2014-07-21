@@ -645,6 +645,125 @@ function change_admin_footer_right() {
 }
 
 
+
+
+
+
+
+
+/*==========================
+ 
+ Custom User Fields 
+ 
+ ===========================*/
+
+wp_enqueue_script('thickbox');
+wp_enqueue_style('thickbox');
+wp_enqueue_script('media-upload');
+wp_enqueue_script('easy-author-image-uploader');
+
+add_action('admin_init', 'easy_author_image_init');
+function easy_author_image_init() {
+	global $pagenow;
+	if ( $pagenow == 'media-upload.php' || $pagenow == 'async-upload.php' ) {
+		add_filter('gettext', 'q_replace_thickbox_button_text', 1, 3); //Replace the button text for the uploader
+	}
+}
+function q_replace_thickbox_button_text($translated_text, $text, $domain) {
+	if ( $text == 'Insert into Post' ) {
+		$referer = strpos(wp_get_referer(), 'profile');
+		if ( $referer != '' ) {
+			return 'Choose this photo.';
+		}
+	}
+	return $translated_text;
+}
+
+//Show the fields in the user admin page
+if ( !user_can($current_user, 'subscriber') && !user_can($current_user, 'contributor') ) {
+	add_action('show_user_profile', 'extra_profile_fields');
+	add_action('edit_user_profile', 'extra_profile_fields');
+}
+function extra_profile_fields($user) { ?>
+	<h3>Additional Information</h3>
+	<table class="form-table">
+		<tr class="headshot_button_con">
+			<th>
+				<label for="headshot_button"><span class="description">Headshot</span></label>
+			</th>
+			<?php $buttontext = ""; if( get_the_author_meta( 'headshot_url', $user->ID ) ) {
+				$buttontext = "Change headshot";  } else { $buttontext = "Upload new headshot";
+			} ?>
+			<td>
+				<input id="headshot_button" type="button" class="button" value="<?php echo $buttontext; ?>" />
+				<?php if( get_the_author_meta('headshot_url', $user->ID) ) : ?>
+					<input id="headshot_remove" type="button" class="button" value="Remove headshot" />
+				<?php endif; ?>
+				<br/><span class="description">Please select "Full Size" when choosing the headshot.</span>
+			</td>
+		</tr>
+		<tr>
+			<th>
+				<label for="headshot_preview"><span class="description">Preview</span></label>
+			</th>
+			<td>
+				<?php if ( get_the_author_meta('headshot_url', $user->ID) ) : ?>
+					<div id="headshot_preview" style="min-height: 100px; max-width: 150px;">
+						<img style="max-width:100%; border-radius: 100px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2);" src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
+					</div>					
+				<?php else : ?>
+					<div id="headshot_preview" style="height: 100px; width:100px; line-height:100px; border:2px solid #CCC; text-align:center; font-size:5em;">?</div>					
+				<?php endif; ?>
+				<span id="upload_success" style="display:block;"></span>
+				
+				<input type="hidden" name="headshot_url" id="headshot_url" value="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" class="regular-text" />
+			</td>
+		</tr>
+		<tr>
+			<th><label for="jobtitle">Job Title</label></th>
+			<td>
+				<input type="text" name="jobtitle" id="jobtitle" value="<?php echo esc_attr(get_the_author_meta( 'jobtitle', $user->ID)); ?>" class="regular-text" /><br />
+				<span class="description">&nbsp;</span>
+			</td>
+		</tr>
+		<tr>
+			<th><label for="phoneextension">Phone Number</label></th>
+			<td>
+				<input type="text" name="phonenumber" id="phonenumber" value="<?php echo esc_attr(get_the_author_meta( 'phonenumber', $user->ID)); ?>" class="regular-text" /><br />
+				<span class="description">&nbsp;</span>
+			</td>
+		</tr>
+	</table>
+<?php }
+
+//Save the field values to the DB
+add_action('personal_options_update', 'save_extra_profile_fields');
+add_action('edit_user_profile_update', 'save_extra_profile_fields');
+function save_extra_profile_fields($user_id) {
+	if ( !current_user_can('edit_user', $user_id) ) {
+		return false;
+	}
+	update_usermeta($user_id, 'headshot', $_POST['headshot']);
+	update_usermeta($user_id, 'headshot_url', $_POST['headshot_url']);
+	update_usermeta($user_id, 'jobtitle', $_POST['jobtitle']);
+	update_usermeta($user_id, 'phonenumber', $_POST['phonenumber']);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Template for comments and pingbacks.
 //Used as a callback by wp_list_comments() for displaying the comments.
 function boilerplate_comment($comment, $args, $depth) {
@@ -684,7 +803,72 @@ function boilerplate_comment($comment, $args, $depth) {
 			break;
 	endswitch;
 }
+
+function nebula_comment_theme($comment, $args, $depth) {
+	$GLOBALS['comment'] = $comment;
+	extract($args, EXTR_SKIP);
 	
+	if ( $args['style'] == 'div' ) {
+		$tag = 'div';
+		$add_below = 'comment';
+	} else {
+		$tag = 'li';
+		$add_below = 'div-comment';
+	}
+	?>
+	
+	<<?php echo $tag ?> <?php comment_class(empty( $args['has_children'] ) ? '' : 'parent'); ?> id="comment-<?php comment_ID(); ?>">
+	
+		<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
+			
+			<div class="user-avatar">
+				<?php
+					$comment_author_id = get_comment(get_comment_ID())->user_id;
+					$comment_author_info = get_userdata($comment_author_id);
+					$comment_headshot = str_replace('.jpg', '-150x150.jpg' , $comment_author_info->headshot_url);
+				?>
+				
+				<?php if ( $comment_author_info->headshot_url ) : ?>
+					<img src="<?php echo $comment_headshot; ?>" width="50" height="50" style="border-radius: 25px; border: 2px solid #fff; box-shadow: 0px 0px 6px 0 rgba(0,0,0,0.2);" />
+				<?php endif; ?>
+			
+			</div>
+			
+			<div class="comment-author">
+				<?php printf('<cite class="fn">%s</cite>', '<strong>' . get_comment_author() . '</strong>'); ?>
+			</div>
+			
+			<?php if ($comment->comment_approved == '0') : ?>
+				<em class="comment-awaiting-moderation">Your comment is awaiting moderation.</em>
+				<br />
+			<?php endif; ?>
+			
+			<div class="comment-meta commentmetadata"><a href="<?php echo htmlspecialchars(get_comment_link( $comment->comment_ID )); ?>">
+				<?php
+					/* 1: date, 2: time */
+					printf( 'on %1$s at %2$s', get_comment_date(), get_comment_time()); ?></a> 
+					<?php if (current_user_can('edit_post')) : ?>
+						<? edit_comment_link('<small><i class="icon-pencil"></i> Edit</small>','  ','' ); ?>
+					<?php endif; ?>
+			</div>
+			
+			<?php comment_text(); ?>
+				
+			<div class="reply">
+				<?php 
+					$comment_reply_args = array(
+						'add_below' => 'comment',
+					);
+					comment_reply_link(array_merge($comment_reply_args, array('add_below' => $add_below, 'depth' => $depth, 'max_depth' => $args['max_depth'])));
+				?>
+			</div>
+		
+		</div><!--/commentbody-->
+	
+	<?php
+}
+
+
 /*** If the project uses comments, remove the next set of functions (six)! ***/
 if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 
@@ -743,6 +927,13 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 				remove_post_type_support($post_type, 'trackbacks');
 			}
 		}
+	}
+} else {
+	//Open comments on the front-end
+	add_filter('comments_open', 'enable_comments_status', 20, 2);
+	add_filter('pings_open', 'enable_comments_status', 20, 2);
+	function enable_comments_status() {
+		return true;
 	}
 }
 
@@ -1188,7 +1379,7 @@ function the_breadcrumb() {
     } elseif ( is_author() ) {
        global $author;
       $userdata = get_userdata($author);
-      echo $before . 'Articles posted by ' . $userdata->display_name . $after;
+      echo $before . $userdata->display_name . $after;
     } elseif ( is_404() ) {
       echo $before . 'Error 404' . $after;
     }
@@ -1430,6 +1621,67 @@ function foldersize($path) {
 	return $total_size;
 }
 	
+
+function nebula_tel_link($phone){
+	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
+		return '<a class="nebula-tel-link" href="tel:' . nebula_phone_format($phone, 'tel') . '">' . nebula_phone_format($phone, 'human') . '</a>';
+	} else {
+		return nebula_phone_format($phone, 'human');
+	}
+}
+
+
+//Convert phone numbers into ten digital dialable
+function nebula_phone_format($number, $format=''){
+	
+	if ( $format == 'human' && (strpos($number, ')') == 4 || strpos($number, ')') == 6) ) {
+		//Format is already human-readable
+		return $number;
+	} elseif ( $format == 'tel' && (strpos($number, '+1') == 0 && strlen($number) == 12) ) {
+		//Format is already dialable
+		return $number;
+	}
+	
+	if ( (strpos($number, '+1') == 0 && strlen($number) == 12) || (strpos($number, '1') == 0 && strlen($number) == 11) || strlen($number) == 10 && $format != 'tel' ) {
+		//Convert from dialable to human
+		if ( strpos($number, '1') == 0 && strlen($number) == 11 ) {
+			//13154786700
+			$number = '(' . substr($number, 1, 3) . ') ' . substr($number, 4, 3) . '-' . substr($number, 7);
+			return $number;
+		} elseif ( strlen($number) == 10 ) {
+			//3154786700
+			$number = '(' . substr($number, 0, 3) . ') ' . substr($number, 3, 3) . '-' . substr($number, 6);
+			return $number;
+		} elseif ( strpos($number, '+1') == 0 && strlen($number) == 12 ) {
+			//+13154786700
+			$number = '(' . substr($number, 2, 3) . ') ' . substr($number, 5, 3) . '-' . substr($number, 8);
+			return $number;
+		} else {
+			return 'Error: Unknown format.';
+		}
+	} else {
+		if ( strlen($number) < 7 ) {
+			return 'Error: Too few digits.';
+		} elseif ( strlen($number) < 10 ) {
+			return 'Error: Area code required.';
+		}
+		//Convert from human to dialable
+		if ( strpos($number, '1') != '0' ) {
+			$number = '1 ' . $number;
+		}	
+		$number = str_replace(array(' ', '-', '(', ')', '.'), '', $number);
+		$number = substr($number, 0, 10);
+		return '+' . $number;
+	}
+	
+	
+	
+	
+}
+
+
+
+
 
 //Automatically convert HEX colors to RGB.
 function hex2rgb( $colour ) {

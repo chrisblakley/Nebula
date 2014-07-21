@@ -6,12 +6,6 @@
 
 <ul class="xoxo">
 	
-	<?php if ( is_author() ) : ?>
-		<li>
-			<h3>About the Author</h3>
-		</li>
-	<?php endif; ?>
-	
 	<li>
 		<h3>Features</h3>
 		<?php 

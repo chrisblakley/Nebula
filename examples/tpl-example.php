@@ -22,7 +22,7 @@ get_header(); ?>
 <div class="container" style="background-color: rgba(0,0,0,0.0225); margin-bottom: 30px;">
 	<div class="row">
 		<div class="sixteen columns">
-			<? the_breadcrumb(); ?>
+			<?php the_breadcrumb(); ?>
 		</div><!--/columns-->
 	</div><!--/row-->
 	<hr/>
@@ -358,6 +358,37 @@ get_header(); ?>
 								</div><!--/columns-->
 							</div><!--/row-->
 					<?php endif; //End CSS Browser Selectore ?>
+					
+					
+					<?php if ( is_page(582) ) : //IE Compatibility Mode Detection ?>
+						<style>
+							div.notie {color: red; font-weight: bold;}
+							.ie div.notie {display: none;}
+							div.iemode {display: none; position: relative; height: 150px; width: 280px; border: 2px solid #222; background: #ddd;}
+								.ie div.iemode {display: table;}
+								.ie6 div.iemode {background: #3696e9; border: 2px solid #72f0fc;}
+								.ie7 div.iemode {background: #1374ae; border: 2px solid #f4b619;}
+								.ie8 div.iemode {background: #1374ae; border: 2px solid #f4b619;}
+								.ie9 div.iemode {background: #3aa8de; border: 2px solid #fbd21e;}
+								.ie10 div.iemode {background: #2b6bec;}
+								.ie11 div.iemode {background: #2ebaee;}
+								
+								.ie8.no-hashchange div.iemode {}
+								.ie10.no-svg div.iemode {}
+								.ie10.no-hashchange div.iemode {}
+								.ie7.no-applicationcache div.iemode {}
+								.ie7.no-rgba-hashchange div.iemode {}
+								.ie7.rgba.hashchange div.iemode {}
+							</style>
+							
+							<div class="row">
+								<div class="sixteen columns">
+									<div class="notie">This example only works with Internet Explorer.</div>
+									<div class="iemode"></div>
+								</div><!--/columns-->
+							</div><!--/row-->
+					<?php endif; //End IE Compatibility Mode Detection ?>
+					
 					
 					<?php if ( is_page(277) ) : //Retina ?>
 						<div class="row">
@@ -1158,6 +1189,70 @@ get_header(); ?>
 							</div><!--/columns-->
 						</div><!--/row-->
 					<?php endif; //End AJAX ?>
+					
+					
+					<?php if ( is_page(588) ) : //nebula_tel_link and nebula_phone_format ?>
+						<div class="row">
+							<div class="sixteen columns">
+								<p>
+									<span>This number will be linked on mobile devices:</span><br/>
+									<code>nebula_tel_link('(315) 478-6700');</code><br/>
+									<?php echo nebula_tel_link('(315) 478-6700'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('(315) 478-6700');</code><br/>
+									<?php echo nebula_phone_format('(315) 478-6700'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('315.478.6700');</code><br/>
+									<?php echo nebula_phone_format('(315) 478-6700'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('+13154786700');</code><br/>
+									<?php echo nebula_phone_format('+13154786700'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('3154786700');</code><br/>
+									<?php echo nebula_phone_format('3154786700'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('4786700');</code><br/>
+									<?php echo nebula_phone_format('4786700'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('123');</code><br/>
+									<?php echo nebula_phone_format('123'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('3154786700', 'tel');</code><br/>
+									<?php echo nebula_phone_format('3154786700', 'tel'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('(315) 478-6700 x123');</code><br/>
+									<?php echo nebula_phone_format('(315) 478-6700 x123'); ?>
+								</p>
+								
+								<p>
+									<code>nebula_phone_format('(315) 478-6700 ext: 123');</code><br/>
+									<?php echo nebula_phone_format('(315) 478-6700 ext: 123'); ?>
+								</p>
+																
+								<p>
+									<code>nebula_phone_format('(315) 478-6700', 'human');</code><br/>
+									<?php echo nebula_phone_format('(315) 478-6700', 'human'); ?>
+								</p>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End nebula_tel_link and nebula_phone_format ?>
+					
 					
 					
 					<?php if ( is_page(481) ) : //Video @TODO: In progress ?>

@@ -355,6 +355,69 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s ease 0s; -moz-transition: all 0.75s ease 0s; -o-transition: all 0.75s ease 0s; transition: all 0.75s ease 0s;}
 	.wpcf7-form.sent ul {max-height: 0;}
 
+/* Comments */
+/* 
+	@TODO: Soft validation with JS to make submit greyed out/disabled until textarea has value.
+	@TODO: Style textarea (maybe animate a min height when focused)
+	@TODO: Style comments themselves (similar to phg intranet)
+*/
+
+#about-the-author {padding-top: 30px; padding-bottom: 30px;}
+	.author-headshot {min-height: 100px;}
+		.author-headshot img {width: 100%; max-width: 250px; border-radius: 500px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2); -webkit-transition: all 0.75s ease 0s; -moz-transition: all 0.75s ease 0s; -o-transition: all 0.75s ease 0s; transition: all 0.75s ease 0s;}
+	.author-meta {font-size: 12px;}
+		.author-jobtitle {}
+		.author-contact {float: right;}
+			.author-email {white-space: nowrap;}
+			.author-phonenumber {white-space: nowrap;}
+
+
+/* PHG INTRANET COMMENT STYLES */
+
+.commentcon {padding: 0;}
+	.commentcon.closed {height: 0; overflow: hidden;}
+	.commentlist {}
+	
+	.comment-opencloseicon {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+		.comment-opencloseicon.closed {transform:rotate(90deg); -webkit-transform:rotate(90deg); -ms-transform:rotate(90deg);}
+	
+	li.comment {list-style: none; padding: 10px 0;}
+		/*
+		li.comment.even {}
+		li.comment.odd {background: #e0e0e0;}
+		*/
+		div.user-avatar {float: left; margin-right: 10px;}
+		
+		li.comment ul.children {margin: 0 0 0 60px; padding-left: 10px; border-left: 1px solid #95d600;}
+		li.comment div.comment-author {display: inline;}
+			li.comment.bypostauthor > div.comment-body div.comment-author:after {content: 'Author'; font-size: 9px; color: #fff; padding: 0 2px; background: #0098d7; border-radius: 12px;}
+		li.comment div.comment-meta {display: inline; font-size: 12px;}
+			li.comment div.comment-meta a {color: #999; cursor: default;}
+			li.comment div.comment-meta a.comment-edit-link {color: #0098d7; cursor: pointer;}
+				li.comment div.comment-meta a.comment-edit-link:hover,
+				li.comment div.comment-meta a.comment-edit-link.hover {color: #95d600;}
+		div.comment-respond {padding: 0 0 5px 0;}
+			li.comment p {margin: 0; font-size: 12px;}
+			li.comment .reply {margin-bottom: 3px;}
+				li.comment a.comment-reply-link {font-size: 10px;}
+	
+	.formcon {padding: 0 10px;}
+	
+	h3.comment-reply-title {font-size: 12px;}
+	
+	p.comment-form-comment {margin: 0;}
+		p.comment-form-comment textarea {height: auto; min-height: 42px; max-height: 599px; width: 81%; background: #fff url('images/lolfrog.png') 0px 300px no-repeat; background-size: 100% auto;}
+	p.form-submit {margin: 5px 0 0 50px;}
+		p.form-submit input {border: 0; background: #0098d7; padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+			p.form-submit input.hover,
+			p.form-submit input:hover {background: #95d600;}
+			p.form-submit input.disabled {background: #ccc !important; cursor: default;}
+
+/* END PHG INTRANET COMMENT STYLES */
+
+
+
+
 
 /* ==========================================================================
    Sidebar Area
@@ -490,7 +553,9 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 	#heroslidercon {height: 100px; overflow: hidden; background-size: cover;}
 		#heroslidercon h3 {font-size: 28px; line-height: 40px;}
 		#heroslidercon h4 {font-size: 16px; display: none !important;}
-
+	
+	.author-headshot {text-align: center;}
+	
 	.xoxo .search {display: none;}
 
 	/* Nebula Wordpress power footer navigation responsive style defaults */
@@ -521,7 +586,10 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 .column, .columns {outline: 1px solid lightgreen;}
 	.row {outline: 1px solid pink;}
 */
-
+	
+	.author-jobtitle {display: block;}
+	.author-contact {float: none; display: block;}
+	
 	.nebula-manage-edit {display: block; text-align: center;}
 	.post-modified {float: none; display: block; text-align: center;}
 

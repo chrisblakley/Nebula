@@ -1,72 +1,72 @@
-<?php
-/**
- * The template for displaying Comments.
- *
- * The area of the page that contains both current comments
- * and the comment form.  The actual display of comments is
- * handled by a callback to boilerplate_comment which is
- * located in the functions.php file.
- *
- * @package WordPress
- * @subpackage Boilerplate
- * @since Boilerplate 1.0
- */
-?>
-
-<?php if ( post_password_required() ) : ?>
-				<p>This post is password protected. Enter the password to view any comments.</p>
-<?php
-		/* Stop the rest of comments.php from being processed,
-		 * but don't kill the script entirely -- we still have
-		 * to fully load the template.
-		 */
-		return;
-	endif;
-?>
-
-<?php
-	// You can start editing here -- including this comment!
-?>
-
-<?php if ( have_comments() ) : ?>
-			<!-- STARKERS NOTE: The following h3 id is left intact so that comments can be referenced on the page -->
-			<h3 id="comments-title"><?php
-				printf( _n( 'One Response to %2$s', '%1$s Responses to %2$s', get_comments_number(), 'boilerplate' ),
-				number_format_i18n( get_comments_number() ), '' . get_the_title() . '' );
-			?></h3>
-
-<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
-				<?php previous_comments_link( '&larr; Older Comments' ); ?>
-				<?php next_comments_link( 'Newer Comments &rarr;' ); ?>
-<?php endif; // check for comment navigation ?>
-
-			<ol>
-				<?php
-					/* Loop through and list the comments. Tell wp_list_comments()
-					 * to use boilerplate_comment() to format the comments.
-					 * If you want to overload this in a child theme then you can
-					 * define boilerplate_comment() and that will be used instead.
-					 * See boilerplate_comment() in boilerplate/functions.php for more.
-					 */
-					wp_list_comments( array( 'callback' => 'boilerplate_comment' ) );
-				?>
-			</ol>
-
-<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
-				<?php previous_comments_link( '&larr; Older Comments' ); ?>
-				<?php next_comments_link( 'Newer Comments &rarr;' ); ?>
-<?php endif; // check for comment navigation ?>
-
-<?php else : // or, if we don't have comments:
-
-	/* If there are no comments and comments are closed,
-	 * let's leave a little note, shall we?
-	 */
-	if ( ! comments_open() ) :
-?>
-	<p>Comments are closed.</p>
-<?php endif; // end ! comments_open() ?>
-
-<?php endif; // end have_comments() ?>
-
-<?php comment_form(); ?>
+<?php if ( nebula_settings_conditional('nebula_comments') ) : ?>
+<div class="commentcon">
+	<?php
+		$comments = get_comments(array(
+			'post_id' => $post->ID,
+			'number' => 10,
+			'status' => 'approve'
+		));
+	?>
+		
+	<?php if ($comments) : ?>
+		<hr/>
+		<h3><?php echo ( sizeof($comments) == 0 ) ? 'No' : sizeof($comments); ?> <?php echo ( sizeof($comments) == 1 ) ? 'Comment' : 'Comments'; ?></h3>
+		<?php
+			$comment_list_args = array(
+				'walker' => null,
+				'max_depth' => '',
+				'style' => 'ul',
+				'callback' => 'nebula_comment_theme',
+				'end-callback' => null,
+				'type' => 'comment',
+				'reply_text' => 'Reply',
+				//'avatar_size' => 32,
+				'reverse_top_level' => 'true'
+			);
+			wp_list_comments($comment_list_args, $comments);
+		?>
+	<?php endif; ?>
+	
+	<hr/>
+	<div class="formcon">
+					
+		<?php if ( is_user_logged_in() ) : ?>
+			<?php $userData = get_userdata(get_current_user_id()); ?>
+			Logged in as <a href="<?php echo admin_url('profile.php'); ?>"><?php echo $userData->display_name; ?></a> <small><a href="<?php echo wp_logout_url(get_permalink()); ?>">(Log Out)</a></small>
+			<?php
+				$comment_args = array(
+			        'label_submit'=>'Submit',
+			        'title_reply'=>'',
+			        'logged_in_as' => '',
+			        'comment_notes_before' => '',
+			        'comment_notes_after' => '',
+			        'comment_field' => '<p class="comment-form-comment"><textarea id="comment" name="comment" aria-required="true" placeholder="Add a comment"></textarea></p>',
+				);
+			?>
+		<?php else : ?>
+			<?php
+				$commenter = wp_get_current_commenter();
+				$comment_args = array(
+			        'label_submit'=>'Submit',
+			        'title_reply'=>'',
+			        'logged_in_as' => '',
+			        'comment_notes_before' => '',
+			        'comment_notes_after' => '',
+			        'fields' => array(
+					    'author' =>
+					      '<p class="comment-form-author"><input id="author" name="author" type="text" value="' . esc_attr($commenter['comment_author']) . '" aria-required="true" placeholder="Name" /></p>',
+					
+					    'email' =>
+					      '<p class="comment-form-email"><input id="email" name="email" type="text" value="' . esc_attr($commenter['comment_author_email']) . '" aria-required="true" placeholder="Email" /></p>',						
+					    ),
+			        'comment_field' => '<p class="comment-form-comment"><textarea id="comment" name="comment" aria-required="true" placeholder="Add a comment"></textarea></p>',
+				);
+			?>
+		<?php endif; ?>
+		
+		<?php comment_form($comment_args); ?>
+		
+	</div><!--formcon-->
+	            	
+</div><!--/commentscon-->
+<?php endif; ?>
