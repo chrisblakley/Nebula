@@ -380,12 +380,12 @@ if ( nebula_settings_conditional('nebula_phg_plugin_update_warning') ) {
 	if ( $filename == 'plugins.php' ) {
 		add_action('admin_notices','plugin_warning');
 		function plugin_warning(){
-			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
+			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>"; //@TODO: Use nebula tel function here
 		}
 	} elseif ( $filename == 'update-core.php') {
 		add_action('admin_notices','plugin_warning');
 		function plugin_warning(){
-			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>";
+			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: <a href='tel:3154786700'>(315) 478-6700</a></p></div>"; //@TODO: Use nebula tel function here
 		}
 	}
 } else {
@@ -1670,7 +1670,7 @@ function nebula_phone_format($number, $format=''){
 			$number = '1 ' . $number;
 		}	
 		$number = str_replace(array(' ', '-', '(', ')', '.'), '', $number);
-		$number = substr($number, 0, 10);
+		$number = substr($number, 0, 11);
 		return '+' . $number;
 	}
 	
