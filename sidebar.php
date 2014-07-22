@@ -13,8 +13,6 @@
 				wp_nav_menu(array('theme_location' => 'sidebar'));
 			} elseif (has_nav_menu('header') ) {
 				wp_nav_menu(array('theme_location' => 'header'));
-			} else {
-				echo '<p>@TODO: Set a default menu or something</p>';
 			}
 		?>
 	</li>

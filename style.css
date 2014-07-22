@@ -124,6 +124,10 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 .nebulashadow.below {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
 .nebulashadow.inner-top {height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
 .nebulashadow.inner-bottom {height: 12px; position: absolute; bottom: 0; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0)); -moz-transform: scaleY(-1); -o-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: FlipV; -ms-filter: "FlipV";}
+	.lte-ie9 .nebulashadow.inner-bottom,
+	.lte-ie9 .nebulashadow.above {transform: none; filter:-; -ms-filter:-;} /* Handled with JavaScript */
+	.no-js.lte-ie9 .nebulashadow.inner-bottom,
+	.no-js.lte-ie9 .nebulashadow.above {display: none; visibility: hidden; opacity: 0;}
 .nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 .nebulashadow.bulging {height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
 	.nebulashadow.buldging:before {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%;}
@@ -304,6 +308,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 #heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 #heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 15px; margin-top: 10px; padding-left: 15px; text-transform: uppercase; background: rgba(0,0,0,0.5);}
+	.no-rgba #heroslidercon h4 {background: #000;}
 
 
 /* ==========================================================================
@@ -585,7 +590,8 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 	
 	.nebula-manage-edit {display: block; text-align: center;}
 	.post-modified {float: none; display: block; text-align: center;}
-
+	
+	li.comment div.comment-meta {display: block;}
 
 } /* End mobile landscape media query */
 

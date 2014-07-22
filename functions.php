@@ -647,10 +647,6 @@ function change_admin_footer_right() {
 
 
 
-
-
-
-
 /*==========================
  
  Custom User Fields 
@@ -751,20 +747,8 @@ function save_extra_profile_fields($user_id) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //Template for comments and pingbacks.
+//@TODO: Add functionality from this into nebula_comment_theme, then update templates to no longer use this.
 //Used as a callback by wp_list_comments() for displaying the comments.
 function boilerplate_comment($comment, $args, $depth) {
 	$GLOBALS['comment'] = $comment;
@@ -817,7 +801,7 @@ function nebula_comment_theme($comment, $args, $depth) {
 	}
 	?>
 	
-	<<?php echo $tag ?> <?php comment_class(empty( $args['has_children'] ) ? '' : 'parent'); ?> id="comment-<?php comment_ID(); ?>">
+	<<?php echo $tag; ?> <?php comment_class(empty($args['has_children']) ? '' : 'parent'); ?> id="comment-<?php comment_ID(); ?>">
 	
 		<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
 			
@@ -829,27 +813,31 @@ function nebula_comment_theme($comment, $args, $depth) {
 				?>
 				
 				<?php if ( $comment_author_info->headshot_url ) : ?>
-					<img src="<?php echo $comment_headshot; ?>" width="50" height="50" style="border-radius: 25px; border: 2px solid #fff; box-shadow: 0px 0px 6px 0 rgba(0,0,0,0.2);" />
+					<?php if ( $comment_author_id != 0 ) : ?><a href="<?php echo get_author_posts_url($comment_author_id); ?>"><?php endif; ?>
+						<img src="<?php echo $comment_headshot; ?>" width="50" height="50" style="border-radius: 25px; border: 2px solid #fff; box-shadow: 0px 0px 6px 0 rgba(0,0,0,0.2);" />
+					<?php if ( $comment_author_id != 0 ) : ?></a><?php endif; ?>
 				<?php endif; ?>
 			
 			</div>
 			
 			<div class="comment-author">
-				<?php printf('<cite class="fn">%s</cite>', '<strong>' . get_comment_author() . '</strong>'); ?>
+				<cite class="fn">
+					<?php if ( $comment_author_id != 0 ) : ?><a href="<?php echo get_author_posts_url($comment_author_id); ?>"><?php endif; ?>
+						<strong><?php echo get_comment_author(); ?></strong>
+					<?php if ( $comment_author_id != 0 ) : ?></a><?php endif; ?>
+				</cite>
 			</div>
 			
-			<?php if ($comment->comment_approved == '0') : ?>
+			<?php if ($comment->comment_approved == '0') : //This does not seem to work yet. ?>
 				<em class="comment-awaiting-moderation">Your comment is awaiting moderation.</em>
-				<br />
+				<br/>
 			<?php endif; ?>
 			
-			<div class="comment-meta commentmetadata"><a href="<?php echo htmlspecialchars(get_comment_link( $comment->comment_ID )); ?>">
-				<?php
-					/* 1: date, 2: time */
-					printf( 'on %1$s at %2$s', get_comment_date(), get_comment_time()); ?></a> 
-					<?php if (current_user_can('edit_post')) : ?>
-						<? edit_comment_link('<small><i class="icon-pencil"></i> Edit</small>','  ','' ); ?>
-					<?php endif; ?>
+			<div class="comment-meta commentmetadata"><a href="<?php echo htmlspecialchars(get_comment_link($comment->comment_ID)); ?>">
+				<?php printf( 'on %1$s at %2$s', get_comment_date(), get_comment_time()); ?></a> 
+				<?php if (current_user_can('edit_post')) : ?>
+					<? edit_comment_link('<small><i class="icon-pencil"></i> Edit</small>','  ','' ); ?>
+				<?php endif; ?>
 			</div>
 			
 			<?php comment_text(); ?>
@@ -2144,7 +2132,7 @@ function slider_shortcode($atts, $content=''){
 	#theslider-' . $id . ' #slider-nav li.last-child {margin-right: 0;}
 	#theslider-' . $id . ' #slider-nav li a {display: table-cell; vertical-align: middle; padding: 5px 0; position: relative; height: 100%; color: #fff;}';
 	
-	$titles = [];
+	$titles = array();
 	$slideAttrs = attribute_map($content);	
 	foreach ($slideAttrs as $key => $slideAttr) {
 		array_push($titles, $slideAttr['title']);
@@ -2156,7 +2144,7 @@ function slider_shortcode($atts, $content=''){
 	}	
 		
 	$titleCount = count($titles);
-	$slideTitles = [];
+	$slideTitles = array();
 	if ( $titleCount != $slideCount ) {
 		$slideTitles[0]['activeUTF'] = '\u25CF';
 		$slideTitles[0]['inactiveUTF'] = '\u25CB';

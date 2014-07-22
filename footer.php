@@ -140,7 +140,7 @@
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $GLOBALS["defer"]; ?>></script> -->
-		<script <?php echo $GLOBALS["gumby_debug"]; ?> src="<?php bloginfo('template_directory');?>/js/libs/gumby.min.js" <?php echo $GLOBALS["defer"]; ?>></script>
+		<script <?php echo $GLOBALS["gumby_debug"]; ?> src="<?php bloginfo('template_directory');?>/js/libs/gumby.min.js" <?php echo $GLOBALS["defer"]; ?>></script><!-- @TODO: Change to gumby.js if getting undefined console errors. -->
 		
 		<!--[if lt IE 9]>
 			<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js" <?php echo $GLOBALS["defer"]; ?>></script>

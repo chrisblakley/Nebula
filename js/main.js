@@ -106,7 +106,9 @@ function helperFunctions(){
 	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child');
 	jQuery('li:last-child, tr:last-child').addClass('last-child');
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
-	jQuery('a:hover, li:hover, tr:hover').addClass('hover');	
+	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
+	
+	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above'); //@TODO: Anything we can do here to alleviate the issue? May need to just hide
 } //end helperFunctions()
 
 

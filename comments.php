@@ -21,7 +21,8 @@
 				'type' => 'comment',
 				'reply_text' => 'Reply',
 				//'avatar_size' => 32,
-				'reverse_top_level' => 'true'
+				'reverse_top_level' => 'true',
+				'reverse_children' => 'true'
 			);
 			wp_list_comments($comment_list_args, $comments);
 		?>
