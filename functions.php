@@ -493,6 +493,13 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			$secureServer = '<small><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
 		}
 		
+		function top_domain_name($url){
+			$alldomains = explode(".", $url);
+			return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
+		}
+		
+		$dnsrecord = dns_get_record(top_domain_name(gethostname()), DNS_NS);
+		
 		echo '<script id="testloadscript">
 				var beforeLoad = (new Date()).getTime();
 				function stopTimer(){
@@ -507,7 +514,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		echo '<ul class="serverdetections">';
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
 			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
-			echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . gethostname() . '</strong></li>';
+			echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> (' . top_domain_name($dnsrecord[0]['target']) . ')</li>';
 			echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
 			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
@@ -518,6 +525,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		echo '</ul>';
 	}
 }
+
 
 //Only allow admins to modify Contact Forms
 define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
@@ -1610,9 +1618,13 @@ function foldersize($path) {
 }
 	
 
-function nebula_tel_link($phone){
+function nebula_tel_link($phone, $postd=''){
 	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
-		return '<a class="nebula-tel-link" href="tel:' . nebula_phone_format($phone, 'tel') . '">' . nebula_phone_format($phone, 'human') . '</a>';
+		if ( $postd ) {
+			$postd = str_replace('#', '%23', $postd);
+			$postd = ';' . $postd;
+		}
+		return '<a class="nebula-tel-link" href="tel:' . nebula_phone_format($phone, 'tel') . $postd . '">' . nebula_phone_format($phone, 'human') . '</a>';
 	} else {
 		return nebula_phone_format($phone, 'human');
 	}
@@ -1656,15 +1668,18 @@ function nebula_phone_format($number, $format=''){
 		//Convert from human to dialable
 		if ( strpos($number, '1') != '0' ) {
 			$number = '1 ' . $number;
-		}	
-		$number = str_replace(array(' ', '-', '(', ')', '.'), '', $number);
+		}
+		
+		if ( strpos($number,'x') !== false ) {
+			$postd = ';p' . substr($number, strpos($number, "x") + 1);
+		} else {
+			$postd = '';
+		}
+		
+		$number = str_replace(array(' ', '-', '(', ')', '.', 'x'), '', $number);
 		$number = substr($number, 0, 11);
-		return '+' . $number;
+		return '+' . $number . $postd;
 	}
-	
-	
-	
-	
 }
 
 
