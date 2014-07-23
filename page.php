@@ -35,7 +35,7 @@ get_header(); ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
 			
-			<?php include('comments.php'); ?>
+			<?php get_template_part('comments'); ?>
 		<?php endwhile; ?>
 	</div><!--/columns-->
 	

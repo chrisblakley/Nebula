@@ -1532,7 +1532,7 @@ get_header(); ?>
 												eraseCookie('examplejs');
 												checkExample();
 											} else {
-												var weekday = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+												var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 												var month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 												var currentTime = new Date();
 												dddd = currentTime.getDay(); //Get day of week (0-6)
@@ -1571,6 +1571,14 @@ get_header(); ?>
 				 End Hard-Code Example
 				 ===========================*/
 				?>
+				
+				
+				<div class="row">
+					<div class="sixteen columns">
+						<?php get_template_part('comments'); ?>
+					</div><!--/columns-->
+				</div><!--/row-->
+				
 				
 				<?php if ( current_user_can('manage_options') ) : ?>
 					<div class="container entry-manage">

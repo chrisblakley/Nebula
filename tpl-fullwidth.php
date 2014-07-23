@@ -28,7 +28,9 @@ get_header(); ?>
 					<?php endif; ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
-			<?php //comments_template( '', true ); ?>
+			
+			<?php get_template_part('comments'); ?>
+			
 		<?php endwhile; ?>
 	</div><!--/columns-->
 </div><!--/row-->

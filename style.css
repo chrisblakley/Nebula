@@ -8,6 +8,19 @@
 
 /* @TODO: Change the Theme Name (above) to be the client/project and the year! */
 
+
+/* ==========================================================================
+   Global Variables
+   ========================================================================== */
+/* @TODO: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
+:root {
+	--primary-color: #0098d7;
+		--primary-color-darker: #006893;
+	--secondary-color: #95D600;
+		--secondary-color-darker: #669200;
+}
+
+
 /* ==========================================================================
    Base styles: opinionated defaults
    ========================================================================== */
@@ -33,21 +46,18 @@ h5 {font-size: 13px; line-height: 21px;}
 h6 {font-size: 10px; line-height: 18px;}
 p {}
 span {font-size: inherit;}
-
-/* ==========================================================================
-   Chrome Frame prompt
-   ========================================================================== */
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
+
 
 /* ==========================================================================
    PHG Nebula custom styles
    ========================================================================== */
 ::selection {background: #d5f3ff; color: black;}
 ::-moz-selection {background: #d5f3ff; color: black;}
-h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7;}
-a {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7; color: var(--primary-color);}
+a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	a:hover,
-	a.hover {color: #95D600;}
+	a.hover {color: #95D600; color: var(--secondary-color)-darker;}
 	.btn > a:hover {color: #fff;}
 body {overflow-x: hidden; background: #f6f6f6;}
 .inner {width: 100%; max-width: 980px; padding: 0 20px; margin: 0 auto; border: 1px solid red;}
@@ -104,9 +114,9 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 	table tr td:hover,
 	table tr td.hover {background: #d2d2d2;}
 	/* Table Heading Cells */
-	table tr th {background: #95d600 !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff;}
+	table tr th {background: #95d600 !important; background: var(--secondary-color) !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff;}
 	/* Table Heading Rows */
-	table thead tr td {background: #0098D7 !important; padding: 10px 0;}
+	table thead tr td {background: #0098D7 !important; background: var(--primary-color) !important; padding: 10px 0;}
 	/* Table Footer Rows */
 	table tfoot tr td {background: grey !important; color: #fff;}
 
@@ -209,13 +219,14 @@ Also be sure to find the other @TODO: items within the stylesheet.
 .row {outline: 1px solid blanchedalmond;}
 */
 
+
 /* ==========================================================================
    Header Area
    ========================================================================== */
 .mobilenavcon {display: none;}
 	.directions div {line-height: 12px; padding-left: 35px;}
 
-#topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s; overflow: hidden;}
+#topbarcon {position: relative; background: #0098D7; background: var(--primary-color); width: 100%; height: 5px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s; overflow: hidden;}
 	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
 		#topbarcon a:hover,
 		#topbarcon a.hover {color: #ccc;}
@@ -232,7 +243,7 @@ nav#topnav {position: relative; z-index: 1000; margin-top: 5px;}
 			nav#topnav ul li.menu-item.last-child {margin-right: 0;}
 			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
 				nav#topnav ul li.menu-item a:hover,
-				nav#topnav ul li.menu-item a.hover {color: #95D600;}
+				nav#topnav ul li.menu-item a.hover {color: #95D600; color: var(--secondary-color);}
 			nav#topnav ul li.menu-item ul.sub-menu {display: none;}
 
 li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
@@ -255,7 +266,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
 	li.nebula-search input.open,
 	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
+	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
 	li.nebula-search input.focus:-moz-placeholder, input.nebula-search.focus:-moz-placeholder, li.nebula-search input.open:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
 	li.nebula-search input.focus::-webkit-input-placeholder, input.nebula-search.focus::-webkit-input-placeholder, li.nebula-search input.open::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
 
@@ -284,7 +295,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 23px; opacity: 1;}
 				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
 
-.fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s ease 0s;}
+.fixedbar {background: #0098D7; background: var(--primary-color); width: 100%; height: 0px; overflow: hidden; transition: all 0.5s ease 0s;}
 	.fixedbar > div {display: none;}
 	.fixedbar.active {height: 20px;}
 		.fixedbar.active > div {display: block;}
@@ -392,14 +403,14 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 		*/
 		div.user-avatar {float: left; margin-right: 10px;}
 		
-		li.comment ul.children {margin: 0 0 0 60px; padding-left: 10px; border-left: 1px solid #95d600;}
+		li.comment ul.children {margin: 0 0 0 60px; padding-left: 10px; border-left: 1px solid #95d600; border-left: 1px solid var(--secondary-color);}
 		li.comment div.comment-author {display: inline;}
-			li.comment.bypostauthor > div.comment-body div.comment-author:after {content: 'Author'; font-size: 9px; color: #fff; padding: 0 2px; background: #0098d7; border-radius: 12px;}
+			li.comment.bypostauthor > div.comment-body div.comment-author:after {content: 'Author'; font-size: 9px; color: #fff; padding: 0 2px; background: #0098d7; background: var(--primary-color); border-radius: 12px;}
 		li.comment div.comment-meta {display: inline; font-size: 12px;}
 			li.comment div.comment-meta a {color: #999; cursor: default;}
-			li.comment div.comment-meta a.comment-edit-link {color: #0098d7; cursor: pointer;}
+			li.comment div.comment-meta a.comment-edit-link {color: #0098d7; color: var(--primary-color); cursor: pointer;}
 				li.comment div.comment-meta a.comment-edit-link:hover,
-				li.comment div.comment-meta a.comment-edit-link.hover {color: #95d600;}
+				li.comment div.comment-meta a.comment-edit-link.hover {color: #95d600; color: var(--secondary-color);}
 		div.comment-respond {padding: 0 0 5px 0;}
 			li.comment p {margin: 0; font-size: 12px;}
 			li.comment .reply {margin-bottom: 3px;}
@@ -412,9 +423,9 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	p.comment-form-comment {margin: 0;}
 		p.comment-form-comment textarea {height: auto; min-height: 42px; max-height: 599px; width: 81%;}
 	p.form-submit {margin: 5px 0 0 50px;}
-		p.form-submit input {border: 0; background: #0098d7; padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+		p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 			p.form-submit input.hover,
-			p.form-submit input:hover {background: #95d600;}
+			p.form-submit input:hover {background: #95d600; background: var(--secondary-color);}
 			p.form-submit input.disabled {background: #ccc !important; cursor: default;}
 
 /* ==========================================================================
@@ -423,13 +434,13 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .xoxo {padding: 0;}
 	.xoxo ul {margin: 0; padding: 0;}
 		.xoxo ul.menu a {display: block; padding-right: 20px;}
-		.xoxo ul.menu li.current-menu-item a {color: #95D600;}
-		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
+		.xoxo ul.menu li.current-menu-item a {color: #95D600; color: var(--secondary-color);}
+		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7; color: var(--primary-color);}
 			.xoxo ul.menu li.current-menu-item .sub-menu a:hover,
-			.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600;}
+			.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600; color: var(--secondary-color);}
 		.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
 			.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
-				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
+				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600; border-left: 1px solid var(--secondary-color);}
 
 .widget-container {margin: 10px 0 15px 0;}
 
@@ -494,13 +505,13 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 				nav#powerfooter ul li.menu-item.first-child {margin-left: 0; padding-left: 0;}
 				nav#powerfooter ul li.menu-item:last-child,
 				nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
-				nav#powerfooter ul li.menu-item a {display: block; border-bottom: 1px solid #95D600;}
+				nav#powerfooter ul li.menu-item a {display: block; border-bottom: 1px solid #95D600; border-bottom: 1px solid var(--secondary-color);}
 				nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
 					nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; padding: 5px 0; border-bottom: none;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 
-div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #0098d7;}
+div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #0098d7; background: var(--primary-color);}
 	div.copyright p {font-size: 12px; color: #fff;}
 		div.copyright a {color: #fff;}
 			div.copyright a:hover,
@@ -563,7 +574,7 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 		nav#powerfooter ul li.menu-item {display: block; margin: 0; padding: 0; width: 100% !important;}
 			nav#powerfooter ul li.menu-item a {border-bottom: none;}
 			nav#powerfooter ul li.menu-item ul.sub-menu {padding: 5px 0 5px 35px;}
-				nav#powerfooter ul li.menu-item ul.sub-menu li {padding: 0 0 0 10px; border-left: 1px solid #95D600;}
+				nav#powerfooter ul li.menu-item ul.sub-menu li {padding: 0 0 0 10px; border-left: 1px solid #95D600; border-left: 1px solid var(--secondary-color);}
 					nav#powerfooter ul li.menu-item ul.sub-menu li a {}
 					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {}
 
