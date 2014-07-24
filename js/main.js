@@ -40,6 +40,7 @@ jQuery(document).ready(function() {
 	searchValidator();
 	searchTermHighlighter();
 	singleResultDrawer();
+	pageVisibility();
 	errorLogAndFallback();
 	WPcomments();
 	
@@ -239,8 +240,9 @@ function gaEventTracking(){
 	//External links
 	jQuery("a[rel*='external']").on('click', function(){
 		var linkText = jQuery(this).text();
-		ga('send', 'event', 'External Link', linkText);
-		Gumby.log('Sending GA event: ' + 'External Link', linkText);
+		var destinationURL = jQuery(this).attr('href');
+		ga('send', 'event', 'External Link', linkText, destinationURL);
+		Gumby.log('Sending GA event: ' + 'External Link', linkText, destinationURL);
 	});
 	
 	//PDF View/Download
@@ -276,8 +278,8 @@ function gaEventTracking(){
 	jQuery('a[href^="mailto"]').on('click', function(){
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
-		ga('send', 'event', 'Contact Us', 'Email: ' + emailAddress);
-		Gumby.log('Sending GA event: ' + 'Contact Us', 'Email: ' + emailAddress);
+		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
+		Gumby.log('Sending GA event: ' + 'Mailto', 'Email: ' + emailAddress);
 	});
 	
 	//Telephone link tracking
@@ -286,6 +288,22 @@ function gaEventTracking(){
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 		Gumby.log('Sending GA event: ' + 'Click-to-Call', 'Phone Number: ' + phoneNumber);
+	});
+	
+	//Comment tracking
+	jQuery('#commentform').on('submit', function(){
+		if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
+			var currentPage = jQuery(document).attr('title');
+			if ( jQuery('#reply-title').length ) {
+				var replyTo = jQuery('#reply-title').children('a').text();
+				var commentID = jQuery('#reply-title').children('a').attr('href').replace('comment-', '');
+				ga('send', 'event', 'Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
+				Gumby.log('Sending GA event: ' + 'Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
+			} else {
+				ga('send', 'event', 'Comment', currentPage, 'Top Level');
+				Gumby.log('Sending GA event: ' + 'Comment', currentPage, 'Top Level');
+			}
+		}
 	});
 	
 	//Word copy tracking
@@ -537,6 +555,47 @@ function singleResultDrawer(){
 	});
 }
 
+
+//Page Visibility
+function pageVisibility(){
+	visibilityChangeActions();
+	jQuery(document).on('visibilitychange', function(){								
+		visibilityChangeActions();
+	});
+	
+	function visibilityChangeActions(){
+		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
+			var pageTitle = jQuery(document).attr('title');
+			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle);
+			Gumby.log('Sending GA event: ' + 'Page Visibility', 'Prerendered', pageTitle);
+			//@TODO: prevent autoplay of videos
+		}
+		
+		if ( getPageVisibility() ) { //Page is hidden
+			//@TODO: pause youtube
+			//@TODO: pause vimeo
+			var firstHidden = 1;
+			var pageTitle = jQuery(document).attr('title');
+			ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle);
+			Gumby.log('Sending GA event: ' + 'Page Visibility', 'Hidden', pageTitle);
+		} else { //Page is visible
+			//@TODO: resume autoplay of videos
+			if ( firstHidden == 1 ) {
+				var pageTitle = jQuery(document).attr('title');
+				ga('send', 'event', 'Page Visibility', 'Visible', pageTitle);
+				Gumby.log('Sending GA event: ' + 'Page Visibility', 'Visible', pageTitle);
+			}
+		}
+	}
+	
+	function getPageVisibility(){
+		if ( typeof document.hidden != "undefined" ) {
+			return document.hidden;
+		} else {
+			return false;
+		}
+	}
+}
 
 //Contact form pre-validator
 function cFormPreValidator() {

@@ -1447,6 +1447,43 @@ get_header(); ?>
 					<?php endif; //End CSS Masks ?>
 					
 					
+					<?php if ( is_page(628) ) : //Page Visibility API ?>
+						<script>
+							function getPageVisibility(){
+								if ( typeof document.hidden != "undefined" ) {
+									return document.hidden;
+								} else {
+									console.log('page visibility api is not supported');
+									return false;
+								}
+							}
+							
+							if ( document.visibilityState == 'prerender' ) {
+								console.log('This page was prerendered!');
+							}
+							
+							jQuery(document).on('visibilitychange', function(){								
+								var pagevislog = jQuery('.pagevislog').text();
+								
+								if ( getPageVisibility() ) {
+									console.log('tab hidden');
+									jQuery('.pagevislog').text(pagevislog + '-Hidden-');
+								} else {
+									console.log('tab visible');
+									jQuery('.pagevislog').text(pagevislog + '-Visible-');
+								}
+							});
+							
+							jQuery(window).on('load', function(){
+								
+							});					
+						</script>
+						
+						<p><strong>Change tabs to see the log:</strong></p>
+						<div class="pagevislog" style="min-height: 50px; border: 1px solid blue; padding: 15px;"></div>
+					<?php endif; //End Page Visibility API ?>
+					
+					
 					<?php if ( is_page(89) ) : //Google Maps Iframe ?>
 							<div class="row">
 								<div class="sixteen columns">
@@ -1571,15 +1608,7 @@ get_header(); ?>
 				 End Hard-Code Example
 				 ===========================*/
 				?>
-				
-				
-				<div class="row">
-					<div class="sixteen columns">
-						<?php get_template_part('comments'); ?>
-					</div><!--/columns-->
-				</div><!--/row-->
-				
-				
+								
 				<?php if ( current_user_can('manage_options') ) : ?>
 					<div class="container entry-manage">
 						<div class="row">
@@ -1591,6 +1620,12 @@ get_header(); ?>
 						</div>
 					</div>
 				<?php endif; ?>
+				
+				<div class="row">
+					<div class="sixteen columns">
+						<?php get_template_part('comments'); ?>
+					</div><!--/columns-->
+				</div><!--/row-->
 				
 			</div><!--/container-->
 			
