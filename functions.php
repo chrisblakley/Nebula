@@ -7,41 +7,95 @@
  Nebula Stylesheets
  ===========================*/
 
-//Register stylesheets
+//Register
 //wp_register_style($handle, $src, $dependencies, $version, $media);
 wp_register_style('normalize', get_template_directory_uri() . '/css/normalize.css', array(), '3.0.1');
 wp_register_style('gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
 wp_register_style('font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
 wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), '4.3');
 wp_register_style('datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), '1.10');
-wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby', 'mmenu', 'normalize'), null);
+wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby', 'mmenu'), null);
 wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
 wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
 
+
+/*========================== 
+ Nebula Scripts
+ ===========================*/
+
+//Register
+//wp_register_script($handle, $src, $dependencies, $version, $in_footer);
+######################### Wait until scripts can be deferred via wp_enqueue_script(); #############################
+
+//@TODO: 2 things to test here:
+	//If a dependent script does not exist, what happens? does the enqueued script still trigger or no? does this initialze the dependent script?
+	//Can a script and a style share a handle? Seems so (so far)
+
+wp_register_script('modernizr', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js', array(), '2.8.3', false);
+wp_register_script('mmenu', get_template_directory_uri() . '/js/libs/jquery.mmenu.min.all.js', array(), '4.3', true); //Can a script and a style share the same handle?
+wp_register_script('cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js', array(), '1.0', true);
+wp_register_script('doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js', array(), null, true);
+wp_register_script('froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
+wp_register_script('performance-timing', get_template_directory_uri() . '/js/libs/performance-timing.js', array(), null, true);
+wp_register_script('respond', get_template_directory_uri() . '/js/libs/respond.js', array(), null, true); //Registerred, but called from footer.php (only when needed) - Find a way to enqueue in IE conditional comments
+wp_register_script('html5shiv', get_template_directory_uri() . '/js/libs/html5shiv.js', array(), '3.7.2', true); //Registerred, but called from footer.php (only when needed) - Find a way to enqueue in IE conditional comments
+wp_register_script('gumby', get_template_directory_uri() . '/js/libs/gumby.min.js', array(), '2.6', true);
+wp_register_script('twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
+wp_register_script('datatables', get_template_directory_uri() . '/js/libs/jquery.dataTables.min.js', array(), '1.10', true);
+wp_register_script('maskedinput', get_template_directory_uri() . '/js/libs/jquery.maskedinput.js', array(), null, true);
+wp_register_script('main', get_template_directory_uri() . '/js/main.js', array('mmenu', 'gumby', 'jquery', 'jquery-ui-core', 'doubletaptogo', 'twitter'), null, true); //@TODO: Make sure if dependencies don't exist, this script still initializes (without triggering the dependent script)!
+
+
 //Enqueue for frontend
-add_action('wp_enqueue_scripts', 'enqueue_nebula_styles_frontend');
-function enqueue_nebula_styles_frontend() {
+add_action('wp_enqueue_scripts', 'enqueue_nebula_frontend');
+function enqueue_nebula_frontend() {
+	//Stylesheets
 	wp_enqueue_style('normalize');
 	wp_enqueue_style('gumby');
 	wp_enqueue_style('mmenu');
 	wp_enqueue_style('font-awesome');
-	if ( is_page(9999) ) {
-		wp_enqueue_style('datatables');
-	}
 	wp_enqueue_style('main');
+	
+	//Scripts
+	wp_enqueue_script('jquery');
+	//swfobject from core (commented out by default)
+	//hoverIntent from core (commented out by default)
+	######################### Wait until scripts can be deferred via wp_enqueue_script(); #############################
+
+	//Conditionals
+	if ( is_page(9999) ) { //Datatables pages
+		wp_enqueue_style('datatables');
+		wp_enqueue_script('datatables');
+	}
+	
+	if ( is_page(9999) ) { //Twitter pages (conditional may need to change depending on type of page it's used on)
+		wp_enqueue_script('twitter');
+	}
+	
+	if ( is_page(9999) ) { //Contact page (if using phone number, birthday, or other numerical-only inputs)
+		wp_enqueue_script('maskedinput');
+	}
 }
 
 //Enqueue for WP Login
-add_action('login_enqueue_scripts', 'enqueue_nebula_styles_login');
-function enqueue_nebula_styles_login() {
+add_action('login_enqueue_scripts', 'enqueue_nebula_login');
+function enqueue_nebula_login() {
+	//Stylesheets
 	wp_enqueue_style('nebula-login');
+	
+	//Scripts
+	######################### Wait until scripts can be deferred via wp_enqueue_script(); #############################
 }
 
 //Enqueue for WP Admin
-add_action('admin_enqueue_scripts', 'enqueue_nebula_styles_admin');
-function enqueue_nebula_styles_admin() {
+add_action('admin_enqueue_scripts', 'enqueue_nebula_admin');
+function enqueue_nebula_admin() {
+	//Stylesheets
 	wp_enqueue_style('nebula-admin');
 	wp_enqueue_style('font-awesome');
+	
+	//Scripts
+	######################### Wait until scripts can be deferred via wp_enqueue_script(); #############################
 }
 
 /*========================== 
@@ -1489,6 +1543,7 @@ function mobile_classes() {
 
 //Control how scripts are loaded, and force clear cache for debugging
 if ( array_key_exists('debug', $_GET) ) {
+	$GLOBALS["debug"] = true;
 	$GLOBALS["defer"] = '';
 	$GLOBALS["async"] = '';
 	$GLOBALS["gumby_debug"] = 'gumby-debug';
@@ -1497,7 +1552,13 @@ if ( array_key_exists('debug', $_GET) ) {
 	header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 	header("Cache-Control: post-check=0, pre-check=0", false);
 	header("Pragma: no-cache");
+	
+	add_action('wp_enqueue_scripts', 'enqueue_nebula_debug_scripts');
+	function enqueue_nebula_debug_scripts() {
+		wp_enqueue_script('performance-timing');
+	}
 } else {
+	$GLOBALS["debug"] = false;
 	$GLOBALS["defer"] = 'defer';
 	$GLOBALS["async"] = 'async';
 	$GLOBALS["gumby_debug"] = '';

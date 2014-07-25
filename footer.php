@@ -136,7 +136,7 @@
 		
 		<script src="<?php bloginfo('template_directory');?>/js/libs/jquery.mmenu.min.all.js"></script> <!-- @TODO: Have to make sure this one loads before main.js! Can it be deferred? -->
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" <?php echo $GLOBALS["async"]; ?>></script>
-		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $GLOBALS["async"]; ?>></script> -->
+		<!-- <script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js" <?php echo $GLOBALS["async"]; ?>></script> //swfobject is registerred in WP as "swfobject" -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/supplementr.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script> -->
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/doubletaptogo.js" <?php echo $GLOBALS["defer"]; ?>></script> -->
@@ -148,7 +148,6 @@
 		<![endif]-->
 		
 		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $GLOBALS["defer"]; ?>></script>
-		
 		
 		<script src="<?php bloginfo('template_directory');?>/js/libs/froogaloop.min.js"></script><!-- @TODO: Only call this script if vimeoplayer exists! -->
         <script>

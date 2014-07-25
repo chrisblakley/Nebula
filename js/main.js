@@ -92,8 +92,6 @@ jQuery(window).on('load', function() {
 }); //End Window Load
 
 
-
-
 /*==========================
  
  Functions

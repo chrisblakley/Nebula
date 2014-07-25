@@ -75,7 +75,7 @@
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 		
 		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.64172.js?ver=2.8.3" <?php echo $GLOBALS["defer"]; ?>></script>
-				
+						
 		<script>
 			social = [];
 			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
