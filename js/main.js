@@ -421,12 +421,14 @@ function mmenu() {
 	});
 		
 	//Close mmenu on back button click
-	window.addEventListener("popstate", function(e) {
-		if ( jQuery('html.mm-opened').length ) {
-			jQuery(".mm-menu").trigger("close.mm");
-			e.stopPropagation();
-		}
-	}, false);
+	if (window.history && window.history.pushState) {
+		window.addEventListener("popstate", function(e) {
+			if ( jQuery('html.mm-opened').length ) {
+				jQuery(".mm-menu").trigger("close.mm");
+				e.stopPropagation();
+			}
+		}, false);
+	}
 	
 } //end mmenu()
 
