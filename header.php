@@ -35,8 +35,8 @@
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
 		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-temp.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.jpg" />
-    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.jpg" />
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
+    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" />
 		<meta property="og:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear. ?>" />
 		<meta property="og:phone_number" content="<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
 		<meta property="og:fax_number" content="<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
@@ -84,6 +84,8 @@
 			social['linkedin_url'] = "<?php echo $social['linkedin_url']; ?>";
 			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
 		</script>
+		
+		
 		
 		<script> //Universal Analytics
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

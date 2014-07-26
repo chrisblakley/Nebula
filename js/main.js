@@ -450,13 +450,14 @@ function powerFooterWidthDist() {
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.nebula-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" name="s" placeholder="Search" /></form>');
+	jQuery('li.nebula-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" class="input search" name="s" placeholder="Search" x-webkit-speech/></form>');
 	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
 		jQuery(this).addClass('focus active');
 	});
 	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
-		if ( jQuery(this).val() == '' ) {
-			jQuery(this).removeClass('focus active');
+		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
+			jQuery(this).removeClass('focus active focusError').attr('placeholder', 'Search');
+			
 		} else {
 			jQuery(this).removeClass('active');
 		}
@@ -814,19 +815,27 @@ function WPcomments() {
 	
 	jQuery('#commentform').on('submit', function(){
 		if ( jQuery('#commentform #submit').hasClass('disabled') ) {
-			
 			return false;
 		}
 	});
 	
 	function checkCommentVal() {
-		//Count how many required fields there are. If any of them don't have value, then trigger disabled
+		//@TODO: Count how many required fields there are. If any of them don't have value, then trigger disabled
 		if ( jQuery('#commentform #comment').val() != '' ) {
 			jQuery('#commentform #submit').removeClass('disabled');
 		} else {
 			jQuery('#commentform #submit').addClass('disabled');
 		}
 	}
+	
+	jQuery('p.comment-form-comment textarea').on('focus', function(){
+		jQuery(this).stop().animate({minHeight: 150}, 1000, "easeInOutCubic");
+	});
+	jQuery('p.comment-form-comment textarea').on('blur', function(){
+		if ( jQuery(this).val() == '' ) {
+			jQuery(this).stop().animate({minHeight: 42, height: 42}, 250, "easeInOutCubic").css('height', 'auto');
+		}
+	});
 }
 
 

@@ -1015,6 +1015,14 @@ function js_bloginfo() {
 	bloginfo["admin_email"] = "' . get_option("admin_email", $admin_user->user_email) . '";</script>';
 }
 
+//Add user variable for JavaScript
+add_action('admin_head', 'js_clientinfo');
+add_action('wp_head', 'js_clientinfo');
+function js_clientinfo() {
+	echo '<script>clientinfo = [];
+	clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";</script>';
+}
+
 //Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
 add_action('wp_head', 'theme_favicon');
 function theme_favicon() {
@@ -1316,6 +1324,14 @@ function word_limit_chars($string, $charlimit, $continue=false){
 		}
 	}
 	return $newString;
+}
+
+
+//Speech recognition AJAX for navigating
+add_action('wp_ajax_navigator', 'nebula_ajax_navigator');
+function nebula_ajax_navigator() {
+    //include('includes/navigator.php');
+    include('includes/navigat-holder.php');
 }
 
 

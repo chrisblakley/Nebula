@@ -1421,6 +1421,306 @@ get_header(); ?>
 					<?php endif; //End Proximity API ?>
 					
 					
+					<?php if ( is_page(643) ) : //Speech Recognition API ?>
+						<style>
+							#start_button {background: #0098d7; color: #fff; padding: 3px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+								#start_button:hover {background: green;}
+								#start_button.active {background: red;}
+								#start_button.pending {background: grey;}
+									#start_button.active:hover,
+									#start_button.active.hover,
+									#start_button.pending:hover,
+									#start_button.pending.hover {background: maroon;}
+						</style>
+						
+						<h4 id="speech-help" style="text-align: center;"></h4>
+						
+						<div id="startbuttoncon" style="text-align: center; margin: 15px 0;">
+							<a id="start_button" href="#">
+								<i id="start_button_icon" class="fa fa-microphone"></i> <span id="start_button_text"> Start</span>
+							</a>
+						   <!--  <img id="start_img" src="mic.gif" alt="Start"> -->
+						</div>
+						
+						<p class="speechconfidence" style="margin: 0; font-size: 12px;"></p>
+						
+						<div id="results" style="border: 1px solid #ccc; background: #fafafa; padding: 15px; text-align: left; min-height: 150px; width: 100%;">
+							<span id="final_span" style="font-weight: bold; color: black;"></span>
+							<span id="interim_span" style="color: #777;"></span>
+						</div>
+						
+						<div>
+							<p style="font-size: 12px;">You can say things like <strong>"My name is ________"</strong>, <strong>"Search for _________"</strong>, <strong>"Driving Directions"</strong>, <strong>"Stop Listening"</strong>, and <strong>"Navigate to __________"</strong></p>
+							
+							<p style="margin: 0; margin-top: 20px; font-size: 12px;">Say <strong>"I love Nebula"</strong> or better yet, introduce yourself and then say it!</p>
+							<input id="ilovenebula" type="text" disabled style="width: 100%;" />
+						</div>
+						
+						<div id="ajaxarea" style="display: none; min-height: 100px; border: 1px solid red; padding: 25px; background: white; margin-top: 30px;"></div>
+						
+						<script>
+							jQuery(document).ready(function() {
+								jQuery('#speech-help').text('Click on the microphone icon and begin speaking.');
+								
+								var final_transcript = '';
+								var recognizing = false;
+								var ignore_onend;
+								var start_timestamp;
+								
+								window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+								
+								if ( window.SpeechRecognition === null ) {
+									noSpeechRecognition();
+								} else {
+									var recognition = new window.SpeechRecognition();
+									recognition.continuous = true;
+									recognition.interimResults = true;
+									recognition.lang = 'en-US';
+									recognition.maxAlternatives = 1;
+									
+									recognition.onstart = function() {
+										recognizing = true;
+										//Animated start button icon to recording here
+										jQuery('#speech-help').text('Speak now.');
+										jQuery('#start_button').removeClass().addClass('active');
+										jQuery('#start_button_text').text(' Listening...');
+										jQuery('#start_button_icon').removeClass().addClass('fa fa-comment');
+									};
+									
+									recognition.onaudiostart = function(event) { console.log('onaudiostart'); } //When audio is being listened for...?
+									recognition.onsoundstart = function(event) { console.log('onsoundstart'); } //When a sound is detected
+									recognition.onspeechstart = function(event) { console.log('onspeechstart'); } //When human speech is detected
+									
+									recognition.onerror = function(event) {
+										if ( event.error == 'no-speech' ) {
+											//start_img.src = 'mic.gif';
+											jQuery('#speech-help').text('No speech was detected. You may need to adjust your microphone settings.');
+											jQuery('#start_button').removeClass();
+											jQuery('#start_button_text').text(' No Speech');
+											jQuery('#start_button_icon').removeClass().addClass('fa fa-volume-off');
+											ignore_onend = true;
+											ga('send', 'event', 'Speech Recognition', 'Error', 'No speech was detected.');
+											Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'No speech was detected.');
+										}
+									
+										if ( event.error == 'audio-capture' ) {
+											//start_img.src = 'mic.gif';
+											jQuery('#speech-help').text('No microphone was found. Ensure that a microphone is installed and that microphone settings are configured correctly.');
+											jQuery('#start_button').removeClass();
+											jQuery('#start_button_text').text(' No Microphone');
+											jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone-slash');
+											ignore_onend = true;
+											ga('send', 'event', 'Speech Recognition', 'Error', 'No microphone was found.');
+											Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'No microphone was found.');
+										}
+									
+										if ( event.error == 'not-allowed' ) {
+											if (event.timeStamp - start_timestamp < 100) {
+												jQuery('#speech-help').text('Permission to use microphone is blocked. To change, go to chrome://settings/contentExceptions#media-stream');
+												jQuery('#start_button').removeClass();
+												jQuery('#start_button_text').text(' Blocked');
+												jQuery('#start_button_icon').removeClass().addClass('fa fa-times-circle');
+												ga('send', 'event', 'Speech Recognition', 'Error', 'Permission to use microphone is blocked.');
+												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'Permission to use microphone is blocked.');
+											} else {
+												jQuery('#speech-help').text('Permission to use microphone was denied.');
+												jQuery('#start_button').removeClass();
+												jQuery('#start_button_text').text(' Denied');
+												jQuery('#start_button_icon').removeClass().addClass('fa fa-times-circle-o');
+												ga('send', 'event', 'Speech Recognition', 'Error', 'Permission to use microphone was denied.');
+												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'Permission to use microphone was denied.');
+											}
+											ignore_onend = true;
+										}
+									};
+									
+									recognition.onspeechend = function(event) { console.log('onspeechend'); } //When human speech has stopped
+									recognition.onsoundend = function(event) { console.log('onsoundend'); } //When sound has stopped
+									recognition.onaudioend = function(event) { console.log('onaudioend'); } //When audio is no longer being listened for...?
+									recognition.onnomatch = function(event) { console.log('onnomatch'); } // No idea...
+									
+									recognition.onresult = function(event) {
+										var interim_transcript = '';
+										for ( var i = event.resultIndex; i < event.results.length; ++i ) {
+											if ( event.results[i].isFinal ) {
+												final_transcript += event.results[i][0].transcript;
+												jQuery('.speechconfidence').html('I am <strong>' + (event.results[i][0].confidence*100).toFixed(2) + '%</strong> sure you said:');
+											} else {
+												interim_transcript += event.results[i][0].transcript;
+												jQuery('.speechconfidence').html('I am <strong>' + (event.results[i][0].confidence*100).toFixed(2) + '%</strong> sure you said:');
+												keyPhrases(interim_transcript);
+											}
+										}
+										final_transcript = capitalize(final_transcript);
+										jQuery('#final_span').text(linebreak(final_transcript));
+										jQuery('#interim_span').text(linebreak(interim_transcript));
+									};
+									
+									recognition.onend = function() {
+										recognizing = false;
+									
+										if ( ignore_onend ) {
+											return;
+										}
+										
+										if ( final_transcript ) {
+											if ( final_transcript.indexOf('*') > -1 ) {
+												ga('send', 'event', 'Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
+												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
+											} else {
+												ga('send', 'event', 'Speech Recognition', 'Transcript', '"' + final_transcript + '"');
+												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Transcript', '"' + final_transcript + '"');
+											}
+										}
+										
+										jQuery('#start_button').removeClass();
+										jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
+										jQuery('#speech-help').text('Click on the microphone icon and begin speaking.');
+										jQuery('#start_button_text').text(' Start');
+									};
+								}
+								
+								function noSpeechRecognition() {
+									jQuery('#results, #startbuttoncon').hide();
+									jQuery('#speech-help').text('Speech detection is not supported in your browser.').css('color', 'red');
+									ga('send', 'event', 'Speech Recognition', 'Not Supported');
+									Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Not Supported');
+								}
+									
+								var two_line = /\n\n/g;
+								var one_line = /\n/g;
+								function linebreak(s) {
+									return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
+								}
+									
+								var first_char = /\S/;
+								function capitalize(s) {
+									return s.replace(first_char, function(m) { return m.toUpperCase(); });
+								}
+									
+								function startListening(event) {
+									if ( recognizing ) {
+										recognition.stop();
+										return;
+									}
+									
+									final_transcript = '';
+									recognition.start();
+									ignore_onend = false;
+									final_span.innerHTML = '';
+									interim_span.innerHTML = '';
+									//start_img.src = 'mic-slash.gif';
+									jQuery('#speech-help').text('Click the "Allow" button above to enable your microphone.');
+									jQuery('#start_button').removeClass().addClass('pending');
+									jQuery('#start_button_text').text(' Requesting Permission...');
+									jQuery('#start_button_icon').removeClass().addClass('fa fa-external-link-square');
+									start_timestamp = event.timeStamp;
+								}
+								
+								function keyPhrases(transcript) {
+									transcript = transcript.toLowerCase();
+									
+									if ( transcript.indexOf('my name is') > -1 ) {
+										speakerName = '';
+										speakerName = transcript.substr( transcript.indexOf('my name is')+11, 25);
+										speakerName = speakerName.substr( 0, speakerName.indexOf(' ') );
+										speakerName = speakerName.charAt(0).toUpperCase() + speakerName.slice(1);
+										
+										if ( (speakerName == 'Jeff' || speakerName == 'Geoff') && clientinfo["remote_addr"] == '72.43.235.106' ) {
+											speakerName = 'Jef';
+										}
+									}
+									
+									if ( transcript.indexOf('i love nebula') > -1 || transcript.indexOf('i love allah') > -1 || transcript.indexOf('isle of nebula') > -1 || transcript.indexOf('i love nutella') > -1 || transcript.indexOf('isle of nutella') > -1 || transcript.indexOf('isle of allah') > -1) {
+										if ( speakerName != '' ) {
+											jQuery('#ilovenebula').val('I love you too, ' + speakerName + '.' );
+										} else {
+											jQuery('#ilovenebula').val('I love you too.');
+										}
+									}
+									
+									if ( transcript.indexOf('stop listening') > -1 ) {
+										jQuery('#speech-help').text('Stopped because you said so.');
+										jQuery('#start_button').removeClass();
+										jQuery('#start_button_text').text(' Start');
+										jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
+										ignore_onend = true;
+										recognition.stop();
+									}
+																		
+									if ( transcript.indexOf('search for') > -1 ) {
+										searchQuery = transcript.substr( transcript.indexOf('search for')+11, 99);
+										
+										jQuery('#speech-help').text('About to search. Say "Stop Listening" or click the button to cancel.');
+										setTimeout(function(){
+											if ( recognizing ) { //This allows the user to cancel navigation by stopping.
+												jQuery('#speech-help').text('Searching now...');
+												jQuery('#start_button').removeClass();
+												jQuery('#start_button_text').text(' Start');
+												jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
+												ignore_onend = true;
+												recognition.stop();
+												window.location.href = bloginfo['home_url'] + '?s=' + searchQuery;
+											}
+										}, 3000);
+									}
+									
+									if ( transcript.indexOf('driving directions') > -1 ) {
+										jQuery('#speech-help').text('Let\'s get you here...');
+										jQuery('#start_button').removeClass();
+										jQuery('#start_button_text').text(' Start');
+										jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
+										ignore_onend = true;
+										recognition.stop();
+										window.location.href = 'https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>';
+									}
+									
+									if ( transcript.indexOf('navigate to') > -1 ) {
+										navigationRequest = transcript.substr( transcript.indexOf('navigate to')+11, 99);
+										
+										jQuery('#speech-help').text('About to navigate. Say "Stop Listening" or click the button to cancel.');
+										jQuery('#ajaxarea').fadeIn();
+										setTimeout(function(){
+											if ( recognizing ) { //This allows the user to cancel navigation by stopping.
+												jQuery('#speech-help').text('Navigating...');
+												jQuery('#start_button').removeClass();
+												jQuery('#start_button_text').text(' Start');
+												jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
+												ignore_onend = true;
+												recognition.stop();
+												
+												jQuery('#ajaxarea').css('border', '1px solid grey');
+												//jQuery('#ajaxarea').css('border', '1px solid green').load(bloginfo['template_directory'] + '/includes/navigator.php', { "n[]": [ navigationRequest ] }, function() {
+												//	console.log('navigator ajax should be loaded by now');
+												//});
+												
+												jQuery.post('<?php echo admin_url('admin-ajax.php'); ?>', {
+													'action': 'navigator',
+													'data': navigationRequest
+												}, function(response){
+													jQuery('#ajaxarea').html(response);
+													console.log('redirecting to: ' + response);
+												});
+											}
+										}, 3000);
+									}
+								}
+								
+								jQuery('#start_button').on('click', function(event){
+									startListening(event);
+									return false;
+								});
+							});
+							
+							/*
+								@TODO:
+									- Recording button should pulsate color when recording.
+							*/
+							
+						</script>						
+					<?php endif; //End Speech Recognition API ?>
+										
+					
 					<?php if ( is_page(624) ) : //CSS Feature Queries ?>
 						<style>
 							.supportdiv {background: red; color: #fff; width: 100%; height: 150px; text-align: center;}
