@@ -20,6 +20,7 @@
 		
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
                 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
@@ -74,7 +75,7 @@
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
 		
-		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.64172.js?ver=2.8.3" <?php echo $GLOBALS["defer"]; ?>></script>
+		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.64172.js" <?php echo $GLOBALS["defer"]; ?>></script>
 						
 		<script>
 			social = [];

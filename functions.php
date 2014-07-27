@@ -1188,6 +1188,13 @@ function nav_menu_locations() {
 	);
 }
 
+//Remove version query strings from styles/scripts (to allow caching)
+add_filter('script_loader_src', 'nebula_remove_script_version', 15, 1);
+add_filter('style_loader_src', 'nebula_remove_script_version', 15, 1);
+function nebula_remove_script_version($src){
+	return remove_query_arg('ver', $src);
+}
+
 
 //Show different meta data information about the post. Typically used inside the loop.
 //Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
@@ -1329,9 +1336,11 @@ function word_limit_chars($string, $charlimit, $continue=false){
 
 //Speech recognition AJAX for navigating
 add_action('wp_ajax_navigator', 'nebula_ajax_navigator');
+add_action('wp_ajax_nopriv_navigator', 'nebula_ajax_navigator');
 function nebula_ajax_navigator() {
-    //include('includes/navigator.php');
-    include('includes/navigat-holder.php');
+	include('includes/navigator.php');
+	//include('includes/navigat-holder.php');
+	exit();
 }
 
 

@@ -97,7 +97,7 @@
 				</div><!--/columns-->
 				<div class="four columns push_one">
 					<form class="search align-right" method="get" action="<?php echo home_url('/'); ?>">
-						<input class="nebula-search open" type="search" name="s" placeholder="Search" />
+						<input class="nebula-search open input search" type="search" name="s" placeholder="Search" x-webkit-speech/>
 					</form>
 				</div><!--/columns-->
 			</div><!--/row-->
@@ -149,7 +149,7 @@
 		
 		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
-		<script src="<?php bloginfo('template_directory');?>/js/libs/froogaloop.min.js"></script><!-- @TODO: Only call this script if vimeoplayer exists! -->
+		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/froogaloop.min.js" <?php echo $GLOBALS["defer"]; ?>></script> --><!-- @TODO: Only call this script if vimeoplayer exists! -->
         <script>
                 if ( jQuery('.vimeoplayer').length ) {
 	                var player = new Array();
