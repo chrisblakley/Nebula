@@ -184,7 +184,7 @@ function facebookSDK() {
 function checkFacebookLogin() {
 	FB.getLoginStatus(function(response) {
 		if ( response.status === 'connected' ) {
-			jQuery('#facebook-connect p').text('You have been connected to Facebook.');
+			jQuery('#facebook-connect p strong').text('You have been connected to Facebook.');
 			FB.api('/me', function(response) {
 				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.');
 				ga('send', 'event', 'Social', 'Facebook Connect', response.first_name + ' ' + response.last_name);
