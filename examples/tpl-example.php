@@ -328,6 +328,7 @@ get_header(); ?>
 							<div class="sixteen columns">
 								<div id="facebook-connect" style="margin-top: 15px;">
 									<p><strong>The Facebook SDK has not loaded yet.</strong></p>									
+									<img class="fbpicture" /><br/><br/>
 									<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" scope="public_profile,email,user_friends" onlogin="checkFacebookLogin();"></div>
 								</div>
 							</div><!--/columns-->

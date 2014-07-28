@@ -187,6 +187,7 @@ function checkFacebookLogin() {
 			jQuery('#facebook-connect p strong').text('You have been connected to Facebook.');
 			FB.api('/me', function(response) {
 				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.');
+				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100');
 				ga('send', 'event', 'Social', 'Facebook Connect', response.first_name + ' ' + response.last_name);
 				console.debug(response);
 				console.log('Your name is: ' + response.first_name + ' ' + response.last_name);
