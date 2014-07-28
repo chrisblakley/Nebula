@@ -38,8 +38,8 @@
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
     	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" />
 		<meta property="og:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear. ?>" />
-		<meta property="og:phone_number" content="<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
-		<meta property="og:fax_number" content="<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "+1-315-478-6700" -->
+		<meta property="og:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
+		<meta property="og:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
 		<meta property="og:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
 		<meta property="og:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
 		<meta property="og:street-address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
@@ -64,6 +64,7 @@
 		<?php $social['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
 		<?php $social['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
 		<?php $social['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO: Enter the URL of the Youtube page here. ?>
+		<?php $social['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO: Enter the URL of the Instagram page here. ?>
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
@@ -84,6 +85,7 @@
 			social['google_plus_url'] = "<?php echo $social['google_plus_url']; ?>";
 			social['linkedin_url'] = "<?php echo $social['linkedin_url']; ?>";
 			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
+			social['instagram_url'] = "<?php echo $social['instagram_url']; ?>";
 		</script>
 		
 		<script> //Universal Analytics

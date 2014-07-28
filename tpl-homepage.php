@@ -9,8 +9,8 @@ get_header(); ?>
 	<div class="nebulashadow inner-top bulging"></div>
 	<div class="valign row" style="height: 100%;">
 		<div>
-			<h3>Nebula</h3>
-			<h4>Lorem ipsum dolor sit amet</h4>
+			<h3><?php echo get_bloginfo('name'); ?></h3>
+			<h4><?php echo (get_bloginfo('description')) ? get_bloginfo('description') : 'Lorem Ipsum Dolor Sit Amet'; ?></h4>
 		</div>
 	</div>
 	<div class="nebulashadow inner-bottom bulging"></div>

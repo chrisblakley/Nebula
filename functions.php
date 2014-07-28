@@ -29,11 +29,11 @@ wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css
 ######################### Wait until scripts can be deferred via wp_enqueue_script(); #############################
 
 //@TODO: 2 things to test here:
-	//If a dependent script does not exist, what happens? does the enqueued script still trigger or no? does this initialze the dependent script?
-	//Can a script and a style share a handle? Seems so (so far)
+	//If a dependent script does not exist, what happens? A: The script never loads (because the dependant did not)
+	//Can a script and a style share a handle? A: Yes
 
 wp_register_script('nebula-modernizr', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js', array(), '2.8.3', false);
-wp_register_script('nebula-mmenu', get_template_directory_uri() . '/js/libs/jquery.mmenu.min.all.js', array(), '4.3', true); //Can a script and a style share the same handle?
+wp_register_script('nebula-mmenu', get_template_directory_uri() . '/js/libs/jquery.mmenu.min.all.js', array(), '4.3', true);
 wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js', array(), '1.0', true);
 wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js', array(), null, true);
 wp_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
@@ -402,10 +402,7 @@ function nebulaChangeHomeSetting(){
 function nebulaWordpressSettings() {
 	global $wp_rewrite;
 	
-	//Remove Hello Dolly plugin if it exists
-	if ( file_exists(WP_PLUGIN_DIR . '/hello.php') ) {
-        delete_plugins(array('hello.php'));
-    }	
+	remove_core_bundled_plugins();
 	
 	//Update Nebula Settings //@TODO: ADD THE REST!
 	update_option('nebula_ga_tracking_id', '');
@@ -423,6 +420,14 @@ function nebulaWordpressSettings() {
 	//Set the permalink structure to be "pretty" style
 	update_option('permalink_structure', '/%postname%/');
 	$wp_rewrite->flush_rules();
+}
+
+add_action('admin_init', 'remove_core_bundled_plugins');
+function remove_core_bundled_plugins(){
+	//Remove Hello Dolly plugin if it exists
+	if ( file_exists(WP_PLUGIN_DIR . '/hello.php') ) {
+        delete_plugins(array('hello.php'));
+    }
 }
 
 function nebulaActivateComplete(){
@@ -1577,8 +1582,8 @@ function addBackPostFeed() {
 if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 	add_theme_support('woocommerce');
 	//Remove existing WooCommerce hooks to be replaced with our own
-	remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
-	remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
+	remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
+	remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
 	//Replace WooCommerce hooks at our own declared locations
 	add_action('woocommerce_before_main_content', 'custom_woocommerce_start', 10);
 	add_action('woocommerce_after_main_content', 'custom_woocommerce_end', 10);

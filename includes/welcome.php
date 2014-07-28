@@ -77,6 +77,8 @@
 					<li><i class="fa fa-twitter-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_twitter_url', ''); ?>" target="_blank">Twitter</a></li>
 					<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_google_plus_url', ''); ?>" target="_blank">Google+</a></li>
 					<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_linkedin_url', ''); ?>" target="_blank">LinkedIn</a></li>
+					<li><i class="fa fa-youtube-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_youtube_url', ''); ?>" target="_blank">Youtube</a></li>
+					<li><i class="fa fa-instagram fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_instagram_url', ''); ?>" target="_blank">Instagram</a></li>
 				</ul>
 			</div>
 			

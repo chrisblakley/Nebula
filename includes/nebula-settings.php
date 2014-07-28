@@ -36,6 +36,7 @@
 		register_setting('nebula_settings_group', 'nebula_twitter_url');
 		register_setting('nebula_settings_group', 'nebula_linkedin_url');
 		register_setting('nebula_settings_group', 'nebula_youtube_url');
+		register_setting('nebula_settings_group', 'nebula_instagram_url');
 		
 		register_setting('nebula_settings_group', 'nebula_admin_bar');
 		register_setting('nebula_settings_group', 'nebula_comments');
@@ -204,15 +205,15 @@
 			        <tr valign="top">
 			        	<th scope="row">Phone Number&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<input type="text" name="nebula_phone_number" value="<?php echo get_option('nebula_phone_number'); ?>" placeholder="+1-315-478-6700" />
-							<p class="helper"><small>The primary phone number used for Open Graph data. Use the format: "+1-315-478-6700".</small></p>
+							<input type="text" name="nebula_phone_number" value="<?php echo get_option('nebula_phone_number'); ?>" placeholder="1-315-478-6700" />
+							<p class="helper"><small>The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
 			        	<th scope="row">Fax Number&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<input type="text" name="nebula_fax_number" value="<?php echo get_option('nebula_fax_number'); ?>" placeholder="+1-315-426-1392" />
-							<p class="helper"><small>The fax number used for Open Graph data. Use the format: "+1-315-426-1392".</small></p>
+							<input type="text" name="nebula_fax_number" value="<?php echo get_option('nebula_fax_number'); ?>" placeholder="1-315-426-1392" />
+							<p class="helper"><small>The fax number used for Open Graph data. Use the format: "1-315-426-1392".</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
@@ -270,6 +271,13 @@
 						<td>
 							URL: <input type="text" name="nebula_youtube_url" value="<?php echo get_option('nebula_youtube_url'); ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" style="width: 358px;"/>
 							<p class="helper"><small>The URL of the associated YouTube page.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Instagram&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							URL: <input type="text" name="nebula_instagram_url" value="<?php echo get_option('nebula_instagram_url'); ?>" placeholder="https://www.instagram.com/pinckneyhugo" style="width: 358px;"/>
+							<p class="helper"><small>The URL of the associated Instagram page.</small></p>
 						</td>
 			        </tr>
 			    </table>
