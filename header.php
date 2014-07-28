@@ -20,7 +20,6 @@
 		
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
                 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
@@ -80,13 +79,12 @@
 		<script>
 			social = [];
 			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
+			social['facebook_app_id'] = "<?php echo $social['facebook_app_id']; ?>";
 			social['twitter_url'] = "<?php echo $social['twitter_url']; ?>";
 			social['google_plus_url'] = "<?php echo $social['google_plus_url']; ?>";
 			social['linkedin_url'] = "<?php echo $social['linkedin_url']; ?>";
 			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
 		</script>
-		
-		
 		
 		<script> //Universal Analytics
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -104,82 +102,6 @@
 		<div id="fullbodywrapper">
 		
 		<div id="fb-root"></div>
-		<script type="text/javascript">
-			window.fbAsyncInit = function() {
-				//Initialize the Facebook JavaScript SDK
-				FB.init({
-					appId: '<?php echo $social['facebook_app_id']; ?>',
-					channelUrl: '<?php bloginfo("template_directory");?>/includes/channel.html',
-					status: true,
-					xfbml: true
-				});
-							
-				//Facebook Likes
-				FB.Event.subscribe('edge.create', function(href, widget) {
-					var currentPage = jQuery(document).attr('title');
-					ga('send', {
-						'hitType': 'social',
-						'socialNetwork': 'Facebook',
-						'socialAction': 'Like',
-						'socialTarget': href,
-						'page': currentPage
-					});
-					ga('send', 'event', 'Social', 'Facebook Like', currentPage);
-					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Like', currentPage);
-				});
-			
-				//Facebook Unlikes
-				FB.Event.subscribe('edge.remove', function(href, widget) {
-					var currentPage = jQuery(document).attr('title');
-					ga('send', {
-						'hitType': 'social',
-						'socialNetwork': 'Facebook',
-						'socialAction': 'Unlike',
-						'socialTarget': href,
-						'page': currentPage
-					});
-					ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
-					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Unlike', currentPage);
-				});
-			
-				//Facebook Send/Share
-				FB.Event.subscribe('message.send', function(href, widget) {
-					var currentPage = jQuery(document).attr('title');
-					ga('send', {
-						'hitType': 'social',
-						'socialNetwork': 'Facebook',
-						'socialAction': 'Send',
-						'socialTarget': href,
-						'page': currentPage
-					});
-					ga('send', 'event', 'Social', 'Facebook Share', currentPage);
-					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Share', currentPage);
-				});
-			
-				//Facebook Comments
-				FB.Event.subscribe('comment.create', function(href, widget) {
-					var currentPage = jQuery(document).attr('title');
-					ga('send', {
-						'hitType': 'social',
-						'socialNetwork': 'Facebook',
-						'socialAction': 'Comment',
-						'socialTarget': href,
-						'page': currentPage
-					});
-					ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
-					Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
-				});
-			};
-			
-			//Load the SDK asynchronously
-			(function(d, s, id) {
-				var js, fjs = d.getElementsByTagName(s)[0];
-				if (d.getElementById(id)) return;
-				js = d.createElement(s); js.id = id;
-				js.src = "//connect.facebook.net/en_GB/all.js";
-				fjs.parentNode.insertBefore(js, fjs);
-			}(document, 'script', 'facebook-jssdk'));
-		</script>
 										
 		<div id="topbarcon">
 			<div class="row mobilenavcon">

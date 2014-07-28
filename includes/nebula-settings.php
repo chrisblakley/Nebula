@@ -30,6 +30,8 @@
 		
 		register_setting('nebula_settings_group', 'nebula_facebook_url');
 		register_setting('nebula_settings_group', 'nebula_facebook_app_id');
+		register_setting('nebula_settings_group', 'nebula_facebook_app_secret');
+		register_setting('nebula_settings_group', 'nebula_facebook_access_token');
 		register_setting('nebula_settings_group', 'nebula_google_plus_url');
 		register_setting('nebula_settings_group', 'nebula_twitter_url');
 		register_setting('nebula_settings_group', 'nebula_linkedin_url');
@@ -66,7 +68,8 @@
 			p.helper {display: none; color: #777;}
 				p.helper.active {display: block;}
 				
-			input[type="text"] {width: 206px; font-size: 12px;}
+			input[type="text"],
+			input[type="password"] {width: 206px; font-size: 12px;}
 			
 			.mobiletitle {display: none;}
 						
@@ -235,8 +238,10 @@
 			        	<th scope="row">Facebook&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							URL: <input type="text" name="nebula_facebook_url" value="<?php echo get_option('nebula_facebook_url'); ?>" placeholder="http://www.facebook.com/PinckneyHugo" style="width: 358px;"/><br/>
-							App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/>
-							<p class="helper"><small>The URL and App ID of the associated Facebook page. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &raquo;</a></small></p>
+							App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
+							App Secret: <input type="password" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br/>
+							Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/>
+							<p class="helper"><small>The URL and App ID of the associated Facebook page/app. This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">

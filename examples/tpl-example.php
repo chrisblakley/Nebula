@@ -181,146 +181,169 @@ get_header(); ?>
 					
 					
 					<?php if ( is_page(318) ) : //Vimeo Meta ?>
-							<div class="row">
-								<div class="eight columns">
-									<?php vimeo_meta('97428427'); ?>
-									
-									<article class="vimeo video">
-										<iframe id="<?php echo $vimeo_meta['safetitle']; ?>" class="vimeoplayer" src="http://player.vimeo.com/video/<?php echo $vimeo_meta['id']; ?>?api=1&player_id=<?php echo $vimeo_meta['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-									</article>
-												
-									<br/>
-									<div class="container">
-										<div class="row">
-											<div class="four columns">
-												<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><img src="<?php echo $vimeo_meta['thumbnail']; ?>" width="100"/></a>
-											</div><!--/columns-->
-											<div class="twelve columns">
-													<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><?php echo $vimeo_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vimeo_meta['duration']; ?>)</span>
-													<span style="display: block; font-size: 12px; line-height: 18px;">
-														by <?php echo $vimeo_meta['user']; ?><br/>
-														<?php echo $vimeo_meta['description']; ?>
-													</span>
-											</div><!--/columns-->
-										</div><!--/row-->
-									</div><!--/container-->
+						<div class="row">
+							<div class="eight columns">
+								<?php vimeo_meta('97428427'); ?>
+								
+								<article class="vimeo video">
+									<iframe id="<?php echo $vimeo_meta['safetitle']; ?>" class="vimeoplayer" src="http://player.vimeo.com/video/<?php echo $vimeo_meta['id']; ?>?api=1&player_id=<?php echo $vimeo_meta['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+								</article>
+											
+								<br/>
+								<div class="container">
+									<div class="row">
+										<div class="four columns">
+											<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><img src="<?php echo $vimeo_meta['thumbnail']; ?>" width="100"/></a>
+										</div><!--/columns-->
+										<div class="twelve columns">
+												<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><?php echo $vimeo_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vimeo_meta['duration']; ?>)</span>
+												<span style="display: block; font-size: 12px; line-height: 18px;">
+													by <?php echo $vimeo_meta['user']; ?><br/>
+													<?php echo $vimeo_meta['description']; ?>
+												</span>
+										</div><!--/columns-->
+									</div><!--/row-->
+								</div><!--/container-->
+														
+							</div><!--/columns-->
+							<div class="eight columns">
+								
+								<?php vimeo_meta('27855315'); ?>
+								
+								<article class="vimeo video">
+									<iframe id="<?php echo $vimeo_meta['safetitle']; ?>" class="vimeoplayer" src="http://player.vimeo.com/video/<?php echo $vimeo_meta['id']; ?>?api=1&player_id=<?php echo $vimeo_meta['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+								</article>
 															
-								</div><!--/columns-->
-								<div class="eight columns">
-									
-									<?php vimeo_meta('27855315'); ?>
-									
-									<article class="vimeo video">
-										<iframe id="<?php echo $vimeo_meta['safetitle']; ?>" class="vimeoplayer" src="http://player.vimeo.com/video/<?php echo $vimeo_meta['id']; ?>?api=1&player_id=<?php echo $vimeo_meta['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-									</article>
-																
-									<br/>
-									<div class="container">
-										<div class="row">
-											<div class="four columns">
-												<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><img src="<?php echo $vimeo_meta['thumbnail']; ?>" width="100"/></a>
-											</div><!--/columns-->
-											<div class="twelve columns">
-													<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><?php echo $vimeo_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vimeo_meta['duration']; ?>)</span>
-													<span style="display: block; font-size: 12px; line-height: 18px;">
-														by <?php echo $vimeo_meta['user']; ?><br/>
-														<?php echo $vimeo_meta['description']; ?>
-													</span>
-											</div><!--/columns-->
-										</div><!--/row-->
-									</div><!--/container-->
-									
-								</div><!--/columns-->
-							</div><!--/row-->
+								<br/>
+								<div class="container">
+									<div class="row">
+										<div class="four columns">
+											<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><img src="<?php echo $vimeo_meta['thumbnail']; ?>" width="100"/></a>
+										</div><!--/columns-->
+										<div class="twelve columns">
+												<a href="<?php echo $vimeo_meta['url']; ?>" target="_blank"><?php echo $vimeo_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $vimeo_meta['duration']; ?>)</span>
+												<span style="display: block; font-size: 12px; line-height: 18px;">
+													by <?php echo $vimeo_meta['user']; ?><br/>
+													<?php echo $vimeo_meta['description']; ?>
+												</span>
+										</div><!--/columns-->
+									</div><!--/row-->
+								</div><!--/container-->
+								
+							</div><!--/columns-->
+						</div><!--/row-->
 					<?php endif; //End Vimeo Meta ?>
 					
 					
 					<?php if ( is_page(263) ) : //Youtube Meta ?>
-							<div class="row">
-								<div class="eight columns">
-									<?php youtube_meta('jtip7Gdcf0Q'); ?>
-									
-									<article class="youtube video">
-										<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>&rel=0" frameborder="0" allowfullscreen=""></iframe>
-									</article>
-												
-									<br/>
-									<div class="container">
-										<div class="row">
-											<div class="four columns">
-												<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
-											</div><!--/columns-->
-											<div class="twelve columns">
-													<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
-													<span style="display: block; font-size: 12px; line-height: 18px;">
-														by <?php echo $youtube_meta['author']; ?><br/>
-														<?php echo $youtube_meta['content']; ?>
-													</span>
-											</div><!--/columns-->
-										</div><!--/row-->
-									</div><!--/container-->
+						<div class="row">
+							<div class="eight columns">
+								<?php youtube_meta('jtip7Gdcf0Q'); ?>
+								
+								<article class="youtube video">
+									<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>&rel=0" frameborder="0" allowfullscreen=""></iframe>
+								</article>
+											
+								<br/>
+								<div class="container">
+									<div class="row">
+										<div class="four columns">
+											<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
+										</div><!--/columns-->
+										<div class="twelve columns">
+												<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
+												<span style="display: block; font-size: 12px; line-height: 18px;">
+													by <?php echo $youtube_meta['author']; ?><br/>
+													<?php echo $youtube_meta['content']; ?>
+												</span>
+										</div><!--/columns-->
+									</div><!--/row-->
+								</div><!--/container-->
+														
+							</div><!--/columns-->
+							<div class="eight columns">
+								
+								<?php youtube_meta('fjh61K3hyY0'); ?>
+								
+								<article class="youtube video">
+									<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
+								</article>
 															
-								</div><!--/columns-->
-								<div class="eight columns">
-									
-									<?php youtube_meta('fjh61K3hyY0'); ?>
-									
-									<article class="youtube video">
-										<iframe id="<?php echo $youtube_meta['safetitle']; ?>" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/<?php echo $youtube_meta['id']; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo $youtube_meta['origin']; ?>" frameborder="0" allowfullscreen=""></iframe>
-									</article>
-																
-									<br/>
-									<div class="container">
-										<div class="row">
-											<div class="four columns">
-												<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
-											</div><!--/columns-->
-											<div class="twelve columns">
-													<a href="<?php echo $youtube_meta['href']; ?>"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
-													<span style="display: block; font-size: 12px; line-height: 18px;">
-														by <?php echo $youtube_meta['author']; ?><br/>
-														<?php echo $youtube_meta['content']; ?>
-													</span>
-											</div><!--/columns-->
-										</div><!--/row-->
-									</div><!--/container-->
-									
-								</div><!--/columns-->
-							</div><!--/row-->
+								<br/>
+								<div class="container">
+									<div class="row">
+										<div class="four columns">
+											<a href="<?php echo $youtube_meta['href']; ?>" target="_blank"><img src="http://i1.ytimg.com/vi/<?php echo $youtube_meta['id']; ?>/hqdefault.jpg" width="100"/></a>
+										</div><!--/columns-->
+										<div class="twelve columns">
+												<a href="<?php echo $youtube_meta['href']; ?>"><?php echo $youtube_meta['title']; ?></a> <span style="font-size: 12px;">(<?php echo $youtube_meta['duration']; ?>)</span>
+												<span style="display: block; font-size: 12px; line-height: 18px;">
+													by <?php echo $youtube_meta['author']; ?><br/>
+													<?php echo $youtube_meta['content']; ?>
+												</span>
+										</div><!--/columns-->
+									</div><!--/row-->
+								</div><!--/container-->
+								
+							</div><!--/columns-->
+						</div><!--/row-->
 					<?php endif; //End Youtube Meta ?>
 					
 
 					<?php if ( is_page(214) ) : //Nebula Meta ?>
-							<div class="row">
-								<div class="sixteen columns">
-									<hr/>
-									<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
-									<hr/>
-								</div><!--/columns-->
-							</div><!--/row-->
+						<div class="row">
+							<div class="sixteen columns">
+								<hr/>
+								<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
+								<hr/>
+							</div><!--/columns-->
+						</div><!--/row-->
 					<?php endif; //End Nebula Meta ?>
 					
 					
 					<?php if ( is_page(224) ) : //Nebula the Excerpt ?>
-							<div class="row">
-								<div class="sixteen columns">
-									<hr/>
-									<?php echo nebula_the_excerpt(1, 'Read More &raquo;', 35, 1); ?>
-									<hr/>
-								</div><!--/columns-->
-							</div><!--/row-->
+						<div class="row">
+							<div class="sixteen columns">
+								<hr/>
+								<?php echo nebula_the_excerpt(1, 'Read More &raquo;', 35, 1); ?>
+								<hr/>
+							</div><!--/columns-->
+						</div><!--/row-->
 					<?php endif; //End Nebula the Excerpt ?>
 					
 					
 					<?php if ( is_page(228) ) : //Nebula Manage ?>
-							<div class="row">
-								<div class="sixteen columns">
-									<hr/>
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr/>
-								</div><!--/columns-->
-							</div><!--/row-->
+						<div class="row">
+							<div class="sixteen columns">
+								<hr/>
+								<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+								<hr/>
+							</div><!--/columns-->
+						</div><!--/row-->
 					<?php endif; //End Nebula Manage ?>
+					
+					
+					<?php if ( is_page(648) ) : //Facebook Graph API ?>
+						<div class="row">
+							<div class="sixteen columns">
+								<div id="facebook-connect" style="margin-top: 15px;">
+									<p><strong>The Facebook SDK has not loaded yet.</strong></p>									
+									<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" scope="public_profile,email,user_friends" onlogin="checkFacebookLogin();"></div>
+								</div>
+							</div><!--/columns-->
+						</div><!--/row-->
+						
+						<script>
+							jQuery(window).on('load', function(){
+								if ( !window.fbAsyncInit ) {
+									jQuery('#facebook-connect p strong').text('The Facebook SDK has not loaded yet. Main.js may have triggered before the async FB SDK loaded- Need to fix this bug!').css('color', 'red');
+								} else {
+									jQuery('#facebook-connect p strong').text('Connect with Facebook for this example:');
+								}
+							});
+						</script>
+						
+					<?php endif; //End Facebook Graph API ?>
 					
 					
 					<?php if ( is_page(258) ) : //CSS Browser Selector ?>

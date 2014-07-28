@@ -149,6 +149,17 @@
 		
 		<script src="<?php bloginfo('template_directory');?>/js/main.js" <?php echo $GLOBALS["defer"]; ?>></script>
 		
+		<script type="text/javascript">
+			//Load the SDK asynchronously
+			(function(d, s, id) {
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/en_GB/all.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		</script>
+		
 		<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/froogaloop.min.js" <?php echo $GLOBALS["defer"]; ?>></script> --><!-- @TODO: Only call this script if vimeoplayer exists! -->
         <script>
                 if ( jQuery('.vimeoplayer').length ) {

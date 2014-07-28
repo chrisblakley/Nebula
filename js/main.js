@@ -2,6 +2,7 @@ jQuery.noConflict();
 
 jQuery(document).ready(function() {	
 	
+	facebookSDK();
 	conditionalJSLoading();
 	
 	/* To be vetted. Turn these into functions.
@@ -19,7 +20,6 @@ jQuery(document).ready(function() {
 		} //End pull query strings from URL
 	
 	*/
-
 
 	//Init Custom Functions
 	gaEventTracking();
@@ -107,8 +107,97 @@ function helperFunctions(){
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
 	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
 	
-	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above'); //@TODO: Anything we can do here to alleviate the issue? May need to just hide
+	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above').hide(); //@TODO: Anything we can do here to alleviate the issue? May need to just hide
 } //end helperFunctions()
+
+
+//Create Facebook functions
+function facebookSDK() {
+	window.fbAsyncInit = function() { //This is called once the Facebook SDK is initialized (from the footer)
+		FB.init({
+			appId: social['facebook_app_id'],
+			channelUrl: bloginfo['template_directory'] + '/includes/channel.php',
+			status: true,
+			xfbml: true
+		});
+		
+		checkFacebookLogin();
+		
+		//Facebook Likes
+		FB.Event.subscribe('edge.create', function(href, widget) {
+			var currentPage = jQuery(document).attr('title');
+			ga('send', {
+				'hitType': 'social',
+				'socialNetwork': 'Facebook',
+				'socialAction': 'Like',
+				'socialTarget': href,
+				'page': currentPage
+			});
+			ga('send', 'event', 'Social', 'Facebook Like', currentPage);
+			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Like', currentPage);
+		});
+	
+		//Facebook Unlikes
+		FB.Event.subscribe('edge.remove', function(href, widget) {
+			var currentPage = jQuery(document).attr('title');
+			ga('send', {
+				'hitType': 'social',
+				'socialNetwork': 'Facebook',
+				'socialAction': 'Unlike',
+				'socialTarget': href,
+				'page': currentPage
+			});
+			ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
+			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Unlike', currentPage);
+		});
+	
+		//Facebook Send/Share
+		FB.Event.subscribe('message.send', function(href, widget) {
+			var currentPage = jQuery(document).attr('title');
+			ga('send', {
+				'hitType': 'social',
+				'socialNetwork': 'Facebook',
+				'socialAction': 'Send',
+				'socialTarget': href,
+				'page': currentPage
+			});
+			ga('send', 'event', 'Social', 'Facebook Share', currentPage);
+			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Share', currentPage);
+		});
+	
+		//Facebook Comments
+		FB.Event.subscribe('comment.create', function(href, widget) {
+			var currentPage = jQuery(document).attr('title');
+			ga('send', {
+				'hitType': 'social',
+				'socialNetwork': 'Facebook',
+				'socialAction': 'Comment',
+				'socialTarget': href,
+				'page': currentPage
+			});
+			ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
+			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
+		});
+	};
+}
+
+function checkFacebookLogin() {
+	FB.getLoginStatus(function(response) {
+		if ( response.status === 'connected' ) {
+			jQuery('#facebook-connect p').text('You have been connected to Facebook.');
+			FB.api('/me', function(response) {
+				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.');
+				ga('send', 'event', 'Social', 'Facebook Connect', response.first_name + ' ' + response.last_name);
+				console.debug(response);
+				console.log('Your name is: ' + response.first_name + ' ' + response.last_name);
+			});
+		} else if (response.status === 'not_authorized') {
+			console.log('Please log into this app.');
+		} else {
+			console.log('Please log into Facebook.');
+		}
+	});
+}
 
 
 //Social sharing buttons

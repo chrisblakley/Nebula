@@ -9,12 +9,13 @@
 
 //Register
 //wp_register_style($handle, $src, $dependencies, $version, $media);
-wp_register_style('normalize', get_template_directory_uri() . '/css/normalize.css', array(), '3.0.1');
-wp_register_style('gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
-wp_register_style('font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
-wp_register_style('mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), '4.3');
-wp_register_style('datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), '1.10');
-wp_register_style('main', get_stylesheet_directory_uri() . '/style.css', array('normalize', 'gumby', 'mmenu'), null);
+wp_register_style('nebula-normalize', get_template_directory_uri() . '/css/normalize.css', array(), '3.0.1');
+wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700', array(), null);
+wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
+wp_register_style('nebula-font_awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
+wp_register_style('nebula-mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), '4.3');
+wp_register_style('nebula-datatables', get_template_directory_uri() . '/css/jquery.dataTables.css', array(), '1.10');
+wp_register_style('nebula-main', get_stylesheet_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null);
 wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
 wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
 
@@ -31,30 +32,31 @@ wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css
 	//If a dependent script does not exist, what happens? does the enqueued script still trigger or no? does this initialze the dependent script?
 	//Can a script and a style share a handle? Seems so (so far)
 
-wp_register_script('modernizr', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js', array(), '2.8.3', false);
-wp_register_script('mmenu', get_template_directory_uri() . '/js/libs/jquery.mmenu.min.all.js', array(), '4.3', true); //Can a script and a style share the same handle?
-wp_register_script('cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js', array(), '1.0', true);
-wp_register_script('doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js', array(), null, true);
-wp_register_script('froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
-wp_register_script('performance-timing', get_template_directory_uri() . '/js/libs/performance-timing.js', array(), null, true);
-wp_register_script('respond', get_template_directory_uri() . '/js/libs/respond.js', array(), null, true); //Registerred, but called from footer.php (only when needed) - Find a way to enqueue in IE conditional comments
-wp_register_script('html5shiv', get_template_directory_uri() . '/js/libs/html5shiv.js', array(), '3.7.2', true); //Registerred, but called from footer.php (only when needed) - Find a way to enqueue in IE conditional comments
-wp_register_script('gumby', get_template_directory_uri() . '/js/libs/gumby.min.js', array(), '2.6', true);
-wp_register_script('twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
-wp_register_script('datatables', get_template_directory_uri() . '/js/libs/jquery.dataTables.min.js', array(), '1.10', true);
-wp_register_script('maskedinput', get_template_directory_uri() . '/js/libs/jquery.maskedinput.js', array(), null, true);
-wp_register_script('main', get_template_directory_uri() . '/js/main.js', array('mmenu', 'gumby', 'jquery', 'jquery-ui-core', 'doubletaptogo', 'twitter'), null, true); //@TODO: Make sure if dependencies don't exist, this script still initializes (without triggering the dependent script)!
+wp_register_script('nebula-modernizr', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js', array(), '2.8.3', false);
+wp_register_script('nebula-mmenu', get_template_directory_uri() . '/js/libs/jquery.mmenu.min.all.js', array(), '4.3', true); //Can a script and a style share the same handle?
+wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js', array(), '1.0', true);
+wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js', array(), null, true);
+wp_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
+wp_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js', array(), null, true);
+wp_register_script('nebula-respond', get_template_directory_uri() . '/js/libs/respond.js', array(), null, true); //Registerred, but called from footer.php (only when needed) - Find a way to enqueue in IE conditional comments
+wp_register_script('nebula-html5shiv', get_template_directory_uri() . '/js/libs/html5shiv.js', array(), '3.7.2', true); //Registerred, but called from footer.php (only when needed) - Find a way to enqueue in IE conditional comments
+wp_register_script('nebula-gumby', get_template_directory_uri() . '/js/libs/gumby.min.js', array(), '2.6', true);
+wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
+wp_register_script('nebula-datatables', get_template_directory_uri() . '/js/libs/jquery.dataTables.min.js', array(), '1.10', true);
+wp_register_script('nebula-maskedinput', get_template_directory_uri() . '/js/libs/jquery.maskedinput.js', array(), null, true);
+wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', array('nebula-mmenu', 'nebula-gumby', 'jquery', 'jquery-ui-core', 'nebula-doubletaptogo', 'nebula-twitter'), null, true); //@TODO: Make sure if dependencies don't exist, this script still initializes (without triggering the dependent script)!
 
 
 //Enqueue for frontend
 add_action('wp_enqueue_scripts', 'enqueue_nebula_frontend');
 function enqueue_nebula_frontend() {
 	//Stylesheets
-	wp_enqueue_style('normalize');
-	wp_enqueue_style('gumby');
-	wp_enqueue_style('mmenu');
-	wp_enqueue_style('font-awesome');
-	wp_enqueue_style('main');
+	wp_enqueue_style('nebula-normalize');
+	wp_enqueue_style('nebula-open_sans');
+	wp_enqueue_style('nebula-gumby');
+	wp_enqueue_style('nebula-mmenu');
+	wp_enqueue_style('nebula-font_awesome');
+	wp_enqueue_style('nebula-main');
 	
 	//Scripts
 	wp_enqueue_script('jquery');
@@ -64,16 +66,16 @@ function enqueue_nebula_frontend() {
 
 	//Conditionals
 	if ( is_page(9999) ) { //Datatables pages
-		wp_enqueue_style('datatables');
-		wp_enqueue_script('datatables');
+		wp_enqueue_style('nebula-datatables');
+		wp_enqueue_script('nebula-datatables');
 	}
 	
 	if ( is_page(9999) ) { //Twitter pages (conditional may need to change depending on type of page it's used on)
-		wp_enqueue_script('twitter');
+		wp_enqueue_script('nebula-twitter');
 	}
 	
 	if ( is_page(9999) ) { //Contact page (if using phone number, birthday, or other numerical-only inputs)
-		wp_enqueue_script('maskedinput');
+		wp_enqueue_script('nebula-maskedinput');
 	}
 }
 
@@ -92,10 +94,57 @@ add_action('admin_enqueue_scripts', 'enqueue_nebula_admin');
 function enqueue_nebula_admin() {
 	//Stylesheets
 	wp_enqueue_style('nebula-admin');
-	wp_enqueue_style('font-awesome');
+	wp_enqueue_style('nebula-font_awesome');
 	
 	//Scripts
 	######################### Wait until scripts can be deferred via wp_enqueue_script(); #############################
+}
+
+
+//Dequeue redundant files (from plugins)
+//Important: Add a reason in comments to help future updates: Plugin Name - Reason
+add_action('wp_print_scripts', 'nebula_dequeues', 9999);
+add_action('wp_print_styles', 'nebula_dequeues', 9999);
+function nebula_dequeues() {
+	if ( !is_admin() ) {
+		//Styles
+		wp_deregister_style('open-sans'); //WP Core - We load Open Sans ourselves (or whatever font the project calls for)
+		wp_deregister_style('admin-bar'); //WP Core - Even though these are admin-only resources, I'd rather them not add any interpreted load time
+		wp_deregister_style('dashicons'); //WP Core - Even though these are admin-only resources, I'd rather them not add any interpreted load time NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		wp_deregister_style('cff-font-awesome'); //Custom Facebook Feed - We enqueue the latest version of Font Awesome ourselves
+		wp_deregister_style('se-link-styles'); //Search Everything - (As far as I know) We do not use any of their styles (I believe they are for additional settings)
+		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling specifically, so removing it unless we decide we need it.
+		
+		//Scripts
+		if( !preg_match('/(?i)msie [2-8]/', $_SERVER['HTTP_USER_AGENT']) ) { //WP Core - Dequeue jQuery Migrate for browsers that don't need it.
+			wp_deregister_script('jquery');
+			wp_register_script('jquery', false, array('jquery-core'), '1.11.0'); //Just have to make sure this version reflects the actual jQuery version bundled with WP (click the jquery.js link in the source)
+		}
+		
+		/* @TODO: Styles/Scripts to consider for dequeue
+			- media-upload.min.js?
+			- underscore.min.js?
+		*/
+	}
+	
+	//if ( get_the_ID() == 1 ) {
+		//Page specific dequeues can go here
+	//}
+}
+
+
+//Override existing functions (from plugins)
+//Please note the reason for the override!
+add_action('wp_print_scripts', 'nebula_remove_actions', 9999);
+function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
+	if ( !is_admin() ) {
+		remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
+	}
+	
+	//This example removes Custom Facebook Feed from the homepage:
+	//if ( get_the_ID() == 1 ) {
+	//	remove_action('wp_footer', 'cff_js', 10);
+	//}
 }
 
 /*========================== 
@@ -564,11 +613,11 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				    jQuery(".serverdetections .fa-spin, #testload, #testloadscript").remove();
 				}</script>';
 		echo '<iframe id="testload" onload="stopTimer();" src="' . home_url('/') . '" style="width: 1200px; height: 0px; pointer-events: none; opacity: 0; visibility: hidden; display: none;"></iframe>';
-		
+				
 		echo '<ul class="serverdetections">';
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
-			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
-			echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> (' . top_domain_name($dnsrecord[0]['target']) . ')</li>';
+			echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
+			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . ' <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
 			echo '<li><i class="fa fa-gavel fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
 			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
