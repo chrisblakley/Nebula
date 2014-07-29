@@ -8,7 +8,7 @@
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 		
-		<title><?php wp_title( '-', true, 'right' ); ?></title>
+		<title><?php wp_title('-', true, 'right'); ?></title>
 		
 		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO: Replace '' with keywords. -->
@@ -34,9 +34,8 @@
 		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
 		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-temp.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
-    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" />
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. -->
+    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. -->
 		<meta property="og:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear. ?>" />
 		<meta property="og:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
 		<meta property="og:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
@@ -50,7 +49,8 @@
 		
 		<!-- Facebook Metadata -->
 		<?php $social['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
-		<?php $social['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter the Facebook App ID here. How to get an App ID: http://smashballoon.com/custom-facebook-feed/access-token/ (Good idea to save the Access Token too!) ?>
+		<?php $social['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>
+		<?php $social['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
 		<meta property="fb:admins" content="" /><!-- @TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" -->
 				
@@ -58,7 +58,7 @@
 		<?php $social['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
 		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/fb-thumb1.jpg" />
+		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
 
 		<!-- Other Social Metadata -->
 		<?php $social['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
@@ -74,9 +74,7 @@
 		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!-- 150x150px -->
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
-		
-		<script type='text/javascript' src="<?php bloginfo('template_directory');?>/js/libs/modernizr.custom.64172.js" <?php echo $GLOBALS["defer"]; ?>></script>
-						
+								
 		<script>
 			social = [];
 			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";

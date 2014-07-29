@@ -161,7 +161,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 
 .searchresultword {background: #e8f8ff; background: rgba(0, 152, 215, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;} /* @TODO: Replace BG color with very light primary color */
 	.searchresultword.transitionable {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
-		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;} /* @TODO: Not working */
+		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
 
 .searchresultsinglecon {background: rgba(0,0,0,0.0225);}
 	.searchresultsinglecon hr {margin: 0;}
@@ -318,7 +318,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 /* Sample Hero and on-load animation */
 #heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
-#heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 15px; margin-top: 10px; padding-left: 15px; text-transform: uppercase; background: rgba(0,0,0,0.5);}
+#heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 10px; margin-top: 10px; padding-left: 10px; text-transform: uppercase; background: rgba(0,0,0,0.5);}
 	.no-rgba #heroslidercon h4 {background: #000;}
 
 

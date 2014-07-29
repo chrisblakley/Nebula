@@ -184,18 +184,20 @@ function facebookSDK() {
 function checkFacebookLogin() {
 	FB.getLoginStatus(function(response) {
 		if ( response.status === 'connected' ) {
-			jQuery('#facebook-connect p strong').text('You have been connected to Facebook.');
+			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...');
 			FB.api('/me', function(response) {
 				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.');
 				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100');
 				ga('send', 'event', 'Social', 'Facebook Connect', response.first_name + ' ' + response.last_name);
-				console.debug(response);
-				console.log('Your name is: ' + response.first_name + ' ' + response.last_name);
+				//console.debug(response);
+				//console.log('Your name is: ' + response.first_name + ' ' + response.last_name);
 			});
 		} else if (response.status === 'not_authorized') {
-			console.log('Please log into this app.');
+			//console.log('Please log into this app.');
+			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:');
 		} else {
-			console.log('Please log into Facebook.');
+			//console.log('Please log into Facebook.');
+			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:');
 		}
 	});
 }

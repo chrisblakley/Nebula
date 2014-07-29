@@ -3,7 +3,7 @@ Theme Name: PHG Nebula
 Used to style the TinyMCE editor
 */
 
-@import url(//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
+/* @import url(//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700); */
 
 /* Default Boilerplate Reset */
 html .mceContentBody {/* max-width:640px; */}
