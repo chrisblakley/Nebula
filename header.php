@@ -122,15 +122,13 @@
 					<nav id="mobilecontact" class="unhideonload hidden">
 						<ul>
 				    		<li>
-				    			<a href="#"><i class="icon-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here. ?></a>
+				    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="icon-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here (x2). ?></a>
 				    		</li>
 				    		<li>
-				    			<a href="#"><i class="icon-mail"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear. ?></a>
+				    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="icon-mail"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear (x2). ?></a>
 				    		</li>
 				    		<li>
-				    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank">
-				    				<i class="icon-direction"></i> Directions <br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here. ?></small></div>
-				    			</a>
+				    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="icon-direction"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here (x2). ?></small></div></a>
 				    		</li>
 				    	</ul>
 					</nav><!--/mobilecontact-->

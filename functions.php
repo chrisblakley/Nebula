@@ -174,20 +174,62 @@ function nebula_dequeues() {
 	//}
 }
 
+//Force settings within plugins
+add_action('admin_init', 'nebula_plugin_force_settings');
+function nebula_plugin_force_settings(){
+	//Ultimate TinyMCE
+	if ( file_exists(WP_PLUGIN_DIR . '/ultimate-tinymce') ) {
+		$jwl_options_group4 = get_option('jwl_options_group4');
+		unset($jwl_options_group4['jwl_dev_support']); //Prevent link on frontend.
+		$jwl_options_group4['jwl_menu_location'] = 'Settings'; //Move the settings page under settings (instead of a top-level link in the admin sidebar)
+		unset($jwl_options_group4['jwl_qr_code']); //Prevent enabling QR codes on the frontend
+		unset($jwl_options_group4['jwl_qr_code_pages']); //Prevent enabling QR codes on the frontend
+		$jwl_options_group4['jwl_disable_styles'] = '1'; //Disable annoying/distracting styles on plugin listing (and elsewhere).
+		//update_option('jwl_options_group4', $jwl_options_group4); //@TODO: This *is* working. Uncomment once the below solution also works
+		add_user_meta(get_current_user_id(), 'jwl_ignore_notice_pro', 'true', true); //Prevent the Pro upgrade notice
+	}
+	//Search Everything
+	if ( file_exists(WP_PLUGIN_DIR . '/search-everything') ) {
+		$se_options = get_option('se_options');
+	    $se_options['se_use_highlight'] = false; //Disable search keyword highlighting (to prevent interference with Nebula keyword highlighting)
+	    update_option('se_options', $se_options);
+	}
+}
 
-//Override existing functions (from plugins)
-//Please note the reason for the override!
+//Unset admin plugins from appearing on the frontend
+add_action('option_active_plugins', 'nebula_unset_admin_plugins_on_frontend');
+function nebula_unset_admin_plugins_on_frontend($plugins) {
+	if ( !is_admin() ) {
+		//var_dump($plugins);
+		$admin_only_plugins = array_search('ultimate-tinymce/main.php' , $plugins); //@TODO: make this an array, then foreach through $admin_only_plugins as $admin_only_plugin //@TODO: This is not working...
+		//$admin_only_plugins = array_search('contact-form-7/wp-contact-form-7.php' , $plugins); //This one works.
+		/* @TODO: Add the following too:
+			admin-menu-tree-page-view/index.php
+			reveal-ids-for-wp-admin-25/reveal-ids-for-wp-admin-25.php
+		*/
+		if ( $admin_only_plugins ) {
+			unset($plugins[$admin_only_plugins]);
+		}
+		//var_dump($plugins);
+		return $plugins;
+	}
+}
+
+//Override existing functions (typcially from plugins)
+//Please add a comment with the reason for the override!
 add_action('wp_print_scripts', 'nebula_remove_actions', 9999);
 function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
 	if ( !is_admin() ) {
 		remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
+		//remove_action('get_footer', 'your_function'); //Ultimate TinyMCE fontend linkback @TODO: This *is* working. Uncomment once the above solutions also work (in case they change the function name or something).
+		//if ( get_the_ID() == 1 ) { remove_action('wp_footer', 'cff_js', 10); } //Custom Facebook Feed - Remove the feed from the homepage. @TODO: Update to any page/post type that should NOT have the Facebook Feed
 	}
-	
-	//This example removes Custom Facebook Feed from the homepage:
-	//if ( get_the_ID() == 1 ) {
-	//	remove_action('wp_footer', 'cff_js', 10);
-	//}
 }
+
+
+
+
+
 
 
 /*========================== 
@@ -236,17 +278,6 @@ function nebula_settings_conditional($setting, $default='enabled') {
 		return 1;
 	} else {
 		return 0;
-	}
-}
-
-add_action('option_active_plugins', 'nebula_unset_admin_plugins_on_frontend');
-function nebula_unset_admin_plugins_on_frontend($plugins) {
-	if ( !is_admin() ) {
-		$admin_only_plugins = array_search('ultimate-tinymce/main.php' , $plugins); //@TODO: make this an array, then foreach through $admin_only_plugins as $admin_only_plugin
-		if ( $admin_only_plugins ) {
-			unset($plugins[$admin_only_plugins]);
-		}
-		return $plugins;
 	}
 }
 
@@ -491,19 +522,6 @@ function nebulaActivateComplete(){
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: red;'>Re-initialize Nebula.</a></p></div>";
 	} else {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
-	}
-}
-
-
-add_action('admin_init', 'nebula_plugin_force_settings');
-function nebula_plugin_force_settings(){
-	//Ultimate TinyMCE
-	if ( file_exists(WP_PLUGIN_DIR . '/ultimate-tinymce') ) {
-		$jwl_options_group4 = get_option('jwl_options_group4');
-		update_option($jwl_options_group4['jwl_dev_support'], '0'); //Force prevent link on frontend. @TODO: THESE ARE NOT WORKING...
-		update_option($jwl_options_group4['jwl_disable_styles'], '1'); //Force disable annoying/distracting styles on plugin listing (and elsewhere).
-		//var_dump($jwl_options_group4); @TODO: I just plain don't know why this won't update :C
-		//echo 'why isnt this off: ' . $jwl_options_group4['jwl_dev_support'];
 	}
 }
 
@@ -805,7 +823,7 @@ function muc_value( $column_name, $id ) {
 
 
 //Enable editor-style.css for the WYSIWYG editor.
-add_editor_style();
+add_editor_style('css/editor-style.css');
 
 
 //Admin Footer Enhancements
