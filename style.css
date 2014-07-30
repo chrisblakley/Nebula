@@ -60,6 +60,7 @@ a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s ea
 	.btn > a:hover {color: #fff;}
 body,
 .mceContentBody {overflow-x: hidden; background: #f6f6f6;} /* @TODO: copy other .mce stuff for the editor too! */
+.mceContentBody {padding: 25px;}
 .inner {width: 100%; max-width: 960px; padding: 0 20px; margin: 0 auto;}
 ul.menu {padding: 0;}
 
