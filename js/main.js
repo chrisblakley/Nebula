@@ -433,6 +433,16 @@ function gaEventTracking(){
 } //End gaEventTracking()
 
 
+//Google AdWords conversion tracking for AJAX
+function conversionTracker() {
+	var  iframe = document.createElement('iframe');
+	iframe.style.width = '0px';
+	iframe.style.height = '0px';
+	document.body.appendChild(iframe);
+	iframe.src = bloginfo['template_directory'] + '/includes/thanks.html';
+};
+
+
 function googlePlusCallback(jsonParam) {
 	var currentPage = jQuery(document).attr('title');
 	if ( jsonParam.state == 'on' ) {

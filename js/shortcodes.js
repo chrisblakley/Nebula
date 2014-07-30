@@ -2,9 +2,11 @@ jQuery.noConflict();
 
 jQuery(window).on('load', function() {
 
-	iframe = document.getElementById("content_ifr");
-	win = iframe.contentWindow;
-	doc = win.document;
+	iframe = document.getElementById("content_ifr");	
+	if ( typeof iframe !== 'undefined' ) {
+		win = iframe.contentWindow;
+		doc = win.document;
+	}	
 
 }); //End Window Load
 
