@@ -197,7 +197,7 @@ function nebula_plugin_force_settings(){
 }
 
 //Unset admin plugins from appearing on the frontend
-add_action('option_active_plugins', 'nebula_unset_admin_plugins_on_frontend');
+//add_action('option_active_plugins', 'nebula_unset_admin_plugins_on_frontend'); //@TODO: Possibly breaking everything...
 function nebula_unset_admin_plugins_on_frontend($plugins) {
 	if ( !is_admin() ) {
 		//var_dump($plugins);
