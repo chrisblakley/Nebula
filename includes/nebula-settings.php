@@ -184,7 +184,7 @@
 			        <tr valign="top">
 			        	<th scope="row">Contact Email&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<input type="text" name="nebula_contact_email" value="<?php echo get_option('nebula_contact_email'); ?>" placeholder="<?php echo get_option('admin_email', $admin_user->user_email); ?>" />
+							<input type="text" name="nebula_contact_email" value="<?php echo get_option('nebula_contact_email'); ?>" placeholder="<?php echo get_option('admin_email', $GLOBALS['admin_user']->user_email); ?>" />
 							<p class="helper"><small>The main contact email address. If left empty, the admin email address will be used (shown by placeholder).</small></p>
 						</td>
 			        </tr>

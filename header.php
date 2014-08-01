@@ -36,7 +36,7 @@
 		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. -->
     	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. -->
-		<meta property="og:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear. ?>" />
+		<meta property="og:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify this email is the one that should appear. ?>" />
 		<meta property="og:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
 		<meta property="og:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
 		<meta property="og:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />

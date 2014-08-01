@@ -32,7 +32,7 @@
 					#welcome-content .logocon a img {width: 100%;}
 			#welcome-content hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
 
-#wpbody-content {padding-bottom: 0;}
+#wpbody-content {padding-bottom: 40px;}
 #dashboard-widgets .meta-box-sortables {min-height: 0;}
 .metabox-holder .postbox-container .empty-container {height: 100px; margin-bottom: 25px !important;}
 
