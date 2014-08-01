@@ -140,7 +140,8 @@
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 			</script>
-		
+			
+			
 			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/froogaloop.min.js" <?php echo $GLOBALS["defer"]; ?>></script> --><!-- @TODO: Only call this script if vimeoplayer exists! -->
 	        <script>
 	            if ( jQuery('.vimeoplayer').length ) {

@@ -74,7 +74,7 @@
 		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!-- 150x150px -->
 		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
 		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
-								
+		
 		<script>
 			social = [];
 			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
@@ -94,6 +94,15 @@
 		
 			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //@TODO: Change Tracking ID in Nebula Settings or functions.php! ?>
 			ga('send', 'pageview');
+		</script>
+		
+		<script type="text/javascript">
+			window.addEventListener('error', function(e) {
+				if ( e.lineno != 0 ) {
+					ga('send', 'event', 'Error', 'JavaScript Error', e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
+					ga('send', 'exception', e.message, false);
+				}
+			});
 		</script>
 		
 		<?php wp_head(); ?>

@@ -32,7 +32,13 @@
 					#welcome-content .logocon a img {width: 100%;}
 			#welcome-content hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
 
+#wpbody-content {padding-bottom: 0;}
+#dashboard-widgets .meta-box-sortables {min-height: 0;}
+.metabox-holder .postbox-container .empty-container {height: 100px; margin-bottom: 25px !important;}
+
 .form-table .helper {padding: 0 10px; margin: 10px 0; background: #f9f9f9; border-radius: 8px;}
+
+th#id {width: 50px;}
 
 /*==========================
  Nebula TinyMCE Toolbar 

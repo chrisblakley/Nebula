@@ -429,6 +429,13 @@ function gaEventTracking(){
 			copyOver = 1;
 		}
 	});
+	
+	//AJAX Errors
+	jQuery(document).ajaxError(function(e, request, settings) {
+		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url);
+		ga('send', 'exception', e.result, true);
+		Gumby.log('Sending GA event: ' + 'Error', 'AJAX Error', e.result + ' on: ' + settings.url);
+	});
 		
 } //End gaEventTracking()
 
