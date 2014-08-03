@@ -17,6 +17,7 @@ $GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); 
 //wp_register_style($handle, $src, $dependencies, $version, $media);
 wp_register_style('nebula-normalize', get_template_directory_uri() . '/css/normalize.css', array(), '3.0.1');
 wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700', array(), null);
+wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null);
 wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
 wp_register_style('nebula-font_awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '4.1');
 wp_register_style('nebula-mmenu', get_template_directory_uri() . '/css/jquery.mmenu.all.css', array(), '4.3');
@@ -55,7 +56,8 @@ if ( array_key_exists('debug', $_GET) ) {
 
 //Register
 //wp_register_script($handle, $src, $dependencies, $version, $in_footer);
-wp_register_script('nebula-modernizr', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
+wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
+wp_register_script('nebula-modernizr', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 wp_register_script('nebula-mmenu', get_template_directory_uri() . '/js/libs/jquery.mmenu.min.all.js', array(), '4.3', true);
 wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js?' . $GLOBALS['async'], array(), '1.0', true);
 wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js?' . $GLOBALS['defer'], array(), null, true);
@@ -68,7 +70,7 @@ wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/tw
 wp_register_script('nebula-datatables', get_template_directory_uri() . '/js/libs/jquery.dataTables.min.js', array(), '1.10', true);
 wp_register_script('nebula-maskedinput', get_template_directory_uri() . '/js/libs/jquery.maskedinput.js', array(), null, true);
 wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-mmenu', 'nebula-gumby', 'jquery', 'jquery-ui-core', 'nebula-doubletaptogo'), null, true);
-wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js?' . $GLOBALS['defer'], array(), null, true);
+wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
 wp_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js?' . $GLOBALS['defer'], array(), null, true);
 
 
@@ -78,6 +80,7 @@ function enqueue_nebula_frontend() {
 	//Stylesheets
 	wp_enqueue_style('nebula-normalize');
 	wp_enqueue_style('nebula-open_sans');
+	//wp_enqueue_style('nebula-open_sans_local');
 	wp_enqueue_style('nebula-gumby');
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome');
@@ -88,7 +91,8 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_script('jquery-ui-core');
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
-	wp_enqueue_script('nebula-modernizr');
+	wp_enqueue_script('nebula-modernizr_dev');
+	//wp_enqueue_script('nebula-modernizr'); //@TODO: Switch to this modernizr when launching (if not using advanced polyfills)
 	
 	wp_enqueue_script('nebula-mmenu');
 	//wp_enqueue_script('nebula-supplementr');
@@ -98,6 +102,10 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_script('nebula-main');
 
 	//Conditionals
+	if ( $GLOBALS["debug"] ) {
+		wp_enqueue_script('nebula-performance_timing');
+	}
+	
 	if ( is_page(9999) ) { //Datatables pages
 		wp_enqueue_style('nebula-datatables');
 		wp_enqueue_script('nebula-datatables');
@@ -115,6 +123,9 @@ function enqueue_nebula_login() {
 	wp_enqueue_style('nebula-login');
 	
 	//Scripts
+	wp_enqueue_script('jquery');
+	wp_enqueue_script('nebula-modernizr');
+	//wp_enqueue_script('nebula-cssbs');
 	wp_enqueue_script('nebula-login');
 }
 
@@ -245,7 +256,7 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 set_error_handler('nebula_error_handler');
 
 //Custom error handler
-function nebula_error_handler($error_level, $error_message, $error_file, $error_line) {
+function nebula_error_handler($error_level, $error_message, $error_file, $error_line, $error_contest) {
     /*
     	@TODO: Parse errors cannot be caught with this function. In order to make it work, you must auto prepend a file using php.ini or .htaccess
 		.htaccess method: php_value auto_prepend_file "./includes/shutdown_tracker.php" Note: this hasn't worked for me. Beyond that, no testing has been done.
@@ -254,55 +265,74 @@ function nebula_error_handler($error_level, $error_message, $error_file, $error_
     */
     $error = array(
         'type' => 'Unknown Error',
+        'definition' => 'Unknown Error Level',
         'level' => $error_level,
         'message' => $error_message,
         'file' => $error_file,
-        'line' => $error_line
+        'line' => $error_line,
+        'contest' => $error_contest
     );
     
     switch ( $error_level ) {
-	    case E_ERROR: //(1) Fatal run-time errors. These indicate errors that can not be recovered from, such as a memory allocation problem. Execution of the script is halted.
-	    case E_CORE_ERROR: //(16) Fatal errors that occur during PHP's initial startup. This is like an E_ERROR, except it is generated by the core of PHP.
-	    case E_COMPILE_ERROR: //(64) Fatal compile-time errors. This is like an E_ERROR, except it is generated by the Zend Scripting Engine.
-	    case E_PARSE: //(4) Compile-time parse errors. Parse errors should only be generated by the parser.
+	    case E_ERROR: //(1) Fatal run-time errors. These indicate errors that can not be recovered from, such as a memory allocation problem. Execution of the script is halted. [Not supported by set_error_handler()]
+	    case E_CORE_ERROR: //(16) Fatal errors that occur during PHP's initial startup. This is like an E_ERROR, except it is generated by the core of PHP. [Not supported by set_error_handler()]
+	    case E_COMPILE_ERROR: //(64) Fatal compile-time errors. This is like an E_ERROR, except it is generated by the Zend Scripting Engine. [Not supported by set_error_handler()]
+	    case E_PARSE: //(4) Compile-time parse errors. Parse errors should only be generated by the parser. [Not supported by set_error_handler()]
 	    	$error['type'] = 'Fatal Error';
+	    	$error['definition'] = 'Fatal run-time errors that can not be recovered from. Execution of the script is halted. Includes E_Error [1], E_CORE_ERROR [16], E_COMPILE_ERROR [64], and E_PARSE [4].';
 	        gaBuildData($error);
-	        echo '<br/><strong>' . $error['type'] . '</strong> [' . $error['level'] . ']: ' . $error['message'] . ' in <strong>' . $error['file'] . '</strong> on <strong>line ' . $error['line'] . '</strong>';
+	        nebula_print_error($error);
 	        exit(1);
 	        break;
 	    case E_USER_ERROR: //(256) User-generated error message. This is like an E_ERROR, except it is generated in PHP code by using the PHP function trigger_error().
 	    case E_RECOVERABLE_ERROR: //(4096) Catchable fatal error. It indicates that a probably dangerous error occurred, but did not leave the Engine in an unstable state. If the error is not caught by a user defined handle, the application aborts as it was an E_ERROR.
 	        $error['type'] = 'Error';
+	        $error['definition'] = 'Indicates a probably dangerous error occurred, but did not leave the Engine in an unstable state. Includes E_USER_ERROR [256], and E_RECOVERABLE_ERROR [4096].';
 	        gaBuildData($error);
-	        echo '<br/><strong>' . $error['type'] . '</strong> [' . $error['level'] . ']: ' . $error['message'] . ' in <strong>' . $error['file'] . '</strong> on <strong>line ' . $error['line'] . '</strong>';
+	        nebula_print_error($error);
 	        exit(1);
 	        break;
 	    case E_WARNING: //(2) Run-time warnings (non-fatal errors). Execution of the script is not halted.
-	    case E_CORE_WARNING: //(32) Warnings (non-fatal errors) that occur during PHP's initial startup. This is like an E_WARNING, except it is generated by the core of PHP.
-	    case E_COMPILE_WARNING: //(218) Compile-time warnings (non-fatal errors). This is like an E_WARNING, except it is generated by the Zend Scripting Engine.
+	    case E_CORE_WARNING: //(32) Warnings (non-fatal errors) that occur during PHP's initial startup. This is like an E_WARNING, except it is generated by the core of PHP. [Not supported by set_error_handler()]
+	    case E_COMPILE_WARNING: //(218) Compile-time warnings (non-fatal errors). This is like an E_WARNING, except it is generated by the Zend Scripting Engine. [Not supported by set_error_handler()]
 	    case E_USER_WARNING: //(256) User-generated error message. This is like an E_ERROR, except it is generated in PHP code by using the PHP function trigger_error().
 	        $error['type'] = 'Warning';
+	        $error['definition'] = 'Run-time warnings (non-fatal errors). Execution of the script is not halted. Includes E_WARNING [2], E_CORE_WARNING [32], E_COMPILE_WARNING [218], and E_USER_WARNING [256].';
 	        //gaBuildData($error); //Disabled GA event tracking of Warnings (Maybe we should send to a log file instead)
-	        //echo '<br/><strong>' . $error['type'] . '</strong> [' . $error['level'] . ']: ' . $error['message'] . ' in <strong>' . $error['file'] . '</strong> on <strong>line ' . $error['line'] . '</strong>';
+	        if ( $GLOBALS["debug"] ) {
+	        	nebula_print_error($error);
+	        }
 	        break;
 	    case E_NOTICE: //(8) Run-time notices. Indicate that the script encountered something that could indicate an error, but could also happen in the normal course of running a script.
 	    case E_USER_NOTICE: //(1024) User-generated notice message. This is like an E_NOTICE, except it is generated in PHP code by using the PHP function trigger_error().
+	    case E_DEPRECATED: //(8192) Run
+	    case E_USER_DEPRECATED: //(16384) 
 	        $error['type'] = 'Notice';
+	        $error['definition'] = 'Run-time notices. Indicate that the script encountered something that could indicate an error, but could also happen in the normal course of running a script. Includes E_NOTICE [8], E_USER_NOTICE [1024], E_DEPRECATED [8192], and E_USER_DEPRECATED [16384].';
 	        //gaBuildData($error); //Disabled GA event tracking of Notices (Maybe we should send to a log file instead)
-	        //echo '<br/><strong>' . $error['type'] . '</strong> [' . $error['level'] . ']: ' . $error['message'] . ' in <strong>' . $error['file'] . '</strong> on <strong>line ' . $error['line'] . '</strong>';
+	        if ( $GLOBALS["debug"] ) {
+	        	nebula_print_error($error);
+	        }
 	        break;
 		case E_STRICT: //(2048) Enable to have PHP suggest changes to your code which will ensure the best interoperability and forward compatibility of your code.
-			$error['type'] = 'Debug';
-	        gaBuildData($error);
-	        echo '<br/><strong>' . $error['type'] . '</strong> [' . $error['level'] . ']: ' . $error['message'] . ' in <strong>' . $error['file'] . '</strong> on <strong>line ' . $error['line'] . '</strong>';
+			$error['type'] = 'Strict';
+			$error['definition'] = 'Suggested changes which will ensure the best interoperability and forward compatibility. Includes E_STRICT [2048].';
+	        //gaBuildData($error); //Disabled GA event tracking of Notices (Maybe we should send to a log file instead)
+	        if ( $GLOBALS["debug"] ) {
+	        	nebula_print_error($error);
+	        }
 	        break;
 	    default:
-	        echo '<br/><strong>' . $error['type'] . '</strong> [' . $error['level'] . ']: ' . $error['message'] . ' in <strong>' . $error['file'] . '</strong> on <strong>line ' . $error['line'] . '</strong>';
+	        nebula_print_error($error);
 	        gaBuildData($error);
 	        break;
     }
 	
     return true; //Don't execute PHP internal error handler
+}
+
+function nebula_print_error($error) {
+	echo '<p class="nebula-php-error ' . strtolower(str_replace(' ', '-', $error['type'])) . '"><small title="' . $error['definition'] . '">[' . $error['level'] . ']</small> <strong title="' . $error['definition'] . '">' . $error['type'] . '</strong>: ' . $error['message'] . ' in <strong>' . $error['file'] . '</strong> on <strong>line ' . $error['line'] . '</strong>.</p>';
 }
 
 //Construct the data payload
@@ -329,7 +359,7 @@ function gaBuildData($error) {
 		'cid' => $cid,
 		't' => 'exception',
 		'exd' => 'PHP ' . $error['type'] . ' [' . $error['level'] . ']', //Exception Description
-		'exf' => 0 //Fatal Exception? (Boolean)
+		'exf' => 0 //Fatal Exception? (Boolean) //@TODO: Pull this data from the $error array (if 'type' contains 'fatal'). Doesn't matter until the handler supports fatal errors.
 	);
 	gaSendData($data);
 }
@@ -337,7 +367,7 @@ function gaBuildData($error) {
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
 function gaParseCookie() {
 	if (isset($_COOKIE['_ga'])) {
-		list($version,$domainDepth, $cid1, $cid2) = split('[\.]', $_COOKIE["_ga"], 4);
+		list($version,$domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
 		$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
 		$cid = $contents['cid'];
 	} else {
@@ -727,12 +757,6 @@ function custom_login_css() {
 	//Only use BG image and animation on direct requests (disable for iframe logins after session timeouts).
 	if( empty($_POST['signed_request']) ) {
 	    echo '<script>window.userIP = "' . $_SERVER["REMOTE_ADDR"] . '";</script>';
-	    echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js?ver=3.5.1"></script>';
-	    //echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/libs/cssbs.js"></script>';
-	    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/libs/modernizr.custom.42059.js"></script>';
-	    echo '<script type="text/javascript" src="' . get_bloginfo('template_directory') . '/js/login.js"></script>';
-	    
-	    //@TODO: Need to figure out a way to automate the Google Analytics account number and domain!
 	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $GLOBALS['ga'] . "', 'auto');</script>";
 	}
 }
@@ -780,7 +804,7 @@ if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 //If user's email address ends in @pinckneyhugo.com and is an administrator
 if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO: Undefined offset: 1   ...?
 	if ( $current_user_domain == 'pinckneyhugo.com' && current_user_can('manage_options') ) {
 		add_action('wp_dashboard_setup', 'phg_dev_metabox');
 	}
@@ -817,16 +841,29 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		
 		$dnsrecord = dns_get_record(top_domain_name(gethostname()), DNS_NS);
 		
+		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 		echo '<script id="testloadscript">
-				var beforeLoad = (new Date()).getTime();
+				jQuery(window).on("load", function(){
+					jQuery(".loadtime").css("visibility", "visible");
+					beforeLoad = (new Date()).getTime();
+					var iframe = document.createElement("iframe");
+					iframe.style.width = "1200px";
+					iframe.style.height = "0px";
+					jQuery("#testloadcon").append(iframe);
+					iframe.src = "' . home_url('/') . '";
+					jQuery("#testloadcon iframe").on("load", function(){
+						stopTimer();
+					});
+				});
+				
 				function stopTimer(){
 				    var afterLoad = (new Date()).getTime();
 				    var result = (afterLoad - beforeLoad)/1000;
 				    jQuery(".loadtime").html(result + " seconds");
 				    if ( result > 5 ) { jQuery(".slowicon").addClass("fa-warning"); }
-				    jQuery(".serverdetections .fa-spin, #testload, #testloadscript").remove();
-				}</script>';
-		echo '<iframe id="testload" onload="stopTimer();" src="' . home_url('/') . '" style="width: 1200px; height: 0px; pointer-events: none; opacity: 0; visibility: hidden; display: none;"></iframe>';
+				    jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
+				}
+				</script>';
 				
 		echo '<ul class="serverdetections">';
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
@@ -836,7 +873,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
-			echo '<li><i class="fa fa-clock-o fa-fw"></i> Homepage load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank"><strong class="loadtime"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
+			echo '<li><i class="fa fa-clock-o fa-fw"></i> Homepage load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank"><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';
@@ -1090,6 +1127,10 @@ function save_extra_profile_fields($user_id) {
 }
 
 
+function nebula_facebook_link() {
+	echo '<p class="facebook-connect-con"><i class="fa fa-facebook-square"></i> <a class="facebook-connect" href="#">Connect with Facebook</a></p>';
+}
+
 
 //Template for comments and pingbacks.
 //@TODO: Add functionality from this into nebula_comment_theme, then update templates to no longer use this.
@@ -1151,12 +1192,15 @@ function nebula_comment_theme($comment, $args, $depth) {
 			
 			<div class="user-avatar">
 				<?php
-					$comment_author_id = get_comment(get_comment_ID())->user_id;
+					$comment_id = get_comment_ID();
+					$comment_author_id = get_comment($comment_id)->user_id;
 					$comment_author_info = get_userdata($comment_author_id);
-					$comment_headshot = str_replace('.jpg', '-150x150.jpg' , $comment_author_info->headshot_url);
+					if ( $comment_author_info ) {
+						$comment_headshot = str_replace('.jpg', '-150x150.jpg' , $comment_author_info->headshot_url);
+					}
 				?>
 				
-				<?php if ( $comment_author_info->headshot_url ) : ?>
+				<?php if ( $comment_author_info ) : ?>
 					<?php if ( $comment_author_id != 0 ) : ?><a href="<?php echo get_author_posts_url($comment_author_id); ?>"><?php endif; ?>
 						<img src="<?php echo $comment_headshot; ?>" width="50" height="50" style="border-radius: 25px; border: 2px solid #fff; box-shadow: 0px 0px 6px 0 rgba(0,0,0,0.2);" />
 					<?php if ( $comment_author_id != 0 ) : ?></a><?php endif; ?>
@@ -1294,7 +1338,8 @@ function js_bloginfo() {
 	bloginfo["template_directory"] = "' . get_bloginfo("template_directory") . '";
 	bloginfo["stylesheet_url"] = "' . get_bloginfo("stylesheet_url") . '";
 	bloginfo["home_url"] = "' . home_url() . '";
-	bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";</script>';
+	bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";
+	bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";</script>';
 }
 
 //Add user variable for JavaScript
@@ -1475,6 +1520,32 @@ function nebula_remove_script_version($src){
 }
 
 
+function nebula_backup_contact_form() {
+	echo '<form class="contact-form-backup">
+		<p class="contact-form-name-heading">Name</p>
+		<p class="contact-form-name"><input class="fb-form-name" type="text" placeholder="Name"/></p>
+		<p class="contact-form-email-heading">Email</p>
+		<p class="contact-form-email"><input class="fb-form-email" type="email" placeholder="Email"/></p>
+		<p class="contact-form-message-heading">Message</p>
+		<p class="contact-form-message"><textarea placeholder="Message"></textarea></p>
+		<p class="contact-form-submit"><input id="contact-submit" class="submit" type="submit"/></p>
+	</form>';
+}
+
+
+//Nebula backup contact form (if Contact Form 7 is not available)
+add_action('wp_ajax_nebula_backup_contact_send', 'nebula_backup_contact_send');
+add_action('wp_ajax_nopriv_nebula_backup_contact_send', 'nebula_backup_contact_send');
+function nebula_backup_contact_send() {
+	$to = array($GLOBALS['admin_user']->user_email, 'chrisb@pinckneyhugo.com'); //Could be an array of multiple email addresses
+	$subject = 'Contact form submission via ' . get_bloginfo('name') . ' from ' . $_POST['data'][0]['name'];
+	$message = $_POST['data'][0]['message'] + '\n\n\nThis message was sent by the backup contact form!';
+	$headers = 'From: ' . $_POST['data'][0]['name'] . ' <' . $_POST['data'][0]['email'] . '>';
+	wp_mail($to, $subject, $message, $headers);
+	die();
+}
+
+
 //Show different meta data information about the post. Typically used inside the loop.
 //Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
 //Example: nebula_meta('by');
@@ -1515,7 +1586,6 @@ function nebula_meta($meta, $day=1) {
 	//Inside the loop (or outside the loop for current post/page): nebula_the_excerpt('Read more &raquo;', 20, 1);
 	//Outside the loop: nebula_the_excerpt(572, 'Read more &raquo;', 20, 1);
 function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
-	
 	if ( $postID && is_int($postID) ) {
 		$the_post = get_post($postID);
 	} else {
@@ -1748,14 +1818,14 @@ function the_breadcrumb() {
 
 
 //Prevent empty search query error (Show all results instead)
-add_action('pre_get_posts', 'fix_empty_search');
-function fix_empty_search($query){
-    global $wp_query;
-    if ( isset($_GET['s']) && $_GET['s'] == '' ){ //if search parameter is blank, do not return false
-        $wp_query->set('s',' ');
-        $wp_query->is_search=true;
-    }
-    return $query;
+add_action('pre_get_posts', 'redirect_empty_search');
+function redirect_empty_search($query){
+	global $wp_query;
+	if ( isset($_GET['s']) && str_replace(' ', '', $_GET['s']) == '' ){
+		header('Location: ' . home_url('/') . 'search/?invalid');
+	} else {
+		return $query;
+	}
 }
 
 

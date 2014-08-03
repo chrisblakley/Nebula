@@ -39,6 +39,7 @@
 	<li>
 		
 	<h3>Contact Us</h3>
+	<?php nebula_facebook_link(); ?>
 	<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
 		<ul id="cform7-container">
 			<?php echo do_shortcode('[contact-form-7 id="384" title="Contact Form 7 Documentation"]'); ?>
@@ -46,11 +47,7 @@
 	<?php else : ?>
 		<div class="row">
 			<div class="sixteen columns">
-				<?php //@TODO: Eventually change this to use WP Mail with a hard-coded form. ?>
-				<?php $admin_user = get_userdata(1); ?>
-				<div class="medium primary btn icon-left entypo icon-mail">
-					<a class="cform-disabled" href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>?subject=Email%20submission%20from%20<?php the_permalink(); ?>" target="_blank">Email Us</a>
-				</div><!--/button-->
+				<?php nebula_backup_contact_form(); ?>
 			</div><!--/columns-->
 		</div><!--/row-->
 	<?php endif; ?>

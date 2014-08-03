@@ -116,3 +116,34 @@ a.phg {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: a
 
 .myhidden {display: none; visibility: hidden; opacity: 0;}
 .noheight {height: 0 !important; overflow: hidden; opacity: 0 !important;}
+
+
+/* Nebula Debug Classes */
+.nebula-php-error {font-size: 13px !important; width: 96% !important; margin: 10px auto !important; padding: 2px 10px !important; border-radius: 4px !important; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05) !important;}
+	.nebula-php-error small {position: relative; top: -2px; font-size: 8px; cursor: help;}
+	.nebula-php-error.fatal-error {color: #000; background: rgba(153, 51, 51, 0.02);}
+		.nebula-php-error.fatal-error strong:first-of-type {color: rgb(153, 51, 51); cursor: help;}
+	.nebula-php-error.error {color: #333; background: rgba(204, 102, 51, 0.02);}
+		.nebula-php-error.error strong:first-of-type {color: rgb(204, 102, 51); cursor: help;}
+	.nebula-php-error.warning {color: #666; background: rgba(228, 199, 51, 0.02);}
+		.nebula-php-error.warning strong:first-of-type {color: rgb(228, 199, 51); cursor: help;}
+	.nebula-php-error.notice {color: #666; background: rgba(51, 102, 153, 0.02);}
+		.nebula-php-error.notice strong:first-of-type {color: rgb(51, 102, 153); cursor: help;}
+	.nebula-php-error.strict {color: #666; background: rgba(138, 169, 112, 0.02);}
+		.nebula-php-error.strict strong:first-of-type {color: rgb(138, 169, 112); cursor: help;}
+	.nebula-php-error.unknown {color: #666; background: rgba(102, 102, 102, 0.02);}
+		.nebula-php-error.unknown strong:first-of-type {color: rgb(102, 102, 102); cursor: help;}
+
+.border-red, .outline-red {outline: 1px solid red;}
+.border-orange, .outline-orange {outline: 1px solid orange;}
+.border-yellow, .outline-yellow {outline: 1px solid yellow;}
+.border-green, .outline-green {outline: 1px solid green;}
+.border-blue, .border-indigo, .outline-blue, .outline-indigo {outline: 1px solid blue;}
+.border-purple, .border-violet, .outline-purple, .outline-violet {outline: 1px solid purple;}
+
+.background-red, .bg-red {background: red;}
+.background-orange, .bg-orange {background: orange;}
+.background-yellow, .bg-yellow {background: yellow;}
+.background-green, .bg-green {background: green;}
+.background-blue, .bg-blue, .background-indigo, .bg-indigo {background: blue;}
+.background-purple, .bg-purple, .background-violet, .bg-violet {background: purple;}

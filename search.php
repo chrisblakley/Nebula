@@ -17,7 +17,7 @@ get_header(); ?>
 			<?php get_search_form(); ?>
 			
 			<?php global $defer; global $async; ?>
-			<script <?php echo $defer; ?>>
+			<script>
 				var badSearchTerm = jQuery('#s').val();
 				ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm);
 				Gumby.log('Sending GA event: ' + 'Internal Search', 'No Results', badSearchTerm);

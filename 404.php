@@ -22,8 +22,7 @@ get_header(); ?>
 	
 </div><!--/row-->
 
-<?php global $defer; global $async; ?>
-<script <?php echo $defer; ?>>
+<script>
 	if ( document.referrer.length ) {
 		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
 		Gumby.log('Sending GA event: ' + '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);

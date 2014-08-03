@@ -9,7 +9,7 @@ body.login {background: #f2f2f2; background: linear-gradient(to bottom, #f2f2f2,
 body.login div#login h1 {}
 	body.login div#login h1 a {width:auto;}
 
-.login form {margin-top: 0;}
+.login form {margin: 0 auto;}
 
 .ipcon {margin: 20px 0 -20px 0;}
 	.ipcon p {font-size: 12px; margin: 0; padding: 0; color: #888;}

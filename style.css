@@ -58,8 +58,7 @@ a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s ea
 	a:hover,
 	a.hover {color: #95D600; color: var(--secondary-color)-darker;}
 	.btn > a:hover {color: #fff;}
-body,
-.mceContentBody {overflow-x: hidden; background: #f6f6f6;} /* @TODO: copy other .mce stuff for the editor too! */
+body, .mceContentBody {overflow-x: hidden; background: #f6f6f6;}
 .mceContentBody {padding: 25px;}
 .inner {width: 100%; max-width: 960px; padding: 0 20px; margin: 0 auto;}
 ul.menu {padding: 0;}
@@ -185,6 +184,12 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 	.maprefresh-icon.inactive,
 	.mapgeolocation-icon.inactive {opacity: 0.4;}
 
+.facebook-connect-con {font-size: 12px;}
+	.facebook-connect-con i,
+	.facebook-connect-con a {color: #3b5998;}
+		.facebook-connect-con a:hover,
+		.facebook-connect-con a.hover {color: #8b9dc3;}
+		
 
 /* ==========================================================================
    Specific Gumby feature modifications
@@ -238,7 +243,7 @@ Also be sure to find the other @TODO: items within the stylesheet.
 	#mobilenav.mm-menu {visibility: visible; height: 100%;}
 
 /* Nebula Wordpress top navigation style defaults */
-nav#topnav {position: relative; z-index: 1000; margin-top: 5px;}
+nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
 	nav#topnav ul {float: right;}
 		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
 			nav#topnav ul li.menu-item:last-child,
@@ -246,7 +251,10 @@ nav#topnav {position: relative; z-index: 1000; margin-top: 5px;}
 			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
 				nav#topnav ul li.menu-item a:hover,
 				nav#topnav ul li.menu-item a.hover {color: #95D600; color: var(--secondary-color);}
-			nav#topnav ul li.menu-item ul.sub-menu {display: none;}
+			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; border-left: 1px solid var(--primary-color); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s ease 0s; -moz-transition: opacity 0.25s ease 0s; -o-transition: opacity 0.25s ease 0s; transition: opacity 0.25s ease 0s;}
+				nav#topnav ul li.menu-item.hover ul.sub-menu,
+				nav#topnav ul li.menu-item:hover ul.sub-menu {left: 5px; opacity: 1;}
+				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
 
 li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 	.svg li.nebula-search input, .svg input.nebula-search {background: #eee url('images/search.svg') no-repeat 6px center;}
@@ -417,24 +425,39 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	h3.comment-reply-title {font-size: 12px;}
 	
 	.logged-in-as {margin: 0;}
-	.comment-form-author-heading {margin: 0; font-size: 11px; font-weight: bold;}
-	.comment-form-email-heading {margin: 0; font-size: 11px; font-weight: bold;}
+	.contact-form-name-heading,
+	.contact-form-email-heading,
+	.contact-form-message-heading,
+	.comment-form-author-heading,
+	.comment-form-email-heading,
 	.comment-form-comment-heading {margin: 0; font-size: 11px; font-weight: bold;}
 	
+	p.contact-form-name,
 	p.comment-form-author {}
+		p.contact-form-name input,
 		p.comment-form-author input {font-size: 12px;}
-		
+	
+	p.contact-form-email,
 	p.comment-form-email {}
+		p.contact-form-email input,
 		p.comment-form-email input {font-size: 12px;}
 	
+	p.contact-form-message,
 	p.comment-form-comment {margin: 0;}
+		p.contact-form-message textarea,
 		p.comment-form-comment textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: 12px;}
-			.no-js p.comment-form-comment textarea {height: 150px;}
+			.no-js p.comment-form-comment textarea {min-height: 150px;}
+	
 	p.form-submit {}
+		p.contact-form-submit input,
 		p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+			p.contact-form-submit input.hover,
+			p.contact-form-submit input:hover,
 			p.form-submit input.hover,
 			p.form-submit input:hover {background: #95d600; background: var(--secondary-color);}
-			p.form-submit input.disabled {background: #ccc !important; cursor: default;}
+			p.contact-form-submit input.disabled,
+			p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
+			
 
 /* ==========================================================================
    Sidebar Area
@@ -697,6 +720,21 @@ div.space {clear: both; display: block; overflow: hidden; visibility: hidden; wi
 
 
 /* Nebula Debug Classes */
+.nebula-php-error {font-size: 13px !important; width: 96% !important; margin: 10px auto !important; padding: 2px 10px !important; border-radius: 4px !important; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05) !important;}
+	.nebula-php-error small {position: relative; top: -2px; font-size: 8px; cursor: help;}
+	.nebula-php-error.fatal-error {color: #000; background: rgba(153, 51, 51, 0.02);}
+		.nebula-php-error.fatal-error strong:first-of-type {color: rgb(153, 51, 51); cursor: help;}
+	.nebula-php-error.error {color: #333; background: rgba(204, 102, 51, 0.02);}
+		.nebula-php-error.error strong:first-of-type {color: rgb(204, 102, 51); cursor: help;}
+	.nebula-php-error.warning {color: #666; background: rgba(228, 199, 51, 0.02);}
+		.nebula-php-error.warning strong:first-of-type {color: rgb(228, 199, 51); cursor: help;}
+	.nebula-php-error.notice {color: #666; background: rgba(51, 102, 153, 0.02);}
+		.nebula-php-error.notice strong:first-of-type {color: rgb(51, 102, 153); cursor: help;}
+	.nebula-php-error.strict {color: #666; background: rgba(138, 169, 112, 0.02);}
+		.nebula-php-error.strict strong:first-of-type {color: rgb(138, 169, 112); cursor: help;}
+	.nebula-php-error.unknown {color: #666; background: rgba(102, 102, 102, 0.02);}
+		.nebula-php-error.unknown strong:first-of-type {color: rgb(102, 102, 102); cursor: help;}
+
 .border-red, .outline-red {outline: 1px solid red;}
 .border-orange, .outline-orange {outline: 1px solid orange;}
 .border-yellow, .outline-yellow {outline: 1px solid yellow;}

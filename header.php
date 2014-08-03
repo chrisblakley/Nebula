@@ -111,7 +111,11 @@
 		<div id="fullbodywrapper">
 		
 		<div id="fb-root"></div>
-										
+		
+		<noscript>
+			<iframe class="hidden" src="<?php bloginfo('template_directory');?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&p=<?php echo get_page_uri(); ?>&t=<?php wp_title('-', true, 'right'); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+		</noscript>
+		
 		<div id="topbarcon">
 			<div class="row mobilenavcon">
 				<div class="sixteen columns clearfix">
@@ -150,7 +154,7 @@
 			<div class="row topnavcon">
 				<div class="sixteen columns">
 					<nav id="topnav">
-	        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '1')); ?>
+	        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '2')); ?>
 	        		</nav>
 				</div><!--/columns-->
 			</div><!--/row-->
@@ -194,6 +198,18 @@
 				<div class="row">
 					<div class="sixteen columns searchresultsingle">
 						<span>Your search returned only one result. You have been automatically redirected.</span>
+						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="icon-cancel"></i></a>
+						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
+					</div><!--/columns-->
+				</div><!--/row-->
+				<hr/>
+			</div><!--/container-->
+		<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
+			<div class="container searchresultsinglecon">
+				<hr/>
+				<div class="row">
+					<div class="sixteen columns searchresultsingle invalid">
+						<span>Your search was invalid. Please try again.</span>
 						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="icon-cancel"></i></a>
 						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
 					</div><!--/columns-->

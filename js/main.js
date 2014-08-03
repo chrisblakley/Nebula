@@ -43,6 +43,7 @@ jQuery(document).ready(function() {
 	pageVisibility();
 	errorLogAndFallback();
 	WPcomments();
+	contactBackup();
 	
 	mapInfo = [];
 	getAllLocations();
@@ -121,7 +122,7 @@ function facebookSDK() {
 			xfbml: true
 		});
 		
-		checkFacebookLogin();
+		checkFacebookStatus();
 		
 		//Facebook Likes
 		FB.Event.subscribe('edge.create', function(href, widget) {
@@ -179,29 +180,86 @@ function facebookSDK() {
 			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
 		});
 	};
+	
+	jQuery('.facebook-connect').on('click', function(){
+		facebookLoginLogout();
+		return false;
+	});
 }
 
-function checkFacebookLogin() {
+//Connect to Facebook without using Facebook Login button
+function facebookLoginLogout() {
+	console.log('triggered fb login/logout');
+	if ( !FBstatus ) {
+		console.log('facebook session is null, logging in');
+		FB.login(function(response) {
+			if (response.authResponse) {
+				checkFacebookStatus();
+			} else {
+				checkFacebookStatus();
+			}
+		}, {scope:'public_profile,email'});
+	} else {
+		console.log('facebook session is NOT null, logging out');
+		FB.logout(function(response) {
+			checkFacebookStatus();
+		});
+	}
+	return false;
+}
+
+//Fetch Facebook user information
+function checkFacebookStatus() {
+	console.log('checking facebook login status');
 	FB.getLoginStatus(function(response) {
 		if ( response.status === 'connected' ) {
+			window.FBstatus = true;
+			
+			//Example page:
 			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...');
+			
 			FB.api('/me', function(response) {
+				prefillFacebookFields(response);
+				jQuery('.facebook-connect-con a').text('Disconnect').removeClass('disconnected').addClass('connected');
+				ga('send', 'event', 'Social', 'Facebook Connect', response.first_name + ' ' + response.last_name);
+
+				//Example page:
 				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.');
 				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100');
-				ga('send', 'event', 'Social', 'Facebook Connect', response.first_name + ' ' + response.last_name);
-				//console.debug(response);
-				//console.log('Your name is: ' + response.first_name + ' ' + response.last_name);
 			});
 		} else if (response.status === 'not_authorized') {
+			window.FBstatus = false;
 			//console.log('Please log into this app.');
+			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
+			
+			//Example page:
 			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:');
 		} else {
+			window.FBstatus = false;
 			//console.log('Please log into Facebook.');
+			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
+			prefillFacebookFields();
+			
+			//Example page:
 			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:');
 		}
 	});
 }
 
+function prefillFacebookFields(response) {
+	if ( response ) {
+		jQuery('.fb-form-name, .comment-form-author input, .cform7-name').each(function(){
+			jQuery(this).val(response.first_name + ' ' + response.last_name).trigger('keyup');
+		});
+		jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
+			jQuery(this).val(response.email).trigger('keyup');
+		});
+	} else {
+		jQuery('.fb-form-name, .comment-form-author input, .fb-form-email, .comment-form-email input').each(function(){
+			jQuery(this).val('');
+		});
+	}
+}
 
 //Social sharing buttons
 function socialSharing() {
@@ -380,7 +438,15 @@ function gaEventTracking(){
 		Gumby.log('Sending GA event: ' + 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 	});
 	
-	//Comment tracking
+	//SMS link tracking
+	jQuery('a[href^="sms"]').on('click', function(){
+		var phoneNumber = jQuery(this).attr('href');
+		phoneNumber = phoneNumber.replace('sms:+', '');
+		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
+		Gumby.log('Sending GA event: ' + 'Click-to-Call', 'SMS to: ' + phoneNumber);
+	});
+	
+	//Comment tracking @TODO: This might not be working.
 	jQuery('#commentform').on('submit', function(){
 		if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
 			var currentPage = jQuery(document).attr('title');
@@ -668,6 +734,7 @@ function singleResultDrawer(){
 
 //Page Visibility
 function pageVisibility(){
+	visFirstHidden = 0;
 	visibilityChangeActions();
 	jQuery(document).on('visibilitychange', function(){								
 		visibilityChangeActions();
@@ -684,16 +751,19 @@ function pageVisibility(){
 		if ( getPageVisibility() ) { //Page is hidden
 			//@TODO: pause youtube
 			//@TODO: pause vimeo
-			var firstHidden = 1;
+			visFirstHidden = 1;
+			visTimerBefore = (new Date()).getTime();
 			var pageTitle = jQuery(document).attr('title');
 			ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle);
 			Gumby.log('Sending GA event: ' + 'Page Visibility', 'Hidden', pageTitle);
 		} else { //Page is visible
 			//@TODO: resume autoplay of videos
-			if ( firstHidden == 1 ) {
+			if ( visFirstHidden == 1 ) {
+				var visTimerAfter = (new Date()).getTime();
+				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
 				var pageTitle = jQuery(document).attr('title');
-				ga('send', 'event', 'Page Visibility', 'Visible', pageTitle);
-				Gumby.log('Sending GA event: ' + 'Page Visibility', 'Visible', pageTitle);
+				ga('send', 'event', 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)');
+				Gumby.log('Sending GA event: ' + 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)');
 			}
 		}
 	}
@@ -915,27 +985,24 @@ function onlyNumbers() {
 	});
 }
 
+function checkCommentVal(oThis) {
+	//@TODO: Count how many required fields there are. If any of them don't have value, then trigger disabled
+	if ( jQuery(oThis).val() != '' ) {
+		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').removeClass('disabled');
+	} else {
+		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').addClass('disabled');
+	}
+}
 
 function WPcomments() {
-	checkCommentVal();
-	jQuery('#commentform #comment').on('keyup focus blur', function(){
-		checkCommentVal();
+	checkCommentVal('.comment-form-comment #comment');
+	jQuery('.comment-form-comment #comment').on('keyup focus blur', function(){
+		checkCommentVal(this);
 	});
 	
-	jQuery('#commentform').on('submit', function(){
-		if ( jQuery('#commentform #submit').hasClass('disabled') ) {
-			return false;
-		}
+	jQuery(document).on('click', 'disabled', function(){
+		return false;
 	});
-	
-	function checkCommentVal() {
-		//@TODO: Count how many required fields there are. If any of them don't have value, then trigger disabled
-		if ( jQuery('#commentform #comment').val() != '' ) {
-			jQuery('#commentform #submit').removeClass('disabled');
-		} else {
-			jQuery('#commentform #submit').addClass('disabled');
-		}
-	}
 	
 	jQuery('p.comment-form-comment textarea').on('focus', function(){
 		jQuery(this).stop().animate({minHeight: 150}, 1000, "easeInOutCubic");
@@ -947,6 +1014,49 @@ function WPcomments() {
 	});
 }
 
+function contactBackup() {
+	checkCommentVal('.contact-form-message textarea');
+	jQuery('.contact-form-message textarea').on('keyup focus blur', function(){
+		checkCommentVal(this);
+	});
+	
+	jQuery(document).on('click', 'disabled', function(){
+		return false;
+	});
+	
+	jQuery(document).on('submit', '.contact-form-backup', function(e){
+		var contactData = [{
+			'name': jQuery(".contact-form-name input").val(),
+			'email': jQuery(".contact-form-email input").val(),
+			'message': jQuery(".contact-form-message textarea").val()
+		}];
+		jQuery.ajax({
+			type: "POST",
+			url: bloginfo["admin-ajax"],
+			data: {
+				action: 'nebula_backup_contact_send',
+				data: contactData,
+			},
+			success: function(response){
+				console.log(response);
+				jQuery('.contact-form-backup input:not(#contact-submit), .contact-form-backup textarea').val('');
+				//Collapse the contact form and replace with sent notification
+				//call google adwords conversion tracker
+				//remove the contact form
+				//ga('send', 'event', 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
+				//Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
+			},
+			error: function(MLHttpRequest, textStatus, errorThrown){
+				console.log('There was an AJAX error: ' + errorThrown);
+				//ga('send', 'event', 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
+				//Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
+			},
+			timeout: 60000
+		});
+		e.preventDefault();
+		return false;
+	});
+}
 
 //Waits until event (generally resize) finishes before triggering. Call with waitForFinalEvent();
 var waitForFinalEvent = (function () {
