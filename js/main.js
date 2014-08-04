@@ -191,7 +191,6 @@ function facebookSDK() {
 function facebookLoginLogout() {
 	console.log('triggered fb login/logout');
 	if ( !FBstatus ) {
-		console.log('facebook session is null, logging in');
 		FB.login(function(response) {
 			if (response.authResponse) {
 				checkFacebookStatus();
@@ -200,7 +199,6 @@ function facebookLoginLogout() {
 			}
 		}, {scope:'public_profile,email'});
 	} else {
-		console.log('facebook session is NOT null, logging out');
 		FB.logout(function(response) {
 			checkFacebookStatus();
 		});
@@ -210,7 +208,6 @@ function facebookLoginLogout() {
 
 //Fetch Facebook user information
 function checkFacebookStatus() {
-	console.log('checking facebook login status');
 	FB.getLoginStatus(function(response) {
 		if ( response.status === 'connected' ) {
 			window.FBstatus = true;

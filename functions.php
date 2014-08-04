@@ -1521,15 +1521,36 @@ function nebula_remove_script_version($src){
 
 
 function nebula_backup_contact_form() {
-	echo '<form class="contact-form-backup">
-		<p class="contact-form-name-heading">Name</p>
-		<p class="contact-form-name"><input class="fb-form-name" type="text" placeholder="Name"/></p>
-		<p class="contact-form-email-heading">Email</p>
-		<p class="contact-form-email"><input class="fb-form-email" type="email" placeholder="Email"/></p>
-		<p class="contact-form-message-heading">Message</p>
-		<p class="contact-form-message"><textarea placeholder="Message"></textarea></p>
-		<p class="contact-form-submit"><input id="contact-submit" class="submit" type="submit"/></p>
-	</form>';
+	echo '<ul id="cform7-container">
+	<div class="wpcf7" id="wpcf7-f384-o1" lang="en-US" dir="ltr">
+		<div class="screen-reader-response"></div>
+			<form class="wpcf7-form contact-form-backup">
+				<ul>
+					<li class="field">
+						<span class="contact-form-heading">Name</span>
+						<span class="wpcf7-form-control-wrap name">
+							<input type="text" name="name" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required text input cform7-name fb-form-name" placeholder="Your Name*">
+						</span>
+					</li>
+					<li class="field">
+						<span class="contact-form-heading">Email</span>
+						<span class="wpcf7-form-control-wrap email">
+							<input type="email" name="email" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email email input cform7-email" placeholder="Email Address*">
+						</span>
+					</li>
+					<li class="field">
+						<span class="contact-form-heading">Message</span>
+						<span class="wpcf7-form-control-wrap message">
+							<textarea name="message" cols="40" rows="10" class="wpcf7-form-control wpcf7-textarea wpcf7-validates-as-required textarea input cform7-message" placeholder="Enter your message here.*"></textarea>
+						</span>
+					</li>
+					<li class="fieldzzzz">
+						<input type="submit" value="Send" class="wpcf7-form-control wpcf7-submit submit">
+					</li>
+				</ul>
+			</form>
+		</div>
+	</ul>';
 }
 
 
@@ -1821,10 +1842,12 @@ function the_breadcrumb() {
 add_action('pre_get_posts', 'redirect_empty_search');
 function redirect_empty_search($query){
 	global $wp_query;
-	if ( isset($_GET['s']) && str_replace(' ', '', $_GET['s']) == '' ){
-		header('Location: ' . home_url('/') . 'search/?invalid');
-	} else {
-		return $query;
+	if ( isset($_GET['s']) && $wp_query->query && !array_key_exists('invalid', $_GET) ) {
+		if ( $_GET['s'] == '' && $wp_query->query['s'] == '' ) {
+			header('Location: ' . home_url('/') . 'search/?invalid');
+		} else {
+			return $query;
+		}
 	}
 }
 

@@ -1462,6 +1462,20 @@ get_header(); ?>
 					<?php endif; //End Proximity API ?>
 					
 					
+					<?php if ( is_page(671) ) : //PHP error handling ?>
+						<?php if ( !array_key_exists('debug', $_GET) ) : ?>
+							<h2>Refreshing to enable debug mode!</h2>
+							<script>
+								document.location = "<?php the_permalink(); ?>?debug";
+							</script>
+						<?php else : ?>
+							<?php trigger_error('This is an example of a warning', E_USER_WARNING); ?>	
+							<?php trigger_error('This is an example of a notice', E_USER_NOTICE); ?>
+							<?php trigger_error('This is an example of a deprecated function', E_USER_DEPRECATED); ?>
+						<?php endif; ?>
+					<?php endif; //End PHP error handling ?>
+					
+					
 					<?php if ( is_page(643) ) : //Speech Recognition API ?>
 						<style>
 							#start_button {background: #0098d7; font-size: 16px; color: #fff; padding: 3px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}

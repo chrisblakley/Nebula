@@ -419,44 +419,6 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 			li.comment p {margin: 0; font-size: 12px;}
 			li.comment .reply {margin-bottom: 3px;}
 				li.comment a.comment-reply-link {font-size: 10px;}
-	
-	.formcon {}
-	
-	h3.comment-reply-title {font-size: 12px;}
-	
-	.logged-in-as {margin: 0;}
-	.contact-form-name-heading,
-	.contact-form-email-heading,
-	.contact-form-message-heading,
-	.comment-form-author-heading,
-	.comment-form-email-heading,
-	.comment-form-comment-heading {margin: 0; font-size: 11px; font-weight: bold;}
-	
-	p.contact-form-name,
-	p.comment-form-author {}
-		p.contact-form-name input,
-		p.comment-form-author input {font-size: 12px;}
-	
-	p.contact-form-email,
-	p.comment-form-email {}
-		p.contact-form-email input,
-		p.comment-form-email input {font-size: 12px;}
-	
-	p.contact-form-message,
-	p.comment-form-comment {margin: 0;}
-		p.contact-form-message textarea,
-		p.comment-form-comment textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: 12px;}
-			.no-js p.comment-form-comment textarea {min-height: 150px;}
-	
-	p.form-submit {}
-		p.contact-form-submit input,
-		p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
-			p.contact-form-submit input.hover,
-			p.contact-form-submit input:hover,
-			p.form-submit input.hover,
-			p.form-submit input:hover {background: #95d600; background: var(--secondary-color);}
-			p.contact-form-submit input.disabled,
-			p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
 			
 
 /* ==========================================================================
@@ -486,11 +448,47 @@ a.toplevelvert_expander {position: absolute; top: 0; right: 0; padding: 0 10px !
 input[type="submit"] {color: #fff;}
 form.search .submit.btn {line-height: 24px !important; width: 22% !important; height: auto !important;}
 
+.formcon {}
+
+h3.comment-reply-title {font-size: 12px;}
+
+.logged-in-as {margin: 0;}
+.contact-form-heading {display: block; margin: 0; font-size: 11px; font-weight: bold;}
+
+p.contact-form-name,
+p.comment-form-author {}
+	p.contact-form-name input,
+	p.comment-form-author input {font-size: 12px;}
+
+p.contact-form-email,
+p.comment-form-email {}
+	p.contact-form-email input,
+	p.comment-form-email input {font-size: 12px;}
+
+p.contact-form-message,
+p.comment-form-comment {margin: 0;}
+	p.contact-form-message textarea,
+	p.comment-form-comment textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: 12px;}
+		.no-js p.comment-form-comment textarea {min-height: 150px;}
+
+p.form-submit {}
+	p.contact-form-submit input,
+	#cform7-container .submit,
+	p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+		#cform7-container .submit:hover,
+		#cform7-container .submit.hover,
+		p.contact-form-submit input.hover,
+		p.contact-form-submit input:hover,
+		p.form-submit input.hover,
+		p.form-submit input:hover {background: #95d600; background: var(--secondary-color);}
+		#cform7-container .submit.disabled,
+		p.contact-form-submit input.disabled,
+		p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
+
 #cform7-container {margin: 0;}
+	#cform7-container .field {margin-bottom: 3px;}
 	#cform7-container input[type="text"],
 	#cform7-container input[type="email"] {width: 100% !important; font-size: 12px !important; line-height: 24px !important; height: auto !important;}
-	#cform7-container .cform7-name { font-size: 12px;}
-	#cform7-container .cform7-email { font-size: 12px;}
 	#cform7-container .cform7-phone-area {width: 20%; font-size: 12px;}
 	#cform7-container .cform7-phone-prefix {width: 20%; font-size: 12px;}
 	#cform7-container .cform7-phone-line {width: 25%; font-size: 12px;}
@@ -502,7 +500,7 @@ form.search .submit.btn {line-height: 24px !important; width: 22% !important; he
 #cform7-container .success textarea {color: #000 !important; background: #efe !important; border: 1px solid #d8d8d8 !important;}
 .wpcf7-not-valid-tip {display: none !important;}
 
-.field.danger:after, .field.warning:after, .field.success:after {top: 1px !important;}
+.field.danger:after, .field.warning:after, .field.success:after {top: 23px !important;}
 
 div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
 div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
