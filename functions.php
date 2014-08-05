@@ -463,7 +463,6 @@ require_once dirname(__FILE__) . '/includes/class-tgm-plugin-activation.php';
 
 add_action('tgmpa_register', 'my_theme_register_required_plugins');
 function my_theme_register_required_plugins() {
-
     $plugins = array(
         array(
             'name'      => 'Admin Menu Tree Page View',
@@ -486,8 +485,8 @@ function my_theme_register_required_plugins() {
             'required'  => true,
         ),
         array(
-            'name'      => 'Custom Field Suite',
-            'slug'      => 'custom-field-suite',
+            'name'      => 'Advanced Custom Fields',
+            'slug'      => 'advanced-custom-fields',
             'required'  => false,
         ),
         array(
@@ -585,7 +584,6 @@ function my_theme_register_required_plugins() {
 		When updating the class file (in the /includes directory, be sure to edit the text on the following line to be 'Recommended' and 'Optional' in the installation table.
 		$table_data[$i]['type'] = isset( $plugin['required'] ) && $plugin['required'] ? __( 'Recommended', 'tgmpa' ) : __( 'Optional', 'tgmpa' );
 	*/
-	
 }
 
 //When WP Nebula has been activated
@@ -791,12 +789,12 @@ if ( nebula_settings_conditional('nebula_phg_welcome_panel') ) {
 //Remove unnecessary Dashboard metaboxes
 if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 	add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
-	function remove_dashboard_metaboxes() {
-	    remove_meta_box('dashboard_primary', 'dashboard', 'side');
-	    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
-	    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
-	    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
-	}
+}
+function remove_dashboard_metaboxes() {
+    remove_meta_box('dashboard_primary', 'dashboard', 'side');
+    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
+    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
+    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
 }
 
 
@@ -1013,11 +1011,23 @@ function muc_value( $column_name, $id ) {
 add_editor_style('css/editor-style.css');
 
 
+//Clear caches when plugins are activated if W3 Total Cache is active
+add_action('admin_init', 'clear_all_w3_caches');
+function clear_all_w3_caches(){
+	include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+	if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_GET['activate']) && $_GET['activate'] == 'true' ) {		
+		if ( function_exists('w3tc_pgcache_flush') ) {
+			w3tc_pgcache_flush();
+		}
+	}
+}
+
+
 //Admin Footer Enhancements
 //Left Side
 add_filter('admin_footer_text', 'change_admin_footer_left');
 function change_admin_footer_left() {
-    return '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""'.get_bloginfo('template_directory').'/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
+    return '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="' . get_bloginfo('template_directory') . '/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""' . get_bloginfo('template_directory') . '/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
 }
 //Right Side
 add_filter('update_footer', 'change_admin_footer_right', 11);
@@ -1245,8 +1255,14 @@ function nebula_comment_theme($comment, $args, $depth) {
 }
 
 
-/*** If the project uses comments, remove the next set of functions (six)! ***/
+/*** If the project uses comments, remove the next set of functions (six), or force this conditional to be false! ***/
 if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
+
+	//Remove the Activity metabox
+	add_action('wp_dashboard_setup', 'remove_activity_metabox');
+	function remove_activity_metabox(){
+		remove_meta_box('dashboard_activity', 'dashboard', 'normal');
+	}
 
 	//Remove Comments column
 	add_filter('manage_posts_columns', 'remove_pages_count_columns');
@@ -1333,13 +1349,15 @@ add_filter('xmlrpc_methods', function($methods) {
 add_action('admin_head', 'js_bloginfo');
 add_action('wp_head', 'js_bloginfo');
 function js_bloginfo() {
+	$upload_dir = wp_upload_dir();
 	echo '<script>bloginfo = [];
 	bloginfo["name"] = "' . get_bloginfo("name") . '";
 	bloginfo["template_directory"] = "' . get_bloginfo("template_directory") . '";
 	bloginfo["stylesheet_url"] = "' . get_bloginfo("stylesheet_url") . '";
 	bloginfo["home_url"] = "' . home_url() . '";
 	bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";
-	bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";</script>';
+	bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";
+	bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"</script>';
 }
 
 //Add user variable for JavaScript

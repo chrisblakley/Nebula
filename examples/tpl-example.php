@@ -13,7 +13,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="sixteen columns">
 				<h1 class="entry-title" style="color: #fff;"><?php the_title(); ?></h1>
-				<p style="color: #fff;"><?php echo $cfs->get('description'); ?></p>				
+				<p style="color: #fff;"><?php echo get_field('description'); ?></p>				
 			</div><!--/columns-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -35,20 +35,20 @@ get_header(); ?>
 			<div class="container">
 				<div class="row">
 					<div class="sixteen columns entry-content">
-						<?php if ( $cfs->get('usage') ) : ?>
+						<?php if ( get_field('usage') ) : ?>
 							<h2>Usage</h2>
-							<?php echo do_shortcode($cfs->get('usage')); ?>
+							<?php echo do_shortcode(get_field('usage')); ?>
 							<br/>
 						<?php endif; ?>
 						
-						<?php if ( $cfs->get('parameters') ) : ?>
+						<?php if ( get_field('parameters') ) : ?>
 							<h2>Parameters</h2>
-							<p><?php echo $cfs->get('parameters'); ?></p>
+							<p><?php echo do_shortcode(get_field('parameters')); ?></p>
 						<?php endif; ?>
 						
-						<?php if ( $cfs->get('example') ) : ?>
+						<?php if ( get_field('example') ) : ?>
 							<h2>Example</h2>
-							<?php echo do_shortcode($cfs->get('example')); ?>
+							<?php echo do_shortcode(get_field('example')); ?>
 							<br/>
 						<?php endif; ?>
 						<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
@@ -515,7 +515,7 @@ get_header(); ?>
 					<?php endif; //End Picture Tag ?>
 					
 					
-					<?php if ( is_page(351) && 1==2 ) : ?>
+					<?php if ( is_page(351) && 1==2 ) : //Slider without ?>
 						
 						<style>
 							#theslider {transition: all .5s ease 0s;}

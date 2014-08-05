@@ -122,6 +122,8 @@ function facebookSDK() {
 			xfbml: true
 		});
 		
+		window.FBuser = '';
+		window.FBstatus = false;
 		checkFacebookStatus();
 		
 		//Facebook Likes
@@ -189,17 +191,20 @@ function facebookSDK() {
 
 //Connect to Facebook without using Facebook Login button
 function facebookLoginLogout() {
-	console.log('triggered fb login/logout');
 	if ( !FBstatus ) {
 		FB.login(function(response) {
 			if (response.authResponse) {
 				checkFacebookStatus();
+				ga('send', 'event', 'Social', 'Facebook Connect', FBuser.name);
+				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Connect', FBuser.name);
 			} else {
+				Gumby.log('User has logged in, but did not accept permissions.');
 				checkFacebookStatus();
 			}
 		}, {scope:'public_profile,email'});
 	} else {
 		FB.logout(function(response) {
+			Gumby.log('User has logged out.');
 			checkFacebookStatus();
 		});
 	}
@@ -209,40 +214,37 @@ function facebookLoginLogout() {
 //Fetch Facebook user information
 function checkFacebookStatus() {
 	FB.getLoginStatus(function(response) {
-		if ( response.status === 'connected' ) {
-			window.FBstatus = true;
-			
-			//Example page:
-			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...');
-			
+		if ( response.status === 'connected' ) { //User is logged into Facebook and is connected to this app.
+			FBstatus = true;
 			FB.api('/me', function(response) {
+				FBuser = response;
+				Gumby.log(response.name + ' has connected with this app.');
 				prefillFacebookFields(response);
-				jQuery('.facebook-connect-con a').text('Disconnect').removeClass('disconnected').addClass('connected');
-				ga('send', 'event', 'Social', 'Facebook Connect', response.first_name + ' ' + response.last_name);
+				jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
 
-				//Example page:
-				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.');
-				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100');
+				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //Example page. @TODO: Get this out of main.js somehow!
+				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //Example page. @TODO: Get this out of main.js somehow!
 			});
-		} else if (response.status === 'not_authorized') {
-			window.FBstatus = false;
-			//console.log('Please log into this app.');
+			
+			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //Example page. @TODO: Get this out of main.js somehow!
+		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
+			Gumby.log('User is logged into Facebook, but has not connected to this app.');
+			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 			
-			//Example page:
-			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:');
-		} else {
-			window.FBstatus = false;
-			//console.log('Please log into Facebook.');
+			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //Example page. @TODO: Get this out of main.js somehow!
+		} else { //User is not logged into Facebook.
+			Gumby.log('User is not logged into Facebook.');
+			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 			prefillFacebookFields();
 			
-			//Example page:
-			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:');
+			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //Example page. @TODO: Get this out of main.js somehow!
 		}
 	});
 }
 
+//Fill or clear form inputs with Facebook data
 function prefillFacebookFields(response) {
 	if ( response ) {
 		jQuery('.fb-form-name, .comment-form-author input, .cform7-name').each(function(){
@@ -252,8 +254,8 @@ function prefillFacebookFields(response) {
 			jQuery(this).val(response.email).trigger('keyup');
 		});
 	} else {
-		jQuery('.fb-form-name, .comment-form-author input, .fb-form-email, .comment-form-email input').each(function(){
-			jQuery(this).val('');
+		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, .fb-form-email, .comment-form-email input, input[type="email"]').each(function(){
+			jQuery(this).val('').trigger('keyup');
 		});
 	}
 }
@@ -969,9 +971,10 @@ function cFormPreValidator() {
 } //end cFormPreValidator()
 
 //CForm7 submit success callback
-//Add on_sent_ok: "cFormSuccess('EnterTheFormNameHere');" to Additional Settings in WP Admin.
-function cFormSuccess(formName){
-    //Contact Form 7 Submit Success actions here.
+//Add on_sent_ok: "cFormSuccess();" to Additional Settings in WP Admin.
+function cFormSuccess(){
+    //Contact Form 7 Submit Success actions here. Could pass a parameter if needed.
+    //conversionTracker(); //Call conversion tracker if contact is a conversion goal.
 }
 
 //Allows only numerical input on specified inputs. Call this on keyUp? @TODO: Make the selector into oThis and pass that to the function from above.
