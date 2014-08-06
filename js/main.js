@@ -6,7 +6,6 @@ jQuery(document).ready(function() {
 	conditionalJSLoading();
 	
 	/* To be vetted. Turn these into functions.
-	
 		//Pull query strings from URL
 		var queries = new Array(); 
 	    var q = document.URL.split('?')[1];
@@ -18,7 +17,6 @@ jQuery(document).ready(function() {
 	            queries[hash[0]] = hash[1];
 	        }
 		} //End pull query strings from URL
-	
 	*/
 
 	//Init Custom Functions
@@ -529,21 +527,6 @@ function googlePlusCallback(jsonParam) {
 	}
 }
 
-//Detect and log errors, and fallback fixes
-function errorLogAndFallback() {
-	
-	//Check if Contact Form 7 is active and if the selected form ID exists
-	if ( jQuery('.cform-disabled').length ) {
-		var currentPage = jQuery(document).attr('title');
-		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage);
-		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
-	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
-		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo icon-mail"><a class="cform-disabled" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
-		ga('send', 'event', 'Error', 'Contact Form 7 Not Found', currentPage);
-		Gumby.warn('Warning: Contact Form 7 is not found! Reverting to mailto link.');
-	}
-}
-
 function mmenu() {
 	jQuery("#mobilenav").mmenu({
 	    //Options
@@ -1038,24 +1021,39 @@ function contactBackup() {
 				data: contactData,
 			},
 			success: function(response){
-				console.log(response);
 				jQuery('.contact-form-backup input:not(#contact-submit), .contact-form-backup textarea').val('');
 				//Collapse the contact form and replace with sent notification
 				//call google adwords conversion tracker
 				//remove the contact form
-				//ga('send', 'event', 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
-				//Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
+				ga('send', 'event', 'Contact', 'Submit', 'Backup Form Submission');
+				Gumby.log('Sending GA event: ' + 'Contact', 'Submit', 'Backup AJAX Form Submission');
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
-				console.log('There was an AJAX error: ' + errorThrown);
-				//ga('send', 'event', 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
-				//Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
+				ga('send', 'event', 'Contact', 'Error', 'Backup Form AJAX Error');
+				Gumby.log('Sending GA event: ' + 'Contact', 'Error', 'Backup AJAX Form Error');
 			},
 			timeout: 60000
 		});
 		e.preventDefault();
 		return false;
 	});
+}
+
+//Detect and log errors, and fallback fixes
+function errorLogAndFallback() {
+	//Check if Contact Form 7 is active and if the selected form ID exists
+	if ( jQuery('.cform-disabled').length ) {
+		var currentPage = jQuery(document).attr('title');
+		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage);
+		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
+	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
+		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo icon-mail"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
+		ga('send', 'event', 'Error', 'Contact Form 7 Form Not Found', currentPage);
+		Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.');
+		jQuery(document).on('click', '.cform-not-found', function(){
+			ga('send', 'event', 'Contact', 'Submit (Intent)', 'Backup Mailto Intent');
+		});
+	}
 }
 
 //Waits until event (generally resize) finishes before triggering. Call with waitForFinalEvent();

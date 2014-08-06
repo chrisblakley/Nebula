@@ -763,7 +763,7 @@ function custom_login_css() {
 //Change link of logo to live site
 add_filter('login_headerurl', 'custom_login_header_url');
 function custom_login_header_url() {
-    return home_url();
+    return home_url('/');
 }
 
 
@@ -789,12 +789,12 @@ if ( nebula_settings_conditional('nebula_phg_welcome_panel') ) {
 //Remove unnecessary Dashboard metaboxes
 if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 	add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
-}
-function remove_dashboard_metaboxes() {
-    remove_meta_box('dashboard_primary', 'dashboard', 'side');
-    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
-    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
-    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
+	function remove_dashboard_metaboxes() {
+	    remove_meta_box('dashboard_primary', 'dashboard', 'side');
+	    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
+	    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
+	    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
+	}
 }
 
 
@@ -1539,7 +1539,7 @@ function nebula_remove_script_version($src){
 
 
 function nebula_backup_contact_form() {
-	echo '<ul id="cform7-container">
+	echo '<ul id="cform7-container" class="cform-disabled">
 	<div class="wpcf7" id="wpcf7-f384-o1" lang="en-US" dir="ltr">
 		<div class="screen-reader-response"></div>
 			<form class="wpcf7-form contact-form-backup">
@@ -1563,7 +1563,7 @@ function nebula_backup_contact_form() {
 						</span>
 					</li>
 					<li class="fieldzzzz">
-						<input type="submit" value="Send" class="wpcf7-form-control wpcf7-submit submit">
+						<input id="contact-submit" type="submit" value="Send" class="wpcf7-form-control wpcf7-submit submit">
 					</li>
 				</ul>
 			</form>

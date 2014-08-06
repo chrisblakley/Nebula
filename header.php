@@ -27,8 +27,6 @@
 		<link rel="icon" href="<?php bloginfo('template_directory');?>/images/favicon.ico">
 		<link rel="apple-touch-icon" href="<?php bloginfo('template_directory');?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
 		
-		<?php global $social; ?>
-		
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
 		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
@@ -48,23 +46,23 @@
 		<meta property="og:country-name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
 		
 		<!-- Facebook Metadata -->
-		<?php $social['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
-		<?php $social['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>
-		<?php $social['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
+		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
+		<?php $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>
+		<?php $GLOBALS['social']['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
 		<meta property="fb:admins" content="" /><!-- @TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" -->
 				
 		<!-- Google+ Metadata -->
-		<?php $social['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
+		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
 		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
 
 		<!-- Other Social Metadata -->
-		<?php $social['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
-		<?php $social['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
-		<?php $social['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO: Enter the URL of the Youtube page here. ?>
-		<?php $social['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO: Enter the URL of the Instagram page here. ?>
+		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
+		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
+		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO: Enter the URL of the Youtube page here. ?>
+		<?php $GLOBALS['social']['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO: Enter the URL of the Instagram page here. ?>
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
@@ -77,13 +75,13 @@
 		
 		<script>
 			social = [];
-			social['facebook_url'] = "<?php echo $social['facebook_url']; ?>";
-			social['facebook_app_id'] = "<?php echo $social['facebook_app_id']; ?>";
-			social['twitter_url'] = "<?php echo $social['twitter_url']; ?>";
-			social['google_plus_url'] = "<?php echo $social['google_plus_url']; ?>";
-			social['linkedin_url'] = "<?php echo $social['linkedin_url']; ?>";
-			social['youtube_url'] = "<?php echo $social['youtube_url']; ?>";
-			social['instagram_url'] = "<?php echo $social['instagram_url']; ?>";
+			social['facebook_url'] = "<?php echo $GLOBALS['social']['facebook_url']; ?>";
+			social['facebook_app_id'] = "<?php echo $GLOBALS['social']['facebook_app_id']; ?>";
+			social['twitter_url'] = "<?php echo $GLOBALS['social']['twitter_url']; ?>";
+			social['google_plus_url'] = "<?php echo $GLOBALS['social']['google_plus_url']; ?>";
+			social['linkedin_url'] = "<?php echo $GLOBALS['social']['linkedin_url']; ?>";
+			social['youtube_url'] = "<?php echo $GLOBALS['social']['youtube_url']; ?>";
+			social['instagram_url'] = "<?php echo $GLOBALS['social']['instagram_url']; ?>";
 		</script>
 		
 		<script> //Universal Analytics

@@ -13,7 +13,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="sixteen columns">
 				<h1 class="entry-title" style="color: #fff;"><?php the_title(); ?></h1>
-				<p style="color: #fff;"><?php echo get_field('description'); ?></p>				
+				<p style="color: #fff;"><?php echo get_field('description', false, false); ?></p>				
 			</div><!--/columns-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -37,18 +37,18 @@ get_header(); ?>
 					<div class="sixteen columns entry-content">
 						<?php if ( get_field('usage') ) : ?>
 							<h2>Usage</h2>
-							<?php echo do_shortcode(get_field('usage')); ?>
+							<?php echo do_shortcode(get_field('usage', false, false)); ?>
 							<br/>
 						<?php endif; ?>
 						
 						<?php if ( get_field('parameters') ) : ?>
 							<h2>Parameters</h2>
-							<p><?php echo do_shortcode(get_field('parameters')); ?></p>
+							<p><?php echo do_shortcode(get_field('parameters', false, false)); ?></p>
 						<?php endif; ?>
 						
 						<?php if ( get_field('example') ) : ?>
 							<h2>Example</h2>
-							<?php echo do_shortcode(get_field('example')); ?>
+							<?php echo do_shortcode(get_field('example', false, false)); ?>
 							<br/>
 						<?php endif; ?>
 						<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>

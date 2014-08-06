@@ -82,7 +82,7 @@ get_header(); ?>
 						<?php endif; ?>
 					</footer><!-- .entry-utility -->
 		
-					<?php //comments_template(); ?>
+					<?php include('comments.php'); ?>
 				</div><!-- .entry-content -->
 			</article>
 		

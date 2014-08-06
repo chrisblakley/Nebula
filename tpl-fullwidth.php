@@ -18,11 +18,9 @@ get_header(); ?>
 					<?php if ( current_user_can('manage_options') ) : ?>
 						<div class="container entry-manage">
 							<div class="row">
-								<div class="sixteen columns">
-									<hr/>
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr/>
-								</div><!--/columns-->
+								<hr/>
+								<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+								<hr/>
 							</div>
 						</div>
 					<?php endif; ?>
