@@ -88,7 +88,7 @@ function enqueue_nebula_frontend() {
 	
 	//Scripts
 	wp_enqueue_script('jquery');
-	wp_enqueue_script('jquery-ui-core');
+	//wp_enqueue_script('jquery-ui-core');
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
 	wp_enqueue_script('nebula-modernizr_dev');
