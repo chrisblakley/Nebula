@@ -1,90 +1,40 @@
 /*
 	jQuery.mmenu CSS
 */
-.mm-page,
-.mm-fixed-top,
-.mm-fixed-bottom,
+/*
+	jQuery.mmenu panels CSS
+*/
 .mm-menu.mm-horizontal > .mm-panel {
-  -webkit-transition: none 0.4s ease;
-  -moz-transition: none 0.4s ease;
-  -ms-transition: none 0.4s ease;
-  -o-transition: none 0.4s ease;
-  transition: none 0.4s ease;
-  -webkit-transition-property: top, right, bottom, left, border;
-  -moz-transition-property: top, right, bottom, left, border;
-  -ms-transition-property: top, right, bottom, left, border;
-  -o-transition-property: top, right, bottom, left, border;
-  transition-property: top, right, bottom, left, border; }
-
-html.mm-opened .mm-page,
-html.mm-opened #mm-blocker {
-  left: 0;
-  top: 0;
-  margin: 0;
-  border: 0px solid rgba(0, 0, 0, 0); }
-
-html.mm-opening .mm-page,
-html.mm-opening #mm-blocker {
-  border: 0px solid rgba(100, 100, 100, 0); }
+  -webkit-transition: left 0.4s ease;
+  -moz-transition: left 0.4s ease;
+  -ms-transition: left 0.4s ease;
+  -o-transition: left 0.4s ease;
+  transition: left 0.4s ease; }
 
 .mm-menu .mm-hidden {
   display: none; }
 
-.mm-fixed-top,
-.mm-fixed-bottom {
-  position: fixed;
-  left: 0; }
-
-.mm-fixed-top {
-  top: 0; }
-
-.mm-fixed-bottom {
-  bottom: 0; }
-
-html.mm-opened .mm-page,
-.mm-menu > .mm-panel {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  -o-box-sizing: border-box;
-  box-sizing: border-box; }
-
-html.mm-opened {
+.mm-wrapper {
   overflow-x: hidden;
   position: relative; }
 
-html.mm-opened .mm-page {
-  position: relative; }
-
-html.mm-background .mm-page {
-  background: inherit; }
-
-#mm-blocker {
-  background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==) transparent;
-  display: none;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 999999; }
-
-html.mm-opened #mm-blocker,
-html.mm-blocking #mm-blocker {
-  display: block; }
-
-.mm-menu.mm-current {
-  display: block; }
-
 .mm-menu {
   background: inherit;
-  display: none;
+  display: block;
   overflow: hidden;
+  width: 100%;
   height: 100%;
   padding: 0;
-  position: fixed;
+  position: absolute;
   left: 0;
   top: 0;
   z-index: 0; }
   .mm-menu > .mm-panel {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
     background: inherit;
     -webkit-overflow-scrolling: touch;
     overflow: scroll;
@@ -103,14 +53,10 @@ html.mm-blocking #mm-blocker {
       left: -40%; }
     .mm-menu > .mm-panel.mm-highest {
       z-index: 1; }
-    .mm-menu > .mm-panel.mm-hidden {
-      display: block;
-      visibility: hidden; }
-
-.mm-menu .mm-list {
-  padding: 20px 0; }
-.mm-menu > .mm-list {
-  padding: 20px 0 40px 0; }
+  .mm-menu .mm-list {
+    padding: 20px 0; }
+  .mm-menu > .mm-list {
+    padding: 20px 0 40px 0; }
 
 .mm-panel > .mm-list {
   margin-left: -20px;
@@ -143,7 +89,7 @@ html.mm-blocking #mm-blocker {
       display: block;
       padding: 10px 10px 10px 20px;
       margin: 0; }
-  .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {
+  .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {
     content: '';
     border-bottom-width: 1px;
     border-bottom-style: solid;
@@ -152,7 +98,7 @@ html.mm-blocking #mm-blocker {
     position: absolute;
     bottom: 0;
     left: 0; }
-  .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {
+  .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {
     width: auto;
     margin-left: 20px;
     position: relative;
@@ -272,6 +218,83 @@ html.mm-opened .mm-page {
 .mm-menu.mm-vertical .mm-list li.mm-opened > a.mm-subopen,
 .mm-menu.mm-vertical .mm-list li.mm-opened > ul {
   background: rgba(255, 255, 255, 0.05); }
+
+/*
+	jQuery.mmenu offcanvas addon CSS
+*/
+.mm-page,
+.mm-fixed-top,
+.mm-fixed-bottom {
+  -webkit-transition: none 0.4s ease;
+  -moz-transition: none 0.4s ease;
+  -ms-transition: none 0.4s ease;
+  -o-transition: none 0.4s ease;
+  transition: none 0.4s ease;
+  -webkit-transition-property: top, right, bottom, left, border;
+  -moz-transition-property: top, right, bottom, left, border;
+  -ms-transition-property: top, right, bottom, left, border;
+  -o-transition-property: top, right, bottom, left, border;
+  transition-property: top, right, bottom, left, border; }
+
+.mm-page,
+#mm-blocker {
+  margin: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+.mm-page {
+  border: 0px solid rgba(0, 0, 0, 0); }
+
+html.mm-opening .mm-page {
+  border: 0px solid rgba(1, 1, 1, 0); }
+
+.mm-fixed-top,
+.mm-fixed-bottom {
+  position: fixed;
+  left: 0; }
+
+.mm-fixed-top {
+  top: 0; }
+
+.mm-fixed-bottom {
+  bottom: 0; }
+
+html.mm-opened {
+  overflow: hidden;
+  position: relative; }
+  html.mm-opened body {
+    overflow: hidden; }
+
+html.mm-opened .mm-page {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative; }
+
+html.mm-background .mm-page {
+  background: inherit; }
+
+#mm-blocker {
+  background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==) transparent;
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 999999; }
+
+html.mm-opened #mm-blocker,
+html.mm-blocking #mm-blocker {
+  display: block; }
+
+.mm-menu.mm-offcanvas {
+  display: none;
+  position: fixed; }
+.mm-menu.mm-current {
+  display: block; }
 
 html.mm-opening .mm-page,
 html.mm-opening #mm-blocker,
@@ -426,14 +449,16 @@ html.mm-opened.mm-dragging #mm-blocker {
 
 .mm-menu.mm-hasheader li.mm-subtitle {
   display: none; }
-.mm-menu.mm-hasheader .mm-panel {
+.mm-menu.mm-hasheader > .mm-panel {
   padding-top: 80px; }
+  .mm-menu.mm-hasheader > .mm-panel.mm-list {
+    padding-top: 60px; }
+  .mm-menu.mm-hasheader > .mm-panel > .mm-list:first-child {
+    margin-top: -20px; }
 .mm-menu.mm-hasheader.mm-hassearch > .mm-panel {
   padding-top: 120px; }
-.mm-menu.mm-hasheader.mm-ismenu > .mm-panel {
-  padding-top: 60px; }
-.mm-menu.mm-hasheader.mm-ismenu.mm-hassearch > .mm-panel {
-  padding-top: 100px; }
+  .mm-menu.mm-hasheader.mm-hassearch > .mm-panel.mm-list {
+    padding-top: 100px; }
 
 .mm-menu .mm-header {
   border-color: rgba(0, 0, 0, 0.15);
@@ -494,17 +519,28 @@ html.mm-opened.mm-dragging #mm-blocker {
   -o-box-sizing: border-box;
   box-sizing: border-box; }
 
+.mm-list > li.mm-search {
+  padding: 10px;
+  margin-top: -20px; }
+.mm-list > li.mm-subtitle + li.mm-search {
+  margin-top: 0; }
+
+div.mm-panel > div.mm-search {
+  padding: 0 0 10px 0; }
+
+.mm-menu.mm-hasheader .mm-list > li.mm-search {
+  margin-top: 0; }
+
 .mm-search {
   background: inherit;
   width: 100%;
-  height: 50px;
   padding: 10px;
   position: relative;
   top: 0;
   z-index: 2; }
   .mm-search input {
     border: none;
-    border-radius: 15px;
+    border-radius: 30px;
     font: inherit;
     font-size: 14px;
     line-height: 30px;
@@ -515,28 +551,84 @@ html.mm-opened.mm-dragging #mm-blocker {
     margin: 0;
     padding: 0 10px; }
 
+.mm-menu .mm-noresultsmsg {
+  text-align: center;
+  font-size: 21px;
+  display: none;
+  padding: 60px 0; }
+  .mm-menu .mm-noresultsmsg:after {
+    border: none !important; }
+
+.mm-noresults .mm-noresultsmsg {
+  display: block; }
+
 .mm-menu li.mm-nosubresults > a.mm-subopen {
   display: none; }
   .mm-menu li.mm-nosubresults > a.mm-subopen + a,
   .mm-menu li.mm-nosubresults > a.mm-subopen + span {
     padding-right: 10px; }
-.mm-menu li.mm-noresults {
-  text-align: center;
-  font-size: 21px;
-  display: none;
-  padding-top: 80px; }
-  .mm-menu li.mm-noresults:after {
-    border: none; }
-.mm-menu.mm-noresults li.mm-noresults {
-  display: block; }
 .mm-menu.mm-hassearch > .mm-panel {
-  padding-top: 60px; }
+  padding-top: 70px; }
+  .mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {
+    margin-top: -20px; }
+.mm-menu.mm-hasheader > .mm-panel > div.mm-search:first-child {
+  margin-top: -10px; }
+  .mm-menu.mm-hasheader > .mm-panel > div.mm-search:first-child + .mm-list {
+    padding-top: 0; }
 
 .mm-menu .mm-search input {
   background: rgba(255, 255, 255, 0.3);
   color: rgba(255, 255, 255, 0.6); }
-.mm-menu li.mm-noresults {
+.mm-menu .mm-noresultsmsg {
   color: rgba(255, 255, 255, 0.3); }
+
+/*
+	jQuery.mmenu toggles addon CSS
+*/
+label.mm-toggle {
+  border-radius: 30px;
+  width: 50px;
+  height: 30px;
+  margin: -15px 0 0 0;
+  position: absolute;
+  top: 50%;
+  z-index: 1; }
+  label.mm-toggle div {
+    border-radius: 30px;
+    width: 28px;
+    height: 28px;
+    margin: 1px; }
+
+input.mm-toggle {
+  position: absolute;
+  left: -10000px; }
+  input.mm-toggle:checked ~ label.mm-toggle div {
+    float: right; }
+
+label.mm-toggle {
+  right: 20px; }
+  label.mm-toggle + a,
+  label.mm-toggle + span {
+    margin-right: 70px; }
+
+a.mm-subopen + label.mm-toggle {
+  right: 50px; }
+  a.mm-subopen + label.mm-toggle + a,
+  a.mm-subopen + label.mm-toggle + span {
+    margin-right: 100px; }
+
+em.mm-counter + a.mm-subopen + label.mm-toggle {
+  right: 90px; }
+  em.mm-counter + a.mm-subopen + label.mm-toggle + a,
+  em.mm-counter + a.mm-subopen + label.mm-toggle + span {
+    margin-right: 140px; }
+
+.mm-menu label.mm-toggle {
+  background: rgba(0, 0, 0, 0.15); }
+  .mm-menu label.mm-toggle div {
+    background: #333333; }
+.mm-menu input.mm-toggle:checked ~ label.mm-toggle {
+  background: #4bd963; }
 
 /*
 	jQuery.mmenu effects extension CSS
@@ -669,6 +761,12 @@ html.mm-zoom-menu.mm-bottom.mm-opening .mm-menu {
   -o-transform: scale(1, 1) translateY(0%);
   transform: scale(1, 1) translateY(0%); }
 
+html.mm-zoom-page .mm-page {
+  -webkit-transition-property: -webkit-transform, top, right, bottom, left, border;
+  -moz-transition-property: -moz-transform, top, right, bottom, left, border;
+  -ms-transition-property: -ms-transform, top, right, bottom, left, border;
+  -o-transition-property: -o-transform, top, right, bottom, left, border;
+  transition-property: transform, top, right, bottom, left, border; }
 html.mm-zoom-page.mm-opened .mm-page {
   -webkit-transform: scale(1, 1);
   -moz-transform: scale(1, 1);
@@ -705,7 +803,7 @@ html.mm-zoom-page.mm-bottom.mm-opened .mm-page {
   -o-transform-origin: center bottom;
   transform-origin: center bottom; }
 
-html.mm-zoom-panels .mm-panel {
+html.mm-zoom-panels .mm-menu.mm-horizontal > .mm-panel {
   -webkit-transform: scale(1.5, 1.5);
   -moz-transform: scale(1.5, 1.5);
   -ms-transform: scale(1.5, 1.5);
@@ -715,14 +813,19 @@ html.mm-zoom-panels .mm-panel {
   -moz-transform-origin: left center;
   -ms-transform-origin: left center;
   -o-transform-origin: left center;
-  transform-origin: left center; }
-  html.mm-zoom-panels .mm-panel.mm-opened {
+  transform-origin: left center;
+  -webkit-transition-property: -webkit-transform, left;
+  -moz-transition-property: -moz-transform, left;
+  -ms-transition-property: -ms-transform, left;
+  -o-transition-property: -o-transform, left;
+  transition-property: transform, left; }
+  html.mm-zoom-panels .mm-menu.mm-horizontal > .mm-panel.mm-opened {
     -webkit-transform: scale(1, 1);
     -moz-transform: scale(1, 1);
     -ms-transform: scale(1, 1);
     -o-transform: scale(1, 1);
     transform: scale(1, 1); }
-    html.mm-zoom-panels .mm-panel.mm-opened.mm-subopened {
+    html.mm-zoom-panels .mm-menu.mm-horizontal > .mm-panel.mm-opened.mm-subopened {
       -webkit-transform: scale(0.7, 0.7);
       -moz-transform: scale(0.7, 0.7);
       -ms-transform: scale(0.7, 0.7);
@@ -1173,7 +1276,7 @@ html.mm-opened.mm-light .mm-page {
 .mm-menu.mm-light .mm-search input {
   background: rgba(0, 0, 0, 0.1);
   color: rgba(0, 0, 0, 0.6); }
-.mm-menu.mm-light li.mm-noresults {
+.mm-menu.mm-light .mm-noresultsmsg {
   color: rgba(0, 0, 0, 0.3); }
 
 .mm-menu.mm-light em.mm-counter {
@@ -1187,6 +1290,13 @@ html.mm-opened.mm-light .mm-page {
   color: rgba(0, 0, 0, 0.3); }
   .mm-menu.mm-light .mm-header a:before {
     border-color: rgba(0, 0, 0, 0.3); }
+
+.mm-menu.mm-light label.mm-toggle {
+  background: rgba(0, 0, 0, 0.1); }
+  .mm-menu.mm-light label.mm-toggle div {
+    background: #f3f3f3; }
+.mm-menu.mm-light input.mm-toggle:checked ~ label.mm-toggle {
+  background: #4bd963; }
 
 html.mm-opened.mm-white .mm-page {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); }
@@ -1216,7 +1326,7 @@ html.mm-opened.mm-white .mm-page {
 .mm-menu.mm-white .mm-search input {
   background: rgba(0, 0, 0, 0.1);
   color: rgba(0, 0, 0, 0.6); }
-.mm-menu.mm-white li.mm-noresults {
+.mm-menu.mm-white .mm-noresultsmsg {
   color: rgba(0, 0, 0, 0.3); }
 
 .mm-menu.mm-white em.mm-counter {
@@ -1230,6 +1340,13 @@ html.mm-opened.mm-white .mm-page {
   color: rgba(0, 0, 0, 0.3); }
   .mm-menu.mm-white .mm-header a:before {
     border-color: rgba(0, 0, 0, 0.3); }
+
+.mm-menu.mm-white label.mm-toggle {
+  background: rgba(0, 0, 0, 0.1); }
+  .mm-menu.mm-white label.mm-toggle div {
+    background: white; }
+.mm-menu.mm-white input.mm-toggle:checked ~ label.mm-toggle {
+  background: #4bd963; }
 
 html.mm-opened.mm-black .mm-page {
   box-shadow: none; }
@@ -1259,7 +1376,7 @@ html.mm-opened.mm-black .mm-page {
 .mm-menu.mm-black .mm-search input {
   background: rgba(255, 255, 255, 0.3);
   color: rgba(255, 255, 255, 0.6); }
-.mm-menu.mm-black li.mm-noresults {
+.mm-menu.mm-black .mm-noresultsmsg {
   color: rgba(255, 255, 255, 0.3); }
 
 .mm-menu.mm-black em.mm-counter {
@@ -1273,3 +1390,10 @@ html.mm-opened.mm-black .mm-page {
   color: rgba(255, 255, 255, 0.3); }
   .mm-menu.mm-black .mm-header a:before {
     border-color: rgba(255, 255, 255, 0.3); }
+
+.mm-menu.mm-black label.mm-toggle {
+  background: rgba(255, 255, 255, 0.2); }
+  .mm-menu.mm-black label.mm-toggle div {
+    background: black; }
+.mm-menu.mm-black input.mm-toggle:checked ~ label.mm-toggle {
+  background: #4bd963; }
