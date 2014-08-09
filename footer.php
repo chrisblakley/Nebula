@@ -125,11 +125,7 @@
 				} catch(e) {}
 			</script>
 				
-			<!--[if lt IE 9]>
-				<script src="<?php bloginfo('template_directory');?>/js/libs/html5shiv.js" <?php echo $GLOBALS["defer"]; ?>></script>
-				<script src="<?php bloginfo('template_directory');?>/js/libs/respond.js" <?php echo $GLOBALS["defer"]; ?>></script>
-			<![endif]-->
-		
+
 			<script type="text/javascript">
 				//Load the SDK asynchronously
 				(function(d, s, id) {
