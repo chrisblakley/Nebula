@@ -63,6 +63,10 @@ body, .mceContentBody {overflow-x: hidden; background: #f6f6f6;}
 .inner {width: 100%; max-width: 960px; padding: 0 20px; margin: 0 auto;}
 ul.menu {padding: 0;}
 
+#form-messages .sending {color: orange;}
+#form-messages .error {color: red;}
+#form-messages .success {color: green;}
+
 /* ==========================================================================
    Special File Type Indicators
    ========================================================================== */
@@ -132,8 +136,8 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 
 .nebulashadow.above {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0)); -moz-transform: scaleY(-1); -o-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: FlipV; -ms-filter: "FlipV";}
 .nebulashadow.below {height: 12px; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
-.nebulashadow.inner-top {height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
-.nebulashadow.inner-bottom {height: 12px; position: absolute; bottom: 0; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0)); -moz-transform: scaleY(-1); -o-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: FlipV; -ms-filter: "FlipV";}
+.nebulashadow.inner-top {top: 0; left: 0; height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
+.nebulashadow.inner-bottom {bottom: 0; left: 0; height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0)); -moz-transform: scaleY(-1); -o-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: FlipV; -ms-filter: "FlipV";}
 	.lte-ie9 .nebulashadow.inner-bottom,
 	.lte-ie9 .nebulashadow.above {transform: none; filter:-; -ms-filter:-;} /* Handled with JavaScript */
 	.no-js.lte-ie9 .nebulashadow.inner-bottom,
@@ -204,6 +208,22 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby video setting */
 i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .btn, .skiplink {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+
+
+
+.field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: #ca3838;}
+.field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: #ca3838; color: #000; background: #f0c5c5;}
+
+.field.warning:after {font-family: "FontAwesome"; content: "\f071"; color: #f6b83f;}
+.field.warning input, .field.warning .input, .field.warning textarea, .field.warning .textarea, .field.warning .radio span, .field.warning .checkbox span, .field.warning .picker {border-color: #d8d8d8; color: #000; background: #ffd;}
+
+.field.success:after {font-family: "FontAwesome"; content: "\f00c"; color: #58c026;}
+.field.success input, .field.success .input, .field.success textarea, .field.success .textarea, .field.success .radio span, .field.success .checkbox span, .field.success .picker {border-color: #d8d8d8; color: #000; background: #efe;}
+
+
+.picker:after {content: "\f0d7"; font-family: "FontAwesome";}
+
+
 
 
 /* ==========================================================================
@@ -495,12 +515,9 @@ p.form-submit {}
 	#cform7-container .cform7-phone-ext {width: 22%; font-size: 12px;}
 	#cform7-container .cform7-message {font-size: 12px; line-height: 16px !important; padding-top: 7px; resize: vertical !important;}
 
-#cform7-container .warning input {color: #000 !important; background: #ffd !important; border: 1px solid #d8d8d8 !important;}
-#cform7-container .success input,
-#cform7-container .success textarea {color: #000 !important; background: #efe !important; border: 1px solid #d8d8d8 !important;}
 .wpcf7-not-valid-tip {display: none !important;}
 
-.field.danger:after, .field.warning:after, .field.success:after {top: 23px !important;}
+.field.danger:after, .field.warning:after, .field.success:after {top: 24px !important;}
 
 div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
 div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
@@ -514,6 +531,8 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .mm-list a.mm-subopen:hover {background: rgba(0, 0, 0, 0.1);}
 .mm-list > li > a:hover {background: rgba(0, 0, 0, 0.1);}
 .mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; background: rgba(0, 0, 0, 0.05);}
+.mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {margin-top: 0px;}
+.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {margin-left: 0;}
 .clearsearch {text-align: center; margin-top: 20px;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 

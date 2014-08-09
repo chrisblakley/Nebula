@@ -6,14 +6,14 @@
 
 get_header(); ?>
 
-<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script> <!-- This script is found in the footer. It is disabled by default, so it needs to be called again here to show the CSS Browser Selector example section. -->
+<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script>
 
 <section><!-- Do not duplicate this section because it has inline styles. -->
 	<div class="container" style="background: #0098d7;">
 		<div class="row">
 			<div class="sixteen columns">
 				<h1 class="entry-title" style="color: #fff;"><?php the_title(); ?></h1>
-				<p style="color: #fff;"><?php echo get_field('description', false, false); ?></p>				
+				<p style="color: #fff;"><?php the_field('description'); ?></p>				
 			</div><!--/columns-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -37,18 +37,18 @@ get_header(); ?>
 					<div class="sixteen columns entry-content">
 						<?php if ( get_field('usage') ) : ?>
 							<h2>Usage</h2>
-							<?php echo do_shortcode(get_field('usage', false, false)); ?>
+							<?php echo do_shortcode(get_field('usage')); ?>
 							<br/>
 						<?php endif; ?>
 						
 						<?php if ( get_field('parameters') ) : ?>
 							<h2>Parameters</h2>
-							<p><?php echo do_shortcode(get_field('parameters', false, false)); ?></p>
+							<p><?php echo do_shortcode(get_field('parameters')); ?></p>
 						<?php endif; ?>
 						
 						<?php if ( get_field('example') ) : ?>
 							<h2>Example</h2>
-							<?php echo do_shortcode(get_field('example', false, false)); ?>
+							<?php echo do_shortcode(get_field('example')); ?>
 							<br/>
 						<?php endif; ?>
 						<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
@@ -552,7 +552,7 @@ get_header(); ?>
 					            <div class="sixteen columns sliderwrap">
 					                
 					                <a href="#" class="status">
-					                	<i class="icon-pause"></i> <span>Paused</span>
+					                	<i class="fa fa-pause"></i> <span>Paused</span>
 					                </a><!--/status-->
 					                
 					                <ul id="theslides">
@@ -563,11 +563,11 @@ get_header(); ?>
 					
 					                <div class="slider-nav-con">
 					                    <ul id="slider-nav" class="clearfix">
-				                            <li><a class="slider-arrow slider-left " href="#"><i class="icon-left-open"></i></a></li>
+				                            <li><a class="slider-arrow slider-left " href="#"><i class="fa fa-chevron-left"></i></a></li>
 				                            <li class="slide-nav-item"><a href="#">One</a></li>
 				                            <li class="slide-nav-item"><a href="#">Two</a></li>
 				                            <li class="slide-nav-item"><a href="#">Three</a></li>
-				                            <li><a class="slider-arrow slider-right " href="#"><i class="icon-right-open"></i></a></li>
+				                            <li><a class="slider-arrow slider-right " href="#"><i class="fa fa-chevron-right"></i></a></li>
 					                    </ul>
 					                </div><!--/slider-nav-con-->
 					                					                
@@ -596,7 +596,7 @@ get_header(); ?>
 							        clearInterval(autoSlide);
 							        jQuery("#slider-nav").addClass("pause");
 							        if ( !jQuery(".status").hasClass("stop") ) {
-							        	jQuery(".status i").removeClass("icon-stop icon-play").addClass("icon-pause");
+							        	jQuery(".status i").removeClass("fa fa-stop fa fa-play").addClass("fa fa-pause");
 										jQuery(".status span").text("Paused");
 								        jQuery(".status").addClass("pause");
 							        }
@@ -611,7 +611,7 @@ get_header(); ?>
 							    //Navigation
 							    jQuery("#slider-nav li.slide-nav-item a").on("click", function(){       
 							        strictPause = 1;
-							        jQuery(".status i").removeClass("icon-pause").addClass("icon-stop");
+							        jQuery(".status i").removeClass("fa fa-pause").addClass("fa fa-stop");
 							        jQuery(".status").removeClass("pause").addClass("stop").find("span").text("Stopped");
 							        jQuery("#slider-nav").removeClass("pause").addClass("stop");
 							        theIndex = jQuery(this).parent().index();
@@ -621,11 +621,11 @@ get_header(); ?>
 								
 								//Status
 								jQuery("#theslider").on("mouseenter", ".status.stop", function(){
-									jQuery(this).find("i").removeClass("icon-stop").addClass("icon-play");
+									jQuery(this).find("i").removeClass("fa fa-stop").addClass("fa fa-play");
 									jQuery(this).find("span").text("Resume");
 								});
 								jQuery("#theslider").on("mouseleave", ".status.stop", function(){
-									jQuery(this).find("i").removeClass("icon-play").addClass("icon-stop");
+									jQuery(this).find("i").removeClass("fa fa-play").addClass("fa fa-stop");
 									jQuery(this).find("span").text("Stopped");
 								});
 								jQuery("#theslider").on("click", ".status.stop", function(){
@@ -638,7 +638,7 @@ get_header(); ?>
 							    //Arrows
 							    jQuery(".slider-arrow").on("click", function(){
 							        strictPause = 1;
-							        jQuery(".status i").removeClass("icon-pause").addClass("icon-stop");
+							        jQuery(".status i").removeClass("fa fa-pause").addClass("fa fa-stop");
 							        jQuery(".status").addClass("stopped").find("span").text("Stopped");
 							        jQuery("#slider-nav").removeClass("pause").addClass("stop");
 							        jQuery("#slider-nav").removeClass("pause").addClass("stop");
@@ -1286,6 +1286,74 @@ get_header(); ?>
 							</div><!--/columns-->
 						</div><!--/row-->
 					<?php endif; //End AJAX ?>
+					
+					
+					<?php if ( is_page(703) ) : //AJAX Contact Form ?>
+						<script>
+							jQuery(document).on('submit', '#ajax-contact', function(e){
+								var contactData = [{
+									'name': jQuery("#ajax-contact input.name").val(),
+									'email': jQuery("#ajax-contact input.email").val(),
+									'message': jQuery("#ajax-contact textarea.message").val(),
+								}];
+								
+								jQuery('#form-messages').html('<i class="fa fa-spinner fa-spin sending"></i> Sending...');
+								
+								jQuery.ajax({
+									type: "POST",
+									url: jQuery('#ajax-contact').attr('action'),
+									data: {
+										data: contactData,
+									},
+									success: function(response){
+										if ( response.indexOf('Thank you') > -1 ) {					
+											jQuery('#ajax-contact input:not(#contact-submit), #ajax-contact textarea').val('').trigger('keyup');
+											jQuery('#ajax-contact').slideUp();
+											
+											//conversionTracker();
+											ga('send', 'event', 'Contact', 'Submit', 'AJAX Example Form Submission from ' + contactData[0]['name'] + ': "' + contactData[0]['message'] + '"');
+											Gumby.log('Sending GA event: ' + 'Contact', 'Submit', 'AJAX Example Submission');
+										}
+										jQuery('#form-messages').html(response);
+									},
+									error: function(MLHttpRequest, textStatus, errorThrown){
+										jQuery('#form-messages').text(errorThrown);
+										ga('send', 'event', 'Contact', 'Error', 'Contact Form AJAX Error');
+										Gumby.log('Sending GA event: ' + 'Contact', 'Error', 'Contact AJAX Form Error');
+									},
+									timeout: 60000
+								});
+								
+								e.preventDefault();
+								return false;
+							});
+						</script>
+						
+						<div class="row">
+							<div class="sixteen columns">
+								<form id="ajax-contact" method="post" action="<?php echo bloginfo('template_directory'); ?>/includes/mailer.php">
+									<ul>
+										<li class="field">
+											<span class="contact-form-heading">Name*</span>
+											<input class="input name" type="text" placeholder="Name" required/>
+										</li>
+										<li class="field">
+											<span class="contact-form-heading">Email*</span>
+											<input class="input email" type="email" placeholder="Email" required/>
+										</li>
+										<li class="field">
+											<span class="contact-form-heading">Message*</span>
+											<textarea class="input textarea message" placeholder="Message" required></textarea>
+										</li>
+										<li class="field">
+											<input class="submit" type="submit" value="Send">
+										</li>
+									</ul>
+								</form>
+								<div id="form-messages"></div>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End AJAX Contact Form ?>
 					
 					
 					<?php if ( is_page(588) ) : //nebula_tel_link and nebula_phone_format ?>
@@ -1957,9 +2025,9 @@ get_header(); ?>
 										<div class="eight columns">
 											<ul>
 												<li><strong>Example Locations</strong></li>
-												<li class="latlngcon"><i class="icon-location" style="color: #fe7569;"></i> <span class="lat">43.109205</span>, <span class="lng">-76.095831</span></li>
-												<li class="latlngcon"><i class="icon-location" style="color: #fe7569;"></i> <span class="lat">43.093068</span>, <span class="lng">-76.163809</span></li>
-												<li class="latlngcon"><i class="icon-location" style="color: #fe7569;"></i> <span class="lat">43.100150</span>, <span class="lng">-76.207207</span></li>
+												<li class="latlngcon"><i class="fa fa-location-arrow" style="color: #fe7569;"></i> <span class="lat">43.109205</span>, <span class="lng">-76.095831</span></li>
+												<li class="latlngcon"><i class="fa fa-location-arrow" style="color: #fe7569;"></i> <span class="lat">43.093068</span>, <span class="lng">-76.163809</span></li>
+												<li class="latlngcon"><i class="fa fa-location-arrow" style="color: #fe7569;"></i> <span class="lat">43.100150</span>, <span class="lng">-76.207207</span></li>
 											</ul>
 										</div><!--/columns-->
 										<div class="eight columns">

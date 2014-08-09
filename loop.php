@@ -60,7 +60,7 @@
 							<a class="size-thumbnail" href="<?php the_permalink(); ?>"><?php echo $image_img_tag; ?></a>
 						</div>
 					
-						<p><em><?php printf( '<i class="icon-picture"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
+						<p><em><?php printf( '<i class="fa fa-picture-o"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
 					
 					<?php endif; // if $images ?>
 				

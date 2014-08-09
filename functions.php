@@ -69,7 +69,7 @@ wp_register_script('nebula-gumby', get_template_directory_uri() . '/js/libs/gumb
 wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
 wp_register_script('nebula-datatables', get_template_directory_uri() . '/js/libs/jquery.dataTables.min.js', array(), '1.10', true);
 wp_register_script('nebula-maskedinput', get_template_directory_uri() . '/js/libs/jquery.maskedinput.js', array(), null, true);
-wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-mmenu', 'nebula-gumby', 'jquery', 'jquery-ui-core', 'nebula-doubletaptogo'), null, true);
+wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-gumby', 'jquery'), null, true);
 wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
 wp_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js?' . $GLOBALS['defer'], array(), null, true);
 
@@ -168,27 +168,36 @@ function nebula_dequeues() {
 	if ( !is_admin() ) {
 		//Styles
 		wp_deregister_style('open-sans'); //WP Core - We load Open Sans ourselves (or whatever font the project calls for)
-		wp_deregister_style('admin-bar'); //WP Core - Even though these are admin-only resources, I'd rather them not add any interpreted load time
 		wp_deregister_style('dashicons'); //WP Core - Even though these are admin-only resources, I'd rather them not add any interpreted load time NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		wp_deregister_style('cff-font-awesome'); //Custom Facebook Feed - We enqueue the latest version of Font Awesome ourselves
 		wp_deregister_style('se-link-styles'); //Search Everything - (As far as I know) We do not use any of their styles (I believe they are for additional settings)
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling specifically, so removing it unless we decide we need it.
 		
 		//Scripts
-		if( !preg_match('/(?i)msie [2-8]/', $_SERVER['HTTP_USER_AGENT']) ) { //WP Core - Dequeue jQuery Migrate for browsers that don't need it.
+		if ( !preg_match('/(?i)msie [2-8]/', $_SERVER['HTTP_USER_AGENT']) ) { //WP Core - Dequeue jQuery Migrate for browsers that don't need it.
 			wp_deregister_script('jquery');
 			wp_register_script('jquery', false, array('jquery-core'), '1.11.0'); //Just have to make sure this version reflects the actual jQuery version bundled with WP (click the jquery.js link in the source)
 		}
 		
-		/* @TODO: Styles/Scripts to consider for dequeue
-			- media-upload.min.js?
-			- underscore.min.js?
+		//Page specific dequeues
+		if ( is_front_page() ) {
+			//Styles
+			//wp_deregister_style('wp-pagenavi'); //WP PageNavi - Uncomment if pagination does NOT appear on the homepage.
+			wp_deregister_style('thickbox'); //WP Core Thickbox - Comment out if thickbox type gallery IS used on the homepage.
+			//wp_deregister_style('cff'); //Custom Facebook Feed - Uncomment if the Custom Facebook Feed does NOT appear on the homepage.
+			
+			//Scripts
+			wp_deregister_script('thickbox'); //WP Thickbox - Comment out if thickbox type gallery IS used on the homepage.
+			//wp_deregister_script('cffscripts'); //Custom Facebook Feed - Uncomment if the Custom Facebook Feed does NOT appear on the homepage.
+			//wp_deregister_script('contact-form-7'); //Contact Form 7 - Uncomment if Contact Form 7 does NOT appear on the homepage.
+			
+			
+		}
+		
+		/* @TODO: Styles/Scripts to consider for dequeue from homepage
+			- admin-bar.min.js
 		*/
 	}
-	
-	//if ( get_the_ID() == 1 ) {
-		//Page specific dequeues can go here
-	//}
 }
 
 //Force settings within plugins
@@ -214,7 +223,7 @@ function nebula_plugin_force_settings(){
 }
 
 //Unset admin plugins from appearing on the frontend
-//add_action('option_active_plugins', 'nebula_unset_admin_plugins_on_frontend'); //@TODO: Pretty sure this is causing a gigantic error... can't prove it, but I'm leaning towards deleting this function.
+//add_action('option_active_plugins', 'nebula_unset_admin_plugins_on_frontend'); //@TODO: This causes a big error and deactivates all plugins. Should probably just delete this function.
 function nebula_unset_admin_plugins_on_frontend($plugins) {
 	if ( !is_admin() ) {
 		//var_dump($plugins);
@@ -240,7 +249,7 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 		//Frontend
 		remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
 		remove_action('get_footer', 'your_function'); //Ultimate TinyMCE fontend linkback
-		//if ( get_the_ID() == 1 ) { remove_action('wp_footer', 'cff_js', 10); } //Custom Facebook Feed - Remove the feed from the homepage. @TODO: Update to any page/post type that should NOT have the Facebook Feed
+		if ( get_the_ID() == 1 ) { remove_action('wp_footer', 'cff_js', 10); } //Custom Facebook Feed - Remove the feed from the homepage. @TODO: Update to any page/post type that should NOT have the Facebook Feed
 	} else {
 		//WP Admin
 		remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
@@ -699,6 +708,13 @@ remove_filter('comment_text', 'wptexturize');
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
 if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ) {
+	add_action('wp_print_scripts', 'dequeue_admin_bar', 9999);
+	add_action('wp_print_styles', 'dequeue_admin_bar', 9999);
+	function dequeue_admin_bar() {
+		wp_deregister_style('admin-bar');
+		wp_dequeue_script('admin-bar');
+	}
+	
 	add_action('init', 'admin_only_features');
 	function admin_only_features() {
 		remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
@@ -1234,7 +1250,7 @@ function nebula_comment_theme($comment, $args, $depth) {
 			<div class="comment-meta commentmetadata"><a href="<?php echo htmlspecialchars(get_comment_link($comment->comment_ID)); ?>">
 				<?php printf( 'on %1$s at %2$s', get_comment_date(), get_comment_time()); ?></a> 
 				<?php if (current_user_can('edit_post')) : ?>
-					<? edit_comment_link('<small><i class="icon-pencil"></i> Edit</small>','  ','' ); ?>
+					<? edit_comment_link('<small><i class="fa fa-pencil"></i> Edit</small>','  ','' ); ?>
 				<?php endif; ?>
 			</div>
 			
@@ -1594,12 +1610,12 @@ function nebula_meta($meta, $day=1) {
 		if ( $day ) {
 			$the_day = get_the_date('d') . '/';
 		}
-		echo '<span class="posted-on"><i class="icon-calendar"></i> <span class="entry-date">' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} elseif ( $meta == 'author' || $meta == 'by' ) {
-		echo '<span class="posted-by"><i class="icon-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
+		echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ) {
 		if ( is_object_in_taxonomy(get_post_type(), 'category') ) {
-			$post_categories = '<span class="posted-in post-categories"><i class="icon-bookmarks"></i> ' . get_the_category_list(', ') . '</span>';
+			$post_categories = '<span class="posted-in post-categories"><i class="fa fa-bookmark"></i> ' . get_the_category_list(', ') . '</span>';
 		} else {
 			$post_categories = '';
 		}
@@ -1607,7 +1623,7 @@ function nebula_meta($meta, $day=1) {
 	} elseif ( $meta == 'tags' || $meta == 'tag' ) {
 		$tag_list = get_the_tag_list('', ', ');
 		if ( $tag_list ) {
-			$post_tags = '<span class="posted-in post-tags"><i class="icon-tag"></i> ' . $tag_list . '</span>';
+			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-tags"></i> ' . $tag_list . '</span>';
 		} else {
 			$post_tags = '';
 		}
@@ -1615,7 +1631,7 @@ function nebula_meta($meta, $day=1) {
 	} elseif ( $meta == 'dimensions' || $meta == 'size' || $meta == 'image' || $meta == 'photo' ) {
 		if ( wp_attachment_is_image() ) {
 			$metadata = wp_get_attachment_metadata();
-			echo '<i class="icon-resize-full"></i><a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a>';
+			echo '<i class="fa fa-expand"></i><a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a>';
 		}		
 	}
 }
@@ -1672,7 +1688,7 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 //Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
 function nebula_manage($data) {
 	if ( $data == 'edit' || $data == 'admin' ) {
-		echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="icon-tools"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="icon-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
+		echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="fa fa-wrench"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="fa fa-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
 	} elseif ( $data == 'modified' || $data == 'mod' ) {
 		if ( get_the_modified_author() ) {
 			$manage_author = get_the_modified_author();
@@ -2652,13 +2668,13 @@ function slider_shortcode($atts, $content=''){
 	$sliderHTML = '<div id="theslider-' . $id . '" class="container ' . $frame . '"><div class="row"><div class="sixteen columns sliderwrap">';
 				                
 	if ( in_array('status', $flags) ) {
-		$sliderHTML .= '<a href="#" class="status"><i class="icon-pause"></i> <span>Paused</span></a>';
+		$sliderHTML .= '<a href="#" class="status"><i class="fa fa-pause"></i> <span>Paused</span></a>';
 	}			                
 				                
 	$sliderHTML .= '<ul id="theslides">' . parse_shortcode_content(do_shortcode($content)) . '</ul>
 				<div class="slider-nav-con">
 					<ul id="slider-nav" class="clearfix">
-						<li><a class="slider-arrow slider-left " href="#"><i class="icon-left-open"></i></a></li>';
+						<li><a class="slider-arrow slider-left " href="#"><i class="fa fa-chevron-left"></i></a></li>';
 	
 	$i = 0;
 	while ( $i < $slideCount ) {
@@ -2670,7 +2686,7 @@ function slider_shortcode($atts, $content=''){
 		$i++;
 	}
 	
-	$sliderHTML .= '<li><a class="slider-arrow slider-right " href="#"><i class="icon-right-open"></i></a></li>
+	$sliderHTML .= '<li><a class="slider-arrow slider-right " href="#"><i class="fa fa-chevron-right"></i></a></li>
 					</ul>
 				</div></div></div></div>'; //Each through the li.slide-nav-item and pull the title from its corresponding slide by incrementing .eq()
 		
@@ -2700,7 +2716,7 @@ function slider_shortcode($atts, $content=''){
 					        clearInterval(autoSlide);
 					        jQuery("#theslider-' . $id . ' #slider-nav").addClass("pause");
 					        if ( !jQuery("#theslider-' . $id . ' .status").hasClass("stop") ) {
-					        	jQuery("#theslider-' . $id . ' .status i").removeClass("icon-stop icon-play").addClass("icon-pause");
+					        	jQuery("#theslider-' . $id . ' .status i").removeClass("fa fa-stop fa fa-play").addClass("fa fa-pause");
 								jQuery("#theslider-' . $id . ' .status span").text("Paused");
 						        jQuery("#theslider-' . $id . ' .status").addClass("pause");
 					        }
@@ -2714,7 +2730,7 @@ function slider_shortcode($atts, $content=''){
 					    //Navigation
 					    jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item a").on("click", function(){       
 					        strictPause = 1;
-					        jQuery("#theslider-' . $id . ' .status i").removeClass("icon-pause").addClass("icon-stop");
+					        jQuery("#theslider-' . $id . ' .status i").removeClass("fa fa-pause").addClass("fa fa-stop");
 					        jQuery("#theslider-' . $id . ' .status").removeClass("pause").addClass("stop").find("span").text("Stopped");
 					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
 					        theIndex = jQuery(this).parent().index();
@@ -2723,11 +2739,11 @@ function slider_shortcode($atts, $content=''){
 					    });
 						//Status
 						jQuery("#theslider-' . $id . '").on("mouseenter", ".status.stop", function(){
-							jQuery(this).find("i").removeClass("icon-stop").addClass("icon-play");
+							jQuery(this).find("i").removeClass("fa fa-stop").addClass("fa fa-play");
 							jQuery(this).find("span").text("Resume");
 						});
 						jQuery("#theslider-' . $id . '").on("mouseleave", ".status.stop", function(){
-							jQuery(this).find("i").removeClass("icon-play").addClass("icon-stop");
+							jQuery(this).find("i").removeClass("fa fa-play").addClass("fa fa-stop");
 							jQuery(this).find("span").text("Stopped");
 						});
 						jQuery("#theslider-' . $id . '").on("click", ".status.stop", function(){
@@ -2739,7 +2755,7 @@ function slider_shortcode($atts, $content=''){
 					    //Arrows
 					    jQuery("#theslider-' . $id . ' .slider-arrow").on("click", function(){
 					        strictPause = 1;
-					        jQuery("#theslider-' . $id . ' .status i").removeClass("icon-pause").addClass("icon-stop");
+					        jQuery("#theslider-' . $id . ' .status i").removeClass("fa fa-pause").addClass("fa fa-stop");
 					        jQuery("#theslider-' . $id . ' .status").addClass("stopped").find("span").text("Stopped");
 					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
 					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");

@@ -245,8 +245,14 @@ function checkFacebookStatus() {
 //Fill or clear form inputs with Facebook data
 function prefillFacebookFields(response) {
 	if ( response ) {
-		jQuery('.fb-form-name, .comment-form-author input, .cform7-name').each(function(){
+		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
 			jQuery(this).val(response.first_name + ' ' + response.last_name).trigger('keyup');
+		});
+		jQuery('.fb-form-first-name, .cform7-first-name, input.first-name').each(function(){
+			jQuery(this).val(response.first_name).trigger('keyup');
+		});
+		jQuery('.fb-form-last-name, .cform7-last-name, input.last-name').each(function(){
+			jQuery(this).val(response.last_name).trigger('keyup');
 		});
 		jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
 			jQuery(this).val(response.email).trigger('keyup');
@@ -341,7 +347,7 @@ function overflowDetector() {
 
 //Vertical subnav expanders
 function subnavExpanders() {
-    jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="icon-left-dir"></i></a>');
+    jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
     jQuery('.toplevelvert_expander').on('click', function(){
         jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
@@ -570,7 +576,7 @@ function mmenu() {
 			jQuery('.clearsearch').addClass('hidden');
 		}
 	});
-	jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="icon-cancel-circled"></i>Reset Search</a></div>');
+	jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
 	jQuery('.clearsearch a').on('click', function(){
 		jQuery('.mm-search input').val('').keyup();
 		jQuery('.clearsearch').addClass('hidden');
@@ -1047,7 +1053,7 @@ function errorLogAndFallback() {
 		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage);
 		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
 	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
-		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo icon-mail"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
+		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo fa fa-envelope"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
 		ga('send', 'event', 'Error', 'Contact Form 7 Form Not Found', currentPage);
 		Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.');
 		jQuery(document).on('click', '.cform-not-found', function(){
@@ -1155,12 +1161,12 @@ function createCookie(name, value, days) {
 	if (days) {
 		var date = new Date();
 		date.setTime(date.getTime()+(days*24*60*60*1000));
-		var expires = "; expires="+date.toGMTString();
+		var expires = "; expires=" + date.toGMTString();
 	} else {
 		var expires = "";
 	}
-	document.cookie = name+"="+value+expires+"; path=/";
-	Gumby.log('Created cookie: ' + name + ', with the value: ' + value + ', and expires on: ' + expires);
+	document.cookie = name + "=" + value + expires + "; path=/";
+	Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires);
 }
 function readCookie(name) {
 	var nameEQ = name + "=";

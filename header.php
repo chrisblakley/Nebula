@@ -118,7 +118,7 @@
 			<div class="row mobilenavcon">
 				<div class="sixteen columns clearfix">
 					
-					<a class="alignleft" href="#mobilenav"><i class="icon-menu"></i></a>
+					<a class="alignleft" href="#mobilenav"><i class="fa fa-bars"></i></a>
 					<nav id="mobilenav">
 						<?php 
 							if ( has_nav_menu('mobile') ) {
@@ -129,17 +129,17 @@
 						?>
 					</nav><!--/mobilenav-->
 					
-					<a class="alignright" href="#mobilecontact"><i class="icon-users"></i></a>
+					<a class="alignright" href="#mobilecontact"><i class="fa fa-users"></i></a>
 					<nav id="mobilecontact" class="unhideonload hidden">
 						<ul>
 				    		<li>
-				    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="icon-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here (x2). ?></a>
+				    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here (x2). ?></a>
 				    		</li>
 				    		<li>
-				    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="icon-mail"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear (x2). ?></a>
+				    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear (x2). ?></a>
 				    		</li>
 				    		<li>
-				    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="icon-direction"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here (x2). ?></small></div></a>
+				    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here (x2). ?></small></div></a>
 				    		</li>
 				    	</ul>
 					</nav><!--/mobilecontact-->
@@ -180,7 +180,7 @@
 		<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
 			<div class="row">
 				<div class="four columns">
-					<a href="<?php echo home_url(); ?>"><i class="icon-home"></i> <?php echo bloginfo('name'); ?></a>
+					<a href="<?php echo home_url(); ?>"><i class="fa fa-home"></i> <?php echo bloginfo('name'); ?></a>
 				</div><!--/columns-->
 				<div class="twelve columns">
 					<nav id="fixednav">
@@ -196,7 +196,7 @@
 				<div class="row">
 					<div class="sixteen columns searchresultsingle">
 						<span>Your search returned only one result. You have been automatically redirected.</span>
-						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="icon-cancel"></i></a>
+						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="fa fa-times"></i></a>
 						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
 					</div><!--/columns-->
 				</div><!--/row-->
@@ -208,7 +208,7 @@
 				<div class="row">
 					<div class="sixteen columns searchresultsingle invalid">
 						<span>Your search was invalid. Please try again.</span>
-						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="icon-cancel"></i></a>
+						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="fa fa-cancel"></i></a>
 						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
 					</div><!--/columns-->
 				</div><!--/row-->
