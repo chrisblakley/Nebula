@@ -43,6 +43,8 @@ jQuery(document).ready(function() {
 	WPcomments();
 	contactBackup();
 	
+	vimeoControls();
+	
 	mapInfo = [];
 	getAllLocations();
 	mapActions();
@@ -112,7 +114,7 @@ function helperFunctions(){
 
 //Create Facebook functions
 function facebookSDK() {
-	window.fbAsyncInit = function() { //This is called once the Facebook SDK is initialized (from the footer)
+	window.fbAsyncInit = function() { //This is called once the Facebook SDK is initialized (from the footer)		
 		FB.init({
 			appId: social['facebook_app_id'],
 			channelUrl: bloginfo['template_directory'] + '/includes/channel.php',
@@ -185,6 +187,15 @@ function facebookSDK() {
 		facebookLoginLogout();
 		return false;
 	});
+	
+	//Load the SDK asynchronously
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_GB/all.js";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
 }
 
 //Connect to Facebook without using Facebook Login button
@@ -505,6 +516,26 @@ function gaEventTracking(){
 		ga('send', 'exception', e.result, true);
 		Gumby.log('Sending GA event: ' + 'Error', 'AJAX Error', e.result + ' on: ' + settings.url);
 	});
+	
+	
+	//Capture Print Intent
+	printed = 0;
+	var afterPrint = function() {
+		if ( printed == 0 ) {
+			printed = 1;
+			ga('send', 'event', 'Print (Intent)', document.location.pathname);
+			Gumby.log('Sending GA event: ' + 'Print (Intent)', document.location.pathname);
+		}
+	};
+	if ( window.matchMedia ) {
+		var mediaQueryList = window.matchMedia('print');
+		mediaQueryList.addListener(function(mql) {
+			if ( !mql.matches ) {
+				afterPrint();
+			}
+		});
+	}
+	window.onafterprint = afterPrint;
 		
 } //End gaEventTracking()
 
@@ -685,17 +716,17 @@ function searchTermHighlighter(){
 //Emphasize the search Terms
 function emphasizeSearchTerms() {
 	var theSearchTerm = document.URL.split('?s=')[1];
-	if (typeof theSearchTerm != 'undefined' ) {
+	if ( typeof theSearchTerm != 'undefined' ) {
 		var origBGColor = jQuery('.searchresultword').css('background-color');
 		jQuery('.searchresultword').each(function(i) {
 	    	var stallFor = 150 * parseInt(i);
 			jQuery(this).delay(stallFor).animate({
 			    backgroundColor: 'rgba(255, 255, 0, 0.5)',
 			    borderColor: 'rgba(255, 255, 0, 1)',
-			}, 500, 'easeInOutCubic', function() {
+			}, 500, 'swing', function() {
 			    jQuery(this).delay(1000).animate({
 				    backgroundColor: origBGColor,
-				}, 1000, 'easeInOutCubic', function(){
+				}, 1000, 'swing', function(){
 				    jQuery(this).addClass('transitionable');
 				});
 			});
@@ -1137,6 +1168,62 @@ function twitterFeed() {
         JQTWEET.loadTweets();
     }
 } //end twitterFeed()
+
+
+function vimeoControls() {
+	if ( jQuery('.vimeoplayer').length ) {
+        jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
+			createVimeoPlayers();
+		}).fail(function(){
+			Gumby.warn('froogaloop.js could not be loaded.');
+		});
+	}
+
+	function createVimeoPlayers() {
+		var player = new Array();
+	    jQuery('iframe.vimeoplayer').each(function(i){
+			var vimeoiframeClass = jQuery(this).attr('id');
+			player[i] = $f(vimeoiframeClass);
+			player[i].addEvent('ready', function() {
+		    	Gumby.log('player is ready');
+			    player[i].addEvent('play', onPlay);
+			    player[i].addEvent('pause', onPause);
+			    player[i].addEvent('seek', onSeek);
+			    player[i].addEvent('finish', onFinish);
+			    player[i].addEvent('playProgress', onPlayProgress);
+			});
+		});
+	}
+	
+	function onPlay(id) {
+	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('send', 'event', 'Videos', 'Play', videoTitle);
+	    Gumby.log('Sending GA event: ' + 'Videos', 'Play', videoTitle);
+	}
+	
+	function onPause(id) {
+	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
+	    Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
+	}
+	
+	function onSeek(data, id) {
+	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('send', 'event', 'Videos', 'Seek', videoTitle);
+	    Gumby.log('Sending GA event: ' + 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
+	}
+	
+	function onFinish(id) {
+		var videoTitle = id.replace(/-/g, ' ');
+		ga('send', 'event', 'Videos', 'Finished', videoTitle);
+		Gumby.log('Sending GA event: ' + 'Videos', 'Finished', videoTitle);
+	}
+	
+	function onPlayProgress(data, id) {
+		//Gumby.log(data.seconds + 's played');
+	}
+}
+
 
 
 function cookieActions() {

@@ -103,88 +103,9 @@
 					</div><!--/container-->
 			
 			</div><!--/footer-->
-
+			
 			<?php wp_footer(); ?>
-						
-			<script>
-				//Capture Print Intent
-				try { (function() {
-						var afterPrint = function() {
-							ga('send', 'event', 'Print (Intent)', document.location.pathname);
-							Gumby.log('Sending GA event: ' + 'Print (Intent)', document.location.pathname);
-						};
-						if (window.matchMedia) {
-							var mediaQueryList = window.matchMedia('print');
-							mediaQueryList.addListener(function(mql) {
-								if (!mql.matches)
-								afterPrint();
-							});
-						}
-						window.onafterprint = afterPrint;
-					}());
-				} catch(e) {}
-			</script>
-				
 
-			<script type="text/javascript">
-				//Load the SDK asynchronously
-				(function(d, s, id) {
-					var js, fjs = d.getElementsByTagName(s)[0];
-					if (d.getElementById(id)) return;
-					js = d.createElement(s); js.id = id;
-					js.src = "//connect.facebook.net/en_GB/all.js";
-					fjs.parentNode.insertBefore(js, fjs);
-				}(document, 'script', 'facebook-jssdk'));
-			</script>
-			
-			
-			<!-- <script src="<?php bloginfo('template_directory');?>/js/libs/froogaloop.min.js" <?php echo $GLOBALS["defer"]; ?>></script> --><!-- @TODO: Only call this script if vimeoplayer exists! -->
-	        <script>
-	            if ( jQuery('.vimeoplayer').length ) {
-	                var player = new Array();
-	                jQuery('iframe.vimeoplayer').each(function(i){
-						var vimeoiframeClass = jQuery(this).attr('id');
-						player[i] = $f(vimeoiframeClass);
-						player[i].addEvent('ready', function() {
-					    	Gumby.log('player is ready');
-						    player[i].addEvent('play', onPlay);
-						    player[i].addEvent('pause', onPause);
-						    player[i].addEvent('seek', onSeek);
-						    player[i].addEvent('finish', onFinish);
-						    player[i].addEvent('playProgress', onPlayProgress);
-						});
-					});    
-				}
-				
-				function onPlay(id) {
-				    var videoTitle = id.replace(/-/g, ' ');
-				    ga('send', 'event', 'Videos', 'Play', videoTitle);
-				    Gumby.log('Sending GA event: ' + 'Videos', 'Play', videoTitle);
-				}
-				
-				function onPause(id) {
-				    var videoTitle = id.replace(/-/g, ' ');
-				    ga('send', 'event', 'Videos', 'Pause', videoTitle);
-				    Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
-				}
-				
-				function onSeek(data, id) {
-				    var videoTitle = id.replace(/-/g, ' ');
-				    ga('send', 'event', 'Videos', 'Seek', videoTitle);
-				    Gumby.log('Sending GA event: ' + 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
-				}
-				
-				function onFinish(id) {
-					var videoTitle = id.replace(/-/g, ' ');
-					ga('send', 'event', 'Videos', 'Finished', videoTitle);
-					Gumby.log('Sending GA event: ' + 'Videos', 'Finished', videoTitle);
-				}
-				
-				function onPlayProgress(data, id) {
-					//Gumby.log(data.seconds + 's played');
-				}
-	        </script>
-		
 			<script>
 				//Check for Youtube Videos
 				if ( jQuery('.youtubeplayer').length ) {

@@ -62,6 +62,7 @@ if ( array_key_exists('debug', $_GET) ) {
 wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 wp_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 wp_register_script('nebula-modernizr', '//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.2', false);
+wp_register_script('nebula-jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.0', true);
 wp_register_script('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/js/umd/jquery.mmenu.umd.all.min.js', array(), '4.3.2', true);
 wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js?' . $GLOBALS['async'], array(), '1.0', true);
 wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js?' . $GLOBALS['defer'], array(), null, true);
@@ -74,7 +75,7 @@ wp_register_script('nebula-gumby', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0
 wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
 wp_register_script('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/js/jquery.dataTables.min.js', array(), '1.10', true);
 wp_register_script('nebula-maskedinput', '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js', array(), '1.3.1', true);
-wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-gumby', 'jquery'), null, true);
+wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
 wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
 wp_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js?' . $GLOBALS['defer'], array(), null, true);
 
@@ -93,7 +94,7 @@ function enqueue_nebula_frontend() {
 	
 	//Scripts
 	wp_enqueue_script('jquery');
-	//wp_enqueue_script('jquery-ui-core');
+	wp_enqueue_script('nebula-jquery_ui');
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
 	//wp_enqueue_script('nebula-modernizr_dev');
@@ -187,7 +188,6 @@ function nebula_dequeues() {
 		if ( !preg_match('/(?i)msie [2-8]/', $_SERVER['HTTP_USER_AGENT']) ) { //WP Core - Dequeue jQuery Migrate for browsers that don't need it.
 			wp_deregister_script('jquery');
 			wp_register_script('jquery', false, array('jquery-core'), '1.11.0'); //Just have to make sure this version reflects the actual jQuery version bundled with WP (click the jquery.js link in the source)
-			
 		}
 		
 		//Page specific dequeues
