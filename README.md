@@ -52,7 +52,7 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 - [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
 - [Contact Form 7](http://wordpress.org/plugins/contact-form-7/)
 - [Contact Form 7 DB](http://wordpress.org/plugins/contact-form-7-to-database-extension/)
-- [Custom Field Suite](http://wordpress.org/plugins/custom-field-suite/) or [Advanced Custom Fields](http://wordpress.org/plugins/advanced-custom-fields/)
+- [Advanced Custom Fields](http://wordpress.org/plugins/advanced-custom-fields/)
 - [Regenerate Thumbnails](http://wordpress.org/plugins/regenerate-thumbnails/)
 - [Reveal IDs](http://wordpress.org/plugins/reveal-ids-for-wp-admin-25/)
 - [W3 Total Cache](http://wordpress.org/plugins/w3-total-cache/)
