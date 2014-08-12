@@ -97,8 +97,8 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_script('nebula-jquery_ui');
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
-	//wp_enqueue_script('nebula-modernizr_dev');
-	wp_enqueue_script('nebula-modernizr'); //@TODO: Switch to this modernizr when launching (if not using advanced polyfills)
+	wp_enqueue_script('nebula-modernizr_dev');
+	//wp_enqueue_script('nebula-modernizr'); //@TODO: Switch to this modernizr when launching (if not using advanced polyfills)
 	
 	wp_enqueue_script('nebula-mmenu');
 	//wp_enqueue_script('nebula-supplementr');
@@ -1356,6 +1356,30 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 	}
 }
 
+//Check referrer in order to comment
+add_action('check_comment_flood', 'check_referrer');
+function check_referrer() {
+	if ( !isset($_SERVER['HTTP_REFERER']) || $_SERVER['HTTP_REFERER'] == '' ) {
+		wp_die('Please do not access this file directly.');
+	}
+}
+
+//Prefill form fields with comment author cookie
+add_action('wp_head', 'comment_author_cookie');
+function comment_author_cookie() {
+	echo '<script>';
+	if ( isset($_COOKIE['comment_author_' . COOKIEHASH]) ) {
+	    $commentAuthorName = $_COOKIE['comment_author_' . COOKIEHASH];
+	    $commentAuthorEmail = $_COOKIE['comment_author_email_' . COOKIEHASH];
+	    echo 'cookieAuthorName = "' . $commentAuthorName . '";';
+	    echo 'cookieAuthorEmail = "' . $commentAuthorEmail . '";';
+	} else {
+	    echo 'cookieAuthorName = "";';
+	    echo 'cookieAuthorEmail = "";';
+	}
+	echo '</script>';
+}
+
 
 /*==========================
  
@@ -1964,28 +1988,68 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 require_once 'includes/Mobile_Detect.php';
 $GLOBALS["mobile_detect"] = new Mobile_Detect();
 
-function mobile_classes() {
-	$mobile_classes = '';
+add_filter('body_class', 'mobile_body_class');
+function mobile_body_class($classes) {
+	
 	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
-		$mobile_classes .= '  mobile ';
+		$classes[] = 'mobile';
 	} else {
-		$mobile_classes .= '  no-mobile ';
+		$classes[] = 'no-mobile';
 	}
+	
 	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
-		$mobile_classes .= '  tablet ';
+		$classes[] = 'tablet';
 	}
+	
 	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
-		$mobile_classes .= '  ios ';
+		$classes[] = 'ios';
 	}
+	
 	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
-		$mobile_classes .= '  androidos ';
+		$classes[] = 'androidos';
 	}
-	echo $mobile_classes;
+	
+	return $classes;
 }
 
+//Add body classes based on WP core browser detection
+add_filter('body_class', 'browser_body_class');
+function browser_body_class($classes) {
+	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
+	$browser = get_browser(null, true); //@TODO: Find a server this works on and then wrap in if $browser, then echo the version number too
+	//@TODO: Also look into the function wp_check_browser_version().
+	
+    if ( $is_lynx ) {
+    	$classes[] = 'lynx';
+    } elseif ( $is_gecko ) {
+    	$classes[] = 'gecko';
+    } elseif ( $is_opera ) {
+    	$classes[] = 'opera';
+    } elseif ( $is_NS4 ) {
+    	$classes[] = 'ns4';
+    } elseif ( $is_safari ) {
+    	$classes[] = 'safari';
+    } elseif ( $is_chrome ) {
+    	$classes[] = 'chrome';
+    	if ( $browser ) {
+	    	$classes[] = 'chrome21';
+    	}
+    } elseif ( $is_IE ) {
+    	$classes[] = 'ie';
+    } else {
+    	$classes[] = 'unknown_browser';
+    }
+
+    if ( $is_iphone ) {
+    	$classes[] = 'iphone';
+    }
+    
+    return $classes;
+}
 
 //Add additional body classes including ancestor IDs and directory structures
-function page_name_class($classes) {
+add_filter('body_class', 'page_name_body_class');
+function page_name_body_class($classes) {
 	global $post;
 	$segments = explode('/', trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ));
 	$parents = get_post_ancestors( $post->ID );
@@ -1997,7 +2061,6 @@ function page_name_class($classes) {
 	}
 	return $classes;
 }
-add_filter('body_class', 'page_name_class');
 
 
 //Add category IDs to body/post classes.
@@ -2010,6 +2073,32 @@ function category_id_class($classes) {
 }
 add_filter('post_class', 'category_id_class');
 add_filter('body_class', 'category_id_class');
+
+
+//Check if the current time is within business hours.
+function currently_open() {
+	$businessHours = array();
+	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ) {
+		$businessHours[$weekday] = array(
+			"enabled" => get_option('nebula_business_hours_' . $weekday . '_enabled'),
+			"open" => get_option('nebula_business_hours_' . $weekday . '_open'),
+			"close" => get_option('nebula_business_hours_' . $weekday . '_close')
+		);
+	}
+	
+	$today = strtolower(date('l'));
+	if ( $businessHours[$today]['enabled'] == '1' ) {
+		$now = time();
+		$openToday = strtotime($businessHours[$today]['open']);
+		$closeToday = strtotime($businessHours[$today]['close']);
+		
+		if ( $now >= $openToday && $now <= $closeToday ) {
+			return true;
+		}
+	}
+	
+	return false;
+}
 
 
 function vimeo_meta($videoID) {

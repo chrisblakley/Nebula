@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
 	        }
 		} //End pull query strings from URL
 	*/
-
+	
 	//Init Custom Functions
 	gaEventTracking();
 	
@@ -43,6 +43,10 @@ jQuery(document).ready(function() {
 	WPcomments();
 	contactBackup();
 	
+	if ( cookieAuthorName ) {
+		prefillCommentAuthorCookieFields(cookieAuthorName, cookieAuthorEmail);
+	}
+
 	vimeoControls();
 	
 	mapInfo = [];
@@ -215,6 +219,7 @@ function facebookLoginLogout() {
 		FB.logout(function(response) {
 			Gumby.log('User has logged out.');
 			checkFacebookStatus();
+			prefillFacebookFields();
 		});
 	}
 	return false;
@@ -246,7 +251,6 @@ function checkFacebookStatus() {
 			Gumby.log('User is not logged into Facebook.');
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
-			prefillFacebookFields();
 			
 			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //Example page. @TODO: Get this out of main.js somehow!
 		}
@@ -273,6 +277,15 @@ function prefillFacebookFields(response) {
 			jQuery(this).val('').trigger('keyup');
 		});
 	}
+}
+
+function prefillCommentAuthorCookieFields(name, email) {
+	jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
+		jQuery(this).val(name).trigger('keyup');
+	});
+	jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
+		jQuery(this).val(email).trigger('keyup');
+	});
 }
 
 //Social sharing buttons

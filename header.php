@@ -3,14 +3,14 @@
 <!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> <?php mobile_classes(); ?> no-js "><!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js "><!--<![endif]-->
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 		
 		<title><?php wp_title('-', true, 'right'); ?></title>
 		
-		<meta name="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+		<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 		<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO: Replace '' with keywords. -->
 		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
 		
@@ -29,22 +29,34 @@
 		
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
+		<meta property="og:type" content="business.business" />
 		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
 		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. -->
-    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" /> <!-- @TODO: Create at least one new thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template. -->
-		<meta property="og:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify this email is the one that should appear. ?>" />
-		<meta property="og:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
-		<meta property="og:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
-		<meta property="og:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
-		<meta property="og:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
-		<meta property="og:street-address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
-		<meta property="og:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
-		<meta property="og:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
-		<meta property="og:postal-code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
-		<meta property="og:country-name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
+		<!-- @TODO: Create at least one OG Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template (Use PNG to avoid compression artifacts!). -->
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
+    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" />
+		<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
+		<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify admin email address. ?>" />
+		<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
+		<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
+		<meta property="business:contact_data:street_address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
+		<meta property="business:contact_data:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
+		<meta property="business:contact_data:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
+		<meta property="business:contact_data:postal_code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
+		<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
+		<meta property="place:location:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
+		<meta property="place:location:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
 		
+		<?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Settings. ?>
+		<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ) : ?>
+			<?php if ( get_option('nebula_business_hours_' . $weekday . '_enabled') && get_option('nebula_business_hours_' . $weekday . '_open') != '' && get_option('nebula_business_hours_' . $weekday . '_close') != '' ) : ?>
+				<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
+				<meta property="business:hours:start" content="<?php echo get_option('nebula_business_hours_' . $weekday . '_open'); ?>" />
+				<meta property="business:hours:end" content="<?php echo get_option('nebula_business_hours_' . $weekday . '_close'); ?>" />
+			<?php endif; ?>
+		<?php endforeach; ?>
+				
 		<!-- Facebook Metadata -->
 		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
 		<?php $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>
@@ -108,6 +120,12 @@
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
 		
+		<?php if ( currently_open() ) : ?>
+			<!-- We are open! -->
+		<?php else : ?>
+			<!-- We are closed. -->
+		<?php endif; ?>
+				
 		<div id="fb-root"></div>
 		
 		<noscript>

@@ -289,7 +289,20 @@ get_header(); ?>
 						</div><!--/row-->
 					<?php endif; //End Youtube Meta ?>
 					
-
+					
+					<?php if ( is_page(722) ) : //Currently Open (Business Hours) ?>
+						<div class="row">
+							<div class="sixteen columns">
+								<?php if ( currently_open() ) : ?>
+									<p style="font-size: 32px;"><i class="fa fa-building-o"></i> We are currently <strong style="color: green;">open</strong>!</p>
+								<?php else : ?>
+									<p style="font-size: 32px;"><i class="fa fa-building"></i> We are currently <strong style="color: maroon;">closed</strong>.</p>
+								<?php endif; ?>
+							</div><!--/columns-->
+						</div><!--/row-->
+					<?php endif; //End Nebula Meta ?>
+					
+					
 					<?php if ( is_page(214) ) : //Nebula Meta ?>
 						<div class="row">
 							<div class="sixteen columns">

@@ -28,6 +28,28 @@
 		register_setting('nebula_settings_group', 'nebula_postal_code');
 		register_setting('nebula_settings_group', 'nebula_country_name');
 		
+		register_setting('nebula_settings_group', 'nebula_business_hours_sunday_enabled');
+		register_setting('nebula_settings_group', 'nebula_business_hours_sunday_open');
+		register_setting('nebula_settings_group', 'nebula_business_hours_sunday_close');
+		register_setting('nebula_settings_group', 'nebula_business_hours_monday_enabled');
+		register_setting('nebula_settings_group', 'nebula_business_hours_monday_open');
+		register_setting('nebula_settings_group', 'nebula_business_hours_monday_close');
+		register_setting('nebula_settings_group', 'nebula_business_hours_tuesday_enabled');
+		register_setting('nebula_settings_group', 'nebula_business_hours_tuesday_open');
+		register_setting('nebula_settings_group', 'nebula_business_hours_tuesday_close');
+		register_setting('nebula_settings_group', 'nebula_business_hours_wednesday_enabled');
+		register_setting('nebula_settings_group', 'nebula_business_hours_wednesday_open');
+		register_setting('nebula_settings_group', 'nebula_business_hours_wednesday_close');
+		register_setting('nebula_settings_group', 'nebula_business_hours_thursday_enabled');
+		register_setting('nebula_settings_group', 'nebula_business_hours_thursday_open');
+		register_setting('nebula_settings_group', 'nebula_business_hours_thursday_close');
+		register_setting('nebula_settings_group', 'nebula_business_hours_friday_enabled');
+		register_setting('nebula_settings_group', 'nebula_business_hours_friday_open');
+		register_setting('nebula_settings_group', 'nebula_business_hours_friday_close');
+		register_setting('nebula_settings_group', 'nebula_business_hours_saturday_enabled');
+		register_setting('nebula_settings_group', 'nebula_business_hours_saturday_open');
+		register_setting('nebula_settings_group', 'nebula_business_hours_saturday_close');
+		
 		register_setting('nebula_settings_group', 'nebula_facebook_url');
 		register_setting('nebula_settings_group', 'nebula_facebook_app_id');
 		register_setting('nebula_settings_group', 'nebula_facebook_app_secret');
@@ -71,6 +93,12 @@
 				
 			input[type="text"],
 			input[type="password"] {width: 206px; font-size: 12px;}
+			
+			.businessday span,
+			.businessday input {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+				.businessday.closed span,
+				.businessday.closed input {opacity: 0.4; pointer-events: none;}
+				.businessday input[type="checkbox"] {opacity: 1 !important; pointer-events: all;}
 			
 			.mobiletitle {display: none;}
 						
@@ -127,6 +155,22 @@
 					});
 					return false;
 				});
+				
+				businessHoursCheck();
+				jQuery('.businessday input[type="checkbox"]').on('click', function(){
+					businessHoursCheck();
+				});
+				
+				function businessHoursCheck() {
+					jQuery('.businessday input[type="checkbox"]').each(function(){
+						if ( jQuery(this).prop('checked') ) {
+							jQuery(this).parents('.businessday').removeClass('closed');
+						} else {
+							jQuery(this).parents('.businessday').addClass('closed');
+						}
+					});
+				}
+				
 			});
 		</script>
 		
@@ -235,6 +279,42 @@
 							<p class="helper"><small>The address of the location (or headquarters if multiple locations).</small></p>
 						</td>
 			        </tr>
+			        
+			        <tr valign="top">
+			        	<th scope="row">Business Hours&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_sunday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_sunday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Sunday:</span> <input type="text" name="nebula_business_hours_sunday_open" value="<?php echo get_option('nebula_business_hours_sunday_open'); ?>" style="width: 75px;"/> &ndash; <input type="text" name="nebula_business_hours_sunday_close" value="<?php echo get_option('nebula_business_hours_sunday_close'); ?>" style="width: 75px;"/>
+							</div>
+							
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_monday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_monday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Monday:</span> <input type="text" name="nebula_business_hours_monday_open" value="<?php echo get_option('nebula_business_hours_monday_open'); ?>" style="width: 75px;"/> &ndash; <input type="text" name="nebula_business_hours_monday_close" value="<?php echo get_option('nebula_business_hours_monday_close'); ?>" style="width: 75px;"/>
+							</div>
+							
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_tuesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_tuesday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Tuesday:</span> <input type="text" name="nebula_business_hours_tuesday_open" value="<?php echo get_option('nebula_business_hours_tuesday_open'); ?>" style="width: 75px;"/> &ndash; <input type="text" name="nebula_business_hours_tuesday_close" value="<?php echo get_option('nebula_business_hours_tuesday_close'); ?>" placeholder="5:30 pm" style="width: 75px;"/>
+							</div>
+							
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_wednesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_wednesday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Wednesday:</span> <input type="text" name="nebula_business_hours_wednesday_open" value="<?php echo get_option('nebula_business_hours_wednesday_open'); ?>" style="width: 75px;"/> &ndash; <input type="text" name="nebula_business_hours_wednesday_close" value="<?php echo get_option('nebula_business_hours_wednesday_close'); ?>" style="width: 75px;"/>
+							</div>
+							
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_thursday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_thursday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Thursday:</span> <input type="text" name="nebula_business_hours_thursday_open" value="<?php echo get_option('nebula_business_hours_thursday_open'); ?>" style="width: 75px;"/> &ndash; <input type="text" name="nebula_business_hours_thursday_close" value="<?php echo get_option('nebula_business_hours_thursday_close'); ?>" style="width: 75px;"/>
+							</div>
+							
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_friday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_friday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Friday:</span> <input type="text" name="nebula_business_hours_friday_open" value="<?php echo get_option('nebula_business_hours_friday_open'); ?>" style="width: 75px;"/> &ndash; <input type="text" name="nebula_business_hours_friday_close" value="<?php echo get_option('nebula_business_hours_friday_close'); ?>" style="width: 75px;"/>
+							</div>
+							
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_saturday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_saturday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Saturday:</span> <input type="text" name="nebula_business_hours_saturday_open" value="<?php echo get_option('nebula_business_hours_saturday_open'); ?>" style="width: 75px;"/> &ndash; <input type="text" name="nebula_business_hours_saturday_close" value="<?php echo get_option('nebula_business_hours_saturday_close'); ?>" style="width: 75px;"/>
+							</div>
+							
+							<p class="helper"><small>Open/Close times. Times should be in the format "5:30 pm" or "17:30". Uncheck all to disable this meta.</small></p>
+						</td>
+			        </tr>
+			        
 			        <tr valign="top">
 			        	<th scope="row">Facebook&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
@@ -280,6 +360,7 @@
 							<p class="helper"><small>The URL of the associated Instagram page.</small></p>
 						</td>
 			        </tr>
+			        
 			    </table>
 				
 				<h2 class="mobiletitle">Functions</h2>
@@ -374,7 +455,7 @@
 				<h2 class="mobiletitle">Administration</h2>
 				<hr class="mobiletitle"/>
 				
-				<table class="form-table dependent administration">
+				<table class="form-table dependent administration" style="display: none;">
 			        <tr valign="top">
 			        	<th scope="row">Control Panel&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
