@@ -904,14 +904,16 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		echo '</ul>';
 		
 		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles" style="display: inline-block; margin-bottom: 10px;"><input class="findterm" type="text" placeholder="Search files" style="padding: 2px 5px; font-size: 12px; border-radius: 4px;" /><select class="searchdirectory" style="font-size: 12px; height: 23px; vertical-align: top;"><option value="theme">Theme</option><option value="plugin">Plugins</option></select><input class="searchterm button button-primary" type="submit" value="Search" style="font-size: 12px; line-height: 11px; height: 22px; margin: 1px 1px; outline: none !important;" /></form><br/>';		
-		echo '<textarea class="search_results" placeholder="Results" wrap="off" readonly style="display: none; width: 100%; font-size: 10px; resize: vertical; border-color: #ddd !important; box-shadow: none !important; border-radius: 4px;"></textarea><div style="text-align: right;"><a class="selectall" href="#" style="display: none; font-size: 9px;">Select All</a></div>';
+		//echo '<textarea class="search_results" placeholder="Results" wrap="off" readonly style="display: none; width: 100%; font-size: 10px; resize: vertical; border-color: #ddd !important; box-shadow: none !important; border-radius: 4px;"></textarea><div style="text-align: right;"><a class="selectall" href="#" style="display: none; font-size: 9px;">Select All</a></div>';
+		
+		echo '<div class="search_results" style="display: none; font-size: 10px; background: #f6f6f6; border: 1px solid #ddd; border-radius: 4px; padding: 5px; min-height: 150px; max-height: 500px; overflow: auto; resize: vertical; white-space: nowrap;"></div>';
 	}
 }
 
 add_action('wp_ajax_search_theme_files', 'search_theme_files');
 add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
 function search_theme_files() {
-	echo "Search results for \"" . $_POST['data'][0]['searchData'] . "\" in " . $_POST['data'][0]['directory'] . " files.\r\n-----------------------------------------\r\n\r\n";
+	echo '<p style="font-size: 10px; margin: 0;">Search results for <strong>"' . $_POST['data'][0]['searchData'] . '"</strong> in <em>' . $_POST['data'][0]['directory'] . '</em> files.</p><br/>';
 	
 	if ( $_POST['data'][0]['directory'] == 'theme' ) {
 		$dirpath = get_template_directory();
@@ -932,12 +934,19 @@ function search_theme_files() {
 		        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
 		            $result_counter++;
 		            $actualLineNumber = $lineNumber+1;
-					echo str_replace($dirpath, '', dirname($file)) . '/' . basename($file) . ' on line ' . $actualLineNumber . "\r\n";
+					echo '
+						<style>
+							.actualline.open {display: table !important;}
+						</style>
+						<div class="linewrap">
+							<p style="font-size: 10px; margin: 0;">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong> on <a class="linenumber" href="#">line ' . $actualLineNumber . '</a>.</p>
+							<pre class="actualline" style="display: none; font-family: monospace; font-size: 10px; margin: 0; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none;">' . trim(htmlentities($line)) . '</pre>
+						</div>';
 		        }
 		    }
-		}
+		}		
 	}
-	echo "\r\n-----------------------------------------\r\nFound " . $result_counter . " results.";
+	echo '<br/><p style="font-size: 10px; margin: 0;">Found <strong>' . $result_counter . '</strong> files.</p>';
 	exit();
 }
 

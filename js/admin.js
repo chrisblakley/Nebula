@@ -73,6 +73,8 @@ jQuery(document).ready(function() {
 					jQuery("#searchprogress").removeClass().addClass("fa fa-search fa-fw");
 					jQuery("textarea.search_results").val(response).fadeIn().css("height", "250px");
 					jQuery(".selectall").fadeIn();
+					
+					jQuery('div.search_results').html(response).fadeIn();
 				},
 				error: function(MLHttpRequest, textStatus, errorThrown){
 					jQuery("textarea.search_results").val(errorThrown).fadeIn();
@@ -89,6 +91,11 @@ jQuery(document).ready(function() {
 	jQuery(document).on("click", ".selectall", function(){
 		jQuery("textarea.search_results").focus().select();
 		return false; 
+	});
+	
+	jQuery(document).on("click", ".linenumber", function(){
+		jQuery(this).parents('.linewrap').find('.actualline').toggleClass('open');
+		return false;
 	});
 	
 	
