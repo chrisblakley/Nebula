@@ -902,7 +902,43 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';
+		
+		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles" style="display: inline-block; margin-bottom: 10px;"><input class="findterm" type="text" placeholder="Search files" style="padding: 2px 5px; font-size: 12px; border-radius: 4px;" /><select class="searchdirectory" style="font-size: 12px; height: 23px; vertical-align: top;"><option value="theme">Theme</option><option value="plugin">Plugins</option></select><input class="searchterm button button-primary" type="submit" value="Search" style="font-size: 12px; line-height: 11px; height: 22px; margin: 1px 1px; outline: none !important;" /></form><br/>';		
+		echo '<textarea class="search_results" placeholder="Results" wrap="off" readonly style="display: none; width: 100%; font-size: 10px; resize: vertical; border-color: #ddd !important; box-shadow: none !important; border-radius: 4px;"></textarea><div style="text-align: right;"><a class="selectall" href="#" style="display: none; font-size: 9px;">Select All</a></div>';
 	}
+}
+
+add_action('wp_ajax_search_theme_files', 'search_theme_files');
+add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
+function search_theme_files() {
+	echo "Search results for \"" . $_POST['data'][0]['searchData'] . "\" in " . $_POST['data'][0]['directory'] . " files.\r\n-----------------------------------------\r\n\r\n";
+	
+	if ( $_POST['data'][0]['directory'] == 'theme' ) {
+		$dirpath = get_template_directory();
+	} else {
+		$dirpath = ABSPATH . 'wp-content/plugins';
+	}
+	
+	$dir = glob_r($dirpath . '/*');
+	$result_counter = 0;
+	foreach ($dir as $file) {
+		if ( is_file($file) ) {
+		    if ( strpos(basename($file), $_POST['data'][0]['searchData']) !== false ) {
+			    echo str_replace($dirpath, '', dirname($file)) . '/' . basename($file) . "\r\n";
+		    }
+		    
+		    $lines = file($file);
+		    foreach ($lines as $lineNumber => $line) {
+		        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
+		            $result_counter++;
+		            $actualLineNumber = $lineNumber+1;
+					echo str_replace($dirpath, '', dirname($file)) . '/' . basename($file) . ' on line ' . $actualLineNumber . "\r\n";
+		        }
+		    }
+		}
+	}
+	echo "\r\n-----------------------------------------\r\nFound " . $result_counter . " results.";
+	exit();
 }
 
 
@@ -1438,17 +1474,17 @@ function complete_version_removal() {
 
 
 //Allow pages to have excerpts too
-add_post_type_support( 'page', 'excerpt' );
+add_post_type_support('page', 'excerpt');
 
 
 //Add thumbnail support
-if ( function_exists( 'add_theme_support' ) ) :
-	add_theme_support( 'post-thumbnails' );
+if ( function_exists('add_theme_support') ) :
+	add_theme_support('post-thumbnails');
 endif;
 
 
 //Add new image sizes
-add_image_size( 'example', 32, 32, 1 );
+add_image_size('example', 32, 32, 1);
 
 
 //Dynamic Page Titles
@@ -1487,7 +1523,7 @@ function filter_wp_title($title, $separator) {
 add_action('widgets_init', 'nebula_widgets_init');
 function nebula_widgets_init() {
 	//Sidebar 1
-	register_sidebar( array(
+	register_sidebar(array(
 		'name' => 'Primary Widget Area',
 		'id' => 'primary-widget-area',
 		'description' => 'The primary widget area', 'boilerplate',
@@ -1498,7 +1534,7 @@ function nebula_widgets_init() {
 	) );
 
 	//Sidebar 2
-	register_sidebar( array(
+	register_sidebar(array(
 		'name' => 'Secondary Widget Area',
 		'id' => 'secondary-widget-area',
 		'description' => 'The secondary widget area',
@@ -1509,7 +1545,7 @@ function nebula_widgets_init() {
 	) );
 
 	//Footer 1
-	register_sidebar( array(
+	register_sidebar(array(
 		'name' => 'First Footer Widget Area',
 		'id' => 'first-footer-widget-area',
 		'description' => 'The first footer widget area',
@@ -1520,7 +1556,7 @@ function nebula_widgets_init() {
 	) );
 
 	//Footer 2
-	register_sidebar( array(
+	register_sidebar(array(
 		'name' => 'Second Footer Widget Area',
 		'id' => 'second-footer-widget-area',
 		'description' => 'The second footer widget area',
@@ -1531,7 +1567,7 @@ function nebula_widgets_init() {
 	) );
 
 	//Footer 3
-	register_sidebar( array(
+	register_sidebar(array(
 		'name' => 'Third Footer Widget Area',
 		'id' => 'third-footer-widget-area',
 		'description' => 'The third footer widget area',
@@ -1542,7 +1578,7 @@ function nebula_widgets_init() {
 	) );
 
 	//Footer 4
-	register_sidebar( array(
+	register_sidebar(array(
 		'name' => 'Fourth Footer Widget Area',
 		'id' => 'fourth-footer-widget-area',
 		'description' => 'The fourth footer widget area',
@@ -1555,7 +1591,7 @@ function nebula_widgets_init() {
 
 
 //Override the default Wordpress search form
-add_filter( 'get_search_form', 'my_search_form' );
+add_filter('get_search_form', 'my_search_form');
 function my_search_form($form) {
     $form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
 	    <div>
@@ -1568,7 +1604,7 @@ function my_search_form($form) {
 
 
 //Name the locations where Navigation Menus will be located (to avoid duplicate IDs)
-add_action( 'after_setup_theme', 'nav_menu_locations' );
+add_action('after_setup_theme', 'nav_menu_locations');
 function nav_menu_locations() {
 	// Register nav menu locations
 	register_nav_menus( array(
@@ -1632,7 +1668,7 @@ function nebula_backup_contact_send() {
 	$message = $_POST['data'][0]['message'] + '\n\n\nThis message was sent by the backup contact form!';
 	$headers = 'From: ' . $_POST['data'][0]['name'] . ' <' . $_POST['data'][0]['email'] . '>';
 	wp_mail($to, $subject, $message, $headers);
-	die();
+	exit();
 }
 
 

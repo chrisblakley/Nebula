@@ -49,7 +49,47 @@ jQuery(document).ready(function() {
 	});
 	
 	
+	//PHG Metabox
+	jQuery(document).on("keyup", "input.findterm", function(){
+		jQuery("input.findterm").attr("placeholder", "Search files");
+	});
 	
+	jQuery(document).on("submit", ".searchfiles", function(e){
+		if ( jQuery("input.findterm").val().trim().length >= 3 ) {
+			
+			jQuery("#searchprogress").removeClass().addClass("fa fa-spinner fa-fw fa-spin");
+			
+			jQuery.ajax({
+				type: "POST",
+				url: bloginfo['admin-ajax'],
+				data: {
+					action: "search_theme_files",
+					data: [{
+						"directory": jQuery("select.searchdirectory").val(),
+						"searchData": jQuery("input.findterm").val()
+					}]
+				},
+				success: function(response){
+					jQuery("#searchprogress").removeClass().addClass("fa fa-search fa-fw");
+					jQuery("textarea.search_results").val(response).fadeIn().css("height", "250px");
+					jQuery(".selectall").fadeIn();
+				},
+				error: function(MLHttpRequest, textStatus, errorThrown){
+					jQuery("textarea.search_results").val(errorThrown).fadeIn();
+				},
+				timeout: 60000
+			});
+		} else {
+			jQuery("input.findterm").val("").attr("placeholder", "Minimum 3 characters.");
+		}
+		e.preventDefault();
+		return false;
+	});
+
+	jQuery(document).on("click", ".selectall", function(){
+		jQuery("textarea.search_results").focus().select();
+		return false; 
+	});
 	
 	
 
