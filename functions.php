@@ -903,50 +903,78 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';
 		
-		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles" style="display: inline-block; margin-bottom: 10px;"><input class="findterm" type="text" placeholder="Search files" style="padding: 2px 5px; font-size: 12px; border-radius: 4px;" /><select class="searchdirectory" style="font-size: 12px; height: 23px; vertical-align: top;"><option value="theme">Theme</option><option value="plugin">Plugins</option></select><input class="searchterm button button-primary" type="submit" value="Search" style="font-size: 12px; line-height: 11px; height: 22px; margin: 1px 1px; outline: none !important;" /></form><br/>';		
-		//echo '<textarea class="search_results" placeholder="Results" wrap="off" readonly style="display: none; width: 100%; font-size: 10px; resize: vertical; border-color: #ddd !important; box-shadow: none !important; border-radius: 4px;"></textarea><div style="text-align: right;"><a class="selectall" href="#" style="display: none; font-size: 9px;">Select All</a></div>';
+		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br/>';		
 		
-		echo '<div class="search_results" style="display: none; font-size: 10px; background: #f6f6f6; border: 1px solid #ddd; border-radius: 4px; padding: 5px; min-height: 150px; max-height: 500px; overflow: auto; resize: vertical; white-space: nowrap;"></div>';
+		echo '<div class="search_results"></div>';
 	}
 }
 
+//Search theme or plugin files via PHG Metabox
 add_action('wp_ajax_search_theme_files', 'search_theme_files');
 add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
 function search_theme_files() {
-	echo '<p style="font-size: 10px; margin: 0;">Search results for <strong>"' . $_POST['data'][0]['searchData'] . '"</strong> in <em>' . $_POST['data'][0]['directory'] . '</em> files.</p><br/>';
+	if ( strlen($_POST['data'][0]['searchData']) < 3 ) {
+		echo '<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>';
+		die();
+	}
 	
 	if ( $_POST['data'][0]['directory'] == 'theme' ) {
 		$dirpath = get_template_directory();
+	} elseif ( $_POST['data'][0]['directory'] == 'plugins' ) {
+		$dirpath = WP_PLUGIN_DIR;
+	} elseif ( $_POST['data'][0]['directory'] == 'uploads' ) {
+		$uploadDirectory = wp_upload_dir();
+		$dirpath = $uploadDirectory['basedir'];
 	} else {
-		$dirpath = ABSPATH . 'wp-content/plugins';
+		echo '<p><strong>Error:</strong> Please specify a directory to search!</p>';
+		die();
 	}
 	
+	echo '<p class="resulttext">Search results for <strong>"' . $_POST['data'][0]['searchData'] . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br/>';
+	
 	$dir = glob_r($dirpath . '/*');
-	$result_counter = 0;
-	foreach ($dir as $file) {
+	$file_counter = 0;
+	$instance_counter = 0;
+	foreach ( $dir as $file ) {
+		$counted = 0;
 		if ( is_file($file) ) {
 		    if ( strpos(basename($file), $_POST['data'][0]['searchData']) !== false ) {
-			    echo str_replace($dirpath, '', dirname($file)) . '/' . basename($file) . "\r\n";
+			    echo '<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong></p>';
+			    $file_counter++;
+			    $counted = 1;
 		    }
 		    
-		    $lines = file($file);
-		    foreach ($lines as $lineNumber => $line) {
-		        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
-		            $result_counter++;
-		            $actualLineNumber = $lineNumber+1;
-					echo '
-						<style>
-							.actualline.open {display: table !important;}
-						</style>
-						<div class="linewrap">
-							<p style="font-size: 10px; margin: 0;">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong> on <a class="linenumber" href="#">line ' . $actualLineNumber . '</a>.</p>
-							<pre class="actualline" style="display: none; font-family: monospace; font-size: 10px; margin: 0; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none;">' . trim(htmlentities($line)) . '</pre>
-						</div>';
-		        }
+		    $skipExtensions = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'tiff', 'psd', 'ai', 'apng', 'bmp', 'otf', 'ttf', 'ogv', 'flv', 'fla', 'mpg', 'mpeg', 'avi', 'mov', 'woff', 'eot', 'mp3', 'mp4', 'wmv', 'wma', 'aiff', 'zip', 'zipx', 'rar', 'exe', 'dmg', 'swf', 'pdf', 'pdfx', 'pem');
+		    $skipFilenames = array('error_log');
+		    if ( !contains(basename($file), $skipExtensions) && !contains(basename($file), $skipFilenames) ) {
+			    $lines = file($file);
+			    foreach ($lines as $lineNumber => $line) {
+			        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
+			            $actualLineNumber = $lineNumber+1;
+						echo '<div class="linewrap">
+								<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong> on <a class="linenumber" href="#">line ' . $actualLineNumber . '</a>.</p>
+								<div class="precon"><pre class="actualline">' . trim(htmlentities($line)) . '</pre></div>
+							</div>';
+						$instance_counter++;
+						if ( $counted == 0 ) {
+							$file_counter++;
+							$counted = 1;
+						}
+			        }
+			    }
 		    }
 		}		
 	}
-	echo '<br/><p style="font-size: 10px; margin: 0;">Found <strong>' . $result_counter . '</strong> files.</p>';
+	echo '<br/><p class="resulttext">Found ';
+	if ( $instance_counter ) {
+		echo '<strong>' . $instance_counter . '</strong> instances in ';
+	}
+	echo '<strong>' . $file_counter . '</strong> file';
+	if ( $file_counter == 1 ) {
+		echo '.</p>';
+	} else {
+		echo 's.</p>';
+	}
 	exit();
 }
 
@@ -1764,26 +1792,23 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 	return $string[0];
 }
 
-//Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
-//Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
-function nebula_manage($data) {
-	if ( $data == 'edit' || $data == 'admin' ) {
-		echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="fa fa-wrench"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="fa fa-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
-	} elseif ( $data == 'modified' || $data == 'mod' ) {
-		if ( get_the_modified_author() ) {
-			$manage_author = get_the_modified_author();
-		} else {
-			$manage_author = get_the_author();
-		}
-		echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . $manage_author . '</strong></span>';
-	} elseif ( $data == 'info' ) {
-		if ( wp_attachment_is_image() ) {
-			$metadata = wp_get_attachment_metadata();
-			echo ''; //@TODO: In progress
+function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=false, $more=false) {
+	$string = strip_tags(strip_shortcodes($text), '');
+
+	$string = string_limit_words($string, $length);
+	
+	if ( $hellip ) {
+		if ( $string[1] == 1 ) {
+			$string[0] .= '&hellip; ';
 		}
 	}
+		
+	if ( isset($link) && isset($more) && $more != '' ) {
+		$string[0] .= ' <a class="nebula_custom_excerpt" href="' . $link . '">' . $more . '</a>';
+	}
+	
+	return $string[0];
 }
-
 
 //Text limiter by words
 function string_limit_words($string, $word_limit){
@@ -1815,6 +1840,27 @@ function word_limit_chars($string, $charlimit, $continue=false){
 		}
 	}
 	return $newString;
+}
+
+
+//Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
+//Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
+function nebula_manage($data) {
+	if ( $data == 'edit' || $data == 'admin' ) {
+		echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="fa fa-wrench"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="fa fa-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
+	} elseif ( $data == 'modified' || $data == 'mod' ) {
+		if ( get_the_modified_author() ) {
+			$manage_author = get_the_modified_author();
+		} else {
+			$manage_author = get_the_author();
+		}
+		echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . $manage_author . '</strong></span>';
+	} elseif ( $data == 'info' ) {
+		if ( wp_attachment_is_image() ) {
+			$metadata = wp_get_attachment_metadata();
+			echo ''; //@TODO: In progress
+		}
+	}
 }
 
 
@@ -2232,6 +2278,14 @@ function foldersize($path) {
 	return $total_size;
 }
 	
+function contains($str, array $arr) {
+    foreach( $arr as $a ) {
+        if ( stripos($str,$a) !== false ) {
+        	return true;
+        }
+    }
+    return false;
+}
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
 function nebula_tel_link($phone, $postd=''){

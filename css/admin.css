@@ -40,6 +40,19 @@
 
 th#id {width: 50px;}
 
+.wp-admin #testloadcon {pointer-events: none; opacity: 0; visibility: hidden; display: none;}
+
+.wp-admin form.searchfiles {display: inline-block; margin-bottom: 10px; width: 90%;}
+	.wp-admin input.findterm {padding: 2px 5px; font-size: 12px; border-radius: 4px; width: 48%;}
+	.wp-admin #wpbody .searchdirectory {font-size: 12px; height: 23px; vertical-align: top;}
+	.wp-admin input.searchterm {font-size: 12px; line-height: 11px; height: 22px; margin: 1px 1px; outline: none !important;}
+.wp-admin .search_results {max-height: 0px; opacity: 0; font-size: 10px; background: #f6f6f6; padding: 5px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; -webkit-transition: all 1s ease 0s; -moz-transition: all 1s ease 0s; -o-transition: all 1s ease 0s; transition: all 1s ease 0s;}
+	.wp-admin .search_results.done {max-height: 500px; opacity: 1;}
+
+.wp-admin .resulttext {font-size: 10px; margin: 0;}
+	div.precon {display: none;}
+		.wp-admin pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+
 /*==========================
  Nebula TinyMCE Toolbar 
  ===========================*/
