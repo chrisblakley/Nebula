@@ -3,6 +3,8 @@
  * The template for displaying Search Results pages.
  */
 
+if ( !defined('ABSPATH') ) { exit; } //Exit if accessed directly
+
 get_header(); ?>
 
 <div class="row">

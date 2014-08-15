@@ -4,6 +4,8 @@
  * @TODO: Delete this file before launching the site!
  */
 
+if ( !defined('ABSPATH') ) { exit; } //Exit if accessed directly
+
 get_header(); ?>
 
 <script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script>
@@ -1521,6 +1523,91 @@ get_header(); ?>
 					<?php if ( is_page(614) ) : //CSS Position: Sticky ?>
 						<!--STUFF-->
 					<?php endif; //End CSS Position: Sticky ?>
+					
+					
+					<?php if ( is_page(737) ) : //Notification API ?>
+						
+						<script>
+							function checkNotificationPermission() {
+								Notification = window.Notification || window.mozNotification || window.webkitNotification;
+								if ( !(Notification) ) {
+									console.log("This browser does not support desktop notifications.");
+								} else if ( Notification.permission === "granted" ) {
+									return true;
+								} else if ( Notification.permission !== 'denied' ) {
+									Notification.requestPermission(function (permission) {
+										if( !('permission' in Notification) ) {
+											Notification.permission = permission;
+										}
+										
+										if (permission === "granted") {
+											return true;
+										}
+									});
+								}
+								return false;
+							}
+							
+							function notifyMe() {
+								if ( checkNotificationPermission() ) {
+									instance = new Notification( //@TODO: Create an array of notification instances so they can be eached through or all closed at once.
+										"This is the notification title", { //Title (Required)
+											dir: "auto", //Direction ["auto", "ltr", "rtl"] (optional)
+											lang: "en-US", //Language (optional)
+											body: "This is the notification message.", //Body message (optional)
+											tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
+											icon: bloginfo['template_directory'] + "/images/og-thumb2.png" //Thumbnail Icon (optional)
+										}
+									);
+						
+									instance.onclick = function () {
+										console.log('You clicked the notification tagged ' + instance['tag'] + '.');
+										window.open("http://gearside.com/nebula/");
+									};
+									instance.onerror = function () {
+										console.log('There was an error with the notification tagged ' + instance['tag'] + '.');
+									};
+									instance.onshow = function () {
+										console.log('The notification tagged ' + instance['tag'] + ' has been shown.');
+									};
+									instance.onclose = function () {
+										console.log('You closed the notification tagged ' + instance['tag'] + '.');
+									};
+								}
+								return false;
+							}
+							
+							function closeNotifications() {
+								if ( typeof instance != 'undefined' ) {
+									instance.close();
+								}
+								return false;
+							}
+						</script>
+						
+						<div class="medium primary btn">
+							<a href="#" onclick="notifyMe()">Create Notification</a>
+						</div>
+						
+						<div class="medium default btn">
+							<a href="#" onclick="closeNotifications()">Close Last Notifications</a>
+						</div>
+					<?php endif; //End Notification API ?>
+					
+					
+					<?php if ( is_page(614) ) : //Seamless Iframe ?>
+						<!--STUFF-->
+					<?php endif; //End Seamless Iframes ?>
+					
+					
+					<?php if ( is_page(614) ) : //Device Orientation ?>
+						<!--STUFF-->
+					<?php endif; //End Device Orientation ?>
+					
+					
+					<?php if ( is_page(614) ) : //Device Motion API ?>
+						<!--STUFF-->
+					<?php endif; //End Device Motion API ?>
 					
 					
 					<?php if ( is_page(1234) ) : //Image Orientation ?>

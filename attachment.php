@@ -3,6 +3,8 @@
  * The template for displaying attachments.
  */
 
+if ( !defined('ABSPATH') ) { exit; } //Exit if accessed directly
+
 get_header(); ?>
 
 <div class="row">
