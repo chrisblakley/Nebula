@@ -30,6 +30,17 @@ get_header(); ?>
 	<hr/>
 </div><!--/container-->
 
+<?php if ( is_page(680) ) : //Hero Slider ?>
+	<div class="container">
+		<!-- @TODO: bx-viewport box-shadow: none, border: none, background: none. -->
+		<ul class="bxslider heroslider">
+			<li><img src="http://placehold.it/1600x500" title="Placeholder" /></li>
+			<li><img src="http://placebear.com/1600/500" title="PlaceBear" /></li>
+			<li><img src="http://placekitten.com/1600/500" title="PlaceKitten" /></li>
+		</ul>
+	</div><!--/container-->
+<?php endif; //End Hero Slider ?>
+
 <div class="container">
 	<div class="row">
 		<div class="eleven columns">
@@ -1525,74 +1536,113 @@ get_header(); ?>
 					<?php endif; //End CSS Position: Sticky ?>
 					
 					
-					<?php if ( is_page(737) ) : //Notification API ?>
-						
+					<?php if ( is_page(742) ) : //History API ?>
 						<script>
-							function checkNotificationPermission() {
-								Notification = window.Notification || window.mozNotification || window.webkitNotification;
-								if ( !(Notification) ) {
-									console.log("This browser does not support desktop notifications.");
-								} else if ( Notification.permission === "granted" ) {
-									return true;
-								} else if ( Notification.permission !== 'denied' ) {
-									Notification.requestPermission(function (permission) {
-										if( !('permission' in Notification) ) {
-											Notification.permission = permission;
+							jQuery(document).ready(function() {	
+								history.replaceState(null, document.title, location);
+								history.pushState(null, document.title, location);
+								console.log('History state modified.');
+								
+								if (window.history && window.history.pushState) {
+									window.addEventListener("popstate", function(e) {
+										if ( !window.dontnavigate ) {
+											window.location = "http://gearside.com/";
 										}
-										
-										if (permission === "granted") {
-											return true;
-										}
-									});
+										e.stopPropagation();
+									}, false);
 								}
-								return false;
-							}
+							});
 							
-							function notifyMe() {
-								if ( checkNotificationPermission() ) {
-									instance = new Notification( //@TODO: Create an array of notification instances so they can be eached through or all closed at once.
-										"This is the notification title", { //Title (Required)
-											dir: "auto", //Direction ["auto", "ltr", "rtl"] (optional)
-											lang: "en-US", //Language (optional)
-											body: "This is the notification message.", //Body message (optional)
-											tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-											icon: bloginfo['template_directory'] + "/images/og-thumb2.png" //Thumbnail Icon (optional)
-										}
-									);
-						
-									instance.onclick = function () {
-										console.log('You clicked the notification tagged ' + instance['tag'] + '.');
-										window.open("http://gearside.com/nebula/");
-									};
-									instance.onerror = function () {
-										console.log('There was an error with the notification tagged ' + instance['tag'] + '.');
-									};
-									instance.onshow = function () {
-										console.log('The notification tagged ' + instance['tag'] + ' has been shown.');
-									};
-									instance.onclose = function () {
-										console.log('You closed the notification tagged ' + instance['tag'] + '.');
-									};
-								}
-								return false;
-							}
-							
-							function closeNotifications() {
-								if ( typeof instance != 'undefined' ) {
-									instance.close();
-								}
+							function modifyURL() {
+								window.dontnavigate = 1;
+								history.replaceState(null, "Changing the Title Too", "http://gearside.com/new-url");
+								console.log('URL modified.');
+								
+								jQuery('div.btn a').fadeOut();
+								
+								setTimeout(function(){
+									window.dontnavigate = 0;
+								}, 1000);							
 								return false;
 							}
 						</script>
 						
 						<div class="medium primary btn">
-							<a href="#" onclick="notifyMe()">Create Notification</a>
+							<a href="#" onclick="modifyURL()">Modify the URL</a>
+						</div>
+					<?php endif; //End History API ?>
+					
+					
+					<?php if ( is_page(737) ) : //Notification API ?>
+						
+						<script>
+							jQuery(document).ready(function() {	
+								if ( !checkNotificationPermission() ) {
+									jQuery('.notsupported').removeClass('hidden');
+									jQuery('.basicnotify, .fullnotify').parents('div').removeClass('primary').addClass('danger');
+								}
+								
+								jQuery('.basicnotify').on('click', function(){
+									desktopNotification("Basic Notification", "This is the message");
+									return false;
+								});
+								
+								jQuery('.fullnotify').on('click', function(){
+									var message = {
+										dir: "ltr",
+										lang: "en-US",
+										body: "This is a fully customized notification with callback functions!",
+										icon: bloginfo['template_directory'] + "/images/og-thumb2.png"
+									}
+									desktopNotification("Fully Customized Notification", message, clickNotify, closeNotify, showNotify, errorNotify);
+									
+									function clickNotify() {
+										jQuery('.fullnotify').parents('div').removeClass('primary danger info warning').addClass('success');
+									}
+									
+									function closeNotify() {
+										jQuery('.fullnotify').parents('div').removeClass('warning primary danger success').addClass('info');
+									}
+									
+									function showNotify() {
+										jQuery('.fullnotify').parents('div').removeClass('primary success info danger').addClass('warning');
+									}
+									
+									function errorNotify() {
+										jQuery('.fullnotify').parents('div').removeClass('primary warning success info').addClass('danger');
+									}
+									
+									return false;
+								});
+							});
+						</script>
+						
+						
+						<p class="notsupported hidden" style="font-weight: bold; color: red;">Desktop Notifications are not supported in your browser!</p>
+						
+						
+						<p>The following button passes only a title and body and uses Nebula defaults for everything else:</p>
+						<div class="medium primary btn">
+							<a class="basicnotify" href="#">Basic Notification</a>
 						</div>
 						
-						<div class="medium default btn">
-							<a href="#" onclick="closeNotifications()">Close Last Notifications</a>
+						<br/><br/><br/><p>The following button passes everything and uses the callbacks too:</p>
+						<div class="medium primary btn">
+							<a class="fullnotify" href="#">Fully Customized</a>
 						</div>
+						
+						<!-- @TODO: Make an example of how to close a notification with instance.close(); -->
+																		
 					<?php endif; //End Notification API ?>
+					
+					
+					<?php if ( is_page(760) ) : //bxSlider ?>
+						<ul class="bxslider exampleslider">
+							<li><img src="http://placehold.it/800x400" title="Placeholder" /></li>
+							<li><img src="http://placebear.com/800/400" title="PlaceBear" /></li>
+							<li><img src="http://placekitten.com/800/400" title="PlaceKitten" /></li>
+						</ul>
+					<?php endif; //End bxSlider ?>
 					
 					
 					<?php if ( is_page(614) ) : //Seamless Iframe ?>

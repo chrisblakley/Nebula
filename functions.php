@@ -24,6 +24,7 @@ wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css
 wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0'); //Only useful for 12 col primary, entypo is also re-enabled
 wp_register_style('nebula-font_awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css', array(), '4.1.0');
 wp_register_style('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/css/jquery.mmenu.all.min.css', array(), '4.3.2');
+//wp_register_style('nebula-bxslider', get_template_directory_uri() . '/css/jquery.bxslider.css', array(), '4.1.2'); //bxSlider is conditionally loaded via main.js when needed.
 wp_register_style('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/css/jquery.dataTables.min.css', array(), '1.10');
 wp_register_style('nebula-main', get_stylesheet_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null);
 wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
@@ -66,6 +67,7 @@ wp_register_script('nebula-jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui
 wp_register_script('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/js/umd/jquery.mmenu.umd.all.min.js', array(), '4.3.2', true);
 wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js?' . $GLOBALS['async'], array(), '1.0', true);
 wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js?' . $GLOBALS['defer'], array(), null, true);
+//wp_register_script('nebula-bxslider', get_template_directory_uri() . '/js/libs/jquery.bxslider.min.js?' . $GLOBALS['defer'], array(), '4.1.2', true); //bxSlider is conditionally loaded via main.js when needed.
 wp_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
 wp_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js?async', array(), null, true);
 wp_register_script('nebula-respond', '//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js?' . $GLOBALS['defer'], array(), '1.4.2', true);
@@ -273,6 +275,8 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 /*========================== 
  Server-Side Google Analytics
  ===========================*/
+
+//@TODO: There is a bug where body classes are appearing when using ?debug
 set_error_handler('nebula_error_handler');
 
 //Custom error handler
@@ -2107,7 +2111,8 @@ function mobile_body_class($classes) {
 add_filter('body_class', 'browser_body_class');
 function browser_body_class($classes) {
 	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
-	$browser = get_browser(null, true); //@TODO: Find a server this works on and then wrap in if $browser, then echo the version number too
+	
+	//$browser = get_browser(null, true); //@TODO: Find a server this works on and then wrap in if $browser, then echo the version number too
 	//@TODO: Also look into the function wp_check_browser_version().
 	
     if ( $is_lynx ) {
@@ -2122,9 +2127,11 @@ function browser_body_class($classes) {
     	$classes[] = 'safari';
     } elseif ( $is_chrome ) {
     	$classes[] = 'chrome';
-    	if ( $browser ) {
+    	/*
+		if ( $browser ) {
 	    	$classes[] = 'chrome21';
     	}
+		*/
     } elseif ( $is_IE ) {
     	$classes[] = 'ie';
     } else {
@@ -2690,14 +2697,13 @@ function youtube_shortcode($atts){
 }
 
 
-
 //Pre
 add_shortcode('pre', 'pre_shortcode');
 $GLOBALS['pre'] = 0;
 function pre_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );  	
 	
-	if ( $GLOBALS['pre'] == 0 ) {
+	if ( $GLOBALS['pre'] == 0 ) { //@TODO: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
 		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
@@ -2707,7 +2713,8 @@ function pre_shortcode($atts, $content=''){
 		$content = preg_replace('#<br\s*/?>#', '', $content);
 	}
 	
-	$content = htmlspecialchars($content);
+	//$content = htmlspecialchars($content);
+	$content = htmlentities($content);
 	
 	if ( $lang == '' && $language != '' ) {
 		$lang = $language;	
@@ -2723,16 +2730,16 @@ function pre_shortcode($atts, $content=''){
 	}
 } //end pre_shortcode()
 
+
 //Code
 add_shortcode('code', 'code_shortcode');
 function code_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
 	
 	//$content = htmlspecialchars($content);
-	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . $content . '</code>';
+	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . htmlentities($content) . '</code>';
 
 } //end code_shortcode()
-
 
 
 //Accordion

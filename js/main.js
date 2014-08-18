@@ -1,6 +1,6 @@
 jQuery.noConflict();
 
-jQuery(document).ready(function() {	
+jQuery(document).ready(function() {
 	
 	facebookSDK();
 	conditionalJSLoading();
@@ -757,8 +757,8 @@ function singleResultDrawer(){
 	
 	jQuery('.searchresultsingle .close').on('click', function(){
 		var permalink = jQuery(this).attr('href');
+		history.replaceState(null, document.title, permalink);
 		jQuery('.searchresultsinglecon').slideUp();
-		history.replaceState({}, document.title, permalink);
 		return false;
 	});
 }
@@ -1089,6 +1089,91 @@ function contactBackup() {
 	});
 }
 
+//Create desktop notifications
+function desktopNotification(title, message, clickCallback, closeCallback, showCallback, errorCallback) {
+	if ( checkNotificationPermission() ) {
+		//Set defaults
+		var defaults = {
+			dir: "auto", //Direction ["auto", "ltr", "rtl"] (optional)
+			lang: "en-US", //Language (optional)
+			body: "", //Body message (optional)
+			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
+			icon: bloginfo['template_directory'] + "/images/og-thumb.png" //Thumbnail Icon (optional)
+		}
+		
+		if ( typeof message === "undefined" ) {
+			message = defaults;
+			Gumby.warn('Warning: message is undefined, using defaults.');
+		} else if ( typeof message === "string" ) {
+			body = message;
+			message = defaults;
+			message.body = body;
+			Gumby.log('Note: message is a string, using defaults.');
+		} else {
+			if ( typeof message.dir === "undefined" ) {
+				message.dir = defaults.dir;
+			}
+			if ( typeof message.lang === "undefined" ) {
+				message.lang = defaults.lang;
+			}
+			if ( typeof message.body === "undefined" ) {
+				message.body = defaults.lang;
+				Gumby.warn('Warning: No message body.');
+			}
+			if ( typeof message.tag === "undefined" ) {
+				message.tag = defaults.tag;
+			}
+			if ( typeof message.icon === "undefined" ) {
+				message.icon = defaults.icon;
+			}
+		}
+		
+		instance = new Notification(title, message); //Trigger the notification
+		
+		if ( typeof clickCallback !== "undefined" ) {
+			instance.onclick = function() {
+				clickCallback();
+			};
+		}
+		if ( typeof closeCallback !== "undefined" ) {
+			instance.onclose = function() {
+				closeCallback();
+			};
+		}
+		if ( typeof showCallback !== "undefined" ) {
+			instance.onshow = function() {
+				showCallback();
+			};
+		}
+		if ( typeof errorCallback !== "undefined" ) {
+			instance.onerror = function() {
+				errorCallback();
+			};
+		}
+	}
+	return false;
+}
+
+function checkNotificationPermission() {
+	Notification = window.Notification || window.mozNotification || window.webkitNotification;
+	if ( !(Notification) ) {
+		Gumby.warn("This browser does not support desktop notifications.");
+		return false;
+	} else if ( Notification.permission === "granted" ) {
+		return true;
+	} else if ( Notification.permission !== 'denied' ) {
+		Notification.requestPermission(function (permission) {
+			if( !('permission' in Notification) ) {
+				Notification.permission = permission;
+			}
+			if (permission === "granted") {
+				return true;
+			}
+		});
+	}
+	return false;
+}
+
 //Detect and log errors, and fallback fixes
 function errorLogAndFallback() {
 	//Check if Contact Form 7 is active and if the selected form ID exists
@@ -1129,9 +1214,19 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
 			twitterFeed();
 		}).fail(function(){
-			console.log('twitter.js could not be loaded.');
+			Gumby.warn('twitter.js could not be loaded.');
 			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
 		});
+	}
+	
+	//Only load bxslider library on a page that calls bxslider.
+	if ( jQuery('.bxslider').length ) {
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
+			bxSlider();
+		}).fail(function(){
+			Gumby.warn('bxSlider could not be loaded.');
+		});
+		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
 	}
 	
 	//Only load maskedinput.js library if phone or bday field exists.
@@ -1139,7 +1234,7 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
-			console.log('jquery.maskedinput.js could not be loaded.');
+			Gumby.warn('jquery.maskedinput.js could not be loaded.');
 		});
 	} else {
 		cFormPreValidator();
@@ -1149,23 +1244,13 @@ function conditionalJSLoading() {
 	if ( jQuery('.dataTables_wrapper').length ) {
 		
 	jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){
-			cFormPreValidator();
+			//Do something
 		}).fail(function(){
-			console.log('jquery.dataTables.min.js could not be loaded.');
+			Gumby.warn('jquery.dataTables.min.js could not be loaded.');
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
 	}
 	
-	//Load Gumby UI scripts as needed
-	//THIS IS STILL IN THE TESTING PHASE!
-		//WE NEED TO DETERMINE: Does this work? Is it easier than uncommenting <script> calls in the footer? Is it slower than using links?
-	if ( jQuery('.tab-nav').length ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/ui/gumby.tabs.js').done(function(){
-			//Success
-		}).fail(function(){
-			console.log('gumby.tabs.js could not be loaded.');
-		});
-	}
 } //end conditionalJSLoading()
 
 
@@ -1182,6 +1267,35 @@ function twitterFeed() {
     }
 } //end twitterFeed()
 
+//Place all bxSlider events inside this function!
+function bxSlider() {
+	jQuery('.exampleslider').bxSlider({
+		mode: 'horizontal', //'horizontal', 'vertical', 'fade'
+		speed: 800,
+		captions: false,
+		auto: true,
+		pause: 6000,
+		autoHover: true,
+		adaptiveHeight: true,
+		useCSS: false,
+		easing: 'easeInOutCubic',
+		controls: false
+	});
+	
+	jQuery('.heroslider').bxSlider({
+		mode: 'fade',
+		speed: 800,
+		captions: false,
+		pager: false,
+		auto: true,
+		pause: 6000,
+		autoHover: true,
+		adaptiveHeight: true,
+		useCSS: false,
+		easing: 'easeInOutCubic',
+		controls: true
+	});
+}
 
 function vimeoControls() {
 	if ( jQuery('.vimeoplayer').length ) {

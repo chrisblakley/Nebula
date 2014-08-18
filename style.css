@@ -124,7 +124,7 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 	/* Table Footer Rows */
 	table tfoot tr td {background: grey !important; color: #fff;}
 
-.nebula_the_excerpt {white-space: nowrap;}
+.nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
 .wp_search_submit {color: #444 !important;}
 	.wp_search_submit:hover,
 	.wp_search_submit.hover {color: #000 !important;}
@@ -139,7 +139,7 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 .nebulashadow.inner-top {top: 0; left: 0; height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));}
 .nebulashadow.inner-bottom {bottom: 0; left: 0; height: 12px; position: absolute; width: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0)); -moz-transform: scaleY(-1); -o-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: FlipV; -ms-filter: "FlipV";}
 	.lte-ie9 .nebulashadow.inner-bottom,
-	.lte-ie9 .nebulashadow.above {transform: none; filter:-; -ms-filter:-;} /* Handled with JavaScript */
+	.lte-ie9 .nebulashadow.above {transform: none; filter:-; -ms-filter:-; display: none;}
 	.no-js.lte-ie9 .nebulashadow.inner-bottom,
 	.no-js.lte-ie9 .nebulashadow.above {display: none; visibility: hidden; opacity: 0;}
 .nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
@@ -196,7 +196,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 		
 
 /* ==========================================================================
-   Specific Gumby feature modifications
+   Specific Library feature modifications
    ========================================================================== */
 /* Allows tab text to wrap to a new line */
 .tab-nav > li.active > a {height: auto; line-height: inherit;}
@@ -209,8 +209,6 @@ body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby
 i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .btn, .skiplink {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 
-
-
 .field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: #ca3838;}
 .field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: #ca3838; color: #000; background: #f0c5c5;}
 
@@ -220,10 +218,12 @@ i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .field.success:after {font-family: "FontAwesome"; content: "\f00c"; color: #58c026;}
 .field.success input, .field.success .input, .field.success textarea, .field.success .textarea, .field.success .radio span, .field.success .checkbox span, .field.success .picker {border-color: #d8d8d8; color: #000; background: #efe;}
 
-
 .picker:after {content: "\f0d7"; font-family: "FontAwesome";}
 
-
+div.bx-wrapper div.bx-viewport {left: 0 !important;}
+ul.bxslider {}
+	ul.bxslider li {padding-bottom: 0;}
+.bx-controls-direction a {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
 
 
 /* ==========================================================================
@@ -351,6 +351,8 @@ nav#fixednav {position: relative; z-index: 1000;}
 #heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 10px; margin-top: 10px; padding-left: 10px; text-transform: uppercase; background: rgba(0,0,0,0.5);}
 	.no-rgba #heroslidercon h4 {background: #000;}
 
+.heroslider {}
+	.heroslider img {margin: 0 auto;}
 
 /* ==========================================================================
    Content Area

@@ -1,2 +1,2 @@
-Delete this entire directory before launching the site!!
+Delete this entire directory before launching the site!
 This subdirectory only contains example implementations and code snippets that are not needed for the live site; it will only take up unnecessary server space.

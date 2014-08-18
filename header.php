@@ -34,7 +34,7 @@
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
 		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<!-- @TODO: Create at least one OG Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template (Use PNG to avoid compression artifacts!). -->
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
+		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb.png" />
     	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" />
 		<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
 		<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify admin email address. ?>" />
