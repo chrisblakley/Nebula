@@ -421,7 +421,32 @@ function gaSendData($data) {
 	return $result;
 }
 
-
+//Track Google Page Speed tests
+add_action('wp_footer', 'track_google_pagespeed_checks');
+function track_google_pagespeed_checks() {
+	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ) {		
+		$protocol = stripos($_SERVER['SERVER_PROTOCOL'], 'https') === true ? 'https://' : 'http://';
+		$currentURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+		
+		if ( strpos($currentURL, ".js") !== false ) {
+			exit();
+		} else {
+			global $post;
+			$currentTitle = get_the_title($post->ID);
+		}
+		
+		$data = array(
+			'v' => 1,
+			'tid' => $GLOBALS['ga'],
+			'cid' => gaParseCookie(),
+			't' => 'event',
+			'ec' => 'Google Page Speed', //Category
+			'ea' => $currentURL, //Action
+			'el' => $currentTitle //Label
+		);
+		gaSendData($data);
+	}
+}
 
 /*========================== 
  Nebula Settings
@@ -902,7 +927,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
-			echo '<li><i class="fa fa-clock-o fa-fw"></i> Homepage load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank"><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
+			echo '<li><i class="fa fa-clock-o fa-fw"></i> Homepage load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';

@@ -1645,9 +1645,76 @@ get_header(); ?>
 					<?php endif; //End bxSlider ?>
 					
 					
-					<?php if ( is_page(614) ) : //Seamless Iframe ?>
-						<!--STUFF-->
+					<?php if ( is_page(785) ) : //Seamless Iframe ?>
+						<script>
+							var sandboxSupported = "sandbox" in document.createElement("iframe");
+							console.log(sandboxSupported);
+						</script>
+						
+						<style>
+							.iframeswrap iframe {background-color: none !important;}
+							.iframeswrap iframe h1, .iframeswrap iframe p {color: white;}
+							.iframeswrap iframe a {color: green;}
+						</style>
+						
+						<div class="iframeswrap">
+							<h3>Standard Iframe:</h3>
+							<iframe src="<?php echo bloginfo('template_directory'); ?>/examples/includes/seamless.html" style="width: 100%;"></iframe>
+							<br/>
+							<hr/>
+							<br/>
+							<h3>Seamless Iframe:</h3>
+							<iframe src="<?php echo bloginfo('template_directory'); ?>/examples/includes/seamless.html" seamless style="width: 100%;"></iframe>
+						</div>
 					<?php endif; //End Seamless Iframes ?>
+					
+					
+					<?php if ( is_page(779) ) : //Google Analytics RealTime API ?>
+						<?php
+							/*
+								Request Beta access here (need a project ID from below): https://docs.google.com/forms/d/1qfRFysCikpgCMGqgF3yXdUyQW4xAlLyjKuOoOEFN2Uw/viewform
+								
+								Instructions:
+									Go to: https://console.developers.google.com/
+									Create Project
+									APIs & auth > APIs: Make sure Real Time Reporting API is "ON"
+									Credentials > 
+									
+									Full instructions here: https://developers.google.com/analytics/devguides/reporting/realtime/v3/authorization
+									Test it here: https://developers.google.com/apis-explorer/#p/analytics/v3/analytics.data.realtime.get
+							*/
+						?>
+						
+						<?php
+							/* Not sure if this stuff is needed yet or not
+								$client = new Google_Client();
+								$client->setApplicationName("My Application");
+								$client->setDeveloperKey(MY_SIMPLE_API_KEY);
+								
+								$service = new Google_Service_Books($client);
+							*/
+							
+							/*
+$optParams = array(
+								'dimensions' => 'rt:medium'
+							);
+							
+							try {
+								$results = $analytics->data_realtime->get(
+									'ga:#####',
+									'rt:activeUsers',
+									$optParams
+								);
+								// Success.
+								echo $results;
+							} catch (apiServiceException $e) {
+								// Handle API service exceptions.
+								$error = $e->getMessage();
+							}
+*/
+							
+						?>
+					<?php endif; //End Google Analytics RealTime API ?>
 					
 					
 					<?php if ( is_page(614) ) : //Device Orientation ?>
