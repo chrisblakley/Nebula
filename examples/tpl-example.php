@@ -303,6 +303,40 @@ get_header(); ?>
 					<?php endif; //End Youtube Meta ?>
 					
 					
+					<?php if ( is_page(791) ) : //GET() ?>
+						<script>
+							jQuery(window).on('load', function() {
+								//This can be called on document ready normally, but must reside within main.js or else it becomes a race condition.
+								if ( GET('hello') ) {
+									console.log(GET('hello'));
+									nebula_event('GET Example', 'Test query string: ' + GET('hello'));
+								}
+							});
+						</script>
+					<?php endif; //End GET() ?>
+					
+					
+					<?php if ( is_page(797) ) : //GET() ?>
+						<?php if ( !array_key_exists('debug', $_GET) ) : ?>
+							<h2>Refreshing to enable debug mode!</h2>
+							<script>
+								document.location = "<?php the_permalink(); ?>?debug";
+							</script>
+						<?php else : ?>
+							<script>
+								jQuery(document).on('click', 'a.nebula_event', function(){
+									nebula_event('Example Nebula Event', 'User Triggered', 'This is the label');
+									return false;
+								});
+							</script>
+							
+							<div class="medium primary btn">
+								<a class="nebula_event" href="#">Trigger sample event</a>
+							</div>
+						<?php endif; ?>
+					<?php endif; //End GET() ?>
+					
+					
 					<?php if ( is_page(722) ) : //Currently Open (Business Hours) ?>
 						<div class="row">
 							<div class="sixteen columns">
@@ -1337,15 +1371,13 @@ get_header(); ?>
 											jQuery('#ajax-contact').slideUp();
 											
 											//conversionTracker();
-											ga('send', 'event', 'Contact', 'Submit', 'AJAX Example Form Submission from ' + contactData[0]['name'] + ': "' + contactData[0]['message'] + '"');
-											Gumby.log('Sending GA event: ' + 'Contact', 'Submit', 'AJAX Example Submission');
+											nebula_event('Contact', 'Submit', 'AJAX Example Form Submission from ' + contactData[0]['name'] + ': "' + contactData[0]['message'] + '"');
 										}
 										jQuery('#form-messages').html(response);
 									},
 									error: function(MLHttpRequest, textStatus, errorThrown){
 										jQuery('#form-messages').text(errorThrown);
-										ga('send', 'event', 'Contact', 'Error', 'Contact Form AJAX Error');
-										Gumby.log('Sending GA event: ' + 'Contact', 'Error', 'Contact AJAX Form Error');
+										nebula_event('Contact', 'Error', 'Contact Form AJAX Error');
 									},
 									timeout: 60000
 								});
@@ -1880,8 +1912,7 @@ $optParams = array(
 											jQuery('#start_button_text').text(' No Speech');
 											jQuery('#start_button_icon').removeClass().addClass('fa fa-volume-off');
 											ignore_onend = true;
-											ga('send', 'event', 'Speech Recognition', 'Error', 'No speech was detected.');
-											Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'No speech was detected.');
+											nebula_event('Speech Recognition', 'Error', 'No speech was detected.');
 										}
 									
 										if ( event.error == 'audio-capture' ) {
@@ -1891,8 +1922,7 @@ $optParams = array(
 											jQuery('#start_button_text').text(' No Microphone');
 											jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone-slash');
 											ignore_onend = true;
-											ga('send', 'event', 'Speech Recognition', 'Error', 'No microphone was found.');
-											Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'No microphone was found.');
+											nebula_event('Speech Recognition', 'Error', 'No microphone was found.');
 										}
 									
 										if ( event.error == 'not-allowed' ) {
@@ -1901,15 +1931,13 @@ $optParams = array(
 												jQuery('#start_button').removeClass();
 												jQuery('#start_button_text').text(' Blocked');
 												jQuery('#start_button_icon').removeClass().addClass('fa fa-times-circle');
-												ga('send', 'event', 'Speech Recognition', 'Error', 'Permission to use microphone is blocked.');
-												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'Permission to use microphone is blocked.');
+												nebula_event('Speech Recognition', 'Error', 'Permission to use microphone is blocked.');
 											} else {
 												jQuery('#speech-help').text('Permission to use microphone was denied.');
 												jQuery('#start_button').removeClass();
 												jQuery('#start_button_text').text(' Denied');
 												jQuery('#start_button_icon').removeClass().addClass('fa fa-times-circle-o');
-												ga('send', 'event', 'Speech Recognition', 'Error', 'Permission to use microphone was denied.');
-												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'Permission to use microphone was denied.');
+												nebula_event('Speech Recognition', 'Error', 'Permission to use microphone was denied.');
 											}
 											ignore_onend = true;
 										}
@@ -1943,11 +1971,9 @@ $optParams = array(
 										
 										if ( final_transcript ) {
 											if ( final_transcript.indexOf('*') > -1 ) {
-												ga('send', 'event', 'Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
-												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
+												nebula_event('Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
 											} else {
-												ga('send', 'event', 'Speech Recognition', 'Transcript', '"' + final_transcript + '"');
-												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Transcript', '"' + final_transcript + '"');
+												nebula_event('Speech Recognition', 'Transcript', '"' + final_transcript + '"');
 											}
 										}
 										
@@ -1963,8 +1989,7 @@ $optParams = array(
 								function noSpeechRecognition() {
 									jQuery('#results, #startbuttoncon').hide();
 									jQuery('#speech-help').text('Speech detection is not supported in your browser.').css('color', 'red');
-									ga('send', 'event', 'Speech Recognition', 'Not Supported');
-									Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Not Supported');
+									nebula_event('Speech Recognition', 'Not Supported');
 								}
 									
 								var two_line = /\n\n/g;
@@ -2035,8 +2060,7 @@ $optParams = array(
 												resetStartButton();
 												ignore_onend = true;
 												recognition.stop();
-												ga('send', 'event', 'Speech Recognition', 'Search for: ' + searchQuery);
-												Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Search for: ' + searchQuery);
+												nebula_event('Speech Recognition', 'Search for: ' + searchQuery);
 												searchQuery = searchQuery.replace(' ', '+');
 												window.location.href = bloginfo['home_url'] + '?s=' + searchQuery;
 											}
@@ -2052,8 +2076,7 @@ $optParams = array(
 										jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
 										ignore_onend = true;
 										recognition.stop();
-										ga('send', 'event', 'Speech Recognition', 'Driving Directions');
-										Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Driving Directions');
+										nebula_event('Speech Recognition', 'Driving Directions');
 										window.location.href = 'https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>';
 									}
 									
@@ -2089,13 +2112,11 @@ $optParams = array(
 														jQuery('#ajaxarea').val(response).css('border', '1px solid green');
 														//@TODO: window location href here
 														console.log(response);
-														ga('send', 'event', 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
-														Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
+														nebula_event('Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
 													},
 													error: function(MLHttpRequest, textStatus, errorThrown){
 														console.log('There was an AJAX error: ' + errorThrown);
-														ga('send', 'event', 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
-														Gumby.log('Sending GA event: ' + 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
+														nebula_event('Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
 													},
 													timeout: 60000
 												});

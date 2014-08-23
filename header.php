@@ -3,16 +3,12 @@
 <!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js "><!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js testing"><!--<![endif]-->
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 		
 		<title><?php wp_title('-', true, 'right'); ?></title>
-		
-		<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
-		<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO: Replace '' with keywords. -->
-		<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
 		
 		<meta name="HandheldFriendly" content="True">
 		<meta name="MobileOptimized" content="320">
@@ -26,28 +22,39 @@
 		
 		<link rel="icon" href="<?php bloginfo('template_directory');?>/images/favicon.ico">
 		<link rel="apple-touch-icon" href="<?php bloginfo('template_directory');?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
-		
+				
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
-		<meta property="og:type" content="business.business" />
-		<meta property="og:title" content="<?php bloginfo('name'); ?>" />
-		<meta property="og:url" content="<?php the_permalink(); ?>" />
-		<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_home() ) : ?>
+			<meta property="og:type" content="business.business" />
+			<meta property="og:locale" content="<?php language_attributes(); ?>" />
+			<meta property="og:title" content="<?php the_title(); ?>" />
+			<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+			<meta property="og:url" content="<?php the_permalink(); ?>" />
+			<meta property="og:site_name" content="<?php bloginfo('name'); ?>" />
+			
+			<link rel="canonical" href="<?php the_permalink(); ?>" />
+			
+			<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
+			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO: Replace '' with comma-separated keywords. -->
+			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO: Replace '' with comma-separated news event keywords. -->
+			<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
+			
+			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
+			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify admin email address. ?>" />
+			<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
+			<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
+			<meta property="business:contact_data:street_address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
+			<meta property="business:contact_data:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
+			<meta property="business:contact_data:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
+			<meta property="business:contact_data:postal_code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
+			<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
+		<?php endif; ?>
+		
 		<!-- @TODO: Create at least one OG Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template (Use PNG to avoid compression artifacts!). -->
 		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb.png" />
     	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" />
-		<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
-		<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify admin email address. ?>" />
-		<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
-		<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
-		<meta property="business:contact_data:street_address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
-		<meta property="business:contact_data:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
-		<meta property="business:contact_data:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
-		<meta property="business:contact_data:postal_code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
-		<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
-		<meta property="place:location:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
-		<meta property="place:location:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
-		
+    			
 		<?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Settings. ?>
 		<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ) : ?>
 			<?php if ( get_option('nebula_business_hours_' . $weekday . '_enabled') && get_option('nebula_business_hours_' . $weekday . '_open') != '' && get_option('nebula_business_hours_' . $weekday . '_close') != '' ) : ?>
@@ -61,9 +68,19 @@
 		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
 		<?php $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>
 		<?php $GLOBALS['social']['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
+		<meta property="fb:app_id" content="" /><!-- @TODO: Remove this line if not related to a FB App. -->
 		<meta property="fb:page_id" content="" /><!-- @TODO: Remove this line if not related to a FB Page. -->
 		<meta property="fb:admins" content="" /><!-- @TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" -->
-				
+		
+		<!-- Twitter Metadata -->
+		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="<?php the_title(); ?>" /> 
+		<meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+		<meta name="twitter:image" content="<?php bloginfo('template_directory');?>/images/og-thumb.png" />
+		<meta name="twitter:site" content="" /> <!-- "@username" of website -->
+		<meta name="twitter:creator" content="" /> <!-- "@username" of content creator -->
+						
 		<!-- Google+ Metadata -->
 		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
@@ -71,11 +88,18 @@
 		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
 
 		<!-- Other Social Metadata -->
-		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
 		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
 		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO: Enter the URL of the Youtube page here. ?>
 		<?php $GLOBALS['social']['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO: Enter the URL of the Instagram page here. ?>
-
+		
+		<!-- Local/Geolocation Metadata -->
+		<meta name="geo.placename" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- The city (and state if needed). Replace each respective '' with the appropriate value. -->
+		<meta name="geo.position" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>;<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Semi-colon separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
+		<meta name="geo.region" content="<?php language_attributes(); ?>" />
+		<meta name="ICBM" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Comma and space separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
+		<meta property="place:location:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
+		<meta property="place:location:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
+		
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
 		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>">
@@ -116,16 +140,78 @@
 		</script>
 		
 		<?php wp_head(); ?>
+		
+		<script>
+			<?php //Using this for GA event tracking will note when events are being sent during debug mode (or for admins) without needing to additionally log the event. ?>
+			function nebula_event(category, action, label, value, error1, error2) {
+				category = typeof category !== 'undefined' ? category : null;
+				action = typeof action !== 'undefined' ? action : null;
+				label = typeof label !== 'undefined' ? label : null;
+				value = typeof value !== 'undefined' ? value : null;
+				error1 = typeof error1 !== 'undefined' ? error1 : null;
+				error2 = typeof error2 !== 'undefined' ? error2 : null;
+				
+				if ( category == 'send' && action == 'event' ) {
+					console.warn('Warning: Remove "send" and "event" from nebula_event parameters!');
+					category = label;
+					action = value;
+					label = error1;
+					value = error2;
+				}
+				
+				if ( typeof ga == 'function' ) {
+					ga('send', 'event', category, action, label, value);
+					
+					//@TODO: This can be optimized waaay better...
+					if ( (isDev == 1 || <?php echo (is_dev()) ? '1' : '0'; ?>) && document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 0 ) {
+						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
+							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
+						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
+							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
+						} else {
+							console.log('Sending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value);
+						}
+					} else if ( typeof Gumby !== 'undefined' ) {
+						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
+							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
+						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
+							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
+						} else {
+							Gumby.log('Sending GA event: ' + category, action, label, value);
+						}
+					} else if ( document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 1 ) {
+						console.log('Sending GA event: ' + category, action, label, value);
+					}
+				} else {
+					if ( isDev && document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 1 ) {
+						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
+							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
+						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
+							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
+						} else {
+							console.warn('ga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value);
+						}
+					} else if ( typeof Gumby !== 'undefined' ) {
+						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
+							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
+						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
+							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
+						} else {
+							Gumby.warn('ga() is not defined. Attempted event: ' + category, action, label, value);
+						}
+					} else if ( document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 1 ) {
+						console.warn('ga() is not defined. Attempted event: ' + category, action, label, value);
+					}
+				}
+				
+				
+			}			
+		</script>
 	</head>
 	<body <?php body_class(); ?>>
+	
 		<div id="fullbodywrapper">
 		
-		<?php if ( currently_open() ) : ?>
-			<!-- We are open! -->
-		<?php else : ?>
-			<!-- We are closed. -->
-		<?php endif; ?>
-				
 		<div id="fb-root"></div>
 		
 		<noscript>

@@ -21,8 +21,7 @@ get_header(); ?>
 			<?php global $defer; global $async; ?>
 			<script>
 				var badSearchTerm = jQuery('#s').val();
-				ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm);
-				Gumby.log('Sending GA event: ' + 'Internal Search', 'No Results', badSearchTerm);
+				nebula_event('Internal Search', 'No Results', badSearchTerm);
 			</script>
 		<?php endif; ?>
 		<?php if ( have_posts() ) : ?>

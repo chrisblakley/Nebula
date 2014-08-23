@@ -233,26 +233,19 @@ function nebula_plugin_force_settings(){
 	    $se_options['se_use_highlight'] = false; //Disable search keyword highlighting (to prevent interference with Nebula keyword highlighting)
 	    update_option('se_options', $se_options);
 	}
+	//Wordpress SEO (Yoast)
+	/*
+if ( file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ) {
+		$wpseo = get_option('wpseo');
+		$wpseo['ignore_meta_description_warning'] = true;
+		$wpseo['ignore_tour'] = true;
+		$wpseo['theme_description_found'] = false;
+		$wpseo['theme_has_description'] = false;
+		update_option('wpseo', $wpseo); //@TODO: Seems like this is working, but being overwritten again when the plugin loads or something... Maybe need to remove the check of the options?
+	}
+*/
 }
 
-//Unset admin plugins from appearing on the frontend
-//add_action('option_active_plugins', 'nebula_unset_admin_plugins_on_frontend'); //@TODO: This causes a big error and deactivates all plugins. Should probably just delete this function.
-function nebula_unset_admin_plugins_on_frontend($plugins) {
-	if ( !is_admin() ) {
-		//var_dump($plugins);
-		$admin_only_plugins = array_search('ultimate-tinymce/main.php' , $plugins); //@TODO: make this an array, then foreach through $admin_only_plugins as $admin_only_plugin //@TODO: This is not working...
-		//$admin_only_plugins = array_search('contact-form-7/wp-contact-form-7.php' , $plugins); //This one works.
-		/* @TODO: Add the following too:
-			admin-menu-tree-page-view/index.php
-			reveal-ids-for-wp-admin-25/reveal-ids-for-wp-admin-25.php
-		*/
-		if ( $admin_only_plugins ) {
-			unset($plugins[$admin_only_plugins]);
-		}
-		//var_dump($plugins);
-		return $plugins;
-	}
-}
 
 //Override existing functions (typcially from plugins)
 //Please add a comment with the reason for the override!
@@ -260,6 +253,7 @@ add_action('wp_print_scripts', 'nebula_remove_actions', 9999);
 function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
 	if ( !is_admin() ) {
 		//Frontend
+		//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
 		remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
 		remove_action('get_footer', 'your_function'); //Ultimate TinyMCE fontend linkback
 		if ( get_the_ID() == 1 ) { remove_action('wp_footer', 'cff_js', 10); } //Custom Facebook Feed - Remove the feed from the homepage. @TODO: Update to any page/post type that should NOT have the Facebook Feed
@@ -268,6 +262,7 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 		remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_meta_box('espresso_news_dashboard_widget', 'dashboard', 'normal'); //Event Espresso - Remove Dashboard Metabox
+		//remove_action('init', 'wpseo_description_test'); //Wordpress SEO (Yoast) - Remove Meta Description test (@TODO: Not Working - this function is called all over the place...)
 	}
 }
 
@@ -854,14 +849,38 @@ if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 }
 
 
-//Custom PHG Metabox
-//If user's email address ends in @pinckneyhugo.com and is an administrator
-if ( nebula_settings_conditional('nebula_phg_metabox') ) {
+function is_dev() {
+	//Check if the current IP address matches any of the dev IP address from Nebula Settings
+	$devIPs = explode(', ', get_option('nebula_dev_ip'));
+	foreach ( $devIPs as $devIP ) {
+		if ( $devIP == $_SERVER['REMOTE_ADDR'] ) {
+			return true;
+		}
+	}
+	
+	//Check if the current user's email domain matches pinckneyhugo.com //@TODO: Come up with a better way to do this... maybe another Nebula Setting?
 	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO: Undefined offset: 1   ...?
-	if ( $current_user_domain == 'pinckneyhugo.com' && current_user_can('manage_options') ) {
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+	
+	$devEmails = explode(', ', get_option('nebula_dev_email_domain'));
+	foreach ( $devEmails as $devEmail ) {
+		if ( $devEmail == $current_user_domain ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+//Custom PHG Metabox
+//If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Settings).
+if ( nebula_settings_conditional('nebula_phg_metabox') ) {
+	
+	if ( is_dev() ) {
 		add_action('wp_dashboard_setup', 'phg_dev_metabox');
 	}
+	
 	function phg_dev_metabox() {
 		global $wp_meta_boxes;
 		wp_add_dashboard_widget('custom_help_widget', 'PHG Developer Info', 'custom_dashboard_help');
@@ -1498,11 +1517,25 @@ add_filter('xmlrpc_methods', function($methods) {
    return $methods;
 });
 
+//Add the calling card to the browser console
+add_action('wp_head', 'nebula_calling_card');
+function nebula_calling_card() {
+	//@TODO: if chrome or firefox... (find what other browsers support this)
+	echo "<script>
+		if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ) {
+		console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_bloginfo('template_directory') . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
+		console.log('%c Nebula by Pinckney Hugo Group ', 'padding: 2px 10px; background: #0098d7; color: #fff;');
+		}
+	</script>";
+}
+
 //Add bloginfo variable for JavaScript
-add_action('admin_head', 'js_bloginfo');
-add_action('wp_head', 'js_bloginfo');
-function js_bloginfo() {
+add_action('admin_head', 'js_variables');
+add_action('wp_head', 'js_variables');
+function js_variables() {
 	$upload_dir = wp_upload_dir();
+	$jsAdmin = (current_user_can('manage_options')) ? true : false;
+	
 	echo '<script>bloginfo = [];
 	bloginfo["name"] = "' . get_bloginfo("name") . '";
 	bloginfo["template_directory"] = "' . get_bloginfo("template_directory") . '";
@@ -1510,15 +1543,11 @@ function js_bloginfo() {
 	bloginfo["home_url"] = "' . home_url() . '";
 	bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";
 	bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";
-	bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"</script>';
-}
-
-//Add user variable for JavaScript
-add_action('admin_head', 'js_clientinfo');
-add_action('wp_head', 'js_clientinfo');
-function js_clientinfo() {
-	echo '<script>clientinfo = [];
-	clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";</script>';
+	bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"
+	clientinfo = [];
+	clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";
+	isDev = "' . $jsAdmin . '";
+	debug = "' . $GLOBALS["debug"] . '";</script>';
 }
 
 //Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
@@ -1852,6 +1881,16 @@ function string_limit_words($string, $word_limit){
 	return $limited;
 }
 
+if ( array_key_exists('varcheck', $_GET) ) {
+	$varcheck = false;
+	add_action('init', 'varcheck');
+	function varchecks() {
+		if ( !function_exists('locate_and_check_global_variables') && !$varcheck ) {
+			echo '<p class="varcheck" style="display: none;">vars-will-be-checked-next-reload</p>';
+			$varcheck = true;
+		}	
+	}
+}
 
 //Word limiter by characters
 function word_limit_chars($string, $charlimit, $continue=false){
@@ -1861,9 +1900,9 @@ function word_limit_chars($string, $charlimit, $continue=false){
 	} else{
 		$newString = preg_replace('/\s+?(\S+)?$/', '', substr(strip_tags($string, '<p><span><a>'), 0, ($charlimit + 1)));
 		if($continue == 1){
-			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">' . __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'boilerplate' ) . '</a>';
+			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Continue reading <span class="meta-nav">&rarr;</span></a>';
 		} elseif($continue == 2){
-			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">' . __( 'Learn more &raquo;', 'boilerplate' ) . '</a>';
+			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Learn more &raquo;</a>';
 		} else{
 			$newString = $newString . '&hellip;';
 		}

@@ -18,6 +18,7 @@
 		register_setting('nebula_settings_group', 'nebula_contact_email');
 		register_setting('nebula_settings_group', 'nebula_ga_tracking_id');
 		register_setting('nebula_settings_group', 'nebula_keywords');
+		register_setting('nebula_settings_group', 'nebula_news_keywords');
 		register_setting('nebula_settings_group', 'nebula_phone_number');
 		register_setting('nebula_settings_group', 'nebula_fax_number');
 		register_setting('nebula_settings_group', 'nebula_latitude');
@@ -68,6 +69,8 @@
 		register_setting('nebula_settings_group', 'nebula_unnecessary_metaboxes');
 		register_setting('nebula_settings_group', 'nebula_phg_metabox');
 		
+		register_setting('nebula_settings_group', 'nebula_dev_ip');
+		register_setting('nebula_settings_group', 'nebula_dev_email_domain');
 		register_setting('nebula_settings_group', 'nebula_cpanel_url');
 		register_setting('nebula_settings_group', 'nebula_hosting_url');
 		register_setting('nebula_settings_group', 'nebula_registrar_url');
@@ -182,7 +185,7 @@
 				    wp_die('You do not have sufficient permissions to access this page.');
 				}
 			?>
-			<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the function.php file. It can also be disabled below, or overridden via functions.php if that makes you feel better.</p>
+			<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the functions.php file. It can also be disabled below, or overridden via functions.php if that makes you feel better.</p>
 			
 			<?php if ( get_option('nebula_overall') == 'override' ) : ?>
 				<div id="setting-error-settings_updated" class="error settings-error"> 
@@ -243,7 +246,14 @@
 			        	<th scope="row">Keywords&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_keywords" value="<?php echo get_option('nebula_keywords'); ?>" placeholder="Keywords" style="width: 392px;"/>
-							<p class="helper"><small>Comma-separated list of keywords that will be used as keyword metadata.</small></p>
+							<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">News Keywords&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_news_keywords" value="<?php echo get_option('nebula_news_keywords'); ?>" placeholder="News Keywords" style="width: 392px;"/>
+							<p class="helper"><small>Comma-separated list of news events (without quotes) that will be used as news keyword metadata. Currently, this is a global setting. In the future it should be overwritten by a per-post custom field (or pull from Yoast or likewise). <a href="https://support.google.com/news/publisher/answer/68297" target="_blank">More information &raquo;</a></small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
@@ -456,6 +466,25 @@
 				<hr class="mobiletitle"/>
 				
 				<table class="form-table dependent administration" style="display: none;">
+			        <tr valign="top">
+			        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_dev_ip" value="<?php echo get_option('nebula_dev_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
+							<p class="helper"><small>Comma and space separated IP addresses of the developer to enable specific console logs and other dev info. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<?php
+			        		$current_user = wp_get_current_user();
+							list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+						?>
+			        	
+			        	<th scope="row">Developer Email Domains&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_dev_email_domain" value="<?php echo get_option('nebula_dev_email_domain'); ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
+							<p class="helper"><small>Comma and space separated domains of the developer emails (without the "@") to enable specific console logs and other dev info. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
+						</td>
+			        </tr>
 			        <tr valign="top">
 			        	<th scope="row">Control Panel&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>

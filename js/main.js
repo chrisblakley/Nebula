@@ -5,20 +5,8 @@ jQuery(document).ready(function() {
 	facebookSDK();
 	conditionalJSLoading();
 	
-	/* To be vetted. Turn these into functions.
-		//Pull query strings from URL
-		var queries = new Array(); 
-	    var q = document.URL.split('?')[1];
-	    if(q != undefined){
-	        q = q.split('&');
-	        for(var i = 0; i < q.length; i++){
-	            hash = q[i].split('=');
-	            queries.push(hash[1]);
-	            queries[hash[0]] = hash[1];
-	        }
-		} //End pull query strings from URL
-	*/
-	
+	getQueryStrings();
+		
 	//Init Custom Functions
 	gaEventTracking();
 	
@@ -64,11 +52,9 @@ jQuery(document).ready(function() {
 	    	//Track size change
 	    	/* viewportResized = updateViewportDimensions();  //@TODO: This breaks in IE8
 	    	if ( viewport.width > viewportResized.width ) {
-	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    		Gumby.log('Sending GA event: ' + 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    		nebula_event('Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	} else if ( viewport.width < viewportResized.width ) {
-	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    		Gumby.log('Sending GA event: ' + 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    		nebula_event('Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	}
 	    	viewport = updateViewportDimensions();
 	    	//console.debug(viewport); */
@@ -140,8 +126,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Like', currentPage);
-			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Like', currentPage);
+			nebula_event('Social', 'Facebook Like', currentPage);
 		});
 	
 		//Facebook Unlikes
@@ -154,8 +139,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
-			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Unlike', currentPage);
+			nebula_event('Social', 'Facebook Unlike', currentPage);
 		});
 	
 		//Facebook Send/Share
@@ -168,8 +152,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Share', currentPage);
-			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Share', currentPage);
+			nebula_event('Social', 'Facebook Share', currentPage);
 		});
 	
 		//Facebook Comments
@@ -182,8 +165,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
-			Gumby.log('Sending GA event: ' + 'Social', 'Facebook Comment', currentPage);
+			nebula_event('Social', 'Facebook Comment', currentPage);
 		});
 	};
 	
@@ -208,10 +190,9 @@ function facebookLoginLogout() {
 		FB.login(function(response) {
 			if (response.authResponse) {
 				checkFacebookStatus();
-				ga('send', 'event', 'Social', 'Facebook Connect', FBuser.name);
-				Gumby.log('Sending GA event: ' + 'Social', 'Facebook Connect', FBuser.name);
+				nebula_event('Social', 'Facebook Connect', FBuser.name);
 			} else {
-				Gumby.log('User has logged in, but did not accept permissions.');
+				Gumby.log('User did not accept permissions.');
 				checkFacebookStatus();
 			}
 		}, {scope:'public_profile,email'});
@@ -340,6 +321,34 @@ function updateViewportDimensions() {
 	return viewportObject;
 }
 
+//Pull query strings from URL
+function getQueryStrings() {
+	queries = new Array(); 
+    var q = document.URL.split('?')[1];
+    if ( q != undefined ){
+        q = q.split('&');
+        for ( var i = 0; i < q.length; i++ ){
+            hash = q[i].split('=');
+            queries.push(hash[1]);
+            queries[hash[0]] = hash[1];
+        }
+	}
+}
+
+//Search query strings for the passed parameter
+function GET(query) {
+	if ( typeof query === 'undefined' ) {
+		return queries;
+	}
+	
+	if ( typeof queries[query] !== 'undefined' ) {
+		return queries[query];
+	} else if ( queries.hasOwnProperty(query) ) {
+		return query;
+	}
+	return false;
+}
+
 //Main dropdown nav dynamic width controller
 function dropdownWidthController() {
 	jQuery('#primarynav .sub-menu').each(function(){
@@ -386,7 +395,7 @@ function subnavExpanders() {
 //Show fixed bar when scrolling passed the header
 function nebulaFixeder() {
 	jQuery(window).on('scroll resize', function() {
-		if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').length ) {
+		if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
 			var fixedBarBottom = jQuery('#logonavcon img').position().top + jQuery('#logonavcon img').outerHeight();
 	        var windowBottom = jQuery(window).scrollTop();
 		
@@ -406,18 +415,19 @@ function nebulaFixeder() {
 
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
+	
+	//@TODO: IF ga() is defined.
+	
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string.)
 	//jQuery('.selector').on('click', function() {
-	//	ga('send', 'event', 'Category', 'Action', 'Label', Value;
-	//  Gumby.log('Sending GA event: ' + 'Category', 'Action', 'Label', Value);
+	//	nebula_event('Category', 'Action', 'Label', Value;
 	//});
 	
 	//External links
 	jQuery("a[rel*='external']").on('click', function(){
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
-		ga('send', 'event', 'External Link', linkText, destinationURL);
-		Gumby.log('Sending GA event: ' + 'External Link', linkText, destinationURL);
+		nebula_event('External Link', linkText, destinationURL);
 	});
 	
 	//PDF View/Download
@@ -427,64 +437,55 @@ function gaEventTracking(){
 		var fileName = jQuery(this).attr('href');
 		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
 		if ( linkText == '' || linkText == 'Download') {
-			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
-			Gumby.log('Sending GA event: ' + 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
+			nebula_event('PDF View', 'From Page: ' + title, 'File: ' + fileName);
 		} else {
-			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
-			Gumby.log('Sending GA event: ' + 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
+			nebula_event('PDF View', 'From Page: ' + title, 'Text: ' + linkText);
 		}
 	});
 	
 	//Contact Form Submissions
 	jQuery('.wpcf7-form').on('submit', function() {
 		var currentPage = jQuery(document).attr('title');
-		ga('send', 'event', 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
-		Gumby.log('Sending GA event: ' + 'Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
+		nebula_event('Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
 	});
 	
 	//Generic Interal Search Tracking
 	jQuery('.search').on('submit', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
-		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
-		Gumby.log('Sending GA event: ' + 'Internal Search', 'Submit', searchQuery);
+		nebula_event('Internal Search', 'Submit', searchQuery);
 	});
 	
 	//Mailto link tracking
 	jQuery('a[href^="mailto"]').on('click', function(){
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
-		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
-		Gumby.log('Sending GA event: ' + 'Mailto', 'Email: ' + emailAddress);
+		nebula_event('Mailto', 'Email: ' + emailAddress);
 	});
 	
 	//Telephone link tracking
 	jQuery('a[href^="tel"]').on('click', function(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
-		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
-		Gumby.log('Sending GA event: ' + 'Click-to-Call', 'Phone Number: ' + phoneNumber);
+		nebula_event('Click-to-Call', 'Phone Number: ' + phoneNumber);
 	});
 	
 	//SMS link tracking
 	jQuery('a[href^="sms"]').on('click', function(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
-		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
-		Gumby.log('Sending GA event: ' + 'Click-to-Call', 'SMS to: ' + phoneNumber);
+		nebula_event('Click-to-Call', 'SMS to: ' + phoneNumber);
 	});
 	
 	//Comment tracking @TODO: This might not be working.
 	jQuery('#commentform').on('submit', function(){
 		if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
 			var currentPage = jQuery(document).attr('title');
-			if ( jQuery('#reply-title').length ) {
+			if ( jQuery('#reply-title').is('*') ) {
 				var replyTo = jQuery('#reply-title').children('a').text();
 				var commentID = jQuery('#reply-title').children('a').attr('href').replace('comment-', '');
-				ga('send', 'event', 'Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
-				Gumby.log('Sending GA event: ' + 'Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
+				nebula_event('Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
 			} else {
-				ga('send', 'event', 'Comment', currentPage, 'Top Level');
-				Gumby.log('Sending GA event: ' + 'Comment', currentPage, 'Top Level');
+				nebula_event('Comment', currentPage, 'Top Level');
 			}
 		}
 	});
@@ -503,21 +504,17 @@ function gaEventTracking(){
 		if ( copyCount < 13 ) {
 			if (words.length > 8) {
 				words = words.slice(0, 8).join(' ');
-				ga('send', 'event', 'Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
-				Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
+				nebula_event('Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
 			} else {
 				if ( selection == '' || selection == ' ' ) {
-					ga('send', 'event', 'Copied Text', currentPage, '[0 words]');
-					Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, '[0 words]');
+					nebula_event('Copied Text', currentPage, '[0 words]');
 				} else {
-					ga('send', 'event', 'Copied Text', currentPage, selection);
-					Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, selection);
+					nebula_event('Copied Text', currentPage, selection);
 				}
 			}
 		} else {
 			if ( copyOver == 0 ) {
-				ga('send', 'event', 'Copied Text', currentPage, '[Copy limit reached]');
-				Gumby.log('Sending GA event: ' + 'Copied Text', currentPage, '[Copy limit reached]');
+				nebula_event('Copied Text', currentPage, '[Copy limit reached]');
 			}
 			copyOver = 1;
 		}
@@ -525,9 +522,8 @@ function gaEventTracking(){
 	
 	//AJAX Errors
 	jQuery(document).ajaxError(function(e, request, settings) {
-		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url);
+		nebula_event('Error', 'AJAX Error', e.result + ' on: ' + settings.url);
 		ga('send', 'exception', e.result, true);
-		Gumby.log('Sending GA event: ' + 'Error', 'AJAX Error', e.result + ' on: ' + settings.url);
 	});
 	
 	
@@ -536,8 +532,7 @@ function gaEventTracking(){
 	var afterPrint = function() {
 		if ( printed == 0 ) {
 			printed = 1;
-			ga('send', 'event', 'Print (Intent)', document.location.pathname);
-			Gumby.log('Sending GA event: ' + 'Print (Intent)', document.location.pathname);
+			nebula_event('Print (Intent)', document.location.pathname);
 		}
 	};
 	if ( window.matchMedia ) {
@@ -566,18 +561,18 @@ function conversionTracker() {
 function googlePlusCallback(jsonParam) {
 	var currentPage = jQuery(document).attr('title');
 	if ( jsonParam.state == 'on' ) {
-		ga('send', 'event', 'Social', 'Google+ Like', currentPage);
-		Gumby.log('Sending GA event: ' + 'Social', 'Google+ Like', currentPage);
+		nebula_event('Social', 'Google+ Like', currentPage);
 	} else if ( jsonParam.state == 'off' ) {
-		ga('send', 'event', 'Social', 'Google+ Unlike', currentPage);
-		Gumby.log('Sending GA event: ' + 'Social', 'Google+ Unlike', currentPage);
+		nebula_event('Social', 'Google+ Unlike', currentPage);
 	} else {
-		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]', currentPage);
-		Gumby.log('Sending GA event: ' + 'Social', 'Google+ [JSON Unavailable]', currentPage);
+		nebula_event('Social', 'Google+ [JSON Unavailable]', currentPage);
 	}
 }
 
 function mmenu() {
+	
+	//@TODO: IF .mmenu is defined
+	
 	jQuery("#mobilenav").mmenu({
 	    //Options
 	    searchfield: { //This is for searching through the menu itself (NOT for site search)
@@ -630,7 +625,7 @@ function mmenu() {
 	//Close mmenu on back button click
 	if (window.history && window.history.pushState) {
 		window.addEventListener("popstate", function(e) {
-			if ( jQuery('html.mm-opened').length ) {
+			if ( jQuery('html.mm-opened').is('*') ) {
 				jQuery(".mm-menu").trigger("close.mm");
 				e.stopPropagation();
 			}
@@ -775,8 +770,7 @@ function pageVisibility(){
 	function visibilityChangeActions(){
 		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
 			var pageTitle = jQuery(document).attr('title');
-			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle);
-			Gumby.log('Sending GA event: ' + 'Page Visibility', 'Prerendered', pageTitle);
+			nebula_event('Page Visibility', 'Prerendered', pageTitle);
 			//@TODO: prevent autoplay of videos
 		}
 		
@@ -786,16 +780,14 @@ function pageVisibility(){
 			visFirstHidden = 1;
 			visTimerBefore = (new Date()).getTime();
 			var pageTitle = jQuery(document).attr('title');
-			ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle);
-			Gumby.log('Sending GA event: ' + 'Page Visibility', 'Hidden', pageTitle);
+			nebula_event('Page Visibility', 'Hidden', pageTitle);
 		} else { //Page is visible
 			//@TODO: resume autoplay of videos
 			if ( visFirstHidden == 1 ) {
 				var visTimerAfter = (new Date()).getTime();
 				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
 				var pageTitle = jQuery(document).attr('title');
-				ga('send', 'event', 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)');
-				Gumby.log('Sending GA event: ' + 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)');
+				nebula_event('Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)');
 			}
 		}
 	}
@@ -864,7 +856,7 @@ function cFormPreValidator() {
 		}
 	});
 	
-	if ( jQuery('.cform7-phone').length || jQuery('.cform7-bday').length ) {
+	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
 		jQuery('.cform7-phone').mask("(999) 999-9999? x99999");
 		jQuery('.cform7-phone').keyup(function(){
 			if ( jQuery(this).val().replace(/\D/g,'').length >= 10 ) {
@@ -1075,12 +1067,10 @@ function contactBackup() {
 				//Collapse the contact form and replace with sent notification
 				//call google adwords conversion tracker
 				//remove the contact form
-				ga('send', 'event', 'Contact', 'Submit', 'Backup Form Submission');
-				Gumby.log('Sending GA event: ' + 'Contact', 'Submit', 'Backup AJAX Form Submission');
+				nebula_event('Contact', 'Submit', 'Backup Form Submission');
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
-				ga('send', 'event', 'Contact', 'Error', 'Backup Form AJAX Error');
-				Gumby.log('Sending GA event: ' + 'Contact', 'Error', 'Backup AJAX Form Error');
+				nebula_event('Contact', 'Error', 'Backup Form AJAX Error');
 			},
 			timeout: 60000
 		});
@@ -1177,16 +1167,16 @@ function checkNotificationPermission() {
 //Detect and log errors, and fallback fixes
 function errorLogAndFallback() {
 	//Check if Contact Form 7 is active and if the selected form ID exists
-	if ( jQuery('.cform-disabled').length ) {
+	if ( jQuery('.cform-disabled').is('*') ) {
 		var currentPage = jQuery(document).attr('title');
-		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage);
+		nebula_event('Error', 'Contact Form 7 Disabled', currentPage);
 		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
 	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
 		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo fa fa-envelope"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
-		ga('send', 'event', 'Error', 'Contact Form 7 Form Not Found', currentPage);
+		nebula_event('Error', 'Contact Form 7 Form Not Found', currentPage);
 		Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.');
 		jQuery(document).on('click', '.cform-not-found', function(){
-			ga('send', 'event', 'Contact', 'Submit (Intent)', 'Backup Mailto Intent');
+			nebula_event('Contact', 'Submit (Intent)', 'Backup Mailto Intent');
 		});
 	}
 }
@@ -1210,7 +1200,7 @@ var waitForFinalEvent = (function () {
 //This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading() {
 	//Only load Twitter if Twitter wrapper exists.
-	if ( jQuery('#twittercon').length ) {
+	if ( jQuery('#twittercon').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
 			twitterFeed();
 		}).fail(function(){
@@ -1220,7 +1210,7 @@ function conditionalJSLoading() {
 	}
 	
 	//Only load bxslider library on a page that calls bxslider.
-	if ( jQuery('.bxslider').length ) {
+	if ( jQuery('.bxslider').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
 			bxSlider();
 		}).fail(function(){
@@ -1230,7 +1220,7 @@ function conditionalJSLoading() {
 	}
 	
 	//Only load maskedinput.js library if phone or bday field exists.
-	if ( jQuery('.cform7-phone').length || jQuery('.cform7-bday').length ) {
+	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
@@ -1241,7 +1231,7 @@ function conditionalJSLoading() {
 	}
 	
 	//Only load dataTables library if dataTables table exists.
-	if ( jQuery('.dataTables_wrapper').length ) {
+	if ( jQuery('.dataTables_wrapper').is('*') ) {
 		
 	jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){
 			//Do something
@@ -1256,7 +1246,8 @@ function conditionalJSLoading() {
 
 //Twitter Feed integration
 function twitterFeed() {
-    if(jQuery('.twitter-feed').length){
+    if(jQuery('.twitter-feed').is('*')){
+    	//@TODO: IF JQTWEET is defined
         JQTWEET = JQTWEET || {};
         //JQTWEET.search = '#hashtag';
         JQTWEET.user = 'pinckneyhugo';
@@ -1269,6 +1260,7 @@ function twitterFeed() {
 
 //Place all bxSlider events inside this function!
 function bxSlider() {
+	//@TODO: IF bxSlider is defined
 	jQuery('.exampleslider').bxSlider({
 		mode: 'horizontal', //'horizontal', 'vertical', 'fade'
 		speed: 800,
@@ -1298,7 +1290,7 @@ function bxSlider() {
 }
 
 function vimeoControls() {
-	if ( jQuery('.vimeoplayer').length ) {
+	if ( jQuery('.vimeoplayer').is('*') ) {
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
@@ -1324,26 +1316,22 @@ function vimeoControls() {
 	
 	function onPlay(id) {
 	    var videoTitle = id.replace(/-/g, ' ');
-	    ga('send', 'event', 'Videos', 'Play', videoTitle);
-	    Gumby.log('Sending GA event: ' + 'Videos', 'Play', videoTitle);
+	    nebula_event('Videos', 'Play', videoTitle);
 	}
 	
 	function onPause(id) {
 	    var videoTitle = id.replace(/-/g, ' ');
-	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
-	    Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
+	    nebula_event('Videos', 'Pause', videoTitle);
 	}
 	
 	function onSeek(data, id) {
 	    var videoTitle = id.replace(/-/g, ' ');
-	    ga('send', 'event', 'Videos', 'Seek', videoTitle);
-	    Gumby.log('Sending GA event: ' + 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
+	    nebula_event('Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
 	}
 	
 	function onFinish(id) {
 		var videoTitle = id.replace(/-/g, ' ');
-		ga('send', 'event', 'Videos', 'Finished', videoTitle);
-		Gumby.log('Sending GA event: ' + 'Videos', 'Finished', videoTitle);
+		nebula_event('Videos', 'Finished', videoTitle);
 	}
 	
 	function onPlayProgress(data, id) {
@@ -1580,8 +1568,7 @@ function successCallback(position) {
 	}
 	
 	jQuery(document).trigger('geolocationSuccess');
-	ga('send', 'event', 'Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']);
-	Gumby.log('Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1] + '. Accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (' + mapInfo['detectLoc']['accMeters'].toFixed(2) + ' meters)');
+	nebula_event('Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']);
 }
 
 //Geolocation Error
@@ -1604,8 +1591,7 @@ function errorCallback(error) {
     }
     Gumby.warn(geolocationErrorMessage);
     jQuery(document).trigger('geolocationError');
-    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage);
-    Gumby.log('Sending GA event: ' + 'Geolocation', 'Error', geolocationErrorMessage);
+    nebula_event('Geolocation', 'Error', geolocationErrorMessage);
 }
 
 //Retreive Lat/Lng locations
@@ -1627,100 +1613,100 @@ function renderMap(mapInfo) {
     if ( typeof google === 'undefined' ) {
     	Gumby.log('google is not defined. Likely the Google Maps script is not being seen.');
     	return false;
-    }
-    
-    var myOptions = {
-		zoom: 11,
-		scrollwheel: false,
-		zoomControl: true,
-		scaleControl: true,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	}
-    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    var bounds = new google.maps.LatLngBounds();
-
-	if ( typeof mapInfo['traffic'] !== 'undefined' ) {
-		if ( mapInfo['traffic'] == 1 ) {
-			Gumby.log('Traffic is enabled.');
-			var trafficLayer = new google.maps.TrafficLayer();
-			trafficLayer.setMap(map);
+    } else {
+    	var myOptions = {
+			zoom: 11,
+			scrollwheel: false,
+			zoomControl: true,
+			scaleControl: true,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
 		}
-	}
+	    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	    var bounds = new google.maps.LatLngBounds();
 	
-	//Map weather
-	if ( typeof mapInfo['weather'] !== 'undefined' ) {
-		if ( mapInfo['weather'] == 1 ) {
-			Gumby.log('Weather is enabled.');
-			var weatherLayer = new google.maps.weather.WeatherLayer({
-				temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
-			});
-			weatherLayer.setMap(map);
-			
-			var cloudLayer = new google.maps.weather.CloudLayer();
-			cloudLayer.setMap(map); 
+		if ( typeof mapInfo['traffic'] !== 'undefined' ) {
+			if ( mapInfo['traffic'] == 1 ) {
+				Gumby.log('Traffic is enabled.');
+				var trafficLayer = new google.maps.TrafficLayer();
+				trafficLayer.setMap(map);
+			}
 		}
-	}
-    
-    
-   	//Hard-Coded Custom Marker
-	//http://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
-	var phg = new google.maps.LatLng('43.0536608', '-76.1656');
-	bounds.extend(phg);
-	marker = new google.maps.Marker({
-        position: phg,
-        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
-        clickable: false,
-        map: map
-    });
-
-
-	//Dynamic Markers (passed from getAllLocations()
-	if ( typeof mapInfo['markers'] !== 'undefined' ) {
-		var marker, i;
-	    for (i = 0; i < mapInfo['markers'].length; i++) {
-	        var pos = new google.maps.LatLng(mapInfo['markers'][i][0], mapInfo['markers'][i][1]);
-	        bounds.extend(pos);
-	        marker = new google.maps.Marker({
-	            position: pos,
-	            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
-	            clickable: false,
-	            map: map
-	        });
-	        Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]);
-	    }(marker, i);
-    }
-	   
-	//Detected Location Marker
-	if ( typeof mapInfo['detectLoc'] !== 'undefined' ) {
-		if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
-			var detectLoc = new google.maps.LatLng(mapInfo['detectLoc'][0], mapInfo['detectLoc'][1]);
-			marker = new google.maps.Marker({
-		        position: detectLoc,
-		        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
-		        //animation: google.maps.Animation.DROP,
-		        clickable: false,
-		        map: map
-		    });
-		    var circle = new google.maps.Circle({
-				strokeColor: mapInfo['detectLoc']['accColor'],
-				strokeOpacity: 0.7,
-				strokeWeight: 1,
-				fillColor: mapInfo['detectLoc']['accColor'],
-				fillOpacity: 0.15,
-				map: map,
-				radius: mapInfo['detectLoc']['accMeters']
-			});
-			circle.bindTo('center', marker, 'position');
-			Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
-			
-			//var detectbounds = new google.maps.LatLngBounds();
-			bounds.extend(detectLoc);
-			//map.fitBounds(detectbounds); //Use this instead of the one below to center on detected location only (ignoring other markers)
+		
+		//Map weather
+		if ( typeof mapInfo['weather'] !== 'undefined' ) {
+			if ( mapInfo['weather'] == 1 ) {
+				Gumby.log('Weather is enabled.');
+				var weatherLayer = new google.maps.weather.WeatherLayer({
+					temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
+				});
+				weatherLayer.setMap(map);
+				
+				var cloudLayer = new google.maps.weather.CloudLayer();
+				cloudLayer.setMap(map); 
+			}
 		}
-	}
-
-	map.fitBounds(bounds);
-	google.maps.event.trigger(map, "resize");
+	    
+	    
+	   	//Hard-Coded Custom Marker
+		//http://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
+		var phg = new google.maps.LatLng('43.0536608', '-76.1656');
+		bounds.extend(phg);
+		marker = new google.maps.Marker({
+	        position: phg,
+	        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
+	        clickable: false,
+	        map: map
+	    });
 	
-	jQuery(document).trigger('mapRendered');
+	
+		//Dynamic Markers (passed from getAllLocations()
+		if ( typeof mapInfo['markers'] !== 'undefined' ) {
+			var marker, i;
+		    for (i = 0; i < mapInfo['markers'].length; i++) {
+		        var pos = new google.maps.LatLng(mapInfo['markers'][i][0], mapInfo['markers'][i][1]);
+		        bounds.extend(pos);
+		        marker = new google.maps.Marker({
+		            position: pos,
+		            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
+		            clickable: false,
+		            map: map
+		        });
+		        Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]);
+		    }(marker, i);
+	    }
+		   
+		//Detected Location Marker
+		if ( typeof mapInfo['detectLoc'] !== 'undefined' ) {
+			if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
+				var detectLoc = new google.maps.LatLng(mapInfo['detectLoc'][0], mapInfo['detectLoc'][1]);
+				marker = new google.maps.Marker({
+			        position: detectLoc,
+			        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
+			        //animation: google.maps.Animation.DROP,
+			        clickable: false,
+			        map: map
+			    });
+			    var circle = new google.maps.Circle({
+					strokeColor: mapInfo['detectLoc']['accColor'],
+					strokeOpacity: 0.7,
+					strokeWeight: 1,
+					fillColor: mapInfo['detectLoc']['accColor'],
+					fillOpacity: 0.15,
+					map: map,
+					radius: mapInfo['detectLoc']['accMeters']
+				});
+				circle.bindTo('center', marker, 'position');
+				Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
+				
+				//var detectbounds = new google.maps.LatLngBounds();
+				bounds.extend(detectLoc);
+				//map.fitBounds(detectbounds); //Use this instead of the one below to center on detected location only (ignoring other markers)
+			}   
+		}
+		
+		map.fitBounds(bounds);
+		google.maps.event.trigger(map, "resize");
+		
+		jQuery(document).trigger('mapRendered');
+	}
 }

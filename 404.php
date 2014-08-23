@@ -26,11 +26,9 @@ get_header(); ?>
 
 <script>
 	if ( document.referrer.length ) {
-		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
-		Gumby.log('Sending GA event: ' + '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
+		nebula_event('404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
 	} else {
-		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown');
-		Gumby.log('Sending GA event: ' + '404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown');
+		nebula_event('404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown');
 	}
 </script>
 

@@ -136,23 +136,20 @@
 				function onPlayerStateChange(e) {
 				    if (e.data == YT.PlayerState.PLAYING) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Play', videoTitle);
-				        Gumby.log('Sending GA event: ' + 'Videos', 'Play', videoTitle);
+				        nebula_event('Videos', 'Play', videoTitle);
 				        pauseFlag = true;
 				    }
 				    if (e.data == YT.PlayerState.ENDED) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Finished', videoTitle);
-				        Gumby.log('Sending GA event: ' + 'Videos', 'Finished', videoTitle);
+				        nebula_event('Videos', 'Finished', videoTitle);
 				    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Pause', videoTitle);
-				        Gumby.log('Sending GA event: ' + 'Videos', 'Pause', videoTitle);
+				        nebula_event('Videos', 'Pause', videoTitle);
 				        pauseFlag = false;
 				    }
 				}
 			</script>
-		
+			
 		</div><!--/fullbodywrapper-->
 	</body>
 </html>
