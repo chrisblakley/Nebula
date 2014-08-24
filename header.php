@@ -3,12 +3,17 @@
 <!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js testing"><!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 		
-		<title><?php wp_title('-', true, 'right'); ?></title>
+		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
+			<title><?php wp_title('-', true, 'right'); ?></title>
+		<?php else : ?>
+			<title><?php wp_title('-', true, 'right'); ?></title>
+		<?php endif; ?>
+		
 		
 		<meta name="HandheldFriendly" content="True">
 		<meta name="MobileOptimized" content="320">
@@ -25,7 +30,7 @@
 				
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
-		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_home() ) : ?>
+		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : ?>
 			<meta property="og:type" content="business.business" />
 			<meta property="og:locale" content="<?php language_attributes(); ?>" />
 			<meta property="og:title" content="<?php the_title(); ?>" />
@@ -159,52 +164,33 @@
 					value = error2;
 				}
 				
+				<?php global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone; ?>
+				<?php if ( nebula_settings_conditional('nebula_console_css') ) : //Disable console styles by making this condition false. ?>
+					var css = '%c';
+					if ( <?php echo ($is_gecko || $is_chrome) ? '1' : '0'; ?> ) {
+						var styling = 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;';
+					} else if ( <?php echo ($is_safari) ? '1' : '0'; ?> ) {
+						var styling = 'color: #f5981d;';
+					} else {
+						var styling = '';
+					}
+				<?php else : ?>
+					var css = '';
+					var styling = '';
+				<?php endif; ?>
+				
 				if ( typeof ga == 'function' ) {
-					ga('send', 'event', category, action, label, value);
-					
-					//@TODO: This can be optimized waaay better...
-					if ( (isDev == 1 || <?php echo (is_dev()) ? '1' : '0'; ?>) && document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 0 ) {
-						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
-							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
-						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
-							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
-						} else {
-							console.log('Sending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value);
-						}
-					} else if ( typeof Gumby !== 'undefined' ) {
-						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
-							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
-						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
-							console.log('%cSending GA event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
-						} else {
-							Gumby.log('Sending GA event: ' + category, action, label, value);
-						}
-					} else if ( document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 1 ) {
-						console.log('Sending GA event: ' + category, action, label, value);
-					}
+					ga('send', 'event', category, action, label, value); //Important! If modifying this function, DO NOT DELETE THIS LINE!
+					var consolePrepend = 'Sending GA event: ';
 				} else {
-					if ( isDev && document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 1 ) {
-						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
-							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
-						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
-							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
-						} else {
-							console.warn('ga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value);
-						}
-					} else if ( typeof Gumby !== 'undefined' ) {
-						if ( document.getElementsByTagName("body")[0].className.indexOf('chrome') > -1 || document.getElementsByTagName("body")[0].className.indexOf('firefox') > -1 ) {
-							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'padding: 0 0 0 13px; background-image: url(' + bloginfo['template_directory'] + '/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;');
-						} else if ( document.getElementsByTagName("body")[0].className.indexOf('safari') > -1 ) {
-							console.warn('%cga() is not defined. Attempted event: ' + category + ', ' + action + ', ' + label + ', ' + value, 'color: #f5981d;');
-						} else {
-							Gumby.warn('ga() is not defined. Attempted event: ' + category, action, label, value);
-						}
-					} else if ( document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 && debug == 1 ) {
-						console.warn('ga() is not defined. Attempted event: ' + category, action, label, value);
-					}
+					var consolePrepend = 'ga() is not defined. Attempted event: ';
 				}
 				
-				
+				if ( document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 ) { //If not IE8 or less
+					if ( <?php echo (is_dev()) ? '1' : '0'; ?> || debug == 1 ) {
+						console.log(css + consolePrepend + category + ', ' + action + ', ' + label + ', ' + value, styling);
+					}
+				}
 			}			
 		</script>
 	</head>
@@ -295,25 +281,38 @@
 		</div><!--/container-->
 		
 		<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ) : ?>
-			<div class="container searchresultsinglecon">
+			<div class="container headerdrawercon">
 				<hr/>
 				<div class="row">
-					<div class="sixteen columns searchresultsingle">
+					<div class="sixteen columns headerdrawer">
 						<span>Your search returned only one result. You have been automatically redirected.</span>
-						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="fa fa-times"></i></a>
+						<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
 						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
 					</div><!--/columns-->
 				</div><!--/row-->
 				<hr/>
 			</div><!--/container-->
 		<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
-			<div class="container searchresultsinglecon">
+			<div class="container headerdrawercon">
 				<hr/>
 				<div class="row">
-					<div class="sixteen columns searchresultsingle invalid">
+					<div class="sixteen columns headerdrawer invalid">
 						<span>Your search was invalid. Please try again.</span>
-						<a class="close" href="<?php the_permalink(); ?>" style="float: right;"><i class="fa fa-cancel"></i></a>
+						<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
 						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
+					</div><!--/columns-->
+				</div><!--/row-->
+				<hr/>
+			</div><!--/container-->
+		<?php elseif ( is_404() || array_key_exists('s', $_GET) ) : ?>
+			<div id="suggestedpage" class="container headerdrawercon">
+				<hr/>
+				<div class="row">
+					<div class="sixteen columns headerdrawer">						
+						<h3>Did you mean?</h3>
+						<p><a class="suggestion" href="#"></a></p>
+						
+						<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
 					</div><!--/columns-->
 				</div><!--/row-->
 				<hr/>

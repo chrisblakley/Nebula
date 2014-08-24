@@ -8,13 +8,13 @@ if ( !defined('ABSPATH') ) { exit; } //Exit if accessed directly
 get_header(); ?>
 
 <div class="row">
-	
+		
 	<div class="ten columns">
 		<?php the_breadcrumb(); ?>
 		<?php if ( have_posts() ) : ?>
 			<h1>Search Results <?php get_search_query(); ?></h1>
 			<?php get_search_form(); ?>
-		<?php else : ?>
+		<?php else : ?>			
 			<h1>No Results Found</h1>
 			<?php get_search_form(); ?>
 			

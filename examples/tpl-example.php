@@ -2368,6 +2368,16 @@ $optParams = array(
 							</div><!--/columns-->
 						</div>
 					</div>
+				<?php else : ?>
+					<div class="container entry-manage">
+						<div class="row">
+							<div class="sixteen columns">
+								<hr/>
+								<?php nebula_manage('modified'); ?>
+								<hr/>
+							</div><!--/columns-->
+						</div>
+					</div>
 				<?php endif; ?>
 				
 				<div class="row">

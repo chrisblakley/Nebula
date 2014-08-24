@@ -234,16 +234,15 @@ function nebula_plugin_force_settings(){
 	    update_option('se_options', $se_options);
 	}
 	//Wordpress SEO (Yoast)
-	/*
-if ( file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ) {
+	if ( file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ) {
+		remove_submenu_page('wpseo_dashboard', 'wpseo_files'); //Remove the ability to edit files.
 		$wpseo = get_option('wpseo');
-		$wpseo['ignore_meta_description_warning'] = true;
-		$wpseo['ignore_tour'] = true;
-		$wpseo['theme_description_found'] = false;
-		$wpseo['theme_has_description'] = false;
-		update_option('wpseo', $wpseo); //@TODO: Seems like this is working, but being overwritten again when the plugin loads or something... Maybe need to remove the check of the options?
+		$wpseo['ignore_meta_description_warning'] = true; //Disable the meta description warning.
+		$wpseo['ignore_tour'] = true; //Disable the tour.
+		$wpseo['theme_description_found'] = false; //@TODO: Not working because this keeps getting checked/tested at many various times in the plugin.
+		$wpseo['theme_has_description'] = false; //@TODO: Not working because this keeps getting checked/tested at many various times in the plugin.
+		update_option('wpseo', $wpseo);
 	}
-*/
 }
 
 
@@ -1518,7 +1517,9 @@ add_filter('xmlrpc_methods', function($methods) {
 });
 
 //Add the calling card to the browser console
-add_action('wp_head', 'nebula_calling_card');
+if ( nebula_settings_conditional('nebula_console_css') ) {
+	add_action('wp_head', 'nebula_calling_card');
+}
 function nebula_calling_card() {
 	//@TODO: if chrome or firefox... (find what other browsers support this)
 	echo "<script>
@@ -1546,6 +1547,9 @@ function js_variables() {
 	bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"
 	clientinfo = [];
 	clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";
+	nebulaSettings = [];
+	nebulaSettings["nebula_cse_id"] = "' . get_option('nebula_cse_id') . '";
+	nebulaSettings["nebula_cse_api_key"] = "' . get_option('nebula_cse_api_key') . '";
 	isDev = "' . $jsAdmin . '";
 	debug = "' . $GLOBALS["debug"] . '";</script>';
 }

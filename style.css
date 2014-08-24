@@ -167,9 +167,11 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 	.searchresultword.transitionable {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
 
-.searchresultsinglecon {background: rgba(0,0,0,0.0225);}
-	.searchresultsinglecon hr {margin: 0;}
-	.searchresultsingle {padding-top: 10px; text-align: center; font-size: 12px;}
+.headerdrawercon {position: relative; background: rgba(0,0,0,0.0225);}
+	.headerdrawercon hr {margin: 0;}
+	.headerdrawer {position: relative; padding-top: 10px; text-align: center; font-size: 12px;}
+		.headerdrawer a.close {position: absolute; top: 0; right: 0;}
+#suggestedpage {display: none;}
 
 /* Google Maps */
 .googlemapcon {width: 100%; height: 250px;}
@@ -441,7 +443,6 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 			li.comment p {margin: 0; font-size: 12px;}
 			li.comment .reply {margin-bottom: 3px;}
 				li.comment a.comment-reply-link {font-size: 10px;}
-			
 
 /* ==========================================================================
    Sidebar Area

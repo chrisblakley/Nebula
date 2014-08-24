@@ -68,6 +68,9 @@
 		register_setting('nebula_settings_group', 'nebula_phg_welcome_panel');
 		register_setting('nebula_settings_group', 'nebula_unnecessary_metaboxes');
 		register_setting('nebula_settings_group', 'nebula_phg_metabox');
+		register_setting('nebula_settings_group', 'nebula_console_css');
+		register_setting('nebula_settings_group', 'nebula_cse_id');
+		register_setting('nebula_settings_group', 'nebula_cse_api_key');
 		
 		register_setting('nebula_settings_group', 'nebula_dev_ip');
 		register_setting('nebula_settings_group', 'nebula_dev_email_domain');
@@ -458,6 +461,34 @@
 								<option value="disabled" <?php selected('disabled', get_option('nebula_phg_metabox')); ?>>Disabled</option>
 							</select>
 							<p class="helper"><small>Control the PHG Developer Metabox with useful server information. Requires a user with a @pinckneyhugo.com email address to view. <em>(Default: Enabled)</em></small></p>
+						</td>
+			        </tr>
+			        
+			        <tr valign="top">
+			        	<th scope="row">Console CSS&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<select name="nebula_console_css">
+								<option value="default" <?php selected('default', get_option('nebula_console_css')); ?>>Default</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_console_css')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_console_css')); ?>>Disabled</option>
+							</select>
+							<p class="helper"><small>Adds CSS to the browser console.</em></small></p>
+						</td>
+			        </tr>
+			        
+			        <tr valign="top">
+			        	<th scope="row">CSE Engine ID&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_cse_id" value="<?php echo get_option('nebula_cse_id'); ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" />
+							<p class="helper"><small>Google Custom Search Engine ID (for page suggestions on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
+						</td>
+			        </tr>
+			        
+			        <tr valign="top">
+			        	<th scope="row">CSE API Key&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_cse_api_key" value="<?php echo get_option('nebula_cse_api_key'); ?>" style="width: 392px;" />
+							<p class="helper"><small>Google Custom Search Engine API Key (for page suggestions on 404 and No Search Results pages). On the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Then on the "APIs" page, find "Custom Search API" and toggle it on. Then under "Credentials" create a new key, choose "Browser Key".</small></p>
 						</td>
 			        </tr>
 			    </table>

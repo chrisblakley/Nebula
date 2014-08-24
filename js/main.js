@@ -31,6 +31,10 @@ jQuery(document).ready(function() {
 	WPcomments();
 	contactBackup();
 	
+	if ( jQuery('body').hasClass('search-no-results') || jQuery('body').hasClass('error404') ) {
+		pageSuggestion();
+	}
+	
 	if ( cookieAuthorName ) {
 		prefillCommentAuthorCookieFields(cookieAuthorName, cookieAuthorEmail);
 	}
@@ -319,34 +323,6 @@ function updateViewportDimensions() {
 	}
 	
 	return viewportObject;
-}
-
-//Pull query strings from URL
-function getQueryStrings() {
-	queries = new Array(); 
-    var q = document.URL.split('?')[1];
-    if ( q != undefined ){
-        q = q.split('&');
-        for ( var i = 0; i < q.length; i++ ){
-            hash = q[i].split('=');
-            queries.push(hash[1]);
-            queries[hash[0]] = hash[1];
-        }
-	}
-}
-
-//Search query strings for the passed parameter
-function GET(query) {
-	if ( typeof query === 'undefined' ) {
-		return queries;
-	}
-	
-	if ( typeof queries[query] !== 'undefined' ) {
-		return queries[query];
-	} else if ( queries.hasOwnProperty(query) ) {
-		return query;
-	}
-	return false;
 }
 
 //Main dropdown nav dynamic width controller
@@ -750,14 +726,62 @@ function singleResultDrawer(){
 		jQuery('#searchform input#s').val(theSearchTerm); //This is not needed if Search Everything can fix the "?s=" issue.
 	}
 	
-	jQuery('.searchresultsingle .close').on('click', function(){
+	jQuery('.headerdrawer .close').on('click', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
-		jQuery('.searchresultsinglecon').slideUp();
+		jQuery('.headerdrawercon').slideUp();
 		return false;
 	});
 }
 
+//Suggestions for 404 page
+function pageSuggestion(){
+	if ( nebulaSettings["nebula_cse_id"] != '' && nebulaSettings["nebula_cse_api_key"] != '' ) {
+		if ( GET().length ) {
+			var queryStrings = GET();
+		} else {
+			var queryStrings = [''];
+		}
+		var path = window.location.pathname;
+		var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
+		trySearch(phrase);
+		
+		jQuery(document).on('click', 'a.suggestion', function(){
+			var suggestedPage = jQuery(this).text();
+			nebula_event('Page Suggestion', 'Clicked', 'Suggested Page: ' + suggestedPage);
+		});
+	}
+}
+
+function trySearch(phrase){
+	var queryParams = {
+		cx: nebulaSettings["nebula_cse_id"],
+		key: nebulaSettings["nebula_cse_api_key"],
+		num: 10,
+		q: phrase,
+		alt: 'JSON'
+	}
+	var API_URL = 'https://www.googleapis.com/customsearch/v1?';
+	
+	// Send the request to the custom search API
+	jQuery.getJSON(API_URL, queryParams, function(response) {
+		if (response.items && response.items.length) {
+			nebula_event('Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location);
+			showSuggestedPage(response.items[0].title, response.items[0].link);
+		} else {
+			nebula_event('Page Suggestion', 'No Suggestions Found', 'Requested URL: ' + window.location);
+		}
+	});
+}
+
+function showSuggestedPage(title, url){
+	var hostname = new RegExp(location.host);
+	if ( hostname.test(url) ) {
+		jQuery('.suggestion').text(title);
+		jQuery('.suggestion').attr('href', url);
+		jQuery('#suggestedpage').slideDown();
+	}
+}
 
 //Page Visibility
 function pageVisibility(){
