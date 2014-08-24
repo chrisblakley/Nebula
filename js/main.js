@@ -93,7 +93,7 @@ jQuery(window).on('load', function() {
  
  ===========================*/
 
-//Zebra-striper, First-child/Last-child, Hover helper functions
+//Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function helperFunctions(){
 	jQuery('li:even, tr:even').addClass('even');
 	jQuery('li:odd, tr:odd').addClass('odd');
@@ -101,7 +101,13 @@ function helperFunctions(){
 	jQuery('li:last-child, tr:last-child').addClass('last-child');
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
 	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
-	
+	jQuery('a').each(function(){
+		var a = new RegExp('/' + window.location.host + '/');
+		if( !a.test(this.href) ) {
+			var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
+			jQuery(this).attr('rel', rel + 'external');
+		}
+	});
 	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above').hide(); //@TODO: Anything we can do here to alleviate the issue? May need to just hide
 } //end helperFunctions()
 

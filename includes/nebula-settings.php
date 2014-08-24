@@ -480,7 +480,7 @@
 			        	<th scope="row">CSE Engine ID&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_cse_id" value="<?php echo get_option('nebula_cse_id'); ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" />
-							<p class="helper"><small>Google Custom Search Engine ID (for page suggestions on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
+							<p class="helper"><small>Google Custom Search Engine ID (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
 						</td>
 			        </tr>
 			        
@@ -488,7 +488,7 @@
 			        	<th scope="row">CSE API Key&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_cse_api_key" value="<?php echo get_option('nebula_cse_api_key'); ?>" style="width: 392px;" />
-							<p class="helper"><small>Google Custom Search Engine API Key (for page suggestions on 404 and No Search Results pages). On the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Then on the "APIs" page, find "Custom Search API" and toggle it on. Then under "Credentials" create a new key, choose "Browser Key".</small></p>
+							<p class="helper"><small>Google Custom Search Engine API Key (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). On the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Then on the "APIs" page, find "Custom Search API" and toggle it on. Then under "Credentials" create a new key, choose "Browser Key".</small></p>
 						</td>
 			        </tr>
 			    </table>
