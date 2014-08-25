@@ -179,7 +179,7 @@ function facebookSDK() {
 		});
 	};
 	
-	jQuery('.facebook-connect').on('click', function(){
+	jQuery(document).on('click', '.facebook-connect', function(){
 		facebookLoginLogout();
 		return false;
 	});
@@ -364,7 +364,7 @@ function overflowDetector() {
 function subnavExpanders() {
     jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    jQuery('.toplevelvert_expander').on('click', function(){
+    jQuery(document).on('click', '.toplevelvert_expander', function(){
         jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
         return false;
     });
@@ -400,20 +400,20 @@ function gaEventTracking(){
 	
 	//@TODO: IF ga() is defined.
 	
-	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string.)
-	//jQuery('.selector').on('click', function() {
+	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Use deferred selectors.)
+	//jQuery(document).on('click', '.selector', function() {
 	//	nebula_event('Category', 'Action', 'Label', Value;
 	//});
 	
 	//External links
-	jQuery("a[rel*='external']").on('click', function(){
+	jQuery(document).on('click', "a[rel*='external']", function(){
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
 		nebula_event('External Link', linkText, destinationURL);
 	});
 	
 	//PDF View/Download
-	jQuery("a[href$='.pdf']").on('click', function(){
+	jQuery(document).on('click', "a[href$='.pdf']", function(){
 		var title= jQuery('title').text()
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
@@ -426,40 +426,40 @@ function gaEventTracking(){
 	});
 	
 	//Contact Form Submissions
-	jQuery('.wpcf7-form').on('submit', function() {
+	jQuery(document).on('submit', '.wpcf7-form', function() {
 		var currentPage = jQuery(document).attr('title');
 		nebula_event('Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
 	});
 	
 	//Generic Interal Search Tracking
-	jQuery('.search').on('submit', function(){
+	jQuery(document).on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		nebula_event('Internal Search', 'Submit', searchQuery);
 	});
 	
 	//Mailto link tracking
-	jQuery('a[href^="mailto"]').on('click', function(){
+	jQuery(document).on('click', 'a[href^="mailto"]', function(){
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
 		nebula_event('Mailto', 'Email: ' + emailAddress);
 	});
 	
 	//Telephone link tracking
-	jQuery('a[href^="tel"]').on('click', function(){
+	jQuery(document).on('click', 'a[href^="tel"]', function(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		nebula_event('Click-to-Call', 'Phone Number: ' + phoneNumber);
 	});
 	
 	//SMS link tracking
-	jQuery('a[href^="sms"]').on('click', function(){
+	jQuery(document).on('click', 'a[href^="sms"]', function(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		nebula_event('Click-to-Call', 'SMS to: ' + phoneNumber);
 	});
 	
 	//Comment tracking @TODO: This might not be working.
-	jQuery('#commentform').on('submit', function(){
+	jQuery(document).on('submit', '#commentform', function(){
 		if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
 			var currentPage = jQuery(document).attr('title');
 			if ( jQuery('#reply-title').is('*') ) {
@@ -598,7 +598,7 @@ function mmenu() {
 		}
 	});
 	jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-	jQuery('.clearsearch a').on('click', function(){
+	jQuery(document).on('click', '.clearsearch a', function(){
 		jQuery('.mm-search input').val('').keyup();
 		jQuery('.clearsearch').addClass('hidden');
 		return false;
@@ -732,7 +732,7 @@ function singleResultDrawer(){
 		jQuery('#searchform input#s').val(theSearchTerm); //This is not needed if Search Everything can fix the "?s=" issue.
 	}
 	
-	jQuery('.headerdrawer .close').on('click', function(){
+	jQuery(document).on('click', '.headerdrawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
 		jQuery('.headerdrawercon').slideUp();
@@ -1429,7 +1429,7 @@ function eraseCookie(name) {
 //Interactive Functions of the Google Map
 function mapActions() {
 	originalWeatherText = jQuery('.mapweather').text();
-	jQuery('.mapweather').on('click', function(){
+	jQuery(document).on('click', '.mapweather', function(){
 		if ( mapInfo['weather'] == 1 ) {
 			mapInfo['weather'] = 0;
 			jQuery('.mapweather').removeClass('active').addClass('inactive').text(originalWeatherText);
@@ -1446,7 +1446,7 @@ function mapActions() {
 	});
 	
 	originalTrafficText = jQuery('.maptraffic').text();
-	jQuery('.maptraffic').on('click', function(){
+	jQuery(document).on('click', '.maptraffic', function(){
 		if ( mapInfo['traffic'] == 1 ) {
 			mapInfo['traffic'] = 0;
 			jQuery('.maptraffic').removeClass('active').addClass('inactive').text(originalTrafficText);
@@ -1462,7 +1462,7 @@ function mapActions() {
 		return false;
 	});
 	
-	jQuery('.mapgeolocation').on('click', function(){
+	jQuery(document).on('click', '.mapgeolocation', function(){
 		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
 			Gumby.log('Enabling location detection.');
 			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
@@ -1490,7 +1490,7 @@ function mapActions() {
 	
 	originalRefreshText = jQuery('.maprefresh').text();
 	pleaseWait = 0;
-	jQuery('.maprefresh').on('click', function(){
+	jQuery(document).on('click', '.maprefresh', function(){
 		if ( !jQuery(this).hasClass('timeout') ) {
 			pleaseWait = 0;
 			Gumby.log('Refreshing the map.');

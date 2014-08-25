@@ -170,6 +170,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 .headerdrawercon {position: relative; background: rgba(0,0,0,0.0225);}
 	.headerdrawercon hr {margin: 0;}
 	.headerdrawer {position: relative; padding-top: 10px; text-align: center; font-size: 12px;}
+		.headerdrawer p {text-align: center;}
 		.headerdrawer a.close {position: absolute; top: 0; right: 0;}
 #suggestedpage {display: none;}
 
@@ -613,7 +614,7 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 	#heroslidercon {height: 100px; overflow: hidden; background-size: cover;}
 		#heroslidercon h3 {font-size: 28px; line-height: 40px;}
 		#heroslidercon h4 {font-size: 16px; display: none !important;}
-	
+		
 	.author-headshot {text-align: center;}
 	
 	.xoxo .search {display: none;}
