@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
 	nebulaFixeder();
 	
 	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
-	mmenu();
+	mmenus();
 	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
 	
 	powerFooterWidthDist();
@@ -397,135 +397,136 @@ function nebulaFixeder() {
 
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
-	
-	//@TODO: IF ga() is defined.
-	
-	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Use deferred selectors.)
-	//jQuery(document).on('click', '.selector', function() {
-	//	nebula_event('Category', 'Action', 'Label', Value;
-	//});
-	
-	//External links
-	jQuery(document).on('click', "a[rel*='external']", function(){
-		var linkText = jQuery(this).text();
-		var destinationURL = jQuery(this).attr('href');
-		nebula_event('External Link', linkText, destinationURL);
-	});
-	
-	//PDF View/Download
-	jQuery(document).on('click', "a[href$='.pdf']", function(){
-		var title= jQuery('title').text()
-		var linkText = jQuery(this).text();
-		var fileName = jQuery(this).attr('href');
-		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
-		if ( linkText == '' || linkText == 'Download') {
-			nebula_event('PDF View', 'From Page: ' + title, 'File: ' + fileName);
-		} else {
-			nebula_event('PDF View', 'From Page: ' + title, 'Text: ' + linkText);
-		}
-	});
-	
-	//Contact Form Submissions
-	jQuery(document).on('submit', '.wpcf7-form', function() {
-		var currentPage = jQuery(document).attr('title');
-		nebula_event('Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
-	});
-	
-	//Generic Interal Search Tracking
-	jQuery(document).on('submit', '.search', function(){
-		var searchQuery = jQuery(this).find('input[name="s"]').val();
-		nebula_event('Internal Search', 'Submit', searchQuery);
-	});
-	
-	//Mailto link tracking
-	jQuery(document).on('click', 'a[href^="mailto"]', function(){
-		var emailAddress = jQuery(this).attr('href');
-		emailAddress = emailAddress.replace('mailto:', '');
-		nebula_event('Mailto', 'Email: ' + emailAddress);
-	});
-	
-	//Telephone link tracking
-	jQuery(document).on('click', 'a[href^="tel"]', function(){
-		var phoneNumber = jQuery(this).attr('href');
-		phoneNumber = phoneNumber.replace('tel:+', '');
-		nebula_event('Click-to-Call', 'Phone Number: ' + phoneNumber);
-	});
-	
-	//SMS link tracking
-	jQuery(document).on('click', 'a[href^="sms"]', function(){
-		var phoneNumber = jQuery(this).attr('href');
-		phoneNumber = phoneNumber.replace('sms:+', '');
-		nebula_event('Click-to-Call', 'SMS to: ' + phoneNumber);
-	});
-	
-	//Comment tracking @TODO: This might not be working.
-	jQuery(document).on('submit', '#commentform', function(){
-		if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
-			var currentPage = jQuery(document).attr('title');
-			if ( jQuery('#reply-title').is('*') ) {
-				var replyTo = jQuery('#reply-title').children('a').text();
-				var commentID = jQuery('#reply-title').children('a').attr('href').replace('comment-', '');
-				nebula_event('Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
-			} else {
-				nebula_event('Comment', currentPage, 'Top Level');
-			}
-		}
-	});
-	
-	//Word copy tracking
-	var copyCount = 0;
-	var copyOver = 0;
-	jQuery(document).on('cut copy', function(){
-		copyCount++;
-		var currentPage = jQuery(document).attr('title');
-		var words = [];
-		var selection = window.getSelection() + '';
-		words = selection.split(' ');
-		wordsLength = words.length;
+	if ( typeof nebula_event !== 'undefined' /* || typeof ga !== 'undefined' */ ) {
+
+		//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Use deferred selectors.)
+		//jQuery(document).on('click', '.selector', function() {
+		//	nebula_event('Category', 'Action', 'Label', Value;
+		//});
 		
-		if ( copyCount < 13 ) {
-			if (words.length > 8) {
-				words = words.slice(0, 8).join(' ');
-				nebula_event('Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
+		//External links
+		jQuery(document).on('click', "a[rel*='external']", function(){
+			var linkText = jQuery(this).text();
+			var destinationURL = jQuery(this).attr('href');
+			nebula_event('External Link', linkText, destinationURL);
+		});
+		
+		//PDF View/Download
+		jQuery(document).on('click', "a[href$='.pdf']", function(){
+			var title= jQuery('title').text()
+			var linkText = jQuery(this).text();
+			var fileName = jQuery(this).attr('href');
+			fileName = fileName.substr(fileName.lastIndexOf("/")+1);
+			if ( linkText == '' || linkText == 'Download') {
+				nebula_event('PDF View', 'From Page: ' + title, 'File: ' + fileName);
 			} else {
-				if ( selection == '' || selection == ' ' ) {
-					nebula_event('Copied Text', currentPage, '[0 words]');
-				} else {
-					nebula_event('Copied Text', currentPage, selection);
-				}
-			}
-		} else {
-			if ( copyOver == 0 ) {
-				nebula_event('Copied Text', currentPage, '[Copy limit reached]');
-			}
-			copyOver = 1;
-		}
-	});
-	
-	//AJAX Errors
-	jQuery(document).ajaxError(function(e, request, settings) {
-		nebula_event('Error', 'AJAX Error', e.result + ' on: ' + settings.url);
-		ga('send', 'exception', e.result, true);
-	});
-	
-	
-	//Capture Print Intent
-	printed = 0;
-	var afterPrint = function() {
-		if ( printed == 0 ) {
-			printed = 1;
-			nebula_event('Print (Intent)', document.location.pathname);
-		}
-	};
-	if ( window.matchMedia ) {
-		var mediaQueryList = window.matchMedia('print');
-		mediaQueryList.addListener(function(mql) {
-			if ( !mql.matches ) {
-				afterPrint();
+				nebula_event('PDF View', 'From Page: ' + title, 'Text: ' + linkText);
 			}
 		});
+		
+		//Contact Form Submissions
+		jQuery(document).on('submit', '.wpcf7-form', function() {
+			var currentPage = jQuery(document).attr('title');
+			nebula_event('Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
+		});
+		
+		//Generic Interal Search Tracking
+		jQuery(document).on('submit', '.search', function(){
+			var searchQuery = jQuery(this).find('input[name="s"]').val();
+			nebula_event('Internal Search', 'Submit', searchQuery);
+		});
+		
+		//Mailto link tracking
+		jQuery(document).on('click', 'a[href^="mailto"]', function(){
+			var emailAddress = jQuery(this).attr('href');
+			emailAddress = emailAddress.replace('mailto:', '');
+			nebula_event('Mailto', 'Email: ' + emailAddress);
+		});
+		
+		//Telephone link tracking
+		jQuery(document).on('click', 'a[href^="tel"]', function(){
+			var phoneNumber = jQuery(this).attr('href');
+			phoneNumber = phoneNumber.replace('tel:+', '');
+			nebula_event('Click-to-Call', 'Phone Number: ' + phoneNumber);
+		});
+		
+		//SMS link tracking
+		jQuery(document).on('click', 'a[href^="sms"]', function(){
+			var phoneNumber = jQuery(this).attr('href');
+			phoneNumber = phoneNumber.replace('sms:+', '');
+			nebula_event('Click-to-Call', 'SMS to: ' + phoneNumber);
+		});
+		
+		//Comment tracking @TODO: This might not be working.
+		jQuery(document).on('submit', '#commentform', function(){
+			if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
+				var currentPage = jQuery(document).attr('title');
+				if ( jQuery('#reply-title').is('*') ) {
+					var replyTo = jQuery('#reply-title').children('a').text();
+					var commentID = jQuery('#reply-title').children('a').attr('href').replace('comment-', '');
+					nebula_event('Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
+				} else {
+					nebula_event('Comment', currentPage, 'Top Level');
+				}
+			}
+		});
+		
+		//Word copy tracking
+		var copyCount = 0;
+		var copyOver = 0;
+		jQuery(document).on('cut copy', function(){
+			copyCount++;
+			var currentPage = jQuery(document).attr('title');
+			var words = [];
+			var selection = window.getSelection() + '';
+			words = selection.split(' ');
+			wordsLength = words.length;
+			
+			if ( copyCount < 13 ) {
+				if (words.length > 8) {
+					words = words.slice(0, 8).join(' ');
+					nebula_event('Copied Text', currentPage, words + '... [' + wordsLength + ' words]');
+				} else {
+					if ( selection == '' || selection == ' ' ) {
+						nebula_event('Copied Text', currentPage, '[0 words]');
+					} else {
+						nebula_event('Copied Text', currentPage, selection);
+					}
+				}
+			} else {
+				if ( copyOver == 0 ) {
+					nebula_event('Copied Text', currentPage, '[Copy limit reached]');
+				}
+				copyOver = 1;
+			}
+		});
+		
+		//AJAX Errors
+		jQuery(document).ajaxError(function(e, request, settings) {
+			nebula_event('Error', 'AJAX Error', e.result + ' on: ' + settings.url);
+			ga('send', 'exception', e.result, true);
+		});
+		
+		
+		//Capture Print Intent
+		printed = 0;
+		var afterPrint = function() {
+			if ( printed == 0 ) {
+				printed = 1;
+				nebula_event('Print (Intent)', document.location.pathname);
+			}
+		};
+		if ( window.matchMedia ) {
+			var mediaQueryList = window.matchMedia('print');
+			mediaQueryList.addListener(function(mql) {
+				if ( !mql.matches ) {
+					afterPrint();
+				}
+			});
+		}
+		window.onafterprint = afterPrint;
+	
 	}
-	window.onafterprint = afterPrint;
 		
 } //End gaEventTracking()
 
@@ -551,70 +552,69 @@ function googlePlusCallback(jsonParam) {
 	}
 }
 
-function mmenu() {
-	
-	//@TODO: IF .mmenu is defined
-	
-	jQuery("#mobilenav").mmenu({
-	    //Options
-	    searchfield: { //This is for searching through the menu itself (NOT for site search)
-	    	add: true,
-	    	search: true,
-	    	placeholder: 'Search',
-	    	noResults: 'No navigation items found.',
-	    	showLinksOnly: false //"true" searches only <a> links, "false" includes spans in search results
-	    },
-	    counters: true, //Display count of sub-menus
-	    classes: "mm-light"
-	}, {
-		//Configuration
-	}).on('opened.mm', function(){
-		history.replaceState(null, document.title, location);
-		history.pushState(null, document.title, location);
-	});
-	
-	jQuery("#mobilecontact").mmenu({
-		//Options
-	    position: 'right',
-	    classes: "mm-light",
-	    header: {
-			add: true,
-			update: true, //Change the header text when navigating to sub-menus
-			title: 'Contact Us'
-		}
-	}, {
-		//Configuration
-	}).on('opened.mm', function(){
-		history.replaceState(null, document.title, location);
-		history.pushState(null, document.title, location);
-	});
-	
-	jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
-	jQuery('.mm-search input').on('keyup', function(){
-		if ( jQuery(this).val().length > 0 ) {
-			jQuery('.clearsearch').removeClass('hidden');
-		} else {
-			jQuery('.clearsearch').addClass('hidden');
-		}
-	});
-	jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-	jQuery(document).on('click', '.clearsearch a', function(){
-		jQuery('.mm-search input').val('').keyup();
-		jQuery('.clearsearch').addClass('hidden');
-		return false;
-	});
+function mmenus() {
+	if ( 'mmenu' in jQuery ) {
+		jQuery("#mobilenav").mmenu({
+		    //Options
+		    searchfield: { //This is for searching through the menu itself (NOT for site search)
+		    	add: true,
+		    	search: true,
+		    	placeholder: 'Search',
+		    	noResults: 'No navigation items found.',
+		    	showLinksOnly: false //"true" searches only <a> links, "false" includes spans in search results
+		    },
+		    counters: true, //Display count of sub-menus
+		    classes: "mm-light"
+		}, {
+			//Configuration
+		}).on('opened.mm', function(){
+			history.replaceState(null, document.title, location);
+			history.pushState(null, document.title, location);
+		});
 		
-	//Close mmenu on back button click
-	if (window.history && window.history.pushState) {
-		window.addEventListener("popstate", function(e) {
-			if ( jQuery('html.mm-opened').is('*') ) {
-				jQuery(".mm-menu").trigger("close.mm");
-				e.stopPropagation();
+		jQuery("#mobilecontact").mmenu({
+			//Options
+		    position: 'right',
+		    classes: "mm-light",
+		    header: {
+				add: true,
+				update: true, //Change the header text when navigating to sub-menus
+				title: 'Contact Us'
 			}
-		}, false);
-	}
+		}, {
+			//Configuration
+		}).on('opened.mm', function(){
+			history.replaceState(null, document.title, location);
+			history.pushState(null, document.title, location);
+		});
+		
+		jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
+		jQuery('.mm-search input').on('keyup', function(){
+			if ( jQuery(this).val().length > 0 ) {
+				jQuery('.clearsearch').removeClass('hidden');
+			} else {
+				jQuery('.clearsearch').addClass('hidden');
+			}
+		});
+		jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
+		jQuery(document).on('click', '.clearsearch a', function(){
+			jQuery('.mm-search input').val('').keyup();
+			jQuery('.clearsearch').addClass('hidden');
+			return false;
+		});
+			
+		//Close mmenu on back button click
+		if (window.history && window.history.pushState) {
+			window.addEventListener("popstate", function(e) {
+				if ( jQuery('html.mm-opened').is('*') ) {
+					jQuery(".mm-menu").trigger("close.mm");
+					e.stopPropagation();
+				}
+			}, false);
+		}
 	
-} //end mmenu()
+	}
+} //end mmenus()
 
 //Power Footer Width Distributor
 function powerFooterWidthDist() {
@@ -1276,8 +1276,7 @@ function conditionalJSLoading() {
 
 //Twitter Feed integration
 function twitterFeed() {
-    if(jQuery('.twitter-feed').is('*')){
-    	//@TODO: IF JQTWEET is defined
+    if ( jQuery('.twitter-feed').is('*') && typeof JQTWEET !== 'undefined' ){
         JQTWEET = JQTWEET || {};
         //JQTWEET.search = '#hashtag';
         JQTWEET.user = 'pinckneyhugo';
@@ -1290,33 +1289,33 @@ function twitterFeed() {
 
 //Place all bxSlider events inside this function!
 function bxSlider() {
-	//@TODO: IF bxSlider is defined
-	jQuery('.exampleslider').bxSlider({
-		mode: 'horizontal', //'horizontal', 'vertical', 'fade'
-		speed: 800,
-		captions: false,
-		auto: true,
-		pause: 6000,
-		autoHover: true,
-		adaptiveHeight: true,
-		useCSS: false,
-		easing: 'easeInOutCubic',
-		controls: false
-	});
-	
-	jQuery('.heroslider').bxSlider({
-		mode: 'fade',
-		speed: 800,
-		captions: false,
-		pager: false,
-		auto: true,
-		pause: 6000,
-		autoHover: true,
-		adaptiveHeight: true,
-		useCSS: false,
-		easing: 'easeInOutCubic',
-		controls: true
-	});
+	if ( typeof bxSlider !== 'undefined' ) {
+		jQuery('.exampleslider').bxSlider({
+			mode: 'horizontal', //'horizontal', 'vertical', 'fade'
+			speed: 800,
+			captions: false,
+			auto: true,
+			pause: 6000,
+			autoHover: true,
+			adaptiveHeight: true,
+			useCSS: false,
+			easing: 'easeInOutCubic',
+			controls: false
+		});
+		
+		jQuery('.heroslider').bxSlider({
+			mode: 'fade',
+			speed: 800,
+			captions: false,
+			pager: false,
+			auto: false,
+			pause: 10000,
+			autoHover: true,
+			adaptiveHeight: true,
+			useCSS: true,
+			controls: true
+		});
+	}
 }
 
 function vimeoControls() {

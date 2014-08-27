@@ -32,7 +32,7 @@
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
 		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : ?>
 			<meta property="og:type" content="business.business" />
-			<meta property="og:locale" content="<?php language_attributes(); ?>" />
+			<meta property="og:locale" content="<?php echo bloginfo('language'); ?>" />
 			<meta property="og:title" content="<?php the_title(); ?>" />
 			<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 			<meta property="og:url" content="<?php the_permalink(); ?>" />
@@ -100,7 +100,7 @@
 		<!-- Local/Geolocation Metadata -->
 		<meta name="geo.placename" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- The city (and state if needed). Replace each respective '' with the appropriate value. -->
 		<meta name="geo.position" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>;<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Semi-colon separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
-		<meta name="geo.region" content="<?php language_attributes(); ?>" />
+		<meta name="geo.region" content="<?php echo bloginfo('language'); ?>" />
 		<meta name="ICBM" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Comma and space separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
 		<meta property="place:location:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
 		<meta property="place:location:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />

@@ -183,8 +183,7 @@
 			});
 		</script>
 		
-		
-		<div class="wrap">			
+		<div class="wrap">
 			<h2>Nebula Settings</h2>
 			<?php
 				if (!current_user_can('manage_options')) {
@@ -213,7 +212,7 @@
 				?>
 				<table class="form-table global">
 			        <tr valign="top">
-			        	<th scope="row">Nebula Settings&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Nebula Settings&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_overall" id="nebula_overall">
 								<option value="enabled" <?php selected('enabled', get_option('nebula_overall')); ?>>Enabled</option>
@@ -235,96 +234,96 @@
 				
 				<table class="form-table dependent metadata">
 			        <tr valign="top">
-			        	<th scope="row">Contact Email&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Contact Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_contact_email" value="<?php echo get_option('nebula_contact_email'); ?>" placeholder="<?php echo get_option('admin_email', $GLOBALS['admin_user']->user_email); ?>" />
 							<p class="helper"><small>The main contact email address. If left empty, the admin email address will be used (shown by placeholder).</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Google Analytics Tracking ID&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Google Analytics Tracking ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_ga_tracking_id" value="<?php echo get_option('nebula_ga_tracking_id'); ?>" placeholder="UA-00000000-1" />
 							<p class="helper"><small>This will add the tracking number to the appropriate locations. If left empty, the tracking ID will need to be entered in <strong>functions.php</strong>.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Keywords&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<input type="text" name="nebula_keywords" value="<?php echo get_option('nebula_keywords'); ?>" placeholder="Keywords" style="width: 392px;"/>
+							<input type="text" name="nebula_keywords" value="<?php echo get_option('nebula_keywords'); ?>" placeholder="Keywords" style="width: 392px;" />
 							<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">News Keywords&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">News Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<input type="text" name="nebula_news_keywords" value="<?php echo get_option('nebula_news_keywords'); ?>" placeholder="News Keywords" style="width: 392px;"/>
+							<input type="text" name="nebula_news_keywords" value="<?php echo get_option('nebula_news_keywords'); ?>" placeholder="News Keywords" style="width: 392px;" />
 							<p class="helper"><small>Comma-separated list of news events (without quotes) that will be used as news keyword metadata. Currently, this is a global setting. In the future it should be overwritten by a per-post custom field (or pull from Yoast or likewise). <a href="https://support.google.com/news/publisher/answer/68297" target="_blank">More information &raquo;</a></small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Phone Number&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Phone Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_phone_number" value="<?php echo get_option('nebula_phone_number'); ?>" placeholder="1-315-478-6700" />
 							<p class="helper"><small>The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Fax Number&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Fax Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_fax_number" value="<?php echo get_option('nebula_fax_number'); ?>" placeholder="1-315-426-1392" />
 							<p class="helper"><small>The fax number used for Open Graph data. Use the format: "1-315-426-1392".</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Geolocation&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Geolocation&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							Lat: <input type="text" name="nebula_latitude" value="<?php echo get_option('nebula_latitude'); ?>" placeholder="43.0536854" style="width: 100px;"/>
-							Long: <input type="text" name="nebula_longitude" value="<?php echo get_option('nebula_longitude'); ?>" placeholder="-76.1654569" style="width: 100px;"/>
+							Lat: <input type="text" name="nebula_latitude" value="<?php echo get_option('nebula_latitude'); ?>" placeholder="43.0536854" style="width: 100px;" />
+							Long: <input type="text" name="nebula_longitude" value="<?php echo get_option('nebula_longitude'); ?>" placeholder="-76.1654569" style="width: 100px;" />
 							<p class="helper"><small>The latitude and longitude of the physical location (or headquarters if multiple locations). Use the format "43.0536854".</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Address&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Address&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<input type="text" name="nebula_street_address" value="<?php echo get_option('nebula_street_address'); ?>" placeholder="760 West Genesee Street" style="width: 392px;"/><br/>
-							<input type="text" name="nebula_locality" value="<?php echo get_option('nebula_locality'); ?>" placeholder="Syracuse"  style="width: 194px;"/>
-							<input type="text" name="nebula_region" value="<?php echo get_option('nebula_region'); ?>" placeholder="NY"  style="width: 40px;"/>
-							<input type="text" name="nebula_postal_code" value="<?php echo get_option('nebula_postal_code'); ?>" placeholder="13204"  style="width: 70px;"/>
-							<input type="text" name="nebula_country_name" value="<?php echo get_option('nebula_country_name'); ?>" placeholder="USA"  style="width: 70px;"/>
+							<input type="text" name="nebula_street_address" value="<?php echo get_option('nebula_street_address'); ?>" placeholder="760 West Genesee Street" style="width: 392px;" /><br/>
+							<input type="text" name="nebula_locality" value="<?php echo get_option('nebula_locality'); ?>" placeholder="Syracuse"  style="width: 194px;" />
+							<input type="text" name="nebula_region" value="<?php echo get_option('nebula_region'); ?>" placeholder="NY"  style="width: 40px;" />
+							<input type="text" name="nebula_postal_code" value="<?php echo get_option('nebula_postal_code'); ?>" placeholder="13204"  style="width: 70px;" />
+							<input type="text" name="nebula_country_name" value="<?php echo get_option('nebula_country_name'); ?>" placeholder="USA"  style="width: 70px;" />
 							<p class="helper"><small>The address of the location (or headquarters if multiple locations).</small></p>
 						</td>
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">Business Hours&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_sunday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_sunday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Sunday:</span> <input class="business-hour" type="text" name="nebula_business_hours_sunday_open" value="<?php echo get_option('nebula_business_hours_sunday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_sunday_close" value="<?php echo get_option('nebula_business_hours_sunday_close'); ?>" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_sunday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_sunday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Sunday:</span> <input class="business-hour" type="text" name="nebula_business_hours_sunday_open" value="<?php echo get_option('nebula_business_hours_sunday_open'); ?>" style="width: 75px;" /> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_sunday_close" value="<?php echo get_option('nebula_business_hours_sunday_close'); ?>" style="width: 75px;"  />
 							</div>
 							
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_monday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_monday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Monday:</span> <input class="business-hour" type="text" name="nebula_business_hours_monday_open" value="<?php echo get_option('nebula_business_hours_monday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_monday_close" value="<?php echo get_option('nebula_business_hours_monday_close'); ?>" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_monday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_monday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Monday:</span> <input class="business-hour" type="text" name="nebula_business_hours_monday_open" value="<?php echo get_option('nebula_business_hours_monday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_monday_close" value="<?php echo get_option('nebula_business_hours_monday_close'); ?>" style="width: 75px;"/>
 							</div>
 							
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_tuesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_tuesday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Tuesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_tuesday_open" value="<?php echo get_option('nebula_business_hours_tuesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_tuesday_close" value="<?php echo get_option('nebula_business_hours_tuesday_close'); ?>" placeholder="5:30 pm" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_tuesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_tuesday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Tuesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_tuesday_open" value="<?php echo get_option('nebula_business_hours_tuesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_tuesday_close" value="<?php echo get_option('nebula_business_hours_tuesday_close'); ?>" placeholder="5:30 pm" style="width: 75px;"/>
 							</div>
 							
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_wednesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_wednesday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Wednesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_wednesday_open" value="<?php echo get_option('nebula_business_hours_wednesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_wednesday_close" value="<?php echo get_option('nebula_business_hours_wednesday_close'); ?>" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_wednesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_wednesday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Wednesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_wednesday_open" value="<?php echo get_option('nebula_business_hours_wednesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_wednesday_close" value="<?php echo get_option('nebula_business_hours_wednesday_close'); ?>" style="width: 75px;"/>
 							</div>
 							
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_thursday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_thursday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Thursday:</span> <input class="business-hour" type="text" name="nebula_business_hours_thursday_open" value="<?php echo get_option('nebula_business_hours_thursday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_thursday_close" value="<?php echo get_option('nebula_business_hours_thursday_close'); ?>" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_thursday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_thursday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Thursday:</span> <input class="business-hour" type="text" name="nebula_business_hours_thursday_open" value="<?php echo get_option('nebula_business_hours_thursday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_thursday_close" value="<?php echo get_option('nebula_business_hours_thursday_close'); ?>" style="width: 75px;"/>
 							</div>
 							
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_friday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_friday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Friday:</span> <input class="business-hour" type="text" name="nebula_business_hours_friday_open" value="<?php echo get_option('nebula_business_hours_friday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_friday_close" value="<?php echo get_option('nebula_business_hours_friday_close'); ?>" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_friday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_friday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Friday:</span> <input class="business-hour" type="text" name="nebula_business_hours_friday_open" value="<?php echo get_option('nebula_business_hours_friday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_friday_close" value="<?php echo get_option('nebula_business_hours_friday_close'); ?>" style="width: 75px;"/>
 							</div>
 							
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_saturday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_saturday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Saturday:</span> <input class="business-hour" type="text" name="nebula_business_hours_saturday_open" value="<?php echo get_option('nebula_business_hours_saturday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_saturday_close" value="<?php echo get_option('nebula_business_hours_saturday_close'); ?>" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_saturday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_saturday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Saturday:</span> <input class="business-hour" type="text" name="nebula_business_hours_saturday_open" value="<?php echo get_option('nebula_business_hours_saturday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_saturday_close" value="<?php echo get_option('nebula_business_hours_saturday_close'); ?>" style="width: 75px;"/>
 							</div>
 							
 							<p class="helper"><small>Open/Close times. Times should be in the format "5:30 pm" or "17:30". Uncheck all to disable this meta.</small></p>
@@ -332,7 +331,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">Facebook&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							URL: <input type="text" name="nebula_facebook_url" value="<?php echo get_option('nebula_facebook_url'); ?>" placeholder="http://www.facebook.com/PinckneyHugo" style="width: 358px;"/><br/>
 							App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
@@ -342,35 +341,35 @@
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Google+&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Google+&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							URL: <input type="text" name="nebula_google_plus_url" value="<?php echo get_option('nebula_google_plus_url'); ?>" placeholder="https://plus.google.com/106644717328415684498/about" style="width: 358px;"/>
 							<p class="helper"><small>The URL of the associated Google+ page.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Twitter&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Twitter&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							URL: <input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/>
 							<p class="helper"><small>The URL of the associated Twitter page.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">LinkedIn&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">LinkedIn&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							URL: <input type="text" name="nebula_linkedin_url" value="<?php echo get_option('nebula_linkedin_url'); ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" style="width: 358px;"/>
 							<p class="helper"><small>The URL of the associated LinkedIn page.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Youtube&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Youtube&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							URL: <input type="text" name="nebula_youtube_url" value="<?php echo get_option('nebula_youtube_url'); ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" style="width: 358px;"/>
 							<p class="helper"><small>The URL of the associated YouTube page.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Instagram&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Instagram&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							URL: <input type="text" name="nebula_instagram_url" value="<?php echo get_option('nebula_instagram_url'); ?>" placeholder="https://www.instagram.com/pinckneyhugo" style="width: 358px;"/>
 							<p class="helper"><small>The URL of the associated Instagram page.</small></p>
@@ -384,7 +383,7 @@
 				
 				<table class="form-table dependent functions" style="display: none;">
 			        <tr valign="top">
-			        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_admin_bar">
 								<option value="default" <?php selected('default', get_option('nebula_admin_bar')); ?>>Default</option>
@@ -396,7 +395,7 @@
 			        </tr>
 			         
 			        <tr valign="top">
-			        	<th scope="row">Comments&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Comments&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_comments">
 								<option value="default" <?php selected('default', get_option('nebula_comments')); ?>>Default</option>
@@ -408,7 +407,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_wp_core_updates_notify">
 								<option value="default" <?php selected('default', get_option('nebula_wp_core_updates_notify')); ?>>Default</option>
@@ -420,7 +419,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">PHG Plugin Update Warning&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">PHG Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_phg_plugin_update_warning">
 								<option value="default" <?php selected('default', get_option('nebula_phg_plugin_update_warning')); ?>>Default</option>
@@ -432,7 +431,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">PHG Welcome Panel&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">PHG Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_phg_welcome_panel">
 								<option value="default" <?php selected('default', get_option('nebula_phg_welcome_panel')); ?>>Default</option>
@@ -444,7 +443,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_unnecessary_metaboxes">
 								<option value="default" <?php selected('default', get_option('nebula_unnecessary_metaboxes')); ?>>Default</option>
@@ -456,7 +455,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">PHG Developer Metabox&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">PHG Developer Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_phg_metabox">
 								<option value="default" <?php selected('default', get_option('nebula_phg_metabox')); ?>>Default</option>
@@ -468,7 +467,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">Console CSS&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Console CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_console_css">
 								<option value="default" <?php selected('default', get_option('nebula_console_css')); ?>>Default</option>
@@ -480,7 +479,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">CSE Engine ID&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">CSE Engine ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_cse_id" value="<?php echo get_option('nebula_cse_id'); ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" />
 							<p class="helper"><small>Google Custom Search Engine ID (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
@@ -488,7 +487,7 @@
 			        </tr>
 			        
 			        <tr valign="top">
-			        	<th scope="row">CSE API Key&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">CSE API Key&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_cse_api_key" value="<?php echo get_option('nebula_cse_api_key'); ?>" style="width: 392px;" />
 							<p class="helper"><small>Google Custom Search Engine API Key (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). On the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Then on the "APIs" page, find "Custom Search API" and toggle it on. Then under "Credentials" create a new key, choose "Browser Key".</small></p>
@@ -501,7 +500,7 @@
 				
 				<table class="form-table dependent administration" style="display: none;">
 			        <tr valign="top">
-			        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_dev_ip" value="<?php echo get_option('nebula_dev_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
 							<p class="helper"><small>Comma and space separated IP addresses of the developer to enable specific console logs and other dev info. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
@@ -513,14 +512,14 @@
 							list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 						?>
 			        	
-			        	<th scope="row">Developer Email Domains&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Developer Email Domains&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_dev_email_domain" value="<?php echo get_option('nebula_dev_email_domain'); ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
 							<p class="helper"><small>Comma and space separated domains of the developer emails (without the "@") to enable specific console logs and other dev info. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Control Panel&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Control Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<?php
 								$serverProtocol = 'http://';
@@ -533,7 +532,7 @@
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Hosting&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Hosting&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<?php
 								$hostURL = explode(".", gethostname());
@@ -543,7 +542,7 @@
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Domain Registrar&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Domain Registrar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<?php
 								//$whois = simplexml_load_string(file_get_contents('http://whomsy.com/api/' . $_SERVER['SERVER_NAME'] . '?output=xml'));
@@ -555,14 +554,14 @@
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Google Analytics URL&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Google Analytics URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_ga_url" value="<?php echo get_option('nebula_ga_url'); ?>" placeholder="http://www.google.com/analytics/..." style="width: 392px;" />
 							<p class="helper"><small>Link directly to this project's Google Analytics report.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
-			        	<th scope="row">Google Webmaster Tools URL&nbsp;<a class="help" href="#"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Google Webmaster Tools URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_google_webmaster_tools_url" value="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
 							<p class="helper"><small>Direct link to this project's Google Webmaster Tools.</small></p>
