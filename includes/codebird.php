@@ -349,7 +349,7 @@ class Codebird
         if (!function_exists('hash_hmac')) {
             throw new Exception('To generate a hash, the PHP hash extension must be available.');
         }
-        return base64_encode(hash_hmac('sha1', $data, self::$_oauth_consumer_secret . '&'
+        return base64_encode(hash_hmac('sha1', $data, self::$_oauth_consumer_secret . '&' //@TODO: Replace base64_encode with an equivilent
             . ($this->_oauth_token_secret != null ? $this->_oauth_token_secret : ''), true));
     }
 
@@ -734,13 +734,13 @@ class Codebird
 
     private function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false)
     {
-        if (! function_exists('curl_init')) {
+        if (! function_exists('curl_init')) { //@TODO: use WP_Filesystem methods instead of curl_init
             throw new Exception('To make API requests, the PHP curl extension must be available.');
         }
         $url = $this->_getEndpoint($method, $method_template);
         $ch  = false;
         if ($httpmethod == 'GET') {
-            $ch = curl_init($this->_sign($httpmethod, $url, $params));
+            $ch = curl_init($this->_sign($httpmethod, $url, $params)); //@TODO: use WP_Filesystem methods instead of curl_init
         } else {
             if ($multipart) {
                 $authorization = $this->_sign('POST', $url, array(), true);
@@ -748,7 +748,7 @@ class Codebird
             } else {
                 $post_fields = $this->_sign('POST', $url, $params);
             }
-            $ch = curl_init($url);
+            $ch = curl_init($url); //@TODO: use WP_Filesystem methods instead of curl_init
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
         }
@@ -763,7 +763,7 @@ class Codebird
                 'Expect:'
             ));
         }
-        $reply      = curl_exec($ch);
+        $reply      = curl_exec($ch); //@TODO: use WP_Filesystem methods instead of curl_exec
         $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $reply = $this->_parseApiReply($method_template, $reply);
         if ($this->_return_format == CODEBIRD_RETURNFORMAT_OBJECT) {

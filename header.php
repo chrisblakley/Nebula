@@ -25,8 +25,8 @@
                 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		
-		<link rel="icon" href="<?php bloginfo('template_directory');?>/images/favicon.ico">
-		<link rel="apple-touch-icon" href="<?php bloginfo('template_directory');?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
+		<link rel="icon" href="<?php echo get_template_directory_uri();?>/images/favicon.ico">
+		<link rel="apple-touch-icon" href="<?php echo get_template_directory_uri();?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
 				
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
@@ -43,7 +43,7 @@
 			<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO: Replace '' with comma-separated keywords. -->
 			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO: Replace '' with comma-separated news event keywords. -->
-			<meta name="author" content="<?php bloginfo('template_directory');?>/humans.txt" />
+			<meta name="author" content="<?php echo get_template_directory_uri();?>/humans.txt" />
 			
 			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
 			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify admin email address. ?>" />
@@ -57,8 +57,8 @@
 		<?php endif; ?>
 		
 		<!-- @TODO: Create at least one OG Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template (Use PNG to avoid compression artifacts!). -->
-		<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb.png" />
-    	<meta property="og:image" content="<?php bloginfo('template_directory');?>/images/og-thumb2.png" />
+		<meta property="og:image" content="<?php echo get_template_directory_uri();?>/images/og-thumb.png" />
+    	<meta property="og:image" content="<?php echo get_template_directory_uri();?>/images/og-thumb2.png" />
     			
 		<?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Settings. ?>
 		<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ) : ?>
@@ -82,7 +82,7 @@
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content="<?php the_title(); ?>" /> 
 		<meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta name="twitter:image" content="<?php bloginfo('template_directory');?>/images/og-thumb.png" />
+		<meta name="twitter:image" content="<?php echo get_template_directory_uri();?>/images/og-thumb.png" />
 		<meta name="twitter:site" content="" /> <!-- "@username" of website -->
 		<meta name="twitter:creator" content="" /> <!-- "@username" of content creator -->
 						
@@ -90,7 +90,7 @@
 		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
 		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta itemprop="image" content="<?php bloginfo('template_directory');?>/images/og-thumb1.png" />
+		<meta itemprop="image" content="<?php echo get_template_directory_uri();?>/images/og-thumb1.png" />
 
 		<!-- Other Social Metadata -->
 		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
@@ -109,10 +109,10 @@
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
 		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>">
 		<meta name="msapplication-TileColor" content="#ffffff" />
-		<meta name="msapplication-square70x70logo" content="<?php bloginfo('template_directory');?>/images/tiny.png" /><!-- 70x70px -->
-		<meta name="msapplication-square150x150logo" content="<?php bloginfo('template_directory');?>/images/square.png" /><!-- 150x150px -->
-		<meta name="msapplication-wide310x150logo" content="<?php bloginfo('template_directory');?>/images/wide.png" /><!-- 310x150px -->
-		<meta name="msapplication-square310x310logo" content="<?php bloginfo('template_directory');?>/images/large.png" /><!-- 310x310px -->
+		<meta name="msapplication-square70x70logo" content="<?php echo get_template_directory_uri();?>/images/tiny.png" /><!-- 70x70px -->
+		<meta name="msapplication-square150x150logo" content="<?php echo get_template_directory_uri();?>/images/square.png" /><!-- 150x150px -->
+		<meta name="msapplication-wide310x150logo" content="<?php echo get_template_directory_uri();?>/images/wide.png" /><!-- 310x150px -->
+		<meta name="msapplication-square310x310logo" content="<?php echo get_template_directory_uri();?>/images/large.png" /><!-- 310x310px -->
 		
 		<script>
 			social = [];
@@ -136,12 +136,14 @@
 		</script>
 		
 		<script type="text/javascript">
-			window.addEventListener('error', function(e) {
-				if ( e.lineno != 0 ) {
-					ga('send', 'event', 'Error', 'JavaScript Error', e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
-					ga('send', 'exception', e.message, false);
-				}
-			});
+			if ( window.addEventListener ) {
+				window.addEventListener('error', function(e) {
+					if ( e.lineno != 0 ) {
+						ga('send', 'event', 'Error', 'JavaScript Error', e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
+						ga('send', 'exception', e.message, false);
+					}
+				});
+			}
 		</script>
 		
 		<?php wp_head(); ?>
@@ -201,7 +203,7 @@
 		<div id="fb-root"></div>
 		
 		<noscript>
-			<iframe class="hidden" src="<?php bloginfo('template_directory');?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&p=<?php echo get_page_uri(); ?>&t=<?php wp_title('-', true, 'right'); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+			<iframe class="hidden" src="<?php echo get_template_directory_uri();?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&p=<?php echo get_page_uri(); ?>&t=<?php wp_title('-', true, 'right'); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
 		</noscript>
 		
 		<div id="topbarcon">
@@ -255,7 +257,7 @@
 					//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
 				?>
 				<a class="logocon" href="<?php echo home_url(); ?>">
-					<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php bloginfo('template_directory');?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
+					<img src="<?php echo get_template_directory_uri();?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri();?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
 				</a>
 			</div><!--/columns-->
 			<?php if ( has_nav_menu('header') ) : ?>

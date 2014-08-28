@@ -8,32 +8,62 @@
  ===========================*/
 $GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO: Change Google Analytics Tracking ID here
 
-//Use CDNJS to pull common libraries
-//http://cdnjs.com/
-
-/*========================== 
- Nebula Stylesheets
- ===========================*/
-
-//Register
-//wp_register_style($handle, $src, $dependencies, $version, $media);
-wp_register_style('nebula-normalize', '//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css', array(), '3.0.1');
-wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:400,700', array(), null);
-wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null);
-wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
-wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0'); //Only useful for 12 col primary, entypo is also re-enabled
-wp_register_style('nebula-font_awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css', array(), '4.1.0');
-wp_register_style('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/css/jquery.mmenu.all.min.css', array(), '4.3.2');
-//wp_register_style('nebula-bxslider', get_template_directory_uri() . '/css/jquery.bxslider.css', array(), '4.1.2'); //bxSlider is conditionally loaded via main.js when needed.
-wp_register_style('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/css/jquery.dataTables.min.css', array(), '1.10');
-wp_register_style('nebula-main', get_stylesheet_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null);
-wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
-wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
 
 
 /*========================== 
- Nebula Scripts
+ Register All Stylesheets
  ===========================*/
+add_action('wp_enqueue_scripts', 'register_nebula_styles');
+add_action('login_enqueue_scripts', 'register_nebula_styles');
+add_action('admin_enqueue_scripts', 'register_nebula_styles');
+function register_nebula_styles() {	
+	//wp_register_style($handle, $src, $dependencies, $version, $media);
+	wp_register_style('nebula-normalize', '//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css', array(), '3.0.1');
+	wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:400,700', array(), null);
+	wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null);
+	wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
+	wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0'); //Only useful for 12 col primary, entypo is also re-enabled
+	wp_register_style('nebula-font_awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css', array(), '4.1.0');
+	wp_register_style('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/css/jquery.mmenu.all.min.css', array(), '4.3.2');
+	//wp_register_style('nebula-bxslider', get_template_directory_uri() . '/css/jquery.bxslider.css', array(), '4.1.2'); //bxSlider is conditionally loaded via main.js when needed.
+	wp_register_style('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/css/jquery.dataTables.min.css', array(), '1.10');
+	wp_register_style('nebula-main', get_stylesheet_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null);
+	wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
+	wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
+}
+
+
+/*========================== 
+ Register All Scripts
+ ===========================*/
+add_action('wp_enqueue_scripts', 'register_nebula_scripts');
+add_action('login_enqueue_scripts', 'register_nebula_scripts');
+add_action('admin_enqueue_scripts', 'register_nebula_scripts');
+function register_nebula_scripts() {	
+	//Use CDNJS to pull common libraries: http://cdnjs.com/
+	//wp_register_script($handle, $src, $dependencies, $version, $in_footer);
+	wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
+	wp_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
+	wp_register_script('nebula-modernizr', '//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.2', false);
+	wp_register_script('nebula-jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.0', true);
+	wp_register_script('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/js/umd/jquery.mmenu.umd.all.min.js', array(), '4.3.2', true);
+	wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js?' . $GLOBALS['async'], array(), '1.0', true);
+	wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js?' . $GLOBALS['defer'], array(), null, true);
+	//wp_register_script('nebula-bxslider', get_template_directory_uri() . '/js/libs/jquery.bxslider.min.js?' . $GLOBALS['defer'], array(), '4.1.2', true); //bxSlider is conditionally loaded via main.js when needed.
+	wp_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
+	wp_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js?async', array(), null, true);
+	wp_register_script('nebula-respond', '//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js?' . $GLOBALS['defer'], array(), '1.4.2', true);
+	wp_register_script('nebula-html5shiv', '//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js?' . $GLOBALS['defer'], array(), '3.7.2', true);
+	wp_register_script('nebula-gumby_local', get_template_directory_uri() . '/js/libs/gumby.min.js?' . $GLOBALS['gumby_debug'], array(), '2.6', true);
+	wp_register_script('nebula-gumby', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/js/libs/gumby.min.js?' . $GLOBALS['gumby_debug'], array(), '2.6', true);
+	wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
+	wp_register_script('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/js/jquery.dataTables.min.js', array(), '1.10', true);
+	wp_register_script('nebula-maskedinput', '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js', array(), '1.3.1', true);
+	wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
+	wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
+	wp_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js?' . $GLOBALS['defer'], array(), null, true);
+}
+
 
 //Control how scripts are loaded, and force clear cache for debugging
 if ( array_key_exists('debug', $_GET) ) {
@@ -58,33 +88,11 @@ if ( array_key_exists('debug', $_GET) ) {
 	$GLOBALS["gumby_debug"] = 'defer';
 }
 
-//Register
-//wp_register_script($handle, $src, $dependencies, $version, $in_footer);
-wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
-wp_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
-wp_register_script('nebula-modernizr', '//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.2', false);
-wp_register_script('nebula-jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.0', true);
-wp_register_script('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/js/umd/jquery.mmenu.umd.all.min.js', array(), '4.3.2', true);
-wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js?' . $GLOBALS['async'], array(), '1.0', true);
-wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js?' . $GLOBALS['defer'], array(), null, true);
-//wp_register_script('nebula-bxslider', get_template_directory_uri() . '/js/libs/jquery.bxslider.min.js?' . $GLOBALS['defer'], array(), '4.1.2', true); //bxSlider is conditionally loaded via main.js when needed.
-wp_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
-wp_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js?async', array(), null, true);
-wp_register_script('nebula-respond', '//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js?' . $GLOBALS['defer'], array(), '1.4.2', true);
-wp_register_script('nebula-html5shiv', '//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js?' . $GLOBALS['defer'], array(), '3.7.2', true);
-wp_register_script('nebula-gumby_local', get_template_directory_uri() . '/js/libs/gumby.min.js?' . $GLOBALS['gumby_debug'], array(), '2.6', true);
-wp_register_script('nebula-gumby', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/js/libs/gumby.min.js?' . $GLOBALS['gumby_debug'], array(), '2.6', true);
-wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
-wp_register_script('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/js/jquery.dataTables.min.js', array(), '1.10', true);
-wp_register_script('nebula-maskedinput', '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js', array(), '1.3.1', true);
-wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
-wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
-wp_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js?' . $GLOBALS['defer'], array(), null, true);
-
 
 //Enqueue for frontend
 add_action('wp_enqueue_scripts', 'enqueue_nebula_frontend');
 function enqueue_nebula_frontend() {
+	
 	//Stylesheets
 	wp_enqueue_style('nebula-normalize');
 	wp_enqueue_style('nebula-open_sans');
@@ -93,6 +101,7 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome');
 	wp_enqueue_style('nebula-main');
+
 	
 	//Scripts
 	wp_enqueue_script('jquery');
@@ -587,6 +596,11 @@ function my_theme_register_required_plugins() {
             'slug'      => 'search-everything',
             'required'  => false,
         ),
+        array(
+            'name'      => 'Theme Check',
+            'slug'      => 'theme-check',
+            'required'  => false,
+        ),
     );
 
     $config = array(
@@ -938,6 +952,9 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				</script>';
 				
 		echo '<ul class="serverdetections">';
+			if ( WP_DEBUG ) {
+				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
+			}
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
 			echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
 			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . ' <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
@@ -1045,7 +1062,7 @@ function custom_media_display_settings() {
 add_filter('manage_edit-post_columns', 'custom_set_posts_columns');
 function custom_set_posts_columns($columns) {
 	return array(
-		'cb' => '<input type=”checkbox” />',
+		'cb' => '<input type="checkbox" />',
 		'title' => 'Title',
 		'author' => 'Author',
 		'date' => 'Date',
@@ -1174,7 +1191,7 @@ function clear_all_w3_caches(){
 //Left Side
 add_filter('admin_footer_text', 'change_admin_footer_left');
 function change_admin_footer_left() {
-    return '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="' . get_bloginfo('template_directory') . '/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""' . get_bloginfo('template_directory') . '/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
+    return '<a href="http://www.pinckneyhugo.com" style="color: #0098d7; font-size: 14px; padding-left: 23px;"><img src="' . get_template_directory_uri() . '/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""' . get_template_directory_uri() . '/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="position: absolute; margin-left: -20px; margin-top: 4px; max-width: 18px;"/> Pinckney Hugo Group</a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
 }
 //Right Side
 add_filter('update_footer', 'change_admin_footer_right', 11);
@@ -1277,10 +1294,10 @@ function save_extra_profile_fields($user_id) {
 	if ( !current_user_can('edit_user', $user_id) ) {
 		return false;
 	}
-	update_usermeta($user_id, 'headshot', $_POST['headshot']);
-	update_usermeta($user_id, 'headshot_url', $_POST['headshot_url']);
-	update_usermeta($user_id, 'jobtitle', $_POST['jobtitle']);
-	update_usermeta($user_id, 'phonenumber', $_POST['phonenumber']);
+	update_user_meta($user_id, 'headshot', $_POST['headshot']);
+	update_user_meta($user_id, 'headshot_url', $_POST['headshot_url']);
+	update_user_meta($user_id, 'jobtitle', $_POST['jobtitle']);
+	update_user_meta($user_id, 'phonenumber', $_POST['phonenumber']);
 }
 
 
@@ -1381,7 +1398,7 @@ function nebula_comment_theme($comment, $args, $depth) {
 			<div class="comment-meta commentmetadata"><a href="<?php echo htmlspecialchars(get_comment_link($comment->comment_ID)); ?>">
 				<?php printf( 'on %1$s at %2$s', get_comment_date(), get_comment_time()); ?></a> 
 				<?php if (current_user_can('edit_post')) : ?>
-					<? edit_comment_link('<small><i class="fa fa-pencil"></i> Edit</small>','  ','' ); ?>
+					<?php edit_comment_link('<small><i class="fa fa-pencil"></i> Edit</small>','  ','' ); ?>
 				<?php endif; ?>
 			</div>
 			
@@ -1510,6 +1527,11 @@ function comment_author_cookie() {
 //Set server timezone to match Wordpress
 date_default_timezone_set( get_option('timezone_string') );
 
+//Declare the content width
+if ( !isset($content_width) ) {
+	$content_width = 960;
+}
+
 //Disable Pingbacks to prevent security issues
 add_filter('xmlrpc_methods', function($methods) {
    unset( $methods['pingback.ping'] );
@@ -1524,7 +1546,7 @@ function nebula_calling_card() {
 	//@TODO: if chrome or firefox... (find what other browsers support this)
 	echo "<script>
 		if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ) {
-		console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_bloginfo('template_directory') . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
+		console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
 		console.log('%c Nebula by Pinckney Hugo Group ', 'padding: 2px 10px; background: #0098d7; color: #fff;');
 		}
 	</script>";
@@ -1539,7 +1561,7 @@ function js_variables() {
 	
 	echo '<script>bloginfo = [];
 	bloginfo["name"] = "' . get_bloginfo("name") . '";
-	bloginfo["template_directory"] = "' . get_bloginfo("template_directory") . '";
+	bloginfo["template_directory"] = "' . get_template_directory_uri() . '";
 	bloginfo["stylesheet_url"] = "' . get_bloginfo("stylesheet_url") . '";
 	bloginfo["home_url"] = "' . home_url() . '";
 	bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";
@@ -1557,11 +1579,11 @@ function js_variables() {
 //Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
 add_action('wp_head', 'theme_favicon');
 function theme_favicon() {
-	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_bloginfo('template_directory') . '/images/favicon.ico" />';
+	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
 }
 add_action('admin_head', 'admin_favicon');
 function admin_favicon() {
-	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_bloginfo('template_directory') . '/images/favicon.ico" />';
+	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
 }
 
 
@@ -1956,7 +1978,7 @@ function the_breadcrumb() {
   $after = '</span>'; // tag after the current crumb
   $dontCapThese = array('the', 'and', 'but', 'of');
   global $post;
-  $homeLink = get_bloginfo('url');
+  $homeLink = home_url();
   if (is_home() || is_front_page()) {
     if ($showOnHome == 1) echo '<div id="bcrumbs"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav>';
   } else {
@@ -1983,7 +2005,7 @@ function the_breadcrumb() {
 								$link_str .= $value . ' ';
 							}
 						}
-						echo '<a href="' . get_bloginfo('url') . $link . '/">' . $link_str . '</a> ' . $delimiter . ' ';
+						echo '<a href="' . home_url() . $link . '/">' . $link_str . '</a> ' . $delimiter . ' ';
 					}
 					$i++;
 				}
@@ -2062,7 +2084,7 @@ function the_breadcrumb() {
     }
     if ( get_query_var('paged') ) {
       if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) echo ' (';
-      echo __('Page') . ' ' . get_query_var('paged');
+      echo 'Page ' . get_query_var('paged');
       if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) echo ')';
     }
     echo '</nav></div>';
@@ -2266,10 +2288,37 @@ function currently_open() {
 	return false;
 }
 
+//Detect weather for Zip Code (using Yahoo! Weather)
+function nebula_weather($zipcode){
+	if ( !isset($zipcode) ) {
+		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
+	}
+	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
+	$use_errors = libxml_use_internal_errors(true);
+	$xml = simplexml_load_file($url);
+	if ( !$xml ) {
+		$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors
+	}
+	libxml_clear_errors();
+	libxml_use_internal_errors($use_errors);
+	
+	global $current_weather;
+	$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
+	$current_weather['temp'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;	
+	$current_weather['city'] = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
+	$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;	
+	$current_weather['sunrise'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
+	$current_weather['sunset'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
+	$current_weather["sunrise_seconds"] = strtotime($current_weather['sunrise'])-strtotime('today'); //Sunrise in seconds
+	$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
+	$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
+	$current_weather['time_seconds'] = time()-strtotime("today");
+	return $current_weather;
+}
 
 function vimeo_meta($videoID) {
 	global $vimeo_meta;
-	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO: Will this work on a secure server?
+	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO: Use WP_Filesystem methods instead of file_get_contents
 	$vimeo_meta['id'] = $videoID;
 	$vimeo_meta['title'] = $xml->video->title;
 	$vimeo_meta['safetitle'] = str_replace(" ", "-", $vimeo_meta['title']);
@@ -2286,7 +2335,7 @@ function vimeo_meta($videoID) {
 
 function youtube_meta($videoID) {
 	global $youtube_meta;
-	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO: Will this work on a secure server?
+	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO: Use WP_Filesystem methods instead of file_get_contents
 	$youtube_meta['origin'] = baseDomain();
 	$youtube_meta['id'] = $videoID;
 	$youtube_meta['title'] = $xml->title;
@@ -3177,7 +3226,7 @@ function register_shortcode_button($buttons){
     return $buttons;
 }
 function add_shortcode_plugin($plugin_array) {  
-	$plugin_array['nebulatoolbar'] = get_bloginfo('template_url') . '/js/shortcodes.js';
+	$plugin_array['nebulatoolbar'] = get_template_directory_uri() . '/js/shortcodes.js';
 	return $plugin_array;  
 }
 

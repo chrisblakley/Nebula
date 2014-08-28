@@ -8,7 +8,7 @@ if ( !defined('ABSPATH') ) { exit; } //Exit if accessed directly
 
 get_header(); ?>
 
-<script src="<?php bloginfo('template_directory');?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script>
+<script src="<?php echo get_template_directory_uri();?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script>
 
 <section><!-- Do not duplicate this section because it has inline styles. -->
 	<div class="container" style="background: #0098d7;">
@@ -365,6 +365,94 @@ get_header(); ?>
 					<?php endif; //End Youtube Meta ?>
 					
 					
+					
+					
+					
+					
+					<?php if ( is_page(834) ) : //Ooyala Player Modal ?>
+<style>
+.simple_overlay {display: none;}
+#lgVid1 {width: 100%; /* max-width: 646px; */}
+    .closemod {position: absolute; top: -33px; right: 0; display: block; font-size: 24px; line-height: 33px; width: 40px; height: 33px; text-align: center; color: #fff; background: #003395; z-index: 10001;}
+    	.closemod:hover,
+    	.closemod.hover {color: #fff;}
+	    .lte-ie8 .closemod {top: -48px;}
+	    .ie7 .closemod {top: -33px;}
+	    .ie7x {display: none; font-size: 21px; font-weight: bold; margin-top: 3px;}
+	    .ie7 .ie7x {display: block;}
+	    .ie7 .closemod i {display: none;}
+	        .closemod:hover {cursor: pointer; background: #001c54;}
+	        .closemod i {margin-top: 3px; color: #fff;}
+#simplemodal-container {position: fixed; top: 120px !important; max-width: 640px; height: auto !important; left: 50% !important; margin-left: -320px; zoom: 1; outline: 15px solid #000; outline: 15px solid rgba(0,0,0,0.4); z-index: 1002;}
+	.firefox #simplemodal-container {width: 670px; margin-left: -335px; outline: 0; border: 15px solid #000; border: 15px solid rgba(0,0,0,0.4);}
+	.ie7 #simplemodal-container {width: 640px; margin-left: -335px; outline: 0; border: 15px solid #000; border: 15px solid rgba(0,0,0,0.4);}
+	#simplemodal-overlay {background-color: #000;}
+#playerwrapper {width: 100%; height: 360px; position: relative;}
+#playerwrapper .video {position: static;}
+.lte-ie8 .video {height: 100% !important; padding-bottom: 0 !important;}
+</style>
+
+<script>
+jQuery(document).ready(function() {	
+	ooyalaVideo();
+
+    function ooyalaVideo() {
+		if ( jQuery('.ooyalalink').is('*') && typeof OO !== 'undefined' ) { //@TODO: Do we need to check for .ooyalalink ?
+			jQuery(document).on('click', '.ooyalalink', function(e) {
+				var thisID = jQuery(this).attr('id');
+				var thisOOcode = jQuery(this).data('ooyala');
+				var thismovieplayer = OO.Player.create('playerwrapper', thisOOcode, {
+					height:'100%',
+	      			width:'100%'
+				});
+	
+				jQuery('#lgVid1').modal({
+					autoResize: true,
+					overlayClose: false
+				});
+	
+				jQuery(document).on('click', '.simplemodal-close', function() {
+					thismovieplayer.destroy();
+				});
+				
+				e.preventDefault();
+			});
+		}
+	}
+});
+</script>
+						
+<?php
+	/* Known Branding IDs and Asset IDs:
+		Branding ID: MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk
+		
+		Embed Code: 45cmZqNDrKn7TvtpfGa9k9fQSeyK4VaI (Avatar)
+		Embed Code: UxaXI5MzruPkO9medlrVQ9sZbgpqgMxr (Dark Knight Trailer)
+		Embed Code: llMDQ6rMWxVWbvdxs2yduVEtSrNCJUk1 (Tron Legacy Trailer)
+		Embed Code: s0MmVvMTrSlB1ZLzaWXnKZaa42Ib5rJV (Ooyala Careers)
+		Embed Code: 8wNTqa-6MkpEB1c7fNGOpoSJytLptmm9 (Say Ooyala 2)
+		Embed Code: 44azdwNDpSWUvfd8F30d55tXY0YH9njH (Ooyala ESP)
+	*/
+?>
+												
+<script src='http://player.ooyala.com/v3/MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk' async></script> <!-- Branding ID here -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/simplemodal/1.4.4/jquery.simplemodal.min.js" defer></script>
+	
+<div id="lgVid1" class="simple_overlay">
+	<a class="closemod simplemodal-close">X</a>
+	<div id='playerwrapper'></div>
+</div>
+
+<div class="medium primary btn">
+	<a id="ooyalalink1" class="ooyalalink" href="#" rel="#lgVid1" data-ooyala="44azdwNDpSWUvfd8F30d55tXY0YH9njH">Play Video</a> <!-- Embed Code (Asset ID) here -->
+</div>
+					<?php endif; //End Ooyala Player Modal ?>
+					
+					
+					
+					
+					
+					
 					<?php if ( is_page(791) ) : //GET() ?>
 						<script>
 							jQuery(window).on('load', function() {
@@ -454,38 +542,9 @@ get_header(); ?>
 					<?php if ( is_page(824) ) : //Weather Detection ?>
 					<div class="row">
 						<div class="sixteen columns">
-							<?php
-								//Detect weather for Zip Code (using Yahoo! Weather)
-								$locationzip = 13204;
-								$url = 'http://weather.yahooapis.com/forecastrss?p=' . $locationzip;
-								$use_errors = libxml_use_internal_errors(true);
-								$xml = simplexml_load_file($url);
-								if (!$xml) {
-								  $xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors
-								}
-								libxml_clear_errors();
-								libxml_use_internal_errors($use_errors);
-								
-								$currentweather = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
-								$currenttemp = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;
-								
-								//Location from zip code
-								$weathercity = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
-								$weatherstate = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
-								
-								//Sunrise & Sunset
-								$XMLsunrise = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
-								$XMLsunset = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
-								$dayTime["sunrise"] = strtotime($XMLsunrise)-strtotime('today'); //Sunrise in seconds
-								$dayTime["sunset"] = strtotime($XMLsunset)-strtotime('today'); //Sunset in seconds
-								$dayTime["noon"] = (($dayTime["sunset"]-$dayTime["sunrise"])/2)+$dayTime["sunrise"]; //Solar noon in seconds				
-								
-								//Determine time of day photo to display
-								$currentDayTime = time()-strtotime("today");
-							?>
-							
-							<p>It is currently <strong><?php echo $currenttemp; ?>&deg;F</strong> and <strong><?php echo $currentweather; ?></strong> in <strong><?php echo $weathercity; ?></strong>, <strong><?php echo $weatherstate; ?></strong>.</p>
-							<p>Sunrise: <strong><?php echo $XMLsunrise; ?></strong>, Sunset: <strong><?php echo $XMLsunset; ?></strong></p>
+							<?php nebula_weather(); ?>							
+							<p>It is currently <strong><?php echo $current_weather['temp']; ?>&deg;F</strong> and <strong><?php echo $current_weather['conditions']; ?></strong> in <strong><?php echo $current_weather['city']; ?></strong>, <strong><?php echo $current_weather['state']; ?></strong>.</p>
+							<p>Sunrise: <strong><?php echo $current_weather['sunrise']; ?></strong>, Sunset: <strong><?php echo $current_weather['sunset']; ?></strong>.</p>
 							
 							<hr/>
 						</div><!--/columns-->
@@ -768,11 +827,11 @@ get_header(); ?>
 						<div class="row">
 							<div class="eight columns">
 								<p>This image is only a standard-resolution.</p>
-								<img src="<?php bloginfo('template_directory');?>/examples/images/example.jpg" />
+								<img src="<?php echo get_template_directory_uri();?>/examples/images/example.jpg" />
 							</div><!--/columns-->
 							<div class="eight columns">
 								<p>This image has a retina backup.</p>
-								<img src="<?php bloginfo('template_directory');?>/examples/images/example.jpg" gumby-retina />
+								<img src="<?php echo get_template_directory_uri();?>/examples/images/example.jpg" gumby-retina />
 							</div><!--/columns-->
 						</div><!--/row-->
 					<?php endif; //End Retina ?>
@@ -782,10 +841,10 @@ get_header(); ?>
 						<div class="row">
 							<div class="sixteen columns">
 								<picture alt="This is the alt tag for the picture">
-									<source src="<?php bloginfo('template_directory');?>/examples/images/example_320x212.jpg">
-									<source media="(min-width: 640px)" src="<?php bloginfo('template_directory');?>/examples/images/example_640x424.jpg">
-									<source media="(min-width: 1000px)" src="<?php bloginfo('template_directory');?>/examples/images/example@2x.jpg">
-									<img src="<?php bloginfo('template_directory');?>/examples/images/example.jpg" alt="This is the alt tag for the picture" />
+									<source src="<?php echo get_template_directory_uri();?>/examples/images/example_320x212.jpg">
+									<source media="(min-width: 640px)" src="<?php echo get_template_directory_uri();?>/examples/images/example_640x424.jpg">
+									<source media="(min-width: 1000px)" src="<?php echo get_template_directory_uri();?>/examples/images/example@2x.jpg">
+									<img src="<?php echo get_template_directory_uri();?>/examples/images/example.jpg" alt="This is the alt tag for the picture" />
 								</picture>
 							</div><!--/columns-->
 						</div><!--/row-->
@@ -1391,7 +1450,7 @@ get_header(); ?>
 					<?php if (is_page(497) ) : //CSS Blending Modes ?>
 					
 						<style>
-							.blend {width: 100%; min-height: 200px; background: #0098d7 url('<?php bloginfo('template_directory'); ?>/examples/images/example_640x424.jpg') no-repeat center center; background-size: contain; margin-bottom: 50px;}
+							.blend {width: 100%; min-height: 200px; background: #0098d7 url('<?php echo get_template_directory_uri(); ?>/examples/images/example_640x424.jpg') no-repeat center center; background-size: contain; margin-bottom: 50px;}
 								.blend.multiply {background-blend-mode: multiply;}
 								.blend.screen {background-blend-mode: screen;}
 								.blend.overlay {background-blend-mode: overlay;}
@@ -1606,7 +1665,7 @@ get_header(); ?>
 						
 						<div class="row">
 							<div class="sixteen columns">
-								<form id="ajax-contact" method="post" action="<?php echo bloginfo('template_directory'); ?>/includes/mailer.php">
+								<form id="ajax-contact" method="post" action="<?php echo get_template_directory_uri(); ?>/includes/mailer.php">
 									<ul>
 										<li class="field">
 											<span class="contact-form-heading">Name*</span>
@@ -1908,12 +1967,12 @@ get_header(); ?>
 						
 						<div class="iframeswrap">
 							<h3>Standard Iframe:</h3>
-							<iframe src="<?php echo bloginfo('template_directory'); ?>/examples/includes/seamless.html" style="width: 100%;"></iframe>
+							<iframe src="<?php echo get_template_directory_uri(); ?>/examples/includes/seamless.html" style="width: 100%;"></iframe>
 							<br/>
 							<hr/>
 							<br/>
 							<h3>Seamless Iframe:</h3>
-							<iframe src="<?php echo bloginfo('template_directory'); ?>/examples/includes/seamless.html" seamless style="width: 100%;"></iframe>
+							<iframe src="<?php echo get_template_directory_uri(); ?>/examples/includes/seamless.html" seamless style="width: 100%;"></iframe>
 						</div>
 					<?php endif; //End Seamless Iframes ?>
 					

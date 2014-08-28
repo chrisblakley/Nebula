@@ -518,14 +518,15 @@ function gaEventTracking(){
 		};
 		if ( window.matchMedia ) {
 			var mediaQueryList = window.matchMedia('print');
-			mediaQueryList.addListener(function(mql) {
-				if ( !mql.matches ) {
-					afterPrint();
-				}
-			});
+			if ( mediaQueryList.addListener ) {
+				mediaQueryList.addListener(function(mql) {
+					if ( !mql.matches ) {
+						afterPrint();
+					}
+				});
+			}
 		}
 		window.onafterprint = afterPrint;
-	
 	}
 		
 } //End gaEventTracking()

@@ -69,7 +69,7 @@
 				<?php endif; ?>
 				
 					<div class="container footerlinks">
-						<? if ( has_nav_menu('footer') || has_nav_menu('header') ) : ?>
+						<?php if ( has_nav_menu('footer') || has_nav_menu('header') ) : ?>
 							<div class="row powerfootercon">
 								<div class="sixteen columns">
 									<nav id="powerfooter">

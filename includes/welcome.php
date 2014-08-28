@@ -3,12 +3,12 @@
 	<div id="welcome-content">
 		<div class="logocon">
 			<a href="<?php echo home_url(); ?>" target="_blank">
-				<img src="<?php bloginfo('template_directory');?>/images/logo.svg" onerror="this.onerror=null; this.src=""<?php bloginfo('template_directory');?>/images/logo.png" alt="<?php bloginfo('name'); ?>"/>
+				<img src="<?php echo get_template_directory_uri();?>/images/logo.svg" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri();?>/images/logo.png" alt="<?php bloginfo('name'); ?>"/>
 			</a>
 		</div>
 		
 		<h3><a href="<?php echo home_url(); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
-		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank" style="color: #0098d7; white-space: nowrap;"><img src="<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/> Pinckney Hugo Group</a>.</p>
+		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank" style="color: #0098d7; white-space: nowrap;"><img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/> Pinckney Hugo Group</a>.</p>
 		
 		<hr/>
 		
@@ -48,7 +48,7 @@
 					<li><i class="fa <?php echo $fa_role; ?> fa-fw"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo $user_info->roles[0]; ?></strong></li>
 					<li>
 						<?php if ($_SERVER["REMOTE_ADDR"] == '72.43.235.106'): ?>
-							<img src="<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_bloginfo('template_directory'); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
+							<img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
 						<?php else: ?>
 							<i class="fa fa-laptop fa-fw"></i>
 						<?php endif; ?>
@@ -126,7 +126,7 @@
 				if ( jQuery('.maininfo').hasClass('no-map') ) {
 					jQuery('.maininfo').removeClass('no-map');
 					jQuery('.welcome-photo-bg').addClass('myhidden');
-					jQuery('.maptoggle').text('« Back');
+					jQuery('.maptoggle').html("&laquo; Back");
 					jQuery('.maininfo h4, .hideformap').addClass('noheight');
 				} else {
 					jQuery('.maininfo').addClass('no-map');

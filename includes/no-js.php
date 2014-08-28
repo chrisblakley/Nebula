@@ -1,5 +1,5 @@
 <?php
-	require_once('../../../../wp-load.php');
+	require_once('../../../../wp-load.php'); //@TODO: If these are being used to include separate sections of a template from independent files, then get_template_part() should be used instead.
 	
 	$data = array(
 		'v' => 1,

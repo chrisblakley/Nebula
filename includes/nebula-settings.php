@@ -8,7 +8,8 @@
 	
 	//Create the Nebula Submenu
 	function nebula_sub_menu() {
-		add_options_page('Nebula Settings', 'Nebula Settings', 'manage_options', 'nebula_settings', 'nebula_settings_page');
+		//add_options_page('Nebula Settings', 'Nebula Settings', 'manage_options', 'nebula_settings', 'nebula_settings_page');
+		add_theme_page('Nebula Settings', 'Nebula Settings', 'manage_options', 'nebula_settings', 'nebula_settings_page');
 	}
 	
 	//Register each option

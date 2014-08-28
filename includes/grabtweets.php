@@ -1,8 +1,8 @@
-<?
+<?php
 
 //We use already made Twitter OAuth library
 //https://github.com/mynetx/codebird-php
-require_once ('codebird.php');
+require_once ('codebird.php'); //@TODO: If these are being used to include separate sections of a template from independent files, then get_template_part() should be used instead.
 
 //Twitter OAuth Settings, enter your settings here:
 //Create an app here: https://apps.twitter.com/

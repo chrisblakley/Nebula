@@ -37,7 +37,7 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 - Strip out all unplanned HTML/CSS/JS (Do this before any other development! You can always add pieces back in from the Nebula.)
 - *[Theme development goes here]*
 - Update editor-style.css to match front-end
-- Update screenshot.png
+- Update screenshot.png (880x660px)
 - Search for any remaining @TODO tags
 - *[Testing](https://docs.google.com/document/d/17nmeSsa-4SSfX8bzWWUXcFDTyz3o2-oSgX4ayCgGm7Y/)*
 - Uncheck "Discourage search engines from indexing this site" (Reading Settings)
