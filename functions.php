@@ -864,20 +864,20 @@ if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 
 function is_dev() {
 	//Check if the current IP address matches any of the dev IP address from Nebula Settings
-	$devIPs = explode(', ', get_option('nebula_dev_ip'));
+	$devIPs = explode(',', get_option('nebula_dev_ip'));
 	foreach ( $devIPs as $devIP ) {
-		if ( $devIP == $_SERVER['REMOTE_ADDR'] ) {
+		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
 			return true;
 		}
 	}
 	
-	//Check if the current user's email domain matches pinckneyhugo.com //@TODO: Come up with a better way to do this... maybe another Nebula Setting?
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
 	$current_user = wp_get_current_user();
 	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 	
-	$devEmails = explode(', ', get_option('nebula_dev_email_domain'));
+	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
 	foreach ( $devEmails as $devEmail ) {
-		if ( $devEmail == $current_user_domain ) {
+		if ( trim($devEmail) == $current_user_domain ) {
 			return true;
 		}
 	}

@@ -1277,7 +1277,7 @@ function conditionalJSLoading() {
 
 //Twitter Feed integration
 function twitterFeed() {
-    if ( jQuery('.twitter-feed').is('*') && typeof JQTWEET !== 'undefined' ){
+    if ( typeof JQTWEET !== 'undefined' ) {
         JQTWEET = JQTWEET || {};
         //JQTWEET.search = '#hashtag';
         JQTWEET.user = 'pinckneyhugo';

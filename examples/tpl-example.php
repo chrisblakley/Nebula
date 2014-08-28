@@ -558,7 +558,7 @@ jQuery(document).ready(function() {
 								<?php if ( is_plugin_active('custom-facebook-feed/custom-facebook-feed.php') ) : ?>
 									<div id="fbcon">
 										<div class="fbhead">
-											<p><a href="<?php echo $social['facebook_url']; ?>" target="_blank"><i class="icon-facebook"></i> Facebook</a></p>
+											<p><a href="<?php echo $social['facebook_url']; ?>" target="_blank"><i class="fa fa-facebook-square"></i> Facebook</a></p>
 										</div><!--/fbhead-->
 										<div class="fbbody">
 											<div class="container">
@@ -590,18 +590,19 @@ jQuery(document).ready(function() {
 						</div><!--/row-->
 					<?php endif; //End Facebook Feed ?>
 					
+					
 					<?php if ( is_page(815) ) : //Twitter Feed ?>
 						<div class="row">
 							<div class="sixteen columns">
 								<?php if ( $social['twitter_url'] ) : ?>
 									<div id="twittercon">
 										<div class="twitterhead">
-											<p><a href="<?php echo $social['twitter_url']; ?>" target="_blank"><i class="icon-twitter"></i> Tweets</a></p>
+											<p><a href="<?php echo $social['twitter_url']; ?>" target="_blank"><i class="fa fa-twitter"></i> Tweets</a></p>
 										</div><!--/twitterhead-->
 										<div class="twitterbody">
 											<div class="container">
 												<div class="twitter-feed">		
-													<div id="twitter_update_list"></div>
+													<div id="twitter_update_list" style="outline: 1px solid red; min-height: 100px;"></div>
 												</div><!--/twitter-feed-->
 											</div><!--/container-->
 										</div><!--/twitterbody-->
