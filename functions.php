@@ -2289,10 +2289,18 @@ function currently_open() {
 }
 
 //Detect weather for Zip Code (using Yahoo! Weather)
-function nebula_weather($zipcode){
-	if ( !isset($zipcode) ) {
+function nebula_weather($zipcode=null, $data=null){
+	
+	if ( $zipcode && is_string($zipcode) && !ctype_digit($zipcode) ) { //ctype_alpha($zipcode)
+		$data = $zipcode;
+		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
+	} elseif ( !$zipcode ) {
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
 	}
+	
+	
+	
+	
 	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
 	$use_errors = libxml_use_internal_errors(true);
 	$xml = simplexml_load_file($url);
@@ -2306,14 +2314,24 @@ function nebula_weather($zipcode){
 	$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
 	$current_weather['temp'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;	
 	$current_weather['city'] = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
-	$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;	
+	$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
+	$current_weather['city_state'] = $current_weather['city'] . ', ' . $current_weather['state'];
 	$current_weather['sunrise'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
 	$current_weather['sunset'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
 	$current_weather["sunrise_seconds"] = strtotime($current_weather['sunrise'])-strtotime('today'); //Sunrise in seconds
 	$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
 	$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
 	$current_weather['time_seconds'] = time()-strtotime("today");
-	return $current_weather;
+	
+
+	if ( $data && isset($current_weather[$data]) ) {
+		return $current_weather[$data];
+	} elseif ( $data && !isset($current_weather[$data]) ) {
+		return 'Error: Requested data "' . $data . '" is not defined.';
+	} else {
+		return $current_weather;
+	}
+
 }
 
 function vimeo_meta($videoID) {

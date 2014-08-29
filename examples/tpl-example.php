@@ -38,8 +38,10 @@ get_header(); ?>
 	
 	<?php
 		function random_unsplash($width=800, $height=600) {
-			//My favorite IDs: 362,
-			$randID = rand(0,431);
+			$skipList = array(312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48);
+			
+			while ( in_array(($randID = rand(0, 430)), $skipList) );
+			
 			echo 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID . '" title="Unsplash ID#' . $randID;
 		}
 	?>
@@ -397,15 +399,15 @@ jQuery(document).ready(function() {
 	ooyalaVideo();
 
     function ooyalaVideo() {
-		if ( jQuery('.ooyalalink').is('*') && typeof OO !== 'undefined' ) { //@TODO: Do we need to check for .ooyalalink ?
-			jQuery(document).on('click', '.ooyalalink', function(e) {
+		jQuery(document).on('click', '.ooyalalink', function(e) {
+			if ( typeof OO !== 'undefined' ) {
 				var thisID = jQuery(this).attr('id');
 				var thisOOcode = jQuery(this).data('ooyala');
 				var thismovieplayer = OO.Player.create('playerwrapper', thisOOcode, {
 					height:'100%',
 	      			width:'100%'
 				});
-	
+
 				jQuery('#lgVid1').modal({
 					autoResize: true,
 					overlayClose: false
@@ -414,10 +416,9 @@ jQuery(document).ready(function() {
 				jQuery(document).on('click', '.simplemodal-close', function() {
 					thismovieplayer.destroy();
 				});
-				
-				e.preventDefault();
-			});
-		}
+			}
+			e.preventDefault();
+		});
 	}
 });
 </script>
@@ -435,7 +436,7 @@ jQuery(document).ready(function() {
 	*/
 ?>
 												
-<script src='http://player.ooyala.com/v3/MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk' async></script> <!-- Branding ID here -->
+<script src='http://player.ooyala.com/v3/MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk'></script> <!-- Branding ID here -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/simplemodal/1.4.4/jquery.simplemodal.min.js" defer></script>
 	
 <div id="lgVid1" class="simple_overlay">
@@ -542,11 +543,9 @@ jQuery(document).ready(function() {
 					<?php if ( is_page(824) ) : //Weather Detection ?>
 					<div class="row">
 						<div class="sixteen columns">
-							<?php nebula_weather(); ?>							
+							<?php nebula_weather(); //@TODO: Maaaaybe think about returning values here based on a 2nd parameter. Like <?php echo nebula_weather('13204', 'temp'); ?>					
 							<p>It is currently <strong><?php echo $current_weather['temp']; ?>&deg;F</strong> and <strong><?php echo $current_weather['conditions']; ?></strong> in <strong><?php echo $current_weather['city']; ?></strong>, <strong><?php echo $current_weather['state']; ?></strong>.</p>
-							<p>Sunrise: <strong><?php echo $current_weather['sunrise']; ?></strong>, Sunset: <strong><?php echo $current_weather['sunset']; ?></strong>.</p>
-							
-							<hr/>
+							<p>Sunrise: <strong><?php echo $current_weather['sunrise']; ?></strong>, Sunset: <strong><?php echo $current_weather['sunset']; ?></strong>.</p>							
 						</div><!--/columns-->
 					</div><!--/row-->
 					<?php endif; //End Weather Detection ?>

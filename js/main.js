@@ -1285,6 +1285,9 @@ function twitterFeed() {
         JQTWEET.template = '<div class="row tweetcon"><div class="four columns"><div class="twittericon">{AVA}</div></div><div class="twelve columns"><div class="twitteruser"><a href="{URL}" target="_blank">@{USER}</a></div><div class="twittertweet">{TEXT} <a class="twitterago" href="{URL}" target="_blank">{AGO}</a></div></div></div>',
         JQTWEET.appendTo = '#twitter_update_list';
         JQTWEET.loadTweets();
+        
+        console.log('tweets loaded.');
+        console.debug(JQTWEET);
     }
 } //end twitterFeed()
 
