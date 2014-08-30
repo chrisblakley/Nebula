@@ -1,4 +1,5 @@
-# @TODO: Move to root directory if possible.
+# @TODO: Move to root directory.
+# @TODO: Rename this file to be: .htaccess
 
 <IfModule mod_headers.c>
 	Header set Connection keep-alive
@@ -30,6 +31,7 @@
 #RewriteCond %{HTTP_HOST} !^www.domain.com$ [NC]
 #RewriteRule ^(.*)$ http://www.domain.com/$1 [L,R=301]
 ###################
+
 
 <IfModule mod_deflate.c>
   #Force deflate for mangled headers
@@ -107,6 +109,13 @@ Header set Cache-Control "max-age=172800, proxy-revalidate"
 <FilesMatch ".(pl|cgi|spl|scgi|fcgi)$">
 Header unset Cache-Control
 </FilesMatch>
+
+#RewriteEngine On
+#RewriteCond %{REQUEST_METHOD} POST
+#RewriteCond %{REQUEST_URI} .wp-comments-post.php
+#RewriteCond %{HTTP_REFERER} !domain.com [OR]
+#RewriteCond %{HTTP_USER_AGENT} ^$
+#RewriteRule (.*) http://%{REMOTE_ADDR}/$ [R=301,L]
 
 # 301 Redirects Here
 

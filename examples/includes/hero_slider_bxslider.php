@@ -5,9 +5,14 @@
 
 <?php
 	function random_unsplash($width=800, $height=600) {
-		$skipList = array(312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128);
+		$skipList = array(312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
+		//$randID = random_number_between_but_not(0, 430, $skipList);
 		while ( in_array(($randID = rand(0, 430)), $skipList) ); //@TODO: Update to random_number_between_but_not() function
 		echo 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID . '" title="Unsplash ID #' . $randID;
+	}
+	
+	function random_number_between_but_not(){
+		
 	}
 ?>
 
