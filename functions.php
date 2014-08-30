@@ -3,11 +3,6 @@
  * Functions
  */
 
-/*========================== 
- Google Analytics Tracking ID
- ===========================*/
-$GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO: Change Google Analytics Tracking ID here
-
 
 /*========================== 
  Include Nebula Functions Groups
@@ -19,6 +14,12 @@ require_once('functions/nebula_admin_functions.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
+
+
+/*========================== 
+ Google Analytics Tracking ID
+ ===========================*/
+$GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO: Change Google Analytics Tracking ID here
 
 
 /*========================== 
