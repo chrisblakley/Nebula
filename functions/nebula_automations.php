@@ -5,7 +5,7 @@ require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 //Detect and prompt install of Recommended and Optional plugins
-require_once TEMPLATEPATH . '/includes/class-tgm-plugin-activation.php';
+require_once(TEMPLATEPATH . '/includes/class-tgm-plugin-activation.php');
 
 add_action('tgmpa_register', 'my_theme_register_required_plugins');
 function my_theme_register_required_plugins() {

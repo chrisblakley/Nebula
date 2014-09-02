@@ -2,7 +2,7 @@
 
 //Include Nebula Settings page
 if ( is_admin() ) {
-	include_once('includes/nebula-settings.php');	
+	include_once(TEMPLATEPATH . '/includes/nebula-settings.php');	
 }
 
 //Uncomment to force override the Nebula Settings. This will disable changes made from the Settings page, and only allow edits from this functions file (to revert, comment out and choose "Enabled" in the Nebula Settings page):

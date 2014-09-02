@@ -95,7 +95,7 @@ if ( nebula_settings_conditional('nebula_phg_welcome_panel') ) {
 	remove_action('welcome_panel','wp_welcome_panel');
 	add_action('welcome_panel','nebula_welcome_panel');
 	function nebula_welcome_panel() {
-		include('includes/welcome.php');
+		include(TEMPLATEPATH . '/includes/welcome.php');
 	}
 } else {
 	remove_action('welcome_panel','wp_welcome_panel');
