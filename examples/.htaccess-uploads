@@ -3,6 +3,7 @@
 
 # Don't list directory contents
 IndexIgnore *
+
 # Disable script execution
 AddHandler cgi-script .php .php2 .php3 .php4 .php5 .php6 .php7 .php8 .pl .py .js .jsp .asp .htm .html .shtml .sh .cgi
 Options -ExecCGI -Indexes
@@ -24,11 +25,11 @@ RewriteCond %{QUERY_STRING} (\.exe|\.tar|act=|afilter=|alter|benchmark|chbd|chmo
 RewriteRule .* - [F]
  
 # Disable hotlinking of images
-RewriteCond %{HTTP_REFERER} !^$
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteCond %{REQUEST_FILENAME} \.(jpe?g?|png|gif|ico|pdf|flv|swf|gz)$ [NC]
-RewriteCond %{HTTP_REFERER} !^https?://([^.]+\.)?yourdomain\. [NC]
-RewriteRule \.(jpe?g?|png|gif|ico|pdf|flv|swf|gz)$ - [NC,F]
+#RewriteCond %{HTTP_REFERER} !^$
+#RewriteCond %{REQUEST_FILENAME} -f
+#RewriteCond %{REQUEST_FILENAME} \.(jpe?g?|png|gif|ico|pdf|flv|swf|gz)$ [NC]
+#RewriteCond %{HTTP_REFERER} !^https?://([^.]+\.)?yourdomain\. [NC]
+#RewriteRule \.(jpe?g?|png|gif|ico|pdf|flv|swf|gz)$ - [NC,F]
  
 # Only the following file extensions are allowed
 Order Allow,Deny
