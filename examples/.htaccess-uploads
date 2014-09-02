@@ -1,5 +1,6 @@
 # @TODO: Move to uploads directory.
 # @TODO: Rename this file to be: .htaccess
+# @TODO: Find/Replace "yourdomain" with the actual domain name!
 
 # Don't list directory contents
 IndexIgnore *
