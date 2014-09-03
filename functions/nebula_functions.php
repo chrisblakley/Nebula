@@ -1152,16 +1152,12 @@ function currently_open() {
 
 //Detect weather for Zip Code (using Yahoo! Weather)
 function nebula_weather($zipcode=null, $data=null){
-	
 	if ( $zipcode && is_string($zipcode) && !ctype_digit($zipcode) ) { //ctype_alpha($zipcode)
 		$data = $zipcode;
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
 	} elseif ( !$zipcode ) {
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
 	}
-	
-	
-	
 	
 	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
 	$use_errors = libxml_use_internal_errors(true);
@@ -1185,7 +1181,6 @@ function nebula_weather($zipcode=null, $data=null){
 	$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
 	$current_weather['time_seconds'] = time()-strtotime("today");
 	
-
 	if ( $data && isset($current_weather[$data]) ) {
 		return $current_weather[$data];
 	} elseif ( $data && !isset($current_weather[$data]) ) {
@@ -1193,7 +1188,6 @@ function nebula_weather($zipcode=null, $data=null){
 	} else {
 		return $current_weather;
 	}
-
 }
 
 function vimeo_meta($videoID) {
@@ -1255,12 +1249,12 @@ function in_array_r($needle, $haystack, $strict = true) {
 
 //Recursive Glob
 function glob_r($pattern, $flags = 0) {
-	    $files = glob($pattern, $flags); 
-	    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-	        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
-	    }
-	    return $files;
-	}
+    $files = glob($pattern, $flags); 
+    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
+    }
+    return $files;
+}
 	
 //Add up the filesizes of files in a directory (and it's sub-directories)
 function foldersize($path) {

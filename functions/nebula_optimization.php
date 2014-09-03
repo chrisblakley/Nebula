@@ -29,7 +29,7 @@ function nebula_dequeues() {
 		wp_deregister_style('dashicons'); //WP Core - Even though these are admin-only resources, I'd rather them not add any interpreted load time NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		wp_deregister_style('cff-font-awesome'); //Custom Facebook Feed - We enqueue the latest version of Font Awesome ourselves
 		wp_deregister_style('se-link-styles'); //Search Everything - (As far as I know) We do not use any of their styles (I believe they are for additional settings)
-		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling specifically, so removing it unless we decide we need it.
+		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
 		
 		//Scripts
 		if ( !preg_match('/(?i)msie [2-8]/', $_SERVER['HTTP_USER_AGENT']) ) { //WP Core - Dequeue jQuery Migrate for browsers that don't need it.

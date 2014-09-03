@@ -96,6 +96,14 @@ function my_theme_register_required_plugins() {
             'required'  => false,
         ),
     );
+    
+    if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ) {
+    	array_push($plugins, array(
+    		'name'      => 'WooCommerce Google Analytics Integration',
+    		'slug'      => 'woocommerce-google-analytics-integration',
+    		'required'  => true
+    	));
+    }
 
     $config = array(
         'id'           => 'tgmpa',                 //Unique ID for hashing notices for multiple instances of TGMPA.
