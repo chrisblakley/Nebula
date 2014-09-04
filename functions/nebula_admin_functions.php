@@ -31,7 +31,7 @@ if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ) {
 }
 
 //Disable Wordpress Core update notifications in WP Admin
-if ( nebula_settings_conditional('nebula_wp_core_updates_notify') ) {
+if ( nebula_settings_conditional('nebula_wp_core_updates_notify', 'disabled') ) {
 	add_filter('pre_site_transient_update_core', create_function('$a', "return null;"));
 }
 

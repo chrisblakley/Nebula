@@ -771,7 +771,7 @@ function string_limit_words($string, $word_limit){
 if ( array_key_exists('varcheck', $_GET) ) {
 	$varcheck = false;
 	add_action('init', 'varcheck');
-	function varchecks() {
+	function varcheck() {
 		if ( !function_exists('locate_and_check_global_variables') && !$varcheck ) {
 			echo '<p class="varcheck" style="display: none;">vars-will-be-checked-next-reload</p>';
 			$varcheck = true;
@@ -1275,7 +1275,8 @@ function foldersize($path) {
 	}
 	return $total_size;
 }
-	
+
+//Checks to see if an array contains a string.
 function contains($str, array $arr) {
     foreach( $arr as $a ) {
         if ( stripos($str,$a) !== false ) {
@@ -1283,6 +1284,28 @@ function contains($str, array $arr) {
         }
     }
     return false;
+}
+
+//Generate a random integer between two numbers with an exclusion array
+//Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
+function random_number_between_but_not($min=null, $max=null, $butNot=null) {
+    if ( $min > $max ) {
+        return 'Error: min is greater than max.'; //@TODO: If min is greater than max, swap the variables.
+    }
+    if ( gettype($butNot) == 'array' ) {
+        foreach( $butNot as $key => $skip ){
+            if( $skip > $max || $skip < $min ){
+                unset($butNot[$key]);
+            }
+        }
+        if ( count($butNot) == $max-$min+1 ) {
+            return 'Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.';
+        }
+        while ( in_array(($randnum = rand($min, $max)), $butNot));
+    } else {
+        while (($randnum = rand($min, $max)) == $butNot );
+    }
+    return $randnum;
 }
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
