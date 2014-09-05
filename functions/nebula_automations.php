@@ -150,7 +150,7 @@ add_action('after_switch_theme', 'nebulaActivation');
 function nebulaActivation() {
 	$theme = wp_get_theme();
 	//Check if this is the initial activation, or if initialization has been ran before (and the user is just toggling themes)
-	if ( $theme['Name'] == 'WP Nebula' && (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) {
+	if ( get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset']) ) {
 
 		//Create Homepage
 		$nebula_home = array(
