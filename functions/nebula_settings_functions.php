@@ -38,9 +38,9 @@ function nebula_settings_conditional_text_bool($setting, $true = true, $false = 
 
 //Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
 function nebula_settings_conditional($setting, $default='enabled') {
-	if ( get_option('nebula_overall') == 'override' || get_option('nebula_overall') == 'disabled' || (get_option('nebula_overall') == 'enabled' && get_option($setting) == 'default') || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
-		return 1;
+	if ( get_option('nebula_overall') == 'override' || get_option('nebula_overall') == 'disabled' || (get_option('nebula_overall') == 'enabled' && (get_option($setting) == 'default' || get_option($setting) === false)) || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
+		return true;
 	} else {
-		return 0;
+		return false;
 	}
 }
