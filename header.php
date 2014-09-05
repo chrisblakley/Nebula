@@ -90,7 +90,7 @@
 		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
 		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta itemprop="image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb1.png" />
+		<meta itemprop="image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb.png" />
 
 		<!-- Other Social Metadata -->
 		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
