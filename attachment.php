@@ -52,7 +52,7 @@ get_header(); ?>
 							?>
 							<p class="isitthisone"><a href="<?php echo $next_attachment_url; ?>" title="<?php echo get_the_title(); ?>">
 								<?php
-									$attachment_size = apply_filters( 'boilerplate_attachment_size', 900 );
+									$attachment_size = apply_filters( 'boilerplate_attachment_size', 900 ); //@TODO: Need to remove boilerplate remnants
 									echo wp_get_attachment_image( $post->ID, array( $attachment_size, 9999 ) ); // filterable image width with, essentially, no limit for image height.
 								?>
 							</a></p>

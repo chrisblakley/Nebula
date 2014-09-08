@@ -63,8 +63,8 @@ a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s ea
 	a:hover,
 	a.hover {color: #95D600; color: var(--secondary-color)-darker;}
 	.btn > a:hover {color: #fff;}
-body, .mceContentBody {overflow-x: hidden; background: #f6f6f6;}
-.mceContentBody {padding: 25px;}
+body/* , .mceContentBody */ {overflow-x: hidden; background: #f6f6f6;}
+/* .mceContentBody */ {padding: 25px;}
 .inner {width: 100%; max-width: 960px; padding: 0 20px; margin: 0 auto;}
 ul.menu {padding: 0;}
 

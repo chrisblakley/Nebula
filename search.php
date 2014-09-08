@@ -18,7 +18,6 @@ get_header(); ?>
 			<h1>No Results Found</h1>
 			<?php get_search_form(); ?>
 			
-			<?php global $defer; global $async; ?>
 			<script>
 				var badSearchTerm = jQuery('#s').val();
 				nebula_event('Internal Search', 'No Results', badSearchTerm);
