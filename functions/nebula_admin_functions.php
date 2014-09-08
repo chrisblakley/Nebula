@@ -110,7 +110,7 @@ if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 		//global $wp_meta_boxes;
 		//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
 	    
-	    remove_meta_box('dashboard_primary', 'dashboard', 'side');
+	    remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
 	    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
 	    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
 	    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
@@ -120,10 +120,6 @@ if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 
 
 function is_dev() {
-	if ( current_user_can('manage_options') ) {
-		return true;
-	}
-	
 	//Check if the current IP address matches any of the dev IP address from Nebula Settings
 	$devIPs = explode(',', get_option('nebula_dev_ip'));
 	foreach ( $devIPs as $devIP ) {
@@ -150,6 +146,7 @@ function is_dev() {
 //Custom PHG Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Settings).
 if ( nebula_settings_conditional('nebula_phg_metabox') ) {
+	
 	if ( is_dev() ) {
 		add_action('wp_dashboard_setup', 'phg_dev_metabox');
 	}

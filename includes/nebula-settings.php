@@ -56,6 +56,8 @@
 		register_setting('nebula_settings_group', 'nebula_facebook_app_id');
 		register_setting('nebula_settings_group', 'nebula_facebook_app_secret');
 		register_setting('nebula_settings_group', 'nebula_facebook_access_token');
+		register_setting('nebula_settings_group', 'nebula_facebook_page_id');
+		register_setting('nebula_settings_group', 'nebula_facebook_admin_ids');
 		register_setting('nebula_settings_group', 'nebula_google_plus_url');
 		register_setting('nebula_settings_group', 'nebula_twitter_url');
 		register_setting('nebula_settings_group', 'nebula_linkedin_url');
@@ -80,6 +82,7 @@
 		register_setting('nebula_settings_group', 'nebula_registrar_url');
 		register_setting('nebula_settings_group', 'nebula_ga_url');
 		register_setting('nebula_settings_group', 'nebula_google_webmaster_tools_url');
+		register_setting('nebula_settings_group', 'nebula_google_adsense_url');
 	}
 	
 	//Output the settings page
@@ -308,7 +311,7 @@
 							</div>
 							
 							<div class="businessday">
-								<input type="checkbox" name="nebula_business_hours_tuesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_tuesday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Tuesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_tuesday_open" value="<?php echo get_option('nebula_business_hours_tuesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_tuesday_close" value="<?php echo get_option('nebula_business_hours_tuesday_close'); ?>" placeholder="5:30 pm" style="width: 75px;"/>
+								<input type="checkbox" name="nebula_business_hours_tuesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_tuesday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Tuesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_tuesday_open" value="<?php echo get_option('nebula_business_hours_tuesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_tuesday_close" value="<?php echo get_option('nebula_business_hours_tuesday_close'); ?>" style="width: 75px;"/>
 							</div>
 							
 							<div class="businessday">
@@ -337,7 +340,10 @@
 							URL: <input type="text" name="nebula_facebook_url" value="<?php echo get_option('nebula_facebook_url'); ?>" placeholder="http://www.facebook.com/PinckneyHugo" style="width: 358px;"/><br/>
 							App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
 							App Secret: <input type="password" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br/>
-							Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/>
+							Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/><br/>
+							Page ID: <input type="text" name="nebula_facebook_page_id" value="<?php echo get_option('nebula_facebook_page_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
+							Admin IDs: <input type="text" name="nebula_facebook_admin_ids" value="<?php echo get_option('nebula_facebook_admin_ids'); ?>" placeholder="0000, 0000, 0000" style="width: 153px;"/><br/>
+							
 							<p class="helper"><small>The URL and App ID of the associated Facebook page/app. This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></small></p>
 						</td>
 			        </tr>
@@ -504,7 +510,7 @@
 			        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_dev_ip" value="<?php echo get_option('nebula_dev_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
-							<p class="helper"><small>Comma separated IP addresses of the developer to enable specific console logs and other dev info. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
+							<p class="helper"><small>Comma-separated IP addresses of the developer to enable specific console logs and other dev info. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
@@ -566,6 +572,13 @@
 						<td>
 							<input type="text" name="nebula_google_webmaster_tools_url" value="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
 							<p class="helper"><small>Direct link to this project's Google Webmaster Tools.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Google AdSense URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_google_adsense_url" value="<?php echo get_option('nebula_google_adsense_url'); ?>" placeholder="https://www.google.com/adsense/app" style="width: 392px;" />
+							<p class="helper"><small>Direct link to this project's Google AdSense account.</small></p>
 						</td>
 			        </tr>
 			    </table>
