@@ -5,9 +5,6 @@ if ( is_admin() ) {
 	include_once(TEMPLATEPATH . '/includes/nebula-settings.php');	
 }
 
-//Uncomment to force override the Nebula Settings. This will disable changes made from the Settings page, and only allow edits from this functions file (to revert, comment out and choose "Enabled" in the Nebula Settings page):
-/* update_option('nebula_overall', 'override'); */
-
 //Store global strings as needed
 add_action('init', 'global_nebula_vars');
 add_action('admin_init', 'global_nebula_vars');
@@ -38,7 +35,7 @@ function nebula_settings_conditional_text_bool($setting, $true = true, $false = 
 
 //Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
 function nebula_settings_conditional($setting, $default='enabled') {
-	if ( get_option('nebula_overall') == 'override' || get_option('nebula_overall') == 'disabled' || (get_option('nebula_overall') == 'enabled' && (get_option($setting) == 'default' || get_option($setting) === false)) || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
+	if ( get_option('nebula_overall') == 'override' || get_option('nebula_overall') == 'disabled' || (get_option('nebula_overall') == 'enabled' && get_option($setting) == 'default') || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
 		return true;
 	} else {
 		return false;

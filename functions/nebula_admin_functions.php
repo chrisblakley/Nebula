@@ -184,6 +184,15 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		
 		$dnsrecord = dns_get_record(top_domain_name(gethostname()), DNS_NS);
 		
+		function initial_install_date(){
+			if ( get_option('nebula_initialized') != '' && (get_option('nebula_initialized') < getlastmod()) ) {
+				$install_date = '<strong>' . date('F j, Y', get_option('nebula_initialized')) . '</strong> <small>@</small> <strong>' . date('g:ia', get_option('nebula_initialized')) . '</strong> <small>(Nebula Init)</small>';
+			} else {
+				$install_date = '<strong>' . date("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong> <small>(WP Detect)</small>';
+			}
+			return $install_date;
+		}
+		
 		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 		echo '<script id="testloadscript">
 				jQuery(window).on("load", function(){
@@ -220,7 +229,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
 			echo '<li><i class="fa fa-clock-o fa-fw"></i> Homepage load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
-			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: <strong>' . date("F j, Y", getlastmod()) . '</strong> <small>(Estimate)</small></li>'; //@TODO: Might just be the last WP update date
+			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>'; //@TODO: Might just be the last WP update date
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';
 		

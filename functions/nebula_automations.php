@@ -119,13 +119,13 @@ function my_theme_register_required_plugins() {
             'menu_title'                      => __( 'Install Plugins', 'tgmpa' ),
             'installing'                      => __( 'Installing Plugin: %s', 'tgmpa' ), // %s = plugin name.
             'oops'                            => __( 'Something went wrong with the plugin API.', 'tgmpa' ),
-            'notice_can_install_required'     => _n_noop( 'WP Nebula recommends the following plugin: %1$s.', 'WP Nebula recommends the following plugins: %1$s.', 'tgmpa' ), // %1$s = plugin name(s).
+            'notice_can_install_required'     => _n_noop( 'Nebula recommends the following plugin: %1$s.', 'Nebula recommends the following plugins: %1$s.', 'tgmpa' ), // %1$s = plugin name(s).
             'notice_can_install_recommended'  => _n_noop( 'The following optional plugin can be installed: %1$s.', 'The following optional plugins can be installed: %1$s.', 'tgmpa' ), // %1$s = plugin name(s).
             'notice_cannot_install'           => _n_noop( 'Sorry, but you do not have the correct permissions to install the %s plugin. Contact the administrator of this site for help on getting the plugin installed.', 'Sorry, but you do not have the correct permissions to install the %s plugins. Contact the administrator of this site for help on getting the plugins installed.', 'tgmpa' ), // %1$s = plugin name(s).
             'notice_can_activate_required'    => _n_noop( 'The following recommended plugin is currently inactive: %1$s.', 'The following recommended plugins are currently inactive: %1$s.', 'tgmpa' ), // %1$s = plugin name(s).
             'notice_can_activate_recommended' => _n_noop( 'The following optional plugin is currently inactive: %1$s.', 'The following optinal plugins are currently inactive: %1$s.', 'tgmpa' ), // %1$s = plugin name(s).
             'notice_cannot_activate'          => _n_noop( 'Sorry, but you do not have the correct permissions to activate the %s plugin. Contact the administrator of this site for help on getting the plugin activated.', 'Sorry, but you do not have the correct permissions to activate the %s plugins. Contact the administrator of this site for help on getting the plugins activated.', 'tgmpa' ), // %1$s = plugin name(s).
-            'notice_ask_to_update'            => _n_noop( 'The following plugin needs to be updated to its latest version to ensure maximum compatibility with WP Nebula: %1$s.', 'The following plugins need to be updated to their latest version to ensure maximum compatibility with WP Nebula: %1$s.', 'tgmpa' ), // %1$s = plugin name(s).
+            'notice_ask_to_update'            => _n_noop( 'The following plugin needs to be updated to its latest version to ensure maximum compatibility with Nebula: %1$s.', 'The following plugins need to be updated to their latest version to ensure maximum compatibility with Nebula: %1$s.', 'tgmpa' ), // %1$s = plugin name(s).
             'notice_cannot_update'            => _n_noop( 'Sorry, but you do not have the correct permissions to update the %s plugin. Contact the administrator of this site for help on getting the plugin updated.', 'Sorry, but you do not have the correct permissions to update the %s plugins. Contact the administrator of this site for help on getting the plugins updated.', 'tgmpa' ), // %1$s = plugin name(s).
             'install_link'                    => _n_noop( 'Begin installing plugin', 'Begin installing plugins', 'tgmpa' ),
             'activate_link'                   => _n_noop( 'Begin activating plugin', 'Begin activating plugins', 'tgmpa' ),
@@ -145,12 +145,12 @@ function my_theme_register_required_plugins() {
 	*/
 }
 
-//When WP Nebula has been activated
+//When Nebula has been activated
 add_action('after_switch_theme', 'nebulaActivation');
 function nebulaActivation() {
 	$theme = wp_get_theme();
 	//Check if this is the initial activation, or if initialization has been ran before (and the user is just toggling themes)
-	if ( get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset']) ) {
+	if ( (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) {
 
 		//Create Homepage
 		$nebula_home = array(
@@ -158,7 +158,7 @@ function nebulaActivation() {
 			'post_type' => 'page',
 			'post_title' => 'Home',
 			'post_name' => 'home',
-			'post_content'   => "The WP Nebula is a springboard Wordpress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other Wordpress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
+			'post_content'   => "Nebula is a springboard Wordpress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other Wordpress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 
 Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced Wordpress techniques.",
 			'post_status' => 'publish',
@@ -181,17 +181,76 @@ Wordpress developers will find all source code not obfuscated, so everything may
 
 //When Nebula "Reset" has been clicked
 if ( current_user_can('manage_options') && isset($_GET['nebula-reset']) ) {
+	mail_existing_settings();
 	nebulaActivation();
 	nebulaChangeHomeSetting();
 	add_action('init', 'nebulaWordpressSettings');
 }
 
-//If WP Nebula has been activated and other actions have heppened, but the user is still on the Themes settings page.
-if ( current_user_can('manage_options') && isset($_GET['activated'] ) && $pagenow == 'themes.php' ) {
-	$theme = wp_get_theme();
-	if ( $theme['Name'] == 'WP Nebula' ) {
-		add_action('admin_notices', 'nebulaActivateComplete');
+
+//Send a list of existing settings to the user's email (to test, trigger the function on admin_init)
+function mail_existing_settings(){
+	global $wpdb;
+	$current_user = wp_get_current_user();
+	$to = $current_user->user_email;
+	$headers[] = 'From: ' . get_bloginfo('name');
+	
+	//Carbon copy the admin if reset was done by another user.
+	$admin_user_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email));
+	if ( $admin_user_email != $current_user->user_email ) {
+		$headers[] = 'Cc: ' . $admin_user_email; //@TODO: Email all admins?
 	}
+
+	$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
+	$message = '
+		<p>Wordpress theme settings have been reset for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p><p>Below is a record of the previous settings prior to the reset for backup purposes:</p>';
+	$message .= '<table style="width: 100%;>';
+	
+	$options = $wpdb->get_results("SELECT * FROM $wpdb->options ORDER BY option_name");
+	foreach ( $options as $option ) {
+		if ( $option->option_name != '' ) {
+			if ( is_serialized($option->option_value) ) {
+				if ( is_serialized_string($option->option_value) ) {
+					$value = maybe_unserialize($option->option_value);
+					$options_to_update[] = $option->option_name;
+				} else {
+					$value = 'SERIALIZED DATA';
+				}
+			} else {
+				$value = $option->option_value;
+				$options_to_update[] = $option->option_name;
+			}
+			$message .= '<tr><td style="width: 40%; min-width: 330px;">';
+			
+			if ( strpos(esc_html($option->option_name), 'nebula') !== false ) {
+				$message .= '<strong style="color: #0098d7;">' . esc_html($option->option_name) . '</strong>';
+			} else {
+				$message .= '<strong>' . esc_html($option->option_name) . '</strong>';
+			}
+			
+			$message .=	'</td><td style="width: 60%;">';
+			if ( strpos($value, "\n") !== false ) {
+				$message .= '<textarea rows="5" style="width: 95%; resize: vertical;">' . esc_textarea($value) . '</textarea>';
+			} else {
+				$message .= '<input type="text" value="' . esc_attr($value) . '" style="width: 95%;" />';
+			}
+			$message .= '</td></tr>';
+		}
+	}
+	$message .= '</table>';
+	
+	//Set the content type to text/html for the email. Don't forget to reset after wp_mail()!
+	add_filter('wp_mail_content_type', 'set_html_content_type');
+	function set_html_content_type() {
+		return 'text/html';
+	}
+	wp_mail($to, $subject, $message, $headers);	
+	remove_filter('wp_mail_content_type', 'set_html_content_type'); //This resets the content type for the email.
+}
+
+//If Nebula has been activated and other actions have happened, but the user is still on the Themes settings page.
+if ( current_user_can('manage_options') && isset($_GET['activated'] ) && $pagenow == 'themes.php' ) {
+	add_action('admin_notices', 'nebulaActivateComplete');
 }
 
 //Set the front page to static > Home.
@@ -207,9 +266,79 @@ function nebulaWordpressSettings() {
 	
 	remove_core_bundled_plugins();
 	
-	//Update Nebula Settings //@TODO: ADD THE REST!
+	//Update Nebula Settings
+	update_option('nebula_overall', 'Enabled');
+	update_option('nebula_initialized', date());
+	update_option('nebula_edited_yet', 'false');
+	
+	update_option('nebula_contact_email', '');
 	update_option('nebula_ga_tracking_id', '');
-	update_option('nebula_admin_bar', 'disabled');
+	update_option('nebula_keywords', '');
+	update_option('nebula_news_keywords', '');
+	update_option('nebula_phone_number', '');
+	update_option('nebula_fax_number', '');
+	update_option('nebula_latitude', '');
+	update_option('nebula_longitude', '');
+	update_option('nebula_street_address', '');
+	update_option('nebula_locality', '');
+	update_option('nebula_region', '');
+	update_option('nebula_postal_code', '');
+	update_option('nebula_country_name', '');
+	
+	update_option('nebula_business_hours_sunday_enabled', '');
+	update_option('nebula_business_hours_sunday_open', '');
+	update_option('nebula_business_hours_sunday_close', '');
+	update_option('nebula_business_hours_monday_enabled', '');
+	update_option('nebula_business_hours_monday_open', '');
+	update_option('nebula_business_hours_monday_close', '');
+	update_option('nebula_business_hours_tuesday_enabled', '');
+	update_option('nebula_business_hours_tuesday_open', '');
+	update_option('nebula_business_hours_tuesday_close', '');
+	update_option('nebula_business_hours_wednesday_enabled', '');
+	update_option('nebula_business_hours_wednesday_open', '');
+	update_option('nebula_business_hours_wednesday_close', '');
+	update_option('nebula_business_hours_thursday_enabled', '');
+	update_option('nebula_business_hours_thursday_open', '');
+	update_option('nebula_business_hours_thursday_close', '');
+	update_option('nebula_business_hours_friday_enabled', '');
+	update_option('nebula_business_hours_friday_open', '');
+	update_option('nebula_business_hours_friday_close', '');
+	update_option('nebula_business_hours_saturday_enabled', '');
+	update_option('nebula_business_hours_saturday_open', '');
+	update_option('nebula_business_hours_saturday_close', '');
+	
+	update_option('nebula_facebook_url', '');
+	update_option('nebula_facebook_app_id', '');
+	update_option('nebula_facebook_app_secret', '');
+	update_option('nebula_facebook_access_token', '');
+	update_option('nebula_facebook_page_id', '');
+	update_option('nebula_facebook_admin_ids', '');
+	update_option('nebula_google_plus_url', '');
+	update_option('nebula_twitter_url', '');
+	update_option('nebula_linkedin_url', '');
+	update_option('nebula_youtube_url', '');
+	update_option('nebula_instagram_url', '');
+	
+	update_option('nebula_admin_bar', 'Default');
+	update_option('nebula_comments', 'Default');
+	update_option('nebula_wp_core_updates_notify', 'Default');
+	update_option('nebula_phg_plugin_update_warning', 'Default');
+	update_option('nebula_phg_welcome_panel', 'Default');
+	update_option('nebula_unnecessary_metaboxes', 'Default');
+	update_option('nebula_phg_metabox', 'Default');
+	update_option('nebula_console_css', 'Default');
+	update_option('nebula_cse_id', '');
+	update_option('nebula_cse_api_key', '');
+	
+	update_option('nebula_dev_ip', '');
+	update_option('nebula_dev_email_domain', '');
+	update_option('nebula_cpanel_url', '');
+	update_option('nebula_hosting_url', '');
+	update_option('nebula_registrar_url', '');
+	update_option('nebula_ga_url', '');
+	update_option('nebula_google_webmaster_tools_url', '');
+	update_option('nebula_google_adsense_url', '');
+
 	
 	//Empty the site tagline
 	update_option('blogdescription', '');
@@ -225,6 +354,7 @@ function nebulaWordpressSettings() {
 	$wp_rewrite->flush_rules();
 }
 
+//Uninstall/Delete unnecessary bundled plugins
 add_action('admin_init', 'remove_core_bundled_plugins');
 function remove_core_bundled_plugins(){
 	//Remove Hello Dolly plugin if it exists
@@ -235,10 +365,10 @@ function remove_core_bundled_plugins(){
 
 function nebulaActivateComplete(){
 	if ( isset($_GET['nebula-reset']) ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been reset!</strong><br/>You have reset WP Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
-	} elseif ( get_post_meta(1, '_wp_page_template', 1) == 'tpl-homepage.php' ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: red;'>Re-initialize Nebula.</a></p></div>";
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>. <strong>Next step: configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</strong></p></div>";
+	} elseif ( get_option('nebula_initialized') != '' ) { //@TODO: This is triggered on initial activation! - possibly fixed?
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. <strong>Next step: verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</strong> <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: red;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'> Re-initialize Nebula.</a></p></div>";
 	} else {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>WP Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.</p></div>";
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>. <strong>Next step: configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</strong></p></div>";
 	}
 }
