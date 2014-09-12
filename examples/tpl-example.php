@@ -286,6 +286,10 @@ get_header(); ?>
 						include_once('includes/cookies_js.php');	
 					} ?>
 					
+					<?php if (is_page(867)) { //DataTables
+						include_once('includes/datatables.php');	
+					} ?>
+					
 				<?php
 				/*==========================
 				 End Hard-Code Examples

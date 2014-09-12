@@ -57,29 +57,72 @@
 				</ul>
 			</div>
 			
-			<?php if ( current_user_can('manage_options') ) : //If user is an administrator ?>
-			<div class="welcome-panel-column">
-				<h4>Administration</h4>
-				<ul>
-					<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_cpanel_url', ''); ?>" target="_blank">Control Panel</a></li>
-					<li><i class="fa fa-hdd-o fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_hosting_url', ''); ?>" target="_blank">Hosting</a></li>
-					<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_registrar_url', ''); ?>" target="_blank">Registrar</a></li>
-					<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_ga_url', 'http://www.google.com/analytics/'); ?>" target="_blank">Google Analytics</a></li>
-					<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_google_webmaster_tools_url', 'https://www.google.com/webmasters/tools/'); ?>" target="_blank">Google Webmaster Tools</a></li>
-				</ul>
-			</div>
+			<?php if ( current_user_can('manage_options') ) : ?>
+				<div class="welcome-panel-column">
+					<h4>Administration</h4>
+					<ul>
+						<?php if ( get_option('nebula_cpanel_url') != '' ) : ?>
+							<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo get_option('nebula_cpanel_url'); ?>" target="_blank">Control Panel</a></li>
+						<?php endif; ?>
+						
+						<?php if ( get_option('nebula_hosting_url') != '' ) : ?>
+							<li><i class="fa fa-hdd-o fa-fw"></i> <a href="<?php echo get_option('nebula_hosting_url'); ?>" target="_blank">Hosting</a></li>
+						<?php endif; ?>
+						
+						<?php if ( get_option('nebula_registrar_url') != '' ) : ?>
+							<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo get_option('nebula_registrar_url'); ?>" target="_blank">Registrar</a></li>
+						<?php endif; ?>
+						
+						<?php if ( get_option('nebula_ga_url') != '' ) : ?>
+							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo get_option('nebula_ga_url'); ?>" target="_blank">Google Analytics</a></li>
+						<?php endif; ?>
+						
+						<?php if ( get_option('nebula_google_webmaster_tools_url') != '' ) : ?>
+							<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" target="_blank">Google Webmaster Tools</a></li>
+						<?php endif; ?>
+					</ul>
+					
+					<?php if ( get_option('nebula_cpanel_url') == '' && get_option('nebula_hosting_url') == '' && get_option('nebula_registrar_url') == '' && get_option('nebula_ga_url') == '' && get_option('nebula_google_webmaster_tools_url') == '' ) : ?>
+						<p><em>Add administrative links to <strong><a href="themes.php?page=nebula_settings">Nebula Settings</a></strong> to see them here.</em></p>
+					<?php endif; ?>
+				</div>
 			<?php endif; ?>
 			
 			<div class="welcome-panel-column">
 				<h4>Social</h4>
 				<ul>
-					<li><i class="fa fa-facebook-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_facebook_url', ''); ?>" target="_blank">Facebook</a></li>
-					<li><i class="fa fa-twitter-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_twitter_url', ''); ?>" target="_blank">Twitter</a></li>
-					<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_google_plus_url', ''); ?>" target="_blank">Google+</a></li>
-					<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_linkedin_url', ''); ?>" target="_blank">LinkedIn</a></li>
-					<li><i class="fa fa-youtube-square fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_youtube_url', ''); ?>" target="_blank">Youtube</a></li>
-					<li><i class="fa fa-instagram fa-fw"></i> <a href="<?php echo nebula_settings_conditional_text('nebula_instagram_url', ''); ?>" target="_blank">Instagram</a></li>
+					<?php if ( get_option('nebula_facebook_url') != '' ) : ?>
+						<li><i class="fa fa-facebook-square fa-fw"></i> <a href="<?php echo get_option('nebula_facebook_url'); ?>" target="_blank">Facebook</a></li>
+					<?php endif; ?>
+					
+					<?php if ( get_option('nebula_twitter_url') != '' ) : ?>
+						<li><i class="fa fa-twitter-square fa-fw"></i> <a href="<?php echo get_option('nebula_twitter_url'); ?>" target="_blank">Twitter</a></li>
+					<?php endif; ?>
+					
+					<?php if ( get_option('nebula_google_plus_url') != '' ) : ?>
+						<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="<?php echo get_option('nebula_google_plus_url'); ?>" target="_blank">Google+</a></li>
+					<?php endif; ?>
+					
+					<?php if ( get_option('nebula_linkedin_url') != '' ) : ?>
+						<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="<?php echo get_option('nebula_linkedin_url'); ?>" target="_blank">LinkedIn</a></li>
+					<?php endif; ?>
+					
+					<?php if ( get_option('nebula_youtube_url') != '' ) : ?>
+						<li><i class="fa fa-youtube-square fa-fw"></i> <a href="<?php echo get_option('nebula_youtube_url'); ?>" target="_blank">Youtube</a></li>
+					<?php endif; ?>
+					
+					<?php if ( get_option('nebula_instagram_url') != '' ) : ?>
+						<li><i class="fa fa-instagram fa-fw"></i> <a href="<?php echo get_option('nebula_instagram_url'); ?>" target="_blank">Instagram</a></li>
+					<?php endif; ?>
 				</ul>
+				
+				<?php if ( get_option('nebula_facebook_url') == '' && get_option('nebula_twitter_url') == '' && get_option('nebula_google_plus_url') == '' && get_option('nebula_linkedin_url') == '' && get_option('nebula_youtube_url') == '' && get_option('nebula_instagram_url') == '' ) : ?>
+					<?php if ( current_user_can('manage_options') ) : ?>
+						<p>Add social links to <strong><a href="themes.php?page=nebula_settings">Nebula Settings</a></strong> to see them here.</em></p>
+					<?php else : ?>
+						<p><i class="fa fa-frown-o fa-fw"></i> <em>No social links are set up.</em></p>
+					<?php endif; ?>
+				<?php endif; ?>
 			</div>
 			
 		</div>

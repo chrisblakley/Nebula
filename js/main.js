@@ -1,7 +1,7 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function() {
-	
+		
 	facebookSDK();
 	conditionalJSLoading();
 	
@@ -1110,6 +1110,7 @@ function contactBackup() {
 	});
 }
 
+
 //Create desktop notifications
 function desktopNotification(title, message, clickCallback, closeCallback, showCallback, errorCallback) {
 	if ( checkNotificationPermission() ) {
@@ -1235,8 +1236,8 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
 			twitterFeed();
 		}).fail(function(){
-			Gumby.warn('twitter.js could not be loaded.');
 			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
+			nebula_event('Error', 'JS Error', 'twitter.js could not be loaded.');
 		});
 	}
 	
@@ -1245,7 +1246,7 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
 			bxSlider();
 		}).fail(function(){
-			Gumby.warn('bxSlider could not be loaded.');
+			nebula_event('Error', 'JS Error', 'bxSlider could not be loaded.');
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
 	}
@@ -1255,7 +1256,7 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
-			Gumby.warn('jquery.maskedinput.js could not be loaded.');
+			nebula_event('Error', 'JS Error', 'jquery.maskedinput.js could not be loaded.');
 		});
 	} else {
 		cFormPreValidator();
@@ -1263,17 +1264,29 @@ function conditionalJSLoading() {
 	
 	//Only load dataTables library if dataTables table exists.
 	if ( jQuery('.dataTables_wrapper').is('*') ) {
-		
-	jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){
-			//Do something
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO: Use CDN?
+			dataTablesActions();
 		}).fail(function(){
-			Gumby.warn('jquery.dataTables.min.js could not be loaded.');
+			nebula_event('Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded');
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
+		
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-4.closure.js').done(function(){
+			//Do something
+		}).fail(function(){
+			nebula_event('Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.');
+		});
 	}
 	
 } //end conditionalJSLoading()
 
+function dataTablesActions(){
+	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO: Something here is eating the first letter after a few have been typed... lol
+	    console.log('keyup: ' + jQuery(this).val());
+	    jQuery('.dataTables_wrapper').removeHighlight();
+	    jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
+	});
+}
 
 //Twitter Feed integration
 function twitterFeed() {

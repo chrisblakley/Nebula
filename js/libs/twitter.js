@@ -153,38 +153,45 @@ $(function() {
 	    }, // ify
 
 	    renderTweets: function(data, textStatus, xhr){
-	    	if (JQTWEET.search) data = data.statuses;
-                var text, name, img;       
-                try {
-                  // append tweets into page
-                  for (var i = 0; i < JQTWEET.numTweets; i++) {		
-                    img = '';
-                    url = 'http://twitter.com/' + data[i].user.screen_name + '/status/' + data[i].id_str;
-                    baseurl = 'http://twitter.com/' + data[i].user.screen_name;
-                    followurl = 'https://twitter.com/intent/user?screen_name=' + data[i].user.screen_name;
-                    ava = '<a href="' + baseurl + '" target="_blank" class="tweet_avatar"><img src="' + data[i].user.profile_image_url + '" /></a>';
-                    try {
-                      if (data[i].entities['media']) {
-                        img = '<a href="' + url + '" target="_blank"><img src="' + data[i].entities['media'][0].media_url + '" /></a>';
-                      }
-                    } catch (e) {  
-                      //no media
-                      //console.log('catch!');
-                    }
-                    $(JQTWEET.appendTo).append( JQTWEET.template.replace('{TEXT}', JQTWEET.ify.clean(data[i].text) )
-                        .replace(/{USER}/g, data[i].user.screen_name )
-                        .replace(/{IMG}/g, img )
-                        .replace(/{AVA}/g, ava )
-                        .replace(/{AGO}/g, JQTWEET.timeAgo(data[i].created_at) )
-                        .replace(/{URL}/g, url )
-                        .replace(/{BURL}/g, baseurl )
-                        .replace(/{FOLLOW}/g, followurl )
-                        );
-                  }
-              
-              } catch (e) {
-                  //item is less than item count
-              }
+			if (JQTWEET.search) data = data.statuses;
+			var text, name, img;       
+			try {
+				// append tweets into page
+				console.log('number of tweets: ' + JQTWEET.numTweets);
+				for (var i = 0; i < JQTWEET.numTweets; i++) {
+					console.log('inside for loop: ' + i);
+					console.debug(data[i]);
+					console.log('number of tweets is still: ' + JQTWEET.numTweets);
+					img = '';
+					url = 'http://twitter.com/' + data[i].user.screen_name + '/status/' + data[i].id_str;
+					baseurl = 'http://twitter.com/' + data[i].user.screen_name;
+					followurl = 'https://twitter.com/intent/user?screen_name=' + data[i].user.screen_name;
+					ava = '<a href="' + baseurl + '" target="_blank" class="tweet_avatar"><img src="' + data[i].user.profile_image_url + '" /></a>';
+					try {
+						if (data[i].entities['media']) {
+							img = '<a href="' + url + '" target="_blank"><img src="' + data[i].entities['media'][0].media_url + '" /></a>';
+						}
+					} catch (e) {  
+						//no media
+						//console.log('catch!');
+					}
+					
+					console.log('about to append to: ' + JQTWEET.appendTo);
+					console.log('text is: ' + data[i].text);
+					$(JQTWEET.appendTo).append( JQTWEET.template.replace('{TEXT}', JQTWEET.ify.clean(data[i].text) )
+						.replace(/{USER}/g, data[i].user.screen_name )
+						.replace(/{IMG}/g, img )
+						.replace(/{AVA}/g, ava )
+						.replace(/{AGO}/g, JQTWEET.timeAgo(data[i].created_at) )
+						.replace(/{URL}/g, url )
+						.replace(/{BURL}/g, baseurl )
+						.replace(/{FOLLOW}/g, followurl )
+					);
+					console.log('done appending for ' + i);
+				}
+			} catch (e) {
+				//item is less than item count
+			}
 	    } //renderTweets
 	     
 	};		

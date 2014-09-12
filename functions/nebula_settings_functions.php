@@ -17,7 +17,7 @@ function global_nebula_vars(){
 
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text($setting, $default = ''){
-	if ( get_option('nebula_overall') == 'enabled' && get_option($setting) ) {
+	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ) {
 		return get_option($setting);
 	} else {
 		return $default;
@@ -26,7 +26,7 @@ function nebula_settings_conditional_text($setting, $default = ''){
 
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text_bool($setting, $true = true, $false = false){
-	if ( get_option('nebula_overall') == 'enabled' && get_option($setting) ) {
+	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ) {
 		return $true;
 	} else {
 		return $false;
@@ -35,7 +35,7 @@ function nebula_settings_conditional_text_bool($setting, $true = true, $false = 
 
 //Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
 function nebula_settings_conditional($setting, $default='enabled') {
-	if ( get_option('nebula_overall') == 'override' || get_option('nebula_overall') == 'disabled' || (get_option('nebula_overall') == 'enabled' && get_option($setting) == 'default') || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
+	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' || (strtolower(get_option('nebula_overall')) == 'enabled' && strtolower(get_option($setting)) == 'default') || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
 		return true;
 	} else {
 		return false;

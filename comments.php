@@ -1,4 +1,11 @@
-<?php if ( nebula_settings_conditional('nebula_comments') ) : ?>
+<?php if ( nebula_settings_conditional('nebula_comments', 'disabled') ) : ?>
+
+<?php
+	if ( is_singular() ) {
+		wp_enqueue_script('comment-reply');
+	}
+?>
+
 <div class="commentcon">
 	<?php
 		$comments = get_comments(array(
@@ -25,6 +32,7 @@
 				'reverse_children' => 'true'
 			);
 			wp_list_comments($comment_list_args, $comments);
+			paginate_comments_links(); //@TODO: Not sure this is working, but it's required that it exists in the theme.
 		?>
 	<?php endif; ?>
 	

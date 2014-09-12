@@ -8,9 +8,7 @@ jQuery(document).ready(function() {
 	
 	jQuery(function() {
 	    jQuery("#post textarea").allowTabChar();
-	})
-	
-	
+	});	
 	
 	
 	jQuery('#headshot_button').on('click', function() {
@@ -48,6 +46,9 @@ jQuery(document).ready(function() {
 		jQuery('#upload_success').text('Picture removed.');
 	});
 	
+	if ( !jQuery('li.comment-count').is(':visible') ) {
+		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_settings">Nebula Settings</a>)</small>.');
+	}
 	
 	//PHG Metabox
 	jQuery(document).on("keyup", "input.findterm", function(){
@@ -88,10 +89,24 @@ jQuery(document).ready(function() {
 	jQuery(document).on("click", ".linenumber", function(){
 		jQuery(this).parents('.linewrap').find('.precon').slideToggle();
 		return false;
-	});
+	});	
 	
+	//Alert confirmation if "Bulk Action" is selected when "Apply" is submitted.
+	if ( jQuery('#bulk-action-selector-top').is('*') ) {
+		bulkSubmitError = 0;
+		jQuery('form').on('submit', function(){		
+			if ( jQuery(this).find('#bulk-action-selector-top').val() == '-1' ) {
+				if ( bulkSubmitError == 0 ) {
+					jQuery(this).find('.bulkactions').append('<strong title="You have not selected an action to apply to the selected items." style="cursor: default; background: #dd3d36; padding: 2px 10px; border-radius: 10px; line-height: 30px; color: #fff;">Select an option before applying!</strong>');
+					bulkSubmitError = 1;
+				}
+				if ( !confirm('You have not selected an action. Proceed anyway?') ) {
+				    return false;
+				}
+			}
+		});
+	}
 	
-
 }); //End Document Ready
 
 jQuery(window).on('load', function() {	

@@ -36,6 +36,10 @@
 #dashboard-widgets .meta-box-sortables {min-height: 0;}
 .metabox-holder .postbox-container .empty-container {height: 100px; margin-bottom: 25px !important;}
 
+.wp-admin .hide-if-no-customize {display: none; visibility: hidden; opacity: 0;}
+
+.appearance_page_nebula_settings .form-table th {width: 300px;}
+
 .form-table .helper {padding: 0 10px; margin: 10px 0; background: #f9f9f9; border-radius: 8px;}
 
 th#id {width: 50px;}

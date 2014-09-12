@@ -256,21 +256,24 @@ if ( current_user_can('manage_options') && isset($_GET['activated'] ) && $pageno
 //Set the front page to static > Home.
 function nebulaChangeHomeSetting(){
 	$nebula_homepage = get_page_by_title('Home');
-	update_option('page_on_front', $nebula_homepage->ID); //Or set this to ...(..., '1');
+	update_option('page_on_front', $nebula_homepage->ID); //Or set the second parameter to '1'.
 	update_option('show_on_front', 'page');
 }
 
 //Nebula preferred default Wordpress settings
 function nebulaWordpressSettings() {
 	global $wp_rewrite;
-	
 	remove_core_bundled_plugins();
+	
+	//Only update the nebula_initialized option the first time it is activated.
+	$nebula_initialized_date = date_parse(get_option('nebula_initialized'));
+	if ( get_option('nebula_initialized') === null || get_option('nebula_initialized') == '' || $nebula_initialized_date["error_count"] != 0 ) {
+		update_option('nebula_initialized', date('U'));
+	}
 	
 	//Update Nebula Settings
 	update_option('nebula_overall', 'Enabled');
-	update_option('nebula_initialized', date());
 	update_option('nebula_edited_yet', 'false');
-	
 	update_option('nebula_contact_email', '');
 	update_option('nebula_ga_tracking_id', '');
 	update_option('nebula_keywords', '');
@@ -284,7 +287,6 @@ function nebulaWordpressSettings() {
 	update_option('nebula_region', '');
 	update_option('nebula_postal_code', '');
 	update_option('nebula_country_name', '');
-	
 	update_option('nebula_business_hours_sunday_enabled', '');
 	update_option('nebula_business_hours_sunday_open', '');
 	update_option('nebula_business_hours_sunday_close', '');
@@ -306,7 +308,6 @@ function nebulaWordpressSettings() {
 	update_option('nebula_business_hours_saturday_enabled', '');
 	update_option('nebula_business_hours_saturday_open', '');
 	update_option('nebula_business_hours_saturday_close', '');
-	
 	update_option('nebula_facebook_url', '');
 	update_option('nebula_facebook_app_id', '');
 	update_option('nebula_facebook_app_secret', '');
@@ -318,7 +319,6 @@ function nebulaWordpressSettings() {
 	update_option('nebula_linkedin_url', '');
 	update_option('nebula_youtube_url', '');
 	update_option('nebula_instagram_url', '');
-	
 	update_option('nebula_admin_bar', 'Default');
 	update_option('nebula_comments', 'Default');
 	update_option('nebula_wp_core_updates_notify', 'Default');
@@ -329,7 +329,6 @@ function nebulaWordpressSettings() {
 	update_option('nebula_console_css', 'Default');
 	update_option('nebula_cse_id', '');
 	update_option('nebula_cse_api_key', '');
-	
 	update_option('nebula_dev_ip', '');
 	update_option('nebula_dev_email_domain', '');
 	update_option('nebula_cpanel_url', '');
@@ -338,19 +337,12 @@ function nebulaWordpressSettings() {
 	update_option('nebula_ga_url', '');
 	update_option('nebula_google_webmaster_tools_url', '');
 	update_option('nebula_google_adsense_url', '');
-
 	
-	//Empty the site tagline
-	update_option('blogdescription', '');
-	
-	//Change Timezone
-	update_option('timezone_string', 'America/New_York');
-	
-	//Start of the week to Sunday
-	update_option('start_of_week', 0);
-
-	//Set the permalink structure to be "pretty" style
-	update_option('permalink_structure', '/%postname%/');
+	//Update certain Wordpress Core options
+	update_option('blogdescription', ''); //Empty the site tagline
+	update_option('timezone_string', 'America/New_York'); //Change Timezone
+	update_option('start_of_week', 0); //Start of the week to Sunday
+	update_option('permalink_structure', '/%postname%/'); //Set the permalink structure to be "pretty" style
 	$wp_rewrite->flush_rules();
 }
 
@@ -365,10 +357,10 @@ function remove_core_bundled_plugins(){
 
 function nebulaActivateComplete(){
 	if ( isset($_GET['nebula-reset']) ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>. <strong>Next step: configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</strong></p></div>";
-	} elseif ( get_option('nebula_initialized') != '' ) { //@TODO: This is triggered on initial activation! - possibly fixed?
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. <strong>Next step: verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</strong> <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: red;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'> Re-initialize Nebula.</a></p></div>";
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
+	} elseif ( get_post_meta(1, '_wp_page_template', 1) == 'tpl-homepage.php' ) {
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a></p></div>";
 	} else {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>. <strong>Next step: configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</strong></p></div>";
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
 	}
 }

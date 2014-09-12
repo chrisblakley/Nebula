@@ -247,11 +247,16 @@ function complete_version_removal() {
 add_post_type_support('page', 'excerpt');
 
 
-//Add thumbnail support
-if ( function_exists('add_theme_support') ) :
+//Add Theme Support
+if ( function_exists('add_theme_support') ) {
 	add_theme_support('post-thumbnails');
-endif;
+}
 
+//Remove Theme Support
+if ( function_exists('remove_theme_support') ) {
+	remove_theme_support('custom-background');
+	remove_theme_support('custom-header');
+}
 
 //Add new image sizes
 add_image_size('example', 32, 32, 1);
@@ -588,6 +593,11 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 		remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
 		remove_menu_page('edit-comments.php');
 		remove_submenu_page('options-general.php', 'options-discussion.php');
+		
+		add_filter('admin_head', 'hide_ataglance_comment_counts');
+		function hide_ataglance_comment_counts(){
+			echo '<style>li.comment-count, li.comment-mod-count {display: none;}</style>'; //Hide comment counts in "At a Glance" metabox
+		}
 	}
 	
 	//Disable support for comments and trackbacks in post types, Redirect any user trying to access comments page
@@ -605,7 +615,7 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 				remove_post_type_support($post_type, 'comments');
 				remove_post_type_support($post_type, 'trackbacks');
 			}
-		}
+		}		
 	}
 } else {
 	//Open comments on the front-end
