@@ -107,6 +107,11 @@ jQuery(document).ready(function() {
 		});
 	}
 	
+	if ( jQuery('.flag').is('*') ) {
+		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
+	}
+	
+	
 }); //End Document Ready
 
 jQuery(window).on('load', function() {	

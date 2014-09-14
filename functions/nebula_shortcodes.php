@@ -296,21 +296,24 @@ function pre_shortcode($atts, $content=''){
 		$content = preg_replace('#<br\s*/?>#', '', $content);
 	}
 	
-	//$content = htmlspecialchars($content);
-	$content = htmlentities($content);
+	$content = htmlspecialchars_decode($content);
+	$content = htmlspecialchars($content);
 	
 	if ( $lang == '' && $language != '' ) {
 		$lang = $language;	
 	}
+	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
 	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
 	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
 	$vislang = str_replace($search, $replace, $lang);
 	
+	$return = '<span class="nebula-pre pretitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-pre ' . $lang . ' ' . $class . '" style="';
 	if ( $color != '' ) {
-		return '<span class="nebula-pre pretitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-pre ' . $lang . ' ' . $class . '" style="border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';' . $style . '" >' . $content . '</pre>';
-	} else {
-		return '<span class="nebula-pre pretitle ' . $lang . '">' . $vislang . '</span><pre class="nebula-pre ' . $lang . ' ' . $class . '" style="' . $style . '" >' . $content . '</pre>';
+		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
+	$return .= $style . '" >' . $content . '</pre>';
+	
+	return $return;
 } //end pre_shortcode()
 
 

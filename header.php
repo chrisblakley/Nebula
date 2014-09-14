@@ -134,7 +134,7 @@
 			ga('send', 'pageview');
 		</script>
 		
-		<script type="text/javascript">
+		<script>
 			if ( window.addEventListener ) {
 				window.addEventListener('error', function(e) {
 					if ( e.lineno != 0 ) {
@@ -196,126 +196,124 @@
 		</script>
 	</head>
 	<body <?php body_class(); ?>>
-	
 		<div id="fullbodywrapper">
-		
-		<div id="fb-root"></div>
-		
-		<noscript>
-			<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&p=<?php echo get_page_uri(); ?>&t=<?php wp_title('-', true, 'right'); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
-		</noscript>
-		
-		<div id="topbarcon">
-			<div class="row mobilenavcon">
-				<div class="sixteen columns clearfix">
-					
-					<a class="alignleft" href="#mobilenav"><i class="fa fa-bars"></i></a>
-					<nav id="mobilenav">
-						<?php 
-							if ( has_nav_menu('mobile') ) {
-								wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
-							} elseif ( has_nav_menu('header') ) {
-								wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
-							}
-						?>
-					</nav><!--/mobilenav-->
-					
-					<a class="alignright" href="#mobilecontact"><i class="fa fa-users"></i></a>
-					<nav id="mobilecontact" class="unhideonload hidden">
-						<ul>
-				    		<li>
-				    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here (x2). ?></a>
-				    		</li>
-				    		<li>
-				    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear (x2). ?></a>
-				    		</li>
-				    		<li>
-				    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here (x2). ?></small></div></a>
-				    		</li>
-				    	</ul>
-					</nav><!--/mobilecontact-->
-					
-				</div><!--/columns-->
-			</div><!--/row-->
-		</div><!--/topbarcon-->
-
-		<?php if ( has_nav_menu('topnav') ) : ?>
-			<div class="row topnavcon">
-				<div class="sixteen columns">
-					<nav id="topnav">
-	        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '2')); ?>
-	        		</nav>
-				</div><!--/columns-->
-			</div><!--/row-->
-		<?php endif; ?>
-		
-		<div id="logonavcon" class="row">
-			<div class="six columns">
-				<?php
-					//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
-					//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
-				?>
-				<a class="logocon" href="<?php echo home_url(); ?>">
-					<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
-				</a>
-			</div><!--/columns-->
-			<?php if ( has_nav_menu('header') ) : ?>
-				<div class="ten columns">
-					<nav id="primarynav" class="clearfix">
-						<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-	        		</nav>
-	        	</div><!--/columns-->
-        	<?php endif; ?>
-		</div><!--/row-->
-		
-		<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
-			<div class="row">
-				<div class="four columns">
-					<a href="<?php echo home_url(); ?>"><i class="fa fa-home"></i> <?php echo bloginfo('name'); ?></a>
-				</div><!--/columns-->
-				<div class="twelve columns">
-					<nav id="fixednav">
-						<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-	        		</nav>
-				</div><!--/columns-->
-			</div><!--/row-->
-		</div><!--/container-->
-		
-		<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ) : ?>
-			<div class="container headerdrawercon">
-				<hr/>
-				<div class="row">
-					<div class="sixteen columns headerdrawer">
-						<span>Your search returned only one result. You have been automatically redirected.</span>
-						<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
-					</div><!--/columns-->
-				</div><!--/row-->
-				<hr/>
-			</div><!--/container-->
-		<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
-			<div class="container headerdrawercon">
-				<hr/>
-				<div class="row">
-					<div class="sixteen columns headerdrawer invalid">
-						<span>Your search was invalid. Please try again.</span>
-						<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-						<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
-					</div><!--/columns-->
-				</div><!--/row-->
-				<hr/>
-			</div><!--/container-->
-		<?php elseif ( is_404() || array_key_exists('s', $_GET) ) : ?>
-			<div id="suggestedpage" class="container headerdrawercon">
-				<hr/>
-				<div class="row">
-					<div class="sixteen columns headerdrawer">						
-						<h3>Did you mean?</h3>
-						<p><a class="suggestion" href="#"></a></p>
+			<div id="fb-root"></div>
+			
+			<noscript>
+				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&p=<?php echo get_page_uri(); ?>&t=<?php wp_title('-', true, 'right'); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+			</noscript>
+			
+			<div id="topbarcon">
+				<div class="row mobilenavcon">
+					<div class="sixteen columns clearfix">
 						
-						<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+						<a class="alignleft" href="#mobilenav"><i class="fa fa-bars"></i></a>
+						<nav id="mobilenav">
+							<?php 
+								if ( has_nav_menu('mobile') ) {
+									wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
+								} elseif ( has_nav_menu('header') ) {
+									wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
+								}
+							?>
+						</nav><!--/mobilenav-->
+						
+						<a class="alignright" href="#mobilecontact"><i class="fa fa-users"></i></a>
+						<nav id="mobilecontact" class="unhideonload hidden">
+							<ul>
+					    		<li>
+					    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here (x2). ?></a>
+					    		</li>
+					    		<li>
+					    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear (x2). ?></a>
+					    		</li>
+					    		<li>
+					    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here (x2). ?></small></div></a>
+					    		</li>
+					    	</ul>
+						</nav><!--/mobilecontact-->
+						
 					</div><!--/columns-->
 				</div><!--/row-->
-				<hr/>
+			</div><!--/topbarcon-->
+	
+			<?php if ( has_nav_menu('topnav') ) : ?>
+				<div class="row topnavcon">
+					<div class="sixteen columns">
+						<nav id="topnav">
+		        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '2')); ?>
+		        		</nav>
+					</div><!--/columns-->
+				</div><!--/row-->
+			<?php endif; ?>
+			
+			<div id="logonavcon" class="row">
+				<div class="six columns">
+					<?php
+						//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
+						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
+					?>
+					<a class="logocon" href="<?php echo home_url(); ?>">
+						<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
+					</a>
+				</div><!--/columns-->
+				<?php if ( has_nav_menu('header') ) : ?>
+					<div class="ten columns">
+						<nav id="primarynav" class="clearfix">
+							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
+		        		</nav>
+		        	</div><!--/columns-->
+	        	<?php endif; ?>
+			</div><!--/row-->
+			
+			<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
+				<div class="row">
+					<div class="four columns">
+						<a href="<?php echo home_url(); ?>"><i class="fa fa-home"></i> <?php echo bloginfo('name'); ?></a>
+					</div><!--/columns-->
+					<div class="twelve columns">
+						<nav id="fixednav">
+							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
+		        		</nav>
+					</div><!--/columns-->
+				</div><!--/row-->
 			</div><!--/container-->
-		<?php endif; ?>
+			
+			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ) : ?>
+				<div class="container headerdrawercon">
+					<hr/>
+					<div class="row">
+						<div class="sixteen columns headerdrawer">
+							<span>Your search returned only one result. You have been automatically redirected.</span>
+							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
+						</div><!--/columns-->
+					</div><!--/row-->
+					<hr/>
+				</div><!--/container-->
+			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
+				<div class="container headerdrawercon">
+					<hr/>
+					<div class="row">
+						<div class="sixteen columns headerdrawer invalid">
+							<span>Your search was invalid. Please try again.</span>
+							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
+						</div><!--/columns-->
+					</div><!--/row-->
+					<hr/>
+				</div><!--/container-->
+			<?php elseif ( is_404() || array_key_exists('s', $_GET) ) : ?>
+				<div id="suggestedpage" class="container headerdrawercon">
+					<hr/>
+					<div class="row">
+						<div class="sixteen columns headerdrawer">						
+							<h3>Did you mean?</h3>
+							<p><a class="suggestion" href="#"></a></p>
+							
+							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+						</div><!--/columns-->
+					</div><!--/row-->
+					<hr/>
+				</div><!--/container-->
+			<?php endif; ?>

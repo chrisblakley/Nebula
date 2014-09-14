@@ -5,6 +5,7 @@ if ( is_admin() ) {
 	include_once(TEMPLATEPATH . '/includes/nebula-settings.php');	
 }
 
+
 //Store global strings as needed
 add_action('init', 'global_nebula_vars');
 add_action('admin_init', 'global_nebula_vars');
@@ -15,6 +16,7 @@ function global_nebula_vars(){
     $GLOBALS['enc_address'] = str_replace(' ', '+', $GLOBALS['enc_address']);
 }
 
+
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text($setting, $default = ''){
 	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ) {
@@ -23,6 +25,7 @@ function nebula_settings_conditional_text($setting, $default = ''){
 		return $default;
 	}
 }
+
 
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text_bool($setting, $true = true, $false = false){
@@ -33,9 +36,14 @@ function nebula_settings_conditional_text_bool($setting, $true = true, $false = 
 	}
 }
 
+
 //Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
 function nebula_settings_conditional($setting, $default='enabled') {
-	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' || (strtolower(get_option('nebula_overall')) == 'enabled' && strtolower(get_option($setting)) == 'default') || (get_option('nebula_overall') == 'enabled' && get_option($setting) == $default) ) {
+	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' ) {
+		return true;
+	}
+	
+	if ( (strtolower(get_option($setting)) == 'default') || (strtolower(get_option($setting)) == strtolower($default)) ) {
 		return true;
 	} else {
 		return false;

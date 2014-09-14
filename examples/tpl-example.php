@@ -290,6 +290,10 @@ get_header(); ?>
 						include_once('includes/datatables.php');	
 					} ?>
 					
+					<?php if (is_page(873)) { //Vibration API
+						include_once('includes/vibration_api.php');
+					} ?>
+					
 				<?php
 				/*==========================
 				 End Hard-Code Examples
@@ -317,6 +321,7 @@ get_header(); ?>
 						</div>
 					</div>
 				<?php endif; ?>
+				
 				
 				<div class="row">
 					<div class="sixteen columns">

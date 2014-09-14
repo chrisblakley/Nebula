@@ -18,6 +18,10 @@ jQuery(document).ready(function() {
 		Gumby.log('Sending GA event: ' + 'Password Reset', 'User: ' + resetUser);
 	});
 	
+	if ( jQuery('.flag').is('*') ) {
+		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
+	}
+	
 }); //End Document Ready
 
 

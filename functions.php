@@ -7,6 +7,7 @@
 /*========================== 
  Include Nebula Functions Groups
  ===========================*/
+
 require_once('functions/nebula_settings_functions.php'); //Nebula Settings Functions
 require_once('functions/nebula_automations.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
@@ -14,7 +15,6 @@ require_once('functions/nebula_admin_functions.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
-
 
 //To force override the Nebula Settings, uncomment the line below.
 //This will disable changes made from the Nebula Settings page, and only allow edits from the functions files themselves.
@@ -188,9 +188,6 @@ function enqueue_nebula_admin() {
 	//Scripts
 	wp_enqueue_script('nebula-admin');
 }
-
-
-
 
 
 //Close functions.php. Do not add anything after this closing tag!! ?>

@@ -28,13 +28,16 @@
 /* ==========================================================================
    Base styles: opinionated defaults
    ========================================================================== */
-html, button, input, select, textarea {color: #444; font-size: 14px;}
+html, button, input, select, textarea {color: #444; font-size: 16px;}
 ::-moz-selection {background: #b3d4fc; text-shadow: none;}
 ::selection {background: #b3d4fc; text-shadow: none;}
 hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 3px 0; padding: 0;}
-	.rgba hr {display: block; height: 1px; border: 0; background: rgba(255,255,255,1); margin: 3px 0; padding: 0; mix-blend-mode: screen;}
-		.rgba hr:before {content: ''; position: relative; top: -1px; height: 1px; display: block; background: rgba(0,0,0,0.2); mix-blend-mode: multiply;}
+	/* @TODO: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended. */
+	.rgba hr {display: block; height: 1px; border: 0; background: rgba(255,255,255,1); margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
+		.rgba hr:before {content: ''; position: relative; top: -1px; height: 1px; display: block; background: rgba(0,0,0,0.2); /* mix-blend-mode: multiply; */}
 	hr.zero {margin: 0;}
+
+
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
@@ -63,8 +66,8 @@ a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s ea
 	a:hover,
 	a.hover {color: #95D600; color: var(--secondary-color)-darker;}
 	.btn > a:hover {color: #fff;}
-body/* , .mceContentBody */ {overflow-x: hidden; background: #f6f6f6;}
-/* .mceContentBody */ {padding: 25px;}
+body {overflow-x: hidden; background: #f6f6f6;}
+#tinymce.mceContentBody {padding: 10px 15px !important; background: #f6f6f6;}
 .inner {width: 100%; max-width: 960px; padding: 0 20px; margin: 0 auto;}
 ul.menu {padding: 0;}
 

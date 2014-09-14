@@ -15,6 +15,8 @@
 	//Register each option
 	function register_nebula_settings() {
 		register_setting('nebula_settings_group', 'nebula_overall');
+		register_setting('nebula_settings_group', 'nebula_initialized');
+		register_setting('nebula_settings_group', 'nebula_edited_yet');
 		
 		register_setting('nebula_settings_group', 'nebula_contact_email');
 		register_setting('nebula_settings_group', 'nebula_ga_tracking_id');
@@ -186,7 +188,7 @@
 				
 			});
 		</script>
-		
+				
 		<div class="wrap">
 			<h2>Nebula Settings</h2>
 			<?php
@@ -194,6 +196,13 @@
 				    wp_die('You do not have sufficient permissions to access this page.');
 				}
 			?>
+			
+			<?php if ( $_GET['settings-updated'] == 'true' ) : ?>
+				<div id="message" class="updated below-h2">
+					<p><strong>Nebula Settings</strong> have been updated.</p>
+				</div>
+			<?php endif; ?>
+			
 			<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the functions.php file. It can also be disabled below, or overridden via functions.php if that makes you feel better.</p>
 			
 			<?php if ( get_option('nebula_overall') == 'override' ) : ?>
@@ -210,10 +219,6 @@
 					do_settings_sections('nebula_settings_group');
 				?>
 				
-				<?php
-					//http://www.smashingmagazine.com/2011/10/20/create-tabs-wordpress-settings-pages/ //@TODO: Create tabs.
-					//http://wordpress.stackexchange.com/questions/127493/wordpress-settings-api-implementing-tabs-on-custom-menu-page
-				?>
 				<table class="form-table global">
 			        <tr valign="top">
 			        	<th scope="row">Nebula Settings&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
@@ -223,6 +228,20 @@
 								<option value="disabled" <?php selected('disabled', get_option('nebula_overall')); selected('override', get_option('nebula_overall')); ?>>Disabled</option>
 							</select>
 							<p class="helper"><small>Enable/Disable this settings page. If disabled, all settings will use <strong>default values</strong> and can only be edited via functions.php! This <strong>does not</strong> disable all settings!</small></p>
+						</td>
+			        </tr>
+			        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+			        	<th scope="row">Initialized?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+			        	<td>
+							<input type="text" value="<?php echo date('F j, Y @ g:ia', get_option('nebula_initialized')); ?>" disabled/>
+							<p class="helper"><small>Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty. If you are viewing this page, it should probably always be set.</small></p>
+						</td>
+			        </tr>
+			        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+			        	<th scope="row">Edited Yet?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+			        	<td>
+							<input type="text" name="nebula_edited_yet" value="true" disabled/>
+							<p class="helper"><small>Has any user saved the Nebula Settings on this DB yet (Basically, has the save button on this page been clicked)? This will always be "true" on this page (even if it is not saved yet)! Note: This is a string, not a boolean!</small></p>
 						</td>
 			        </tr>
 			    </table>

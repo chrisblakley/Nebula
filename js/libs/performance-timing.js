@@ -72,7 +72,7 @@ window.onload = function(){
 		
 		function colorLogic(i, bad, good) {
 			if ( values[i] >= bad ) {
-				colors[i] = 'red';
+				colors[i] = 'orange';
 			} else if ( values[i] == 0 ) {
 				colors[i] = 'lightgrey';
 			} else if ( values[i] < good ) { 

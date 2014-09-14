@@ -1,7 +1,7 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function() {
-		
+	
 	facebookSDK();
 	conditionalJSLoading();
 	
@@ -557,6 +557,9 @@ function mmenus() {
 	if ( 'mmenu' in jQuery ) {
 		jQuery("#mobilenav").mmenu({
 		    //Options
+		    offCanvas: {
+			    zposition: 'back' //'back' (default), 'front', 'next'
+		    },
 		    searchfield: { //This is for searching through the menu itself (NOT for site search)
 		    	add: true,
 		    	search: true,
@@ -565,7 +568,7 @@ function mmenus() {
 		    	showLinksOnly: false //"true" searches only <a> links, "false" includes spans in search results
 		    },
 		    counters: true, //Display count of sub-menus
-		    classes: "mm-light"
+		    classes: "mm-light mm-slide" //Theming and open effects
 		}, {
 			//Configuration
 		}).on('opened.mm', function(){
@@ -575,8 +578,11 @@ function mmenus() {
 		
 		jQuery("#mobilecontact").mmenu({
 			//Options
-		    position: 'right',
-		    classes: "mm-light",
+		    offCanvas: {
+			    position: 'right', //'left' (default), 'right', 'top' (must use zposition 'front'), 'bottom' (must use zposition 'front')
+			    zposition: 'back' //'back' (default), 'front', 'next'
+		    },
+		    classes: "mm-light", //Theming and open effects
 		    header: {
 				add: true,
 				update: true, //Change the header text when navigating to sub-menus
@@ -614,7 +620,7 @@ function mmenus() {
 			}, false);
 		}
 	
-	}
+	}	
 } //end mmenus()
 
 //Power Footer Width Distributor
@@ -1196,6 +1202,34 @@ function checkNotificationPermission() {
 	return false;
 }
 
+function nebulaVibrate(pattern) {
+	if ( typeof pattern === 'undefined' ) {
+		Gumby.warn('Vibration pattern was not provided. Using default.');
+		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
+	} else if ( typeof pattern !== 'object' ) {
+		Gumby.warn('Vibration pattern is not an object. Using default.');
+		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
+	}	
+	if ( checkVibration() ) {
+		navigator.vibrate(pattern);
+	}
+	return false;
+}
+
+function checkVibration() {
+	if ( !jQuery('body').hasClass('mobile') ) {
+		Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support).");
+	}
+	
+	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+	if ( !(Vibration) ) {
+		Gumby.warn("This browser does not support vibration.");
+		return false;
+	} else {
+		return true;
+	}
+}
+
 //Detect and log errors, and fallback fixes
 function errorLogAndFallback() {
 	//Check if Contact Form 7 is active and if the selected form ID exists
@@ -1276,6 +1310,10 @@ function conditionalJSLoading() {
 		}).fail(function(){
 			nebula_event('Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.');
 		});
+	}
+	
+	if ( jQuery('.flag').is('*') ) {
+		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
 	}
 	
 } //end conditionalJSLoading()
