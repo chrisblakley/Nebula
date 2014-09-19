@@ -187,7 +187,7 @@ get_header(); ?>
 					} ?>
 					
 					<?php if ( is_page(356) ) { //AJAX
-						//@TODO: Coming Soon
+						include_once('includes/ajax.php');	
 					} ?>
 					
 					<?php if ( is_page(703) ) { //AJAX Contact Form

@@ -190,15 +190,42 @@ function track_google_pagespeed_checks() {
 //Add the calling card to the browser console
 if ( nebula_settings_conditional('nebula_console_css') ) {
 	add_action('wp_head', 'nebula_calling_card');
+	function nebula_calling_card() {
+		//@TODO: if chrome or firefox... (find what other browsers support this)
+		echo "<script>
+			if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ) {
+			console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
+			console.log('%c Nebula by Pinckney Hugo Group ', 'padding: 2px 10px; background: #0098d7; color: #fff;');
+			}
+		</script>";
+	}
 }
-function nebula_calling_card() {
-	//@TODO: if chrome or firefox... (find what other browsers support this)
-	echo "<script>
-		if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ) {
-		console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
-		console.log('%c Nebula by Pinckney Hugo Group ', 'padding: 2px 10px; background: #0098d7; color: #fff;');
+
+
+//Check for dev stylesheets
+if ( 1==1 ) { //If Nebula Setting is enabled
+	add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
+	function combine_dev_stylesheets() {
+		$file_counter = 0;
+		file_put_contents(get_template_directory() . '/css/dev.css', ''); //Empty /css/dev.css
+		foreach ( glob(get_template_directory() . '/css/dev/*.css') as $file ) {
+			$file_path_info = pathinfo($file);
+			
+			if ( is_file($file) && $file_path_info['extension'] == 'css' ) {
+				$file_counter++;		
+				$this_css_filename = basename($file);
+				$this_css_contents = file_get_contents($file); //Copy file contents
+				$empty_css = ( $this_css_contents == '' ) ? ' (empty)' : '';
+				$dev_css_contents = file_get_contents(get_template_directory() . '/css/dev.css');
+				$dev_css_contents .= "/* ==========================================================================\r\n   " . get_template_directory_uri() . "/css/dev/" . $this_css_filename . $empty_css . "\r\n   ========================================================================== */\r\n\r\n" . $this_css_contents . "\r\n\r\n/* End of " . $this_css_filename . " */\r\n\r\n\r\n";
+				file_put_contents(get_template_directory() . '/css/dev.css', $dev_css_contents);			
+			}		
 		}
-	</script>";
+		
+		if ( $file_counter > 0 ) {
+			wp_enqueue_style('nebula-dev_styles', get_template_directory() . '/css/dev.css?c=' . $file_counter, array('nebula-main'), null);
+		}
+	}
 }
 
 //Add bloginfo variable for JavaScript
@@ -841,126 +868,147 @@ function nebula_ajax_navigator() {
 
 //Breadcrumbs
 function the_breadcrumb() {
-  $showOnHome = 0; // 1 - show breadcrumbs on the homepage, 0 - don't show
-  $delimiter = '<span class="arrow">&rsaquo;</span>'; // delimiter between crumbs
-  $home = '<i class="fa fa-home"></i>'; // text for the 'Home' link
-  $showCurrent = 1; // 1 - show current post/page title in breadcrumbs, 0 - don't show
-  $before = '<span class="current">'; // tag before the current crumb
-  $after = '</span>'; // tag after the current crumb
-  $dontCapThese = array('the', 'and', 'but', 'of');
-  global $post;
-  $homeLink = home_url();
-  if (is_home() || is_front_page()) {
-    if ($showOnHome == 1) echo '<div id="bcrumbs"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav>';
-  } else {
-    echo '<div id="bcrumbs"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
- 	if ( function_exists( 'is_pod_page' ) ) {
-	    if(  is_pod_page() ) {
-	      // This is a Pod page, so we'll  explode the URI and turn each virtual path into a crumb.
-	      $url_parts = explode('/', $_SERVER['REQUEST_URI']);
-	      $link;
-	      // These are specific to LCS, but the principle is the same.
-	      $skipThese = array('detail', 'concentration', 'minor', 'bachelor', 'masters', 'doctoral', 'other', 'certificate');
-	      $i = 0;
-			foreach ($url_parts as $key => $value) {
-				// Pulling off the last one because it won't need a link or a delimiter.
-				if ($key != (count($url_parts) - 1)) {
-					if($value !='' && !in_array($value, $skipThese)){
+	global $post;
+	$delimiter = '<span class="arrow">&rsaquo;</span>'; //Delimiter between crumbs
+	$home = '<i class="fa fa-home"></i>'; //Text for the 'Home' link
+	$showCurrent = 1; // 1 - show current post/page title in breadcrumbs, 0 - don't show
+	$before = '<span class="current">'; //Tag before the current crumb
+	$after = '</span>'; //Tag after the current crumb
+	$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by');
+	$homeLink = home_url('/');
+	
+	if ( is_home() || is_front_page() ) {
+		echo '<div id="bcrumbs"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav></div>';
+		return false;
+	} else {
+		echo '<div id="bcrumbs"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
+		if ( function_exists('is_pod_page') ) {
+			if ( is_pod_page() ) {
+				$skipThese = array('wordsgohere'); //An array of words(?) to skip. //array('detail', 'concentration')
+				
+				//Explode the URI and turn each virtual path into a crumb.
+				$url_parts = explode('/', $_SERVER['REQUEST_URI']);
+				$link;				
+				$i = 0;
+				foreach ( $url_parts as $key => $value ) {
+					if ( $key != (count($url_parts)-1) ) {
+						if( $value != '' && !in_array($value, $skipThese) ) {
+							$pieces = explode('-', $value);
+							$link_str = '';
+							$link = ($i == 0) ? $link : $link  . '/' . $value;
+							foreach ( $pieces as $key => $value ){
+								if ( !in_array($value, $dontCapThese) ){
+									$link_str .= ucfirst($value) . ' ';
+								} else{
+									$link_str .= $value . ' ';
+								}
+							}
+							echo '<a href="' . $homeLink . $link . '/">' . $link_str . '</a> ' . $delimiter . ' ';
+						}
+						$i++;
+					}
+					
+					//Strip out the <a> tags
+					if ( $key == (count($url_parts)-1) ) {
 						$pieces = explode('-', $value);
-						$link_str = '';
-						$link = ($i == 0) ? $link : $link  . '/' . $value;
-						foreach($pieces as $key => $value){
-							if(!in_array($value, $dontCapThese)){
-								$link_str .= ucfirst($value) . ' ';
+						foreach( $pieces as $key => $value ){
+							if( !in_array($value, $dontCapThese) ){
+								$txt_str .= ucfirst($value) . ' ';
 							} else{
-								$link_str .= $value . ' ';
+								$txt_str .= $value . ' ';
 							}
 						}
-						echo '<a href="' . home_url() . $link . '/">' . $link_str . '</a> ' . $delimiter . ' ';
+						echo $txt_str;
 					}
-					$i++;
-				}
-				// Finally we'll strip out the <a> tags
-				if($key == (count($url_parts) - 1)) {
-					$pieces = explode('-', $value);
-					foreach($pieces as $key => $value){
-						if(!in_array($value, $dontCapThese)){
-							$txt_str .= ucfirst($value) . ' ';
-						} else{
-							$txt_str .= $value . ' ';
-						}
-					}
-					echo $txt_str;
 				}
 			}
+		} elseif ( is_category() ) {
+			$thisCat = get_category(get_query_var('cat'), false);
+			if ( $thisCat->parent != 0 ) {
+				echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
+			}
+			echo $before . 'Archive by category "' . single_cat_title('', false) . '"' . $after;
+		} elseif ( is_search() ) {
+			echo $before . 'Search results for "' . get_search_query() . '"' . $after;
+		} elseif ( is_day() ) {
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
+			echo $before . get_the_time('d') . $after;
+		} elseif ( is_month() ) {
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+			echo $before . get_the_time('F') . $after;
+		} elseif ( is_year() ) {
+			echo $before . get_the_time('Y') . $after;
+		} elseif ( is_single() && !is_attachment() ) {
+			if ( get_post_type() != 'post' ) {
+				$post_type = get_post_type_object(get_post_type());
+				$slug = $post_type->rewrite;
+				echo '<a href="' . $homeLink . '/' . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
+				if ( $showCurrent == 1 ) {
+					echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+				}
+			} else {
+				$cat = get_the_category();
+				$cat = $cat[0];
+				$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+				if ( $showCurrent == 0 ) {
+					$cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
+				}
+				echo $cats;
+				if ( $showCurrent == 1 ) {
+					echo $before . get_the_title() . $after;
+				}
+			}
+		} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ) {
+			$post_type = get_post_type_object(get_post_type());
+			echo $before . $post_type->labels->singular_name . $after;
+		} elseif ( is_attachment() ) {
+			echo 'Uploads &raquo; ';
+			echo get_the_title();
+		} elseif ( is_page() && !$post->post_parent ) {
+			if ( $showCurrent == 1 ) {
+				echo $before . get_the_title() . $after;
+			}
+		} elseif ( is_page() && $post->post_parent ) {
+			$parent_id = $post->post_parent;
+			$breadcrumbs = array();
+			while ( $parent_id ) {
+				$page = get_page($parent_id);
+				$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
+				$parent_id  = $page->post_parent;
+			}
+			$breadcrumbs = array_reverse($breadcrumbs);
+			for ( $i = 0; $i < count($breadcrumbs); $i++ ) {
+				echo $breadcrumbs[$i];
+				if ( $i != count($breadcrumbs)-1 ) {
+					echo ' ' . $delimiter . ' ';
+				}
+			}
+			if ( $showCurrent == 1 ) {
+				echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+			}
+		} elseif ( is_tag() ) {
+			echo $before . 'Posts tagged "' . single_tag_title('', false) . '"' . $after;
+		} elseif ( is_author() ) {
+			global $author;
+			$userdata = get_userdata($author);
+			echo $before . $userdata->display_name . $after;
+		} elseif ( is_404() ) {
+			echo $before . 'Error 404' . $after;
 		}
-    } elseif ( is_category() ) {
-      $thisCat = get_category(get_query_var('cat'), false);
-      if ($thisCat->parent != 0) echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
-      echo $before . 'Archive by category "' . single_cat_title('', false) . '"' . $after;
-    } elseif ( is_search() ) {
-      echo $before . 'Search results for "' . get_search_query() . '"' . $after;
-    } elseif ( is_day() ) {
-      echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
-      echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
-      echo $before . get_the_time('d') . $after;
-    } elseif ( is_month() ) {
-      echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
-      echo $before . get_the_time('F') . $after;
-    } elseif ( is_year() ) {
-      echo $before . get_the_time('Y') . $after;
-    } elseif ( is_single() && !is_attachment() ) {
-      if ( get_post_type() != 'post' ) {
-        $post_type = get_post_type_object(get_post_type());
-        $slug = $post_type->rewrite;
-        echo '<a href="' . $homeLink . '/' . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
-        if ($showCurrent == 1) echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
-      } else {
-        $cat = get_the_category(); $cat = $cat[0];
-        $cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
-        if ($showCurrent == 0) $cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
-        echo $cats;
-        if ($showCurrent == 1) echo $before . get_the_title() . $after;
-      }
-    } elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ) {
-      $post_type = get_post_type_object(get_post_type());
-      echo $before . $post_type->labels->singular_name . $after;
-    } elseif ( is_attachment() ) {
-      echo 'Uploads &raquo; ';
-      echo the_title();
-    } elseif ( is_page() && !$post->post_parent ) {
-      if ($showCurrent == 1) echo $before . get_the_title() . $after;
-    } elseif ( is_page() && $post->post_parent ) {
-      $parent_id  = $post->post_parent;
-      $breadcrumbs = array();
-      while ($parent_id) {
-        $page = get_page($parent_id);
-        $breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
-        $parent_id  = $page->post_parent;
-      }
-      $breadcrumbs = array_reverse($breadcrumbs);
-      for ($i = 0; $i < count($breadcrumbs); $i++) {
-        echo $breadcrumbs[$i];
-        if ($i != count($breadcrumbs)-1) echo ' ' . $delimiter . ' ';
-      }
-      if ($showCurrent == 1) echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
-    } elseif ( is_tag() ) {
-      echo $before . 'Posts tagged "' . single_tag_title('', false) . '"' . $after;
-    } elseif ( is_author() ) {
-       global $author;
-      $userdata = get_userdata($author);
-      echo $before . $userdata->display_name . $after;
-    } elseif ( is_404() ) {
-      echo $before . 'Error 404' . $after;
-    }
-    if ( get_query_var('paged') ) {
-      if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) echo ' (';
-      echo 'Page ' . get_query_var('paged');
-      if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) echo ')';
-    }
-    echo '</nav></div>';
-  }
-} // end the_breadcrumbs()
+		
+		if ( get_query_var('paged') ) {
+			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) {
+				echo ' (';
+			}
+			echo 'Page ' . get_query_var('paged');
+			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) {
+				echo ')';
+			}
+		}
+		echo '</nav></div><!--/bcrumbs-->';
+	}
+} //End Breadcrumbs
 
 
 //Prevent empty search query error (Show all results instead)
@@ -1108,6 +1156,7 @@ function browser_body_class($classes) {
 }
 
 //Add additional body classes including ancestor IDs and directory structures
+add_filter('post_class', 'category_id_class');
 add_filter('body_class', 'page_name_body_class');
 function page_name_body_class($classes) {
 	global $post;
@@ -1119,20 +1168,11 @@ function page_name_body_class($classes) {
 	foreach ( $segments as $segment ) {
 		$classes[] = $segment;
 	}
+	foreach ( get_the_category($post->ID) as $category ) {
+		$classes[] = 'cat-' . $category->cat_ID . '-id';
+	}
 	return $classes;
 }
-
-
-//Add category IDs to body/post classes.
-//@TODO: Possibly combine this with the above ancestor ID classes
-function category_id_class($classes) {
-	global $post;
-	foreach((get_the_category($post->ID)) as $category)
-		$classes [] = 'cat-' . $category->cat_ID . '-id';
-		return $classes;
-}
-add_filter('post_class', 'category_id_class');
-add_filter('body_class', 'category_id_class');
 
 
 //Check if the current time is within business hours.
@@ -1145,7 +1185,6 @@ function currently_open() {
 			"close" => get_option('nebula_business_hours_' . $weekday . '_close')
 		);
 	}
-	
 	$today = strtolower(date('l'));
 	if ( $businessHours[$today]['enabled'] == '1' ) {
 		$now = time();
@@ -1156,9 +1195,29 @@ function currently_open() {
 			return true;
 		}
 	}
-	
 	return false;
 }
+
+
+//Combine development stylesheets into a single dev.css file
+function combine_dev_styles() {
+	/* @TODO:
+			- Look for .css files in /css/dev/
+			- For each of those .css files, open it, copy the text to memory (or a temp file)
+			- If the length or filesize or something is different than /css/dev.css then overwrite /css/dev.css
+			
+			- Detect if /css/dev.css is not empty
+				- If true (not empty), wp_enqueue_style(); (Register during enqueue)
+				- add_action('wp_enqueue_scripts', 'enqueue_nebula_dev_styles');
+			
+			- Create Nebula Settings for this to disable it.
+			
+			- Consider security risks? Prevent all possible.
+				- If a non-css file is added to the directory.
+				- If another file is disguised as a css file (PHP)
+	*/
+}
+
 
 //Detect weather for Zip Code (using Yahoo! Weather)
 function nebula_weather($zipcode=null, $data=null){

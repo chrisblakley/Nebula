@@ -50,12 +50,11 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 ##Recommended Plugins
 When activated, WP Nebula will prompt to install the recommended and optional plugins. Following the instructions will install them all (or selected ones) at once. These can also be downloaded from Wordpress.org, or manually installed from the Wordpress Admin under the Plugins > Add New.
 - [Admin Menu Tree Page View](http://wordpress.org/plugins/admin-menu-tree-page-view/)
+- [Advanced Custom Fields](http://wordpress.org/plugins/advanced-custom-fields/)
 - [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
 - [Contact Form 7](http://wordpress.org/plugins/contact-form-7/)
 - [Contact Form 7 DB](http://wordpress.org/plugins/contact-form-7-to-database-extension/)
-- [Advanced Custom Fields](http://wordpress.org/plugins/advanced-custom-fields/)
 - [Regenerate Thumbnails](http://wordpress.org/plugins/regenerate-thumbnails/)
-- [Reveal IDs](http://wordpress.org/plugins/reveal-ids-for-wp-admin-25/)
 - [W3 Total Cache](http://wordpress.org/plugins/w3-total-cache/)
 - [WP-PageNavi](http://wordpress.org/plugins/wp-pagenavi/)
 
@@ -65,9 +64,9 @@ When activated, WP Nebula will prompt to install the recommended and optional pl
 - [Smush.it](http://wordpress.org/plugins/wp-smushit/)
 - [Really Simple CAPTCHA](http://wordpress.org/plugins/really-simple-captcha/)
 - [Theme Check](https://wordpress.org/plugins/theme-check/)
-- [Ultimate TinyMCE](https://wordpress.org/plugins/ultimate-tinymce/)
 - [WooCommerce](https://wordpress.org/plugins/woocommerce/)
 - [Wordpress SEO by Yoast](http://wordpress.org/plugins/wordpress-seo/)
+- [WP Edit](https://wordpress.org/plugins/wp-edit/)
 
 ##Included Libraries
 #####HTML/CSS

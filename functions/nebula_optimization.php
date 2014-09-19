@@ -61,16 +61,11 @@ function nebula_dequeues() {
 //Force settings within plugins
 add_action('admin_init', 'nebula_plugin_force_settings');
 function nebula_plugin_force_settings(){
-	//Ultimate TinyMCE
-	if ( file_exists(WP_PLUGIN_DIR . '/ultimate-tinymce') ) {
-		$jwl_options_group4 = get_option('jwl_options_group4');
-		unset($jwl_options_group4['jwl_dev_support']); //Prevent link on frontend.
-		$jwl_options_group4['jwl_menu_location'] = 'Settings'; //Move the settings page under settings (instead of a top-level link in the admin sidebar)
-		unset($jwl_options_group4['jwl_qr_code']); //Prevent enabling QR codes on the frontend
-		unset($jwl_options_group4['jwl_qr_code_pages']); //Prevent enabling QR codes on the frontend
-		$jwl_options_group4['jwl_disable_styles'] = '1'; //Disable annoying/distracting styles on plugin listing (and elsewhere).
-		update_option('jwl_options_group4', $jwl_options_group4);
-		add_user_meta(get_current_user_id(), 'jwl_ignore_notice_pro', 'true', true); //Prevent the Pro upgrade notice
+	//WP Edit
+	if ( file_exists(WP_PLUGIN_DIR . '/wp-edit') ) {
+		$plugin_options_global = get_option('wp_edit_global');
+		$plugin_options_global['disable_admin_links'] = 1;
+		update_option('wp_edit_global', $plugin_options_global);
 	}
 	//Search Everything
 	if ( file_exists(WP_PLUGIN_DIR . '/search-everything') ) {
@@ -99,13 +94,13 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 		//Frontend
 		//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
 		remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
-		remove_action('get_footer', 'your_function'); //Ultimate TinyMCE fontend linkback
 		if ( get_the_ID() == 1 ) { remove_action('wp_footer', 'cff_js', 10); } //Custom Facebook Feed - Remove the feed from the homepage. @TODO: Update to any page/post type that should NOT have the Facebook Feed
 	} else {
 		//WP Admin
 		remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_meta_box('espresso_news_dashboard_widget', 'dashboard', 'normal'); //Event Espresso - Remove Dashboard Metabox
+		remove_meta_box('jwl_user_tinymce_dashboard_widget', 'dashboard', 'normal'); //WP Edit - Remove Dashboard Metabox
 		//remove_action('init', 'wpseo_description_test'); //Wordpress SEO (Yoast) - Remove Meta Description test (@TODO: Not Working - this function is called all over the place...)
 	}
 }

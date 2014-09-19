@@ -31,6 +31,12 @@ jQuery(document).ready(function() {
 	WPcomments();
 	contactBackup();
 	
+	//Detect if loaded in an iframe
+	if ( window != window.parent ) {
+		jQuery('html').addClass('in-iframe');
+		nebula_event('Iframe', 'Requested page: ' + window.location, 'Loaded within: ' + window.parent.location);
+	}
+	
 	if ( jQuery('body').hasClass('search-no-results') || jQuery('body').hasClass('error404') ) {
 		pageSuggestion();
 	}

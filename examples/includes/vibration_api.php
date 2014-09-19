@@ -10,7 +10,14 @@
 			nebulaVibrate([150, 150, 150, 150, 75, 75, 150, 150, 150, 150, 450]);
 			return false;
 		});
-				
+		
+		jQuery('form#patterntester').submit(function(){
+			var thePattern = jQuery('input#pattern').val();
+			thePattern = thePattern.replace(/\s+/g, '');
+			var patternObj = thePattern.split(',');
+			nebulaVibrate(patternObj);
+			return false;
+		});	
 	});
 </script>
 
@@ -19,3 +26,11 @@
 <div class="medium primary btn">
 	<a class="basicvibrate" href="#">Go Go Vibration Test</a>
 </div>
+
+<br/><br/><br/>
+<form id="patterntester">
+	<h2>Vibration Pattern Tester</h2>
+	<p>Enter comma separated integers (in milliseconds) to test the vibration pattern.</p>
+	<input type="text" id="pattern" />
+	<input type="submit" value="Test Pattern" />
+</form>

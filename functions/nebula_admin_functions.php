@@ -261,10 +261,9 @@ function search_theme_files() {
 	
 	echo '<p class="resulttext">Search results for <strong>"' . $_POST['data'][0]['searchData'] . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br/>';
 	
-	$dir = glob_r($dirpath . '/*');
 	$file_counter = 0;
 	$instance_counter = 0;
-	foreach ( $dir as $file ) {
+	foreach ( glob_r($dirpath . '/*') as $file ) {
 		$counted = 0;
 		if ( is_file($file) ) {
 		    if ( strpos(basename($file), $_POST['data'][0]['searchData']) !== false ) {
@@ -276,8 +275,7 @@ function search_theme_files() {
 		    $skipExtensions = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'tiff', 'psd', 'ai', 'apng', 'bmp', 'otf', 'ttf', 'ogv', 'flv', 'fla', 'mpg', 'mpeg', 'avi', 'mov', 'woff', 'eot', 'mp3', 'mp4', 'wmv', 'wma', 'aiff', 'zip', 'zipx', 'rar', 'exe', 'dmg', 'swf', 'pdf', 'pdfx', 'pem');
 		    $skipFilenames = array('error_log');
 		    if ( !contains(basename($file), $skipExtensions) && !contains(basename($file), $skipFilenames) ) {
-			    $lines = file($file);
-			    foreach ($lines as $lineNumber => $line) {
+			    foreach ( file($file) as $lineNumber => $line ) {
 			        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
 			            $actualLineNumber = $lineNumber+1;
 						echo '<div class="linewrap">
