@@ -171,7 +171,7 @@
 				    }
 				    if (e.data == YT.PlayerState.ENDED) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        nebula_event('Videos', 'Finished', videoTitle);
+				        nebula_event('Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 				    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
 				        nebula_event('Videos', 'Pause', videoTitle);

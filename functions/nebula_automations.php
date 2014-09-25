@@ -66,8 +66,8 @@ function my_theme_register_required_plugins() {
             'required'  => false,
         ),
         array(
-            'name'      => 'WP Edit',
-            'slug'      => 'wp-edit',
+            'name'      => 'TinyMCE Advanced',
+            'slug'      => 'tinymce-advanced',
             'required'  => false,
         ),
         array(

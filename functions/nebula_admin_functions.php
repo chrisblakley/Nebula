@@ -159,10 +159,12 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		//Get last modified filename and date
 		$dir = glob_r( get_template_directory() . '/*');
 		$last_date = 0;
+		$skip_files = array('dev.css');
+		
 		foreach($dir as $file) {
 			if( is_file($file) ) {
 				$mod_date = filemtime($file);
-				if ( $mod_date > $last_date ) {
+				if ( $mod_date > $last_date && !contains(basename($file), $skip_files) ) {
 					$last_date = $mod_date;
 					$last_filename = basename($file);
 				}

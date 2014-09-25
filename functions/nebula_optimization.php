@@ -61,7 +61,7 @@ function nebula_dequeues() {
 //Force settings within plugins
 add_action('admin_init', 'nebula_plugin_force_settings');
 function nebula_plugin_force_settings(){
-	//WP Edit
+	//WP Edit (This plugin is not bundled with Nebula anymore [in favor of TinyMCE Advanced], but this can stay in case it is ever used).
 	if ( file_exists(WP_PLUGIN_DIR . '/wp-edit') ) {
 		$plugin_options_global = get_option('wp_edit_global');
 		$plugin_options_global['disable_admin_links'] = 1;
@@ -100,7 +100,7 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 		remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_meta_box('espresso_news_dashboard_widget', 'dashboard', 'normal'); //Event Espresso - Remove Dashboard Metabox
-		remove_meta_box('jwl_user_tinymce_dashboard_widget', 'dashboard', 'normal'); //WP Edit - Remove Dashboard Metabox
+		remove_meta_box('jwl_user_tinymce_dashboard_widget', 'dashboard', 'normal'); //WP Edit - Remove Dashboard Metabox (This plugin is not bundled with Nebula anymore [in favor of TinyMCE Advanced], but this can stay in case it is ever used).
 		//remove_action('init', 'wpseo_description_test'); //Wordpress SEO (Yoast) - Remove Meta Description test (@TODO: Not Working - this function is called all over the place...)
 	}
 }

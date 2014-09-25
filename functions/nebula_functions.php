@@ -203,14 +203,13 @@ if ( nebula_settings_conditional('nebula_console_css') ) {
 
 
 //Check for dev stylesheets
-if ( 1==1 ) { //If Nebula Setting is enabled
+if ( 1==1 ) { //@TODO: If Nebula Setting is enabled
 	add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
 	function combine_dev_stylesheets() {
 		$file_counter = 0;
-		file_put_contents(get_template_directory() . '/css/dev.css', ''); //Empty /css/dev.css
+		file_put_contents(get_template_directory() . '/css/dev.css', '/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/'); //Empty /css/dev.css
 		foreach ( glob(get_template_directory() . '/css/dev/*.css') as $file ) {
 			$file_path_info = pathinfo($file);
-			
 			if ( is_file($file) && $file_path_info['extension'] == 'css' ) {
 				$file_counter++;		
 				$this_css_filename = basename($file);
@@ -236,20 +235,41 @@ function js_variables() {
 	$jsAdmin = (current_user_can('manage_options')) ? true : false;
 	
 	echo '<script>bloginfo = [];
-	bloginfo["name"] = "' . get_bloginfo("name") . '";
-	bloginfo["template_directory"] = "' . get_template_directory_uri() . '";
-	bloginfo["stylesheet_url"] = "' . get_bloginfo("stylesheet_url") . '";
-	bloginfo["home_url"] = "' . home_url() . '";
-	bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";
-	bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";
-	bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"
-	clientinfo = [];
-	clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";
-	nebulaSettings = [];
-	nebulaSettings["nebula_cse_id"] = "' . get_option('nebula_cse_id') . '";
-	nebulaSettings["nebula_cse_api_key"] = "' . get_option('nebula_cse_api_key') . '";
-	isDev = "' . $jsAdmin . '";
-	debug = "' . $GLOBALS["debug"] . '";</script>';
+		bloginfo["name"] = "' . get_bloginfo("name") . '";
+		bloginfo["template_directory"] = "' . get_template_directory_uri() . '";
+		bloginfo["stylesheet_url"] = "' . get_bloginfo("stylesheet_url") . '";
+		bloginfo["home_url"] = "' . home_url() . '";
+		bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";
+		bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";
+		bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"
+		clientinfo = [];
+		clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";';
+	
+	/*
+		if ( $GLOBALS["mobile_detect"]->isMobile() ) { //@TODO: Detect actual device name.
+			echo 'deviceinfo["device_name"] = "' . 'something' . '";';
+		}
+	*/
+	
+	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
+		echo 'deviceinfo["form_factor"] = "' . 'Tablet' . '";';
+	} elseif ( $GLOBALS["mobile_detect"]->isMobile() ) {
+		echo 'deviceinfo["form_factor"] = "' . 'Mobile' . '";';
+	} else {
+		echo 'deviceinfo["form_factor"] = "' . 'Desktop' . '";';
+	}
+	
+	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
+		echo 'deviceinfo["is_mobile"] = "True";';
+	} else {
+		echo 'deviceinfo["is_mobile"] = "False";';
+	}
+	
+	echo 'nebulaSettings = [];
+		nebulaSettings["nebula_cse_id"] = "' . get_option('nebula_cse_id') . '";
+		nebulaSettings["nebula_cse_api_key"] = "' . get_option('nebula_cse_api_key') . '";
+		isDev = "' . $jsAdmin . '";
+		debug = "' . $GLOBALS["debug"] . '";</script>';
 }
 
 //Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
@@ -1232,7 +1252,7 @@ function nebula_weather($zipcode=null, $data=null){
 	$use_errors = libxml_use_internal_errors(true);
 	$xml = simplexml_load_file($url);
 	if ( !$xml ) {
-		$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors
+		$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors @TODO: Change hard-coded URL!
 	}
 	libxml_clear_errors();
 	libxml_use_internal_errors($use_errors);
