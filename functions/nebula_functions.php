@@ -243,7 +243,9 @@ function js_variables() {
 		bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";
 		bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"
 		clientinfo = [];
-		clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";';
+		clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";
+		deviceinfo = [];';
+		
 	
 	/*
 		if ( $GLOBALS["mobile_detect"]->isMobile() ) { //@TODO: Detect actual device name.

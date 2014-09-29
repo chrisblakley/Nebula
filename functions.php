@@ -190,4 +190,19 @@ function enqueue_nebula_admin() {
 }
 
 
-//Close functions.php. Do not add anything after this closing tag!! ?>
+
+
+/*====================================================
+ Custom Theme Functions
+ =====================================================*/
+
+
+
+
+
+
+
+
+
+
+//Close functions.php. DO NOT add anything after this closing tag!! ?>
