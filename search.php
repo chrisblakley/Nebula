@@ -20,7 +20,7 @@ get_header(); ?>
 			
 			<script>
 				var badSearchTerm = jQuery('#s').val();
-				nebula_event('Internal Search', 'No Results', badSearchTerm);
+				nebula_event('Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
 			</script>
 		<?php endif; ?>
 		<?php if ( have_posts() ) : ?>

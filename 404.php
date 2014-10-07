@@ -27,9 +27,9 @@ get_header(); ?>
 
 <script>
 	if ( document.referrer.length ) {
-		nebula_event('404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer);
+		nebula_event('404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer, {'nonInteraction': 1});
 	} else {
-		nebula_event('404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown');
+		nebula_event('404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown', {'nonInteraction': 1});
 	}
 </script>
 

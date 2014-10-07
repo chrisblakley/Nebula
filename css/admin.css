@@ -61,6 +61,11 @@ th#id {width: 50px;}
 .wpseo-admin-page #sidebar-container {display: none;}
 #wpseo-conf p.settings_error {display: none !important; visibility: hidden; height: 0; width: 0; opacity: 0; pointer-events: none;}
 	#wpseo-conf p.settings_error a {display: none !important; visibility: hidden; height: 0; width: 0; opacity: 0; pointer-events: none;}
+.column-wpseo-score {font-size: 10px !important; text-align: center; background: #fafafa;}
+	.wpseo-score-icon {margin-left: 0; width: 10px; height: 10px;}
+.column-wpseo-title {width: 200px; font-size: 10px !important; background: #fafafa;}
+.column-wpseo-metadesc {width: 200px; font-size: 10px !important; background: #fafafa;}
+.column-wpseo-focuskw {width: 100px; font-size: 10px !important; background: #fafafa;}
 
 /*==========================
  Nebula TinyMCE Toolbar 

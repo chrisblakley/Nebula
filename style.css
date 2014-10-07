@@ -28,6 +28,7 @@
 /* ==========================================================================
    Base styles: opinionated defaults
    ========================================================================== */
+html {height: auto;}
 html, button, input, select, textarea {color: #444; font-size: 16px;}
 ::-moz-selection {background: #b3d4fc; text-shadow: none;}
 ::selection {background: #b3d4fc; text-shadow: none;}
@@ -62,7 +63,7 @@ span {font-size: inherit;}
 ::selection {background: #d5f3ff; color: black;}
 ::-moz-selection {background: #d5f3ff; color: black;}
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7; color: var(--primary-color);}
-a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a:hover,
 	a.hover {color: #95D600; color: var(--secondary-color)-darker;}
 	.btn > a:hover {color: #fff;}
@@ -150,7 +151,7 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 	.lte-ie9 .nebulashadow.above {transform: none; filter:-; -ms-filter:-; display: none;}
 	.no-js.lte-ie9 .nebulashadow.inner-bottom,
 	.no-js.lte-ie9 .nebulashadow.above {display: none; visibility: hidden; opacity: 0;}
-.nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
+.nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 .nebulashadow.bulging {height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
 	.nebulashadow.buldging:before {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%;}
 .nebulashadow.curling {height: 24px; background: url('images/shadow-curling.png') no-repeat top center; background-size: contain;}
@@ -159,7 +160,7 @@ table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Set
 .nebulashadow.anchored-left {height: 24px; background: url('images/shadow-anchored-left.png') no-repeat top center; background-size: contain;}
 	
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;}
-	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s; pointer-events: none;}
+	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; pointer-events: none;}
 .nebulaframe.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain; pointer-events: none;}
 	.nebulaframe.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%; background: none;}
 .nebulaframe.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-curling.png') no-repeat top center; background-size: contain; pointer-events: none;}
@@ -173,7 +174,7 @@ a.nebulaframe {border: none;}
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
 
 .searchresultword {background: #e8f8ff; background: rgba(0, 152, 215, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;} /* @TODO: Replace BG color with very light primary color */
-	.searchresultword.transitionable {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	.searchresultword.transitionable {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
 
 .headerdrawercon {position: relative; background: rgba(0,0,0,0.0225);}
@@ -189,7 +190,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 .googlemapcon {width: 100%; height: 250px;}
 	#map_canvas {width: 100%; height: 100%;}
 	.googlemapcon a,
-	.googlemapcon i {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	.googlemapcon i {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	
 	.mapgeolocation-icon.error {color: red;}
 	
@@ -221,7 +222,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
         .tab-content ul li {list-style: disc;}
 body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby video setting */
 i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
-.btn, .skiplink {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+.btn, .skiplink {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
 .field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: #ca3838;}
 .field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: #ca3838; color: #000; background: #f0c5c5;}
@@ -267,7 +268,7 @@ Also be sure to find the other @TODO: items within the stylesheet.
 .mobilenavcon {display: none;}
 	.directions div {line-height: 12px; padding-left: 35px;}
 
-#topbarcon {position: relative; background: #0098D7; background: var(--primary-color); width: 100%; height: 5px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s; overflow: hidden;}
+#topbarcon {position: relative; background: #0098D7; background: var(--primary-color); width: 100%; height: 5px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
 	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
 		#topbarcon a:hover,
 		#topbarcon a.hover {color: #ccc;}
@@ -285,12 +286,12 @@ nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
 			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
 				nav#topnav ul li.menu-item a:hover,
 				nav#topnav ul li.menu-item a.hover {color: #95D600; color: var(--secondary-color);}
-			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; border-left: 1px solid var(--primary-color); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s ease 0s; -moz-transition: opacity 0.25s ease 0s; -o-transition: opacity 0.25s ease 0s; transition: opacity 0.25s ease 0s;}
+			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; border-left: 1px solid var(--primary-color); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s; -moz-transition: opacity 0.25s; -o-transition: opacity 0.25s; transition: opacity 0.25s;}
 				nav#topnav ul li.menu-item.hover ul.sub-menu,
 				nav#topnav ul li.menu-item:hover ul.sub-menu {left: 5px; opacity: 1;}
 				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
 
-li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	.svg li.nebula-search input, .svg input.nebula-search {background: #eee url('images/search.svg') no-repeat 6px center;}
 	li.nebula-search input::-webkit-search-decoration,
 	li.nebula-search input::-webkit-search-cancel-button,
@@ -328,7 +329,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 				nav#primarynav ul li.menu-item a {display: block;}
 					nav#primarynav ul li.menu-item a:hover,
 					nav#primarynav ul li.menu-item a.hover {}
-				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s ease 0s, opacity 0.25s ease 0s; -moz-transition: top 0.25s ease 0s, opacity 0.25s ease 0s; -o-transition: top 0.25s ease 0s, opacity 0.25s ease 0s; transition: top 0.25s ease 0s, opacity 0.25s ease 0s; background: lightgrey; background: linear-gradient(to bottom, white, gainsboro); z-index: 1001; border: 1px solid grey;}
+				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s, opacity 0.25s; -moz-transition: top 0.25s, opacity 0.25s; -o-transition: top 0.25s, opacity 0.25s; transition: top 0.25s, opacity 0.25s; background: lightgrey; background: linear-gradient(to bottom, white, gainsboro); z-index: 1001; border: 1px solid grey;}
 				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}	
 					nav#primarynav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
 						nav#primarynav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
@@ -339,7 +340,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 23px; opacity: 1;}
 				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
 
-.fixedbar {background: #0098D7; background: var(--primary-color); width: 100%; height: 0px; overflow: hidden; transition: all 0.5s ease 0s;}
+.fixedbar {background: #0098D7; background: var(--primary-color); width: 100%; height: 0px; overflow: hidden; transition: all 0.5s;}
 	.fixedbar > div {display: none;}
 	.fixedbar.active {height: 20px;}
 		.fixedbar.active > div {display: block;}
@@ -360,12 +361,12 @@ nav#fixednav {position: relative; z-index: 1000;}
 			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
 
 /* Sample Hero and on-load animation */
-#heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
+#heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	#heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 10px; margin-top: 10px; padding-left: 10px; text-transform: uppercase; background: #000; background: rgba(0,0,0,0.5);}
 
 /* Example Heroslider with bxSlider */
-div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-transition: all 1s ease 0s; -moz-transition: all 1s ease 0s; -o-transition: all 1s ease 0s; transition: all 1s ease 0s;}
+div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-transition: all 1s; -moz-transition: all 1s; -o-transition: all 1s; transition: all 1s;}
 	div#heroslider.closed {height: 0;}
     .bx-wrapper {}
         .bx-wrapper .bx-viewport {min-height: 500px; border: none; left: 0; z-index: 1;}
@@ -429,12 +430,12 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	div.wp-pagination a.page-numbers.next {}
 	div.wp-pagination a.page-numbers.prev {}
 
-.wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s ease 0s; -moz-transition: all 0.75s ease 0s; -o-transition: all 0.75s ease 0s; transition: all 0.75s ease 0s;}
+.wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	.wpcf7-form.sent ul {max-height: 0;}
 
 #about-the-author {padding-top: 30px; padding-bottom: 30px;}
 	.author-headshot {min-height: 100px; margin-bottom: 20px;}
-		.author-headshot img {width: 100%; max-width: 200px; border-radius: 500px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2); -webkit-transition: all 0.75s ease 0s; -moz-transition: all 0.75s ease 0s; -o-transition: all 0.75s ease 0s; transition: all 0.75s ease 0s;}
+		.author-headshot img {width: 100%; max-width: 200px; border-radius: 500px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2); -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	#about-the-author h1 {padding: 0;}
 	.author-meta {font-size: 12px;}
 		.author-jobtitle {}
@@ -452,7 +453,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	.commentcon.closed {height: 0; overflow: hidden;}
 	.commentlist {}
 	
-	.comment-opencloseicon {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	.comment-opencloseicon {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		.comment-opencloseicon.closed {transform:rotate(90deg); -webkit-transform:rotate(90deg); -ms-transform:rotate(90deg);}
 	
 	li.comment {list-style: none; padding: 10px 0;}
@@ -524,7 +525,7 @@ p.comment-form-comment {margin: 0;}
 p.form-submit {}
 	p.contact-form-submit input,
 	#cform7-container .submit,
-	p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		#cform7-container .submit:hover,
 		#cform7-container .submit.hover,
 		p.contact-form-submit input.hover,
@@ -566,6 +567,8 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .clearsearch {text-align: center; margin-top: 20px;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 
+.doasitesearch {display: block; margin-bottom: 15px;}
+
 /* ==========================================================================
    Footer Area
    ========================================================================== */
@@ -598,7 +601,7 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 /* Nebula Desktop Helper Styles */
 .disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;}
 .disallowed.notallowed {cursor: not-allowed !important;}
-.focusError {background-color: #fcc !important; border: 1px solid #f88 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+.focusError {background-color: #fcc !important; border: 1px solid #f88 !important; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
 
 @media only screen and (max-width: 767px) {

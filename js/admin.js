@@ -94,7 +94,7 @@ jQuery(document).ready(function() {
 	//Alert confirmation if "Bulk Action" is selected when "Apply" is submitted.
 	if ( jQuery('#bulk-action-selector-top').is('*') ) {
 		bulkSubmitError = 0;
-		jQuery('form').on('submit', function(){		
+		jQuery('form').on('click', '#doaction', function(){		
 			if ( jQuery(this).find('#bulk-action-selector-top').val() == '-1' ) {
 				if ( bulkSubmitError == 0 ) {
 					jQuery(this).find('.bulkactions').append('<strong title="You have not selected an action to apply to the selected items." style="cursor: default; background: #dd3d36; padding: 2px 10px; border-radius: 10px; line-height: 30px; color: #fff;">Select an option before applying!</strong>');

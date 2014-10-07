@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin installation and activation for WordPress themes.
  *

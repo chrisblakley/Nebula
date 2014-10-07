@@ -735,7 +735,8 @@ function nebula_meta($meta, $day=1) {
 	} elseif ( $meta == 'tags' || $meta == 'tag' ) {
 		$tag_list = get_the_tag_list('', ', ');
 		if ( $tag_list ) {
-			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-tags"></i> ' . $tag_list . '</span>';
+			$tag_icon = ( count(get_the_tags()) > 1 ) ? 'tags' : 'tag';			
+			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-' . $tag_icon . '"></i> ' . $tag_list . '</span>'; //@TODO: Singular tag if only one tag in the post! - then port over to nebula too!
 		} else {
 			$post_tags = '';
 		}
@@ -1242,7 +1243,7 @@ function combine_dev_styles() {
 
 
 //Detect weather for Zip Code (using Yahoo! Weather)
-function nebula_weather($zipcode=null, $data=null){
+function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	if ( $zipcode && is_string($zipcode) && !ctype_digit($zipcode) ) { //ctype_alpha($zipcode)
 		$data = $zipcode;
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
@@ -1250,27 +1251,30 @@ function nebula_weather($zipcode=null, $data=null){
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
 	}
 	
-	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
-	$use_errors = libxml_use_internal_errors(true);
-	$xml = simplexml_load_file($url);
-	if ( !$xml ) {
-		$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors @TODO: Change hard-coded URL!
-	}
-	libxml_clear_errors();
-	libxml_use_internal_errors($use_errors);
+	if ( $zipcode != $current_weather['zip'] || isset($fresh) ) {
+		$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
+		$use_errors = libxml_use_internal_errors(true);
+		$xml = simplexml_load_file($url);
+		if ( !$xml ) {
+			$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors @TODO: Change hard-coded URL!
+		}
+		libxml_clear_errors();
+		libxml_use_internal_errors($use_errors);
 	
-	global $current_weather;
-	$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
-	$current_weather['temp'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;	
-	$current_weather['city'] = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
-	$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
-	$current_weather['city_state'] = $current_weather['city'] . ', ' . $current_weather['state'];
-	$current_weather['sunrise'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
-	$current_weather['sunset'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
-	$current_weather["sunrise_seconds"] = strtotime($current_weather['sunrise'])-strtotime('today'); //Sunrise in seconds
-	$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
-	$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
-	$current_weather['time_seconds'] = time()-strtotime("today");
+		global $current_weather;
+		$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
+		$current_weather['temp'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;	
+		$current_weather['city'] = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
+		$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
+		$current_weather['city_state'] = $current_weather['city'] . ', ' . $current_weather['state'];
+		$current_weather['zip'] = $zipcode;
+		$current_weather['sunrise'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
+		$current_weather['sunset'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
+		$current_weather["sunrise_seconds"] = strtotime($current_weather['sunrise'])-strtotime('today'); //Sunrise in seconds
+		$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
+		$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
+		$current_weather['time_seconds'] = time()-strtotime("today");
+	}
 	
 	if ( $data && isset($current_weather[$data]) ) {
 		return $current_weather[$data];

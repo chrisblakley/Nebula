@@ -8,6 +8,7 @@ jQuery(document).ready(function() {
 	getQueryStrings();
 		
 	//Init Custom Functions
+	gaCustomDimensions();
 	gaEventTracking();
 	
 	helperFunctions();
@@ -30,11 +31,12 @@ jQuery(document).ready(function() {
 	errorLogAndFallback();
 	WPcomments();
 	contactBackup();
+			
 	
 	//Detect if loaded in an iframe
 	if ( window != window.parent ) {
 		jQuery('html').addClass('in-iframe');
-		nebula_event('Iframe', 'Requested page: ' + window.location, 'Loaded within: ' + window.parent.location);
+		nebula_event('Iframe', 'Requested page: ' + window.location, 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 	}
 	
 	if ( jQuery('body').hasClass('search-no-results') || jQuery('body').hasClass('error404') ) {
@@ -89,7 +91,7 @@ jQuery(window).on('load', function() {
 	setTimeout(function(){
 		emphasizeSearchTerms();
 	}, 1000);
-	
+		
 }); //End Window Load
 
 
@@ -142,7 +144,9 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			nebula_event('Social', 'Facebook Like', currentPage);
+			nebula_event('Social', 'Facebook Like', currentPage, {
+				'dimension1': 'Like'
+			});
 		});
 	
 		//Facebook Unlikes
@@ -155,7 +159,9 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			nebula_event('Social', 'Facebook Unlike', currentPage);
+			nebula_event('Social', 'Facebook Unlike', currentPage, {
+				'dimension1': 'Unlike'
+			});
 		});
 	
 		//Facebook Send/Share
@@ -168,7 +174,9 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			nebula_event('Social', 'Facebook Share', currentPage);
+			nebula_event('Social', 'Facebook Share', currentPage, {
+				'dimension1': 'Share'
+			});
 		});
 	
 		//Facebook Comments
@@ -181,7 +189,9 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			nebula_event('Social', 'Facebook Comment', currentPage);
+			nebula_event('Social', 'Facebook Comment', currentPage, {
+				'dimension1': 'Comment'
+			});
 		});
 	};
 	
@@ -232,24 +242,28 @@ function checkFacebookStatus() {
 				Gumby.log(response.name + ' has connected with this app.');
 				prefillFacebookFields(response);
 				jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
-
+				
+				ga('send', 'pageview', {
+					'dimension1': 'Connected' //@TODO: Is this how we want to do this?
+				});
+				
 				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //Example page. @TODO: Get this out of main.js somehow!
 				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //Example page. @TODO: Get this out of main.js somehow!
 			});
 			
-			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //Example page. @TODO: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //For Example page. @TODO: Get this out of main.js somehow!
 		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
 			Gumby.log('User is logged into Facebook, but has not connected to this app.');
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 			
-			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //Example page. @TODO: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //For Example page. @TODO: Get this out of main.js somehow!
 		} else { //User is not logged into Facebook.
 			Gumby.log('User is not logged into Facebook.');
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 			
-			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //Example page. @TODO: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //For Example page. @TODO: Get this out of main.js somehow!
 		}
 	});
 }
@@ -401,14 +415,37 @@ function nebulaFixeder() {
 } //end nebulaFixeder()
 
 
+//Google Analytics Custom Dimensions
+function gaCustomDimensions(){
+	/*
+		Custom Dimensions Index:
+			Dimension 1 = Facebook Interaction (Like, Unlike, Comment, Share)
+			Dimension 2 = Device Form Factor (Tablet, Mobile, Desktop) //@TODO: Do we really need this? GA has this standardized already...
+			Dimension 3 = Is Mobile (True/False) //@TODO: Do we really need this? GA has this standardized already...
+			
+		Custom Dimension Ideas:
+			- When location is available (through Zip Code, or IP geolocation), set dimension to user's local weather conditions. (Dimension is current condition, metric is current temperature). Maybe an event too?
+			- Age Group / Gender / Etc. of user
+	*/
+	
+	/*
+ga('send', 'pageview', {
+		'dimension2': deviceinfo['form_factor'],
+		'dimension3': deviceinfo['is_mobile']
+	});
+*/
+}
+
+
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
 	if ( typeof nebula_event !== 'undefined' /* || typeof ga !== 'undefined' */ ) {
 
-		//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Use deferred selectors.)
+		//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 		//jQuery(document).on('click', '.selector', function() {
-		//	nebula_event('Category', 'Action', 'Label', Value;
+		//	nebula_event('Category', 'Action', 'Label', Value);
 		//});
+		
 		
 		//External links
 		jQuery(document).on('click', "a[rel*='external']", function(){
@@ -509,7 +546,7 @@ function gaEventTracking(){
 		
 		//AJAX Errors
 		jQuery(document).ajaxError(function(e, request, settings) {
-			nebula_event('Error', 'AJAX Error', e.result + ' on: ' + settings.url);
+			nebula_event('Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
 			ga('send', 'exception', e.result, true);
 		});
 		
@@ -785,10 +822,10 @@ function trySearch(phrase){
 	// Send the request to the custom search API
 	jQuery.getJSON(API_URL, queryParams, function(response) {
 		if (response.items && response.items.length) {
-			nebula_event('Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location);
+			nebula_event('Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location, {'nonInteraction': 1});
 			showSuggestedPage(response.items[0].title, response.items[0].link);
 		} else {
-			nebula_event('Page Suggestion', 'No Suggestions Found', 'Requested URL: ' + window.location);
+			nebula_event('Page Suggestion', 'No Suggestions Found', 'Requested URL: ' + window.location, {'nonInteraction': 1});
 		}
 	});
 }
@@ -813,7 +850,7 @@ function pageVisibility(){
 	function visibilityChangeActions(){
 		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
 			var pageTitle = jQuery(document).attr('title');
-			nebula_event('Page Visibility', 'Prerendered', pageTitle);
+			nebula_event('Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
 			//@TODO: prevent autoplay of videos
 		}
 		
@@ -823,14 +860,14 @@ function pageVisibility(){
 			visFirstHidden = 1;
 			visTimerBefore = (new Date()).getTime();
 			var pageTitle = jQuery(document).attr('title');
-			nebula_event('Page Visibility', 'Hidden', pageTitle);
+			//nebula_event('Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1}); //@TODO: Page Visibility Hidden event tracking is off by default. Uncomment to enable.
 		} else { //Page is visible
 			//@TODO: resume autoplay of videos
 			if ( visFirstHidden == 1 ) {
 				var visTimerAfter = (new Date()).getTime();
 				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
 				var pageTitle = jQuery(document).attr('title');
-				nebula_event('Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)');
+				//nebula_event('Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)', {'nonInteraction': 1}); //@TODO: Page Visibility Visible event tracking is off by default. Uncomment to enable.
 			}
 		}
 	}
@@ -1241,11 +1278,11 @@ function errorLogAndFallback() {
 	//Check if Contact Form 7 is active and if the selected form ID exists
 	if ( jQuery('.cform-disabled').is('*') ) {
 		var currentPage = jQuery(document).attr('title');
-		nebula_event('Error', 'Contact Form 7 Disabled', currentPage);
+		nebula_event('Error', 'Contact Form 7 Disabled', currentPage, {'nonInteraction': 1});
 		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
 	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
 		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo fa fa-envelope"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
-		nebula_event('Error', 'Contact Form 7 Form Not Found', currentPage);
+		nebula_event('Error', 'Contact Form 7 Form Not Found', currentPage, {'nonInteraction': 1});
 		Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.');
 		jQuery(document).on('click', '.cform-not-found', function(){
 			nebula_event('Contact', 'Submit (Intent)', 'Backup Mailto Intent');
@@ -1277,7 +1314,7 @@ function conditionalJSLoading() {
 			twitterFeed();
 		}).fail(function(){
 			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
-			nebula_event('Error', 'JS Error', 'twitter.js could not be loaded.');
+			nebula_event('Error', 'JS Error', 'twitter.js could not be loaded.', {'nonInteraction': 1});
 		});
 	}
 	
@@ -1286,7 +1323,7 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
 			bxSlider();
 		}).fail(function(){
-			nebula_event('Error', 'JS Error', 'bxSlider could not be loaded.');
+			nebula_event('Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
 	}
@@ -1296,7 +1333,7 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
-			nebula_event('Error', 'JS Error', 'jquery.maskedinput.js could not be loaded.');
+			nebula_event('Error', 'JS Error', 'jquery.maskedinput.js could not be loaded.', {'nonInteraction': 1});
 		});
 	} else {
 		cFormPreValidator();
@@ -1307,14 +1344,14 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO: Use CDN?
 			dataTablesActions();
 		}).fail(function(){
-			nebula_event('Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded');
+			nebula_event('Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
 		
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-4.closure.js').done(function(){
 			//Do something
 		}).fail(function(){
-			nebula_event('Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.');
+			nebula_event('Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.', {'nonInteraction': 1});
 		});
 	}
 	
@@ -1421,7 +1458,7 @@ function vimeoControls() {
 	
 	function onFinish(id) {
 		var videoTitle = id.replace(/-/g, ' ');
-		nebula_event('Videos', 'Finished', videoTitle);
+		nebula_event('Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 	}
 	
 	function onPlayProgress(data, id) {
@@ -1658,7 +1695,7 @@ function successCallback(position) {
 	}
 	
 	jQuery(document).trigger('geolocationSuccess');
-	nebula_event('Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']);
+	nebula_event('Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']); //@TODO: Add a GA dimension and metric to get weather from this location.
 }
 
 //Geolocation Error
@@ -1681,7 +1718,7 @@ function errorCallback(error) {
     }
     Gumby.warn(geolocationErrorMessage);
     jQuery(document).trigger('geolocationError');
-    nebula_event('Geolocation', 'Error', geolocationErrorMessage);
+    nebula_event('Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
 
 //Retreive Lat/Lng locations
