@@ -183,7 +183,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			$alldomains = explode(".", $url);
 			return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
 		}
-		$dnsrecord = dns_get_record(top_domain_name(gethostname()), DNS_NS);
+		$dnsrecord = ( function_exists('gethostname') ) ? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
 		
 		function initial_install_date(){
 			if ( get_option('nebula_initialized') != '' && (get_option('nebula_initialized') < getlastmod()) ) {
@@ -223,7 +223,9 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
 			}
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
-			echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
+			if ( function_exists('gethostname') ) {
+				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
+			}
 			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . ' <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
 			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
 			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';

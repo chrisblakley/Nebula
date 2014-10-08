@@ -9,10 +9,11 @@ if ( !isset($content_width) ) {
 }
 
 //Disable Pingbacks to prevent security issues
-add_filter('xmlrpc_methods', function($methods) {
-   unset( $methods['pingback.ping'] );
+add_filter('xmlrpc_methods', disable_pingbacks($methods));
+function disable_pingbacks($methods) {
+   unset($methods['pingback.ping']);
    return $methods;
-});
+};
 
 
 //@TODO: There is a bug where body classes are appearing when using ?debug
@@ -158,6 +159,25 @@ function gaSendData($data) {
 	$getString .= http_build_query($data);
 	$result = wp_remote_get($getString);
 	return $result;
+}
+
+//Check for direct access redirects, log them, then redirect without queries.
+add_action('init', 'check_direct_access');
+function check_direct_access() {
+	if ( isset($_GET['directaccess']) || array_key_exists('directaccess', $_GET) ) {
+		$attempted = ( $_GET['directaccess'] != '' ) ? $_GET['directaccess'] : 'Unknown' ;
+		$data = array(
+			'v' => 1,
+			'tid' => $GLOBALS['ga'],
+			'cid' => gaParseCookie(),
+			't' => 'event',
+			'ec' => 'Direct Template Access', //Category
+			'ea' => $attempted, //Action
+			'el' => '' //Label
+		);
+		gaSendData($data);
+		header('Location: ' . home_url('/'));
+	}
 }
 
 //Track Google Page Speed tests
