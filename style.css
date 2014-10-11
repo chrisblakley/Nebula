@@ -4,23 +4,25 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 1.0
+	Version: 1.6
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
-
 */
 
-/* @TODO: Change the Theme Name (above) to be the client/project and the year! */
+/* @TODO:
+		Change the Theme Name (above) to be the client/project and the year!
+		Do not change the "Version"! This is to track the Nebula version of initial development.
+*/
 
 /* ==========================================================================
    Global Variables
    ========================================================================== */
 /* @TODO: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
 :root {
-	--primary-color: #0098d7;
+	--primary-color: #0098d7; /* @TODO: (Nebula) Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
 		--primary-color-darker: #006893;
-	--secondary-color: #95D600;
+	--secondary-color: #95D600; /* @TODO: (Nebula) Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
 		--secondary-color-darker: #669200;
 }
 
@@ -550,8 +552,8 @@ p.form-submit {}
 
 .field.danger:after, .field.warning:after, .field.success:after {top: 24px !important;}
 
-div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
-div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
+div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px;}
+div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px;}
 
 
 /***** MOBILE MENUS *****/

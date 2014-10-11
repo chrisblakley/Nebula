@@ -70,7 +70,6 @@ add_action('login_head', 'custom_login_css');
 function custom_login_css() {
 	//Only use BG image and animation on direct requests (disable for iframe logins after session timeouts).
 	if( empty($_POST['signed_request']) ) {
-	    echo '<script>window.userIP = "' . $_SERVER["REMOTE_ADDR"] . '";</script>';
 	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $GLOBALS['ga'] . "', 'auto');</script>";
 	}
 }

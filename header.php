@@ -24,7 +24,6 @@
                 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		
-		<link rel="icon" href="<?php echo get_template_directory_uri(); ?>/images/favicon.ico">
 		<link rel="apple-touch-startup-image" href="<?php echo get_template_directory_uri(); ?>/images/apple-startup.png"> <!-- @TODO: Create an apple startup screen 320x480px. -->
 		<link rel="apple-touch-icon" href="<?php echo get_template_directory_uri(); ?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
 				
@@ -251,7 +250,7 @@
 				<div class="six columns">
 					<?php
 						//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
-						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin!
+						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
 					?>
 					<a class="logocon" href="<?php echo home_url(); ?>">
 						<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>

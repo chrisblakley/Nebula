@@ -247,61 +247,14 @@ if ( 1==1 ) { //@TODO: If Nebula Setting is enabled
 	}
 }
 
-//Add bloginfo variable for JavaScript
-add_action('admin_head', 'js_variables');
-add_action('wp_head', 'js_variables');
-function js_variables() {
-	$upload_dir = wp_upload_dir();
-	$jsAdmin = (current_user_can('manage_options')) ? true : false;
-	
-	echo '<script>bloginfo = [];
-		bloginfo["name"] = "' . get_bloginfo("name") . '";
-		bloginfo["template_directory"] = "' . get_template_directory_uri() . '";
-		bloginfo["stylesheet_url"] = "' . get_bloginfo("stylesheet_url") . '";
-		bloginfo["home_url"] = "' . home_url() . '";
-		bloginfo["admin_email"] = "' . get_option("admin_email", $GLOBALS['admin_user']->user_email) . '";
-		bloginfo["admin-ajax"] = "' . admin_url('admin-ajax.php') . '";
-		bloginfo["upload_dir"] = "' . $upload_dir['baseurl'] . '"
-		clientinfo = [];
-		clientinfo["remote_addr"] = "' . $_SERVER['REMOTE_ADDR'] . '";
-		deviceinfo = [];';
-		
-	
-	/*
-		if ( $GLOBALS["mobile_detect"]->isMobile() ) { //@TODO: Detect actual device name.
-			echo 'deviceinfo["device_name"] = "' . 'something' . '";';
-		}
-	*/
-	
-	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
-		echo 'deviceinfo["form_factor"] = "' . 'Tablet' . '";';
-	} elseif ( $GLOBALS["mobile_detect"]->isMobile() ) {
-		echo 'deviceinfo["form_factor"] = "' . 'Mobile' . '";';
-	} else {
-		echo 'deviceinfo["form_factor"] = "' . 'Desktop' . '";';
-	}
-	
-	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
-		echo 'deviceinfo["is_mobile"] = "True";';
-	} else {
-		echo 'deviceinfo["is_mobile"] = "False";';
-	}
-	
-	echo 'nebulaSettings = [];
-		nebulaSettings["nebula_cse_id"] = "' . get_option('nebula_cse_id') . '";
-		nebulaSettings["nebula_cse_api_key"] = "' . get_option('nebula_cse_api_key') . '";
-		isDev = "' . $jsAdmin . '";
-		debug = "' . $GLOBALS["debug"] . '";</script>';
-}
-
 //Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
 add_action('wp_head', 'theme_favicon');
 function theme_favicon() {
-	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
+	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
 }
 add_action('admin_head', 'admin_favicon');
 function admin_favicon() {
-	echo '<link rel="Shortcut Icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
+	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
 }
 
 

@@ -1137,7 +1137,7 @@ function contactBackup() {
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["admin-ajax"],
+			url: bloginfo["admin_ajax"],
 			data: {
 				action: 'nebula_backup_contact_send',
 				data: contactData,

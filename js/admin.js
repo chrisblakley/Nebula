@@ -2,7 +2,7 @@ jQuery.noConflict();
 
 jQuery(document).ready(function() {	
 	
-	if ( window.iphpp == '72.43.235.106' ) {
+	if ( clientinfo['remote_addr'] == '72.43.235.106' ) {
 		jQuery('html').addClass('phg');
 	}
 	
@@ -20,7 +20,7 @@ jQuery(document).ready(function() {
 		var image_url = jQuery(html).attr('src');
 		jQuery('#headshot_url').val(image_url); //updates our hidden field that will update our author's meta when the form is saved
 		tb_remove();
-		jQuery('#headshot_preview').html('<img src="'+image_url+'" style="max-width:100%; max-height:100%;" />');
+		jQuery('#headshot_preview').html('<img src="' + image_url + '" style="max-width:100%; max-height:100%;" />');
 				
 		jQuery('#submit_options_form').trigger('click');
 		jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
@@ -62,7 +62,7 @@ jQuery(document).ready(function() {
 			
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo['admin-ajax'],
+				url: bloginfo['admin_ajax'],
 				data: {
 					action: "search_theme_files",
 					data: [{
