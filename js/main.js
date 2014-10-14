@@ -576,12 +576,16 @@ function gaEventTracking(){
 
 
 //Google AdWords conversion tracking for AJAX
-function conversionTracker() {
+function conversionTracker(conversionpage) {
+	if ( typeof conversionpage == 'undefined' ) {
+		conversionpage = 'thanks.html';
+	}
+	
 	var  iframe = document.createElement('iframe');
 	iframe.style.width = '0px';
 	iframe.style.height = '0px';
 	document.body.appendChild(iframe);
-	iframe.src = bloginfo['template_directory'] + '/includes/thanks.html';
+	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
 };
 
 
@@ -1086,7 +1090,7 @@ function cFormSuccess(){
 //The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
 function onlyNumbers() {
 	jQuery(".leftcolumn input[type='text']").each(function(){
-		this.value = this.value.replace(/[^0-9\.]/g,'');
+		this.value = this.value.replace(/[^0-9\.]/g, '');
 	});
 }
 
@@ -1115,6 +1119,23 @@ function WPcomments() {
 	jQuery('p.comment-form-comment textarea').on('blur', function(){
 		if ( jQuery(this).val() == '' ) {
 			jQuery(this).stop().animate({minHeight: 42, height: 42}, 250, "easeInOutCubic").css('height', 'auto');
+		}
+	});	
+}
+
+function scrollTo() {
+	jQuery(document).on('click', 'a[href*=#]:not([href=#])', function() {
+		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ) {
+			var target = jQuery(this.hash);
+			target = target.length ? target : jQuery('[name=' + this.hash.slice(1) +']');
+			if ( target.length ) {
+				var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+				var nOffset = Math.floor(target.offset().top - headerHtOffset);
+				jQuery('html, body').animate({
+					scrollTop: nOffset
+				}, 500);
+				return false;
+			}
 		}
 	});
 }

@@ -113,7 +113,7 @@
 		<meta name="msapplication-square310x310logo" content="<?php echo get_template_directory_uri(); ?>/images/large.png" /><!-- 310x310px -->
 		
 		<script>
-			social = [];
+			social = []; //Not localized with WP because needs to be able to be modified in header.php if desired.
 			social['facebook_url'] = "<?php echo $GLOBALS['social']['facebook_url']; ?>";
 			social['facebook_app_id'] = "<?php echo $GLOBALS['social']['facebook_app_id']; ?>";
 			social['twitter_url'] = "<?php echo $GLOBALS['social']['twitter_url']; ?>";

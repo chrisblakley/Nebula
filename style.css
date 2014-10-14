@@ -113,27 +113,28 @@ a.white {color: #fff;}
 
 
 /* Table styles - Restyle here as needed */
-table {table-layout: fixed; border-collapse: collapse; border-spacing: 0; /* Sets a fixed width for all cells, and removes cellspacing. */ background: #fff;}
+table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ /* Sets a fixed width for all cells, and removes cellspacing. */}
 	/* Table Rows */
 	table tr {}
-	table tr.odd {background: #f5f5f5;}
-	table tr:hover,
-	table tr.hover {background: #e2e2e2;}
+		table tr.odd {/* background: #f5f5f5; */}
+		table tr:hover,
+		table tr.hover {/* background: #e2e2e2; */}
 	/* Table Cells */
-	table tr td {text-align: center; border: none; border: 1px solid #ddd;}
-	table tr td:first-child {font-weight: inherit;}
-	table tr td {padding: 0; font-size: inherit;}
-	table tr td, table tbody tr td {font-size: inherit;}
+	table tr td {/* text-align: center; border: none; border: 1px solid #ddd; */}
+	table tr td:first-child {/* font-weight: inherit; */}
+	table tr td {/* padding: 0; font-size: inherit; */}
+	table tr td, table tbody tr td {/* font-size: inherit; */}
 	table thead tr:first-child td,
-	table thead tr.first-child td {font-weight: bold; color: #fff;}
+	table thead tr.first-child td {/* font-weight: bold; color: #fff; */}
 	table tr td:hover,
-	table tr td.hover {background: #d2d2d2;}
+	table tr td.hover {/* background: #d2d2d2; */}
 	/* Table Heading Cells */
-	table tr th {background: #95d600 !important; background: var(--secondary-color) !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff;}
+	table tr th {/* background: #95d600 !important; background: var(--secondary-color) !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff; */}
 	/* Table Heading Rows */
-	table thead tr td {background: #0098D7 !important; background: var(--primary-color) !important; padding: 10px 0;}
+	table thead tr td {/* background: #0098D7 !important; background: var(--primary-color) !important; padding: 10px 0; */}
 	/* Table Footer Rows */
-	table tfoot tr td {background: grey !important; color: #fff;}
+	table tfoot tr td {/* background: grey !important; color: #fff; */}
+
 
 .nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
 .wp_search_submit {color: #444 !important;}
@@ -186,7 +187,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 		.headerdrawer a.close {position: absolute; top: 0; right: 0;}
 #suggestedpage {display: none;}
 
-.highlight {background: yellow;} /* Find Highlight color */
+.search .highlight {background: yellow;} /* Find Highlight color */
 
 /* Google Maps */
 .googlemapcon {width: 100%; height: 250px;}
@@ -444,6 +445,10 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 		.author-contact {float: right;}
 			.author-email {white-space: nowrap;}
 			.author-phonenumber {white-space: nowrap;}
+
+.gist .line-numbers {font-size: 12px;}
+.gist .file-data pre,
+.gist .line-data {font-size: 12px;}
 
 /* Comments */
 /* 

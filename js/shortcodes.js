@@ -55,21 +55,46 @@ jQuery(window).on('load', function() {
 			}),
 			ed.addButton('nebulacode', {
 				title : 'Insert Code',
-				image : bloginfo['template_directory'] + '/images/admin/nebulacode.png',
+				type: 'menubutton',
+				icon: 'nebulacode',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
-					if (win.getSelection) {
-						var selectedText = win.getSelection().toString();
-					} else if (doc.selection && doc.selection.createRange) {
-						var selectedText = doc.selection.createRange().text;
+				menu: [{
+					text: 'Tag',
+					onclick : function() {
+						if (win.getSelection) {
+							var selectedText = win.getSelection().toString();
+						} else if (doc.selection && doc.selection.createRange) {
+							var selectedText = doc.selection.createRange().text;
+						}
+						ed.focus();
+						if ( typeof selectedText != undefined && selectedText != '' ) {
+							ed.selection.setContent('[code]' + selectedText + '[/code]');
+						} else {
+							ed.selection.setContent('[code]CONTENT_HERE[/code]');
+						}
 					}
-					ed.focus();
-					if ( typeof selectedText != undefined && selectedText != '' ) {
-						ed.selection.setContent('[code]' + selectedText + '[/code]');
-					} else {
-						ed.selection.setContent('[code]CONTENT_HERE[/code]');
+				}, {
+					text: 'Pre',
+					onclick : function() {
+						if (win.getSelection) {
+							var selectedText = win.getSelection().toString();
+						} else if (doc.selection && doc.selection.createRange) {
+							var selectedText = doc.selection.createRange().text;
+						}
+						ed.focus();
+						if ( typeof selectedText != undefined && selectedText != '' ) {
+							ed.selection.setContent('[pre lang="LANGUAGE"]' + selectedText + '[/pre]<br/>');
+						} else {
+							ed.selection.setContent('[pre lang="LANGUAGE"]CONTENT_HERE[/pre]<br/>');
+						}
 					}
-				}
+				}, {
+					text: 'Gist',
+					onclick : function() {
+						ed.focus();
+						ed.selection.setContent('[gist file=FILENAME]URL[/gist]<br/>');
+					}
+				}]
 			}),
 			ed.addButton('nebuladiv', {
 				title : 'Insert Div',
@@ -220,24 +245,6 @@ jQuery(window).on('load', function() {
 						ed.selection.setContent('[map mode="view" center="43.0536364,-76.1657063" zoom="19" maptype="satellite"]<br/>');
 					}
 				}]
-			}),
-			ed.addButton('nebulapre', {
-				title : 'Insert Pre',
-				image : bloginfo['template_directory'] + '/images/admin/nebulapre.png',
-				classes : 'widget btn nebula-icon',
-				onclick : function() {
-					if (win.getSelection) {
-						var selectedText = win.getSelection().toString();
-					} else if (doc.selection && doc.selection.createRange) {
-						var selectedText = doc.selection.createRange().text;
-					}
-					ed.focus();
-					if ( typeof selectedText != undefined && selectedText != '' ) {
-						ed.selection.setContent('[pre lang="LANGUAGE"]' + selectedText + '[/pre]<br/>');
-					} else {
-						ed.selection.setContent('[pre lang="LANGUAGE"]CONTENT_HERE[/pre]<br/>');
-					}
-				}
 			}),
 			ed.addButton('nebulaslider', {
 				title : 'Insert Slider',

@@ -80,6 +80,9 @@ th#id {width: 50px;}
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap, 
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap {background-image: url('../images/admin/nebulamap.png');}
 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode {background-image: url('../images/admin/nebulacode.png');}
+
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid, 
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid {background-image: url('../images/admin/nebulacolgrid.png');}
 

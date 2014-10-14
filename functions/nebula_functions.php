@@ -689,13 +689,13 @@ function nebula_backup_contact_send() {
 //Show different meta data information about the post. Typically used inside the loop.
 //Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
 //Example: nebula_meta('by');
-function nebula_meta($meta, $day=1) {
+function nebula_meta($meta, $secondary=1) {
 	if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ) {
 		$the_day = '';
-		if ( $day ) {
+		if ( $secondary ) { //Secondary here is if the day should be shown
 			$the_day = get_the_date('d') . '/';
 		}
-		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} elseif ( $meta == 'author' || $meta == 'by' ) {
 		echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ) {
@@ -709,7 +709,7 @@ function nebula_meta($meta, $day=1) {
 		$tag_list = get_the_tag_list('', ', ');
 		if ( $tag_list ) {
 			$tag_icon = ( count(get_the_tags()) > 1 ) ? 'tags' : 'tag';			
-			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-' . $tag_icon . '"></i> ' . $tag_list . '</span>'; //@TODO: Singular tag if only one tag in the post! - then port over to nebula too!
+			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-' . $tag_icon . '"></i> ' . $tag_list . '</span>';
 		} else {
 			$post_tags = '';
 		}
@@ -719,8 +719,25 @@ function nebula_meta($meta, $day=1) {
 			$metadata = wp_get_attachment_metadata();
 			echo '<i class="fa fa-expand"></i><a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a>';
 		}		
+	} elseif ( $meta == 'comments' || $meta == 'comment' ) {
+		$comments_text = 'Comments';
+		if ( get_comments_number() == 0 ) {
+			$comment_icon = 'fa-comment-o';
+			if ( $secondary ) { //Secondary here is if no comments should hide
+				$comment_show = '';
+			} else {
+				$comment_show = 'hidden';
+			}
+		} elseif ( get_comments_number() == 1 ) {
+			$comment_icon = 'fa-comment';
+			$comments_text = 'Comment';
+		} elseif ( get_comments_number() > 1 ) {
+			$comment_icon = 'fa-comments';
+		}
+		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
 	}
 }
+
 
 //Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.
 //Several ways to implement this:

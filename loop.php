@@ -126,11 +126,11 @@
 			<?php endif; ?>
 		</article>
 		
-		<?php
-			if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
-				comments_template('', true);
-			}
-		?>
+		<?php if ( nebula_settings_conditional('nebula_comments', 'disabled') ) : ?>
+			<div id="nebulacommentswrapper">
+				<?php comments_template('', true); ?>
+			</div><!--/nebulacommentswrapper-->
+		<?php endif; ?>
 
 	<?php endif; //End if in Gallery ?>
 

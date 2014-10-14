@@ -45,7 +45,7 @@ get_header(); ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
 			
-			<?php get_template_part('comments'); ?>
+			<?php get_template_part('comments'); //@TODO: Either wrap this in a div with an ID (for scroll to), or put that div w/ ID inside the template_part this is calling. Probably the latter for less breakage. ?>
 			
 		<?php endwhile; ?>
 	</div><!--/columns-->

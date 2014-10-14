@@ -321,10 +321,8 @@ function pre_shortcode($atts, $content=''){
 add_shortcode('code', 'code_shortcode');
 function code_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
-	
-	//$content = htmlspecialchars($content);
+	$content = htmlspecialchars_decode($content);		
 	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . htmlentities($content) . '</code>';
-
 } //end code_shortcode()
 
 
@@ -632,6 +630,17 @@ function slide_shortcode($atts, $content=''){
 } //end slide_shortcode()
 
 
+//Gist embedding
+add_shortcode('gist', 'gist_shortcode');
+function gist_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('file' => ''), $atts) );	
+	if ( $file ) {
+		$file = '?file=' . $file;
+	}
+	return '<script type="text/javascript" src="'. $content . $file . '"></script>';
+} //end gist_shortcode()
+
+
 //Map parameters of nested shortcodes
 function attribute_map($str, $att = null) {
     $res = array();
@@ -691,7 +700,7 @@ function add_shortcode_button(){
 
 }
 function register_shortcode_button($buttons){
-    array_push($buttons, "nebulaaccordion", "nebulabio", "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulapre", "nebulaspace", "nebulaslider", "nebulatooltip", "nebulavideo");
+    array_push($buttons, "nebulaaccordion", "nebulabio", "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulaspace", "nebulaslider", "nebulatooltip", "nebulavideo");
     return $buttons;
 }
 function add_shortcode_plugin($plugin_array) {  
