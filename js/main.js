@@ -2,11 +2,14 @@ jQuery.noConflict();
 
 jQuery(document).ready(function() {
 	
+	getQueryStrings();
+	if ( GET('killall') || GET('kill') || GET('die') ) {
+		throw ' (Manually terminated main.js)';
+	}
+	
 	facebookSDK();
 	conditionalJSLoading();
 	
-	getQueryStrings();
-		
 	//Init Custom Functions
 	gaCustomDimensions();
 	gaEventTracking();

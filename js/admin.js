@@ -2,6 +2,37 @@ jQuery.noConflict();
 
 jQuery(document).ready(function() {	
 	
+	//Pull query strings from URL
+	queries = new Array(); 
+    var q = document.URL.split('?')[1];
+    if ( q != undefined ){
+        q = q.split('&');
+        for ( var i = 0; i < q.length; i++ ){
+            hash = q[i].split('=');
+            queries.push(hash[1]);
+            queries[hash[0]] = hash[1];
+        }
+	}
+	
+	//Search query strings for the passed parameter
+	function GET(query) {
+		if ( typeof query === 'undefined' ) {
+			return queries;
+		}
+		
+		if ( typeof queries[query] !== 'undefined' ) {
+			return queries[query];
+		} else if ( queries.hasOwnProperty(query) ) {
+			return query;
+		}
+		return false;
+	}
+	
+	if ( GET('killall') || GET('kill') || GET('die') ) {
+		throw ' (Manually terminated admin.js)';
+	}
+	
+	
 	if ( clientinfo['remote_addr'] == '72.43.235.106' ) {
 		jQuery('html').addClass('phg');
 	}
@@ -21,7 +52,7 @@ jQuery(document).ready(function() {
 			var image_url = jQuery(html).attr('src');
 			jQuery('#headshot_url').val(image_url); //updates our hidden field that will update our author's meta when the form is saved
 			tb_remove();
-			jQuery('#headshot_preview').html('<img src="'+image_url+'" style="max-width:100%; max-height:100%;" />');
+			jQuery('#headshot_preview').html('<img src="' + image_url + '" style="max-width: 100%; max-height: 100%;" />');
 					
 			jQuery('#submit_options_form').trigger('click');
 			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
