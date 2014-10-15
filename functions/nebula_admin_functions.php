@@ -453,6 +453,35 @@ function clear_all_w3_caches(){
 }
 
 
+//Nebula Help Tab
+add_action('in_admin_header', 'nebula_help_tabs');
+function nebula_help_tabs() {
+	if ( $screen = get_current_screen() ) {
+		$help_tabs = $screen->get_help_tabs();
+		$screen->remove_help_tabs();
+		
+		$youarehere = '<i class="fa fa-arrow-circle-right" title="You are here."></i> '; //@TODO: Detect current page and place this variable accordingly.
+		
+		$screen->add_help_tab(array(
+			'id' => 'nebula_help',
+			'title' => 'Nebula',
+			'content' => '
+				<h2>Nebula Overview</h2>
+				<p>' . $youarehere . '<strong><a class="nebula_help_link" href="' . get_admin_url() . '">Dashboard</a></strong> - Nebula help content coming soon.</p>
+				<p><strong><a class="nebula_help_link" href="' . get_admin_url() . 'themes.php?page=nebula_settings">Settings</a></strong> - Nebula help content coming soon.</p>
+				<p><strong>Shortcodes</strong> - Nebula help content coming soon.</p>
+			',
+		));
+		
+		if ( count($help_tabs) ) {
+			foreach ( $help_tabs as $help_tab ) {
+				$screen->add_help_tab($help_tab);
+			}
+		}
+	}
+}//nebula_help_tabs
+
+
 //Admin Footer Enhancements
 //Left Side
 add_filter('admin_footer_text', 'change_admin_footer_left');

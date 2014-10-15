@@ -11,40 +11,44 @@ jQuery(document).ready(function() {
 	});	
 	
 	
-	jQuery('#headshot_button').on('click', function() {
-		tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
-		return false;
-	});
-	
-	window.send_to_editor = function(html) {
-		var image_url = jQuery(html).attr('src');
-		jQuery('#headshot_url').val(image_url); //updates our hidden field that will update our author's meta when the form is saved
-		tb_remove();
-		jQuery('#headshot_preview').html('<img src="' + image_url + '" style="max-width:100%; max-height:100%;" />');
-				
-		jQuery('#submit_options_form').trigger('click');
-		jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
+	if ( jQuery('body').hasClass('profile-php') ) {
+		jQuery('#headshot_button').on('click', function() {
+			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
+			return false;
+		});
 		
+		window.send_to_editor = function(html) {
+			var image_url = jQuery(html).attr('src');
+			jQuery('#headshot_url').val(image_url); //updates our hidden field that will update our author's meta when the form is saved
+			tb_remove();
+			jQuery('#headshot_preview').html('<img src="'+image_url+'" style="max-width:100%; max-height:100%;" />');
+					
+			jQuery('#submit_options_form').trigger('click');
+			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
+			
+		}
+		
+		jQuery('#headshot_remove').on('click', function(){
+			jQuery('#headshot_url').val('');
+			jQuery('#headshot_preview').remove();
+			jQuery('#upload_success').text('Picture removed.');
+		});
+	
+	
+	
+		jQuery('#avatar_button').on('click', function() {
+			tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
+			return false;
+		});
+			
+		jQuery('#avatar_remove').on('click', function(){
+			jQuery('#avatar_url').val('');
+			jQuery('#avatar_preview').remove();
+			jQuery('#upload_success').text('Picture removed.');
+		});
 	}
 	
-	jQuery('#headshot_remove').on('click', function(){
-		jQuery('#headshot_url').val('');
-		jQuery('#headshot_preview').remove();
-		jQuery('#upload_success').text('Picture removed.');
-	});
-
-
-
-	jQuery('#avatar_button').on('click', function() {
-		tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
-		return false;
-	});
-		
-	jQuery('#avatar_remove').on('click', function(){
-		jQuery('#avatar_url').val('');
-		jQuery('#avatar_preview').remove();
-		jQuery('#upload_success').text('Picture removed.');
-	});
+	
 	
 	if ( !jQuery('li.comment-count').is(':visible') ) {
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_settings">Nebula Settings</a>)</small>.');
@@ -94,7 +98,7 @@ jQuery(document).ready(function() {
 	//Alert confirmation if "Bulk Action" is selected when "Apply" is submitted.
 	if ( jQuery('#bulk-action-selector-top').is('*') ) {
 		bulkSubmitError = 0;
-		jQuery('form').on('click', '#doaction', function(){		
+		jQuery('form').on('submit', function(){		
 			if ( jQuery(this).find('#bulk-action-selector-top').val() == '-1' ) {
 				if ( bulkSubmitError == 0 ) {
 					jQuery(this).find('.bulkactions').append('<strong title="You have not selected an action to apply to the selected items." style="cursor: default; background: #dd3d36; padding: 2px 10px; border-radius: 10px; line-height: 30px; color: #fff;">Select an option before applying!</strong>');

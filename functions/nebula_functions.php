@@ -1103,7 +1103,7 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 //PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
 //Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
 //Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
-require_once TEMPLATEPATH . '/includes/Mobile_Detect.php';
+require_once TEMPLATEPATH . '/includes/Mobile_Detect.php'; //@TODO: try changing TEMPLATEPATH to get_template_directory()
 $GLOBALS["mobile_detect"] = new Mobile_Detect();
 
 add_filter('body_class', 'mobile_body_class');

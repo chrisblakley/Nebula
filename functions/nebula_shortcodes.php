@@ -160,14 +160,15 @@ function icon_shortcode($atts){
 //Button
 add_shortcode('button', 'button_shortcode');
 function button_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('size' => 'medium', 'type' => 'default', 'pretty' => false, 'metro' => false, 'icon' => false, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
-
-	if ( $pretty ) {
+	extract( shortcode_atts( array('size' => 'medium', 'type' => 'primary', 'pretty' => false, 'metro' => false, 'icon' => false, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
+	
+	$flags = get_flags($atts);
+	if ( in_array('pretty', $flags) ) {
 		$btnstyle = ' pretty';
-	} elseif ( $metro ) {
+	} elseif ( in_array('metro', $flags) ) {
 		$btnstyle = ' metro';
 	}
-
+	
 	if ( $icon ) {
 		$side = 'icon-' . $side;
 		if (strpos($icon, 'fa-') !== false) {
@@ -177,14 +178,11 @@ function button_shortcode($atts, $content=''){
 		}
 	} else {
 		$icon = '';
-		$size = '';
 	}
 	
 	if ( $target ) {
 		$target = ' target="' . $target . '"';
 	}
-	
-	//Figure out if the extra classes and styles should go in the <div> or the <a>
 	
 	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
 
@@ -280,6 +278,15 @@ function youtube_shortcode($atts){
 }
 
 
+//Code
+add_shortcode('code', 'code_shortcode');
+function code_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
+	$content = htmlspecialchars_decode($content);		
+	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . htmlentities($content) . '</code>';
+} //end code_shortcode()
+
+
 //Pre
 add_shortcode('pre', 'pre_shortcode');
 $GLOBALS['pre'] = 0;
@@ -307,7 +314,7 @@ function pre_shortcode($atts, $content=''){
 	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
 	$vislang = str_replace($search, $replace, $lang);
 	
-	$return = '<span class="nebula-pre pretitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-pre ' . $lang . ' ' . $class . '" style="';
+	$return = '<span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
 	if ( $color != '' ) {
 		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
@@ -317,13 +324,36 @@ function pre_shortcode($atts, $content=''){
 } //end pre_shortcode()
 
 
-//Code
-add_shortcode('code', 'code_shortcode');
-function code_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
-	$content = htmlspecialchars_decode($content);		
-	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . htmlentities($content) . '</code>';
-} //end code_shortcode()
+//Gist embedding
+add_shortcode('gist', 'gist_shortcode');
+function gist_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) ); 
+	
+	if ( $GLOBALS['pre'] == 0 ) { //@TODO: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
+		$GLOBALS['pre'] = 1;
+	}
+	
+	if ( $lang == '' && $language != '' ) {
+		$lang = $language;	
+	}
+	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
+	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
+	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
+	$vislang = str_replace($search, $replace, $lang);
+	
+	if ( $file ) {
+		$file = '?file=' . $file;
+	}
+	
+	$return = '<span class="nebula-gist nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><div class="nebula-code ' . $lang . ' ' . $class . '" style="';
+	if ( $color != '' ) {
+		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
+	}
+	$return .= $style . '" ><script type="text/javascript" src="'. $content . $file . '"></script></div>';
+	
+	return $return;
+} //end gist_shortcode()
 
 
 //Accordion
@@ -628,17 +658,6 @@ function slide_shortcode($atts, $content=''){
 	
 	return '<li class="nebula-slide clearfix">' . $linkopen . '<img src="' . $content . '" ' . $alt . '"/>' . $linkclose . '</li>'; //if title, echo it, else do not
 } //end slide_shortcode()
-
-
-//Gist embedding
-add_shortcode('gist', 'gist_shortcode');
-function gist_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('file' => ''), $atts) );	
-	if ( $file ) {
-		$file = '?file=' . $file;
-	}
-	return '<script type="text/javascript" src="'. $content . $file . '"></script>';
-} //end gist_shortcode()
 
 
 //Map parameters of nested shortcodes

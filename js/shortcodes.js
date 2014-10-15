@@ -41,7 +41,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[button size="medium" type="success" pretty icon="icon-mail" href="http://pinckneyhugo.com/" target="_blank"]Click Here[/button]<br/>');
+					ed.selection.setContent('[button size=medium type=primary pretty icon=icon-mail href=http://pinckneyhugo.com/ target=_blank]Click Here[/button]<br/>');
 				}
 			}),
 			ed.addButton('nebulaclear', {
@@ -83,9 +83,9 @@ jQuery(window).on('load', function() {
 						}
 						ed.focus();
 						if ( typeof selectedText != undefined && selectedText != '' ) {
-							ed.selection.setContent('[pre lang="LANGUAGE"]' + selectedText + '[/pre]<br/>');
+							ed.selection.setContent('[pre lang=LANGUAGE]' + selectedText + '[/pre]<br/>');
 						} else {
-							ed.selection.setContent('[pre lang="LANGUAGE"]CONTENT_HERE[/pre]<br/>');
+							ed.selection.setContent('[pre lang=LANGUAGE]CONTENT_HERE[/pre]<br/>');
 						}
 					}
 				}, {
@@ -108,7 +108,7 @@ jQuery(window).on('load', function() {
 					}
 					ed.focus();
 					if ( typeof selectedText != undefined && selectedText != '' ) {
-						ed.selection.setContent('[div class="CLASSES" style="STYLES"]' + selectedText + '[/div]<br/>');
+						ed.selection.setContent('[div class="CLASSES" style=STYLES]' + selectedText + '[/div]<br/>');
 					} else {
 						ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]<br/>');
 					}
@@ -174,9 +174,9 @@ jQuery(window).on('load', function() {
 						}
 						ed.focus();
 						if ( typeof selectedText != undefined && selectedText != '' ) {
-							ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]' + selectedText + '[/columns]<br/>');
+							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + selectedText + '[/columns]<br/>');
 						} else {
-							ed.selection.setContent('[columns four push="one" class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');
+							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');
 						}
 					}
 				}]
@@ -188,7 +188,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn colorbutton nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[icon type="icon-home" color="COLOR" size="SIZE" class="CLASSES"]');
+					ed.selection.setContent('[icon type=icon-home color=COLOR size=SIZE class="CLASSES"]');
 				},
 				menu: [{
 					text: 'View all Entypo icons »',
@@ -208,7 +208,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[line space="5"]<br/>');
+					ed.selection.setContent('[line space=5]<br/>');
 				}
 			}),
 			ed.addButton('nebulamap', {
@@ -230,19 +230,19 @@ jQuery(window).on('load', function() {
 					text: 'Directions',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[map mode="directions" origin="Pinckney Hugo Group" destination="Destiny USA"]<br/>');
+						ed.selection.setContent('[map mode=directions origin="Pinckney Hugo Group" destination="Destiny USA"]<br/>');
 					}
 				}, {
 					text: 'Search',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[map mode="search" q="Food in Syracuse, NY"]<br/>');
+						ed.selection.setContent('[map mode=search q="Food in Syracuse, NY"]<br/>');
 					}
 				}, {
 					text: 'View',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[map mode="view" center="43.0536364,-76.1657063" zoom="19" maptype="satellite"]<br/>');
+						ed.selection.setContent('[map mode=view center="43.0536364,-76.1657063" zoom=19 maptype=satellite]<br/>');
 					}
 				}]
 			}),
@@ -252,7 +252,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[slider frame status]<br/>[slide title="TITLE_HERE" link="http://www.pinckneyhugo.com" target="_blank"]IMAGE_URL_HERE[/slide]<br/>[/slider]<br/>');
+					ed.selection.setContent('[slider frame status]<br/>[slide title="TITLE_HERE" link=http://www.pinckneyhugo.com target=_blank]IMAGE_URL_HERE[/slide]<br/>[/slider]<br/>');
 				}
 			}),
 			ed.addButton('nebulaspace', {
@@ -280,19 +280,19 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn colorbutton nebula-icon',
 				onclick: function(){
 					ed.focus();
-					ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
+					ed.selection.setContent('[youtube id=YOUTUBE_VIDEO_ID]<br/>');
 				},
 				menu: [{
 					text: 'Youtube',
 					onclick: function(){
 						ed.focus();
-						ed.selection.setContent('[youtube id="YOUTUBE_VIDEO_ID"]<br/>');
+						ed.selection.setContent('[youtube id=YOUTUBE_VIDEO_ID]<br/>');
 					}
 				}, {
 					text: 'Vimeo',
 					onclick: function(){
 						ed.focus();
-						ed.selection.setContent('[vimeo id="VIMEO_VIDEO_ID"]<br/>');
+						ed.selection.setContent('[vimeo id=VIMEO_VIDEO_ID]<br/>');
 					}
 				}]
 			});
