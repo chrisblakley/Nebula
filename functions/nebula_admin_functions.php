@@ -324,21 +324,18 @@ function custom_media_display_settings() {
 }
 
 
-//Add ID column on post listings
-add_filter('manage_edit-post_columns', 'custom_set_posts_columns');
-function custom_set_posts_columns($columns) {
-	return array(
-		'cb' => '<input type="checkbox" />',
-		'title' => 'Title',
-		'author' => 'Author',
-		'date' => 'Date',
-		'id' => 'ID',
-	);
+//Add ID column on post/page listings
+add_filter('manage_posts_columns', 'id_columns_head');
+add_action('manage_posts_custom_column', 'id_columns_content', 10, 2);
+add_filter('manage_pages_columns', 'id_columns_head');
+add_action('manage_pages_custom_column', 'id_columns_content', 10, 2);
+function id_columns_head($defaults) {
+    $defaults['id'] = 'ID';
+    return $defaults;
 }
-add_action('manage_posts_custom_column', 'custom_set_posts_columns_value', 10, 2);
-function custom_set_posts_columns_value($column, $post_id) {
-	if ($column == 'id'){
-		echo $post_id;
+function id_columns_content($column_name, $post_ID) {
+    if ( $column_name == 'id' ){
+		echo $post_ID;
 	}
 }
 

@@ -53,6 +53,9 @@ jQuery(document).ready(function() {
 	getAllLocations();
 	mapActions();
 	
+	//Fix for <p> tags wrapping my pre spans in the WYSIWYG
+	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
+	
 	//viewport = updateViewportDimensions(); //@TODO: This breaks in IE8
 	//console.debug(viewport);
 	jQuery(window).resize(function() {
