@@ -294,6 +294,10 @@ get_header(); ?>
 						include_once('includes/vibration_api.php');
 					} ?>
 					
+					<?php if (is_page(943)) { //Wireframing
+						include_once('includes/wireframing.php');
+					} ?>
+					
 				<?php
 				/*==========================
 				 End Hard-Code Examples

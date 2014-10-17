@@ -1,30 +1,33 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function() {
-	
+
 	getQueryStrings();
 	if ( GET('killall') || GET('kill') || GET('die') ) {
 		throw ' (Manually terminated main.js)';
+	} else if ( GET('layout') ) {
+		console.log('Visualizing layout...');
+		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
-	
+
 	facebookSDK();
 	conditionalJSLoading();
-	
+
 	//Init Custom Functions
 	gaCustomDimensions();
 	gaEventTracking();
-	
+
 	helperFunctions();
 	socialSharing();
 	dropdownWidthController();
 	overflowDetector();
-	subnavExpanders();	
+	subnavExpanders();
 	nebulaFixeder();
-	
+
 	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
 	mmenus();
 	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
-	
+
 	powerFooterWidthDist();
 	menuSearchReplacement();
 	searchValidator();
@@ -34,39 +37,39 @@ jQuery(document).ready(function() {
 	errorLogAndFallback();
 	WPcomments();
 	contactBackup();
-			
-	
+
+
 	//Detect if loaded in an iframe
 	if ( window != window.parent ) {
 		jQuery('html').addClass('in-iframe');
 		nebula_event('Iframe', 'Requested page: ' + window.location, 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 	}
-	
+
 	if ( jQuery('body').hasClass('search-no-results') || jQuery('body').hasClass('error404') ) {
 		pageSuggestion();
 	}
-	
+
 	if ( cookieAuthorName ) {
 		prefillCommentAuthorCookieFields(cookieAuthorName, cookieAuthorEmail);
 	}
 
 	vimeoControls();
-	
+
 	mapInfo = [];
 	getAllLocations();
 	mapActions();
-	
+
 	//Fix for <p> tags wrapping my pre spans in the WYSIWYG
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
-	
+
 	//viewport = updateViewportDimensions(); //@TODO: This breaks in IE8
 	//console.debug(viewport);
 	jQuery(window).resize(function() {
 		waitForFinalEvent(function(){
-		
+
 	    	//Window resize functions here.
 	    	powerFooterWidthDist();
-	    	
+
 	    	//Track size change
 	    	/* viewportResized = updateViewportDimensions();  //@TODO: This breaks in IE8
 	    	if ( viewport.width > viewportResized.width ) {
@@ -76,35 +79,35 @@ jQuery(document).ready(function() {
 	    	}
 	    	viewport = updateViewportDimensions();
 	    	//console.debug(viewport); */
-	    	
+
 		}, 500, "unique resize ID 1");
 	});
-	
-	
+
+
 }); //End Document Ready
 
 
 
 
 jQuery(window).on('load', function() {
-	
+
 	//conditionalJSLoading();
-		
+
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
 	jQuery('.unhideonload').removeClass('hidden');
-	
+
 	setTimeout(function(){
 		emphasizeSearchTerms();
 	}, 1000);
-		
+
 }); //End Window Load
 
 
 /*==========================
- 
+
  Functions
- 
+
  ===========================*/
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
@@ -128,18 +131,18 @@ function helperFunctions(){
 
 //Create Facebook functions
 function facebookSDK() {
-	window.fbAsyncInit = function() { //This is called once the Facebook SDK is initialized (from the footer)		
+	window.fbAsyncInit = function() { //This is called once the Facebook SDK is initialized (from the footer)
 		FB.init({
 			appId: social['facebook_app_id'],
 			channelUrl: bloginfo['template_directory'] + '/includes/channel.php',
 			status: true,
 			xfbml: true
 		});
-		
+
 		window.FBuser = '';
 		window.FBstatus = false;
 		checkFacebookStatus();
-		
+
 		//Facebook Likes
 		FB.Event.subscribe('edge.create', function(href, widget) {
 			var currentPage = jQuery(document).attr('title');
@@ -154,7 +157,7 @@ function facebookSDK() {
 				'dimension1': 'Like'
 			});
 		});
-	
+
 		//Facebook Unlikes
 		FB.Event.subscribe('edge.remove', function(href, widget) {
 			var currentPage = jQuery(document).attr('title');
@@ -169,7 +172,7 @@ function facebookSDK() {
 				'dimension1': 'Unlike'
 			});
 		});
-	
+
 		//Facebook Send/Share
 		FB.Event.subscribe('message.send', function(href, widget) {
 			var currentPage = jQuery(document).attr('title');
@@ -184,7 +187,7 @@ function facebookSDK() {
 				'dimension1': 'Share'
 			});
 		});
-	
+
 		//Facebook Comments
 		FB.Event.subscribe('comment.create', function(href, widget) {
 			var currentPage = jQuery(document).attr('title');
@@ -200,12 +203,12 @@ function facebookSDK() {
 			});
 		});
 	};
-	
+
 	jQuery(document).on('click', '.facebook-connect', function(){
 		facebookLoginLogout();
 		return false;
 	});
-	
+
 	//Load the SDK asynchronously
 	(function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0];
@@ -248,27 +251,27 @@ function checkFacebookStatus() {
 				Gumby.log(response.name + ' has connected with this app.');
 				prefillFacebookFields(response);
 				jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
-				
+
 				ga('send', 'pageview', {
 					'dimension1': 'Connected' //@TODO: Is this how we want to do this?
 				});
-				
+
 				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //Example page. @TODO: Get this out of main.js somehow!
 				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //Example page. @TODO: Get this out of main.js somehow!
 			});
-			
+
 			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //For Example page. @TODO: Get this out of main.js somehow!
 		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
 			Gumby.log('User is logged into Facebook, but has not connected to this app.');
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
-			
+
 			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //For Example page. @TODO: Get this out of main.js somehow!
 		} else { //User is not logged into Facebook.
 			Gumby.log('User is not logged into Facebook.');
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
-			
+
 			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //For Example page. @TODO: Get this out of main.js somehow!
 		}
 	});
@@ -322,7 +325,7 @@ function socialSharing() {
 //Create an object of the viewport dimensions
 function updateViewportDimensions() {
 	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
-	
+
 	if ( typeof viewport === 'undefined' ) {
 		var viewportHistory = 0;
 		//console.log('creating viewport History: ' + viewportHistory);
@@ -332,10 +335,10 @@ function updateViewportDimensions() {
 		viewport.prevHeight = viewport.height; //Not pushing to the object...
 		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
 	}
-	
+
 	var x = w.innerWidth || e.clientWidth || g.clientWidth;
 	var y = w.innerHeight || e.clientHeight || g.clientHeight;
-	
+
 	if ( viewportHistory == 0 ) {
 		var viewportObject = {
 			initialWidth: x,
@@ -353,7 +356,7 @@ function updateViewportDimensions() {
 		    history: viewportHistory
 		};
 	}
-	
+
 	return viewportObject;
 }
 
@@ -379,7 +382,7 @@ function overflowDetector() {
 			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
     	} else {
 			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
-    	}    	
+    	}
     }, function(){
 	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
     });
@@ -406,7 +409,7 @@ function nebulaFixeder() {
 		if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
 			var fixedBarBottom = jQuery('#logonavcon img').position().top + jQuery('#logonavcon img').outerHeight();
 	        var windowBottom = jQuery(window).scrollTop();
-		
+
 	        if( windowBottom > fixedBarBottom ){
 	        	if ( !jQuery('.fixedbar').hasClass('active') ) {
 		        	jQuery('.fixedbar').addClass('active');
@@ -416,7 +419,7 @@ function nebulaFixeder() {
 		        	jQuery('.fixedbar').removeClass('active');
 	        	}
 	        }
-		}	
+		}
 	});
 } //end nebulaFixeder()
 
@@ -428,12 +431,12 @@ function gaCustomDimensions(){
 			Dimension 1 = Facebook Interaction (Like, Unlike, Comment, Share)
 			Dimension 2 = Device Form Factor (Tablet, Mobile, Desktop) //@TODO: Do we really need this? GA has this standardized already...
 			Dimension 3 = Is Mobile (True/False) //@TODO: Do we really need this? GA has this standardized already...
-			
+
 		Custom Dimension Ideas:
 			- When location is available (through Zip Code, or IP geolocation), set dimension to user's local weather conditions. (Dimension is current condition, metric is current temperature). Maybe an event too?
 			- Age Group / Gender / Etc. of user
 	*/
-	
+
 	/*
 ga('send', 'pageview', {
 		'dimension2': deviceinfo['form_factor'],
@@ -451,15 +454,15 @@ function gaEventTracking(){
 		//jQuery(document).on('click', '.selector', function() {
 		//	nebula_event('Category', 'Action', 'Label', Value);
 		//});
-		
-		
+
+
 		//External links
 		jQuery(document).on('click', "a[rel*='external']", function(){
 			var linkText = jQuery(this).text();
 			var destinationURL = jQuery(this).attr('href');
 			nebula_event('External Link', linkText, destinationURL);
 		});
-		
+
 		//PDF View/Download
 		jQuery(document).on('click', "a[href$='.pdf']", function(){
 			var title= jQuery('title').text()
@@ -472,40 +475,40 @@ function gaEventTracking(){
 				nebula_event('PDF View', 'From Page: ' + title, 'Text: ' + linkText);
 			}
 		});
-		
+
 		//Contact Form Submissions
 		jQuery(document).on('submit', '.wpcf7-form', function() {
 			var currentPage = jQuery(document).attr('title');
 			nebula_event('Contact', 'Submit', 'Contact Form Submission on ' + currentPage);
 		});
-		
+
 		//Generic Interal Search Tracking
 		jQuery(document).on('submit', '.search', function(){
 			var searchQuery = jQuery(this).find('input[name="s"]').val();
 			nebula_event('Internal Search', 'Submit', searchQuery);
 		});
-		
+
 		//Mailto link tracking
 		jQuery(document).on('click', 'a[href^="mailto"]', function(){
 			var emailAddress = jQuery(this).attr('href');
 			emailAddress = emailAddress.replace('mailto:', '');
 			nebula_event('Mailto', 'Email: ' + emailAddress);
 		});
-		
+
 		//Telephone link tracking
 		jQuery(document).on('click', 'a[href^="tel"]', function(){
 			var phoneNumber = jQuery(this).attr('href');
 			phoneNumber = phoneNumber.replace('tel:+', '');
 			nebula_event('Click-to-Call', 'Phone Number: ' + phoneNumber);
 		});
-		
+
 		//SMS link tracking
 		jQuery(document).on('click', 'a[href^="sms"]', function(){
 			var phoneNumber = jQuery(this).attr('href');
 			phoneNumber = phoneNumber.replace('sms:+', '');
 			nebula_event('Click-to-Call', 'SMS to: ' + phoneNumber);
 		});
-		
+
 		//Comment tracking @TODO: This might not be working.
 		jQuery(document).on('submit', '#commentform', function(){
 			if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
@@ -519,7 +522,7 @@ function gaEventTracking(){
 				}
 			}
 		});
-		
+
 		//Word copy tracking
 		var copyCount = 0;
 		var copyOver = 0;
@@ -530,7 +533,7 @@ function gaEventTracking(){
 			var selection = window.getSelection() + '';
 			words = selection.split(' ');
 			wordsLength = words.length;
-			
+
 			if ( copyCount < 13 ) {
 				if (words.length > 8) {
 					words = words.slice(0, 8).join(' ');
@@ -549,14 +552,14 @@ function gaEventTracking(){
 				copyOver = 1;
 			}
 		});
-		
+
 		//AJAX Errors
 		jQuery(document).ajaxError(function(e, request, settings) {
 			nebula_event('Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
 			ga('send', 'exception', e.result, true);
 		});
-		
-		
+
+
 		//Capture Print Intent
 		printed = 0;
 		var afterPrint = function() {
@@ -577,7 +580,7 @@ function gaEventTracking(){
 		}
 		window.onafterprint = afterPrint;
 	}
-		
+
 } //End gaEventTracking()
 
 
@@ -586,7 +589,7 @@ function conversionTracker(conversionpage) {
 	if ( typeof conversionpage == 'undefined' ) {
 		conversionpage = 'thanks.html';
 	}
-	
+
 	var  iframe = document.createElement('iframe');
 	iframe.style.width = '0px';
 	iframe.style.height = '0px';
@@ -628,7 +631,7 @@ function mmenus() {
 			history.replaceState(null, document.title, location);
 			history.pushState(null, document.title, location);
 		});
-		
+
 		jQuery("#mobilecontact").mmenu({
 			//Options
 		    offCanvas: {
@@ -647,7 +650,7 @@ function mmenus() {
 			history.replaceState(null, document.title, location);
 			history.pushState(null, document.title, location);
 		});
-		
+
 		jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
 		jQuery('.mm-search input').on('keyup', function(){
 			if ( jQuery(this).val().length > 0 ) {
@@ -662,7 +665,7 @@ function mmenus() {
 			jQuery('.clearsearch').addClass('hidden');
 			return false;
 		});
-			
+
 		//Close mmenu on back button click
 		if (window.history && window.history.pushState) {
 			window.addEventListener("popstate", function(e) {
@@ -672,8 +675,8 @@ function mmenus() {
 				}
 			}, false);
 		}
-	
-	}	
+
+	}
 } //end mmenus()
 
 //Power Footer Width Distributor
@@ -701,7 +704,7 @@ function menuSearchReplacement(){
 	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
 		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
 			jQuery(this).removeClass('focus active focusError').attr('placeholder', 'Search');
-			
+
 		} else {
 			jQuery(this).removeClass('active');
 		}
@@ -714,7 +717,7 @@ function searchValidator() {
 	jQuery('.lt-ie9 form.search .btn.submit').val('Search');
 	jQuery('.input.search').each(function(){
 		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().children('.btn.submit').addClass('disallowed');		
+			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 		} else {
 			jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
 			jQuery(this).parent().find('.input.search').removeClass('focusError');
@@ -780,7 +783,7 @@ function emphasizeSearchTerms() {
 				    jQuery(this).addClass('transitionable');
 				});
 			});
-		});		
+		});
 	}
 }
 
@@ -791,7 +794,7 @@ function singleResultDrawer(){
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //This is not needed if Search Everything can fix the "?s=" issue.
 		jQuery('#searchform input#s').val(theSearchTerm); //This is not needed if Search Everything can fix the "?s=" issue.
 	}
-	
+
 	jQuery(document).on('click', '.headerdrawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
@@ -802,7 +805,7 @@ function singleResultDrawer(){
 
 //Suggestions for 404 page
 function pageSuggestion(){
-	if ( nebulaSettings["nebula_cse_id"] != '' && nebulaSettings["nebula_cse_api_key"] != '' ) {
+	if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_cse_api_key"] != '' ) {
 		if ( GET().length ) {
 			var queryStrings = GET();
 		} else {
@@ -811,7 +814,7 @@ function pageSuggestion(){
 		var path = window.location.pathname;
 		var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
 		trySearch(phrase);
-		
+
 		jQuery(document).on('click', 'a.suggestion', function(){
 			var suggestedPage = jQuery(this).text();
 			nebula_event('Page Suggestion', 'Clicked', 'Suggested Page: ' + suggestedPage);
@@ -821,14 +824,14 @@ function pageSuggestion(){
 
 function trySearch(phrase){
 	var queryParams = {
-		cx: nebulaSettings["nebula_cse_id"],
-		key: nebulaSettings["nebula_cse_api_key"],
+		cx: nebula_settings["nebula_cse_id"],
+		key: nebula_settings["nebula_cse_api_key"],
 		num: 10,
 		q: phrase,
 		alt: 'JSON'
 	}
 	var API_URL = 'https://www.googleapis.com/customsearch/v1?';
-	
+
 	// Send the request to the custom search API
 	jQuery.getJSON(API_URL, queryParams, function(response) {
 		if (response.items && response.items.length) {
@@ -853,17 +856,17 @@ function showSuggestedPage(title, url){
 function pageVisibility(){
 	visFirstHidden = 0;
 	visibilityChangeActions();
-	jQuery(document).on('visibilitychange', function(){								
+	jQuery(document).on('visibilitychange', function(){
 		visibilityChangeActions();
 	});
-	
+
 	function visibilityChangeActions(){
 		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
 			var pageTitle = jQuery(document).attr('title');
 			nebula_event('Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
 			//@TODO: prevent autoplay of videos
 		}
-		
+
 		if ( getPageVisibility() ) { //Page is hidden
 			//@TODO: pause youtube
 			//@TODO: pause vimeo
@@ -881,7 +884,7 @@ function pageVisibility(){
 			}
 		}
 	}
-	
+
 	function getPageVisibility(){
 		if ( typeof document.hidden != "undefined" ) {
 			return document.hidden;
@@ -940,12 +943,12 @@ function cFormPreValidator() {
 		removeSpace = removeSpace.replace(/ /g, '_');
 		jQuery(this).val(removeSpace);
 		//console.log('after trimming: ', removeSpace);
-		
+
 		if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ) {
 			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');
 		}
 	});
-	
+
 	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
 		jQuery('.cform7-phone').mask("(999) 999-9999? x99999");
 		jQuery('.cform7-phone').keyup(function(){
@@ -1114,11 +1117,11 @@ function WPcomments() {
 	jQuery('.comment-form-comment #comment').on('keyup focus blur', function(){
 		checkCommentVal(this);
 	});
-	
+
 	jQuery(document).on('click', 'disabled', function(){
 		return false;
 	});
-	
+
 	jQuery('p.comment-form-comment textarea').on('focus', function(){
 		jQuery(this).stop().animate({minHeight: 150}, 1000, "easeInOutCubic");
 	});
@@ -1126,7 +1129,7 @@ function WPcomments() {
 		if ( jQuery(this).val() == '' ) {
 			jQuery(this).stop().animate({minHeight: 42, height: 42}, 250, "easeInOutCubic").css('height', 'auto');
 		}
-	});	
+	});
 }
 
 function scrollTo() {
@@ -1151,11 +1154,11 @@ function contactBackup() {
 	jQuery('.contact-form-message textarea').on('keyup focus blur', function(){
 		checkCommentVal(this);
 	});
-	
+
 	jQuery(document).on('click', 'disabled', function(){
 		return false;
 	});
-	
+
 	jQuery(document).on('submit', '.contact-form-backup', function(e){
 		var contactData = [{
 			'name': jQuery(".contact-form-name input").val(),
@@ -1198,7 +1201,7 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
 			icon: bloginfo['template_directory'] + "/images/og-thumb.png" //Thumbnail Icon (optional)
 		}
-		
+
 		if ( typeof message === "undefined" ) {
 			message = defaults;
 			Gumby.warn('Warning: message is undefined, using defaults.');
@@ -1225,9 +1228,9 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 				message.icon = defaults.icon;
 			}
 		}
-		
+
 		instance = new Notification(title, message); //Trigger the notification
-		
+
 		if ( typeof clickCallback !== "undefined" ) {
 			instance.onclick = function() {
 				clickCallback();
@@ -1279,7 +1282,7 @@ function nebulaVibrate(pattern) {
 	} else if ( typeof pattern !== 'object' ) {
 		Gumby.warn('Vibration pattern is not an object. Using default.');
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
-	}	
+	}
 	if ( checkVibration() ) {
 		navigator.vibrate(pattern);
 	}
@@ -1290,7 +1293,7 @@ function checkVibration() {
 	if ( !jQuery('body').hasClass('mobile') ) {
 		Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support).");
 	}
-	
+
 	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 	if ( !(Vibration) ) {
 		Gumby.warn("This browser does not support vibration.");
@@ -1344,7 +1347,7 @@ function conditionalJSLoading() {
 			nebula_event('Error', 'JS Error', 'twitter.js could not be loaded.', {'nonInteraction': 1});
 		});
 	}
-	
+
 	//Only load bxslider library on a page that calls bxslider.
 	if ( jQuery('.bxslider').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
@@ -1354,7 +1357,7 @@ function conditionalJSLoading() {
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
 	}
-	
+
 	//Only load maskedinput.js library if phone or bday field exists.
 	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
@@ -1365,7 +1368,7 @@ function conditionalJSLoading() {
 	} else {
 		cFormPreValidator();
 	}
-	
+
 	//Only load dataTables library if dataTables table exists.
 	if ( jQuery('.dataTables_wrapper').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO: Use CDN?
@@ -1374,18 +1377,18 @@ function conditionalJSLoading() {
 			nebula_event('Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
-		
+
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-4.closure.js').done(function(){
 			//Do something
 		}).fail(function(){
 			nebula_event('Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.', {'nonInteraction': 1});
 		});
 	}
-	
+
 	if ( jQuery('.flag').is('*') ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
 	}
-	
+
 } //end conditionalJSLoading()
 
 function dataTablesActions(){
@@ -1406,7 +1409,7 @@ function twitterFeed() {
         JQTWEET.template = '<div class="row tweetcon"><div class="four columns"><div class="twittericon">{AVA}</div></div><div class="twelve columns"><div class="twitteruser"><a href="{URL}" target="_blank">@{USER}</a></div><div class="twittertweet">{TEXT} <a class="twitterago" href="{URL}" target="_blank">{AGO}</a></div></div></div>',
         JQTWEET.appendTo = '#twitter_update_list';
         JQTWEET.loadTweets();
-        
+
         console.log('tweets loaded.');
         console.debug(JQTWEET);
     }
@@ -1427,7 +1430,7 @@ function bxSlider() {
 			easing: 'easeInOutCubic',
 			controls: false
 		});
-		
+
 		jQuery('.heroslider').bxSlider({
 			mode: 'fade',
 			speed: 800,
@@ -1467,27 +1470,27 @@ function vimeoControls() {
 			});
 		});
 	}
-	
+
 	function onPlay(id) {
 	    var videoTitle = id.replace(/-/g, ' ');
 	    nebula_event('Videos', 'Play', videoTitle);
 	}
-	
+
 	function onPause(id) {
 	    var videoTitle = id.replace(/-/g, ' ');
 	    nebula_event('Videos', 'Pause', videoTitle);
 	}
-	
+
 	function onSeek(data, id) {
 	    var videoTitle = id.replace(/-/g, ' ');
 	    nebula_event('Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
 	}
-	
+
 	function onFinish(id) {
 		var videoTitle = id.replace(/-/g, ' ');
 		nebula_event('Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 	}
-	
+
 	function onPlayProgress(data, id) {
 		//Gumby.log(data.seconds + 's played');
 	}
@@ -1496,19 +1499,19 @@ function vimeoControls() {
 
 
 function cookieActions() {
-	
+
 	/*
 		createCookie('example', 'true', 30);
-		
+
 		if ( readCookie('example') ) {
 			//Stuff here if cookie exists
 		}
-		
+
 		eraseCookie('example');
 	*/
-	
+
 	//Cookie actions here
-	
+
 
 } //end cookieActions()
 
@@ -1568,7 +1571,7 @@ function mapActions() {
 		renderMap(mapInfo);
 		return false;
 	});
-	
+
 	originalTrafficText = jQuery('.maptraffic').text();
 	jQuery(document).on('click', '.maptraffic', function(){
 		if ( mapInfo['traffic'] == 1 ) {
@@ -1585,12 +1588,12 @@ function mapActions() {
 		renderMap(mapInfo);
 		return false;
 	});
-	
+
 	jQuery(document).on('click', '.mapgeolocation', function(){
 		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
 			Gumby.log('Enabling location detection.');
 			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
-			jQuery('.mapgeolocation').removeClass('inactive').attr('title', 'Requesting location...').text('Detecting Location...');			
+			jQuery('.mapgeolocation').removeClass('inactive').attr('title', 'Requesting location...').text('Detecting Location...');
 			requestPosition();
 		} else {
 			Gumby.log('Removing detected location.');
@@ -1601,7 +1604,7 @@ function mapActions() {
 		}
 		return false;
 	});
-	
+
 	jQuery('.mapgeolocation').hover(function(){
 		if ( jQuery(this).hasClass('active') ) {
 			jQuery('.mapgeolocation-icon').removeClass('fa-location-arrow').addClass('fa-ban');
@@ -1611,7 +1614,7 @@ function mapActions() {
 			jQuery('.mapgeolocation-icon').removeClass('fa-ban').addClass('fa-location-arrow');
 		}
 	});
-	
+
 	originalRefreshText = jQuery('.maprefresh').text();
 	pleaseWait = 0;
 	jQuery(document).on('click', '.maprefresh', function(){
@@ -1619,7 +1622,7 @@ function mapActions() {
 			pleaseWait = 0;
 			Gumby.log('Refreshing the map.');
 			renderMap(mapInfo);
-			jQuery('.maprefresh').addClass('timeout', function(){ 
+			jQuery('.maprefresh').addClass('timeout', function(){
 				jQuery('.maprefresh').text('Refreshing...');
 				jQuery('.maprefresh-icon').removeClass('inactive').addClass('fa-spin');
 			});
@@ -1633,38 +1636,38 @@ function mapActions() {
 		}
 		return false;
 	});
-	
+
 	//Event Listeners
-	
-	//Refresh listener	
-	jQuery(document).on('mapRendered', function(){		
+
+	//Refresh listener
+	jQuery(document).on('mapRendered', function(){
 		setTimeout(function(){
 			jQuery('.maprefresh').addClass('timeout').text('Refreshed!');
 			jQuery('.maprefresh-icon').removeClass('fa-refresh fa-spin inactive').addClass('fa-check-circle success');
 		}, 500);
-		
+
 		setTimeout(function(){ //Hide the refresh button to prevent spamming it
 			jQuery('.maprefresh').removeClass('timeout').text(originalRefreshText);
 			jQuery('.maprefresh-icon').removeClass('fa-check-circle success').addClass('fa-refresh inactive');
 		}, 10000);
 	});
-	
+
 	//Geolocation Success listener
-	jQuery(document).on('geolocationSuccess', function(){		
+	jQuery(document).on('geolocationSuccess', function(){
 		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles <small>(' + mapInfo['detectLoc']['accMeters'].toFixed(2) + ' meters)</small></span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').addClass('active').attr('title', '');
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin inactive').addClass('fa-location-arrow');
-		}, 500);		
+		}, 500);
 	});
-	
+
 	//Geolocation Error listener
-	jQuery(document).on('geolocationError', function(){		
+	jQuery(document).on('geolocationError', function(){
 		jQuery('.mapgeolocation').removeClass('success').text(geolocationErrorMessage);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').attr('title', '');
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin').addClass('fa-location-arrow error');
-		}, 500);		
+		}, 500);
 	});
 } //End mapActions()
 
@@ -1684,7 +1687,7 @@ function requestPosition() {
 //Geolocation Success
 function successCallback(position) {
 	jQuery('.mapgeolocation').removeClass('failure').addClass('success');
-	
+
 	mapInfo['detectLoc'] = [];
 	mapInfo['detectLoc'][0] = position.coords.latitude;
 	mapInfo['detectLoc'][1] = position.coords.longitude;
@@ -1712,15 +1715,15 @@ function successCallback(position) {
 		mapInfo['detectLoc']['accColor'] = '#ff0000';
 	}
 	renderMap(mapInfo);
-	
+
 	mapInfo['detectLoc']['accMiles'] = (mapInfo['detectLoc']['accMeters']*0.000621371).toFixed(2);
-	
+
 	if ( mapInfo['detectLoc']['accMeters'] > 400 ) {
 		lowAccText = 'Your location accuracy is ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).';
 		Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).');
 		//Some kind of notification here...
 	}
-	
+
 	jQuery(document).trigger('geolocationSuccess');
 	nebula_event('Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']); //@TODO: Add a GA dimension and metric to get weather from this location.
 }
@@ -1763,7 +1766,7 @@ function getAllLocations() {
 //Render the Google Map
 function renderMap(mapInfo) {
     Gumby.log('Rendering Google Map');
-    
+
     if ( typeof google === 'undefined' ) {
     	Gumby.log('google is not defined. Likely the Google Maps script is not being seen.');
     	return false;
@@ -1777,7 +1780,7 @@ function renderMap(mapInfo) {
 		}
 	    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	    var bounds = new google.maps.LatLngBounds();
-	
+
 		if ( typeof mapInfo['traffic'] !== 'undefined' ) {
 			if ( mapInfo['traffic'] == 1 ) {
 				Gumby.log('Traffic is enabled.');
@@ -1785,7 +1788,7 @@ function renderMap(mapInfo) {
 				trafficLayer.setMap(map);
 			}
 		}
-		
+
 		//Map weather
 		if ( typeof mapInfo['weather'] !== 'undefined' ) {
 			if ( mapInfo['weather'] == 1 ) {
@@ -1794,13 +1797,13 @@ function renderMap(mapInfo) {
 					temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
 				});
 				weatherLayer.setMap(map);
-				
+
 				var cloudLayer = new google.maps.weather.CloudLayer();
-				cloudLayer.setMap(map); 
+				cloudLayer.setMap(map);
 			}
 		}
-	    
-	    
+
+
 	   	//Hard-Coded Custom Marker
 		//http://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
 		var phg = new google.maps.LatLng('43.0536608', '-76.1656');
@@ -1811,8 +1814,8 @@ function renderMap(mapInfo) {
 	        clickable: false,
 	        map: map
 	    });
-	
-	
+
+
 		//Dynamic Markers (passed from getAllLocations()
 		if ( typeof mapInfo['markers'] !== 'undefined' ) {
 			var marker, i;
@@ -1828,7 +1831,7 @@ function renderMap(mapInfo) {
 		        Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]);
 		    }(marker, i);
 	    }
-		   
+
 		//Detected Location Marker
 		if ( typeof mapInfo['detectLoc'] !== 'undefined' ) {
 			if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
@@ -1851,16 +1854,16 @@ function renderMap(mapInfo) {
 				});
 				circle.bindTo('center', marker, 'position');
 				Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
-				
+
 				//var detectbounds = new google.maps.LatLngBounds();
 				bounds.extend(detectLoc);
 				//map.fitBounds(detectbounds); //Use this instead of the one below to center on detected location only (ignoring other markers)
-			}   
+			}
 		}
-		
+
 		map.fitBounds(bounds);
 		google.maps.event.trigger(map, "resize");
-		
+
 		jQuery(document).trigger('mapRendered');
 	}
 }

@@ -66,8 +66,8 @@ function my_theme_register_required_plugins() {
             'required'  => false,
         ),
         array(
-            'name'      => 'TinyMCE Advanced',
-            'slug'      => 'tinymce-advanced',
+            'name'      => 'Ultimate TinyMCE',
+            'slug'      => 'ultimate-tinymce',
             'required'  => false,
         ),
         array(
@@ -96,7 +96,15 @@ function my_theme_register_required_plugins() {
             'required'  => false,
         ),
     );
-    
+
+	if ( get_option('nebula_comments') == 'enabled' ) {
+    	array_push($plugins, array(
+    		'name'      => 'Disqus Comment System',
+    		'slug'      => 'disqus-comment-system',
+    		'required'  => false
+    	));
+    }
+
     if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ) {
     	array_push($plugins, array(
     		'name'      => 'WooCommerce Google Analytics Integration',
@@ -137,8 +145,8 @@ function my_theme_register_required_plugins() {
     );
 
     tgmpa($plugins, $config);
-	
-	/* 
+
+	/*
 		Until there is support for Required, Recommended, AND Optional plugins:
 		When updating the class file (in the /includes directory, be sure to edit the text on the following line to be 'Recommended' and 'Optional' in the installation table.
 		$table_data[$i]['type'] = isset( $plugin['required'] ) && $plugin['required'] ? __( 'Recommended', 'tgmpa' ) : __( 'Optional', 'tgmpa' );
@@ -165,16 +173,16 @@ Wordpress developers will find all source code not obfuscated, so everything may
 			'post_author' => 1,
 			'page_template' => 'tpl-homepage.php'
 		);
-		
+
 		//Insert the post into the database
 		wp_insert_post($nebula_home);
-		
+
 		//Show the Activation Complete message
 		add_action('admin_notices', 'nebulaActivateComplete');
-		
+
 		//Change some Wordpress settings
 		add_action('init', 'nebulaWordpressSettings');
-	
+
 	}
 	return;
 }
@@ -194,7 +202,7 @@ function mail_existing_settings(){
 	$current_user = wp_get_current_user();
 	$to = $current_user->user_email;
 	$headers[] = 'From: ' . get_bloginfo('name');
-	
+
 	//Carbon copy the admin if reset was done by another user.
 	$admin_user_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email));
 	if ( $admin_user_email != $current_user->user_email ) {
@@ -205,7 +213,7 @@ function mail_existing_settings(){
 	$message = '
 		<p>Wordpress theme settings have been reset for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p><p>Below is a record of the previous settings prior to the reset for backup purposes:</p>';
 	$message .= '<table style="width: 100%;>';
-	
+
 	$options = $wpdb->get_results("SELECT * FROM $wpdb->options ORDER BY option_name");
 	foreach ( $options as $option ) {
 		if ( $option->option_name != '' ) {
@@ -221,13 +229,13 @@ function mail_existing_settings(){
 				$options_to_update[] = $option->option_name;
 			}
 			$message .= '<tr><td style="width: 40%; min-width: 330px;">';
-			
+
 			if ( strpos(esc_html($option->option_name), 'nebula') !== false ) {
 				$message .= '<strong style="color: #0098d7;">' . esc_html($option->option_name) . '</strong>';
 			} else {
 				$message .= '<strong>' . esc_html($option->option_name) . '</strong>';
 			}
-			
+
 			$message .=	'</td><td style="width: 60%;">';
 			if ( strpos($value, "\n") !== false ) {
 				$message .= '<textarea rows="5" style="width: 95%; resize: vertical;">' . esc_textarea($value) . '</textarea>';
@@ -238,13 +246,13 @@ function mail_existing_settings(){
 		}
 	}
 	$message .= '</table>';
-	
+
 	//Set the content type to text/html for the email. Don't forget to reset after wp_mail()!
 	add_filter('wp_mail_content_type', 'set_html_content_type');
 	function set_html_content_type() {
 		return 'text/html';
 	}
-	wp_mail($to, $subject, $message, $headers);	
+	wp_mail($to, $subject, $message, $headers);
 	remove_filter('wp_mail_content_type', 'set_html_content_type'); //This resets the content type for the email.
 }
 
@@ -264,13 +272,13 @@ function nebulaChangeHomeSetting(){
 function nebulaWordpressSettings() {
 	global $wp_rewrite;
 	remove_core_bundled_plugins();
-	
+
 	//Only update the nebula_initialized option the first time it is activated.
 	$nebula_initialized_date = date_parse(get_option('nebula_initialized'));
 	if ( get_option('nebula_initialized') === null || get_option('nebula_initialized') == '' || $nebula_initialized_date["error_count"] != 0 ) {
 		update_option('nebula_initialized', date('U'));
 	}
-	
+
 	//Update Nebula Settings
 	update_option('nebula_overall', 'Enabled');
 	update_option('nebula_edited_yet', 'false');
@@ -337,7 +345,7 @@ function nebulaWordpressSettings() {
 	update_option('nebula_ga_url', '');
 	update_option('nebula_google_webmaster_tools_url', '');
 	update_option('nebula_google_adsense_url', '');
-	
+
 	//Update certain Wordpress Core options
 	update_option('blogdescription', ''); //Empty the site tagline
 	update_option('timezone_string', 'America/New_York'); //Change Timezone
