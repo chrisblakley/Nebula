@@ -1,9 +1,9 @@
 jQuery.noConflict();
 
-jQuery(document).ready(function() {	
-	
+jQuery(document).ready(function() {
+
 	//Pull query strings from URL
-	queries = new Array(); 
+	queries = new Array();
     var q = document.URL.split('?')[1];
     if ( q != undefined ){
         q = q.split('&');
@@ -13,13 +13,13 @@ jQuery(document).ready(function() {
             queries[hash[0]] = hash[1];
         }
 	}
-	
+
 	//Search query strings for the passed parameter
 	function GET(query) {
 		if ( typeof query === 'undefined' ) {
 			return queries;
 		}
-		
+
 		if ( typeof queries[query] !== 'undefined' ) {
 			return queries[query];
 		} else if ( queries.hasOwnProperty(query) ) {
@@ -27,74 +27,74 @@ jQuery(document).ready(function() {
 		}
 		return false;
 	}
-	
+
 	if ( GET('killall') || GET('kill') || GET('die') ) {
 		throw ' (Manually terminated admin.js)';
 	}
-	
-	
+
+
 	if ( clientinfo['remote_addr'] == '72.43.235.106' ) {
 		jQuery('html').addClass('phg');
 	}
-	
+
 	jQuery(function() {
 	    jQuery("#post textarea").allowTabChar();
-	});	
-	
-	
+	});
+
+
 	if ( jQuery('body').hasClass('profile-php') ) {
 		jQuery('#headshot_button').on('click', function() {
 			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
-		
+
 		window.send_to_editor = function(html) {
 			var image_url = jQuery(html).attr('src');
 			jQuery('#headshot_url').val(image_url); //updates our hidden field that will update our author's meta when the form is saved
 			tb_remove();
 			jQuery('#headshot_preview').html('<img src="' + image_url + '" style="max-width: 100%; max-height: 100%;" />');
-					
+
 			jQuery('#submit_options_form').trigger('click');
 			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
-			
+
 		}
-		
+
 		jQuery('#headshot_remove').on('click', function(){
 			jQuery('#headshot_url').val('');
 			jQuery('#headshot_preview').remove();
 			jQuery('#upload_success').text('Picture removed.');
 		});
-	
-	
-	
+
+
+
 		jQuery('#avatar_button').on('click', function() {
 			tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
-			
+
 		jQuery('#avatar_remove').on('click', function(){
 			jQuery('#avatar_url').val('');
 			jQuery('#avatar_preview').remove();
 			jQuery('#upload_success').text('Picture removed.');
 		});
 	}
-	
-	
-	
+
+
+
 	if ( !jQuery('li.comment-count').is(':visible') ) {
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_settings">Nebula Settings</a>)</small>.');
 	}
-	
+
 	//PHG Metabox
 	jQuery(document).on("keyup", "input.findterm", function(){
 		jQuery("input.findterm").attr("placeholder", "Search files");
 	});
-	
+
 	jQuery(document).on("submit", ".searchfiles", function(e){
 		if ( jQuery("input.findterm").val().trim().length >= 3 ) {
-			
+
 			jQuery("#searchprogress").removeClass().addClass("fa fa-spinner fa-fw fa-spin");
-			
+
 			jQuery.ajax({
 				type: "POST",
 				url: bloginfo['admin_ajax'],
@@ -106,7 +106,7 @@ jQuery(document).ready(function() {
 					}]
 				},
 				success: function(response){
-					jQuery("#searchprogress").removeClass().addClass("fa fa-search fa-fw");					
+					jQuery("#searchprogress").removeClass().addClass("fa fa-search fa-fw");
 					jQuery('div.search_results').html(response).addClass('done');
 				},
 				error: function(MLHttpRequest, textStatus, errorThrown){
@@ -124,12 +124,17 @@ jQuery(document).ready(function() {
 	jQuery(document).on("click", ".linenumber", function(){
 		jQuery(this).parents('.linewrap').find('.precon').slideToggle();
 		return false;
-	});	
-	
+	});
+
+	jQuery(document).on("click", ".todo_help_icon", function() {
+		jQuery('.todo_help_con').slideToggle();
+		return false;
+	});
+
 	//Alert confirmation if "Bulk Action" is selected when "Apply" is submitted.
 	if ( jQuery('#bulk-action-selector-top').is('*') ) {
 		bulkSubmitError = 0;
-		jQuery('form').on('submit', function(){		
+		jQuery('form').on('submit', function(){
 			if ( jQuery(this).find('#bulk-action-selector-top').val() == '-1' ) {
 				if ( bulkSubmitError == 0 ) {
 					jQuery(this).find('.bulkactions').append('<strong title="You have not selected an action to apply to the selected items." style="cursor: default; background: #dd3d36; padding: 2px 10px; border-radius: 10px; line-height: 30px; color: #fff;">Select an option before applying!</strong>');
@@ -141,18 +146,25 @@ jQuery(document).ready(function() {
 			}
 		});
 	}
-	
+
 	if ( jQuery('.flag').is('*') ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
 	}
-	
-	
+
+	//Hide TODO files with only hidden items
+	jQuery('.todofilewrap').each(function(){
+		if ( jQuery(this).find('.linewrap').length == jQuery(this).find('.hidden_todo').length ) {
+			jQuery(this).addClass('hidden_file').css('display', 'none');
+		}
+	});
+
+
 }); //End Document Ready
 
-jQuery(window).on('load', function() {	
+jQuery(window).on('load', function() {
 
 	//Window load functions here.
-	
+
 }); //End Window Load
 
 

@@ -11,7 +11,7 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 get_header(); ?>
 
 <div class="row">
-	
+
 	<div class="sixteen columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<?php if ( ! empty( $post->post_parent ) ) : ?>
@@ -22,7 +22,7 @@ get_header(); ?>
 			<?php endif; ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<h1 class="entry-title"><?php the_title(); ?></h1>
-				
+
 				<div class="entry-meta">
 					<hr/>
 					<?php nebula_meta('by'); ?>
@@ -30,7 +30,7 @@ get_header(); ?>
 					<?php nebula_meta('dimensions'); ?>
 					<hr/>
 				</div><!-- .entry-meta -->
-		
+
 				<div class="entry-content">
 					<div class="entry-attachment">
 						<?php if ( wp_attachment_is_image() ) :
@@ -55,28 +55,28 @@ get_header(); ?>
 							?>
 							<p class="isitthisone"><a href="<?php echo $next_attachment_url; ?>" title="<?php echo get_the_title(); ?>">
 								<?php
-									$attachment_size = apply_filters( 'boilerplate_attachment_size', 900 ); //@TODO: Need to remove boilerplate remnants
-									echo wp_get_attachment_image( $post->ID, array( $attachment_size, 9999 ) ); // filterable image width with, essentially, no limit for image height.
+									$attachment_size = apply_filters( 'boilerplate_attachment_size', 900 ); //@TODO "Nebula" 0: Need to remove boilerplate remnants
+									echo wp_get_attachment_image( $post->ID, array( $attachment_size, 9999 ) ); //filterable image width with, essentially, no limit for image height.
 								?>
 							</a></p>
-							
+
 							<?php if (1==2): ?>
 								<nav id="nav-below" class="navigation">
 									<div class="nav-previous"><?php previous_image_link( false ); ?></div>
 									<div class="nav-next"><?php next_image_link( false ); ?></div>
 								</nav><!-- #nav-below -->
 							<?php endif; ?>
-							
+
 						<?php else : ?>
-						
+
 							<a href="<?php echo wp_get_attachment_url(); ?>" title="<?php echo get_the_title(); ?>" ><?php echo basename( get_permalink() ); ?></a>
-							
+
 						<?php endif; ?>
 					</div><!-- .entry-attachment -->
 					<div class="entry-caption"><?php if ( !empty( $post->post_excerpt ) ) the_excerpt(); ?></div>
-		
+
 					<?php the_content( 'Continue reading &rarr;' ); ?>
-			
+
 					<footer class="entry-utility">
 						<?php if ( current_user_can('manage_options') ) : ?>
 							<hr/>
@@ -86,14 +86,14 @@ get_header(); ?>
 							<hr/>
 						<?php endif; ?>
 					</footer><!-- .entry-utility -->
-		
+
 					<?php get_template_part('comments'); ?>
 				</div><!-- .entry-content -->
 			</article>
-		
+
 		<?php endwhile; ?>
 	</div><!--/columns-->
-			
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

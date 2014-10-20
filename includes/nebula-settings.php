@@ -74,6 +74,8 @@
 		register_setting('nebula_settings_group', 'nebula_phg_welcome_panel');
 		register_setting('nebula_settings_group', 'nebula_unnecessary_metaboxes');
 		register_setting('nebula_settings_group', 'nebula_phg_metabox');
+		register_setting('nebula_settings_group', 'nebula_todo_metabox');
+		register_setting('nebula_settings_group', 'nebula_dev_stylesheets');
 		register_setting('nebula_settings_group', 'nebula_console_css');
 		register_setting('nebula_settings_group', 'nebula_cse_id');
 		register_setting('nebula_settings_group', 'nebula_cse_api_key');
@@ -498,6 +500,30 @@
 								<option value="disabled" <?php selected('disabled', get_option('nebula_phg_metabox')); ?>>Disabled</option>
 							</select>
 							<p class="helper"><small>Control the PHG Developer Metabox with useful server information. Requires a user with a matching email address domain to the "Developer Email Domains" setting (under the Administration tab). <em>(Default: Enabled)</em></small></p>
+						</td>
+			        </tr>
+
+			        <tr valign="top">
+			        	<th scope="row">TODO Manager Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<select name="nebula_todo_metabox">
+								<option value="default" <?php selected('default', get_option('nebula_todo_metabox')); ?>>Default</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_todo_metabox')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_todo_metabox')); ?>>Disabled</option>
+							</select>
+							<p class="helper"><small>Finds TODO messages in theme files to track open issues. <em>(Default: Enabled)</em></small></p>
+						</td>
+			        </tr>
+
+			        <tr valign="top">
+			        	<th scope="row">Developer Stylesheets&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<select name="nebula_dev_stylesheets">
+								<option value="default" <?php selected('default', get_option('nebula_dev_stylesheets')); ?>>Default</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_dev_stylesheets')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_dev_stylesheets')); ?>>Disabled</option>
+							</select>
+							<p class="helper"><small>Combines CSS files within /css/dev/ into /css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint. <em>(Default: Enabled)</em></small></p>
 						</td>
 			        </tr>
 

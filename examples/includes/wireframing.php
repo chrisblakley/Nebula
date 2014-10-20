@@ -99,8 +99,10 @@
 		
 		<h2>Parameters</h2>
 		<p>
-			<strong>$id</strong> (integer or array of strings) (optional) Either an integer of the amount of sample slides (random <a href="https://unsplash.com/" target="_blank">Unsplash</a> images), or an array of specific image URLs. Default: <em>3</em><br/>
-			<strong>$service</strong> (object) (optional) Slider options *NOT IMPLEMENTED YET*.<br/>
+			<strong>$id</strong> (string) (optional) The video ID. Default: <em>jtip7Gdcf0Q</em><br/>
+			<strong>$service</strong> (string) (optional) Which video service the ID is associated with. Default: <em>youtube</em><br/>
+			<strong>$width</strong> (string) (optional) The width of the video iframe. Default: <em>560</em><br/>
+			<strong>$height</strong> (string) (optional) The height of the video iframe. Default: <em>315</em><br/>
 		</p>
 		
 		<h2>Example</h2>

@@ -1,16 +1,16 @@
 .nebula_help_link {text-decoration: none;}
 
 .index-php .welcome-panel {display: block; padding: 8px 12px; overflow: hidden;}
-	
+
 	.index-php .welcome-panel-content {margin: 0;}
 		.index-php .welcome-panel .about-description {font-size: 13px;}
 			.index-php .welcome-panel h4 {/* margin-top: 8px; */}
 			.index-php .welcome-panel li {color: #444; font-size: 13px;}
 				.index-php .welcome-panel li strong {color: #000;}
 	.admin-user-info {text-transform: capitalize;}
-	
+
 	#phg-welcome {}
-		
+
 		#welcome-photo {position: absolute; top: 0; right: 0; height: 100%; width: 47%; padding: 5px 20px;}
 			.phg-info {position: relative; background: rgba(0,0,0,0.6); position: absolute; bottom: 10px; left: 0; width: 100%; padding: 5px 12px; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 			.js .jsinfo {bottom: -50px; -webkit-transition: all 0.5s ease 0s; -moz-transition: all 0.5s ease 0s; -o-transition: all 0.5s ease 0s; transition: all 0.5s ease 0s;}
@@ -23,9 +23,9 @@
 				.phg-info.maininfo {z-index: 50;}
 				.phg-info.mapinfo {z-index: 25;}
 		.welcome-photo-bg {position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: url('../images/phg/welcome.jpg') center 90% no-repeat; background-size: cover; z-index: 40;}
-		
+
 		.weclome-map {position: absolute; top: 0; left: 0; height: 100%; width: 100%; padding: 0;}
-		
+
 		#welcome-content {width: 50%;}
 			.index-php .welcome-panel .welcome-panel-column:first-child {width: 33% !important;}
 			.index-php .welcome-panel .welcome-panel-column {min-width: 100px;}
@@ -59,6 +59,26 @@ th#id {width: 50px;}
 	div.precon {display: none;}
 		.wp-admin pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 
+.linenumber {font-weight: bold;}
+
+.todo_help_icon {float: right; font-size: 10px;}
+.todo_help_con {display: none; overflow: hidden; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
+	.todo_help_desc {font-size: 10px; margin: 0; color: #666;}
+
+.todoresults_title {margin-bottom: 0;}
+.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 257px; resize: vertical;}
+	.todofilewrap {margin-bottom: 10px;}
+		.todofilename {font-size: 12px; margin: 0;}
+		.todoresult {font-size: 10px; margin: 0; padding: 0;}
+			.todocategory {background: #ccc; color: #fff; padding: 0 5px; text-align: center; border-radius: 10px; text-transform: uppercase; font-size: 8px;}
+				.todocategory i {color: #ccc;}
+		.hidden_todo,
+		.hidden_file {display: none;}
+
+
+
+
+
 /* Post/Page Listing Column Modifictions */
 .widefat td, .widefat td ol, .widefat td p, .widefat td ul {font-size: 12px !important;}
 .fixed .column-categories, .fixed .column-rel, .fixed .column-response, .fixed .column-role, .fixed .column-tags {width: 7%;}
@@ -66,8 +86,9 @@ th#id {width: 50px;}
 .fixed .column-comments {width: 3%;}
 .widefat .column-id {padding-left: 0 !important; padding-right: 0 !important; font-size: 10px !important;}
 .row-title,
-td.plugin-title strong, td.post-title strong, 
-.row-actions {font-size: 12px !important;}
+td.plugin-title strong, td.post-title strong,
+.row-actions,
+.plugin-version-author-uri {font-size: 12px !important;}
 
 /* Wordpress SEO (Yoast) */
 .wpseo-admin-page #sidebar-container {display: none;}
@@ -80,34 +101,34 @@ td.plugin-title strong, td.post-title strong,
 .widefat .column-wpseo-focuskw {width: 100px; font-size: 10px !important; background: #fafafa;}
 
 /*==========================
- Nebula TinyMCE Toolbar 
+ Nebula TinyMCE Toolbar
  ===========================*/
 
 #dashboard_right_now a[href$='options-reading.php'] {color: red !important; font-weight: 700;}
 	#dashboard_right_now a[href$='options-reading.php']:before {content: '!'; background: red; color: white; padding: 0 7px; margin-right: 5px;}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon {background-image: url('../images/admin/nebulaicon.png');}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap {background-image: url('../images/admin/nebulamap.png');}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode {background-image: url('../images/admin/nebulacode.png');}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid {background-image: url('../images/admin/nebulacolgrid.png');}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo {background-image: url('../images/admin/nebulavideo.png');}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i {background-position-y: 0px; background-repeat: no-repeat;}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i, 
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i,
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:hover button i,
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded='true'] i,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i, 
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:hover button i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded='true'] i {background-position-y: -20px; background-repeat: no-repeat;}
 
@@ -146,7 +167,7 @@ td.plugin-title strong, td.post-title strong,
 	#pluginwarning a {color: #0098D7; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 		#pluginwarning a:hover {color: #95D600;}
 
-.update-nag a,	
+.update-nag a,
 .update-core-php input#upgrade,
 .update-core-php input#upgrade-plugins,
 .update-core-php input#upgrade-plugins-2,

@@ -3,7 +3,7 @@
 //Create a placeholder box as an FPO element
 function fpo($title='FPO', $description='', $icon='', $width='100%', $height="250px", $bg='#ddd', $color=0, $styles='', $classes='') {
 	$safe_title = strtolower(str_replace(' ', '-', $title));
-	
+
 	$icon_html = '';
 	if ( $icon != '' ) {
 		if ( strpos($icon, 'fa-') === false ) {
@@ -11,7 +11,7 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 		}
 		$icon_html = '<i class="fa ' . $icon . '"></i>';
 	}
-	
+
 	if ( $color ) {
 		$title_color = '#fff';
 		$desc_color = '255';
@@ -19,7 +19,7 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 		$title_color = '#222';
 		$desc_color = '0';
 	}
-	
+
 	echo '<div class="nebula-fpo ' . $safe_title . ' valign ' . $classes . '" style="position: relative; text-align: center; width: ' . $width . '; height: ' . $height . '; padding: 10px; background: ' . $bg . '; ' . $styles . '">
 			<div>
 				<h3 style="font-size: 21px; color: ' . $title_color . ';">' . $icon_html . ' ' . $title . '</h3>
@@ -31,7 +31,7 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 
 //Placeholder form
 function fpo_form($fields=array('Name', 'Email', 'Message'), $submit="Send", $action=null) {
-	
+
 	if ( !isset($action) ) {
 		$action = get_template_directory_uri() . '/includes/mailer.php';
 		echo '<script>
@@ -42,9 +42,9 @@ function fpo_form($fields=array('Name', 'Email', 'Message'), $submit="Send", $ac
 						"email": jQuery("#nebula-fpo-form input.email").val(),
 						"message": jQuery("#nebula-fpo-form textarea.message").val(),
 					}];
-					
+
 					jQuery("#form-messages").html("<i class=\"fa fa-spinner fa-spin sending\"></i> Sending...");
-					
+
 					jQuery.ajax({
 						type: "POST",
 						url: "' . get_template_directory_uri() . '/includes/mailer.php",
@@ -52,7 +52,7 @@ function fpo_form($fields=array('Name', 'Email', 'Message'), $submit="Send", $ac
 							data: contactData,
 						},
 						success: function(response){
-							if ( response.indexOf("Thank you") > -1 ) {					
+							if ( response.indexOf("Thank you") > -1 ) {
 								jQuery("#nebula-fpo-form input:not(#contact-submit), #nebula-fpo-form textarea").val("").trigger("keyup");
 								jQuery("#nebula-fpo-form").slideUp();
 							}
@@ -69,42 +69,42 @@ function fpo_form($fields=array('Name', 'Email', 'Message'), $submit="Send", $ac
 			});
 		</script>';
 	}
-	
+
 	$return = '<form id="nebula-fpo-form" name="nebula-fpo-form" class="nebula-fpo-form" method="POST" action="' . $action . '"><ul>';
 	foreach ( $fields as $field ) {
 		$safe_field = strtolower(str_replace(' ', '-', $field));
 		if ( $field == 'Message' || $field == 'Comments' ) {
-			$return .= '<li class="field"><span class="contact-form-heading">' . $field . '</span><textarea class="input textarea ' . $safe_field . '" placeholder="' . $field . '" style="resize: vertical;"></textarea></li>';
+			$return .= '<li class="field"><span class="contact-form-heading">' . $field . '</span><textarea class="input textarea ' . $safe_field . '" placeholder="' . $field . '" style="resize: vertical; min-height: 150px;"></textarea></li>';
 		} elseif ( $field == 'Email' ) {
 			$return .= '<li class="field"><span class="contact-form-heading">' . $field . '</span><input class="input ' . $safe_field . '" type="email" placeholder="' . $field . '" /></li>';
 		} else {
 			$return .= '<li class="field"><span class="contact-form-heading">' . $field . '</span><input class="input ' . $safe_field . '" type="text" placeholder="' . $field . '" /></li>';
 		}
 	}
-	$return .= '<li class="field"><input class="submit" type="submit" value="' . $submit . '"></li></ul></form><div id="form-messages"></div>';
-	
+	$return .= '<li class="field" style="text-align: right;"><input class="submit primary btn medium" type="submit" value="' . $submit . '" style="max-width: 100px;"></li></ul></form><div id="form-messages"></div>';
+
 	echo $return;
-	
+
 }
 
 
 //Placeholder menu
 //Parameters: menu name, styles
-//@TODO: How to do a dropdown or mega-menu?
+//@TODO "Nebula" 0: How to do a dropdown or mega-menu?
 function fpo_menu() {
-	
+
 }
 
 
 //Placeholder slider
-//@TODO: Pass an object to set options.
+//@TODO "Nebula" 0: Pass an object to set options.
 function fpo_slider($slides=3) {
 	$return = '<div class="nebula-fpo-slider"><ul class="bxslider fposlider">';
 	if ( is_int($slides) ) {
 		$i = 1;
 		while ( $i <= $slides ) {
 			$return .= '<li><img class="random-unsplash" src="' . random_unsplash(800, 400) . '" alt="Slide ' . $i . '" /></li>';
-			$i++;	
+			$i++;
 		}
 	} else {
 		foreach ( $slides as $slide ) {
@@ -112,7 +112,7 @@ function fpo_slider($slides=3) {
 		}
 	}
 	$return .= '</ul></div><!--/nebula-fpo-slider-->';
-	
+
 	$return .= '<script>
 		jQuery(window).on("load", function() {
 			setTimeout(function(){
@@ -136,22 +136,16 @@ function fpo_slider($slides=3) {
 
 
 //Placeholder video
-//@TODO: both metas are null... same issue as elsewhere when using the metas.
-function fpo_video($id='jtip7Gdcf0Q', $service='youtube') {
-	
+function fpo_video($id='jtip7Gdcf0Q', $service='youtube', $width='100%', $height='315') {
 	if ( $service == 'vimeo' || $service == 'Vimeo' ) {
-		
 		vimeo_meta($id);
-		echo '<iframe id="' . $vimeo_meta['safetitle'] . '" class="vimeoplayer" src="http://player.vimeo.com/video/' . $vimeo_meta['id'] . '?api=1&player_id=' . $vimeo_meta['safetitle'] . '" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
-	
+		echo '<iframe id="' . $GLOBALS['vimeo_meta']['safetitle'] . '" class="vimeoplayer" src="http://player.vimeo.com/video/' . $GLOBALS['vimeo_meta']['id'] . '?api=1&player_id=' . $GLOBALS['vimeo_meta']['safetitle'] . '" width="' . $width . '" height="' . $height . '" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 	} else {
-		
 		youtube_meta($id);
-		echo '<iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" width="560" height="315" src="http://www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '" frameborder="0" allowfullscreen=""></iframe>';
-	
+		echo '<iframe id="' . $GLOBALS['youtube_meta']['safetitle'] . '" class="youtubeplayer" width="' . $width . '" height="' . $height . '" src="https://www.youtube.com/embed/' . $GLOBALS['youtube_meta']['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $GLOBALS['youtube_meta']['origin'] . '" frameborder="0" allowfullscreen=""></iframe>';
 	}
 }
 
 
 
-//eCommerce suite, ad buckets, lightbox, 
+//eCommerce suite, ad buckets, lightbox,

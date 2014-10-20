@@ -4,25 +4,24 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 1.6
+	Version: 1.7
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
 */
 
-/* @TODO:
-		Change the Theme Name (above) to be the client/project and the year!
-		Do not change the "Version"! This is to track the Nebula version of initial development.
+/* @TODO "Wordpress" 4: Change the Theme Name (above) to be the client/project and the year!
+	Do not change the "Version"! This is to track the Nebula version of initial development.
 */
 
 /* ==========================================================================
    Global Variables
    ========================================================================== */
-/* @TODO: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
+/* @TODO "Styles" 5: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
 :root {
-	--primary-color: #0098d7; /* @TODO: (Nebula) Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
+	--primary-color: #0098d7; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
 		--primary-color-darker: #006893;
-	--secondary-color: #95D600; /* @TODO: (Nebula) Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
+	--secondary-color: #95D600; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
 		--secondary-color-darker: #669200;
 }
 
@@ -31,11 +30,11 @@
    Base styles: opinionated defaults
    ========================================================================== */
 html {height: auto;}
-html, button, input, select, textarea {color: #444; font-size: 16px;}
+html, button, input, select, textarea {color: #444; font-size: 14px;}
 ::-moz-selection {background: #b3d4fc; text-shadow: none;}
 ::selection {background: #b3d4fc; text-shadow: none;}
 hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 3px 0; padding: 0;}
-	/* @TODO: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended. */
+	/* @TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended. */
 	.rgba hr {display: block; height: 1px; border: 0; background: rgba(255,255,255,1); margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
 		.rgba hr:before {content: ''; position: relative; top: -1px; height: 1px; display: block; background: rgba(0,0,0,0.2); /* mix-blend-mode: multiply; */}
 	hr.zero {margin: 0;}
@@ -48,13 +47,13 @@ ul {padding: 0;}
 
 h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
 h1, h2, h3, h4, h5, h6 {}
-h1 {font-size: 32px; line-height: 40px;}
-h2 {font-size: 24px; line-height: 32px;}
-h3 {font-size: 18px; line-height: 26px;}
-h4 {font-size: 16px; line-height: 24px;}
-h5 {font-size: 13px; line-height: 21px;}
-h6 {font-size: 10px; line-height: 18px;}
-p {}
+h1 {font-size: 36px; line-height: 42px; font-weight: bold;}
+h2 {font-size: 28px; line-height: 32px;}
+h3 {font-size: 21px; line-height: 36px;}
+h4 {font-size: 18px; line-height: 21px;}
+h5 {font-size: 14px; line-height: 28px;}
+h6 {font-size: 14px; line-height: 18px;}
+p, dt, dl {font-size: 14px;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
@@ -161,7 +160,7 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 .nebulashadow.hovering { height: 35px; background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain;}
 .nebulashadow.anchored-right {height: 24px; background: url('images/shadow-anchored-right.png') no-repeat top center; background-size: contain;}
 .nebulashadow.anchored-left {height: 24px; background: url('images/shadow-anchored-left.png') no-repeat top center; background-size: contain;}
-	
+
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;}
 	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; pointer-events: none;}
 .nebulaframe.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain; pointer-events: none;}
@@ -176,7 +175,9 @@ a.nebulaframe {border: none;}
 
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
 
-.searchresultword {background: #e8f8ff; background: rgba(0, 152, 215, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;} /* @TODO: Replace BG color with very light primary color */
+div.nebula-button {margin-bottom: 10px;}
+
+.searchresultword {background: #e8f8ff; background: rgba(0, 152, 215, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;} /* @TODO "Nebula" 0: Replace BG color with very light primary color */
 	.searchresultword.transitionable {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
 
@@ -194,13 +195,13 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 	#map_canvas {width: 100%; height: 100%;}
 	.googlemapcon a,
 	.googlemapcon i {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-	
+
 	.mapgeolocation-icon.error {color: red;}
-	
+
 	.maprefresh {overflow: hidden; white-space: nowrap;}
 		.maprefresh.timeout {color: #aaa; cursor: default;}
 		.maprefresh-icon.success {color: green;}
-		
+
 	.mapweather-icon.inactive,
 	.maptraffic-icon.inactive,
 	.maprefresh-icon.inactive,
@@ -211,7 +212,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 	.facebook-connect-con a {color: #3b5998;}
 		.facebook-connect-con a:hover,
 		.facebook-connect-con a.hover {color: #8b9dc3;}
-		
+
 
 /* ==========================================================================
    Specific Library feature modifications
@@ -248,22 +249,14 @@ ul.bxslider {}
    Author's custom styles
    ========================================================================== */
 
-/* 
-@TODO: Find/Replace the following HTML colors: 
+/*
+@TODO "Styles" 2: Find/Replace the following HTML colors:
 	lightgrey
 	grey
 	#0098D7 (Primary Brand Color)
 	#95D600 (Secondary Brand Color)
-	
-Also be sure to find the other @TODO: items within the stylesheet.
-*/
 
-/* @TODO: Delete these debug styles before launching */
-/*
-.column, .columns {outline: 1px solid gainsboro;}
-.row {outline: 1px solid blanchedalmond;}
 */
-
 
 /* ==========================================================================
    Header Area
@@ -314,7 +307,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
 	li.nebula-search input.open,
 	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO: Change RGBa to be primary color */
+	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
 	li.nebula-search input.focus:-moz-placeholder, input.nebula-search.focus:-moz-placeholder, li.nebula-search input.open:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
 	li.nebula-search input.focus::-webkit-input-placeholder, input.nebula-search.focus::-webkit-input-placeholder, li.nebula-search input.open::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
 
@@ -333,7 +326,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 					nav#primarynav ul li.menu-item a:hover,
 					nav#primarynav ul li.menu-item a.hover {}
 				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s, opacity 0.25s; -moz-transition: top 0.25s, opacity 0.25s; -o-transition: top 0.25s, opacity 0.25s; transition: top 0.25s, opacity 0.25s; background: lightgrey; background: linear-gradient(to bottom, white, gainsboro); z-index: 1001; border: 1px solid grey;}
-				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}	
+				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}
 					nav#primarynav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
 						nav#primarynav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
 							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
@@ -371,22 +364,22 @@ nav#fixednav {position: relative; z-index: 1000;}
 /* Example Heroslider with bxSlider */
 div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-transition: all 1s; -moz-transition: all 1s; -o-transition: all 1s; transition: all 1s;}
 	div#heroslider.closed {height: 0;}
-    .bx-wrapper {}
-        .bx-wrapper .bx-viewport {min-height: 500px; border: none; left: 0; z-index: 1;}
-            ul.bxslider {margin: 0; background: #222 url('images/black-linen.png'); height: 100%;}
-                ul.bxslider li {padding: 0; height: 100%;}
-                    ul.bxslider li div {position: absolute; top: 30%; left: 50%; width: 70%; max-width: 940px;}
-                        ul.bxslider li div p {display: table; position: relative; margin-left: -50%; padding: 10px 30px; color: #000; text-align: center; text-transform: uppercase; margin-bottom: 5px; background: #fff; background: rgba(255, 255, 255, 0.9); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.2);}
-                        ul.bxslider li div p.line1 {font-size: 48px;}
-                        ul.bxslider li div p.line2 {font-size: 24px;}
-                        ul.bxslider li div a {display: inline-block; position: relative; margin-left: -50%; padding: 10px 30px; color: #fff; font-size: 24px; text-align: center; text-transform: uppercase; background: #0098d7; background: var(--primary-color);}
-                            ul.bxslider li div a:hover {background: #95d600; background: var(--secondary-color);}                   
-                    ul.bxslider li img {min-height: 100%; min-width: 1600px; /* width: 100%; */ margin: 0 auto; box-shadow: 0 0 50px 0 rgba(0,0,0,0.8)} /* Uncomment the width for the image to stretch across the entire viewport. */
-.bx-wrapper .bx-has-controls-direction {position: absolute; top: 50%; left: 50%; width: 100%; max-width: 1100px; height: 32px;}
-    .bx-wrapper .bx-has-controls-direction .bx-controls-direction {position: relative; height: 32px; left: -50%;}
-        .bx-wrapper .bx-controls-direction a {top: 0; margin-top: 0; z-index: 100;}
-        
-        
+    div#heroslider .bx-wrapper {}
+        div#heroslider .bx-wrapper .bx-viewport {min-height: 500px; border: none; left: 0; z-index: 1;}
+            div#heroslider ul.bxslider {margin: 0; background: #222 url('images/black-linen.png'); height: 100%;}
+                div#heroslider ul.bxslider li {padding: 0; height: 100%;}
+                    div#heroslider ul.bxslider li div {position: absolute; top: 30%; left: 50%; width: 70%; max-width: 940px;}
+                        div#heroslider ul.bxslider li div p {display: table; position: relative; margin-left: -50%; padding: 10px 30px; color: #000; text-align: center; text-transform: uppercase; margin-bottom: 5px; background: #fff; background: rgba(255, 255, 255, 0.9); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.2);}
+                        div#heroslider ul.bxslider li div p.line1 {font-size: 48px;}
+                        div#heroslider ul.bxslider li div p.line2 {font-size: 24px;}
+                        div#heroslider ul.bxslider li div a {display: inline-block; position: relative; margin-left: -50%; padding: 10px 30px; color: #fff; font-size: 24px; text-align: center; text-transform: uppercase; background: #0098d7; background: var(--primary-color);}
+                            div#heroslider ul.bxslider li div a:hover {background: #95d600; background: var(--secondary-color);}
+                    div#heroslider ul.bxslider li img {min-height: 100%; min-width: 1600px; /* width: 100%; */ margin: 0 auto; box-shadow: 0 0 50px 0 rgba(0,0,0,0.8)} /* Uncomment the width for the image to stretch across the entire viewport. */
+div#heroslider .bx-wrapper .bx-has-controls-direction {position: absolute; top: 50%; left: 50%; width: 100%; max-width: 1100px; height: 32px;}
+    div#heroslider .bx-wrapper .bx-has-controls-direction .bx-controls-direction {position: relative; height: 32px; left: -50%;}
+        div#heroslider .bx-wrapper .bx-controls-direction a {top: 0; margin-top: 0; z-index: 100;}
+
+
 /* ==========================================================================
    Content Area
    ========================================================================== */
@@ -400,7 +393,7 @@ div#bcrumbs {position: relative; z-index: 1;}
 .entry-meta {font-size: 12px;}
 	.posted-on,
 	.posted-in,
-	.posted-by {display: inline-block; margin-right: 10px;}
+	.posted-by {display: inline-block; margin-right: 10px; font-size: 12px;}
 
 .entry-social {}
 	.entry-social ul {}
@@ -409,7 +402,7 @@ div#bcrumbs {position: relative; z-index: 1;}
 			.entry-social ul li.facebook-share {}
 			.entry-social ul li.twitter {}
 
-.entry-content {margin-top: 10px;}
+.entry-content {margin-top: 10px; font-size: 14px;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
 
 .entry-manage {font-size: 12px; margin-top: 15px;}
@@ -451,33 +444,9 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .gist .line-data {font-size: 12px;}
 
 /* Comments */
-/* 
-	@TODO: Soft validation with JS to make submit greyed out/disabled until textarea has value.
-	@TODO: Style textarea (maybe animate a min height when focused)
-	@TODO: Style comments themselves (similar to phg intranet)
-*/
-.commentcon {padding: 0;}
-	.commentcon.closed {height: 0; overflow: hidden;}
-	.commentlist {}
-	
-	.comment-opencloseicon {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-		.comment-opencloseicon.closed {transform:rotate(90deg); -webkit-transform:rotate(90deg); -ms-transform:rotate(90deg);}
-	
-	li.comment {list-style: none; padding: 10px 0;}
-		div.user-avatar {float: left; margin-right: 10px;}
-		
-		li.comment ul.children {margin: 0 0 0 60px; padding-left: 10px; border-left: 1px solid #95d600; border-left: 1px solid var(--secondary-color);}
-		li.comment div.comment-author {display: inline;}
-			li.comment.bypostauthor > div.comment-body div.comment-author:after {content: 'Author'; font-size: 9px; color: #fff; padding: 0 2px; background: #0098d7; background: var(--primary-color); border-radius: 12px;}
-		li.comment div.comment-meta {display: inline; font-size: 12px;}
-			li.comment div.comment-meta a {color: #999; cursor: default;}
-			li.comment div.comment-meta a.comment-edit-link {color: #0098d7; color: var(--primary-color); cursor: pointer;}
-				li.comment div.comment-meta a.comment-edit-link:hover,
-				li.comment div.comment-meta a.comment-edit-link.hover {color: #95d600; color: var(--secondary-color);}
-		div.comment-respond {padding: 0 0 5px 0;}
-			li.comment p {margin: 0; font-size: 12px;}
-			li.comment .reply {margin-bottom: 3px;}
-				li.comment a.comment-reply-link {font-size: 10px;}
+#nebulacommentswrapper {}
+	#disqus_thread {margin-top: 20px;}
+
 
 /* ==========================================================================
    Sidebar Area
@@ -496,7 +465,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .widget-container {margin: 10px 0 15px 0;}
 
 /* Nebula expandable sidebar subnav style defaults */
-a.toplevelvert_expander {position: absolute; top: 0; right: 0; padding: 0 10px !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
+a.toplevelvert_expander {position: absolute; top: 9px; right: 0; padding: 0 10px !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
 	a.toplevelvert_expander.plus {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
 	a.toplevelvert_expander i {font-size: 18px; display: block; width: 100%;}
 
@@ -555,7 +524,7 @@ p.form-submit {}
 
 .wpcf7-not-valid-tip {display: none !important;}
 
-.field.danger:after, .field.warning:after, .field.success:after {top: 24px !important;}
+.field.danger:after, .field.warning:after, .field.success:after {top: 28px !important;}
 
 div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px;}
 div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px;}
@@ -613,12 +582,6 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 
 @media only screen and (max-width: 767px) {
 
-	/* @TODO: Delete these debug styles before launching */
-	/*
-.column, .columns {outline: 1px solid mintcream;}
-	.row {outline: 1px solid plum;}
-*/
-
 	#topbarcon {min-height: 42px;}
 		.mobilenavcon {display: block;}
 
@@ -649,10 +612,10 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 
 	#heroslidercon {height: 100px; overflow: hidden; background-size: cover;}
 		#heroslidercon h3 {font-size: 28px; line-height: 40px;}
-		#heroslidercon h4 {font-size: 16px; display: none !important;}
-		
+		#heroslidercon h4 {font-size: 14px; display: none !important;}
+
 	.author-headshot {text-align: center;}
-	
+
 	.xoxo .search {display: none;}
 
 	/* Nebula Wordpress power footer navigation responsive style defaults */
@@ -678,18 +641,12 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 
 @media only screen and (max-width: 641px) {
 
-	/* @TODO: Delete these debug styles before launching */
-	/*
-.column, .columns {outline: 1px solid lightgreen;}
-	.row {outline: 1px solid pink;}
-*/
-	
 	.author-jobtitle {display: block;}
 	.author-contact {float: none; display: block;}
-	
+
 	.nebula-manage-edit {display: block; text-align: center;}
 	.post-modified {float: none; display: block; text-align: center;}
-	
+
 	li.comment div.comment-meta {display: block;}
 
 } /* End mobile landscape media query */
@@ -697,11 +654,6 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 
 @media only screen and (max-width: 361px) {
 
-	/* @TODO: Delete these debug styles before launching */
-	/*
-.column, .columns {outline: 1px solid yellow;}
-	.row {outline: 1px solid lightgrey;}
-*/
 
 
 } /* End mobile portrait media query */
@@ -737,6 +689,10 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
 .avoid-clicks {pointer-events: none;} /* Only supported in IE11+ */
 .allow-clicks {pointer-events: all;}
+
+@-ms-viewport{
+  width: device-width;
+}
 
 /* ==========================================================================
    Print styles

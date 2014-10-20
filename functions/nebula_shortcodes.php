@@ -45,8 +45,8 @@ if ( shortcode_exists( 'colgrid' ) ) {
 	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
 	add_shortcode('colgrid', 'colgrid_shortcode');
 }
-function colgrid_shortcode($atts, $content=''){	
-	extract( shortcode_atts( array('grid' => '', 'class' => '', 'style' => ''), $atts) );	
+function colgrid_shortcode($atts, $content=''){
+	extract( shortcode_atts( array('grid' => '', 'class' => '', 'style' => ''), $atts) );
 	$flags = get_flags($atts);
 	$grid = array_values($flags);
 	return '<section class="nebula-colgrid ' . $grid[0] . ' colgrid ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</section><!--/' . $grid[0] . ' colgrid-->';
@@ -59,7 +59,7 @@ if ( shortcode_exists( 'container' ) ) {
 	add_shortcode('gumby_container', 'container_shortcode');
 	add_shortcode('container', 'container_shortcode');
 }
-function container_shortcode($atts, $content=''){	
+function container_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
 	return '<div class="nebula-container container ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/container-->';
 } //end container_grid()
@@ -71,7 +71,7 @@ if ( shortcode_exists('row') ) {
 	add_shortcode('gumby_row', 'row_shortcode');
 	add_shortcode('row', 'row_shortcode');
 }
-function row_shortcode($atts, $content=''){	
+function row_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
 	$GLOBALS['col_counter'] = 0;
 	return '<div class="nebula-row row ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/row-->';
@@ -93,9 +93,9 @@ if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exis
 	add_shortcode('col', 'column_shortcode');
 	add_shortcode('cols', 'column_shortcode');
 }
-function column_shortcode($atts, $content=''){	
+function column_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('columns' => '', 'push' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts) );
-	
+
 	$flags = get_flags($atts);
 	if ( in_array('centered', $flags) ) {
 		$centered = 'centered';
@@ -111,21 +111,21 @@ function column_shortcode($atts, $content=''){
 	} else {
 		$GLOBALS['col_counter']++;
 	}
-	
+
 	if ( in_array('last', $flags) ) {
 		$GLOBALS['col_counter'] = 0;
 		$key = array_search('last', $flags);
 		unset($flags[$key]);
 	}
-	
+
 	$columns = array_values($flags);
-	
+
 	if ( $push ) {
 		$push = 'push_' . $push;
 	}
-	
+
 	return '<div class="nebula-columns ' . $columns[0] . ' columns ' . $push . ' ' . $centered . ' ' . $class . '" style="' . $style . ' ' . $first . '">' . do_shortcode($content) . '</div>';
-	
+
 } //end column_grid()
 
 
@@ -146,8 +146,8 @@ function divider_shortcode($atts){
 
 //Icon
 add_shortcode('icon', 'icon_shortcode');
-function icon_shortcode($atts){	
-	extract( shortcode_atts(array('type'=>'', 'color'=>'inherit', 'size'=>'inherit', 'class'=>''), $atts) );		
+function icon_shortcode($atts){
+	extract( shortcode_atts(array('type'=>'', 'color'=>'inherit', 'size'=>'inherit', 'class'=>''), $atts) );
 	if (strpos($type, 'fa-') !== false) {
 	    $fa = 'fa ';
 	}
@@ -161,14 +161,14 @@ function icon_shortcode($atts){
 add_shortcode('button', 'button_shortcode');
 function button_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('size' => 'medium', 'type' => 'primary', 'pretty' => false, 'metro' => false, 'icon' => false, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
-	
+
 	$flags = get_flags($atts);
 	if ( in_array('pretty', $flags) ) {
 		$btnstyle = ' pretty';
 	} elseif ( in_array('metro', $flags) ) {
 		$btnstyle = ' metro';
 	}
-	
+
 	if ( $icon ) {
 		$side = 'icon-' . $side;
 		if (strpos($icon, 'fa-') !== false) {
@@ -179,11 +179,11 @@ function button_shortcode($atts, $content=''){
 	} else {
 		$icon = '';
 	}
-	
+
 	if ( $target ) {
 		$target = ' target="' . $target . '"';
 	}
-	
+
 	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
 
 } //end button_shortcode()
@@ -193,7 +193,7 @@ function button_shortcode($atts, $content=''){
 add_shortcode('space', 'space_shortcode');
 add_shortcode('gap', 'space_shortcode');
 function space_shortcode($atts){
-	extract( shortcode_atts(array("height" => '20'), $atts) );  	
+	extract( shortcode_atts(array("height" => '20'), $atts) );
 	return '<div class="space" style=" height:' . $height . 'px;" ></div>';
 }
 
@@ -209,9 +209,9 @@ function clear_shortcode(){
 //Map
 add_shortcode('map', 'map_shortcode');
 function map_shortcode($atts){
-	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '250', "class" => '', "style" => ''), $atts) );  	
+	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '250', "class" => '', "style" => ''), $atts) );
 	if ( $key == '' ) {
-		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO: Replace with your own key to avoid designating a key every time.
+		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO "APIs" 3: Replace with your own key to avoid designating a key every time.
 	}
 	if ( $q != '' ) {
 		$q = str_replace(' ', '+', $q);
@@ -253,7 +253,7 @@ function map_shortcode($atts){
 //Vimeo
 add_shortcode('vimeo', 'vimeo_shortcode');
 function vimeo_shortcode($atts){
-	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );  
+	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );
 	$protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
@@ -267,7 +267,7 @@ function vimeo_shortcode($atts){
 //Youtube
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
-	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0), $atts) ); 
+	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0), $atts) );
 	$protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
@@ -282,7 +282,7 @@ function youtube_shortcode($atts){
 add_shortcode('code', 'code_shortcode');
 function code_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
-	$content = htmlspecialchars_decode($content);		
+	$content = htmlspecialchars_decode($content);
 	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . htmlentities($content) . '</code>';
 } //end code_shortcode()
 
@@ -291,35 +291,35 @@ function code_shortcode($atts, $content=''){
 add_shortcode('pre', 'pre_shortcode');
 $GLOBALS['pre'] = 0;
 function pre_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );  	
-	
-	if ( $GLOBALS['pre'] == 0 ) { //@TODO: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );
+
+	if ( $GLOBALS['pre'] == 0 ) { //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
 		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
-	
+
 	$flags = get_flags($atts);
 	if ( !in_array('br', $flags) ) {
 		$content = preg_replace('#<br\s*/?>#', '', $content);
 	}
-	
+
 	$content = htmlspecialchars_decode($content);
 	$content = htmlspecialchars($content);
-	
+
 	if ( $lang == '' && $language != '' ) {
-		$lang = $language;	
+		$lang = $language;
 	}
 	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
 	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
 	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
 	$vislang = str_replace($search, $replace, $lang);
-	
+
 	$return = '<span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
 	if ( $color != '' ) {
 		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
 	$return .= $style . '" >' . $content . '</pre>';
-	
+
 	return $return;
 } //end pre_shortcode()
 
@@ -327,31 +327,31 @@ function pre_shortcode($atts, $content=''){
 //Gist embedding
 add_shortcode('gist', 'gist_shortcode');
 function gist_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) ); 
-	
-	if ( $GLOBALS['pre'] == 0 ) { //@TODO: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) );
+
+	if ( $GLOBALS['pre'] == 0 ) { //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
 		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
-	
+
 	if ( $lang == '' && $language != '' ) {
-		$lang = $language;	
+		$lang = $language;
 	}
 	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
 	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
 	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
 	$vislang = str_replace($search, $replace, $lang);
-	
+
 	if ( $file ) {
 		$file = '?file=' . $file;
 	}
-	
+
 	$return = '<span class="nebula-gist nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><div class="nebula-code ' . $lang . ' ' . $class . '" style="';
 	if ( $color != '' ) {
 		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
 	$return .= $style . '" ><script type="text/javascript" src="'. $content . $file . '"></script></div>';
-	
+
 	return $return;
 } //end gist_shortcode()
 
@@ -359,8 +359,8 @@ function gist_shortcode($atts, $content=''){
 //Accordion
 add_shortcode('accordion', 'accordion_shortcode');
 function accordion_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
-	
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
+
 	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
 
 } //end accordion_shortcode()
@@ -369,8 +369,8 @@ function accordion_shortcode($atts, $content=''){
 //Bio
 add_shortcode('bio', 'bio_shortcode');
 function bio_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
-	
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
+
 	/*
 		Parameters to use:
 			Name
@@ -387,7 +387,7 @@ function bio_shortcode($atts, $content=''){
 			Photo path
 			Excerpt ($content)
 	*/
-	
+
 	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
 
 } //end bio_shortcode()
@@ -396,7 +396,7 @@ function bio_shortcode($atts, $content=''){
 //Tooltip
 add_shortcode('tooltip', 'tooltip_shortcode');
 function tooltip_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );  	
+	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
 	return '<div class="nebula-tooltip ' . $class . '" style="' . $style . '" >' . $content . '</code>';
 } //end tooltip_shortcode()
 
@@ -404,24 +404,24 @@ function tooltip_shortcode($atts, $content=''){
 //Slider
 add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic', 'status' => false, 'frame' => false, 'titles' => false), $atts) );  	
+	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic', 'status' => false, 'frame' => false, 'titles' => false), $atts) );
 
 	if ( !$id ) {
 		$id = rand(1, 10000);
 	}
-	
+
 	$flags = get_flags($atts);
 	if ( in_array('frame', $flags) ) {
 		$frame = 'nebulaframe';
 	}
-	
+
 	$slideCount = preg_match_all('[/slide]', $content);
 	if ( $slideCount == 0 ) {
-		$slideCount = 1;	
+		$slideCount = 1;
 	}
 	$slideConWidth = $slideCount*100 . '%';
 	$slideWidth = round(100/$slideCount, 3) . '%';
-	
+
 	$sliderCSS = '<style>#theslider-' . $id . ' {transition: all .5s ease 0s;}
 					#theslider-' . $id . ' .sliderwrap {position: relative; overflow: hidden;}';
 	if ( in_array('status', $flags) ) {
@@ -447,9 +447,9 @@ function slider_shortcode($atts, $content=''){
 	#theslider-' . $id . ' #slider-nav li:last-child,
 	#theslider-' . $id . ' #slider-nav li.last-child {margin-right: 0;}
 	#theslider-' . $id . ' #slider-nav li a {display: table-cell; vertical-align: middle; padding: 5px 0; position: relative; height: 100%; color: #fff;}';
-	
+
 	$titles = array();
-	$slideAttrs = attribute_map($content);	
+	$slideAttrs = attribute_map($content);
 	foreach ($slideAttrs as $key => $slideAttr) {
 		array_push($titles, $slideAttr['title']);
 		foreach ($slideAttr as $nested){
@@ -457,8 +457,8 @@ function slider_shortcode($atts, $content=''){
 				array_push($titles, $nested['title']);
 			}
 		}
-	}	
-		
+	}
+
 	$titleCount = count($titles);
 	$slideTitles = array();
 	if ( $titleCount != $slideCount ) {
@@ -480,22 +480,22 @@ function slider_shortcode($atts, $content=''){
 			$i++;
 		}
 	}
-	
+
 	$sliderCSS .= '#theslider-' . $id . ' #slider-nav li a:hover {color: #aaa;}
 	#theslider-' . $id . ' #slider-nav li.active a {color: #fff; font-weight: bold;}
 	#theslider-' . $id . ' #slider-nav li.active a:hover {color: #aaa;}</style>';
-	
+
 	$sliderHTML = '<div id="theslider-' . $id . '" class="container ' . $frame . '"><div class="row"><div class="sixteen columns sliderwrap">';
-				                
+
 	if ( in_array('status', $flags) ) {
 		$sliderHTML .= '<a href="#" class="status"><i class="fa fa-pause"></i> <span>Paused</span></a>';
-	}			                
-				                
+	}
+
 	$sliderHTML .= '<ul id="theslides">' . parse_shortcode_content(do_shortcode($content)) . '</ul>
 				<div class="slider-nav-con">
 					<ul id="slider-nav" class="clearfix">
 						<li><a class="slider-arrow slider-left " href="#"><i class="fa fa-chevron-left"></i></a></li>';
-	
+
 	$i = 0;
 	while ( $i < $slideCount ) {
 		if ( !$customTitles ) {
@@ -505,11 +505,11 @@ function slider_shortcode($atts, $content=''){
 		}
 		$i++;
 	}
-	
+
 	$sliderHTML .= '<li><a class="slider-arrow slider-right " href="#"><i class="fa fa-chevron-right"></i></a></li>
 					</ul>
 				</div></div></div></div>'; //Each through the li.slide-nav-item and pull the title from its corresponding slide by incrementing .eq()
-		
+
 	//<p> appearing here. apparently inside $sliderJS, but not attackable using str_replace()... ugh is that even causing the space?
 	//Happens even when minified to one line...
 	$sliderJS = '<script>jQuery(document).ready(function() {
@@ -523,7 +523,7 @@ function slider_shortcode($atts, $content=''){
 		$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(0).addClass("active").find("a").text("' . $slideTitles[0]['activeUTF'] . '");';
 	} else {
 		$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(0).addClass("active");';
-	}				
+	}
 	$sliderJS .= 'function autoSlider() {
 					        autoSlide = setInterval(function(){
 					            theIndex = jQuery("#theslides li.active").index();
@@ -548,7 +548,7 @@ function slider_shortcode($atts, $content=''){
 					        }
 					    });
 					    //Navigation
-					    jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item a").on("click", function(){       
+					    jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item a").on("click", function(){
 					        strictPause = 1;
 					        jQuery("#theslider-' . $id . ' .status i").removeClass("fa fa-pause").addClass("fa fa-stop");
 					        jQuery("#theslider-' . $id . ' .status").removeClass("pause").addClass("stop").find("span").text("Stopped");
@@ -597,7 +597,7 @@ function slider_shortcode($atts, $content=''){
 					        } else {
 					            newIndex = theIndex;
 					        }
-							nextHeight = jQuery("#theslider-' . $id . ' #theslides li").eq(newIndex).find("img").height();	
+							nextHeight = jQuery("#theslider-' . $id . ' #theslides li").eq(newIndex).find("img").height();
 							jQuery("#theslider-' . $id . ' #theslides li.active").removeClass("active");';
 						    if ( !$customTitles ) {
 								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item.active").removeClass("active").find("a").text("' . $slideTitles[0]['inactiveUTF'] . '");';
@@ -624,7 +624,7 @@ function slider_shortcode($atts, $content=''){
 				    jQuery(window).on("load", function() {
 					    jQuery("#theslider-' . $id . ' .slider-nav-con").css("bottom", "0");
 				    }); //End Window Load</script>';
-	
+
 	return $sliderCSS . $sliderHTML . $sliderJS;
 
 }
@@ -633,15 +633,15 @@ function slider_shortcode($atts, $content=''){
 //Slide
 add_shortcode('slide', 'slide_shortcode');
 function slide_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('title' => '', 'link' => '', 'target' => ''), $atts) );  	
-	
+	extract( shortcode_atts(array('title' => '', 'link' => '', 'target' => ''), $atts) );
+
 	if ( $title != '' ) {
 		$alt = 'alt="' . $title . '"';
 	} else {
 		$title = '';
 		$alt = '';
 	}
-	
+
 	if ( $link == '' ) {
 		$linkopen = '';
 		$linkclose = '';
@@ -653,9 +653,9 @@ function slide_shortcode($atts, $content=''){
 		}
 		$linkclose = '</a>';
 	}
-		
+
 	$target= '';
-	
+
 	return '<li class="nebula-slide clearfix">' . $linkopen . '<img src="' . $content . '" ' . $alt . '"/>' . $linkclose . '</li>'; //if title, echo it, else do not
 } //end slide_shortcode()
 
@@ -712,17 +712,17 @@ add_filter( 'the_content', 'shortcode_unautop',100 );
 //Add Nebula Toolbar to TinyMCE
 add_action('init', 'add_shortcode_button');
 function add_shortcode_button(){
-    if ( current_user_can('edit_posts') ||  current_user_can('edit_pages') ){  
-         add_filter('mce_external_plugins', 'add_shortcode_plugin');  
-         add_filter('mce_buttons_3', 'register_shortcode_button');  
-       }    
+    if ( current_user_can('edit_posts') ||  current_user_can('edit_pages') ){
+         add_filter('mce_external_plugins', 'add_shortcode_plugin');
+         add_filter('mce_buttons_3', 'register_shortcode_button');
+       }
 
 }
 function register_shortcode_button($buttons){
     array_push($buttons, "nebulaaccordion", "nebulabio", "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulaspace", "nebulaslider", "nebulatooltip", "nebulavideo");
     return $buttons;
 }
-function add_shortcode_plugin($plugin_array) {  
+function add_shortcode_plugin($plugin_array) {
 	$plugin_array['nebulatoolbar'] = get_template_directory_uri() . '/js/shortcodes.js';
-	return $plugin_array;  
+	return $plugin_array;
 }

@@ -16,16 +16,16 @@ function disable_pingbacks($methods) {
 };
 
 
-//@TODO: There is a bug where body classes are appearing when using ?debug
+//@TODO "Nebula" 0: There is a bug where body classes are appearing when using ?debug
 set_error_handler('nebula_error_handler');
 
 //Custom error handler
 function nebula_error_handler($error_level, $error_message, $error_file, $error_line, $error_contest) {
     /*
-    	@TODO: Parse errors cannot be caught with this function. In order to make it work, you must auto prepend a file using php.ini or .htaccess
+    	@TODO "Nebula" 0: Parse errors cannot be caught with this function. In order to make it work, you must auto prepend a file using php.ini or .htaccess
 		.htaccess method: php_value auto_prepend_file "./includes/shutdown_tracker.php" Note: this hasn't worked for me. Beyond that, no testing has been done.
 
-		@TODO: Need to come up with a way to print errors without triggering "Headers already sent" warnings!
+		@TODO "Nebula" 0: Need to come up with a way to print errors without triggering "Headers already sent" warnings!
     */
     $error = array(
         'type' => 'Unknown Error',
@@ -123,7 +123,7 @@ function gaBuildData($error) {
 		'cid' => $cid,
 		't' => 'exception',
 		'exd' => 'PHP ' . $error['type'] . ' [' . $error['level'] . ']', //Exception Description
-		'exf' => 0 //Fatal Exception? (Boolean) //@TODO: Pull this data from the $error array (if 'type' contains 'fatal'). Doesn't matter until the handler supports fatal errors.
+		'exf' => 0 //Fatal Exception? (Boolean) //@TODO "Nebula" 0: Pull this data from the $error array (if 'type' contains 'fatal'). Doesn't matter until the handler supports fatal errors.
 	);
 	gaSendData($data);
 }
@@ -211,7 +211,7 @@ function track_google_pagespeed_checks() {
 if ( nebula_settings_conditional('nebula_console_css') ) {
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card() {
-		//@TODO: if chrome or firefox... (find what other browsers support this)
+		//@TODO "Nebula" 0: if chrome or firefox... (find what other browsers support this)
 		echo "<script>
 			if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ) {
 			console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
@@ -223,7 +223,7 @@ if ( nebula_settings_conditional('nebula_console_css') ) {
 
 
 //Check for dev stylesheets
-if ( 1==1 ) { //@TODO: If Nebula Setting is enabled
+if ( nebula_settings_conditional('nebula_dev_stylesheets') ) {
 	add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
 	function combine_dev_stylesheets() {
 		$file_counter = 0;
@@ -242,7 +242,7 @@ if ( 1==1 ) { //@TODO: If Nebula Setting is enabled
 		}
 
 		if ( $file_counter > 0 ) {
-			wp_enqueue_style('nebula-dev_styles', get_template_directory() . '/css/dev.css?c=' . $file_counter, array('nebula-main'), null);
+			wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/css/dev.css?c=' . $file_counter, array('nebula-main'), null);
 		}
 	}
 }
@@ -485,10 +485,10 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 	add_action('init', 'disable_comments_admin_bar');
 	function disable_comments_admin_bar() {
 		if (is_admin_bar_showing()) {
-			//global $wp_admin_bar; //@TODO: NULL
+			//global $wp_admin_bar; //@TODO "Nebula" 0: NULL
 			//$wp_admin_bar->remove_menu('wp-logo');
 			//$wp_admin_bar->remove_menu('comments');
-			//remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO: Not working
+			//remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO "Nebula" 0: Not working
 			add_filter('admin_head', 'admin_bar_hide_comments');
 			function admin_bar_hide_comments(){
 				echo '<style>#wp-admin-bar-comments {display: none;}</style>'; //Temporary fix until PHP removal is possible.
@@ -574,7 +574,7 @@ function nebula_backup_contact_send() {
 
 //Display a random stock photo from unsplash.it
 function random_unsplash($width=800, $height=600) {
-	$skipList = array(312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
+	$skipList = array(35, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
 	$randID = random_number_between_but_not(0, 430, $skipList);
 	return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID . '" title="Unsplash ID #' . $randID;
 }
@@ -756,7 +756,7 @@ function nebula_manage($data) {
 	} elseif ( $data == 'info' ) {
 		if ( wp_attachment_is_image() ) {
 			$metadata = wp_get_attachment_metadata();
-			echo ''; //@TODO: In progress
+			echo ''; //@TODO "Nebula" 0: In progress
 		}
 	}
 }
@@ -967,6 +967,7 @@ remove_action('wp_head', 'start_post_rel_link', 10, 0);
 remove_action('wp_head', 'parent_post_rel_link', 10, 0);
 remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
 remove_action('wp_head', 'feed_links', 2);
+header(base64_decode('RGV2ZWxvcGVkIHVzaW5nIE5lYnVsYTogaHR0cDovL2dlYXJzaWRlLmNvbS9uZWJ1bGE='));
 
 //Add the Posts RSS Feed back in
 add_action('wp_head', 'addBackPostFeed');
@@ -996,7 +997,7 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 //PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
 //Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
 //Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
-require_once TEMPLATEPATH . '/includes/Mobile_Detect.php'; //@TODO: try changing TEMPLATEPATH to get_template_directory()
+require_once TEMPLATEPATH . '/includes/Mobile_Detect.php'; //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
 $GLOBALS["mobile_detect"] = new Mobile_Detect();
 
 add_filter('body_class', 'mobile_body_class');
@@ -1028,8 +1029,8 @@ add_filter('body_class', 'browser_body_class');
 function browser_body_class($classes) {
 	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
 
-	//$browser = get_browser(null, true); //@TODO: Find a server this works on and then wrap in if $browser, then echo the version number too
-	//@TODO: Also look into the function wp_check_browser_version().
+	//$browser = get_browser(null, true); //@TODO "Nebula" 0: Find a server this works on and then wrap in if $browser, then echo the version number too
+	//@TODO "Nebula" 0: Also look into the function wp_check_browser_version().
 
     if ( $is_lynx ) {
     	$classes[] = 'lynx';
@@ -1104,27 +1105,6 @@ function currently_open() {
 	return false;
 }
 
-
-//Combine development stylesheets into a single dev.css file
-function combine_dev_styles() {
-	/* @TODO:
-			- Look for .css files in /css/dev/
-			- For each of those .css files, open it, copy the text to memory (or a temp file)
-			- If the length or filesize or something is different than /css/dev.css then overwrite /css/dev.css
-
-			- Detect if /css/dev.css is not empty
-				- If true (not empty), wp_enqueue_style(); (Register during enqueue)
-				- add_action('wp_enqueue_scripts', 'enqueue_nebula_dev_styles');
-
-			- Create Nebula Settings for this to disable it.
-
-			- Consider security risks? Prevent all possible.
-				- If a non-css file is added to the directory.
-				- If another file is disguised as a css file (PHP)
-	*/
-}
-
-
 //Detect weather for Zip Code (using Yahoo! Weather)
 function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	if ( $zipcode && is_string($zipcode) && !ctype_digit($zipcode) ) { //ctype_alpha($zipcode)
@@ -1139,7 +1119,7 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 		$use_errors = libxml_use_internal_errors(true);
 		$xml = simplexml_load_file($url);
 		if ( !$xml ) {
-			$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors @TODO: Change hard-coded URL!
+			$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors @TODO "Nebula" 0: Change hard-coded URL!
 		}
 		libxml_clear_errors();
 		libxml_use_internal_errors($use_errors);
@@ -1169,36 +1149,34 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 }
 
 function vimeo_meta($videoID) {
-	global $vimeo_meta;
-	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO: Use WP_Filesystem methods instead of file_get_contents
-	$vimeo_meta['id'] = $videoID;
-	$vimeo_meta['title'] = $xml->video->title;
-	$vimeo_meta['safetitle'] = str_replace(" ", "-", $vimeo_meta['title']);
-	$vimeo_meta['description'] = $xml->video->description;
-	$vimeo_meta['upload_date'] = $xml->video->upload_date;
-	$vimeo_meta['thumbnail'] = $xml->video->thumbnail_large;
-	$vimeo_meta['url'] = $xml->video->url;
-	$vimeo_meta['user'] = $xml->video->user_name;
-	$vimeo_meta['seconds'] = strval($xml->video->duration);
-	$vimeo_meta['duration'] = intval(gmdate("i", $vimeo_meta['seconds'])) . gmdate(":s", $vimeo_meta['seconds']);
-	return $vimeo_meta;
+	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+	$GLOBALS['vimeo_meta']['id'] = $videoID;
+	$GLOBALS['vimeo_meta']['title'] = $xml->video->title;
+	$GLOBALS['vimeo_meta']['safetitle'] = str_replace(" ", "-", $GLOBALS['vimeo_meta']['title']);
+	$GLOBALS['vimeo_meta']['description'] = $xml->video->description;
+	$GLOBALS['vimeo_meta']['upload_date'] = $xml->video->upload_date;
+	$GLOBALS['vimeo_meta']['thumbnail'] = $xml->video->thumbnail_large;
+	$GLOBALS['vimeo_meta']['url'] = $xml->video->url;
+	$GLOBALS['vimeo_meta']['user'] = $xml->video->user_name;
+	$GLOBALS['vimeo_meta']['seconds'] = strval($xml->video->duration);
+	$GLOBALS['vimeo_meta']['duration'] = intval(gmdate("i", $GLOBALS['vimeo_meta']['seconds'])) . gmdate(":s", $GLOBALS['vimeo_meta']['seconds']);
+	return $GLOBALS['vimeo_meta'];
 }
 
 
 function youtube_meta($videoID) {
-	global $youtube_meta;
-	$xml = simplexml_load_string(file_get_contents("http://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO: Use WP_Filesystem methods instead of file_get_contents
-	$youtube_meta['origin'] = baseDomain();
-	$youtube_meta['id'] = $videoID;
-	$youtube_meta['title'] = $xml->title;
-	$youtube_meta['safetitle'] = str_replace(" ", "-", $youtube_meta['title']);
-	$youtube_meta['content'] = $xml->content;
-	$youtube_meta['href'] = $xml->link['href'];
-	$youtube_meta['author'] = $xml->author->name;
+	$xml = simplexml_load_string(file_get_contents("https://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+	$GLOBALS['youtube_meta']['origin'] = baseDomain();
+	$GLOBALS['youtube_meta']['id'] = $videoID;
+	$GLOBALS['youtube_meta']['title'] = $xml->title;
+	$GLOBALS['youtube_meta']['safetitle'] = str_replace(" ", "-", $GLOBALS['youtube_meta']['title']);
+	$GLOBALS['youtube_meta']['content'] = $xml->content;
+	$GLOBALS['youtube_meta']['href'] = $xml->link['href'];
+	$GLOBALS['youtube_meta']['author'] = $xml->author->name;
 	$temp = $xml->xpath('//yt:duration[@seconds]');
-    $youtube_meta['seconds'] = strval($temp[0]->attributes()->seconds);
-	$youtube_meta['duration'] = intval(gmdate("i", $youtube_meta['seconds'])) . gmdate(":s", $youtube_meta['seconds']);
-	return $youtube_meta;
+    $GLOBALS['youtube_meta']['seconds'] = strval($temp[0]->attributes()->seconds);
+	$GLOBALS['youtube_meta']['duration'] = intval(gmdate("i", $GLOBALS['youtube_meta']['seconds'])) . gmdate(":s", $GLOBALS['youtube_meta']['seconds']);
+	return $GLOBALS['youtube_meta'];
 }
 
 
@@ -1268,7 +1246,7 @@ function contains($str, array $arr) {
 //Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
 function random_number_between_but_not($min=null, $max=null, $butNot=null) {
     if ( $min > $max ) {
-        return 'Error: min is greater than max.'; //@TODO: If min is greater than max, swap the variables.
+        return 'Error: min is greater than max.'; //@TODO "Nebula" 0: If min is greater than max, swap the variables.
     }
     if ( gettype($butNot) == 'array' ) {
         foreach( $butNot as $key => $skip ){
@@ -1307,7 +1285,7 @@ function nebula_tel_link($phone, $postd=''){
 function nebula_sms_link($phone, $message=''){
 	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
 		$sep = ( $GLOBALS["mobile_detect"]->isiOS() ) ? '?' : ';';
-		//@TODO: Encode $message string here...?
+		//@TODO "Nebula" 0: Encode $message string here...?
 		return '<a class="nebula-sms-link" href="sms:' . nebula_phone_format($phone, 'tel') . $sep . 'body=' . $message . '">' . nebula_phone_format($phone, 'human') . '</a>';
 	} else {
 		return nebula_phone_format($phone, 'human');
@@ -1339,7 +1317,7 @@ function nebula_phone_format($number, $format=''){
 		} else {
 			return 'Error: Unknown format.';
 		}
-		//@TODO: Maybe any numbers after "," "p" ";" or "w" could be added to the human-readable in brackets, like: (315) 555-1346 [323]
+		//@TODO "Nebula" 0: Maybe any numbers after "," "p" ";" or "w" could be added to the human-readable in brackets, like: (315) 555-1346 [323]
 		//To do the above, set a remainder variable from above and add it to the return (if it exists). Maybe even add them to a span with a class so they can be hidden if undesired?
 		return $number;
 	} else {

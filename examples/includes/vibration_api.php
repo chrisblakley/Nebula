@@ -32,5 +32,5 @@
 	<h2>Vibration Pattern Tester</h2>
 	<p>Enter comma separated integers (in milliseconds) to test the vibration pattern.</p>
 	<input type="text" id="pattern" />
-	<input type="submit" value="Test Pattern" />
+	<input class="primary btn" type="submit" value="Test Pattern" style="display: inline-block; padding: 3px 10px !important;" />
 </form>

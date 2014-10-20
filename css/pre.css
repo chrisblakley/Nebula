@@ -55,15 +55,15 @@ pre.nebula-code.html,
 .nebula-code.codetitle.javascript,
 .nebula-code.codetitle.jquery {color: #f1bf26;}
 
-pre.nebula-pre.js,
-pre.nebula-pre.javascript,
-pre.nebula-pre.jquery,
+pre.nebula-code.js,
+pre.nebula-code.javascript,
+pre.nebula-code.jquery,
 .nebula-code.js .gist-file,
 .nebula-code.javascript .gist-file,
 .nebula-code.jquery .gist-file {border: 1px solid #f1bf26; border-left: 5px solid #f1bf26;}
-	.nebula-pre.js::selection,
-	.nebula-pre.javascript::selection,
-	.nebula-pre.jquery::selection {background: #fae9b6;}
+	.nebula-code.js::selection,
+	.nebula-code.javascript::selection,
+	.nebula-code.jquery::selection {background: #fae9b6;}
 
 
 /* PHP */

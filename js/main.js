@@ -91,7 +91,7 @@ jQuery(document).ready(function() {
 
 jQuery(window).on('load', function() {
 
-	//conditionalJSLoading();
+	detectIconFonts();
 
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
@@ -1338,6 +1338,9 @@ var waitForFinalEvent = (function () {
 //Conditional JS Library Loading
 //This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading() {
+
+	detectIconFonts();
+
 	//Only load Twitter if Twitter wrapper exists.
 	if ( jQuery('#twittercon').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
@@ -1390,6 +1393,24 @@ function conditionalJSLoading() {
 	}
 
 } //end conditionalJSLoading()
+
+
+//These detect Font Awesom and Entypo usage via classes. This will not detect usage with font-family CSS (only known detection method is resource-heavy).
+loadedFonts = [];
+loadedFonts['Entypo'] = 0;
+loadedFonts['FontAwesome'] = 1;
+function detectIconFonts(){
+	if ( jQuery('i.fa').is('*') && loadedFonts['FontAwesome'] == 0 ) {
+		Modernizr.load('//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css');
+		loadedFonts['FontAwesome'] = 1;
+	}
+
+	if ( jQuery('div[class^="icon-"], div[class*=" icon-"]').is('*') && loadedFonts['Entypo'] == 0 ) {
+		Modernizr.load(bloginfo['template_directory'] + '/css/entypo.css'); //Note this is supplemental to gumby.css
+		loadedFonts['Entypo'] = 1;
+	}
+}
+
 
 function dataTablesActions(){
 	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO: Something here is eating the first letter after a few have been typed... lol

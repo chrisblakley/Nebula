@@ -23,7 +23,7 @@
 			#start_button.active.hover,
 			#start_button.pending:hover,
 			#start_button.pending.hover {background: maroon;}
-			
+
 	#functionlist ul li {margin-bottom: 10px;}
 </style>
 
@@ -47,7 +47,7 @@
 
 <div id="functionlist">
 	<h4>Functions</h4>
-	
+
 	<ul style="font-size: 12px;">
 		<li>
 			<strong>"My name is ________"</strong><br/>
@@ -78,14 +78,14 @@
 <script>
 	jQuery(document).ready(function() {
 		jQuery('#speech-help').text('Click on the microphone icon and begin speaking.');
-		
+
 		var final_transcript = '';
 		var recognizing = false;
 		var ignore_onend;
 		var start_timestamp;
-		
+
 		window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-		
+
 		if ( window.SpeechRecognition === null ) {
 			noSpeechRecognition();
 		} else {
@@ -94,7 +94,7 @@
 			recognition.interimResults = true;
 			recognition.lang = 'en-US';
 			recognition.maxAlternatives = 1;
-			
+
 			recognition.onstart = function() {
 				recognizing = true;
 				//Animated start button icon to recording here
@@ -103,11 +103,11 @@
 				jQuery('#start_button_text').text(' Listening...');
 				jQuery('#start_button_icon').removeClass().addClass('fa fa-comment');
 			};
-			
+
 			recognition.onaudiostart = function(event) { console.log('onaudiostart'); } //When audio is being listened for...?
 			recognition.onsoundstart = function(event) { console.log('onsoundstart'); } //When a sound is detected
 			recognition.onspeechstart = function(event) { console.log('onspeechstart'); } //When human speech is detected
-			
+
 			recognition.onerror = function(event) {
 				if ( event.error == 'no-speech' ) {
 					//start_img.src = 'mic.gif';
@@ -118,7 +118,7 @@
 					ignore_onend = true;
 					nebula_event('Speech Recognition', 'Error', 'No speech was detected.');
 				}
-			
+
 				if ( event.error == 'audio-capture' ) {
 					//start_img.src = 'mic.gif';
 					jQuery('#speech-help').text('No microphone was found. Ensure that a microphone is installed and that microphone settings are configured correctly.');
@@ -128,7 +128,7 @@
 					ignore_onend = true;
 					nebula_event('Speech Recognition', 'Error', 'No microphone was found.');
 				}
-			
+
 				if ( event.error == 'not-allowed' ) {
 					if (event.timeStamp - start_timestamp < 100) {
 						jQuery('#speech-help').text('Permission to use microphone is blocked. To change, go to chrome://settings/contentExceptions#media-stream');
@@ -146,12 +146,12 @@
 					ignore_onend = true;
 				}
 			};
-			
+
 			recognition.onspeechend = function(event) { console.log('onspeechend'); } //When human speech has stopped
 			recognition.onsoundend = function(event) { console.log('onsoundend'); } //When sound has stopped
 			recognition.onaudioend = function(event) { console.log('onaudioend'); } //When audio is no longer being listened for...?
 			recognition.onnomatch = function(event) { console.log('onnomatch'); } // No idea...
-			
+
 			recognition.onresult = function(event) {
 				var interim_transcript = '';
 				for ( var i = event.resultIndex; i < event.results.length; ++i ) {
@@ -169,10 +169,10 @@
 				jQuery('#final_span').text(linebreak(final_transcript));
 				jQuery('#interim_span').text(linebreak(interim_transcript));
 			};
-			
+
 			recognition.onend = function() {
 				recognizing = false;
-				
+
 				if ( final_transcript ) {
 					if ( final_transcript.indexOf('*') > -1 ) {
 						nebula_event('Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
@@ -180,39 +180,39 @@
 						nebula_event('Speech Recognition', 'Transcript', '"' + final_transcript + '"');
 					}
 				}
-				
+
 				if ( ignore_onend ) {
 					return;
 				}
-				
+
 				resetStartButton();
 				jQuery('#speech-help').text('Click on the microphone icon and begin speaking.');
 			};
 		}
-		
+
 		function noSpeechRecognition() {
 			jQuery('#results, #startbuttoncon').hide();
 			jQuery('#speech-help').text('Speech detection is not supported in your browser.').css('color', 'red');
 			nebula_event('Speech Recognition', 'Not Supported');
 		}
-			
+
 		var two_line = /\n\n/g;
 		var one_line = /\n/g;
 		function linebreak(s) {
 			return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
 		}
-			
+
 		var first_char = /\S/;
 		function capitalize(s) {
 			return s.replace(first_char, function(m) { return m.toUpperCase(); });
 		}
-			
+
 		function startListening(event) {
 			if ( recognizing ) {
 				recognition.stop();
 				return;
 			}
-			
+
 			final_transcript = '';
 			recognition.start();
 			ignore_onend = false;
@@ -225,23 +225,23 @@
 			jQuery('#start_button_icon').removeClass().addClass('fa fa-external-link-square');
 			start_timestamp = event.timeStamp;
 		}
-		
+
 		function keyPhrases(transcript) {
 			transcript = transcript.toLowerCase();
 			speakerName = '';
-			
+
 			//"My Name is _______"
 			phraseMyNameIs = ['my name is'];
 			if ( checkAlternates(transcript, phraseMyNameIs) ) {
 				speakerName = transcript.substr( transcript.indexOf('my name is')+11, 25);
 				speakerName = speakerName.substr( 0, speakerName.indexOf(' ') );
 				speakerName = speakerName.charAt(0).toUpperCase() + speakerName.slice(1);
-				
+
 				if ( (speakerName == 'Jeff' || speakerName == 'Geoff') && clientinfo["remote_addr"] == '72.43.235.106' ) {
 					speakerName = 'Jef';
 				}
 			}
-			
+
 			//"I Love Nebula"
 			phraseILoveNebula = ['i love nebula', 'isle of nebula', 'i love allah', 'i love nutella', 'isle of nutella', 'isle of allah'];
 			if ( checkAlternates(transcript, phraseILoveNebula) ) {
@@ -250,13 +250,13 @@
 				} else {
 					jQuery('#ilovenebula').val('I love you too.');
 				}
-			}									
-			
+			}
+
 			//"Search for ________"
 			phraseSearchFor = ['search for'];
 			if ( checkAlternates(transcript, phraseSearchFor) ) {
 				searchQuery = transcript.substr( transcript.indexOf('search for ')+11, 99);
-				
+
 				jQuery('#speech-help').text('About to search. Say "Stop Listening" or click the button to cancel.');
 				setTimeout(function(){
 					if ( recognizing ) { //This allows the user to cancel navigation by stopping.
@@ -270,7 +270,7 @@
 					}
 				}, 3000);
 			}
-											
+
 			//"Driving Directions"
 			phraseDrivingDirections = ['driving directions'];
 			if ( checkAlternates(transcript, phraseDrivingDirections) ) {
@@ -283,12 +283,12 @@
 				nebula_event('Speech Recognition', 'Driving Directions');
 				window.location.href = 'https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>';
 			}
-			
+
 			//"Navigate to ________"
 			phraseNavigateTo = ['navigate to', 'browse to', 'go to'];
 			if ( checkAlternates(transcript, phraseNavigateTo) ) {
 				navigationRequest = transcript.substr( transcript.indexOf('navigate to ')+12, 99);
-				//@TODO: Need to set navigationRequest to alt phrases if user said "browser to" or "go to"
+				//@TODO "Nebula" 0: Need to set navigationRequest to alt phrases if user said "browser to" or "go to"
 				jQuery('#speech-help').text('About to navigate. Say "Stop Listening" or click the button to cancel.');
 				jQuery('#ajaxarea').fadeIn();
 				setTimeout(function(){
@@ -299,9 +299,9 @@
 						jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
 						ignore_onend = true;
 						recognition.stop();
-						
+
 						jQuery('#ajaxarea').css('border', '1px solid grey');
-						
+
 						jQuery.ajax({
 							type: "POST",
 							url: '<?php echo admin_url('admin-ajax.php'); ?>',
@@ -314,7 +314,7 @@
 							success: function(response){
 								jQuery('#ajaxnavtext').fadeIn();
 								jQuery('#ajaxarea').val(response).css('border', '1px solid green');
-								//@TODO: window location href here
+								//@TODO "Nebula" 0: window location href here
 								console.log(response);
 								nebula_event('Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
 							},
@@ -324,11 +324,11 @@
 							},
 							timeout: 60000
 						});
-						
+
 					}
 				}, 3000);
 			}
-			
+
 			//"Stop Listening" (should always be the last check)
 			phraseStopListening = ['stop listening', 'topless'];
 			if ( checkAlternates(transcript, phraseStopListening) ) {
@@ -341,8 +341,8 @@
 				recognition.stop();
 			}
 		}
-		
-		
+
+
 		function checkAlternates(transcript, altPhrases) {
 			var length = altPhrases.length;
 			while ( length-- ) {
@@ -352,22 +352,22 @@
 			}
 			return false;
 		}
-		
+
 		function resetStartButton() {
 			jQuery('#start_button').removeClass();
 			jQuery('#start_button_text').text(' Start');
 			jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
 		}
-			
+
 		jQuery('#start_button').on('click', function(event){
 			startListening(event);
 			return false;
 		});
 	});
-	
+
 	/*
-		@TODO:
+		@TODO "Nebula" 0:
 			- Recording button should pulsate color when recording.
 	*/
-	
-</script>	
+
+</script>

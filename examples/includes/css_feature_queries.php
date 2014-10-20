@@ -9,4 +9,4 @@
 	}
 </style>
 
-<div class="supportdiv">If this has a drop shadow, feature queries are supported!</div>
+<div class="supportdiv valign"><div>If this has a drop shadow, feature queries are supported!</div></div>

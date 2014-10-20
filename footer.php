@@ -4,9 +4,9 @@
  */
 ?>
 			<hr class="zero" style="margin-top: 30px;"/>
-			
+
 			<div class="footer">
-			
+
 				<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
 					<div class="row footerwidgets">
 						<?php if ( footerWidgetCounter() == 4 ) : ?>
@@ -64,10 +64,10 @@
 								<?php endif; ?>
 							</div><!--/columns-->
 						<?php endif; ?>
-						
+
 					</div><!--/row-->
 				<?php endif; ?>
-				
+
 					<div class="container footerlinks">
 						<?php if ( has_nav_menu('footer') || has_nav_menu('header') ) : ?>
 							<div class="row powerfootercon">
@@ -85,13 +85,13 @@
 							</div><!--/row-->
 						<?php endif; ?>
 					</div><!--/container-->
-					
+
 					<div class="container copyright">
 						<div class="row">
 							<div class="eleven columns ">
 								<p>
 									<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
-										<a href="https://www.google.com/maps/place/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); //@TODO: Add address here. ?>" target="_blank"><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); ?></a>
+										<a href="https://www.google.com/maps/place/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); //@TODO "Metadata" 3: Add address here. ?>" target="_blank"><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); ?></a>
 								</p>
 							</div><!--/columns-->
 							<div class="four columns push_one">
@@ -101,15 +101,15 @@
 							</div><!--/columns-->
 						</div><!--/row-->
 					</div><!--/container-->
-			
+
 			</div><!--/footer-->
-			
+
 			<?php wp_footer(); ?>
-			
+
 			<script>
 				//Pull query strings from URL
 				function getQueryStrings() {
-					queries = new Array(); 
+					queries = new Array();
 				    var q = document.URL.split('?')[1];
 				    if ( q != undefined ){
 				        q = q.split('&');
@@ -120,13 +120,13 @@
 				        }
 					}
 				}
-				
+
 				//Search query strings for the passed parameter
 				function GET(query) {
 					if ( typeof query === 'undefined' ) {
 						return queries;
 					}
-					
+
 					if ( typeof queries[query] !== 'undefined' ) {
 						return queries[query];
 					} else if ( queries.hasOwnProperty(query) ) {
@@ -135,7 +135,7 @@
 					return false;
 				}
 			</script>
-			
+
 			<script>
 				//Check for Youtube Videos
 				if ( jQuery('.youtubeplayer').length ) {
@@ -145,7 +145,7 @@
 					var firstScriptTag = document.getElementsByTagName('script')[0];
 					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 				}
-		
+
 				function onYouTubeIframeAPIReady(e) {
 					jQuery('iframe.youtubeplayer').each(function(i){
 						var youtubeiframeClass = jQuery(this).attr('id');
@@ -157,7 +157,7 @@
 						});
 					});
 				}
-		
+
 				//Track Youtube Video Events
 				var pauseFlag = false;
 				function onPlayerReady(e) {
@@ -179,7 +179,7 @@
 				    }
 				}
 			</script>
-			
+
 		</div><!--/fullbodywrapper-->
 	</body>
 </html>

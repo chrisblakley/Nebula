@@ -9,7 +9,7 @@
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
-		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
+		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
 			<title><?php wp_title('-', true, 'right'); ?></title>
 		<?php else : ?>
 			<title><?php wp_title('-', true, 'right'); ?></title>
@@ -25,8 +25,8 @@
 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
-		<link rel="apple-touch-startup-image" href="<?php echo get_template_directory_uri(); ?>/images/apple-startup.png"> <!-- @TODO: Create an apple startup screen 320x480px. -->
-		<link rel="apple-touch-icon" href="<?php echo get_template_directory_uri(); ?>/images/apple-touch-icon.png"> <!-- @TODO: Create an apple touch icon 129x129px. -->
+		<link rel="apple-touch-startup-image" href="<?php echo get_template_directory_uri(); ?>/images/apple-startup.png"> <!-- @TODO "Graphics" 1: Create an apple startup screen 320x480px. -->
+		<link rel="apple-touch-icon" href="<?php echo get_template_directory_uri(); ?>/images/apple-touch-icon.png"> <!-- @TODO "Graphics" 1: Create an apple touch icon 129x129px. -->
 
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
@@ -41,12 +41,12 @@
 			<link rel="canonical" href="<?php the_permalink(); ?>" />
 
 			<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
-			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO: Replace '' with comma-separated keywords. -->
-			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO: Replace '' with comma-separated news event keywords. -->
+			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated keywords. -->
+			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated news event keywords. -->
 			<meta name="author" content="<?php echo get_template_directory_uri(); ?>/humans.txt" />
 
 			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
-			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO: Verify admin email address. ?>" />
+			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO "Metadata" 2: Verify admin email address. ?>" />
 			<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
 			<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
 			<meta property="business:contact_data:street_address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
@@ -56,7 +56,7 @@
 			<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
 		<?php endif; ?>
 
-		<!-- @TODO: Create at least one OG Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template (Use PNG to avoid compression artifacts!). -->
+		<!-- @TODO "Graphics" 4: Create at least one OG Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template (Use PNG to avoid compression artifacts!). -->
 		<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb.png" />
     	<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb2.png" />
 
@@ -70,14 +70,14 @@
 		<?php endforeach; ?>
 
 		<!-- Facebook Metadata -->
-		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO: Enter the URL of the Facebook page here. ?>
-		<?php $GLOBALS['social']['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
-		<meta property="fb:app_id" content="<?php echo $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>" />
-		<meta property="fb:page_id" content="<?php echo $GLOBALS['social']['facebook_page_id'] = nebula_settings_conditional_text('nebula_facebook_page_id', ''); //@TODO: Enter Facebook Page ID. ?>" />
-		<meta property="fb:admins" content="<?php echo $GLOBALS['social']['facebook_admin_ids'] = nebula_settings_conditional_text('facebook_admin_ids', ''); //@TODO: Comma separated IDs of FB admins. Ex: "1234,2345,3456" ?>" />
+		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO "Social" 1: Enter the URL of the Facebook page here. ?>
+		<?php $GLOBALS['social']['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO "Social" 1: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
+		<meta property="fb:app_id" content="<?php echo $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO "Social" 1: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>" />
+		<meta property="fb:page_id" content="<?php echo $GLOBALS['social']['facebook_page_id'] = nebula_settings_conditional_text('nebula_facebook_page_id', ''); //@TODO "Social" 1: Enter Facebook Page ID. ?>" />
+		<meta property="fb:admins" content="<?php echo $GLOBALS['social']['facebook_admin_ids'] = nebula_settings_conditional_text('facebook_admin_ids', ''); //@TODO "Social" 1: Comma separated IDs of FB admins. Ex: "1234,2345,3456" ?>" />
 
 		<!-- Twitter Metadata -->
-		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO: Enter the URL of the Twitter page here. ?>
+		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO "Social" 1: Enter the URL of the Twitter page here. ?>
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content="<?php the_title(); ?>" />
 		<meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
@@ -86,15 +86,15 @@
 		<meta name="twitter:creator" content="" /> <!-- "@username" of content creator -->
 
 		<!-- Google+ Metadata -->
-		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO: Enter the URL of the Google+ page here. ?>
+		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO "Social" 1: Enter the URL of the Google+ page here. ?>
 		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
 		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 		<meta itemprop="image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb.png" />
 
 		<!-- Other Social Metadata -->
-		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO: Enter the URL of the LinkedIn page here. ?>
-		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO: Enter the URL of the Youtube page here. ?>
-		<?php $GLOBALS['social']['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO: Enter the URL of the Instagram page here. ?>
+		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO "Social" 1: Enter the URL of the LinkedIn page here. ?>
+		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO "Social" 1: Enter the URL of the Youtube page here. ?>
+		<?php $GLOBALS['social']['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO "Social" 1: Enter the URL of the Instagram page here. ?>
 
 		<!-- Local/Geolocation Metadata -->
 		<meta name="geo.placename" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- The city (and state if needed). Replace each respective '' with the appropriate value. -->
@@ -130,7 +130,7 @@
 				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //@TODO: Change Tracking ID in Nebula Settings or functions.php! ?>
+			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Settings or functions.php ?>
 			ga('send', 'pageview');
 		</script>
 
@@ -222,13 +222,13 @@
 						<nav id="mobilecontact" class="unhideonload hidden">
 							<ul>
 					    		<li>
-					    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO: Add phone number here (x2). ?></a>
+					    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO "Metadata" 1: Add phone number here (x2). ?></a>
 					    		</li>
 					    		<li>
-					    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO: Verify this email is the one that should appear (x2). ?></a>
+					    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO "Metadata" 1: Verify this email is the one that should appear (x2). ?></a>
 					    		</li>
 					    		<li>
-					    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO: Add address here (x2). ?></small></div></a>
+					    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO "Metadata" 1: Add address here (x2). ?></small></div></a>
 					    		</li>
 					    	</ul>
 						</nav><!--/mobilecontact-->
@@ -250,7 +250,7 @@
 			<div id="logonavcon" class="row">
 				<div class="six columns">
 					<?php
-						//@TODO: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
+						//@TODO "Graphics" 4: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
 						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
 					?>
 					<a class="logocon" href="<?php echo home_url(); ?>">

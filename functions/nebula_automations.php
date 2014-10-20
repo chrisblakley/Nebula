@@ -206,7 +206,7 @@ function mail_existing_settings(){
 	//Carbon copy the admin if reset was done by another user.
 	$admin_user_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email));
 	if ( $admin_user_email != $current_user->user_email ) {
-		$headers[] = 'Cc: ' . $admin_user_email; //@TODO: Email all admins?
+		$headers[] = 'Cc: ' . $admin_user_email; //@TODO "Nebula" 0: Email all admins?
 	}
 
 	$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');

@@ -14,11 +14,11 @@ if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ) {
 		wp_deregister_style('admin-bar');
 		wp_dequeue_script('admin-bar');
 	}
-	
+
 	add_action('init', 'admin_only_features');
 	function admin_only_features() {
 		remove_action('wp_footer', 'wp_admin_bar_render', 1000); //For the front-end
-			
+
 		//CSS override for the frontend
 		add_filter('wp_head','remove_admin_bar_style_frontend', 99);
 		function remove_admin_bar_style_frontend() {
@@ -108,7 +108,7 @@ if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 		//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
 		//global $wp_meta_boxes;
 		//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
-	    
+
 	    remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
 	    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
 	    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
@@ -126,11 +126,11 @@ function is_dev() {
 			return true;
 		}
 	}
-	
+
 	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
 	$current_user = wp_get_current_user();
 	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
-	
+
 	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
 	foreach ( $devEmails as $devEmail ) {
 		if ( trim($devEmail) == $current_user_domain ) {
@@ -142,24 +142,175 @@ function is_dev() {
 }
 
 
+//TODO Metabox
+//This metabox tracks TODO messages throughout development.
+//@TODO "Nebula" 0: I think this can be way more optimized. It also is dependent on JS to hide filenames w/ only 0 priority TODOs.
+if ( nebula_settings_conditional('nebula_todo_metabox') ) {
+
+	if ( is_dev() ) {
+		add_action('wp_dashboard_setup', 'todo_metabox');
+	}
+
+	function todo_metabox() {
+		global $wp_meta_boxes;
+		wp_add_dashboard_widget('todo_manager', '@TODO Manager', 'dashboard_todo_manager');
+	}
+
+	function dashboard_todo_manager() {
+
+		echo '<p class="todoresults_title"><strong>Active @TODO Comments</strong> <a class="todo_help_icon" href="#"><i class="fa fw fa-question-circle"></i> Syntax</a></p>';
+		echo '<div class="todo_help_con">
+			<p class="todo_help_desc">
+				@TODO "Category" Priority: Write your message here<br/>
+				Priority (0-5) and Category are optional. A priority of 0 will be hidden from this list. Or just write them like you normally would.<br/>
+				Ex: @TODO "Example" 4: Lorem ipsum dolor sit amet.
+			</p>
+		</div>';
+
+		echo '<div class="todo_results">';
+		$todo_last_filename = '';
+		$todo_dirpath = get_template_directory();
+		$todo_file_counter = 0;
+		$todo_instance_counter = 0;
+		foreach ( glob_r($todo_dirpath . '/*') as $todo_file ) {
+			$todo_counted = 0;
+			$todo_hidden = 0;
+			if ( is_file($todo_file) ) {
+			    if ( strpos(basename($todo_file), '@TODO') !== false ) {
+				    echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
+				    $todo_file_counter++;
+				    $todo_counted = 1;
+			    }
+
+			    $todo_skipExtensions = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'tiff', 'psd', 'ai', 'apng', 'bmp', 'otf', 'ttf', 'ogv', 'flv', 'fla', 'mpg', 'mpeg', 'avi', 'mov', 'woff', 'eot', 'mp3', 'mp4', 'wmv', 'wma', 'aiff', 'zip', 'zipx', 'rar', 'exe', 'dmg', 'swf', 'pdf', 'pdfx', 'pem');
+			    $todo_skipFilenames = array('README.md', 'nebula_admin_functions.php', 'error_log', 'Mobile_Detect.php', 'class-tgm-plugin-activation.php');
+
+			    if ( !contains(basename($todo_file), $todo_skipExtensions) && !contains(basename($todo_file), $todo_skipFilenames) ) {
+				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ) {
+						$todo_hidden = 0;
+
+				        if ( stripos($todo_line, '@TODO') !== false ) {
+				            $todo_actualLineNumber = $todo_lineNumber+1;
+
+							$the_full_todo = substr($todo_line, strpos($todo_line, "@TODO"));
+							$the_todo_meta = current(explode(":", $the_full_todo));
+
+							//Get the priority
+							preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
+							$todo_hidden = 0;
+							if ( $the_todo_ints[0][0] != '' ) {
+								switch ( true ) {
+									case ( $the_todo_ints[0][0] >= 5 ) :
+										$todo_hidden = 0;
+										$the_todo_icon_color = '#c52026';
+										break;
+									case ( $the_todo_ints[0][0] == 4 ) :
+										$todo_hidden = 0;
+										$the_todo_icon_color = '#f9c215';
+										break;
+									case ( $the_todo_ints[0][0] == 3 ) :
+										$todo_hidden = 0;
+										$the_todo_icon_color = '#efe241';
+										break;
+									case ( $the_todo_ints[0][0] == 2 ) :
+										$todo_hidden = 0;
+										$the_todo_icon_color = '#666';
+										break;
+									case ( $the_todo_ints[0][0] == 1 ) :
+										$todo_hidden = 0;
+										$the_todo_icon_color = '#ccc';
+										break;
+									case ( $the_todo_ints[0][0] == 0 ) :
+										$todo_hidden = 1;
+										$the_todo_icon_color = '#0098d7';
+										break;
+									default :
+										$todo_hidden = 0;
+										$the_todo_icon_color = '#aaa';
+										break;
+								}
+							} else {
+								$todo_hidden = 0;
+							}
+
+							if ( $todo_hidden == 1 ) {
+								$todo_hidden_style = 'style="display: none;"';
+								$todo_hidden_class = 'hidden_todo';
+							} else {
+								$todo_hidden_style = '';
+								$todo_hidden_class = '';
+							}
+
+							//Get the category
+							preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
+							if ( $the_todo_quote_check[0][0] != '' ) {
+								$the_todo_category = substr($the_todo_quote_check[0][0], 1, -1);
+								$the_todo_category_html = '<span class="todocategory" style="background: ' . $the_todo_icon_color . ';">' . $the_todo_category . '</span>';
+							} else {
+								$the_todo_quote_check = '';
+								$the_todo_category = '';
+								$the_todo_category_html = '';
+							}
+
+							//Get the message
+							$the_todo_message_full = substr($the_full_todo, strpos($the_full_todo, ":") + 1);
+							$end_todo_message_strings = array('-->', '?>', '*/');
+							$the_todo_message = explode($end_todo_message_strings[0], str_replace($end_todo_message_strings, $end_todo_message_strings[0], $the_todo_message_full));
+
+
+							$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
+							if ( $todo_last_filename != $todo_this_filename ) {
+								if ( $todo_last_filename != '' ) {
+									echo '</div><!--/todofilewrap-->';
+								}
+
+
+								echo '<div class="todofilewrap">';
+								echo '<p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
+							}
+
+							echo '<div class="linewrap ' . $todo_hidden_class . '" ' . $todo_hidden_style . '>
+									<p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . $todo_actualLineNumber . '</a> <span class="todomessage">' . $the_todo_message[0] . '</span></p>
+									<div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div>
+								</div>';
+
+							$todo_last_filename = $todo_this_filename;
+
+							$todo_instance_counter++;
+							if ( $todo_counted == 0 ) {
+								$todo_file_counter++;
+								$todo_counted = 1;
+							}
+				        }
+				    }
+			    }
+			}
+		}
+
+		echo '</div><!--/todofilewrap-->';
+		echo '</div><!--/todo_results-->';
+	}
+}
+
+
 //Custom PHG Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Settings).
 if ( nebula_settings_conditional('nebula_phg_metabox') ) {
-	
+
 	if ( is_dev() ) {
 		add_action('wp_dashboard_setup', 'phg_dev_metabox');
 	}
-	
+
 	function phg_dev_metabox() {
 		global $wp_meta_boxes;
-		wp_add_dashboard_widget('custom_help_widget', 'PHG Developer Info', 'custom_dashboard_help');
+		wp_add_dashboard_widget('phg_developer_info', 'PHG Developer Info', 'dashboard_developer_info');
 	}
-	function custom_dashboard_help() {
+	function dashboard_developer_info() {
 		//Get last modified filename and date
 		$dir = glob_r( get_template_directory() . '/*');
 		$last_date = 0;
 		$skip_files = array('dev.css');
-		
+
 		foreach($dir as $file) {
 			if( is_file($file) ) {
 				$mod_date = filemtime($file);
@@ -172,18 +323,18 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		$nebula_size = foldersize(get_template_directory());
 		$upload_dir = wp_upload_dir();
 		$uploads_size = foldersize($upload_dir['basedir']);
-		
+
 		$secureServer = '';
 		if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) {
 			$secureServer = '<small><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
 		}
-		
+
 		function top_domain_name($url){
 			$alldomains = explode(".", $url);
 			return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
 		}
 		$dnsrecord = ( function_exists('gethostname') ) ? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
-		
+
 		function initial_install_date(){
 			if ( get_option('nebula_initialized') != '' && (get_option('nebula_initialized') < getlastmod()) ) {
 				$install_date = '<strong>' . date('F j, Y', get_option('nebula_initialized')) . '</strong> <small>@</small> <strong>' . date('g:ia', get_option('nebula_initialized')) . '</strong> <small>(Nebula Init)</small>';
@@ -192,7 +343,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			}
 			return $install_date;
 		}
-		
+
 		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 		echo '<script id="testloadscript">
 				jQuery(window).on("load", function(){
@@ -207,7 +358,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 						stopTimer();
 					});
 				});
-				
+
 				function stopTimer(){
 				    var afterLoad = (new Date()).getTime();
 				    var result = (afterLoad - beforeLoad)/1000;
@@ -216,7 +367,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				    jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
 				}
 				</script>';
-				
+
 		echo '<ul class="serverdetections">';
 			if ( WP_DEBUG ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
@@ -234,9 +385,9 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
 		echo '</ul>';
-		
-		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br/>';		
-		
+
+		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br/>';
+
 		echo '<div class="search_results"></div>';
 	}
 }
@@ -249,7 +400,7 @@ function search_theme_files() {
 		echo '<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>';
 		die();
 	}
-	
+
 	if ( $_POST['data'][0]['directory'] == 'theme' ) {
 		$dirpath = get_template_directory();
 	} elseif ( $_POST['data'][0]['directory'] == 'plugins' ) {
@@ -261,9 +412,9 @@ function search_theme_files() {
 		echo '<p><strong>Error:</strong> Please specify a directory to search!</p>';
 		die();
 	}
-	
+
 	echo '<p class="resulttext">Search results for <strong>"' . $_POST['data'][0]['searchData'] . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br/>';
-	
+
 	$file_counter = 0;
 	$instance_counter = 0;
 	foreach ( glob_r($dirpath . '/*') as $file ) {
@@ -274,7 +425,7 @@ function search_theme_files() {
 			    $file_counter++;
 			    $counted = 1;
 		    }
-		    
+
 		    $skipExtensions = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'tiff', 'psd', 'ai', 'apng', 'bmp', 'otf', 'ttf', 'ogv', 'flv', 'fla', 'mpg', 'mpeg', 'avi', 'mov', 'woff', 'eot', 'mp3', 'mp4', 'wmv', 'wma', 'aiff', 'zip', 'zipx', 'rar', 'exe', 'dmg', 'swf', 'pdf', 'pdfx', 'pem');
 		    $skipFilenames = array('error_log');
 		    if ( !contains(basename($file), $skipExtensions) && !contains(basename($file), $skipFilenames) ) {
@@ -293,7 +444,7 @@ function search_theme_files() {
 			        }
 			    }
 		    }
-		}		
+		}
 	}
 	echo '<br/><p class="resulttext">Found ';
 	if ( $instance_counter ) {
@@ -309,7 +460,7 @@ function search_theme_files() {
 }
 
 
-//Only allow admins to modify Contact Forms //@TODO: Currently does not work because these constants are already defined!
+//Only allow admins to modify Contact Forms //@TODO "Nebula" 0: Currently does not work because these constants are already defined!
 //define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
 //define('WPCF7_ADMIN_READ_WRITE_CAPABILITY', 'manage_options');
 
@@ -347,16 +498,16 @@ function duplicate_post_as_draft(){
 	if (! ( isset( $_GET['post']) || isset( $_POST['post'])  || ( isset($_REQUEST['action']) && 'duplicate_post_as_draft' == $_REQUEST['action'] ) ) ) {
 		wp_die('No post to duplicate has been supplied!');
 	}
- 
+
 	//Get the original post id
 	$post_id = (isset($_GET['post']) ? $_GET['post'] : $_POST['post']);
 	//Get all the original post data
 	$post = get_post( $post_id );
- 
+
 	//Set post author (default by current user). For original author change to: $new_post_author = $post->post_author;
 	$current_user = wp_get_current_user();
 	$new_post_author = $current_user->ID;
- 
+
 	//If post data exists, create the post duplicate
 	if (isset( $post ) && $post != null) {
 		//New post data array
@@ -375,17 +526,17 @@ function duplicate_post_as_draft(){
 			'to_ping'        => $post->to_ping,
 			'menu_order'     => $post->menu_order
 		);
- 
+
 		//Insert the post by wp_insert_post() function
 		$new_post_id = wp_insert_post( $args );
- 
+
 		//Get all current post terms ad set them to the new post draft
 		$taxonomies = get_object_taxonomies($post->post_type); // returns array of taxonomy names for post type, ex array("category", "post_tag");
 		foreach ($taxonomies as $taxonomy) {
 			$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
 			wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
 		}
- 
+
 		//Duplicate all post meta
 		$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
 		if (count($post_meta_infos)!=0) {
@@ -398,7 +549,7 @@ function duplicate_post_as_draft(){
 			$sql_query.= implode(" UNION ALL ", $sql_query_sel);
 			$wpdb->query($sql_query);
 		}
- 
+
 		//Redirect to the edit post screen for the new draft
 		wp_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
 		exit;
@@ -406,7 +557,7 @@ function duplicate_post_as_draft(){
 		wp_die('Post creation failed, could not find original post: ' . $post_id);
 	}
 }
- 
+
 //Add the duplicate link to action list for post_row_actions (This works for custom post types too).
 //Additional post types with the following: add_filter('{post type name}_row_actions', 'rd_duplicate_post_link', 10, 2);
 add_filter( 'post_row_actions', 'rd_duplicate_post_link', 10, 2 );
@@ -442,7 +593,7 @@ add_editor_style('css/editor-style.css');
 add_action('admin_init', 'clear_all_w3_caches');
 function clear_all_w3_caches(){
 	include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-	if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_GET['activate']) && $_GET['activate'] == 'true' ) {		
+	if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_GET['activate']) && $_GET['activate'] == 'true' ) {
 		if ( function_exists('w3tc_pgcache_flush') ) {
 			w3tc_pgcache_flush();
 		}
@@ -456,9 +607,9 @@ function nebula_help_tabs() {
 	if ( $screen = get_current_screen() ) {
 		$help_tabs = $screen->get_help_tabs();
 		$screen->remove_help_tabs();
-		
-		$youarehere = '<i class="fa fa-arrow-circle-right" title="You are here."></i> '; //@TODO: Detect current page and place this variable accordingly.
-		
+
+		$youarehere = '<i class="fa fa-arrow-circle-right" title="You are here."></i> '; //@TODO "Nebula" 0: Detect current page and place this variable accordingly.
+
 		$screen->add_help_tab(array(
 			'id' => 'nebula_help',
 			'title' => 'Nebula',
@@ -469,7 +620,7 @@ function nebula_help_tabs() {
 				<p><strong>Shortcodes</strong> - Nebula help content coming soon.</p>
 			',
 		));
-		
+
 		if ( count($help_tabs) ) {
 			foreach ( $help_tabs as $help_tab ) {
 				$screen->add_help_tab($help_tab);
