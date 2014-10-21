@@ -162,8 +162,9 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 		echo '<div class="todo_help_con">
 			<p class="todo_help_desc">
 				@TODO "Category" Priority: Write your message here<br/>
-				Priority (0-5) and Category are optional. A priority of 0 will be hidden from this list. Or just write them like you normally would.<br/>
-				Ex: @TODO "Example" 4: Lorem ipsum dolor sit amet.
+				Priority (0 = Hidden, 5 = Important) and Category are optional.<br/>
+				Ex: @TODO "Example" 4: Lorem ipsum dolor sit amet.<br/>
+				<a class="togglehiddentodos" href="#">Toggle Hidden TODOs</a>
 			</p>
 		</div>';
 
@@ -202,19 +203,19 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 								switch ( true ) {
 									case ( $the_todo_ints[0][0] >= 5 ) :
 										$todo_hidden = 0;
-										$the_todo_icon_color = '#c52026';
+										$the_todo_icon_color = '#d92827';
 										break;
 									case ( $the_todo_ints[0][0] == 4 ) :
 										$todo_hidden = 0;
-										$the_todo_icon_color = '#f9c215';
+										$the_todo_icon_color = '#e38a2c';
 										break;
 									case ( $the_todo_ints[0][0] == 3 ) :
 										$todo_hidden = 0;
-										$the_todo_icon_color = '#efe241';
+										$the_todo_icon_color = '#dda65c';
 										break;
 									case ( $the_todo_ints[0][0] == 2 ) :
 										$todo_hidden = 0;
-										$the_todo_icon_color = '#666';
+										$the_todo_icon_color = '#d3bd9f';
 										break;
 									case ( $the_todo_ints[0][0] == 1 ) :
 										$todo_hidden = 0;
@@ -226,7 +227,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 										break;
 									default :
 										$todo_hidden = 0;
-										$the_todo_icon_color = '#aaa';
+										$the_todo_icon_color = '#999';
 										break;
 								}
 							} else {

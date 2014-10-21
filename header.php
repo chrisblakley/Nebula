@@ -6,7 +6,7 @@
 <!--[if IEMobile]><html <?php language_attributes(); ?> class="no-js ie iem7" dir="ltr"><![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
 	<head>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
@@ -42,7 +42,7 @@
 
 			<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated keywords. -->
-			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated news event keywords. -->
+			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated news event keywords. --> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." -->
 			<meta name="author" content="<?php echo get_template_directory_uri(); ?>/humans.txt" />
 
 			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
@@ -85,13 +85,8 @@
 		<meta name="twitter:site" content="" /> <!-- "@username" of website -->
 		<meta name="twitter:creator" content="" /> <!-- "@username" of content creator -->
 
-		<!-- Google+ Metadata -->
-		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO "Social" 1: Enter the URL of the Google+ page here. ?>
-		<meta itemprop="name" content="<?php bloginfo('name'); ?>" />
-		<meta itemprop="description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta itemprop="image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb.png" />
-
 		<!-- Other Social Metadata -->
+		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO "Social" 1: Enter the URL of the Google+ page here. ?>
 		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO "Social" 1: Enter the URL of the LinkedIn page here. ?>
 		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO "Social" 1: Enter the URL of the Youtube page here. ?>
 		<?php $GLOBALS['social']['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO "Social" 1: Enter the URL of the Instagram page here. ?>
@@ -106,7 +101,7 @@
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
-		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>">
+		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>"> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword msapplication-notification is not registered." -->
 		<meta name="msapplication-TileColor" content="#ffffff" />
 		<meta name="msapplication-square70x70logo" content="<?php echo get_template_directory_uri(); ?>/images/tiny.png" /><!-- 70x70px -->
 		<meta name="msapplication-square150x150logo" content="<?php echo get_template_directory_uri(); ?>/images/square.png" /><!-- 150x150px -->
@@ -200,7 +195,7 @@
 			<div id="fb-root"></div>
 
 			<noscript>
-				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&p=<?php echo get_page_uri(); ?>&t=<?php wp_title('-', true, 'right'); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo get_page_uri(); ?>&amp;t=<?php urlencode(get_the_title()); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
 			</noscript>
 
 			<div id="topbarcon">
@@ -221,15 +216,28 @@
 						<a class="alignright" href="#mobilecontact"><i class="fa fa-users"></i></a>
 						<nav id="mobilecontact" class="unhideonload hidden">
 							<ul>
+
+					    		<?php $nebula_phone_number = nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO "Metadata" 1: Add phone number here. ?>
+					    		<?php if ( $nebula_phone_number ) : ?>
+						    		<li>
+						    			<a href="tel:<?php echo nebula_phone_format($nebula_phone_number, 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo $nebula_phone_number; ?></a>
+						    		</li>
+					    		<?php endif; ?>
+
+
+								<?php $nebula_admin_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO "Metadata" 1: Verify this email is the one that should appear. ?>
 					    		<li>
-					    			<a href="tel:<?php echo nebula_phone_format(nebula_settings_conditional_text('nebula_phone_number', ''), 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO "Metadata" 1: Add phone number here (x2). ?></a>
+					    			<a href="mailto:<?php echo $nebula_admin_email; ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo $nebula_admin_email; ?></a>
 					    		</li>
-					    		<li>
-					    			<a href="mailto:<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO "Metadata" 1: Verify this email is the one that should appear (x2). ?></a>
-					    		</li>
-					    		<li>
-					    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO "Metadata" 1: Add address here (x2). ?></small></div></a>
-					    		</li>
+
+
+								<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); //@TODO "Metadata" 1: Add address here. ?>
+					    		<?php if ( $nebula_full_address ) : ?>
+						    		<li>
+						    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo $nebula_full_address; ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo $nebula_full_address; ?></small></div></a>
+						    		</li>
+								<?php endif; ?>
+
 					    	</ul>
 						</nav><!--/mobilecontact-->
 

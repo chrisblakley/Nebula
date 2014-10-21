@@ -56,7 +56,7 @@ th#id {width: 50px;}
 	.wp-admin .search_results.done {max-height: 500px; opacity: 1;}
 
 .wp-admin .resulttext {font-size: 10px; margin: 0;}
-	div.precon {display: none;}
+	div.precon {display: none; resize: none;}
 		.wp-admin pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 
 .linenumber {font-weight: bold;}
@@ -74,6 +74,8 @@ th#id {width: 50px;}
 				.todocategory i {color: #ccc;}
 		.hidden_todo,
 		.hidden_file {display: none;}
+			.hidden_todo.show-hidden-todos,
+			.hidden_file.show-hidden-todos {display: block !important;}
 
 
 

@@ -28,11 +28,15 @@ get_header(); ?>
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 				<div class="entry-content">
 					<?php the_content(); ?>
-					
+
 					<?php if ( current_user_can('manage_options') ) : ?>
-						<hr/>
-						<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-						<hr/>
+						<div class="container entry-manage">
+							<div class="row">
+								<hr/>
+								<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+								<hr/>
+							</div>
+						</div>
 					<?php endif; ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->

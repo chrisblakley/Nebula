@@ -157,6 +157,11 @@ jQuery(document).ready(function() {
 			jQuery(this).addClass('hidden_file').css('display', 'none');
 		}
 	});
+	
+	jQuery('.togglehiddentodos').on('click', function(){
+		jQuery('.hidden_todo, .hidden_file').toggleClass('show-hidden-todos');
+		return false;
+	});
 
 
 }); //End Document Ready

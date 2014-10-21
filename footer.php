@@ -91,12 +91,13 @@
 							<div class="eleven columns ">
 								<p>
 									<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
-										<a href="https://www.google.com/maps/place/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); //@TODO "Metadata" 3: Add address here. ?>" target="_blank"><?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); ?></a>
+									<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); //@TODO "Metadata" 3: Add address here. ?>
+									<a href="https://www.google.com/maps/place/<?php echo $nebula_full_address; ?>" target="_blank"><?php echo $nebula_full_address; ?></a>
 								</p>
 							</div><!--/columns-->
 							<div class="four columns push_one">
 								<form class="search align-right" method="get" action="<?php echo home_url('/'); ?>">
-									<input class="nebula-search open input search" type="search" name="s" placeholder="Search" x-webkit-speech/>
+									<input class="nebula-search open input search" type="search" name="s" placeholder="Search" />
 								</form>
 							</div><!--/columns-->
 						</div><!--/row-->
