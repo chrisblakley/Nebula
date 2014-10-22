@@ -15,7 +15,7 @@
 				dir: "ltr",
 				lang: "en-US",
 				body: "This is a fully customized notification with callback functions!",
-				icon: bloginfo['template_directory'] + "/images/og-thumb2.png"
+				icon: bloginfo['template_directory'] + "/images/meta/og-thumb2.png"
 			}
 			desktopNotification("Fully Customized Notification", message, clickNotify, closeNotify, showNotify, errorNotify);
 

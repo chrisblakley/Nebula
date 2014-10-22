@@ -17,6 +17,9 @@
 
 		<meta name="HandheldFriendly" content="True">
 		<meta name="MobileOptimized" content="320">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
 
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
@@ -25,8 +28,7 @@
 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
-		<link rel="apple-touch-startup-image" href="<?php echo get_template_directory_uri(); ?>/images/apple-startup.png"> <!-- @TODO "Graphics" 1: Create an apple startup screen 320x480px. -->
-		<link rel="apple-touch-icon" href="<?php echo get_template_directory_uri(); ?>/images/apple-touch-icon.png"> <!-- @TODO "Graphics" 1: Create an apple touch icon 129x129px. -->
+		<?php include_once('includes/metagraphics.php'); ?>
 
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
@@ -56,10 +58,6 @@
 			<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
 		<?php endif; ?>
 
-		<!-- @TODO "Graphics" 4: Create at least one OG Thumbnail. Minimum Size: 560x560px with a 246px tall safezone in the center. Use og-temp.png as a template (Use PNG to avoid compression artifacts!). -->
-		<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb.png" />
-    	<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb2.png" />
-
 		<?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Settings. ?>
 		<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ) : ?>
 			<?php if ( get_option('nebula_business_hours_' . $weekday . '_enabled') && get_option('nebula_business_hours_' . $weekday . '_open') != '' && get_option('nebula_business_hours_' . $weekday . '_close') != '' ) : ?>
@@ -77,11 +75,11 @@
 		<meta property="fb:admins" content="<?php echo $GLOBALS['social']['facebook_admin_ids'] = nebula_settings_conditional_text('facebook_admin_ids', ''); //@TODO "Social" 1: Comma separated IDs of FB admins. Ex: "1234,2345,3456" ?>" />
 
 		<!-- Twitter Metadata -->
+		<?php //twitter:image is located in includes/metagraphics.php ?>
 		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO "Social" 1: Enter the URL of the Twitter page here. ?>
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content="<?php the_title(); ?>" />
 		<meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta name="twitter:image" content="<?php echo get_template_directory_uri(); ?>/images/og-thumb.png" />
 		<meta name="twitter:site" content="" /> <!-- "@username" of website -->
 		<meta name="twitter:creator" content="" /> <!-- "@username" of content creator -->
 
@@ -102,11 +100,6 @@
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
 		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>"> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword msapplication-notification is not registered." -->
-		<meta name="msapplication-TileColor" content="#ffffff" />
-		<meta name="msapplication-square70x70logo" content="<?php echo get_template_directory_uri(); ?>/images/tiny.png" /><!-- 70x70px -->
-		<meta name="msapplication-square150x150logo" content="<?php echo get_template_directory_uri(); ?>/images/square.png" /><!-- 150x150px -->
-		<meta name="msapplication-wide310x150logo" content="<?php echo get_template_directory_uri(); ?>/images/wide.png" /><!-- 310x150px -->
-		<meta name="msapplication-square310x310logo" content="<?php echo get_template_directory_uri(); ?>/images/large.png" /><!-- 310x310px -->
 
 		<script>
 			social = []; //Not localized with WP because needs to be able to be modified in header.php if desired.

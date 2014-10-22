@@ -247,14 +247,10 @@ if ( nebula_settings_conditional('nebula_dev_stylesheets') ) {
 	}
 }
 
-//Pull favicon from the theme folder (First is for Frontend, second is for Admin; default is same for both)
-add_action('wp_head', 'theme_favicon');
-function theme_favicon() {
-	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
-}
+//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
 add_action('admin_head', 'admin_favicon');
 function admin_favicon() {
-	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/favicon.ico" />';
+	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico" />';
 }
 
 
