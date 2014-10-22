@@ -231,10 +231,10 @@
 					    		</li>
 
 
-								<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); //@TODO "Metadata" 1: Add address here. ?>
+								<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO "Metadata" 1: Add address here. ?>
 					    		<?php if ( $nebula_full_address ) : ?>
 						    		<li>
-						    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo $nebula_full_address; ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo $nebula_full_address; ?></small></div></a>
+						    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo $nebula_full_address; ?></small></div></a>
 						    		</li>
 								<?php endif; ?>
 

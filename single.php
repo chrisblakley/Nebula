@@ -18,21 +18,21 @@ get_header(); ?>
 </div><!--/row-->
 
 <div class="row">
-	
-	<div class="eleven columns">		
+
+	<div class="eleven columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<h1 class="entry-title"><?php the_title(); ?></h1>
-				
+
 				<div class="entry-meta">
 					<hr/>
 		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
 		        	<hr/>
 		        </div>
-				
+
 				<div class="entry-content">
 					<?php the_content(); ?>
-					
+
 					<?php if ( current_user_can('manage_options') ) : ?>
 						<div class="container entry-manage">
 							<div class="row">
@@ -44,16 +44,16 @@ get_header(); ?>
 					<?php endif; ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
-			
-			<?php get_template_part('comments'); //@TODO: Either wrap this in a div with an ID (for scroll to), or put that div w/ ID inside the template_part this is calling. Probably the latter for less breakage. ?>
-			
+
+			<?php get_template_part('comments'); ?>
+
 		<?php endwhile; ?>
 	</div><!--/columns-->
-	
+
 	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
-	
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

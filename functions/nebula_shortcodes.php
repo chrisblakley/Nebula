@@ -404,230 +404,70 @@ function tooltip_shortcode($atts, $content=''){
 //Slider
 add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '5000', 'speed' => '1000', 'easing' => 'easeInOutCubic', 'status' => false, 'frame' => false, 'titles' => false), $atts) );
-
+	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '8000', 'speed' => '1000', 'frame' => false, 'titles' => false), $atts) );
+	
 	if ( !$id ) {
-		$id = rand(1, 10000);
+		$id = 'nebula-slider-' . rand(1, 10000);
+	} elseif ( strlen($id) > 0 && ctype_digit(substr($id, 0, 1)) ) {
+		$id = 'nebula-slider-' . $id;
 	}
-
+	
+	$return = '<div id="' . $id . '" class="nebula-slider-con"><ul class="bxslider ' . $id . '" style="padding-left: 0;">';
+	$return .= parse_shortcode_content(do_shortcode($content));
+	$return .= '</ul></div><!--/nebula-shortcode-slider-con-->';
+	
 	$flags = get_flags($atts);
-	if ( in_array('frame', $flags) ) {
-		$frame = 'nebulaframe';
-	}
-
-	$slideCount = preg_match_all('[/slide]', $content);
-	if ( $slideCount == 0 ) {
-		$slideCount = 1;
-	}
-	$slideConWidth = $slideCount*100 . '%';
-	$slideWidth = round(100/$slideCount, 3) . '%';
-
-	$sliderCSS = '<style>#theslider-' . $id . ' {transition: all .5s ease 0s;}
-					#theslider-' . $id . ' .sliderwrap {position: relative; overflow: hidden;}';
-	if ( in_array('status', $flags) ) {
-		$sliderCSS .= '#theslider-' . $id . ' .status {position: absolute; display: block; width: 100px; top: 5px; right: 5px; background: rgba(0,0,0,0.4); text-align: center; color: #fff; text-decoration: none; border-radius: 25px; z-index: 1500; cursor: default; opacity: 0; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
-		.no-js #theslider-' . $id . ' .status {display: none;}
-		#theslider-' . $id . ' .status.pause {opacity: 1; pointer-events: none;}
-		#theslider-' . $id . ':hover .status.stop {opacity: 1;}
-		#theslider-' . $id . ' .status.stop:hover,
-		#theslider-' . $id . ' .status.stop.hover {cursor: pointer; background: rgba(0,0,0,0.7);}';
-	} else {
-		$sliderCSS .= '#theslider-' . $id . ' .status {display: none !important;}';
-	}
-	$sliderCSS .= '#theslider-' . $id . ' .slider-arrow {position: relative; display: inline-block; color: #fff;}
-	.no-js #theslider-' . $id . ' .slider-arrow {display: none;}
-	#theslider-' . $id . ' ul#theslides {position: relative; overflow: hidden; margin: 0; padding: 0;}
-	#theslider-' . $id . ' ul#theslides li {position: absolute; top: 0; left: 0; width: 100%; height: auto; margin-bottom: -7px; padding: 0; opacity: 0; z-index: 0; transition: all 1s ease 0s;}
-	#theslider-' . $id . ' ul#theslides li a {display: block; width: 100%; height: 100%;}
-	#theslider-' . $id . ' ul#theslides li.active {position: relative; opacity: 1; z-index: 500;}
-	.no-js #theslider-' . $id . ' .slider-nav-con {display: none;}
-	#theslider-' . $id . ' .slider-nav-con {position: absolute; bottom: -50px; width: 100%; background: rgba(0,0,0,0.7); z-index: 1000; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
-	#theslider-' . $id . ' #slider-nav {position: relative; display: table; margin: 0 auto; padding: 0; list-style: none;}
-	#theslider-' . $id . ' #slider-nav li {display: inline-block; margin-right: 15px; padding: 0; text-align: center; vertical-align: middle;}
-	#theslider-' . $id . ' #slider-nav li:last-child,
-	#theslider-' . $id . ' #slider-nav li.last-child {margin-right: 0;}
-	#theslider-' . $id . ' #slider-nav li a {display: table-cell; vertical-align: middle; padding: 5px 0; position: relative; height: 100%; color: #fff;}';
-
-	$titles = array();
-	$slideAttrs = attribute_map($content);
-	foreach ($slideAttrs as $key => $slideAttr) {
-		array_push($titles, $slideAttr['title']);
-		foreach ($slideAttr as $nested){
-			if (isset($nested['title'])) {
-				array_push($titles, $nested['title']);
-			}
+	
+	if ( !in_array('frame', $flags) ) {
+		$return .= '<style>
+			#' . $id . ' .bx-wrapper .bx-viewport {box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none; border: none; background: none;}
+		</style>';
+		if ( $mode == 'fade' ) {
+			$return .= '<style>
+				#' . $id . ' .bx-wrapper .bx-viewport .nebula-slide {width: auto !important;}
+			</style>';
 		}
 	}
-
-	$titleCount = count($titles);
-	$slideTitles = array();
-	if ( $titleCount != $slideCount ) {
-		$slideTitles[0]['activeUTF'] = '\u25CF';
-		$slideTitles[0]['inactiveUTF'] = '\u25CB';
-		$slideTitles[0]['activeHTML'] = '&#9679;';
-		$slideTitles[0]['inactiveHTML'] = '&#9675;';
-		$sliderCSS .= '#theslider-' . $id . ' #slider-nav li {margin-right: 10px;}
-		#theslider-' . $id . ' #slider-nav li a.slider-arrow i {margin: 0 5px;}
-		#theslider-' . $id . ' #slider-nav li.slide-nav-item a {font-size: 24px;}';
+	
+	if ( in_array('titles', $flags) ) {
+		$titles= 'true';
 	} else {
-		$customTitles = 1;
-		$i = 0;
-		while ( $i < $slideCount ) {
-			$slideTitles[$i]['activeUTF'] = $titles[$i];
-			$slideTitles[$i]['inactiveUTF'] = $titles[$i];
-			$slideTitles[$i]['activeHTML'] = $titles[$i];
-			$slideTitles[$i]['inactiveHTML'] = $titles[$i];
-			$i++;
-		}
+		$titles= 'false';
 	}
-
-	$sliderCSS .= '#theslider-' . $id . ' #slider-nav li a:hover {color: #aaa;}
-	#theslider-' . $id . ' #slider-nav li.active a {color: #fff; font-weight: bold;}
-	#theslider-' . $id . ' #slider-nav li.active a:hover {color: #aaa;}</style>';
-
-	$sliderHTML = '<div id="theslider-' . $id . '" class="container ' . $frame . '"><div class="row"><div class="sixteen columns sliderwrap">';
-
-	if ( in_array('status', $flags) ) {
-		$sliderHTML .= '<a href="#" class="status"><i class="fa fa-pause"></i> <span>Paused</span></a>';
-	}
-
-	$sliderHTML .= '<ul id="theslides">' . parse_shortcode_content(do_shortcode($content)) . '</ul>
-				<div class="slider-nav-con">
-					<ul id="slider-nav" class="clearfix">
-						<li><a class="slider-arrow slider-left " href="#"><i class="fa fa-chevron-left"></i></a></li>';
-
-	$i = 0;
-	while ( $i < $slideCount ) {
-		if ( !$customTitles ) {
-			$sliderHTML .= '<li class="slide-nav-item"><a href="#">' . $slideTitles[0]['inactiveHTML'] . '</a></li>';
+	
+	if ( !in_array('controls', $flags) ) {
+		$controls = 'false';
+		$auto = 'true';
+	} else {
+		$controls = 'true';
+		if ( in_array('delay', $flags) ) {
+			$auto = 'true';
 		} else {
-			$sliderHTML .= '<li class="slide-nav-item"><a href="#">' . $slideTitles[$i]['inactiveHTML'] . '</a></li>';
+			$auto = 'false';
 		}
-		$i++;
 	}
-
-	$sliderHTML .= '<li><a class="slider-arrow slider-right " href="#"><i class="fa fa-chevron-right"></i></a></li>
-					</ul>
-				</div></div></div></div>'; //Each through the li.slide-nav-item and pull the title from its corresponding slide by incrementing .eq()
-
-	//<p> appearing here. apparently inside $sliderJS, but not attackable using str_replace()... ugh is that even causing the space?
-	//Happens even when minified to one line...
-	$sliderJS = '<script>jQuery(document).ready(function() {
-						jQuery("#theslider-' . $id . ' #theslides li.slide-nav-item").each(function(i){
-							jQuery(this).find("a").text(i);
-						});
-						strictPause = 0;
-						autoSlider();
-						jQuery("#theslider-' . $id . ' #theslides li").eq(0).addClass("active");';
-	if ( !$customTitles ) {
-		$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(0).addClass("active").find("a").text("' . $slideTitles[0]['activeUTF'] . '");';
-	} else {
-		$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(0).addClass("active");';
-	}
-	$sliderJS .= 'function autoSlider() {
-					        autoSlide = setInterval(function(){
-					            theIndex = jQuery("#theslides li.active").index();
-					            if ( strictPause == 0 ) {
-					                activateSlider(theIndex, "next");
-					            }
-					        }, ' . $delay . ');
-					    } //End autoSlider()
-						jQuery("#theslider-' . $id . '").hover(function(){
-					        clearInterval(autoSlide);
-					        jQuery("#theslider-' . $id . ' #slider-nav").addClass("pause");
-					        if ( !jQuery("#theslider-' . $id . ' .status").hasClass("stop") ) {
-					        	jQuery("#theslider-' . $id . ' .status i").removeClass("fa fa-stop fa fa-play").addClass("fa fa-pause");
-								jQuery("#theslider-' . $id . ' .status span").text("Paused");
-						        jQuery("#theslider-' . $id . ' .status").addClass("pause");
-					        }
-					    }, function(){
-					        if ( strictPause == 0 ) {
-					            autoSlider();
-					            jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause");
-					            jQuery("#theslider-' . $id . ' .status").removeClass("pause");
-					        }
-					    });
-					    //Navigation
-					    jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item a").on("click", function(){
-					        strictPause = 1;
-					        jQuery("#theslider-' . $id . ' .status i").removeClass("fa fa-pause").addClass("fa fa-stop");
-					        jQuery("#theslider-' . $id . ' .status").removeClass("pause").addClass("stop").find("span").text("Stopped");
-					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
-					        theIndex = jQuery(this).parent().index();
-					        activateSlider(theIndex-1, "goto");
-					        return false;
-					    });
-						//Status
-						jQuery("#theslider-' . $id . '").on("mouseenter", ".status.stop", function(){
-							jQuery(this).find("i").removeClass("fa fa-stop").addClass("fa fa-play");
-							jQuery(this).find("span").text("Resume");
-						});
-						jQuery("#theslider-' . $id . '").on("mouseleave", ".status.stop", function(){
-							jQuery(this).find("i").removeClass("fa fa-play").addClass("fa fa-stop");
-							jQuery(this).find("span").text("Stopped");
-						});
-						jQuery("#theslider-' . $id . '").on("click", ".status.stop", function(){
-							strictPause = 0;
-							jQuery("#theslider-' . $id . ' #slider-nav").removeClass("stop");
-					        jQuery("#theslider-' . $id . ' .status").removeClass("pause stop");
-					        return false;
-						});
-					    //Arrows
-					    jQuery("#theslider-' . $id . ' .slider-arrow").on("click", function(){
-					        strictPause = 1;
-					        jQuery("#theslider-' . $id . ' .status i").removeClass("fa fa-pause").addClass("fa fa-stop");
-					        jQuery("#theslider-' . $id . ' .status").addClass("stopped").find("span").text("Stopped");
-					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
-					        jQuery("#theslider-' . $id . ' #slider-nav").removeClass("pause").addClass("stop");
-					        theIndex = jQuery("#theslider-' . $id . ' #theslides li.active").index();
-					        if ( jQuery(this).hasClass("slider-right") ) {
-					            activateSlider(theIndex, "next");
-					        } else {
-					            activateSlider(theIndex, "prev");
-					        }
-					        return false;
-					    });
-					    function activateSlider(theIndex, buttoned) {
-					        slideCount = jQuery("#theslider-' . $id . ' #theslides li").length;
-					        activeHeight = jQuery("#theslider-' . $id . ' #theslides li.active img").height();
-					        if ( buttoned == "next" ) {
-					            newIndex = ( theIndex+1 >= slideCount ? 0 : theIndex+1 );
-					        } else if ( buttoned == "prev" ) {
-					            newIndex = ( theIndex-1 <= -1 ? slideCount-1 : theIndex-1 );
-					        } else {
-					            newIndex = theIndex;
-					        }
-							nextHeight = jQuery("#theslider-' . $id . ' #theslides li").eq(newIndex).find("img").height();
-							jQuery("#theslider-' . $id . ' #theslides li.active").removeClass("active");';
-						    if ( !$customTitles ) {
-								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item.active").removeClass("active").find("a").text("' . $slideTitles[0]['inactiveUTF'] . '");';
-							} else {
-								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item.active").removeClass("active");';
-							}
-					$sliderJS .= 'jQuery("#theslider-' . $id . ' #theslides li").eq(newIndex).addClass("active");';
-						    if ( !$customTitles ) {
-								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(newIndex).addClass("active").find("a").text("' . $slideTitles[0]['activeUTF'] . '");';
-							} else {
-								$sliderJS .= 'jQuery("#theslider-' . $id . ' #slider-nav li.slide-nav-item").eq(newIndex).addClass("active");';
-							}
-					$sliderJS .= 'if ( nextHeight >= activeHeight ) {
-								jQuery("#theslider-' . $id . ' #theslides").delay(' . $speed/2 . ').animate({
-									height: nextHeight,
-								}, ' . $speed/2 . ', "' . $easing . '");
-							} else {
-								jQuery("#theslider-' . $id . ' #theslides").animate({
-									height: nextHeight,
-								}, ' . $speed/2 . ', "' . $easing . '");
-							}
-					    } //End activateSlider()
-				    }); //End Document Ready
-				    jQuery(window).on("load", function() {
-					    jQuery("#theslider-' . $id . ' .slider-nav-con").css("bottom", "0");
-				    }); //End Window Load</script>';
-
-	return $sliderCSS . $sliderHTML . $sliderJS;
-
-}
+	
+	$return .= '<script>
+		jQuery(window).on("load", function() {
+			setTimeout(function(){
+				jQuery(".' . $id . '").bxSlider({
+					mode: "' . $mode . '",
+					speed: ' . $speed . ',
+					captions: ' . $titles . ',
+					pager: false,
+					auto: ' . $auto . ',
+					pause: ' . $delay . ',
+					autoHover: true,
+					adaptiveHeight: true,
+					useCSS: true,
+					controls: ' . $controls . '
+				});
+			}, 1000);
+		});
+	</script>';
+	
+	echo $return;
+} //end slider_shortcode()
 
 
 //Slide
@@ -636,10 +476,9 @@ function slide_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('title' => '', 'link' => '', 'target' => ''), $atts) );
 
 	if ( $title != '' ) {
-		$alt = 'alt="' . $title . '"';
+		$alt_and_title = 'alt="' . $title . '" title="' . $title . '"';
 	} else {
-		$title = '';
-		$alt = '';
+		$alt_and_title = '';
 	}
 
 	if ( $link == '' ) {
@@ -654,10 +493,9 @@ function slide_shortcode($atts, $content=''){
 		$linkclose = '</a>';
 	}
 
-	$target= '';
-
-	return '<li class="nebula-slide clearfix">' . $linkopen . '<img src="' . $content . '" ' . $alt . '"/>' . $linkclose . '</li>'; //if title, echo it, else do not
+	return '<li class="nebula-slide clearfix">' . $linkopen . '<img src="' . $content . '" ' . $alt_and_title . '"/>' . $linkclose . '</li>';
 } //end slide_shortcode()
+
 
 
 //Map parameters of nested shortcodes

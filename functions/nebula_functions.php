@@ -967,7 +967,7 @@ remove_action('wp_head', 'start_post_rel_link', 10, 0);
 remove_action('wp_head', 'parent_post_rel_link', 10, 0);
 remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
 remove_action('wp_head', 'feed_links', 2);
-header(base64_decode('RGV2ZWxvcGVkIHVzaW5nIE5lYnVsYTogaHR0cDovL2dlYXJzaWRlLmNvbS9uZWJ1bGE='));
+header(base64_decode('RGV2ZWxvcGVkLXdpdGgtTmVidWxhOiBodHRwOi8vZ2VhcnNpZGUuY29tL25lYnVsYQ'.'=='));
 
 //Add the Posts RSS Feed back in
 add_action('wp_head', 'addBackPostFeed');

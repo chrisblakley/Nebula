@@ -1405,7 +1405,7 @@ function detectIconFonts(){
 		loadedFonts['FontAwesome'] = 1;
 	}
 
-	if ( jQuery('div[class^="icon-"], div[class*=" icon-"]').is('*') && loadedFonts['Entypo'] == 0 ) {
+	if ( jQuery('i[class^="icon-"], i[class*=" icon-"]').is('*') && loadedFonts['Entypo'] == 0 ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/entypo.css'); //Note this is supplemental to gumby.css
 		loadedFonts['Entypo'] = 1;
 	}
