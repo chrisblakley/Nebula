@@ -13,6 +13,7 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url('../images/phg/phg-
 .index-php .welcome-panel {display: block; padding: 8px 12px; overflow: hidden;}
 
 	.index-php .welcome-panel-content {margin: 0;}
+		.index-php .welcome-logo {max-height: 75px; width: auto;}
 		.index-php .welcome-panel .about-description {font-size: 13px;}
 			.index-php .welcome-panel h4 {/* margin-top: 8px; */}
 			.index-php .welcome-panel li {color: #444; font-size: 13px;}

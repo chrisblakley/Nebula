@@ -3,12 +3,12 @@
 	<div id="welcome-content">
 		<div class="logocon">
 			<a href="<?php echo home_url(); ?>" target="_blank">
-				<img src="<?php echo get_template_directory_uri();?>/images/logo.svg" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri();?>/images/logo.png" alt="<?php bloginfo('name'); ?>"/>
+				<img class="welcome-logo" src="<?php echo get_template_directory_uri();?>/images/logo.svg" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri();?>/images/logo.png" alt="<?php bloginfo('name'); ?>"/>
 			</a>
 		</div>
 
 		<h3><a href="<?php echo home_url(); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
-		<p class="about-description">Designed and Developed by <a href="http://www.pinckneyhugo.com/" target="_blank" style="color: #0098d7; white-space: nowrap;"><img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/> Pinckney Hugo Group</a>.</p>
+		<p class="about-description">Designed and Developed by <a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span> <span class="hugo">Hugo</span> <span class="group">Group</span></a>.</p>
 
 		<hr/>
 

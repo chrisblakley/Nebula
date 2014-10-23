@@ -240,6 +240,8 @@ i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .picker:after {content: "\f0d7"; font-family: "FontAwesome";}
 
 div.bx-wrapper div.bx-viewport {left: 0 !important;}
+div.bx-wrapper div.bx-caption {bottom: 10px; background: rgba(0,0,0,0.8);}
+	div.bx-wrapper div.bx-caption span {font-size: 14px;}
 ul.bxslider {}
 	ul.bxslider li {padding-bottom: 0;}
 .bx-controls-direction a {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
