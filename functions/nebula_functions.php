@@ -1074,6 +1074,8 @@ function page_name_body_class($classes) {
 	foreach ( get_the_category($post->ID) as $category ) {
 		$classes[] = 'cat-' . $category->cat_ID . '-id';
 	}
+	$nebula_theme_info = wp_get_theme();
+	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 	return $classes;
 }
 

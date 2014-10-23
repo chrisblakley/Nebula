@@ -5,6 +5,7 @@
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IEMobile]><html <?php language_attributes(); ?> class="no-js ie iem7" dir="ltr"><![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
+	<?php /* manifest="<?php echo get_template_directory_uri(); ?>/includes/manifest.appcache" */ //To begin setting up ApplicationCache, move this attribute to the <html> tag. ?>
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
@@ -19,16 +20,15 @@
 		<meta name="MobileOptimized" content="320">
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-capable" content="yes">
-		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json">
+		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json"> <!-- Web App Manifest Icons/Settings -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
 
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
-		<?php include_once('includes/metagraphics.php'); ?>
+		<?php include_once('includes/metagraphics.php'); //All graphic components of metadata are declared in this file. ?>
 
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
@@ -100,6 +100,7 @@
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
 		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>"> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword msapplication-notification is not registered." -->
+		<meta name="msapplication-config" content="<?php echo get_template_directory_uri(); ?>/includes/ieconfig.xml" />
 
 		<script>
 			social = []; //Not localized with WP because needs to be able to be modified in header.php if desired.

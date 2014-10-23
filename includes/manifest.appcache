@@ -1,0 +1,22 @@
+CACHE MANIFEST
+#Version 1
+#This file will cache resources for offline use. Those files will remain cached until this file is updated!
+#@TODO: Currently these files are all just tests!
+#This article is scary enough to warrant thinking twice about attempting to appcache a Wordpress site...
+#http://alistapart.com/article/application-cache-is-a-douchebag
+
+CACHE:
+#This is the default section for entries. Files listed under this header (or immediately after the CACHE MANIFEST) will be explicitly cached after they're downloaded for the first time.
+#../js/main.js
+#../js/libs/
+#../images/logo.png
+#../style.css
+#../css/dev.css
+
+FALLBACK:
+#An optional section specifying fallback pages if a resource is inaccessible. The first URI is the resource, the second is the fallback. Both URIs must be relative and from the same origin as the manifest file. Wildcards may be used.
+#../images/ ../images/logo.png
+
+NETWORK:
+#Files listed under this section are white-listed resources that require a connection to the server. All requests to these resources bypass the cache, even if the user is offline. Wildcards may be used.
+#../css/dev.css

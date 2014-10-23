@@ -59,4 +59,5 @@
 ?>
 <meta name="msapplication-TileColor" content="#0098d7"> <!-- @TODO "Graphics" 1: Designate a background color for Windows Tiles.-->
 <meta name="msapplication-TileImage" content="<?php echo get_template_directory_uri(); ?>/images/meta/mstile-144x144.png"> <!-- @TODO "Graphics" 1: Create a Windows Tile 144x144px.-->
-<meta name="msapplication-config" content="<?php echo get_template_directory_uri(); ?>/includes/browserconfig.xml"> <!-- @TODO "Graphics" 1: Create four other Windows Tile icons (various sizes).-->
+<meta name="msapplication-config" content="<?php echo get_template_directory_uri(); ?>/includes/ieconfig.xml"> <!-- @TODO "Graphics" 1: Create four other Windows Tile icons (various sizes).-->
+
