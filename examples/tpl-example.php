@@ -238,7 +238,7 @@ get_header(); ?>
 						//@TODO "Nebula" 0: Coming Soon
 					} ?>
 
-					<?php if ( is_page(1234) ) { //Image Orientation
+					<?php if ( is_page(9999) ) { //Image Orientation
 						//@TODO "Nebula" 0: Coming Soon
 					} ?>
 
@@ -246,7 +246,7 @@ get_header(); ?>
 						include_once('includes/css_variables.php');
 					} ?>
 
-					<?php if ( is_page(1234) ) { //Proximity API
+					<?php if ( is_page(9999) ) { //Proximity API
 						//@TODO "Nebula" 0: Coming Soon
 					} ?>
 
@@ -262,12 +262,32 @@ get_header(); ?>
 						include_once('includes/css_feature_queries.php');
 					} ?>
 
-					<?php if ( is_page(1234) ) { //Clipboard API
+					<?php if ( is_page(1011) ) { //Clipboard API
+						include_once('includes/clipboard_api.php');
+					} ?>
+
+					<?php if ( is_page(9999) ) { //CSS Masks
 						//@TODO "Nebula" 0: Coming Soon
 					} ?>
 
-					<?php if ( is_page(1234) ) { //CSS Masks
-						//@TODO "Nebula" 0: Coming Soon
+					<?php if ( is_page(1015) ) { //Gumby Shuffle
+						include_once('includes/gumby_shuffle.php');
+					} ?>
+
+					<?php if ( is_page(1025) ) { //Gumby Parallax
+						include_once('includes/gumby_parallax.php');
+					} ?>
+
+					<?php if ( is_page(1028) ) { //Gumby InView
+						include_once('includes/gumby_inview.php');
+					} ?>
+
+					<?php if ( is_page(1031) ) { //Gumby FitText
+						include_once('includes/gumby_fittext.php');
+					} ?>
+
+					<?php if ( is_page(1042) ) { //Gumby Modal
+						include_once('includes/gumby_modal.php');
 					} ?>
 
 					<?php if ( is_page(628) ) { //Page Visibility API
@@ -296,6 +316,10 @@ get_header(); ?>
 
 					<?php if (is_page(943)) { //Wireframing
 						include_once('includes/wireframing.php');
+					} ?>
+
+					<?php if (is_page(9999)) { //Random Unsplash
+						include_once('includes/random_unsplash.php');
 					} ?>
 
 				<?php

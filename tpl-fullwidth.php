@@ -18,7 +18,7 @@ get_header(); ?>
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 				<div class="entry-content">
 					<?php the_content(); ?>
-					
+
 					<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
 					<?php if ( current_user_can('manage_options') ) : ?>
 						<div class="container entry-manage">
@@ -31,9 +31,9 @@ get_header(); ?>
 					<?php endif; ?>
 				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
-			
+
 			<?php get_template_part('comments'); ?>
-			
+
 		<?php endwhile; ?>
 	</div><!--/columns-->
 </div><!--/row-->

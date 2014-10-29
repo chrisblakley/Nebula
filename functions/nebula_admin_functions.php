@@ -186,7 +186,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 			    $todo_skipExtensions = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'tiff', 'psd', 'ai', 'apng', 'bmp', 'otf', 'ttf', 'ogv', 'flv', 'fla', 'mpg', 'mpeg', 'avi', 'mov', 'woff', 'eot', 'mp3', 'mp4', 'wmv', 'wma', 'aiff', 'zip', 'zipx', 'rar', 'exe', 'dmg', 'swf', 'pdf', 'pdfx', 'pem');
 			    $todo_skipFilenames = array('README.md', 'nebula_admin_functions.php', 'error_log', 'Mobile_Detect.php', 'class-tgm-plugin-activation.php');
 
-			    if ( !contains(basename($todo_file), $todo_skipExtensions) && !contains(basename($todo_file), $todo_skipFilenames) ) {
+			    if ( !contains(basename($todo_file), $todo_skipExtensions) && !contains(basename($todo_file), $todo_skipFilenames) ) { //@TODO "Nebula" 0: main.js is not showing up for some reason...
 				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ) {
 						$todo_hidden = 0;
 
@@ -297,7 +297,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 //Custom PHG Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Settings).
 if ( nebula_settings_conditional('nebula_phg_metabox') ) {
-
+	
 	if ( is_dev() ) {
 		add_action('wp_dashboard_setup', 'phg_dev_metabox');
 	}
@@ -312,12 +312,13 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		$last_date = 0;
 		$skip_files = array('dev.css');
 
-		foreach($dir as $file) {
+		foreach( $dir as $file ) {
 			if( is_file($file) ) {
 				$mod_date = filemtime($file);
 				if ( $mod_date > $last_date && !contains(basename($file), $skip_files) ) {
 					$last_date = $mod_date;
 					$last_filename = basename($file);
+					$last_file_path = str_replace(get_template_directory(), '', dirname($file)) . '/' . $last_filename;
 				}
 			}
 		}
@@ -344,7 +345,27 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			}
 			return $install_date;
 		}
-
+		
+		if ( strpos(strtolower(PHP_OS), 'linux') !== false ) {
+			$php_os_icon = 'fa-linux';
+		} else if ( strpos(strtolower(PHP_OS), 'windows') !== false ) {
+			$php_os_icon = 'fa-windows';
+		} else {
+			$php_os_icon = 'fa-upload';
+		}
+		
+		if ( function_exists('wp_max_upload_size') ) {
+			$upload_max = '<small>(Max upload: <strong>' . strval(round((int) wp_max_upload_size()/(1024*1024))) . 'mb</strong>)</small>';
+		} else if ( ini_get('upload_max_filesize') ) {
+			$upload_max = '<small>(Max upload: <strong>' . ini_get('upload_max_filesize') . '</strong>)</small>';
+		} else {
+			$upload_max = '';
+		}
+		
+		if ( ini_get('safe_mode') ) {
+			$safe_mode = '<small><strong><em>Safe Mode</em></strong></small>';
+		}
+		
 		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 		echo '<script id="testloadscript">
 				jQuery(window).on("load", function(){
@@ -368,7 +389,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				    jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
 				}
 				</script>';
-
+				
 		echo '<ul class="serverdetections">';
 			if ( WP_DEBUG ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
@@ -377,20 +398,40 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			if ( function_exists('gethostname') ) {
 				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
 			}
-			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . ' <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
-			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong></li>';
+			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fa ' . $php_os_icon . ' fa-fw"></i> Server OS: <strong>' . PHP_OS . '</strong> <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
+			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong> ' . $safe_mode . '</li>';
+			echo '<li><i class="fa fa-cogs fa-fw"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
 			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
-			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> </li>';
-			echo '<li><i class="fa fa-clock-o fa-fw"></i> Homepage load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
+			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
+			echo '<li><i class="fa fa-clock-o fa-fw"></i> <span title="' . get_home_url() . '" style="cursor: help;">Homepage</span> load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
-			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small>(' . $last_filename . ')</small></li>';
+			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small title="' . $last_file_path . '" style="cursor: help;">(' . $last_filename . ')</small></li>';
 		echo '</ul>';
 
 		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br/>';
 
 		echo '<div class="search_results"></div>';
 	}
+}
+
+function espresso_let_to_num( $size ) {
+	$l 		= substr( $size, -1 );
+	$ret 	= substr( $size, 0, -1 );
+	switch( strtoupper( $l ) ) {
+		case 'P':
+			$ret *= 1024;
+		case 'T':
+			$ret *= 1024;
+		case 'G':
+			$ret *= 1024;
+		case 'M':
+			$ret *= 1024;
+		case 'K':
+			$ret *= 1024;
+	}
+	return $ret;
 }
 
 //Search theme or plugin files via PHG Metabox

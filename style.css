@@ -16,13 +16,12 @@
 
 /* ==========================================================================
    Global Variables
+   Note: CSS variables are currently only supported in Firefox. http://caniuse.com/#feat=css-variables
    ========================================================================== */
-/* @TODO "Styles" 5: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
-:root {
+
+:root { /* @TODO "Styles" 5: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
 	--primary-color: #0098d7; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
-		--primary-color-darker: #006893;
 	--secondary-color: #95D600; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
-		--secondary-color-darker: #669200;
 }
 
 
@@ -46,17 +45,26 @@ textarea {resize: vertical;}
 ul {padding: 0;}
 
 h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
-h1, h2, h3, h4, h5, h6 {}
-h1 {font-size: 36px; line-height: 42px; font-weight: bold;}
-h2 {font-size: 28px; line-height: 32px;}
-h3 {font-size: 21px; line-height: 36px;}
-h4 {font-size: 18px; line-height: 21px;}
-h5 {font-size: 14px; line-height: 28px;}
-h6 {font-size: 14px; line-height: 18px;}
-p, dt, dl {font-size: 14px;}
+h1, h2, h3, h4, h5, h6 {line-height: 1.15538em;}
+h1 {font-size: 36px; font-weight: bold;}
+h2 {font-size: 28px;}
+h3 {font-size: 21px;}
+h4 {font-size: 18px;}
+h5 {font-size: 14px;}
+h6 {font-size: 14px;}
+p, dt, dl {font-size: 14px; line-height: 1.625em;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
+
+/*
+	h1 {font-size: 36px; line-height: 42px; font-weight: bold;}
+	h2 {font-size: 28px; line-height: 32px;}
+	h3 {font-size: 21px; line-height: 36px;}
+	h4 {font-size: 18px; line-height: 21px;}
+	h5 {font-size: 14px; line-height: 28px;}
+	h6 {font-size: 14px; line-height: 18px;}
+*/
 
 /* ==========================================================================
    PHG Nebula custom styles
@@ -264,7 +272,7 @@ ul.bxslider {}
    Header Area
    ========================================================================== */
 .mobilenavcon {display: none;}
-	.directions div {line-height: 12px; padding-left: 35px;}
+	a.directions div {line-height: 12px; padding-left: 35px;}
 
 #topbarcon {position: relative; background: #0098D7; background: var(--primary-color); width: 100%; height: 5px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
 	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}

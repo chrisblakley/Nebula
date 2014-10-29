@@ -42,7 +42,9 @@ jQuery(document).ready(function() {
 	//Detect if loaded in an iframe
 	if ( window != window.parent ) {
 		jQuery('html').addClass('in-iframe');
-		nebula_event('Iframe', 'Requested page: ' + window.location, 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
+		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ) {
+			nebula_event('Iframe', 'Requested page: ' + window.location, 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
+		}
 	}
 
 	if ( jQuery('body').hasClass('search-no-results') || jQuery('body').hasClass('error404') ) {
@@ -62,23 +64,26 @@ jQuery(document).ready(function() {
 	//Fix for <p> tags wrapping my pre spans in the WYSIWYG
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
 
-	//viewport = updateViewportDimensions(); //@TODO: This breaks in IE8
-	//console.debug(viewport);
+	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+		viewport = updateViewportDimensions();
+	}
+
 	jQuery(window).resize(function() {
 		waitForFinalEvent(function(){
 
 	    	//Window resize functions here.
 	    	powerFooterWidthDist();
-
+			
 	    	//Track size change
-	    	/* viewportResized = updateViewportDimensions();  //@TODO: This breaks in IE8
-	    	if ( viewport.width > viewportResized.width ) {
-	    		nebula_event('Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    	} else if ( viewport.width < viewportResized.width ) {
-	    		nebula_event('Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+		    	viewportResized = updateViewportDimensions();
+		    	if ( viewport.width > viewportResized.width ) {
+		    		nebula_event('Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
+		    	} else if ( viewport.width < viewportResized.width ) {
+		    		nebula_event('Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
+		    	}
+		    	viewport = updateViewportDimensions();
 	    	}
-	    	viewport = updateViewportDimensions();
-	    	//console.debug(viewport); */
 
 		}, 500, "unique resize ID 1");
 	});
@@ -125,7 +130,7 @@ function helperFunctions(){
 			jQuery(this).attr('rel', rel + 'external');
 		}
 	});
-	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above').hide(); //@TODO: Anything we can do here to alleviate the issue? May need to just hide
+	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above').hide(); //@TODO "Nebula" 0: Anything we can do here to alleviate the issue? May need to just hide
 } //end helperFunctions()
 
 
@@ -253,26 +258,26 @@ function checkFacebookStatus() {
 				jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
 
 				ga('send', 'pageview', {
-					'dimension1': 'Connected' //@TODO: Is this how we want to do this?
+					'dimension1': 'Connected' //@TODO "Nebula" 0: Is this how we want to do this?
 				});
 
-				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //Example page. @TODO: Get this out of main.js somehow!
-				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //Example page. @TODO: Get this out of main.js somehow!
+				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
+				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
 			});
 
-			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //For Example page. @TODO: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
 		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
 			Gumby.log('User is logged into Facebook, but has not connected to this app.');
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
-			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //For Example page. @TODO: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
 		} else { //User is not logged into Facebook.
 			Gumby.log('User is not logged into Facebook.');
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
-			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //For Example page. @TODO: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
 		}
 	});
 }
@@ -403,24 +408,27 @@ function subnavExpanders() {
 } //end subnavExpanders()
 
 
-//Show fixed bar when scrolling passed the header
+//Show fixed bar when scrolling passed a particular element
 function nebulaFixeder() {
-	jQuery(window).on('scroll resize', function() {
-		if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
-			var fixedBarBottom = jQuery('#logonavcon img').position().top + jQuery('#logonavcon img').outerHeight();
-	        var windowBottom = jQuery(window).scrollTop();
-
-	        if( windowBottom > fixedBarBottom ){
-	        	if ( !jQuery('.fixedbar').hasClass('active') ) {
-		        	jQuery('.fixedbar').addClass('active');
-				}
-	        } else {
-	        	if ( !jQuery('.fixedbar').hasClass('hidden') ) {
-		        	jQuery('.fixedbar').removeClass('active');
-	        	}
-	        }
-		}
-	});
+	var fixedAfterSelector = '#logonavcon img'; //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
+	if ( jQuery(fixedAfterSelector).is('*') ) {
+		jQuery(window).on('scroll resize', function() {
+			if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
+				var fixedBarBottom = jQuery(fixedAfterSelector).position().top + jQuery(fixedAfterSelector).outerHeight();
+		        var windowBottom = jQuery(window).scrollTop();
+	
+		        if( windowBottom > fixedBarBottom ){
+		        	if ( !jQuery('.fixedbar').hasClass('active') ) {
+			        	jQuery('.fixedbar').addClass('active');
+					}
+		        } else {
+		        	if ( !jQuery('.fixedbar').hasClass('hidden') ) {
+			        	jQuery('.fixedbar').removeClass('active');
+		        	}
+		        }
+			}
+		});
+	}
 } //end nebulaFixeder()
 
 
@@ -429,8 +437,8 @@ function gaCustomDimensions(){
 	/*
 		Custom Dimensions Index:
 			Dimension 1 = Facebook Interaction (Like, Unlike, Comment, Share)
-			Dimension 2 = Device Form Factor (Tablet, Mobile, Desktop) //@TODO: Do we really need this? GA has this standardized already...
-			Dimension 3 = Is Mobile (True/False) //@TODO: Do we really need this? GA has this standardized already...
+			Dimension 2 = Device Form Factor (Tablet, Mobile, Desktop) //@TODO "Nebula" 0: Do we really need this? GA has this standardized already...
+			Dimension 3 = Is Mobile (True/False) //@TODO "Nebula" 0: Do we really need this? GA has this standardized already...
 
 		Custom Dimension Ideas:
 			- When location is available (through Zip Code, or IP geolocation), set dimension to user's local weather conditions. (Dimension is current condition, metric is current temperature). Maybe an event too?
@@ -509,7 +517,7 @@ function gaEventTracking(){
 			nebula_event('Click-to-Call', 'SMS to: ' + phoneNumber);
 		});
 
-		//Comment tracking @TODO: This might not be working.
+		//Comment tracking @TODO "Nebula" 0: This might not be working.
 		jQuery(document).on('submit', '#commentform', function(){
 			if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
 				var currentPage = jQuery(document).attr('title');
@@ -864,23 +872,23 @@ function pageVisibility(){
 		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
 			var pageTitle = jQuery(document).attr('title');
 			nebula_event('Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
-			//@TODO: prevent autoplay of videos
+			//@TODO "Nebula" 0: prevent autoplay of videos
 		}
 
 		if ( getPageVisibility() ) { //Page is hidden
-			//@TODO: pause youtube
-			//@TODO: pause vimeo
+			//@TODO "Nebula" 0: pause youtube
+			//@TODO "Nebula" 0: pause vimeo
 			visFirstHidden = 1;
 			visTimerBefore = (new Date()).getTime();
 			var pageTitle = jQuery(document).attr('title');
 			//nebula_event('Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1}); //@TODO: Page Visibility Hidden event tracking is off by default. Uncomment to enable.
 		} else { //Page is visible
-			//@TODO: resume autoplay of videos
+			//@TODO "Nebula" 0: resume autoplay of videos
 			if ( visFirstHidden == 1 ) {
 				var visTimerAfter = (new Date()).getTime();
 				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
 				var pageTitle = jQuery(document).attr('title');
-				//nebula_event('Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)', {'nonInteraction': 1}); //@TODO: Page Visibility Visible event tracking is off by default. Uncomment to enable.
+				//nebula_event('Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)', {'nonInteraction': 1}); //@TODO "Nebula" 0: Page Visibility Visible event tracking is off by default. Uncomment to enable.
 			}
 		}
 	}
@@ -1095,7 +1103,7 @@ function cFormSuccess(){
     //conversionTracker(); //Call conversion tracker if contact is a conversion goal.
 }
 
-//Allows only numerical input on specified inputs. Call this on keyUp? @TODO: Make the selector into oThis and pass that to the function from above.
+//Allows only numerical input on specified inputs. Call this on keyUp? @TODO "Nebula" 0: Make the selector into oThis and pass that to the function from above.
 //The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
 function onlyNumbers() {
 	jQuery(".leftcolumn input[type='text']").each(function(){
@@ -1104,7 +1112,7 @@ function onlyNumbers() {
 }
 
 function checkCommentVal(oThis) {
-	//@TODO: Count how many required fields there are. If any of them don't have value, then trigger disabled
+	//@TODO "Nebula" 0: Count how many required fields there are. If any of them don't have value, then trigger disabled
 	if ( jQuery(oThis).val() != '' ) {
 		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').removeClass('disabled');
 	} else {
@@ -1374,7 +1382,7 @@ function conditionalJSLoading() {
 
 	//Only load dataTables library if dataTables table exists.
 	if ( jQuery('.dataTables_wrapper').is('*') ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO: Use CDN?
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO "Nebula" 0: Use CDN?
 			dataTablesActions();
 		}).fail(function(){
 			nebula_event('Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
@@ -1390,15 +1398,15 @@ function conditionalJSLoading() {
 
 	if ( jQuery('.flag').is('*') ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
-	}
-
+	}	
 } //end conditionalJSLoading()
 
 
-//These detect Font Awesom and Entypo usage via classes. This will not detect usage with font-family CSS (only known detection method is resource-heavy).
-loadedFonts = [];
-loadedFonts['Entypo'] = 0;
-loadedFonts['FontAwesome'] = 1;
+//These detect Font Awesome and Entypo usage via classes. This will not detect usage with font-family CSS (only known detection method is resource-heavy).
+var loadedFonts = {
+	'Entypo': 0,
+	'FontAwesome': 1
+};
 function detectIconFonts(){
 	if ( jQuery('i.fa').is('*') && loadedFonts['FontAwesome'] == 0 ) {
 		Modernizr.load('//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css');
@@ -1413,7 +1421,7 @@ function detectIconFonts(){
 
 
 function dataTablesActions(){
-	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO: Something here is eating the first letter after a few have been typed... lol
+	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
 	    console.log('keyup: ' + jQuery(this).val());
 	    jQuery('.dataTables_wrapper').removeHighlight();
 	    jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
@@ -1746,7 +1754,7 @@ function successCallback(position) {
 	}
 
 	jQuery(document).trigger('geolocationSuccess');
-	nebula_event('Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']); //@TODO: Add a GA dimension and metric to get weather from this location.
+	nebula_event('Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']); //@TODO "Nebula" 0: Add a GA dimension and metric to get weather from this location.
 }
 
 //Geolocation Error
@@ -1845,7 +1853,7 @@ function renderMap(mapInfo) {
 		        bounds.extend(pos);
 		        marker = new google.maps.Marker({
 		            position: pos,
-		            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
+		            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO "Nebula" 0: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
 		            clickable: false,
 		            map: map
 		        });
