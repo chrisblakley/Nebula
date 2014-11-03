@@ -209,7 +209,15 @@ function clear_shortcode(){
 //Map
 add_shortcode('map', 'map_shortcode');
 function map_shortcode($atts){
-	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '300', "class" => '', "style" => ''), $atts) );
+	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '300', 'overlay' => false, "class" => '', "style" => ''), $atts) );
+	
+	$flags = get_flags($atts);
+	if ( in_array('overlay', $flags) ) {
+		$overlay = 'the-map-overlay';
+	} else {
+		$overlay = '';
+	}
+	
 	if ( $key == '' ) {
 		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO "APIs" 2: Replace with your own key to avoid designating a key every time.
 	}
@@ -246,7 +254,18 @@ function map_shortcode($atts){
 	if ( $zoom != '' ) {
 		$zoom = '&zoom=' . $zoom;
 	}
-	return '<iframe class="nebula-googlemap-shortcode googlemap ' . $class . '" width="' . $width . '" height="' . $height . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="' . $style . '"></iframe>';
+	
+	$return = '<script>
+		jQuery(document).ready(function() {
+			jQuery(".the-map-overlay").on("click", function(){
+				jQuery(this).removeClass("the-map-overlay");
+			});
+		});
+	</script>';
+	
+	$return .= '<div class="google-map-overlay ' . $overlay . '"><iframe class="nebula-googlemap-shortcode googlemap ' . $class . '" width="' . $width . '" height="' . $height . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="' . $style . '"></iframe></div>';
+	
+	return $return;
 }
 
 
@@ -396,8 +415,8 @@ function bio_shortcode($atts, $content=''){
 //Tooltip
 add_shortcode('tooltip', 'tooltip_shortcode');
 function tooltip_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
-	return '<div class="nebula-tooltip ' . $class . '" style="' . $style . '" >' . $content . '</code>';
+	extract( shortcode_atts(array('tip' => '', 'class' => '', 'style' => ''), $atts) );
+	return '<span class="nebula-tooltip ttip ' . $class . '" data-tooltip="' . $tip . '" style="' . $style . '">' . $content . '</span>';
 } //end tooltip_shortcode()
 
 

@@ -23,7 +23,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[accordion]CONTENT_HERE[/accordion]<br/>');
+					ed.selection.setContent('[accordion]CONTENT_HERE[/accordion]');
 				}
 			}),
 			ed.addButton('nebulabio', {
@@ -32,7 +32,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[bio]<br/>');
+					ed.selection.setContent('[bio]');
 				}
 			}),
 			ed.addButton('nebulabutton', {
@@ -41,7 +41,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[button size=medium type=primary pretty icon=icon-mail href=http://pinckneyhugo.com/ target=_blank]Click Here[/button]<br/>');
+					ed.selection.setContent('[button size=medium type=primary pretty icon=icon-mail href=http://pinckneyhugo.com/ target=_blank]Click Here[/button]');
 				}
 			}),
 			ed.addButton('nebulaclear', {
@@ -50,7 +50,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[clear]<br/>');
+					ed.selection.setContent('[clear]');
 				}
 			}),
 			ed.addButton('nebulacode', {
@@ -83,16 +83,16 @@ jQuery(window).on('load', function() {
 						}
 						ed.focus();
 						if ( typeof selectedText != undefined && selectedText != '' ) {
-							ed.selection.setContent('[pre lang=LANGUAGE]' + selectedText + '[/pre]<br/>');
+							ed.selection.setContent('[pre lang=LANGUAGE]' + selectedText + '[/pre]');
 						} else {
-							ed.selection.setContent('[pre lang=LANGUAGE]CONTENT_HERE[/pre]<br/>');
+							ed.selection.setContent('[pre lang=LANGUAGE]CONTENT_HERE[/pre]');
 						}
 					}
 				}, {
 					text: 'Gist',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[gist file=FILENAME]URL[/gist]<br/>');
+						ed.selection.setContent('[gist file=FILENAME]URL[/gist]');
 					}
 				}]
 			}),
@@ -108,9 +108,9 @@ jQuery(window).on('load', function() {
 					}
 					ed.focus();
 					if ( typeof selectedText != undefined && selectedText != '' ) {
-						ed.selection.setContent('[div class="CLASSES" style=STYLES]' + selectedText + '[/div]<br/>');
+						ed.selection.setContent('[div class="CLASSES" style=STYLES]' + selectedText + '[/div]');
 					} else {
-						ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]<br/>');
+						ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]');
 					}
 				}
 			}),
@@ -129,9 +129,9 @@ jQuery(window).on('load', function() {
 						}
 						ed.focus();
 						if ( typeof selectedText != undefined && selectedText != '' ) {
-							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + selectedText + '[/colspan]<br/>');
+							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + selectedText + '[/colspan]');
 						} else {
-							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]<br/>');
+							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]');
 						}
 					}
 				}, {
@@ -144,9 +144,9 @@ jQuery(window).on('load', function() {
 						}
 						ed.focus();
 						if ( typeof selectedText != undefined && selectedText != '' ) {
-							ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + selectedText + '[/container]<br/>');
+							ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + selectedText + '[/container]');
 						} else {
-							ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]<br/>');
+							ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]');
 						}
 					}
 				}, {
@@ -159,9 +159,9 @@ jQuery(window).on('load', function() {
 						}
 						ed.focus();
 						if ( typeof selectedText != undefined && selectedText != '' ) {
-							ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + selectedText + '[/row]<br/>');
+							ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + selectedText + '[/row]');
 						} else {
-							ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]<br/>');
+							ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]');
 						}
 					}
 				}, {
@@ -174,9 +174,9 @@ jQuery(window).on('load', function() {
 						}
 						ed.focus();
 						if ( typeof selectedText != undefined && selectedText != '' ) {
-							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + selectedText + '[/columns]<br/>');
+							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + selectedText + '[/columns]');
 						} else {
-							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]<br/>');
+							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]');
 						}
 					}
 				}]
@@ -208,7 +208,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[line space=5]<br/>');
+					ed.selection.setContent('[line space=5]');
 				}
 			}),
 			ed.addButton('nebulamap', {
@@ -218,31 +218,31 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn colorbutton nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');
+					ed.selection.setContent('[map q="Pinckney Hugo Group"]');
 				},
 				menu: [{
 					text: 'Place',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[map q="Pinckney Hugo Group"]<br/>');
+						ed.selection.setContent('[map q="Pinckney Hugo Group"]');
 					}
 				}, {
 					text: 'Directions',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[map mode=directions origin="Pinckney Hugo Group" destination="Destiny USA"]<br/>');
+						ed.selection.setContent('[map mode=directions origin="Pinckney Hugo Group" destination="Destiny USA"]');
 					}
 				}, {
 					text: 'Search',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[map mode=search q="Food in Syracuse, NY"]<br/>');
+						ed.selection.setContent('[map mode=search q="Food in Syracuse, NY"]');
 					}
 				}, {
 					text: 'View',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[map mode=view center="43.0536364,-76.1657063" zoom=19 maptype=satellite]<br/>');
+						ed.selection.setContent('[map mode=view center="43.0536364,-76.1657063" zoom=19 maptype=satellite]');
 					}
 				}]
 			}),
@@ -252,7 +252,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[slider frame status]<br/>[slide title="TITLE_HERE" link=http://www.pinckneyhugo.com target=_blank]IMAGE_URL_HERE[/slide]<br/>[/slider]<br/>');
+					ed.selection.setContent('[slider frame status]<br/>[slide title="TITLE_HERE" link=http://www.pinckneyhugo.com target=_blank]IMAGE_URL_HERE[/slide]<br/>[/slider]');
 				}
 			}),
 			ed.addButton('nebulaspace', {
@@ -261,7 +261,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[space height=25]<br/>');
+					ed.selection.setContent('[space height=25]');
 				}
 			}),
 			ed.addButton('nebulatooltip', {
@@ -269,8 +269,17 @@ jQuery(window).on('load', function() {
 				image: bloginfo['template_directory'] + '/images/admin/nebulatooltip.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
+					if (win.getSelection) {
+						var selectedText = win.getSelection().toString();
+					} else if (doc.selection && doc.selection.createRange) {
+						var selectedText = doc.selection.createRange().text;
+					}
 					ed.focus();
-					ed.selection.setContent('[tooltip]CONTENT HERE[/tooltip]<br/>');
+					if ( typeof selectedText != undefined && selectedText != '' ) {
+						ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]' + selectedText + '[/tooltip]');
+					} else {
+						ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]CONTENT[/tooltip]');
+					}
 				}
 			}),
 			ed.addButton('nebulavideo', {
@@ -280,19 +289,19 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn colorbutton nebula-icon',
 				onclick: function(){
 					ed.focus();
-					ed.selection.setContent('[youtube id=YOUTUBE_VIDEO_ID]<br/>');
+					ed.selection.setContent('[youtube id=YOUTUBE_VIDEO_ID]');
 				},
 				menu: [{
 					text: 'Youtube',
 					onclick: function(){
 						ed.focus();
-						ed.selection.setContent('[youtube id=YOUTUBE_VIDEO_ID]<br/>');
+						ed.selection.setContent('[youtube id=YOUTUBE_VIDEO_ID]');
 					}
 				}, {
 					text: 'Vimeo',
 					onclick: function(){
 						ed.focus();
-						ed.selection.setContent('[vimeo id=VIMEO_VIDEO_ID]<br/>');
+						ed.selection.setContent('[vimeo id=VIMEO_VIDEO_ID]');
 					}
 				}]
 			});

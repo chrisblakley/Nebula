@@ -297,7 +297,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 //Custom PHG Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Settings).
 if ( nebula_settings_conditional('nebula_phg_metabox') ) {
-	
+
 	if ( is_dev() ) {
 		add_action('wp_dashboard_setup', 'phg_dev_metabox');
 	}
@@ -345,7 +345,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			}
 			return $install_date;
 		}
-		
+
 		if ( strpos(strtolower(PHP_OS), 'linux') !== false ) {
 			$php_os_icon = 'fa-linux';
 		} else if ( strpos(strtolower(PHP_OS), 'windows') !== false ) {
@@ -353,7 +353,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		} else {
 			$php_os_icon = 'fa-upload';
 		}
-		
+
 		if ( function_exists('wp_max_upload_size') ) {
 			$upload_max = '<small>(Max upload: <strong>' . strval(round((int) wp_max_upload_size()/(1024*1024))) . 'mb</strong>)</small>';
 		} else if ( ini_get('upload_max_filesize') ) {
@@ -361,11 +361,11 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		} else {
 			$upload_max = '';
 		}
-		
+
 		if ( ini_get('safe_mode') ) {
 			$safe_mode = '<small><strong><em>Safe Mode</em></strong></small>';
 		}
-		
+
 		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 		echo '<script id="testloadscript">
 				jQuery(window).on("load", function(){
@@ -389,7 +389,7 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				    jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
 				}
 				</script>';
-				
+
 		echo '<ul class="serverdetections">';
 			if ( WP_DEBUG ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
@@ -676,7 +676,7 @@ function nebula_help_tabs() {
 //Left Side
 add_filter('admin_footer_text', 'change_admin_footer_left');
 function change_admin_footer_left() {
-    return '<a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span> <span class="hugo">Hugo</span> <span class="group">Group</span></a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
+    return '<a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
 }
 //Right Side
 add_filter('update_footer', 'change_admin_footer_right', 11);

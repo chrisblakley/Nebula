@@ -73,7 +73,7 @@ jQuery(document).ready(function() {
 
 	    	//Window resize functions here.
 	    	powerFooterWidthDist();
-			
+
 	    	//Track size change
 	    	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 		    	viewportResized = updateViewportDimensions();
@@ -416,7 +416,7 @@ function nebulaFixeder() {
 			if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
 				var fixedBarBottom = jQuery(fixedAfterSelector).position().top + jQuery(fixedAfterSelector).outerHeight();
 		        var windowBottom = jQuery(window).scrollTop();
-	
+
 		        if( windowBottom > fixedBarBottom ){
 		        	if ( !jQuery('.fixedbar').hasClass('active') ) {
 			        	jQuery('.fixedbar').addClass('active');
@@ -1398,7 +1398,7 @@ function conditionalJSLoading() {
 
 	if ( jQuery('.flag').is('*') ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
-	}	
+	}
 } //end conditionalJSLoading()
 
 

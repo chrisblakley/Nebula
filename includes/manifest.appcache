@@ -1,7 +1,7 @@
 CACHE MANIFEST
 #Version 1
 #This file will cache resources for offline use. Those files will remain cached until this file is updated!
-#@TODO: Currently these files are all just tests!
+#@TODO "Nebula" 0: Currently these files are all just tests!
 #This article is scary enough to warrant thinking twice about attempting to appcache a Wordpress site...
 #http://alistapart.com/article/application-cache-is-a-douchebag
 

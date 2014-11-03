@@ -154,10 +154,6 @@ get_header(); ?>
 						include_once('includes/hero_slider_native.php');
 					} ?>
 
-					<?php if ( is_page(428) ) { //Tooltip Shortcode
-						include_once('includes/tooltip.php');
-					} ?>
-
 					<?php if ( is_page(460) ) { //File Type Indicators
 						include_once('includes/file_type_indicators.php');
 					} ?>
@@ -208,6 +204,10 @@ get_header(); ?>
 
 					<?php if ( is_page(614) ) { //CSS Position: Sticky
 						//@TODO "Nebula" 0: Coming Soon
+					} ?>
+
+					<?php if ( is_page(1074) ) { //HEX2RGB
+						include_once('includes/hex2rgb.php');
 					} ?>
 
 					<?php if ( is_page(742) ) { //History API
@@ -320,6 +320,10 @@ get_header(); ?>
 
 					<?php if (is_page(9999)) { //Random Unsplash
 						include_once('includes/random_unsplash.php');
+					} ?>
+
+					<?php if (is_page(1079)) { //Flash Banner Analytics
+						include_once('includes/flash_banner_analytics.php');
 					} ?>
 
 				<?php

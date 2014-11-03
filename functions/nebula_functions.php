@@ -496,7 +496,7 @@ function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an
 	return $full_url;
 }
 
-//Separate a URL into it's components. @TODO: Incomplete!
+//Separate a URL into it's components. @TODO "Nebula" 0: Incomplete!
 function nebula_url_components($segment="all", $url=null) {
 	if ( !$url ) {
 		$url = nebula_requested_url();
@@ -521,7 +521,7 @@ function nebula_url_components($segment="all", $url=null) {
 			}
 			break;
 
-		case 'subdomain' : //@TODO: This would return the primary domain if www does not exist nor does an actual subdomain. Need to check against actual domain.
+		case 'subdomain' : //@TODO "Nebula" 0: This would return the primary domain if www does not exist nor does an actual subdomain. Need to check against actual domain.
 			if ( $host[0] != 'www' && $host[0] != $domain ) {
 				return $host[0];
 			} else {
@@ -529,10 +529,10 @@ function nebula_url_components($segment="all", $url=null) {
 			}
 			break;
 
-		case 'domain' : return $domain; break; //@TODO: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic. Then remove the tld.
-		case 'sld' : return $domain; break; //@TODO: same as above
+		case 'domain' : return $domain; break; //@TODO "Nebula" 0: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic. Then remove the tld.
+		case 'sld' : return $domain; break; //@TODO "Nebula" 0: same as above
 
-		case 'tld' : return ''; break; //@TODO: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic.
+		case 'tld' : return ''; break; //@TODO "Nebula" 0: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic.
 
 		case 'host' : return $url_compontents['host']; break;
 		case 'path' : return $url_compontents['path']; break;
@@ -1324,21 +1324,21 @@ function nebula_phone_format($number, $format=''){
 
 
 //Automatically convert HEX colors to RGB.
-function hex2rgb( $colour ) {
-	if ( $colour[0] == '#' ) {
-		$colour = substr( $colour, 1 );
+function hex2rgb($color) {
+	if ( $color[0] == '#' ) {
+		$color = substr($color, 1);
 	}
-	if ( strlen( $colour ) == 6 ) {
-		list( $r, $g, $b ) = array( $colour[0] . $colour[1], $colour[2] . $colour[3], $colour[4] . $colour[5] );
-	} elseif ( strlen( $colour ) == 3 ) {
-		list( $r, $g, $b ) = array( $colour[0] . $colour[0], $colour[1] . $colour[1], $colour[2] . $colour[2] );
+	if ( strlen($color) == 6 ) {
+		list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+	} elseif ( strlen($color) == 3 ) {
+		list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
 	} else {
 		return false;
 	}
-	$r = hexdec( $r );
-	$g = hexdec( $g );
-	$b = hexdec( $b );
-	return array( 'red' => $r, 'green' => $g, 'blue' => $b );
+	$r = hexdec($r);
+	$g = hexdec($g);
+	$b = hexdec($b);
+	return array('r' => $r, 'g' => $g, 'b' => $b);
 }
 
 
