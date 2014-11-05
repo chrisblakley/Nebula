@@ -53,6 +53,7 @@
 		register_setting('nebula_settings_group', 'nebula_business_hours_saturday_enabled');
 		register_setting('nebula_settings_group', 'nebula_business_hours_saturday_open');
 		register_setting('nebula_settings_group', 'nebula_business_hours_saturday_close');
+		register_setting('nebula_settings_group', 'nebula_business_hours_closed');
 
 		register_setting('nebula_settings_group', 'nebula_facebook_url');
 		register_setting('nebula_settings_group', 'nebula_facebook_app_id');
@@ -355,6 +356,18 @@
 							<p class="helper"><small>Open/Close times. Times should be in the format "5:30 pm" or "17:30". Uncheck all to disable this meta.</small></p>
 						</td>
 			        </tr>
+
+					<tr valign="top">
+			        	<th scope="row">Days Off&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<textarea name="nebula_business_hours_closed"><?php echo get_option('nebula_business_hours_closed'); ?></textarea>
+							<p class="helper"><small>Comma-separated list of special days the business is closed (like holidays). These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank">Here is a good reference for holiday occurrences.</a><br/><strong>Note:</strong> This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</small></p>
+						</td>
+			        </tr>
+
+
+
+
 
 			        <tr valign="top">
 			        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>

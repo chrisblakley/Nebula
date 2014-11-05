@@ -307,6 +307,25 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		wp_add_dashboard_widget('phg_developer_info', 'PHG Developer Info', 'dashboard_developer_info');
 	}
 	function dashboard_developer_info() {
+		
+		
+		//@TODO "Nebula" 0: The strpos only works with very specific domains. The getwhois is fine (most of the time), but need to find a more consistent way to use it.
+		
+		$whois = getwhois('gearside', 'com'); //@TODO "Nebula" 0: Use dynamic domain here (eventually use nebula_url_components('sld') and nebula_url_components('tld').
+		$domain_exp_unix = strtotime(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ") + 40, 10));
+		$domain_exp = date("F j, Y", $domain_exp_unix);
+		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: #000;' ;
+		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') ) ? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
+		
+		echo '<!-- ' . $whois . ' -->';
+		
+		//@TODO "Nebula" 0: This only works with my whois data...
+		$domain_registrar_start = strpos($whois, "Reseller: ")+10;
+		$domain_registrar_stop = strpos($whois, "Domain Status: ")-$domain_registrar_start;
+		$domain_registrar = strtolower(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+		$domain_registrar_html = ( $domain_registrar ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . $domain_registrar . '</strong></li>': '';
+		
+		
 		//Get last modified filename and date
 		$dir = glob_r( get_template_directory() . '/*');
 		$last_date = 0;
@@ -394,7 +413,10 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 			if ( WP_DEBUG ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
 			}
-			echo '<li><i class="fa fa-info-circle fa-fw"></i> Domain: <strong>' . $_SERVER['SERVER_NAME'] . '</strong></li>';
+			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . $_SERVER['SERVER_NAME'] . '</strong>' . $domain_exp_html . '</li>';
+			
+			echo $domain_registrar_html;
+			
 			if ( function_exists('gethostname') ) {
 				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
 			}
@@ -414,24 +436,6 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 
 		echo '<div class="search_results"></div>';
 	}
-}
-
-function espresso_let_to_num( $size ) {
-	$l 		= substr( $size, -1 );
-	$ret 	= substr( $size, 0, -1 );
-	switch( strtoupper( $l ) ) {
-		case 'P':
-			$ret *= 1024;
-		case 'T':
-			$ret *= 1024;
-		case 'G':
-			$ret *= 1024;
-		case 'M':
-			$ret *= 1024;
-		case 'K':
-			$ret *= 1024;
-	}
-	return $ret;
 }
 
 //Search theme or plugin files via PHG Metabox
@@ -683,4 +687,20 @@ add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right() {
 	$nebula_theme_info = wp_get_theme();
     return '<a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong>';
+}
+
+
+function getwhois($domain, $tld) {
+	require_once(TEMPLATEPATH . "/includes/class-whois.php");
+	$whois = new Whois();
+	
+	if( !$whois->ValidDomain($domain . '.' . $tld) ) {
+		return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
+	}
+
+	if ( $whois->Lookup($domain . '.' . $tld) ) {
+		return $whois->GetData(1);
+	} else {
+		return 'Sorry, an error occurred.';
+	}
 }

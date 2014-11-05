@@ -170,14 +170,14 @@
 				<?php endif; ?>
 
 				if ( typeof ga == 'function' ) {
-					ga('send', 'event', category, action, label, value); //Important! If modifying this function, DO NOT DELETE THIS LINE!
+					ga('send', 'event', category, action, label, value); //Important! If modifying this function, DO NOT DELETE THIS LINE! //{'page': '/test-page'} or maybe campaign info?
 					var consolePrepend = 'Sending GA event: ';
 				} else {
 					var consolePrepend = 'ga() is not defined. Attempted event: ';
 				}
 
 				if ( document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 ) { //If not IE8 or less
-					if ( <?php echo (is_dev()) ? '1' : '0'; ?> || debug == 1 ) {
+					if ( <?php echo (is_dev()) ? '1' : '0'; ?> || ( typeof debug != 'undefined' && debug == 1) ) {
 						console.log(css + consolePrepend + category + ', ' + action + ', ' + label + ', ' + value, styling);
 					}
 				}

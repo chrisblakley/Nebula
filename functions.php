@@ -73,10 +73,10 @@ function register_nebula_scripts() {
 	wp_register_script('nebula-skrollr', '//cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.27/skrollr.min.js?' . $GLOBALS['gumby_debug'], array(), '0.6.27', true);
 	wp_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js?async', array(), null, true);
 	wp_register_script('nebula-respond', '//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js?' . $GLOBALS['defer'], array(), '1.4.2', true);
-	wp_register_script('nebula-html5shiv', '//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js?' . $GLOBALS['defer'], array(), '3.7.2', true);	
-	
+	wp_register_script('nebula-html5shiv', '//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js?' . $GLOBALS['defer'], array(), '3.7.2', true);
+
 	wp_register_script('nebula-gumby', get_template_directory_uri() . '/js/libs/gumby.min.js?' . $GLOBALS['gumby_debug'], array(), '2.6', true); //CDN: //cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/js/libs/gumby.min.js //Note: CDN version does not have the extensions installed.
-	
+
 	wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
 	wp_register_script('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/js/jquery.dataTables.min.js', array(), '1.10', true);
 	wp_register_script('nebula-maskedinput', '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js', array(), '1.3.1', true);
@@ -168,9 +168,9 @@ function enqueue_nebula_frontend() {
 	//wp_enqueue_script('nebula-supplementr');
 	//wp_enqueue_script('nebula-cssbs');
 	//wp_enqueue_script('nebula-doubletaptogo');
-	
+
 	wp_enqueue_script('nebula-gumby');
-	
+
 	wp_enqueue_script('nebula-main');
 	wp_localize_script('nebula-main', 'bloginfo', $localize_bloginfo);
 	wp_localize_script('nebula-main', 'clientinfo', $localize_clientinfo);
@@ -247,6 +247,7 @@ function enqueue_nebula_admin() {
 
 /*====================================================
  Custom Theme Functions
+ Add custom functions for the theme here so that /functions/* files can be easily updated with newer Nebula versions. If you do need to modify Nebula functions make a comment at the top!
  =====================================================*/
 
 

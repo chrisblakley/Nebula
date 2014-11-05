@@ -52,6 +52,7 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url('../images/phg/phg-
 .wp-admin .hide-if-no-customize {display: none; visibility: hidden; opacity: 0;}
 
 .appearance_page_nebula_settings .form-table th {width: 300px;}
+.appearance_page_nebula_settings textarea {width: 392px; height: 60px; resize: vertical; font-size: 12px;}
 
 .form-table .helper {padding: 0 10px; margin: 10px 0; background: #f9f9f9; border-radius: 8px;}
 
@@ -77,7 +78,7 @@ th#id {width: 50px;}
 	.todo_help_desc {font-size: 10px; margin: 0; color: #666;}
 
 .todoresults_title {margin-bottom: 0;}
-.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 306px; resize: vertical;}
+.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 350px; resize: vertical;}
 	.todofilewrap {margin-bottom: 10px;}
 		.todofilename {font-size: 12px; margin: 0;}
 		.todoresult {font-size: 10px; margin: 0; padding: 0;}

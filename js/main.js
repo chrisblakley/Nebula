@@ -102,6 +102,8 @@ jQuery(window).on('load', function() {
 	jQuery('html').addClass('loaded');
 	jQuery('.unhideonload').removeClass('hidden');
 
+	browserInfo();
+
 	setTimeout(function(){
 		emphasizeSearchTerms();
 	}, 1000);
@@ -1197,6 +1199,35 @@ function contactBackup() {
 	});
 }
 
+//Fill browserinfo field with browser information (to send with forms).
+function browserInfo() {
+	var browserInfoVal = '';
+
+	if ( typeof navigator != 'undefined' ) {
+		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n\n';
+	}
+
+	browserInfoVal += 'Browser Information: ' + jQuery('html').attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Current Page Information: ' + jQuery('body').attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Viewport Size: ' + jQuery(window).width() + 'px x ' + jQuery(window).height() + 'px ' + '\n\n';
+
+	if ( typeof performance != 'undefined' ) {
+		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
+		var pageLoadTime = (performance.timing.loadEventStart-performance.timing.navigationStart)/1000;
+		browserInfoVal += 'Page Loading Time: ' + pageLoadTime + 's' + '\n\n';
+	}
+
+	browserInfoVal += 'Referrer: ' + document.referrer + '\n';
+
+	if ( typeof window.history != 'undefined' ) {
+		browserInfoVal += 'History Depth: ' + window.history.length + '\n\n';
+	}
+
+	browserInfoVal += 'IP Address: ' + clientinfo['remote_addr'] + '\n';
+	browserInfoVal += 'Lookup: http://whatismyipaddress.com/ip/' + clientinfo['remote_addr'];
+
+	jQuery('textarea.browserinfo').addClass('hidden').css('display', 'none').val(browserInfoVal);
+}
 
 //Create desktop notifications
 function desktopNotification(title, message, clickCallback, closeCallback, showCallback, errorCallback) {
@@ -1207,7 +1238,7 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 			lang: "en-US", //Language (optional)
 			body: "", //Body message (optional)
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-			icon: bloginfo['template_directory'] + "/images/og-thumb.png" //Thumbnail Icon (optional)
+			icon: bloginfo['template_directory'] + "/images/meta/og-thumb.png" //Thumbnail Icon (optional)
 		}
 
 		if ( typeof message === "undefined" ) {

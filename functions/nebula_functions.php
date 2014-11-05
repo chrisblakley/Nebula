@@ -1073,8 +1073,25 @@ function currently_open() {
 		);
 	}
 	$today = strtolower(date('l'));
-	if ( $businessHours[$today]['enabled'] == '1' ) {
+
+	$days_off = explode(', ', get_option('nebula_business_hours_closed'));
+	foreach($days_off as $key => $day_off){
+		$days_off[$key] = strtotime($day_off . ' ' . date('Y'));
+
+		if ( date('N', $days_off[$key]) == 6 ) { //If the date is a Saturday
+			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
+		} elseif ( date('N', $days_off[$key]) == 7 ) { //If the date is a Sunday
+			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
+		}
+
+		if ( date('Y-m-d', $days_off[$key]) == date('Y-m-d', strtotime('today')) ) {
+			return false;
+		}
+	}
+
+	if ( $businessHours[$today]['enabled'] == '1' ) { //If the Nebula Settings checkmark is checked for this day of the week.
 		$now = time();
+
 		$openToday = strtotime($businessHours[$today]['open']);
 		$closeToday = strtotime($businessHours[$today]['close']);
 
