@@ -545,12 +545,12 @@ function nebula_url_components($segment="all", $url=null) {
 
 
 
-
-
 //Display a random stock photo from unsplash.it
-function random_unsplash($width=800, $height=600, $raw=0) {
+function random_unsplash($width=800, $height=600, $raw=0, $randID=0) {
 	$skipList = array(35, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-	$randID = random_number_between_but_not(0, 430, $skipList);
+	if ( $randID == 0 ) {
+		$randID = random_number_between_but_not(0, 506, $skipList); //Update the second number here as more Unsplash.it photos become available.
+	}
 	if ( $raw ) {
 		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
 	} else {
@@ -931,6 +931,10 @@ function redirect_single_post() {
     }
 }
 
+//Remove capital P core function
+remove_filter('the_title', 'capital_P_dangit', 11);
+remove_filter('the_content', 'capital_P_dangit', 11);
+remove_filter('comment_text', 'capital_P_dangit', 31);
 
 //Add default posts and comments RSS feed links to head
 add_theme_support('automatic-feed-links');

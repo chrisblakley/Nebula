@@ -29,6 +29,20 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 }
 
 
+//Placeholder image
+//@TODO "Nebula" 0: Come up with a way for the "X" to appear in the div without it looking bad (currently stretching the PNG).
+function fpo_image($type='none', $width='100%', $height='200px', $color='', $outline='', $styles='', $classes='') {
+	if ( $type == 'unsplash' || $type == 'photo' ) {
+		$imgsrc = random_unsplash(800, 600, 1);
+	} else {
+		$imgsrc = get_template_directory_uri() . '/images/x.png';
+		$outline = 'outline: 1px solid #000;';
+	}
+
+	echo '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $color . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $outline . ' ' . $styles . '"></div>';
+}
+
+
 //Placeholder form
 function fpo_form($fields=array('Name', 'Email', 'Message'), $submit="Send", $action=null) {
 

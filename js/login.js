@@ -38,13 +38,13 @@ jQuery(document).ready(function() {
 	if ( jQuery('#login_error').text().indexOf('password') > -1 ) {
 		var userError = jQuery('#login_error strong:nth-of-type(2)').text();
 		ga('send', 'event', 'Login Error', 'User: ' + userError, 'From: ' + clientinfo['remote_addr']);
-		Gumby.log('Sending GA event: ' + 'Login Error', 'User: ' + userError, 'From: ' + clientinfo['remote_addr']);
+		if ( typeof Gumby != 'undefined' ) { Gumby.log('Sending GA event: ' + 'Login Error', 'User: ' + userError, 'From: ' + clientinfo['remote_addr']); }
 	}
 	
 	jQuery('#lostpasswordform').submit(function(){
 		var resetUser = jQuery('#user_login').val();
 		ga('send', 'event', 'Password Reset', 'User: ' + resetUser);
-		Gumby.log('Sending GA event: ' + 'Password Reset', 'User: ' + resetUser);
+		if ( typeof Gumby != 'undefined' ) { Gumby.log('Sending GA event: ' + 'Password Reset', 'User: ' + resetUser); }
 	});
 	
 	if ( jQuery('.flag').is('*') ) {

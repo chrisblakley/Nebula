@@ -318,7 +318,7 @@ get_header(); ?>
 						include_once('includes/wireframing.php');
 					} ?>
 
-					<?php if (is_page(9999)) { //Random Unsplash
+					<?php if (is_page(1105)) { //Random Unsplash
 						include_once('includes/random_unsplash.php');
 					} ?>
 

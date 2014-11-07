@@ -234,13 +234,13 @@ function facebookLoginLogout() {
 				checkFacebookStatus();
 				nebula_event('Social', 'Facebook Connect', FBuser.name);
 			} else {
-				Gumby.log('User did not accept permissions.');
+				if ( typeof Gumby != 'undefined' ) { Gumby.log('User did not accept permissions.'); }
 				checkFacebookStatus();
 			}
 		}, {scope:'public_profile,email'});
 	} else {
 		FB.logout(function(response) {
-			Gumby.log('User has logged out.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('User has logged out.'); }
 			checkFacebookStatus();
 			prefillFacebookFields();
 		});
@@ -255,7 +255,7 @@ function checkFacebookStatus() {
 			FBstatus = true;
 			FB.api('/me', function(response) {
 				FBuser = response;
-				Gumby.log(response.name + ' has connected with this app.');
+				if ( typeof Gumby != 'undefined' ) { Gumby.log(response.name + ' has connected with this app.'); }
 				prefillFacebookFields(response);
 				jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
 
@@ -269,13 +269,13 @@ function checkFacebookStatus() {
 
 			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
 		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
-			Gumby.log('User is logged into Facebook, but has not connected to this app.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('User is logged into Facebook, but has not connected to this app.'); }
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
 			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
 		} else { //User is not logged into Facebook.
-			Gumby.log('User is not logged into Facebook.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('User is not logged into Facebook.'); }
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
@@ -1243,12 +1243,12 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 
 		if ( typeof message === "undefined" ) {
 			message = defaults;
-			Gumby.warn('Warning: message is undefined, using defaults.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: message is undefined, using defaults.'); }
 		} else if ( typeof message === "string" ) {
 			body = message;
 			message = defaults;
 			message.body = body;
-			Gumby.log('Note: message is a string, using defaults.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Note: message is a string, using defaults.'); }
 		} else {
 			if ( typeof message.dir === "undefined" ) {
 				message.dir = defaults.dir;
@@ -1258,7 +1258,7 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 			}
 			if ( typeof message.body === "undefined" ) {
 				message.body = defaults.lang;
-				Gumby.warn('Warning: No message body.');
+				if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: No message body.'); }
 			}
 			if ( typeof message.tag === "undefined" ) {
 				message.tag = defaults.tag;
@@ -1297,7 +1297,7 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 function checkNotificationPermission() {
 	Notification = window.Notification || window.mozNotification || window.webkitNotification;
 	if ( !(Notification) ) {
-		Gumby.warn("This browser does not support desktop notifications.");
+		if ( typeof Gumby != 'undefined' ) { Gumby.warn("This browser does not support desktop notifications."); }
 		return false;
 	} else if ( Notification.permission === "granted" ) {
 		return true;
@@ -1316,10 +1316,10 @@ function checkNotificationPermission() {
 
 function nebulaVibrate(pattern) {
 	if ( typeof pattern === 'undefined' ) {
-		Gumby.warn('Vibration pattern was not provided. Using default.');
+		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Vibration pattern was not provided. Using default.'); }
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	} else if ( typeof pattern !== 'object' ) {
-		Gumby.warn('Vibration pattern is not an object. Using default.');
+		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Vibration pattern is not an object. Using default.'); }
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	}
 	if ( checkVibration() ) {
@@ -1330,7 +1330,7 @@ function nebulaVibrate(pattern) {
 
 function checkVibration() {
 	if ( !jQuery('body').hasClass('mobile') ) {
-		Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support).");
+		if ( typeof Gumby != 'undefined' ) { Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support)."); }
 	}
 
 	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
@@ -1348,11 +1348,11 @@ function errorLogAndFallback() {
 	if ( jQuery('.cform-disabled').is('*') ) {
 		var currentPage = jQuery(document).attr('title');
 		nebula_event('Error', 'Contact Form 7 Disabled', currentPage, {'nonInteraction': 1});
-		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
+		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.'); }
 	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
 		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo fa fa-envelope"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
 		nebula_event('Error', 'Contact Form 7 Form Not Found', currentPage, {'nonInteraction': 1});
-		Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.');
+		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.'); }
 		jQuery(document).on('click', '.cform-not-found', function(){
 			nebula_event('Contact', 'Submit (Intent)', 'Backup Mailto Intent');
 		});
@@ -1511,7 +1511,7 @@ function vimeoControls() {
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			Gumby.warn('froogaloop.js could not be loaded.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.warn('froogaloop.js could not be loaded.'); }
 		});
 	}
 
@@ -1521,7 +1521,7 @@ function vimeoControls() {
 			var vimeoiframeClass = jQuery(this).attr('id');
 			player[i] = $f(vimeoiframeClass);
 			player[i].addEvent('ready', function() {
-		    	Gumby.log('player is ready');
+		    	if ( typeof Gumby != 'undefined' ) { Gumby.log('player is ready'); }
 			    player[i].addEvent('play', onPlay);
 			    player[i].addEvent('pause', onPause);
 			    player[i].addEvent('seek', onSeek);
@@ -1552,7 +1552,7 @@ function vimeoControls() {
 	}
 
 	function onPlayProgress(data, id) {
-		//Gumby.log(data.seconds + 's played');
+		//if ( typeof Gumby != 'undefined' ) { Gumby.log(data.seconds + 's played'); }
 	}
 }
 
@@ -1585,7 +1585,7 @@ function createCookie(name, value, days) {
 		var expires = "";
 	}
 	document.cookie = name + "=" + value + expires + "; path=/";
-	Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires);
+	if ( typeof Gumby != 'undefined' ) { Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires); }
 }
 function readCookie(name) {
 	var nameEQ = name + "=";
@@ -1595,7 +1595,7 @@ function readCookie(name) {
 		while (c.charAt(0) == ' ') {
 			c = c.substring(1, c.length);
 			if (c.indexOf(nameEQ) == 0) {
-				Gumby.log('Cookie "' + name + '" exists.');
+				if ( typeof Gumby != 'undefined' ) { Gumby.log('Cookie "' + name + '" exists.'); }
 				return c.substring(nameEQ.length, c.length);
 			}
 		}
@@ -1604,7 +1604,7 @@ function readCookie(name) {
 }
 function eraseCookie(name) {
 	createCookie(name,"",-1);
-	Gumby.warn('Erased cookie: ' + name);
+	if ( typeof Gumby != 'undefined' ) { Gumby.warn('Erased cookie: ' + name); }
 }
 
 
@@ -1621,12 +1621,12 @@ function mapActions() {
 			mapInfo['weather'] = 0;
 			jQuery('.mapweather').removeClass('active').addClass('inactive').text(originalWeatherText);
 			jQuery('.mapweather-icon').removeClass('active').addClass('inactive');
-			Gumby.log('Disabling weather layer.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Disabling weather layer.'); }
 		} else {
 			mapInfo['weather'] = 1;
 			jQuery('.mapweather').addClass('active').removeClass('inactive').text('Disable Weather');
 			jQuery('.mapweather-icon').addClass('active').removeClass('inactive');
-			Gumby.log('Enabling weather layer.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling weather layer.'); }
 		}
 		renderMap(mapInfo);
 		return false;
@@ -1638,12 +1638,12 @@ function mapActions() {
 			mapInfo['traffic'] = 0;
 			jQuery('.maptraffic').removeClass('active').addClass('inactive').text(originalTrafficText);
 			jQuery('.maptraffic-icon').removeClass('active').addClass('inactive');
-			Gumby.log('Disabling traffic layer.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Disabling traffic layer.'); }
 		} else {
 			mapInfo['traffic'] = 1;
 			jQuery('.maptraffic').addClass('active').removeClass('inactive').text('Disable Traffic');
 			jQuery('.maptraffic-icon').addClass('active').removeClass('inactive');
-			Gumby.log('Enabling traffic layer.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling traffic layer.'); }
 		}
 		renderMap(mapInfo);
 		return false;
@@ -1651,12 +1651,12 @@ function mapActions() {
 
 	jQuery(document).on('click', '.mapgeolocation', function(){
 		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
-			Gumby.log('Enabling location detection.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling location detection.'); }
 			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
 			jQuery('.mapgeolocation').removeClass('inactive').attr('title', 'Requesting location...').text('Detecting Location...');
 			requestPosition();
 		} else {
-			Gumby.log('Removing detected location.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Removing detected location.'); }
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-ban success error').addClass('inactive fa-location-arrow');
 			jQuery(this).removeClass('active success failure').text('Detect Location').addClass('inactive').attr('title', 'Detect current location').css('color', '');
 			mapInfo['detectLoc'] = new Array(0, 0);
@@ -1680,7 +1680,7 @@ function mapActions() {
 	jQuery(document).on('click', '.maprefresh', function(){
 		if ( !jQuery(this).hasClass('timeout') ) {
 			pleaseWait = 0;
-			Gumby.log('Refreshing the map.');
+			if ( typeof Gumby != 'undefined' ) { Gumby.log('Refreshing the map.'); }
 			renderMap(mapInfo);
 			jQuery('.maprefresh').addClass('timeout', function(){
 				jQuery('.maprefresh').text('Refreshing...');
@@ -1733,7 +1733,7 @@ function mapActions() {
 
 //Request Geolocation
 function requestPosition() {
-	Gumby.log('Requesting location... May need to be accepted.');
+	if ( typeof Gumby != 'undefined' ) { Gumby.log('Requesting location... May need to be accepted.'); }
     var nav = null;
     if (nav == null) {
         nav = window.navigator;
@@ -1780,7 +1780,7 @@ function successCallback(position) {
 
 	if ( mapInfo['detectLoc']['accMeters'] > 400 ) {
 		lowAccText = 'Your location accuracy is ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).';
-		Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).');
+		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).'); }
 		//Some kind of notification here...
 	}
 
@@ -1806,7 +1806,7 @@ function errorCallback(error) {
         	geolocationErrorMessage = "An unknown error has occurred.";
             break;
     }
-    Gumby.warn(geolocationErrorMessage);
+    if ( typeof Gumby != 'undefined' ) { Gumby.warn(geolocationErrorMessage); }
     jQuery(document).trigger('geolocationError');
     nebula_event('Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
@@ -1817,7 +1817,7 @@ function getAllLocations() {
 	jQuery('.latlngcon').each(function(i){
 		var alat = jQuery(this).find('.lat').text();
 		var alng = jQuery(this).find('.lng').text();
-		Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng);
+		if ( typeof Gumby != 'undefined' ) { Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng); }
 		mapInfo['markers'][i] = [alat, alng];
 	});
 	renderMap(mapInfo);
@@ -1825,10 +1825,10 @@ function getAllLocations() {
 
 //Render the Google Map
 function renderMap(mapInfo) {
-    Gumby.log('Rendering Google Map');
+    if ( typeof Gumby != 'undefined' ) { Gumby.log('Rendering Google Map'); }
 
     if ( typeof google === 'undefined' ) {
-    	Gumby.log('google is not defined. Likely the Google Maps script is not being seen.');
+    	if ( typeof Gumby != 'undefined' ) { Gumby.log('google is not defined. Likely the Google Maps script is not being seen.'); }
     	return false;
     } else {
     	var myOptions = {
@@ -1843,7 +1843,7 @@ function renderMap(mapInfo) {
 
 		if ( typeof mapInfo['traffic'] !== 'undefined' ) {
 			if ( mapInfo['traffic'] == 1 ) {
-				Gumby.log('Traffic is enabled.');
+				if ( typeof Gumby != 'undefined' ) { Gumby.log('Traffic is enabled.'); }
 				var trafficLayer = new google.maps.TrafficLayer();
 				trafficLayer.setMap(map);
 			}
@@ -1852,7 +1852,7 @@ function renderMap(mapInfo) {
 		//Map weather
 		if ( typeof mapInfo['weather'] !== 'undefined' ) {
 			if ( mapInfo['weather'] == 1 ) {
-				Gumby.log('Weather is enabled.');
+				if ( typeof Gumby != 'undefined' ) { Gumby.log('Weather is enabled.'); }
 				var weatherLayer = new google.maps.weather.WeatherLayer({
 					temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
 				});
@@ -1888,7 +1888,7 @@ function renderMap(mapInfo) {
 		            clickable: false,
 		            map: map
 		        });
-		        Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]);
+		        if ( typeof Gumby != 'undefined' ) { Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]); }
 		    }(marker, i);
 	    }
 
@@ -1913,7 +1913,7 @@ function renderMap(mapInfo) {
 					radius: mapInfo['detectLoc']['accMeters']
 				});
 				circle.bindTo('center', marker, 'position');
-				Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
+				if ( typeof Gumby != 'undefined' ) { Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]); }
 
 				//var detectbounds = new google.maps.LatLngBounds();
 				bounds.extend(detectLoc);

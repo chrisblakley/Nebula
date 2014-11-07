@@ -67,6 +67,7 @@
 		register_setting('nebula_settings_group', 'nebula_youtube_url');
 		register_setting('nebula_settings_group', 'nebula_instagram_url');
 
+		register_setting('nebula_settings_group', 'nebula_wireframing');
 		register_setting('nebula_settings_group', 'nebula_admin_bar');
 		register_setting('nebula_settings_group', 'nebula_comments');
 		register_setting('nebula_settings_group', 'nebula_disqus_shortname');
@@ -424,6 +425,18 @@
 				<hr class="mobiletitle"/>
 
 				<table class="form-table dependent functions" style="display: none;">
+			        <tr valign="top">
+			        	<th scope="row">Wireframe Styles&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<select name="nebula_wireframing">
+								<option value="default" <?php selected('default', get_option('nebula_wireframing')); ?>>Default</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_wireframing')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_wireframing')); ?>>Disabled</option>
+							</select>
+							<p class="helper"><small>When prototyping, enable this setting to use the greyscale stylesheet. <em>(Default: Disabled)</em></small></p>
+						</td>
+			        </tr>
+			        
 			        <tr valign="top">
 			        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>

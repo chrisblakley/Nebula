@@ -49,6 +49,7 @@ function register_nebula_styles() {
 	wp_register_style('nebula-main', get_stylesheet_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null);
 	wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
 	wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
+	wp_register_style('nebula-wireframing', get_template_directory_uri() . '/css/wireframing.css', array('nebula-main'), null);
 }
 
 
@@ -154,7 +155,10 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome'); //Font-Awesome can be dynamically loaded with JS (with some exceptions).
 	wp_enqueue_style('nebula-main');
-
+	
+	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
+		wp_enqueue_style('nebula-wireframing');
+	}
 
 	//Scripts
 	wp_enqueue_script('jquery');

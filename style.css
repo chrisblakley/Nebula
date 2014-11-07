@@ -236,6 +236,8 @@ body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby
 i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .btn, .skiplink {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
+form fieldset {border: 1px solid #ccc;}
+
 .field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: #ca3838;}
 .field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: #ca3838; color: #000; background: #f0c5c5;}
 
@@ -521,6 +523,7 @@ p.form-submit {}
 		#cform7-container .submit.disabled,
 		p.contact-form-submit input.disabled,
 		p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
+		.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px !important; line-height: 0px !important; background: rgba(255,255,255,0); color: rgba(255,255,255,0);}
 
 #cform7-container {margin: 0;}
 	#cform7-container .field {margin-bottom: 3px;}
@@ -535,6 +538,7 @@ p.form-submit {}
 .wpcf7-not-valid-tip {display: none !important;}
 
 .field.danger:after, .field.warning:after, .field.success:after {top: 28px !important;}
+.xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 24px !important;}
 
 div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px;}
 div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px;}
@@ -674,6 +678,25 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 .ie7 .column.first-child, .ie7 .columns.first-child, .ie7 .alpha {margin-left: 0px !important;}
 .ie7 .row .push_one {margin-left: 8.1% !important;}
 
+
+/* ==========================================================================
+   Shortcode Helpers
+   ========================================================================== */
+.google-map-overlay {position: relative; overflow: hidden;}
+	.the-map-overlay {cursor: pointer;}
+		.google-map-overlay:before {content: 'Click to enable interactivity.'; position: absolute; bottom: -50px; width: 100%; background: rgba(0, 0, 0, 0.5); text-align: center; color: #fff; overflow: hidden; opacity: 0; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+		.google-map-overlay.the-map-overlay:before {bottom: 6px; opacity: 1; padding: 8px 0; height: auto;}
+			.the-map-overlay:hover:before,
+			.the-map-overlay.hover:before {background: rgba(0, 0, 0, 0.9); padding: 24px 0;}
+	.the-map-overlay iframe {pointer-events: none;}
+
+.ttip {cursor: text;}
+	.ttip:before,
+	.ttip:after {bottom: 0%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+		.ie .ttip:before,
+		.ie .ttip:after,
+		.ttip:hover:after,
+		.ttip:hover:before {bottom: 101%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
 
 /* ==========================================================================
