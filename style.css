@@ -477,9 +477,9 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .widget-container {margin: 10px 0 15px 0;}
 
 /* Nebula expandable sidebar subnav style defaults */
-a.toplevelvert_expander {position: absolute; top: 9px; right: 0; padding: 0 10px !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
-	a.toplevelvert_expander.plus {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
-	a.toplevelvert_expander i {font-size: 18px; display: block; width: 100%;}
+a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;}
+	a.toplevelvert_expander i {font-size: 18px; display: block; width: 100%; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg); -webkit-transition: transform 0.25s; -moz-transition: transform 0.25s; -o-transition: transform 0.25s; transition: transform 0.25s;}
+	a.toplevelvert_expander.plus i {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
 
 
 .xoxo form.search input[type="text"] {width: 77% !important; font-size: 12px !important; line-height: 24px !important; height: auto !important; vertical-align: top;}

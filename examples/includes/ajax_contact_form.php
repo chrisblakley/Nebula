@@ -5,9 +5,9 @@
 			'email': jQuery("#ajax-contact input.email").val(),
 			'message': jQuery("#ajax-contact textarea.message").val(),
 		}];
-		
+
 		jQuery('#form-messages').html('<i class="fa fa-spinner fa-spin sending"></i> Sending...');
-		
+
 		jQuery.ajax({
 			type: "POST",
 			url: jQuery('#ajax-contact').attr('action'),
@@ -15,22 +15,22 @@
 				data: contactData,
 			},
 			success: function(response){
-				if ( response.indexOf('Thank you') > -1 ) {					
+				if ( response.indexOf('Thank you') > -1 ) {
 					jQuery('#ajax-contact input:not(#contact-submit), #ajax-contact textarea').val('').trigger('keyup');
 					jQuery('#ajax-contact').slideUp();
-					
+
 					//conversionTracker();
-					nebula_event('Contact', 'Submit', 'AJAX Example Form Submission from ' + contactData[0]['name'] + ': "' + contactData[0]['message'] + '"');
+					ga('send', 'event', 'Contact', 'Submit', 'AJAX Example Form Submission from ' + contactData[0]['name'] + ': "' + contactData[0]['message'] + '"');
 				}
 				jQuery('#form-messages').html(response);
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
 				jQuery('#form-messages').text(errorThrown);
-				nebula_event('Contact', 'Error', 'Contact Form AJAX Error');
+				ga('send', 'event', 'Contact', 'Error', 'Contact Form AJAX Error');
 			},
 			timeout: 60000
 		});
-		
+
 		e.preventDefault();
 		return false;
 	});

@@ -1,6 +1,6 @@
 <script>
 	jQuery(document).ready(function() {
-		
+
 		//This is the same as checkNotificationPermission(), but tailored for this example.
 		//Generally, you could just call it with: if ( !checkNotificationPermission() ) { //Supported and Permission Granted }
 		Notification = window.Notification || window.mozNotification || window.webkitNotification;
@@ -20,10 +20,10 @@
 				}
 			});
 		}
-				
+
 		jQuery('.basicnotify').on('click', function(){
 			desktopNotification("Basic Notification", "This is the message");
-			nebula_event('Notification Activated', 'Basic Notification');
+			ga('send', 'event', 'Notification Activated', 'Basic Notification');
 			return false;
 		});
 
@@ -35,18 +35,18 @@
 				icon: bloginfo['template_directory'] + "/images/meta/og-thumb2.png"
 			}
 			desktopNotification("Fully Customized Notification", message, clickNotify, closeNotify, showNotify, errorNotify);
-			nebula_event('Notification Activated', 'Fully Customized');
+			ga('send', 'event', 'Notification Activated', 'Fully Customized');
 
 			function clickNotify() {
 				jQuery('.fullnotify').parents('div').removeClass('primary danger success info warning').addClass('success');
 				//console.log('You clicked the notification!');
-				nebula_event('Notification Clicked');
+				ga('send', 'event', 'Notification Clicked');
 			}
 
 			function closeNotify() {
 				jQuery('.fullnotify').parents('div').removeClass('warning primary info danger success').addClass('info');
 				//console.log('You closed the notification.');
-				nebula_event('Notification Closed');
+				ga('send', 'event', 'Notification Closed');
 			}
 
 			function showNotify() {
@@ -57,35 +57,35 @@
 			function errorNotify() {
 				jQuery('.fullnotify').parents('div').removeClass('primary warning danger success info').addClass('danger');
 				//console.log('There was an error with the notification.');
-				nebula_event('Notification Error', 'An error happened when the fully customized notification was clicked.');
+				ga('send', 'event', 'Notification Error', 'An error happened when the fully customized notification was clicked.');
 			}
 
 			return false;
 		});
-		
-		
+
+
 		jQuery('.custommessageform').on('submit', function(){
 			var customtitle = 'Default Custom Title';
 			var custommessage = 'Default custom message.';
-			
+
 			if ( jQuery('.customtitle').val().trim() != '' ) {
 				customtitle = jQuery('.customtitle').val().trim();
 			}
-			
+
 			if ( jQuery('.custommessage').val().trim() != '' ) {
 				custommessage = jQuery('.custommessage').val().trim();
 			}
-			
+
 			var message = {
 				body: custommessage,
 			}
 			desktopNotification(customtitle, message);
-			nebula_event('Notification Activated', 'Custom Message', customtitle + ': ' +  message);
+			ga('send', 'event', 'Notification Activated', 'Custom Message', customtitle + ': ' +  message);
 			jQuery('.customtitle').val('').focus();
 			jQuery('.custommessage').val('');
 			return false;
 		});
-		
+
 		jQuery('.resetcustomfields').on('click', function(){
 			jQuery('.customtitle').val('').focus();
 			jQuery('.custommessage').val('');

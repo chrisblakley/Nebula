@@ -116,7 +116,7 @@
 					jQuery('#start_button_text').text(' No Speech');
 					jQuery('#start_button_icon').removeClass().addClass('fa fa-volume-off');
 					ignore_onend = true;
-					nebula_event('Speech Recognition', 'Error', 'No speech was detected.');
+					ga('send', 'event', 'Speech Recognition', 'Error', 'No speech was detected.');
 				}
 
 				if ( event.error == 'audio-capture' ) {
@@ -126,7 +126,7 @@
 					jQuery('#start_button_text').text(' No Microphone');
 					jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone-slash');
 					ignore_onend = true;
-					nebula_event('Speech Recognition', 'Error', 'No microphone was found.');
+					ga('send', 'event', 'Speech Recognition', 'Error', 'No microphone was found.');
 				}
 
 				if ( event.error == 'not-allowed' ) {
@@ -135,13 +135,13 @@
 						jQuery('#start_button').removeClass();
 						jQuery('#start_button_text').text(' Blocked');
 						jQuery('#start_button_icon').removeClass().addClass('fa fa-times-circle');
-						nebula_event('Speech Recognition', 'Error', 'Permission to use microphone is blocked.');
+						ga('send', 'event', 'Speech Recognition', 'Error', 'Permission to use microphone is blocked.');
 					} else {
 						jQuery('#speech-help').text('Permission to use microphone was denied.');
 						jQuery('#start_button').removeClass();
 						jQuery('#start_button_text').text(' Denied');
 						jQuery('#start_button_icon').removeClass().addClass('fa fa-times-circle-o');
-						nebula_event('Speech Recognition', 'Error', 'Permission to use microphone was denied.');
+						ga('send', 'event', 'Speech Recognition', 'Error', 'Permission to use microphone was denied.');
 					}
 					ignore_onend = true;
 				}
@@ -175,9 +175,9 @@
 
 				if ( final_transcript ) {
 					if ( final_transcript.indexOf('*') > -1 ) {
-						nebula_event('Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
+						ga('send', 'event', 'Speech Recognition', 'Transcript (Swearing)', '"' + final_transcript + '"');
 					} else {
-						nebula_event('Speech Recognition', 'Transcript', '"' + final_transcript + '"');
+						ga('send', 'event', 'Speech Recognition', 'Transcript', '"' + final_transcript + '"');
 					}
 				}
 
@@ -193,7 +193,7 @@
 		function noSpeechRecognition() {
 			jQuery('#results, #startbuttoncon').hide();
 			jQuery('#speech-help').text('Speech detection is not supported in your browser.').css('color', 'red');
-			nebula_event('Speech Recognition', 'Not Supported');
+			ga('send', 'event', 'Speech Recognition', 'Not Supported');
 		}
 
 		var two_line = /\n\n/g;
@@ -264,7 +264,7 @@
 						resetStartButton();
 						ignore_onend = true;
 						recognition.stop();
-						nebula_event('Speech Recognition', 'Search for: ' + searchQuery);
+						ga('send', 'event', 'Speech Recognition', 'Search for: ' + searchQuery);
 						searchQuery = searchQuery.replace(' ', '+');
 						window.location.href = bloginfo['home_url'] + '?s=' + searchQuery;
 					}
@@ -280,7 +280,7 @@
 				jQuery('#start_button_icon').removeClass().addClass('fa fa-microphone');
 				ignore_onend = true;
 				recognition.stop();
-				nebula_event('Speech Recognition', 'Driving Directions');
+				ga('send', 'event', 'Speech Recognition', 'Driving Directions');
 				window.location.href = 'https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>';
 			}
 
@@ -316,11 +316,11 @@
 								jQuery('#ajaxarea').val(response).css('border', '1px solid green');
 								//@TODO "Nebula" 0: window location href here
 								console.log(response);
-								nebula_event('Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
+								ga('send', 'event', 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
 							},
 							error: function(MLHttpRequest, textStatus, errorThrown){
 								console.log('There was an AJAX error: ' + errorThrown);
-								nebula_event('Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
+								ga('send', 'event', 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
 							},
 							timeout: 60000
 						});

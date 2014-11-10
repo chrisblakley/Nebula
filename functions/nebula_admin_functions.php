@@ -307,25 +307,25 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 		wp_add_dashboard_widget('phg_developer_info', 'PHG Developer Info', 'dashboard_developer_info');
 	}
 	function dashboard_developer_info() {
-		
-		
+
+
 		//@TODO "Nebula" 0: The strpos only works with very specific domains. The getwhois is fine (most of the time), but need to find a more consistent way to use it.
-		
+
 		$whois = getwhois('gearside', 'com'); //@TODO "Nebula" 0: Use dynamic domain here (eventually use nebula_url_components('sld') and nebula_url_components('tld').
 		$domain_exp_unix = strtotime(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ") + 40, 10));
 		$domain_exp = date("F j, Y", $domain_exp_unix);
 		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: #000;' ;
 		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') ) ? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
-		
+
 		echo '<!-- ' . $whois . ' -->';
-		
+
 		//@TODO "Nebula" 0: This only works with my whois data...
 		$domain_registrar_start = strpos($whois, "Reseller: ")+10;
 		$domain_registrar_stop = strpos($whois, "Domain Status: ")-$domain_registrar_start;
 		$domain_registrar = strtolower(substr($whois, $domain_registrar_start, $domain_registrar_stop));
 		$domain_registrar_html = ( $domain_registrar ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . $domain_registrar . '</strong></li>': '';
-		
-		
+
+
 		//Get last modified filename and date
 		$dir = glob_r( get_template_directory() . '/*');
 		$last_date = 0;
@@ -414,9 +414,9 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
 			}
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . $_SERVER['SERVER_NAME'] . '</strong>' . $domain_exp_html . '</li>';
-			
+
 			echo $domain_registrar_html;
-			
+
 			if ( function_exists('gethostname') ) {
 				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Hostname: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
 			}
@@ -472,8 +472,8 @@ function search_theme_files() {
 			    $counted = 1;
 		    }
 
-		    $skipExtensions = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'tiff', 'psd', 'ai', 'apng', 'bmp', 'otf', 'ttf', 'ogv', 'flv', 'fla', 'mpg', 'mpeg', 'avi', 'mov', 'woff', 'eot', 'mp3', 'mp4', 'wmv', 'wma', 'aiff', 'zip', 'zipx', 'rar', 'exe', 'dmg', 'swf', 'pdf', 'pdfx', 'pem');
-		    $skipFilenames = array('error_log');
+			$skipExtensions = array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.swf', '.pdf', '.pdfx', '.pem');
+			$skipFilenames = array('error_log');
 		    if ( !contains(basename($file), $skipExtensions) && !contains(basename($file), $skipFilenames) ) {
 			    foreach ( file($file) as $lineNumber => $line ) {
 			        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
@@ -693,7 +693,7 @@ function change_admin_footer_right() {
 function getwhois($domain, $tld) {
 	require_once(TEMPLATEPATH . "/includes/class-whois.php");
 	$whois = new Whois();
-	
+
 	if( !$whois->ValidDomain($domain . '.' . $tld) ) {
 		return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
 	}

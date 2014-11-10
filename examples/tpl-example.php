@@ -95,7 +95,7 @@ get_header(); ?>
 					} ?>
 
 					<?php if ( is_page(797) ) { //nebula_event()
-						include_once('includes/nebula_event.php');
+						//include_once('includes/nebula_event.php');
 					} ?>
 
 					<?php if ( is_page(829) ) { //Social Buttons
@@ -324,6 +324,14 @@ get_header(); ?>
 
 					<?php if (is_page(1079)) { //Flash Banner Analytics
 						include_once('includes/flash_banner_analytics.php');
+					} ?>
+
+					<?php if (is_page(1113)) { //Websockets API
+						include_once('includes/websockets_api.php');
+					} ?>
+
+					<?php if (is_page(1121)) { //LocalStorage
+						include_once('includes/localstorage.php');
 					} ?>
 
 				<?php

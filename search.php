@@ -11,19 +11,19 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 get_header(); ?>
 
 <div class="row">
-		
+
 	<div class="ten columns">
 		<?php the_breadcrumb(); ?>
 		<?php if ( have_posts() ) : ?>
 			<h1>Search Results <?php get_search_query(); ?></h1>
 			<?php get_search_form(); ?>
-		<?php else : ?>			
+		<?php else : ?>
 			<h1>No Results Found</h1>
 			<?php get_search_form(); ?>
-			
+
 			<script>
 				var badSearchTerm = jQuery('#s').val();
-				nebula_event('Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
+				ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
 			</script>
 		<?php endif; ?>
 		<?php if ( have_posts() ) : ?>
@@ -39,11 +39,11 @@ get_header(); ?>
 			<p>Your search criteria returned 0 results.</p>
 		<?php endif; ?>
 	</div><!--/columns-->
-	
+
 	<div class="five columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
-	
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

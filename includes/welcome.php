@@ -45,7 +45,12 @@
 						    default : $fa_role = 'fa-recycle'; break;
 						}
 					?>
-					<li><i class="fa <?php echo $fa_role; ?> fa-fw"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo $user_info->roles[0]; ?></strong></li>
+					<li>
+						<i class="fa <?php echo $fa_role; ?> fa-fw"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo $user_info->roles[0]; ?></strong>
+						<?php if ( is_dev() ) : ?>
+							<small>(Dev)</small>
+						<?php endif; ?>
+					</li>
 					<li>
 						<?php if ($_SERVER["REMOTE_ADDR"] == '72.43.235.106'): ?>
 							<img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
@@ -80,9 +85,13 @@
 						<?php if ( get_option('nebula_google_webmaster_tools_url') != '' ) : ?>
 							<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" target="_blank">Google Webmaster Tools</a></li>
 						<?php endif; ?>
+
+						<?php if ( get_option('nebula_mention_url') != '' ) : ?>
+							<li><i class="fa fa-star fa-fw"></i> <a href="<?php echo get_option('nebula_mention_url'); ?>" target="_blank">Mention</a></li>
+						<?php endif; ?>
 					</ul>
 
-					<?php if ( get_option('nebula_cpanel_url') == '' && get_option('nebula_hosting_url') == '' && get_option('nebula_registrar_url') == '' && get_option('nebula_ga_url') == '' && get_option('nebula_google_webmaster_tools_url') == '' ) : ?>
+					<?php if ( get_option('nebula_cpanel_url') == '' && get_option('nebula_hosting_url') == '' && get_option('nebula_registrar_url') == '' && get_option('nebula_ga_url') == '' && get_option('nebula_google_webmaster_tools_url') == '' && get_option('nebula_mention_url') == '' ) : ?>
 						<p><em>Add administrative links to <strong><a href="themes.php?page=nebula_settings">Nebula Settings</a></strong> to see them here.</em></p>
 					<?php endif; ?>
 				</div>

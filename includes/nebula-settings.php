@@ -90,6 +90,7 @@
 		register_setting('nebula_settings_group', 'nebula_ga_url');
 		register_setting('nebula_settings_group', 'nebula_google_webmaster_tools_url');
 		register_setting('nebula_settings_group', 'nebula_google_adsense_url');
+		register_setting('nebula_settings_group', 'nebula_mention_url');
 	}
 
 	//Output the settings page
@@ -225,16 +226,20 @@
 				?>
 
 				<table class="form-table global">
-			        <tr valign="top">
-			        	<th scope="row">Nebula Settings&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-						<td>
-							<select name="nebula_overall" id="nebula_overall">
-								<option value="enabled" <?php selected('enabled', get_option('nebula_overall')); ?>>Enabled</option>
-								<option value="disabled" <?php selected('disabled', get_option('nebula_overall')); selected('override', get_option('nebula_overall')); ?>>Disabled</option>
-							</select>
-							<p class="helper"><small>Enable/Disable this settings page. If disabled, all settings will use <strong>default values</strong> and can only be edited via functions.php! This <strong>does not</strong> disable all settings!</small></p>
-						</td>
-			        </tr>
+
+			        <?php if ( is_dev() ) : ?>
+				        <tr valign="top">
+				        	<th scope="row">Nebula Settings&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+							<td>
+								<select name="nebula_overall" id="nebula_overall">
+									<option value="enabled" <?php selected('enabled', get_option('nebula_overall')); ?>>Enabled</option>
+									<option value="disabled" <?php selected('disabled', get_option('nebula_overall')); selected('override', get_option('nebula_overall')); ?>>Disabled</option>
+								</select>
+								<p class="helper"><small>Enable/Disable this settings page. If disabled, all settings will use <strong style="text-transform: uppercase;">default values</strong> and can only be edited via functions.php! This <strong style="text-transform: uppercase;">does not</strong> disable all settings!</small></p>
+							</td>
+				        </tr>
+			        <?php endif; ?>
+
 			        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 			        	<th scope="row">Initialized?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 			        	<td>
@@ -418,7 +423,6 @@
 							<p class="helper"><small>The URL of the associated Instagram page.</small></p>
 						</td>
 			        </tr>
-
 			    </table>
 
 				<h2 class="mobiletitle">Functions</h2>
@@ -436,7 +440,7 @@
 							<p class="helper"><small>When prototyping, enable this setting to use the greyscale stylesheet. <em>(Default: Disabled)</em></small></p>
 						</td>
 			        </tr>
-			        
+
 			        <tr valign="top">
 			        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
@@ -644,21 +648,28 @@
 			        	<th scope="row">Google Analytics URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_ga_url" value="<?php echo get_option('nebula_ga_url'); ?>" placeholder="http://www.google.com/analytics/..." style="width: 392px;" />
-							<p class="helper"><small>Link directly to this project's Google Analytics report.</small></p>
+							<p class="helper"><small>Link directly to this project's <a href="http://www.google.com/analytics/" target="_blank">Google Analytics</a> report.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
 			        	<th scope="row">Google Webmaster Tools URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_google_webmaster_tools_url" value="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
-							<p class="helper"><small>Direct link to this project's Google Webmaster Tools.</small></p>
+							<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/webmasters/tools/" target="_blank">Google Webmaster</a> Tools.</small></p>
 						</td>
 			        </tr>
 			        <tr valign="top">
 			        	<th scope="row">Google AdSense URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<input type="text" name="nebula_google_adsense_url" value="<?php echo get_option('nebula_google_adsense_url'); ?>" placeholder="https://www.google.com/adsense/app" style="width: 392px;" />
-							<p class="helper"><small>Direct link to this project's Google AdSense account.</small></p>
+							<p class="helper"><small>Direct link to this project's <a href="http://www.google.com/adsense/" target="_blank">Google AdSense</a> account.</small></p>
+						</td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Mention URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" name="nebula_mention_url" value="<?php echo get_option('nebula_mention_url'); ?>" placeholder="https://web.mention.com/" style="width: 392px;" />
+							<p class="helper"><small>Direct link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account.</small></p>
 						</td>
 			        </tr>
 			    </table>

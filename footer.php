@@ -167,15 +167,15 @@
 				function onPlayerStateChange(e) {
 				    if (e.data == YT.PlayerState.PLAYING) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        nebula_event('Videos', 'Play', videoTitle);
+				        ga('send', 'event', 'Videos', 'Play', videoTitle);
 				        pauseFlag = true;
 				    }
 				    if (e.data == YT.PlayerState.ENDED) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        nebula_event('Videos', 'Finished', videoTitle, {'nonInteraction': 1});
+				        ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 				    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
 				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        nebula_event('Videos', 'Pause', videoTitle);
+				        ga('send', 'event', 'Videos', 'Pause', videoTitle);
 				        pauseFlag = false;
 				    }
 				}

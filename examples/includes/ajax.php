@@ -27,7 +27,7 @@
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
 				jQuery('.example-response').css('border', '1px solid red').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
-				nebula_event('Error', 'AJAX Error', 'Example AJAX');
+				ga('send', 'event', 'Error', 'AJAX Error', 'Example AJAX');
 			},
 			timeout: 60000
 		});

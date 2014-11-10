@@ -135,54 +135,6 @@
 		</script>
 
 		<?php wp_head(); ?>
-
-		<script>
-			<?php //Using this for GA event tracking will note when events are being sent during debug mode (or for admins) without needing to additionally log the event. ?>
-			function nebula_event(category, action, label, value, error1, error2) {
-				category = typeof category !== 'undefined' ? category : null;
-				action = typeof action !== 'undefined' ? action : null;
-				label = typeof label !== 'undefined' ? label : null;
-				value = typeof value !== 'undefined' ? value : null;
-				error1 = typeof error1 !== 'undefined' ? error1 : null;
-				error2 = typeof error2 !== 'undefined' ? error2 : null;
-
-				if ( category == 'send' && action == 'event' ) {
-					console.warn('Warning: Remove "send" and "event" from nebula_event parameters!');
-					category = label;
-					action = value;
-					label = error1;
-					value = error2;
-				}
-
-				<?php global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone; ?>
-				<?php if ( nebula_settings_conditional('nebula_console_css') ) : //Disable console styles by making this condition false. ?>
-					var css = '%c';
-					if ( <?php echo ($is_gecko || $is_chrome) ? '1' : '0'; ?> ) {
-						var styling = 'padding: 0 0 0 13px; background-image: url(<?php echo get_template_directory_uri(); ?>/images/phg/ga.png); background-repeat: no-repeat; background-size: 10px 10px; background-position-y: 1px; color: #f5981d;';
-					} else if ( <?php echo ($is_safari) ? '1' : '0'; ?> ) {
-						var styling = 'color: #f5981d;';
-					} else {
-						var styling = '';
-					}
-				<?php else : ?>
-					var css = '';
-					var styling = '';
-				<?php endif; ?>
-
-				if ( typeof ga == 'function' ) {
-					ga('send', 'event', category, action, label, value); //Important! If modifying this function, DO NOT DELETE THIS LINE! //{'page': '/test-page'} or maybe campaign info?
-					var consolePrepend = 'Sending GA event: ';
-				} else {
-					var consolePrepend = 'ga() is not defined. Attempted event: ';
-				}
-
-				if ( document.getElementsByTagName("html")[0].className.indexOf('lte-ie8') < 0 ) { //If not IE8 or less
-					if ( <?php echo (is_dev()) ? '1' : '0'; ?> || ( typeof debug != 'undefined' && debug == 1) ) {
-						console.log(css + consolePrepend + category + ', ' + action + ', ' + label + ', ' + value, styling);
-					}
-				}
-			}
-		</script>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
