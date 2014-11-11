@@ -2,17 +2,17 @@ jQuery.noConflict();
 
 jQuery(window).on('load', function() {
 
-	iframe = document.getElementById("content_ifr");	
+	iframe = document.getElementById("content_ifr");
 	if ( typeof iframe !== 'undefined' ) {
 		win = iframe.contentWindow;
 		doc = win.document;
-	}	
+	}
 
 }); //End Window Load
 
 
 /*==========================
- Nebula TinyMCE Toolbar 
+ Nebula TinyMCE Toolbar
  ===========================*/
 (function() {
 	tinymce.create('tinymce.plugins.nebulatoolbar', {
@@ -92,7 +92,7 @@ jQuery(window).on('load', function() {
 					text: 'Gist',
 					onclick : function() {
 						ed.focus();
-						ed.selection.setContent('[gist file=FILENAME]URL[/gist]');
+						ed.selection.setContent('[gist file=FILENAME lang=LANGUAGE]URL[/gist]');
 					}
 				}]
 			}),

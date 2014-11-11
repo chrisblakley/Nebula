@@ -120,6 +120,7 @@
 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Settings or functions.php! ?>
+			ga('require', 'displayfeatures');
 			ga('send', 'pageview');
 		</script>
 

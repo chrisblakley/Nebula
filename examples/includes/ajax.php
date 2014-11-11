@@ -17,7 +17,7 @@
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["admin-ajax"],
+			url: bloginfo["admin_ajax"],
 			data: {
 				action: 'nebula_example_ajax',
 				data: messageData,

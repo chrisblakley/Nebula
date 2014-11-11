@@ -333,6 +333,10 @@ get_header(); ?>
 					<?php if (is_page(1121)) { //LocalStorage
 						include_once('includes/localstorage.php');
 					} ?>
+					
+					<?php if (is_page(1129)) { //Nebula URL Components
+						include_once('includes/nebula_url_components.php');
+					} ?>
 
 				<?php
 				/*==========================

@@ -311,19 +311,19 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 
 		//@TODO "Nebula" 0: The strpos only works with very specific domains. The getwhois is fine (most of the time), but need to find a more consistent way to use it.
 
-		$whois = getwhois('gearside', 'com'); //@TODO "Nebula" 0: Use dynamic domain here (eventually use nebula_url_components('sld') and nebula_url_components('tld').
+		$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
 		$domain_exp_unix = strtotime(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ") + 40, 10));
 		$domain_exp = date("F j, Y", $domain_exp_unix);
 		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: #000;' ;
 		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') ) ? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
 
-		echo '<!-- ' . $whois . ' -->';
+		//echo '<!-- ' . $whois . ' -->';
 
 		//@TODO "Nebula" 0: This only works with my whois data...
 		$domain_registrar_start = strpos($whois, "Reseller: ")+10;
 		$domain_registrar_stop = strpos($whois, "Domain Status: ")-$domain_registrar_start;
 		$domain_registrar = strtolower(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-		$domain_registrar_html = ( $domain_registrar ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . $domain_registrar . '</strong></li>': '';
+		$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 30 ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . $domain_registrar . '</strong></li>': '';
 
 
 		//Get last modified filename and date

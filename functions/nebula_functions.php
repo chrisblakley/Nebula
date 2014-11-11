@@ -473,6 +473,7 @@ function comment_author_cookie() {
 }
 
 
+
 //Nebula backup contact form (if Contact Form 7 is not available)
 add_action('wp_ajax_nebula_backup_contact_send', 'nebula_backup_contact_send');
 add_action('wp_ajax_nopriv_nebula_backup_contact_send', 'nebula_backup_contact_send');
@@ -486,15 +487,13 @@ function nebula_backup_contact_send() {
 }
 
 
-
-//@TODO "Nebula" 0: The next two functions are in progress to pull data from a URL.
-
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
 	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) ? 'https' : 'http';
-	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["PHP_SELF"];
+	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
 	return $full_url;
 }
+
 
 //Separate a URL into it's components. @TODO "Nebula" 0: Incomplete!
 function nebula_url_components($segment="all", $url=null) {
@@ -505,15 +504,37 @@ function nebula_url_components($segment="all", $url=null) {
 	$url_compontents = parse_url($url);
 	$host = explode('.', $url_compontents['host']);
 
-	$domain = '';
+	//Best way to get the domain so far. Probably a better way by checking against all known TLDs.
+	preg_match("/[a-z0-9\-]{1,63}\.[a-z\.]{2,6}$/", parse_url($url, PHP_URL_HOST), $domain);
+	$sld = substr($domain[0], 0, strpos($domain[0], '.'));
+	$tld = substr($domain[0], strpos($domain[0], '.'));
 
 	switch ($segment) {
-		case 'all' : return $url; break;
+		case ('all') :
+			return $url;
+			break;
 
-		case 'protocol' : return $url_compontents['scheme']; break;
-		case 'scheme' : return $url_compontents['scheme']; break;
+		case ('protocol') : //Protocol and Scheme are aliases and return the same value.
+			if ( $url_compontents['scheme'] != '' ) {
+				return $url_compontents['scheme'];
+			} else {
+				return false;
+			}
+			break;
 
-		case 'www' :
+		case ('scheme') : //Protocol and Scheme are aliases and return the same value.
+			if ( $url_compontents['scheme'] != '' ) {
+				return $url_compontents['scheme'];
+			} else {
+				return false;
+			}
+			break;
+
+		case ('host') : //In http://something.example.com the host is "something.example.com"
+			return $url_compontents['host'];
+			break;
+
+		case ('www') :
 			if ( $host[0] == 'www' ) {
 				return 'www';
 			} else {
@@ -521,25 +542,53 @@ function nebula_url_components($segment="all", $url=null) {
 			}
 			break;
 
-		case 'subdomain' : //@TODO "Nebula" 0: This would return the primary domain if www does not exist nor does an actual subdomain. Need to check against actual domain.
-			if ( $host[0] != 'www' && $host[0] != $domain ) {
+		case ('subdomain') :
+			if ( $host[0] != 'www' && $host[0] != $sld ) {
 				return $host[0];
 			} else {
 				return false;
 			}
 			break;
 
-		case 'domain' : return $domain; break; //@TODO "Nebula" 0: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic. Then remove the tld.
-		case 'sld' : return $domain; break; //@TODO "Nebula" 0: same as above
+		case ('domain') : //In example.com the domain is "example.com"
+			return $domain[0];
+			break;
 
-		case 'tld' : return ''; break; //@TODO "Nebula" 0: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic.
+		case ('sld') : //In example.com the sld is "example"
+			return $sld;
+			break;
 
-		case 'host' : return $url_compontents['host']; break;
-		case 'path' : return $url_compontents['path']; break;
-		case 'file' : return basename($url_compontents['path']); break;
+		case ('tld') : //In example.com the tld is ".com"
+			return $tld;
+			break;
 
-		case 'query' : return $url_compontents['query']; break;
-		default : return $url; break;
+		case ('filepath') : //Filepath will be both path and file/extension
+			return $url_compontents['path'];
+			break;
+
+		case ('file') : //Filename will be just the filename/extension.
+			if ( contains(basename($url_compontents['path']), array('.')) ) {
+				return basename($url_compontents['path']);
+			} else {
+				return false;
+			}
+			break;
+
+		case ('path') : //Path should be just the path without the filename/extension.
+			if ( contains(basename($url_compontents['path']), array('.')) ) { //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
+				return str_replace(basename($url_compontents['path']), '', $url_compontents['path']);
+			} else {
+				return $url_compontents['path'];
+			}
+			break;
+
+		case ('query') :
+			return $url_compontents['query'];
+			break;
+
+		default :
+			return $url;
+			break;
 	}
 }
 
