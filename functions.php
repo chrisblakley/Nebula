@@ -7,12 +7,14 @@
 /*==========================
  Include Nebula Functions Groups
  ===========================*/
+require_once('functions/nebula_utilities.php'); //Nebula Utilities
 require_once('functions/nebula_settings_functions.php'); //Nebula Settings Functions
 require_once('functions/nebula_automations.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
 require_once('functions/nebula_admin_functions.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
+require_once('functions/nebula_security.php'); //Nebula Security
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be commented out after launch)
 
@@ -155,7 +157,7 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome'); //Font-Awesome can be dynamically loaded with JS (with some exceptions).
 	wp_enqueue_style('nebula-main');
-	
+
 	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
 		wp_enqueue_style('nebula-wireframing');
 	}

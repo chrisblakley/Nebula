@@ -648,9 +648,18 @@ function mmenus() {
 		    classes: "mm-light mm-slide" //Theming and open effects
 		}, {
 			//Configuration
-		}).on('opened.mm', function(){
+			classNames: {
+				selected: "current-menu-item"
+			}
+		}).on('opening.mm', function(){ //When mmenu has started opening
+			jQuery('a.mobilenavtrigger i').removeClass('fa-bars').addClass('fa-times');
+		}).on('opened.mm', function(){ //After mmenu has finished opening
 			history.replaceState(null, document.title, location);
 			history.pushState(null, document.title, location);
+		}).on('closing.mm', function(){ //When mmenu has started closing
+			jQuery('a.mobilenavtrigger i').removeClass('fa-times').addClass('fa-bars');
+		}).on('closed.mm', function(){ //After mmenu has finished closing
+			//Functions after closed.
 		});
 
 		jQuery("#mobilecontact").mmenu({
@@ -931,11 +940,15 @@ function cFormLocalStorage() {
 }
 
 function checkCformLocalStorage() {
-	if ( jQuery('.cform7-message').val() != '' ) {
-		localStorage.setItem('global_cform_message', jQuery('.cform7-message').val());
-		jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+	if ( typeof localStorage.getItem('global_cform_message') !== 'undefined' && localStorage.getItem('global_cform_message') != 'undefined' ) {
+		if ( jQuery('.cform7-message').val() != '' ) {
+			localStorage.setItem('global_cform_message', jQuery('.cform7-message').val());
+			jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+		} else {
+			jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+		}
 	} else {
-		jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+		localStorage.removeItem('global_cform_message');
 	}
 }
 

@@ -149,7 +149,7 @@
 				<div class="row mobilenavcon">
 					<div class="sixteen columns clearfix">
 
-						<a class="alignleft" href="#mobilenav"><i class="fa fa-bars"></i></a>
+						<a class="mobilenavtrigger alignleft" href="#mobilenav"><i class="fa fa-bars"></i></a>
 						<nav id="mobilenav">
 							<?php
 								if ( has_nav_menu('mobile') ) {

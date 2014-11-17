@@ -8,13 +8,6 @@ if ( !isset($content_width) ) {
 	$content_width = 960;
 }
 
-//Disable Pingbacks to prevent security issues
-add_filter('xmlrpc_methods', disable_pingbacks($methods));
-function disable_pingbacks($methods) {
-   unset($methods['pingback.ping']);
-   return $methods;
-};
-
 
 //Construct the data payload
 function gaBuildData($error) {
@@ -78,24 +71,6 @@ function gaSendData($data) {
 	return $result;
 }
 
-//Check for direct access redirects, log them, then redirect without queries.
-add_action('init', 'check_direct_access');
-function check_direct_access() {
-	if ( isset($_GET['directaccess']) || array_key_exists('directaccess', $_GET) ) {
-		$attempted = ( $_GET['directaccess'] != '' ) ? $_GET['directaccess'] : 'Unknown' ;
-		$data = array(
-			'v' => 1,
-			'tid' => $GLOBALS['ga'],
-			'cid' => gaParseCookie(),
-			't' => 'event',
-			'ec' => 'Direct Template Access', //Category
-			'ea' => $attempted, //Action
-			'el' => '' //Label
-		);
-		gaSendData($data);
-		header('Location: ' . home_url('/'));
-	}
-}
 
 //Track Google Page Speed tests
 add_action('wp_footer', 'track_google_pagespeed_checks');
@@ -170,12 +145,6 @@ function admin_favicon() {
 	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico" />';
 }
 
-
-//Remove Wordpress version info from head and feeds
-add_filter('the_generator', 'complete_version_removal');
-function complete_version_removal() {
-	return '';
-}
 
 
 //Allow pages to have excerpts too
@@ -448,13 +417,6 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 	}
 }
 
-//Check referrer in order to comment
-add_action('check_comment_flood', 'check_referrer');
-function check_referrer() {
-	if ( !isset($_SERVER['HTTP_REFERER']) || $_SERVER['HTTP_REFERER'] == '' ) {
-		wp_die('Please do not access this file directly.');
-	}
-}
 
 //Prefill form fields with comment author cookie
 add_action('wp_head', 'comment_author_cookie');
@@ -484,112 +446,6 @@ function nebula_backup_contact_send() {
 	$headers = 'From: ' . $_POST['data'][0]['name'] . ' <' . $_POST['data'][0]['email'] . '>';
 	wp_mail($to, $subject, $message, $headers);
 	exit();
-}
-
-
-//Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
-function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
-	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) ? 'https' : 'http';
-	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
-	return $full_url;
-}
-
-
-//Separate a URL into it's components. @TODO "Nebula" 0: Incomplete!
-function nebula_url_components($segment="all", $url=null) {
-	if ( !$url ) {
-		$url = nebula_requested_url();
-	}
-
-	$url_compontents = parse_url($url);
-	$host = explode('.', $url_compontents['host']);
-
-	//Best way to get the domain so far. Probably a better way by checking against all known TLDs.
-	preg_match("/[a-z0-9\-]{1,63}\.[a-z\.]{2,6}$/", parse_url($url, PHP_URL_HOST), $domain);
-	$sld = substr($domain[0], 0, strpos($domain[0], '.'));
-	$tld = substr($domain[0], strpos($domain[0], '.'));
-
-	switch ($segment) {
-		case ('all') :
-			return $url;
-			break;
-
-		case ('protocol') : //Protocol and Scheme are aliases and return the same value.
-			if ( $url_compontents['scheme'] != '' ) {
-				return $url_compontents['scheme'];
-			} else {
-				return false;
-			}
-			break;
-
-		case ('scheme') : //Protocol and Scheme are aliases and return the same value.
-			if ( $url_compontents['scheme'] != '' ) {
-				return $url_compontents['scheme'];
-			} else {
-				return false;
-			}
-			break;
-
-		case ('host') : //In http://something.example.com the host is "something.example.com"
-			return $url_compontents['host'];
-			break;
-
-		case ('www') :
-			if ( $host[0] == 'www' ) {
-				return 'www';
-			} else {
-				return false;
-			}
-			break;
-
-		case ('subdomain') :
-			if ( $host[0] != 'www' && $host[0] != $sld ) {
-				return $host[0];
-			} else {
-				return false;
-			}
-			break;
-
-		case ('domain') : //In example.com the domain is "example.com"
-			return $domain[0];
-			break;
-
-		case ('sld') : //In example.com the sld is "example"
-			return $sld;
-			break;
-
-		case ('tld') : //In example.com the tld is ".com"
-			return $tld;
-			break;
-
-		case ('filepath') : //Filepath will be both path and file/extension
-			return $url_compontents['path'];
-			break;
-
-		case ('file') : //Filename will be just the filename/extension.
-			if ( contains(basename($url_compontents['path']), array('.')) ) {
-				return basename($url_compontents['path']);
-			} else {
-				return false;
-			}
-			break;
-
-		case ('path') : //Path should be just the path without the filename/extension.
-			if ( contains(basename($url_compontents['path']), array('.')) ) { //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
-				return str_replace(basename($url_compontents['path']), '', $url_compontents['path']);
-			} else {
-				return $url_compontents['path'];
-			}
-			break;
-
-		case ('query') :
-			return $url_compontents['query'];
-			break;
-
-		default :
-			return $url;
-			break;
-	}
 }
 
 
@@ -726,48 +582,6 @@ function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=fal
 	return $string[0];
 }
 
-//Text limiter by words
-function string_limit_words($string, $word_limit){
-	$limited[0] = $string;
-	$limited[1] = 0;
-	$words = explode(' ', $string, ($word_limit + 1));
-	if(count($words) > $word_limit){
-		array_pop($words);
-		$limited[0] = implode(' ', $words);
-		$limited[1] = 1;
-	}
-	return $limited;
-}
-
-if ( array_key_exists('varcheck', $_GET) ) {
-	$varcheck = false;
-	add_action('init', 'varcheck');
-	function varcheck() {
-		if ( !function_exists('locate_and_check_global_variables') && !$varcheck ) {
-			echo '<p class="varcheck" style="display: none;">vars-will-be-checked-next-reload</p>';
-			$varcheck = true;
-		}
-	}
-}
-
-//Word limiter by characters
-function word_limit_chars($string, $charlimit, $continue=false){
-	// 1 = "Continue Reading", 2 = "Learn More"
-	if(strlen(strip_tags($string, '<p><span><a>')) <= $charlimit){
-		$newString = strip_tags($string, '<p><span><a>');
-	} else{
-		$newString = preg_replace('/\s+?(\S+)?$/', '', substr(strip_tags($string, '<p><span><a>'), 0, ($charlimit + 1)));
-		if($continue == 1){
-			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Continue reading <span class="meta-nav">&rarr;</span></a>';
-		} elseif($continue == 2){
-			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Learn more &raquo;</a>';
-		} else{
-			$newString = $newString . '&hellip;';
-		}
-	}
-	return $newString;
-}
-
 
 //Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
 //Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
@@ -797,6 +611,18 @@ function nebula_ajax_navigator() {
 	include('includes/navigator.php');
 	//include('includes/navigat-holder.php');
 	exit();
+}
+
+
+//Replace text on password protected posts to be more minimal
+add_filter('the_password_form', 'nebula_password_form_simplify');
+function nebula_password_form_simplify() {
+    $output  = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">';
+	    $output .= '<span>Password: </span>';
+	    $output .= '<input name="post_password" type="password" size="20" />';
+	    $output .= '<input type="submit" name="Submit" value="Go" />';
+    $output .= '</form>';
+    return $output;
 }
 
 
@@ -1026,39 +852,11 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 }
 
 
-//PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
-//Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
-//Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
-require_once TEMPLATEPATH . '/includes/Mobile_Detect.php'; //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
-$GLOBALS["mobile_detect"] = new Mobile_Detect();
+//Add custom body classes
+add_filter('body_class', 'nebula_body_classes');
+function nebula_body_classes($classes) {
 
-add_filter('body_class', 'mobile_body_class');
-function mobile_body_class($classes) {
-
-	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
-		$classes[] = 'mobile';
-	} else {
-		$classes[] = 'no-mobile';
-	}
-
-	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
-		$classes[] = 'tablet';
-	}
-
-	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
-		$classes[] = 'ios';
-	}
-
-	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
-		$classes[] = 'androidos';
-	}
-
-	return $classes;
-}
-
-//Add body classes based on WP core browser detection
-add_filter('body_class', 'browser_body_class');
-function browser_body_class($classes) {
+	//Browsers
 	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
 
 	//$browser = get_browser(null, true); //@TODO "Nebula" 0: Find a server this works on and then wrap in if $browser, then echo the version number too
@@ -1091,12 +889,28 @@ function browser_body_class($classes) {
     	$classes[] = 'iphone';
     }
 
-    return $classes;
-}
 
-//Add additional body classes including ancestor IDs and directory structures
-add_filter('body_class', 'page_name_body_class');
-function page_name_body_class($classes) {
+	//Mobile
+	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
+		$classes[] = 'mobile';
+	} else {
+		$classes[] = 'no-mobile';
+	}
+
+	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
+		$classes[] = 'tablet';
+	}
+
+	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
+		$classes[] = 'ios';
+	}
+
+	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
+		$classes[] = 'androidos';
+	}
+
+
+	//Post Information
 	global $post;
 	$segments = explode('/', trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ));
 	$parents = get_post_ancestors( $post->ID );
@@ -1111,7 +925,55 @@ function page_name_body_class($classes) {
 	}
 	$nebula_theme_info = wp_get_theme();
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
-	return $classes;
+
+
+    return $classes;
+}
+
+
+
+//Add additional classes to post wrappers @TODO: Finish implementing this!
+add_filter('post_class', 'nebula_post_classes');
+function nebula_post_classes($classes) {
+    global $wp_query;
+    if ( $wp_query->current_post == 0 ) { //If first post in a query
+        $classes[] = 'first-post';
+    }
+    return $classes;
+}
+
+
+//Make sure attachment URLs match the protocol (to prevent mixed content warnings).
+add_filter('wp_get_attachment_url', 'wp_get_attachment_url_example');
+function wp_get_attachment_url_example($url) {
+    $http  = site_url(false, 'http');
+    $https = site_url(false, 'https');
+
+    if ( $_SERVER['HTTPS'] == 'on' ) {
+        return str_replace( $http, $https, $url );
+    } else {
+        return $url;
+    }
+}
+
+
+//Add more fields to attachments //@TODO "Nebula" 0: Enable this as needed. The below example adds a "License" field.
+//add_filter('attachment_fields_to_edit', 'nebula_attachment_fields', 10, 2);
+function nebula_attachment_fields($form_fields, $post) {
+    $field_value = get_post_meta($post->ID, 'license', true);
+    $form_fields['license'] = array(
+        'value' => $field_value ? $field_value : '',
+        'label' => 'License',
+        'helps' => 'Specify the license type used for this image'
+    );
+    return $form_fields;
+}
+//add_action('edit_attachment', 'nebula_save_attachment_fields');
+function nebula_save_attachment_fields($attachment_id) {
+    $license = $_REQUEST['attachments'][$attachment_id]['license'];
+    if ( isset($license) ) {
+        update_post_meta($attachment_id, 'license', $license);
+    }
 }
 
 
@@ -1216,7 +1078,7 @@ function vimeo_meta($videoID) {
 
 function youtube_meta($videoID) {
 	$xml = simplexml_load_string(file_get_contents("https://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
-	$GLOBALS['youtube_meta']['origin'] = baseDomain();
+	$GLOBALS['youtube_meta']['origin'] = nebula_url_components('basedomain');
 	$GLOBALS['youtube_meta']['id'] = $videoID;
 	$GLOBALS['youtube_meta']['title'] = $xml->title;
 	$GLOBALS['youtube_meta']['safetitle'] = str_replace(" ", "-", $GLOBALS['youtube_meta']['title']);
@@ -1230,89 +1092,7 @@ function youtube_meta($videoID) {
 }
 
 
-function baseDomain($str='') {
-	if ( $str == '' ) {
-		$str = home_url();
-	}
-    $url = @parse_url( $str );
-    if ( empty( $url['host'] ) ) return;
-    $parts = explode( '.', $url['host'] );
-    $slice = ( strlen( reset( array_slice( $parts, -2, 1 ) ) ) == 2 ) && ( count( $parts ) > 2 ) ? 3 : 2;
-    $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
-    return $protocol . implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
-}
 
-
-//Traverse multidimensional arrays
-function in_array_r($needle, $haystack, $strict = true) {
-    foreach ($haystack as $item) {
-        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
-            return true;
-        }
-    }
-    return false;
-}
-
-//Recursive Glob
-function glob_r($pattern, $flags = 0) {
-    $files = glob($pattern, $flags);
-    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
-    }
-    return $files;
-}
-
-//Add up the filesizes of files in a directory (and it's sub-directories)
-function foldersize($path) {
-	$total_size = 0;
-	$files = scandir($path);
-	$cleanPath = rtrim($path, '/') . '/';
-	foreach($files as $t) {
-		if ($t<>"." && $t<>"..") {
-			$currentFile = $cleanPath . $t;
-			if (is_dir($currentFile)) {
-				$size = foldersize($currentFile);
-				$total_size += $size;
-			} else {
-				$size = filesize($currentFile);
-				$total_size += $size;
-			}
-		}
-	}
-	return $total_size;
-}
-
-//Checks to see if an array contains a string.
-function contains($str, array $arr) {
-    foreach( $arr as $a ) {
-        if ( stripos($str,$a) !== false ) {
-        	return true;
-        }
-    }
-    return false;
-}
-
-//Generate a random integer between two numbers with an exclusion array
-//Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
-function random_number_between_but_not($min=null, $max=null, $butNot=null) {
-    if ( $min > $max ) {
-        return 'Error: min is greater than max.'; //@TODO "Nebula" 0: If min is greater than max, swap the variables.
-    }
-    if ( gettype($butNot) == 'array' ) {
-        foreach( $butNot as $key => $skip ){
-            if( $skip > $max || $skip < $min ){
-                unset($butNot[$key]);
-            }
-        }
-        if ( count($butNot) == $max-$min+1 ) {
-            return 'Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.';
-        }
-        while ( in_array(($randnum = rand($min, $max)), $butNot));
-    } else {
-        while (($randnum = rand($min, $max)) == $butNot );
-    }
-    return $randnum;
-}
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
 function nebula_tel_link($phone, $postd=''){
@@ -1392,24 +1172,6 @@ function nebula_phone_format($number, $format=''){
 	}
 }
 
-
-//Automatically convert HEX colors to RGB.
-function hex2rgb($color) {
-	if ( $color[0] == '#' ) {
-		$color = substr($color, 1);
-	}
-	if ( strlen($color) == 6 ) {
-		list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-	} elseif ( strlen($color) == 3 ) {
-		list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
-	} else {
-		return false;
-	}
-	$r = hexdec($r);
-	$g = hexdec($g);
-	$b = hexdec($b);
-	return array('r' => $r, 'g' => $g, 'b' => $b);
-}
 
 
 //Footer Widget Counter

@@ -337,6 +337,10 @@ get_header(); ?>
 					<?php if (is_page(1129)) { //Nebula URL Components
 						include_once('includes/nebula_url_components.php');
 					} ?>
+					
+					<?php if (is_page(1139)) { //WHOIS Tester
+						include_once('includes/whois_tester.php');
+					} ?>
 
 				<?php
 				/*==========================

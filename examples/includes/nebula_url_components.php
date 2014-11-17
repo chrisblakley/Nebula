@@ -26,13 +26,13 @@
 
 ?>
 
-<style>
-	.url_component_tests .success {color: green;}
-</style>
-
 <script>
 	jQuery(document).on('submit', '#urltester', function(e){
 		if ( jQuery("#urlstring").val().trim() != '' ) {
+			ga('send', 'event', 'Nebula URL Components Test', jQuery("#urlstring").val().trim());
+			
+			jQuery('i.fa-spinner').removeClass('hidden');
+			
 			var urlData = [{
 				'url': jQuery("#urlstring").val()
 			}];
@@ -45,10 +45,12 @@
 				},
 				success: function(response){
 					jQuery('#testerresults').html(response);
+					jQuery('i.fa-spinner').addClass('hidden');
 				},
 				error: function(MLHttpRequest, textStatus, errorThrown){
 					jQuery('#testerresults').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
 					ga('send', 'event', 'Error', 'Nebula URL Components Tester', 'AJAX Error');
+					jQuery('i.fa-spinner').addClass('hidden');
 				},
 				timeout: 60000
 			});
@@ -61,7 +63,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns url_component_tests">
+	<div class="sixteen columns">
 
 		<br/>
 		<h2>Nebula Requested URL</h2>
@@ -116,8 +118,8 @@
 				<input id="urlstring" class="input" type="text" placeholder="Enter any URL here!" />
 			</div>
 			<div class="field btn primary medium">
-				<input class="submit" type="submit" value="Test" style="padding-left: 15px; padding-right: 15px;"/> <!-- @TODO "Nebula" 0: Add an animated icon while AJAXing. -->
-			</div>
+				<input class="submit" type="submit" value="Test" style="padding-left: 15px; padding-right: 15px;"/>
+			</div><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
 		</form>
 
 		<p id="testerresults"></p>

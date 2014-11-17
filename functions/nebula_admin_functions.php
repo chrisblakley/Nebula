@@ -308,22 +308,98 @@ if ( nebula_settings_conditional('nebula_phg_metabox') ) {
 	}
 	function dashboard_developer_info() {
 
-
-		//@TODO "Nebula" 0: The strpos only works with very specific domains. The getwhois is fine (most of the time), but need to find a more consistent way to use it.
-
 		$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
-		$domain_exp_unix = strtotime(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ") + 40, 10));
+
+		//Get Expiration Date
+		if ( contains($whois, array('Registrar Registration Expiration Date: ')) ) {
+			$domain_exp_detected = substr($whois, strpos($whois, "Registrar Registration Expiration Date: ")+40, 10);
+		} elseif ( contains($whois, array('Registry Expiry Date: ')) ) {
+			$domain_exp_detected = substr($whois, strpos($whois, "Registry Expiry Date: ")+22, 10);
+		} else {
+			$domain_exp_detected = '';
+		}
+
+		$domain_exp_unix = strtotime(trim($domain_exp_detected));
 		$domain_exp = date("F j, Y", $domain_exp_unix);
-		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: #000;' ;
+		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: inherit;' ;
 		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') ) ? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
 
-		//echo '<!-- ' . $whois . ' -->';
 
-		//@TODO "Nebula" 0: This only works with my whois data...
-		$domain_registrar_start = strpos($whois, "Reseller: ")+10;
-		$domain_registrar_stop = strpos($whois, "Domain Status: ")-$domain_registrar_start;
-		$domain_registrar = strtolower(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-		$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 30 ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . $domain_registrar . '</strong></li>': '';
+		//Get Registrar URL
+		if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ) {
+			$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
+			$domain_registrar_url_stop = strpos($whois, "Updated Date: ")-$domain_registrar_url_start;
+			$domain_registrar_url = substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop);
+		} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ) {
+			$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
+			$domain_registrar_url_stop = strpos($whois, "Update Date: ")-$domain_registrar_url_start;
+			$domain_registrar_url = substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop);
+		} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ) { //co.uk
+			$domain_registrar_url_start = strpos($whois, "URL: ")+5;
+			$domain_registrar_url_stop = strpos($whois, "Relevant dates: ")-$domain_registrar_url_start;
+			$domain_registrar_url = substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop);
+		}
+
+
+		//Get Registrar Name
+		$domain_registrar_start = '';
+		$domain_registrar_stop = '';
+		if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
+			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+			$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
+			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
+		} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
+			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+			$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
+			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
+		} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
+			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+			$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
+			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
+		} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
+			$domain_registrar_start = strpos($whois, "Sponsoring Registrar:")+21;
+			$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
+			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
+		} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ) {
+			$domain_registrar_start = strpos($whois, "Registrar:")+17;
+			$domain_registrar_stop = strpos($whois, "Number: ")-$domain_registrar_start;
+			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
+		} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ) { //co.uk
+			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+			$domain_registrar_stop = strpos($whois, "URL: ")-$domain_registrar_start;
+			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
+		}
+
+
+		//Get Reseller Name
+		$domain_reseller = '';
+		if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ) {
+			$reseller1 = strpos($whois, 'Reseller: ');
+			$reseller2 = strpos($whois, 'Reseller: ', $reseller1 + strlen('Reseller: '));
+			if ( $reseller2 ) {
+				$domain_reseller_start = strpos($whois, "Reseller: ")+10;
+				$domain_reseller_stop = $reseller2-$domain_reseller_start;
+				$domain_reseller = substr($whois, $domain_reseller_start, $domain_reseller_stop);
+			} else {
+				$domain_reseller_start = strpos($whois, "Reseller: ")+10;
+				$domain_reseller_stop = strpos($whois, "Domain Status: ")-$domain_reseller_start;
+				$domain_reseller = substr($whois, $domain_reseller_start, $domain_reseller_stop);
+			}
+		}
+
+
+		//Construct Registrar info to be echoed
+		if ( $domain_registrar_url && strlen($domain_registrar_url) < 70 ) {
+			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong><a href="//' . trim($domain_registrar_url) . '" target="_blank">' . $domain_registrar . '</a></strong>': '';
+		} else {
+			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . trim($domain_registrar) . '</strong>': '';
+		}
+		if ( trim($domain_registrar_html) != '' && $domain_reseller && strlen($domain_reseller) < 70 ) {
+			$domain_registrar_html .= '<small>(via ' . trim($domain_reseller) . ')</small></li>';
+		} else {
+			$domain_registrar_html .= '</li>';
+		}
+
 
 
 		//Get last modified filename and date
@@ -635,6 +711,7 @@ function muc_value( $column_name, $id ) {
 add_editor_style('css/editor-style.css');
 
 
+
 //Clear caches when plugins are activated if W3 Total Cache is active
 add_action('admin_init', 'clear_all_w3_caches');
 function clear_all_w3_caches(){
@@ -644,6 +721,21 @@ function clear_all_w3_caches(){
 			w3tc_pgcache_flush();
 		}
 	}
+}
+
+
+//Additional Contact Info fields on User Profile page
+add_filter('user_contactmethods', 'nebula_user_contactmethods');
+function nebula_user_contactmethods($contactmethods) {
+    unset($contactmethods['yim']);
+    unset($contactmethods['aim']);
+    unset($contactmethods['jabber']);
+    $contactmethods['facebook'] = 'Facebook';
+    $contactmethods['twitter'] = 'Twitter <small>(Without @)</small>';
+    $contactmethods['gplus'] = 'Google+';
+    $contactmethods['linkedin'] = 'LinkedIn';
+    $contactmethods['instagram'] = 'Instagram';
+    return $contactmethods;
 }
 
 
@@ -686,7 +778,127 @@ function change_admin_footer_left() {
 add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right() {
 	$nebula_theme_info = wp_get_theme();
-    return '<a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong>';
+
+	//@TODO "Nebula" 0: Set title tag for when this version was released.
+	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
+
+	//year here... @TODO "Nebula" 0: Not sure how to write a conditional for this...
+	//$nebula_version_split[0];
+	$nebula_version_year = '[YEAR]';
+	/*
+		1 = 2014
+		2 = 2015 Jan - June
+		3 = 2015 Jul - Dec
+		4 = 2016 Jan - June
+		5 = 2016 Jul - Dec
+		6 = 2017 Jan - June
+		7 = 2017 Jul - Dec
+		8 = 2018 Jan - June
+		9 = 2018 Jul - Dec
+	*/
+
+	//@TODO "Nebula" 0: This switch seems like overkill. There's gotta be a more optimized way to do this logic.
+	switch ( $nebula_version_split[1] ) {
+		case '1':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'January';
+			} else {
+				$nebula_version_month = 'July';
+			}
+			$nebula_version_daterange = 'Second';
+			break;
+		case '3':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'February';
+			} else {
+				$nebula_version_month = 'August';
+			}
+			$nebula_version_daterange = 'Second';
+			break;
+		case '5':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'March';
+			} else {
+				$nebula_version_month = 'September';
+			}
+			$nebula_version_daterange = 'Second';
+			break;
+		case '7':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'April';
+			} else {
+				$nebula_version_month = 'October';
+			}
+			$nebula_version_daterange = 'Second';
+			break;
+		case '9':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'May';
+			} else {
+				$nebula_version_month = 'November';
+			}
+			$nebula_version_daterange = 'Second';
+			break;
+		case '0rc':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'June';
+			} else {
+				$nebula_version_month = 'December';
+			}
+			$nebula_version_daterange = 'Second';
+			break;
+
+		case '0b':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'June';
+			} else {
+				$nebula_version_month = 'December';
+			}
+			$nebula_version_daterange = 'First';
+			break;
+		case '0':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'January';
+			} else {
+				$nebula_version_month = 'July';
+			}
+			$nebula_version_daterange = 'First';
+			break;
+		case '2':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'February';
+			} else {
+				$nebula_version_month = 'August';
+			}
+			$nebula_version_daterange = 'First';
+			break;
+		case '4':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'March';
+			} else {
+				$nebula_version_month = 'September';
+			}
+			$nebula_version_daterange = 'First';
+			break;
+		case '6':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'April';
+			} else {
+				$nebula_version_month = 'October';
+			}
+			$nebula_version_daterange = 'First';
+			break;
+		case '8':
+			if ( intval($nebula_version_split[0])%2 == 0 ) {
+				$nebula_version_month = 'May';
+			} else {
+				$nebula_version_month = 'November';
+			}
+			$nebula_version_daterange = 'Second';
+			break;
+	}
+
+    return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
 }
 
 
