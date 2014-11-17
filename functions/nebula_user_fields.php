@@ -5,6 +5,22 @@ wp_enqueue_style('thickbox');
 wp_enqueue_script('media-upload');
 wp_enqueue_script('easy-author-image-uploader');
 
+
+//Additional Contact Info fields
+add_filter('user_contactmethods', 'nebula_user_contactmethods');
+function nebula_user_contactmethods($contactmethods) {
+    unset($contactmethods['yim']);
+    unset($contactmethods['aim']);
+    unset($contactmethods['jabber']);
+    $contactmethods['facebook'] = 'Facebook';
+    $contactmethods['twitter'] = 'Twitter <small>(Without @)</small>';
+    $contactmethods['gplus'] = 'Google+';
+    $contactmethods['linkedin'] = 'LinkedIn';
+    $contactmethods['instagram'] = 'Instagram';
+    return $contactmethods;
+}
+
+
 add_action('admin_init', 'easy_author_image_init');
 function easy_author_image_init() {
 	global $pagenow;
@@ -53,12 +69,12 @@ function extra_profile_fields($user) { ?>
 				<?php if ( get_the_author_meta('headshot_url', $user->ID) ) : ?>
 					<div id="headshot_preview" style="min-height: 100px; max-width: 150px;">
 						<img style="max-width:100%; border-radius: 100px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2);" src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
-					</div>					
+					</div>
 				<?php else : ?>
-					<div id="headshot_preview" style="height: 100px; width:100px; line-height:100px; border:2px solid #CCC; text-align:center; font-size:5em;">?</div>					
+					<div id="headshot_preview" style="height: 100px; width:100px; line-height:100px; border:2px solid #CCC; text-align:center; font-size:5em;">?</div>
 				<?php endif; ?>
 				<span id="upload_success" style="display:block;"></span>
-				
+
 				<input type="hidden" name="headshot_url" id="headshot_url" value="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" class="regular-text" />
 			</td>
 		</tr>

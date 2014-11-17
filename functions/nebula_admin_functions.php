@@ -724,21 +724,6 @@ function clear_all_w3_caches(){
 }
 
 
-//Additional Contact Info fields on User Profile page
-add_filter('user_contactmethods', 'nebula_user_contactmethods');
-function nebula_user_contactmethods($contactmethods) {
-    unset($contactmethods['yim']);
-    unset($contactmethods['aim']);
-    unset($contactmethods['jabber']);
-    $contactmethods['facebook'] = 'Facebook';
-    $contactmethods['twitter'] = 'Twitter <small>(Without @)</small>';
-    $contactmethods['gplus'] = 'Google+';
-    $contactmethods['linkedin'] = 'LinkedIn';
-    $contactmethods['instagram'] = 'Instagram';
-    return $contactmethods;
-}
-
-
 //Nebula Help Tab
 add_action('in_admin_header', 'nebula_help_tabs');
 function nebula_help_tabs() {
