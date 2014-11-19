@@ -2,7 +2,7 @@
 
 //Include Nebula Settings page
 if ( is_admin() ) {
-	include_once(TEMPLATEPATH . '/includes/nebula-settings.php');	
+	include_once(TEMPLATEPATH . '/includes/nebula-settings.php');
 }
 
 
@@ -42,7 +42,7 @@ function nebula_settings_conditional($setting, $default='enabled') {
 	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' ) {
 		return true;
 	}
-	
+
 	if ( (strtolower(get_option($setting)) == 'default') || (strtolower(get_option($setting)) == strtolower($default)) ) {
 		return true;
 	} else {

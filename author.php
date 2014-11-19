@@ -19,7 +19,7 @@ get_header(); ?>
 
 <?php if ( have_posts() ) { the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="row">
-	
+
 	<?php if ( get_the_author_meta('headshot_url') ) : ?>
 		<div class="three columns">
 			<div class="author-headshot">
@@ -30,9 +30,9 @@ get_header(); ?>
 	<?php else : ?>
 		<div class="sixteen columns">
 	<?php endif; ?>
-		
+
 		<h1><?php if ( get_the_author_meta('user_url') ) : ?><a href="<?php echo get_the_author_meta('user_url'); ?>" target="_blank"><?php endif; ?><?php echo get_the_author(); ?><?php if ( get_the_author_meta('user_url') ) : ?></a><?php endif; ?></h1>
-		
+
 		<hr/>
 			<div class="author-meta">
 				<span class="author-jobtitle"><?php echo get_the_author_meta('jobtitle'); ?></span>
@@ -49,7 +49,7 @@ get_header(); ?>
 
 <div class="row">
 	<div class="eleven columns">
-		
+
 		<h2>Articles by <?php echo get_the_author_meta('first_name'); ?></h2>
 		<?php
 			rewind_posts();
@@ -57,11 +57,11 @@ get_header(); ?>
 		?>
 
 	</div><!--/columns-->
-	
-	<div class="four columns push_one">		
+
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
-	
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

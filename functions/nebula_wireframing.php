@@ -31,15 +31,22 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 
 //Placeholder image
 //@TODO "Nebula" 0: Come up with a way for the "X" to appear in the div without it looking bad (currently stretching the PNG).
-function fpo_image($type='none', $width='100%', $height='200px', $color='', $outline='', $styles='', $classes='') {
-	if ( $type == 'unsplash' || $type == 'photo' ) {
-		$imgsrc = random_unsplash(800, 600, 1);
-	} else {
-		$imgsrc = get_template_directory_uri() . '/images/x.png';
-		$outline = 'outline: 1px solid #000;';
+function fpo_image($type='none', $width='100%', $height='200px', $background='', $color='#000', $styles='', $classes='') {
+
+	$imgsrc = ( $type == 'unsplash' || $type == 'photo' ) ? random_unsplash(800, 600, 1) : '';
+
+	$return = '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $background . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $styles . '">';
+
+	if ( $imgsrc == '' ) {
+		$return .= '<svg x="0px" y="0px" width="100%" height="100%" style="border: 1px solid ' . $color . ';">
+					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
+					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+				</svg>';
 	}
 
-	echo '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $color . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $outline . ' ' . $styles . '"></div>';
+	$return .= '</div>';
+
+	echo $return;
 }
 
 

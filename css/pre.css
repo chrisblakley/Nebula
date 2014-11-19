@@ -1,7 +1,7 @@
 pre.nebula-code {position: relative; display: block; height: auto; font: normal 12px/22px Monaco, Monospace !important; color:#222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0 0 20px 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
 
 	/* .no-js pre.nebula-pre {margin: 10px 0 20px 0;} */
-	
+
 	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
 
 /* ==========================================================================
@@ -73,7 +73,7 @@ pre.nebula-code.php,
 .nebula-code.php .gist-file {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
 	.nebula-code.php::selection {background: #c8cde1;}
 
-	
+
 /* Shortcode */
 .nebula-code.codetitle.shortcode {color: #287DA2;}
 	.nebula-code.codetitle.shortcode:before {content: "\f19a"; font-family: 'FontAwesome'; margin-right: 3px;}
