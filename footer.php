@@ -3,184 +3,122 @@
  * Theme Footer
  */
 ?>
-			<hr class="zero" style="margin-top: 30px;"/>
+					<div class="footer" data-0="margin-top: -75px;" data-end="margin-top: -250px;">
+						<div class="row logodivider">
+							<img src="<?php bloginfo('template_directory');?>/images/footerlogo.png" alt="Footer Logo"/>
+						</div><!--/row-->
+						<div class="container copyright">
+							<div class="row">
+								<div class="eight columns">
+									<p>
+										<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url('/'); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved &bull; <a href="http://gearside.com/sitemap.xml" target="_blank">Sitemap</a><br/>
+									</p>
+								</div><!--/columns-->
+								<div class="eight columns">
+									<p style="text-align: right;">
+										Assistant Interactive Designer at <a class="phg" href="http://www.pinckneyhugo.com/" target="_blank" rel="external"><span class="pinckney">Pinckney</span> <span class="hugo">Hugo</span> <span class="group">Group</span></a>
+									</p>
+								</div><!--/columns-->
+							</div><!--/row-->
+						</div><!--/container-->
 
-			<div class="footer">
-
-				<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
-					<div class="row footerwidgets">
-						<?php if ( footerWidgetCounter() == 4 ) : ?>
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('First Footer Widget Area') ) : ?>
-									<?php //First Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Second Footer Widget Area') ) : ?>
-									<?php //Second Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Third Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
-									<?php //Fourth Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php elseif ( footerWidgetCounter() == 3 ) : ?>
-							<div class="four columns">
-								<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="eight columns">
-								<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php elseif ( footerWidgetCounter() == 2 ) : ?>
-							<div class="eight columns">
-								<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds (between 1-3). ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="eight columns">
-								<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds (between 4-2). ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php else : //1 Active Widget ?>
-							<div class="sixteen columns">
-								<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php endif; ?>
-
-					</div><!--/row-->
-				<?php endif; ?>
-
-					<div class="container footerlinks">
-						<?php if ( has_nav_menu('footer') || has_nav_menu('header') ) : ?>
-							<div class="row powerfootercon">
+						<?php if ( current_user_can('manage_options') || array_key_exists('chris', $_GET) || $_SERVER["REMOTE_ADDR"] == '67.249.66.89' ) : //Update to nebula settings fields ?>
+							<div class="row adminlinkscon">
 								<div class="sixteen columns">
-									<nav id="powerfooter">
-										<?php
-											if ( has_nav_menu('footer') ) {
-												wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2'));
-											} elseif ( has_nav_menu('header') ) {
-												wp_nav_menu(array('theme_location' => 'header', 'depth' => '2'));
-											}
-										?>
-									</nav>
+									<?php if ( current_user_can('manage_options') ) : ?>
+										<i class="fa fw fa-wrench" title="Logged into Wordpress"></i>
+									<?php elseif ( array_key_exists('chris', $_GET) ) : ?>
+										<i class="fa fw fa-code" title="Using Admin Query"></i>
+									<?php elseif ( $_SERVER["REMOTE_ADDR"] == '67.249.66.89' ) : ?>
+										<i class="fa fw fa-home" title="At Home IP Address"></i>
+									<?php endif; ?>
+									<a href="<?php echo get_admin_url(); ?>" target="_blank">Admin</a> | <a href="<?php echo get_option('nebula_cpanel_url'); ?>" target="_blank">cPanel</a> | <a href="<?php echo get_option('nebula_hosting_url'); ?>" target="_blank">HostGator</a> | <a href="<?php echo get_option('nebula_registrar_url'); ?>">NameCheap</a> | <a href="<?php echo get_option('nebula_ga_url'); ?>" target="_blank">Analytics</a> | <a href="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" target="_blank">Webmaster Tools</a> | <a href="<?php echo get_option('nebula_google_adsense_url'); ?>" target="_blank">AdSense</a> | <a href="https://console.developers.google.com/project/neon-research-491/apiui/api?authuser=0" target="_blank">Google Dev Console</a>
+
+									<br/>
+
+									<i class="fa fw fa-tachometer"></i> <a href="http://www.alexa.com/siteinfo/gearside.com" target="_blank">Alexa</a> | <a href="http://www.opensiteexplorer.org/comparisons?site=gearsidecreative.com%2F&comparisons[0]=gearsidecreative.com&comparisons[1]=groggie.com" target="_blank">Open Site Explorer</a> | <a href="http://www.webpagetest.org/" target="_blank">WebPageTest</a> | <a href="http://developers.google.com/speed/pagespeed/insights/?url=<?php echo nebula_requested_url(); ?>" target="_blank">Google Page Speed</a> | <a href="http://tools.pingdom.com/fpt/#!/<?php echo nebula_requested_url(); ?>" target="_blank">Pingdom</a> | <a href="https://docs.google.com/spreadsheet/ccc?key=0AtjinqqkCYqpdG1ibDJRU0JQM3E5X0wyVWN5dGh5X3c&usp=sharing" target="_blank">Log</a>
 								</div><!--/columns-->
 							</div><!--/row-->
 						<?php endif; ?>
-					</div><!--/container-->
 
-					<div class="container copyright">
-						<div class="row">
-							<div class="eleven columns ">
-								<p>
-									<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
-									<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO "Metadata" 3: Add address here. ?>
-									<a href="https://www.google.com/maps/place/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><?php echo $nebula_full_address; ?></a>
-								</p>
-							</div><!--/columns-->
-							<div class="four columns push_one">
-								<form class="search align-right" method="get" action="<?php echo home_url('/'); ?>">
-									<input class="nebula-search open input search" type="search" name="s" placeholder="Search" />
-								</form>
-							</div><!--/columns-->
-						</div><!--/row-->
-					</div><!--/container-->
+					</div><!--/footer-->
 
-			</div><!--/footer-->
+					<?php wp_footer(); ?>
 
-			<?php wp_footer(); ?>
-
-			<script>
-				//Pull query strings from URL
-				function getQueryStrings() {
-					queries = new Array();
-				    var q = document.URL.split('?')[1];
-				    if ( q != undefined ){
-				        q = q.split('&');
-				        for ( var i = 0; i < q.length; i++ ){
-				            hash = q[i].split('=');
-				            queries.push(hash[1]);
-				            queries[hash[0]] = hash[1];
-				        }
-					}
-				}
-
-				//Search query strings for the passed parameter
-				function GET(query) {
-					if ( typeof query === 'undefined' ) {
-						return queries;
-					}
-
-					if ( typeof queries[query] !== 'undefined' ) {
-						return queries[query];
-					} else if ( queries.hasOwnProperty(query) ) {
-						return query;
-					}
-					return false;
-				}
-			</script>
-
-			<script>
-				//Check for Youtube Videos
-				if ( jQuery('.youtubeplayer').length ) {
-					var players = {};
-					var tag = document.createElement('script');
-					tag.src = "http://www.youtube.com/iframe_api";
-					var firstScriptTag = document.getElementsByTagName('script')[0];
-					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-				}
-
-				function onYouTubeIframeAPIReady(e) {
-					jQuery('iframe.youtubeplayer').each(function(i){
-						var youtubeiframeClass = jQuery(this).attr('id');
-						players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
-							events: {
-								'onReady': onPlayerReady,
-								'onStateChange': onPlayerStateChange
+					<script>
+						//Pull query strings from URL
+						function getQueryStrings() {
+							queries = new Array();
+						    var q = document.URL.split('?')[1];
+						    if ( q != undefined ){
+						        q = q.split('&');
+						        for ( var i = 0; i < q.length; i++ ){
+						            hash = q[i].split('=');
+						            queries.push(hash[1]);
+						            queries[hash[0]] = hash[1];
+						        }
 							}
-						});
-					});
-				}
+						}
 
-				//Track Youtube Video Events
-				var pauseFlag = false;
-				function onPlayerReady(e) {
-				   //Do nothing
-				}
-				function onPlayerStateChange(e) {
-				    if (e.data == YT.PlayerState.PLAYING) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Play', videoTitle);
-				        pauseFlag = true;
-				    }
-				    if (e.data == YT.PlayerState.ENDED) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-				    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Pause', videoTitle);
-				        pauseFlag = false;
-				    }
-				}
-			</script>
+						//Search query strings for the passed parameter
+						function GET(query) {
+							if ( typeof query === 'undefined' ) {
+								return queries;
+							}
 
-		</div><!--/fullbodywrapper-->
+							if ( typeof queries[query] !== 'undefined' ) {
+								return queries[query];
+							} else if ( queries.hasOwnProperty(query) ) {
+								return query;
+							}
+							return false;
+						}
+					</script>
+
+					<script>
+						//Check for Youtube Videos
+						if ( jQuery('.youtubeplayer').length ) {
+							var players = {};
+							var tag = document.createElement('script');
+							tag.src = "http://www.youtube.com/iframe_api";
+							var firstScriptTag = document.getElementsByTagName('script')[0];
+							firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+						}
+
+						function onYouTubeIframeAPIReady(e) {
+							jQuery('iframe.youtubeplayer').each(function(i){
+								var youtubeiframeClass = jQuery(this).attr('id');
+								players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
+									events: {
+										'onReady': onPlayerReady,
+										'onStateChange': onPlayerStateChange
+									}
+								});
+							});
+						}
+
+						//Track Youtube Video Events
+						var pauseFlag = false;
+						function onPlayerReady(e) {
+						   //Do nothing
+						}
+						function onPlayerStateChange(e) {
+						    if (e.data == YT.PlayerState.PLAYING) {
+						        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+						        ga('send', 'event', 'Videos', 'Play', videoTitle);
+						        pauseFlag = true;
+						    }
+						    if (e.data == YT.PlayerState.ENDED) {
+						        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+						        ga('send', 'event', 'Videos', 'Finished', videoTitle);
+						    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
+						        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+						        ga('send', 'event', 'Videos', 'Pause', videoTitle);
+						        pauseFlag = false;
+						    }
+						}
+					</script>
+				</div><!--/fullbodywrapper-->
+			</div><!--/bgsky-->
 	</body>
 </html>

@@ -3,18 +3,15 @@
  * Functions
  */
 
-
 /*==========================
  Include Nebula Functions Groups
  ===========================*/
-require_once('functions/nebula_utilities.php'); //Nebula Utilities
 require_once('functions/nebula_settings_functions.php'); //Nebula Settings Functions
 require_once('functions/nebula_automations.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
 require_once('functions/nebula_admin_functions.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
-require_once('functions/nebula_security.php'); //Nebula Security
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be commented out after launch)
 
@@ -28,7 +25,7 @@ require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be c
 /*==========================
  Google Analytics Tracking ID
  ===========================*/
-$GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO "Analytics" 5: Change Google Analytics Tracking ID here or in Nebula Settings (or both)!
+$GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', 'UA-36461517-1');
 
 
 /*==========================
@@ -51,7 +48,6 @@ function register_nebula_styles() {
 	wp_register_style('nebula-main', get_stylesheet_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null);
 	wp_register_style('nebula-login', get_template_directory_uri() . '/css/login.css', array(), null);
 	wp_register_style('nebula-admin', get_template_directory_uri() . '/css/admin.css', array(), null);
-	wp_register_style('nebula-wireframing', get_template_directory_uri() . '/css/wireframing.css', array('nebula-main'), null);
 }
 
 
@@ -78,7 +74,7 @@ function register_nebula_scripts() {
 	wp_register_script('nebula-respond', '//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js?' . $GLOBALS['defer'], array(), '1.4.2', true);
 	wp_register_script('nebula-html5shiv', '//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js?' . $GLOBALS['defer'], array(), '3.7.2', true);
 
-	wp_register_script('nebula-gumby', get_template_directory_uri() . '/js/libs/gumby.min.js?' . $GLOBALS['gumby_debug'], array(), '2.6', true); //CDN: //cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/js/libs/gumby.min.js //Note: CDN version does not have the extensions installed.
+	wp_register_script('nebula-gumby', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/js/libs/gumby.min.js?' . $GLOBALS['gumby_debug'], array(), '2.6', true); //CDN: //cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/js/libs/gumby.min.js //Note: CDN version does not have the extensions installed.
 
 	wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
 	wp_register_script('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/js/jquery.dataTables.min.js', array(), '1.10', true);
@@ -87,7 +83,6 @@ function register_nebula_scripts() {
 	wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
 	wp_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js?' . $GLOBALS['defer'], array(), null, true);
 }
-
 
 //Control how scripts are loaded, and force clear cache for debugging
 if ( array_key_exists('debug', $_GET) ) {
@@ -153,14 +148,10 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_style('nebula-normalize');
 	wp_enqueue_style('nebula-open_sans');
 	//wp_enqueue_style('nebula-open_sans_local');
-	wp_enqueue_style('nebula-gumby');
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome'); //Font-Awesome can be dynamically loaded with JS (with some exceptions).
 	wp_enqueue_style('nebula-main');
 
-	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
-		wp_enqueue_style('nebula-wireframing');
-	}
 
 	//Scripts
 	wp_enqueue_script('jquery');
@@ -168,13 +159,17 @@ function enqueue_nebula_frontend() {
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
 	wp_enqueue_script('nebula-modernizr_dev');
-	//wp_enqueue_script('nebula-modernizr'); //@TODO "Libraries" 1: Switch to this modernizr when launching (if not using advanced polyfills)
+	//wp_enqueue_script('nebula-modernizr');
 
 	wp_enqueue_script('nebula-mmenu');
+
+	if ( !$GLOBALS["mobile_detect"]->isMobile() && !$GLOBALS["mobile_detect"]->isTablet() ) {
+		wp_enqueue_script('nebula-skrollr');
+	}
+
 	//wp_enqueue_script('nebula-supplementr');
 	//wp_enqueue_script('nebula-cssbs');
 	//wp_enqueue_script('nebula-doubletaptogo');
-
 	wp_enqueue_script('nebula-gumby');
 
 	wp_enqueue_script('nebula-main');
@@ -199,10 +194,6 @@ function enqueue_nebula_frontend() {
 
 	if ( is_page(9999) ) { //Twitter pages (conditional may need to change depending on type of page it's used on)
 		wp_enqueue_script('nebula-twitter');
-	}
-
-	if ( !$GLOBALS["mobile_detect"]->isMobile() && !$GLOBALS["mobile_detect"]->isTablet() ) {
-		//wp_enqueue_script('nebula-skrollr');
 	}
 }
 
@@ -249,20 +240,147 @@ function enqueue_nebula_admin() {
 }
 
 
+/*==========================
 
-
-/*====================================================
  Custom Theme Functions
- Add custom functions for the theme here so that /functions/* files can be easily updated with newer Nebula versions. If you do need to modify Nebula functions make a comment at the top!
- =====================================================*/
+
+ ===========================*/
+
+
+function heroslidercon($full=null) {
+	?>
+
+	<div class='heroslidercon'>
+
+		<?php if ( get_the_category() && !is_front_page() ) : ?>
+			<div class="row catbarcon">
+				<div class="fourteen columns push_one">
+					<?php
+						foreach ( get_the_category() as $category ) {
+							if ( $category->slug != 'ideas' && $category->slug != 'resources' ) {
+								$branded_category = $category->name;
+								$category_slug = $category->slug;
+								$category_id = $category->term_id;
+							}
+						}
+					?>
+					<a class="catbar <?php echo $category_slug; ?>" href="<?php echo get_category_link($category_id); ?>" style="background-color: <?php the_field('color', 'category_' . $category_id); ?>;"><?php echo $branded_category; ?></a>
+				</div>
+			</div>
+		<?php endif; ?>
+
+		<?php if ( count(get_field('slider')) == 1 || get_field('featured_oob') ) : ?>
+			<div class="row featuredimage">
+				<?php if ( get_field('featured_oob') && !isset($full) ) : ?>
+					<img class="featuredoob" src="<?php the_field('featured_oob'); ?>" />
+				<?php endif; ?>
+
+				<?php $slides = get_field('slider'); ?>
+				<img src="<?php echo $slides[0]['slide_image']; ?>" />
+
+				<hr style="margin-top: 5px;" />
+			</div><!--/row-->
+			<?php if ( $slides[0]['slide_title'] || $slides[0]['slide_description'] ) : ?>
+				<div class="row">
+					<?php if ( !isset($full) ) : ?>
+						<div class="six columns push_nine slidecaptionwrap">
+					<?php else : ?>
+						<div class="five columns push_ten slidecaptionwrap">
+					<?php endif; ?>
+						<div class="slidecaptioncon">
+							<span class="captiontitle"><?php echo $slides[0]['slide_title']; ?></span>
+							<span class="captiondesc"><?php echo $slides[0]['slide_description']; ?></span>
+						</div>
+						<div class="nebulashadow anchored-right"></div>
+					</div><!--/columns-->
+				</div><!--/row-->
+			<?php endif; ?>
+		<?php elseif ( count(get_field('slider')) > 1 ) : ?>
+			<?php if( have_rows('slider') ): ?>
+				<ul class="heroslider bxslider">
+					<?php while( have_rows('slider') ): the_row(); ?>
+						<li class="heroslide">
+							<div class="row featuredimage">
+								<img src="<?php the_sub_field('slide_image'); ?>" />
+								<hr style="margin-top: 5px;" />
+							</div><!--/row-->
+
+							<?php if ( get_sub_field('slide_title') || get_sub_field('slide_description') ) : ?>
+								<div class="row">
+									<?php if ( !isset($full) ) : ?>
+										<div class="six columns push_nine slidecaptionwrap">
+									<?php else : ?>
+										<div class="five columns push_ten slidecaptionwrap">
+									<?php endif; ?>
+										<div class="slidecaptioncon">
+											<span class="captiontitle"><?php the_sub_field('slide_title'); ?></span>
+											<span class="captiondesc"><?php the_sub_field('slide_description'); ?></span>
+										</div>
+										<div class="nebulashadow anchored-right"></div>
+									</div><!--/columns-->
+								</div><!--/row-->
+							<?php endif; ?>
+						</li><!--/heroslide-->
+					<?php endwhile; ?>
+				</ul>
+			<?php endif; ?>
+		<?php endif; ?>
+	</div><!--/heroslidercon-->
+
+	<?php
+}
+
+
+add_action('wp_ajax_aboutiama', 'aboutiama');
+add_action('wp_ajax_nopriv_aboutiama', 'aboutiama');
+function aboutiama() {
+
+	/*
+		@TODO:
+			Randomly choose from multiple responses (if more than one description exists). This would require an additional repeater and WYSIWYG fields.
+			Implement something (maybe regex) to find parts of strings from the keyphrases.
+	*/
+
+	$query = $_POST['data'][0]['query'];
+	$keywords = explode(' ', $query);
+	$hats = get_field('hats', 16);
+
+	foreach ( $hats as $hat ) {
+		//echo 'Checking "' . $query . '" for "' . $hat['keyphrase'] . '" (Exact Matches).';
+		if ( strpos($query, $hat['keyphrase']) !== false ) {
+			echo $hat['description'];
+			exit;
+		}
+	}
+
+	foreach ( $hats as $hat ) {
+		//echo 'Checking "' . $hat['keyphrase'] . '" for "' . $query . '" (Partial Matches).';
+		foreach ( $keywords as $keyword ) {
+			if ( strpos($hat['keyphrase'], $keyword) !== false ) {
+				echo $hat['description'];
+				exit;
+			}
+		}
+	}
+
+	echo $hats[0]['description']; //Default if nothing found.
+
+	$v = 1; //Version
+	$cid = gaParseCookie(); //Anonymous Client ID
+	$data = array(
+		'v' => $v,
+		'tid' => $GLOBALS['ga'],
+		'cid' => $cid,
+		't' => 'event',
+		'ec' => 'I Am A', //Category (Required)
+		'ea' => 'Default Response', //Action (Required)
+		'el' => $query //Label
+	);
+	gaSendData($data);
+
+	exit;
+}
 
 
 
-
-
-
-
-
-
-
-//Close functions.php. DO NOT add anything after this closing tag!! ?>
+//Close functions.php. Do not add anything after this closing tag!! ?>

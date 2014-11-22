@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Mobile Detect Library
  * =====================
@@ -23,7 +22,7 @@
  *
  * @version     2.8.0
  */
- 
+
 class Mobile_Detect
 {
     /**

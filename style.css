@@ -1,27 +1,27 @@
 /*
-	Theme Name: Nebula
+	Theme Name: Gearside 2015
 	Theme URI: http://gearside.com/nebula
-	Author: Pinckney Hugo Group
-	Author URI: http://www.pinckneyhugo.com
-	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 1.9
+	Author: Chris Blakley
+	Author URI: http://gearisde.com
+	Description: The 2015 theme for Gearside Creative
+	Version: 1.6
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
 */
 
-/* @TODO "Wordpress" 4: Change the Theme Name (above) to be the client/project and the year!
-	Do not change the "Version"! This is to track the Nebula version of initial development.
+/* @TODO:
+		Change the Theme Name (above) to be the client/project and the year!
+		Do not change the "Version"! This is to track the Nebula version of initial development.
 */
 
 /* ==========================================================================
    Global Variables
-   Note: CSS variables are currently only supported in Firefox. http://caniuse.com/#feat=css-variables
    ========================================================================== */
-
-:root { /* @TODO "Styles" 5: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
-	--primary-color: #0098d7; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
-	--secondary-color: #95D600; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
+/* @TODO: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
+:root {
+	--primary-color: #2282db;
+	--secondary-color: #0d3357;
 }
 
 
@@ -29,15 +29,14 @@
    Base styles: opinionated defaults
    ========================================================================== */
 html {height: auto;}
-html, button, input, select, textarea {color: #444; font-size: 14px;}
-::-moz-selection {background: #b3d4fc; text-shadow: none;}
-::selection {background: #b3d4fc; text-shadow: none;}
+html, button, input, select, textarea {color: #444; font-size: 16px;}
+::-moz-selection {background: #d6dee6; text-shadow: none;}
+::selection {background: #d6dee6; text-shadow: none;}
 hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; background: #fff; margin: 3px 0; padding: 0;}
-	/* @TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended. */
+	/* @TODO: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended. */
 	.rgba hr {display: block; height: 1px; border: 0; background: rgba(255,255,255,1); margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
 		.rgba hr:before {content: ''; position: relative; top: -1px; height: 1px; display: block; background: rgba(0,0,0,0.2); /* mix-blend-mode: multiply; */}
 	hr.zero {margin: 0;}
-
 
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
@@ -45,38 +44,31 @@ textarea {resize: vertical;}
 ul {padding: 0;}
 
 h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
-h1, h2, h3, h4, h5, h6 {line-height: 1.15538em;}
-h1 {font-size: 36px; font-weight: bold;}
-h2 {font-size: 28px;}
-h3 {font-size: 21px;}
-h4 {font-size: 18px;}
-h5 {font-size: 14px;}
-h6 {font-size: 14px;}
-p, dt, dl {font-size: 14px; line-height: 1.625em;}
+h1, h2, h3, h4, h5, h6 {}
+h1 {font-size: 48px; line-height: 51px; padding-top: 0; font-weight: bold;}
+h2 {font-size: 34px; line-height: 37px;}
+h3 {font-size: 18px; line-height: 26px;}
+h4 {font-size: 16px; line-height: 24px;}
+h5 {font-size: 13px; line-height: 21px;}
+h6 {font-size: 10px; line-height: 18px;}
+p {}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
-
-/*
-	h1 {font-size: 36px; line-height: 42px; font-weight: bold;}
-	h2 {font-size: 28px; line-height: 32px;}
-	h3 {font-size: 21px; line-height: 36px;}
-	h4 {font-size: 18px; line-height: 21px;}
-	h5 {font-size: 14px; line-height: 28px;}
-	h6 {font-size: 14px; line-height: 18px;}
-*/
 
 /* ==========================================================================
    PHG Nebula custom styles
    ========================================================================== */
 ::selection {background: #d5f3ff; color: black;}
 ::-moz-selection {background: #d5f3ff; color: black;}
-h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7; color: var(--primary-color);}
-a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #2282db; color: var(--primary-color);}
+a {color: #2282db; color: var(--primary-color); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a:hover,
-	a.hover {color: #95D600; color: var(--secondary-color)-darker;}
+	a.hover {color: #0d3357; color: var(--secondary-color)-darker;}
 	.btn > a:hover {color: #fff;}
-body {overflow-x: hidden; background: #f6f6f6;}
+body {overflow-x: hidden; top: 0; left: 0; width: 100%; height: 100%;}
+	#bgsky {background-attachment: fixed;} /* Background image is in header.php */
+	#fullbodywrapper {background-repeat: no-repeat; background-size: cover; background-attachment: fixed; position: relative; z-index: 9;} /* Background image and gradient are in header.php */
 #tinymce.mceContentBody {padding: 10px 15px !important; background: #f6f6f6;}
 .inner {width: 100%; max-width: 960px; padding: 0 20px; margin: 0 auto;}
 ul.menu {padding: 0;}
@@ -119,29 +111,6 @@ a.white {color: #fff;}
 	a.white.hover {color: #ccc;}
 
 
-/* Table styles - Restyle here as needed */
-table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ /* Sets a fixed width for all cells, and removes cellspacing. */}
-	/* Table Rows */
-	table tr {}
-		table tr.odd {/* background: #f5f5f5; */}
-		table tr:hover,
-		table tr.hover {/* background: #e2e2e2; */}
-	/* Table Cells */
-	table tr td {/* text-align: center; border: none; border: 1px solid #ddd; */}
-	table tr td:first-child {/* font-weight: inherit; */}
-	table tr td {/* padding: 0; font-size: inherit; */}
-	table tr td, table tbody tr td {/* font-size: inherit; */}
-	table thead tr:first-child td,
-	table thead tr.first-child td {/* font-weight: bold; color: #fff; */}
-	table tr td:hover,
-	table tr td.hover {/* background: #d2d2d2; */}
-	/* Table Heading Cells */
-	table tr th {/* background: #95d600 !important; background: var(--secondary-color) !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff; */}
-	/* Table Heading Rows */
-	table thead tr td {/* background: #0098D7 !important; background: var(--primary-color) !important; padding: 10px 0; */}
-	/* Table Footer Rows */
-	table tfoot tr td {/* background: grey !important; color: #fff; */}
-
 
 .nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
 .wp_search_submit {color: #444 !important;}
@@ -183,17 +152,19 @@ a.nebulaframe {border: none;}
 
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
 
-div.nebula-button {margin-bottom: 10px;}
-
-.searchresultword {background: #e8f8ff; background: rgba(0, 152, 215, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;} /* @TODO "Nebula" 0: Replace BG color with very light primary color */
+.searchresultword {background: #e8f8ff; background: rgba(0, 152, 215, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;} /* @TODO: Replace BG color with very light primary color */
 	.searchresultword.transitionable {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
 
-.headerdrawercon {position: relative; background: rgba(0,0,0,0.0225);}
-	.headerdrawercon hr {margin: 0;}
-	.headerdrawer {position: relative; padding-top: 10px; text-align: center; font-size: 12px;}
+.headerdrawercon {position: relative; background: rgba(0,0,0,0.25); margin-bottom: 25px;}
+	.frosted {background-size: cover;}
+	.headerdrawercon hr {margin: 0; background: rgba(255, 255, 255, 0.15);}
+	.headerdrawer {position: relative; padding: 20px 0; text-align: center; font-size: 12px; color: #fff;}
+		.headerdrawer h3 {color: #fff;}
+		.headerdrawer i {margin-right: 5px;}
 		.headerdrawer p {text-align: center;}
-		.headerdrawer a.close {position: absolute; top: 0; right: 0;}
+		.headerdrawer a.close {position: absolute; top: 0; right: 0; color: rgba(255, 255, 255, 0.6);}
+			.headerdrawer a.close:hover {color: rgba(255, 255, 255, 1);}
 #suggestedpage {display: none;}
 
 .search .highlight {background: yellow;} /* Find Highlight color */
@@ -236,8 +207,6 @@ body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby
 i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .btn, .skiplink {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
-form fieldset {border: 1px solid #ccc;}
-
 .field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: #ca3838;}
 .field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: #ca3838; color: #000; background: #f0c5c5;}
 
@@ -250,8 +219,7 @@ form fieldset {border: 1px solid #ccc;}
 .picker:after {content: "\f0d7"; font-family: "FontAwesome";}
 
 div.bx-wrapper div.bx-viewport {left: 0 !important;}
-div.bx-wrapper div.bx-caption {bottom: 10px; background: rgba(0,0,0,0.8);}
-	div.bx-wrapper div.bx-caption span {font-size: 14px;}
+div.bx-wrapper img {margin: 0 auto;}
 ul.bxslider {}
 	ul.bxslider li {padding-bottom: 0;}
 .bx-controls-direction a {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
@@ -262,156 +230,249 @@ ul.bxslider {}
    ========================================================================== */
 
 /*
-@TODO "Styles" 2: Find/Replace the following HTML colors:
+@TODO: Find/Replace the following HTML colors:
 	lightgrey
 	grey
-	#0098D7 (Primary Brand Color)
-	#95D600 (Secondary Brand Color)
+	#2282db (Primary Brand Color)
+	#0d3357 (Secondary Brand Color)
 
+Also be sure to find the other @TODO: items within the stylesheet.
 */
+
+/* @TODO: Delete these debug styles before launching */
+/*
+.column, .columns {outline: 1px solid gainsboro;}
+.row {outline: 1px solid blanchedalmond;}
+*/
+
 
 /* ==========================================================================
    Header Area
    ========================================================================== */
-
 .pointerevents #fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	.pointerevents.mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
 
-.mobilenavcon {display: none;}
-	a.directions div {line-height: 12px; padding-left: 35px;}
-
-#topbarcon {position: relative; background: #0098D7; background: var(--primary-color); width: 100%; height: 5px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
-	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
-		#topbarcon a:hover,
-		#topbarcon a.hover {color: #ccc;}
-	#topbarcon a.mobilenavtrigger {position: relative; z-index: 99999;}
-		/* .mm-opening #fullbodywrapper:hover a.mobilenavtrigger. {color: red;} @TODO "Nebula" 0: Not working. Is there a way to trigger a hover on #fullbodywrapper when mmenu is active? */
-	#topbarcon .rightside {text-align: right;}
-
-#mobilenav {visibility: hidden; height: 0;}
-	#mobilenav.mm-menu {visibility: visible; height: 100%;}
-
-/* Nebula Wordpress top navigation style defaults */
-nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
-	nav#topnav ul {float: right;}
-		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
-			nav#topnav ul li.menu-item:last-child,
-			nav#topnav ul li.menu-item.last-child {margin-right: 0;}
-			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
-				nav#topnav ul li.menu-item a:hover,
-				nav#topnav ul li.menu-item a.hover {color: #95D600; color: var(--secondary-color);}
-			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; border-left: 1px solid var(--primary-color); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s; -moz-transition: opacity 0.25s; -o-transition: opacity 0.25s; transition: opacity 0.25s;}
-				nav#topnav ul li.menu-item.hover ul.sub-menu,
-				nav#topnav ul li.menu-item:hover ul.sub-menu {left: 5px; opacity: 1;}
-				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
-
-li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-	.svg li.nebula-search input, .svg input.nebula-search {background: #eee url('images/search.svg') no-repeat 6px center;}
-	li.nebula-search input::-webkit-search-decoration,
-	li.nebula-search input::-webkit-search-cancel-button,
-	input.nebula-search::-webkit-search-decoration,
-	input.nebula-search::-webkit-search-cancel-button {display: none;}
-	li.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: #999;}
-	li.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: #999;}
-	li.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: transparent;}
-	li.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: transparent;}
-	li.nebula-search input:hover,
-	li.nebula-search input.hover,
-	input.nebula-search:hover,
-	input.nebula-search.hover {background-color: #fff;}
-	li.nebula-search input:focus,
-	li.nebula-search input.focus,
-	input.nebula-search:focus,
-	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.nebula-search input.open,
-	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
-	li.nebula-search input.focus:-moz-placeholder, input.nebula-search.focus:-moz-placeholder, li.nebula-search input.open:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
-	li.nebula-search input.focus::-webkit-input-placeholder, input.nebula-search.focus::-webkit-input-placeholder, li.nebula-search input.open::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
+.minilogocon {position: absolute; display: block; top: -200px; left: 50%; margin-left: -600px; width: 70px; height: 140px; background: #f2f2f2; box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.2); z-index: 999999;}
+	.minilogocon {top: -200px;}
+	.minilogocon a {position: relative; display: block; width: 100%; height: 100%;}
+		.minilogocon img {position: absolute; bottom: 8px; left: 50%; margin-left: -25px; max-width: 50px;}
+		.minilogocon.active {position: fixed !important;}
 
 
-/* Nebula Wordpress main navigation style defaults */
-#logonavcon {padding-top: 20px;}
-	nav#primarynav {position: relative; z-index: 1000;}
-		nav#primarynav ul {}
-		nav#primarynav ul:first-child,
-		nav#primarynav ul.first-child {float: right; margin-top: 26px;}
-			nav#primarynav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
-			.ie7 nav#primarynav ul li.menu-item {float: left;}
-				nav#primarynav ul li.menu-item:last-child,
-				nav#primarynav ul li.menu-item.last-child {margin-right: 0;}
-				nav#primarynav ul li.menu-item a {display: block;}
-					nav#primarynav ul li.menu-item a:hover,
-					nav#primarynav ul li.menu-item a.hover {}
-				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s, opacity 0.25s; -moz-transition: top 0.25s, opacity 0.25s; -o-transition: top 0.25s, opacity 0.25s; transition: top 0.25s, opacity 0.25s; background: lightgrey; background: linear-gradient(to bottom, white, gainsboro); z-index: 1001; border: 1px solid grey;}
-				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}
-					nav#primarynav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
-						nav#primarynav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
-							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
-							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: lightgrey; color: #fff;}
-						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
-				nav#primarynav ul li.menu-item:hover .sub-menu,
-				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 23px; opacity: 1;}
-				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
+#stickyhead {position: sticky; top: 0; pointer-events: none; z-index: 8000;} /* @TODO: Not working because the parent z-index... even though it isnt set... */
+	.no-skrollr #stickyhead {position: relative;}
 
-.fixedbar {background: #0098D7; background: var(--primary-color); width: 100%; height: 0px; overflow: hidden; transition: all 0.5s;}
-	.fixedbar > div {display: none;}
-	.fixedbar.active {height: 20px;}
-		.fixedbar.active > div {display: block;}
-	.fixedbar a {display: block; font-size: 11px; color: #fff;}
-		.fixedbar a:hover,
-		.fixedbar a.hover {color: #ccc;}
-	.fixedbar i {font-size: 13px;}
+.mobilemenucon {position: absolute; top: 6px; left: 10px; z-index: 9999; pointer-events: all;}
+	.mobilemenucon a {color: #fff; font-size: 36px;}
+		.mobilemenucon a:hover,
+		.mobilemenucon a.hover {color: #ccc;}
+	#mobilenav {visibility: hidden; height: 0;}
+		#mobilenav.mm-menu {visibility: visible; height: 100%;}
 
-/* Nebula Wordpress fixed navigation style defaults */
-nav#fixednav {position: relative; z-index: 1000;}
-	nav#fixednav ul {float: right;}
-		nav#fixednav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px;}
-			nav#fixednav ul li.menu-item:last-child,
-			nav#fixednav ul li.menu-item.last-child {margin-right: 0;}
-			nav#fixednav ul li.menu-item a {}
-				nav#fixednav ul li.menu-item a:hover,
-				nav#fixednav ul li.menu-item a.hover {}
-			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
+.loadingcon {/* display: block !important; */}
+#bgimgloadcontainer {position: absolute; top: 0; left: 50%; width: 200px; height: 200px; margin-left: -100px; margin-top: 20px; text-align: center; z-index: 3;}
+	.bgimgload {position: absolute; margin: 0 auto; text-align: center;}
+	.bgimgload {position: absolute; left: 50%; margin-left: -100px; text-align: center; width: 200px; height: 200px; background-color: #000;
+		-webkit-mask-image: url('images/loading.png');
+		-webkit-animation-name: spinnerRotate;
+		-webkit-animation-duration: 1.5s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-timing-function: linear;
+	}
+	@-webkit-keyframes spinnerRotate { from {-webkit-transform: rotate(0deg);} to {-webkit-transform: rotate(360deg);} }
+	.bgimgloadtext {position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 70px 25px 0 25px; z-index: 200; color: white; font-size: 18px;}
+	#bgimgloadcontainer span {text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);}
 
-/* Sample Hero and on-load animation */
-#heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	#heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 10px; margin-top: 10px; padding-left: 10px; text-transform: uppercase; background: #000; background: rgba(0,0,0,0.5);}
+#logocon {position: relative; top: 0; text-align: center; margin-bottom: 50px; z-index: 0;}
+	#logocon a {pointer-events: all; opacity: 1;}
+		.home.page #logocon a.inithide {opacity: 0;}
+		.svglogo {max-width: 270px; margin-top: 15px;}
 
-/* Example Heroslider with bxSlider */
-div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-transition: all 1s; -moz-transition: all 1s; -o-transition: all 1s; transition: all 1s;}
-	div#heroslider.closed {height: 0;}
-    div#heroslider .bx-wrapper {}
-        div#heroslider .bx-wrapper .bx-viewport {min-height: 500px; border: none; left: 0; z-index: 1;}
-            div#heroslider ul.bxslider {margin: 0; background: #222 url('images/black-linen.png'); height: 100%;}
-                div#heroslider ul.bxslider li {padding: 0; height: 100%;}
-                    div#heroslider ul.bxslider li div {position: absolute; top: 30%; left: 50%; width: 70%; max-width: 940px;}
-                        div#heroslider ul.bxslider li div p {display: table; position: relative; margin-left: -50%; padding: 10px 30px; color: #000; text-align: center; text-transform: uppercase; margin-bottom: 5px; background: #fff; background: rgba(255, 255, 255, 0.9); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.2);}
-                        div#heroslider ul.bxslider li div p.line1 {font-size: 48px;}
-                        div#heroslider ul.bxslider li div p.line2 {font-size: 24px;}
-                        div#heroslider ul.bxslider li div a {display: inline-block; position: relative; margin-left: -50%; padding: 10px 30px; color: #fff; font-size: 24px; text-align: center; text-transform: uppercase; background: #0098d7; background: var(--primary-color);}
-                            div#heroslider ul.bxslider li div a:hover {background: #95d600; background: var(--secondary-color);}
-                    div#heroslider ul.bxslider li img {min-height: 100%; min-width: 1600px; /* width: 100%; */ margin: 0 auto; box-shadow: 0 0 50px 0 rgba(0,0,0,0.8)} /* Uncomment the width for the image to stretch across the entire viewport. */
-div#heroslider .bx-wrapper .bx-has-controls-direction {position: absolute; top: 50%; left: 50%; width: 100%; max-width: 1100px; height: 32px;}
-    div#heroslider .bx-wrapper .bx-has-controls-direction .bx-controls-direction {position: relative; height: 32px; left: -50%;}
-        div#heroslider .bx-wrapper .bx-controls-direction a {top: 0; margin-top: 0; z-index: 100;}
+
+.likecon {position: absolute !important; top: 6px; right: 10px; z-index: 9999; pointer-events: all;}
+	.fb-like {}
+
+
+#searchnavfixer {width: 100%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+#searchnavcon {position: relative; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	.no-skrollr #searchnavcon {border-bottom: 1px solid rgba(255, 255, 255, 0.7);}
+	#searchnavcon .searchcon {color: rgba(255, 255, 255, 0.7);}
+		#searchnavcon .searchcon form#headersearch {margin-bottom: 0; margin-top: 3px;}
+			form#headersearch i {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+					form#headersearch.active i {color: rgba(255, 255, 255, 1);}
+			#searchnavcon .searchcon form#headersearch input {margin-left: 3px; width: 90%; outline: none; border: none; background: none; color: rgba(255, 255, 255, 1); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+				#searchnavcon .searchcon form#headersearch input#s::-webkit-input-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+				#searchnavcon .searchcon form#headersearch input#s:-moz-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+				#searchnavcon .searchcon form#headersearch input#s::-moz-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+				#searchnavcon .searchcon form#headersearch input#s:-ms-input-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+					#searchnavcon .searchcon form#headersearch input#s:focus::-webkit-input-placeholder {color: rgba(255, 255, 255, 0);}
+					#searchnavcon .searchcon form#headersearch input#s:focus:-moz-placeholder {color: rgba(255, 255, 255, 0);}
+					#searchnavcon .searchcon form#headersearch input#s:focus::-moz-placeholder {color: rgba(255, 255, 255, 0);}
+					#searchnavcon .searchcon form#headersearch input#s:focus:-ms-input-placeholder {color: rgba(255, 255, 255, 0);}
+
+				#searchnavcon .searchcon form#headersearch input#s.tempfade {opacity: 0;}
+
+	#searchnavcon .navcon {position: relative; text-align: right; z-index: 9999;}
+		#searchnavcon .navcon a {color: #fff;}
+			#searchnavcon .navcon a:hover,
+			#searchnavcon .navcon a.hover {color: #aaa;}
+	nav#primarynav {margin-top: 3px;}
+		nav#primarynav ul {margin-bottom: 0;}
+			nav#primarynav ul li.menu-item {display: inline-block; margin-left: 10px; margin-bottom: 0;}
+				nav#primarynav ul li.menu-item a {display: block; width: 100%; height: 100%;}
+				/* @TODO: Add right-aligned dropdown nav here. */
+
+
+
 
 
 /* ==========================================================================
    Content Area
    ========================================================================== */
-div#bcrumbs {position: relative; z-index: 1;}
-	nav.breadcrumbs {font-size: 10px; line-height: 14px;}
+div#bcrumbscon {position: relative; background: linear-gradient(to bottom, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%); font-size: 10px; padding: 0 10px; color: #fff; z-index: 1;}
+	nav.breadcrumbs {font-size: 10px; line-height: 20px;}
+		nav.breadcrumbs a {color: #fff;}
+			nav.breadcrumbs a:hover,
+			nav.breadcrumbs a.hover {color: #aaa;}
+
+.heroslidercon {position: relative; margin-bottom: 10px; min-height: 35px;}
+	.featuredoob {position: absolute; right: 0; top: -90px; z-index: 3000; pointer-events: none;}
+		.heroslidercon .bx-wrapper .bx-viewport {border: none; box-shadow: none; -webkit-box-shadow: none; background: none;}
+		.heroslide {z-index: inherit !important;}
+		.featuredimage {position: relative;}
+			.featuredimage:after {content: ''; width: 100%; height: 50px; left: 0; bottom: 5px; position: absolute; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.25));}
+		.bx-controls {position: absolute; top: 260px; margin-left: 6.4%; max-width: 150px;}
+			.bx-wrapper {margin-bottom: 30px;}
+			.bx-wrapper .bx-pager {position: relative; bottom: 0; padding-top: 0; text-align: left;}
+
+
+#maincontentareawrap {position: relative; z-index: 1000;}
+	.contentbg {position: relative; background: #f2f2f2; padding-bottom: 50px; min-height: 700px;}
+		.corner-left {content:''; position: absolute; top: 0; left: -100px; width: 100px; height: 360px; background-image: url('images/corner-left.png'); opacity: 0.4;}
+		.corner-right {content:''; position: absolute; top: 0; right: -100px; width: 100px; height: 360px; background-image: url('images/corner-right.png'); opacity: 0.4;}
+
+.slideindicatorcon {}
+	.slideindicatorcon a {font-size: 12px;}
+.slidecaptioncon {position: relative; margin-top: -30px; background: #fff; padding: 2px 10px 7px 10px; z-index: 3100;}
+	.slidecaptioncon .captiontitle {display: block; font-weight: bold; line-height: 18px; margin-top: 2px; margin-bottom: 5px;}
+	.slidecaptioncon span.captiondesc {display: block; font-size: 12px; line-height: 16px;}
 
 .row.multi-column-query {margin-bottom: 30px;}
 
 .sticky-title i {font-size: 20px;}
 
+.home-title {text-align: center; font-size: 48px;}
+.home-content {text-align: center;}
+
+
+
+.homebucketscon {margin-top: 25px;}
+	.homebucketscon figure {position: relative; z-index: 1; display: inline-block; overflow: hidden; margin: -0.135em; margin-bottom: -7px; width: 100%; height: 250px; background: #000; text-align: center; cursor: pointer;}
+	.homebucketscon figure img {position: relative; display: block; min-height: 100%; opacity: 0.2; -webkit-transition: opacity 0.35s, -webkit-transform 0.35s; transition: opacity 0.35s, transform 0.35s; -webkit-transform: scale(1.12); transform: scale(1.12);}
+		.homebucketscon figure:hover img,
+		.homebucketscon figure.hover img {opacity: 0.5; -webkit-transform: scale(1); transform: scale(1);}
+	.homebucketscon figure figcaption {padding: 3em; color: #fff; text-transform: uppercase; font-size: 1.25em; -webkit-backface-visibility: hidden; backface-visibility: hidden;}
+		.homebucketscon figure figcaption::after {pointer-events: none;}
+		.homebucketscon figure figcaption::before {position: absolute; top: 30px; right: 30px; bottom: 30px; left: 30px; border: 1px solid #fff; content: ''; -webkit-transform: scale(1.1); transform: scale(1.1); pointer-events: none;}
+	.homebucketscon figure figcaption,
+	.homebucketscon figure a {position: absolute; top: 0; left: 0; width: 100%; height: 100%;}
+	.homebucketscon figure a {z-index: 1000; text-indent: 200%; white-space: nowrap; font-size: 0; opacity: 0;}
+
+	.homebucketscon figure h2 {margin: 0; font-size: 60px; font-weight: 800; color: #fff; padding: 30px 0 0 0; -webkit-transform: scale(1); transform: scale(1); -webkit-transition: all .35s; transition: all .35s;}
+		.homebucketscon figure.hover h2,
+		.homebucketscon figure:hover h2 {padding: 30px 0 0 0; -webkit-transform: scale(0.75); transform: scale(0.75);}
+
+	.homebucketscon figure p {font-size: 24px; margin: -15px auto 0 auto; max-width: 200px; -webkit-transform: scale(1.5); transform: scale(1.5);}
+
+	.homebucketscon figure figcaption::before,
+	.homebucketscon figure p {opacity: 0; -webkit-transition: opacity 0.35s, -webkit-transform 0.35s; transition: opacity 0.35s, transform 0.35s;}
+		.homebucketscon figure:hover figcaption::before,
+		.homebucketscon figure.hover figcaption::before,
+		.homebucketscon figure:hover p,
+		.homebucketscon figure.hover p {opacity: 1; -webkit-transform: scale(1); transform: scale(1);}
+
+	.iead {text-align: center;}
+	.iead span {display: block; font-size: 10px; line-height: 16px; color: #444; text-align: center;}
+		.iewhy {border: 1px solid #ccc; background: #e8e8e8; margin: 5px 0; padding: 6px; text-align: left !important; height: 0; display: none;}
+			.iewhy.active {display: block; height: auto;}
+
+
+
+
+
+.listingcon {margin-bottom: 25px;}
+	.listingcon article {position: relative; min-height: 250px; background-size: auto 100% !important; overflow: hidden; outline: 1px solid rgba(0,0,0,0.2);}
+		.listingcon article .glasscon {position: relative; width: 62%; min-height: 250px; background: rgba(0,0,0,0.7); padding: 10px 25px 20px 25px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+			.listingcon article:hover .glasscon,
+			.listingcon article.hover .glasscon {background: rgba(0,0,0,0.9);}
+		.listingcon article .glassbg {position: absolute; top: 0; height: 100%; width: 62%; background-size: auto 100% !important; -webkit-filter: blur(5px); -moz-filter: blur(5px); -o-filter: blur(5px); -ms-filter: blur(5px); filter: blur(5px); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+			.listingcon article .glasscon h2 {font-size: 26px; line-height: 26px;}
+				.listingcon article .glasscon h2 a {color: #fff; font-weight: bold; text-transform: uppercase;}
+					.listingcon article .glasscon h2 a:hover,
+					.listingcon article .glasscon h2 a.hover {color: #aaa;}
+				.listingcon article .glasscon .metadata {color: #fff; font-size: 12px; font-weight: bold; text-transform: uppercase;}
+					.listingcon article .glasscon .metadata i {margin-right: 5px;}
+					.listingcon article .glasscon .metadata a {color: #fff;}
+						.listingcon article .glasscon .metadata a:hover,
+						.listingcon article .glasscon .metadata a.hover {color: #aaa;}
+					.listingcon article .glasscon .metadata.metatags {position: absolute; bottom: 3px; right: 25px;}
+				.listingcon article .glasscon .postexcerpt {color: #fff; font-size: 14px;}
+					.listingcon article .glasscon .postexcerpt .nebula_the_excerpt {color: #fff; font-weight: bold; text-transform: uppercase;}
+						.listingcon article .glasscon .postexcerpt .nebula_the_excerpt:hover,
+						.listingcon article .glasscon .postexcerpt .nebula_the_excerpt.hover {color: #aaa;}
+
+.catbarcon {position: absolute; top: 10px; left: 0; z-index: 10;}
+	.catbar {padding: 2px 10px; color: #fff; font-size: 12px; line-height: 18px; font-weight: bold; text-transform: uppercase;}
+		.catbar.uncategorized {background-color: #666 !important;}
+		.catbar.featured-posts {background-color: #3b4e60;}
+		.catbar:hover,
+		.catbar.hover {color: #fff;}
+
+ul.aboutsocial {position: relative; margin-top: -70px; margin-bottom: 20px; max-width: 300px; z-index: 4000;}
+	ul.aboutsocial li {display: inline-block; margin-right: 5px;}
+		ul.aboutsocial li:last-child {margin-right: 0;}
+		ul.aboutsocial li a {font-size: 18px;}
+			ul.aboutsocial li a.facebook {color: #3b5998;}
+			ul.aboutsocial li a.twitter {color: #00aced;}
+			ul.aboutsocial li a.googleplus {color: #dd4b39;}
+			ul.aboutsocial li a.linkedin {color: #007bb6;}
+			ul.aboutsocial li a.github {color: #333;}
+				ul.aboutsocial li a.github:hover,
+				ul.aboutsocial li a.github.hover {color: #4183c4;}
+			ul.aboutsocial li a.youtube {color: #bb0000;}
+			ul.aboutsocial li a.instagram {color: #517fa4;}
+			ul.aboutsocial li a.soundcloud {color: #ff3300;}
+
+#iamatitle {cursor: pointer; font-size: 32px;}
+input#iama {position: relative; background: none; border: none; border-bottom: 1px solid #aaa; outline: none; font-size: 32px; color: #444;}
+	input#iama:focus {border-bottom: 1px solid #444;}
+	input#iama::-webkit-calendar-picker-indicator {display: none;}
+	input#iama::-webkit-input-placeholder {color: rgba(0, 0, 0, 0.2); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	input#iama:-moz-placeholder {color: rgba(0, 0, 0, 0.2); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	input#iama::-moz-placeholder {color: rgba(0, 0, 0, 0.2); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	input#iama:-ms-input-placeholder {color: rgba(0, 0, 0, 0.2); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+		input#iama:focus::-webkit-input-placeholder {color: rgba(0, 0, 0, 0);}
+		input#iama:focus:-moz-placeholder {color: rgba(0, 0, 0, 0);}
+		input#iama:focus::-moz-placeholder {color: rgba(0, 0, 0, 0);}
+		input#iama:focus:-ms-input-placeholder {color: rgba(0, 0, 0, 0);}
+#iamadesc {min-height: 250px; margin-top: 15px;}
+
+span.loading i {opacity: 1; font-size: 16px; line-height: 32px; color: #444; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	span.loading.faded i {opacity: 0;}
+	span.loading.success i {color: #004750;}
+	span.loading.error i {color: #c52026;}
+
+.entry-title {}
+	.entry-title.centered {text-align: center;}
+
 .entry-meta {font-size: 12px;}
 	.posted-on,
 	.posted-in,
-	.posted-by {display: inline-block; margin-right: 10px; font-size: 12px;}
+	.posted-by {display: inline-block; margin-right: 10px;}
+	.commentmetacon {float: right;}
+		.sharing-links {display: inline-block; margin-top: 2px;}
+			.share-button {display: inline-block; margin-left: 5px;}
+				.share-button.share-facebook .fb_iframe_widget span {vertical-align: inherit !important;}
 
 .entry-social {}
 	.entry-social ul {}
@@ -420,8 +481,15 @@ div#bcrumbs {position: relative; z-index: 1;}
 			.entry-social ul li.facebook-share {}
 			.entry-social ul li.twitter {}
 
-.entry-content {margin-top: 10px; font-size: 14px;}
+.entry-content {margin-top: 10px;}
+	.entry-content.centered {text-align: center;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
+	.entry-content div.update,
+	.entry-content div.updated {background: #fdd; padding: 15px; border: 1px solid #980;}
+		.entry-content div.update:before,
+		.entry-content div.updated:before {content: 'Updates'; display: block; font-size: 16px; font-weight: bold; margin-bottom: 10px;}
+		.entry-content div.update p,
+		.entry-content div.updated p {font-size: 14px;}
 
 .entry-manage {font-size: 12px; margin-top: 15px;}
 	.nebula-manage-edit {}
@@ -429,8 +497,17 @@ div#bcrumbs {position: relative; z-index: 1;}
 		.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;}
 
+hr.articleend {margin: 15px 0;}
+
+.searchcon article {margin-bottom: 20px;}
+.archive .contentbg article {margin-bottom: 20px;}
+
+.gist .line-numbers {font-size: 12px;}
+.gist .file-data pre,
+.gist .line-data {font-size: 12px;}
+
 /* wp-pagenavi Pagination */
-div.wp-pagenavi {float: right; margin-bottom: 20px;}
+div.wp-pagenavi {text-align: center;}
 	div.wp-pagenavi span.pages {}
 	div.wp-pagenavi span.current {}
 	div.wp-pagenavi a.page {}
@@ -457,13 +534,32 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 			.author-email {white-space: nowrap;}
 			.author-phonenumber {white-space: nowrap;}
 
-.gist .line-numbers {font-size: 12px;}
-.gist .file-data pre,
-.gist .line-data {font-size: 12px;}
+#disqus_thread {margin-top: 20px;}
 
-/* Comments */
-#nebulacommentswrapper {}
-	#disqus_thread {margin-top: 20px;}
+
+/* NFL */
+.page-template-tpl-nfl-php .draft p, .page-template-tpl-nfl-php .season p, .page-template-tpl-nfl-php .playoffs p, .page-template-tpl-nfl-php .superbowl p {margin: 0; text-align: center;}
+.page-template-tpl-nfl-php .draft .nfldate, .page-template-tpl-nfl-php .season .nfldate, .page-template-tpl-nfl-php .playoffs .nfldate, .page-template-tpl-nfl-php .superbowl .nfldate {display: block; margin: 0; text-align: center; font-size: 14px;}
+.page-template-tpl-nfl-php .widgettitle {display: none;}
+.page-template-tpl-nfl-php .countdown_descr {display: none;}
+.page-template-tpl-nfl-php .hasCountdown {width: 320px;}
+.page-template-tpl-nfl-php .shailan_CountdownWidget {margin-bottom: 25px;}
+.page-template-tpl-nfl-php .shailan_CountdownWidget small {display: none;}
+.nfltable {background: none !important; border: none !important;}
+	.nfltable tr {background: none !important;}
+		.nfltable .nfldesc {display: block; padding-bottom: 15px;}
+	.nfltable td {text-align: left; font-size: 12px; border: none;}
+		.nfltable td:hover,
+		.nfltable td.hover {background: none;}
+		.nfltable td.schedcell {padding: 0 10px; border: 1px solid #e2e2e2;}
+			.nfltable td.schedcell a:before {content: '\f1c5'; font-family: 'FontAwesome'; margin-right: 10px;}
+		.nfltable tr.odd td.schedcell {background: #eee;}
+		.nfltable tr.even td.schedcell {background: #f2f2f2;}
+			.nfltable td.schedcell:hover,
+			.nfltable td.schedcell.hover {background: #ddd !important;}
+	.nfltitle {}
+	.nflthumb {}
+	.schedcell {}
 
 
 /* ==========================================================================
@@ -471,21 +567,32 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
    ========================================================================== */
 .xoxo {padding: 0;}
 	.xoxo ul {margin: 0; padding: 0;}
-		.xoxo ul.menu a {display: block; padding-right: 20px;}
-		.xoxo ul.menu li.current-menu-item a {color: #95D600; color: var(--secondary-color);}
-		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7; color: var(--primary-color);}
-			.xoxo ul.menu li.current-menu-item .sub-menu a:hover,
-			.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600; color: var(--secondary-color);}
-		.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
-			.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
-				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600; border-left: 1px solid var(--secondary-color);}
+		.xoxo li.gacon {width: 160px; right: 0; position: absolute;}
+
+		.blockdetection {display: block; width: 160px; height: 600px; border-top: 1px solid #ccc; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; box-shadow: inset 0 1px 0 0 #fff, inset 1px 0 0 0 #fff, inset 0 -1px 0 0 #fff, inset -1px 0 0 0 #fff; padding: 40px 10px 15px 10px; background: #ddd;}
+			.blockdetection:hover,
+			.blockdetection.hover {background: #d4d4d4;}
+			.blockdetection p {font-size: 12px; line-height: 16px; margin: 0; text-align: center; color: #444;}
+			.blockdetection p i {font-size: 28px; line-height: 32px; display: block; margin: 10px 0 10px 0;}
+			.blockdetection .blockcopy {display: block; font-size: 11px; color: #777; margin-top: 5px; margin-bottom: 10px;}
+
+		.adtooltip {position: relative; background: linear-gradient(to bottom, #2282db, #232a3c); min-height: 35px; opacity: 0.4; border-radius: 5px; padding: 5px; margin-top: 10px; border: 1px solid #fff;
+			-webkit-transition: opacity 0.25s, margin 0.25s cubic-bezier(0.270, -0.020, 0.385, 1.650);
+			-moz-transition: opacity 0.25s, margin 0.25s cubic-bezier(0.270, -0.020, 0.385, 1.650);
+			-o-transition: opacity 0.25s, margin 0.25s cubic-bezier(0.270, -0.020, 0.385, 1.650);
+			transition: opacity 0.25s, margin 0.25s cubic-bezier(0.270, -0.020, 0.385, 1.650);
+		}
+			.adtooltip:before {content: ''; position: absolute; top: -20px; left: 50%; margin-left: -5px; border: 10px solid transparent; border-bottom-color: #fff;}
+			.adtooltip p {margin: 0; color: #fff; font-size: 10px; line-height: 14px; text-align: center; cursor: default;}
+			.adtooltip:hover,
+			.adtooltip.hover {margin-top: 20px; opacity: 0.9;}
 
 .widget-container {margin: 10px 0 15px 0;}
 
 /* Nebula expandable sidebar subnav style defaults */
-a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;}
-	a.toplevelvert_expander i {font-size: 18px; display: block; width: 100%; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg); -webkit-transition: transform 0.25s; -moz-transition: transform 0.25s; -o-transition: transform 0.25s; transition: transform 0.25s;}
-	a.toplevelvert_expander.plus i {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
+a.toplevelvert_expander {position: absolute; top: 0; right: 0; padding: 0 10px !important; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg);}
+	a.toplevelvert_expander.plus {-webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -o-transform: rotate(0deg); transform: rotate(0deg);}
+	a.toplevelvert_expander i {font-size: 18px; display: block; width: 100%;}
 
 
 .xoxo form.search input[type="text"] {width: 77% !important; font-size: 12px !important; line-height: 24px !important; height: auto !important; vertical-align: top;}
@@ -519,17 +626,16 @@ p.comment-form-comment {margin: 0;}
 p.form-submit {}
 	p.contact-form-submit input,
 	#cform7-container .submit,
-	p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	p.form-submit input {border: 0; background: #2282db; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		#cform7-container .submit:hover,
 		#cform7-container .submit.hover,
 		p.contact-form-submit input.hover,
 		p.contact-form-submit input:hover,
 		p.form-submit input.hover,
-		p.form-submit input:hover {background: #95d600; background: var(--secondary-color);}
+		p.form-submit input:hover {background: #0d3357; background: var(--secondary-color);}
 		#cform7-container .submit.disabled,
 		p.contact-form-submit input.disabled,
 		p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
-		.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px !important; line-height: 0px !important; background: rgba(255,255,255,0); color: rgba(255,255,255,0);}
 
 #cform7-container {margin: 0;}
 	#cform7-container .field {margin-bottom: 3px;}
@@ -546,8 +652,8 @@ p.form-submit {}
 .field.danger:after, .field.warning:after, .field.success:after {top: 28px !important;}
 .xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 24px !important;}
 
-div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px;}
-div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px;}
+div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
+div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px;}
 
 
 /***** MOBILE MENUS *****/
@@ -563,45 +669,52 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .clearsearch {text-align: center; margin-top: 20px;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 .mm-menu li.current_page_item {background: rgba(255, 255, 255, 1); font-weight: bold; color: #000;}
-	.mm-menu li.current_page_item a:before {content: '\f138'; font-family: 'FontAwesome'; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
+	.mm-menu li.current_page_item a:not(.mm-subopen):before {content: '\f138'; font-family: 'FontAwesome'; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
 
-
-
-.doasitesearch {display: block; margin-bottom: 15px;}
 
 /* ==========================================================================
    Footer Area
    ========================================================================== */
-.footer {padding-top: 20px; background: #e7e7e7; background: rgba(0,0,0,0.0225);}
+.footer {position: relative; padding-top: 10px; background: #3b4e60; background: linear-gradient(to bottom, #3b4e60, #232a3c); z-index: 10;}
+	.no-skrollr .footer {margin-top: -250px;}
+	.footer:before {content: ''; position: absolute; top: -20px; display: block; width: 100%; height: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%); z-index: 9;}
 
 .twitterago {font-size: 12px; text-decoration: underline;}
 
 .widget-container {list-style: none;}
 
-.row.powerfootercon {margin-bottom: 30px;}
-	nav#powerfooter {position: relative; z-index: 1000;}
-		nav#powerfooter ul {}
-			nav#powerfooter ul li.menu-item {position: relative; display: inline-block; float: left; margin: 0 5px; padding: 0 10px; width: 180px;}
-				nav#powerfooter ul li.menu-item:first-child,
-				nav#powerfooter ul li.menu-item.first-child {margin-left: 0; padding-left: 0;}
-				nav#powerfooter ul li.menu-item:last-child,
-				nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
-				nav#powerfooter ul li.menu-item a {display: block; border-bottom: 1px solid #95D600; border-bottom: 1px solid var(--secondary-color);}
-				nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
-					nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
-						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; padding: 5px 0; border-bottom: none;}
-						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
-
-div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #0098d7; background: var(--primary-color);}
+div.copyright {position: relative; margin-top: -15px; padding-bottom: 30px; z-index: 20;}
 	div.copyright p {font-size: 12px; color: #fff;}
 		div.copyright a {color: #fff;}
 			div.copyright a:hover,
 			div.copyright a.hover {color: #ccc;}
 
+	.phg {margin-left: 3px; padding-left: 20px; background: url('images/phg_symbol.png') 0 0 no-repeat;}
+		.phg span {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+		.phg span.pinckney {color: #0099d8;}
+		.phg span.hugo {color: #a0ce67;}
+		.phg span.group {color: #9fa1a4;}
+		.phg:hover span.pinckney {color: #006690;}
+		.phg:hover span.hugo {color: #709048;}
+		.phg:hover span.group {color: #6f7072;}
+
+.adminlinkscon {position: relative; margin-top: -30px; padding-bottom: 50px; z-index: 100;}
+	.adminlinkscon i {font-size: 12px; color: #fff; margin-right: 5px;}
+	.adminlinkscon a {font-size: 12px; color: #fff;}
+		.adminlinkscon a:hover,
+		.adminlinkscon a.hover {color: #aaa;}
+
+.performancecon {text-align: right;}
+	.performancecon p {margin: 0; font-size: 12px;}
+
+
 /* Nebula Desktop Helper Styles */
 .disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;}
 .disallowed.notallowed {cursor: not-allowed !important;}
 .focusError {background-color: #fcc !important; border: 1px solid #f88 !important; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+
+
+
 
 
 @media only screen and (max-width: 767px) {
@@ -614,44 +727,32 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 	.logocon {display: block; text-align: center;}
 		.logocon img {width: 420px;}
 
-	/* Nebula Wordpress main navigation responsive style defaults */
-	nav#primarynav {display: none;}
-		nav#primarynav ul {}
-			nav#primarynav ul li.menu-item {display: block; width: 100%; text-align: center;}
-				nav#primarynav ul li.menu-item:last-child,
-				nav#primarynav ul li.menu-item.last-child {}
-				nav#primarynav ul li.menu-item a {min-height: 44px; line-height: 44px;}
-					nav#primarynav ul li.menu-item a:hover,
-					nav#primarynav ul li.menu-item a.hover {}
-				nav#primarynav ul li.menu-item ul.sub-menu {position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;}
-					nav#primarynav ul li.menu-item ul.sub-menu li {}
-						nav#primarynav ul li.menu-item ul.sub-menu li a {padding: 0;}
-							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
-							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
-						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
-				nav#primarynav ul li.menu-item:hover .sub-menu,
-				nav#primarynav ul li.menu-item.hover .sub-menu {left: auto; top: 0; display: block; width: 100% !important;}
-
 	.fixedbar {display: none;}
+
+	#primarynav {display: none;}
+
+	.contentbg .fourteen.columns.centered,
+	.homebucketscon .columns {padding-left: 6% !important; padding-right: 6% !important;}
 
 	#heroslidercon {height: 100px; overflow: hidden; background-size: cover;}
 		#heroslidercon h3 {font-size: 28px; line-height: 40px;}
-		#heroslidercon h4 {font-size: 14px; display: none !important;}
+		#heroslidercon h4 {font-size: 16px; display: none !important;}
+		.slidecaptionwrap {max-width: 85%; margin: 0 auto !important;}
+
+	.bx-controls {position: relative; margin: 0 auto; max-width: none; top: auto;}
+		.bx-wrapper .bx-pager {text-align: center;}
+
+	.home-content p {text-align: center;}
+
+	.bucketwrap {max-width: 300px; margin: 0 auto !important;}
+		.homebucketscon figure figcaption::before,
+		.homebucketscon figure p {text-align: center;}
 
 	.author-headshot {text-align: center;}
 
-	.xoxo .search {display: none;}
+	.gacon {display: none;}
 
-	/* Nebula Wordpress power footer navigation responsive style defaults */
-	.powerfootercon {display: none;}
-	nav#powerfooter {}
-	nav#powerfooter ul {}
-		nav#powerfooter ul li.menu-item {display: block; margin: 0; padding: 0; width: 100% !important;}
-			nav#powerfooter ul li.menu-item a {border-bottom: none;}
-			nav#powerfooter ul li.menu-item ul.sub-menu {padding: 5px 0 5px 35px;}
-				nav#powerfooter ul li.menu-item ul.sub-menu li {padding: 0 0 0 10px; border-left: 1px solid #95D600; border-left: 1px solid var(--secondary-color);}
-					nav#powerfooter ul li.menu-item ul.sub-menu li a {}
-					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {}
+	.footer {padding-top: 230px;}
 
 	div.copyright p {font-size: 11px;}
 
@@ -665,6 +766,10 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 
 @media only screen and (max-width: 641px) {
 
+	h1,
+	.home-title {font-size: 26px; line-height: 30px;}
+	p {font-size: 14px;}
+
 	.author-jobtitle {display: block;}
 	.author-contact {float: none; display: block;}
 
@@ -673,14 +778,21 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 
 	li.comment div.comment-meta {display: block;}
 
+	.footer {padding-top: 230px;}
+
 } /* End mobile landscape media query */
 
 
 @media only screen and (max-width: 361px) {
 
+	#logocon {top: 15px;}
 
+	.footer {padding-top: 230px;}
 
 } /* End mobile portrait media query */
+
+
+
 
 
 /* IE7 Gumby Adjustments */
@@ -688,25 +800,6 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 .ie7 .column.first-child, .ie7 .columns.first-child, .ie7 .alpha {margin-left: 0px !important;}
 .ie7 .row .push_one {margin-left: 8.1% !important;}
 
-
-/* ==========================================================================
-   Shortcode Helpers
-   ========================================================================== */
-.google-map-overlay {position: relative; overflow: hidden;}
-	.the-map-overlay {cursor: pointer;}
-		.google-map-overlay:before {content: 'Click to enable interactivity.'; position: absolute; bottom: -50px; width: 100%; background: rgba(0, 0, 0, 0.5); text-align: center; color: #fff; overflow: hidden; opacity: 0; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-		.google-map-overlay.the-map-overlay:before {bottom: 6px; opacity: 1; padding: 8px 0; height: auto;}
-			.the-map-overlay:hover:before,
-			.the-map-overlay.hover:before {background: rgba(0, 0, 0, 0.9); padding: 24px 0;}
-	.the-map-overlay iframe {pointer-events: none;}
-
-.ttip {cursor: text;}
-	.ttip:before,
-	.ttip:after {bottom: 0%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-		.ie .ttip:before,
-		.ie .ttip:after,
-		.ttip:hover:after,
-		.ttip:hover:before {bottom: 101%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
 
 /* ==========================================================================
@@ -732,10 +825,6 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
 .avoid-clicks {pointer-events: none;} /* Only supported in IE11+ */
 .allow-clicks {pointer-events: all;}
-
-@-ms-viewport{
-  width: device-width;
-}
 
 /* ==========================================================================
    Print styles

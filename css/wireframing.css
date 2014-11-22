@@ -1,7 +1,0 @@
-/* body:after {content: 'Wireframing is Active'; font-size: 8px;} */
-
-/* div, h1, h2, h3, h4, h5, h6, p, span, a, a:hover, a.hover, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button, .active {-webkit-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); -o-filter: grayscale(100%); filter: grayscale(100%);} */ /* @TODO "Nebula" 0: Adding div to this list gets a white page. */
-
-body {-webkit-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); -o-filter: grayscale(100%); filter: grayscale(100%);}
-
-img, a.logocon {-webkit-filter: none; -moz-filter: none; -ms-filter: none; -o-filter: none; filter: none;}

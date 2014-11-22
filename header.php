@@ -10,7 +10,7 @@
 		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
-		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
+		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : ?>
 			<title><?php wp_title('-', true, 'right'); ?></title>
 		<?php else : ?>
 			<title><?php wp_title('-', true, 'right'); ?></title>
@@ -20,7 +20,7 @@
 		<meta name="MobileOptimized" content="320">
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-capable" content="yes">
-		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json"> <!-- Web App Manifest Icons/Settings -->
+		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 
@@ -43,19 +43,19 @@
 			<link rel="canonical" href="<?php the_permalink(); ?>" />
 
 			<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
-			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated keywords. -->
-			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated news event keywords. --> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." -->
+			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" />
+			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" />
 			<meta name="author" content="<?php echo get_template_directory_uri(); ?>/humans.txt" />
 
 			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
-			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO "Metadata" 2: Verify admin email address. ?>" />
-			<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
-			<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
+			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); ?>" />
+			<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" />
+			<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" />
 			<meta property="business:contact_data:street_address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
-			<meta property="business:contact_data:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
-			<meta property="business:contact_data:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
+			<meta property="business:contact_data:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" />
+			<meta property="business:contact_data:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" />
 			<meta property="business:contact_data:postal_code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
-			<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
+			<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" />
 		<?php endif; ?>
 
 		<?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Settings. ?>
@@ -68,42 +68,210 @@
 		<?php endforeach; ?>
 
 		<!-- Facebook Metadata -->
-		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO "Social" 1: Enter the URL of the Facebook page here. ?>
-		<?php $GLOBALS['social']['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO "Social" 1: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
-		<meta property="fb:app_id" content="<?php echo $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO "Social" 1: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>" />
-		<meta property="fb:page_id" content="<?php echo $GLOBALS['social']['facebook_page_id'] = nebula_settings_conditional_text('nebula_facebook_page_id', ''); //@TODO "Social" 1: Enter Facebook Page ID. ?>" />
-		<meta property="fb:admins" content="<?php echo $GLOBALS['social']['facebook_admin_ids'] = nebula_settings_conditional_text('facebook_admin_ids', ''); //@TODO "Social" 1: Comma separated IDs of FB admins. Ex: "1234,2345,3456" ?>" />
+		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/GearsideCreative'); ?>
+		<?php $GLOBALS['social']['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); ?>
+		<meta property="fb:app_id" content="<?php echo $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); ?>" />
+		<meta property="fb:page_id" content="<?php echo $GLOBALS['social']['facebook_page_id'] = nebula_settings_conditional_text('nebula_facebook_page_id', ''); ?>" />
+		<meta property="fb:admins" content="<?php echo $GLOBALS['social']['facebook_admin_ids'] = nebula_settings_conditional_text('facebook_admin_ids', ''); ?>" />
 
 		<!-- Twitter Metadata -->
 		<?php //twitter:image is located in includes/metagraphics.php ?>
-		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO "Social" 1: Enter the URL of the Twitter page here. ?>
+		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/great_blakes'); ?>
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content="<?php the_title(); ?>" />
 		<meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-		<meta name="twitter:site" content="" /> <!-- "@username" of website -->
-		<meta name="twitter:creator" content="" /> <!-- "@username" of content creator -->
+		<meta name="twitter:site" content="" />
+		<meta name="twitter:creator" content="" />
 
 		<!-- Other Social Metadata -->
-		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO "Social" 1: Enter the URL of the Google+ page here. ?>
-		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO "Social" 1: Enter the URL of the LinkedIn page here. ?>
-		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO "Social" 1: Enter the URL of the Youtube page here. ?>
-		<?php $GLOBALS['social']['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); //@TODO "Social" 1: Enter the URL of the Instagram page here. ?>
+		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); ?>
+		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); ?>
+		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); ?>
+		<?php $GLOBALS['social']['instagram_url'] = nebula_settings_conditional_text('nebula_instagram_url', ''); ?>
 
 		<!-- Local/Geolocation Metadata -->
-		<meta name="geo.placename" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- The city (and state if needed). Replace each respective '' with the appropriate value. -->
-		<meta name="geo.position" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>;<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Semi-colon separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
+		<meta name="geo.placename" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" />
+		<meta name="geo.position" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>;<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
 		<meta name="geo.region" content="<?php echo bloginfo('language'); ?>" />
-		<meta name="ICBM" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Comma and space separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
+		<meta name="ICBM" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
 		<meta property="place:location:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
 		<meta property="place:location:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
 
 		<!--Microsoft Windows 8 Tiles /-->
 		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
-		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>"> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword msapplication-notification is not registered." -->
+		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>">
 		<meta name="msapplication-config" content="<?php echo get_template_directory_uri(); ?>/includes/ieconfig.xml" />
 
+		<style>
+			<?php
+				//Sunrise & Sunset
+				$dayTime["sunrise"] = strtotime(nebula_weather('sunrise'))-strtotime('today');
+				$dayTime["sunset"] = strtotime(nebula_weather('sunset'))-strtotime('today');
+				$dayTime["noon"] = (($dayTime["sunset"]-$dayTime["sunrise"])/2)+$dayTime["sunrise"];
+
+				$dayTimeModifier = (int) (($dayTime["noon"]-$dayTime["sunrise"])/6);
+				$dayTime["dawn"] = (int) $dayTime["sunrise"]-$dayTimeModifier;
+				$dayTime["aftcalc"] = (int) $dayTime["sunrise"]+$dayTimeModifier;
+				$dayTime["evecalc"] = (int) $dayTime["sunset"]-$dayTimeModifier;
+				$dayTime["dusk"] = (int) $dayTime["sunset"]+$dayTimeModifier;
+
+				//Determine time of day photo to display
+				$currentDayTime = time()-strtotime("today");
+				echo '/* ' . $currentDayTime . ' */';
+				//$currentDayTime = 73000;
+				switch ( true ) {
+
+					/*==========================
+					 Morning
+					 ===========================*/
+					case $currentDayTime >= $dayTime["dawn"] && $currentDayTime < $dayTime["aftcalc"] : ?>
+						<?php
+							$glowPercent = (($currentDayTime-$dayTime["dawn"])*100)/($dayTime["aftcalc"]-$dayTime["dawn"]);
+							if ( $currentDayTime <= $dayTime["sunrise"] ) {
+								$glow_color = 'rgba(240, 140, 140, 0.6)'; //Blue/Purple
+							} else {
+								$glow_color = 'rgba(240, 200, 130, 0.9)'; //Yellow
+							}
+						?>
+						#bgsky {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-back-morning.jpg') no-repeat; background-size: cover;}
+						#fullbodywrapper {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-fore-morning.png'), linear-gradient(to bottom, rgba(130, 194, 237, 0.25) <?php echo max([20, $glowPercent]); ?>%, <?php echo $glow_color; ?> 100%);}
+							}
+						<?php break;
+
+					/*==========================
+					 Afternoon (with Animation - non-subpixel)
+					 ===========================*/
+					case $currentDayTime >= $dayTime["aftcalc"] && $currentDayTime < $dayTime["evecalc"] && 1==1 : ?>
+						#bgsky {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-back-afternoon.jpg') repeat-x; background-size: cover;}
+							#bgsky.animate,
+							.frosted.animate {
+								animation: cloudAnimation 500s linear infinite;
+								-moz-animation: cloudAnimation 500s linear infinite;
+								-webkit-animation: cloudAnimation 500s linear infinite;
+								-ms-animation: cloudAnimation 500s linear infinite;
+								-o-animation: cloudAnimation 500s linear infinite;
+							}
+
+							@keyframes cloudAnimation {
+								0% {background-position-x: 0;}
+								100% {background-position-x: 2616px;}
+							}
+							@-moz-keyframes cloudAnimation {
+								0% {background-position-x: 0;}
+								100% {background-position-x: 2616px;}
+							}
+							@-webkit-keyframes cloudAnimation {
+								0% {background-position-x: 0;}
+								100% {background-position-x: 2616px;}
+							}
+							@-ms-keyframes cloudAnimation {
+								0% {background-position-x: 0;}
+								100% {background-position-x: 2616px;}
+							}
+							@-o-keyframes cloudAnimation {
+								0% {background-position-x: 0;}
+								100% {background-position-x: 2616px;}
+							}
+
+						#fullbodywrapper {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-fore-afternoon.png');}
+
+						.logodivider {transform: translate3d(0, 0, 0); /* Trigger hardware acceleration. Must not be on #bgsky or #fullbodywrapper because it breaks fixed positioning on child elements. */}
+
+						<?php break;
+
+					/*==========================
+					 Afternoon (with Transition - subpixel)  http://jsfiddle.net/5pVr4/6/
+					 ===========================*/
+					case $currentDayTime >= $dayTime["aftcalc"] && $currentDayTime < $dayTime["evecalc"] : ?>
+
+						#bgsky {overflow: hidden;}
+
+						.cloudtest {
+							position: fixed; /* @TODO: Absolute scrolls clouds, fixed is in front of mmenu :( */
+						    left: 0;
+						    right: -2616px;
+						    top: 0;
+						    bottom: 0;
+							background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-back-afternoon.jpg') repeat-x;
+
+						    animation: cloudAnimation 500s linear infinite;
+							-moz-animation: cloudAnimation 500s linear infinite;
+							-webkit-animation: cloudAnimation 500s linear infinite;
+							-ms-animation: cloudAnimation 500s linear infinite;
+							-o-animation: cloudAnimation 500s linear infinite;
+						}
+
+						/* This kind of helps, but once the menu is open it shows how broken it is.
+							.mm-opening .cloudtest,
+							.mm-opened .cloudtest {position: absolute;}
+						*/
+
+						@keyframes cloudAnimation {
+							from {transform: translateX(0);}
+							to {transform: translateX(-2616px);}
+						}
+						@-moz-keyframes cloudAnimation {
+							from {-moz-transform: translateX(0);}
+							to {-moz-transform: translateX(-2616px);}
+						}
+						@-webkit-keyframes cloudAnimation {
+							from {-webkit-transform: translateX(0);}
+							to {-webkit-transform: translateX(-2616px);}
+						}
+						@-ms-keyframes cloudAnimation {
+							from {-ms-transform: translateX(0);}
+							to {-ms-transform: translateX(-2616px);}
+						}
+						@-o-keyframes cloudAnimation {
+							from {-o-transform: translateX(0);}
+							to {-o-transform: translateX(-2616px);}
+						}
+
+
+						#fullbodywrapper {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-fore-afternoon.png');}
+
+						.logodivider {transform: translate3d(0, 0, 0); /* Trigger hardware acceleration. Must not be on #bgsky or #fullbodywrapper because it breaks fixed positioning on child elements. */}
+
+						<?php break;
+
+					/*==========================
+					 Evening
+					 ===========================*/
+					case $currentDayTime >= $dayTime["evecalc"] && $currentDayTime < $dayTime["dusk"] : ?>
+						<?php
+							$glowPercent = (($currentDayTime-$dayTime["evecalc"])*100)/($dayTime["dusk"]-$dayTime["evecalc"]);
+							if ( $currentDayTime <= $dayTime["sunset"] ) {
+								$glow_color = 'rgba(255, 144, 0,'; //Orange
+							} else {
+								$glow_color = 'rgba(255, 45, 0,'; //Red
+							}
+						?>
+						#bgsky {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-back-evening.jpg') no-repeat; background-size: cover; }
+						#fullbodywrapper {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-fore-evening.png'), linear-gradient(to bottom, rgba(100, 165, 240, <?php echo min([0.5, (100-$glowPercent)/100]); ?>) <?php echo max([20, $glowPercent]) . '%,' . $glow_color . min([0.5, (100-$glowPercent)/100]); ?>) 100%);}
+						<?php break;
+
+					/*==========================
+					 Night
+					 ===========================*/
+					case $currentDayTime >= $dayTime["dusk"] :
+					case $currentDayTime < $dayTime["dawn"] : ?>
+						#bgsky {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-back-night.jpg') no-repeat; background-size: cover; }
+						#fullbodywrapper {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-fore-night.png');}
+						<?php break;
+
+					/*==========================
+					 Default
+					 ===========================*/
+					default: ?>
+						#bgsky {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-back-evening.jpg') no-repeat; background-size: cover; }
+						#fullbodywrapper {background: url('<?php echo get_template_directory_uri(); ?>/images/bg/bg-fore-evening.png'), linear-gradient(to bottom, rgba(0, 0, 0, 0) 99%, rgba(255, 45, 0, 0) 100%);}
+						<?php break;
+				}
+			?>
+		</style>
+
 		<script>
-			social = []; //Not localized with WP because needs to be able to be modified in header.php if desired.
+			social = [];
 			social['facebook_url'] = "<?php echo $GLOBALS['social']['facebook_url']; ?>";
 			social['facebook_app_id'] = "<?php echo $GLOBALS['social']['facebook_app_id']; ?>";
 			social['twitter_url'] = "<?php echo $GLOBALS['social']['twitter_url']; ?>";
@@ -119,7 +287,7 @@
 				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Settings or functions.php! ?>
+			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto');
 			ga('require', 'displayfeatures');
 			ga('send', 'pageview');
 		</script>
@@ -138,137 +306,147 @@
 		<?php wp_head(); ?>
 	</head>
 	<body <?php body_class(); ?>>
-		<div id="fullbodywrapper">
-			<div id="fb-root"></div>
+			<div id="bgsky" data-0="background-position-y: 0px;" data-end="background-position-y: -10px;">
+				<!-- <div class="cloudtest FixedTop"></div> -->
+				<div id="fullbodywrapper" data-0="background-position-y: 0px;" data-end="background-position-y: -25px;">
+					<div id="fb-root"></div>
 
-			<noscript>
-				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo get_page_uri(); ?>&amp;t=<?php urlencode(get_the_title()); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
-			</noscript>
+					<noscript>
+						<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&p=<?php echo get_page_uri(); ?>&t=<?php wp_title('-', true, 'right'); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+					</noscript>
 
-			<div id="topbarcon">
-				<div class="row mobilenavcon">
-					<div class="sixteen columns clearfix">
+					<div id="stickyhead">
+						<div class="mobilemenucon">
+			        		<a class="mobilenavtrigger" href="#mobilenav"><i class="fa fa-bars"></i></a> <!-- @TODO: Clicking this re-anchors to the top when triggering menu... why? -->
+							<nav id="mobilenav">
+								<?php wp_nav_menu(array('theme_location' => 'mobile')); ?>
+							</nav><!--/mobilenav-->
+		        		</div><!--/mobilemenucon-->
 
-						<a class="mobilenavtrigger alignleft" href="#mobilenav"><i class="fa fa-bars"></i></a>
-						<nav id="mobilenav">
-							<?php
-								if ( has_nav_menu('mobile') ) {
-									wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
-								} elseif ( has_nav_menu('header') ) {
-									wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
-								}
-							?>
-						</nav><!--/mobilenav-->
+		        		<div id="logocon" data-0="opacity:1; top: 0px;" data-83="opacity:0; top: -20px;">
+							<a class="inithide" href="<?php echo home_url('/'); ?>"><img class="svglogo" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="Gearside Creative"/></a>
+						</div>
 
-						<a class="alignright" href="#mobilecontact"><i class="fa fa-users"></i></a>
-						<nav id="mobilecontact" class="unhideonload hidden">
-							<ul>
+		        		<?php if ( is_front_page() ) : ?>
+			        		<div class="loadingcon">
+								<div id="bgimgloadcontainer">
+									<div class="bgimgload"></div>
+					        		<div class="bgimgloadtext">
+					        			<span>Loading...<br/></span>
+					        			<span id="countHolder">0.00</span>
+					        			<script type="text/javascript">
+											pageLoaded = 0;
+											initialTime = Date.now();
+											var actualTimer = setInterval(function() {
+												var currentTime = Date.now();
+												var displayTime = (currentTime-initialTime)/1000;
+												displayTime = displayTime.toFixed(2);
 
-					    		<?php $nebula_phone_number = nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO "Metadata" 1: Add phone number here. ?>
-					    		<?php if ( $nebula_phone_number ) : ?>
-						    		<li>
-						    			<a href="tel:<?php echo nebula_phone_format($nebula_phone_number, 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo $nebula_phone_number; ?></a>
-						    		</li>
-					    		<?php endif; ?>
+												if ( pageLoaded == 1 ) {
+											        jQuery('#countHolder').css('color', '#0f0').html(displayTime);
+											        jQuery('.loadingcon').fadeOut(500);
+											        jQuery('#logocon a').removeClass('inithide');
+											        window.clearInterval(actualTimer);
+											        return false;
+											    } else if(displayTime < 2 && pageLoaded == 0){
+										            jQuery('#countHolder').css('color', '#fff').html(displayTime);
+										        } else if (displayTime >= 2 && displayTime < 4 && pageLoaded == 0){
+										            jQuery('#countHolder').css('color', '#fcc').html(displayTime);
+										        } else if (displayTime >= 4 && displayTime < 6 && pageLoaded == 0){
+										            jQuery('#countHolder').css('color', 'f99').html(displayTime);
+										        } else if (displayTime >= 6 && displayTime < 8 && pageLoaded == 0){
+										            jQuery('#countHolder').css('color', 'f66').html(displayTime);
+										        } else if (displayTime >= 8 && displayTime < 10 && pageLoaded == 0){
+										            jQuery('#countHolder').css('color', 'f33').html(displayTime);
+										        } else {
+										        	ga('send', 'event', 'Homepage Visible Load', 'Loading 10+', 'Visible load time: ' + displayTime);
+										        	jQuery('#countHolder').css('color', 'f00').html('10+');
+										        	jQuery('.loadingcon').fadeOut(500, function(){
+														jQuery(this).remove();
+														jQuery('#logocon a').removeClass('inithide');
+													});
+										        	window.clearInterval(actualTimer);
+										            return false;
+										        }
+											}, 10);
+					        			</script>
+					        		</div>
+					        	</div>
+							</div><!--/container-->
+		        		<?php endif; ?>
 
+		        		<div class="likecon">
+							<div class="fb-like" data-href="https://www.facebook.com/GearsideCreative" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+						</div>
+					</div>
 
-								<?php $nebula_admin_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO "Metadata" 1: Verify this email is the one that should appear. ?>
-					    		<li>
-					    			<a href="mailto:<?php echo $nebula_admin_email; ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo $nebula_admin_email; ?></a>
-					    		</li>
+					<div class="minilogocon">
+						<a href="<?php echo home_url('/'); ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/logo-symbol.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo-symbol.png'" alt="Gearside Creative"/></a>
+					</div>
 
+					<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ) : ?>
+						<div class="container headerdrawercon">
+							<hr/>
+							<div class="row">
+								<div class="sixteen columns headerdrawer">
+									<span><i class="fa fa-share"></i> Your search returned only one result. You have been automatically redirected.</span>
+									<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+								</div><!--/columns-->
+							</div><!--/row-->
+							<hr/>
+						</div><!--/container-->
+					<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
+						<div class="container headerdrawercon">
+							<hr/>
+							<div class="row">
+								<div class="sixteen columns headerdrawer invalid">
+									<span><i class="fa fa-exclamation-triangle"></i> Your search was invalid. Please try again.</span>
+									<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+								</div><!--/columns-->
+							</div><!--/row-->
+							<hr/>
+						</div><!--/container-->
+					<?php elseif ( is_404() || array_key_exists('s', $_GET) ) : ?>
+						<div id="suggestedpage" class="container headerdrawercon">
+							<hr/>
+							<div class="row">
+								<div class="sixteen columns headerdrawer">
+									<h3><i class="fa fa-question-circle"></i> Did you mean?</h3>
+									<p><a class="suggestion" href="#"></a></p>
+									<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+								</div><!--/columns-->
+							</div><!--/row-->
+							<hr/>
+						</div><!--/container-->
+					<?php endif; ?>
 
-								<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO "Metadata" 1: Add address here. ?>
-					    		<?php if ( $nebula_full_address ) : ?>
-						    		<li>
-						    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo $nebula_full_address; ?></small></div></a>
-						    		</li>
-								<?php endif; ?>
+					<div id="searchnavfixer" data-0="position: relative; background: !rgba(0,0,0,0); z-index: inherit;" data-top="position: fixed; top: 0; background: !rgba(0,0,0,0.9); z-index: !7000;">
+						<div class="row">
+							<div class="sixteen columns">
 
-					    	</ul>
-						</nav><!--/mobilecontact-->
+								<div id="searchnavcon" class="row" data-0="border-bottom: !1px solid rgba(255, 255, 255, 0.7);" data-0-top="border-bottom: !1px solid rgba(255, 255, 255, 0);">
+									<div class="twelve columns searchcon">
+										<form id="headersearch" method="get" action="<?php echo home_url('/'); ?>">
+											<?php
+												if ( $_GET['s'] ) {
+													$current_search = $_GET['s'];
+												} elseif ( $_GET['rs'] ) {
+													$current_search = $_GET['rs'];
+												}
+												$header_search_placeholder = ( isset($current_search) ) ? $current_search : 'What are you looking for?' ;
+											?>
+											<i class="fa fa-search"></i> <input id="s" name="s" type="search" placeholder="<?php echo $header_search_placeholder; ?>" x-webkit-speech/> <!-- @TODO: If on a search result page, change the placeholder to the current search term! -->
+										</form>
+									</div><!--/columns-->
+									<div class="four columns navcon">
+										<nav id="primarynav" class="clearfix">
+											<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '1')); ?>
+						        		</nav>
+									</div><!--/columns-->
+								</div><!--/row-->
 
-					</div><!--/columns-->
-				</div><!--/row-->
-			</div><!--/topbarcon-->
+							</div><!--/columns-->
+						</div><!--/row-->
+					</div>
 
-			<?php if ( has_nav_menu('topnav') ) : ?>
-				<div class="row topnavcon">
-					<div class="sixteen columns">
-						<nav id="topnav">
-		        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '2')); ?>
-		        		</nav>
-					</div><!--/columns-->
-				</div><!--/row-->
-			<?php endif; ?>
-
-			<div id="logonavcon" class="row">
-				<div class="six columns">
-					<?php
-						//@TODO "Graphics" 4: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
-						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
-					?>
-					<a class="logocon" href="<?php echo home_url(); ?>">
-						<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
-					</a>
-				</div><!--/columns-->
-				<?php if ( has_nav_menu('header') ) : ?>
-					<div class="ten columns">
-						<nav id="primarynav" class="clearfix">
-							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-		        		</nav>
-		        	</div><!--/columns-->
-	        	<?php endif; ?>
-			</div><!--/row-->
-
-			<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
-				<div class="row">
-					<div class="four columns">
-						<a href="<?php echo home_url(); ?>"><i class="fa fa-home"></i> <?php echo bloginfo('name'); ?></a>
-					</div><!--/columns-->
-					<div class="twelve columns">
-						<nav id="fixednav">
-							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-		        		</nav>
-					</div><!--/columns-->
-				</div><!--/row-->
-			</div><!--/container-->
-
-			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ) : ?>
-				<div class="container headerdrawercon">
-					<hr/>
-					<div class="row">
-						<div class="sixteen columns headerdrawer">
-							<span>Your search returned only one result. You have been automatically redirected.</span>
-							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
-						</div><!--/columns-->
-					</div><!--/row-->
-					<hr/>
-				</div><!--/container-->
-			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
-				<div class="container headerdrawercon">
-					<hr/>
-					<div class="row">
-						<div class="sixteen columns headerdrawer invalid">
-							<span>Your search was invalid. Please try again.</span>
-							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
-						</div><!--/columns-->
-					</div><!--/row-->
-					<hr/>
-				</div><!--/container-->
-			<?php elseif ( is_404() || array_key_exists('s', $_GET) ) : ?>
-				<div id="suggestedpage" class="container headerdrawercon">
-					<hr/>
-					<div class="row">
-						<div class="sixteen columns headerdrawer">
-							<h3>Did you mean?</h3>
-							<p><a class="suggestion" href="#"></a></p>
-
-							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-						</div><!--/columns-->
-					</div><!--/row-->
-					<hr/>
-				</div><!--/container-->
-			<?php endif; ?>
+					<br/>

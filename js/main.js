@@ -10,11 +10,25 @@ jQuery(document).ready(function() {
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
+	//Detect referrals from my other domains
+	if ( GET('f') ) {
+		var currentPage = jQuery(location).attr('href');
+		if ( !GET('r') ) {
+			ga('send', 'event', 'Redirection', GET('f'), '[No Referrer Detected]');
+		} else {
+			ga('send', 'event', 'Redirection', GET('f'), GET('r'));
+		}
+	}
+
+	//Fix for <p> tags wrapping my pre spans in the WYSIWYG
+	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
+
 	facebookSDK();
 	conditionalJSLoading();
 
+	getQueryStrings();
+
 	//Init Custom Functions
-	gaCustomDimensions();
 	gaEventTracking();
 
 	helperFunctions();
@@ -23,21 +37,21 @@ jQuery(document).ready(function() {
 	overflowDetector();
 	subnavExpanders();
 	nebulaFixeder();
+	googleResourceDetect();
 
-	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
 	mmenus();
-	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
 
-	powerFooterWidthDist();
 	menuSearchReplacement();
 	searchValidator();
 	searchTermHighlighter();
 	singleResultDrawer();
 	pageVisibility();
 	errorLogAndFallback();
-	cFormLocalStorage();
+	WPcomments();
+	scrollTo();
 	contactBackup();
 
+	aboutiama();
 
 	//Detect if loaded in an iframe
 	if ( window != window.parent ) {
@@ -64,6 +78,25 @@ jQuery(document).ready(function() {
 	//Fix for <p> tags wrapping my pre spans in the WYSIWYG
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
 
+	skrollrOptions = {
+		smoothScrolling: true,
+		forceHeight: false
+	};
+
+	jQuery('input#s').on('focus', function(){
+		jQuery(this).parents('form').addClass('active');
+	});
+	jQuery('input#s').on('blur', function(){
+		jQuery(this).parents('form').removeClass('active');
+	});
+
+	 //IE "Why?" Link
+    jQuery('.iewhylink').on('click', function(){
+	    jQuery('.iewhy').removeClass('hidden').addClass('active', 300);
+	    jQuery('.iewhylink').addClass('hidden');
+	    return false;
+    });
+
 	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 		viewport = updateViewportDimensions();
 	}
@@ -72,7 +105,7 @@ jQuery(document).ready(function() {
 		waitForFinalEvent(function(){
 
 	    	//Window resize functions here.
-	    	powerFooterWidthDist();
+
 
 	    	//Track size change
 	    	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
@@ -92,18 +125,31 @@ jQuery(document).ready(function() {
 }); //End Document Ready
 
 
-
-
 jQuery(window).on('load', function() {
 
+	jQuery('#bgsky, .frosted').addClass('animate');
+
 	detectIconFonts();
+
+	if ( typeof skrollr != 'undefined' && typeof skrollrOptions != 'undefined' ) {
+		skrollr.init(skrollrOptions);
+	} else {
+		console.warn('skrollr or skrollrOptions is not defined. Skrollr has not been initialized.');
+	}
+
+	//Hide loading animation once loaded
+	pageLoaded = 1;
+	jQuery('.loadingcon').fadeOut(500, function(){
+		jQuery(this).remove();
+		jQuery('#logocon a').removeClass('inithide');
+	});
+
+	//conditionalJSLoading();
+	minilogofixer();
 
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
 	jQuery('.unhideonload').removeClass('hidden');
-
-	checkCformLocalStorage();
-	browserInfo();
 
 	setTimeout(function(){
 		emphasizeSearchTerms();
@@ -112,11 +158,45 @@ jQuery(window).on('load', function() {
 }); //End Window Load
 
 
+jQuery(window).on('scroll resize', function() {
+	minilogofixer();
+	waitForFinalEvent(function(){
+		minilogofixer();
+	}, 1000, "scrollevent");
+});
+
 /*==========================
 
  Functions
 
  ===========================*/
+
+function minilogofixer() {
+	if ( jQuery(window).width() > 767 ) {
+		var mainNavTop = jQuery('#searchnavcon').height() + jQuery('#searchnavcon').offset().top;
+        var windowScroll = jQuery(window).scrollTop();
+
+        if ( !jQuery('html').hasClass('mm-opening') && windowScroll > mainNavTop-195 ){
+        	if ( !jQuery('.minilogocon').hasClass('active') ) {
+	        	jQuery('.minilogocon').addClass('active').removeClass('inactive').delay(750).animate({
+					top: '-75px'
+					}, 1000, 'easeOutBack', function() {
+						//On Complete
+				});
+				//jQuery('#searchnavcon').addClass('fixed').addClass('opaque', 1000);
+			}
+        } else {
+        	if ( !jQuery('.minilogocon').hasClass('inactive') ) {
+	        	jQuery('.minilogocon').addClass('inactive').animate({
+					top: '-200px'
+					}, 500, 'easeInOutCubic', function() {
+						jQuery(this).removeClass('active');
+				});
+				//jQuery('#searchnavcon').removeClass('fixed').removeClass('opaque', 1000);
+        	}
+        }
+	}
+}
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function helperFunctions(){
@@ -133,7 +213,7 @@ function helperFunctions(){
 			jQuery(this).attr('rel', rel + 'external');
 		}
 	});
-	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above').hide(); //@TODO "Nebula" 0: Anything we can do here to alleviate the issue? May need to just hide
+	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above').hide(); //@TODO: Anything we can do here to alleviate the issue? May need to just hide
 } //end helperFunctions()
 
 
@@ -161,9 +241,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Like', currentPage, {
-				'dimension1': 'Like'
-			});
+			ga('send', 'event', 'Social', 'Facebook Like', currentPage);
 		});
 
 		//Facebook Unlikes
@@ -176,9 +254,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Unlike', currentPage, {
-				'dimension1': 'Unlike'
-			});
+			ga('send', 'event', 'Social', 'Facebook Unlike', currentPage);
 		});
 
 		//Facebook Send/Share
@@ -191,9 +267,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Share', currentPage, {
-				'dimension1': 'Share'
-			});
+			ga('send', 'event', 'Social', 'Facebook Share', currentPage);
 		});
 
 		//Facebook Comments
@@ -206,9 +280,7 @@ function facebookSDK() {
 				'socialTarget': href,
 				'page': currentPage
 			});
-			ga('send', 'event', 'Social', 'Facebook Comment', currentPage, {
-				'dimension1': 'Comment'
-			});
+			ga('send', 'event', 'Social', 'Facebook Comment', currentPage);
 		});
 	};
 
@@ -235,13 +307,13 @@ function facebookLoginLogout() {
 				checkFacebookStatus();
 				ga('send', 'event', 'Social', 'Facebook Connect', FBuser.name);
 			} else {
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('User did not accept permissions.'); }
+				Gumby.log('User did not accept permissions.');
 				checkFacebookStatus();
 			}
 		}, {scope:'public_profile,email'});
 	} else {
 		FB.logout(function(response) {
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('User has logged out.'); }
+			Gumby.log('User has logged out.');
 			checkFacebookStatus();
 			prefillFacebookFields();
 		});
@@ -256,31 +328,33 @@ function checkFacebookStatus() {
 			FBstatus = true;
 			FB.api('/me', function(response) {
 				FBuser = response;
-				if ( typeof Gumby != 'undefined' ) { Gumby.log(response.name + ' has connected with this app.'); }
+				if ( typeof Gumby != 'undefined' ) {
+					Gumby.log(response.name + ' has connected with this app.');
+				}
 				prefillFacebookFields(response);
 				jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
 
-				ga('send', 'pageview', {
-					'dimension1': 'Connected' //@TODO "Nebula" 0: Is this how we want to do this?
-				});
-
-				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
-				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
+				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //Example page. @TODO: Get this out of main.js somehow!
+				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //Example page. @TODO: Get this out of main.js somehow!
 			});
 
-			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //Example page. @TODO: Get this out of main.js somehow!
 		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('User is logged into Facebook, but has not connected to this app.'); }
+			if ( typeof Gumby != 'undefined' ) {
+				Gumby.log('User is logged into Facebook, but has not connected to this app.');
+			}
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
-			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //Example page. @TODO: Get this out of main.js somehow!
 		} else { //User is not logged into Facebook.
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('User is not logged into Facebook.'); }
+			if ( typeof Gumby != 'undefined' ) {
+				Gumby.log('User is not logged into Facebook.');
+			}
 			FBstatus = false;
 			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
-			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //For Example page. @TODO "Nebula" 0: Get this out of main.js somehow!
+			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //Example page. @TODO: Get this out of main.js somehow!
 		}
 	});
 }
@@ -411,93 +485,51 @@ function subnavExpanders() {
 } //end subnavExpanders()
 
 
-//Show fixed bar when scrolling passed a particular element
+//Show fixed bar when scrolling passed the header
 function nebulaFixeder() {
-	var fixedAfterSelector = '#logonavcon img'; //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
-	if ( jQuery(fixedAfterSelector).is('*') ) {
-		jQuery(window).on('scroll resize', function() {
-			if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
-				var fixedBarBottom = jQuery(fixedAfterSelector).position().top + jQuery(fixedAfterSelector).outerHeight();
-		        var windowBottom = jQuery(window).scrollTop();
+	jQuery(window).on('scroll resize', function() {
+		if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
+			var fixedBarBottom = jQuery('#logonavcon img').position.top + jQuery('#logonavcon img').outerHeight();
+	        var windowBottom = jQuery(window).scrollTop();
 
-		        if( windowBottom > fixedBarBottom ){
-		        	if ( !jQuery('.fixedbar').hasClass('active') ) {
-			        	jQuery('.fixedbar').addClass('active');
-					}
-		        } else {
-		        	if ( !jQuery('.fixedbar').hasClass('hidden') ) {
-			        	jQuery('.fixedbar').removeClass('active');
-		        	}
-		        }
-			}
-		});
-	}
-} //end nebulaFixeder()
-
-
-//Google Analytics Custom Dimensions
-function gaCustomDimensions(){
-	/*
-		Custom Dimensions Index:
-			Dimension 1 = Facebook Interaction (Like, Unlike, Comment, Share)
-			Dimension 2 = Device Form Factor (Tablet, Mobile, Desktop) //@TODO "Nebula" 0: Do we really need this? GA has this standardized already...
-			Dimension 3 = Is Mobile (True/False) //@TODO "Nebula" 0: Do we really need this? GA has this standardized already...
-
-		Custom Dimension Ideas:
-			- When location is available (through Zip Code, or IP geolocation), set dimension to user's local weather conditions. (Dimension is current condition, metric is current temperature). Maybe an event too?
-			- Age Group / Gender / Etc. of user
-	*/
-
-	/*
-ga('send', 'pageview', {
-		'dimension2': deviceinfo['form_factor'],
-		'dimension3': deviceinfo['is_mobile']
+	        if( windowBottom > fixedBarBottom ){
+	        	if ( !jQuery('.fixedbar').hasClass('active') ) {
+		        	jQuery('.fixedbar').addClass('active');
+				}
+	        } else {
+	        	if ( !jQuery('.fixedbar').hasClass('hidden') ) {
+		        	jQuery('.fixedbar').removeClass('active');
+	        	}
+	        }
+		}
 	});
-*/
-}
+} //end nebulaFixeder()
 
 
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
-
-	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
-	//jQuery(document).on('mousedown', '.selector', function(e) {
-	//  var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
-	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
+	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Use deferred selectors.)
+	//jQuery(document).on('click', '.selector', function() {
+	//	ga('send', 'event', 'Category', 'Action', 'Label', Value;
 	//});
 
-/*
-	@TODO "Nebula" 0: Testing other ways to console log GA events. Goal is to not have to write out the cat/action/label twice each time. Can we listen for the ga('send', 'event') and spit out all parameters?
-	//Callback test DELETE THIS
-	jQuery(document).on('click', "h1", function(){
-		console.log('triggering event');
-		ga('send', 'event', 'Callback testing', 'this is the actions', 'this is the label', {'hitCallback': function(){
-			console.log('test event with callback sent.');
-		}});
-		return false;
-	});
-*/
-
-
 	//External links
-	jQuery(document).on('mousedown', "a[rel*='external']", function(e){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+	jQuery(document).on('click', "a[rel*='external']", function(){
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
-		ga('send', 'event', 'External Link' + intent, linkText, destinationURL);
+		ga('send', 'event', 'External Link', linkText, destinationURL);
 	});
 
 	//PDF View/Download
-	jQuery(document).on('mousedown', "a[href$='.pdf']", function(){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+	jQuery(document).on('click', "a[href$='.pdf']", function(){
 		var title= jQuery('title').text()
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
 		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
 		if ( linkText == '' || linkText == 'Download') {
-			ga('send', 'event', 'PDF View' + intent, 'From Page: ' + title, 'File: ' + fileName);
+			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
 		} else {
-			ga('send', 'event', 'PDF View' + intent, 'From Page: ' + title, 'Text: ' + linkText);
+			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
 		}
 	});
 
@@ -514,30 +546,27 @@ function gaEventTracking(){
 	});
 
 	//Mailto link tracking
-	jQuery(document).on('mousedown', 'a[href^="mailto"]', function(){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+	jQuery(document).on('click', 'a[href^="mailto"]', function(){
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
-		ga('send', 'event', 'Mailto' + intent, 'Email: ' + emailAddress);
+		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
 	});
 
 	//Telephone link tracking
-	jQuery(document).on('mousedown', 'a[href^="tel"]', function(){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+	jQuery(document).on('click', 'a[href^="tel"]', function(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
-		ga('send', 'event', 'Click-to-Call' + intent, 'Phone Number: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 	});
 
 	//SMS link tracking
-	jQuery(document).on('mousedown', 'a[href^="sms"]', function(){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+	jQuery(document).on('click', 'a[href^="sms"]', function(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
-		ga('send', 'event', 'Click-to-Call' + intent, 'SMS to: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
 	});
 
-	//Comment tracking @TODO "Nebula" 0: This might not be working.
+	//Comment tracking @TODO: This might not be working.
 	jQuery(document).on('submit', '#commentform', function(){
 		if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
 			var currentPage = jQuery(document).attr('title');
@@ -583,7 +612,7 @@ function gaEventTracking(){
 
 	//AJAX Errors
 	jQuery(document).ajaxError(function(e, request, settings) {
-		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
+		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url);
 		ga('send', 'exception', e.result, true);
 	});
 
@@ -612,18 +641,38 @@ function gaEventTracking(){
 
 
 //Google AdWords conversion tracking for AJAX
-function conversionTracker(conversionpage) {
-	if ( typeof conversionpage == 'undefined' ) {
-		conversionpage = 'thanks.html';
-	}
-
+function conversionTracker() {
 	var  iframe = document.createElement('iframe');
 	iframe.style.width = '0px';
 	iframe.style.height = '0px';
 	document.body.appendChild(iframe);
-	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
+	iframe.src = bloginfo['template_directory'] + '/includes/thanks.html';
 };
 
+
+function googleResourceDetect() {
+	if ( jQuery('.googleresources').length ) {
+		if ( jQuery('.googleresources').height() < 200 && jQuery('.googleresources').css('display') == 'block' ) {
+			jQuery('.blockdetection').removeClass('hidden');
+			jQuery('.adtooltip').addClass('hidden');
+			ga('send', 'event', 'Ads Blocked', 'Using Browser Extension');
+		}
+	}
+
+	/*
+jQuery(document).on('mouseover', '.googleresources', function(){
+		jQuery('.adtooltip').addClass('hover');
+	});
+
+	jQuery(document).on('mouseleave', '.googleresources', function(){
+		jQuery('.adtooltip').removeClass('hover');
+	});
+
+	jQuery('.googleresources').children().on('mouseover', function(){
+		jQuery('.gacon').fadeOut();
+	});
+*/
+}
 
 function googlePlusCallback(jsonParam) {
 	var currentPage = jQuery(document).attr('title');
@@ -641,7 +690,7 @@ function mmenus() {
 		jQuery("#mobilenav").mmenu({
 		    //Options
 		    offCanvas: {
-			    zposition: 'back' //'back' (default), 'front', 'next'
+			    zposition: 'next' //'back' (default), 'front', 'next'
 		    },
 		    searchfield: { //This is for searching through the menu itself (NOT for site search)
 		    	add: true,
@@ -657,34 +706,16 @@ function mmenus() {
 			classNames: {
 				selected: "current-menu-item"
 			}
-		}).on('opening.mm', function(){ //When mmenu has started opening
+		}).on('opening.mm', function(){
+			ga('send', 'event', 'Mmenu', 'Opening', document.title);
+			minilogofixer();
 			jQuery('a.mobilenavtrigger i').removeClass('fa-bars').addClass('fa-times');
-		}).on('opened.mm', function(){ //After mmenu has finished opening
-			history.replaceState(null, document.title, location);
-			history.pushState(null, document.title, location);
-		}).on('closing.mm', function(){ //When mmenu has started closing
-			jQuery('a.mobilenavtrigger i').removeClass('fa-times').addClass('fa-bars');
-		}).on('closed.mm', function(){ //After mmenu has finished closing
-			//Functions after closed.
-		});
-
-		jQuery("#mobilecontact").mmenu({
-			//Options
-		    offCanvas: {
-			    position: 'right', //'left' (default), 'right', 'top' (must use zposition 'front'), 'bottom' (must use zposition 'front')
-			    zposition: 'back' //'back' (default), 'front', 'next'
-		    },
-		    classes: "mm-light", //Theming and open effects
-		    header: {
-				add: true,
-				update: true, //Change the header text when navigating to sub-menus
-				title: 'Contact Us'
-			}
-		}, {
-			//Configuration
 		}).on('opened.mm', function(){
 			history.replaceState(null, document.title, location);
 			history.pushState(null, document.title, location);
+		}).on('closing.mm', function(){
+			minilogofixer();
+			jQuery('a.mobilenavtrigger i').removeClass('fa-times').addClass('fa-bars');
 		});
 
 		jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
@@ -714,22 +745,6 @@ function mmenus() {
 
 	}
 } //end mmenus()
-
-//Power Footer Width Distributor
-function powerFooterWidthDist() {
-	var powerFooterWidth = jQuery('#powerfooter').width();
-	var topLevelFooterItems = 0;
-	jQuery('#powerfooter ul.menu > li').each(function(){
-		topLevelFooterItems = topLevelFooterItems+1;
-	});
-	var footerItemWidth = powerFooterWidth/topLevelFooterItems-8;
-	if ( topLevelFooterItems == 0 ) {
-		jQuery('.powerfootercon').addClass('hidden');
-	} else {
-		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
-	}
-} //end PowerFooterWidthDist
-
 
 //Menu Search Replacement
 function menuSearchReplacement(){
@@ -835,6 +850,15 @@ function singleResultDrawer(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
 		jQuery('.headerdrawercon').slideUp();
+		jQuery('#headersearch input#s').addClass('tempfade', function(){
+			setTimeout(function(){
+				jQuery('#headersearch input#s').attr('placeholder', 'What are you looking for?');
+			}, 251);
+
+			setTimeout(function(){
+				jQuery('#headersearch input#s').removeClass('tempfade');
+			}, 300);
+		});
 		return false;
 	});
 }
@@ -851,10 +875,9 @@ function pageSuggestion(){
 		var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
 		trySearch(phrase);
 
-		jQuery(document).on('mousedown', 'a.suggestion', function(e){
-			var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+		jQuery(document).on('click', 'a.suggestion', function(){
 			var suggestedPage = jQuery(this).text();
-			ga('send', 'event', 'Page Suggestion', 'Click' + intent, 'Suggested Page: ' + suggestedPage);
+			ga('send', 'event', 'Page Suggestion', 'Clicked', 'Suggested Page: ' + suggestedPage);
 		});
 	}
 }
@@ -872,10 +895,10 @@ function trySearch(phrase){
 	// Send the request to the custom search API
 	jQuery.getJSON(API_URL, queryParams, function(response) {
 		if (response.items && response.items.length) {
-			ga('send', 'event', 'Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location, {'nonInteraction': 1});
+			ga('send', 'event', 'Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location);
 			showSuggestedPage(response.items[0].title, response.items[0].link);
 		} else {
-			ga('send', 'event', 'Page Suggestion', 'No Suggestions Found', 'Requested URL: ' + window.location, {'nonInteraction': 1});
+			ga('send', 'event', 'Page Suggestion', 'No Suggestions Found', 'Requested URL: ' + window.location);
 		}
 	});
 }
@@ -900,24 +923,24 @@ function pageVisibility(){
 	function visibilityChangeActions(){
 		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
 			var pageTitle = jQuery(document).attr('title');
-			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
-			//@TODO "Nebula" 0: prevent autoplay of videos
+			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle);
+			//@TODO: prevent autoplay of videos
 		}
 
 		if ( getPageVisibility() ) { //Page is hidden
-			//@TODO "Nebula" 0: pause youtube
-			//@TODO "Nebula" 0: pause vimeo
+			//@TODO: pause youtube
+			//@TODO: pause vimeo
 			visFirstHidden = 1;
 			visTimerBefore = (new Date()).getTime();
 			var pageTitle = jQuery(document).attr('title');
-			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1}); //@TODO: Page Visibility Hidden event tracking is off by default. Uncomment to enable.
+			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle);
 		} else { //Page is visible
-			//@TODO "Nebula" 0: resume autoplay of videos
+			//@TODO: resume autoplay of videos
 			if ( visFirstHidden == 1 ) {
 				var visTimerAfter = (new Date()).getTime();
 				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
 				var pageTitle = jQuery(document).attr('title');
-				//ga('send', 'event', 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)', {'nonInteraction': 1}); //@TODO "Nebula" 0: Page Visibility Visible event tracking is off by default. Uncomment to enable.
+				//ga('send', 'event', 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)');
 			}
 		}
 	}
@@ -928,34 +951,6 @@ function pageVisibility(){
 		} else {
 			return false;
 		}
-	}
-}
-
-function cFormLocalStorage() {
-	jQuery('.cform7-message').on('keyup', function(){
-    	localStorage.setItem('global_cform_message', jQuery('.cform7-message').val());
-		jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
-    });
-
-    jQuery(window).bind('storage',function(e){
-    	jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
-    });
-
-	jQuery('form.wpcf7-form').submit(function(){
-		localStorage.removeItem('global_cform_message');
-	});
-}
-
-function checkCformLocalStorage() {
-	if ( typeof localStorage.getItem('global_cform_message') !== 'undefined' && localStorage.getItem('global_cform_message') != 'undefined' ) {
-		if ( jQuery('.cform7-message').val() != '' ) {
-			localStorage.setItem('global_cform_message', jQuery('.cform7-message').val());
-			jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
-		} else {
-			jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
-		}
-	} else {
-		localStorage.removeItem('global_cform_message');
 	}
 }
 
@@ -1160,21 +1155,41 @@ function cFormSuccess(){
     //conversionTracker(); //Call conversion tracker if contact is a conversion goal.
 }
 
-//Allows only numerical input on specified inputs. Call this on keyUp? @TODO "Nebula" 0: Make the selector into oThis and pass that to the function from above.
+//Allows only numerical input on specified inputs. Call this on keyUp? @TODO: Make the selector into oThis and pass that to the function from above.
 //The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
 function onlyNumbers() {
 	jQuery(".leftcolumn input[type='text']").each(function(){
-		this.value = this.value.replace(/[^0-9\.]/g, '');
+		this.value = this.value.replace(/[^0-9\.]/g,'');
 	});
 }
 
 function checkCommentVal(oThis) {
-	//@TODO "Nebula" 0: Count how many required fields there are. If any of them don't have value, then trigger disabled
+	//@TODO: Count how many required fields there are. If any of them don't have value, then trigger disabled
 	if ( jQuery(oThis).val() != '' ) {
 		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').removeClass('disabled');
 	} else {
 		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').addClass('disabled');
 	}
+}
+
+function WPcomments() {
+	checkCommentVal('.comment-form-comment #comment');
+	jQuery('.comment-form-comment #comment').on('keyup focus blur', function(){
+		checkCommentVal(this);
+	});
+
+	jQuery(document).on('click', 'disabled', function(){
+		return false;
+	});
+
+	jQuery('p.comment-form-comment textarea').on('focus', function(){
+		jQuery(this).stop().animate({minHeight: 150}, 1000, "easeInOutCubic");
+	});
+	jQuery('p.comment-form-comment textarea').on('blur', function(){
+		if ( jQuery(this).val() == '' ) {
+			jQuery(this).stop().animate({minHeight: 42, height: 42}, 250, "easeInOutCubic").css('height', 'auto');
+		}
+	});
 }
 
 function scrollTo() {
@@ -1183,11 +1198,11 @@ function scrollTo() {
 			var target = jQuery(this.hash);
 			target = target.length ? target : jQuery('[name=' + this.hash.slice(1) +']');
 			if ( target.length ) {
-				var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+				var headerHtOffset = jQuery('#searchnavfixer').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 				var nOffset = Math.floor(target.offset().top - headerHtOffset);
 				jQuery('html, body').animate({
 					scrollTop: nOffset
-				}, 500);
+				}, 1000);
 				return false;
 			}
 		}
@@ -1234,35 +1249,6 @@ function contactBackup() {
 	});
 }
 
-//Fill browserinfo field with browser information (to send with forms).
-function browserInfo() {
-	var browserInfoVal = '';
-
-	if ( typeof navigator != 'undefined' ) {
-		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n\n';
-	}
-
-	browserInfoVal += 'Browser Information: ' + jQuery('html').attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Current Page Information: ' + jQuery('body').attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Viewport Size: ' + jQuery(window).width() + 'px x ' + jQuery(window).height() + 'px ' + '\n\n';
-
-	if ( typeof performance != 'undefined' ) {
-		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
-		var pageLoadTime = (performance.timing.loadEventStart-performance.timing.navigationStart)/1000;
-		browserInfoVal += 'Page Loading Time: ' + pageLoadTime + 's' + '\n\n';
-	}
-
-	browserInfoVal += 'Referrer: ' + document.referrer + '\n';
-
-	if ( typeof window.history != 'undefined' ) {
-		browserInfoVal += 'History Depth: ' + window.history.length + '\n\n';
-	}
-
-	browserInfoVal += 'IP Address: ' + clientinfo['remote_addr'] + '\n';
-	browserInfoVal += 'Lookup: http://whatismyipaddress.com/ip/' + clientinfo['remote_addr'];
-
-	jQuery('textarea.browserinfo').addClass('hidden').css('display', 'none').val(browserInfoVal);
-}
 
 //Create desktop notifications
 function desktopNotification(title, message, clickCallback, closeCallback, showCallback, errorCallback) {
@@ -1273,17 +1259,17 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 			lang: "en-US", //Language (optional)
 			body: "", //Body message (optional)
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-			icon: bloginfo['template_directory'] + "/images/meta/og-thumb.png" //Thumbnail Icon (optional)
+			icon: bloginfo['template_directory'] + "/images/og-thumb.png" //Thumbnail Icon (optional)
 		}
 
 		if ( typeof message === "undefined" ) {
 			message = defaults;
-			if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: message is undefined, using defaults.'); }
+			Gumby.warn('Warning: message is undefined, using defaults.');
 		} else if ( typeof message === "string" ) {
 			body = message;
 			message = defaults;
 			message.body = body;
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Note: message is a string, using defaults.'); }
+			Gumby.log('Note: message is a string, using defaults.');
 		} else {
 			if ( typeof message.dir === "undefined" ) {
 				message.dir = defaults.dir;
@@ -1293,7 +1279,7 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 			}
 			if ( typeof message.body === "undefined" ) {
 				message.body = defaults.lang;
-				if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: No message body.'); }
+				Gumby.warn('Warning: No message body.');
 			}
 			if ( typeof message.tag === "undefined" ) {
 				message.tag = defaults.tag;
@@ -1332,7 +1318,7 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 function checkNotificationPermission() {
 	Notification = window.Notification || window.mozNotification || window.webkitNotification;
 	if ( !(Notification) ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn("This browser does not support desktop notifications."); }
+		Gumby.warn("This browser does not support desktop notifications.");
 		return false;
 	} else if ( Notification.permission === "granted" ) {
 		return true;
@@ -1351,10 +1337,10 @@ function checkNotificationPermission() {
 
 function nebulaVibrate(pattern) {
 	if ( typeof pattern === 'undefined' ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Vibration pattern was not provided. Using default.'); }
+		Gumby.warn('Vibration pattern was not provided. Using default.');
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	} else if ( typeof pattern !== 'object' ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Vibration pattern is not an object. Using default.'); }
+		Gumby.warn('Vibration pattern is not an object. Using default.');
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	}
 	if ( checkVibration() ) {
@@ -1365,7 +1351,7 @@ function nebulaVibrate(pattern) {
 
 function checkVibration() {
 	if ( !jQuery('body').hasClass('mobile') ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support)."); }
+		Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support).");
 	}
 
 	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
@@ -1382,12 +1368,12 @@ function errorLogAndFallback() {
 	//Check if Contact Form 7 is active and if the selected form ID exists
 	if ( jQuery('.cform-disabled').is('*') ) {
 		var currentPage = jQuery(document).attr('title');
-		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage, {'nonInteraction': 1});
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.'); }
+		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', currentPage);
+		Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.');
 	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
 		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo fa fa-envelope"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
-		ga('send', 'event', 'Error', 'Contact Form 7 Form Not Found', currentPage, {'nonInteraction': 1});
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.'); }
+		ga('send', 'event', 'Error', 'Contact Form 7 Form Not Found', currentPage);
+		Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.');
 		jQuery(document).on('click', '.cform-not-found', function(){
 			ga('send', 'event', 'Contact', 'Submit (Intent)', 'Backup Mailto Intent');
 		});
@@ -1409,10 +1395,98 @@ var waitForFinalEvent = (function () {
 })(); //end waitForFinalEvent()
 
 
+//Controls the AJAX between the "I am a" input and the "hats" data.
+function aboutiama() {
+	var defaultama = jQuery('#iamadesc').html();
+
+	jQuery('#iama').on('input', function() {
+		jQuery('.loading').removeClass('faded success error').children('i').removeClass().addClass('fa fa-keyboard-o');
+
+		if ( vowelChecker(jQuery('#iama').val().trim().toLowerCase().charAt(0)) ) {
+			jQuery('#iamatitle').text('I am an');
+		} else {
+			jQuery('#iamatitle').text('I am a');
+		}
+
+		waitForFinalEvent(function(){
+			if ( jQuery('#iama').val().trim().length > 0 ) {
+
+				jQuery('.loading').children('i').removeClass().addClass('fa fa-spinner fa-spin');
+				jQuery('#iamadesc').html('');
+
+				ga('send', 'event', 'I Am A', jQuery("#iama").val().trim());
+
+				var iamaData = [{
+					'query': jQuery('<div/>').text(jQuery("#iama").val().trim().toLowerCase()).html() //Encode the input so scripts can not be run
+				}];
+				jQuery.ajax({
+					type: "POST",
+					url: bloginfo["admin_ajax"],
+					data: {
+						action: 'aboutiama',
+						data: iamaData,
+					},
+					success: function(response){
+						jQuery('#iamadesc').html(response);
+						jQuery('.loading').addClass('success').children('i').removeClass().addClass('fa fa-check-circle');
+						setTimeout(function(){
+							jQuery('.loading').addClass('faded');
+						}, 3000);
+					},
+					error: function(MLHttpRequest, textStatus, errorThrown){
+						jQuery('#iamadesc').css('border', '1px solid red').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
+						ga('send', 'event', 'Error', 'AJAX Error', 'About I am a');
+						jQuery('.loading').addClass('error').children('i').removeClass().addClass('fa fa-times-circle');
+					},
+					timeout: 60000
+				});
+
+			} else {
+				jQuery('#iamadesc').html(defaultama);
+				jQuery('.loading').addClass('faded');
+			}
+		}, 1000, "iamachange");
+	});
+}
+
+function vowelChecker(letter) {
+	var vowels = ['a','e','i','o','u'];
+	for ( var i = 0; i < vowels.length; i++ ) {
+        if ( letter === vowels[i] ) {
+            return true;
+         }
+    }
+    return false;
+}
+
+
+function easterEggs() { // up, up, down, down, left, right, left, right, b, a
+	easterEggLimiter = 0;
+	var easter_egg = new Konami(function() {
+		if ( easterEggLimiter == 0 ) {
+			jQuery('html').addClass('konami');
+			ga('send', 'event', 'Konami Code', jQuery(document).attr('title'));
+			easterEggLimiter = 1;
+			Modernizr.load(bloginfo['template_directory'] + '/css/konami.css');
+			jQuery.getScript(bloginfo['template_directory'] + '/js/libs/tdfw.js').done(function(){
+				jQuery("html, body").animate({
+					scrollTop: jQuery(document).height()
+				}, 1000, function(){
+					jQuery("html, body").animate({
+						scrollTop: 0
+					}, 21000);
+				});
+				jQuery("#bgsky").prepend("<div id='tdfw-equalizercon'><div id='yoloswag'>YOLO</div><div id='tdfw-equalizer'></div></div>");
+			}).fail(function(){
+				ga('send', 'event', 'Error', 'JavaScript Error', 'blur.min.js could not be loaded');
+			});
+		}
+	});
+}
+
 //Conditional JS Library Loading
 //This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading() {
-
 	detectIconFonts();
 
 	//Only load Twitter if Twitter wrapper exists.
@@ -1421,7 +1495,7 @@ function conditionalJSLoading() {
 			twitterFeed();
 		}).fail(function(){
 			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
-			ga('send', 'event', 'Error', 'JS Error', 'twitter.js could not be loaded.', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JavaScript Error', 'twitter.js could not be loaded.');
 		});
 	}
 
@@ -1430,7 +1504,7 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
 			bxSlider();
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JavaScript Error', 'bxSlider could not be loaded.');
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
 	}
@@ -1440,7 +1514,7 @@ function conditionalJSLoading() {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'jquery.maskedinput.js could not be loaded.', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JavaScript Error', 'jquery.maskedinput.js could not be loaded.');
 		});
 	} else {
 		cFormPreValidator();
@@ -1448,25 +1522,40 @@ function conditionalJSLoading() {
 
 	//Only load dataTables library if dataTables table exists.
 	if ( jQuery('.dataTables_wrapper').is('*') ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO "Nebula" 0: Use CDN?
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO: Use CDN?
 			dataTablesActions();
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JavaScript Error', 'jquery.dataTables.min.js could not be loaded');
 		});
 		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
 
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-4.closure.js').done(function(){
 			//Do something
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JavaScript Error', 'jquery.highlight-4.closure.js could not be loaded.');
 		});
 	}
 
 	if ( jQuery('.flag').is('*') ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
 	}
-} //end conditionalJSLoading()
 
+	jQuery.getScript(bloginfo['template_directory'] + '/js/libs/konami.js').done(function(){
+		easterEggs();
+	}).fail(function(){
+		ga('send', 'event', 'Error', 'JavaScript Error', 'konami.js could not be loaded.');
+	});
+
+	//Only load blurJS if headerdrawer exists
+	if ( jQuery('.headerdrawercon').is('*') ) {
+		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/blur.min.js').done(function(){ //@TODO: Use CDN?
+			blurjsactions();
+		}).fail(function(){
+			ga('send', 'event', 'Error', 'JavaScript Error', 'blur.min.js could not be loaded');
+		});
+	}
+
+} //end conditionalJSLoading()
 
 //These detect Font Awesome and Entypo usage via classes. This will not detect usage with font-family CSS (only known detection method is resource-heavy).
 var loadedFonts = {
@@ -1487,10 +1576,22 @@ function detectIconFonts(){
 
 
 function dataTablesActions(){
-	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
+	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO: Something here is eating the first letter after a few have been typed... lol
 	    console.log('keyup: ' + jQuery(this).val());
 	    jQuery('.dataTables_wrapper').removeHighlight();
 	    jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
+	});
+}
+
+function blurjsactions(){
+	jQuery('.headerdrawercon').blurjs({
+		source: '#bgsky',
+		radius: 7,
+		overlay: 'rgba(0, 0, 0, 0.3)',
+		optClass: 'frosted',
+		cache: false,
+		cacheKeyPrefix: 'frosted-',
+		draggable: false
 	});
 }
 
@@ -1513,30 +1614,17 @@ function twitterFeed() {
 //Place all bxSlider events inside this function!
 function bxSlider() {
 	if ( typeof bxSlider !== 'undefined' ) {
-		jQuery('.exampleslider').bxSlider({
-			mode: 'horizontal', //'horizontal', 'vertical', 'fade'
-			speed: 800,
-			captions: false,
-			auto: true,
-			pause: 6000,
-			autoHover: true,
-			adaptiveHeight: true,
-			useCSS: false,
-			easing: 'easeInOutCubic',
-			controls: false
-		});
-
 		jQuery('.heroslider').bxSlider({
-			mode: 'fade',
+			mode: 'fade', //'horizontal', 'vertical', 'fade'
 			speed: 800,
 			captions: false,
-			pager: false,
+			pager: true,
 			auto: false,
 			pause: 10000,
 			autoHover: true,
 			adaptiveHeight: true,
 			useCSS: true,
-			controls: true
+			controls: false
 		});
 	}
 }
@@ -1546,7 +1634,7 @@ function vimeoControls() {
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			if ( typeof Gumby != 'undefined' ) { Gumby.warn('froogaloop.js could not be loaded.'); }
+			Gumby.warn('froogaloop.js could not be loaded.');
 		});
 	}
 
@@ -1556,7 +1644,7 @@ function vimeoControls() {
 			var vimeoiframeClass = jQuery(this).attr('id');
 			player[i] = $f(vimeoiframeClass);
 			player[i].addEvent('ready', function() {
-		    	if ( typeof Gumby != 'undefined' ) { Gumby.log('player is ready'); }
+		    	Gumby.log('player is ready');
 			    player[i].addEvent('play', onPlay);
 			    player[i].addEvent('pause', onPause);
 			    player[i].addEvent('seek', onSeek);
@@ -1583,11 +1671,11 @@ function vimeoControls() {
 
 	function onFinish(id) {
 		var videoTitle = id.replace(/-/g, ' ');
-		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
+		ga('send', 'event', 'Videos', 'Finished', videoTitle);
 	}
 
 	function onPlayProgress(data, id) {
-		//if ( typeof Gumby != 'undefined' ) { Gumby.log(data.seconds + 's played'); }
+		//Gumby.log(data.seconds + 's played');
 	}
 }
 
@@ -1620,7 +1708,7 @@ function createCookie(name, value, days) {
 		var expires = "";
 	}
 	document.cookie = name + "=" + value + expires + "; path=/";
-	if ( typeof Gumby != 'undefined' ) { Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires); }
+	Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires);
 }
 function readCookie(name) {
 	var nameEQ = name + "=";
@@ -1630,7 +1718,7 @@ function readCookie(name) {
 		while (c.charAt(0) == ' ') {
 			c = c.substring(1, c.length);
 			if (c.indexOf(nameEQ) == 0) {
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Cookie "' + name + '" exists.'); }
+				Gumby.log('Cookie "' + name + '" exists.');
 				return c.substring(nameEQ.length, c.length);
 			}
 		}
@@ -1639,7 +1727,7 @@ function readCookie(name) {
 }
 function eraseCookie(name) {
 	createCookie(name,"",-1);
-	if ( typeof Gumby != 'undefined' ) { Gumby.warn('Erased cookie: ' + name); }
+	Gumby.warn('Erased cookie: ' + name);
 }
 
 
@@ -1656,12 +1744,12 @@ function mapActions() {
 			mapInfo['weather'] = 0;
 			jQuery('.mapweather').removeClass('active').addClass('inactive').text(originalWeatherText);
 			jQuery('.mapweather-icon').removeClass('active').addClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Disabling weather layer.'); }
+			Gumby.log('Disabling weather layer.');
 		} else {
 			mapInfo['weather'] = 1;
 			jQuery('.mapweather').addClass('active').removeClass('inactive').text('Disable Weather');
 			jQuery('.mapweather-icon').addClass('active').removeClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling weather layer.'); }
+			Gumby.log('Enabling weather layer.');
 		}
 		renderMap(mapInfo);
 		return false;
@@ -1673,12 +1761,12 @@ function mapActions() {
 			mapInfo['traffic'] = 0;
 			jQuery('.maptraffic').removeClass('active').addClass('inactive').text(originalTrafficText);
 			jQuery('.maptraffic-icon').removeClass('active').addClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Disabling traffic layer.'); }
+			Gumby.log('Disabling traffic layer.');
 		} else {
 			mapInfo['traffic'] = 1;
 			jQuery('.maptraffic').addClass('active').removeClass('inactive').text('Disable Traffic');
 			jQuery('.maptraffic-icon').addClass('active').removeClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling traffic layer.'); }
+			Gumby.log('Enabling traffic layer.');
 		}
 		renderMap(mapInfo);
 		return false;
@@ -1686,12 +1774,12 @@ function mapActions() {
 
 	jQuery(document).on('click', '.mapgeolocation', function(){
 		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling location detection.'); }
+			Gumby.log('Enabling location detection.');
 			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
 			jQuery('.mapgeolocation').removeClass('inactive').attr('title', 'Requesting location...').text('Detecting Location...');
 			requestPosition();
 		} else {
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Removing detected location.'); }
+			Gumby.log('Removing detected location.');
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-ban success error').addClass('inactive fa-location-arrow');
 			jQuery(this).removeClass('active success failure').text('Detect Location').addClass('inactive').attr('title', 'Detect current location').css('color', '');
 			mapInfo['detectLoc'] = new Array(0, 0);
@@ -1715,7 +1803,7 @@ function mapActions() {
 	jQuery(document).on('click', '.maprefresh', function(){
 		if ( !jQuery(this).hasClass('timeout') ) {
 			pleaseWait = 0;
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Refreshing the map.'); }
+			Gumby.log('Refreshing the map.');
 			renderMap(mapInfo);
 			jQuery('.maprefresh').addClass('timeout', function(){
 				jQuery('.maprefresh').text('Refreshing...');
@@ -1768,7 +1856,7 @@ function mapActions() {
 
 //Request Geolocation
 function requestPosition() {
-	if ( typeof Gumby != 'undefined' ) { Gumby.log('Requesting location... May need to be accepted.'); }
+	Gumby.log('Requesting location... May need to be accepted.');
     var nav = null;
     if (nav == null) {
         nav = window.navigator;
@@ -1815,12 +1903,12 @@ function successCallback(position) {
 
 	if ( mapInfo['detectLoc']['accMeters'] > 400 ) {
 		lowAccText = 'Your location accuracy is ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).';
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).'); }
+		Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).');
 		//Some kind of notification here...
 	}
 
 	jQuery(document).trigger('geolocationSuccess');
-	ga('send', 'event', 'Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']); //@TODO "Nebula" 0: Add a GA dimension and metric to get weather from this location.
+	ga('send', 'event', 'Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']);
 }
 
 //Geolocation Error
@@ -1841,9 +1929,9 @@ function errorCallback(error) {
         	geolocationErrorMessage = "An unknown error has occurred.";
             break;
     }
-    if ( typeof Gumby != 'undefined' ) { Gumby.warn(geolocationErrorMessage); }
+    Gumby.warn(geolocationErrorMessage);
     jQuery(document).trigger('geolocationError');
-    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
+    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage);
 }
 
 //Retreive Lat/Lng locations
@@ -1852,7 +1940,9 @@ function getAllLocations() {
 	jQuery('.latlngcon').each(function(i){
 		var alat = jQuery(this).find('.lat').text();
 		var alng = jQuery(this).find('.lng').text();
-		if ( typeof Gumby != 'undefined' ) { Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng); }
+		if ( typeof Gumby != 'undefined' ) {
+			Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng);
+		}
 		mapInfo['markers'][i] = [alat, alng];
 	});
 	renderMap(mapInfo);
@@ -1860,10 +1950,12 @@ function getAllLocations() {
 
 //Render the Google Map
 function renderMap(mapInfo) {
-    if ( typeof Gumby != 'undefined' ) { Gumby.log('Rendering Google Map'); }
+    if ( typeof Gumby != 'undefined' ) {
+	    Gumby.log('Rendering Google Map');
+    }
 
     if ( typeof google === 'undefined' ) {
-    	if ( typeof Gumby != 'undefined' ) { Gumby.log('google is not defined. Likely the Google Maps script is not being seen.'); }
+    	Gumby.log('google is not defined. Likely the Google Maps script is not being seen.');
     	return false;
     } else {
     	var myOptions = {
@@ -1878,7 +1970,7 @@ function renderMap(mapInfo) {
 
 		if ( typeof mapInfo['traffic'] !== 'undefined' ) {
 			if ( mapInfo['traffic'] == 1 ) {
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Traffic is enabled.'); }
+				Gumby.log('Traffic is enabled.');
 				var trafficLayer = new google.maps.TrafficLayer();
 				trafficLayer.setMap(map);
 			}
@@ -1887,7 +1979,7 @@ function renderMap(mapInfo) {
 		//Map weather
 		if ( typeof mapInfo['weather'] !== 'undefined' ) {
 			if ( mapInfo['weather'] == 1 ) {
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Weather is enabled.'); }
+				Gumby.log('Weather is enabled.');
 				var weatherLayer = new google.maps.weather.WeatherLayer({
 					temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
 				});
@@ -1919,11 +2011,11 @@ function renderMap(mapInfo) {
 		        bounds.extend(pos);
 		        marker = new google.maps.Marker({
 		            position: pos,
-		            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO "Nebula" 0: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
+		            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
 		            clickable: false,
 		            map: map
 		        });
-		        if ( typeof Gumby != 'undefined' ) { Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]); }
+		        Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]);
 		    }(marker, i);
 	    }
 
@@ -1948,7 +2040,7 @@ function renderMap(mapInfo) {
 					radius: mapInfo['detectLoc']['accMeters']
 				});
 				circle.bindTo('center', marker, 'position');
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]); }
+				Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]);
 
 				//var detectbounds = new google.maps.LatLngBounds();
 				bounds.extend(detectLoc);
