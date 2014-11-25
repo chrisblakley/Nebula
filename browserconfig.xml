@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+	<msapplication>
+		<tile>
+			<square70x70logo src="images/meta/tiny.png"/> <!-- @TODO "Graphics" 1: Create a "square" Windows Tile 70x70px. -->
+			<square150x150logo src="images/meta/square.png"/> <!-- @TODO "Graphics" 1: Create a "square" Windows Tile 150x150px. -->
+			<square310x310logo src="images/meta/large.png"/> <!-- @TODO "Graphics" 1: Create a "square" Windows Tile 310x310px. -->
+			<wide310x150logo src="images/meta/wide.png"/> <!-- @TODO "Graphics" 1: Create a "wide" Windows Tile 310x150px. -->
+			<TileColor>#0098d7</TileColor> <!-- @TODO "Graphics" 1: Designate a background color for Windows Tiles. -->
+		</tile>
+		<notification>
+			<polling-uri src="feed/&amp;id=1"/> <!-- @TODO "RSS" 1: Change this to be the site domain. -->
+			<polling-uri2 src="feed/&amp;id=2"/> <!-- @TODO "RSS" 1: Change this to be the site domain. -->
+			<polling-uri3 src="feed/&amp;id=3"/> <!-- @TODO "RSS" 1: Change this to be the site domain. -->
+			<polling-uri4 src="feed/&amp;id=4"/> <!-- @TODO "RSS" 1: Change this to be the site domain. -->
+			<polling-uri5 src="feed/&amp;id=5"/> <!-- @TODO "RSS" 1: Change this to be the site domain. -->
+			<frequency>30</frequency>
+			<cycle>1</cycle>
+		</notification>
+	</msapplication>
+</browserconfig>

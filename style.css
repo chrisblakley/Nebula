@@ -412,6 +412,10 @@ div#bcrumbs {position: relative; z-index: 1;}
 	.posted-on,
 	.posted-in,
 	.posted-by {display: inline-block; margin-right: 10px; font-size: 12px;}
+	.nebulasocialcon {float: right;}
+		.sharing-links {display: inline-block; margin-top: 2px;}
+			.share-button {display: inline-block; margin-left: 5px;}
+				.share-button.share-facebook .fb_iframe_widget span {vertical-align: inherit !important;}
 
 .entry-social {}
 	.entry-social ul {}
@@ -563,8 +567,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .clearsearch {text-align: center; margin-top: 20px;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 .mm-menu li.current_page_item {background: rgba(255, 255, 255, 1); font-weight: bold; color: #000;}
-	.mm-menu li.current_page_item a:before {content: '\f138'; font-family: 'FontAwesome'; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
-
+	.mm-menu li.current_page_item a:not(.mm-subopen):before {content: '\f138'; font-family: 'FontAwesome'; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
 
 
 .doasitesearch {display: block; margin-bottom: 15px;}

@@ -9,69 +9,6 @@ if ( !isset($content_width) ) {
 }
 
 
-//Construct the data payload
-function gaBuildData($error) {
-	$v = 1; //Version
-	$cid = gaParseCookie(); //Anonymous Client ID
-
-	//Send event
-	$data = array(
-		'v' => $v,
-		'tid' => $GLOBALS['ga'],
-		'cid' => $cid,
-		't' => 'event',
-		'ec' => 'Error', //Category (Required)
-		'ea' => 'PHP ' . $error['type'] . ' [' . $error['level'] . ']', //Action (Required)
-		'el' => $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line'] //Label
-	);
-	gaSendData($data);
-
-	//Send Exception hit
-	$data = array(
-		'v' => $v,
-		'tid' => $GLOBALS['ga'],
-		'cid' => $cid,
-		't' => 'exception',
-		'exd' => 'PHP ' . $error['type'] . ' [' . $error['level'] . ']', //Exception Description
-		'exf' => 0 //Fatal Exception? (Boolean) //@TODO "Nebula" 0: Pull this data from the $error array (if 'type' contains 'fatal'). Doesn't matter until the handler supports fatal errors.
-	);
-	gaSendData($data);
-}
-
-//Handle the parsing of the _ga cookie or setting it to a unique identifier
-function gaParseCookie() {
-	if (isset($_COOKIE['_ga'])) {
-		list($version,$domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
-		$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
-		$cid = $contents['cid'];
-	} else {
-		$cid = gaGenerateUUID();
-	}
-	return $cid;
-}
-
-//Generate UUID v4 function - needed to generate a CID when one isn't available
-function gaGenerateUUID() {
-	return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-		mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
-		mt_rand(0, 0xffff), //16 bits for "time_mid"
-		mt_rand(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
-		mt_rand(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
-		mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff) //48 bits for "node"
-	);
-}
-
-//Send Data to Google Analytics
-//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-function gaSendData($data) {
-	$getString = 'https://ssl.google-analytics.com/collect';
-	$getString .= '?payload_data&';
-	$getString .= http_build_query($data);
-	$result = wp_remote_get($getString);
-	return $result;
-}
-
-
 //Track Google Page Speed tests
 add_action('wp_footer', 'track_google_pagespeed_checks');
 function track_google_pagespeed_checks() {
@@ -87,9 +24,9 @@ function track_google_pagespeed_checks() {
 		}
 
 		$data = array(
-			'v' => 1,
+			'v' => $_GLOBALS['ga_v'],
 			'tid' => $GLOBALS['ga'],
-			'cid' => gaParseCookie(),
+			'cid' => $_GLOBALS['ga_cid'],
 			't' => 'event',
 			'ec' => 'Google Page Speed', //Category
 			'ea' => $currentURL, //Action
@@ -512,6 +449,21 @@ function nebula_meta($meta, $secondary=1) {
 			$comment_icon = 'fa-comments';
 		}
 		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
+	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ) {
+
+		//@TODO "Nebula" 0: Pass an array to nebula_meta() for which social networks to use...
+
+		if ( $secondary ) { //Secondary here is to hide/show button counts
+			$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble');
+		} else {
+			$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none');
+		}
+
+		echo '<div class="sharing-links">';
+			echo '<div class="share-button share-facebook"><div class="fb-like post-like" data-href="' . get_page_link() . '" data-layout="' . $show_counts['facebook'] . '" data-action="like" data-show-faces="false" data-share="false"></div></div>'; //Facebook
+			echo '<div class="share-button share-twitter"><a class="twitter-share-button" href="https://twitter.com/share" data-url="' . get_page_link() . '" ' . $show_counts['twitter'] . '>Tweet</a><script type="text/javascript">window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));</script></div>';
+			//echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div><script src="https://apis.google.com/js/platform.js" async defer></script></div>';
+		echo '</div>';
 	}
 }
 

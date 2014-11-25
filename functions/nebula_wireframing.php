@@ -31,15 +31,21 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 
 //Placeholder image
 //@TODO "Nebula" 0: Come up with a way for the "X" to appear in the div without it looking bad (currently stretching the PNG).
-function fpo_image($type='none', $width='100%', $height='200px', $color='', $outline='', $styles='', $classes='') {
-	if ( $type == 'unsplash' || $type == 'photo' ) {
-		$imgsrc = random_unsplash(800, 600, 1);
-	} else {
-		$imgsrc = get_template_directory_uri() . '/images/x.png';
-		$outline = 'outline: 1px solid #000;';
+function fpo_image($type='none', $width='100%', $height='200px', $background='', $color='#000', $styles='', $classes='') {
+	$imgsrc = ( $type == 'unsplash' || $type == 'photo' ) ? random_unsplash(800, 600, 1) : '';
+
+	$return = '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $background . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $styles . '">';
+
+	if ( $imgsrc == '' ) {
+		$return .= '<svg x="0px" y="0px" width="100%" height="100%" style="border: 1px solid ' . $color . ';">
+					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
+					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+				</svg>';
 	}
 
-	echo '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $color . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $outline . ' ' . $styles . '"></div>';
+	$return .= '</div>';
+
+	echo $return;
 }
 
 
@@ -102,14 +108,6 @@ function fpo_form($fields=array('Name', 'Email', 'Message'), $submit="Send", $ac
 }
 
 
-//Placeholder menu
-//Parameters: menu name, styles
-//@TODO "Nebula" 0: How to do a dropdown or mega-menu?
-function fpo_menu() {
-
-}
-
-
 //Placeholder slider
 //@TODO "Nebula" 0: Pass an object to set options.
 function fpo_slider($slides=3) {
@@ -160,6 +158,176 @@ function fpo_video($id='jtip7Gdcf0Q', $service='youtube', $width='100%', $height
 	}
 }
 
+
+
+
+
+
+
+
+
+
+/*********
+	New FPO Functions 11/21/14
+**********/
+
+if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
+	add_action('nebula_body_open', 'wireframe_bar');
+}
+function wireframe_bar(){
+	$current_user = wp_get_current_user();
+	$greetings = array('Hello', 'Hi', 'Hey', 'Welcome');
+
+	echo '<div id="wireframing-bar" class="container">
+		<div class="row">
+			<div class="eight columns">
+				<a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>
+			</div>
+
+			<div class="eight columns" style="text-align: right;">';
+				if ( is_user_logged_in() ) {
+					echo '<span>' . $greetings[array_rand($greetings)] . ', <a href="' . get_admin_url() . '"><strong>' . $current_user->user_firstname . '</strong></a>.</span>';
+				} else {
+					echo '<span><a href="' . wp_login_url(get_permalink()) . '"><strong>Login</strong></a></span>';
+				}
+			echo '</div>
+		</div>
+	</div>';
+}
+
+
+//Top header for each component
+function fpo_component($component='Component'){
+	echo '<div class="fpo-component"><strong class="component-name fpo-' . strtolower(str_replace(' ', '-', $component)) . '">' . $component . '</strong></div><!-- /fpo-component (' . $component . ') -->';
+}
+
+//Placeholder breadcrumbs
+//$crumbs parameter will need to be passed as an array('', '', '').
+function fpo_breadcrumbs($crumbs=''){
+	if ( $crumbs == '' ) {
+		echo the_breadcrumb();
+	} else {
+		echo '<div class="fpo" id="fpo-bcrumbs"><nav class="breadcrumbs"><a href="' . home_url('/') . '"><i class="fa fa-home"></i></a>';
+		$crumb_count = count($crumbs)-1;
+		$crumb_iteration = 0;
+		foreach ( $crumbs as $crumb ) {
+			if ( $crumb_iteration != $crumb_count ) {
+				echo ' <span class="arrow">›</span> <a href="#">' . $crumbs[$crumb_iteration] . '</a>';
+			} else {
+				echo ' <span class="arrow">›</span> <span class="current">' . $crumbs[$crumb_iteration] . '</span>';
+			}
+			$crumb_iteration++;
+		}
+		echo '</nav></div>';
+	}
+}
+
+
+
+
+
+function fpo_menu($name='header', $items=array()){
+	if ( $items ) { //Should detect if $name is an array- if so, it's actually $items
+		//Do stuff here
+	} else {
+		//echo '<div class="fpo fpo-menu"><nav>' . wp_get_nav_menu(array('theme_location' => $name, 'depth' => '9999')) . '</nav></div>'; //@TODO "Nebula" 0: wp_get_nav_menu() immediately echoes. We need one that returns. wp_get_nav_menu_items() returns, but needs menu ID (not theme locations)- maybe that's ok.
+	}
+	echo '<div class="fpo">in progress...</div>';
+}
+
+
+function fpo_social_links($accounts=array('Facebook', 'Twitter', 'Google+', 'LinkedIn', 'Youtube', 'Instagram')){
+	echo '<div class="fpo fpo-social-links">';
+	foreach ( $accounts as $account ) {
+		switch ( strtolower($account) ) {
+			case ( 'facebook' ) :
+			case ( 'fb' ) :
+				echo '<a class="fpo-social-link-item facebook" href="#"><i class="fa fa-facebook-square"></i></a>';
+				break;
+			case ( 'twitter' ) :
+				echo '<a class="fpo-social-link-item twitter" href="#"><i class="fa fa-twitter-square"></i></a>';
+				break;
+			case ( 'google+' ) :
+			case ( 'google plus' ) :
+			case ( 'googleplus' ) :
+			case ( 'google_plus' ) :
+			case ( 'google-plus' ) :
+			case ( 'gplus' ) :
+			case ( 'g+' ) :
+				echo '<a class="fpo-social-link-item google-plus" href="#"><i class="fa fa-google-plus-square"></i></a>';
+				break;
+			case ( 'linkedin' ) :
+			case ( 'linked in' ) :
+				echo '<a class="fpo-social-link-item linkedin" href="#"><i class="fa fa-linkedin-square"></i></a>';
+				break;
+			case ( 'youtube' ) :
+				echo '<a class="fpo-social-link-item youtube" href="#"><i class="fa fa-youtube"></i></a>';
+				break;
+			case ( 'instagram' ) :
+				echo '<a class="fpo-social-link-item instagram" href="#"><i class="fa fa-instagram"></i></a>';
+				break;
+			default :
+				if ( strpos($account, 'fa-') > -1 ) {
+					echo '<a class="fpo-social-link-item custom-fa-icon" href="#"><i class="fa ' . $account . '"></i></a>';
+				} elseif ( strpos($account, 'icon-') > -1 ) {
+					echo '<a class="fpo-social-link-item custom-entypo-icon" href="#"><i class="' . $account . '"></i></a>';
+				} elseif ( strpos($account, 'http') > -1 ) {
+					echo '<a class="fpo-social-link-item custom-image" href="#"><img src="' . $account . '" width="16" height="16" /></a>';
+				}
+				break;
+		}
+	}
+	echo '</div>';
+}
+
+
+function fpo_social_share($accounts=array('Facebook', 'Twitter', 'Google+', 'LinkedIn', 'Youtube', 'Instagram', 'Email')){
+	echo '<div class="fpo fpo-social-share">';
+	foreach ( $accounts as $account ) {
+		switch ( strtolower($account) ) {
+			case ( 'facebook' ) :
+			case ( 'fb' ) :
+			case ( 'like' ) :
+				echo '<a class="fpo-social-share-item facebook" href="#">[Like]</a>';
+				break;
+			case ( 'twitter' ) :
+			case ( 'tweet' ) :
+				echo '<a class="fpo-social-share-item twitter" href="#">[Tweet]</a>';
+				break;
+			case ( 'google+' ) :
+			case ( 'google plus' ) :
+			case ( 'googleplus' ) :
+			case ( 'google_plus' ) :
+			case ( 'google-plus' ) :
+			case ( 'gplus' ) :
+			case ( 'g+' ) :
+			case ( '+1' ) :
+			case ( 'plus one' ) :
+				echo '<a class="fpo-social-share-item google-plus" href="#">[+1]</a>';
+				break;
+			case ( 'linkedin' ) :
+			case ( 'linked in' ) :
+				echo '<a class="fpo-social-share-item linkedin" href="#">[LinkedIn]</a>';
+				break;
+			case ( 'pinterest' ) :
+				echo '<a class="fpo-social-share-item pinterest" href="#">[Pinterest]</a>';
+				break;
+			case ( 'email' ) :
+				echo '<a class="fpo-social-share-item email" href="#"><i class="fa fa-envelope"></i></a>';
+				break;
+			default :
+				if ( strpos($account, 'fa-') > -1 ) {
+					echo '<a class="fpo-social-share-item custom-fa-icon" href="#"><i class="fa ' . $account . '"></i></a>';
+				} elseif ( strpos($account, 'icon-') > -1 ) {
+					echo '<a class="fpo-social-share-item custom-entypo-icon" href="#"><i class="' . $account . '"></i></a>';
+				} elseif ( strpos($account, 'http') > -1 ) {
+					echo '<a class="fpo-social-share-item custom-image" href="#"><img src="' . $account . '" width="16" height="16" /></a>';
+				}
+				break;
+		}
+	}
+	echo '</div>';
+}
 
 
 //eCommerce suite, ad buckets, lightbox,

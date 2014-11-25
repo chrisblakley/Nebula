@@ -2,6 +2,38 @@
 
 /* div, h1, h2, h3, h4, h5, h6, p, span, a, a:hover, a.hover, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button, .active {-webkit-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); -o-filter: grayscale(100%); filter: grayscale(100%);} */ /* @TODO "Nebula" 0: Adding div to this list gets a white page. */
 
-body {-webkit-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); -o-filter: grayscale(100%); filter: grayscale(100%);}
+/* body {-webkit-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); -o-filter: grayscale(100%); filter: grayscale(100%);} */
+
+#wireframing-bar {position: relative; background: black; color: #fff; padding-top: 5px; padding-bottom: 5px;}
+
+a.phg {margin-left: 3px; padding-left: 15px; background: url('../images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
+	a.phg span {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	a.phg span.pinckney {color: #0099d8;}
+	a.phg span.hugo {color: #a0ce67;}
+	a.phg span.group {color: #9fa1a4;}
+	a.phg:hover span.pinckney {color: #006690;}
+	a.phg:hover span.hugo {color: #709048;}
+	a.phg:hover span.group {color: #6f7072;}
+
+.fixedbar {display: none;}
 
 img, a.logocon {-webkit-filter: none; -moz-filter: none; -ms-filter: none; -o-filter: none; filter: none;}
+
+
+
+
+.fpo-component {background: lightgrey; padding: 5px 10px 1px 10px;}
+	.fpo-component .component-name {display: block; color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 4px;}
+
+.fpo {background: lightgrey; padding: 5px 10px 5px 10px;}
+
+.fpo-menu {}
+	.fpo-menu ul.sub-menu {border: 1px solid red;}
+
+a.fpo-social-link-item {font-size: 18px; margin-right: 10px;}
+	a.fpo-social-link-item.facebook {color: #3b5998;}
+	a.fpo-social-link-item.twitter {color: #00aced;}
+	a.fpo-social-link-item.google-plus {color: #dd4b39;}
+	a.fpo-social-link-item.linkedin {color: #007bb6;}
+	a.fpo-social-link-item.youtube {color: #bb0000;}
+	a.fpo-social-link-item.instagram {color: #517fa4;}

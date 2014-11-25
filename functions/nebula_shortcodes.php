@@ -210,14 +210,14 @@ function clear_shortcode(){
 add_shortcode('map', 'map_shortcode');
 function map_shortcode($atts){
 	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '300', 'overlay' => false, "class" => '', "style" => ''), $atts) );
-	
+
 	$flags = get_flags($atts);
 	if ( in_array('overlay', $flags) ) {
 		$overlay = 'the-map-overlay';
 	} else {
 		$overlay = '';
 	}
-	
+
 	if ( $key == '' ) {
 		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO "APIs" 2: Replace with your own key to avoid designating a key every time.
 	}
@@ -254,7 +254,7 @@ function map_shortcode($atts){
 	if ( $zoom != '' ) {
 		$zoom = '&zoom=' . $zoom;
 	}
-	
+
 	$return = '<script>
 		jQuery(document).ready(function() {
 			jQuery(".the-map-overlay").on("click", function(){
@@ -262,9 +262,9 @@ function map_shortcode($atts){
 			});
 		});
 	</script>';
-	
+
 	$return .= '<div class="google-map-overlay ' . $overlay . '"><iframe class="nebula-googlemap-shortcode googlemap ' . $class . '" width="' . $width . '" height="' . $height . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="' . $style . '"></iframe></div>';
-	
+
 	return $return;
 }
 
@@ -424,19 +424,19 @@ function tooltip_shortcode($atts, $content=''){
 add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '8000', 'speed' => '1000', 'frame' => false, 'titles' => false), $atts) );
-	
+
 	if ( !$id ) {
 		$id = 'nebula-slider-' . rand(1, 10000);
 	} elseif ( strlen($id) > 0 && ctype_digit(substr($id, 0, 1)) ) {
 		$id = 'nebula-slider-' . $id;
 	}
-	
+
 	$return = '<div id="' . $id . '" class="nebula-slider-con"><ul class="bxslider ' . $id . '" style="padding-left: 0;">';
 	$return .= parse_shortcode_content(do_shortcode($content));
 	$return .= '</ul></div><!--/nebula-shortcode-slider-con-->';
-	
+
 	$flags = get_flags($atts);
-	
+
 	if ( !in_array('frame', $flags) ) {
 		$return .= '<style>
 			#' . $id . ' .bx-wrapper .bx-viewport {box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none; border: none; background: none;}
@@ -447,13 +447,13 @@ function slider_shortcode($atts, $content=''){
 			</style>';
 		}
 	}
-	
+
 	if ( in_array('titles', $flags) ) {
 		$titles= 'true';
 	} else {
 		$titles= 'false';
 	}
-	
+
 	if ( !in_array('controls', $flags) ) {
 		$controls = 'false';
 		$auto = 'true';
@@ -465,7 +465,7 @@ function slider_shortcode($atts, $content=''){
 			$auto = 'false';
 		}
 	}
-	
+
 	$return .= '<script>
 		jQuery(window).on("load", function() {
 			setTimeout(function(){
@@ -484,7 +484,7 @@ function slider_shortcode($atts, $content=''){
 			}, 1000);
 		});
 	</script>';
-	
+
 	echo $return;
 } //end slider_shortcode()
 

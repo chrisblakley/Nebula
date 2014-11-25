@@ -11,7 +11,7 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 get_header(); ?>
 
 <div class="row">
-	
+
 	<div class="eleven columns">
 		<?php if ( have_posts() ) { the_post(); } //Queue the first post, then reset before running the loop. ?>
 		<h1 class="page-title">
@@ -31,11 +31,11 @@ get_header(); ?>
 			get_template_part('loop', 'archive');
 		?>
 	</div><!--/columns-->
-	
+
 	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
-	
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

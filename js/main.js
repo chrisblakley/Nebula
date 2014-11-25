@@ -461,7 +461,8 @@ ga('send', 'pageview', {
 function gaEventTracking(){
 
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
-	//jQuery(document).on('click', '.selector', function() {
+	//jQuery(document).on('mousedown', '.selector', function(e) {
+	//  var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
@@ -479,22 +480,24 @@ function gaEventTracking(){
 
 
 	//External links
-	jQuery(document).on('click', "a[rel*='external']", function(){
+	jQuery(document).on('mousedown', "a[rel*='external']", function(e){
+		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
-		ga('send', 'event', 'External Link', linkText, destinationURL);
+		ga('send', 'event', 'External Link' + intent, linkText, destinationURL);
 	});
 
 	//PDF View/Download
-	jQuery(document).on('click', "a[href$='.pdf']", function(){
+	jQuery(document).on('mousedown', "a[href$='.pdf']", function(){
+		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var title= jQuery('title').text()
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
 		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
 		if ( linkText == '' || linkText == 'Download') {
-			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'File: ' + fileName);
+			ga('send', 'event', 'PDF View' + intent, 'From Page: ' + title, 'File: ' + fileName);
 		} else {
-			ga('send', 'event', 'PDF View', 'From Page: ' + title, 'Text: ' + linkText);
+			ga('send', 'event', 'PDF View' + intent, 'From Page: ' + title, 'Text: ' + linkText);
 		}
 	});
 
@@ -511,24 +514,27 @@ function gaEventTracking(){
 	});
 
 	//Mailto link tracking
-	jQuery(document).on('click', 'a[href^="mailto"]', function(){
+	jQuery(document).on('mousedown', 'a[href^="mailto"]', function(){
+		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
-		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
+		ga('send', 'event', 'Mailto' + intent, 'Email: ' + emailAddress);
 	});
 
 	//Telephone link tracking
-	jQuery(document).on('click', 'a[href^="tel"]', function(){
+	jQuery(document).on('mousedown', 'a[href^="tel"]', function(){
+		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
-		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call' + intent, 'Phone Number: ' + phoneNumber);
 	});
 
 	//SMS link tracking
-	jQuery(document).on('click', 'a[href^="sms"]', function(){
+	jQuery(document).on('mousedown', 'a[href^="sms"]', function(){
+		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
-		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call' + intent, 'SMS to: ' + phoneNumber);
 	});
 
 	//Comment tracking @TODO "Nebula" 0: This might not be working.
@@ -845,9 +851,10 @@ function pageSuggestion(){
 		var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
 		trySearch(phrase);
 
-		jQuery(document).on('click', 'a.suggestion', function(){
+		jQuery(document).on('mousedown', 'a.suggestion', function(e){
+			var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 			var suggestedPage = jQuery(this).text();
-			ga('send', 'event', 'Page Suggestion', 'Clicked', 'Suggested Page: ' + suggestedPage);
+			ga('send', 'event', 'Page Suggestion', 'Click' + intent, 'Suggested Page: ' + suggestedPage);
 		});
 	}
 }

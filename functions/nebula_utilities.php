@@ -1,5 +1,41 @@
 <?php
 
+$_GLOBALS['ga_v'] = 1; //Version
+$_GLOBALS['ga_cid'] = gaParseCookie(); //Anonymous Client ID
+
+//Handle the parsing of the _ga cookie or setting it to a unique identifier
+function gaParseCookie() {
+	if (isset($_COOKIE['_ga'])) {
+		list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
+		$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
+		$cid = $contents['cid'];
+	} else {
+		$cid = gaGenerateUUID();
+	}
+	return $cid;
+}
+
+//Generate UUID v4 function - needed to generate a CID when one isn't available
+function gaGenerateUUID() {
+	return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+		mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
+		mt_rand(0, 0xffff), //16 bits for "time_mid"
+		mt_rand(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
+		mt_rand(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
+		mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff) //48 bits for "node"
+	);
+}
+
+//Send Data to Google Analytics
+//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
+function gaSendData($data) {
+	$getString = 'https://ssl.google-analytics.com/collect';
+	$getString .= '?payload_data&';
+	$getString .= http_build_query($data);
+	$result = wp_remote_get($getString);
+	return $result;
+}
+
 
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
@@ -190,7 +226,7 @@ function foldersize($path) {
 //Checks to see if an array contains a string.
 function contains($str, array $arr) {
     foreach( $arr as $a ) {
-        if ( stripos($str,$a) !== false ) {
+        if ( stripos($str, $a) !== false ) {
         	return true;
         }
     }

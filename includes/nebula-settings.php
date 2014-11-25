@@ -430,7 +430,7 @@
 
 				<table class="form-table dependent functions" style="display: none;">
 			        <tr valign="top">
-			        	<th scope="row">Wireframe Styles&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Wireframe Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_wireframing">
 								<option value="default" <?php selected('default', get_option('nebula_wireframing')); ?>>Default</option>

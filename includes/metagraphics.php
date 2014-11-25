@@ -57,7 +57,12 @@
 		Windows Tiles are declared below and four additional sizes (and a duplicate color declaration) are set within browserconfig.xml. Note: I don't know why the image files name dimensions are different than the actual dimensions... It was the recommended name/values.
 	*/
 ?>
-<meta name="msapplication-TileColor" content="#0098d7"> <!-- @TODO "Graphics" 1: Designate a background color for Windows Tiles.-->
-<meta name="msapplication-TileImage" content="<?php echo get_template_directory_uri(); ?>/images/meta/mstile-144x144.png"> <!-- @TODO "Graphics" 1: Create a Windows Tile 144x144px.-->
-<meta name="msapplication-config" content="<?php echo get_template_directory_uri(); ?>/includes/ieconfig.xml"> <!-- @TODO "Graphics" 1: Create four other Windows Tile icons (various sizes).-->
+<meta name="application-name" content="<?php bloginfo('name') ?>"/>
+<meta name="msapplication-TileColor" content="#0098d7"/>
+<meta name="msapplication-square70x70logo" content="<?php echo get_template_directory_uri(); ?>/images/meta/tiny.png"/>
+<meta name="msapplication-square150x150logo" content="<?php echo get_template_directory_uri(); ?>/images/meta/square.png"/>
+<meta name="msapplication-wide310x150logo" content="<?php echo get_template_directory_uri(); ?>/images/meta/wide.png"/>
+<meta name="msapplication-square310x310logo" content="<?php echo get_template_directory_uri(); ?>/images/meta/large.png"/>
+<meta name="msapplication-notification" content="frequency=30;polling-uri=<?php bloginfo('rss_url'); ?>&amp;id=1;polling-uri2=<?php bloginfo('rss_url'); ?>&amp;id=2;polling-uri3=<?php bloginfo('rss_url'); ?>&amp;id=3;polling-uri4=<?php bloginfo('rss_url'); ?>&amp;id=4;polling-uri5=<?php bloginfo('rss_url'); ?>&amp;id=5; cycle=1"/>
+<meta name="msapplication-config" content="<?php echo get_template_directory_uri(); ?>/browserconfig.xml"> <!-- @TODO "Graphics" 1: Create four other Windows Tile icons (various sizes).-->
 

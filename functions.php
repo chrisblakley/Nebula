@@ -5,10 +5,22 @@
 
 
 /*==========================
- Include Nebula Functions Groups
+ Include Nebula Utility Functions
  ===========================*/
-require_once('functions/nebula_utilities.php'); //Nebula Utilities
 require_once('functions/nebula_settings_functions.php'); //Nebula Settings Functions
+require_once('functions/nebula_utilities.php'); //Nebula Utilities
+
+
+/*==========================
+ Google Analytics Tracking ID (Nebula Settings Functions required)
+ ===========================*/
+$GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO "Analytics" 5: Change Google Analytics Tracking ID here or in Nebula Settings (or both)!
+
+
+/*==========================
+ Include Remaining Nebula Functions Groups
+ ===========================*/
+
 require_once('functions/nebula_automations.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
 require_once('functions/nebula_admin_functions.php'); //Nebula Admin Functions
@@ -19,16 +31,12 @@ require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be commented out after launch)
 
 
+
+
 //To force override the Nebula Settings, uncomment the line below.
 //This will disable changes made from the Nebula Settings page, and only allow edits from the functions files themselves.
 //(To revert, comment out and choose "Enabled" in the Nebula Settings page)
 /* update_option('nebula_overall', 'override'); */
-
-
-/*==========================
- Google Analytics Tracking ID
- ===========================*/
-$GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO "Analytics" 5: Change Google Analytics Tracking ID here or in Nebula Settings (or both)!
 
 
 /*==========================

@@ -145,6 +145,8 @@
 				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo get_page_uri(); ?>&amp;t=<?php urlencode(get_the_title()); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
 			</noscript>
 
+			<?php do_action('nebula_body_open'); ?>
+
 			<div id="topbarcon">
 				<div class="row mobilenavcon">
 					<div class="sixteen columns clearfix">

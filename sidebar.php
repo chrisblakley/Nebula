@@ -5,10 +5,10 @@
 ?>
 
 <ul class="xoxo">
-	
+
 	<li>
 		<h3>Features</h3>
-		<?php 
+		<?php
 			if ( has_nav_menu('sidebar') ) {
 				wp_nav_menu(array('theme_location' => 'sidebar'));
 			} elseif (has_nav_menu('header') ) {
@@ -16,7 +16,7 @@
 			}
 		?>
 	</li>
-	
+
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ) : ?>
 		<?php //Primary Widget Area ?>
 	<?php endif; ?>
@@ -31,13 +31,13 @@
 			</ul>
 		</form><!--/search-->
 	</li>
-	
+
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Secondary Widget Area') ) : ?>
 		<?php //Secondary Widget Area ?>
 	<?php endif; ?>
-	
+
 	<li>
-		
+
 	<h3>Contact Us</h3>
 	<?php nebula_facebook_link(); ?>
 	<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
