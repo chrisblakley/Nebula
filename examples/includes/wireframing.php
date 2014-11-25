@@ -1,4 +1,4 @@
-<!-- <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/wireframing.css" /> -->
+<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/wireframing.css" />
 
 <!-- FPO -->
 <div class="row">
@@ -63,7 +63,7 @@
 			<div class="eight columns">
 				<?php fpo_image('unsplash'); ?>
 			</div>
-		</div>		
+		</div>
 	</div>
 </div><!--/row-->
 

@@ -763,8 +763,24 @@ function change_admin_footer_left() {
 add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right() {
 	$nebula_theme_info = wp_get_theme();
+
+	//@TODO "Nebula" 0: Set title tag for when this version was released.
 	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
-	$nebula_version_year = floor($nebula_version_split[0]/2)+2014;
+
+	//year here... @TODO "Nebula" 0: Not sure how to write a conditional for this...
+	//$nebula_version_split[0];
+	$nebula_version_year = '[YEAR]';
+	/*
+		1 = 2014
+		2 = 2015 Jan - June
+		3 = 2015 Jul - Dec
+		4 = 2016 Jan - June
+		5 = 2016 Jul - Dec
+		6 = 2017 Jan - June
+		7 = 2017 Jul - Dec
+		8 = 2018 Jan - June
+		9 = 2018 Jul - Dec
+	*/
 
 	//@TODO "Nebula" 0: This switch seems like overkill. There's gotta be a more optimized way to do this logic.
 	switch ( $nebula_version_split[1] ) {
