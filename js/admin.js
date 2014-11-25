@@ -132,7 +132,9 @@ jQuery(document).ready(function() {
 	});
 
 	//Alert confirmation if "Bulk Action" is selected when "Apply" is submitted.
-	if ( jQuery('#bulk-action-selector-top').is('*') ) {
+	//@TODO "Nebula" 0: This has several false-positives.
+	/*
+if ( jQuery('#bulk-action-selector-top').is('*') ) {
 		bulkSubmitError = 0;
 		jQuery('form').on('submit', function(){
 			if ( jQuery(this).find('#bulk-action-selector-top').val() == '-1' && jQuery(this).find('#bulk-action-selector-bottom').val() == '-1' ) {
@@ -146,6 +148,7 @@ jQuery(document).ready(function() {
 			}
 		});
 	}
+*/
 
 	if ( jQuery('.flag').is('*') ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
@@ -157,7 +160,7 @@ jQuery(document).ready(function() {
 			jQuery(this).addClass('hidden_file').css('display', 'none');
 		}
 	});
-	
+
 	jQuery('.togglehiddentodos').on('click', function(){
 		jQuery('.hidden_todo, .hidden_file').toggleClass('show-hidden-todos');
 		return false;

@@ -10,56 +10,31 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 
 get_header(); ?>
 
-<div id="maincontentareawrap" class="row">
+<div class="row">
 	<div class="sixteen columns">
+		<?php the_breadcrumb(); ?>
+		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+				<h1 class="entry-title"><?php the_title(); ?></h1>
+				<div class="entry-content">
+					<?php the_content(); ?>
 
-		<section class="sixteen colgrid">
-			<div class="container">
+					<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
+					<?php if ( current_user_can('manage_options') ) : ?>
+						<div class="container entry-manage">
+							<div class="row">
+								<hr/>
+								<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+								<hr/>
+							</div>
+						</div>
+					<?php endif; ?>
+				</div><!-- .entry-content -->
+			</article><!-- #post-## -->
 
-				<div id="bcrumbscon" class="row">
-					<?php the_breadcrumb(); ?>
-				</div><!--/row-->
+			<?php get_template_part('comments'); ?>
 
-				<div class="contentbg">
-					<div class="corner-left"></div>
-					<div class="corner-right"></div>
-
-					<?php heroslidercon('full'); ?>
-
-					<div class="row">
-						<div class="fourteen columns centered">
-
-							<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-								<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-									<h1 class="entry-title"><?php the_title(); ?></h1>
-									<div class="entry-content">
-										<?php the_content(); ?>
-
-										<?php if ( current_user_can('manage_options') ) : ?>
-											<div class="container entry-manage">
-												<div class="row">
-													<hr/>
-													<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-													<hr/>
-												</div>
-											</div>
-										<?php else : ?>
-											<hr class="articleend" />
-										<?php endif; ?>
-									</div><!-- .entry-content -->
-								</article><!-- #post-## -->
-
-								<?php get_template_part('comments'); ?>
-							<?php endwhile; ?>
-
-						</div><!--/columns-->
-					</div><!--/row-->
-
-				</div><!--/contentbg-->
-				<div class="nebulashadow floating"></div>
-			</div><!--/container-->
-		</section><!--/colgrid-->
-
+		<?php endwhile; ?>
 	</div><!--/columns-->
 </div><!--/row-->
 

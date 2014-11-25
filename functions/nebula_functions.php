@@ -8,13 +8,6 @@ if ( !isset($content_width) ) {
 	$content_width = 960;
 }
 
-//Disable Pingbacks to prevent security issues
-add_filter('xmlrpc_methods', disable_pingbacks($methods));
-function disable_pingbacks($methods) {
-   unset($methods['pingback.ping']);
-   return $methods;
-};
-
 
 //Construct the data payload
 function gaBuildData($error) {
@@ -78,24 +71,6 @@ function gaSendData($data) {
 	return $result;
 }
 
-//Check for direct access redirects, log them, then redirect without queries.
-add_action('init', 'check_direct_access');
-function check_direct_access() {
-	if ( isset($_GET['directaccess']) || array_key_exists('directaccess', $_GET) ) {
-		$attempted = ( $_GET['directaccess'] != '' ) ? $_GET['directaccess'] : 'Unknown' ;
-		$data = array(
-			'v' => 1,
-			'tid' => $GLOBALS['ga'],
-			'cid' => gaParseCookie(),
-			't' => 'event',
-			'ec' => 'Direct Template Access', //Category
-			'ea' => $attempted, //Action
-			'el' => '' //Label
-		);
-		gaSendData($data);
-		header('Location: ' . home_url('/'));
-	}
-}
 
 //Track Google Page Speed tests
 add_action('wp_footer', 'track_google_pagespeed_checks');
@@ -170,12 +145,6 @@ function admin_favicon() {
 	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico" />';
 }
 
-
-//Remove Wordpress version info from head and feeds
-add_filter('the_generator', 'complete_version_removal');
-function complete_version_removal() {
-	return '';
-}
 
 
 //Allow pages to have excerpts too
@@ -448,13 +417,6 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 	}
 }
 
-//Check referrer in order to comment
-add_action('check_comment_flood', 'check_referrer');
-function check_referrer() {
-	if ( !isset($_SERVER['HTTP_REFERER']) || $_SERVER['HTTP_REFERER'] == '' ) {
-		wp_die('Please do not access this file directly.');
-	}
-}
 
 //Prefill form fields with comment author cookie
 add_action('wp_head', 'comment_author_cookie');
@@ -473,6 +435,7 @@ function comment_author_cookie() {
 }
 
 
+
 //Nebula backup contact form (if Contact Form 7 is not available)
 add_action('wp_ajax_nebula_backup_contact_send', 'nebula_backup_contact_send');
 add_action('wp_ajax_nopriv_nebula_backup_contact_send', 'nebula_backup_contact_send');
@@ -487,70 +450,12 @@ function nebula_backup_contact_send() {
 
 
 
-//@TODO "Nebula" 0: The next two functions are in progress to pull data from a URL.
-
-//Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
-function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
-	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) ? 'https' : 'http';
-	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["PHP_SELF"];
-	return $full_url;
-}
-
-//Separate a URL into it's components. @TODO "Nebula" 0: Incomplete!
-function nebula_url_components($segment="all", $url=null) {
-	if ( !$url ) {
-		$url = nebula_requested_url();
-	}
-
-	$url_compontents = parse_url($url);
-	$host = explode('.', $url_compontents['host']);
-
-	$domain = '';
-
-	switch ($segment) {
-		case 'all' : return $url; break;
-
-		case 'protocol' : return $url_compontents['scheme']; break;
-		case 'scheme' : return $url_compontents['scheme']; break;
-
-		case 'www' :
-			if ( $host[0] == 'www' ) {
-				return 'www';
-			} else {
-				return false;
-			}
-			break;
-
-		case 'subdomain' : //@TODO "Nebula" 0: This would return the primary domain if www does not exist nor does an actual subdomain. Need to check against actual domain.
-			if ( $host[0] != 'www' && $host[0] != $domain ) {
-				return $host[0];
-			} else {
-				return false;
-			}
-			break;
-
-		case 'domain' : return $domain; break; //@TODO "Nebula" 0: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic. Then remove the tld.
-		case 'sld' : return $domain; break; //@TODO "Nebula" 0: same as above
-
-		case 'tld' : return ''; break; //@TODO "Nebula" 0: Need to compare to a list of TLDs. Maybe find an XML feed or something dynamic.
-
-		case 'host' : return $url_compontents['host']; break;
-		case 'path' : return $url_compontents['path']; break;
-		case 'file' : return basename($url_compontents['path']); break;
-
-		case 'query' : return $url_compontents['query']; break;
-		default : return $url; break;
-	}
-}
-
-
-
-
-
 //Display a random stock photo from unsplash.it
-function random_unsplash($width=800, $height=600, $raw=0) {
+function random_unsplash($width=800, $height=600, $raw=0, $randID=0) {
 	$skipList = array(35, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-	$randID = random_number_between_but_not(0, 430, $skipList);
+	if ( $randID == 0 ) {
+		$randID = random_number_between_but_not(0, 506, $skipList); //Update the second number here as more Unsplash.it photos become available.
+	}
 	if ( $raw ) {
 		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
 	} else {
@@ -607,25 +512,6 @@ function nebula_meta($meta, $secondary=1) {
 			$comment_icon = 'fa-comments';
 		}
 		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
-	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ) {
-
-		if ( $secondary ) { //Secondary here is to hide/show button counts
-			$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble');
-		} else {
-			$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none');
-		}
-
-		echo '<div class="sharing-links">';
-			echo '<div class="share-button share-facebook"><div class="fb-like post-like" data-href="' . get_page_link() . '" data-layout="' . $show_counts['facebook'] . '" data-action="like" data-show-faces="false" data-share="false"></div></div>'; //Facebook
-			echo '<div class="share-button share-twitter"><a class="twitter-share-button" href="https://twitter.com/share" data-url="' . get_page_link() . '" data-via="Great_Blakes" ' . $show_counts['twitter'] . '>Tweet</a><script type="text/javascript">window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));</script></div>';
-
-			echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div><script src="https://apis.google.com/js/platform.js" async defer></script></div>';
-
-			//echo ' <i class="icon-share"></i><a class="sharelink" href="#"> Share</a>';
-		echo '</div>';
-
-		//@TODO "Nebula" 0: Make a social accordion here.
-
 	}
 }
 
@@ -696,48 +582,6 @@ function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=fal
 	return $string[0];
 }
 
-//Text limiter by words
-function string_limit_words($string, $word_limit){
-	$limited[0] = $string;
-	$limited[1] = 0;
-	$words = explode(' ', $string, ($word_limit + 1));
-	if(count($words) > $word_limit){
-		array_pop($words);
-		$limited[0] = implode(' ', $words);
-		$limited[1] = 1;
-	}
-	return $limited;
-}
-
-if ( array_key_exists('varcheck', $_GET) ) {
-	$varcheck = false;
-	add_action('init', 'varcheck');
-	function varcheck() {
-		if ( !function_exists('locate_and_check_global_variables') && !$varcheck ) {
-			echo '<p class="varcheck" style="display: none;">vars-will-be-checked-next-reload</p>';
-			$varcheck = true;
-		}
-	}
-}
-
-//Word limiter by characters
-function word_limit_chars($string, $charlimit, $continue=false){
-	// 1 = "Continue Reading", 2 = "Learn More"
-	if(strlen(strip_tags($string, '<p><span><a>')) <= $charlimit){
-		$newString = strip_tags($string, '<p><span><a>');
-	} else{
-		$newString = preg_replace('/\s+?(\S+)?$/', '', substr(strip_tags($string, '<p><span><a>'), 0, ($charlimit + 1)));
-		if($continue == 1){
-			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Continue reading <span class="meta-nav">&rarr;</span></a>';
-		} elseif($continue == 2){
-			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Learn more &raquo;</a>';
-		} else{
-			$newString = $newString . '&hellip;';
-		}
-	}
-	return $newString;
-}
-
 
 //Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
 //Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
@@ -767,6 +611,18 @@ function nebula_ajax_navigator() {
 	include('includes/navigator.php');
 	//include('includes/navigat-holder.php');
 	exit();
+}
+
+
+//Replace text on password protected posts to be more minimal
+add_filter('the_password_form', 'nebula_password_form_simplify');
+function nebula_password_form_simplify() {
+    $output  = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">';
+	    $output .= '<span>Password: </span>';
+	    $output .= '<input name="post_password" type="password" size="20" />';
+	    $output .= '<input type="submit" name="Submit" value="Go" />';
+    $output .= '</form>';
+    return $output;
 }
 
 
@@ -950,6 +806,10 @@ function redirect_single_post() {
     }
 }
 
+//Remove capital P core function
+remove_filter('the_title', 'capital_P_dangit', 11);
+remove_filter('the_content', 'capital_P_dangit', 11);
+remove_filter('comment_text', 'capital_P_dangit', 31);
 
 //Add default posts and comments RSS feed links to head
 add_theme_support('automatic-feed-links');
@@ -992,39 +852,11 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 }
 
 
-//PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
-//Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
-//Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
-require_once TEMPLATEPATH . '/includes/Mobile_Detect.php'; //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
-$GLOBALS["mobile_detect"] = new Mobile_Detect();
+//Add custom body classes
+add_filter('body_class', 'nebula_body_classes');
+function nebula_body_classes($classes) {
 
-add_filter('body_class', 'mobile_body_class');
-function mobile_body_class($classes) {
-
-	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
-		$classes[] = 'mobile';
-	} else {
-		$classes[] = 'no-mobile';
-	}
-
-	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
-		$classes[] = 'tablet';
-	}
-
-	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
-		$classes[] = 'ios';
-	}
-
-	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
-		$classes[] = 'androidos';
-	}
-
-	return $classes;
-}
-
-//Add body classes based on WP core browser detection
-add_filter('body_class', 'browser_body_class');
-function browser_body_class($classes) {
+	//Browsers
 	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
 
 	//$browser = get_browser(null, true); //@TODO "Nebula" 0: Find a server this works on and then wrap in if $browser, then echo the version number too
@@ -1057,12 +889,28 @@ function browser_body_class($classes) {
     	$classes[] = 'iphone';
     }
 
-    return $classes;
-}
 
-//Add additional body classes including ancestor IDs and directory structures
-add_filter('body_class', 'page_name_body_class');
-function page_name_body_class($classes) {
+	//Mobile
+	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
+		$classes[] = 'mobile';
+	} else {
+		$classes[] = 'no-mobile';
+	}
+
+	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
+		$classes[] = 'tablet';
+	}
+
+	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
+		$classes[] = 'ios';
+	}
+
+	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
+		$classes[] = 'androidos';
+	}
+
+
+	//Post Information
 	global $post;
 	$segments = explode('/', trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ));
 	$parents = get_post_ancestors( $post->ID );
@@ -1077,7 +925,55 @@ function page_name_body_class($classes) {
 	}
 	$nebula_theme_info = wp_get_theme();
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
-	return $classes;
+
+
+    return $classes;
+}
+
+
+
+//Add additional classes to post wrappers @TODO: Finish implementing this!
+add_filter('post_class', 'nebula_post_classes');
+function nebula_post_classes($classes) {
+    global $wp_query;
+    if ( $wp_query->current_post == 0 ) { //If first post in a query
+        $classes[] = 'first-post';
+    }
+    return $classes;
+}
+
+
+//Make sure attachment URLs match the protocol (to prevent mixed content warnings).
+add_filter('wp_get_attachment_url', 'wp_get_attachment_url_example');
+function wp_get_attachment_url_example($url) {
+    $http  = site_url(false, 'http');
+    $https = site_url(false, 'https');
+
+    if ( $_SERVER['HTTPS'] == 'on' ) {
+        return str_replace( $http, $https, $url );
+    } else {
+        return $url;
+    }
+}
+
+
+//Add more fields to attachments //@TODO "Nebula" 0: Enable this as needed. The below example adds a "License" field.
+//add_filter('attachment_fields_to_edit', 'nebula_attachment_fields', 10, 2);
+function nebula_attachment_fields($form_fields, $post) {
+    $field_value = get_post_meta($post->ID, 'license', true);
+    $form_fields['license'] = array(
+        'value' => $field_value ? $field_value : '',
+        'label' => 'License',
+        'helps' => 'Specify the license type used for this image'
+    );
+    return $form_fields;
+}
+//add_action('edit_attachment', 'nebula_save_attachment_fields');
+function nebula_save_attachment_fields($attachment_id) {
+    $license = $_REQUEST['attachments'][$attachment_id]['license'];
+    if ( isset($license) ) {
+        update_post_meta($attachment_id, 'license', $license);
+    }
 }
 
 
@@ -1182,7 +1078,7 @@ function vimeo_meta($videoID) {
 
 function youtube_meta($videoID) {
 	$xml = simplexml_load_string(file_get_contents("https://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
-	$GLOBALS['youtube_meta']['origin'] = baseDomain();
+	$GLOBALS['youtube_meta']['origin'] = nebula_url_components('basedomain');
 	$GLOBALS['youtube_meta']['id'] = $videoID;
 	$GLOBALS['youtube_meta']['title'] = $xml->title;
 	$GLOBALS['youtube_meta']['safetitle'] = str_replace(" ", "-", $GLOBALS['youtube_meta']['title']);
@@ -1196,89 +1092,7 @@ function youtube_meta($videoID) {
 }
 
 
-function baseDomain($str='') {
-	if ( $str == '' ) {
-		$str = home_url();
-	}
-    $url = @parse_url( $str );
-    if ( empty( $url['host'] ) ) return;
-    $parts = explode( '.', $url['host'] );
-    $slice = ( strlen( reset( array_slice( $parts, -2, 1 ) ) ) == 2 ) && ( count( $parts ) > 2 ) ? 3 : 2;
-    $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
-    return $protocol . implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
-}
 
-
-//Traverse multidimensional arrays
-function in_array_r($needle, $haystack, $strict = true) {
-    foreach ($haystack as $item) {
-        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
-            return true;
-        }
-    }
-    return false;
-}
-
-//Recursive Glob
-function glob_r($pattern, $flags = 0) {
-    $files = glob($pattern, $flags);
-    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
-    }
-    return $files;
-}
-
-//Add up the filesizes of files in a directory (and it's sub-directories)
-function foldersize($path) {
-	$total_size = 0;
-	$files = scandir($path);
-	$cleanPath = rtrim($path, '/') . '/';
-	foreach($files as $t) {
-		if ($t<>"." && $t<>"..") {
-			$currentFile = $cleanPath . $t;
-			if (is_dir($currentFile)) {
-				$size = foldersize($currentFile);
-				$total_size += $size;
-			} else {
-				$size = filesize($currentFile);
-				$total_size += $size;
-			}
-		}
-	}
-	return $total_size;
-}
-
-//Checks to see if an array contains a string.
-function contains($str, array $arr) {
-    foreach( $arr as $a ) {
-        if ( stripos($str,$a) !== false ) {
-        	return true;
-        }
-    }
-    return false;
-}
-
-//Generate a random integer between two numbers with an exclusion array
-//Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
-function random_number_between_but_not($min=null, $max=null, $butNot=null) {
-    if ( $min > $max ) {
-        return 'Error: min is greater than max.'; //@TODO "Nebula" 0: If min is greater than max, swap the variables.
-    }
-    if ( gettype($butNot) == 'array' ) {
-        foreach( $butNot as $key => $skip ){
-            if( $skip > $max || $skip < $min ){
-                unset($butNot[$key]);
-            }
-        }
-        if ( count($butNot) == $max-$min+1 ) {
-            return 'Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.';
-        }
-        while ( in_array(($randnum = rand($min, $max)), $butNot));
-    } else {
-        while (($randnum = rand($min, $max)) == $butNot );
-    }
-    return $randnum;
-}
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
 function nebula_tel_link($phone, $postd=''){
@@ -1358,24 +1172,6 @@ function nebula_phone_format($number, $format=''){
 	}
 }
 
-
-//Automatically convert HEX colors to RGB.
-function hex2rgb($color) {
-	if ( $color[0] == '#' ) {
-		$color = substr($color, 1);
-	}
-	if ( strlen($color) == 6 ) {
-		list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-	} elseif ( strlen($color) == 3 ) {
-		list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
-	} else {
-		return false;
-	}
-	$r = hexdec($r);
-	$g = hexdec($g);
-	$b = hexdec($b);
-	return array('r' => $r, 'g' => $g, 'b' => $b);
-}
 
 
 //Footer Widget Counter

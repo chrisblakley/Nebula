@@ -10,66 +10,50 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 
 get_header(); ?>
 
-<div id="maincontentareawrap" class="row">
-	<div class="thirteen columns">
-
-		<section class="sixteen colgrid">
-			<div class="container">
-
-				<div id="bcrumbscon" class="row">
-					<?php the_breadcrumb(); ?>
-				</div><!--/row-->
-
-				<div class="contentbg">
-					<div class="corner-left"></div>
-					<div class="corner-right"></div>
-
-					<?php heroslidercon(); ?>
-
-					<div class="row">
-						<div class="fourteen columns centered">
-							<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-								<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-									<h1 class="entry-title"><?php the_title(); ?></h1>
-
-									<div class="entry-meta">
-										<hr/>
-							        	<?php //nebula_meta('by'); ?> <?php nebula_meta('on', 0); ?> <?php nebula_meta('tags'); ?> <span class="commentmetacon"><?php nebula_meta('social', 0); ?></span>
-
-							        	<hr/>
-							        </div>
-
-									<div class="entry-content">
-										<?php the_content(); ?>
-
-										<?php if ( current_user_can('manage_options') ) : ?>
-											<div class="container entry-manage">
-												<div class="row">
-													<hr/>
-													<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-													<hr/>
-												</div>
-											</div>
-										<?php else : ?>
-											<hr class="articleend" />
-										<?php endif; ?>
-									</div><!-- .entry-content -->
-								</article><!-- #post-## -->
-
-								<?php get_template_part('comments'); ?>
-							<?php endwhile; ?>
-						</div><!--/columns-->
-					</div><!--/row-->
-
-				</div><!--/contentbg-->
-				<div class="nebulashadow floating"></div>
-			</div><!--/container-->
-		</section><!--/colgrid-->
-
+<div class="row">
+	<div class="sixteen columns">
+		<?php the_breadcrumb(); ?>
+		<hr/>
 	</div><!--/columns-->
-	<div class="three columns">
+</div><!--/row-->
+
+<div class="row">
+
+	<div class="eleven columns">
+		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+				<h1 class="entry-title"><?php the_title(); ?></h1>
+
+				<div class="entry-meta">
+					<hr/>
+		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
+		        	<hr/>
+		        </div>
+
+				<div class="entry-content">
+					<?php the_content(); ?>
+
+					<?php if ( current_user_can('manage_options') ) : ?>
+						<div class="container entry-manage">
+							<div class="row">
+								<hr/>
+								<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+								<hr/>
+							</div>
+						</div>
+					<?php endif; ?>
+				</div><!-- .entry-content -->
+			</article><!-- #post-## -->
+
+			<?php get_template_part('comments'); ?>
+
+		<?php endwhile; ?>
+	</div><!--/columns-->
+
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

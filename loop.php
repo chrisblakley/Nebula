@@ -4,7 +4,7 @@
  */
 ?>
 
-<?php /* Display navigation to next/previous pages when applicable @TODO: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
+<?php /* Display navigation to next/previous pages when applicable @TODO "Nebula" 0: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
 <?php if ( $wp_query->max_num_pages > 1 ) : ?>
 	<nav id="nav-above" class="navigation">
 		<div class="nav-previous"><?php next_posts_link('<span class="meta-nav">&larr;</span> Older posts'); ?></div>
@@ -34,50 +34,50 @@
 
 	<?php //Display posts in a Gallery ?>
 	<?php if ( in_category('gallery') ) : ?>
-		
+
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-			
+
 			<div class="entry-meta">
 				<hr/>
-				<?php //nebula_meta('by'); ?> <?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
+				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
 				<hr/>
 			</div>
-			
+
 			<div class="entry-content">
 				<?php if ( post_password_required() ) : ?>
 					<?php the_content(); ?>
 				<?php else : ?>
 					<?php $images = get_children( array('post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => 'image', 'orderby' => 'menu_order', 'order' => 'ASC', 'numberposts' => 999) ); ?>
 					<?php if ($images) : ?>
-						<?php 
+						<?php
 							$total_images = count($images);
 							$image = array_shift($images);
 							$image_img_tag = wp_get_attachment_image($image->ID, 'thumbnail');
 						?>
-					
+
 						<div class="gallery-thumb">
 							<a class="size-thumbnail" href="<?php the_permalink(); ?>"><?php echo $image_img_tag; ?></a>
 						</div>
-					
-						<p><em><?php printf('<i class="fa fa-picture-o"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
-					
+
+						<p><em><?php printf( '<i class="fa fa-picture-o"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
+
 					<?php endif; // if $images ?>
-				
+
 				<?php echo nebula_the_excerpt('Read More &raquo;', 50, 1); ?>
-				
+
 				<?php endif; //post_password_required. ?>
 			</div>
 
 			<footer class="entry-utility">
 				<a href="<?php echo get_term_link('gallery', 'category'); ?>">More Galleries</a>
-				
+
 				<?php
 					if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 						comments_popup_link('Leave a comment', '1 Comment', '% Comments');
 					}
 				?>
-				
+
 				<?php if ( current_user_can('manage_options') ) : ?>
 					<div class="container entry-manage">
 						<div class="row">
@@ -86,8 +86,6 @@
 							<hr/>
 						</div>
 					</div>
-				<?php else : ?>
-					<hr class="articleend" />
 				<?php endif; ?>
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
@@ -96,15 +94,15 @@
 	<?php else : ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-						
+
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
 			<div class="entry-meta">
 				<hr/>
-				<?php //nebula_meta('by'); ?> <?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
+				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
 				<hr/>
 			</div>
 			<?php endif; ?>
-			
+
 			<?php if ( is_archive() || is_search() ) : ?>
 				<div class="entry-summary">
 					<?php echo nebula_the_excerpt('', 50, 1); ?>
@@ -113,7 +111,7 @@
 			<?php else : ?>
 				<div class="entry-content">
 					<?php echo nebula_the_excerpt('Read More &raquo;', 70, 1); ?>
-					<?php wp_link_pages( array('before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>') ); //@TODO: Pagenavi ?>
+					<?php wp_link_pages( array('before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>') ); //@TODO "Nebula" 0: Pagenavi ?>
 				</div>
 			<?php endif; ?>
 
@@ -125,16 +123,14 @@
 						<hr/>
 					</div>
 				</div>
-			<?php else : ?>
-				<hr class="articleend" />
 			<?php endif; ?>
 		</article>
-		
-		<?php
-			if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
-				comments_template('', true);
-			}
-		?>
+
+		<?php if ( nebula_settings_conditional('nebula_comments', 'disabled') ) : ?>
+			<div id="nebulacommentswrapper">
+				<?php comments_template('', true); ?>
+			</div><!--/nebulacommentswrapper-->
+		<?php endif; ?>
 
 	<?php endif; //End if in Gallery ?>
 

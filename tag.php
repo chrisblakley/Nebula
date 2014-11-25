@@ -10,40 +10,18 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 
 get_header(); ?>
 
-<div id="maincontentareawrap" class="row">
-	<div class="thirteen columns">
-		
-		<section class="sixteen colgrid">
-			<div class="container">
-				
-				<div id="bcrumbscon" class="row">
-					<?php the_breadcrumb(); ?>
-				</div><!--/row-->
-				
-				<div class="contentbg">
-					<div class="corner-left"></div>
-					<div class="corner-right"></div>
-					
-					<br/><br/>
-					
-					<div class="row">
-						<div class="fourteen columns centered">
-							
-							<h1>Tag Archives: <?php echo single_tag_title('', false); ?></h1>
-							<?php get_template_part('loop', 'tag'); ?>
-							
-						</div><!--/columns-->
-					</div><!--/row-->
-										
-				</div><!--/contentbg-->
-				<div class="nebulashadow floating"></div>
-			</div><!--/container-->
-		</section><!--/colgrid-->
-		
+<div class="row">
+
+	<div class="eleven columns">
+		<?php the_breadcrumb(); ?>
+		<h1>Tag Archives: <?php echo single_tag_title('', false); ?></h1>
+		<?php get_template_part('loop', 'tag'); ?>
 	</div><!--/columns-->
-	<div class="three columns">
+
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

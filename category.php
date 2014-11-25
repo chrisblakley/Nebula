@@ -8,55 +8,26 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 	exit;
 }
 
-//Redirect "Ideas" and "Resources" category archives to their actual pages.
-if ( is_category('Ideas') ) {
-	header('Location: ' . get_permalink(87));
-} elseif ( is_category('Resources') ) {
-	header('Location: ' . get_permalink(90));
-}
-
 get_header(); ?>
 
-<div id="maincontentareawrap" class="row">
-	<div class="thirteen columns">
-		
-		<section class="sixteen colgrid">
-			<div class="container">
-				
-				<div id="bcrumbscon" class="row">
-					<?php the_breadcrumb(); ?>
-				</div><!--/row-->
-				
-				<div class="contentbg">
-					<div class="corner-left"></div>
-					<div class="corner-right"></div>
-					
-					<br/><br/>
-					
-					<div class="row">
-						<div class="fourteen columns centered">
-							
-							<h1>Archive: <span style="white-space: nowrap;"><?php echo single_cat_title('', false); ?></span></h1>
-							<?php
-								$category_description = category_description();
-								if ( !empty($category_description) ) {
-									echo '' . $category_description . '';
-								}
-								get_template_part('loop', 'category');
-							?>
-							
-						</div><!--/columns-->
-					</div><!--/row-->
-										
-				</div><!--/contentbg-->
-				<div class="nebulashadow floating"></div>
-			</div><!--/container-->
-		</section><!--/colgrid-->
-		
+<div class="row">
+
+	<div class="eleven columns">
+		<?php the_breadcrumb(); ?>
+		<h1>Category Archives: <?php echo single_cat_title('', false); ?></h1>
+			<?php
+				$category_description = category_description();
+				if ( !empty($category_description) ) {
+					echo '' . $category_description . '';
+				}
+				get_template_part('loop', 'category');
+			?>
 	</div><!--/columns-->
-	<div class="three columns">
+
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
+
 </div><!--/row-->
 
 <?php get_footer(); ?>

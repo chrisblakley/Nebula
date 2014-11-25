@@ -29,6 +29,27 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 }
 
 
+//Placeholder image
+//@TODO "Nebula" 0: Come up with a way for the "X" to appear in the div without it looking bad (currently stretching the PNG).
+function fpo_image($type='none', $width='100%', $height='200px', $background='', $color='#000', $styles='', $classes='') {
+
+	$imgsrc = ( $type == 'unsplash' || $type == 'photo' ) ? random_unsplash(800, 600, 1) : '';
+
+	$return = '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $background . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $styles . '">';
+
+	if ( $imgsrc == '' ) {
+		$return .= '<svg x="0px" y="0px" width="100%" height="100%" style="border: 1px solid ' . $color . ';">
+					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
+					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+				</svg>';
+	}
+
+	$return .= '</div>';
+
+	echo $return;
+}
+
+
 //Placeholder form
 function fpo_form($fields=array('Name', 'Email', 'Message'), $submit="Send", $action=null) {
 

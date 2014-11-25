@@ -10,64 +10,40 @@ if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
 
 get_header(); ?>
 
-<div id="maincontentareawrap" class="row">
-	<div class="thirteen columns">
+<div class="row">
 
-		<section class="sixteen colgrid">
-			<div class="container">
+	<div class="ten columns">
+		<?php the_breadcrumb(); ?>
+		<?php if ( have_posts() ) : ?>
+			<h1>Search Results <?php get_search_query(); ?></h1>
+			<?php get_search_form(); ?>
+		<?php else : ?>
+			<h1>No Results Found</h1>
+			<?php get_search_form(); ?>
 
-				<div id="bcrumbscon" class="row">
-					<?php the_breadcrumb(); ?>
-				</div><!--/row-->
-
-				<div class="contentbg">
-					<div class="corner-left"></div>
-					<div class="corner-right"></div>
-
-					<br/><br/>
-
-					<div class="row">
-						<div class="fourteen columns centered searchcon">
-							<?php if ( have_posts() ) : ?>
-								<h1>Search Results <?php get_search_query(); ?></h1>
-								<?php get_search_form(); echo '<script>jQuery("#searchform input#s").focus();</script>' . PHP_EOL; ?>
-							<?php else : ?>
-								<h1>No Results Found</h1>
-
-								<script>
-									var badSearchTerm = jQuery('#searchform input#s').val();
-									ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm);
-								</script>
-							<?php endif; ?>
-
-							<?php if ( have_posts() ) : ?>
-								<p>Your search criteria returned
-								<?php
-									$search_results = &new WP_Query("s=$s&showposts=-1");
-									echo $search_results->post_count . ' results.';
-									wp_reset_query();
-								?>
-								</p>
-								<?php get_template_part('loop', 'search'); ?>
-							<?php else : ?>
-								<p>Your search criteria returned 0 results.</p>
-								<?php get_search_form(); echo '<script>jQuery("#searchform input#s").focus();</script>' . PHP_EOL; ?>
-
-								<?php //@TODO: List a few popular posts here. ?>
-
-							<?php endif; ?>
-						</div><!--/columns-->
-					</div><!--/row-->
-
-				</div><!--/contentbg-->
-				<div class="nebulashadow floating"></div>
-			</div><!--/container-->
-		</section><!--/colgrid-->
-
+			<script>
+				var badSearchTerm = jQuery('#s').val();
+				ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
+			</script>
+		<?php endif; ?>
+		<?php if ( have_posts() ) : ?>
+			<p>Your search criteria returned
+			<?php
+				$search_results = &new WP_Query("s=$s&showposts=-1");
+				echo $search_results->post_count . ' results.';
+				wp_reset_query();
+			?>
+			</p>
+			<?php get_template_part('loop', 'search'); ?>
+		<?php else : ?>
+			<p>Your search criteria returned 0 results.</p>
+		<?php endif; ?>
 	</div><!--/columns-->
-	<div class="three columns">
+
+	<div class="five columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
+
 </div><!--/row-->
 
 <?php get_footer(); ?>
