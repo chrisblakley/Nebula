@@ -337,6 +337,9 @@
 		<h3>Browser</h3>
 		<?php $browser_name = ( $GLOBALS['browser_detect']['browser_name'] == 'msie' ) ? 'Internet Explorer' : $GLOBALS['browser_detect']['browser_name']; ?>
 		<p><?php echo ucwords($browser_name); ?> <?php echo $GLOBALS['browser_detect']['browser_math_number']; ?></p>
+		<!-- Other detected browser info:
+			<?php var_dump($GLOBALS['browser_detect']); ?>
+		-->
 
 		<h3>Features</h3>
 		<p class="jsdetection features-info">Enable JavaScript to detect features.</p>

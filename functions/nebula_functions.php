@@ -820,30 +820,28 @@ function nebula_body_classes($classes) {
 	//$classes[] = strtolower(str_replace(' ', '_', nebula_device_detect())); //Add Device info to body classes //@TODO "Nebula" 0: Enable once better detection is set up.
 	$classes[] = strtolower(str_replace(' ', '_', nebula_os_detect())); //Add Operating System info to body classes
 	$classes[] = strtolower(str_replace(' ', '_', wp_browser_detect())); //Add Browser info to body classes
+	$classes[] = str_replace(' ', '_', $GLOBALS['browser_detect']['os']) . '_' . str_replace('.', '-', $GLOBALS['browser_detect']['os_number']); //Alternate OS detection with OS version too
+	$classes[] = str_replace(' ', '_', $GLOBALS['browser_detect']['browser_working']); //Rendering engine
+	$classes[] = str_replace(' ', '_', $GLOBALS['browser_detect']['browser_name']) . '_' . str_replace('.', '-', $GLOBALS['browser_detect']['browser_math_number']); //Browser name and major version number
 
+	//Mobile
 	if ( $is_iphone ) {
     	$classes[] = 'iphone';
     }
-
-	//Mobile
 	if ( $GLOBALS["mobile_detect"]->isMobile() ) {
 		$classes[] = 'mobile';
 	} else {
 		$classes[] = 'no-mobile';
 	}
-
 	if ( $GLOBALS["mobile_detect"]->isTablet() ) {
 		$classes[] = 'tablet';
 	}
-
 	if ( $GLOBALS["mobile_detect"]->isiOS() ) {
 		$classes[] = 'ios';
 	}
-
 	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ) {
 		$classes[] = 'androidos';
 	}
-
 
 	//Post Information
 	global $post;
@@ -853,7 +851,7 @@ function nebula_body_classes($classes) {
 		$classes[] = 'ancestor-id-' . $parent;
 	}
 	foreach ( $segments as $segment ) {
-		$classes[] = $segment;
+		$classes[] = 'ancestor-of-' . $segment;
 	}
 	foreach ( get_the_category($post->ID) as $category ) {
 		$classes[] = 'cat-' . $category->cat_ID . '-id';

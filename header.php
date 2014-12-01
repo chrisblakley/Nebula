@@ -140,7 +140,7 @@
 			<div id="fb-root"></div>
 
 			<noscript>
-				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo get_page_uri(); ?>&amp;t=<?php urlencode(get_the_title()); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo nebula_url_components('all'); ?>&amp;t=<?php echo urlencode(get_the_title($post->ID)); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
 			</noscript>
 
 			<?php do_action('nebula_body_open'); ?>
