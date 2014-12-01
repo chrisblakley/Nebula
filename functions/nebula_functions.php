@@ -817,12 +817,15 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 add_filter('body_class', 'nebula_body_classes');
 function nebula_body_classes($classes) {
 
-	//$classes[] = strtolower(str_replace(' ', '_', nebula_device_detect())); //Add Device info to body classes //@TODO "Nebula" 0: Enable once better detection is set up.
-	$classes[] = strtolower(str_replace(' ', '_', nebula_os_detect())); //Add Operating System info to body classes
-	$classes[] = strtolower(str_replace(' ', '_', wp_browser_detect())); //Add Browser info to body classes
-	$classes[] = str_replace(' ', '_', $GLOBALS['browser_detect']['os']) . '_' . str_replace('.', '-', $GLOBALS['browser_detect']['os_number']); //Alternate OS detection with OS version too
-	$classes[] = str_replace(' ', '_', $GLOBALS['browser_detect']['browser_working']); //Rendering engine
-	$classes[] = str_replace(' ', '_', $GLOBALS['browser_detect']['browser_name']) . '_' . str_replace('.', '-', $GLOBALS['browser_detect']['browser_math_number']); //Browser name and major version number
+	$spaces_and_dots = array(' ', '.');
+	$underscores_and_hyphens = array('_', '-');
+
+	//$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_device_detect())); //Add Device info to body classes //@TODO "Nebula" 0: Enable once better detection is set up.
+	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_os_detect())); //Add Operating System info to body classes
+	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, wp_browser_detect())); //Add Browser info to body classes
+	$classes[] = str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['os']) . '_' . str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['os_number']); //Alternate OS detection with OS version too
+	$classes[] = str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_working']); //Rendering engine
+	$classes[] = str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_name']) . '_' . str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_math_number']); //Browser name and major version number
 
 	//Mobile
 	if ( $is_iphone ) {
