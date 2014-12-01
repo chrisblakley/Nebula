@@ -1,5 +1,7 @@
 <?php
 
+
+
 //Create a placeholder box as an FPO element
 function fpo($title='FPO', $description='', $icon='', $width='100%', $height="250px", $bg='#ddd', $color=0, $styles='', $classes='') {
 	$safe_title = strtolower(str_replace(' ', '-', $title));
@@ -180,34 +182,65 @@ function wireframe_bar(){
 
 	echo '<div id="wireframing-bar" class="container">
 		<div class="row">
-			<div class="eight columns">
-				<a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>
+			<div class="sixteen columns">
+				<ul class="two_up tiles">
+					<li><a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a></li>
+					<li style="text-align: right;">';
+					if ( is_user_logged_in() ) {
+						echo '<span>' . $greetings[array_rand($greetings)] . ', <a href="' . get_admin_url() . '"><strong>' . $current_user->user_firstname . '</strong></a>.</span>';
+					} else {
+						echo '<span><a href="' . wp_login_url(get_permalink()) . '"><strong>Login</strong></a></span>';
+					}
+					echo '</li>
+				</ul>
 			</div>
-
-			<div class="eight columns" style="text-align: right;">';
-				if ( is_user_logged_in() ) {
-					echo '<span>' . $greetings[array_rand($greetings)] . ', <a href="' . get_admin_url() . '"><strong>' . $current_user->user_firstname . '</strong></a>.</span>';
-				} else {
-					echo '<span><a href="' . wp_login_url(get_permalink()) . '"><strong>Login</strong></a></span>';
-				}
-			echo '</div>
 		</div>
 	</div>';
 }
 
 
 //Top header for each component
-function fpo_component($component='Component'){
-	echo '<div class="fpo-component"><strong class="component-name fpo-' . strtolower(str_replace(' ', '-', $component)) . '">' . $component . '</strong></div><!-- /fpo-component (' . $component . ') -->';
+function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
+
+	if ( 1==2 ) { //@TODO "Nebula" 0: If there are more than one comments
+		$comment_icon = 'fa-comments';
+	} elseif ( 1==2 ) { //@TODO "Nebula" 0: If there is only one comment
+		$comment_icon = 'fa-comment';
+	} else {
+		$comment_icon = 'fa-comment-o';
+	}
+
+	echo '<div class="fpo-component-con fpo-component' . $open . '">
+		<div class="component-name fpo-' . strtolower(str_replace(' ', '-', $component)) . '">
+			<i class="component-icon fa ' . $icon . '"></i> <strong>' . $component . '</strong><a class="component-comment-toggle" href="#"><i class="component-icon fa ' . $comment_icon . '"></i></a>
+		</div><!-- /component-name -->
+		<div class="component-comment-drawer">
+			<div class="nebulashadow bulging" style="height: 10px;"></div>
+			<strong class="comment-header">0 Comments</strong>
+			<p>Comment functionality coming soon.</p>
+		</div>
+	</div><!-- /fpo-component (' . $component . ') -->';
+
+}
+
+//Top header for each component (with opening .fpo div)
+function fpo_component_start($component='Component', $icon='fa-cube'){
+	fpo_component($component, $icon, '');
+	echo '<div class="fpo">';
+}
+
+//Closes .fpo div (from fpo_component_start)
+function fpo_component_end(){
+	echo '</div><!-- /fpo -->';
 }
 
 //Placeholder breadcrumbs
 //$crumbs parameter will need to be passed as an array('', '', '').
 function fpo_breadcrumbs($crumbs=''){
 	if ( $crumbs == '' ) {
-		echo the_breadcrumb();
+		echo '<div class="fpo-bcrumbs">' . the_breadcrumb() . '</div>'; //@TODO "Nebula" 0: the_breadcrumb() needs to return, not echo...
 	} else {
-		echo '<div class="fpo" id="fpo-bcrumbs"><nav class="breadcrumbs"><a href="' . home_url('/') . '"><i class="fa fa-home"></i></a>';
+		echo '<div id="fpo-bcrumbs"><nav class="breadcrumbs"><a href="' . home_url('/') . '"><i class="fa fa-home"></i></a>';
 		$crumb_count = count($crumbs)-1;
 		$crumb_iteration = 0;
 		foreach ( $crumbs as $crumb ) {
@@ -232,12 +265,12 @@ function fpo_menu($name='header', $items=array()){
 	} else {
 		//echo '<div class="fpo fpo-menu"><nav>' . wp_get_nav_menu(array('theme_location' => $name, 'depth' => '9999')) . '</nav></div>'; //@TODO "Nebula" 0: wp_get_nav_menu() immediately echoes. We need one that returns. wp_get_nav_menu_items() returns, but needs menu ID (not theme locations)- maybe that's ok.
 	}
-	echo '<div class="fpo">in progress...</div>';
+	echo '<div class="fpo-menu">in progress...</div>';
 }
 
 
 function fpo_social_links($accounts=array('Facebook', 'Twitter', 'Google+', 'LinkedIn', 'Youtube', 'Instagram')){
-	echo '<div class="fpo fpo-social-links">';
+	echo '<div class="fpo-social-links">';
 	foreach ( $accounts as $account ) {
 		switch ( strtolower($account) ) {
 			case ( 'facebook' ) :
@@ -282,7 +315,7 @@ function fpo_social_links($accounts=array('Facebook', 'Twitter', 'Google+', 'Lin
 
 
 function fpo_social_share($accounts=array('Facebook', 'Twitter', 'Google+', 'LinkedIn', 'Youtube', 'Instagram', 'Email')){
-	echo '<div class="fpo fpo-social-share">';
+	echo '<div class="fpo-social-share">';
 	foreach ( $accounts as $account ) {
 		switch ( strtolower($account) ) {
 			case ( 'facebook' ) :
@@ -327,6 +360,11 @@ function fpo_social_share($accounts=array('Facebook', 'Twitter', 'Google+', 'Lin
 		}
 	}
 	echo '</div>';
+}
+
+
+function fpo_text($text='') {
+	echo '<div class="fpo-text">' . $text . '</div>';
 }
 
 

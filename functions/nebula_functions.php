@@ -101,6 +101,7 @@ if ( function_exists('remove_theme_support') ) {
 
 //Add new image sizes
 add_image_size('example', 32, 32, 1);
+add_image_size('open_graph', 560, 560, 1);
 
 
 //Dynamic Page Titles
@@ -385,6 +386,14 @@ function nebula_backup_contact_send() {
 	exit();
 }
 
+
+
+function pinckneyhugogroup($anim=false){
+	if ( $anim ) {
+		$anim = 'anim';
+	}
+	echo '<a class="phg ' . $anim . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
+}
 
 
 //Display a random stock photo from unsplash.it
@@ -808,39 +817,13 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ) {
 add_filter('body_class', 'nebula_body_classes');
 function nebula_body_classes($classes) {
 
-	//Browsers
-	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
+	//$classes[] = strtolower(str_replace(' ', '_', nebula_device_detect())); //Add Device info to body classes //@TODO "Nebula" 0: Enable once better detection is set up.
+	$classes[] = strtolower(str_replace(' ', '_', nebula_os_detect())); //Add Operating System info to body classes
+	$classes[] = strtolower(str_replace(' ', '_', wp_browser_detect())); //Add Browser info to body classes
 
-	//$browser = get_browser(null, true); //@TODO "Nebula" 0: Find a server this works on and then wrap in if $browser, then echo the version number too
-	//@TODO "Nebula" 0: Also look into the function wp_check_browser_version().
-
-    if ( $is_lynx ) {
-    	$classes[] = 'lynx';
-    } elseif ( $is_gecko ) {
-    	$classes[] = 'gecko';
-    } elseif ( $is_opera ) {
-    	$classes[] = 'opera';
-    } elseif ( $is_NS4 ) {
-    	$classes[] = 'ns4';
-    } elseif ( $is_safari ) {
-    	$classes[] = 'safari';
-    } elseif ( $is_chrome ) {
-    	$classes[] = 'chrome';
-    	/*
-		if ( $browser ) {
-	    	$classes[] = 'chrome21';
-    	}
-		*/
-    } elseif ( $is_IE ) {
-    	$classes[] = 'ie';
-    } else {
-    	$classes[] = 'unknown_browser';
-    }
-
-    if ( $is_iphone ) {
+	if ( $is_iphone ) {
     	$classes[] = 'iphone';
     }
-
 
 	//Mobile
 	if ( $GLOBALS["mobile_detect"]->isMobile() ) {

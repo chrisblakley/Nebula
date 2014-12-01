@@ -8,7 +8,7 @@
 		</div>
 
 		<h3><a href="<?php echo home_url(); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
-		<p class="about-description">Designed and Developed by <a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>.</p>
+		<p class="about-description">Designed and Developed by <?php pinckneyhugogroup(1); ?>.</p>
 
 		<hr/>
 

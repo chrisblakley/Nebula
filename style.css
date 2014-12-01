@@ -736,6 +736,27 @@ div.space {clear: both; display: block; overflow: hidden; visibility: hidden; wi
 .avoid-clicks {pointer-events: none;} /* Only supported in IE11+ */
 .allow-clicks {pointer-events: all;}
 
+a.phg {margin-left: 3px; padding-left: 15px; background: url('images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
+	a.phg span {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	a.phg span.pinckney {color: #0099d8;}
+	a.phg span.hugo {color: #a0ce67;}
+	a.phg span.group {color: #9fa1a4;}
+	a.phg:hover span.pinckney {color: #006690;}
+	a.phg:hover span.hugo {color: #709048;}
+	a.phg:hover span.group {color: #6f7072;}
+
+a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url('images/phg/phg-symbol.svg') -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	a.phg.anim span {margin-right: 3px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+		a.phg.anim span:last-child {margin-right: 0;}
+	a.phg.anim span.pinckney {color: inherit;}
+	a.phg.anim span.hugo {color: inherit;}
+	a.phg.anim span.group {color: inherit;}
+	a.phg.anim:hover {margin-left: 3px; padding-left: 15px; background: url('images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px;}
+		a.phg.anim:hover span {margin-right: 0px;}
+		a.phg.anim:hover span.pinckney {color: #0099d8;}
+		a.phg.anim:hover span.hugo {color: #a0ce67;}
+		a.phg.anim:hover span.group {color: #9fa1a4;}
+
 @-ms-viewport{
   width: device-width;
 }

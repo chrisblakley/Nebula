@@ -93,6 +93,7 @@ function register_nebula_scripts() {
 	wp_register_script('nebula-maskedinput', '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js', array(), '1.3.1', true);
 	wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
 	wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
+	wp_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', array('nebula-main'), null, true);
 	wp_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js?' . $GLOBALS['defer'], array(), null, true);
 }
 
@@ -168,6 +169,7 @@ function enqueue_nebula_frontend() {
 
 	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
 		wp_enqueue_style('nebula-wireframing');
+		wp_enqueue_script('nebula-wireframing');
 	}
 
 	//Scripts
@@ -189,6 +191,7 @@ function enqueue_nebula_frontend() {
 	wp_localize_script('nebula-main', 'bloginfo', $localize_bloginfo);
 	wp_localize_script('nebula-main', 'clientinfo', $localize_clientinfo);
 	wp_localize_script('nebula-main', 'nebula_settings', $localize_nebula_settings);
+	wp_localize_script('nebula-main', 'browser_detection', $GLOBALS["browser_detection"]);
 
 	//Conditionals
 	if ( $GLOBALS["debug"] ) {
@@ -234,6 +237,7 @@ function enqueue_nebula_login() {
 	wp_localize_script('nebula-login', 'bloginfo', $localize_bloginfo);
 	wp_localize_script('nebula-login', 'clientinfo', $localize_clientinfo);
 	wp_localize_script('nebula-login', 'nebula_settings', $localize_nebula_settings);
+	wp_localize_script('nebula-login', 'browser_detection', $GLOBALS["browser_detection"]);
 }
 
 
@@ -254,6 +258,7 @@ function enqueue_nebula_admin() {
 	wp_localize_script('nebula-admin', 'bloginfo', $localize_bloginfo);
 	wp_localize_script('nebula-admin', 'clientinfo', $localize_clientinfo);
 	wp_localize_script('nebula-admin', 'nebula_settings', $localize_nebula_settings);
+	wp_localize_script('nebula-admin', 'browser_detection', $GLOBALS["browser_detection"]);
 }
 
 

@@ -338,8 +338,22 @@ get_header(); ?>
 						include_once('includes/nebula_url_components.php');
 					} ?>
 
+					<?php if (is_page(1197)) { //Nebula OS Detect
+						include_once('includes/nebula_os_detect.php');
+					} ?>
+
+					<?php
+					/*==========================
+					 Utilities
+					 ===========================*/
+					?>
+
 					<?php if (is_page(1139)) { //WHOIS Tester
 						include_once('includes/whois_tester.php');
+					} ?>
+
+					<?php if (is_page(1186)) { //Environment and Feature Detection
+						include_once('includes/environment_feature_detection.php');
 					} ?>
 
 				<?php

@@ -759,7 +759,7 @@ function nebula_help_tabs() {
 //Left Side
 add_filter('admin_footer_text', 'change_admin_footer_left');
 function change_admin_footer_left() {
-    return '<a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a> &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
+    return pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
 }
 //Right Side
 add_filter('update_footer', 'change_admin_footer_right', 11);
@@ -884,6 +884,6 @@ function getwhois($domain, $tld) {
 	if ( $whois->Lookup($domain . '.' . $tld) ) {
 		return $whois->GetData(1);
 	} else {
-		return 'Sorry, an error occurred.';
+		return 'A WHOIS error occurred.';
 	}
 }

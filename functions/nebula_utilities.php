@@ -151,6 +151,137 @@ function nebula_url_components($segment="all", $url=null) {
 }
 
 
+//Detect Device //@TODO "Nebula" 0: It would be unfeasible to try to keep this up-to-date... Maybe there is an XML/JSON we can use? If so, may need to keep the more unique ones (like game consoles) here.
+function nebula_device_detect($user_agent=''){
+	if ( $user_agent == '' ) {
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	}
+
+	$user_device = "Unknown Device";
+
+	//The order of this array is important!
+	$device_array = array(
+		'/samsung-sgh-i337/i' => 'Samsung Galaxy S4',
+		'/lumia 928/i' => 'Nokia Lumia 928',
+		'/iphone1c2/i' => 'Apple iPhone 3G',
+		'/iPhone2C1/i' => 'Apple iPhone 3GS',
+		'/iPhone3C1/i' => 'Apple iPhone 4',
+		'/iPhone3C3/i' => 'Apple iPhone 4 CDMA',
+		'/iPhone4C1/i' => 'Apple iPhone 4S',
+		'/iPhone5C1/i' => 'Apple iPhone 5',
+		'/iPhone5C2/i' => 'Apple iPhone 5 CDMA',
+		'/iPhone5C3/i' => 'Apple iPhone 5C GSM',
+		'/iPhone5C4/i' => 'Apple iPhone 5C CDMA',
+		'/iPhone6C1/i' => 'Apple iPhone 5S GSM',
+		'/iPhone6C2/i' => 'Apple iPhone 5S CDMA',
+		'/iPad2C1/i' => 'Apple iPad 2 (WiFi only)',
+		'/iPad2C2/i' => 'Apple iPad 2 (WiFi + 3G GSM)',
+		'/iPad2C3/i' => 'Apple iPad 2 (WiFi + 3G CDMA)',
+		'/iPad3C1/i' => 'Apple iPad (3rd Generation) (WiFi only)',
+		'/iPad3C2/i' => 'Apple iPad (3rd Generation) (WiFi + 4G Verizon)',
+		'/iPad3C3/i' => 'Apple iPad (3rd Generation) (WiFi + 4G AT&T)',
+		'/iPad1C1/i' => 'Apple iPad 1',
+		'/iPad4C1/i' => 'Apple iPad Air',
+		'/cros/i' => 'ChromeBook',
+		'/regex_here/i' => 'Return_Value_Here', //windows && phone && iemobile
+		'/xbox/i' => 'Microsoft Xbox',
+		'/xbox one/i' => 'Microsoft Xbox One',
+		'/nintendo/i' => 'Nintendo',
+		'/wii/i' => 'Nintendo Wii',
+		'/wiiu/i' => 'Nintendo WiiU',
+		'/3DS/i' => 'Nintendo 3DS',
+		'/playstation 4/i' => 'Sony Playstation 4',
+		'/playstation 3/i' => 'Sony Playstation 3',
+		'/regex_here/i' => 'Return_Value_Here', //playstation && psp && portable
+		'/ipod/i' => 'Apple iPod Touch',
+		'/regex_here/i' => 'Return_Value_Here', //linux && apple safari && (is mobile device...)
+	);
+
+	foreach ( $device_array as $regex => $value ) {
+		if ( preg_match($regex, $user_agent) ) {
+			$user_device = $value;
+		}
+	}
+	return $user_device;
+
+}
+
+//Detect Operating System
+function nebula_os_detect($user_agent='') {
+	if ( $user_agent == '' ) {
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	}
+
+	$os_platform    =   "Unknown OS Platform";
+
+    $os_array       =   array(
+                            '/windows nt 6.3/i'     =>  'Windows 8.1',
+                            '/windows nt 6.2/i'     =>  'Windows 8',
+                            '/windows nt 6.1/i'     =>  'Windows 7',
+                            '/windows nt 6.0/i'     =>  'Windows Vista',
+                            '/windows nt 5.2/i'     =>  'Windows Server 2003/XP x64',
+                            '/windows nt 5.1/i'     =>  'Windows XP',
+                            '/windows xp/i'         =>  'Windows XP',
+                            '/windows nt 5.0/i'     =>  'Windows 2000',
+                            '/windows me/i'         =>  'Windows ME',
+                            '/win98/i'              =>  'Windows 98',
+                            '/win95/i'              =>  'Windows 95',
+                            '/win16/i'              =>  'Windows 3.11',
+                            '/macintosh|mac os x/i' =>  'Mac OS X',
+                            '/mac_powerpc/i'        =>  'Mac OS 9',
+                            '/linux/i'              =>  'Linux',
+                            '/ubuntu/i'             =>  'Ubuntu',
+                            '/iphone/i'             =>  'iPhone',
+                            '/ipod/i'               =>  'iPod',
+                            '/ipad/i'               =>  'iPad',
+                            '/android/i'            =>  'Android',
+                            '/blackberry/i'         =>  'BlackBerry',
+                            '/webos/i'              =>  'Mobile'
+                        );
+
+    foreach ($os_array as $regex => $value) {
+
+        if (preg_match($regex, $user_agent)) {
+            $os_platform    =   $value;
+        }
+
+    }
+
+    return $os_platform;
+}
+
+
+//Use WordPress core browser detection
+//@TODO "Nebula" 0: Look into using this in addition to a more powerful library.
+function wp_browser_detect(){
+	//Browsers
+	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
+
+	//$browser = get_browser(null, true); //@TODO "Nebula" 0: Find a server this works on and then wrap in if $browser, then echo the version number too
+	//@TODO "Nebula" 0: Also look into the function wp_check_browser_version().
+
+    if ( $is_lynx ) {
+    	return 'Lynx';
+    } elseif ( $is_gecko ) {
+    	return 'Gecko';
+    } elseif ( $is_opera ) {
+    	return 'Opera';
+    } elseif ( $is_NS4 ) {
+    	return 'NS4';
+    } elseif ( $is_safari ) {
+    	return 'Safari';
+    } elseif ( $is_chrome ) {
+    	return 'Chrome';
+    } elseif ( $is_IE ) {
+    	return 'IE';
+    } else {
+    	return 'Unknown Browser';
+    }
+}
+
+
+
+
 //Text limiter by words
 function string_limit_words($string, $word_limit){
 	$limited[0] = $string;
@@ -288,3 +419,32 @@ function hex2rgb($color) {
 require_once TEMPLATEPATH . '/includes/Mobile_Detect.php'; //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
 $GLOBALS["mobile_detect"] = new Mobile_Detect();
 
+
+
+//Browser Detection
+//http://techpatterns.com/downloads/browser_detection.php
+//Documentation: http://techpatterns.com/downloads/scripts/browser_detection_php_ar.txt
+//$GLOBALS["browser_detect"] is an associative array with the following structure:
+/*
+	['browser_working'] - $browser_working,
+	['browser_number'] - $browser_number,
+	['ie_version'] - $ie_version,
+	['dom'] - $b_dom_browser,
+	['safe'] - $b_safe_browser,
+	['os'] - $os_type,
+	['os_number'] - $os_number,
+	['browser_name'] - $browser_name,
+	['ua_type'] - $ua_type,
+	['browser_math_number'] - $browser_math_number,
+	['moz_data'] - $a_moz_data,
+	['webkit_data'] - $a_webkit_data,
+	['mobile_test'] - $mobile_test,
+	['mobile_data'] - $a_mobile_data,
+	['true_ie_number'] - $true_ie_number,
+	['run_time'] - $run_time,
+	['html_type'] - $html_type,
+	['engine_data'] - $a_engine_data,
+	['trident_data'] - $a_trident_data
+*/
+require_once TEMPLATEPATH . '/includes/browser_detection.php';
+$GLOBALS["browser_detect"] = browser_detection('full_assoc');

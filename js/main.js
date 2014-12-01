@@ -668,25 +668,6 @@ function mmenus() {
 			//Functions after closed.
 		});
 
-		jQuery("#mobilecontact").mmenu({
-			//Options
-		    offCanvas: {
-			    position: 'right', //'left' (default), 'right', 'top' (must use zposition 'front'), 'bottom' (must use zposition 'front')
-			    zposition: 'back' //'back' (default), 'front', 'next'
-		    },
-		    classes: "mm-light", //Theming and open effects
-		    header: {
-				add: true,
-				update: true, //Change the header text when navigating to sub-menus
-				title: 'Contact Us'
-			}
-		}, {
-			//Configuration
-		}).on('opened.mm', function(){
-			history.replaceState(null, document.title, location);
-			history.pushState(null, document.title, location);
-		});
-
 		jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
 		jQuery('.mm-search input').on('keyup', function(){
 			if ( jQuery(this).val().length > 0 ) {

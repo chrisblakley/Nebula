@@ -34,10 +34,12 @@
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
 		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : ?>
 			<meta property="og:type" content="business.business" />
-			<meta property="og:locale" content="<?php echo bloginfo('language'); ?>" />
+			<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 			<meta property="og:title" content="<?php the_title(); ?>" />
 			<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-			<meta property="og:url" content="<?php the_permalink(); ?>" />
+			<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ) : ?>
+				<meta property="og:url" content="<?php the_permalink(); ?>" />
+			<?php endif; ?>
 			<meta property="og:site_name" content="<?php bloginfo('name'); ?>" />
 
 			<link rel="canonical" href="<?php the_permalink(); ?>" />
@@ -84,6 +86,7 @@
 		<meta name="twitter:creator" content="" /> <!-- "@username" of content creator -->
 
 		<!-- Other Social Metadata -->
+		<?php //@TODO "SEO" 3: Create/update information on Google Business! http://www.google.com/business/ ?>
 		<?php $GLOBALS['social']['google_plus_url'] = nebula_settings_conditional_text('nebula_google_plus_url', ''); //@TODO "Social" 1: Enter the URL of the Google+ page here. ?>
 		<?php $GLOBALS['social']['linkedin_url'] = nebula_settings_conditional_text('nebula_linkedin_url', ''); //@TODO "Social" 1: Enter the URL of the LinkedIn page here. ?>
 		<?php $GLOBALS['social']['youtube_url'] = nebula_settings_conditional_text('nebula_youtube_url', ''); //@TODO "Social" 1: Enter the URL of the Youtube page here. ?>
@@ -96,11 +99,6 @@
 		<meta name="ICBM" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Comma and space separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
 		<meta property="place:location:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
 		<meta property="place:location:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
-
-		<!--Microsoft Windows 8 Tiles /-->
-		<meta name="application-name" content="<?php bloginfo('name'); ?>" />
-		<meta name="msapplication-notification" content="frequency=720;polling-uri=<?php bloginfo('rss_url'); ?>"> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword msapplication-notification is not registered." -->
-		<meta name="msapplication-config" content="<?php echo get_template_directory_uri(); ?>/includes/ieconfig.xml" />
 
 		<script>
 			social = []; //Not localized with WP because needs to be able to be modified in header.php if desired.
@@ -161,34 +159,6 @@
 								}
 							?>
 						</nav><!--/mobilenav-->
-
-						<a class="alignright" href="#mobilecontact"><i class="fa fa-users"></i></a>
-						<nav id="mobilecontact" class="unhideonload hidden">
-							<ul>
-
-					    		<?php $nebula_phone_number = nebula_settings_conditional_text('nebula_phone_number', ''); //@TODO "Metadata" 1: Add phone number here. ?>
-					    		<?php if ( $nebula_phone_number ) : ?>
-						    		<li>
-						    			<a href="tel:<?php echo nebula_phone_format($nebula_phone_number, 'tel'); ?>"><i class="fa fa-phone"></i> <?php echo $nebula_phone_number; ?></a>
-						    		</li>
-					    		<?php endif; ?>
-
-
-								<?php $nebula_admin_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $admin_user->user_email)); //@TODO "Metadata" 1: Verify this email is the one that should appear. ?>
-					    		<li>
-					    			<a href="mailto:<?php echo $nebula_admin_email; ?>" target="_blank"><i class="fa fa-envelope"></i> <?php echo $nebula_admin_email; ?></a>
-					    		</li>
-
-
-								<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO "Metadata" 1: Add address here. ?>
-					    		<?php if ( $nebula_full_address ) : ?>
-						    		<li>
-						    			<a class="directions" href="https://www.google.com/maps/dir/Current+Location/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><i class="fa fa-compass"></i> Directions<br/><div><small><?php echo $nebula_full_address; ?></small></div></a>
-						    		</li>
-								<?php endif; ?>
-
-					    	</ul>
-						</nav><!--/mobilecontact-->
 
 					</div><!--/columns-->
 				</div><!--/row-->
