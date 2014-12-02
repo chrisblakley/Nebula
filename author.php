@@ -19,7 +19,6 @@ get_header(); ?>
 
 <?php if ( have_posts() ) { the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="row">
-
 	<?php if ( get_the_author_meta('headshot_url') ) : ?>
 		<div class="three columns">
 			<div class="author-headshot">
@@ -37,8 +36,8 @@ get_header(); ?>
 			<div class="author-meta">
 				<span class="author-jobtitle"><?php echo get_the_author_meta('jobtitle'); ?></span>
 				<span class="author-contact">
-					<?php if ( get_the_author_meta('user_email') ) : ?><span class="author-email"><i class="icon-mail"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;<?php endif; ?>
-					<?php if ( get_the_author_meta('phonenumber') ) : ?><span class="author-phonenumber"><i class="icon-phone"></i> <?php echo nebula_tel_link(get_the_author_meta('phonenumber')); ?></span><?php endif; ?>
+					<?php if ( get_the_author_meta('user_email') ) : ?><span class="author-email"><i class="fa fa-envelope"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;<?php endif; ?>
+					<?php if ( get_the_author_meta('phonenumber') ) : ?><span class="author-phonenumber"><i class="fa fa-phone"></i> <?php echo nebula_tel_link(get_the_author_meta('phonenumber')); ?></span><?php endif; ?>
 				</span>
 			</div>
 		<hr/>

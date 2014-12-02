@@ -42,7 +42,7 @@
 			RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
 		</IfModule>
 	</IfModule>
-	
+
 	#HTML, TXT, CSS, JavaScript, JSON, XML, HTC:
 	<IfModule filter_module>
 		FilterDeclare   COMPRESS
@@ -64,15 +64,15 @@
 		FilterChain     COMPRESS
 		FilterProtocol  COMPRESS  DEFLATE change=yes;byteranges=no
 	</IfModule>
-	
+
 	<IfModule !mod_filter.c>
 		#Legacy versions of Apache
 		AddOutputFilterByType DEFLATE text/html text/plain text/css application/json
 		AddOutputFilterByType DEFLATE application/javascript
 		AddOutputFilterByType DEFLATE text/xml application/xml text/x-component
-		AddOutputFilterByType DEFLATE application/xhtml+xml application/rss+xml 
+		AddOutputFilterByType DEFLATE application/xhtml+xml application/rss+xml
 		AddOutputFilterByType DEFLATE application/atom+xml
-		AddOutputFilterByType DEFLATE image/svg+xml application/vnd.ms-fontobject 
+		AddOutputFilterByType DEFLATE image/svg+xml application/vnd.ms-fontobject
 		AddOutputFilterByType DEFLATE application/x-font-ttf font/opentype
 	</IfModule>
 </IfModule>
@@ -122,6 +122,24 @@
 #If in a subdirectory, prepend that directory to all redirects.
 Redirect 301 /wp-content/index.php /
 
+
+
+#Disable author archives to prevent ?author=1 from showing usernames. This sends to the "about" slug; be sure to change if that page does not exist!
+#Remove this or comment it out if planning on using Author archive pages.
+RewriteRule ^author/(.*)$ /about [R,L]
+RewriteCond %{QUERY_STRING} author=\d
+RewriteRule ^ /about? [L,R=301]
+
+#Prevent no-referrer requests through the login form.
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteCond %{REQUEST_METHOD} POST
+	RewriteCond %{REQUEST_URI} .(wp-comments-post|wp-login)\.php*
+	RewriteCond %{HTTP_REFERER} !.*yourdomain.com.* [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^$
+	RewriteRule (.*) http://%{REMOTE_ADDR}/$ [R=301,L]
+</ifModule>
+
 #Block certain webcrawlers from showing up as actual visitors
 RewriteEngine on
 RewriteCond %{HTTP_REFERER} semalt\.com [NC]
@@ -139,22 +157,22 @@ deny from 24.58.152.89
 RewriteEngine On
 #proc/self/environ? no way!
 RewriteCond %{QUERY_STRING} proc/self/environ [OR]
- 
+
 #Block out any script trying to set a mosConfig value through the URL
 RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
- 
+
 #Block out any script trying to base64_encode crap to send via URL
 RewriteCond %{QUERY_STRING} base64_encode.*(.*) [OR]
- 
+
 #Block out any script that includes a <script> tag in URL
 RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
- 
+
 #Block out any script trying to set a PHP GLOBALS variable via URL
 RewriteCond %{QUERY_STRING} GLOBALS(=|[|\%[0-9A-Z]{0,2}) [OR]
- 
+
 #Block out any script trying to modify a _REQUEST variable via URL
 RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
- 
+
 #Send all blocked request to homepage with 403 Forbidden error!
 RewriteRule ^(.*)$ index.php [F,L]
 

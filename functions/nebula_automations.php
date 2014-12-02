@@ -90,9 +90,16 @@ function my_theme_register_required_plugins() {
             'slug'      => 'search-everything',
             'required'  => false,
         ),
+/*
         array(
             'name'      => 'Theme Check',
             'slug'      => 'theme-check',
+            'required'  => false,
+        ),
+*/
+        array(
+            'name'      => 'Block Bad Queries',
+            'slug'      => 'block-bad-queries',
             'required'  => false,
         ),
     );

@@ -15,6 +15,11 @@
 		requestTestPosition(); //NOTE: These geolocation functions are customized for this example page! Use the built-in location functions in main.js for standard detection!
 
 		jQuery('.javascript-enabled').text('Enabled');
+
+		jQuery('.browservardumptrigger').on('click', function(){
+			jQuery('.browservardump').toggleClass('hidden');
+			return false;
+		});
 	});
 
 	jQuery(window).on('load', function() {
@@ -78,7 +83,7 @@
 
 		if ( typeof swfobject !== 'undefined' ) {
 			var playerVersion = swfobject.getFlashPlayerVersion();
-			if ( typeof playerVersion === 'object' ) { //Working?
+			if ( playerVersion.major != '0' ) { //Working?
 				var majorVersion = playerVersion.major;
 				var flashEnabled = playerVersion['major'] + '.' + playerVersion['minor'] + '.' + playerVersion['release'];
 				jQuery('.flashversion').html('v' + flashEnabled);
@@ -278,7 +283,11 @@
 			var actualCity = results[0]; //Find another way to pull city information from the closest result.
 		}
 		if ( accuracy < 300 ) {
-			jQuery('.actualplace').html(actualPlaceName);
+			if ( actualPlaceName.indexOf('Location is most') >= 0 ) {
+				jQuery('.actualplace').html(actualPlaceName);
+			} else {
+				jQuery('.actualplace').html('<a href="https://maps.google.com?q=' + encodeURI(actualPlaceName) + '" target="_blank">' + actualPlaceName + '</a>'); //@TODO "Nebula" 0: encodeURI isn't working here.
+			}
 		} else {
 			jQuery('.actualplace').html('Location accuracy is too poor to determine actual place.').css('font-size', '12px').css('color', '#aaa');
 		}
@@ -331,15 +340,20 @@
 
 
 		<h3>Operating System</h3>
-		<p><?php echo nebula_os_detect(); ?></p>
+		<p>
+			<?php echo nebula_os_detect(); ?><br/>
+			<strong>Version:</strong> <?php echo $GLOBALS['browser_detect']['os_number']; ?>
+		</p>
 
 
-		<h3>Browser</h3>
+		<h3 class="browservardumptrigger">Browser</h3>
 		<?php $browser_name = ( $GLOBALS['browser_detect']['browser_name'] == 'msie' ) ? 'Internet Explorer' : $GLOBALS['browser_detect']['browser_name']; ?>
-		<p><?php echo ucwords($browser_name); ?> <?php echo $GLOBALS['browser_detect']['browser_math_number']; ?></p>
-		<!-- Other detected browser info:
-			<?php var_dump($GLOBALS['browser_detect']); ?>
-		-->
+		<p>
+			<?php echo ucwords($browser_name); ?> <?php echo $GLOBALS['browser_detect']['browser_math_number']; ?><br/>
+			<strong>Rendering Engine:</strong> <?php echo ucwords($GLOBALS['browser_detect']['engine_data'][0]); ?><br/>
+		</p>
+		<pre class="browservardump hidden"><?php var_dump($GLOBALS['browser_detect']); ?></pre>
+
 
 		<h3>Features</h3>
 		<p class="jsdetection features-info">Enable JavaScript to detect features.</p>

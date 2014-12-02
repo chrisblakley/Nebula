@@ -862,6 +862,27 @@ function nebula_body_classes($classes) {
 	$nebula_theme_info = wp_get_theme();
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 
+	//Time of Day
+	$classes[] = ( currently_open() ) ? 'business-open' : 'business-closed';
+	if ( contains(date('H'), array('00', '01', '02')) ) {
+		$classes[] = 'time-early time-night';
+	} elseif ( contains(date('H'), array('03', '04', '05')) ) {
+		$classes[] = 'time-late time-night';
+	} elseif ( contains(date('H'), array('06', '07', '08')) ) {
+		$classes[] = 'time-early time-morning';
+	} elseif ( contains(date('H'), array('09', '10', '11')) ) {
+		$classes[] = 'time-late time-morning';
+	} elseif ( contains(date('H'), array('12', '13', '14')) ) {
+		$classes[] = 'time-early time-afternoon';
+	} elseif ( contains(date('H'), array('15', '16', '17')) ) {
+		$classes[] = 'time-late time-afternoon';
+	} elseif ( contains(date('H'), array('18', '19', '20')) ) {
+		$classes[] = 'time-early time-evening';
+	} elseif ( contains(date('H'), array('21', '22', '23')) ) {
+		$classes[] = 'time-late time-evening';
+	}
+	$classes[] = 'day-' . strtolower(date('l'));
+	$classes[] = 'month-' . strtolower(date('F'));
 
     return $classes;
 }
