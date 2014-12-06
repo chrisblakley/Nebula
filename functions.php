@@ -15,6 +15,8 @@ require_once('functions/nebula_utilities.php'); //Nebula Utilities
  Google Analytics Tracking ID (Nebula Settings Functions required)
  ===========================*/
 $GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO "Analytics" 5: Change Google Analytics Tracking ID here or in Nebula Settings (or both)!
+$_GLOBALS['ga_v'] = 1; //Version
+$_GLOBALS['ga_cid'] = gaParseCookie(); //Anonymous Client ID
 
 
 /*==========================

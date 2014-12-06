@@ -3,8 +3,9 @@
  * Template Name: Advanced Search
  */
 
-if ( !defined('ABSPATH') ) {  //Log and redirect if accessed directly
-	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?directaccess=' . basename($_SERVER['PHP_SELF']));
+if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
+	ga_send_event('Direct Template Access', 'Template: Advanced Search', basename($_SERVER['PHP_SELF']));
+	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")));
 	exit;
 }
 

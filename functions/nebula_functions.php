@@ -23,16 +23,7 @@ function track_google_pagespeed_checks() {
 			$currentTitle = get_the_title($post->ID);
 		}
 
-		$data = array(
-			'v' => $_GLOBALS['ga_v'],
-			'tid' => $GLOBALS['ga'],
-			'cid' => $_GLOBALS['ga_cid'],
-			't' => 'event',
-			'ec' => 'Google Page Speed', //Category
-			'ea' => $currentURL, //Action
-			'el' => $currentTitle //Label
-		);
-		gaSendData($data);
+		ga_send_event('Google Page Speed', $currentURL, $currentTitle);
 	}
 }
 
@@ -738,7 +729,9 @@ function redirect_empty_search($query){
 	global $wp_query;
 	if ( isset($_GET['s']) && $wp_query->query && !array_key_exists('invalid', $_GET) ) {
 		if ( $_GET['s'] == '' && $wp_query->query['s'] == '' ) {
+			ga_send_event('Internal Search', 'Invalid', '(Empty query)');
 			header('Location: ' . home_url('/') . 'search/?invalid');
+			exit;
 		} else {
 			return $query;
 		}
@@ -754,13 +747,15 @@ function redirect_single_post() {
         if ($wp_query->post_count == 1 && $wp_query->max_num_pages == 1) {
             if ( isset($_GET['s']) ){
 				//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
-				if ( $wp_query->posts['0']->ID != 1 && get_permalink( $wp_query->posts['0']->ID ) != home_url() . '/' ) {
+				if ( $wp_query->posts['0']->ID != 1 && get_permalink($wp_query->posts['0']->ID) != home_url() . '/' ) {
+					ga_send_event('Internal Search', 'Single Result Redirect', $_GET['s']);
 					$_GET['s'] = str_replace(' ', '+', $_GET['s']);
-					wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?rs=' . $_GET['s'] ); //Change this back to ?s if Search Everything can fix the "?s=" issue.
+					wp_redirect(get_permalink($wp_query->posts['0']->ID ) . '?rs=' . $_GET['s']);
 					exit;
 				}
             } else {
-                wp_redirect( get_permalink( $wp_query->posts['0']->ID ) . '?rs' ); //Change this back to ?s if Search Everything can fix the "?s=" issue.
+                ga_send_event('Internal Search', 'Single Result Redirect');
+                wp_redirect(get_permalink($wp_query->posts['0']->ID) . '?rs');
                 exit;
             }
         }

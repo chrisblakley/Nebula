@@ -1,8 +1,5 @@
 <?php
 
-$_GLOBALS['ga_v'] = 1; //Version
-$_GLOBALS['ga_cid'] = gaParseCookie(); //Anonymous Client ID
-
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
 function gaParseCookie() {
 	if (isset($_COOKIE['_ga'])) {
@@ -34,6 +31,62 @@ function gaSendData($data) {
 	$getString .= http_build_query($data);
 	$result = wp_remote_get($getString);
 	return $result;
+}
+
+//Send Pageview Function for Server-Side Google Analytics
+function ga_send_pageview($hostname=null, $page=null, $title=null) {
+	if ( $_GLOBALS['ga_v'] === null ) {
+		$_GLOBALS['ga_v'] = 1;
+	}
+
+	if ( $_GLOBALS['ga_cid'] === null ) {
+		$_GLOBALS['ga_cid'] = gaParseCookie();
+	}
+
+	if ( $hostname === null ) {
+		$hostname = nebula_url_components('hostname');
+	}
+
+	if ( $page === null ) {
+		$page = nebula_url_components('all');
+	}
+
+	if ( $title === null ) {
+		$title = get_the_title();
+	}
+
+	$data = array(
+		'v' => $_GLOBALS['ga_v'],
+		'tid' => $GLOBALS['ga'],
+		'cid' => $_GLOBALS['ga_cid'],
+		't' => 'pageview',
+		'dh' => $hostname, //Document Hostname "gearside.com"
+		'dp' => $page, //Page "/something"
+		'dt' => $title //Title
+	);
+	gaSendData($data);
+}
+
+//Send Event Function for Server-Side Google Analytics
+function ga_send_event($category=null, $action=null, $label=null) {
+	if ( $_GLOBALS['ga_v'] === null ) {
+		$_GLOBALS['ga_v'] = 1;
+	}
+
+	if ( $_GLOBALS['ga_cid'] === null ) {
+		$_GLOBALS['ga_cid'] = gaParseCookie();
+	}
+
+	$data = array(
+		'v' => $_GLOBALS['ga_v'],
+		'tid' => $GLOBALS['ga'],
+		'cid' => $_GLOBALS['ga_cid'],
+		't' => 'event',
+		'ec' => $category, //Category (Required)
+		'ea' => $action, //Action (Required)
+		'el' => $label //Label
+	);
+	gaSendData($data);
 }
 
 
@@ -69,6 +122,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 		case ('protocol') : //Protocol and Scheme are aliases and return the same value.
 		case ('scheme') : //Protocol and Scheme are aliases and return the same value.
+		case ('schema') :
 			if ( $url_compontents['scheme'] != '' ) {
 				return $url_compontents['scheme'];
 			} else {
@@ -77,6 +131,7 @@ function nebula_url_components($segment="all", $url=null) {
 			break;
 
 		case ('host') : //In http://something.example.com the host is "something.example.com"
+		case ('hostname') :
 			return $url_compontents['host'];
 			break;
 

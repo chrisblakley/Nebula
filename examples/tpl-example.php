@@ -8,7 +8,7 @@ if ( !defined('ABSPATH') ) { exit; } //Exit if accessed directly
 
 get_header(); ?>
 
-<script src="<?php echo get_template_directory_uri();?>/js/libs/cssbs.js" <?php echo $GLOBALS["async"]; ?>></script>
+<script src="<?php echo get_template_directory_uri();?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script>
 
 <section><!-- Do not duplicate this section because it has inline styles. -->
 	<div class="container" style="background: #0098d7;">
@@ -341,6 +341,23 @@ get_header(); ?>
 					<?php if (is_page(1197)) { //Nebula OS Detect
 						include_once('includes/nebula_os_detect.php');
 					} ?>
+
+					<?php if (is_page(1203)) { //Battery API
+						include_once('includes/battery_api.php');
+					} ?>
+
+					<?php if (is_page(1206)) { //Network Information API
+						include_once('includes/network_info_api.php');
+					} ?>
+
+					<?php if (is_page(1209)) { //Ambient Light Events
+						include_once('includes/ambient_light_events.php');
+					} ?>
+
+					<?php if (is_page(1227)) { //Wait For Final Event
+						include_once('includes/waitforfinalevent.php');
+					} ?>
+
 
 					<?php
 					/*==========================

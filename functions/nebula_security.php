@@ -4,11 +4,19 @@
 
 //Disable Pingbacks to prevent security issues
 add_filter('xmlrpc_methods', disable_pingbacks($methods));
+add_filter('wp_xmlrpc_server_class', disable_pingbacks($methods));
 function disable_pingbacks($methods) {
-   unset($methods['pingback.ping']);
-   return $methods;
+   //unset($methods['pingback.ping']);
+   //return $methods;
+   return false;
 };
 
+//Remove xpingback header
+add_filter('wp_headers', 'remove_x_pingback');
+function remove_x_pingback($headers) {
+    unset($headers['X-Pingback']);
+    return $headers;
+}
 
 //Prevent login error messages from giving too much information
 /*
@@ -31,28 +39,9 @@ function nebula_login_errors($error) {
 	}
 
 	if ( $incorrect_username != '' ) {
-		$data = array(
-			'v' => $_GLOBALS['ga_v'],
-			'tid' => $GLOBALS['ga'],
-			'cid' => $_GLOBALS['ga_cid'],
-			't' => 'event',
-			'ec' => 'Login Error', //Category (Required)
-			'ea' => 'Attempted User: ' . $incorrect_username, //Action (Required)
-			'el' => 'IP: ' . $_SERVER['REMOTE_ADDR'] //Label
-		);
-		gaSendData($data);
+		ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
 	} else {
-		echo 'some other error';
-		$data = array(
-			'v' => $_GLOBALS['ga_v'],
-			'tid' => $GLOBALS['ga'],
-			'cid' => $_GLOBALS['ga_cid'],
-			't' => 'event',
-			'ec' => 'Login Error', //Category (Required)
-			'ea' => strip_tags($error), //Action (Required)
-			'el' => 'IP: ' . $_SERVER['REMOTE_ADDR'] //Label
-		);
-		gaSendData($data);
+		ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
 	}
 
     $error = 'Login Error.';
@@ -60,30 +49,23 @@ function nebula_login_errors($error) {
 }
 
 
-//Check for direct access redirects, log them, then redirect without queries.
-add_action('init', 'check_direct_access');
-function check_direct_access() {
-	if ( isset($_GET['directaccess']) || array_key_exists('directaccess', $_GET) ) {
-		$attempted = ( $_GET['directaccess'] != '' ) ? $_GET['directaccess'] : 'Unknown' ;
-		$data = array(
-			'v' => $_GLOBALS['ga_v'],
-			'tid' => $GLOBALS['ga'],
-			'cid' => $_GLOBALS['ga_cid'],
-			't' => 'event',
-			'ec' => 'Direct Template Access', //Category
-			'ea' => $attempted, //Action
-			'el' => '' //Label
-		);
-		gaSendData($data);
-		header('Location: ' . home_url('/'));
-	}
-}
-
+//Disable the file editor
+define('DISALLOW_FILE_EDIT', true);
 
 //Remove Wordpress version info from head and feeds
 add_filter('the_generator', 'complete_version_removal');
 function complete_version_removal() {
 	return '';
+}
+
+
+//Remove WordPress version from any enqueued scripts
+add_filter('style_loader_src', 'at_remove_wp_ver_css_js', 9999);
+add_filter('script_loader_src', 'at_remove_wp_ver_css_js', 9999);
+function at_remove_wp_ver_css_js($src) {
+    if ( strpos($src, 'ver=') )
+        $src = remove_query_arg('ver', $src);
+    return $src;
 }
 
 

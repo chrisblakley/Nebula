@@ -124,6 +124,14 @@ Redirect 301 /wp-content/index.php /
 
 
 
+#Prevent script injection
+Options +FollowSymLinks
+RewriteEngine On
+RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|[|%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|[|%[0-9A-Z]{0,2})
+RewriteRule ^(.*)$ index.php [F,L]
+
 #Disable author archives to prevent ?author=1 from showing usernames. This sends to the "about" slug; be sure to change if that page does not exist!
 #Remove this or comment it out if planning on using Author archive pages.
 RewriteRule ^author/(.*)$ /about [R,L]

@@ -115,8 +115,6 @@
 		window.altitude = position.coords.altitude;
 		window.speed = position.coords.speed;
 
-		ga('send', 'event', 'Geolocation', 'Location: ' + window.lat + ', ' + window.lng, 'Accuracy (Miles): ' + window.accuracy);
-
 		jQuery('.coord').html(lat.toFixed(4) + ', ' + lng.toFixed(4));
 		if ( ( accuracy <= 25 ) ) {
 			zoomLevel = 17;
@@ -249,16 +247,18 @@
 		map.panTo(latlng);
 	}
 
-	function actualTestPlaceList(results, status) {
+	function actualTestPlaceList(results, status) { //@TODO "Nebula" 0: Work this function into main.js! Clean it up first!
+		cityState = '';
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode({'latLng': latlng}, function(results, status) {
-			if (status == google.maps.GeocoderStatus.OK) {
-				if (results[1]) { //formatted address
+			if ( status == google.maps.GeocoderStatus.OK ) {
+				if ( results[1] ) { //formatted address
 					jQuery('.address').html(results[1].formatted_address);
-					window.loadedAddress = results[1].formatted_address;
+					cityState = ', ' + results[1].address_components[1].long_name + ', ' + results[1].address_components[3].short_name;
+					loadedAddress = results[1].formatted_address;
 					//find country name
-					for (var i=0; i<results[0].address_components.length; i++) {
-						for (var b=0;b<results[0].address_components[i].types.length;b++) {
+					for ( var i=0; i<results[0].address_components.length; i++ ) {
+						for ( var b=0; b<results[0].address_components[i].types.length; b++ ) {
 							//there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
 							if (results[0].address_components[i].types[b] == "administrative_area_level_1") {
 								city = results[0].address_components[i]; //this is the object you are looking for
@@ -270,28 +270,36 @@
 			}
 		});
 
-		if (status == google.maps.places.PlacesServiceStatus.OK) {
-			for (var i = 0; i < results.length; i++) {
-				//var place = results[i];
+		//A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
+		setTimeout(function(){ //@TODO "Nebula" 0: Maybe instead of a setTimeout here, this could be a callback function on the geocode?
+			if (status == google.maps.places.PlacesServiceStatus.OK) {
+				for (var i = 0; i < results.length; i++) {
+					//var place = results[i];
+				}
 			}
-		}
-		if ( !results[0] ) {
-			var actualPlaceName = 'Location is most likely a residential neighborhood.';
-			var actualCity = '';
-		} else {
-			var actualPlaceName = results[0].name;
-			var actualCity = results[0]; //Find another way to pull city information from the closest result.
-		}
-		if ( accuracy < 300 ) {
-			if ( actualPlaceName.indexOf('Location is most') >= 0 ) {
-				jQuery('.actualplace').html(actualPlaceName);
+			if ( !results[0] ) {
+				var actualPlaceName = 'Location is likely a residential neighborhood.';
+				var actualCity = '';
 			} else {
-				jQuery('.actualplace').html('<a href="https://maps.google.com?q=' + encodeURI(actualPlaceName) + '" target="_blank">' + actualPlaceName + '</a>'); //@TODO "Nebula" 0: encodeURI isn't working here.
+				var actualPlaceName = results[0].name;
+				var actualCity = results[0]; //Find another way to pull city information from the closest result.
 			}
-		} else {
-			jQuery('.actualplace').html('Location accuracy is too poor to determine actual place.').css('font-size', '12px').css('color', '#aaa');
-		}
-		//console.debug(results[0]);
+			if ( accuracy < 300 ) {
+				if ( actualPlaceName.indexOf('Location is') >= 0 ) {
+					jQuery('.actualplace').html(actualPlaceName);
+					ga('send', 'event', 'Geolocation', window.lat.toFixed(4) + ', ' + window.lng.toFixed(4) + ' (Residential/Non-Commercial' + cityState + ')', 'Accuracy: ' + window.accuracy + ' meters');
+				} else {
+					jQuery('.actualplace').html('<a href="https://maps.google.com?q=' + encodeURI(actualPlaceName) + '" target="_blank">' + actualPlaceName + '</a>'); //@TODO "Nebula" 0: encodeURI isn't working here.
+					ga('send', 'event', 'Geolocation', window.lat.toFixed(4) + ', ' + window.lng.toFixed(4) + ' (' + actualPlaceName + cityState + ')', 'Accuracy: ' + window.accuracy + ' meters'); //@TODO "Nebula" 0: Maybe consider the Actions to be something like: "LAT, LNG (Business Name, City, State)"
+
+				}
+			} else {
+				jQuery('.actualplace').html('Location accuracy is too poor to determine actual place.').css('font-size', '12px').css('color', '#aaa');
+				ga('send', 'event', 'Geolocation', window.lat.toFixed(4) + ', ' + window.lng.toFixed(4) + ' (Poor Accuracy' + cityState + ')', 'Accuracy: ' + window.accuracy + ' meters');
+			}
+			//console.debug(results[0]);
+		}, 250);
+
 	}
 
 </script>

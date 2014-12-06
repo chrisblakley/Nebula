@@ -1801,7 +1801,8 @@ function successCallback(position) {
 	}
 
 	jQuery(document).trigger('geolocationSuccess');
-	ga('send', 'event', 'Geolocation', 'Location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1], 'Accuracy (Miles): ' + mapInfo['detectLoc']['accMiles']); //@TODO "Nebula" 0: Add a GA dimension and metric to get weather from this location.
+	//A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
+	ga('send', 'event', 'Geolocation', mapInfo['detectLoc'][0].toFixed(4) + ', ' + mapInfo['detectLoc'][1].toFixed(4), 'Accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' meters'); //@TODO "Nebula" 0: Add in actual location detection (from either gearside.com/ip, or Nebula's environment detection example and move this GA reporting to that (with business names in ga action). Maybe consider the Actions to be something like: "LAT, LNG (Business Name, City, State)"
 }
 
 //Geolocation Error
