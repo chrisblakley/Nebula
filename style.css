@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 1.9
+	Version: 2.0b
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -88,29 +88,29 @@ ul.menu {padding: 0;}
 /* ==========================================================================
    Special File Type Indicators
    ========================================================================== */
-a[href$='.doc'], a[href$='.docx'] {text-decoration: none; border-bottom: 1px dotted #2b5797;}
-a[href$='.xls'], a[href$='.xlsx'] {text-decoration: none; border-bottom: 1px dotted #1e7145;}
-a[href$='.ppt'], a[href$='.pptx'] {text-decoration: none; border-bottom: 1px dotted #d04525;}
-a[href$='.pdf'] {text-decoration: none; border-bottom: 1px dotted #eb3b00;}
-a[href$='.zip'], a[href$='.zipx'], a[href$='.rar'] {text-decoration: none; border-bottom: 1px dotted #777777;}
-a[href$='.txt'], a[href$='.rtf'] {text-decoration: none; border-bottom: 1px dotted #777777;}
+a[href$=".doc"], a[href$=".docx"] {text-decoration: none; border-bottom: 1px dotted #2b5797;}
+a[href$=".xls"], a[href$=".xlsx"] {text-decoration: none; border-bottom: 1px dotted #1e7145;}
+a[href$=".ppt"], a[href$=".pptx"] {text-decoration: none; border-bottom: 1px dotted #d04525;}
+a[href$=".pdf"] {text-decoration: none; border-bottom: 1px dotted #eb3b00;}
+a[href$=".zip"], a[href$=".zipx"], a[href$=".rar"] {text-decoration: none; border-bottom: 1px dotted #777777;}
+a[href$=".txt"], a[href$=".rtf"] {text-decoration: none; border-bottom: 1px dotted #777777;}
 
-li.icon a[href$='.doc']:before, a.icon[href$='.doc']:before, li.icon a[href$='.docx']:before, a.icon[href$='.docx']:before {content: '\f1c2'; font-family: 'FontAwesome'; color: #2b5797; margin-right: 5px;}
-li.icon a[href$='.xls']:before, a.icon[href$='.xls']:before, li.icon a[href$='.xlsx']:before, a.icon[href$='.xlsx']:before {content: '\f1c3'; font-family: 'FontAwesome'; color: #1e7145; margin-right: 5px;}
-li.icon a[href$='.ppt']:before, a.icon[href$='.ppt']:before, li.icon a[href$='.pptx']:before, a.icon[href$='.pptx']:before {content: '\f1c4'; font-family: 'FontAwesome'; color: #eb3b00; margin-right: 5px;}
-li.icon a[href$='.pdf']:before, a.icon[href$='.pdf']:before, li.icon a[href$='.pdfx']:before, a.icon[href$='.pdfx']:before {content: '\f1c1'; font-family: 'FontAwesome'; color: #d04525; margin-right: 5px;}
-li.icon a[href$='.zip']:before, a.icon[href$='.zip']:before, li.icon a[href$='.zipx']:before, a.icon[href$='.zipx']:before, li.icon a[href$='.rar']:before, a.icon[href$='.rar']:before {content: '\f1c6'; font-family: 'FontAwesome'; color: #777777; margin-right: 5px;}
-li.icon a[href$='.txt']:before, a.icon[href$='.txt']:before, li.icon a[href$='.rtf']:before, a.icon[href$='.rtf']:before {content: '\f0f6'; font-family: 'FontAwesome'; color: #777777; margin-right: 5px;}
-a.icon[href$='.html'] {text-decoration: none; border-bottom: 1px dotted #f1672c;}
-	li.icon a[href$='.html']:before, a.icon[href$='.html']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #f1672c; margin-right: 5px;}
-a.icon[href$='.php'] {text-decoration: none; border-bottom: 1px dotted #5a68a5;}
-	li.icon a[href$='.php']:before, a.icon[href$='.php']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #5a68a5; margin-right: 5px;}
-a.icon[href$='.js'] {text-decoration: none; border-bottom: 1px dotted #f1bf26;}
-	li.icon a[href$='.js']:before, a.icon[href$='.js']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #f1bf26; margin-right: 5px;}
-a.icon[href$='.css'] {text-decoration: none; border-bottom: 1px dotted #30a9dc;}
-	li.icon a[href$='.css']:before, a.icon[href$='.css']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #30a9dc; margin-right: 5px;}
-a.icon[href$='.swf'], a.icon[href$='.fla'] {text-decoration: none; border-bottom: 1px dotted #C31E24;}
-	li.icon a[href$='.swf']:before, a.icon[href$='.swf']:before, li.icon a[href$='.fla']:before, a.icon[href$='.fla']:before {content: '\f1c9'; font-family: 'FontAwesome'; color: #C31E24; margin-right: 5px;}
+li.icon a[href$=".doc"]:before, a.icon[href$=".doc"]:before, li.icon a[href$=".docx"]:before, a.icon[href$=".docx"]:before {content: "\f1c2"; font-family: "FontAwesome"; color: #2b5797; margin-right: 5px;}
+li.icon a[href$=".xls"]:before, a.icon[href$=".xls"]:before, li.icon a[href$=".xlsx"]:before, a.icon[href$=".xlsx"]:before {content: "\f1c3"; font-family: "FontAwesome"; color: #1e7145; margin-right: 5px;}
+li.icon a[href$=".ppt"]:before, a.icon[href$=".ppt"]:before, li.icon a[href$=".pptx"]:before, a.icon[href$=".pptx"]:before {content: "\f1c4"; font-family: "FontAwesome"; color: #eb3b00; margin-right: 5px;}
+li.icon a[href$=".pdf"]:before, a.icon[href$=".pdf"]:before, li.icon a[href$='.pdfx']:before, a.icon[href$='.pdfx']:before {content: "\f1c1"; font-family: "FontAwesome"; color: #d04525; margin-right: 5px;}
+li.icon a[href$=".zip"]:before, a.icon[href$=".zip"]:before, li.icon a[href$=".zipx"]:before, a.icon[href$=".zipx"]:before, li.icon a[href$=".rar"]:before, a.icon[href$=".rar"]:before {content: '\f1c6'; font-family: "FontAwesome"; color: #777777; margin-right: 5px;}
+li.icon a[href$=".txt"]:before, a.icon[href$=".txt"]:before, li.icon a[href$=".rtf"]:before, a.icon[href$=".rtf"]:before {content: '\f0f6'; font-family: "FontAwesome"; color: #777777; margin-right: 5px;}
+a.icon[href$=".html"] {text-decoration: none; border-bottom: 1px dotted #f1672c;}
+	li.icon a[href$=".html"]:before, a.icon[href$=".html"]:before {content: '\f1c9'; font-family: "FontAwesome"; color: #f1672c; margin-right: 5px;}
+a.icon[href$=".php"] {text-decoration: none; border-bottom: 1px dotted #5a68a5;}
+	li.icon a[href$=".php"]:before, a.icon[href$=".php"]:before {content: '\f1c9'; font-family: "FontAwesome"; color: #5a68a5; margin-right: 5px;}
+a.icon[href$=".js"] {text-decoration: none; border-bottom: 1px dotted #f1bf26;}
+	li.icon a[href$=".js"]:before, a.icon[href$=".js"]:before {content: '\f1c9'; font-family: "FontAwesome"; color: #f1bf26; margin-right: 5px;}
+a.icon[href$=".css"] {text-decoration: none; border-bottom: 1px dotted #30a9dc;}
+	li.icon a[href$=".css"]:before, a.icon[href$=".css"]:before {content: '\f1c9'; font-family: "FontAwesome"; color: #30a9dc; margin-right: 5px;}
+a.icon[href$=".swf"], a.icon[href$=".fla"] {text-decoration: none; border-bottom: 1px dotted #C31E24;}
+	li.icon a[href$=".swf"]:before, a.icon[href$=".swf"]:before, li.icon a[href$=".fla"]:before, a.icon[href$=".fla"]:before {content: '\f1c9'; font-family: "FontAwesome"; color: #C31E24; margin-right: 5px;}
 
 a.off {text-decoration: none; border: none;}
 	a.off:before {content: '';}
@@ -161,22 +161,22 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 	.lte-ie9 .nebulashadow.above {transform: none; filter:-; -ms-filter:-; display: none;}
 	.no-js.lte-ie9 .nebulashadow.inner-bottom,
 	.no-js.lte-ie9 .nebulashadow.above {display: none; visibility: hidden; opacity: 0;}
-.nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-.nebulashadow.bulging {height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain;}
+.nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+.nebulashadow.bulging {height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain;}
 	.nebulashadow.buldging:before {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%;}
-.nebulashadow.curling {height: 24px; background: url('images/shadow-curling.png') no-repeat top center; background-size: contain;}
-.nebulashadow.hovering { height: 35px; background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain;}
-.nebulashadow.anchored-right {height: 24px; background: url('images/shadow-anchored-right.png') no-repeat top center; background-size: contain;}
-.nebulashadow.anchored-left {height: 24px; background: url('images/shadow-anchored-left.png') no-repeat top center; background-size: contain;}
+.nebulashadow.curling {height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain;}
+.nebulashadow.hovering { height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain;}
+.nebulashadow.anchored-right {height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top center; background-size: contain;}
+.nebulashadow.anchored-left {height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top center; background-size: contain;}
 
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;}
-	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-floating.png') no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; pointer-events: none;}
-.nebulaframe.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-bulging.png') no-repeat top center; background-size: contain; pointer-events: none;}
+	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; pointer-events: none;}
+.nebulaframe.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain; pointer-events: none;}
 	.nebulaframe.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%; background: none;}
-.nebulaframe.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-curling.png') no-repeat top center; background-size: contain; pointer-events: none;}
-.nebulaframe.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url('images/shadow-hovering.png') no-repeat top center; background-size: contain; pointer-events: none;}
-.nebulaframe.anchored-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-anchored-right.png') no-repeat top center; background-size: contain; pointer-events: none;}
-.nebulaframe.anchored-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url('images/shadow-anchored-left.png') no-repeat top center; background-size: contain; pointer-events: none;}
+.nebulaframe.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain; pointer-events: none;}
+.nebulaframe.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain; pointer-events: none;}
+.nebulaframe.anchored-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top center; background-size: contain; pointer-events: none;}
+.nebulaframe.anchored-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top center; background-size: contain; pointer-events: none;}
 
 a.nebulaframe {border: none;}
 	/* .nebulaframe.animate:hover:after {background-position-y: -24px;} */
@@ -305,8 +305,8 @@ nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
 				nav#topnav ul li.menu-item:hover ul.sub-menu {left: 5px; opacity: 1;}
 				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
 
-li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url('images/search.png') no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-	.svg li.nebula-search input, .svg input.nebula-search {background: #eee url('images/search.svg') no-repeat 6px center;}
+li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	.svg li.nebula-search input, .svg input.nebula-search {background: #eee url("images/search.svg") no-repeat 6px center;}
 	li.nebula-search input::-webkit-search-decoration,
 	li.nebula-search input::-webkit-search-cancel-button,
 	input.nebula-search::-webkit-search-decoration,
@@ -375,7 +375,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
 
 /* Sample Hero and on-load animation */
-#heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url('images/phg/phg-nebula.jpg') fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+#heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	#heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 10px; margin-top: 10px; padding-left: 10px; text-transform: uppercase; background: #000; background: rgba(0,0,0,0.5);}
 
@@ -384,7 +384,7 @@ div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-tra
 	div#heroslider.closed {height: 0;}
     div#heroslider .bx-wrapper {}
         div#heroslider .bx-wrapper .bx-viewport {min-height: 500px; border: none; left: 0; z-index: 1;}
-            div#heroslider ul.bxslider {margin: 0; background: #222 url('images/black-linen.png'); height: 100%;}
+            div#heroslider ul.bxslider {margin: 0; background: #222 url("images/black-linen.png"); height: 100%;}
                 div#heroslider ul.bxslider li {padding: 0; height: 100%;}
                     div#heroslider ul.bxslider li div {position: absolute; top: 30%; left: 50%; width: 70%; max-width: 940px;}
                         div#heroslider ul.bxslider li div p {display: table; position: relative; margin-left: -50%; padding: 10px 30px; color: #000; text-align: center; text-transform: uppercase; margin-bottom: 5px; background: #fff; background: rgba(255, 255, 255, 0.9); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.2);}
@@ -567,7 +567,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .clearsearch {text-align: center; margin-top: 20px;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 .mm-menu li.current_page_item {background: rgba(255, 255, 255, 1); font-weight: bold; color: #000;}
-	.mm-menu li.current_page_item a:not(.mm-subopen):before {content: '\f138'; font-family: 'FontAwesome'; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
+	.mm-menu li.current_page_item a:not(.mm-subopen):before {content: "\f138"; font-family: "FontAwesome"; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
 
 
 .doasitesearch {display: block; margin-bottom: 15px;}
@@ -697,7 +697,7 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
    ========================================================================== */
 .google-map-overlay {position: relative; overflow: hidden;}
 	.the-map-overlay {cursor: pointer;}
-		.google-map-overlay:before {content: 'Click to enable interactivity.'; position: absolute; bottom: -50px; width: 100%; background: rgba(0, 0, 0, 0.5); text-align: center; color: #fff; overflow: hidden; opacity: 0; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+		.google-map-overlay:before {content: "Click to enable interactivity."; position: absolute; bottom: -50px; width: 100%; background: rgba(0, 0, 0, 0.5); text-align: center; color: #fff; overflow: hidden; opacity: 0; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		.google-map-overlay.the-map-overlay:before {bottom: 6px; opacity: 1; padding: 8px 0; height: auto;}
 			.the-map-overlay:hover:before,
 			.the-map-overlay.hover:before {background: rgba(0, 0, 0, 0.9); padding: 24px 0;}
@@ -736,7 +736,7 @@ div.space {clear: both; display: block; overflow: hidden; visibility: hidden; wi
 .avoid-clicks {pointer-events: none;} /* Only supported in IE11+ */
 .allow-clicks {pointer-events: all;}
 
-a.phg {margin-left: 3px; padding-left: 15px; background: url('images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
+a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
 	a.phg span {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg span.pinckney {color: #0099d8;}
 	a.phg span.hugo {color: #a0ce67;}
@@ -745,13 +745,13 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url('images/phg/phg-sym
 	a.phg:hover span.hugo {color: #709048;}
 	a.phg:hover span.group {color: #6f7072;}
 
-a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url('images/phg/phg-symbol.svg') -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg.anim span {margin-right: 3px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		a.phg.anim span:last-child {margin-right: 0;}
 	a.phg.anim span.pinckney {color: inherit;}
 	a.phg.anim span.hugo {color: inherit;}
 	a.phg.anim span.group {color: inherit;}
-	a.phg.anim:hover {margin-left: 3px; padding-left: 15px; background: url('images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px;}
+	a.phg.anim:hover {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;}
 		a.phg.anim:hover span {margin-right: 0px;}
 		a.phg.anim:hover span.pinckney {color: #0099d8;}
 		a.phg.anim:hover span.hugo {color: #a0ce67;}

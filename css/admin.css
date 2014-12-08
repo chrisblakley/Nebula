@@ -1,4 +1,4 @@
-a.phg {margin-left: 3px; padding-left: 15px; background: url('../images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
+a.phg {margin-left: 3px; padding-left: 15px; background: url("../images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
 	a.phg span {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg span.pinckney {color: #0099d8;}
 	a.phg span.hugo {color: #a0ce67;}
@@ -7,13 +7,13 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url('../images/phg/phg-
 	a.phg:hover span.hugo {color: #709048;}
 	a.phg:hover span.group {color: #6f7072;}
 
-a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url('../images/phg/phg-symbol.svg') -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("../images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg.anim span {margin-right: 3px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		a.phg.anim span:last-child {margin-right: 0;}
 	a.phg.anim span.pinckney {color: inherit;}
 	a.phg.anim span.hugo {color: inherit;}
 	a.phg.anim span.group {color: inherit;}
-	a.phg.anim:hover {margin-left: 3px; padding-left: 15px; background: url('../images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px;}
+	a.phg.anim:hover {margin-left: 3px; padding-left: 15px; background: url("../images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;}
 		a.phg.anim:hover span {margin-right: 0px;}
 		a.phg.anim:hover span.pinckney {color: #0099d8;}
 		a.phg.anim:hover span.hugo {color: #a0ce67;}
@@ -45,7 +45,7 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 				.phg-info p {color: #fff; margin: 0;}
 				.phg-info.maininfo {z-index: 50;}
 				.phg-info.mapinfo {z-index: 25;}
-		.welcome-photo-bg {position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: url('../images/phg/welcome.jpg') center 90% no-repeat; background-size: cover; z-index: 40;}
+		.welcome-photo-bg {position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: url("../images/phg/welcome.jpg") center 90% no-repeat; background-size: cover; z-index: 40;}
 
 		.weclome-map {position: absolute; top: 0; left: 0; height: 100%; width: 100%; padding: 0;}
 
@@ -130,36 +130,36 @@ td.plugin-title strong, td.post-title strong,
  Nebula TinyMCE Toolbar
  ===========================*/
 
-#dashboard_right_now a[href$='options-reading.php'] {color: red !important; font-weight: 700;}
-	#dashboard_right_now a[href$='options-reading.php']:before {content: '!'; background: red; color: white; padding: 0 7px; margin-right: 5px;}
+#dashboard_right_now a[href$="options-reading.php"] {color: red !important; font-weight: 700;}
+	#dashboard_right_now a[href$="options-reading.php"]:before {content: '!'; background: red; color: white; padding: 0 7px; margin-right: 5px;}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon {background-image: url('../images/admin/nebulaicon.png');}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon {background-image: url("../images/admin/nebulaicon.png");}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap {background-image: url('../images/admin/nebulamap.png');}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap {background-image: url("../images/admin/nebulamap.png");}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode {background-image: url('../images/admin/nebulacode.png');}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode {background-image: url("../images/admin/nebulacode.png");}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid {background-image: url('../images/admin/nebulacolgrid.png');}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid {background-image: url("../images/admin/nebulacolgrid.png");}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo {background-image: url('../images/admin/nebulavideo.png');}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo {background-image: url("../images/admin/nebulavideo.png");}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i {background-position-y: 0px; background-repeat: no-repeat;}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i,
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:hover button i,
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded='true'] i,
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"] i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:hover button i,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded='true'] i {background-position-y: -20px; background-repeat: no-repeat;}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] i {background-position-y: -20px; background-repeat: no-repeat;}
 
-#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded='true'],
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded='true'] {background: #ebebeb; border-color: #999; -webkit-box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3); box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3);}
+#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"],
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] {background: #ebebeb; border-color: #999; -webkit-box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3); box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3);}
 
 
 @media only screen and (max-width: 1800px) and (min-width: 1500px) {

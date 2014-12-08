@@ -97,11 +97,6 @@ function my_theme_register_required_plugins() {
             'required'  => false,
         ),
 */
-        array(
-            'name'      => 'Block Bad Queries',
-            'slug'      => 'block-bad-queries',
-            'required'  => false,
-        ),
     );
 
 	if ( get_option('nebula_comments') == 'enabled' ) {
@@ -337,8 +332,8 @@ function nebulaWordpressSettings() {
 	update_option('nebula_admin_bar', 'Default');
 	update_option('nebula_comments', 'Default');
 	update_option('nebula_wp_core_updates_notify', 'Default');
-	update_option('nebula_phg_plugin_update_warning', 'Default');
-	update_option('nebula_phg_welcome_panel', 'Default');
+	update_option('nebula_plugin_update_warning', 'Default');
+	update_option('nebula_welcome_panel', 'Default');
 	update_option('nebula_unnecessary_metaboxes', 'Default');
 	update_option('nebula_phg_metabox', 'Default');
 	update_option('nebula_console_css', 'Default');

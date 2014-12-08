@@ -38,7 +38,7 @@ if ( nebula_settings_conditional('nebula_wp_core_updates_notify', 'disabled') ) 
 }
 
 //Show update warning on Wordpress Core/Plugin update admin pages
-if ( nebula_settings_conditional('nebula_phg_plugin_update_warning') ) {
+if ( nebula_settings_conditional('nebula_plugin_update_warning') ) {
 	$filename = basename($_SERVER['REQUEST_URI']);
 	if ( $filename == 'plugins.php' ) {
 		add_action('admin_notices','plugin_warning');
@@ -92,7 +92,7 @@ function new_wp_login_title() {
 
 
 //Welcome Panel
-if ( nebula_settings_conditional('nebula_phg_welcome_panel') ) {
+if ( nebula_settings_conditional('nebula_welcome_panel') ) {
 	remove_action('welcome_panel','wp_welcome_panel');
 	add_action('welcome_panel','nebula_welcome_panel');
 	function nebula_welcome_panel() {
@@ -143,6 +143,10 @@ function is_dev() {
 	return false;
 }
 
+//Extension skip list for both TODO Manager and Developer Metabox
+function skip_extensions() {
+	return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx');
+}
 
 //TODO Metabox
 //This metabox tracks TODO messages throughout development.
@@ -160,15 +164,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 
 	function dashboard_todo_manager() {
 
-		echo '<p class="todoresults_title"><strong>Active @TODO Comments</strong> <a class="todo_help_icon" href="#"><i class="fa fw fa-question-circle"></i> Syntax</a></p>';
-		echo '<div class="todo_help_con">
-			<p class="todo_help_desc">
-				@TODO "Category" Priority: Write your message here<br/>
-				Priority (0 = Hidden, 5 = Important) and Category are optional.<br/>
-				Ex: @TODO "Example" 4: Lorem ipsum dolor sit amet.<br/>
-				<a class="togglehiddentodos" href="#">Toggle Hidden TODOs</a>
-			</p>
-		</div>';
+		echo '<p class="todoresults_title"><strong>Active @TODO Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p>';
 
 		echo '<div class="todo_results">';
 		$todo_last_filename = '';
@@ -185,10 +181,9 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 				    $todo_counted = 1;
 			    }
 
-			    $todo_skipExtensions = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'tiff', 'psd', 'ai', 'apng', 'bmp', 'otf', 'ttf', 'ogv', 'flv', 'fla', 'mpg', 'mpeg', 'avi', 'mov', 'woff', 'eot', 'mp3', 'mp4', 'wmv', 'wma', 'aiff', 'zip', 'zipx', 'rar', 'exe', 'dmg', 'swf', 'pdf', 'pdfx', 'pem');
 			    $todo_skipFilenames = array('README.md', 'nebula_admin_functions.php', 'error_log', 'Mobile_Detect.php', 'class-tgm-plugin-activation.php');
 
-			    if ( !contains(basename($todo_file), $todo_skipExtensions) && !contains(basename($todo_file), $todo_skipFilenames) ) { //@TODO "Nebula" 0: main.js is not showing up for some reason...
+			    if ( !contains(basename($todo_file), skip_extensions()) && !contains(basename($todo_file), $todo_skipFilenames) ) {
 				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ) {
 						$todo_hidden = 0;
 
@@ -296,17 +291,17 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 }
 
 
-//Custom PHG Metabox
+//Developer Info Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Settings).
-if ( nebula_settings_conditional('nebula_phg_metabox') ) {
+if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 
 	if ( is_dev() ) {
-		add_action('wp_dashboard_setup', 'phg_dev_metabox');
+		add_action('wp_dashboard_setup', 'dev_info_metabox');
 	}
 
-	function phg_dev_metabox() {
+	function dev_info_metabox() {
 		global $wp_meta_boxes;
-		wp_add_dashboard_widget('phg_developer_info', 'PHG Developer Info', 'dashboard_developer_info');
+		wp_add_dashboard_widget('phg_developer_info', 'Developer Information', 'dashboard_developer_info');
 	}
 	function dashboard_developer_info() {
 
@@ -550,9 +545,8 @@ function search_theme_files() {
 			    $counted = 1;
 		    }
 
-			$skipExtensions = array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.swf', '.pdf', '.pdfx', '.pem');
 			$skipFilenames = array('error_log');
-		    if ( !contains(basename($file), $skipExtensions) && !contains(basename($file), $skipFilenames) ) {
+		    if ( !contains(basename($file), skip_extensions()) && !contains(basename($file), $skipFilenames) ) {
 			    foreach ( file($file) as $lineNumber => $line ) {
 			        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
 			            $actualLineNumber = $lineNumber+1;
@@ -714,6 +708,85 @@ add_editor_style('css/editor-style.css');
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+//Found this PHP error log tracker dashboard metabox. Seems pretty cool. Research the possibility of including it more before implementing.
+//http://sltaylor.co.uk/blog/wordpress-dashboard-widget-php-errors-log/
+function slt_dashboardWidgets() {
+	wp_add_dashboard_widget( 'slt-php-errors', 'PHP errors', 'slt_PHPErrorsWidget' );
+}
+add_action( 'wp_dashboard_setup', 'slt_dashboardWidgets' );
+function slt_PHPErrorsWidget() {
+	$logfile = '/home3/cblakley/public_html/error_log'; // Enter the server path to your logs file here
+	$displayErrorsLimit = 100; // The maximum number of errors to display in the widget
+	$errorLengthLimit = 300; // The maximum number of characters to display for each error
+	$fileCleared = false;
+	$userCanClearLog = current_user_can('manage_options');
+
+	// Clear file?
+	if ( $userCanClearLog && isset( $_GET["slt-php-errors"] ) && $_GET["slt-php-errors"]=="clear" ) {
+		$handle = fopen( $logfile, "w" );
+		fclose( $handle );
+		$fileCleared = true;
+	}
+
+	// Read file
+	if ( file_exists( $logfile ) ) {
+		$errors = file( $logfile );
+		$errors = array_reverse( $errors );
+		if ( $fileCleared ) echo '<p><em>File cleared.</em></p>';
+		if ( $errors ) {
+			echo '<p>'.count( $errors ).' error';
+			if ( $errors != 1 ) echo 's';
+			echo '.';
+			if ( $userCanClearLog ) echo ' [ <b><a href="'.get_bloginfo("url").'/wp-admin/?slt-php-errors=clear" onclick="return confirm(\'Are you sure?\');">CLEAR LOG FILE</a></b> ]';
+			echo '</p>';
+			echo '<div id="slt-php-errors" style="height:250px;overflow:scroll;padding:2px;background-color:#faf9f7;border:1px solid #ccc;">';
+			echo '<ol style="padding:0;margin:0;">';
+			$i = 0;
+			foreach ( $errors as $error ) {
+				echo '<li style="padding:2px 4px 6px;border-bottom:1px solid #ececec;">';
+				$errorOutput = preg_replace( '/\[([^\]]+)\]/', '<b>[$1]</b>', $error, 1 );
+				if ( strlen( $errorOutput ) > $errorLengthLimit ) {
+					echo substr( $errorOutput, 0, $errorLengthLimit ).' [...]';
+				} else {
+					echo $errorOutput;
+				}
+				echo '</li>';
+				$i++;
+				if ( $i > $displayErrorsLimit ) {
+					echo '<li style="padding:2px;border-bottom:2px solid #ccc;"><em>More than '.$displayErrorsLimit.' errors in log...</em></li>';
+					break;
+				}
+			}
+			echo '</ol></div>';
+		} else {
+			echo '<p>No errors currently logged.</p>';
+		}
+	} else {
+		echo '<p><em>There was a problem reading the error log file.</em> The current template path is:</p><p>' . TEMPLATEPATH . '</p>';
+	}
+}
+*/
+
+
+
+
+
+
+
 //Clear caches when plugins are activated if W3 Total Cache is active
 add_action('admin_init', 'clear_all_w3_caches');
 function clear_all_w3_caches(){
@@ -811,19 +884,19 @@ function change_admin_footer_right() {
 			$nebula_version_daterange = 'Second';
 			break;
 		case '0rc':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'June';
-			} else {
+			if ( intval($nebula_version_split[0])%2 == 0 ) { //These are swapped because the "next" version iterates a month early (so 2.0rc is in Second half of December).
 				$nebula_version_month = 'December';
+			} else {
+				$nebula_version_month = 'June';
 			}
 			$nebula_version_daterange = 'Second';
 			break;
 
 		case '0b':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'June';
-			} else {
+			if ( intval($nebula_version_split[0])%2 == 0 ) { //These are swapped because the "next" version iterates a month early (so 2.0b is in First half of December).
 				$nebula_version_month = 'December';
+			} else {
+				$nebula_version_month = 'June';
 			}
 			$nebula_version_daterange = 'First';
 			break;

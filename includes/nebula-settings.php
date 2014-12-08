@@ -72,10 +72,10 @@
 		register_setting('nebula_settings_group', 'nebula_comments');
 		register_setting('nebula_settings_group', 'nebula_disqus_shortname');
 		register_setting('nebula_settings_group', 'nebula_wp_core_updates_notify');
-		register_setting('nebula_settings_group', 'nebula_phg_plugin_update_warning');
-		register_setting('nebula_settings_group', 'nebula_phg_welcome_panel');
+		register_setting('nebula_settings_group', 'nebula_plugin_update_warning');
+		register_setting('nebula_settings_group', 'nebula_welcome_panel');
 		register_setting('nebula_settings_group', 'nebula_unnecessary_metaboxes');
-		register_setting('nebula_settings_group', 'nebula_phg_metabox');
+		register_setting('nebula_settings_group', 'nebula_dev_metabox');
 		register_setting('nebula_settings_group', 'nebula_todo_metabox');
 		register_setting('nebula_settings_group', 'nebula_dev_stylesheets');
 		register_setting('nebula_settings_group', 'nebula_console_css');
@@ -486,26 +486,26 @@
 			        </tr>
 
 			        <tr valign="top">
-			        	<th scope="row">PHG Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<select name="nebula_phg_plugin_update_warning">
-								<option value="default" <?php selected('default', get_option('nebula_phg_plugin_update_warning')); ?>>Default</option>
-								<option value="enabled" <?php selected('enabled', get_option('nebula_phg_plugin_update_warning')); ?>>Enabled</option>
-								<option value="disabled" <?php selected('disabled', get_option('nebula_phg_plugin_update_warning')); ?>>Disabled</option>
+							<select name="nebula_plugin_update_warning">
+								<option value="default" <?php selected('default', get_option('nebula_plugin_update_warning')); ?>>Default</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_plugin_update_warning')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_plugin_update_warning')); ?>>Disabled</option>
 							</select>
 							<p class="helper"><small>Control whether or not the plugin update warning appears on admin pages. <em>(Default: Enabled)</em></small></p>
 						</td>
 			        </tr>
 
 			        <tr valign="top">
-			        	<th scope="row">PHG Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<select name="nebula_phg_welcome_panel">
-								<option value="default" <?php selected('default', get_option('nebula_phg_welcome_panel')); ?>>Default</option>
-								<option value="enabled" <?php selected('enabled', get_option('nebula_phg_welcome_panel')); ?>>Enabled</option>
-								<option value="disabled" <?php selected('disabled', get_option('nebula_phg_welcome_panel')); ?>>Disabled</option>
+							<select name="nebula_welcome_panel">
+								<option value="default" <?php selected('default', get_option('nebula_welcome_panel')); ?>>Default</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_welcome_panel')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_welcome_panel')); ?>>Disabled</option>
 							</select>
-							<p class="helper"><small>Control the PHG Welcome Panel with useful links related to the project. <em>(Default: Enabled)</em></small></p>
+							<p class="helper"><small>Control the Welcome Panel with useful links related to the project. <em>(Default: Enabled)</em></small></p>
 						</td>
 			        </tr>
 
@@ -522,14 +522,14 @@
 			        </tr>
 
 			        <tr valign="top">
-			        	<th scope="row">PHG Developer Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<select name="nebula_phg_metabox">
-								<option value="default" <?php selected('default', get_option('nebula_phg_metabox')); ?>>Default</option>
-								<option value="enabled" <?php selected('enabled', get_option('nebula_phg_metabox')); ?>>Enabled</option>
-								<option value="disabled" <?php selected('disabled', get_option('nebula_phg_metabox')); ?>>Disabled</option>
+							<select name="nebula_dev_metabox">
+								<option value="default" <?php selected('default', get_option('nebula_dev_metabox')); ?>>Default</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_dev_metabox')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_dev_metabox')); ?>>Disabled</option>
 							</select>
-							<p class="helper"><small>Control the PHG Developer Metabox with useful server information. Requires a user with a matching email address domain to the "Developer Email Domains" setting (under the Administration tab). <em>(Default: Enabled)</em></small></p>
+							<p class="helper"><small>Control the Developer Information Metabox with useful server information. Requires a user with a matching email address domain to the "Developer Email Domains" setting (under the Administration tab). <em>(Default: Enabled)</em></small></p>
 						</td>
 			        </tr>
 

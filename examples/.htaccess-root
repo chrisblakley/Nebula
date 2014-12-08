@@ -138,15 +138,6 @@ RewriteRule ^author/(.*)$ /about [R,L]
 RewriteCond %{QUERY_STRING} author=\d
 RewriteRule ^ /about? [L,R=301]
 
-#Prevent no-referrer requests through the login form.
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteCond %{REQUEST_METHOD} POST
-	RewriteCond %{REQUEST_URI} .(wp-comments-post|wp-login)\.php*
-	RewriteCond %{HTTP_REFERER} !.*yourdomain.com.* [OR]
-	RewriteCond %{HTTP_USER_AGENT} ^$
-	RewriteRule (.*) http://%{REMOTE_ADDR}/$ [R=301,L]
-</ifModule>
 
 #Block certain webcrawlers from showing up as actual visitors
 RewriteEngine on

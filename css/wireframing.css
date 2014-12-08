@@ -6,12 +6,12 @@
 
 #wireframing-bar {position: relative; background: black; color: #fff; padding-top: 5px; padding-bottom: 5px;}
 
-a.phg {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url('../images/phg/phg-symbol.svg') -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+a.phg {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("../images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg span {margin-right: 5px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg span.pinckney {color: #fff;}
 	a.phg span.hugo {color: #fff;}
 	a.phg span.group {color: #fff;}
-	a.phg:hover {margin-left: 3px; padding-left: 15px; background: url('../images/phg/phg-symbol.svg') 0 6px no-repeat; background-size: 13px 8px;}
+	a.phg:hover {margin-left: 3px; padding-left: 15px; background: url("../images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;}
 		a.phg:hover span {margin-right: 0px;}
 		a.phg:hover span.pinckney {color: #0099d8;}
 		a.phg:hover span.hugo {color: #a0ce67;}

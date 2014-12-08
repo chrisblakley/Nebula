@@ -90,7 +90,7 @@
       padding: 10px 10px 10px 20px;
       margin: 0; }
   .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {
-    content: '';
+    content: "";
     border-bottom-width: 1px;
     border-bottom-style: solid;
     display: block;
@@ -112,7 +112,7 @@
     top: 0;
     z-index: 2; }
     .mm-list a.mm-subopen:before {
-      content: '';
+      content: "";
       border-left-width: 1px;
       border-left-style: solid;
       display: block;
@@ -153,7 +153,7 @@
       padding-top: 25px; }
   .mm-list a.mm-subopen:after,
   .mm-list a.mm-subclose:before {
-    content: '';
+    content: "";
     border: 2px solid transparent;
     display: block;
     width: 7px;
@@ -412,7 +412,7 @@ html.mm-opened.mm-dragging #mm-blocker {
     bottom: 0; }
     .mm-header .mm-prev:before,
     .mm-header .mm-next:before {
-      content: '';
+      content: "";
       border: 2px solid transparent;
       display: block;
       width: 7px;
