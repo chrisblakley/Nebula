@@ -4,13 +4,7 @@
  */
 
 if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
-
-	/* @TODO "Nebula" 0: Try this out to pass the template name to GA in the event action.
-		global $template;
-    	print_r($template);
-	*/
-
-	ga_send_event('Direct Template Access', 'Template: 404', basename($_SERVER['PHP_SELF']));
+	ga_send_event('Direct Template Access', 'Template: ' . end(explode('/', $template)), basename($_SERVER['PHP_SELF']));
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")));
 	exit;
 }
