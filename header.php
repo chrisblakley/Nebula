@@ -7,7 +7,7 @@
 <!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
 	<?php /* manifest="<?php echo get_template_directory_uri(); ?>/includes/manifest.appcache" */ //To begin setting up ApplicationCache, move this attribute to the <html> tag. ?>
 	<head>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
@@ -139,7 +139,7 @@
 		<div id="fullbodywrapper">
 			<div id="fb-root"></div>
 
-			<noscript>
+			<noscript><?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that could be the issue. ?>
 				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo nebula_url_components('all'); ?>&amp;t=<?php echo urlencode(get_the_title($post->ID)); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
 			</noscript>
 

@@ -388,7 +388,7 @@
 		<p>
 			<strong>Coordinates:</strong> <span class="jsdetection coord">Enable JavaScript to detect coordinates.</span><br/>
 			<strong>City:</strong> <span class="jsdetection address">Enable JavaScript to detect city.</span><br/>
-			<strong>Closest Registerred Google Location:</strong> <span class="jsdetection actualplace">Enable JavaScript to detect registerred location.</span><br/>
+			<strong>Closest Business:</strong> <span class="jsdetection actualplace">Enable JavaScript to detect registerred location.</span><br/>
 			<strong>Location Accuracy:</strong> <span class="jsdetection locacc">Enable JavaScript to detect accuracy.</span><br/>
 		</p>
 		<div id="test_map_canvas" class="googlemaptester"></div>

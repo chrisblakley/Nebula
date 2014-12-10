@@ -27,7 +27,16 @@ get_header(); ?>
 
 				<div class="entry-meta">
 					<hr/>
-		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?> <span class="nebulasocialcon"><?php nebula_meta('social', 0); ?></span>
+		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
+		        	<span class="nebulasocialcon">
+		        		<?php
+			        		if ( is_dev() ) {
+				        		nebula_meta('social', 1);
+			        		} else {
+				        		nebula_meta('social', 0);
+			        		}
+			        	?>
+		        	</span>
 		        	<hr/>
 		        </div>
 

@@ -81,7 +81,7 @@ jQuery(document).ready(function() {
 
 
 
-	if ( !jQuery('li.comment-count').is(':visible') ) {
+	if ( !jQuery('li#menu-comments').is(':visible') ) {
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_settings">Nebula Settings</a>)</small>.');
 	}
 

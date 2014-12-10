@@ -37,21 +37,19 @@
 	<?php endif; ?>
 
 	<li>
-
-	<h3>Contact Us</h3>
-	<?php nebula_facebook_link(); ?>
-	<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
-		<div id="cform7-container">
-			<?php echo do_shortcode('[contact-form-7 id="384" title="Contact Form 7 Documentation"]'); ?>
-		</div>
-	<?php else : ?>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php nebula_backup_contact_form(); ?>
-			</div><!--/columns-->
-		</div><!--/row-->
-	<?php endif; ?>
-
+		<h3>Contact Us</h3>
+		<?php nebula_facebook_link(); ?>
+		<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
+			<div id="cform7-container">
+				<?php echo do_shortcode('[contact-form-7 id="384" title="Contact Form 7 Documentation"]'); ?>
+			</div>
+		<?php else : ?>
+			<div class="row">
+				<div class="sixteen columns">
+					<?php nebula_backup_contact_form(); ?>
+				</div><!--/columns-->
+			</div><!--/row-->
+		<?php endif; ?>
 	</li>
 
 </ul>

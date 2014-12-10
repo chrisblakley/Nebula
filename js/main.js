@@ -537,20 +537,6 @@ function gaEventTracking(){
 		ga('send', 'event', 'Click-to-Call' + intent, 'SMS to: ' + phoneNumber);
 	});
 
-	//Comment tracking @TODO "Nebula" 0: This might not be working.
-	jQuery(document).on('submit', '#commentform', function(){
-		if ( !jQuery(this).find('#submit').hasClass('disabled') ) {
-			var currentPage = jQuery(document).attr('title');
-			if ( jQuery('#reply-title').is('*') ) {
-				var replyTo = jQuery('#reply-title').children('a').text();
-				var commentID = jQuery('#reply-title').children('a').attr('href').replace('comment-', '');
-				ga('send', 'event', 'Comment', currentPage, 'Reply to: ' + replyTo + ' (' + commentID + ')');
-			} else {
-				ga('send', 'event', 'Comment', currentPage, 'Top Level');
-			}
-		}
-	});
-
 	//Word copy tracking
 	var copyCount = 0;
 	var copyOver = 0;

@@ -41,14 +41,14 @@ if ( nebula_settings_conditional('nebula_wp_core_updates_notify', 'disabled') ) 
 if ( nebula_settings_conditional('nebula_plugin_update_warning') ) {
 	$filename = basename($_SERVER['REQUEST_URI']);
 	if ( $filename == 'plugins.php' ) {
-		add_action('admin_notices','plugin_warning');
+		add_action('admin_notices', 'plugin_warning');
 		function plugin_warning(){
-			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
 		}
 	} elseif ( $filename == 'update-core.php') {
-		add_action('admin_notices','plugin_warning');
+		add_action('admin_notices', 'plugin_warning');
 		function plugin_warning(){
-			echo "<div id='pluginwarning' class='error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
 		}
 	}
 } else {
@@ -511,7 +511,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 	}
 }
 
-//Search theme or plugin files via PHG Metabox
+//Search theme or plugin files via Developer Information Metabox
 add_action('wp_ajax_search_theme_files', 'search_theme_files');
 add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
 function search_theme_files() {

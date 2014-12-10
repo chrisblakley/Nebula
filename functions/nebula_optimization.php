@@ -1,5 +1,8 @@
 <?php
 
+//Add IE compatibility header
+header("X-UA-Compatible: IE=edge");
+
 //Control which scripts use defer/async using a query string.
 //Note: Not an ideal solution, but works until WP Core updates wp_enqueue_script(); to allow for deferring.
 add_filter('clean_url', 'nebula_defer_async_scripts', 11, 1);

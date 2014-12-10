@@ -344,7 +344,20 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 	function enable_comments_status() {
 		return true;
 	}
+
+	$filename = basename($_SERVER['REQUEST_URI']);
+	if ( $filename == 'edit-comments.php' ) {
+		add_action('admin_notices', 'disqus_link');
+		function disqus_link(){
+			if ( nebula_settings_conditional_text_bool('nebula_disqus_shortname') ) {
+				echo "<div class='nebula_admin_notice updated'><p>You are using the Disqus commenting system. <a href='https://" . nebula_settings_conditional_text('nebula_disqus_shortname', '') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
+			} else {
+				echo "<div class='nebula_admin_notice error'><p>You are using the Disqus commenting system, <strong>BUT</strong> you have not set your shortname in <a href='themes.php?page=nebula_settings'>Nebula Settings</a>, so we can't send you directly to your comment listing! <a href='https://disqus.com/admin/moderate' target='_blank'>Go to Disqus &raquo;</a></p></div>";
+			}
+		}
+	}
 }
+
 
 
 //Prefill form fields with comment author cookie

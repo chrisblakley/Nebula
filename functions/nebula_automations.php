@@ -99,14 +99,6 @@ function my_theme_register_required_plugins() {
 */
     );
 
-	if ( get_option('nebula_comments') == 'enabled' ) {
-    	array_push($plugins, array(
-    		'name'      => 'Disqus Comment System',
-    		'slug'      => 'disqus-comment-system',
-    		'required'  => false
-    	));
-    }
-
     if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ) {
     	array_push($plugins, array(
     		'name'      => 'WooCommerce Google Analytics Integration',
