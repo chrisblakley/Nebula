@@ -19,7 +19,8 @@ get_header(); ?>
 </div><!--/row-->
 
 <?php if ( have_posts() ) { the_post(); } //Queue the first post then reset it before the loop. ?>
-<div id="about-the-author" class="row">
+<div id="about-the-author" class="container">
+	<div class="row">
 	<?php if ( get_the_author_meta('headshot_url') ) : ?>
 		<div class="three columns">
 			<div class="author-headshot">
@@ -31,26 +32,85 @@ get_header(); ?>
 		<div class="sixteen columns">
 	<?php endif; ?>
 
-		<h1><?php if ( get_the_author_meta('user_url') ) : ?><a href="<?php echo get_the_author_meta('user_url'); ?>" target="_blank"><?php endif; ?><?php echo get_the_author(); ?><?php if ( get_the_author_meta('user_url') ) : ?></a><?php endif; ?></h1>
+			<h1 class="author-name">
+				<?php if ( get_the_author_meta('user_url') ) : ?>
+					<a href="<?php echo esc_url(get_the_author_meta('user_url')); ?>" target="_blank">
+				<?php endif; ?>
+						<?php echo get_the_author(); ?>
+				<?php if ( get_the_author_meta('user_url') ) : ?>
+					</a>
+				<?php endif; ?>
+			</h1>
+			<?php if ( get_the_author_meta('userlocation') ) : ?>
+				<span class="author-location"><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps?q=<?php echo urlencode(str_replace(',', '', get_the_author_meta('userlocation'))); ?>" target="_blank"><?php echo get_the_author_meta('userlocation'); ?></a></span>
+			<?php endif; ?>
 
-		<hr/>
+
+			<span class="author-social">
+				<?php if ( get_the_author_meta('facebook', $user->ID) ) : ?>
+					<a class="facebook" href="http://www.facebook.com/<?php echo get_the_author_meta('facebook', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('facebook', $user->ID); ?>"><i class="fa fa-facebook-square"></i></a> <!-- add tooltips or titles -->
+				<?php endif; ?>
+
+				<?php if ( get_the_author_meta('twitter', $user->ID) ) : ?>
+					<a class="twitter" href="http://www.twitter.com/<?php echo get_the_author_meta('twitter', $user->ID); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter', $user->ID); ?>"><i class="fa fa-twitter-square"></i></a>
+				<?php endif; ?>
+
+				<?php if ( get_the_author_meta('googleplus', $user->ID) ) : ?>
+					<a class="googleplus" href="https://plus.google.com/+<?php echo get_the_author_meta('googleplus', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('googleplus', $user->ID); ?>"><i class="fa fa-google-plus-square"></i></a>
+				<?php endif; ?>
+
+				<?php if ( get_the_author_meta('linkedin', $user->ID) ) : ?>
+					<a class="linkedin" href="https://www.linkedin.com/profile/view?id=<?php echo get_the_author_meta('linkedin', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('linkedin', $user->ID); ?>"><i class="fa fa-linkedin-square"></i></a>
+				<?php endif; ?>
+
+				<?php if ( get_the_author_meta('youtube', $user->ID) ) : ?>
+					<a class="youtube" href="https://www.youtube.com/channel/<?php echo get_the_author_meta('youtube', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('youtube', $user->ID); ?>"><i class="fa fa-youtube"></i></a>
+				<?php endif; ?>
+
+				<?php if ( get_the_author_meta('instagram', $user->ID) ) : ?>
+					<a class="instagram" href="http://instagram.com/<?php echo get_the_author_meta('instagram', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('instagram', $user->ID); ?>"><i class="fa fa-instagram"></i></a>
+				<?php endif; ?>
+			</span>
+
+
+			<hr/>
 			<div class="author-meta">
-				<span class="author-jobtitle"><?php echo get_the_author_meta('jobtitle'); ?></span>
+				<span class="author-jobtitle">
+					<?php if ( get_the_author_meta('jobtitle') ) : ?>
+						<i class="fa fa-building"></i> <?php echo esc_html(get_the_author_meta('jobtitle')); ?>
+					<?php endif; ?>
+					<?php if ( get_the_author_meta('jobcompany') ) : ?>
+						at <span style="white-space: nowrap;">
+							<?php if ( get_the_author_meta('jobcompanywebsite') ) : ?>
+								<a href="<?php echo esc_url(get_the_author_meta('jobcompanywebsite')); ?>" target="_blank">
+							<?php endif; ?>
+									<?php echo get_the_author_meta('jobcompany'); ?>
+							<?php if ( get_the_author_meta('jobcompanywebsite') ) : ?>
+								</a>
+							<?php endif; ?>
+						</span>
+					<?php endif; ?>
+				</span>
 				<span class="author-contact">
-					<?php if ( get_the_author_meta('user_email') ) : ?><span class="author-email"><i class="fa fa-envelope"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;<?php endif; ?>
-					<?php if ( get_the_author_meta('phonenumber') ) : ?><span class="author-phonenumber"><i class="fa fa-phone"></i> <?php echo nebula_tel_link(get_the_author_meta('phonenumber')); ?></span><?php endif; ?>
+					<?php if ( get_the_author_meta('user_email') ) : ?>
+						<span class="author-email"><i class="fa fa-envelope"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;
+					<?php endif; ?>
+					<?php if ( get_the_author_meta('phonenumber') ) : ?>
+						<span class="author-phonenumber"><i class="fa fa-phone"></i> <?php echo nebula_tel_link(get_the_author_meta('phonenumber')); ?></span>
+					<?php endif; ?>
 				</span>
 			</div>
-		<hr/>
-		<br/>
-		<p class="authorbio"><?php echo the_author_meta('description'); ?></p>
-	</div><!--/columns-->
-</div><!--/row-->
+			<hr/>
+			<p class="authorbio"><?php echo esc_html(the_author_meta('description')); ?></p>
+		</div><!--/columns-->
+	</div><!--/row-->
+</div><!--/container-->
 
-<div class="row">
+<div class="row fullcontentcon">
 	<div class="eleven columns">
 
-		<h2>Articles by <?php echo get_the_author_meta('first_name'); ?></h2>
+		<h2>Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h2>
+
 		<?php
 			rewind_posts();
 			get_template_part('loop', 'author');

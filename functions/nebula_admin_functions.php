@@ -1,6 +1,29 @@
 <?php
 
 
+//Check if the current IP address matches any of the dev IP address from Nebula Settings
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_dev() {
+	$devIPs = explode(',', get_option('nebula_dev_ip'));
+	foreach ( $devIPs as $devIP ) {
+		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
+			return true;
+		}
+	}
+
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
+	$current_user = wp_get_current_user();
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+
+	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
+	foreach ( $devEmails as $devEmail ) {
+		if ( trim($devEmail) == $current_user_domain ) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 //Disable auto curly quotes
 remove_filter('the_content', 'wptexturize');
@@ -119,29 +142,6 @@ if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ) {
 	}
 }
 
-
-function is_dev() {
-	//Check if the current IP address matches any of the dev IP address from Nebula Settings
-	$devIPs = explode(',', get_option('nebula_dev_ip'));
-	foreach ( $devIPs as $devIP ) {
-		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
-			return true;
-		}
-	}
-
-	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
-	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
-
-	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
-	foreach ( $devEmails as $devEmail ) {
-		if ( trim($devEmail) == $current_user_domain ) {
-			return true;
-		}
-	}
-
-	return false;
-}
 
 //Extension skip list for both TODO Manager and Developer Metabox
 function skip_extensions() {
@@ -486,7 +486,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			if ( WP_DEBUG ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
 			}
-			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . $_SERVER['SERVER_NAME'] . '</strong>' . $domain_exp_html . '</li>';
+			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
 
 			echo $domain_registrar_html;
 
@@ -839,7 +839,12 @@ add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right() {
 	$nebula_theme_info = wp_get_theme();
 	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
-	$nebula_version_year = floor($nebula_version_split[0]/2)+2014;
+
+	if ( contains($nebula_version_split[1], array('b', 'rc')) ) {
+		$nebula_version_year = (floor($nebula_version_split[0]/2)+2014)-1;
+	} else {
+		$nebula_version_year = floor($nebula_version_split[0]/2)+2014;
+	}
 
 	//@TODO "Nebula" 0: This switch seems like overkill. There's gotta be a more optimized way to do this logic.
 	switch ( $nebula_version_split[1] ) {

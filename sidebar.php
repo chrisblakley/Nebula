@@ -7,14 +7,10 @@
 <ul class="xoxo">
 
 	<li>
-		<h3>Features</h3>
-		<?php
-			if ( has_nav_menu('sidebar') ) {
-				wp_nav_menu(array('theme_location' => 'sidebar'));
-			} elseif (has_nav_menu('header') ) {
-				wp_nav_menu(array('theme_location' => 'header'));
-			}
-		?>
+		<?php if ( has_nav_menu('sidebar') ) : ?>
+			<h3>Features</h3>
+			<?php wp_nav_menu(array('theme_location' => 'sidebar')); ?>
+		<?php endif; ?>
 	</li>
 
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ) : ?>

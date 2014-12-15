@@ -12,10 +12,16 @@ if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
 get_header(); ?>
 
 <div class="row">
+	<div class="sixteen columns">
+		<?php the_breadcrumb(); ?>
+		<hr/>
+	</div><!--/columns-->
+</div><!--/row-->
+
+<div class="row fullcontentcon">
 
 	<div class="eleven columns">
-		<?php the_breadcrumb(); ?>
-		<h1>Category Archives: <?php echo single_cat_title('', false); ?></h1>
+		<h1><i class="archiveicon fa fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 			<?php
 				$category_description = category_description();
 				if ( !empty($category_description) ) {

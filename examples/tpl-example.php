@@ -358,6 +358,9 @@ get_header(); ?>
 						include_once('includes/waitforfinalevent.php');
 					} ?>
 
+					<?php if (is_page(1259)) { //Google Campaign URL Builder
+						include_once('includes/google_campaign_url_generator.php');
+					} ?>
 
 					<?php
 					/*==========================

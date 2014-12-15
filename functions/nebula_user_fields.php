@@ -12,11 +12,12 @@ function nebula_user_contactmethods($contactmethods) {
     unset($contactmethods['yim']);
     unset($contactmethods['aim']);
     unset($contactmethods['jabber']);
-    $contactmethods['facebook'] = 'Facebook';
-    $contactmethods['twitter'] = 'Twitter <small>(Without @)</small>';
-    $contactmethods['gplus'] = 'Google+';
-    $contactmethods['linkedin'] = 'LinkedIn';
-    $contactmethods['instagram'] = 'Instagram';
+    $contactmethods['facebook'] = 'Facebook Username';
+    $contactmethods['twitter'] = 'Twitter Username <small>(Without @)</small>';
+    $contactmethods['googleplus'] = 'Google+ Username <small>(Without +)</small>';
+    $contactmethods['linkedin'] = 'LinkedIn ID';
+    $contactmethods['youtube'] = 'YouTube Channel ID';
+    $contactmethods['instagram'] = 'Instagram Username';
     return $contactmethods;
 }
 
@@ -81,14 +82,35 @@ function extra_profile_fields($user) { ?>
 		<tr>
 			<th><label for="jobtitle">Job Title</label></th>
 			<td>
-				<input type="text" name="jobtitle" id="jobtitle" value="<?php echo esc_attr(get_the_author_meta( 'jobtitle', $user->ID)); ?>" class="regular-text" /><br />
+				<input type="text" name="jobtitle" id="jobtitle" value="<?php echo esc_attr(get_the_author_meta('jobtitle', $user->ID)); ?>" class="regular-text" /><br />
+				<span class="description">&nbsp;</span>
+			</td>
+		</tr>
+		<tr>
+			<th><label for="jobcompany">Company</label></th>
+			<td>
+				<input type="text" name="jobcompany" id="jobcompany" value="<?php echo esc_attr(get_the_author_meta('jobcompany', $user->ID)); ?>" class="regular-text" /><br />
+				<span class="description">&nbsp;</span>
+			</td>
+		</tr>
+		<tr>
+			<th><label for="jobcompanywebsite">Company Website</label></th>
+			<td>
+				<input type="url" name="jobcompanywebsite" id="jobcompanywebsite" value="<?php echo esc_attr(get_the_author_meta('jobcompanywebsite', $user->ID)); ?>" class="regular-text" placeholder="http://" /><br />
+				<span class="description">&nbsp;</span>
+			</td>
+		</tr>
+		<tr>
+			<th><label for="userlocation">Location</label></th>
+			<td>
+				<input type="text" name="userlocation" id="userlocation" value="<?php echo esc_attr(get_the_author_meta('userlocation', $user->ID)); ?>" class="regular-text" placeholder="City, State" /><br />
 				<span class="description">&nbsp;</span>
 			</td>
 		</tr>
 		<tr>
 			<th><label for="phoneextension">Phone Number</label></th>
 			<td>
-				<input type="text" name="phonenumber" id="phonenumber" value="<?php echo esc_attr(get_the_author_meta( 'phonenumber', $user->ID)); ?>" class="regular-text" /><br />
+				<input type="text" name="phonenumber" id="phonenumber" value="<?php echo esc_attr(get_the_author_meta('phonenumber', $user->ID)); ?>" class="regular-text" /><br />
 				<span class="description">&nbsp;</span>
 			</td>
 		</tr>
@@ -105,6 +127,9 @@ function save_extra_profile_fields($user_id) {
 	update_user_meta($user_id, 'headshot', $_POST['headshot']);
 	update_user_meta($user_id, 'headshot_url', $_POST['headshot_url']);
 	update_user_meta($user_id, 'jobtitle', $_POST['jobtitle']);
+	update_user_meta($user_id, 'jobcompany', $_POST['jobcompany']);
+	update_user_meta($user_id, 'jobcompanywebsite', $_POST['jobcompanywebsite']);
+	update_user_meta($user_id, 'userlocation', $_POST['userlocation']);
 	update_user_meta($user_id, 'phonenumber', $_POST['phonenumber']);
 }
 

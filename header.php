@@ -51,13 +51,13 @@
 
 			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
 			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO "Metadata" 2: Verify admin email address. ?>" />
-			<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
-			<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); ?>" /> <!-- Ex: "1-315-478-6700" -->
+			<meta property="business:contact_data:phone_number" content="+<?php echo nebula_settings_conditional_text('nebula_phone_number', ''); //Ex: "1-315-478-6700" ?>" />
+			<meta property="business:contact_data:fax_number" content="+<?php echo nebula_settings_conditional_text('nebula_fax_number', ''); //Ex: "1-315-478-6700" ?>" />
 			<meta property="business:contact_data:street_address" content="<?php echo nebula_settings_conditional_text('nebula_street_address', ''); ?>" />
-			<meta property="business:contact_data:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); ?>" /> <!-- City -->
-			<meta property="business:contact_data:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); ?>" /> <!-- State -->
-			<meta property="business:contact_data:postal_code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); ?>" />
-			<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); ?>" /> <!-- USA -->
+			<meta property="business:contact_data:locality" content="<?php echo nebula_settings_conditional_text('nebula_locality', ''); //City ?>" />
+			<meta property="business:contact_data:region" content="<?php echo nebula_settings_conditional_text('nebula_region', ''); //State ?>" />
+			<meta property="business:contact_data:postal_code" content="<?php echo nebula_settings_conditional_text('nebula_postal_code', ''); //Zip ?>" />
+			<meta property="business:contact_data:country_name" content="<?php echo nebula_settings_conditional_text('nebula_country_name', 'USA'); //Country ?>" />
 		<?php endif; ?>
 
 		<?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Settings. ?>
@@ -70,7 +70,7 @@
 		<?php endforeach; ?>
 
 		<!-- Facebook Metadata -->
-		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', 'https://www.facebook.com/PinckneyHugo'); //@TODO "Social" 1: Enter the URL of the Facebook page here. ?>
+		<?php $GLOBALS['social']['facebook_url'] = nebula_settings_conditional_text('nebula_facebook_url', ''); //@TODO "Social" 1: Enter the URL of the Facebook page here. ?>
 		<?php $GLOBALS['social']['facebook_access_token'] = nebula_settings_conditional_text('nebula_facebook_access_token', ''); //@TODO "Social" 1: Enter Facebook Access Token. This only stored in PHP for reference. Do NOT share or store in browser-facing code. ?>
 		<meta property="fb:app_id" content="<?php echo $GLOBALS['social']['facebook_app_id'] = nebula_settings_conditional_text('nebula_facebook_app_id', ''); //@TODO "Social" 1: Enter Facebook App ID. Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>" />
 		<meta property="fb:page_id" content="<?php echo $GLOBALS['social']['facebook_page_id'] = nebula_settings_conditional_text('nebula_facebook_page_id', ''); //@TODO "Social" 1: Enter Facebook Page ID. ?>" />
@@ -78,7 +78,7 @@
 
 		<!-- Twitter Metadata -->
 		<?php //twitter:image is located in includes/metagraphics.php ?>
-		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', 'https://twitter.com/pinckneyhugo'); //@TODO "Social" 1: Enter the URL of the Twitter page here. ?>
+		<?php $GLOBALS['social']['twitter_url'] = nebula_settings_conditional_text('nebula_twitter_url', ''); //@TODO "Social" 1: Enter the URL of the Twitter page here. ?>
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content="<?php the_title(); ?>" />
 		<meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
@@ -125,7 +125,7 @@
 		<script>
 			if ( window.addEventListener ) {
 				window.addEventListener('error', function(e) {
-					if ( e.lineno != 0 ) {
+					if ( typeof e != 'undefined' && e.lineno != 0 ) {
 						ga('send', 'event', 'Error', 'JavaScript Error', e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
 						ga('send', 'exception', e.message, false);
 					}

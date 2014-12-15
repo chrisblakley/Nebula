@@ -74,6 +74,11 @@ function nebula_plugin_force_settings(){
 	if ( file_exists(WP_PLUGIN_DIR . '/search-everything') ) {
 		$se_options = get_option('se_options');
 	    $se_options['se_use_highlight'] = false; //Disable search keyword highlighting (to prevent interference with Nebula keyword highlighting)
+	    $se_options['se_research_metabox'] = array ( //Disable "Research Everything" feature of Search Everything (including compose-screen metabox)
+			'visible_on_compose'		=> false,
+			'external_search_enabled'	=> false,
+			'notice_visible'			=> false,
+		);
 	    update_option('se_options', $se_options);
 	}
 	//Wordpress SEO (Yoast)

@@ -18,7 +18,7 @@ get_header(); ?>
 	</div><!--/columns-->
 </div><!--/row-->
 
-<div class="row">
+<div class="row fullcontentcon">
 
 	<div class="eleven columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
@@ -27,7 +27,7 @@ get_header(); ?>
 
 				<div class="entry-meta">
 					<hr/>
-		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
+		        	<?php nebula_meta('by'); ?> <?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
 		        	<span class="nebulasocialcon">
 		        		<?php
 			        		if ( is_dev() ) {

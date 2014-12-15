@@ -18,7 +18,7 @@ get_header(); ?>
 	</div><!--/columns-->
 </div><!--/row-->
 
-<div class="row">
+<div class="row fullcontentcon">
 
 	<div class="eleven columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>

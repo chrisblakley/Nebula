@@ -14,7 +14,6 @@ jQuery(document).ready(function() {
 	conditionalJSLoading();
 
 	//Init Custom Functions
-	gaCustomDimensions();
 	gaEventTracking();
 
 	helperFunctions();
@@ -435,28 +434,6 @@ function nebulaFixeder() {
 } //end nebulaFixeder()
 
 
-//Google Analytics Custom Dimensions
-function gaCustomDimensions(){
-	/*
-		Custom Dimensions Index:
-			Dimension 1 = Facebook Interaction (Like, Unlike, Comment, Share)
-			Dimension 2 = Device Form Factor (Tablet, Mobile, Desktop) //@TODO "Nebula" 0: Do we really need this? GA has this standardized already...
-			Dimension 3 = Is Mobile (True/False) //@TODO "Nebula" 0: Do we really need this? GA has this standardized already...
-
-		Custom Dimension Ideas:
-			- When location is available (through Zip Code, or IP geolocation), set dimension to user's local weather conditions. (Dimension is current condition, metric is current temperature). Maybe an event too?
-			- Age Group / Gender / Etc. of user
-	*/
-
-	/*
-ga('send', 'pageview', {
-		'dimension2': deviceinfo['form_factor'],
-		'dimension3': deviceinfo['is_mobile']
-	});
-*/
-}
-
-
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
 
@@ -515,26 +492,29 @@ function gaEventTracking(){
 
 	//Mailto link tracking
 	jQuery(document).on('mousedown', 'a[href^="mailto"]', function(){
+		var currentPage = jQuery(document).attr('title');
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href');
 		emailAddress = emailAddress.replace('mailto:', '');
-		ga('send', 'event', 'Mailto' + intent, 'Email: ' + emailAddress);
+		ga('send', 'event', 'Mailto' + intent, 'Email: ' + emailAddress, currentPage);
 	});
 
 	//Telephone link tracking
 	jQuery(document).on('mousedown', 'a[href^="tel"]', function(){
+		var currentPage = jQuery(document).attr('title');
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
-		ga('send', 'event', 'Click-to-Call' + intent, 'Phone Number: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call' + intent, 'Phone Number: ' + phoneNumber, currentPage);
 	});
 
 	//SMS link tracking
 	jQuery(document).on('mousedown', 'a[href^="sms"]', function(){
+		var currentPage = jQuery(document).attr('title');
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
-		ga('send', 'event', 'Click-to-Call' + intent, 'SMS to: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call' + intent, 'SMS to: ' + phoneNumber, currentPage);
 	});
 
 	//Word copy tracking
@@ -547,6 +527,16 @@ function gaEventTracking(){
 		var selection = window.getSelection() + '';
 		words = selection.split(' ');
 		wordsLength = words.length;
+
+		//Track Email or Phone copies as contact intent.
+		var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		var phonePattern = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;
+		emailPhone = jQuery.trim(words.join(' '));
+		if ( emailPattern.test(emailPhone) ) {
+			ga('send', 'event', 'Contact (Intent)', 'Copied email: ' + emailPhone, currentPage);
+		} else if ( phonePattern.test(emailPhone) ) {
+			ga('send', 'event', 'Click-to-Call (Intent)', 'Copied phone: ' + emailPhone, currentPage);
+		}
 
 		if ( copyCount < 13 ) {
 			if (words.length > 8) {
@@ -1558,28 +1548,9 @@ function vimeoControls() {
 	}
 }
 
-
-
-function cookieActions() {
-
-	/*
-		createCookie('example', 'true', 30);
-
-		if ( readCookie('example') ) {
-			//Stuff here if cookie exists
-		}
-
-		eraseCookie('example');
-	*/
-
-	//Cookie actions here
-
-
-} //end cookieActions()
-
 //Cookie Management
 function createCookie(name, value, days) {
-	if (days) {
+	if ( days ) {
 		var date = new Date();
 		date.setTime(date.getTime()+(days*24*60*60*1000));
 		var expires = "; expires=" + date.toGMTString();
@@ -1587,12 +1558,14 @@ function createCookie(name, value, days) {
 		var expires = "";
 	}
 	document.cookie = name + "=" + value + expires + "; path=/";
-	if ( typeof Gumby != 'undefined' ) { Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires); }
+	if ( typeof Gumby != 'undefined' ) {
+		Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires);
+	}
 }
 function readCookie(name) {
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
-	for (var i=0; i<ca.length; i++) {
+	for ( var i=0; i<ca.length; i++ ) {
 		var c = ca[i];
 		while (c.charAt(0) == ' ') {
 			c = c.substring(1, c.length);
@@ -1605,8 +1578,10 @@ function readCookie(name) {
 	return null;
 }
 function eraseCookie(name) {
-	createCookie(name,"",-1);
-	if ( typeof Gumby != 'undefined' ) { Gumby.warn('Erased cookie: ' + name); }
+	createCookie(name, "", -1);
+	if ( typeof Gumby != 'undefined' ) {
+		Gumby.warn('Erased cookie: ' + name);
+	}
 }
 
 

@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 2.0b
+	Version: 2.0rc
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -19,7 +19,7 @@
    Note: CSS variables are currently only supported in Firefox. http://caniuse.com/#feat=css-variables
    ========================================================================== */
 
-:root { /* @TODO "Styles" 5: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation) */
+:root { /* @TODO "Styles" 5: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation). WARNING: Current only supported in Firefox! */
 	--primary-color: #0098d7; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
 	--secondary-color: #95D600; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
 }
@@ -261,14 +261,6 @@ ul.bxslider {}
    Author's custom styles
    ========================================================================== */
 
-/*
-@TODO "Styles" 2: Find/Replace the following HTML colors:
-	lightgrey
-	grey
-	#0098D7 (Primary Brand Color)
-	#95D600 (Secondary Brand Color)
-
-*/
 
 /* ==========================================================================
    Header Area
@@ -401,8 +393,12 @@ div#heroslider .bx-wrapper .bx-has-controls-direction {position: absolute; top: 
 /* ==========================================================================
    Content Area
    ========================================================================== */
-div#bcrumbs {position: relative; z-index: 1;}
+div.breadcrumbcon {position: relative; z-index: 1;}
 	nav.breadcrumbs {font-size: 10px; line-height: 14px;}
+
+.fullcontentcon {margin-top: 30px;}
+
+.archiveicon {color: #999;}
 
 .row.multi-column-query {margin-bottom: 30px;}
 
@@ -433,6 +429,10 @@ div#bcrumbs {position: relative; z-index: 1;}
 		.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;}
 
+.search-results .fullcontentcon article,
+.archive .fullcontentcon article {margin-top: 40px;}
+
+
 /* wp-pagenavi Pagination */
 div.wp-pagenavi {float: right; margin-bottom: 20px;}
 	div.wp-pagenavi span.pages {}
@@ -451,10 +451,12 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	.wpcf7-form.sent ul {max-height: 0;}
 
-#about-the-author {padding-top: 30px; padding-bottom: 30px;}
+#about-the-author {background: #eee; padding-top: 30px; padding-bottom: 30px; margin-bottom: 15px;}
 	.author-headshot {min-height: 100px; margin-bottom: 20px;}
 		.author-headshot img {width: 100%; max-width: 200px; border-radius: 500px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2); -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
-	#about-the-author h1 {padding: 0;}
+	#about-the-author .author-name {display: inline-block; padding: 0;}
+	.author-location {white-space: nowrap;}
+	.author-social {float: right; margin-top: 17px;}
 	.author-meta {font-size: 12px;}
 		.author-jobtitle {}
 		.author-contact {float: right;}
@@ -484,7 +486,10 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 			.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
 				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600; border-left: 1px solid var(--secondary-color);}
 
-.widget-container {margin: 10px 0 15px 0;}
+li.widget-container {margin: 10px 0 15px 0;}
+	li.widget-container li {margin-bottom: 5px;}
+
+li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
 
 /* Nebula expandable sidebar subnav style defaults */
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;}
@@ -681,7 +686,8 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 
 @media only screen and (max-width: 361px) {
 
-
+	#about-the-author .author-name {display: block; padding-bottom: 15px;}
+	.author-social {margin-top: 0;}
 
 } /* End mobile portrait media query */
 
@@ -756,6 +762,31 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 		a.phg.anim:hover span.pinckney {color: #0099d8;}
 		a.phg.anim:hover span.hugo {color: #a0ce67;}
 		a.phg.anim:hover span.group {color: #9fa1a4;}
+
+a.facebook {color: #3b5998;}
+	a.facebook:hover,
+	a.facebook.hover {color: #3b5998;} /* darken... */
+a.twitter {color: #55acee;}
+	a.twitter:hover,
+	a.twitter.hover {} /* darken... */
+a.googleplus {color: #d73d32;}
+	a.googleplus:hover,
+	a.googleplus.hover {} /* darken... */
+a.linkedin {color: #0077b5;}
+	a.linkedin:hover,
+	a.linkedin.hover {} /* darken... */
+a.github {color: #333;}
+	a.github:hover,
+	a.github.hover {color: #4183c4;}
+a.youtube {color: #cc181e;}
+	a.youtube:hover,
+	a.youtube.hover {} /* darken... */
+a.instagram {color: #3f729b;}
+	a.instagram:hover,
+	a.instagram.hover {color: #1c5380;}
+a.soundcloud {color: #ff3300;}
+	a.soundcloud:hover,
+	a.soundcloud.hover {} /* darken... */
 
 @-ms-viewport{
   width: device-width;

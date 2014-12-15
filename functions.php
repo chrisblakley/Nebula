@@ -7,7 +7,7 @@
 /*==========================
  Include Nebula Utility Functions
  ===========================*/
-require_once('functions/nebula_settings_functions.php'); //Nebula Settings Functions
+require_once('functions/nebula_settings.php'); //Nebula Settings
 require_once('functions/nebula_utilities.php'); //Nebula Utilities
 
 
@@ -15,14 +15,11 @@ require_once('functions/nebula_utilities.php'); //Nebula Utilities
  Google Analytics Tracking ID (Nebula Settings Functions required)
  ===========================*/
 $GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); //@TODO "Analytics" 5: Change Google Analytics Tracking ID here or in Nebula Settings (or both)!
-$_GLOBALS['ga_v'] = 1; //Version
-$_GLOBALS['ga_cid'] = gaParseCookie(); //Anonymous Client ID
 
 
 /*==========================
  Include Remaining Nebula Functions Groups
  ===========================*/
-
 require_once('functions/nebula_automations.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
 require_once('functions/nebula_admin_functions.php'); //Nebula Admin Functions
@@ -33,6 +30,18 @@ require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be commented out after launch)
 
 
+/*
+	//THIS IS AN IN-PROGRESS TEST
+	//For automatically setting certain "Screen Options" settings by default.
+add_action('admin_init', 'set_user_metaboxes');
+function set_user_metaboxes($user_id=NULL) {
+    //css-classes-hide
+
+    echo 'bacon. user meta keys: ';
+    var_dump(  );
+    //var_dump(meta_box_prefs($screen)); //$screen needs to be the admin screen id or something
+}
+*/
 
 
 //To force override the Nebula Settings, uncomment the line below.

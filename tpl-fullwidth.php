@@ -14,6 +14,12 @@ get_header(); ?>
 <div class="row">
 	<div class="sixteen columns">
 		<?php the_breadcrumb(); ?>
+		<hr/>
+	</div><!--/columns-->
+</div><!--/row-->
+
+<div class="row fullcontentcon">
+	<div class="sixteen columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<h1 class="entry-title"><?php the_title(); ?></h1>

@@ -35,7 +35,7 @@ if ( nebula_settings_conditional('nebula_console_css') ) {
 		echo "<script>
 			if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ) {
 			console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
-			console.log('%c Nebula by Pinckney Hugo Group ', 'padding: 2px 10px; background: #0098d7; color: #fff;');
+			console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');
 			}
 		</script>";
 	}
@@ -391,7 +391,6 @@ function nebula_backup_contact_send() {
 }
 
 
-
 function pinckneyhugogroup($anim=false){
 	if ( $anim ) {
 		$anim = 'anim';
@@ -603,10 +602,10 @@ function the_breadcrumb() {
 	$homeLink = home_url('/');
 
 	if ( is_home() || is_front_page() ) {
-		echo '<div id="bcrumbs"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav></div>';
+		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav></div>';
 		return false;
 	} else {
-		echo '<div id="bcrumbs"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
+		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
 		if ( function_exists('is_pod_page') ) {
 			if ( is_pod_page() ) {
 				$skipThese = array('wordsgohere'); //An array of words(?) to skip. //array('detail', 'concentration')
@@ -652,7 +651,7 @@ function the_breadcrumb() {
 			if ( $thisCat->parent != 0 ) {
 				echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
 			}
-			echo $before . 'Archive by category "' . single_cat_title('', false) . '"' . $after;
+			echo $before . 'Category: ' . single_cat_title('', false) . $after;
 		} elseif ( is_search() ) {
 			echo $before . 'Search results for "' . get_search_query() . '"' . $after;
 		} elseif ( is_day() ) {
@@ -713,7 +712,7 @@ function the_breadcrumb() {
 				echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
 			}
 		} elseif ( is_tag() ) {
-			echo $before . 'Posts tagged "' . single_tag_title('', false) . '"' . $after;
+			echo $before . 'Tag: ' . single_tag_title('', false) . $after;
 		} elseif ( is_author() ) {
 			global $author;
 			$userdata = get_userdata($author);
@@ -731,7 +730,7 @@ function the_breadcrumb() {
 				echo ')';
 			}
 		}
-		echo '</nav></div><!--/bcrumbs-->';
+		echo '</nav></div><!--/breadcrumbcon-->';
 	}
 } //End Breadcrumbs
 
@@ -897,7 +896,7 @@ function nebula_body_classes($classes) {
 
 
 
-//Add additional classes to post wrappers @TODO: Finish implementing this!
+//Add additional classes to post wrappers @TODO "Nebula" 0: Finish implementing this!
 add_filter('post_class', 'nebula_post_classes');
 function nebula_post_classes($classes) {
     global $wp_query;

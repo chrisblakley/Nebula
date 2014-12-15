@@ -12,9 +12,15 @@ if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
 get_header(); ?>
 
 <div class="row">
+	<div class="sixteen columns">
+		<?php the_breadcrumb(); ?>
+		<hr/>
+	</div><!--/columns-->
+</div><!--/row-->
+
+<div class="row fullcontentcon">
 
 	<div class="eleven columns">
-		<?php the_breadcrumb(); ?>
 		<article id="post-0" class="post error404 not-found" role="main">
 			<h1>Not Found</h1>
 			<p>The page you requested could not be found.</p>

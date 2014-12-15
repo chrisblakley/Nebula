@@ -3,7 +3,7 @@
 	<div id="welcome-content">
 		<div class="logocon">
 			<a href="<?php echo home_url(); ?>" target="_blank">
-				<img class="welcome-logo" src="<?php echo get_template_directory_uri();?>/images/logo.svg" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri();?>/images/logo.png" alt="<?php bloginfo('name'); ?>"/>
+				<img class="welcome-logo" src="<?php echo get_template_directory_uri();?>/images/meta/favicon-48x48.png" alt="<?php bloginfo('name'); ?>"/>
 			</a>
 		</div>
 

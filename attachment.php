@@ -12,6 +12,13 @@ if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
 get_header(); ?>
 
 <div class="row">
+	<div class="sixteen columns">
+		<?php the_breadcrumb(); ?>
+		<hr/>
+	</div><!--/columns-->
+</div><!--/row-->
+
+<div class="row fullcontentcon">
 
 	<div class="sixteen columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>

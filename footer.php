@@ -68,40 +68,34 @@
 					</div><!--/row-->
 				<?php endif; ?>
 
+				<?php if ( has_nav_menu('footer') ) : ?>
 					<div class="container footerlinks">
-						<?php if ( has_nav_menu('footer') || has_nav_menu('header') ) : ?>
-							<div class="row powerfootercon">
-								<div class="sixteen columns">
-									<nav id="powerfooter">
-										<?php
-											if ( has_nav_menu('footer') ) {
-												wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2'));
-											} elseif ( has_nav_menu('header') ) {
-												wp_nav_menu(array('theme_location' => 'header', 'depth' => '2'));
-											}
-										?>
-									</nav>
-								</div><!--/columns-->
-							</div><!--/row-->
-						<?php endif; ?>
-					</div><!--/container-->
-
-					<div class="container copyright">
-						<div class="row">
-							<div class="eleven columns ">
-								<p>
-									<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
-									<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], '760 West Genesee Street, Syracuse, NY 13204'); //@TODO "Metadata" 3: Add address here. ?>
-									<a href="https://www.google.com/maps/place/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><?php echo $nebula_full_address; ?></a>
-								</p>
-							</div><!--/columns-->
-							<div class="four columns push_one">
-								<form class="search align-right" method="get" action="<?php echo home_url('/'); ?>">
-									<input class="nebula-search open input search" type="search" name="s" placeholder="Search" />
-								</form>
+						<div class="row powerfootercon">
+							<div class="sixteen columns">
+								<nav id="powerfooter">
+									<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2')); ?>
+								</nav>
 							</div><!--/columns-->
 						</div><!--/row-->
 					</div><!--/container-->
+				<?php endif; ?>
+
+				<div class="container copyright">
+					<div class="row">
+						<div class="eleven columns ">
+							<p>
+								<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
+								<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], ''); //@TODO "Metadata" 3: Add address here. ?>
+								<a href="https://www.google.com/maps/place/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><?php echo $nebula_full_address; ?></a>
+							</p>
+						</div><!--/columns-->
+						<div class="four columns push_one">
+							<form class="search align-right" method="get" action="<?php echo home_url('/'); ?>">
+								<input class="nebula-search open input search" type="search" name="s" placeholder="Search" />
+							</form>
+						</div><!--/columns-->
+					</div><!--/row-->
+				</div><!--/container-->
 
 			</div><!--/footer-->
 

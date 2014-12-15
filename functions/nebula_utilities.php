@@ -1,5 +1,8 @@
 <?php
 
+$GLOBALS['ga_v'] = 1; //Version
+$GLOBALS['ga_cid'] = gaParseCookie(); //Anonymous Client ID
+
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
 function gaParseCookie() {
 	if (isset($_COOKIE['_ga'])) {
@@ -35,12 +38,12 @@ function gaSendData($data) {
 
 //Send Pageview Function for Server-Side Google Analytics
 function ga_send_pageview($hostname=null, $page=null, $title=null) {
-	if ( $_GLOBALS['ga_v'] === null ) {
-		$_GLOBALS['ga_v'] = 1;
+	if ( $GLOBALS['ga_v'] === null ) {
+		$GLOBALS['ga_v'] = 1;
 	}
 
-	if ( $_GLOBALS['ga_cid'] === null ) {
-		$_GLOBALS['ga_cid'] = gaParseCookie();
+	if ( $GLOBALS['ga_cid'] === null ) {
+		$GLOBALS['ga_cid'] = gaParseCookie();
 	}
 
 	if ( $hostname === null ) {
@@ -56,9 +59,9 @@ function ga_send_pageview($hostname=null, $page=null, $title=null) {
 	}
 
 	$data = array(
-		'v' => $_GLOBALS['ga_v'],
+		'v' => $GLOBALS['ga_v'],
 		'tid' => $GLOBALS['ga'],
-		'cid' => $_GLOBALS['ga_cid'],
+		'cid' => $GLOBALS['ga_cid'],
 		't' => 'pageview',
 		'dh' => $hostname, //Document Hostname "gearside.com"
 		'dp' => $page, //Page "/something"
@@ -69,18 +72,18 @@ function ga_send_pageview($hostname=null, $page=null, $title=null) {
 
 //Send Event Function for Server-Side Google Analytics
 function ga_send_event($category=null, $action=null, $label=null) {
-	if ( $_GLOBALS['ga_v'] === null ) {
-		$_GLOBALS['ga_v'] = 1;
+	if ( $GLOBALS['ga_v'] === null ) {
+		$GLOBALS['ga_v'] = 1;
 	}
 
-	if ( $_GLOBALS['ga_cid'] === null ) {
-		$_GLOBALS['ga_cid'] = gaParseCookie();
+	if ( $GLOBALS['ga_cid'] === null ) {
+		$GLOBALS['ga_cid'] = gaParseCookie();
 	}
 
 	$data = array(
-		'v' => $_GLOBALS['ga_v'],
+		'v' => $GLOBALS['ga_v'],
 		'tid' => $GLOBALS['ga'],
-		'cid' => $_GLOBALS['ga_cid'],
+		'cid' => $GLOBALS['ga_cid'],
 		't' => 'event',
 		'ec' => $category, //Category (Required)
 		'ea' => $action, //Action (Required)

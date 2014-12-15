@@ -90,6 +90,11 @@ function my_theme_register_required_plugins() {
             'slug'      => 'search-everything',
             'required'  => false,
         ),
+        array(
+            'name'      => 'UpdraftPlus Backup and Restoration',
+            'slug'      => 'updraftplus',
+            'required'  => false,
+        ),
 /*
         array(
             'name'      => 'Theme Check',
@@ -345,6 +350,10 @@ function nebulaWordpressSettings() {
 	update_option('timezone_string', 'America/New_York'); //Change Timezone
 	update_option('start_of_week', 0); //Start of the week to Sunday
 	update_option('permalink_structure', '/%postname%/'); //Set the permalink structure to be "pretty" style
+
+	//Update certain WordPress user meta values
+	//@TODO "Nebula" 0: Check the "CSS Classes" checkbox under "Screen Options" on the Appearance > Menus page so they are always visible on each menu item.
+
 	$wp_rewrite->flush_rules();
 }
 

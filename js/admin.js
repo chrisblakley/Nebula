@@ -126,29 +126,6 @@ jQuery(document).ready(function() {
 		return false;
 	});
 
-	jQuery(document).on("click", ".todo_help_icon", function() {
-		jQuery('.todo_help_con').slideToggle();
-		return false;
-	});
-
-	//Alert confirmation if "Bulk Action" is selected when "Apply" is submitted.
-	//@TODO "Nebula" 0: This has several false-positives.
-	/*
-if ( jQuery('#bulk-action-selector-top').is('*') ) {
-		bulkSubmitError = 0;
-		jQuery('form').on('submit', function(){
-			if ( jQuery(this).find('#bulk-action-selector-top').val() == '-1' && jQuery(this).find('#bulk-action-selector-bottom').val() == '-1' ) {
-				if ( bulkSubmitError == 0 ) {
-					jQuery(this).find('.bulkactions').append('<strong title="You have not selected an action to apply to the selected items." style="cursor: default; background: #dd3d36; padding: 2px 10px; border-radius: 10px; line-height: 30px; color: #fff;">Select an option before applying!</strong>');
-					bulkSubmitError = 1;
-				}
-				if ( !confirm('You have not selected an action. Proceed anyway?') ) {
-				    return false;
-				}
-			}
-		});
-	}
-*/
 
 	if ( jQuery('.flag').is('*') ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');

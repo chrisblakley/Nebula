@@ -25,7 +25,6 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 .index-php .welcome-panel {display: block; padding: 8px 12px; overflow: hidden;}
 
 	.index-php .welcome-panel-content {margin: 0;}
-		.index-php .welcome-logo {max-height: 75px; width: auto;}
 		.index-php .welcome-panel .about-description {font-size: 13px;}
 			.index-php .welcome-panel h4 {/* margin-top: 8px; */}
 			.index-php .welcome-panel li {color: #444; font-size: 13px;}
@@ -53,8 +52,8 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 			.index-php .welcome-panel .welcome-panel-column:first-child {width: 33% !important;}
 			.index-php .welcome-panel .welcome-panel-column {min-width: 100px;}
 			#welcome-content .logocon {float: left; max-width: 22%; /* max-height: 56px; */ margin-right: 15px;}
-				#welcome-content .logocon a {}
-					#welcome-content .logocon a img {width: 100%;}
+				#welcome-content .logocon a {display: inline-block;}
+					#welcome-content .logocon a img {max-height: 75px; width: auto;}
 			#welcome-content hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
 
 #wpbody-content {padding-bottom: 40px;}

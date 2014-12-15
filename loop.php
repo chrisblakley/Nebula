@@ -72,12 +72,6 @@
 			<footer class="entry-utility">
 				<a href="<?php echo get_term_link('gallery', 'category'); ?>">More Galleries</a>
 
-				<?php
-					if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
-						comments_popup_link('Leave a comment', '1 Comment', '% Comments');
-					}
-				?>
-
 				<?php if ( current_user_can('manage_options') ) : ?>
 					<div class="container entry-manage">
 						<div class="row">
@@ -96,18 +90,25 @@
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
-			<div class="entry-meta">
-				<hr/>
-				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
-				<hr/>
-			</div>
+				<div class="entry-meta">
+					<hr/>
+					<?php nebula_meta('by'); ?> <?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
+					<hr/>
+				</div>
 			<?php endif; ?>
 
-			<?php if ( is_archive() || is_search() ) : ?>
+			<?php if ( is_archive() ) : ?>
 				<div class="entry-summary">
-					<?php echo nebula_the_excerpt('', 50, 1); ?>
+					<?php echo nebula_the_excerpt('Read more &raquo;', 50, 1); ?>
 				</div>
-				<a href="<?php the_permalink(); ?>">Read more &raquo;</a>
+			<?php elseif ( is_search() ) : ?>
+				<div class="entry-summary">
+					<?php if ( get_field('description') != '' ) : //@TODO "Custom Fields" 4: Either change or remove this logic to show custom fields in search results. ?>
+						<?php echo nebula_custom_excerpt(get_field('description'), 50, 1); ?>
+					<?php else : ?>
+						<?php echo nebula_the_excerpt('', 50, 1); ?>
+					<?php endif; ?>
+				</div>
 			<?php else : ?>
 				<div class="entry-content">
 					<?php echo nebula_the_excerpt('Read More &raquo;', 70, 1); ?>
