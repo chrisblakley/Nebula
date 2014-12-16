@@ -30,9 +30,9 @@
 	jQuery(document).on('submit', '#urltester', function(e){
 		if ( jQuery("#urlstring").val().trim() != '' ) {
 			ga('send', 'event', 'Nebula URL Components Test', jQuery("#urlstring").val().trim());
-			
+
 			jQuery('i.fa-spinner').removeClass('hidden');
-			
+
 			var urlData = [{
 				'url': jQuery("#urlstring").val()
 			}];
@@ -75,11 +75,11 @@
 		<p>
 			<strong>"all"</strong> <em>(default)</em>: <?php echo nebula_url_components('all'); ?><br/>
 			<strong>"protocol"</strong>: <?php echo nebula_url_components('protocol'); ?><br/>
-			<strong>"scheme"</strong>: <?php echo nebula_url_components('scheme'); ?><br/>
 			<strong>"host"</strong>: <?php echo nebula_url_components('host'); ?><br/>
 			<strong>"www"</strong>: <?php echo nebula_url_components('www'); ?><br/>
 			<strong>"subdomain"</strong>: <?php echo nebula_url_components('subdomain'); ?><br/>
 			<strong>"domain"</strong>: <?php echo nebula_url_components('domain'); ?><br/>
+			<strong>"basedomain"</strong>: <?php echo nebula_url_components('basedomain'); ?><br/>
 			<strong>"sld"</strong>: <?php echo nebula_url_components('sld'); ?><br/>
 			<strong>"tld"</strong>: <?php echo nebula_url_components('tld'); ?><br/>
 			<strong>"filepath"</strong>: <?php echo nebula_url_components('filepath'); ?><br/>
@@ -95,11 +95,11 @@
 			<strong>https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something</strong><br/>
 			<strong>"all"</strong> <em>(default)</em>: <?php echo nebula_url_components('all', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"protocol"</strong>: <?php echo nebula_url_components('protocol', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
-			<strong>"scheme"</strong>: <?php echo nebula_url_components('scheme', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"host"</strong>: <?php echo nebula_url_components('host', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"www"</strong>: <?php echo nebula_url_components('www', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"subdomain"</strong>: <?php echo nebula_url_components('subdomain', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"domain"</strong>: <?php echo nebula_url_components('domain', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
+			<strong>"basedomain"</strong>: <?php echo nebula_url_components('basedomain', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"sld"</strong>: <?php echo nebula_url_components('sld', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"tld"</strong>: <?php echo nebula_url_components('tld', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"filepath"</strong>: <?php echo nebula_url_components('filepath', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>

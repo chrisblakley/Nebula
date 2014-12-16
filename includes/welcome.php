@@ -2,12 +2,12 @@
 
 	<div id="welcome-content">
 		<div class="logocon">
-			<a href="<?php echo home_url(); ?>" target="_blank">
+			<a href="<?php echo home_url('/'); ?>" target="_blank">
 				<img class="welcome-logo" src="<?php echo get_template_directory_uri();?>/images/meta/favicon-48x48.png" alt="<?php bloginfo('name'); ?>"/>
 			</a>
 		</div>
 
-		<h3><a href="<?php echo home_url(); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
+		<h3><a href="<?php echo home_url('/'); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
 		<p class="about-description">Designed and Developed by <?php pinckneyhugogroup(1); ?>.</p>
 
 		<hr/>
@@ -17,7 +17,7 @@
 			<div class="welcome-panel-column">
 				<h4>Your Information</h4>
 
-				<?php $user_info = get_userdata( get_current_user_id() ); ?>
+				<?php $user_info = get_userdata(get_current_user_id()); ?>
 
 				<ul>
 					<li>
@@ -52,7 +52,7 @@
 						<?php endif; ?>
 					</li>
 					<li>
-						<?php if ($_SERVER["REMOTE_ADDR"] == '72.43.235.106'): ?>
+						<?php if ( is_at_phg() ): ?>
 							<img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
 						<?php else: ?>
 							<i class="fa fa-laptop fa-fw"></i>

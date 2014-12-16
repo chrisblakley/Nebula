@@ -466,15 +466,25 @@ function nebula_meta($meta, $secondary=1) {
 		//@TODO "Nebula" 0: Pass an array to nebula_meta() for which social networks to use...
 
 		if ( $secondary ) { //Secondary here is to hide/show button counts
-			$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble');
+			$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble', 'linkedin' => ''); //Show count bubbles
 		} else {
-			$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none');
+			$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none', 'linkedin' => 'data-counter="right"'); //Hide count bubbles
 		}
 
 		echo '<div class="sharing-links">';
-			echo '<div class="share-button share-facebook"><div class="fb-like post-like" data-href="' . get_page_link() . '" data-layout="' . $show_counts['facebook'] . '" data-action="like" data-show-faces="false" data-share="false"></div></div>'; //Facebook
+
+			//Facebook Like
+			echo '<div class="share-button share-facebook"><div class="fb-like post-like" data-href="' . get_page_link() . '" data-layout="' . $show_counts['facebook'] . '" data-action="like" data-show-faces="false" data-share="false"></div></div>';
+
+			//Twitter Share
 			echo '<div class="share-button share-twitter"><a class="twitter-share-button" href="https://twitter.com/share" data-url="' . get_page_link() . '" ' . $show_counts['twitter'] . '>Tweet</a><script type="text/javascript">window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));</script></div>';
+
+			//Google Plus Share
 			//echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div><script src="https://apis.google.com/js/platform.js" async defer></script></div>';
+
+			//LinkedIn Share
+			//echo '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/Share" data-url="' . get_page_link() . '" ' . $show_counts['linkedin'] . '></script>';
+
 		echo '</div>';
 	}
 }

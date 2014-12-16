@@ -1,30 +1,6 @@
 <?php
 
 
-//Check if the current IP address matches any of the dev IP address from Nebula Settings
-//Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_dev() {
-	$devIPs = explode(',', get_option('nebula_dev_ip'));
-	foreach ( $devIPs as $devIP ) {
-		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
-			return true;
-		}
-	}
-
-	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
-	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
-
-	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
-	foreach ( $devEmails as $devEmail ) {
-		if ( trim($devEmail) == $current_user_domain ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 //Disable auto curly quotes
 remove_filter('the_content', 'wptexturize');
 remove_filter('the_excerpt', 'wptexturize');
@@ -305,85 +281,16 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 	}
 	function dashboard_developer_info() {
 
-		$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
-
-		//Get Expiration Date
-		if ( contains($whois, array('Registrar Registration Expiration Date: ')) ) {
-			$domain_exp_detected = substr($whois, strpos($whois, "Registrar Registration Expiration Date: ")+40, 10);
-		} elseif ( contains($whois, array('Registry Expiry Date: ')) ) {
-			$domain_exp_detected = substr($whois, strpos($whois, "Registry Expiry Date: ")+22, 10);
-		} else {
-			$domain_exp_detected = '';
-		}
+		$domain_exp_detected = whois_info('expiration');
 
 		$domain_exp_unix = strtotime(trim($domain_exp_detected));
 		$domain_exp = date("F j, Y", $domain_exp_unix);
 		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: inherit;' ;
 		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') ) ? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
 
-
-		//Get Registrar URL
-		if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ) {
-			$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
-			$domain_registrar_url_stop = strpos($whois, "Updated Date: ")-$domain_registrar_url_start;
-			$domain_registrar_url = substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop);
-		} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ) {
-			$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
-			$domain_registrar_url_stop = strpos($whois, "Update Date: ")-$domain_registrar_url_start;
-			$domain_registrar_url = substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop);
-		} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ) { //co.uk
-			$domain_registrar_url_start = strpos($whois, "URL: ")+5;
-			$domain_registrar_url_stop = strpos($whois, "Relevant dates: ")-$domain_registrar_url_start;
-			$domain_registrar_url = substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop);
-		}
-
-
-		//Get Registrar Name
-		$domain_registrar_start = '';
-		$domain_registrar_stop = '';
-		if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
-			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-			$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
-			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
-		} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
-			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-			$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
-			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
-		} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
-			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-			$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
-			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
-		} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
-			$domain_registrar_start = strpos($whois, "Sponsoring Registrar:")+21;
-			$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
-			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
-		} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ) {
-			$domain_registrar_start = strpos($whois, "Registrar:")+17;
-			$domain_registrar_stop = strpos($whois, "Number: ")-$domain_registrar_start;
-			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
-		} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ) { //co.uk
-			$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-			$domain_registrar_stop = strpos($whois, "URL: ")-$domain_registrar_start;
-			$domain_registrar = substr($whois, $domain_registrar_start, $domain_registrar_stop);
-		}
-
-
-		//Get Reseller Name
-		$domain_reseller = '';
-		if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ) {
-			$reseller1 = strpos($whois, 'Reseller: ');
-			$reseller2 = strpos($whois, 'Reseller: ', $reseller1 + strlen('Reseller: '));
-			if ( $reseller2 ) {
-				$domain_reseller_start = strpos($whois, "Reseller: ")+10;
-				$domain_reseller_stop = $reseller2-$domain_reseller_start;
-				$domain_reseller = substr($whois, $domain_reseller_start, $domain_reseller_stop);
-			} else {
-				$domain_reseller_start = strpos($whois, "Reseller: ")+10;
-				$domain_reseller_stop = strpos($whois, "Domain Status: ")-$domain_reseller_start;
-				$domain_reseller = substr($whois, $domain_reseller_start, $domain_reseller_stop);
-			}
-		}
-
+		$domain_registrar_url = whois_info('registrar_url');
+		$domain_registrar = whois_info('registrar');
+		$domain_reseller = whois_info('reseller');
 
 		//Construct Registrar info to be echoed
 		if ( $domain_registrar_url && strlen($domain_registrar_url) < 70 ) {
@@ -397,6 +304,19 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			$domain_registrar_html .= '</li>';
 		}
 
+		//If domain is expiring within a week, email all admin users.
+		if ( $domain_exp_unix < strtotime('+1 week') ) {
+			$adminUsers = get_users(array('role' => 'Administrator'));
+			$exp_notice_to = '';
+			$i = 0;
+			$exp_notice_to = array();
+			foreach ( $adminUsers as $adminUser ) {
+				array_push($exp_notice_to, $adminUsers[$i]->user_email);
+				$i++;
+			}
+			$exp_notice_message = "Your domain: " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different).</p>";
+			//wp_mail($exp_notice_to, 'Domain expiration notice via ' . nebula_url_components('domain') . '!', $exp_notice_message); //@TODO "Nebula" 0: Need to find a way that this is only sent out once within a two week span! Can't use a cookie because it should only be triggered once (not once per user).
+		}
 
 
 		//Get last modified filename and date
@@ -708,6 +628,39 @@ add_editor_style('css/editor-style.css');
 
 
 
+//Check if the current IP address matches any of the dev IP address from Nebula Settings
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_dev() {
+	$devIPs = explode(',', get_option('nebula_dev_ip'));
+	foreach ( $devIPs as $devIP ) {
+		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
+			return true;
+		}
+	}
+
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
+	$current_user = wp_get_current_user();
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+
+	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
+	foreach ( $devEmails as $devEmail ) {
+		if ( trim($devEmail) == $current_user_domain ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Check if the current IP address matches Pinckney Hugo Group.
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_at_phg(){
+	if ( $_SERVER['REMOTE_ADDR'] == '72.43.235.106' ) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 
 
@@ -950,18 +903,3 @@ function change_admin_footer_right() {
     return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
 }
 
-
-function getwhois($domain, $tld) {
-	require_once(TEMPLATEPATH . "/includes/class-whois.php");
-	$whois = new Whois();
-
-	if( !$whois->ValidDomain($domain . '.' . $tld) ) {
-		return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
-	}
-
-	if ( $whois->Lookup($domain . '.' . $tld) ) {
-		return $whois->GetData(1);
-	} else {
-		return 'A WHOIS error occurred.';
-	}
-}

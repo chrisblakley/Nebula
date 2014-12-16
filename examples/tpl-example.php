@@ -358,8 +358,8 @@ get_header(); ?>
 						include_once('includes/waitforfinalevent.php');
 					} ?>
 
-					<?php if (is_page(1259)) { //Google Campaign URL Builder
-						include_once('includes/google_campaign_url_generator.php');
+					<?php if (is_page(1280)) { //WHOIS Info
+						include_once('includes/whois_info.php');
 					} ?>
 
 					<?php
@@ -374,6 +374,10 @@ get_header(); ?>
 
 					<?php if (is_page(1186)) { //Environment and Feature Detection
 						include_once('includes/environment_feature_detection.php');
+					} ?>
+
+					<?php if (is_page(1259)) { //Google Campaign URL Builder
+						include_once('includes/google_campaign_url_generator.php');
 					} ?>
 
 				<?php

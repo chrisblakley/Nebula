@@ -464,6 +464,116 @@ function hex2rgb($color) {
 }
 
 
+function whois_info($data, $domain='') {
+
+	if ( $domain == '' ) {
+		$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
+	} else {
+		$whois = getwhois(nebula_url_components('sld', $domain), ltrim(nebula_url_components('tld', $domain), '.'));
+		$whois = preg_replace('!\s+!', ' ', $whois);
+	}
+
+	switch ( $data ) {
+		case 'expiration':
+		case 'expiration_date':
+		case 'domain_expiration':
+			if ( contains($whois, array('Registrar Registration Expiration Date: ')) ) {
+				return trim(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ")+40, 10));
+			} elseif ( contains($whois, array('Registry Expiry Date: ')) ) {
+				return trim(substr($whois, strpos($whois, "Registry Expiry Date: ")+22, 10));
+			} elseif ( contains($whois, array('Relevant dates: ')) ) {
+				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 11));
+			} elseif ( contains($whois, array('Expiry date: ')) ) {
+				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 10));
+			} elseif ( contains($whois, array('Domain expires: ')) ) {
+				return trim(substr($whois, strpos($whois, "Domain expires: ")+16, 11));
+			}
+			return false;
+			break;
+		case 'registrar':
+		case 'registrar_name':
+			$domain_registrar_start = '';
+			$domain_registrar_stop = '';
+			if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
+				$domain_registrar_start = strpos($whois, "Sponsoring Registrar:")+21;
+				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ) {
+				$domain_registrar_start = strpos($whois, "Registrar:")+17;
+				$domain_registrar_stop = strpos($whois, "Number: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ) { //co.uk
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "URL: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			}
+			return false;
+			break;
+		case 'registrar_url':
+			if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ) {
+				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
+				$domain_registrar_url_stop = strpos($whois, "Updated Date: ")-$domain_registrar_url_start;
+				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
+			} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ) {
+				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
+				$domain_registrar_url_stop = strpos($whois, "Update Date: ")-$domain_registrar_url_start;
+				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
+			} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ) { //co.uk
+				$domain_registrar_url_start = strpos($whois, "URL: ")+5;
+				$domain_registrar_url_stop = strpos($whois, "Relevant dates: ")-$domain_registrar_url_start;
+				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
+			}
+			return false;
+			break;
+		case 'reseller':
+		case 'reseller_name':
+			$domain_reseller = '';
+			if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ) {
+				$reseller1 = strpos($whois, 'Reseller: ');
+				$reseller2 = strpos($whois, 'Reseller: ', $reseller1 + strlen('Reseller: '));
+				if ( $reseller2 ) {
+					$domain_reseller_start = strpos($whois, "Reseller: ")+10;
+					$domain_reseller_stop = $reseller2-$domain_reseller_start;
+					return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
+				} else {
+					$domain_reseller_start = strpos($whois, "Reseller: ")+10;
+					$domain_reseller_stop = strpos($whois, "Domain Status: ")-$domain_reseller_start;
+					return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
+				}
+			}
+			return false;
+			break;
+	}
+}
+
+
+
+function getwhois($domain, $tld) {
+	require_once(TEMPLATEPATH . "/includes/class-whois.php");
+	$whois = new Whois();
+
+	if( !$whois->ValidDomain($domain . '.' . $tld) ) {
+		return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
+	}
+
+	if ( $whois->Lookup($domain . '.' . $tld) ) {
+		return $whois->GetData(1);
+	} else {
+		return 'A WHOIS error occurred.';
+	}
+}
 
 
 /*==========================

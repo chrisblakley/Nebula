@@ -76,11 +76,17 @@ get_header(); ?>
 			<hr/>
 			<div class="author-meta">
 				<span class="author-jobtitle">
+					<?php if ( get_the_author_meta('jobtitle') || get_the_author_meta('jobcompany') ) : ?>
+						<i class="fa fa-building"></i>
+					<?php endif; ?>
 					<?php if ( get_the_author_meta('jobtitle') ) : ?>
-						<i class="fa fa-building"></i> <?php echo esc_html(get_the_author_meta('jobtitle')); ?>
+						<?php echo esc_html(get_the_author_meta('jobtitle')); ?>
+						<?php if ( get_the_author_meta('jobcompany') ) : ?>
+							at
+						<?php endif; ?>
 					<?php endif; ?>
 					<?php if ( get_the_author_meta('jobcompany') ) : ?>
-						at <span style="white-space: nowrap;">
+						<span style="white-space: nowrap;">
 							<?php if ( get_the_author_meta('jobcompanywebsite') ) : ?>
 								<a href="<?php echo esc_url(get_the_author_meta('jobcompanywebsite')); ?>" target="_blank">
 							<?php endif; ?>
