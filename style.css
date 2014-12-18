@@ -408,9 +408,10 @@ div.breadcrumbcon {position: relative; z-index: 1;}
 	.posted-on,
 	.posted-in,
 	.posted-by {display: inline-block; margin-right: 10px; font-size: 12px;}
-	.nebulasocialcon {float: right;}
-		.sharing-links {display: inline-block; margin-top: 2px;}
-			.share-button {display: inline-block; margin-left: 5px;}
+	.nebulasocialcon {} /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */
+		.sharing-links {display: block; margin-top: 10px;}
+			.sharing-links.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
+			.share-button {display: inline-block; margin-right: 10px;}
 				.share-button.share-facebook .fb_iframe_widget span {vertical-align: inherit !important;}
 
 .entry-social {}
@@ -422,6 +423,8 @@ div.breadcrumbcon {position: relative; z-index: 1;}
 
 .entry-content {margin-top: 10px; font-size: 14px;}
 	.entry-content ul {padding-left: 20px; list-style: disc;}
+
+.entry-caption {text-align: right; font-style: italic; color: #888;}
 
 .entry-manage {font-size: 12px; margin-top: 15px;}
 	.nebula-manage-edit {}
@@ -463,13 +466,26 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 			.author-email {white-space: nowrap;}
 			.author-phonenumber {white-space: nowrap;}
 
-.gist .line-numbers {font-size: 12px;}
-.gist .file-data pre,
-.gist .line-data {font-size: 12px;}
 
 /* Comments */
 #nebulacommentswrapper {}
 	#disqus_thread {margin-top: 20px;}
+
+/* Misc. WP Core styles */
+.gallery-caption {font-size: 12px;}
+
+
+/* ==========================================================================
+   Shortcode Helpers
+   ========================================================================== */
+.gist .line-numbers {font-size: 12px;}
+.gist .file-data pre,
+.gist .line-data {font-size: 12px;}
+
+.nebula-youtube {margin-bottom: 15px;}
+.nebula-vimeo {margin-bottom: 15px;}
+
+
 
 
 /* ==========================================================================
@@ -539,6 +555,7 @@ p.form-submit {}
 		p.contact-form-submit input.disabled,
 		p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
 		.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px !important; line-height: 0px !important; background: rgba(255,255,255,0); color: rgba(255,255,255,0);}
+		.screen-reader-response {display: none;}
 
 #cform7-container {margin: 0;}
 	#cform7-container .field {margin-bottom: 3px;}
@@ -811,17 +828,11 @@ a.soundcloud {color: #ff3300;}
 }
 
 
-.aligncenter { display:block; margin:0 auto }
-.alignleft { float:left }
-.alignright { float:right }
-.wp-caption { border:1px solid #666; text-align:center; background:#ccc; padding:10px; margin:10px }
+.aligncenter {display: block; margin: 0 auto;}
+.alignleft {float: left;}
+.alignright {float: right;}
+.wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
 
-
-/** START WordPress-Defined CSS Classes **/
-.wp-caption-text{}
-.gallery-caption{}
-.bypostauthor{}
-.sticky{}
 /** Keep drop-downs working **/
 #access li {float: left; position: relative;}
 #access ul ul {display: none; float: left; position: absolute; top: 3.333em; left: 0; z-index: 99999;}

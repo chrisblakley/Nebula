@@ -37,9 +37,9 @@ get_header(); ?>
 
 <script>
 	if ( document.referrer.length ) {
-		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'Referrer: ' + document.referrer, {'nonInteraction': 1});
+		ga('send', 'event', '404 Not Found', 'Referrer: ' + document.referrer, {'nonInteraction': 1});
 	} else {
-		ga('send', 'event', '404 Not Found', 'Request: ' + document.URL, 'No Referrer or Unknown', {'nonInteraction': 1});
+		ga('send', 'event', '404 Not Found', 'No Referrer (or Unknown)', {'nonInteraction': 1});
 	}
 </script>
 

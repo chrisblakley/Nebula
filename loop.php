@@ -91,9 +91,7 @@
 
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
 				<div class="entry-meta">
-					<hr/>
 					<?php nebula_meta('by'); ?> <?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
-					<hr/>
 				</div>
 			<?php endif; ?>
 

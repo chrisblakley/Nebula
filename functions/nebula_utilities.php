@@ -445,6 +445,20 @@ function random_number_between_but_not($min=null, $max=null, $butNot=null) {
 }
 
 
+//Display a random stock photo from unsplash.it
+function random_unsplash($width=800, $height=600, $raw=0, $randID=0) {
+	$skipList = array(35, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
+	if ( $randID == 0 ) {
+		$randID = random_number_between_but_not(0, 506, $skipList); //Update the second number here as more Unsplash.it photos become available.
+	}
+	if ( $raw ) {
+		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+	} else {
+		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID . '" title="Unsplash ID #' . $randID;
+	}
+}
+
+
 //Automatically convert HEX colors to RGB.
 function hex2rgb($color) {
 	if ( $color[0] == '#' ) {

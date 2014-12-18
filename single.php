@@ -26,7 +26,6 @@ get_header(); ?>
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 
 				<div class="entry-meta">
-					<hr/>
 		        	<?php nebula_meta('by'); ?> <?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
 		        	<span class="nebulasocialcon">
 		        		<?php
@@ -37,7 +36,6 @@ get_header(); ?>
 			        		}
 			        	?>
 		        	</span>
-		        	<hr/>
 		        </div>
 
 				<div class="entry-content">

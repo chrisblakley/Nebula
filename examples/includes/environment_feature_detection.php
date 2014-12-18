@@ -323,7 +323,10 @@
 		</p>
 
 		<h3>User Agent</h3>
-		<p style="font-family: monospace;"><?php echo $_SERVER["HTTP_USER_AGENT"]; ?></p>
+		<p style="font-family: monospace;">
+			<?php echo $_SERVER["HTTP_USER_AGENT"]; ?><br/>
+			<a href="http://udger.com/resources/online-parser" target="_blank" style="font-family: 'Open Sans', sans-serif;">User Agent Parser &raquo;</a>
+		</p>
 
 		<h3>Device</h3>
 		<p>

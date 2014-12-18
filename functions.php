@@ -22,26 +22,13 @@ $GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); 
  ===========================*/
 require_once('functions/nebula_automations.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
-require_once('functions/nebula_admin_functions.php'); //Nebula Admin Functions
+require_once('functions/nebula_admin.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_security.php'); //Nebula Security
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be commented out after launch)
-
-
-/*
-	//THIS IS AN IN-PROGRESS TEST
-	//For automatically setting certain "Screen Options" settings by default.
-add_action('admin_init', 'set_user_metaboxes');
-function set_user_metaboxes($user_id=NULL) {
-    //css-classes-hide
-
-    echo 'bacon. user meta keys: ';
-    var_dump(  );
-    //var_dump(meta_box_prefs($screen)); //$screen needs to be the admin screen id or something
-}
-*/
+//require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)
 
 
 //To force override the Nebula Settings, uncomment the line below.
@@ -277,8 +264,33 @@ function enqueue_nebula_admin() {
 
 /*====================================================
  Custom Theme Functions
- Add custom functions for the theme here so that /functions/* files can be easily updated with newer Nebula versions. If you do need to modify Nebula functions make a comment at the top!
+ Add custom functions for the theme here so that /functions/* files can be easily updated with newer Nebula versions.
  =====================================================*/
+
+
+//$content_width is a global variable used by WordPress for max image upload sizes and media embeds (in pixels).
+//If the content area is 960px wide, set $content_width = 940; so images and videos will not overflow.
+if ( !isset($content_width) ) {
+	$content_width = 940;
+}
+
+//Add new image sizes
+//Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.
+//add_image_size('example', 32, 32, 1);
+
+//Add/remove post formats as needed
+//http://codex.wordpress.org/Post_Formats
+add_theme_support('post-formats', array('aside', 'gallery', 'link', 'image', 'quote', 'video', 'audio'));
+
+
+
+
+
+
+
+
+
+
 
 
 

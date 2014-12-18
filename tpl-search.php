@@ -32,7 +32,8 @@ get_header(); ?>
 					*/
 				?>
 
-				<form class="search" method="get" action="<?php echo home_url('/'); ?>">
+				<!-- Eh, I'd like to opt for an AJAX autocomplete over a datalist.
+<form class="search" method="get" action="<?php echo home_url('/'); ?>">
 					<input type="text" list="advancedsearch" name="s" style="width: 100%; font-size: 28px; padding: 2px 10px; outline: none;" placeholder="Search" required/>
 					<datalist id="advancedsearch">
 						<?php //@TODO "Nebula" 0: These will be dynamically created. ?>
@@ -46,6 +47,58 @@ get_header(); ?>
 						<option value="This is yet another tag">
 					</datalist>
 				</form>
+-->
+
+				<hr/><br/><br/><br/><br/><br/>
+
+
+				<script>
+					jQuery(document).ready(function ($){
+					    var acs_action = 'myprefix_autocompletesearch';
+					    $("#s").autocomplete({
+					        source: function(req, response){
+					            $.getJSON(bloginfo["admin_ajax"]+'?callback=?&action='+acs_action, req, response);
+					        },
+					        select: function(event, ui) {
+					            window.location.href=ui.item.link;
+					        },
+					        minLength: 3,
+					    });
+					});
+				</script>
+
+
+				<?php get_search_form(); ?>
+
+
+				<!--
+<form method="get" id="searchform" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+				    <label for="s"><?php _e( 'Search', 'twentyeleven' ); ?></label>
+				    <input type="text" name="s" id="s" placeholder="<?php esc_attr_e( 'Search', 'twentyeleven' ); ?>" />
+				    <input type="submit" name="submit" id="searchsubmit" value="<?php esc_attr_e( 'Search', 'twentyeleven' ); ?>" />
+				</form>
+-->
+
+
+
+
+
+
+				<br/><br/><br/><br/><br/><hr/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 				<div class="entry-content">
 					<?php the_content(); ?>

@@ -1,12 +1,7 @@
 <?php
 
 //Set server timezone to match Wordpress
-date_default_timezone_set( get_option('timezone_string') );
-
-//Declare the content width
-if ( !isset($content_width) ) {
-	$content_width = 960;
-}
+date_default_timezone_set(get_option('timezone_string'));
 
 
 //Track Google Page Speed tests
@@ -74,7 +69,6 @@ function admin_favicon() {
 }
 
 
-
 //Allow pages to have excerpts too
 add_post_type_support('page', 'excerpt');
 
@@ -91,7 +85,6 @@ if ( function_exists('remove_theme_support') ) {
 }
 
 //Add new image sizes
-add_image_size('example', 32, 32, 1);
 add_image_size('open_graph', 560, 560, 1);
 
 
@@ -399,19 +392,6 @@ function pinckneyhugogroup($anim=false){
 }
 
 
-//Display a random stock photo from unsplash.it
-function random_unsplash($width=800, $height=600, $raw=0, $randID=0) {
-	$skipList = array(35, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-	if ( $randID == 0 ) {
-		$randID = random_number_between_but_not(0, 506, $skipList); //Update the second number here as more Unsplash.it photos become available.
-	}
-	if ( $raw ) {
-		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
-	} else {
-		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID . '" title="Unsplash ID #' . $randID;
-	}
-}
-
 //Show different meta data information about the post. Typically used inside the loop.
 //Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
 //Example: nebula_meta('by');
@@ -443,7 +423,7 @@ function nebula_meta($meta, $secondary=1) {
 	} elseif ( $meta == 'dimensions' || $meta == 'size' || $meta == 'image' || $meta == 'photo' ) {
 		if ( wp_attachment_is_image() ) {
 			$metadata = wp_get_attachment_metadata();
-			echo '<i class="fa fa-expand"></i><a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a>';
+			echo '<i class="fa fa-expand"></i> <a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a>';
 		}
 	} elseif ( $meta == 'comments' || $meta == 'comment' ) {
 		$comments_text = 'Comments';
@@ -466,9 +446,9 @@ function nebula_meta($meta, $secondary=1) {
 		//@TODO "Nebula" 0: Pass an array to nebula_meta() for which social networks to use...
 
 		if ( $secondary ) { //Secondary here is to hide/show button counts
-			$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble', 'linkedin' => ''); //Show count bubbles
+			$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble', 'linkedin' => 'data-counter="right"'); //Show count bubbles
 		} else {
-			$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none', 'linkedin' => 'data-counter="right"'); //Hide count bubbles
+			$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none', 'linkedin' => ''); //Hide count bubbles
 		}
 
 		echo '<div class="sharing-links">';
@@ -480,10 +460,10 @@ function nebula_meta($meta, $secondary=1) {
 			echo '<div class="share-button share-twitter"><a class="twitter-share-button" href="https://twitter.com/share" data-url="' . get_page_link() . '" ' . $show_counts['twitter'] . '>Tweet</a><script type="text/javascript">window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));</script></div>';
 
 			//Google Plus Share
-			//echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div><script src="https://apis.google.com/js/platform.js" async defer></script></div>';
+			echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div><script src="https://apis.google.com/js/platform.js" async defer></script></div>';
 
 			//LinkedIn Share
-			//echo '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/Share" data-url="' . get_page_link() . '" ' . $show_counts['linkedin'] . '></script>';
+			echo '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/Share" data-url="' . get_page_link() . '" ' . $show_counts['linkedin'] . '></script>';
 
 		echo '</div>';
 	}
@@ -608,7 +588,7 @@ function the_breadcrumb() {
 	$showCurrent = 1; // 1 - show current post/page title in breadcrumbs, 0 - don't show
 	$before = '<span class="current">'; //Tag before the current crumb
 	$after = '</span>'; //Tag after the current crumb
-	$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by');
+	$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'in');
 	$homeLink = home_url('/');
 
 	if ( is_home() || is_front_page() ) {
@@ -696,9 +676,20 @@ function the_breadcrumb() {
 		} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ) {
 			$post_type = get_post_type_object(get_post_type());
 			echo $before . $post_type->labels->singular_name . $after;
-		} elseif ( is_attachment() ) {
-			echo 'Uploads &raquo; ';
-			echo get_the_title();
+		} elseif ( is_attachment() ) { //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
+
+
+
+
+			if ( !empty($post->post_parent) ) { //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
+				echo '<a href="' . get_permalink($post->post_parent) . '">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter . ' ' . get_the_title();
+			} else {
+				echo get_the_title();
+			}
+
+
+
+
 		} elseif ( is_page() && !$post->post_parent ) {
 			if ( $showCurrent == 1 ) {
 				echo $before . get_the_title() . $after;
@@ -863,6 +854,14 @@ function nebula_body_classes($classes) {
 		$classes[] = 'androidos';
 	}
 
+	//User Information
+	$current_user = wp_get_current_user();
+	if ( is_user_logged_in() ) {
+		$classes[] = 'user-' . $current_user->user_login;
+		$user_info = get_userdata(get_current_user_id());
+		$classes[] = 'user-role-' . $user_info->roles[0];
+	}
+
 	//Post Information
 	global $post;
 	$segments = explode('/', trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ));
@@ -912,6 +911,9 @@ function nebula_post_classes($classes) {
     global $wp_query;
     if ( $wp_query->current_post == 0 ) { //If first post in a query
         $classes[] = 'first-post';
+    }
+    if ( is_sticky() ) {
+	    $classes[] = 'sticky';
     }
     return $classes;
 }
