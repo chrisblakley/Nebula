@@ -681,7 +681,7 @@ function nebula_settings_page(){
 		        	<th scope="row">Domain Registrar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_registrar_url" value="<?php echo get_option('nebula_registrar_url'); ?>" placeholder="http://<?php echo whois_info('registrar_url'); ?><?php echo ( whois_info('reseller') ) ? '*' : ''; ?>" style="width: 392px;" />
-						<p class="helper"><small>Link to the domain registrar used for access to pointers, forwarding, and other information. Registrar detected as <a href="http://<?php echo whois_info('registrar_url'); ?>"><?php echo whois_info('registrar'); ?></a><?php echo ( whois_info('reseller') ) ? ' *(via ' . whois_info('reseller') . ')' : ''; ?></small></p>
+						<p class="helper"><small>Link to the domain registrar used for access to pointers, forwarding, and other information. <?php if ( whois_info('registrar') ) : ?> Registrar detected as <a href="http://<?php echo whois_info('registrar_url'); ?>"><?php echo whois_info('registrar'); ?></a><?php echo ( whois_info('reseller') ) ? ' *(via ' . whois_info('reseller') . ')' : ''; ?></small><?php endif; ?></p>
 					</td>
 		        </tr>
 		        <tr valign="top">

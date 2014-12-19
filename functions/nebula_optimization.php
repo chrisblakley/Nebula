@@ -70,6 +70,7 @@ function nebula_plugin_force_settings(){
 		$plugin_options_global['disable_admin_links'] = 1;
 		update_option('wp_edit_global', $plugin_options_global);
 	}
+
 	//Search Everything
 	if ( file_exists(WP_PLUGIN_DIR . '/search-everything') ) {
 		$se_options = get_option('se_options');
@@ -80,7 +81,14 @@ function nebula_plugin_force_settings(){
 			'notice_visible'			=> false,
 		);
 	    update_option('se_options', $se_options);
+		if ( function_exists('se_get_meta') ) {
+			$meta = se_get_meta();
+		    $meta['se_global_notice'] = 0; //Disable Search Everything global notice.
+		    $meta['show_options_page_notice'] = false; //Disable Search Everything options page notice.
+		    se_update_meta($meta);
+		}
 	}
+
 	//Wordpress SEO (Yoast)
 	if ( file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ) {
 		remove_submenu_page('wpseo_dashboard', 'wpseo_files'); //Remove the ability to edit files.

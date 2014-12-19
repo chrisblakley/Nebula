@@ -157,7 +157,7 @@ add_action('after_switch_theme', 'nebulaActivation');
 function nebulaActivation() {
 	$theme = wp_get_theme();
 	//Check if this is the initial activation, or if initialization has been ran before (and the user is just toggling themes)
-	if ( (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) {
+	if ( (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) { //@TODO "Nebula" 0: This is always triggering as re-activated.
 
 		//Create Homepage
 		$nebula_home = array(
@@ -183,6 +183,8 @@ Wordpress developers will find all source code not obfuscated, so everything may
 		add_action('init', 'nebulaWordpressSettings');
 
 	}
+
+	set_nebula_initialized_date();
 	return;
 }
 
@@ -272,11 +274,7 @@ function nebulaWordpressSettings() {
 	global $wp_rewrite;
 	remove_core_bundled_plugins();
 
-	//Only update the nebula_initialized option the first time it is activated.
-	$nebula_initialized_date = date_parse(get_option('nebula_initialized'));
-	if ( get_option('nebula_initialized') === null || get_option('nebula_initialized') == '' || $nebula_initialized_date["error_count"] != 0 ) {
-		update_option('nebula_initialized', date('U'));
-	}
+	set_nebula_initialized_date();
 
 	//Update Nebula Settings
 	update_option('nebula_overall', 'Enabled');
@@ -367,11 +365,31 @@ function remove_core_bundled_plugins(){
 }
 
 function nebulaActivateComplete(){
+	set_nebula_initialized_date();
+
 	if ( isset($_GET['nebula-reset']) ) {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
 	} elseif ( get_post_meta(1, '_wp_page_template', 1) == 'tpl-homepage.php' ) {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a></p></div>";
 	} else {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
+	}
+}
+
+
+function set_nebula_initialized_date(){
+	if ( 1==2 ) { //Set to true to force an initialization date (in case of some kind of accidental reset).
+		$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
+		if ( strtotime($force_date) !== false ) { //Check if provided date string is valid
+			update_option('nebula_initialized', strtotime($force_date));
+			return false;
+		}
+	} else {
+		$nebula_initialized_date = date_parse(get_option('nebula_initialized'));
+
+		//If the nebula_initialized option is not set -or- set as an empty string -or- the parsed string error count is greater than 2 (known "errors" are accounted for) -or- the option has a PHP warning or error in it.
+		if ( get_option('nebula_initialized') === null || get_option('nebula_initialized') == '' || $nebula_initialized_date["error_count"] > 2 || contains(strtolower(get_option('nebula_initialized')), array('fatal', 'warning', 'error', 'on line')) ) {
+			update_option('nebula_initialized', date('U'));
+		}
 	}
 }
