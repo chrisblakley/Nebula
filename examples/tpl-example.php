@@ -250,10 +250,6 @@ get_header(); ?>
 						//@TODO "Nebula" 0: Coming Soon
 					} ?>
 
-					<?php if ( is_page(671) ) { //PHP error handling
-						include_once('includes/php_error_handling.php');
-					} ?>
-
 					<?php if ( is_page(643) ) { //Speech Recognition API
 						include_once('includes/speech_recognition.php');
 					} ?>

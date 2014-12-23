@@ -62,7 +62,9 @@ function register_nebula_settings() {
 	register_setting('nebula_settings_group', 'nebula_overall');
 	register_setting('nebula_settings_group', 'nebula_initialized');
 	register_setting('nebula_settings_group', 'nebula_edited_yet');
+	register_setting('nebula_settings_group', 'nebula_domain_expiration_alert');
 
+	register_setting('nebula_settings_group', 'nebula_site_owner');
 	register_setting('nebula_settings_group', 'nebula_contact_email');
 	register_setting('nebula_settings_group', 'nebula_ga_tracking_id');
 	register_setting('nebula_settings_group', 'nebula_keywords');
@@ -299,6 +301,13 @@ function nebula_settings_page(){
 						<p class="helper"><small>Has any user saved the Nebula Settings on this DB yet (Basically, has the save button on this page been clicked)? This will always be "true" on this page (even if it is not saved yet)! Note: This is a string, not a boolean!</small></p>
 					</td>
 		        </tr>
+		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Last Domain Expiration Alert&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_alert')) ) ? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_alert')) : get_option('nebula_domain_expiration_alert'); ?>" disabled/>
+						<p class="helper"><small>Shows the date of the last domain expiration alert that was sent.</small></p>
+					</td>
+		        </tr>
 		    </table>
 
 			<h2 class="nav-tab-wrapper">
@@ -311,6 +320,13 @@ function nebula_settings_page(){
 			<hr class="mobiletitle"/>
 
 			<table class="form-table dependent metadata">
+		        <tr valign="top">
+		        	<th scope="row">Site Owner&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_site_owner" value="<?php echo get_option('nebula_site_owner'); ?>" placeholder="<?php echo bloginfo('name'); ?>" />
+						<p class="helper"><small>The name of the company (or person) who this website is for.</small></p>
+					</td>
+		        </tr>
 		        <tr valign="top">
 		        	<th scope="row">Contact Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>

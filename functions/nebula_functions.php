@@ -85,7 +85,8 @@ if ( function_exists('remove_theme_support') ) {
 }
 
 //Add new image sizes
-add_image_size('open_graph', 560, 560, 1);
+add_image_size('open_graph_large', 1200, 630, 1);
+add_image_size('open_graph_small', 600, 315, 1);
 
 
 //Dynamic Page Titles
@@ -118,6 +119,16 @@ function filter_wp_title($title, $separator) {
 	}
 
 	return $title;
+}
+
+
+//Determine if the author should be the Company Name or the specific author's name.
+function nebula_the_author($show_authors=1) {
+	if ( !is_single() || $show_authors == 0 ) {
+		return nebula_settings_conditional_text('nebula_site_owner', get_bloginfo('name'));
+	} else {
+		return ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');;
+	}
 }
 
 
@@ -1167,3 +1178,45 @@ function footerWidgetCounter() {
 	}
 	return $footerWidgetCount;
 }
+
+
+
+//Track PHP errors...
+register_shutdown_function('shutdownFunction');
+function shutDownFunction() {
+	$error = error_get_last(); //Will return an error number, or null on normal end of script (without any errors).
+	if ( $error['type'] == 1 || $error['type'] == 16 || $error['type'] == 64 || $error['type'] == 4 || $error['type'] == 256 || $error['type'] == 4096 ) {
+		ga_send_event('Error', 'PHP Error', 'Fatal Error [' . $error['type'] . ']: ' . $error['message'] . ' in ' . $error['file'] . ' on ' . $error['line'] . '.');
+	}
+}
+
+set_error_handler('nebula_error_handler');
+function nebula_error_handler($error_level, $error_message, $error_file, $error_line, $error_contest) {
+    switch ( $error_level ) {
+        case E_WARNING:
+        case E_CORE_WARNING:
+        case E_COMPILE_WARNING:
+        case E_USER_WARNING:
+            ga_send_event('Error', 'PHP Error', 'Warning: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
+            break;
+        case E_NOTICE:
+        case E_USER_NOTICE:
+        case E_DEPRECATED:
+        case E_USER_DEPRECATED:
+            //ga_send_event('Error', 'PHP Error', 'Notice: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track notices.
+            break;
+        case E_STRICT:
+            //ga_send_event('Error', 'PHP Error', 'Strict: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track strict errors.
+            break;
+        default:
+            ga_send_event('Error', 'PHP Error', 'Unknown Error Level: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
+            break;
+    }
+    return false; //After reporting, 'false' allows the original error handler to print errors.
+}
+
+
+
+
+
+

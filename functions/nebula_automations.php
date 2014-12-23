@@ -143,7 +143,10 @@ function my_theme_register_required_plugins() {
         )
     );
 
-    tgmpa($plugins, $config);
+
+	if ( is_dev() || get_current_user_id() == 1 ) {
+		tgmpa($plugins, $config);
+	}
 
 	/*
 		Until there is support for Required, Recommended, AND Optional plugins:
@@ -278,6 +281,7 @@ function nebulaWordpressSettings() {
 
 	//Update Nebula Settings
 	update_option('nebula_overall', 'Enabled');
+	update_option('nebula_domain_expiration_alert', 'Never');
 	update_option('nebula_edited_yet', 'false');
 	update_option('nebula_contact_email', '');
 	update_option('nebula_ga_tracking_id', '');

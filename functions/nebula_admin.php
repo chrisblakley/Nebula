@@ -306,18 +306,23 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			$domain_registrar_html .= '</li>';
 		}
 
-		//If domain is expiring within a week, email all admin users.
-		if ( $domain_exp_unix < strtotime('+1 week') ) {
-			$adminUsers = get_users(array('role' => 'Administrator'));
-			$exp_notice_to = '';
-			$i = 0;
-			$exp_notice_to = array();
-			foreach ( $adminUsers as $adminUser ) {
-				array_push($exp_notice_to, $adminUsers[$i]->user_email);
-				$i++;
+
+		if ( get_option('nebula_domain_expiration_alert') == 'Never' || get_option('nebula_domain_expiration_alert') < strtotime('-2 weeks') ) {
+			if ( $domain_exp_unix < strtotime('+1 week') ) { //If domain is expiring within a week, email all admin users.
+				$adminUsers = get_users(array('role' => 'Administrator'));
+				$exp_notice_to = '';
+				$i = 0;
+				$exp_notice_to = array();
+				foreach ( $adminUsers as $adminUser ) {
+					array_push($exp_notice_to, $adminUsers[$i]->user_email);
+					$i++;
+				}
+				$exp_notice_subject = 'Domain expiration detection of ' . $domain_exp . ' for ' . nebula_url_components('domain') . ' (via ' . bloginfo('name') . ')!';
+				$exp_notice_message = "Your domain " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different). This notice was triggered because the expiration date is within 1 week. It has been sent to all administrators of " . bloginfo('name') . " (" . home_url('/') . "), and will only be sent once!";
+
+				wp_mail($exp_notice_to, $exp_notice_subject, $exp_notice_message);
+				update_option('nebula_domain_expiration_alert', date('U'));
 			}
-			$exp_notice_message = "Your domain: " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different).</p>";
-			//wp_mail($exp_notice_to, 'Domain expiration notice via ' . nebula_url_components('domain') . '!', $exp_notice_message); //@TODO "Nebula" 0: Need to find a way that this is only sent out once within a two week span! Can't use a cookie because it should only be triggered once (not once per user).
 		}
 
 

@@ -17,13 +17,13 @@
 /* ==========================================================================
    Global Variables
    Note: CSS variables are currently only supported in Firefox. http://caniuse.com/#feat=css-variables
+   .example {color: var(--primary-color);}
    ========================================================================== */
 
-:root { /* @TODO "Styles" 5: Update these colors per project! Feel free to use RGBa here instead of HEX (without worrying about graceful degradation). WARNING: Current only supported in Firefox! */
-	--primary-color: #0098d7; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
-	--secondary-color: #95D600; /* @TODO "Nebula" 0: Change this color slightly so it can easily be replaced (without affecting other elements; those elements can be edited case-by-case). */
+:root {
+	--primary-color: #0098d7;
+	--secondary-color: #95D600;
 }
-
 
 /* ==========================================================================
    Base styles: opinionated defaults
@@ -52,7 +52,7 @@ h3 {font-size: 21px;}
 h4 {font-size: 18px;}
 h5 {font-size: 14px;}
 h6 {font-size: 14px;}
-p, dt, dl {font-size: 14px; line-height: 1.625em;}
+p, dt, dl {font-size: 12px; line-height: 1.625em;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
@@ -71,10 +71,10 @@ span {font-size: inherit;}
    ========================================================================== */
 ::selection {background: #d5f3ff; color: black;}
 ::-moz-selection {background: #d5f3ff; color: black;}
-h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7; color: var(--primary-color);}
-a {color: #0098D7; color: var(--primary-color); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7; }
+a {color: #0098D7; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a:hover,
-	a.hover {color: #95D600; color: var(--secondary-color)-darker;}
+	a.hover {color: #95D600;}
 	.btn > a:hover {color: #fff;}
 body {overflow-x: hidden; background: #f6f6f6;}
 #tinymce.mceContentBody {padding: 10px 15px !important; background: #f6f6f6;}
@@ -136,9 +136,9 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 	table tr td:hover,
 	table tr td.hover {/* background: #d2d2d2; */}
 	/* Table Heading Cells */
-	table tr th {/* background: #95d600 !important; background: var(--secondary-color) !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff; */}
+	table tr th {/* background: #95d600 !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff; */}
 	/* Table Heading Rows */
-	table thead tr td {/* background: #0098D7 !important; background: var(--primary-color) !important; padding: 10px 0; */}
+	table thead tr td {/* background: #0098D7 !important; adding: 10px 0; */}
 	/* Table Footer Rows */
 	table tfoot tr td {/* background: grey !important; color: #fff; */}
 
@@ -272,7 +272,7 @@ ul.bxslider {}
 .mobilenavcon {display: none;}
 	a.directions div {line-height: 12px; padding-left: 35px;}
 
-#topbarcon {position: relative; background: #0098D7; background: var(--primary-color); width: 100%; height: 5px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
+#topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
 	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
 		#topbarcon a:hover,
 		#topbarcon a.hover {color: #ccc;}
@@ -291,8 +291,8 @@ nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
 			nav#topnav ul li.menu-item.last-child {margin-right: 0;}
 			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
 				nav#topnav ul li.menu-item a:hover,
-				nav#topnav ul li.menu-item a.hover {color: #95D600; color: var(--secondary-color);}
-			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; border-left: 1px solid var(--primary-color); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s; -moz-transition: opacity 0.25s; -o-transition: opacity 0.25s; transition: opacity 0.25s;}
+				nav#topnav ul li.menu-item a.hover {color: #95D600;}
+			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s; -moz-transition: opacity 0.25s; -o-transition: opacity 0.25s; transition: opacity 0.25s;}
 				nav#topnav ul li.menu-item.hover ul.sub-menu,
 				nav#topnav ul li.menu-item:hover ul.sub-menu {left: 5px; opacity: 1;}
 				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
@@ -317,7 +317,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
 	li.nebula-search input.open,
 	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
+	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
 	li.nebula-search input.focus:-moz-placeholder, input.nebula-search.focus:-moz-placeholder, li.nebula-search input.open:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
 	li.nebula-search input.focus::-webkit-input-placeholder, input.nebula-search.focus::-webkit-input-placeholder, li.nebula-search input.open::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
 
@@ -346,7 +346,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 23px; opacity: 1;}
 				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
 
-.fixedbar {background: #0098D7; background: var(--primary-color); width: 100%; height: 0px; overflow: hidden; transition: all 0.5s;}
+.fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s;}
 	.fixedbar > div {display: none;}
 	.fixedbar.active {height: 20px;}
 		.fixedbar.active > div {display: block;}
@@ -382,8 +382,8 @@ div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-tra
                         div#heroslider ul.bxslider li div p {display: table; position: relative; margin-left: -50%; padding: 10px 30px; color: #000; text-align: center; text-transform: uppercase; margin-bottom: 5px; background: #fff; background: rgba(255, 255, 255, 0.9); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.2);}
                         div#heroslider ul.bxslider li div p.line1 {font-size: 48px;}
                         div#heroslider ul.bxslider li div p.line2 {font-size: 24px;}
-                        div#heroslider ul.bxslider li div a {display: inline-block; position: relative; margin-left: -50%; padding: 10px 30px; color: #fff; font-size: 24px; text-align: center; text-transform: uppercase; background: #0098d7; background: var(--primary-color);}
-                            div#heroslider ul.bxslider li div a:hover {background: #95d600; background: var(--secondary-color);}
+                        div#heroslider ul.bxslider li div a {display: inline-block; position: relative; margin-left: -50%; padding: 10px 30px; color: #fff; font-size: 24px; text-align: center; text-transform: uppercase; background: #0098d7;}
+                            div#heroslider ul.bxslider li div a:hover {background: #95d600;}
                     div#heroslider ul.bxslider li img {min-height: 100%; min-width: 1600px; /* width: 100%; */ margin: 0 auto; box-shadow: 0 0 50px 0 rgba(0,0,0,0.8)} /* Uncomment the width for the image to stretch across the entire viewport. */
 div#heroslider .bx-wrapper .bx-has-controls-direction {position: absolute; top: 50%; left: 50%; width: 100%; max-width: 1100px; height: 32px;}
     div#heroslider .bx-wrapper .bx-has-controls-direction .bx-controls-direction {position: relative; height: 32px; left: -50%;}
@@ -454,9 +454,9 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	.wpcf7-form.sent ul {max-height: 0;}
 
-#about-the-author {background: #eee; padding-top: 30px; padding-bottom: 30px; margin-bottom: 15px;}
+#about-the-author {position: relative; background: #eee url('http://www.transparenttextures.com/patterns/45-degree-fabric-light.png') repeat; padding-top: 30px; padding-bottom: 10px; margin-bottom: 15px;} /* @TODO "Graphics" 3: If using a texture, download it and host in the /images directory! */
 	.author-headshot {min-height: 100px; margin-bottom: 20px;}
-		.author-headshot img {width: 100%; max-width: 200px; border-radius: 500px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2); -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
+		.author-headshot img {width: 100%; max-width: 200px; /* border-radius: 500px; */ -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	#about-the-author .author-name {display: inline-block; padding: 0;}
 	.author-location {white-space: nowrap;}
 	.author-social {float: right; margin-top: 17px;}
@@ -494,13 +494,13 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .xoxo {padding: 0;}
 	.xoxo ul {margin: 0; padding: 0;}
 		.xoxo ul.menu a {display: block; padding-right: 20px;}
-		.xoxo ul.menu li.current-menu-item a {color: #95D600; color: var(--secondary-color);}
-		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7; color: var(--primary-color);}
+		.xoxo ul.menu li.current-menu-item a {color: #95D600;}
+		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
 			.xoxo ul.menu li.current-menu-item .sub-menu a:hover,
-			.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600; color: var(--secondary-color);}
+			.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600;}
 		.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
 			.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
-				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600; border-left: 1px solid var(--secondary-color);}
+				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
 
 li.widget-container {margin: 10px 0 15px 0;}
 	li.widget-container li {margin-bottom: 5px;}
@@ -544,13 +544,13 @@ p.comment-form-comment {margin: 0;}
 p.form-submit {}
 	p.contact-form-submit input,
 	#cform7-container .submit,
-	p.form-submit input {border: 0; background: #0098d7; background: var(--primary-color); padding: 4px 10px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	p.form-submit input {border: 0; background: #0098d7; padding: 4px 10px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		#cform7-container .submit:hover,
 		#cform7-container .submit.hover,
 		p.contact-form-submit input.hover,
 		p.contact-form-submit input:hover,
 		p.form-submit input.hover,
-		p.form-submit input:hover {background: #95d600; background: var(--secondary-color);}
+		p.form-submit input:hover {background: #95d600;}
 		#cform7-container .submit.disabled,
 		p.contact-form-submit input.disabled,
 		p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
@@ -597,7 +597,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 /* ==========================================================================
    Footer Area
    ========================================================================== */
-.footer {padding-top: 20px; background: #e7e7e7; background: rgba(0,0,0,0.0225);}
+.footer {padding-top: 20px; background: #0098d7 url('http://www.transparenttextures.com/patterns/dark-wall.png') repeat;}
 
 .twitterago {font-size: 12px; text-decoration: underline;}
 
@@ -611,13 +611,17 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 				nav#powerfooter ul li.menu-item.first-child {margin-left: 0; padding-left: 0;}
 				nav#powerfooter ul li.menu-item:last-child,
 				nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
-				nav#powerfooter ul li.menu-item a {display: block; border-bottom: 1px solid #95D600; border-bottom: 1px solid var(--secondary-color);}
+				nav#powerfooter ul li.menu-item a {display: block; color: #fff; font-size: 16px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #fff;}
+					nav#powerfooter ul li.menu-item a:hover,
+					nav#powerfooter ul li.menu-item a.hover {color: #aaa;}
 				nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
 					nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
-						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; padding: 5px 0; border-bottom: none;}
+						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; color: #fff; font-size: 12px; font-weight: bold; text-transform: uppercase; border-bottom: none;}
+							nav#powerfooter ul li.menu-item ul.sub-menu li a:hover,
+							nav#powerfooter ul li.menu-item ul.sub-menu li a.hover {color: #aaa;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 
-div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #0098d7; background: var(--primary-color);}
+div.copyright {padding-top: 15px; padding-bottom: 30px; background: #0098d7; background: rgba(0,0,0,0.15);}
 	div.copyright p {font-size: 12px; color: #fff;}
 		div.copyright a {color: #fff;}
 			div.copyright a:hover,
@@ -674,7 +678,7 @@ div.copyright {padding-top: 10px; background: rgba(0,0,0,0.03); background: #009
 		nav#powerfooter ul li.menu-item {display: block; margin: 0; padding: 0; width: 100% !important;}
 			nav#powerfooter ul li.menu-item a {border-bottom: none;}
 			nav#powerfooter ul li.menu-item ul.sub-menu {padding: 5px 0 5px 35px;}
-				nav#powerfooter ul li.menu-item ul.sub-menu li {padding: 0 0 0 10px; border-left: 1px solid #95D600; border-left: 1px solid var(--secondary-color);}
+				nav#powerfooter ul li.menu-item ul.sub-menu li {padding: 0 0 0 10px; border-left: 1px solid #95D600;}
 					nav#powerfooter ul li.menu-item ul.sub-menu li a {}
 					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {}
 
@@ -828,6 +832,7 @@ a.soundcloud {color: #ff3300;}
 }
 
 
+/* WordPress Boilerplate remnants */
 .aligncenter {display: block; margin: 0 auto;}
 .alignleft {float: left;}
 .alignright {float: right;}
@@ -841,21 +846,9 @@ a.soundcloud {color: #ff3300;}
 /** END WordPress-Defined CSS Classes **/
 
 
-/* Nebula Debug Classes */
-.nebula-php-error {font-size: 13px !important; width: 96% !important; margin: 10px auto !important; padding: 2px 10px !important; border-radius: 4px !important; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05) !important;}
-	.nebula-php-error small {position: relative; top: -2px; font-size: 8px; cursor: help;}
-	.nebula-php-error.fatal-error {color: #000; background: rgba(153, 51, 51, 0.02);}
-		.nebula-php-error.fatal-error strong:first-of-type {color: rgb(153, 51, 51); cursor: help;}
-	.nebula-php-error.error {color: #333; background: rgba(204, 102, 51, 0.02);}
-		.nebula-php-error.error strong:first-of-type {color: rgb(204, 102, 51); cursor: help;}
-	.nebula-php-error.warning {color: #666; background: rgba(228, 199, 51, 0.02);}
-		.nebula-php-error.warning strong:first-of-type {color: rgb(228, 199, 51); cursor: help;}
-	.nebula-php-error.notice {color: #666; background: rgba(51, 102, 153, 0.02);}
-		.nebula-php-error.notice strong:first-of-type {color: rgb(51, 102, 153); cursor: help;}
-	.nebula-php-error.strict {color: #666; background: rgba(138, 169, 112, 0.02);}
-		.nebula-php-error.strict strong:first-of-type {color: rgb(138, 169, 112); cursor: help;}
-	.nebula-php-error.unknown {color: #666; background: rgba(102, 102, 102, 0.02);}
-		.nebula-php-error.unknown strong:first-of-type {color: rgb(102, 102, 102); cursor: help;}
+/* ==========================================================================
+   Nebula Debug Classes
+   ========================================================================== */
 
 .border-red, .outline-red {outline: 1px solid red;}
 .border-orange, .outline-orange {outline: 1px solid orange;}

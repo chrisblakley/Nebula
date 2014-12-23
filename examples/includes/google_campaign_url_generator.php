@@ -9,8 +9,18 @@
 
 	.generatingspinner {display: none; color: #0098d7; font-size: 12px; text-transform: uppercase; font-weight: bold;}
 
+	.example-report {font-size: 12px;}
+
 	#lastcampaignurl {display: none;}
 	#lastcampaignurl .lastcampaignurlhere {color: #444; font-family: monospace; font-size: 12px; line-height: 14px; padding: 10px; resize: vertical; height: 100px;}
+
+	p.faq {font-size: 12px; margin-bottom: 30px;}
+	span.question {display: block; font-weight: bold;}
+	span.answer {display: block;}
+	span.source {display: block; text-align: right; font-size: 10px; font-style: italic; color: #999;}
+	span.source a {color: #999;}
+		span.source a:hover,
+		span.source a.hover {color: #0098d7;}
 </style>
 
 
@@ -105,6 +115,11 @@
 			jQuery('#generatedoutput').removeClass('danger').val(generatedResult);
 			createCookie('CampaignURL', generatedResult);
 			ga('send', 'event', 'Campaign URL Generated', generatedResult);
+
+			jQuery('.ex-source').html(utm_source);
+			jQuery('.ex-medium').text(utm_medium);
+			jQuery('.ex-name').text(utm_campaign);
+			jQuery('.example-report').removeClass('hidden');
 		}
 	}
 
@@ -154,7 +169,7 @@
 					<span>
 						<input type="text" id="campaign-source" class="builderinput text input builderrequired">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> The source of the campaign such as a search engine, newsletter name, or referrer.<br/>Examples: Google, Facebook, Newsletter 4</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> The source of the campaign such as a search engine, newsletter name, or referrer.<br/>Examples: google, facebook, newsletter 4, coupon</p>
 				</li>
 
 				<li class="field">
@@ -162,7 +177,7 @@
 					<span>
 						<input type="text" id="campaign-medium" class="builderinput text input builderrequired">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> The medium of the campaign such as email, or cost-per-click.<br/>Examples: CPC, Banner, Email</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> The medium of the campaign such as email, or cost-per-click.<br/>Examples: cpc, banner, email, retargeting, display</p>
 				</li>
 
 				<li class="field">
@@ -170,7 +185,7 @@
 					<span>
 						<input type="text" id="campaign-term" class="builderinput text input">
 					</span>
-					<p class="inputhelp-description"><em>(Optional)</em> Used for paid search. Enter the associated paid keyword(s) with this ad.</p>
+					<p class="inputhelp-description"><em>(Optional)</em> Used for paid search. Enter the associated paid keyword(s) with this ad. This can be used for the text that was specifically linked in an email.</p>
 				</li>
 
 				<li class="field">
@@ -178,7 +193,7 @@
 					<span>
 						<input type="text" id="campaign-content" class="builderinput text input">
 					</span>
-					<p class="inputhelp-description"><em>(Optional)</em> Used for differentiating ads/links that point to the same URL.<br/>Examples: Logo Link, Text Link</p>
+					<p class="inputhelp-description"><em>(Optional)</em> Used for differentiating ads/links that point to the same URL.<br/>Examples: buffalo, ottawa, syracuse, logo link, text link</p>
 				</li>
 
 				<li class="field">
@@ -186,7 +201,7 @@
 					<span>
 						<input type="text" id="campaign-name" class="builderinput text input builderrequired">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> Used for identifying a specific promotion or campaign.<br/>Examples: Product, Promo Code, Slogan</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> Used for identifying a specific promotion or campaign.<br/>Examples: clearance sale, promo code, slogan</p>
 				</li>
 			</ul>
 		</form>
@@ -205,7 +220,13 @@
 			</li>
 		</ul>
 
-		<br/><br/>
+		<p class="example-report hidden">How traffic from this link would appear in Google Analytics:<br/>
+			<strong>Acquisition > All Traffic: </strong> "<span class="ex-source"></span> / <span class="ex-medium"></span>"<br/>
+			<strong>Acquisition > Campaigns:</strong> "<span class="ex-name"></span>"
+		</p>
+
+		<br/>
+		<br/>
 
 		<ul id="lastcampaignurl">
 			<li class="field">
@@ -217,4 +238,33 @@
 		</ul>
 
 	</div><!--/columns-->
+</div><!--/row-->
+
+<div class="row">
+	<div class="sixteen columns">
+		<br/>
+		<hr/>
+
+		<h2>Google Analytics Campaign Tracking FAQ</h2>
+
+		<br/>
+
+		<p class="faq">
+			<span class="question">What does "UTM" stand for?</span>
+			<span class="answer">UTM stands for "Urchin Tracking Module". Urchin was purchased by Google in 2005 and re-branded to "Google Analytics".</span>
+			<span class="source">Source: <a href="http://help.campaignmonitor.com/topic.aspx?t=111" target="_blank">Campaign Monitor &raquo;</a></span>
+		</p>
+
+		<p class="faq">
+			<span class="question">Where can I learn more about Campaigns and Google Analytics in general?</span>
+			<span class="answer">The <a href="https://analyticsacademy.withgoogle.com/course01" target="_blank">Digital Analytics Fundamentals</a> course in <a href="https://analyticsacademy.withgoogle.com/" target="_blank">Google's Analytics Academy</a> is a great resource to learn and test your knowledge using their <a href="https://analyticsacademy.withgoogle.com/course01/assessment?name=Fin" target="_blank">assessment test</a>.</span>
+			<span class="source">Source: <a href="https://analyticsacademy.withgoogle.com/" target="_blank">Google Analytics Academy &raquo;</a></span>
+		</p>
+
+		<p class="faq">
+			<span class="question">Where can I take a proof-of-proficiency test and become certified in Google Analytics?</span>
+			<span class="answer">The <a href="https://google.starttest.com/" target="_blank">Google Testing Center</a> is what you're looking for. Once you pass the Analytics Individual Qualification, you will become a <a href="https://www.google.com/partners/" target="_blank">Google Partner</a>! For more information, check out the <a href="https://support.google.com/analytics/answer/3424287" target="_blank">Google Analytics IQ FAQ &raquo;</a></span>
+			<span class="source">Source: <a href="https://support.google.com/analytics/answer/3424288" target="_blank">Google Analytics IQ &raquo;</a></span>
+		</p>
+	</div><!--/coluns-->
 </div><!--/row-->

@@ -47,7 +47,7 @@
 			<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated keywords. -->
 			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated news event keywords. --> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." -->
-			<meta name="author" content="<?php echo get_template_directory_uri(); ?>/humans.txt" />
+			<meta name="author" content="<?php echo nebula_the_author(); ?>" />
 
 			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
 			<meta property="business:contact_data:email" content="<?php echo nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email', $GLOBALS['admin_user']->user_email)); //@TODO "Metadata" 2: Verify admin email address. ?>" />
@@ -120,6 +120,7 @@
 			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Settings or functions.php! ?>
 			ga('require', 'displayfeatures');
 			ga('send', 'pageview');
+			<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
 		</script>
 
 		<script>
@@ -141,6 +142,17 @@
 
 			<noscript><?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that could be the issue. ?>
 				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo nebula_url_components('all'); ?>&amp;t=<?php echo urlencode(get_the_title($post->ID)); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+
+				<style>
+					<?php
+					/* ==========================================================================
+					   No-JS Event Tracking
+					   This is how we detect events in Google Analytics if users disable JavaScript. Generally using :active for links and :focus for inputs.
+					   https://developers.google.com/analytics/resources/concepts/gaConceptsTrackingOverview
+					   ========================================================================== */
+					?>
+					   .no-js .logocon:active {background-image: url('http://www.google-analytics.com/__utm.gif?utmac=<?php echo $GLOBALS['ga']; ?>&utmt=event&utmwv=1&utmdt=<?php urlencode(get_the_title()); ?>&utmhn=<?php echo nebula_url_components('hostname'); ?>&utmp=<?php echo nebula_url_components('filepath'); ?>&utmn=<?php echo rand(pow(10, 10-1), pow(10, 10)-1); ?><?php echo ( $_SERVER['HTTP_REFERER'] ) ? '&utmr=' . $_SERVER['HTTP_REFERER']: ''; ?>&utme=5(Logo*Click*No-JS%20clicked%20logo.)');}
+				</style>
 			</noscript>
 
 			<?php do_action('nebula_body_open'); ?>
@@ -173,6 +185,7 @@
 					</div><!--/columns-->
 				</div><!--/row-->
 			<?php endif; ?>
+
 
 			<div id="logonavcon" class="row">
 				<div class="six columns">

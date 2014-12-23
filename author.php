@@ -20,6 +20,7 @@ get_header(); ?>
 
 <?php if ( have_posts() ) { the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">
+	<div class="nebulashadow inner-top" style="height: 5px; opacity: 0.3;"></div>
 	<div class="row">
 	<?php if ( get_the_author_meta('headshot_url') ) : ?>
 		<div class="three columns">
@@ -110,6 +111,7 @@ get_header(); ?>
 			<p class="authorbio"><?php echo esc_html(the_author_meta('description')); ?></p>
 		</div><!--/columns-->
 	</div><!--/row-->
+	<div class="nebulashadow inner-bottom" style="height: 5px; opacity: 0.3;"></div>
 </div><!--/container-->
 
 <div class="row fullcontentcon">

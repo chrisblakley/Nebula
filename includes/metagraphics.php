@@ -35,14 +35,16 @@
 
 <?php
 	/* Open Graph
-		Open Graph images are used primarily by Facebook and Google+, but Nebula also utilizes this image for other various functions (ex: desktop notifications) as the default image. The Twitter image also uses og-thumb.png as declared below. Create at least one og-thumb.png image, but this meta can be declared multiple times for alternate graphics! Use og-temp.png as a template (Use PNG to avoid compression artifacts!).
+		Open Graph images are used primarily by Facebook and Google+, but Nebula also utilizes this image for other various functions (ex: desktop notifications) as the default image. The Twitter image also uses og-thumb.png as declared below. Create at least one og-thumb.png image, but this meta can be declared multiple times for alternate graphics! Use PNG to avoid compression artifacts!.
 	*/
 ?>
 <?php if ( has_post_thumbnail($post->ID) ) : ?>
-	<meta property="og:image" content="<?php get_the_post_thumbnail($post->ID, 'open-graph'); ?>" />
+	<meta property="og:image" content="<?php get_the_post_thumbnail($post->ID, 'open_graph_large'); ?>" />
+	<meta property="og:image" content="<?php get_the_post_thumbnail($post->ID, 'open_graph_small'); ?>" />
 <?php endif; ?>
-<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/meta/og-thumb.png" /> <!-- @TODO "Graphics" 4: Create at least one Open Graph image. Minimum Size: 560x560px with a 246px tall safezone in the center. -->
-<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/meta/og-thumb2.png" /> <!-- @TODO "Graphics" 1: Minimum Size: 560x560px with a 246px tall safezone in the center. -->
+
+<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/meta/og-thumb.png" /> <!-- @TODO "Graphics" 4: Create at least one Open Graph image. Minimum Size: 600x315px. -->
+<meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/meta/og-thumb2.png" /> <!-- @TODO "Graphics" 1: Minimum Size: 600x315px. -->
 
 
 

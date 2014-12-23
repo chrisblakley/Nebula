@@ -209,7 +209,7 @@ function clear_shortcode(){
 //Map
 add_shortcode('map', 'map_shortcode');
 function map_shortcode($atts){
-	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '300', 'overlay' => false, "class" => '', "style" => ''), $atts) );
+	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', 'overlay' => false, "class" => '', "style" => ''), $atts) );
 
 	$flags = get_flags($atts);
 	if ( in_array('overlay', $flags) ) {

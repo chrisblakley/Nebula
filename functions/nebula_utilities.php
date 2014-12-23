@@ -120,6 +120,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 	switch ($segment) {
 		case ('all') :
+		case ('href') :
 			return $url;
 			break;
 
@@ -161,6 +162,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 		case ('basedomain') : //In http://example.com/something the basedomain is "http://example.com"
 		case ('base_domain') :
+		case ('origin') :
 			return $url_compontents['scheme'] . '://' . $domain[0];
 			break;
 
@@ -177,6 +179,7 @@ function nebula_url_components($segment="all", $url=null) {
 			break;
 
 		case ('filepath') : //Filepath will be both path and file/extension
+		case ('pathname') :
 			return $url_compontents['path'];
 			break;
 
@@ -199,6 +202,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 		case ('query') :
 		case ('queries') :
+		case ('search') :
 			return $url_compontents['query'];
 			break;
 
@@ -573,7 +577,6 @@ function whois_info($data, $domain='') {
 }
 
 
-
 function getwhois($domain, $tld) {
 	require_once(TEMPLATEPATH . "/includes/class-whois.php");
 	$whois = new Whois();
@@ -588,6 +591,7 @@ function getwhois($domain, $tld) {
 		return 'A WHOIS error occurred.';
 	}
 }
+
 
 
 /*==========================

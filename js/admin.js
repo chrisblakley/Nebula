@@ -85,7 +85,7 @@ jQuery(document).ready(function() {
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_settings">Nebula Settings</a>)</small>.');
 	}
 
-	//PHG Metabox
+	//Developer Info Metabox
 	jQuery(document).on("keyup", "input.findterm", function(){
 		jQuery("input.findterm").attr("placeholder", "Search files");
 	});
@@ -142,6 +142,34 @@ jQuery(document).ready(function() {
 		jQuery('.hidden_todo, .hidden_file').toggleClass('show-hidden-todos');
 		return false;
 	});
+
+
+	//Detect external links in the TinyMCE link modal (to check the "new window" box).
+	linkTargetUsered = 0;
+	jQuery(document).on('click keyup', '#link-target-checkbox', function(){
+		linkTargetUsered = 1;
+	});
+	jQuery(document).on('click', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){
+		linkTargetUsered = 0;
+	});
+	jQuery(document).on('keyup change focus blur', '#url-field', function(){
+		if ( linkTargetUsered == 0 ) {
+			currentVal = jQuery(this).val();
+			if ( currentVal == 'http' || currentVal == 'http:' || currentVal == 'http:/' || currentVal == 'http://' ) { //@TODO "Nebula" 0: This certainly could be written better.
+				jQuery('#link-target-checkbox').prop('checked', false);
+			} else if ( (currentVal.indexOf('http') >= 0 || currentVal.indexOf('www') >= 0) && currentVal.indexOf(location.host) < 0 ) { //if (has "http" or www) && NOT our domain
+				jQuery('#link-target-checkbox').prop('checked', true);
+			} else {
+				jQuery('#link-target-checkbox').prop('checked', false);
+			}
+		}
+	});
+	jQuery(document).on('click', '#most-recent-results *', function(){
+		if ( linkTargetUsered == 0 ) {
+			jQuery('#link-target-checkbox').prop('checked', false);
+		}
+	});
+
 
 
 }); //End Document Ready
