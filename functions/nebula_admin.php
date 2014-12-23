@@ -159,7 +159,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 				    $todo_counted = 1;
 			    }
 
-			    $todo_skipFilenames = array('README.md', 'nebula_admin_functions.php', 'error_log', 'Mobile_Detect.php', 'class-tgm-plugin-activation.php');
+			    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'Mobile_Detect.php', 'class-tgm-plugin-activation.php');
 
 			    if ( !contains(basename($todo_file), skip_extensions()) && !contains(basename($todo_file), $todo_skipFilenames) ) {
 				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ) {
