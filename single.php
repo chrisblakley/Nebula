@@ -41,6 +41,22 @@ get_header(); ?>
 				<div class="entry-content">
 					<?php the_content(); ?>
 
+					<div class="row">
+						<?php if ( get_previous_post_link() ) : ?>
+							<div class="<?php echo ( get_next_post_link() ) ? 'eight': 'sixteen'; ?> columns prev-link-con">
+								<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
+	                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
+							</div><!--/columns-->
+						<?php endif; ?>
+
+						<?php if ( get_next_post_link() ) : ?>
+							<div class="<?php echo ( get_previous_post_link() ) ? 'eight': 'sixteen'; ?> columns next-link-con">
+								<p class="prevnext-post-heading next-post-heading">Next Post</p>
+	                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
+							</div><!--/columns-->
+						<?php endif; ?>
+					</div><!--/row-->
+
 					<?php if ( current_user_can('manage_options') ) : ?>
 						<div class="container entry-manage">
 							<div class="row">

@@ -659,6 +659,30 @@ function is_dev() {
 	return false;
 }
 
+//Check if the current IP address matches any of the client IP address from Nebula Settings
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_client() {
+	$clientIPs = explode(',', get_option('nebula_client_ip'));
+	foreach ( $clientIPs as $clientIP ) {
+		if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ) {
+			return true;
+		}
+	}
+
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
+	$current_user = wp_get_current_user();
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+
+	$clientEmails = explode(',', get_option('nebula_client_email_domain'));
+	foreach ( $clientEmails as $clientEmail ) {
+		if ( trim($clientEmail) == $current_user_domain ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //Check if the current IP address matches Pinckney Hugo Group.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_at_phg(){

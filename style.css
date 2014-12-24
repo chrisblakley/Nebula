@@ -466,6 +466,14 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 			.author-email {white-space: nowrap;}
 			.author-phonenumber {white-space: nowrap;}
 
+.prev-link-con {text-align: left;}
+.next-link-con {text-align: right;}
+	.prevnext-post-heading {font-size: 9px; text-transform: uppercase; font-weight: bold; margin: 0; padding: 0;}
+		.prev-post-heading {}
+		.next-post-heading {}
+	.prevnext-post-link {font-size: 12px;}
+		.prev-post-link {}
+		.next-post-link {}
 
 /* Comments */
 #nebulacommentswrapper {}

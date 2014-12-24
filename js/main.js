@@ -1425,11 +1425,11 @@ function conditionalJSLoading() {
 
 
 //These detect Font Awesome and Entypo usage via classes. This will not detect usage with font-family CSS (only known detection method is resource-heavy).
-var loadedFonts = {
-	'Entypo': 0,
-	'FontAwesome': 1
-};
 function detectIconFonts(){
+	var loadedFonts = []
+	loadedFonts['Entypo'] = 0;
+	loadedFonts['FontAwesome'] = 1;
+
 	if ( jQuery('i.fa').is('*') && loadedFonts['FontAwesome'] == 0 ) {
 		Modernizr.load('//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css');
 		loadedFonts['FontAwesome'] = 1;

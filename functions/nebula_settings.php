@@ -131,6 +131,8 @@ function register_nebula_settings() {
 
 	register_setting('nebula_settings_group', 'nebula_dev_ip');
 	register_setting('nebula_settings_group', 'nebula_dev_email_domain');
+	register_setting('nebula_settings_group', 'nebula_client_ip');
+	register_setting('nebula_settings_group', 'nebula_client_email_domain');
 	register_setting('nebula_settings_group', 'nebula_cpanel_url');
 	register_setting('nebula_settings_group', 'nebula_hosting_url');
 	register_setting('nebula_settings_group', 'nebula_registrar_url');
@@ -668,6 +670,25 @@ function nebula_settings_page(){
 					<td>
 						<input type="text" name="nebula_dev_email_domain" value="<?php echo get_option('nebula_dev_email_domain'); ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
 						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable specific console logs and other dev info. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
+					</td>
+		        </tr>
+		        <tr valign="top">
+		        	<th scope="row">Client IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_client_ip" value="<?php echo get_option('nebula_client_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
+						<p class="helper"><small>Comma-separated IP addresses of the client to enable certain features. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
+					</td>
+		        </tr>
+		        <tr valign="top">
+		        	<?php
+		        		$current_user = wp_get_current_user();
+						list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+					?>
+
+		        	<th scope="row">Client Email Domains&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_client_email_domain" value="<?php echo get_option('nebula_client_email_domain'); ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
+						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable certain features. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">
