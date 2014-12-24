@@ -139,10 +139,28 @@ RewriteCond %{QUERY_STRING} author=\d
 RewriteRule ^ /about? [L,R=301]
 
 
-#Block certain webcrawlers from showing up as actual visitors
+#BEGIN Block certain spambots from showing up as actual visitors
 RewriteEngine on
 RewriteCond %{HTTP_REFERER} semalt\.com [NC]
 RewriteRule .* - [F]
+
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} econom\.com [NC]
+RewriteRule .* - [F]
+
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} ilovevitaly\.com [NC]
+RewriteRule .* - [F]
+
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} ilovevitaly\.ru [NC]
+RewriteRule .* - [F]
+
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} darodar\.com [NC]
+RewriteRule .* - [F]
+#END Spambot blocks
+
 
 #disable directory browsing
 Options All -Indexes
