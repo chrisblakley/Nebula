@@ -4,9 +4,14 @@
  * @TODO "Templates" 5: Delete this file before launching the site!
  */
 
-if ( !defined('ABSPATH') ) { exit; } //Exit if accessed directly
+if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
+	ga_send_event('Security Measure', 'Direct Template Access Prevention', 'Template: ' . end(explode('/', $template)), basename($_SERVER['PHP_SELF']));
+	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")));
+	exit;
+}
 
 get_header(); ?>
+
 
 <script src="<?php echo get_template_directory_uri();?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script>
 

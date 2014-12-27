@@ -1197,19 +1197,19 @@ function nebula_error_handler($error_level, $error_message, $error_file, $error_
         case E_CORE_WARNING:
         case E_COMPILE_WARNING:
         case E_USER_WARNING:
-            ga_send_event('Error', 'PHP Error', 'Warning: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
+            ga_send_event('Error', 'PHP Error', 'Warning [' . $error_level . ']: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
             break;
         case E_NOTICE:
         case E_USER_NOTICE:
         case E_DEPRECATED:
         case E_USER_DEPRECATED:
-            //ga_send_event('Error', 'PHP Error', 'Notice: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track notices.
+            //ga_send_event('Error', 'PHP Error', 'Notice ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track notices.
             break;
         case E_STRICT:
-            //ga_send_event('Error', 'PHP Error', 'Strict: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track strict errors.
+            //ga_send_event('Error', 'PHP Error', 'Strict ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track strict errors.
             break;
         default:
-            ga_send_event('Error', 'PHP Error', 'Unknown Error Level: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
+            ga_send_event('Error', 'PHP Error', 'Unknown Error Level ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
             break;
     }
     return false; //After reporting, 'false' allows the original error handler to print errors.

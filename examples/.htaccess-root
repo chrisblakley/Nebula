@@ -159,6 +159,10 @@ RewriteRule .* - [F]
 RewriteEngine on
 RewriteCond %{HTTP_REFERER} darodar\.com [NC]
 RewriteRule .* - [F]
+
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} 7makemoneyonline\.com [NC]
+RewriteRule .* - [F]
 #END Spambot blocks
 
 

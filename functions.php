@@ -20,12 +20,12 @@ $GLOBALS['ga'] = nebula_settings_conditional_text('nebula_ga_tracking_id', ''); 
 /*==========================
  Include Remaining Nebula Functions Groups
  ===========================*/
+require_once('functions/nebula_security.php'); //Nebula Security
 require_once('functions/nebula_automations.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
 require_once('functions/nebula_admin.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
-require_once('functions/nebula_security.php'); //Nebula Security
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be commented out after launch)
 //require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)

@@ -273,12 +273,11 @@ function map_shortcode($atts){
 add_shortcode('vimeo', 'vimeo_shortcode');
 function vimeo_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );
-	$protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
 	vimeo_meta($id);
 	global $vimeo_meta;
-	$vimeo = '<article class="nebula-vimeo vimeo video"><iframe id="' . $vimeo_meta['safetitle'] . '" class="vimeoplayer" src="' . $protocol . 'player.vimeo.com/video/' . $vimeo_meta['id'] . '?api=1&player_id=' . $vimeo_meta['safetitle'] . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
+	$vimeo = '<article class="nebula-vimeo vimeo video"><iframe id="' . $vimeo_meta['safetitle'] . '" class="vimeoplayer" src="//player.vimeo.com/video/' . $vimeo_meta['id'] . '?api=1&player_id=' . $vimeo_meta['safetitle'] . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
 	return $vimeo;
 }
 
@@ -287,12 +286,11 @@ function vimeo_shortcode($atts){
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0), $atts) );
-	$protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
 	youtube_meta($id);
 	global $youtube_meta;
-	$youtube = '<article class="nebula-youtube youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="' . $protocol . 'www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
+	$youtube = '<article class="nebula-youtube youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="//www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
 	return $youtube;
 }
 

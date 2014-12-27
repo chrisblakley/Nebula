@@ -442,7 +442,10 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 add_action('wp_ajax_search_theme_files', 'search_theme_files');
 add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
 function search_theme_files() {
-	if ( strlen($_POST['data'][0]['searchData']) < 3 ) {
+
+	$searchTerm = stripslashes($_POST['data'][0]['searchData']);
+
+	if ( strlen($searchTerm) < 3 ) {
 		echo '<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>';
 		die();
 	}
@@ -459,14 +462,14 @@ function search_theme_files() {
 		die();
 	}
 
-	echo '<p class="resulttext">Search results for <strong>"' . $_POST['data'][0]['searchData'] . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br/>';
+	echo '<p class="resulttext">Search results for <strong>"' . $searchTerm . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br/>';
 
 	$file_counter = 0;
 	$instance_counter = 0;
 	foreach ( glob_r($dirpath . '/*') as $file ) {
 		$counted = 0;
 		if ( is_file($file) ) {
-		    if ( strpos(basename($file), $_POST['data'][0]['searchData']) !== false ) {
+		    if ( strpos(basename($file), $searchTerm) !== false ) {
 			    echo '<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong></p>';
 			    $file_counter++;
 			    $counted = 1;
@@ -475,7 +478,7 @@ function search_theme_files() {
 			$skipFilenames = array('error_log');
 		    if ( !contains(basename($file), skip_extensions()) && !contains(basename($file), $skipFilenames) ) {
 			    foreach ( file($file) as $lineNumber => $line ) {
-			        if ( stripos($line, $_POST['data'][0]['searchData']) !== false ) {
+			        if ( stripos(stripslashes($line), $searchTerm) !== false ) {
 			            $actualLineNumber = $lineNumber+1;
 						echo '<div class="linewrap">
 								<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong> on <a class="linenumber" href="#">line ' . $actualLineNumber . '</a>.</p>
@@ -496,11 +499,7 @@ function search_theme_files() {
 		echo '<strong>' . $instance_counter . '</strong> instances in ';
 	}
 	echo '<strong>' . $file_counter . '</strong> file';
-	if ( $file_counter == 1 ) {
-		echo '.</p>';
-	} else {
-		echo 's.</p>';
-	}
+	echo ( $file_counter == 1 ) ? '.</p>': 's.</p>';
 	exit();
 }
 

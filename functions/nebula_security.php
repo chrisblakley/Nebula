@@ -78,3 +78,14 @@ function check_referrer() {
 }
 
 
+//Check referrer for known spambots
+//Be absolutely sure before adding a domain to the array in this function. Traffic will be sent a 403 Forbidden error and never be able to see the site!
+add_action('init', 'nebula_spambot_prevention');
+function nebula_spambot_prevention(){
+	$known_spambots = array('semalt.', 'ilovevitaly.', 'darodar.', 'econom.', 'makemoneyonline.', 'buttons-for-website.', 'myftpupload.'); //The dots allow for any TLD to trigger with fewer false-positives.
+	if ( isset($_SERVER['HTTP_REFERER']) && contains($_SERVER['HTTP_REFERER'], $known_spambots) ) {
+		ga_send_event('Security Measure', 'Spambot Prevention', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+		header('HTTP/1.1 403 Forbidden');
+		die;
+	}
+}
