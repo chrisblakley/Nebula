@@ -1426,25 +1426,25 @@ function conditionalJSLoading() {
 
 //These detect Font Awesome and Entypo usage via classes. This will not detect usage with font-family CSS (only known detection method is resource-heavy).
 function detectIconFonts(){
-	var loadedFonts = []
-	loadedFonts['Entypo'] = 0;
-	loadedFonts['FontAwesome'] = 1;
+	var loadedFonts = [];
+	loadedFonts.Entypo = 0;
+	loadedFonts.FontAwesome = 1;
 
-	if ( jQuery('i.fa').is('*') && loadedFonts['FontAwesome'] == 0 ) {
+	if ( jQuery('i.fa').is('*') && loadedFonts.Entypo == 0 ) {
 		Modernizr.load('//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css');
-		loadedFonts['FontAwesome'] = 1;
+		loadedFonts.FontAwesome = 1;
 	}
 
-	if ( jQuery('i[class^="icon-"], i[class*=" icon-"]').is('*') && loadedFonts['Entypo'] == 0 ) {
+	if ( jQuery('i[class^="icon-"], i[class*=" icon-"]').is('*') && loadedFonts.FontAwesome == 0 ) {
 		Modernizr.load(bloginfo['template_directory'] + '/css/entypo.css'); //Note this is supplemental to gumby.css
-		loadedFonts['Entypo'] = 1;
+		loadedFonts.Entypo = 1;
 	}
 }
 
 
 function dataTablesActions(){
 	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
-	    console.log('keyup: ' + jQuery(this).val());
+	    //console.log('keyup: ' + jQuery(this).val());
 	    jQuery('.dataTables_wrapper').removeHighlight();
 	    jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
 	});

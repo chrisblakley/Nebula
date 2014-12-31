@@ -41,7 +41,6 @@ jQuery(document).ready(function() {
 	    jQuery("#post textarea").allowTabChar();
 	});
 
-
 	if ( jQuery('body').hasClass('profile-php') ) {
 		jQuery('#headshot_button').on('click', function() {
 			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);

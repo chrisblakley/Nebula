@@ -6,18 +6,23 @@
 
 <ul class="xoxo">
 
-	<li>
+	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ) : ?>
+		<?php //Primary Widget Area ?>
+	<?php endif; ?>
+
+	<li class="widget-container">
 		<?php if ( has_nav_menu('sidebar') ) : ?>
 			<h3>Features</h3>
 			<?php wp_nav_menu(array('theme_location' => 'sidebar')); ?>
 		<?php endif; ?>
 	</li>
 
-	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ) : ?>
-		<?php //Primary Widget Area ?>
+	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Secondary Widget Area') ) : ?>
+		<?php //Secondary Widget Area ?>
 	<?php endif; ?>
 
-	<li>
+	<li class="widget-container">
+		<h3>Search</h3>
 		<form class="search" method="get" action="<?php echo home_url('/'); ?>">
 			<ul>
 				<li class="append field">
@@ -28,11 +33,7 @@
 		</form><!--/search-->
 	</li>
 
-	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Secondary Widget Area') ) : ?>
-		<?php //Secondary Widget Area ?>
-	<?php endif; ?>
-
-	<li>
+	<li class="widget-container">
 		<h3>Contact Us</h3>
 		<?php nebula_facebook_link(); ?>
 		<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>

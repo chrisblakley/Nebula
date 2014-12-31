@@ -27,6 +27,7 @@ require_once('functions/nebula_admin.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
+require_once('functions/nebula_widgets.php'); //Nebula Widgets
 require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be commented out after launch)
 //require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)
 
@@ -119,6 +120,7 @@ if ( array_key_exists('debug', $_GET) ) {
 	$GLOBALS["gumby_debug"] = 'defer';
 }
 
+
 //Prep vars for localizing PHP functions for JS usage
 $upload_dir = wp_upload_dir();
 $jsAdmin = (current_user_can('manage_options')) ? true : false;
@@ -136,7 +138,7 @@ $localize_bloginfo = array(
 	'home_url' => home_url(),
 	'admin_email' => get_option("admin_email", $GLOBALS['admin_user']->user_email),
 	'admin_ajax' => admin_url('admin-ajax.php'),
-	'upload_dir' => $upload_dir['baseurl']
+	'upload_dir' => $upload_dir['baseurl'],
 );
 $localize_clientinfo = array(
 	'remote_addr' => $_SERVER['REMOTE_ADDR'],
@@ -149,12 +151,18 @@ $localize_nebula_settings = array(
 	'debug' => $GLOBALS["debug"],
 );
 
+
 /*==========================
  Enqueue Styles & Scripts on the Front-End
  ===========================*/
 add_action('wp_enqueue_scripts', 'enqueue_nebula_frontend');
 function enqueue_nebula_frontend() {
 	global $localize_bloginfo, $localize_clientinfo, $localize_nebula_settings;
+
+	$localize_postinfo = array(
+		'id' => get_the_id(),
+		'title' => get_the_title()
+	);
 
 	//Stylesheets
 	wp_enqueue_style('nebula-normalize');
@@ -187,6 +195,7 @@ function enqueue_nebula_frontend() {
 
 	wp_enqueue_script('nebula-main');
 	wp_localize_script('nebula-main', 'bloginfo', $localize_bloginfo);
+	wp_localize_script('nebula-main', 'postinfo', $localize_postinfo);
 	wp_localize_script('nebula-main', 'clientinfo', $localize_clientinfo);
 	wp_localize_script('nebula-main', 'nebula_settings', $localize_nebula_settings);
 	wp_localize_script('nebula-main', 'browser_detection', $GLOBALS["browser_detection"]);
@@ -278,16 +287,10 @@ if ( !isset($content_width) ) {
 //Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.
 //add_image_size('example', 32, 32, 1);
 
+
 //Add/remove post formats as needed
 //http://codex.wordpress.org/Post_Formats
-add_theme_support('post-formats', array('aside', 'gallery', 'link', 'image', 'quote', 'video', 'audio'));
-
-
-
-
-
-
-
+//add_theme_support('post-formats', array('aside', 'chat', 'status', 'gallery', 'link', 'image', 'quote', 'video', 'audio')); //Add to below as they are used.
 
 
 

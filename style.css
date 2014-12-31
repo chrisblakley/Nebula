@@ -43,7 +43,7 @@ img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
 ul {padding: 0;}
-	ul ul {margin: 0;}
+	ul ul {margin: 4px 0 0 0;}
 
 h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
 h1, h2, h3, h4, h5, h6 {line-height: 1.15538em;}
@@ -53,7 +53,7 @@ h3 {font-size: 21px;}
 h4 {font-size: 18px;}
 h5 {font-size: 14px;}
 h6 {font-size: 14px;}
-p, li, dt, dl, div {font-size: 12px; line-height: 1.625em;}
+p, li, dt, dl {font-size: 14px; line-height: 1.625em;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
@@ -405,10 +405,13 @@ div.breadcrumbcon {position: relative; z-index: 1;}
 
 .sticky-title i {font-size: 20px;}
 
+h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
+
 .entry-meta {font-size: 12px;}
+	.entry-meta i {margin-right: 2px;}
 	.posted-on,
 	.posted-in,
-	.posted-by {display: inline-block; margin-right: 10px; font-size: 12px;}
+	.posted-by {display: inline-block; margin-right: 10px; text-transform: uppercase; font-weight: bold;}
 	.nebulasocialcon {} /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */
 		.sharing-links {display: block; margin-top: 10px;}
 			.sharing-links.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
@@ -430,14 +433,24 @@ div.breadcrumbcon {position: relative; z-index: 1;}
 
 .entry-caption {text-align: right; font-style: italic; color: #888;}
 
-.entry-manage {font-size: 12px; margin-top: 15px;}
+.prevnextcon {margin-top: 50px; margin-bottom: 30px;}
+	.prev-link-con {text-align: left;}
+	.next-link-con {text-align: right;}
+		.prevnext-post-heading {font-size: 9px; text-transform: uppercase; font-weight: bold; margin: 0; padding: 0;}
+			.prev-post-heading {}
+			.next-post-heading {}
+		.prevnext-post-link {font-size: 12px;}
+			.prev-post-link {}
+			.next-post-link {}
+
+.entry-manage {font-size: 12px; margin-top: 15px; margin-bottom: 30px;}
 	.nebula-manage-edit {}
 		.post-edit,
 		.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;}
 
 .search-results .fullcontentcon article,
-.archive .fullcontentcon article {margin-top: 40px;}
+.archive .fullcontentcon article {margin-top: 50px;}
 
 
 /* wp-pagenavi Pagination */
@@ -458,26 +471,19 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	.wpcf7-form.sent ul {max-height: 0;}
 
-#about-the-author {position: relative; background: #eee url('http://www.transparenttextures.com/patterns/45-degree-fabric-light.png') repeat; padding-top: 30px; padding-bottom: 10px; margin-bottom: 15px;} /* @TODO "Graphics" 3: If using a texture, download it and host in the /images directory! */
+#about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;}
 	.author-headshot {min-height: 100px; margin-bottom: 20px;}
 		.author-headshot img {width: 100%; max-width: 200px; /* border-radius: 500px; */ -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	#about-the-author .author-name {display: inline-block; padding: 0;}
 	.author-location {white-space: nowrap;}
 	.author-social {float: right; margin-top: 17px;}
-	.author-meta {font-size: 12px;}
+	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: 12px;}
+		.author-meta i {margin-right: 2px;}
 		.author-jobtitle {}
 		.author-contact {float: right;}
-			.author-email {white-space: nowrap;}
+			.author-email {white-space: nowrap; margin-right: 10px;}
 			.author-phonenumber {white-space: nowrap;}
-
-.prev-link-con {text-align: left;}
-.next-link-con {text-align: right;}
-	.prevnext-post-heading {font-size: 9px; text-transform: uppercase; font-weight: bold; margin: 0; padding: 0;}
-		.prev-post-heading {}
-		.next-post-heading {}
-	.prevnext-post-link {font-size: 12px;}
-		.prev-post-link {}
-		.next-post-link {}
+h2.articles-by {padding-top: 0;}
 
 /* Comments */
 #nebulacommentswrapper {}
@@ -503,21 +509,27 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 /* ==========================================================================
    Sidebar Area
    ========================================================================== */
-.xoxo {padding: 0;}
-	.xoxo ul {margin: 0; padding: 0;}
-		.xoxo ul.menu a {display: block; padding-right: 20px;}
-		.xoxo ul.menu li.current-menu-item a {color: #95D600;}
-		.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
-			.xoxo ul.menu li.current-menu-item .sub-menu a:hover,
-			.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600;}
-		.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
-			.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
-				.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
+.xoxo {padding: 0; margin: 0;}
+	.xoxo li.widget-container {margin: 10px 0 30px 0;}
+		.xoxo li.widget-container:first-child,
+		.xoxo li.widget-container.first-child {margin-top: 0;}
+		.xoxo li.widget-container h3 {font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px;}
 
-li.widget-container {margin: 10px 0 15px 0;}
-	li.widget-container li {margin-bottom: 5px;}
+	.xoxo ul.menu a {display: block; padding-right: 20px;}
+	.xoxo ul.menu li.current-menu-item a {color: #95D600;}
+	.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
+		.xoxo ul.menu li.current-menu-item .sub-menu a:hover,
+		.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600;}
+	.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
+		.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
+			.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
 
-li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
+	li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
+
+	/* Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list. */
+	.xoxo .tagcloud a {margin: 8px 3px 0 0; padding: 5px 7px; border-radius: 5px; background-color: rgba(0, 152, 215, 0.1); color: #0098d7; font-size: 12px !important;}
+		.xoxo .tagcloud a:hover,
+		.xoxo .tagcloud a.hover {background-color: rgba(0, 152, 215, 0.25); color: #0098d7;}
 
 /* Nebula expandable sidebar subnav style defaults */
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;}

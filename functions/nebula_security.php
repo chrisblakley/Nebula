@@ -80,11 +80,22 @@ function check_referrer() {
 
 //Check referrer for known spambots
 //Be absolutely sure before adding a domain to the array in this function. Traffic will be sent a 403 Forbidden error and never be able to see the site!
+//Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering).
+//Sometimes spambots target sites without event visiting. Discovering these and filtering them using GA is important too!
 add_action('init', 'nebula_spambot_prevention');
 function nebula_spambot_prevention(){
-	$known_spambots = array('semalt.', 'ilovevitaly.', 'darodar.', 'econom.', 'makemoneyonline.', 'buttons-for-website.', 'myftpupload.'); //The dots allow for any TLD to trigger with fewer false-positives.
-	if ( isset($_SERVER['HTTP_REFERER']) && contains($_SERVER['HTTP_REFERER'], $known_spambots) ) {
-		ga_send_event('Security Measure', 'Spambot Prevention', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+
+	//List of known spambots. The dots allow for any TLD to trigger with fewer false-positives.
+	$known_spambots = array('semalt.', 'ilovevitaly.', 'darodar.', 'econom.', 'makemoneyonline.', 'buttons-for-website.', 'myftpupload.', 'co.lumb', 'iskalko.', 'o-o-8-o-o.', 'o-o-6-o-o.', 'cenoval.', 'priceg.', 'cenokos.', 'seoexperimenty.', 'gobongo.', 'vodkoved.', 'adcash.', 'websocial.', 'cityadspix.', 'luxup.', 'ykecwqlixx.', 'superiends.', 'slftsdybbg.', 'edakgfvwql.', 'socialseet.', 'screentoolkit.', 'savetubevideo.');
+
+	if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $known_spambots) ) {
+		ga_send_event('Security Precaution', 'Spambot Prevention', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+		header('HTTP/1.1 403 Forbidden');
+		die;
+	}
+
+	if ( isset($_SERVER['REMOTE_HOST']) && contains(strtolower($_SERVER['REMOTE_HOST']), $known_spambots) ) {
+		ga_send_event('Security Precaution', 'Spambot Prevention', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 		header('HTTP/1.1 403 Forbidden');
 		die;
 	}

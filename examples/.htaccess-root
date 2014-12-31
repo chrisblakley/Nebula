@@ -139,31 +139,18 @@ RewriteCond %{QUERY_STRING} author=\d
 RewriteRule ^ /about? [L,R=301]
 
 
-#BEGIN Block certain spambots from showing up as actual visitors
-RewriteEngine on
-RewriteCond %{HTTP_REFERER} semalt\.com [NC]
-RewriteRule .* - [F]
-
-RewriteEngine on
-RewriteCond %{HTTP_REFERER} econom\.com [NC]
-RewriteRule .* - [F]
-
-RewriteEngine on
-RewriteCond %{HTTP_REFERER} ilovevitaly\.com [NC]
-RewriteRule .* - [F]
-
-RewriteEngine on
-RewriteCond %{HTTP_REFERER} ilovevitaly\.ru [NC]
-RewriteRule .* - [F]
-
-RewriteEngine on
-RewriteCond %{HTTP_REFERER} darodar\.com [NC]
-RewriteRule .* - [F]
-
-RewriteEngine on
-RewriteCond %{HTTP_REFERER} 7makemoneyonline\.com [NC]
-RewriteRule .* - [F]
-#END Spambot blocks
+#Block certain spambots from showing up as actual visitors
+#Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering)
+SetEnvIfNoCase Referer semalt.com spambot=yes
+SetEnvIfNoCase Referer econom.com spambot=yes
+SetEnvIfNoCase Referer buttons-for-website.com spambot=yes
+SetEnvIfNoCase Referer ilovevitaly.com spambot=yes
+SetEnvIfNoCase Referer ilovevitaly.ru spambot=yes
+SetEnvIfNoCase Referer darodar.com spambot=yes
+SetEnvIfNoCase Referer 7makemoneyonline.com spambot=yes
+Order allow,deny
+Allow from all
+Deny from env=spambot
 
 
 #disable directory browsing

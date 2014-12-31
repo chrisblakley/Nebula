@@ -36,13 +36,13 @@
 	<?php if ( in_category('gallery') ) : ?>
 
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-
 			<div class="entry-meta">
 				<hr/>
 				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
 				<hr/>
 			</div>
+
+			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 			<div class="entry-content">
 				<?php if ( post_password_required() ) : ?>
@@ -87,13 +87,14 @@
 	<?php //Display all other posts (Non-Gallery) ?>
 	<?php else : ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
 				<div class="entry-meta">
-					<?php nebula_meta('by'); ?> <?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
+					<?php nebula_meta('on'); ?> <?php if ( !is_author() ) { nebula_meta('by'); } ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
 				</div>
 			<?php endif; ?>
+
+			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 			<?php if ( is_archive() ) : ?>
 				<div class="entry-summary">

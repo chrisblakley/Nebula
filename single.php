@@ -4,8 +4,13 @@
  */
 
 if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
-	ga_send_event('Security Measure', 'Direct Template Access Prevention', 'Template: ' . end(explode('/', $template)), basename($_SERVER['PHP_SELF']));
+	ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . end(explode('/', $template)), basename($_SERVER['PHP_SELF']));
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")));
+	exit;
+}
+
+if ( get_post_format() ) {
+	get_template_part('format', get_post_format());
 	exit;
 }
 
@@ -23,11 +28,10 @@ get_header(); ?>
 	<div class="eleven columns">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-				<h1 class="entry-title"><?php the_title(); ?></h1>
 
 				<div class="entry-meta">
-		        	<?php nebula_meta('by'); ?> <?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
-		        	<span class="nebulasocialcon">
+					<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
+					<span class="nebulasocialcon">
 		        		<?php
 			        		if ( is_dev() ) {
 				        		nebula_meta('social', 1);
@@ -36,12 +40,14 @@ get_header(); ?>
 			        		}
 			        	?>
 		        	</span>
-		        </div>
+				</div>
+
+				<h1 class="entry-title"><?php the_title(); ?></h1>
 
 				<div class="entry-content">
 					<?php the_content(); ?>
 
-					<div class="row">
+					<div class="row prevnextcon">
 						<?php if ( get_previous_post_link() ) : ?>
 							<div class="<?php echo ( get_next_post_link() ) ? 'eight': 'sixteen'; ?> columns prev-link-con">
 								<p class="prevnext-post-heading prev-post-heading">Previous Post</p>

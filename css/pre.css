@@ -67,10 +67,10 @@ pre.nebula-code.jquery,
 
 
 /* PHP */
-.nebula-code.codetitle.php {color: #5a68a5;}
+.nebula-code.codetitle.php {color: #7f7fb2;}
 
 pre.nebula-code.php,
-.nebula-code.php .gist-file {border: 1px solid #5a68a5; border-left: 5px solid #5a68a5;}
+.nebula-code.php .gist-file {border: 1px solid #7f7fb2; border-left: 5px solid #7f7fb2;}
 	.nebula-code.php::selection {background: #c8cde1;}
 
 

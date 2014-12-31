@@ -401,10 +401,10 @@ function foldersize($path) {
 	$total_size = 0;
 	$files = scandir($path);
 	$cleanPath = rtrim($path, '/') . '/';
-	foreach($files as $t) {
-		if ($t<>"." && $t<>"..") {
+	foreach ( $files as $t ) {
+		if ( $t <> "." && $t <> "..") {
 			$currentFile = $cleanPath . $t;
-			if (is_dir($currentFile)) {
+			if ( is_dir($currentFile) ) {
 				$size = foldersize($currentFile);
 				$total_size += $size;
 			} else {
@@ -418,7 +418,7 @@ function foldersize($path) {
 
 //Checks to see if an array contains a string.
 function contains($str, array $arr) {
-    foreach( $arr as $a ) {
+    foreach ( $arr as $a ) {
         if ( stripos($str, $a) !== false ) {
         	return true;
         }
@@ -429,8 +429,10 @@ function contains($str, array $arr) {
 //Generate a random integer between two numbers with an exclusion array
 //Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
 function random_number_between_but_not($min=null, $max=null, $butNot=null) {
-    if ( $min > $max ) {
-        return 'Error: min is greater than max.'; //@TODO "Nebula" 0: If min is greater than max, swap the variables.
+    if ( $min > $max ) { //If min is greater than max, swap variables
+		$tmp = $min;
+		$min = $max;
+		$max = $tmp;
     }
     if ( gettype($butNot) == 'array' ) {
         foreach( $butNot as $key => $skip ){
@@ -453,7 +455,7 @@ function random_number_between_but_not($min=null, $max=null, $butNot=null) {
 function random_unsplash($width=800, $height=600, $raw=0, $randID=0) {
 	$skipList = array(35, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
 	if ( $randID == 0 ) {
-		$randID = random_number_between_but_not(0, 506, $skipList); //Update the second number here as more Unsplash.it photos become available.
+		$randID = random_number_between_but_not(0, 575, $skipList); //Update the second number here as more Unsplash.it photos become available.
 	}
 	if ( $raw ) {
 		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;

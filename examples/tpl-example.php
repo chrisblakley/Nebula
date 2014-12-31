@@ -91,6 +91,10 @@ get_header(); ?>
 						include_once('includes/youtube_meta.php');
 					} ?>
 
+					<?php if ( is_page(1366) ) { //Ooyala Player
+						include_once('includes/ooyala_player.php');
+					} ?>
+
 					<?php if ( is_page(834) ) { //Ooyala Player Modal
 						include_once('includes/ooyala_player_modal.php');
 					} ?>
