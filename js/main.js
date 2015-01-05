@@ -580,6 +580,7 @@ function gaEventTracking(){
 	}
 	window.onafterprint = afterPrint;
 
+
 } //End gaEventTracking()
 
 

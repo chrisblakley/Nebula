@@ -11,7 +11,14 @@
 	*/
 ?>
 
-<script src='http://player.ooyala.com/v3/MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk'></script> <!-- Branding ID here -->
+<style>
+/* Responsive Ooyala Player */
+.ooyalacon {position: relative; width: 100%; padding: 56.25% 0 0 0;} /* 56.25% = 16:9 ratio */
+	.ooyalacon .innerWrapper {position: absolute !important; top: 0; left: 0; width: 100%; height: 100%;}
+		.ooyalacon .video {position: absolute; top: 0; padding-bottom: 0 !important;}
+</style>
+
+<script src="http://player.ooyala.com/v3/MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk?platform=html5"></script> <!-- Branding ID here -->
 
 <?php //Gumby Modal Implementation Here... Currently getting a 403 Forbidden error from Ooyala. Might be because of the Branding ID? ?>
 <script>
@@ -23,7 +30,7 @@
 			});
 
 			jQuery(document).on('click', '.simplemodal-close', function(){ //@TODO "Nebula" 0: Need gumby modal close event here.
-				thismovieplayer.destroy();
+				thismovieplayer.pause();
 			});
 		}
 	});
@@ -34,7 +41,9 @@
 		<a class="close switch" gumby-trigger="|#modal1"><i class="icon-cancel" /></i></a>
 		<div class="row">
 			<div class="sixteen columns centered text-center">
-				<div id="playerwrapper" data-ooyala="44azdwNDpSWUvfd8F30d55tXY0YH9njH"></div> <!-- Embed Code (Asset ID) here -->
+				<div class="ooyalacon">
+					<div id="playerwrapper" data-ooyala="44azdwNDpSWUvfd8F30d55tXY0YH9njH"></div> <!-- Embed Code (Asset ID) here -->
+				</div>
 			</div>
 		</div>
 	</div>

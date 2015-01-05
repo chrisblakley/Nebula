@@ -233,7 +233,7 @@ div.nebula-button {margin-bottom: 10px;}
     .tab-content p:first-child {margin-top: 0;}
     .tab-content ul {padding-left: 20px;}
         .tab-content ul li {list-style: disc;}
-body .video-override .video {padding-bottom: 0px !important;} /* Overrides Gumby video setting */
+body .video-override .video {padding-bottom: 0px !important; height: auto !important;} /* Overrides Gumby video setting */
 i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .btn, .skiplink {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
@@ -256,6 +256,11 @@ div.bx-wrapper div.bx-caption {bottom: 10px; background: rgba(0,0,0,0.8);}
 ul.bxslider {}
 	ul.bxslider li {padding-bottom: 0;}
 .bx-controls-direction a {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
+
+/* Responsive Ooyala Player */
+.ooyalacon {position: relative; width: 100%; padding: 56.25% 0 0 0;} /* 56.25% = 16:9 ratio */
+	.ooyalacon .innerWrapper {position: absolute !important; top: 0; left: 0; width: 100%; height: 100%;}
+		.ooyalacon .video {position: absolute; top: 0; padding-bottom: 0 !important; height: 100% !important;}
 
 
 /* ==========================================================================
