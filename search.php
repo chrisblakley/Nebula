@@ -24,16 +24,7 @@ get_header(); ?>
 		<?php if ( have_posts() ) : ?>
 			<h1>Search Results <?php get_search_query(); ?></h1>
 			<?php get_search_form(); ?>
-		<?php else : ?>
-			<h1>No Results Found</h1>
-			<?php get_search_form(); ?>
 
-			<script>
-				var badSearchTerm = jQuery('#s').val();
-				ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
-			</script>
-		<?php endif; ?>
-		<?php if ( have_posts() ) : ?>
 			<p>Your search criteria returned
 			<?php
 				$search_results = &new WP_Query("s=$s&showposts=-1");
@@ -43,7 +34,15 @@ get_header(); ?>
 			</p>
 			<?php get_template_part('loop', 'search'); ?>
 		<?php else : ?>
+			<h1>No Results Found</h1>
+			<?php get_search_form(); ?>
+
 			<p>Your search criteria returned 0 results.</p>
+
+			<script>
+				var badSearchTerm = jQuery('#s').val();
+				ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
+			</script>
 		<?php endif; ?>
 	</div><!--/columns-->
 

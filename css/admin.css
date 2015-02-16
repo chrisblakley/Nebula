@@ -150,14 +150,14 @@ td.plugin-title strong, td.post-title strong,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo {background-image: url("../images/admin/nebulavideo.png");}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i {background-position-y: 0px; background-repeat: no-repeat;}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i {background-position: 0px 0px; background-repeat: no-repeat;}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i,
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:hover button i,
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"] i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i,
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:hover button i,
-.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] i {background-position-y: -20px; background-repeat: no-repeat;}
+.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] i {background-position: 0px -20px; background-repeat: no-repeat;}
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"],
 .mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] {background: #ebebeb; border-color: #999; -webkit-box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3); box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3);}

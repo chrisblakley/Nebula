@@ -18,23 +18,25 @@ get_header(); ?>
 	</div><!--/columns-->
 </div><!--/row-->
 
-<div class="row fullcontentcon">
+<div class="container fullcontentcon">
+	<div class="row">
 
-	<div class="eleven columns">
-		<h1><i class="archiveicon fa fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
-			<?php
-				$category_description = category_description();
-				if ( !empty($category_description) ) {
-					echo '' . $category_description . '';
-				}
-				get_template_part('loop', 'category');
-			?>
-	</div><!--/columns-->
+		<div class="eleven columns">
+			<h1><i class="archiveicon fa fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
+				<?php
+					$category_description = category_description();
+					if ( !empty($category_description) ) {
+						echo '' . $category_description . '';
+					}
+					get_template_part('loop', 'category');
+				?>
+		</div><!--/columns-->
 
-	<div class="four columns push_one">
-		<?php get_sidebar(); ?>
-	</div><!--/columns-->
+		<div class="four columns push_one">
+			<?php get_sidebar(); ?>
+		</div><!--/columns-->
 
-</div><!--/row-->
+	</div><!--/row-->
+</div><!--/container-->
 
 <?php get_footer(); ?>

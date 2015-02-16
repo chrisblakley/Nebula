@@ -266,5 +266,11 @@
 			<span class="answer">The <a href="https://google.starttest.com/" target="_blank">Google Testing Center</a> is what you're looking for. Once you pass the Analytics Individual Qualification, you will become a <a href="https://www.google.com/partners/" target="_blank">Google Partner</a>! For more information, check out the <a href="https://support.google.com/analytics/answer/3424287" target="_blank">Google Analytics IQ FAQ &raquo;</a></span>
 			<span class="source">Source: <a href="https://support.google.com/analytics/answer/3424288" target="_blank">Google Analytics IQ &raquo;</a></span>
 		</p>
+
+		<p class="faq">
+			<span class="question">For Google/Facebook conversion tracking and remarketing, where in the HTML do the tag snippets go?</span>
+			<span class="answer"><a href="https://support.google.com/adwords/answer/2476688" target="_blank">Google Remarketing</a> and <a href="https://support.google.com/adwords/answer/1722054?hl=en" target="_blank">Google Conversion</a> tags go at the end of <code>&lt;body&gt;</code>. <a href="https://developers.facebook.com/docs/ads-for-websites/website-custom-audiences/getting-started#install-the-pixel" target="_blank">Facebook Remarketing</a> and <a href="https://www.facebook.com/help/435189689870514/" target="_blank">Facebook Conversion</a> tags need to go at the end of <code>&lt;head&gt;</code>.</span>
+			<span class="source">Sources: <a href="https://support.google.com/adwords/answer/2476688" target="_blank">Google Remarketing &raquo;</a>, <a href="https://support.google.com/adwords/answer/1722054?hl=en" target="_blank">Google Conversion &raquo;</a>, <a href="https://developers.facebook.com/docs/ads-for-websites/website-custom-audiences/getting-started#install-the-pixel" target="_blank">Facebook Remarketing &raquo;</a>, <a href="https://www.facebook.com/help/435189689870514/" target="_blank">Facebook Conversion &raquo;</a></span>
+		</p>
 	</div><!--/coluns-->
 </div><!--/row-->

@@ -205,13 +205,13 @@
 						<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
 					</a>
 				</div><!--/columns-->
-				<?php if ( has_nav_menu('header') ) : ?>
-					<div class="ten columns">
+				<div class="ten columns">
+					<?php if ( has_nav_menu('header') ) : ?>
 						<nav id="primarynav" class="clearfix">
 							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
 		        		</nav>
-		        	</div><!--/columns-->
-	        	<?php endif; ?>
+	        		<?php endif; ?>
+	        	</div><!--/columns-->
 			</div><!--/row-->
 
 			<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">

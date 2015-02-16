@@ -18,22 +18,24 @@ get_header(); ?>
 	</div><!--/columns-->
 </div><!--/row-->
 
-<div class="row fullcontentcon">
+<div class="container fullcontentcon">
+	<div class="row">
 
-	<div class="eleven columns">
-		<article id="post-0" class="post error404 not-found" role="main">
-			<h1>Not Found</h1>
-			<p>The page you requested could not be found.</p>
+		<div class="eleven columns">
+			<article id="post-0" class="post error404 not-found" role="main">
+				<h1>Not Found</h1>
+				<p>The page you requested could not be found.</p>
 
-			<?php get_search_form(); echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>'.PHP_EOL; ?>
-		</article>
-	</div><!--/columns-->
+				<?php get_search_form(); echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>'.PHP_EOL; ?>
+			</article>
+		</div><!--/columns-->
 
-	<div class="four columns push_one">
-		<?php get_sidebar(); ?>
-	</div><!--/columns-->
+		<div class="four columns push_one">
+			<?php get_sidebar(); ?>
+		</div><!--/columns-->
 
-</div><!--/row-->
+	</div><!--/row-->
+</div><!--/container-->
 
 <script>
 	if ( document.referrer.length ) {

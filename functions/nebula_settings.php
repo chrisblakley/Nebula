@@ -124,6 +124,7 @@ function register_nebula_settings() {
 	register_setting('nebula_settings_group', 'nebula_unnecessary_metaboxes');
 	register_setting('nebula_settings_group', 'nebula_dev_metabox');
 	register_setting('nebula_settings_group', 'nebula_todo_metabox');
+	register_setting('nebula_settings_group', 'nebula_domain_exp');
 	register_setting('nebula_settings_group', 'nebula_dev_stylesheets');
 	register_setting('nebula_settings_group', 'nebula_console_css');
 	register_setting('nebula_settings_group', 'nebula_cse_id');
@@ -605,6 +606,18 @@ function nebula_settings_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_todo_metabox')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Finds TODO messages in theme files to track open issues. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Domain Expiration Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_domain_exp">
+							<option value="default" <?php selected('default', get_option('nebula_domain_exp')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_domain_exp')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_domain_exp')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Send an email to all site admins if the detected domain expiration date is within one week. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 

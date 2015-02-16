@@ -102,6 +102,7 @@ li.icon a[href$=".ppt"]:before, a.icon[href$=".ppt"]:before, li.icon a[href$=".p
 li.icon a[href$=".pdf"]:before, a.icon[href$=".pdf"]:before, li.icon a[href$='.pdfx']:before, a.icon[href$='.pdfx']:before {content: "\f1c1"; font-family: "FontAwesome"; color: #d04525; margin-right: 5px;}
 li.icon a[href$=".zip"]:before, a.icon[href$=".zip"]:before, li.icon a[href$=".zipx"]:before, a.icon[href$=".zipx"]:before, li.icon a[href$=".rar"]:before, a.icon[href$=".rar"]:before {content: '\f1c6'; font-family: "FontAwesome"; color: #777777; margin-right: 5px;}
 li.icon a[href$=".txt"]:before, a.icon[href$=".txt"]:before, li.icon a[href$=".rtf"]:before, a.icon[href$=".rtf"]:before {content: '\f0f6'; font-family: "FontAwesome"; color: #777777; margin-right: 5px;}
+a.icon:before {font-weight: normal;}
 a.icon[href$=".html"] {text-decoration: none; border-bottom: 1px dotted #f1672c;}
 	li.icon a[href$=".html"]:before, a.icon[href$=".html"]:before {content: '\f1c9'; font-family: "FontAwesome"; color: #f1672c; margin-right: 5px;}
 a.icon[href$=".php"] {text-decoration: none; border-bottom: 1px dotted #5a68a5;}
@@ -216,6 +217,8 @@ div.nebula-button {margin-bottom: 10px;}
 	.maprefresh-icon.inactive,
 	.mapgeolocation-icon.inactive {opacity: 0.4;}
 
+#googlemap img {max-width: none;} /* Prevents glitchy UI within the map */
+
 .facebook-connect-con {font-size: 12px;}
 	.facebook-connect-con i,
 	.facebook-connect-con a {color: #3b5998;}
@@ -272,6 +275,7 @@ ul.bxslider {}
    Header Area
    ========================================================================== */
 
+/* .pointerevents is only added with the dev version of Modernizr! */
 .pointerevents #fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	.pointerevents.mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
 
@@ -329,7 +333,7 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 
 
 /* Nebula Wordpress main navigation style defaults */
-#logonavcon {padding-top: 20px;}
+#logonavcon {}
 	nav#primarynav {position: relative; z-index: 1000;}
 		nav#primarynav ul {}
 		nav#primarynav ul:first-child,
@@ -373,7 +377,7 @@ nav#fixednav {position: relative; z-index: 1000;}
 			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
 
 /* Sample Hero and on-load animation */
-#heroslidercon {position: relative; height: 400px; margin: 20px 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+#heroslidercon {position: relative; height: 400px; margin: 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	#heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 10px; margin-top: 10px; padding-left: 10px; text-transform: uppercase; background: #000; background: rgba(0,0,0,0.5);}
 
@@ -793,6 +797,7 @@ div.space {clear: both; display: block; overflow: hidden; visibility: hidden; wi
 .allow-clicks {pointer-events: all;}
 
 a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
+	a.phg.white {background: url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;}
 	a.phg span {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg span.pinckney {color: #0099d8;}
 	a.phg span.hugo {color: #a0ce67;}
@@ -800,6 +805,8 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-sym
 	a.phg:hover span.pinckney {color: #006690;}
 	a.phg:hover span.hugo {color: #709048;}
 	a.phg:hover span.group {color: #6f7072;}
+	a.phg.white span {color: #fff;}
+	a.phg.white:hover span {color: #aaa;}
 
 a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg.anim span {margin-right: 3px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}

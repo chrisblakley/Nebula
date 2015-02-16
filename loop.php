@@ -32,8 +32,7 @@
 
 <?php while ( have_posts() ) : the_post();?>
 
-	<?php //Display posts in a Gallery ?>
-	<?php if ( in_category('gallery') ) : ?>
+	<?php if ( in_category('gallery') ) : //Display posts in a Gallery ?>
 
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<div class="entry-meta">
@@ -84,8 +83,8 @@
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
 
-	<?php //Display all other posts (Non-Gallery) ?>
-	<?php else : ?>
+	<?php else : //Display all other posts (Non-Gallery) ?>
+
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 			<?php if ( !in_array("page", get_post_class()) ) : //Do not display entry meta for pages ?>
@@ -124,6 +123,7 @@
 					</div>
 				</div>
 			<?php endif; ?>
+
 		</article>
 
 		<?php if ( nebula_settings_conditional('nebula_comments', 'disabled') ) : ?>

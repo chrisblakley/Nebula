@@ -229,11 +229,11 @@ function nav_menu_locations() {
 	);
 }
 
-//Remove version query strings from styles/scripts (to allow caching)
-add_filter('script_loader_src', 'nebula_remove_script_version', 15, 1);
-add_filter('style_loader_src', 'nebula_remove_script_version', 15, 1);
-function nebula_remove_script_version($src){
-	return remove_query_arg('ver', $src);
+
+//Set email content type to be HTML by default
+add_filter('wp_mail_content_type', 'nebula_email_content_type');
+function nebula_email_content_type(){
+    return "text/html";
 }
 
 
@@ -394,12 +394,17 @@ function nebula_backup_contact_send() {
 	exit();
 }
 
-
-function pinckneyhugogroup($anim=false){
+//Print the PHG logo as text with or without hover animation.
+function pinckney_hugo_group($anim) { pinckneyhugogroup($anim); }
+function phg($anim) { pinckneyhugogroup($anim); }
+function pinckneyhugogroup($anim=false, $white=false){
 	if ( $anim ) {
 		$anim = 'anim';
 	}
-	echo '<a class="phg ' . $anim . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
+	if ( $white ) {
+		$white = 'anim';
+	}
+	echo '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
 }
 
 
@@ -451,7 +456,8 @@ function nebula_meta($meta, $secondary=1) {
 		} elseif ( get_comments_number() > 1 ) {
 			$comment_icon = 'fa-comments';
 		}
-		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
+		$postlink = ( is_single() ) ? '' : get_the_permalink();
+		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
 	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ) {
 
 		//@TODO "Nebula" 0: Pass an array to nebula_meta() for which social networks to use...
@@ -596,7 +602,7 @@ function the_breadcrumb() {
 	global $post;
 	$delimiter = '<span class="arrow">&rsaquo;</span>'; //Delimiter between crumbs
 	$home = '<i class="fa fa-home"></i>'; //Text for the 'Home' link
-	$showCurrent = 1; // 1 - show current post/page title in breadcrumbs, 0 - don't show
+	$showCurrent = 1; //1: Show current post/page title in breadcrumbs, 0: Don't show
 	$before = '<span class="current">'; //Tag before the current crumb
 	$after = '</span>'; //Tag after the current crumb
 	$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'in');
@@ -668,7 +674,7 @@ function the_breadcrumb() {
 			if ( get_post_type() != 'post' ) {
 				$post_type = get_post_type_object(get_post_type());
 				$slug = $post_type->rewrite;
-				echo '<a href="' . $homeLink . '/' . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
+				echo '<a href="' . $homeLink . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
 				if ( $showCurrent == 1 ) {
 					echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
 				}
@@ -685,8 +691,13 @@ function the_breadcrumb() {
 				}
 			}
 		} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ) {
-			$post_type = get_post_type_object(get_post_type());
-			echo $before . $post_type->labels->singular_name . $after;
+			if ( is_archive() ) { //@TODO "Nebula" 0: Might not be perfect... This may never else out.
+				$userdata = get_user_by('slug', get_query_var('author_name'));
+				echo $before . $userdata->first_name . ' ' . $userdata->last_name . $after;
+			} else { //What does this one do?
+				$post_type = get_post_type_object(get_post_type());
+				echo $before . $post_type->labels->singular_name . $after;
+			}
 		} elseif ( is_attachment() ) { //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 
 

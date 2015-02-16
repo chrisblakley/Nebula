@@ -51,11 +51,6 @@ function my_theme_register_required_plugins() {
             'required'  => true,
         ),
         array(
-            'name'      => 'WP Smush.it',
-            'slug'      => 'wp-smushit',
-            'required'  => false,
-        ),
-        array(
             'name'      => 'Custom Facebook Feed',
             'slug'      => 'custom-facebook-feed',
             'required'  => false,

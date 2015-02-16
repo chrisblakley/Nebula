@@ -86,7 +86,7 @@ add_action('init', 'nebula_spambot_prevention');
 function nebula_spambot_prevention(){
 
 	//List of known spambots. The dots allow for any TLD to trigger with fewer false-positives.
-	$known_spambots = array('semalt.', 'ilovevitaly.', 'darodar.', 'econom.', 'makemoneyonline.', 'buttons-for-website.', 'myftpupload.', 'co.lumb', 'iskalko.', 'o-o-8-o-o.', 'o-o-6-o-o.', 'cenoval.', 'priceg.', 'cenokos.', 'seoexperimenty.', 'gobongo.', 'vodkoved.', 'adcash.', 'websocial.', 'cityadspix.', 'luxup.', 'ykecwqlixx.', 'superiends.', 'slftsdybbg.', 'edakgfvwql.', 'socialseet.', 'screentoolkit.', 'savetubevideo.');
+	$known_spambots = array('semalt.', 'ilovevitaly.', 'darodar.', 'econom.', 'makemoneyonline.', 'buttons-for-website.', 'myftpupload.', 'co.lumb', 'iskalko.', 'o-o-8-o-o.', 'o-o-6-o-o.', 'cenoval.', 'priceg.', 'cenokos.', 'seoexperimenty.', 'gobongo.', 'vodkoved.', 'adcash.', 'websocial.', 'cityadspix.', 'luxup.', 'ykecwqlixx.', 'superiends.', 'slftsdybbg.', 'edakgfvwql.', 'socialseet.', 'screentoolkit.', 'savetubevideo.', 'blackhatworth.');
 
 	if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $known_spambots) ) {
 		ga_send_event('Security Precaution', 'Spambot Prevention', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');

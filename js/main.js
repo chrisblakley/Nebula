@@ -119,6 +119,11 @@ jQuery(window).on('load', function() {
 
  ===========================*/
 
+//Custom css expression for a case-insensitive contains(). Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")...
+jQuery.expr[':'].Contains = function(a, i, m){
+    return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+};
+
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function helperFunctions(){
 	jQuery('li:even, tr:even').addClass('even');
@@ -612,22 +617,23 @@ function mmenus() {
 	if ( 'mmenu' in jQuery ) {
 		jQuery("#mobilenav").mmenu({
 		    //Options
-		    offCanvas: {
-			    zposition: 'back' //'back' (default), 'front', 'next'
+		    "offCanvas": {
+			    "zposition": "back", //"back" (default), "front", "next"
+			    "position": "left" //"left" (default), "right", "top", "bottom"
 		    },
-		    searchfield: { //This is for searching through the menu itself (NOT for site search)
-		    	add: true,
-		    	search: true,
-		    	placeholder: 'Search',
-		    	noResults: 'No navigation items found.',
-		    	showLinksOnly: false //"true" searches only <a> links, "false" includes spans in search results
+		    "searchfield": { //This is for searching through the menu itself (NOT for site search)
+		    	"add": true,
+		    	"search": true,
+		    	"placeholder": 'Search',
+		    	"noResults": "No navigation items found.",
+		    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results
 		    },
-		    counters: true, //Display count of sub-menus
-		    classes: "mm-light mm-slide" //Theming and open effects
+		    "counters": true, //Display count of sub-menus
+		    "classes": "mm-light mm-slide" //Theming and open effects
 		}, {
 			//Configuration
-			classNames: {
-				selected: "current-menu-item"
+			"classNames": {
+				"selected": "current-menu-item"
 			}
 		}).on('opening.mm', function(){ //When mmenu has started opening
 			jQuery('a.mobilenavtrigger i').removeClass('fa-bars').addClass('fa-times');
@@ -1223,7 +1229,7 @@ function browserInfo() {
 }
 
 //Create desktop notifications
-function desktopNotification(title, message, clickCallback, closeCallback, showCallback, errorCallback) {
+function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback) {
 	if ( checkNotificationPermission() ) {
 		//Set defaults
 		var defaults = {
@@ -1231,7 +1237,7 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 			lang: "en-US", //Language (optional)
 			body: "", //Body message (optional)
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-			icon: bloginfo['template_directory'] + "/images/meta/og-thumb.png" //Thumbnail Icon (optional)
+			icon: bloginfo['template_directory'] + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
 		}
 
 		if ( typeof message === "undefined" ) {
@@ -1268,14 +1274,20 @@ function desktopNotification(title, message, clickCallback, closeCallback, showC
 				clickCallback();
 			};
 		}
+		if ( typeof showCallback !== "undefined" ) {
+            instance.onshow = function(e) {
+                showCallback();
+            };
+        } else {
+            instance.onshow = function(e) {
+                setTimeout(function() {
+                    instance.close();
+                }, 20000);
+            }
+        }
 		if ( typeof closeCallback !== "undefined" ) {
 			instance.onclose = function() {
 				closeCallback();
-			};
-		}
-		if ( typeof showCallback !== "undefined" ) {
-			instance.onshow = function() {
-				showCallback();
 			};
 		}
 		if ( typeof errorCallback !== "undefined" ) {

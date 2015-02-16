@@ -7,6 +7,15 @@
 
 			<div class="footer">
 
+				<?php
+					if ( SAVEQUERIES && current_user_can('manage_options') && $_GET['showqueries'] ) {
+						echo "<!--\n";
+						print_r($wpdb->queries);
+						echo "\n-->\n";
+						echo "Queries: " . get_num_queries();
+					}
+				?>
+
 				<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
 					<div class="row footerwidgets">
 						<?php if ( footerWidgetCounter() == 4 ) : ?>

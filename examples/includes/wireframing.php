@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/wireframing.css" />
 
+<?php if ( nebula_settings_conditional('nebula_wireframing') == 'disabled' || nebula_settings_conditional('nebula_wireframing') == 'default' ) : ?>
+	<p style="background: maroon; color: #fff; padding: 10px 15px;"><strong>Warning:</strong> Wireframing is currently <strong>disabled</strong> in this instance of WordPress. JavaScript functions will not work unless it is re-enabled on the Nebula Settings page.</p>
+<?php endif; ?>
 
 <div class="row" style="background: #0098d7; color: #fff; padding: 10px 15px;">
 	<div class="sixteen columns">
@@ -124,13 +127,13 @@
 		<p>Placeholder images can be created using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function. The class "nebula-fpo-image" is added to the element.</p>
 
 		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo($title, $description, $icon, $width, $height, $bg, $color, $styles, $classes); ?>[/pre]'); ?>
+		<?php echo do_shortcode('[pre lang=php]<?php fpo_image($width, $height, $type, $background, $color, $styles, $classes); ?>[/pre]'); ?>
 
 		<h2>Parameters</h2>
 		<p>
-			<strong>$type</strong> (string) (optional) The type of placeholder image to use. Options include "none". Default: <em>"none"</em><br/>
 			<strong>$width</strong> (string) (optional) The width of the placeholder image. Default: <em>100%</em><br/>
 			<strong>$height</strong> (string) (optional) The height of the placeholder image. Default: <em>250px</em><br/>
+			<strong>$type</strong> (string) (optional) The type of placeholder image to use. Options include "none". Default: <em>"none"</em><br/>
 			<strong>$styles</strong> (string) (optional) Additional styles to add to the element. Default: <em>None</em><br/>
 			<strong>$classes</strong> (string) (optional) Additional classes to add to the element. Default: <em>None</em><br/>
 		</p>

@@ -21,6 +21,14 @@ function nebula_defer_async_scripts($url) {
 }
 
 
+//Remove version query strings from styles/scripts (to allow caching)
+add_filter('script_loader_src', 'nebula_remove_script_version', 15, 1);
+add_filter('style_loader_src', 'nebula_remove_script_version', 15, 1);
+function nebula_remove_script_version($src){
+	return remove_query_arg('ver', $src);
+}
+
+
 //Dequeue redundant files (from plugins)
 //Important: Add a reason in comments to help future updates: Plugin Name - Reason
 add_action('wp_print_scripts', 'nebula_dequeues', 9999);

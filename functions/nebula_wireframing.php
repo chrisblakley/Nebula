@@ -33,8 +33,8 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 
 //Placeholder image
 //@TODO "Nebula" 0: Come up with a way for the "X" to appear in the div without it looking bad (currently stretching the PNG).
-function fpo_image($type='none', $width='100%', $height='200px', $background='', $color='#000', $styles='', $classes='') {
-	$imgsrc = ( $type == 'unsplash' || $type == 'photo' ) ? random_unsplash(800, 600, 1) : '';
+function fpo_image($width='100%', $height='200px', $type='none', $background='', $color='#000', $styles='', $classes='') {
+	$imgsrc = ( $type == 'unsplash' || $type == 'photo' || $width == 'unsplash' || $width == 'photo' ) ? random_unsplash(800, 600, 1) : '';
 
 	$return = '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $background . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $styles . '">';
 
@@ -178,6 +178,7 @@ if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
 }
 function wireframe_bar(){
 	$current_user = wp_get_current_user();
+	$current_user_name = ( $current_user->user_firstname != '' ) ? $current_user->user_firstname : $current_user->display_name;
 	$greetings = array('Hello', 'Hi', 'Hey', 'Welcome');
 
 	echo '<div id="wireframing-bar" class="container">
@@ -187,7 +188,7 @@ function wireframe_bar(){
 					<li><a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a></li>
 					<li style="text-align: right;">';
 					if ( is_user_logged_in() ) {
-						echo '<span>' . $greetings[array_rand($greetings)] . ', <a href="' . get_admin_url() . '"><strong>' . $current_user->user_firstname . '</strong></a>.</span>';
+						echo '<span>' . $greetings[array_rand($greetings)] . ', <a href="' . get_admin_url() . '"><strong>' . $current_user_name . '</strong></a>.</span>';
 					} else {
 						echo '<span><a href="' . wp_login_url(get_permalink()) . '"><strong>Login</strong></a></span>';
 					}

@@ -51,7 +51,7 @@ function register_nebula_styles() {
 	wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null);
 	wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
 	wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0'); //Only useful for 12 col primary, entypo is also re-enabled
-	wp_register_style('nebula-font_awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css', array(), '4.1.0');
+	wp_register_style('nebula-font_awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css', array(), '4.3.0');
 	wp_register_style('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/css/jquery.mmenu.all.min.css', array(), '4.3.2');
 	//wp_register_style('nebula-bxslider', get_template_directory_uri() . '/css/jquery.bxslider.css', array(), '4.1.2'); //bxSlider is conditionally loaded via main.js when needed.
 	wp_register_style('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.1/css/jquery.dataTables.min.css', array(), '1.10');
@@ -112,6 +112,11 @@ if ( array_key_exists('debug', $_GET) ) {
 	add_action('wp_enqueue_scripts', 'enqueue_nebula_debug_scripts');
 	function enqueue_nebula_debug_scripts() {
 		wp_enqueue_script('performance-timing');
+	}
+
+	add_action('shutdown', 'nebula_echo_db_queries');
+	function nebula_echo_db_queries(){
+		echo "<script>console.log('DB Queries: " . get_num_queries() . "');</script>";
 	}
 } else {
 	$GLOBALS["debug"] = false;

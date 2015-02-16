@@ -1,5 +1,10 @@
 <?php
 
+/**********
+ WARNING: Custom user meta fields can not have hyphens in them! Use underscores or all one word!
+ *********/
+
+
 wp_enqueue_script('thickbox');
 wp_enqueue_style('thickbox');
 wp_enqueue_script('media-upload');

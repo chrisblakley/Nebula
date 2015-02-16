@@ -192,6 +192,15 @@ function nebula_url_components($segment="all", $url=null) {
 			}
 			break;
 
+		case ('extension') : //The extension only.
+		    if ( contains(basename($url_compontents['path']), array('.')) ) {
+		        $file_parts = explode('.', $url_compontents['path']);
+		        return $file_parts[1];
+		    } else {
+		        return false;
+		    }
+		    break;
+
 		case ('path') : //Path should be just the path without the filename/extension.
 			if ( contains(basename($url_compontents['path']), array('.')) ) { //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
 				return str_replace(basename($url_compontents['path']), '', $url_compontents['path']);
@@ -455,7 +464,7 @@ function random_number_between_but_not($min=null, $max=null, $butNot=null) {
 function random_unsplash($width=800, $height=600, $raw=0, $randID=0) {
 	$skipList = array(35, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
 	if ( $randID == 0 ) {
-		$randID = random_number_between_but_not(0, 575, $skipList); //Update the second number here as more Unsplash.it photos become available.
+		$randID = random_number_between_but_not(0, 615, $skipList); //Update the second number here as more Unsplash.it photos become available.
 	}
 	if ( $raw ) {
 		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;

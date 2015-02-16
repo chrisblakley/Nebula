@@ -113,22 +113,24 @@ get_header(); ?>
 	</div><!--/row-->
 </div><!--/container-->
 
-<div class="row fullcontentcon">
-	<div class="eleven columns">
+<div class="container fullcontentcon">
+	<div class="row">
+		<div class="eleven columns">
 
-		<h2 class="articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h2>
+			<h2 class="articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h2>
 
-		<?php
-			rewind_posts();
-			get_template_part('loop', 'author');
-		?>
+			<?php
+				rewind_posts();
+				get_template_part('loop', 'author');
+			?>
 
-	</div><!--/columns-->
+		</div><!--/columns-->
 
-	<div class="four columns push_one">
-		<?php get_sidebar(); ?>
-	</div><!--/columns-->
+		<div class="four columns push_one">
+			<?php get_sidebar(); ?>
+		</div><!--/columns-->
 
-</div><!--/row-->
+	</div><!--/row-->
+</div><!--/container-->
 
 <?php get_footer(); ?>

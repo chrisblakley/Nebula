@@ -9,6 +9,18 @@ remove_filter('the_excerpt', 'wptexturize');
 remove_filter('comment_text', 'wptexturize');
 
 
+//Add classes to the admin body
+add_filter('admin_body_class', 'nebula_admin_body_classes');
+function nebula_admin_body_classes($classes) {
+	global $current_user;
+	$user_roles = $current_user->roles;
+	$classes .= array_shift($user_roles);
+	$classes .= $user_role;
+	return $classes;
+}
+
+
+
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
 if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ) {
 	add_action('wp_print_scripts', 'dequeue_admin_bar', 9999);
@@ -306,22 +318,25 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			$domain_registrar_html .= '</li>';
 		}
 
+		if ( nebula_settings_conditional('nebula_domain_exp', 'enabled') ) {
+			if ( get_option('nebula_domain_expiration_alert') == 'Never' || get_option('nebula_domain_expiration_alert') < strtotime('-2 weeks') ) {
+				if ( $domain_exp != 'December 31, 1969' && $domain_exp_unix > strtotime("3/27/1986")  ) {
+					if ( $domain_exp_unix < strtotime('+1 week') ) { //If domain is expiring within a week, email all admin users.
+						$adminUsers = get_users(array('role' => 'Administrator'));
+						$exp_notice_to = '';
+						$i = 0;
+						$exp_notice_to = array();
+						foreach ( $adminUsers as $adminUser ) {
+							array_push($exp_notice_to, $adminUsers[$i]->user_email);
+							$i++;
+						}
+						$exp_notice_subject = 'Domain expiration detection of ' . $domain_exp . ' for ' . nebula_url_components('domain') . ' (via ' . get_bloginfo('name') . ')!';
+						$exp_notice_message = "Your domain " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different). This notice was triggered because the expiration date is within 1 week. It has been sent to all administrators of " . get_bloginfo('name') . " (" . home_url('/') . "), and will only be sent once!";
 
-		if ( get_option('nebula_domain_expiration_alert') == 'Never' || get_option('nebula_domain_expiration_alert') < strtotime('-2 weeks') ) {
-			if ( $domain_exp_unix < strtotime('+1 week') ) { //If domain is expiring within a week, email all admin users.
-				$adminUsers = get_users(array('role' => 'Administrator'));
-				$exp_notice_to = '';
-				$i = 0;
-				$exp_notice_to = array();
-				foreach ( $adminUsers as $adminUser ) {
-					array_push($exp_notice_to, $adminUsers[$i]->user_email);
-					$i++;
+						wp_mail($exp_notice_to, $exp_notice_subject, $exp_notice_message);
+						update_option('nebula_domain_expiration_alert', date('U'));
+					}
 				}
-				$exp_notice_subject = 'Domain expiration detection of ' . $domain_exp . ' for ' . nebula_url_components('domain') . ' (via ' . bloginfo('name') . ')!';
-				$exp_notice_message = "Your domain " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different). This notice was triggered because the expiration date is within 1 week. It has been sent to all administrators of " . bloginfo('name') . " (" . home_url('/') . "), and will only be sent once!";
-
-				wp_mail($exp_notice_to, $exp_notice_subject, $exp_notice_message);
-				update_option('nebula_domain_expiration_alert', date('U'));
 			}
 		}
 

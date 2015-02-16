@@ -75,7 +75,11 @@ get_header(); ?>
 				 ===========================*/
 				?>
 
-					<?php if ( is_page(208) ) { //Basic Wordpress Query
+					<?php if ( is_page(1408) ) { //Basic Wordpress Query
+						include_once('includes/wp_query_basic.php');
+					} ?>
+
+					<?php if ( is_page(208) ) { //Multicolumn Wordpress Query
 						include_once('includes/wp_query_multicolumn.php');
 					} ?>
 
@@ -119,8 +123,16 @@ get_header(); ?>
 						include_once('includes/facebook_feed.php');
 					} ?>
 
-					<?php if ( is_page(815) ) { //Twitter Feed
-						include_once('includes/twitter_feed.php');
+					<?php if ( is_page(815) ) { //Twitter Feed (OLD)
+						include_once('includes/twitter_feed_old.php');
+					} ?>
+
+					<?php if ( is_page(1391) ) { //Twitter Bearer Token Generator (New)
+						include_once('includes/twitter_bearer_token_generator.php');
+					} ?>
+
+					<?php if ( is_page(1394) ) { //Twitter Cached Feed (New)
+						include_once('includes/twitter_cached_feed.php');
 					} ?>
 
 					<?php if ( is_page(722) ) { //Currently Open (Business Hours)

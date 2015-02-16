@@ -18,17 +18,19 @@ get_header(); ?>
 	</div><!--/columns-->
 </div><!--/row-->
 
-<div class="row fullcontentcon">
+<div class="container fullcontentcon">
+	<div class="row">
 
-	<div class="eleven columns">
-		<h1><i class="archiveicon fa fa-tag"></i> <?php echo single_tag_title('', false); //@TODO "Nebula" 0: Come up with a way to have multiple tag archives (and use fa-tags icon). ?></h1>
-		<?php get_template_part('loop', 'tag'); ?>
-	</div><!--/columns-->
+		<div class="eleven columns">
+			<h1><i class="archiveicon fa fa-tag"></i> <?php echo single_tag_title('', false); //@TODO "Nebula" 0: Come up with a way to have multiple tag archives (and use fa-tags icon). ?></h1>
+			<?php get_template_part('loop', 'tag'); ?>
+		</div><!--/columns-->
 
-	<div class="four columns push_one">
-		<?php get_sidebar(); ?>
-	</div><!--/columns-->
+		<div class="four columns push_one">
+			<?php get_sidebar(); ?>
+		</div><!--/columns-->
 
-</div><!--/row-->
+	</div><!--/row-->
+</div><!--/container-->
 
 <?php get_footer(); ?>
