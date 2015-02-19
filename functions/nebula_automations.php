@@ -154,8 +154,14 @@ function my_theme_register_required_plugins() {
 add_action('after_switch_theme', 'nebulaActivation');
 function nebulaActivation() {
 	$theme = wp_get_theme();
+	$GLOBALS['nebula_initial_activate'] = 0;
+
 	//Check if this is the initial activation, or if initialization has been ran before (and the user is just toggling themes)
-	if ( (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) { //@TODO "Nebula" 0: This is always triggering as re-activated.
+	if ( (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) {
+		$GLOBALS['nebula_initial_activate'] = 1;
+
+		//Show the Activation Complete message
+		add_action('admin_notices', 'nebulaActivateComplete');
 
 		//Create Homepage
 		$nebula_home = array(
@@ -174,16 +180,25 @@ Wordpress developers will find all source code not obfuscated, so everything may
 		//Insert the post into the database
 		wp_insert_post($nebula_home);
 
-		//Show the Activation Complete message
-		add_action('admin_notices', 'nebulaActivateComplete');
-
 		//Change some Wordpress settings
-		add_action('init', 'nebulaWordpressSettings');
+		add_action('init', 'nebulaWordpressSettings'); //Remove add_action? Not sure if entirely necessary. Does 'after_switch_theme' trigger after init?
 
 	}
 
 	set_nebula_initialized_date();
 	return;
+}
+
+function nebulaActivateComplete(){
+	set_nebula_initialized_date();
+
+	if ( isset($_GET['nebula-reset']) ) {
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
+	} elseif ( $GLOBALS['nebula_initial_activate'] == 0 ) { //@TODO "Nebula" 0: This condition is always triggering... because this is tested AFTER options are updated?
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a></p></div>";
+	} else {
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
+	}
 }
 
 //When Nebula "Reset" has been clicked
@@ -362,19 +377,6 @@ function remove_core_bundled_plugins(){
         delete_plugins(array('hello.php'));
     }
 }
-
-function nebulaActivateComplete(){
-	set_nebula_initialized_date();
-
-	if ( isset($_GET['nebula-reset']) ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
-	} elseif ( get_post_meta(1, '_wp_page_template', 1) == 'tpl-homepage.php' ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a></p></div>";
-	} else {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
-	}
-}
-
 
 function set_nebula_initialized_date(){
 	if ( 1==2 ) { //Set to true to force an initialization date (in case of some kind of accidental reset).

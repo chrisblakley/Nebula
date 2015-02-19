@@ -18,6 +18,7 @@
 				<strong>"filepath"</strong>: ' . nebula_url_components("filepath", $_POST['data'][0]['url']) . '<br/>
 				<strong>"path"</strong>: ' . nebula_url_components("path", $_POST['data'][0]['url']) . '<br/>
 				<strong>"file"</strong>: ' . nebula_url_components("file", $_POST['data'][0]['url']) . '<br/>
+				<strong>"extension"</strong>: ' . nebula_url_components("filepath", $_POST['data'][0]['url']) . '<br/>
 				<strong>"query"</strong>: ' . nebula_url_components("query", $_POST['data'][0]['url']) . '<br/>
 			';
 			exit();
@@ -85,6 +86,7 @@
 			<strong>"filepath"</strong>: <?php echo nebula_url_components('filepath'); ?><br/>
 			<strong>"path"</strong>: <?php echo nebula_url_components('path'); ?><br/>
 			<strong>"file"</strong>: <?php echo nebula_url_components('file'); ?><br/>
+			<strong>"extension"</strong>: <?php echo nebula_url_components('extension'); ?><br/>
 			<strong>"query"</strong>: <?php echo nebula_url_components('query'); ?><br/>
 		</p>
 
@@ -105,6 +107,7 @@
 			<strong>"filepath"</strong>: <?php echo nebula_url_components('filepath', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"path"</strong>: <?php echo nebula_url_components('path', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"file"</strong>: <?php echo nebula_url_components('file', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
+			<strong>"extension"</strong>: <?php echo nebula_url_components('extension', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 			<strong>"query"</strong>: <?php echo nebula_url_components('query', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something'); ?><br/>
 		</p>
 

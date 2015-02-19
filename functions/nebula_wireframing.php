@@ -3,8 +3,26 @@
 
 
 //Create a placeholder box as an FPO element
-function fpo($title='FPO', $description='', $icon='', $width='100%', $height="250px", $bg='#ddd', $color=0, $styles='', $classes='') {
+function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg='#ddd', $icon='', $styles='', $classes='') {
 	$safe_title = strtolower(str_replace(' ', '-', $title));
+
+	if ( nebula_color_brightness($bg) < 128 ) {
+		$text_hex = '#fff';
+		$text_rgb = '255';
+	} else {
+		$text_hex = '#000';
+		$text_rgb = '0';
+	}
+
+	if ( $bg == 'placeholder' ) {
+		$bg = '';
+		$placeholder = '<svg x="0px" y="0px" width="100%" height="100%" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid #aaa; z-index: 1;">
+							<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
+							<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+						</svg>';
+	} else {
+		$placeholder = '';
+	}
 
 	$icon_html = '';
 	if ( $icon != '' ) {
@@ -14,29 +32,27 @@ function fpo($title='FPO', $description='', $icon='', $width='100%', $height="25
 		$icon_html = '<i class="fa ' . $icon . '"></i>';
 	}
 
-	if ( $color ) {
-		$title_color = '#fff';
-		$desc_color = '255';
-	} else {
-		$title_color = '#222';
-		$desc_color = '0';
-	}
-
-	echo '<div class="nebula-fpo ' . $safe_title . ' valign ' . $classes . '" style="position: relative; text-align: center; width: ' . $width . '; height: ' . $height . '; padding: 10px; background: ' . $bg . '; ' . $styles . '">
-			<div>
-				<h3 style="font-size: 21px; color: ' . $title_color . ';">' . $icon_html . ' ' . $title . '</h3>
-				<p style="font-size: 14px; color: rgba(' . $desc_color . ',' . $desc_color . ',' . $desc_color . ',0.6);">' . $description . '</p>
+	$return .= '<div class="nebula-fpo ' . $safe_title . ' valign ' . $classes . '" style="position: relative; text-align: center; width: ' . $width . '; height: ' . $height . '; padding: 10px; background: ' . $bg . '; ' . $styles . '">
+			<div style="position: relative; z-index: 5;">
+				<h3 style="font-size: 21px; color: ' . $text_hex . ';">' . $icon_html . ' ' . $title . '</h3>
+				<p style="font-size: 14px; color: rgba(' . $text_rgb . ',' . $text_rgb . ',' . $text_rgb . ',0.6);">' . $description . '</p>
 			</div>
+			' . $placeholder . '
 		</div>';
+
+	echo $return;
 }
 
-
 //Placeholder image
-//@TODO "Nebula" 0: Come up with a way for the "X" to appear in the div without it looking bad (currently stretching the PNG).
-function fpo_image($width='100%', $height='200px', $type='none', $background='', $color='#000', $styles='', $classes='') {
-	$imgsrc = ( $type == 'unsplash' || $type == 'photo' || $width == 'unsplash' || $width == 'photo' ) ? random_unsplash(800, 600, 1) : '';
+function fpo_image($width='100%', $height='200px', $type='none', $color='#000', $styles='', $classes='') {
+	$imgsrc = '';
+	if ( $type == 'unsplash' || $type == 'photo' || $width == 'unsplash' || $width == 'photo' ) {
+		$imgsrc = random_unsplash(800, 600, 1);
+	} elseif ( strpos($type, '#') !== false ) {
+		$color = $type;
+	}
 
-	$return = '<div class="nebula-fpo-image ' . $classes . '" style="background: ' . $background . ' url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $styles . '">';
+	$return = '<div class="nebula-fpo-image ' . $classes . '" style="background: url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $styles . '">';
 
 	if ( $imgsrc == '' ) {
 		$return .= '<svg x="0px" y="0px" width="100%" height="100%" style="border: 1px solid ' . $color . ';">
@@ -227,7 +243,7 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 //Top header for each component (with opening .fpo div)
 function fpo_component_start($component='Component', $icon='fa-cube'){
 	fpo_component($component, $icon, '');
-	echo '<div class="fpo">';
+	echo '<div class="fpo clearfix">';
 }
 
 //Closes .fpo div (from fpo_component_start)

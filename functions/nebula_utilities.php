@@ -493,6 +493,30 @@ function hex2rgb($color) {
 }
 
 
+//Check the brightness of a color. 0=darkest, 255=lightest, 256=false
+function nebula_color_brightness($hex){
+	//@TODO "Nebula" 0: If an rgb value is passed, (create then) run an rgb2hex() function
+	if ( strpos($hex, '#') !== false ) {
+		preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
+
+		if ( strlen($hex_colors[0]) == 4 ) {
+			$values = str_split($hex_colors[0]);
+			$full_hex = '#' . $values[1] . $values[1] . $values[2] . $values[2] . $values[3] . $values[3];
+		} else {
+			$full_hex = $hex_colors[0];
+		}
+
+		$hex = str_replace('#', '', $full_hex);
+		$hex_r = hexdec(substr($hex, 0, 2));
+		$hex_g = hexdec(substr($hex, 2, 2));
+		$hex_b = hexdec(substr($hex, 4, 2));
+
+		return (($hex_r*299)+($hex_g*587)+($hex_b*114))/1000;
+	} else {
+		return 256;
+	}
+}
+
 function whois_info($data, $domain='') {
 
 	if ( $domain == '' ) {

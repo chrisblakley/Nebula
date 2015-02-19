@@ -520,6 +520,12 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 		$string = strip_tags(strip_shortcodes($the_post->post_content), '');
 	}
 
+	if ( $length == -1 || $length == '' || $length === null ) {
+        $string = string_limit_words($string, strlen($string));
+    } else {
+        $string = string_limit_words($string, $length);
+    }
+
 	$string = string_limit_words($string, $length);
 
 	if ( $hellip ) {
@@ -537,6 +543,12 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
 
 function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=false, $more=false) {
 	$string = strip_tags(strip_shortcodes($text), '');
+
+	if ( $length == -1 || $length == '' || $length == 'all' || $length === null ) {
+        $string = string_limit_words($string, strlen($string));
+    } else {
+        $string = string_limit_words($string, $length);
+    }
 
 	$string = string_limit_words($string, $length);
 
@@ -763,7 +775,7 @@ add_action('pre_get_posts', 'redirect_empty_search');
 function redirect_empty_search($query){
 	global $wp_query;
 	if ( isset($_GET['s']) && $wp_query->query && !array_key_exists('invalid', $_GET) ) {
-		if ( $_GET['s'] == '' && $wp_query->query['s'] == '' ) {
+		if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !is_admin() ) {
 			ga_send_event('Internal Search', 'Invalid', '(Empty query)');
 			header('Location: ' . home_url('/') . 'search/?invalid');
 			exit;

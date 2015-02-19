@@ -42,7 +42,7 @@ img, a.logocon {-webkit-filter: none; -moz-filter: none; -ms-filter: none; -o-fi
 	.component-comment-drawer p {font-size: 12px;}
 
 
-.fpo {background: #e2e2e2; padding: 5px 10px 5px 10px;}
+.fpo {background: #e2e2e2; padding: 5px 10px 5px 10px; margin-bottom: 15px;} /* Not sure if I'm a fan of this margin-bottom. */
 
 .fpo-menu {}
 	.fpo-menu ul.sub-menu {border: 1px solid red;}
