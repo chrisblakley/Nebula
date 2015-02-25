@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 2.0
+	Version: 2.3
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -630,7 +630,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 /* ==========================================================================
    Footer Area
    ========================================================================== */
-.footer {padding-top: 20px; background: #0098d7 url('http://www.transparenttextures.com/patterns/dark-wall.png') repeat;}
+.footer {padding-top: 20px; background: #0098d7;}
 
 .twitterago {font-size: 12px; text-decoration: underline;}
 
@@ -649,13 +649,14 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 					nav#powerfooter ul li.menu-item a.hover {color: #aaa;}
 				nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
 					nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
-						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; color: #fff; font-size: 12px; font-weight: bold; text-transform: uppercase; border-bottom: none;}
+						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; color: #fff; font-size: 12px; font-weight: normal; text-transform: none; border-bottom: none;}
 							nav#powerfooter ul li.menu-item ul.sub-menu li a:hover,
 							nav#powerfooter ul li.menu-item ul.sub-menu li a.hover {color: #aaa;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 
-div.copyright {padding-top: 15px; padding-bottom: 30px; background: #0098d7; background: rgba(0,0,0,0.15);}
+div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* background: rgba(0, 0, 0, 0.4); */}
 	div.copyright p {font-size: 12px; color: #fff;}
+		a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 		div.copyright a {color: #fff;}
 			div.copyright a:hover,
 			div.copyright a.hover {color: #ccc;}
@@ -869,9 +870,9 @@ a.soundcloud {color: #ff3300;}
 
 
 /* WordPress Boilerplate remnants */
-.aligncenter {display: block; margin: 0 auto;}
-.alignleft {float: left;}
-.alignright {float: right;}
+.aligncenter, .align-center {display: block; margin: 0 auto;}
+.alignleft, .align-left {float: left;}
+.alignright, .align-right {float: right;}
 .wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
 
 /** Keep drop-downs working **/

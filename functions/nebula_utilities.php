@@ -134,6 +134,56 @@ function nebula_url_components($segment="all", $url=null) {
 			}
 			break;
 
+		case ('port') :
+			if ( $url_compontents['port'] ) {
+				return $url_compontents['port'];
+			} else {
+				switch( $url_compontents['scheme'] ) {
+	                case ('http') :
+	                    return 80; //Default for http
+	                    break;
+	                case 'https':
+	                    return 443; //Default for https
+	                    break;
+	                case 'ftp':
+	                    return 21; //Default for ftp
+	                    break;
+	                case 'ftps':
+	                    return 990; //Default for ftps
+	                    break;
+	                default:
+	                    return false;
+	                    break;
+	            }
+			}
+			break;
+
+		case ('user') : //Returns the username from this type of syntax: https://username:password@gearside.com/
+		case ('username') :
+			if ( $url_compontents['user'] ) {
+				return $url_compontents['user'];
+			} else {
+				return false;
+			}
+			break;
+
+		case ('pass') : //Returns the password from this type of syntax: https://username:password@gearside.com/
+		case ('password') :
+			if ( $url_compontents['pass'] ) {
+				return $url_compontents['pass'];
+			} else {
+				return false;
+			}
+			break;
+
+		case ('authority') :
+			if ( $url_compontents['user'] && $url_compontents['pass'] ) {
+				return $url_compontents['user'] . ':' . $url_compontents['pass'] . '@' . $url_compontents['host'] . ':' . nebula_url_components('port', $url);
+			} else {
+				return false;
+			}
+			break;
+
 		case ('host') : //In http://something.example.com the host is "something.example.com"
 		case ('hostname') :
 			return $url_compontents['host'];
@@ -213,6 +263,15 @@ function nebula_url_components($segment="all", $url=null) {
 		case ('queries') :
 		case ('search') :
 			return $url_compontents['query'];
+			break;
+
+		case ('fragment') :
+		case ('fragments') :
+		case ('anchor') :
+		case ('hash') :
+		case ('hashtag') :
+		case ('id') :
+			return $url_compontents['fragment'];
 			break;
 
 		default :

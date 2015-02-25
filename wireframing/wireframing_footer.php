@@ -1,10 +1,8 @@
 <?php
 /**
- * Theme Footer
+ * Wireframe Footer
  */
 ?>
-			<hr class="zero" style="margin-top: 30px;"/>
-
 			<div class="footer">
 
 				<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
@@ -84,14 +82,13 @@
 					<div class="row">
 						<div class="eleven columns ">
 							<p>
-								<a class="footerlogo" href="<?php echo home_url(); ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/meta/favicon-36x36.png" /></a>
-								<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong> (v<?php $nebula_theme_info = wp_get_theme(); echo $nebula_theme_info->get('Version'); ?>)</a>, all rights reserved.<br/>
+								<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong></a>, all rights reserved.<br/>
 								<?php $nebula_full_address = nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], ''); //@TODO "Metadata" 3: Add address here. ?>
 								<a href="https://www.google.com/maps/place/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><?php echo $nebula_full_address; ?></a>
 							</p>
 						</div><!--/columns-->
 						<div class="four columns push_one">
-							<form class="search alignright" method="get" action="<?php echo home_url('/'); ?>">
+							<form class="search align-right" method="get" action="<?php echo home_url('/'); ?>">
 								<input class="nebula-search open input search" type="search" name="s" placeholder="Search" />
 							</form>
 						</div><!--/columns-->
@@ -129,50 +126,6 @@
 						return query;
 					}
 					return false;
-				}
-			</script>
-
-			<script>
-				//Check for Youtube Videos
-				if ( jQuery('.youtubeplayer').length ) {
-					var players = {};
-					var tag = document.createElement('script');
-					tag.src = "http://www.youtube.com/iframe_api";
-					var firstScriptTag = document.getElementsByTagName('script')[0];
-					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-				}
-
-				function onYouTubeIframeAPIReady(e) {
-					jQuery('iframe.youtubeplayer').each(function(i){
-						var youtubeiframeClass = jQuery(this).attr('id');
-						players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
-							events: {
-								'onReady': onPlayerReady,
-								'onStateChange': onPlayerStateChange
-							}
-						});
-					});
-				}
-
-				//Track Youtube Video Events
-				var pauseFlag = false;
-				function onPlayerReady(e) {
-				   //Do nothing
-				}
-				function onPlayerStateChange(e) {
-				    if (e.data == YT.PlayerState.PLAYING) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Play', videoTitle);
-				        pauseFlag = true;
-				    }
-				    if (e.data == YT.PlayerState.ENDED) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-				    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
-				        ga('send', 'event', 'Videos', 'Pause', videoTitle);
-				        pauseFlag = false;
-				    }
 				}
 			</script>
 

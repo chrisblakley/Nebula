@@ -285,8 +285,19 @@ function enqueue_nebula_admin() {
 //$content_width is a global variable used by WordPress for max image upload sizes and media embeds (in pixels).
 //If the content area is 960px wide, set $content_width = 940; so images and videos will not overflow.
 if ( !isset($content_width) ) {
-	$content_width = 940;
+	$content_width = 640;
 }
+
+//Adjust the content width when the full width page template is being used
+add_action('template_redirect', 'nebula_set_content_width');
+function nebula_set_content_width() {
+    global $content_width;
+
+    if ( is_page_template('tpl-fullwidth.php') ) {
+        $content_width = 940;
+    }
+}
+
 
 //Add new image sizes
 //Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.

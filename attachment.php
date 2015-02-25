@@ -3,11 +3,12 @@
  * The template for displaying attachments.
  */
 
-if ( !defined('ABSPATH') ) { //Log and redirect if accessed directly
-	ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . end(explode('/', $template)), basename($_SERVER['PHP_SELF']));
-	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")));
-	exit;
+if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
+	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+	die('Error 403: Forbidden.');
 }
+
+do_action('nebula_header');
 
 get_header(); ?>
 
@@ -115,3 +116,5 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
+
+<?php do_action('nebula_footer'); ?>

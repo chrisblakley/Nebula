@@ -1,6 +1,5 @@
 <?php
 
-
 add_action('admin_init', 'set_nebula_initialized_date'); //This function is declared in nebula_automation.php. This check is to make sure it is set.
 
 //Disable auto curly quotes
@@ -8,6 +7,16 @@ remove_filter('the_content', 'wptexturize');
 remove_filter('the_excerpt', 'wptexturize');
 remove_filter('comment_text', 'wptexturize');
 
+
+//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
+add_action('admin_head', 'admin_favicon');
+function admin_favicon() {
+	if ( array_key_exists('debug', $_GET) ) {
+		echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico?r' . mt_rand(1000, 99999) . ' />';
+	} else {
+		echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico" />';
+	}
+}
 
 //Add classes to the admin body
 add_filter('admin_body_class', 'nebula_admin_body_classes');
@@ -18,7 +27,6 @@ function nebula_admin_body_classes($classes) {
 	$classes .= $user_role;
 	return $classes;
 }
-
 
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)

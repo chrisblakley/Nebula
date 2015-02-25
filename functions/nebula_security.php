@@ -1,6 +1,24 @@
 <?php
 
+//Log template direct access attempts
+add_action('init', 'nebula_log_direct_access_attempts');
+function nebula_log_direct_access_attempts(){
+	if ( array_key_exists('ndaat', $_GET) ) {
+		ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . $_GET['ndaat']);
+		header('Location: ' . home_url('/'));
+		die('Error 403: Forbidden.');
+	}
+}
 
+//Prevent known bot/brute-force query strings.
+//This is less for security and more for preventing garbage data in Google Analytics reports.
+add_action('init', 'nebula_prevent_bad_query_strings');
+function nebula_prevent_bad_query_strings(){
+	if ( array_key_exists('modTest', $_GET) ) {
+		header("HTTP/1.1 403 Unauthorized");
+		die('Error 403: Forbidden.');
+	}
+}
 
 //Disable Pingbacks to prevent security issues
 add_filter('xmlrpc_methods', disable_pingbacks($methods));
@@ -17,6 +35,7 @@ function remove_x_pingback($headers) {
     unset($headers['X-Pingback']);
     return $headers;
 }
+
 
 //Prevent login error messages from giving too much information
 /*

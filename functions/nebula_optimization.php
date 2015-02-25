@@ -20,7 +20,6 @@ function nebula_defer_async_scripts($url) {
 	}
 }
 
-
 //Remove version query strings from styles/scripts (to allow caching)
 add_filter('script_loader_src', 'nebula_remove_script_version', 15, 1);
 add_filter('style_loader_src', 'nebula_remove_script_version', 15, 1);

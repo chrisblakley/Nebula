@@ -62,12 +62,14 @@ if ( nebula_settings_conditional('nebula_dev_stylesheets') ) {
 	}
 }
 
-//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
-add_action('admin_head', 'admin_favicon');
-function admin_favicon() {
-	echo '<link rel="shortcut icon" type="image/x-icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico" />';
-}
 
+//Redirect to favicon to force-clear the cached version when ?favicon is added.
+add_action('init', 'nebula_favicon_cache');
+function nebula_favicon_cache(){
+	if ( array_key_exists('favicon', $_GET) ) {
+		header('Location: ' . get_template_directory_uri() . '/images/meta/favicon.ico');
+	}
+}
 
 //Allow pages to have excerpts too
 add_post_type_support('page', 'excerpt');
@@ -128,6 +130,39 @@ function nebula_the_author($show_authors=1) {
 		return nebula_settings_conditional_text('nebula_site_owner', get_bloginfo('name'));
 	} else {
 		return ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');;
+	}
+}
+
+
+//List of HTTP status codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+add_action('nebula_header', 'nebula_http_status');
+function nebula_http_status($status=200, $redirect=0){
+	if ( isset($_GET['http']) ) {
+		$status = $_GET['http'];
+	}
+
+	$GLOBALS['http'] = intval($status);
+
+	if ( is_int($GLOBALS['http']) && $GLOBALS['http'] != 0 && $GLOBALS['http'] != 200 ) {
+		if ( $GLOBALS['http'] == '404' ) { //@TODO "Nebula" 0: Eventually consider removing the 404 page and using the http_status.php page.
+			global $wp_query;
+			$wp_query->set_404();
+			status_header(404);
+			if ( $redirect == 1 ) {
+				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
+			} else {
+				get_template_part('404');
+			}
+			die();
+		} else {
+			status_header(403);
+			if ( $redirect == 1 ) {
+				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
+			} else {
+				get_template_part('http_status');
+			}
+			die();
+		}
 	}
 }
 
@@ -526,8 +561,6 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ) {
         $string = string_limit_words($string, $length);
     }
 
-	$string = string_limit_words($string, $length);
-
 	if ( $hellip ) {
 		if ( $string[1] == 1 ) {
 			$string[0] .= '&hellip; ';
@@ -549,8 +582,6 @@ function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=fal
     } else {
         $string = string_limit_words($string, $length);
     }
-
-	$string = string_limit_words($string, $length);
 
 	if ( $hellip ) {
 		if ( $string[1] == 1 ) {
@@ -620,7 +651,9 @@ function the_breadcrumb() {
 	$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'in');
 	$homeLink = home_url('/');
 
-	if ( is_home() || is_front_page() ) {
+	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ) {
+		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
+	} elseif ( is_home() || is_front_page() ) {
 		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav></div>';
 		return false;
 	} else {
@@ -933,6 +966,10 @@ function nebula_body_classes($classes) {
 	}
 	$classes[] = 'day-' . strtolower(date('l'));
 	$classes[] = 'month-' . strtolower(date('F'));
+
+	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ) {
+		$classes[] = 'error' . $GLOBALS['http'];
+	}
 
     return $classes;
 }

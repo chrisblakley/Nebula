@@ -1,6 +1,13 @@
 <?php
 
 
+//Add wireframing body class
+add_filter('body_class', 'nebula_wireframing_body_classes');
+function nebula_wireframing_body_classes($classes) {
+    $classes[] = 'nebula-wireframing';
+    return $classes;
+}
+
 
 //Create a placeholder box as an FPO element
 function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg='#ddd', $icon='', $styles='', $classes='') {
