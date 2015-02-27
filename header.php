@@ -123,6 +123,10 @@
 			//ga('require', 'displayfeatures');
 			ga('send', 'pageview');
 			<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
+
+			//"WordPress" browser testing
+			ga('send', 'event', 'User Agent Debugging', navigator.userAgent);
+
 		</script>
 
 		<script>
@@ -159,6 +163,8 @@
 					   No-JS Event Tracking
 					   This is how we detect events in Google Analytics if users disable JavaScript. Generally using :active for links and :focus for inputs.
 					   https://developers.google.com/analytics/resources/concepts/gaConceptsTrackingOverview
+
+					   //@TODO "Nebula" 0: Come up with a function that makes this easier. Maybe function_name($selector, $pseudo, $category, $action, $label, $value); Find the minimum parameters needed for the gif.
 					   ========================================================================== */
 					?>
 					   .no-js .logocon:active {background-image: url('http://www.google-analytics.com/__utm.gif?utmac=<?php echo $GLOBALS['ga']; ?>&utmt=event&utmwv=1&utmdt=<?php urlencode(get_the_title()); ?>&utmhn=<?php echo nebula_url_components('hostname'); ?>&utmp=<?php echo nebula_url_components('filepath'); ?>&utmn=<?php echo rand(pow(10, 10-1), pow(10, 10)-1); ?><?php echo ( $_SERVER['HTTP_REFERER'] ) ? '&utmr=' . $_SERVER['HTTP_REFERER']: ''; ?>&utme=5(Logo*Click*No-JS%20clicked%20logo.)');}

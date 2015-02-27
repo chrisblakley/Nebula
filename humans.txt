@@ -8,7 +8,7 @@ Syracuse, NY 13204
 http://pinckneyhugo.com
 
 # PINCKNEY HUGO GROUP INTERACTIVE TEAM
-	
+
 	Adam Jwaskiewicz
 	Matt Chatham
 	Jef Collier
@@ -18,13 +18,3 @@ http://pinckneyhugo.com
 	Pat McNeil
 	Terence Hoverter
 	Kate Maggiolino
-
-# THANKS
-
-	
-
-# TECHNOLOGY COLOPHON
-
-	HTML5, CSS3,
-	Gumby Framework,
-	jQuery, Modernizr

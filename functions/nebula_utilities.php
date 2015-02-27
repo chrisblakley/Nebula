@@ -71,7 +71,7 @@ function ga_send_pageview($hostname=null, $page=null, $title=null) {
 }
 
 //Send Event Function for Server-Side Google Analytics
-function ga_send_event($category=null, $action=null, $label=null) {
+function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1) {
 	if ( $GLOBALS['ga_v'] === null ) {
 		$GLOBALS['ga_v'] = 1;
 	}
@@ -87,11 +87,33 @@ function ga_send_event($category=null, $action=null, $label=null) {
 		't' => 'event',
 		'ec' => $category, //Category (Required)
 		'ea' => $action, //Action (Required)
-		'el' => $label //Label
+		'el' => $label, //Label
+		'ev' => $value, //Value
+		'ni' => $ni //Non-Interaction
 	);
 	gaSendData($data);
 }
 
+//Send custom data to Google Analytics. Must pass an array of data to this function:
+//ga_send_custom(array('t' => 'event', 'ec' => 'Category Here', 'ea' => 'Action Here', 'el' => 'Label Here'));
+//https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
+function ga_send_custom($array) {
+	$defaults = array(
+		'v' => $GLOBALS['ga_v'],
+		'tid' => $GLOBALS['ga'],
+		'cid' => $GLOBALS['ga_cid'],
+		't' => '',
+		'ni' => 1
+	);
+
+	$data = array_merge($defaults, $array);
+
+	if ( $data['t'] != '' ) {
+		gaSendData($data);
+	} else {
+		trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
+	}
+}
 
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
