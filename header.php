@@ -123,10 +123,6 @@
 			//ga('require', 'displayfeatures');
 			ga('send', 'pageview');
 			<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
-
-			//"WordPress" browser testing
-			ga('send', 'event', 'User Agent Debugging', navigator.userAgent);
-
 		</script>
 
 		<script>
