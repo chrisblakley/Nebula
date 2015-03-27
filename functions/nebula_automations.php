@@ -1,6 +1,6 @@
 <?php
 
-//Used to detect if plugins are active. Enabled use of is_plugin_active($plugin)
+//Used to detect if plugins are active. Enables use of is_plugin_active($plugin)
 require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 
@@ -181,7 +181,7 @@ Wordpress developers will find all source code not obfuscated, so everything may
 		wp_insert_post($nebula_home);
 
 		//Change some Wordpress settings
-		add_action('init', 'nebulaWordpressSettings'); //Remove add_action? Not sure if entirely necessary. Does 'after_switch_theme' trigger after init?
+		nebulaWordpressSettings(); //Removed add_action? Not sure if entirely necessary. Does 'after_switch_theme' trigger after init? Verify this works sometime.
 
 	}
 

@@ -59,6 +59,10 @@ function fpo_image($width='100%', $height='200px', $type='none', $color='#000', 
 		$color = $type;
 	}
 
+	if ( !isset($color) || $color == '' ) {
+		$color='#000';
+	}
+
 	$return = '<div class="nebula-fpo-image ' . $classes . '" style="background: url(' . $imgsrc . ') no-repeat; background-size: 100% 100%; width: ' . $width . '; height: ' . $height . '; ' . $styles . '">';
 
 	if ( $imgsrc == '' ) {

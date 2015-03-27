@@ -64,7 +64,7 @@ if ( nebula_settings_conditional('nebula_dev_stylesheets') ) {
 
 
 //Redirect to favicon to force-clear the cached version when ?favicon is added.
-add_action('init', 'nebula_favicon_cache');
+add_action('wp_loaded', 'nebula_favicon_cache');
 function nebula_favicon_cache(){
 	if ( array_key_exists('favicon', $_GET) ) {
 		header('Location: ' . get_template_directory_uri() . '/images/meta/favicon.ico');
@@ -332,7 +332,7 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ) {
 	}
 
 	//Remove comments links from admin bar
-	add_action('init', 'disable_comments_admin_bar');
+	add_action('wp_loaded', 'disable_comments_admin_bar');
 	function disable_comments_admin_bar() {
 		if (is_admin_bar_showing()) {
 			//global $wp_admin_bar; //@TODO "Nebula" 0: NULL
@@ -964,6 +964,21 @@ function nebula_body_classes($classes) {
 	} elseif ( contains(date('H'), array('21', '22', '23')) ) {
 		$classes[] = 'time-late time-evening';
 	}
+
+	if ( nebula_settings_conditional_text_bool('nebula_latitude') && nebula_settings_conditional_text_bool('nebula_longitude') ) {
+		$lat = nebula_settings_conditional_text('nebula_latitude');
+		$lng = nebula_settings_conditional_text('nebula_longitude');
+		$gmt = intval(get_option('gmt_offset'));
+		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
+		$sunrise = strtotime($date . ' ' . date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+		$sunset = strtotime($date . ' ' . date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+		if ( time() >= $sunrise && time() <= $sunset ) {
+			$classes[] = 'time-daylight';
+		} else {
+			$classes[] = 'time-darkness';
+		}
+	}
+
 	$classes[] = 'day-' . strtolower(date('l'));
 	$classes[] = 'month-' . strtolower(date('F'));
 
@@ -973,7 +988,6 @@ function nebula_body_classes($classes) {
 
     return $classes;
 }
-
 
 
 //Add additional classes to post wrappers @TODO "Nebula" 0: Finish implementing this!
@@ -1073,30 +1087,58 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
 	}
 
-	if ( $zipcode != $current_weather['zip'] || isset($fresh) ) {
-		$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
+	$cache_file = get_template_directory() . '/includes/cache/weather-' . $zipcode;
+	$interval = 3600; //In seconds. 1 hour = 3600
+
+	//@TODO "Nebula" 0: If file doesn't exist (because of the zipcode in name), then create the file.
+
+	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
+	$modified = filemtime($cache_file);
+
+	//var_dump(date('F j, Y', $modified));
+
+	$now = time();
+
+	global $current_weather;
+
+	//If the cache file has not been modified -or- if the time since modified date is longer than the interval -or- if forced fresh data is passed -or- if the requested zipcode is not the current stored zipcode
+	if ( !$modified || (($now-$modified) > $interval) || isset($fresh) || $zipcode != $current_weather['zip'] ) {
 		$use_errors = libxml_use_internal_errors(true);
 		$xml = simplexml_load_file($url);
 		if ( !$xml ) {
-			$xml = simplexml_load_file('http://gearside.com/wp-content/themes/gearside2014/includes/static-weather.xml'); //Set a static fallback to prevent PHP errors @TODO "Nebula" 0: Change hard-coded URL!
+			$xml = simplexml_load_file($cache_file);
 		}
 		libxml_clear_errors();
 		libxml_use_internal_errors($use_errors);
 
-		global $current_weather;
-		$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
-		$current_weather['temp'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;
-		$current_weather['city'] = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
-		$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
-		$current_weather['city_state'] = $current_weather['city'] . ', ' . $current_weather['state'];
-		$current_weather['zip'] = $zipcode;
-		$current_weather['sunrise'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
-		$current_weather['sunset'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
-		$current_weather["sunrise_seconds"] = strtotime($current_weather['sunrise'])-strtotime('today'); //Sunrise in seconds
-		$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
-		$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
-		$current_weather['time_seconds'] = time()-strtotime("today");
+		var_dump( $xml );
+
+		if ( $xml ) {
+			$cache_static = fopen($cache_file, 'w');
+			fwrite($cache_static, $xml); //Trying to store SimpleXMLElement in the file only makes a few spaces... Strings work though. Maybe store the array in this or something?
+			fclose($cache_static);
+		}
+	} else {
+		$xml = file_get_contents($cache_file);
+
 	}
+
+	$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
+	$current_weather['temp'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;
+	$current_weather['city'] = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
+	$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
+	$current_weather['city_state'] = $current_weather['city'] . ', ' . $current_weather['state'];
+	$current_weather['zip'] = $zipcode;
+	$current_weather['sunrise'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
+	$current_weather['sunset'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
+	$current_weather["sunrise_seconds"] = strtotime($current_weather['sunrise'])-strtotime('today'); //Sunrise in seconds
+	$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
+	$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
+	$current_weather['time_seconds'] = time()-strtotime("today");
+
+	//header('Cache-Control: no-cache, must-revalidate');
+	//header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	//header('Content-type: application/json');
 
 	if ( $data && isset($current_weather[$data]) ) {
 		return $current_weather[$data];

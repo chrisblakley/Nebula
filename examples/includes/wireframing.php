@@ -132,7 +132,7 @@
 		<p>Placeholder images can be created using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function. The class "nebula-fpo-image" is added to the element.</p>
 
 		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_image($width, $height, $type, $background, $color, $styles, $classes); ?>[/pre]'); ?>
+		<?php echo do_shortcode('[pre lang=php]<?php fpo_image($width, $height, $type, $color, $styles, $classes); ?>[/pre]'); ?>
 
 		<h2>Parameters</h2>
 		<p>

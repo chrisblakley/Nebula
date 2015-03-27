@@ -24,12 +24,20 @@ function set_user_metaboxes($user_id=NULL) {
 
 
 
+
+
+
+
+
+
+
+
 //This is the standard/basic search autocomplete function.
 //@TODO "Nebula" 0: Before going too far into customizing this, research if the JavaScript API in WordPress 4.1 would allow for better autocomplete via JS.
 //The problem I foresee with this is trying to add all post types, categories, tags, and especially custom fields to the results.
 //If continuing with this AJAX function, be sure to re-format the layout and everything, and change the myprefix to nebula.
 
-add_action( 'init', 'myprefix_autocomplete_init' );
+add_action('wp_loaded', 'myprefix_autocomplete_init');
 function myprefix_autocomplete_init() {
     // Register our jQuery UI style and our custom javascript file
     wp_register_style('myprefix-jquery-ui','http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');

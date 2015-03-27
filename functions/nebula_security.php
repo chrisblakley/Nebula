@@ -1,7 +1,7 @@
 <?php
 
 //Log template direct access attempts
-add_action('init', 'nebula_log_direct_access_attempts');
+add_action('wp_loaded', 'nebula_log_direct_access_attempts');
 function nebula_log_direct_access_attempts(){
 	if ( array_key_exists('ndaat', $_GET) ) {
 		ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . $_GET['ndaat']);
@@ -12,7 +12,7 @@ function nebula_log_direct_access_attempts(){
 
 //Prevent known bot/brute-force query strings.
 //This is less for security and more for preventing garbage data in Google Analytics reports.
-add_action('init', 'nebula_prevent_bad_query_strings');
+add_action('wp_loaded', 'nebula_prevent_bad_query_strings');
 function nebula_prevent_bad_query_strings(){
 	if ( array_key_exists('modTest', $_GET) ) {
 		header("HTTP/1.1 403 Unauthorized");
@@ -101,7 +101,7 @@ function check_referrer() {
 //Be absolutely sure before adding a domain to the array in this function. Traffic will be sent a 403 Forbidden error and never be able to see the site!
 //Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering).
 //Sometimes spambots target sites without event visiting. Discovering these and filtering them using GA is important too!
-add_action('init', 'nebula_spambot_prevention');
+add_action('wp_loaded', 'nebula_spambot_prevention');
 function nebula_spambot_prevention(){
 
 	//List of known spambots. The dots allow for any TLD to trigger with fewer false-positives.

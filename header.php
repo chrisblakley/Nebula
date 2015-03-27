@@ -7,7 +7,10 @@
 <!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (array_key_exists('debug', $_GET)) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
 	<?php /* manifest="<?php echo get_template_directory_uri(); ?>/includes/manifest.appcache" */ //To begin setting up ApplicationCache, move this attribute to the <html> tag. ?>
 	<head>
+		<?php do_action('nebula_head_open'); ?>
+
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="referrer" content="always">
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
 		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
@@ -16,12 +19,12 @@
 			<title><?php wp_title('-', true, 'right'); ?></title>
 		<?php endif; ?>
 
-		<meta name="HandheldFriendly" content="True">
-		<meta name="MobileOptimized" content="320">
-		<meta name="mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json"> <!-- Web App Manifest Icons/Settings -->
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+		<meta name="HandheldFriendly" content="True" />
+		<meta name="MobileOptimized" content="320" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json" /> <!-- Web App Manifest Icons/Settings -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
@@ -112,7 +115,7 @@
 		</script>
 
 		<script> //Universal Analytics
-			var analyticsScript = ( <?php echo (array_key_exists('debug', $_GET)) ? 1 : 0; ?> ? 'analytics_debug.js' : 'analytics.js' );
+			var analyticsScript = ( <?php echo ( array_key_exists('debug', $_GET) ) ? 1 : 0; ?> ? 'analytics_debug.js' : 'analytics.js' );
 
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -126,21 +129,23 @@
 		</script>
 
 		<script>
-			if ( window.addEventListener ) { //IE9+
-				window.addEventListener('error', function(e) {
-					if ( typeof e !== 'undefined' && typeof e.message !== 'undefined' && e.lineno != 0 ) {
-						//If STILL seeing undefined in: undefined on line undefined in GA, then remove typeof before e.message != 'undefined'... maybe?
-						ga('send', 'event', 'Error', 'JavaScript Error', e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
-						ga('send', 'exception', e.message, false);
-					}
-				});
-			} else { //Older Browsers
-				window.attachEvent('onerror', function(e) {
-					if ( typeof e !== 'undefined' && typeof e.message !== 'undefined' && e.lineno != 0 ) {
-						ga('send', 'event', 'Error', 'JavaScript Error', '(Older Browser): ' . e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
-						ga('send', 'exception', e.message, false);
-					}
-				});
+			//GA Error Tracking
+			if ( 1==2 ) { //This is disabled by default because it captures all JS errors, warnings, and everything (which may appear to make the site look very broken).
+				if ( window.addEventListener ) { //IE9+
+					window.addEventListener('error', function(e) {
+						if ( typeof e !== 'undefined' && typeof e.message !== 'undefined' && e.lineno != 0 ) {
+							ga('send', 'event', 'Error', 'JavaScript Error', e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
+							ga('send', 'exception', e.message, false);
+						}
+					});
+				} else { //Older Browsers
+					window.attachEvent('onerror', function(e) {
+						if ( typeof e !== 'undefined' && typeof e.message !== 'undefined' && e.lineno != 0 ) {
+							ga('send', 'event', 'Error', 'JavaScript Error', '(Older Browser): ' . e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
+							ga('send', 'exception', e.message, false);
+						}
+					});
+				}
 			}
 		</script>
 

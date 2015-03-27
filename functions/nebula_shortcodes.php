@@ -558,14 +558,14 @@ function parse_shortcode_content($content) {
     $content = str_replace( array( '<p>  </p>' ), '', $content );
     return $content;
 }
-//move wpautop filter to AFTER shortcode is processed
-remove_filter( 'the_content', 'wpautop' );
-add_filter( 'the_content', 'wpautop' , 99);
-add_filter( 'the_content', 'shortcode_unautop',100 );
+//Move wpautop filter to AFTER shortcode is processed
+remove_filter('the_content', 'wpautop');
+add_filter('the_content', 'wpautop' , 99);
+add_filter('the_content', 'shortcode_unautop',100);
 
 
 //Add Nebula Toolbar to TinyMCE
-add_action('init', 'add_shortcode_button');
+add_action('admin_init', 'add_shortcode_button');
 function add_shortcode_button(){
     if ( current_user_can('edit_posts') ||  current_user_can('edit_pages') ){
          add_filter('mce_external_plugins', 'add_shortcode_plugin');

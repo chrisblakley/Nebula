@@ -47,7 +47,7 @@ add_action('admin_enqueue_scripts', 'register_nebula_styles');
 function register_nebula_styles() {
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 	wp_register_style('nebula-normalize', '//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css', array(), '3.0.1');
-	wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:400,700', array(), null);
+	wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700', array(), null);
 	wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null);
 	wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6');
 	wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0'); //Only useful for 12 col primary, entypo is also re-enabled
@@ -73,8 +73,8 @@ function register_nebula_scripts() {
 	//wp_register_script($handle, $src, $dependencies, $version, $in_footer);
 	wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 	wp_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
-	wp_register_script('nebula-modernizr', '//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.2', false);
-	wp_register_script('nebula-jquery_ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.0', true);
+	wp_register_script('nebula-modernizr', '//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
+	wp_register_script('nebula-jquery_ui', '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.2', true);
 	wp_register_script('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/4.3.2/js/umd/jquery.mmenu.umd.all.min.js', array(), '4.3.2', true);
 	wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js?' . $GLOBALS['async'], array(), '1.0', true);
 	wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js?' . $GLOBALS['defer'], array(), null, true);
@@ -311,7 +311,18 @@ function nebula_set_content_width() {
 
 
 
+//Google Analytics Experiments (Split Tests)
+//Documentation: http://gearside.com/nebula/documentation/custom-functionality/split-tests-using-google-analytics-experiments-with-nebula/
+//Add a new condition for each experiment group. There can be as many concurrent experiments as needed (just make sure there is no overlap!)
+add_action('nebula_head_open', 'nebula_ga_experiment_detection');
+function nebula_ga_experiment_detection(){
 
+	//Example Experiment
+	if ( is_page(9999) ) { //Use is_post(9999) for single posts. Change the ID to match the desired page/post! ?>
+		<!-- Paste Google Analytics Experiment generated script here -->
+	<?php }
+
+} //END Google Analytics Experiments
 
 
 

@@ -149,6 +149,7 @@ RewriteRule ^ /about? [L,R=301]
 
 #Block certain spambots from showing up as actual visitors
 #Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering)
+#Many spambots aren't actually visiting the site, so best practice is to also add the domain to the Referral Exclusion List (GA Admin > Property > Tracking Info > Referral Exclusion List)
 SetEnvIfNoCase Referer semalt.com spambot=yes
 SetEnvIfNoCase Referer econom.com spambot=yes
 SetEnvIfNoCase Referer buttons-for-website.com spambot=yes
