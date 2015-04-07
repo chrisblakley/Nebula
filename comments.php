@@ -54,10 +54,10 @@
 			      <nav>
 			        <ul class="pager">
 			          <?php if (get_previous_comments_link()) : ?>
-			            <li class="previous"><?php previous_comments_link(__('&larr; Older comments', 'roots')); ?></li>
+			            <li class="previous"><?php previous_comments_link('&larr; Older comments'); ?></li>
 			          <?php endif; ?>
 			          <?php if (get_next_comments_link()) : ?>
-			            <li class="next"><?php next_comments_link(__('Newer comments &rarr;', 'roots')); ?></li>
+			            <li class="next"><?php next_comments_link('Newer comments &rarr;'); ?></li>
 			          <?php endif; ?>
 			        </ul>
 			      </nav>
@@ -66,7 +66,7 @@
 
 			  <?php if (!comments_open() && get_comments_number() != '0' && post_type_supports(get_post_type(), 'comments')) : ?>
 			    <div class="alert alert-warning">
-			      <?php _e('Comments are closed.', 'roots'); ?>
+			    	Comments are closed.
 			    </div>
 			  <?php endif; ?>
 

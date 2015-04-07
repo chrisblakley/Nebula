@@ -41,7 +41,7 @@ get_header(); ?>
 					</div><!-- .entry-content -->
 				</article><!-- #post-## -->
 
-				<?php get_template_part('comments'); ?>
+				<?php comments_template(); ?>
 
 			<?php endwhile; ?>
 		</div><!--/columns-->

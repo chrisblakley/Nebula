@@ -272,6 +272,19 @@ function nebula_email_content_type(){
 }
 
 
+//Nebula backup contact form (if Contact Form 7 is not available)
+add_action('wp_ajax_nebula_backup_contact_send', 'nebula_backup_contact_send');
+add_action('wp_ajax_nopriv_nebula_backup_contact_send', 'nebula_backup_contact_send');
+function nebula_backup_contact_send() {
+	$to = array($GLOBALS['admin_user']->user_email, 'chrisb@pinckneyhugo.com'); //Could be an array of multiple email addresses
+	$subject = 'Contact form submission via ' . get_bloginfo('name') . ' from ' . $_POST['data'][0]['name'];
+	$message = $_POST['data'][0]['message'] + '\n\n\nThis message was sent by the backup contact form!';
+	$headers = 'From: ' . $_POST['data'][0]['name'] . ' <' . $_POST['data'][0]['email'] . '>';
+	wp_mail($to, $subject, $message, $headers);
+	exit();
+}
+
+
 function nebula_backup_contact_form() {
 	echo '<div id="cform7-container" class="cform-disabled">
 		<div class="wpcf7" id="wpcf7-f384-o1" lang="en-US" dir="ltr">
@@ -417,17 +430,6 @@ function comment_author_cookie() {
 
 
 
-//Nebula backup contact form (if Contact Form 7 is not available)
-add_action('wp_ajax_nebula_backup_contact_send', 'nebula_backup_contact_send');
-add_action('wp_ajax_nopriv_nebula_backup_contact_send', 'nebula_backup_contact_send');
-function nebula_backup_contact_send() {
-	$to = array($GLOBALS['admin_user']->user_email, 'chrisb@pinckneyhugo.com'); //Could be an array of multiple email addresses
-	$subject = 'Contact form submission via ' . get_bloginfo('name') . ' from ' . $_POST['data'][0]['name'];
-	$message = $_POST['data'][0]['message'] + '\n\n\nThis message was sent by the backup contact form!';
-	$headers = 'From: ' . $_POST['data'][0]['name'] . ' <' . $_POST['data'][0]['email'] . '>';
-	wp_mail($to, $subject, $message, $headers);
-	exit();
-}
 
 //Print the PHG logo as text with or without hover animation.
 function pinckney_hugo_group($anim) { pinckneyhugogroup($anim); }
@@ -441,6 +443,13 @@ function pinckneyhugogroup($anim=false, $white=false){
 	}
 	echo '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
 }
+
+
+
+
+
+
+
 
 
 //Show different meta data information about the post. Typically used inside the loop.
@@ -494,32 +503,137 @@ function nebula_meta($meta, $secondary=1) {
 		$postlink = ( is_single() ) ? '' : get_the_permalink();
 		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
 	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ) {
-
-		//@TODO "Nebula" 0: Pass an array to nebula_meta() for which social networks to use...
-
-		if ( $secondary ) { //Secondary here is to hide/show button counts
-			$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble', 'linkedin' => 'data-counter="right"'); //Show count bubbles
-		} else {
-			$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none', 'linkedin' => ''); //Hide count bubbles
-		}
-
 		echo '<div class="sharing-links">';
-
-			//Facebook Like
-			echo '<div class="share-button share-facebook"><div class="fb-like post-like" data-href="' . get_page_link() . '" data-layout="' . $show_counts['facebook'] . '" data-action="like" data-show-faces="false" data-share="false"></div></div>';
-
-			//Twitter Share
-			echo '<div class="share-button share-twitter"><a class="twitter-share-button" href="https://twitter.com/share" data-url="' . get_page_link() . '" ' . $show_counts['twitter'] . '>Tweet</a><script type="text/javascript">window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));</script></div>';
-
-			//Google Plus Share
-			echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div><script src="https://apis.google.com/js/platform.js" async defer></script></div>';
-
-			//LinkedIn Share
-			echo '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/Share" data-url="' . get_page_link() . '" ' . $show_counts['linkedin'] . '></script>';
-
-		echo '</div>';
+		nebula_social(array('facebook', 'twitter', 'google+', 'pinterest'), 0, 'share'); //@TODO "Nebula" 0: Remove pinterest after testing
+		echo '</div><!-- /sharing-links -->';
 	}
 }
+
+
+function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0, $action='default', $layout='horizontal', $follow=null) {
+
+	if ( is_string($networks) ) { //if $networks is a string, create an array for the string.
+		$networks = array($networks);
+	} elseif ( is_int($networks) && ($networks == 1 || $networks == 0) ) { //If it is an integer of 1 or 0, then set it to $counts
+		$counts = $networks;
+		$networks = array('facebook', 'twitter', 'google+');
+	} elseif ( !is_array($networks) ) {
+		$networks = array('facebook', 'twitter', 'google+');
+	}
+	$networks = array_map('strtolower', $networks); //Convert $networks to lower case for more flexible string matching later.
+
+	//Determine whether to show the counts (and if they should be above or beside).
+	if ( ($counts && $layout == 'vertical') ) { //Create count syntax to show or hide counts @TODO "Nebula" 0: Add Pinterest
+		$show_counts = array('facebook' => 'box_count', 'twitter' => 'data-count="none"', 'google_plus' => 'vertical-bubble', 'linkedin' => 'data-counter="right"', 'pinterest' => 'above'); //Show count bubbles above
+	} elseif ( $counts != 0 ) {
+		$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble', 'linkedin' => 'data-counter="top"', 'pinterest' => 'beside'); //Show count bubbles beside
+	} else {
+		$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none', 'linkedin' => '', 'pinterest' => 'none'); //Hide count bubbles
+	}
+
+	$faces = ( $follow ) ? 'true' : 'false';
+
+	//Determine which action to uses (Like, Share, Follow, etc.)
+	/*
+		Checklist:
+			- Twitter Share
+			- Twitter Follow
+			- Twitter Hashtag
+			- Twitter Mention
+
+			- Google+ +1
+			- Google+ Share
+			- Google+ Follow
+
+			- LinkedIn Share
+			- LinkedIn Follow
+
+			- Pinterest Pin It
+			- Pinterest Follow
+
+	*/
+	if ( $action == 'share' ) {
+		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+		$network_action_secondary = array('facebook' => 'fb-share-button', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+	} elseif ( $action == 'follow' ) {
+		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+	} elseif ( $action == 'hashtag' ) {
+		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+		//@TODO: Pass which hashtag to use - use $follow. Will need some kind of default if empty!
+	} elseif ( $action == 'follow' ) {
+		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+		//@TODO: Pass which "thing" to follow (company, username) - use $follow. Will need some kind of default if empty!
+	} elseif ( $action == 'both' ) {
+		$network_action_primary = array('facebook' => 'data-action="like" data-show-faces="' . $faces . '" data-share="true"', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+	} else {
+		$network_action_primary = array('facebook' => 'data-action="like" data-show-faces="' . $faces . '" data-share="false"', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => ''); //Like, Tweet, +1
+		$network_action_secondary = array('facebook' => 'fb-like', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
+	}
+
+
+
+	//@TODO "Nebula" 0: Only load the associated scripts once. Check if the function exists first.
+
+	foreach ( $networks as $network ) {
+		//Facebook
+		if ( in_array($network, array('facebook', 'fb')) ) {
+			echo '<div class="share-button share-facebook"><div class="' . $network_action_secondary['facebook'] . '" data-href="' . get_page_link() . '" data-layout="' . $show_counts['facebook'] . '" ' . $network_action_primary['facebook'] . '></div></div>';
+		}
+
+		//Twitter
+		if ( in_array($network, array('twitter')) ) {
+			echo '<div class="share-button share-twitter"><a class="twitter-share-button" href="https://twitter.com/share" data-url="' . get_page_link() . '" ' . $show_counts['twitter'] . '>Tweet</a></div>';
+			if ( 1==1 ) {
+				echo '<script type="text/javascript">window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));</script>';
+			}
+		}
+
+		//Google+
+		if ( in_array($network, array('google_plus', 'google', 'googleplus', 'google+', 'g+', 'gplus', 'g_plus', 'google plus', 'google-plus', 'g-plus')) ) {
+			echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div></div>';
+			if ( 1==1 ) {
+				echo '<script src="https://apis.google.com/js/platform.js" async defer></script>';
+			}
+		}
+
+		//LinkedIn
+		if ( in_array($network, array('linkedin', 'li', 'linked-in', 'linked_in')) ) {
+			if ( 1==1 ) {
+				echo '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>';
+			}
+			echo '<script type="IN/Share" data-url="' . get_page_link() . '" ' . $show_counts['linkedin'] . '></script>';
+		}
+
+		//Pinterest
+		if ( in_array($network, array('pinterest', 'pin')) ) {
+			if ( has_post_thumbnail() ) {
+				$featured_image = get_the_post_thumbnail();
+			} else {
+				$featured_image = get_template_directory_uri() . '/images/meta/og-thumb.png';
+			}
+			echo '<div class="share-button share-pinterest"><a href="https://www.pinterest.com/pin/create/button/?url=' . get_page_link() . '&media=' . $featured_image . '&description=' . urlencode(get_the_title()) . '" data-pin-do="buttonPin" data-pin-config="' . $show_counts['pinterest'] . '"><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" /></a></div>';
+			if ( 1==1 ) {
+				echo "<script type='text/javascript'>(function(d){var f = d.getElementsByTagName('SCRIPT')[0], p = d.createElement('SCRIPT'); p.type = 'text/javascript'; p.async = true; p.src = '//assets.pinterest.com/js/pinit.js'; f.parentNode.insertBefore(p, f);}(document));</script>";
+			}
+		}
+	}
+
+	/*
+		Parameters needed:
+			- Button variations
+				- Facebook Like, Share, or Both?
+				- Facebook layout: Standard, Box, Button
+				- Facebook: Friends Faces?
+				- Twitter: Tweet, Follow, Hashtag, or Mention
+				- Google+: +1, Share, Follow
+				- LinkedIn: Share, Follow (follow needs a company page name)
+				- Pinterest: Pin It, Follow (follow needs a company page name)
+	*/
+} //End nebula_social()
 
 
 //Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.

@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 2.3
+	Version: 2.6
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -75,8 +75,10 @@ span {font-size: inherit;}
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7; }
 a {color: #0098D7; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a:hover,
-	a.hover {color: #95D600;}
-	.btn > a:hover {color: #fff;}
+	a.hover,
+	a:focus {color: #95D600;}
+	.btn > a:hover,
+	.btn > a:focus {color: #fff;}
 body {overflow-x: hidden; background: #f6f6f6;}
 #tinymce.mceContentBody {padding: 10px 15px !important; background: #f6f6f6;}
 .inner {width: 100%; max-width: 960px; padding: 0 20px; margin: 0 auto;}
@@ -118,7 +120,8 @@ a.off {text-decoration: none; border: none;}
 	a.off:before {content: '';}
 a.white {color: #fff;}
 	a.white:hover,
-	a.white.hover {color: #ccc;}
+	a.white.hover,
+	a.white:focus {color: #ccc;}
 
 
 /* Table styles - Restyle here as needed */
@@ -127,7 +130,8 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 	table tr {}
 		table tr.odd {/* background: #f5f5f5; */}
 		table tr:hover,
-		table tr.hover {/* background: #e2e2e2; */}
+		table tr.hover,
+		table tr:focus {/* background: #e2e2e2; */}
 	/* Table Cells */
 	table tr td {/* text-align: center; border: none; border: 1px solid #ddd; */}
 	table tr td:first-child {/* font-weight: inherit; */}
@@ -136,7 +140,8 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 	table thead tr:first-child td,
 	table thead tr.first-child td {/* font-weight: bold; color: #fff; */}
 	table tr td:hover,
-	table tr td.hover {/* background: #d2d2d2; */}
+	table tr td.hover,
+	table tr td:focus {/* background: #d2d2d2; */}
 	/* Table Heading Cells */
 	table tr th {/* background: #95d600 !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff; */}
 	/* Table Heading Rows */
@@ -148,7 +153,8 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 .nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
 .wp_search_submit {color: #444 !important;}
 	.wp_search_submit:hover,
-	.wp_search_submit.hover {color: #000 !important;}
+	.wp_search_submit.hover,
+	.wp_search_submit:focus {color: #000 !important;}
 
 .js .unhideonload {visibility: hidden;}
 	.loaded .unhideonload {visibility: visible;}
@@ -189,7 +195,8 @@ div.nebula-button {margin-bottom: 10px;}
 
 .searchresultword {background: #e8f8ff; background: rgba(0, 152, 215, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;} /* @TODO "Nebula" 0: Replace BG color with very light primary color */
 	.searchresultword.transitionable {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-		article:hover .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
+		article:hover .searchresultword,
+		article:focus .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
 
 .headerdrawercon {position: relative; background: rgba(0,0,0,0.0225);}
 	.headerdrawercon hr {margin: 0;}
@@ -221,7 +228,8 @@ div.nebula-button {margin-bottom: 10px;}
 	.facebook-connect-con i,
 	.facebook-connect-con a {color: #3b5998;}
 		.facebook-connect-con a:hover,
-		.facebook-connect-con a.hover {color: #8b9dc3;}
+		.facebook-connect-con a.hover,
+		.facebook-connect-con a:focus {color: #8b9dc3;}
 
 
 /* ==========================================================================
@@ -289,7 +297,8 @@ ul.bxslider {}
 #topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
 	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
 		#topbarcon a:hover,
-		#topbarcon a.hover {color: #ccc;}
+		#topbarcon a.hover,
+		#topbarcon a:focus {color: #ccc;}
 	#topbarcon a.mobilenavtrigger {position: relative; z-index: 99999;}
 		/* .mm-opening #fullbodywrapper:hover a.mobilenavtrigger. {color: red;} @TODO "Nebula" 0: Not working. Is there a way to trigger a hover on #fullbodywrapper when mmenu is active? */
 	#topbarcon .rightside {text-align: right;}
@@ -305,10 +314,12 @@ nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
 			nav#topnav ul li.menu-item.last-child {margin-right: 0;}
 			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
 				nav#topnav ul li.menu-item a:hover,
-				nav#topnav ul li.menu-item a.hover {color: #95D600;}
+				nav#topnav ul li.menu-item a.hover,
+				nav#topnav ul li.menu-item a:focus {color: #95D600;}
 			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s; -moz-transition: opacity 0.25s; -o-transition: opacity 0.25s; transition: opacity 0.25s;}
 				nav#topnav ul li.menu-item.hover ul.sub-menu,
-				nav#topnav ul li.menu-item:hover ul.sub-menu {left: 5px; opacity: 1;}
+				nav#topnav ul li.menu-item:hover ul.sub-menu,
+				nav#topnav ul li.menu-item:focus ul.sub-menu {left: 5px; opacity: 1;}
 				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
 
 li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
@@ -348,17 +359,21 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 				nav#primarynav ul li.menu-item.last-child {margin-right: 0;}
 				nav#primarynav ul li.menu-item a {display: block;}
 					nav#primarynav ul li.menu-item a:hover,
-					nav#primarynav ul li.menu-item a.hover {}
+					nav#primarynav ul li.menu-item a.hover,
+					nav#primarynav ul li.menu-item a:focus {}
 				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s, opacity 0.25s; -moz-transition: top 0.25s, opacity 0.25s; -o-transition: top 0.25s, opacity 0.25s; transition: top 0.25s, opacity 0.25s; background: lightgrey; background: linear-gradient(to bottom, white, gainsboro); z-index: 1001; border: 1px solid grey;}
 				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}
 					nav#primarynav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
 						nav#primarynav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
 							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
-							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: lightgrey; color: #fff;}
+							nav#primarynav ul li.menu-item ul.sub-menu li a.hover,
+							nav#primarynav ul li.menu-item ul.sub-menu li a:focus {background: lightgrey; color: #fff;}
 						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 				nav#primarynav ul li.menu-item:hover .sub-menu,
-				nav#primarynav ul li.menu-item.hover .sub-menu {left: 0; top: 23px; opacity: 1;}
-				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu {left: auto; right: 0;}
+				nav#primarynav ul li.menu-item.hover .sub-menu,
+				nav#primarynav ul li.menu-item:focus .sub-menu {left: 0; top: 23px; opacity: 1;}
+				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu,
+				.no-js nav#primarynav ul li.menu-item:last-child:focus ul.sub-menu {left: auto; right: 0;}
 
 .fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s;}
 	.fixedbar > div {display: none;}
@@ -366,7 +381,8 @@ li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; 
 		.fixedbar.active > div {display: block;}
 	.fixedbar a {display: block; font-size: 11px; color: #fff;}
 		.fixedbar a:hover,
-		.fixedbar a.hover {color: #ccc;}
+		.fixedbar a.hover,
+		.fixedbar a:focus {color: #ccc;}
 	.fixedbar i {font-size: 13px;}
 
 /* Nebula Wordpress fixed navigation style defaults */
@@ -377,7 +393,8 @@ nav#fixednav {position: relative; z-index: 1000;}
 			nav#fixednav ul li.menu-item.last-child {margin-right: 0;}
 			nav#fixednav ul li.menu-item a {}
 				nav#fixednav ul li.menu-item a:hover,
-				nav#fixednav ul li.menu-item a.hover {}
+				nav#fixednav ul li.menu-item a.hover,
+				nav#fixednav ul li.menu-item a:focus {}
 			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
 
 /* Sample Hero and on-load animation */
@@ -397,7 +414,8 @@ div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-tra
                         div#heroslider ul.bxslider li div p.line1 {font-size: 48px;}
                         div#heroslider ul.bxslider li div p.line2 {font-size: 24px;}
                         div#heroslider ul.bxslider li div a {display: inline-block; position: relative; margin-left: -50%; padding: 10px 30px; color: #fff; font-size: 24px; text-align: center; text-transform: uppercase; background: #0098d7;}
-                            div#heroslider ul.bxslider li div a:hover {background: #95d600;}
+                            div#heroslider ul.bxslider li div a:hover,
+                            div#heroslider ul.bxslider li div a:focus {background: #95d600;}
                     div#heroslider ul.bxslider li img {min-height: 100%; min-width: 1600px; /* width: 100%; */ margin: 0 auto; box-shadow: 0 0 50px 0 rgba(0,0,0,0.8)} /* Uncomment the width for the image to stretch across the entire viewport. */
 div#heroslider .bx-wrapper .bx-has-controls-direction {position: absolute; top: 50%; left: 50%; width: 100%; max-width: 1100px; height: 32px;}
     div#heroslider .bx-wrapper .bx-has-controls-direction .bx-controls-direction {position: relative; height: 32px; left: -50%;}
@@ -532,7 +550,8 @@ h2.articles-by {padding-top: 0;}
 	.xoxo ul.menu li.current-menu-item a {color: #95D600;}
 	.xoxo ul.menu li.current-menu-item .sub-menu a {color: #0098D7;}
 		.xoxo ul.menu li.current-menu-item .sub-menu a:hover,
-		.xoxo ul.menu li.current-menu-item .sub-menu a.hover {color: #95D600;}
+		.xoxo ul.menu li.current-menu-item .sub-menu a.hover,
+		.xoxo ul.menu li.current-menu-item .sub-menu a:focus {color: #95D600;}
 	.xoxo ul.menu li.menu-item {position: relative; padding: 5px 0 5px 0;}
 		.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
 			.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
@@ -542,7 +561,8 @@ h2.articles-by {padding-top: 0;}
 	/* Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list. */
 	.xoxo .tagcloud a {margin: 8px 3px 0 0; padding: 5px 7px; border-radius: 5px; background-color: rgba(0, 152, 215, 0.1); color: #0098d7; font-size: 12px !important;}
 		.xoxo .tagcloud a:hover,
-		.xoxo .tagcloud a.hover {background-color: rgba(0, 152, 215, 0.25); color: #0098d7;}
+		.xoxo .tagcloud a.hover,
+		.xoxo .tagcloud a:focus {background-color: rgba(0, 152, 215, 0.25); color: #0098d7;}
 
 /* Nebula expandable sidebar subnav style defaults */
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;}
@@ -584,10 +604,13 @@ p.form-submit {}
 	p.form-submit input {border: 0; background: #0098d7; padding: 4px 10px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		#cform7-container .submit:hover,
 		#cform7-container .submit.hover,
+		#cform7-container .submit:focus,
 		p.contact-form-submit input.hover,
 		p.contact-form-submit input:hover,
+		p.contact-form-submit input:focus,
 		p.form-submit input.hover,
-		p.form-submit input:hover {background: #95d600;}
+		p.form-submit input:hover,
+		p.form-submit input:focus {background: #95d600;}
 		#cform7-container .submit.disabled,
 		p.contact-form-submit input.disabled,
 		p.form-submit input.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
@@ -618,9 +641,12 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .mm-list a {border: none;}
 .mm-list a.mm-subopen {width: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
 .mm-list a.mm-subopen + a, .mm-list a.mm-subopen + span {margin-right: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
-.mm-list a.mm-subopen:hover {background: rgba(0, 0, 0, 0.1);}
-.mm-list > li > a:hover {background: rgba(0, 0, 0, 0.1);}
-.mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; background: rgba(0, 0, 0, 0.05);}
+.mm-list a.mm-subopen:hover,
+.mm-list a.mm-subopen:focus {background: rgba(0, 0, 0, 0.1);}
+.mm-list > li > a:hover,
+.mm-list > li > a:focus {background: rgba(0, 0, 0, 0.1);}
+.mm-menu.mm-light .mm-list > li > a.mm-subclose:hover,
+.mm-menu.mm-light .mm-list > li > a.mm-subclose:focus {text-decoration: none; background: rgba(0, 0, 0, 0.05);}
 .mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {margin-top: 0px;}
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {margin-left: 0;}
 .clearsearch {text-align: center; margin-top: 20px;}
@@ -650,12 +676,14 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 				nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
 				nav#powerfooter ul li.menu-item a {display: block; color: #fff; font-size: 16px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #fff;}
 					nav#powerfooter ul li.menu-item a:hover,
-					nav#powerfooter ul li.menu-item a.hover {color: #aaa;}
+					nav#powerfooter ul li.menu-item a.hover,
+					nav#powerfooter ul li.menu-item a:focus {color: #aaa;}
 				nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
 					nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; color: #fff; font-size: 12px; font-weight: normal; text-transform: none; border-bottom: none;}
 							nav#powerfooter ul li.menu-item ul.sub-menu li a:hover,
-							nav#powerfooter ul li.menu-item ul.sub-menu li a.hover {color: #aaa;}
+							nav#powerfooter ul li.menu-item ul.sub-menu li a.hover,
+							nav#powerfooter ul li.menu-item ul.sub-menu li a:focus {color: #aaa;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 
 div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* background: rgba(0, 0, 0, 0.4); */}
@@ -663,7 +691,8 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 		a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 		div.copyright a {color: #fff;}
 			div.copyright a:hover,
-			div.copyright a.hover {color: #ccc;}
+			div.copyright a.hover,
+			div.copyright a:focus {color: #ccc;}
 
 /* Nebula Desktop Helper Styles */
 .disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;}
@@ -689,15 +718,18 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 				nav#primarynav ul li.menu-item.last-child {}
 				nav#primarynav ul li.menu-item a {min-height: 44px; line-height: 44px;}
 					nav#primarynav ul li.menu-item a:hover,
-					nav#primarynav ul li.menu-item a.hover {}
+					nav#primarynav ul li.menu-item a.hover,
+					nav#primarynav ul li.menu-item a:focus {}
 				nav#primarynav ul li.menu-item ul.sub-menu {position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;}
 					nav#primarynav ul li.menu-item ul.sub-menu li {}
 						nav#primarynav ul li.menu-item ul.sub-menu li a {padding: 0;}
 							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
-							nav#primarynav ul li.menu-item ul.sub-menu li a.hover {background: grey;}
+							nav#primarynav ul li.menu-item ul.sub-menu li a.hover,
+							nav#primarynav ul li.menu-item ul.sub-menu li a:focus {background: grey;}
 						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 				nav#primarynav ul li.menu-item:hover .sub-menu,
-				nav#primarynav ul li.menu-item.hover .sub-menu {left: auto; top: 0; display: block; width: 100% !important;}
+				nav#primarynav ul li.menu-item.hover .sub-menu,
+				nav#primarynav ul li.menu-item:focus .sub-menu {left: auto; top: 0; display: block; width: 100% !important;}
 
 	.fixedbar {display: none;}
 
@@ -765,7 +797,8 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 		.google-map-overlay:before {content: "Click to enable interactivity."; position: absolute; bottom: -50px; width: 100%; background: rgba(0, 0, 0, 0.5); text-align: center; color: #fff; overflow: hidden; opacity: 0; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		.google-map-overlay.the-map-overlay:before {bottom: 6px; opacity: 1; padding: 8px 0; height: auto;}
 			.the-map-overlay:hover:before,
-			.the-map-overlay.hover:before {background: rgba(0, 0, 0, 0.9); padding: 24px 0;}
+			.the-map-overlay.hover:before,
+			.the-map-overlay:focus:before {background: rgba(0, 0, 0, 0.9); padding: 24px 0;}
 	.the-map-overlay iframe {pointer-events: none;}
 
 .ttip {cursor: text;}
@@ -774,32 +807,34 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 		.ie .ttip:before,
 		.ie .ttip:after,
 		.ttip:hover:after,
-		.ttip:hover:before {bottom: 101%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+		.ttip:hover:before,
+		.ttip:focus:after,
+		.ttip:focus:before {bottom: 101%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
 
 /* ==========================================================================
    Helper classes
    ========================================================================== */
 
-/*Image replacement */
+/* Image replacement */
 .ir {background-color: transparent; border: 0; overflow: hidden; /* IE 6/7 fallback */ *text-indent: -9999px;}
 .ir:before {content: ""; display: block; width: 0; height: 100%;}
-/* Hide from both screenreaders and browsers: h5bp.com/u */
-.hidden {display: none !important;visibility: hidden;}
-/* Hide only visually, but have it available for screenreaders: h5bp.com/v */
-.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;}
-/* Extends the .visuallyhidden class to allow the element to be focusable when navigated to via the keyboard: h5bp.com/p */
-.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;}
-/* Hide visually and from screenreaders, but maintain layout */
-.invisible {visibility: hidden;}
-/* Clearfix: contain floats. For modern browsers. 1. The space content is one way to avoid an Opera bug when the `contenteditable` attribute is included anywhere else in the document. Otherwise it causes space to appear at the top and bottom of elements that receive the `clearfix` class. 2. The use of `table` rather than `block` is only necessary if using `:before` to contain the top-margins of child elements. */
-.clearfix:before, .clearfix:after {content: " "; /* 1 */ display: table; /* 2 */}
+.hidden {display: none !important; visibility: hidden;} /* Hide from both screenreaders and browsers */
+.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;} /* Hide only visually, but have it available for screenreaders */
+.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;} /* Allow the element to be focusable when navigated to via the keyboard */
+.invisible {visibility: hidden;} /* Hide visually and from screenreaders, but maintain layout */
+/* Clearfix: contain floats. */
+.clearfix:before, .clearfix:after {content: " "; display: table;}
 .clearfix:after {clear: both;}
-/* For IE 6/7 only. Include this rule to trigger hasLayout and contain floats. */
-.clearfix {*zoom: 1;}
+.clearfix {*zoom: 1;} /* IE6/7 fix */
 div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
 .avoid-clicks {pointer-events: none;} /* Only supported in IE11+ */
-.allow-clicks {pointer-events: all;}
+.allow-clicks {pointer-events: all;} /* Only supported in IE11+ */
+
+.aligncenter, .align-center {display: block; margin: 0 auto;}
+.alignleft, .align-left {float: left;}
+.alignright, .align-right {float: right;}
+.wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
 
 a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
 	a.phg.white {background: url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;}
@@ -807,11 +842,11 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-sym
 	a.phg span.pinckney {color: #0099d8;}
 	a.phg span.hugo {color: #a0ce67;}
 	a.phg span.group {color: #9fa1a4;}
-	a.phg:hover span.pinckney {color: #006690;}
-	a.phg:hover span.hugo {color: #709048;}
-	a.phg:hover span.group {color: #6f7072;}
+		a.phg:hover span.pinckney, a.phg.hover span.pinckney, a.phg:focus span.pinckney {color: #006690;}
+		a.phg:hover span.hugo, a.phg.hover span.hugo, a.phg:focus span.hugo {color: #709048;}
+		a.phg:hover span.group, a.phg.hover span.group, a.phg:focus span.group {color: #6f7072;}
 	a.phg.white span {color: #fff;}
-	a.phg.white:hover span {color: #aaa;}
+		a.phg.white:hover span, a.phg.white.hover span, a.phg.white:focus span {color: #aaa;}
 
 a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg.anim span {margin-right: 3px; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
@@ -819,45 +854,40 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 	a.phg.anim span.pinckney {color: inherit;}
 	a.phg.anim span.hugo {color: inherit;}
 	a.phg.anim span.group {color: inherit;}
-	a.phg.anim:hover {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;}
-		a.phg.anim:hover span {margin-right: 0px;}
-		a.phg.anim:hover span.pinckney {color: #0099d8;}
-		a.phg.anim:hover span.hugo {color: #a0ce67;}
-		a.phg.anim:hover span.group {color: #9fa1a4;}
+		a.phg.anim:hover {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;}
+			a.phg.anim:hover span, a.phg.anim.hover span, a.phg.anim:focus span {margin-right: 0px;}
+			a.phg.anim:hover span.pinckney, a.phg.anim.hover span.pinckney, a.phg.anim:focus span.pinckney {color: #0099d8;}
+			a.phg.anim:hover span.hugo, a.phg.anim.hover span.hugo, a.phg.anim:focus span.hugo {color: #a0ce67;}
+			a.phg.anim:hover span.group, a.phg.anim.hover span.group, a.phg.anim:focus span.group {color: #9fa1a4;}
 
 a.facebook {color: #3b5998;}
-	a.facebook:hover,
-	a.facebook.hover {color: #3b5998;} /* darken... */
+	a.facebook:hover, a.facebook.hover, a.facebook:focus {color: #3b5998;} /* darken... */
 a.twitter {color: #55acee;}
-	a.twitter:hover,
-	a.twitter.hover {} /* darken... */
+	a.twitter:hover, a.twitter.hover, a.twitter:focus {} /* darken... */
 a.googleplus {color: #d73d32;}
-	a.googleplus:hover,
-	a.googleplus.hover {} /* darken... */
+	a.googleplus:hover, a.googleplus.hover, a.googleplus:focus {} /* darken... */
 a.linkedin {color: #0077b5;}
-	a.linkedin:hover,
-	a.linkedin.hover {} /* darken... */
+	a.linkedin:hover, a.linkedin.hover, a.linkedin:focus {} /* darken... */
 a.github {color: #333;}
-	a.github:hover,
-	a.github.hover {color: #4183c4;}
+	a.github:hover, a.github.hover, a.github:focus {color: #4183c4;}
 a.youtube {color: #cc181e;}
-	a.youtube:hover,
-	a.youtube.hover {} /* darken... */
+	a.youtube:hover, a.youtube.hover, a.youtube:focus {} /* darken... */
 a.instagram {color: #3f729b;}
-	a.instagram:hover,
-	a.instagram.hover {color: #1c5380;}
+	a.instagram:hover, a.instagram.hover, a.instagram:focus {color: #1c5380;}
 a.soundcloud {color: #ff3300;}
-	a.soundcloud:hover,
-	a.soundcloud.hover {} /* darken... */
+	a.soundcloud:hover, a.soundcloud.hover, a.soundcloud:focus {} /* darken... */
 
 @-ms-viewport{
-  width: device-width;
+	width: device-width;
 }
+
 
 /* ==========================================================================
    Print styles
+   - Be sure to change any animated-in elements to static or hidden
    ========================================================================== */
-@media print { /* Be sure to change any animated-in elements to static or hidden */
+
+@media print {
     * {/* background: transparent !important;  */color: #000 !important; box-shadow: none !important; text-shadow: none !important;}
     a, a:visited {text-decoration: underline;}
     /* .entry-content a[href]:after {content: " (" attr(href) ")";} */
@@ -871,20 +901,6 @@ a.soundcloud {color: #ff3300;}
     p, h2, h3 {orphans: 3; widows: 3;}
     h2, h3 {page-break-after: avoid;}
 }
-
-
-/* WordPress Boilerplate remnants */
-.aligncenter, .align-center {display: block; margin: 0 auto;}
-.alignleft, .align-left {float: left;}
-.alignright, .align-right {float: right;}
-.wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
-
-/** Keep drop-downs working **/
-#access li {float: left; position: relative;}
-#access ul ul {display: none; float: left; position: absolute; top: 3.333em; left: 0; z-index: 99999;}
-#access ul ul ul {left: 100%; top: 0;}
-#access ul li:hover > ul {display: block;}
-/** END WordPress-Defined CSS Classes **/
 
 
 /* ==========================================================================

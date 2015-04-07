@@ -7,7 +7,7 @@
 
 
 
-
+/*
 //For automatically setting certain "Screen Options" settings by default.
 add_action('admin_init', 'set_user_metaboxes');
 function set_user_metaboxes($user_id=NULL) {
@@ -17,6 +17,7 @@ function set_user_metaboxes($user_id=NULL) {
     var_dump(  );
     //var_dump(meta_box_prefs($screen)); //$screen needs to be the admin screen id or something
 }
+*/
 
 
 
@@ -24,14 +25,7 @@ function set_user_metaboxes($user_id=NULL) {
 
 
 
-
-
-
-
-
-
-
-
+/*
 //This is the standard/basic search autocomplete function.
 //@TODO "Nebula" 0: Before going too far into customizing this, research if the JavaScript API in WordPress 4.1 would allow for better autocomplete via JS.
 //The problem I foresee with this is trying to add all post types, categories, tags, and especially custom fields to the results.
@@ -85,3 +79,4 @@ function myprefix_autocomplete_suggestions(){
     // Don't forget to exit!
     exit;
 }
+*/

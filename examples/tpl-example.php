@@ -427,7 +427,7 @@ get_header(); ?>
 
 				<div class="row">
 					<div class="sixteen columns">
-						<?php get_template_part('comments'); ?>
+						<?php comments_template(); ?>
 					</div><!--/columns-->
 				</div><!--/row-->
 

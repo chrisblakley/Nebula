@@ -105,7 +105,7 @@ get_header(); ?>
 							</div>
 						<?php endif; ?>
 
-						<?php get_template_part('comments'); ?>
+						<?php comments_template(); ?>
 					</div><!-- .entry-content -->
 				</article>
 
