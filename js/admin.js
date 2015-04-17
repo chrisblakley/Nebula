@@ -42,7 +42,7 @@ jQuery(document).ready(function() {
 	});
 
 	if ( jQuery('body').hasClass('profile-php') ) {
-		jQuery('#headshot_button').on('click', function() {
+		jQuery('#headshot_button').on('click tap touch', function() {
 			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
@@ -58,7 +58,7 @@ jQuery(document).ready(function() {
 
 		}
 
-		jQuery('#headshot_remove').on('click', function(){
+		jQuery('#headshot_remove').on('click tap touch', function(){
 			jQuery('#headshot_url').val('');
 			jQuery('#headshot_preview').remove();
 			jQuery('#upload_success').text('Picture removed.');
@@ -66,12 +66,12 @@ jQuery(document).ready(function() {
 
 
 
-		jQuery('#avatar_button').on('click', function() {
+		jQuery('#avatar_button').on('click tap touch', function() {
 			tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
 
-		jQuery('#avatar_remove').on('click', function(){
+		jQuery('#avatar_remove').on('click tap touch', function(){
 			jQuery('#avatar_url').val('');
 			jQuery('#avatar_preview').remove();
 			jQuery('#upload_success').text('Picture removed.');
@@ -83,6 +83,13 @@ jQuery(document).ready(function() {
 	if ( !jQuery('li#menu-comments').is(':visible') ) {
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_settings">Nebula Settings</a>)</small>.');
 	}
+
+	//Re-initialize confirm dialog.
+	jQuery('.reinitializenebula').on('click tap touch', function(){
+		if ( !confirm('This will reset all Nebula settings and reset the homepage content! Are you sure you want to re-initialize?') ) {
+			return false;
+		}
+	});
 
 	//Developer Info Metabox
 	jQuery(document).on("keyup", "input.findterm", function(){
@@ -137,7 +144,7 @@ jQuery(document).ready(function() {
 		}
 	});
 
-	jQuery('.togglehiddentodos').on('click', function(){
+	jQuery('.togglehiddentodos').on('click tap touch', function(){
 		jQuery('.hidden_todo, .hidden_file').toggleClass('show-hidden-todos');
 		return false;
 	});
@@ -145,10 +152,10 @@ jQuery(document).ready(function() {
 
 	//Detect external links in the TinyMCE link modal (to check the "new window" box).
 	linkTargetUsered = 0;
-	jQuery(document).on('click keyup', '#link-target-checkbox', function(){
+	jQuery(document).on('click tap touch keyup', '#link-target-checkbox', function(){
 		linkTargetUsered = 1;
 	});
-	jQuery(document).on('click', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){
+	jQuery(document).on('click tap touch', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){
 		linkTargetUsered = 0;
 	});
 	jQuery(document).on('keyup change focus blur', '#url-field', function(){
@@ -158,12 +165,14 @@ jQuery(document).ready(function() {
 				jQuery('#link-target-checkbox').prop('checked', false);
 			} else if ( (currentVal.indexOf('http') >= 0 || currentVal.indexOf('www') >= 0) && currentVal.indexOf(location.host) < 0 ) { //if (has "http" or www) && NOT our domain
 				jQuery('#link-target-checkbox').prop('checked', true);
+			} else if ( currentVal.indexOf('.pdf') >= 0 ) { //if the link is a PDF or PDFX (the former catches the latter in a single conditional)
+				jQuery('#link-target-checkbox').prop('checked', true);
 			} else {
 				jQuery('#link-target-checkbox').prop('checked', false);
 			}
 		}
 	});
-	jQuery(document).on('click', '#most-recent-results *', function(){
+	jQuery(document).on('click tap touch', '#most-recent-results *', function(){
 		if ( linkTargetUsered == 0 ) {
 			jQuery('#link-target-checkbox').prop('checked', false);
 		}

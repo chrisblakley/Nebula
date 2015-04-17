@@ -218,7 +218,7 @@ function facebookSDK() {
 		});
 	};
 
-	jQuery(document).on('click', '.facebook-connect', function(){
+	jQuery(document).on('click touch tap', '.facebook-connect', function(){
 		facebookLoginLogout();
 		return false;
 	});
@@ -408,7 +408,7 @@ function overflowDetector() {
 function subnavExpanders() {
     jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    jQuery(document).on('click', '.toplevelvert_expander', function(){
+    jQuery(document).on('click touch tap', '.toplevelvert_expander', function(){
         jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
         return false;
     });
@@ -465,7 +465,7 @@ function gaEventTracking(){
 
 
 	//External links
-	jQuery(document).on('mousedown', "a[rel*='external']", function(e){
+	jQuery(document).on('mousedown touch tap', "a[rel*='external']", function(e){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
@@ -473,7 +473,7 @@ function gaEventTracking(){
 	});
 
 	//PDF View/Download
-	jQuery(document).on('mousedown', "a[href$='.pdf']", function(){
+	jQuery(document).on('mousedown touch tap', "a[href$='.pdf']", function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
@@ -497,14 +497,14 @@ function gaEventTracking(){
 	});
 
 	//Mailto link tracking
-	jQuery(document).on('mousedown', 'a[href^="mailto"]', function(){
+	jQuery(document).on('mousedown touch tap', 'a[href^="mailto"]', function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('send', 'event', 'Mailto' + intent, 'Email: ' + emailAddress);
 	});
 
 	//Telephone link tracking
-	jQuery(document).on('mousedown', 'a[href^="tel"]', function(){
+	jQuery(document).on('mousedown touch tap', 'a[href^="tel"]', function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
@@ -512,7 +512,7 @@ function gaEventTracking(){
 	});
 
 	//SMS link tracking
-	jQuery(document).on('mousedown', 'a[href^="sms"]', function(){
+	jQuery(document).on('mousedown touch tap', 'a[href^="sms"]', function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
@@ -655,7 +655,7 @@ function mmenus() {
 			}
 		});
 		jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-		jQuery(document).on('click', '.clearsearch a', function(){
+		jQuery(document).on('click touch tap', '.clearsearch a', function(){
 			jQuery('.mm-search input').val('').keyup();
 			jQuery('.clearsearch').addClass('hidden');
 			return false;
@@ -790,7 +790,7 @@ function singleResultDrawer(){
 		jQuery('#searchform input#s').val(theSearchTerm); //This is not needed if Search Everything can fix the "?s=" issue.
 	}
 
-	jQuery(document).on('click', '.headerdrawer .close', function(){
+	jQuery(document).on('click touch tap', '.headerdrawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
 		jQuery('.headerdrawercon').slideUp();
@@ -810,7 +810,7 @@ function pageSuggestion(){
 		var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
 		trySearch(phrase);
 
-		jQuery(document).on('mousedown', 'a.suggestion', function(e){
+		jQuery(document).on('mousedown touch tap', 'a.suggestion', function(e){
 			var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 			var suggestedPage = jQuery(this).text();
 			ga('send', 'event', 'Page Suggestion', 'Click' + intent, 'Suggested Page: ' + suggestedPage);
@@ -1137,7 +1137,7 @@ function checkCommentVal(oThis) {
 }
 
 function scrollTo() {
-	jQuery(document).on('click', 'a[href*=#]:not([href=#])', function() {
+	jQuery(document).on('click touch tap', 'a[href*=#]:not([href=#])', function() {
 		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ) {
 			var target = jQuery(this.hash);
 			target = target.length ? target : jQuery('[name=' + this.hash.slice(1) +']');
@@ -1159,7 +1159,7 @@ function contactBackup() {
 		checkCommentVal(this);
 	});
 
-	jQuery(document).on('click', 'disabled', function(){
+	jQuery(document).on('click touch tap', 'disabled', function(){
 		return false;
 	});
 
@@ -1357,7 +1357,7 @@ function errorLogAndFallback() {
 		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo fa fa-envelope"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
 		ga('send', 'event', 'Error', 'Contact Form 7 Form Not Found', {'nonInteraction': 1});
 		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.'); }
-		jQuery(document).on('click', '.cform-not-found', function(){
+		jQuery(document).on('click touch tap', '.cform-not-found', function(){
 			ga('send', 'event', 'Contact', 'Submit (Intent)', 'Backup Mailto Intent');
 		});
 	}
@@ -1605,7 +1605,7 @@ function eraseCookie(name) {
 //Interactive Functions of the Google Map
 function mapActions() {
 	originalWeatherText = jQuery('.mapweather').text();
-	jQuery(document).on('click', '.mapweather', function(){
+	jQuery(document).on('click touch tap', '.mapweather', function(){
 		if ( mapInfo['weather'] == 1 ) {
 			mapInfo['weather'] = 0;
 			jQuery('.mapweather').removeClass('active').addClass('inactive').text(originalWeatherText);
@@ -1622,7 +1622,7 @@ function mapActions() {
 	});
 
 	originalTrafficText = jQuery('.maptraffic').text();
-	jQuery(document).on('click', '.maptraffic', function(){
+	jQuery(document).on('click touch tap', '.maptraffic', function(){
 		if ( mapInfo['traffic'] == 1 ) {
 			mapInfo['traffic'] = 0;
 			jQuery('.maptraffic').removeClass('active').addClass('inactive').text(originalTrafficText);
@@ -1638,7 +1638,7 @@ function mapActions() {
 		return false;
 	});
 
-	jQuery(document).on('click', '.mapgeolocation', function(){
+	jQuery(document).on('click touch tap', '.mapgeolocation', function(){
 		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
 			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling location detection.'); }
 			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
@@ -1666,7 +1666,7 @@ function mapActions() {
 
 	originalRefreshText = jQuery('.maprefresh').text();
 	pleaseWait = 0;
-	jQuery(document).on('click', '.maprefresh', function(){
+	jQuery(document).on('click touch tap', '.maprefresh', function(){
 		if ( !jQuery(this).hasClass('timeout') ) {
 			pleaseWait = 0;
 			if ( typeof Gumby != 'undefined' ) { Gumby.log('Refreshing the map.'); }

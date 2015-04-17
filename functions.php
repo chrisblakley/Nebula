@@ -48,6 +48,7 @@ function register_nebula_styles() {
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 	//wp_register_style('nebula-normalize', '//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css', array(), '3.0.1');
 	wp_register_style('nebula-normalize', '//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css', array(), '3.0.1', 'all');
+	wp_register_style('nebula-google_default_font', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700', array(), null, 'all'); //Change the font URL here to easily change the default font (be sure to update stylesheets accordingly).
 	wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700', array(), null, 'all');
 	wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null, 'all');
 	wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6', 'all');
@@ -172,8 +173,9 @@ function enqueue_nebula_frontend() {
 
 	//Stylesheets
 	wp_enqueue_style('nebula-normalize');
-	wp_enqueue_style('nebula-open_sans');
-	//wp_enqueue_style('nebula-open_sans_local');
+	wp_enqueue_style('nebula-google_default_font'); //Use this to easily replace the remote font URL during registerring (above). If changing from Open Sans, be sure to reflect that change in style.css (and possibly /css/gumby.min.css)!
+	//wp_enqueue_style('nebula-open_sans'); //Use this to easily enable the remote version of Open Sans as the default font.
+	//wp_enqueue_style('nebula-open_sans_local'); //Use this to use a local copy of Open Sans
 	wp_enqueue_style('nebula-gumby');
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome'); //Font-Awesome can be dynamically loaded with JS (with some exceptions).

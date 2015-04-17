@@ -236,7 +236,21 @@ div.nebula-button {margin-bottom: 10px;}
    Specific Library feature modifications
    ========================================================================== */
 
+/* Gumby overrides */
 .row {max-width: 980px;} /* Default Gumby Row max-width is 980px. */
+
+/* Default font override */
+/* Replace the font (or declare multiple) here to avoid needing to edit gumby.css */
+h1, h2, h3, h4, h5, h6,
+body,
+p,
+.btn, .skiplink,
+.field input, .field input[type="*"], .field textarea,
+.prepend .adjoined, .append .adjoined,
+.picker,
+.alert,
+.tab-nav > li > li > a,
+.tab-nav > li > a {font-family: "Open Sans", sans-serif;}
 
 /* Allows tab text to wrap to a new line */
 .tab-nav > li.active > a {height: auto; line-height: inherit;}

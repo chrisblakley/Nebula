@@ -194,8 +194,8 @@ function nebulaActivateComplete(){
 
 	if ( isset($_GET['nebula-reset']) ) {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
-	} elseif ( $GLOBALS['nebula_initial_activate'] == 0 ) { //@TODO "Nebula" 0: This condition is always triggering... because this is tested AFTER options are updated?
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>. <a href='themes.php?activated=true&nebula-reset=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a></p></div>";
+	} elseif ( $GLOBALS['nebula_initial_activate'] == 0 ) {
+		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>. <a class='reinitializenebula' href='themes.php?activated=true&nebula-reset=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a></p></div>";
 	} else {
 		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
 	}
@@ -286,13 +286,16 @@ function nebulaChangeHomeSetting(){
 function nebulaWordpressSettings() {
 	global $wp_rewrite;
 	remove_core_bundled_plugins();
-
 	set_nebula_initialized_date();
+
 
 	//Update Nebula Settings
 	update_option('nebula_overall', 'Enabled');
 	update_option('nebula_domain_expiration_alert', 'Never');
 	update_option('nebula_edited_yet', 'false');
+	update_option('nebula_domain_expiration_alert', 'Default');
+
+	update_option('nebula_site_owner', '');
 	update_option('nebula_contact_email', '');
 	update_option('nebula_ga_tracking_id', '');
 	update_option('nebula_keywords', '');
@@ -306,6 +309,7 @@ function nebulaWordpressSettings() {
 	update_option('nebula_region', '');
 	update_option('nebula_postal_code', '');
 	update_option('nebula_country_name', '');
+
 	update_option('nebula_business_hours_sunday_enabled', '');
 	update_option('nebula_business_hours_sunday_open', '');
 	update_option('nebula_business_hours_sunday_close', '');
@@ -327,6 +331,8 @@ function nebulaWordpressSettings() {
 	update_option('nebula_business_hours_saturday_enabled', '');
 	update_option('nebula_business_hours_saturday_open', '');
 	update_option('nebula_business_hours_saturday_close', '');
+	update_option('nebula_business_hours_closed', '');
+
 	update_option('nebula_facebook_url', '');
 	update_option('nebula_facebook_app_id', '');
 	update_option('nebula_facebook_app_secret', '');
@@ -338,24 +344,35 @@ function nebulaWordpressSettings() {
 	update_option('nebula_linkedin_url', '');
 	update_option('nebula_youtube_url', '');
 	update_option('nebula_instagram_url', '');
+
+	update_option('nebula_wireframing', 'Default');
 	update_option('nebula_admin_bar', 'Default');
 	update_option('nebula_comments', 'Default');
+	update_option('nebula_disqus_shortname', '');
 	update_option('nebula_wp_core_updates_notify', 'Default');
 	update_option('nebula_plugin_update_warning', 'Default');
 	update_option('nebula_welcome_panel', 'Default');
 	update_option('nebula_unnecessary_metaboxes', 'Default');
-	update_option('nebula_phg_metabox', 'Default');
+	update_option('nebula_dev_metabox', 'Default');
+	update_option('nebula_todo_metabox', 'Default');
+	update_option('nebula_domain_exp', 'Default');
+	update_option('nebula_dev_stylesheets', 'Default');
 	update_option('nebula_console_css', 'Default');
 	update_option('nebula_cse_id', '');
 	update_option('nebula_cse_api_key', '');
+
 	update_option('nebula_dev_ip', '');
 	update_option('nebula_dev_email_domain', '');
+	update_option('nebula_client_ip', '');
+	update_option('nebula_client_email_domain', '');
 	update_option('nebula_cpanel_url', '');
 	update_option('nebula_hosting_url', '');
 	update_option('nebula_registrar_url', '');
 	update_option('nebula_ga_url', '');
 	update_option('nebula_google_webmaster_tools_url', '');
 	update_option('nebula_google_adsense_url', '');
+	update_option('nebula_mention_url', '');
+
 
 	//Update certain Wordpress Core options
 	update_option('blogdescription', ''); //Empty the site tagline

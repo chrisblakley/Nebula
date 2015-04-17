@@ -59,6 +59,11 @@ function nebula_sub_menu() {
 
 //Register each option
 function register_nebula_settings() {
+	/*
+		Note: When adding Nebula settings, be sure to add the field to nebulaWordpressSettings() in /functions/nebula_automation.php with a default value!
+			Ex: update_option('nebula_contact_email', ''); -or- update_option('nebula_plugin_update_warning', 'Default');
+	*/
+
 	register_setting('nebula_settings_group', 'nebula_overall');
 	register_setting('nebula_settings_group', 'nebula_initialized');
 	register_setting('nebula_settings_group', 'nebula_edited_yet');

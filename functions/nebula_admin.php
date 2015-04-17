@@ -266,7 +266,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 							}
 
 							echo '<div class="linewrap ' . $todo_hidden_class . '" ' . $todo_hidden_style . '>
-									<p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . $todo_actualLineNumber . '</a> <span class="todomessage">' . $the_todo_message[0] . '</span></p>
+									<p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . $todo_actualLineNumber . '</a> <span class="todomessage">' . htmlentities($the_todo_message[0]) . '</span></p>
 									<div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div>
 								</div>';
 
