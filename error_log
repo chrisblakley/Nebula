@@ -1,1 +1,0 @@
-[15-Apr-2015 04:23:34 America/New_York] PHP Fatal error:  Call to undefined function ga_send_event() in /home3/cblakley/public_html/nebula/wp-content/themes/WP-Nebula-master/index.php on line 7
