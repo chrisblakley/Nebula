@@ -650,7 +650,7 @@ div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 
 div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px;}
 
 
-/***** MOBILE MENUS *****/
+/***** Offcanvas Mmenu Modifications *****/
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
 .mm-list a {border: none;}
 .mm-list a.mm-subopen {width: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
@@ -667,7 +667,12 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 .mm-menu li.current_page_item {background: rgba(255, 255, 255, 1); font-weight: bold; color: #000;}
 	.mm-menu li.current_page_item a:not(.mm-subopen):before {content: "\f138"; font-family: "FontAwesome"; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
-
+.mm-listview .mm-next {width: 90px;} /* New for v5.0+ */
+	.mm-listview .mm-next:hover,
+	.mm-listview .mm-next.hover {background: rgba(0, 0, 0, 0.05);}
+	.mm-listview .mm-next:after {-webkit-transition: right 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275); -moz-transition: right 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275); -o-transition: right 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275); transition: right 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275);}
+	.mm-listview .mm-next:hover:after,
+	.mm-listview .mm-next.hover:after {right: 15px;}
 
 .doasitesearch {display: block; margin-bottom: 15px;}
 
