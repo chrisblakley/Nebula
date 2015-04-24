@@ -336,29 +336,29 @@ nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
 				nav#topnav ul li.menu-item:focus ul.sub-menu {left: 5px; opacity: 1;}
 				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
 
-li.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-	.svg li.nebula-search input, .svg input.nebula-search {background: #eee url("images/search.svg") no-repeat 6px center;}
-	li.nebula-search input::-webkit-search-decoration,
-	li.nebula-search input::-webkit-search-cancel-button,
+.nebula-search input, input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	.svg .nebula-search input, .svg input.nebula-search {background: #eee url("images/search.svg") no-repeat 6px center;}
+	.nebula-search input::-webkit-search-decoration,
+	.nebula-search input::-webkit-search-cancel-button,
 	input.nebula-search::-webkit-search-decoration,
 	input.nebula-search::-webkit-search-cancel-button {display: none;}
-	li.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: #999;}
-	li.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: #999;}
-	li.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: transparent;}
-	li.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: transparent;}
-	li.nebula-search input:hover,
-	li.nebula-search input.hover,
+	.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: #999;}
+	.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: #999;}
+	.nebula-search input:-moz-placeholder, input.nebula-search:-moz-placeholder {color: transparent;}
+	.nebula-search input::-webkit-input-placeholder, input.nebula-search::-webkit-input-placeholder {color: transparent;}
+	.nebula-search input:hover,
+	.nebula-search input.hover,
 	input.nebula-search:hover,
 	input.nebula-search.hover {background-color: #fff;}
-	li.nebula-search input:focus,
-	li.nebula-search input.focus,
+	.nebula-search input:focus,
+	.nebula-search input.focus,
 	input.nebula-search:focus,
 	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.nebula-search input.open,
+	.nebula-search input.open,
 	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	li.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
-	li.nebula-search input.focus:-moz-placeholder, input.nebula-search.focus:-moz-placeholder, li.nebula-search input.open:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
-	li.nebula-search input.focus::-webkit-input-placeholder, input.nebula-search.focus::-webkit-input-placeholder, li.nebula-search input.open::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
+	.nebula-search input.active, input.nebula-search.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0,153,216,.5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
+	.nebula-search input.focus:-moz-placeholder, input.nebula-search.focus:-moz-placeholder, .nebula-search input.open:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
+	.nebula-search input.focus::-webkit-input-placeholder, input.nebula-search.focus::-webkit-input-placeholder, .nebula-search input.open::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
 
 
 /* Nebula Wordpress main navigation style defaults */

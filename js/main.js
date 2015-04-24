@@ -126,8 +126,8 @@ jQuery.expr[':'].Contains = function(a, i, m){
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function helperFunctions(){
-	jQuery('li:even, tr:even').addClass('even');
-	jQuery('li:odd, tr:odd').addClass('odd');
+	jQuery('li:even, tr:even').not('.dataTables_wrapper tr').addClass('even');
+	jQuery('li:odd, tr:odd').not('.dataTables_wrapper tr').addClass('odd');
 	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child');
 	jQuery('li:last-child, tr:last-child').addClass('last-child');
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
@@ -469,7 +469,7 @@ function gaEventTracking(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
-		ga('send', 'event', 'External Link' + intent, linkText, destinationURL);
+		ga('send', 'event', 'External Link', linkText + intent, destinationURL);
 	});
 
 	//PDF View/Download
@@ -479,9 +479,9 @@ function gaEventTracking(){
 		var fileName = jQuery(this).attr('href');
 		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
 		if ( linkText == '' || linkText == 'Download') {
-			ga('send', 'event', 'PDF View' + intent, 'File: ' + fileName);
+			ga('send', 'event', 'PDF View', 'File: ' + fileName + intent);
 		} else {
-			ga('send', 'event', 'PDF View' + intent, 'Text: ' + linkText);
+			ga('send', 'event', 'PDF View', 'Text: ' + linkText + intent);
 		}
 	});
 
@@ -500,7 +500,7 @@ function gaEventTracking(){
 	jQuery(document).on('mousedown touch tap', 'a[href^="mailto"]', function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
-		ga('send', 'event', 'Mailto' + intent, 'Email: ' + emailAddress);
+		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
 	});
 
 	//Telephone link tracking
@@ -508,7 +508,7 @@ function gaEventTracking(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
-		ga('send', 'event', 'Click-to-Call' + intent, 'Phone Number: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber + intent);
 	});
 
 	//SMS link tracking
@@ -516,7 +516,7 @@ function gaEventTracking(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
-		ga('send', 'event', 'Click-to-Call' + intent, 'SMS to: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber + intent);
 	});
 
 	//Word copy tracking
@@ -534,9 +534,9 @@ function gaEventTracking(){
 		var phonePattern = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;
 		emailPhone = jQuery.trim(words.join(' '));
 		if ( emailPattern.test(emailPhone) ) {
-			ga('send', 'event', 'Contact (Intent)', 'Copied email: ' + emailPhone);
+			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone + ' (Intent)');
 		} else if ( phonePattern.test(emailPhone) ) {
-			ga('send', 'event', 'Click-to-Call (Intent)', 'Copied phone: ' + emailPhone);
+			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone + ' (Intent)');
 		}
 
 		if ( copyCount < 13 ) {
@@ -813,7 +813,7 @@ function pageSuggestion(){
 		jQuery(document).on('mousedown touch tap', 'a.suggestion', function(e){
 			var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 			var suggestedPage = jQuery(this).text();
-			ga('send', 'event', 'Page Suggestion', 'Click' + intent, 'Suggested Page: ' + suggestedPage);
+			ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage + intent);
 		});
 	}
 }
