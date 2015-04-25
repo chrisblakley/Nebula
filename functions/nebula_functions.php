@@ -1225,8 +1225,6 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 		libxml_clear_errors();
 		libxml_use_internal_errors($use_errors);
 
-		var_dump( $xml );
-
 		if ( $xml ) {
 			$cache_static = fopen($cache_file, 'w');
 			fwrite($cache_static, $xml); //Trying to store SimpleXMLElement in the file only makes a few spaces... Strings work though. Maybe store the array in this or something?
