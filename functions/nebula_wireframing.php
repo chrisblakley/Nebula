@@ -230,6 +230,10 @@ function wireframe_bar(){
 //Top header for each component
 function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
+	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
+		return false;
+	}
+
 	if ( 1==2 ) { //@TODO "Nebula" 0: If there are more than one comments
 		$comment_icon = 'fa-comments';
 	} elseif ( 1==2 ) { //@TODO "Nebula" 0: If there is only one comment
@@ -253,12 +257,18 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
 //Top header for each component (with opening .fpo div)
 function fpo_component_start($component='Component', $icon='fa-cube'){
+	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
+		return false;
+	}
 	fpo_component($component, $icon, '');
 	echo '<div class="fpo clearfix">';
 }
 
 //Closes .fpo div (from fpo_component_start)
 function fpo_component_end(){
+	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
+		return false;
+	}
 	echo '</div><!-- /fpo -->';
 }
 

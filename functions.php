@@ -276,6 +276,11 @@ function enqueue_nebula_admin() {
 }
 
 
+//If Nebula wireframing functions don't exist, return false.
+if ( !function_exists('fpo') ) { function fpo(){ return false; }}
+if ( !function_exists('fpo_component') ) { function fpo_component(){ return false; }}
+if ( !function_exists('fpo_component_start') ) { function fpo_component_start(){ return false; }}
+if ( !function_exists('fpo_component_end') ) { function fpo_component_end(){ return false; }}
 
 
 /*====================================================

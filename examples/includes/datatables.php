@@ -1,9 +1,26 @@
 <script>
 	jQuery(window).on('load', function(){
 		setTimeout(function(){
-			jQuery('#example').dataTable();
+			jQuery('#example').DataTable({
+				"aaSorting": [[5, "desc"]], //Default sort (column number)
+				"aLengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
+				"iDisplayLength": 5, //Default entries shown (Does NOT need to match aLengthMenu).
+				"oLanguage": {"sSearch": ""}, //"Search:" label text.
+				"aoColumns": [ //Column Options. Change column comments to headers for easy reference.
+					/* Name */   		{"sWidth": "20%"}, //Set a specific width for this column.
+					/* Position */  	{},
+					/* Office */  		{},
+					/* Age */  			{},
+					/* Start Date */ 	{},
+					/* Salary */  		{},
+					/* Extra Example */ //{"sWidth": "15%", "iDataSort": 8}, //Use the data in column 6 for the sort of this column.
+					/* Extra Example */ //{"bVisible": false}, //Hide this column
+				]
+			});
+
+			jQuery('.dataTables_filter input').attr('placeholder', 'Search');
 		}, 3000);
-	});	
+	});
 </script>
 
 <div class="dataTables_wrapper">
@@ -18,7 +35,7 @@
 	            <th>Salary</th>
 	        </tr>
 	    </thead>
-	
+
 	    <tfoot>
 	        <tr>
 	            <th>Name</th>
@@ -29,7 +46,7 @@
 	            <th>Salary</th>
 	        </tr>
 	    </tfoot>
-	
+
 	    <tbody>
 	        <tr>
 	            <td>Tiger Nixon</td>

@@ -570,10 +570,12 @@ h2.articles-by {padding-top: 0;}
 		.xoxo ul.menu li.menu-item ul.sub-menu {/* padding-left: 20px; */}
 			.xoxo ul.menu li.menu-item ul.sub-menu li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid #95d600;}
 
+	li.widget_archive label {display: none;}
+
 	li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
 
 	/* Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list. */
-	.xoxo .tagcloud a {margin: 8px 3px 0 0; padding: 5px 7px; border-radius: 5px; background-color: rgba(0, 152, 215, 0.1); color: #0098d7; font-size: 12px !important;}
+	.xoxo .tagcloud a {display: inline-block; margin: 6px 3px 0 0; padding: 1px 8px; border-radius: 5px; background-color: rgba(0, 152, 215, 0.1); color: #0098d7; font-size: 12px !important;}
 		.xoxo .tagcloud a:hover,
 		.xoxo .tagcloud a.hover,
 		.xoxo .tagcloud a:focus {background-color: rgba(0, 152, 215, 0.25); color: #0098d7;}

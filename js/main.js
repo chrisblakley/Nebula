@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
-	facebookSDK();
+	//facebookSDK(); //Uncomment to enable Facebook Connect functionality.
 	conditionalJSLoading();
 
 	//Init Custom Functions

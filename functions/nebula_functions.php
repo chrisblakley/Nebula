@@ -1263,6 +1263,9 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 
 function vimeo_meta($videoID) {
 	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+	if ( !$xml ) {
+		return 'A Vimeo API error occurred.';
+	}
 	$GLOBALS['vimeo_meta']['id'] = $videoID;
 	$GLOBALS['vimeo_meta']['title'] = $xml->video->title;
 	$GLOBALS['vimeo_meta']['safetitle'] = str_replace(" ", "-", $GLOBALS['vimeo_meta']['title']);
@@ -1279,6 +1282,9 @@ function vimeo_meta($videoID) {
 
 function youtube_meta($videoID) {
 	$xml = simplexml_load_string(file_get_contents("https://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+	if ( !$xml ) {
+		return 'A Youtube API error occurred.';
+	}
 	$GLOBALS['youtube_meta']['origin'] = nebula_url_components('basedomain');
 	$GLOBALS['youtube_meta']['id'] = $videoID;
 	$GLOBALS['youtube_meta']['title'] = $xml->title;
