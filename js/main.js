@@ -44,6 +44,11 @@ jQuery(document).ready(function() {
 		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ) {
 			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 		}
+		jQuery('a').each(function(){
+			if ( jQuery(this).attr('href') != '#' ) {
+				jQuery(this).attr('target', '_parent');
+			}
+		});
 	}
 
 	if ( jQuery('body').hasClass('search-no-results') || jQuery('body').hasClass('error404') ) {

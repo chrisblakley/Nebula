@@ -121,6 +121,7 @@ function register_nebula_settings() {
 
 	register_setting('nebula_settings_group', 'nebula_wireframing');
 	register_setting('nebula_settings_group', 'nebula_admin_bar');
+	register_setting('nebula_settings_group', 'nebula_author_bio_pages');
 	register_setting('nebula_settings_group', 'nebula_comments');
 	register_setting('nebula_settings_group', 'nebula_disqus_shortname');
 	register_setting('nebula_settings_group', 'nebula_wp_core_updates_notify');
@@ -519,6 +520,18 @@ function nebula_settings_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_bar')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Author Bio Pages&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_author_bio_pages">
+							<option value="default" <?php selected('default', get_option('nebula_author_bio_pages')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_author_bio_pages')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_author_bio_pages')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Allow authors to have bio pages that show their post archives. If disabled, it attempts to redirect to an About Us page. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 
