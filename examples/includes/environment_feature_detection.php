@@ -363,7 +363,7 @@
 			<?php echo ucwords($browser_name); ?> <?php echo $GLOBALS['browser_detect']['browser_math_number']; ?><br/>
 			<strong>Rendering Engine:</strong> <?php echo ucwords($GLOBALS['browser_detect']['engine_data'][0]); ?><br/>
 		</p>
-		<pre class="browservardump hidden"><?php var_dump($GLOBALS['browser_detect']); ?></pre>
+		<pre class="browservardump hidden"><?php //var_dump($GLOBALS['browser_detect']); ?></pre>
 
 
 		<h3>Features</h3>

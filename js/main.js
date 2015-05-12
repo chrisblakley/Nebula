@@ -605,7 +605,7 @@ function conversionTracker(conversionpage) {
 		conversionpage = 'thanks.html';
 	}
 
-	var  iframe = document.createElement('iframe');
+	var iframe = document.createElement('iframe');
 	iframe.style.width = '0px';
 	iframe.style.height = '0px';
 	document.body.appendChild(iframe);
@@ -624,9 +624,9 @@ function googlePlusCallback(jsonParam) {
 }
 
 function mmenus() {
-	//console.log('mmenus called');
+	console.log('mmenus called');
 	if ( 'mmenu' in jQuery ) {
-		//console.log('mmenus in jquery');
+		console.log('mmenus in jquery');
 		jQuery("#mobilenav").mmenu({
 		    //Options
 		    "offCanvas": {
@@ -648,13 +648,13 @@ function mmenus() {
 				"selected": "current-menu-item"
 			}
 		}).on('opening.mm', function(){ //When mmenu has started opening
-			//console.log('opening mmenu');
+			console.log('opening mmenu');
 			jQuery('a.mobilenavtrigger i').removeClass('fa-bars').addClass('fa-times');
 		}).on('opened.mm', function(){ //After mmenu has finished opening
 			history.replaceState(null, document.title, location);
 			history.pushState(null, document.title, location);
 		}).on('closing.mm', function(){ //When mmenu has started closing
-			//console.log('closing mmenu');
+			console.log('closing mmenu');
 			jQuery('a.mobilenavtrigger i').removeClass('fa-times').addClass('fa-bars');
 		}).on('closed.mm', function(){ //After mmenu has finished closing
 			//Functions after closed.
@@ -1412,7 +1412,7 @@ function conditionalJSLoading() {
 		}).fail(function(){
 			ga('send', 'event', 'Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
 		});
-		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
 	}
 
 	//Only load maskedinput.js library if phone or bday field exists.
@@ -1433,7 +1433,7 @@ function conditionalJSLoading() {
 		}).fail(function(){
 			ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
 		});
-		Modernizr.load(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
 
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-4.closure.js').done(function(){
 			//Do something
@@ -1443,9 +1443,27 @@ function conditionalJSLoading() {
 	}
 
 	if ( jQuery('.flag').is('*') ) {
-		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/css/flags.css');
 	}
 } //end conditionalJSLoading()
+
+
+//Dynamically load CSS files using JS
+function nebulaLoadCSS(url){
+	if ( document.createStyleSheet ) {
+	    try { document.createStyleSheet(url); } catch (e) {
+		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
+	    }
+	} else {
+	    var css;
+	    css = document.createElement('link');
+	    css.rel = 'stylesheet';
+	    css.type = 'text/css';
+	    css.media = "all";
+	    css.href = url;
+	    document.getElementsByTagName("head")[0].appendChild(css);
+	}
+}
 
 
 function dataTablesActions(){
