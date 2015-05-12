@@ -301,9 +301,8 @@ ul.bxslider {}
    Header Area
    ========================================================================== */
 
-/* .pointerevents is only added with the dev version of Modernizr! */
-.pointerevents #fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	.pointerevents.mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
+#fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	.mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
 
 .mobilenavcon {display: none;}
 	a.directions div {line-height: 12px; padding-left: 35px;}
@@ -668,7 +667,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 .clearsearch {text-align: center; margin-top: 20px;}
 	.clearsearch a {color: #a36d6d;} /* May not need to style this color. */
 .mm-menu li.current_page_item {background: rgba(255, 255, 255, 1); font-weight: bold; color: #000;}
-	.mm-menu li.current_page_item a:not(.mm-subopen):before {content: "\f138"; font-family: "FontAwesome"; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
+	.mm-menu li.current_page_item a:not(.mm-next):before {content: "\f138"; font-family: "FontAwesome"; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
 .mm-listview .mm-next {width: 90px;} /* New for v5.0+ */
 	.mm-listview .mm-next:hover,
 	.mm-listview .mm-next.hover {background: rgba(0, 0, 0, 0.05);}

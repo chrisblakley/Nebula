@@ -51,7 +51,7 @@ function register_nebula_styles() {
 	wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700', array(), null, 'all');
 	wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null, 'all');
 	wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6', 'all');
-	wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0', 'all'); //Only useful for 12 col primary, entypo is also re-enabled
+	wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0', 'all'); //Only useful for 12 col primary
 	wp_register_style('nebula-font_awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css', array(), '4.3.0', 'all');
 	wp_register_style('nebula-mmenu', '//cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.0.4/css/jquery.mmenu.all.css', array(), '5.0.4', 'all');
 	//wp_register_style('nebula-bxslider', get_template_directory_uri() . '/css/jquery.bxslider.css', array(), '4.1.2', 'none'); //bxSlider is conditionally loaded via main.js when needed.
@@ -177,7 +177,7 @@ function enqueue_nebula_frontend() {
 	//wp_enqueue_style('nebula-open_sans_local'); //Use this to use a local copy of Open Sans
 	wp_enqueue_style('nebula-gumby');
 	wp_enqueue_style('nebula-mmenu');
-	wp_enqueue_style('nebula-font_awesome'); //Font-Awesome can be dynamically loaded with JS (with some exceptions).
+	wp_enqueue_style('nebula-font_awesome');
 	wp_enqueue_style('nebula-main');
 
 	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
@@ -190,11 +190,10 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_script('nebula-jquery_ui');
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
-	wp_enqueue_script('nebula-modernizr_dev');
-	//wp_enqueue_script('nebula-modernizr'); //@TODO "Libraries" 1: Switch to this modernizr when launching (if not using advanced polyfills)
+	//wp_enqueue_script('nebula-modernizr_dev');
+	wp_enqueue_script('nebula-modernizr'); //@TODO "Libraries" 1: Switch to this modernizr when launching (if not using advanced polyfills)
 
 	wp_enqueue_script('nebula-mmenu');
-	//wp_enqueue_script('nebula-supplementr');
 	//wp_enqueue_script('nebula-cssbs');
 	//wp_enqueue_script('nebula-doubletaptogo');
 

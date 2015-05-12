@@ -10,7 +10,8 @@ jQuery(document).ready(function() {
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
-	//facebookSDK(); //Uncomment to enable Facebook Connect functionality.
+	facebookSDK();
+	//facebookConnect(); //@TODO "Social" 1: Uncomment here to enable Facebook Connect.
 	conditionalJSLoading();
 
 	//Init Custom Functions
@@ -102,8 +103,6 @@ jQuery(document).ready(function() {
 
 jQuery(window).on('load', function() {
 
-	detectIconFonts();
-
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
 	jQuery('.unhideonload').removeClass('hidden');
@@ -148,87 +147,8 @@ function helperFunctions(){
 } //end helperFunctions()
 
 
-//Create Facebook functions
-function facebookSDK() {
-	window.fbAsyncInit = function() { //This is called once the Facebook SDK is initialized (from the footer)
-		FB.init({
-			appId: social['facebook_app_id'],
-			channelUrl: bloginfo['template_directory'] + '/includes/channel.php',
-			status: true,
-			xfbml: true
-		});
-
-		window.FBuser = '';
-		window.FBstatus = false;
-		checkFacebookStatus();
-
-		//Facebook Likes
-		FB.Event.subscribe('edge.create', function(href, widget) {
-			var currentPage = jQuery(document).attr('title');
-			ga('send', {
-				'hitType': 'social',
-				'socialNetwork': 'Facebook',
-				'socialAction': 'Like',
-				'socialTarget': href,
-				'page': currentPage
-			});
-			ga('send', 'event', 'Social', 'Facebook Like', {
-				'dimension1': 'Like'
-			});
-		});
-
-		//Facebook Unlikes
-		FB.Event.subscribe('edge.remove', function(href, widget) {
-			var currentPage = jQuery(document).attr('title');
-			ga('send', {
-				'hitType': 'social',
-				'socialNetwork': 'Facebook',
-				'socialAction': 'Unlike',
-				'socialTarget': href,
-				'page': currentPage
-			});
-			ga('send', 'event', 'Social', 'Facebook Unlike', {
-				'dimension1': 'Unlike'
-			});
-		});
-
-		//Facebook Send/Share
-		FB.Event.subscribe('message.send', function(href, widget) {
-			var currentPage = jQuery(document).attr('title');
-			ga('send', {
-				'hitType': 'social',
-				'socialNetwork': 'Facebook',
-				'socialAction': 'Send',
-				'socialTarget': href,
-				'page': currentPage
-			});
-			ga('send', 'event', 'Social', 'Facebook Share', {
-				'dimension1': 'Share'
-			});
-		});
-
-		//Facebook Comments
-		FB.Event.subscribe('comment.create', function(href, widget) {
-			var currentPage = jQuery(document).attr('title');
-			ga('send', {
-				'hitType': 'social',
-				'socialNetwork': 'Facebook',
-				'socialAction': 'Comment',
-				'socialTarget': href,
-				'page': currentPage
-			});
-			ga('send', 'event', 'Social', 'Facebook Comment', {
-				'dimension1': 'Comment'
-			});
-		});
-	};
-
-	jQuery(document).on('click touch tap', '.facebook-connect', function(){
-		facebookLoginLogout();
-		return false;
-	});
-
-	//Load the SDK asynchronously
+//Load the SDK asynchronously
+function facebookSDK(){
 	(function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) return;
@@ -236,6 +156,91 @@ function facebookSDK() {
 		js.src = "//connect.facebook.net/en_GB/all.js";
 		fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'facebook-jssdk'));
+}
+
+//Facebook Connect functions
+function facebookConnect(){
+	if ( social['facebook_app_id'] ) {
+		window.fbAsyncInit = function(){
+			FB.init({
+				appId: social['facebook_app_id'],
+				channelUrl: bloginfo['template_directory'] + '/includes/channel.php',
+				status: true,
+				xfbml: true
+			});
+
+			window.FBuser = '';
+			window.FBstatus = false;
+			checkFacebookStatus();
+
+			//Facebook Likes
+			FB.Event.subscribe('edge.create', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Like',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Like', {
+					'dimension1': 'Like'
+				});
+			});
+
+			//Facebook Unlikes
+			FB.Event.subscribe('edge.remove', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Unlike',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Unlike', {
+					'dimension1': 'Unlike'
+				});
+			});
+
+			//Facebook Send/Share
+			FB.Event.subscribe('message.send', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Send',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Share', {
+					'dimension1': 'Share'
+				});
+			});
+
+			//Facebook Comments
+			FB.Event.subscribe('comment.create', function(href, widget) {
+				var currentPage = jQuery(document).attr('title');
+				ga('send', {
+					'hitType': 'social',
+					'socialNetwork': 'Facebook',
+					'socialAction': 'Comment',
+					'socialTarget': href,
+					'page': currentPage
+				});
+				ga('send', 'event', 'Social', 'Facebook Comment', {
+					'dimension1': 'Comment'
+				});
+			});
+		};
+
+		jQuery(document).on('click touch tap', '.facebook-connect', function(){
+			facebookLoginLogout();
+			return false;
+		});
+	} else {
+		jQuery('.facebook-connect').remove();
+	}
 }
 
 //Connect to Facebook without using Facebook Login button
@@ -619,7 +624,9 @@ function googlePlusCallback(jsonParam) {
 }
 
 function mmenus() {
+	//console.log('mmenus called');
 	if ( 'mmenu' in jQuery ) {
+		//console.log('mmenus in jquery');
 		jQuery("#mobilenav").mmenu({
 		    //Options
 		    "offCanvas": {
@@ -641,11 +648,13 @@ function mmenus() {
 				"selected": "current-menu-item"
 			}
 		}).on('opening.mm', function(){ //When mmenu has started opening
+			//console.log('opening mmenu');
 			jQuery('a.mobilenavtrigger i').removeClass('fa-bars').addClass('fa-times');
 		}).on('opened.mm', function(){ //After mmenu has finished opening
 			history.replaceState(null, document.title, location);
 			history.pushState(null, document.title, location);
 		}).on('closing.mm', function(){ //When mmenu has started closing
+			//console.log('closing mmenu');
 			jQuery('a.mobilenavtrigger i').removeClass('fa-times').addClass('fa-bars');
 		}).on('closed.mm', function(){ //After mmenu has finished closing
 			//Functions after closed.
@@ -675,7 +684,6 @@ function mmenus() {
 				}
 			}, false);
 		}
-
 	}
 } //end mmenus()
 
@@ -1387,8 +1395,6 @@ var waitForFinalEvent = (function () {
 //This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading() {
 
-	detectIconFonts();
-
 	//Only load Twitter if Twitter wrapper exists.
 	if ( jQuery('#twittercon').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
@@ -1440,24 +1446,6 @@ function conditionalJSLoading() {
 		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
 	}
 } //end conditionalJSLoading()
-
-
-//These detect Font Awesome and Entypo usage via classes. This will not detect usage with font-family CSS (only known detection method is resource-heavy).
-function detectIconFonts(){
-	var loadedFonts = [];
-	loadedFonts.Entypo = 0;
-	loadedFonts.FontAwesome = 1;
-
-	if ( jQuery('i.fa').is('*') && loadedFonts.Entypo == 0 ) {
-		Modernizr.load('//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css');
-		loadedFonts.FontAwesome = 1;
-	}
-
-	if ( jQuery('i[class^="icon-"], i[class*=" icon-"]').is('*') && loadedFonts.FontAwesome == 0 ) {
-		Modernizr.load(bloginfo['template_directory'] + '/css/entypo.css'); //Note this is supplemental to gumby.css
-		loadedFonts.Entypo = 1;
-	}
-}
 
 
 function dataTablesActions(){
