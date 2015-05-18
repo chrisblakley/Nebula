@@ -624,9 +624,7 @@ function googlePlusCallback(jsonParam) {
 }
 
 function mmenus() {
-	console.log('mmenus called');
 	if ( 'mmenu' in jQuery ) {
-		console.log('mmenus in jquery');
 		jQuery("#mobilenav").mmenu({
 		    //Options
 		    "offCanvas": {
@@ -638,26 +636,29 @@ function mmenus() {
 		    	"search": true,
 		    	"placeholder": 'Search',
 		    	"noResults": "No navigation items found.",
-		    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results
+		    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
 		    },
 		    "counters": true, //Display count of sub-menus
-		    "classes": "mm-light mm-slide" //Theming and open effects
+		    "extensions": ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
 		}, {
 			//Configuration
 			"classNames": {
 				"selected": "current-menu-item"
 			}
-		}).on('opening.mm', function(){ //When mmenu has started opening
-			console.log('opening mmenu');
+		});
+
+		jQuery("#mobilenav").data('mmenu').bind('opening', function(){
+			//When mmenu has started opening
 			jQuery('a.mobilenavtrigger i').removeClass('fa-bars').addClass('fa-times');
-		}).on('opened.mm', function(){ //After mmenu has finished opening
+		}).bind('opened', function(){
+			//After mmenu has finished opening
 			history.replaceState(null, document.title, location);
 			history.pushState(null, document.title, location);
-		}).on('closing.mm', function(){ //When mmenu has started closing
-			console.log('closing mmenu');
+		}).bind('closing', function(){
+			//When mmenu has started closing
 			jQuery('a.mobilenavtrigger i').removeClass('fa-times').addClass('fa-bars');
-		}).on('closed.mm', function(){ //After mmenu has finished closing
-			//Functions after closed.
+		}).bind('closed', function(){
+			//After mmenu has finished closing
 		});
 
 		jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');

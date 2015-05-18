@@ -23,7 +23,7 @@
 	//$feed = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=$username&count=$number_tweets&include_rts=$include_retweets"; //Single Username Feed
 	$feed = "https://api.twitter.com/1.1/lists/statuses.json?slug=$listname&owner_screen_name=$username&count=$number_tweets&include_rts=$include_retweets"; //List
 
-	$bearer = $_GLOBALS['nebula_bearer']; //@TODO "Social" 2: Replace $nebula_bearer variable your bearer token (string)!
+	$bearer = nebula_settings_conditional_text('nebula_twitter_bearer_token', '');
 
 	$cache_file = dirname(__FILE__) . '/cache/twitter-cache';
 	$interval = 600; //In seconds. Ten minutes = 600
