@@ -25,6 +25,19 @@ get_header(); ?>
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<h1 class="entry-title"><?php the_title(); ?></h1>
+
+					<div class="entry-meta">
+						<span class="nebulasocialcon">
+			        		<?php
+				        		if ( is_dev() ) {
+					        		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 1);
+				        		} else {
+					        		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
+				        		}
+				        	?>
+			        	</span>
+					</div>
+
 					<div class="entry-content">
 						<?php the_content(); ?>
 

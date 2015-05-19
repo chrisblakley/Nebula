@@ -255,6 +255,9 @@ p,
 .tab-nav > li > li > a,
 .tab-nav > li > a {font-family: "Open Sans", sans-serif;}
 
+.pinterest-pin a {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
+#___plusone_0 {width: 60px !important;}
+
 /* Allows tab text to wrap to a new line */
 .tab-nav > li.active > a {height: auto; line-height: inherit;}
     .tab-nav > li > a {height: auto; line-height: inherit; padding-top: 7px; padding-bottom: 7px;}
@@ -462,8 +465,8 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 	.nebulasocialcon {} /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */
 		.sharing-links {display: block; margin-top: 10px;}
 			.sharing-links.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
-			.share-button {display: inline-block; margin-right: 10px;}
-				.share-button.share-facebook .fb_iframe_widget span {vertical-align: inherit !important;}
+			.nebula-social-button {display: inline-block; margin-right: 10px;}
+				.nebula-social-button.facebook-share .fb_iframe_widget span {vertical-align: inherit !important;}
 
 .entry-social {}
 	.entry-social ul {}

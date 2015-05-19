@@ -503,15 +503,13 @@ function nebula_meta($meta, $secondary=1) {
 		$postlink = ( is_single() ) ? '' : get_the_permalink();
 		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
 	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ) {
-		echo '<div class="sharing-links">';
-		nebula_social(array('facebook', 'twitter', 'google+', 'pinterest'), 0, 'share'); //@TODO "Nebula" 0: Remove pinterest after testing
-		echo '</div><!-- /sharing-links -->';
+		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
 	}
 }
 
 
-function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0, $action='default', $layout='horizontal', $follow=null) {
 
+function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
 	if ( is_string($networks) ) { //if $networks is a string, create an array for the string.
 		$networks = array($networks);
 	} elseif ( is_int($networks) && ($networks == 1 || $networks == 0) ) { //If it is an integer of 1 or 0, then set it to $counts
@@ -522,118 +520,117 @@ function nebula_social($networks=array('facebook', 'twitter', 'google+'), $count
 	}
 	$networks = array_map('strtolower', $networks); //Convert $networks to lower case for more flexible string matching later.
 
-	//Determine whether to show the counts (and if they should be above or beside).
-	if ( ($counts && $layout == 'vertical') ) { //Create count syntax to show or hide counts @TODO "Nebula" 0: Add Pinterest
-		$show_counts = array('facebook' => 'box_count', 'twitter' => 'data-count="none"', 'google_plus' => 'vertical-bubble', 'linkedin' => 'data-counter="right"', 'pinterest' => 'above'); //Show count bubbles above
-	} elseif ( $counts != 0 ) {
-		$show_counts = array('facebook' => 'button_count', 'twitter' => '', 'google_plus' => 'bubble', 'linkedin' => 'data-counter="top"', 'pinterest' => 'beside'); //Show count bubbles beside
-	} else {
-		$show_counts = array('facebook' => 'button', 'twitter' => 'data-count="none"', 'google_plus' => 'none', 'linkedin' => '', 'pinterest' => 'none'); //Hide count bubbles
-	}
-
-	$faces = ( $follow ) ? 'true' : 'false';
-
-	//Determine which action to uses (Like, Share, Follow, etc.)
-	/*
-		Checklist:
-			- Twitter Share
-			- Twitter Follow
-			- Twitter Hashtag
-			- Twitter Mention
-
-			- Google+ +1
-			- Google+ Share
-			- Google+ Follow
-
-			- LinkedIn Share
-			- LinkedIn Follow
-
-			- Pinterest Pin It
-			- Pinterest Follow
-
-	*/
-	if ( $action == 'share' ) {
-		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-		$network_action_secondary = array('facebook' => 'fb-share-button', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-	} elseif ( $action == 'follow' ) {
-		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-	} elseif ( $action == 'hashtag' ) {
-		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-		//@TODO: Pass which hashtag to use - use $follow. Will need some kind of default if empty!
-	} elseif ( $action == 'follow' ) {
-		$network_action_primary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-		//@TODO: Pass which "thing" to follow (company, username) - use $follow. Will need some kind of default if empty!
-	} elseif ( $action == 'both' ) {
-		$network_action_primary = array('facebook' => 'data-action="like" data-show-faces="' . $faces . '" data-share="true"', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-		$network_action_secondary = array('facebook' => '', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-	} else {
-		$network_action_primary = array('facebook' => 'data-action="like" data-show-faces="' . $faces . '" data-share="false"', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => ''); //Like, Tweet, +1
-		$network_action_secondary = array('facebook' => 'fb-like', 'twitter' => '', 'google_plus' => '', 'linkedin' => '', 'pinterest' => '');
-	}
-
-
-
-	//@TODO "Nebula" 0: Only load the associated scripts once. Check if the function exists first.
-
+	echo '<div class="sharing-links">';
 	foreach ( $networks as $network ) {
 		//Facebook
 		if ( in_array($network, array('facebook', 'fb')) ) {
-			echo '<div class="share-button share-facebook"><div class="' . $network_action_secondary['facebook'] . '" data-href="' . get_page_link() . '" data-layout="' . $show_counts['facebook'] . '" ' . $network_action_primary['facebook'] . '></div></div>';
+			nebula_facebook_share($counts);
 		}
 
 		//Twitter
 		if ( in_array($network, array('twitter')) ) {
-			echo '<div class="share-button share-twitter"><a class="twitter-share-button" href="https://twitter.com/share" data-url="' . get_page_link() . '" ' . $show_counts['twitter'] . '>Tweet</a></div>';
-			if ( 1==1 ) {
-				echo '<script type="text/javascript">window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));</script>';
-			}
+			nebula_twitter_tweet($counts);
 		}
 
 		//Google+
 		if ( in_array($network, array('google_plus', 'google', 'googleplus', 'google+', 'g+', 'gplus', 'g_plus', 'google plus', 'google-plus', 'g-plus')) ) {
-			echo '<div class="share-button share-google-plus"><div class="g-plusone" data-href="' . get_page_link() . '" data-size="medium" data-annotation="' . $show_counts['google_plus'] . '"></div></div>';
-			if ( 1==1 ) {
-				echo '<script src="https://apis.google.com/js/platform.js" async defer></script>';
-			}
+			nebula_google_plus($counts);
 		}
 
 		//LinkedIn
 		if ( in_array($network, array('linkedin', 'li', 'linked-in', 'linked_in')) ) {
-			if ( 1==1 ) {
-				echo '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>';
-			}
-			echo '<script type="IN/Share" data-url="' . get_page_link() . '" ' . $show_counts['linkedin'] . '></script>';
+			nebula_linkedin_share($counts);
 		}
 
 		//Pinterest
 		if ( in_array($network, array('pinterest', 'pin')) ) {
-			if ( has_post_thumbnail() ) {
-				$featured_image = get_the_post_thumbnail();
-			} else {
-				$featured_image = get_template_directory_uri() . '/images/meta/og-thumb.png';
-			}
-			echo '<div class="share-button share-pinterest"><a href="https://www.pinterest.com/pin/create/button/?url=' . get_page_link() . '&media=' . $featured_image . '&description=' . urlencode(get_the_title()) . '" data-pin-do="buttonPin" data-pin-config="' . $show_counts['pinterest'] . '"><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" /></a></div>';
-			if ( 1==1 ) {
-				echo "<script type='text/javascript'>(function(d){var f = d.getElementsByTagName('SCRIPT')[0], p = d.createElement('SCRIPT'); p.type = 'text/javascript'; p.async = true; p.src = '//assets.pinterest.com/js/pinit.js'; f.parentNode.insertBefore(p, f);}(document));</script>";
-			}
+			nebula_pinterest_pin($counts);
 		}
 	}
+	echo '</div><!-- /sharing-links -->';
+}
 
-	/*
-		Parameters needed:
-			- Button variations
-				- Facebook Like, Share, or Both?
-				- Facebook layout: Standard, Box, Button
-				- Facebook: Friends Faces?
-				- Twitter: Tweet, Follow, Hashtag, or Mention
-				- Google+: +1, Share, Follow
-				- LinkedIn: Share, Follow (follow needs a company page name)
-				- Pinterest: Pin It, Follow (follow needs a company page name)
-	*/
-} //End nebula_social()
+/*
+	Social Button Functions
+	//@TODO "Nebula" 0: Eventually upgrade these to support vertical count bubbles as an option.
+*/
+
+function nebula_facebook_share($counts=0){?>
+	<div class="nebula-social-button facebook-share">
+		<div class="fb-share-button" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 ) ? 'button_count' : 'button'; ?>"></div>
+	</div>
+<?php }
+
+
+function nebula_facebook_like($counts=0){ ?>
+	<div class="nebula-social-button facebook-like">
+		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 ) ? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
+	</div>
+<?php }
+
+function nebula_facebook_both($counts=0){ ?>
+	<div class="nebula-social-button facebook-both">
+		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 ) ? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
+	</div>
+<?php }
+
+$nebula_twitter_tweet = 0;
+function nebula_twitter_tweet($counts=0){ ?>
+	<div class="nebula-social-button twitter-tweet">
+		<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 ) ? '': 'data-count="none"'; ?>>Tweet</a>
+		<?php if ( $nebula_twitter_tweet == 0 ) : ?>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+		<?php endif; ?>
+	</div>
+<?php
+	$nebula_twitter_tweet = 1;
+}
+
+$nebula_google_plus = 0;
+function nebula_google_plus($counts=0){ ?>
+	<div class="nebula-social-button google-plus-plus-one">
+		<div class="g-plusone" data-size="medium" <?php echo ( $counts != 0 ) ? '' : 'data-annotation="none"'; ?>></div>
+		<?php if ( $nebula_google_plus == 0 ) : ?>
+			<script src="https://apis.google.com/js/platform.js" async defer></script>
+		<?php endif; ?>
+	</div>
+<?php
+	$nebula_google_plus = 1;
+}
+
+$nebula_linkedin_share = 0;
+function nebula_linkedin_share($counts=0){ //@TODO "Nebula" 0: Bubble counts are not showing up... ?>
+	<div class="nebula-social-button linkedin-share">
+		<?php if ( $nebula_linkedin_share == 0 ) : ?>
+			<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
+		<?php endif; ?>
+		<script type="IN/Share" <?php echo ( $counts != 0 ) ? 'data-counter="right"' : ''; ?>></script>
+	</div>
+<?php
+	$nebula_linkedin_share = 1;
+}
+
+$nebula_pinterest_pin = 0;
+function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are not showing up...
+	if ( has_post_thumbnail() ) {
+		$featured_image = get_the_post_thumbnail();
+	} else {
+		$featured_image = get_template_directory_uri() . '/images/meta/og-thumb.png'; //@TODO "Nebula" 0: This should probably be a square? Check the recommended dimensions.
+	}
+?>
+	<div class="nebula-social-button pinterest-pin">
+		<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts != 0 ) ? 'beside' : 'none'; ?>" data-pin-color="red">
+			<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" />
+		</a>
+		<?php if ( $nebula_pinterest_pin == 0 ) : ?>
+			<script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>
+		<?php endif; ?>
+	</div>
+<?php
+	$nebula_pinterest_pin = 1;
+}
+
+
 
 
 //Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.

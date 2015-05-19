@@ -21,7 +21,7 @@
 </style>
 
 <script>
-jQuery(document).ready(function() {	
+jQuery(document).ready(function() {
 	ooyalaVideo();
 
     function ooyalaVideo() {
@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
 					autoResize: true,
 					overlayClose: false
 				});
-	
+
 				jQuery(document).on('click', '.simplemodal-close', function() {
 					thismovieplayer.destroy();
 				});
@@ -48,11 +48,11 @@ jQuery(document).ready(function() {
 	}
 });
 </script>
-						
+
 <?php
 	/* Known Branding IDs and Asset IDs:
 		Branding ID: MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk
-		
+
 		Embed Code: 45cmZqNDrKn7TvtpfGa9k9fQSeyK4VaI (Avatar)
 		Embed Code: UxaXI5MzruPkO9medlrVQ9sZbgpqgMxr (Dark Knight Trailer)
 		Embed Code: llMDQ6rMWxVWbvdxs2yduVEtSrNCJUk1 (Tron Legacy Trailer)
@@ -61,10 +61,10 @@ jQuery(document).ready(function() {
 		Embed Code: 44azdwNDpSWUvfd8F30d55tXY0YH9njH (Ooyala ESP)
 	*/
 ?>
-												
+
 <script src='http://player.ooyala.com/v3/MzZiMzc1ZDUzZGVlYmMxNzA3Y2MzNjBk'></script> <!-- Branding ID here -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/simplemodal/1.4.4/jquery.simplemodal.min.js" defer></script>
-	
+
 <div id="lgVid1" class="simple_overlay">
 	<a class="closemod simplemodal-close">X</a>
 	<div id='playerwrapper'></div>
