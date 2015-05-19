@@ -341,12 +341,14 @@ function nebulaWordpressSettings() {
 	update_option('nebula_facebook_admin_ids', '');
 	update_option('nebula_google_plus_url', '');
 	update_option('nebula_twitter_url', '');
+	update_option('nebula_twitter_bearer_token', '');
 	update_option('nebula_linkedin_url', '');
 	update_option('nebula_youtube_url', '');
 	update_option('nebula_instagram_url', '');
 
 	update_option('nebula_wireframing', 'Default');
 	update_option('nebula_admin_bar', 'Default');
+	update_option('nebula_author_bio_pages', 'Default');
 	update_option('nebula_comments', 'Default');
 	update_option('nebula_disqus_shortname', '');
 	update_option('nebula_wp_core_updates_notify', 'Default');

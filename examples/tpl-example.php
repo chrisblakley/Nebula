@@ -190,8 +190,8 @@ get_header(); ?>
 						include_once('includes/bio.php');
 					} ?>
 
-					<?php if ( is_page(359) ) { //Level 4 Media Queries
-						include_once('includes/level_4_media_queries.php');
+					<?php if ( is_page(359) ) { //CSS Level 4
+						include_once('includes/css_level_4.php');
 					} ?>
 
 					<?php if (is_page(497) ) { //CSS Blending Modes
@@ -376,6 +376,10 @@ get_header(); ?>
 
 					<?php if (is_page(1280)) { //WHOIS Info
 						include_once('includes/whois_info.php');
+					} ?>
+
+					<?php if (is_page(1494)) { //WHOIS Info
+						include_once('includes/multiple_google_analytics.php');
 					} ?>
 
 					<?php

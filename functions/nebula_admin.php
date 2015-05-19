@@ -380,7 +380,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 		$dnsrecord = ( function_exists('gethostname') ) ? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
 
 		function initial_install_date(){
-			if ( get_option('nebula_initialized') != '' && (get_option('nebula_initialized') < getlastmod()) ) {
+			if ( get_option('nebula_initialized') != '' ) { //&& (get_option('nebula_initialized') < getlastmod())
 				$install_date = '<strong>' . date('F j, Y', get_option('nebula_initialized')) . '</strong> <small>@</small> <strong>' . date('g:ia', get_option('nebula_initialized')) . '</strong> <small>(Nebula Init)</small>';
 			} else {
 				$install_date = '<strong>' . date("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong> <small>(WP Detect)</small>';
