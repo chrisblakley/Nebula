@@ -334,7 +334,7 @@ function nebula_settings_page(){
 		        	<th scope="row">Site Owner&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_site_owner" value="<?php echo get_option('nebula_site_owner'); ?>" placeholder="<?php echo bloginfo('name'); ?>" />
-						<p class="helper"><small>The name of the company (or person) who this website is for.</small></p>
+						<p class="helper"><small>The name of the company (or person) who this website is for. This is used when using nebula_the_author(0) with author names disabled.</small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">

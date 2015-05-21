@@ -128,48 +128,15 @@
 			<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
 		</script>
 
-		<script>
-			//GA Error Tracking
-			if ( 1==2 ) { //This is disabled by default because it captures all JS errors, warnings, and everything (which may appear to make the site look very broken).
-				if ( window.addEventListener ) { //IE9+
-					window.addEventListener('error', function(e) {
-						if ( typeof e !== 'undefined' && typeof e.message !== 'undefined' && e.lineno != 0 ) {
-							ga('send', 'event', 'Error', 'JavaScript Error', e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
-							ga('send', 'exception', e.message, false);
-						}
-					});
-				} else { //Older Browsers
-					window.attachEvent('onerror', function(e) {
-						if ( typeof e !== 'undefined' && typeof e.message !== 'undefined' && e.lineno != 0 ) {
-							ga('send', 'event', 'Error', 'JavaScript Error', '(Older Browser): ' . e.message + ' in: ' + e.filename + ' on line ' + e.lineno);
-							ga('send', 'exception', e.message, false);
-						}
-					});
-				}
-			}
-		</script>
-
 		<?php wp_head(); ?>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
 			<div id="fb-root"></div>
 
-			<noscript><?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that could be the issue. ?>
+			<noscript>
+				<?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that could be the issue. ?>
 				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo nebula_url_components('all'); ?>&amp;t=<?php echo urlencode(get_the_title($post->ID)); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
-
-				<style>
-					<?php
-					/* ==========================================================================
-					   No-JS Event Tracking
-					   This is how we detect events in Google Analytics if users disable JavaScript. Generally using :active for links and :focus for inputs.
-					   https://developers.google.com/analytics/resources/concepts/gaConceptsTrackingOverview
-
-					   //@TODO "Nebula" 0: Come up with a function that makes this easier. Maybe function_name($selector, $pseudo, $category, $action, $label, $value); Find the minimum parameters needed for the gif.
-					   ========================================================================== */
-					?>
-					   .no-js .logocon:active {background-image: url('http://www.google-analytics.com/__utm.gif?utmac=<?php echo $GLOBALS['ga']; ?>&utmt=event&utmwv=1&utmdt=<?php urlencode(get_the_title()); ?>&utmhn=<?php echo nebula_url_components('hostname'); ?>&utmp=<?php echo nebula_url_components('filepath'); ?>&utmn=<?php echo rand(pow(10, 10-1), pow(10, 10)-1); ?><?php echo ( $_SERVER['HTTP_REFERER'] ) ? '&utmr=' . $_SERVER['HTTP_REFERER']: ''; ?>&utme=5(Logo*Click*No-JS%20clicked%20logo.)');}
-				</style>
 			</noscript>
 
 			<?php do_action('nebula_body_open'); ?>

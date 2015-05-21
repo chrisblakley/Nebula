@@ -162,8 +162,11 @@ Allow from all
 Deny from env=spambot
 
 
-#disable directory browsing
+#Disable directory browsing
 Options All -Indexes
+
+#Disable server signature
+ServerSignature Off
 
 SetEnvIfNoCase User-Agent "^libwww-perl*" block_bad_bots
 Deny from env=block_bad_bots

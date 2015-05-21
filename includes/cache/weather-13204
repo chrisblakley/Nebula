@@ -1,2 +1,53 @@
-
-			
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rss xmlns:yweather="http://xml.weather.yahoo.com/ns/rss/1.0" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" version="2.0">
+			<channel>
+		
+<title>Yahoo! Weather - Syracuse, NY</title>
+<link>http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html</link>
+<description>Yahoo! Weather for Syracuse, NY</description>
+<language>en-us</language>
+<lastBuildDate>Thu, 21 May 2015 9:52 am EDT</lastBuildDate>
+<ttl>60</ttl>
+<yweather:location city="Syracuse" region="NY" country="US"/>
+<yweather:units temperature="F" distance="mi" pressure="in" speed="mph"/>
+<yweather:wind chill="55" direction="230" speed="10"/>
+<yweather:atmosphere humidity="45" visibility="10" pressure="29.97" rising="2"/>
+<yweather:astronomy sunrise="5:33 am" sunset="8:25 pm"/>
+<image>
+<title>Yahoo! Weather</title>
+<width>142</width>
+<height>18</height>
+<link>http://weather.yahoo.com</link>
+<url>http://l.yimg.com/a/i/brand/purplelogo//uh/us/news-wea.gif</url>
+</image>
+<item>
+<title>Conditions for Syracuse, NY at 9:52 am EDT</title>
+<geo:lat>43.06</geo:lat>
+<geo:long>-76.14</geo:long>
+<link>http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html</link>
+<pubDate>Thu, 21 May 2015 9:52 am EDT</pubDate>
+<yweather:condition text="Cloudy" code="26" temp="55" date="Thu, 21 May 2015 9:52 am EDT"/>
+<description><![CDATA[
+<img src="http://l.yimg.com/a/i/us/we/52/26.gif"/><br />
+<b>Current Conditions:</b><br />
+Cloudy, 55 F<BR />
+<BR /><b>Forecast:</b><BR />
+Thu - Partly Cloudy. High: 66 Low: 46<br />
+Fri - Partly Cloudy. High: 59 Low: 38<br />
+Sat - Sunny. High: 64 Low: 48<br />
+Sun - Mostly Sunny. High: 76 Low: 55<br />
+Mon - Thunderstorms. High: 77 Low: 62<br />
+<br />
+<a href="http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html">Full Forecast at Yahoo! Weather</a><BR/><BR/>
+(provided by <a href="http://www.weather.com" >The Weather Channel</a>)<br/>
+]]></description>
+<yweather:forecast day="Thu" date="21 May 2015" low="46" high="66" text="Partly Cloudy" code="30"/>
+<yweather:forecast day="Fri" date="22 May 2015" low="38" high="59" text="Partly Cloudy" code="30"/>
+<yweather:forecast day="Sat" date="23 May 2015" low="48" high="64" text="Sunny" code="32"/>
+<yweather:forecast day="Sun" date="24 May 2015" low="55" high="76" text="Mostly Sunny" code="34"/>
+<yweather:forecast day="Mon" date="25 May 2015" low="62" high="77" text="Thunderstorms" code="4"/>
+<guid isPermaLink="false">USNY1434_2015_05_25_7_00_EDT</guid>
+</item>
+</channel>
+</rss>
+<!-- fe494.global.media.gq1.yahoo.com Thu May 21 07:28:08 PDT 2015 -->

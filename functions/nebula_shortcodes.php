@@ -374,13 +374,55 @@ function gist_shortcode($atts, $content=''){
 
 
 //Accordion
+$GLOBALS['accordion'] = 0;
 add_shortcode('accordion', 'accordion_shortcode');
 function accordion_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
+	extract( shortcode_atts(array('class' => '', 'style' => '', 'type' => 'single'), $atts) );
 
-	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
+	$return = '<div class="accordion ' . $class . ' ' . $type . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 
+	if ( $GLOBALS['accordion'] == 0 ) {
+		$return .= "<script>jQuery(document).ready(function() {
+			jQuery('.accordion-item').each(function(){
+				if ( jQuery(this).hasClass('open') ) {
+					jQuery(this).children('.accordion-content-con').slideToggle();
+					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
+				}
+			});
+			jQuery('.accordion-item').on('click touch tap', function(){
+				if ( jQuery(this).parent('.accordion').hasClass('multiple') ) {
+					jQuery(this).children('.accordion-content-con').slideToggle();
+					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
+				}
+				if ( jQuery(this).parent('.accordion').hasClass('single') ) {
+					if ( jQuery(this).hasClass('accordion-collapsed') ) {
+						jQuery(this).parent('.accordion').find('.accordion-item.accordion-expanded').children('.accordion-content-con').slideUp();
+						jQuery(this).parent('.accordion').find('.accordion-item.accordion-expanded').toggleClass('accordion-collapsed accordion-expanded');
+						jQuery(this).children('.accordion-content-con').slideToggle();
+					}
+					if ( jQuery(this).hasClass('accordion-expanded') ) {
+						jQuery(this).children('.accordion-content-con').slideUp();
+					}
+					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
+				}
+				return false;
+			});
+		});</script>";
+		$GLOBALS['accordion'] = 1;
+	}
+
+	return $return;
 } //end accordion_shortcode()
+
+//Accordion_Item
+add_shortcode('accordion_item', 'accordion_item_shortcode');
+function accordion_item_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => ''), $atts) );
+
+	$return = '<div class="accordion-item accordion-collapsed ' . $class . ' ' . $default . '" style="' . $style . '"><div class="accordion-toggle"><a href="#" class="accordion-heading">' . $title . '</a></div><div class="accordion-content-con"><div class="accordion-content">' . $content . '</div></div></div>';
+
+	return $return;
+} //end accordion_item_shortcode()
 
 
 //Bio

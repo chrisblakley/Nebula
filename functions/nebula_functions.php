@@ -39,7 +39,11 @@ if ( nebula_settings_conditional('nebula_console_css') ) {
 
 //Check for dev stylesheets
 if ( nebula_settings_conditional('nebula_dev_stylesheets') ) {
-	add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
+	if ( is_writable(get_template_directory() . '/css/dev.css') ) {
+		add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
+	} else {
+		//@TODO "Nebula" 0: Somehow need to notify that permission is denied to write files (thinking an HTML comment). Need to not do it before headers are sent, though.
+	}
 	function combine_dev_stylesheets() {
 		$file_counter = 0;
 		file_put_contents(get_template_directory() . '/css/dev.css', '/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/'); //Empty /css/dev.css
@@ -1189,6 +1193,15 @@ function currently_open() {
 	return false;
 }
 
+
+
+
+
+
+
+
+
+
 //Detect weather for Zip Code (using Yahoo! Weather)
 function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	if ( $zipcode && is_string($zipcode) && !ctype_digit($zipcode) ) { //ctype_alpha($zipcode)
@@ -1201,19 +1214,15 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	$cache_file = get_template_directory() . '/includes/cache/weather-' . $zipcode;
 	$interval = 3600; //In seconds. 1 hour = 3600
 
-	//@TODO "Nebula" 0: If file doesn't exist (because of the zipcode in name), then create the file.
-
 	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
-	$modified = filemtime($cache_file);
-
-	//var_dump(date('F j, Y', $modified));
+	$modified = ( file_exists($cache_file) ) ? filemtime($cache_file) : false;
 
 	$now = time();
 
 	global $current_weather;
 
 	//If the cache file has not been modified -or- if the time since modified date is longer than the interval -or- if forced fresh data is passed -or- if the requested zipcode is not the current stored zipcode
-	if ( !$modified || (($now-$modified) > $interval) || isset($fresh) || $zipcode != $current_weather['zip'] ) {
+	if ( !$modified || (($now-$modified) > $interval) || isset($fresh) || (isset($current_weather['zip']) && $zipcode != $current_weather['zip']) ) {
 		$use_errors = libxml_use_internal_errors(true);
 		$xml = simplexml_load_file($url);
 		if ( !$xml ) {
@@ -1224,12 +1233,14 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 
 		if ( $xml ) {
 			$cache_static = fopen($cache_file, 'w');
-			fwrite($cache_static, $xml); //Trying to store SimpleXMLElement in the file only makes a few spaces... Strings work though. Maybe store the array in this or something?
+			fwrite($cache_static, $xml->asXML());
 			fclose($cache_static);
 		}
-	} else {
-		$xml = file_get_contents($cache_file);
 
+		$current_weather['cached'] = 'New';
+	} else {
+		$xml = simplexml_load_string(file_get_contents($cache_file));
+		$current_weather['cached'] = 'Cached';
 	}
 
 	$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
@@ -1244,10 +1255,6 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
 	$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
 	$current_weather['time_seconds'] = time()-strtotime("today");
-
-	//header('Cache-Control: no-cache, must-revalidate');
-	//header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	//header('Content-type: application/json');
 
 	if ( $data && isset($current_weather[$data]) ) {
 		return $current_weather[$data];

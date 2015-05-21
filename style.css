@@ -543,18 +543,6 @@ h2.articles-by {padding-top: 0;}
 .gallery-caption {font-size: 12px;}
 
 
-/* ==========================================================================
-   Shortcode Helpers
-   ========================================================================== */
-.gist .line-numbers {font-size: 12px;}
-.gist .file-data pre,
-.gist .line-data {font-size: 12px;}
-
-.nebula-youtube {margin-bottom: 15px;}
-.nebula-vimeo {margin-bottom: 15px;}
-
-
-
 
 /* ==========================================================================
    Sidebar Area
@@ -788,7 +776,7 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 } /* End tablet media query */
 
 
-@media only screen and (max-width: 641px) {
+@media only screen and (max-width: 668px) { /* 1px larger than iPhone 6 landscape */
 
 	.author-jobtitle {display: block;}
 	.author-contact {float: none; display: block;}
@@ -801,7 +789,7 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 } /* End mobile landscape media query */
 
 
-@media only screen and (max-width: 361px) {
+@media only screen and (max-width: 376px) { /* 1px larger than iPhone 6 */
 
 	#about-the-author .author-name {display: block; padding-bottom: 15px;}
 	.author-social {margin-top: 0;}
@@ -837,6 +825,21 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 		.ttip:focus:after,
 		.ttip:focus:before {bottom: 101%; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
+.gist .line-numbers {font-size: 12px;}
+.gist .file-data pre,
+.gist .line-data {font-size: 12px;}
+
+.nebula-youtube {margin-bottom: 15px;}
+.nebula-vimeo {margin-bottom: 15px;}
+
+.accordion {position: relative; margin-top: 10px; margin-bottom: 10px;}
+	.accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; -webkit-transition: border-color 0.3s ease; transition: border-color 0.3s ease;}
+	.accordion-item	.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: 124.8%; color: #2c3e50; background-color: #fafafa; cursor: pointer;}
+	.accordion-item	.accordion-toggle .accordion-heading:before {content: "\f067"; font-family: "FontAwesome"; position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; font-size: 74%; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -o-transform: rotate(45deg); transform: rotate(45deg); -webkit-transition: all 0.3s ease; transition: all 0.3s ease;}
+		.accordion-item.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; -webkit-transform: rotate(0); -moz-transform: rotate(0); -ms-transform: rotate(0); -o-transform: rotate(0); transform: rotate(0);}
+			.accordion-item .accordion-toggle:hover .accordion-heading:before {color: #000;}
+	.accordion-item .accordion-content-con {display:none;}
+		.accordion-item .accordion-content-con .accordion-content {padding: 15px; border-top: 2px solid #e5e5e5;}
 
 /* ==========================================================================
    Helper classes

@@ -378,8 +378,16 @@ get_header(); ?>
 						include_once('includes/whois_info.php');
 					} ?>
 
-					<?php if (is_page(1494)) { //WHOIS Info
+					<?php if (is_page(1494)) { //Multiple Google Analytics
 						include_once('includes/multiple_google_analytics.php');
+					} ?>
+
+					<?php if (is_page(1517)) { //Google Analytics No-JS Events
+						include_once('includes/google_analytics_nojs_events.php');
+					} ?>
+
+					<?php if (is_page(1515)) { //Google Analytics Error Tracking
+						include_once('includes/google_analytics_error_tracking.php');
 					} ?>
 
 					<?php

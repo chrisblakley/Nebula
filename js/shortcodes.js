@@ -23,7 +23,7 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				onclick : function() {
 					ed.focus();
-					ed.selection.setContent('[accordion]CONTENT_HERE[/accordion]');
+					ed.selection.setContent('[accordion type="single"]<br/>[accordion_item title="TITLE_HERE" default="open"]CONTENT_HERE[/accordion_item]<br/>[/accordion]');
 				}
 			}),
 			ed.addButton('nebulabio', {
