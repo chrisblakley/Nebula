@@ -189,7 +189,7 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 a.nebulaframe {border: none;}
 	/* .nebulaframe.animate:hover:after {background-position-y: -24px;} */
 
-!.nebula-vmiddle {-webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;} /* Prevent blurry half-pixel centering on parent element (Note: experimental CSS Level 4 selector!) */
+!.nebula-vmiddle, .nebula-vmiddle-con {-webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;} /* Prevent blurry half-pixel centering on parent element (Note: experimental CSS Level 4 selector!) */
 	.nebula-vmiddle {position: relative; top: 50%; transform: translateY(-50%);}
 
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
