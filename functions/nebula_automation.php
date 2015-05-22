@@ -157,56 +157,77 @@ function nebulaActivation() {
 	$GLOBALS['nebula_initial_activate'] = 0;
 
 	//Check if this is the initial activation, or if initialization has been ran before (and the user is just toggling themes)
-	if ( (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-reset'])) ) {
+	if ( (get_post_meta(1, '_wp_page_template', 1) != 'tpl-homepage.php' || isset($_GET['nebula-initialized'])) ) {
 		$GLOBALS['nebula_initial_activate'] = 1;
-
-		//Show the Activation Complete message
-		add_action('admin_notices', 'nebulaActivateComplete');
-
-		//Create Homepage
-		$nebula_home = array(
-			'ID' => 1,
-			'post_type' => 'page',
-			'post_title' => 'Home',
-			'post_name' => 'home',
-			'post_content'   => "Nebula is a springboard Wordpress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other Wordpress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
-
-Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced Wordpress techniques.",
-			'post_status' => 'publish',
-			'post_author' => 1,
-			'page_template' => 'tpl-homepage.php'
-		);
-
-		//Insert the post into the database
-		wp_insert_post($nebula_home);
-
-		//Change some Wordpress settings
-		nebulaWordpressSettings(); //Removed add_action? Not sure if entirely necessary. Does 'after_switch_theme' trigger after init? Verify this works sometime.
-
+		add_action('admin_notices', 'nebulaActivateComplete'); //Queue the activation complete message
 	}
 
-	set_nebula_initialized_date();
 	return;
 }
 
 function nebulaActivateComplete(){
 	set_nebula_initialized_date();
 
-	if ( isset($_GET['nebula-reset']) ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been reset!</strong><br/>You have reset Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
-	} elseif ( $GLOBALS['nebula_initial_activate'] == 0 ) {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been re-activated!</strong><br/>Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>. <a class='reinitializenebula' href='themes.php?activated=true&nebula-reset=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a></p></div>";
-	} else {
-		echo "<div id='nebula-activate-success' class='updated'><p><strong>Nebula has been activated!</strong><br/>Permalink structure has been updated. A new Home page has been created. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.</p></div>";
-	}
+	if ( current_user_can('manage_options') ) :
+		if ( isset($_GET['nebula-initialized']) ) : //If nebula has been initialized ?>
+			<div id='nebula-activate-success' class='updated'>
+				<p>
+					<strong>Nebula has been initialized!</strong><br/>
+					You have initialized Nebula. Settings have been updated! The Home page has been updated. It has been set as the static frontpage in <a href='options-reading.php'>Settings > Reading</a>.<br/>
+					<strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.
+				</p>
+			</div>
+		<?php elseif ( $GLOBALS['nebula_initial_activate'] == 0 ) : //If Nebula is being re-activated. ?>
+			<div id='nebula-activate-success' class='updated'>
+				<p>
+					<strong>Nebula has been re-activated!</strong><br/>
+					Settings have <strong>not</strong> been changed. The Home page already exists, so it has <strong>not</strong> been updated. Make sure it is set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/><strong>Next step:</strong> Verify <a href='themes.php?page=nebula_settings'>Nebula Settings</a>.<a class='reinitializenebula' href='themes.php?activated=true&nebula-initialized=true' style='float: right; color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'><i class='fa fa-exclamation-triangle'></i> Re-initialize Nebula.</a>
+				</p>
+			</div>
+		<?php else : //If Nebula has been activated for the first time. ?>
+			<div id='nebula-activate-success' class='updated'>
+				<p>
+					<strong>Nebula has been activated!</strong><br/>
+					To run the automated Nebula Initialization process, <a class='reinitializenebula' href='themes.php?activated=true&nebula-initialized=true' style='color: #dd3d36;' title='This will reset some Wordpress Settings and all Nebula Settings!'>click here!</a>
+				</p>
+			</div>
+		<?php endif;
+	else : //If Nebula has been activated or reactivated by a non-admin. ?>
+		<div id='nebula-activate-success' class='updated'>
+			<p>
+				<strong>Nebula has been activated!</strong><br/>
+				You have activated Nebula. Contact the site administrator to run the automated Nebula initialization processes.
+			</p>
+		</div>
+	<?php endif;
 }
 
-//When Nebula "Reset" has been clicked
-if ( current_user_can('manage_options') && isset($_GET['nebula-reset']) ) {
-	mail_existing_settings();
-	nebulaActivation();
-	nebulaChangeHomeSetting();
-	add_action('init', 'nebulaWordpressSettings');
+function nebula_initialization(){
+	mail_existing_settings(); //Email the existing settings to the admin for backup/documentation purposes.
+
+	//Create Homepage
+	$nebula_home = array(
+		'ID' => 1,
+		'post_type' => 'page',
+		'post_title' => 'Home',
+		'post_name' => 'home',
+		'post_content'   => "Nebula is a springboard Wordpress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other Wordpress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
+
+Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced Wordpress techniques.",
+		'post_status' => 'publish',
+		'post_author' => 1,
+		'page_template' => 'tpl-homepage.php'
+	);
+	wp_insert_post($nebula_home); //Insert the post into the database
+
+	$nebula_homepage = get_page_by_title('Home');
+	update_option('page_on_front', $nebula_homepage->ID); //Or set the second parameter to '1'.
+	update_option('show_on_front', 'page');
+
+	//Change some Wordpress settings
+	default_nebula_settings(); //Removed add_action? Not sure if entirely necessary. Does 'after_switch_theme' trigger after init? Verify this works sometime.
+
+	nebulaActivation(); //Re-queue the theme switch logic
 }
 
 

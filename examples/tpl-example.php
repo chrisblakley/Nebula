@@ -390,6 +390,10 @@ get_header(); ?>
 						include_once('includes/google_analytics_error_tracking.php');
 					} ?>
 
+					<?php if (is_page(1523)) { //Equalize Column Heights
+						include_once('includes/equalize.php');
+					} ?>
+
 					<?php
 					/*==========================
 					 Utilities

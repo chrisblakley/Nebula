@@ -23,6 +23,7 @@ jQuery(document).ready(function() {
 	overflowDetector();
 	subnavExpanders();
 	nebulaFixeder();
+	nebulaEqualize();
 
 	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
 	mmenus();
@@ -80,6 +81,7 @@ jQuery(document).ready(function() {
 
 	    	//Window resize functions here.
 	    	powerFooterWidthDist();
+			nebulaEqualize();
 
 	    	//Track size change
 	    	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
@@ -703,6 +705,23 @@ function powerFooterWidthDist() {
 	}
 } //end PowerFooterWidthDist
 
+
+//Column height equalizer
+function nebulaEqualize(){
+	jQuery('.row.equalize').each(function(){
+		tallestColumn = 0;
+		jQuery(this).find('.columns').css('min-height', 'none');
+		jQuery(this).find('.columns').each(function(){
+			if ( !jQuery(this).hasClass('no-equalize') ) {
+				columnHeight = jQuery(this).height();
+				if ( columnHeight > tallestColumn ) {
+					tallestColumn = columnHeight;
+				}
+			}
+		});
+		jQuery(this).find('.columns').css('min-height', tallestColumn);
+	});
+}
 
 //Menu Search Replacement
 function menuSearchReplacement(){
