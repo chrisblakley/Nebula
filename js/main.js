@@ -1446,6 +1446,16 @@ function conditionalJSLoading() {
 		cFormPreValidator();
 	}
 
+	//Only load Chosen library if 'chosen-select' class exists.
+	if ( jQuery('.chosen-select').is('*') ) {
+		jQuery.getScript('//cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
+			chosenSelectOptions();
+		}).fail(function(){
+			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
+		});
+		nebulaLoadCSS('//cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css');
+	}
+
 	//Only load dataTables library if dataTables table exists.
 	if ( jQuery('.dataTables_wrapper').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO "Nebula" 0: Use CDN?
@@ -1485,6 +1495,15 @@ function nebulaLoadCSS(url){
 	}
 }
 
+function chosenSelectOptions(){
+	jQuery('.chosen-select').chosen({
+		'disable_search_threshold': 5,
+		'search_contains': true,
+		'no_results_text': "No results found.",
+		'allow_single_deselect': true,
+		'width': "100%"
+	});
+}
 
 function dataTablesActions(){
 	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol

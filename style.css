@@ -255,6 +255,8 @@ p,
 .tab-nav > li > li > a,
 .tab-nav > li > a {font-family: "Open Sans", sans-serif;}
 
+abbr, acronym {cursor: pointer; border-bottom: none; color: auto;}
+
 .pinterest-pin a {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
 #___plusone_0 {width: 60px !important;}
 
@@ -290,7 +292,10 @@ div.bx-wrapper div.bx-caption {bottom: 10px; background: rgba(0,0,0,0.8);}
 	div.bx-wrapper div.bx-caption span {font-size: 14px;}
 ul.bxslider {}
 	ul.bxslider li {padding-bottom: 0;}
-.bx-controls-direction a {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
+
+/* Anchor tags that should not have transitions */
+.bx-controls-direction a,
+.search-choice-close {-webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
 
 /* Responsive Ooyala Player */
 .ooyalacon {position: relative; width: 100%; padding: 56.25% 0 0 0;} /* 56.25% = 16:9 ratio */
@@ -638,8 +643,8 @@ p.form-submit {}
 
 .wpcf7-not-valid-tip {display: none !important;}
 
-.field.danger:after, .field.warning:after, .field.success:after {top: 28px !important;}
-.xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 24px !important;}
+.field.danger:after, .field.warning:after, .field.success:after {top: 45% !important;}
+.xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 45% !important;}
 
 div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px;}
 div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid #58C027 !important; border-radius: 4px;}
