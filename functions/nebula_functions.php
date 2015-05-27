@@ -241,19 +241,6 @@ function nebula_widgets_init() {
 }
 
 
-//Override the default Wordpress search form
-add_filter('get_search_form', 'my_search_form');
-function my_search_form($form) {
-    $form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
-	    <div>
-		    <input type="text" value="' . get_search_query() . '" name="s" id="s" />
-		    <input type="submit" id="searchsubmit" class="wp_search_submit" value="'. esc_attr__( 'Search' ) .'" />
-	    </div>
-    </form>';
-    return $form;
-}
-
-
 //Name the locations where Navigation Menus will be located (to avoid duplicate IDs)
 add_action('after_setup_theme', 'nav_menu_locations');
 function nav_menu_locations() {
@@ -467,7 +454,9 @@ function nebula_meta($meta, $secondary=1) {
 		}
 		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} elseif ( $meta == 'author' || $meta == 'by' ) {
-		echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
+		if ( nebula_author_bios_enabled() ) {
+			echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
+		}
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ) {
 		if ( is_object_in_taxonomy(get_post_type(), 'category') ) {
 			$post_categories = '<span class="posted-in post-categories"><i class="fa fa-bookmark"></i> ' . get_the_category_list(', ') . '</span>';
@@ -918,6 +907,33 @@ function the_breadcrumb() {
 } //End Breadcrumbs
 
 
+//Always get custom fields with post queries
+add_filter('the_posts', 'nebula_always_get_post_custom');
+function nebula_always_get_post_custom($posts) {
+    for ( $i = 0; $i < count($posts); $i++ ) {
+        $custom_fields = get_post_custom($posts[$i]->ID);
+        $posts[$i]->custom_fields = $custom_fields;
+    }
+    return $posts;
+}
+
+
+
+
+//Override the default Wordpress search form
+//@TODO "Nebula" 0: Use this on template like 404 (and maybe even advanced search?) and search redirect (in header). Then expand this a little bit.
+add_filter('get_search_form', 'nebula_search_form');
+function nebula_search_form($form) {
+    $form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
+	    <div>
+		    <input type="text" value="' . get_search_query() . '" name="s" id="s" />
+		    <input type="submit" id="searchsubmit" class="wp_search_submit" value="'. esc_attr__( 'Search' ) .'" />
+	    </div>
+    </form>';
+    return $form;
+}
+
+
 //Prevent empty search query error (Show all results instead)
 add_action('pre_get_posts', 'redirect_empty_search');
 function redirect_empty_search($query){
@@ -956,6 +972,173 @@ function redirect_single_post() {
         }
     }
 }
+
+
+//Autocomplete Search AJAX
+add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
+add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
+function nebula_autocomplete_search(){
+
+	/*
+		Search Term: $_POST['data']['term'] (string)
+	*/
+
+	//@TODO "Nebula" 0: Once WP_Query method in advanced search (below) is working, try bring it up to here too.
+
+	//Query standard post data
+	$q1 = get_posts(array(
+		'post_type' => array('any'),
+		'post_status' => 'publish',
+		'posts_per_page' => 6,
+		's' => $_POST['data']['term'],
+	));
+
+	//Query custom field data
+	$q2 = get_posts(array(
+	    'post_type' => array('any'),
+	    'post_status' => 'publish',
+	    'posts_per_page' => 6,
+	    'meta_query' => array(
+			array(
+				'value' => $_POST['data']['term'],
+				'compare' => 'LIKE'
+			)
+		)
+	));
+
+	$merged_posts = array_merge($q1, $q2); //Merge above query results into one array.
+
+	//Remove non-unique post objects from array (Note: array_unique() does not work with objects)
+	$unique_posts = array();
+	foreach ($merged_posts as $post) {
+	    if ( !in_array($post, $unique_posts) ) {
+	        $unique_posts[] = $post;
+	    }
+	}
+
+	//Loop through posts to pull title and permalink
+	if ( $unique_posts ) {
+		foreach ( $unique_posts as $post ) {
+		    setup_postdata($post);
+		    $suggestion = array();
+			$suggestion['label'] = get_the_title($post->ID);
+			$suggestion['link'] = get_permalink($post->ID);
+			$suggestions[] = $suggestion;
+		}
+	}
+
+	echo json_encode($suggestions); //Return data in JSON
+	exit;
+}
+
+
+add_action('wp_ajax_nebula_advanced_search', 'nebula_advanced_search');
+add_action('wp_ajax_nopriv_nebula_advanced_search', 'nebula_advanced_search');
+function nebula_advanced_search(){
+	/*
+		Search Term: $_POST['data']['term'] (string)
+		Post Type: $_POST['data']['posttype'] (array)
+		Categories & Tags: $_POST['data']['catstags'] (array) (prefixed with tag__ or category__ followed by the slug)
+		Date From: $_POST['data']['datefrom'] (string: YYYY-MM-DD)
+		Date To: $_POST['data']['dateto'] (string: YYYY-MM-DD)
+	*/
+
+	//Date Range Filter: http://stackoverflow.com/questions/8034697/wordpress-get-posts-by-date-range
+
+	//Pull categories and tags from input.
+	$categories = array();
+	$tags = array();
+	if ( $_POST['data']['catstags'] ) {
+		foreach ( $_POST['data']['catstags'] as $cattag ) {
+			if ( strpos($cattag, 'category__') > -1 ) {
+				$categories[] = substr($cattag, strpos($cattag, "category__")+10);
+			} elseif ( strpos($cattag, 'tag__') > -1 ) {
+				$tags[] = substr($cattag, strpos($cattag, "tag__")+5);
+			}
+		}
+	}
+	array_map('intval', $categories);
+	array_map('intval', $tags);
+
+	$posttype = ( is_array($_POST['data']['posttype']) ) ? $_POST['data']['posttype'] : array('any'); //If post type field was not used, default to array('any').
+
+	//@TODO: Get meta_query working to search custom fields too!
+
+/*
+	$args = array(
+		'post_type' => $posttype,
+		'post_status' => 'publish',
+		'posts_per_page' => -1,
+		'category__and' => $categories,
+		'tag__and' => $tags,
+		's' => $_POST['data']['term'],
+		//@TODO: Current meta_query only works as an AND... Need this to be an OR
+		'meta_query' => array(
+			array(
+				'value' => $_POST['data']['term'],
+				'compare' => 'LIKE'
+			)
+		)
+	);
+	$search = new WP_Query($args);
+*/
+
+
+	//I like this method because it merges the two queries using WP_Query (instead of get_posts), but it doesn't appear that all results are coming through (only 1 result for "remarketing" instead of 2).
+	$q1 = new WP_Query( array(
+	    'post_type' => $posttype,
+		'post_status' => 'publish',
+		'posts_per_page' => -1,
+		'category__and' => $categories,
+		'tag__and' => $tags,
+		's' => $_POST['data']['term'],
+	));
+
+	$q2 = new WP_Query( array(
+	    'post_type' => $posttype,
+		'post_status' => 'publish',
+		'posts_per_page' => -1,
+		//'category__and' => $categories,
+		//'tag__and' => $tags,
+		'meta_query' => array(
+			array(
+				'value' => $_POST['data']['term'],
+				'compare' => 'LIKE'
+			)
+		)
+	));
+
+	$search = new WP_Query();
+	$search->posts = array_unique(array_merge($q1->posts, $q2->posts), SORT_REGULAR);
+	$search->post_count = count($search->posts);
+
+
+	$your_query = ( $_POST['data']['term'] ) ? '"' . $_POST['data']['term'] . '"' : 'your query'; //@TODO: sanitize search term here
+	$results_plural = ( $search->post_count == 1 ) ? 'result' : 'results';
+	echo 'There are <strong>' . $search->post_count . ' ' . $results_plural . '</strong> for ' . $your_query . '.<br/><br/>';
+
+	if ( $search->have_posts() ) {
+		while ( $search->have_posts() ) {
+			$search->the_post();
+
+			if ( !get_the_title() ) {
+				continue;
+			}
+
+			?>
+
+			<p style="padding-bottom: 15px; border-bottom: 1px dotted #ccc;">
+				<a href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a><br/>
+				<span style="font-size: 12px;"><?php echo nebula_the_excerpt('', 10, 1); ?></span>
+			</p>
+
+			<?php
+		}
+	}
+
+	exit;
+}
+
 
 //Remove capital P core function
 remove_filter('the_title', 'capital_P_dangit', 11);

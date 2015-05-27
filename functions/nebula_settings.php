@@ -11,6 +11,10 @@ function global_nebula_vars(){
 }
 
 
+/*==========================
+ Global Nebula Settings Conditional Functions
+ ===========================*/
+
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text($setting, $default = ''){
 	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ) {
@@ -43,6 +47,26 @@ function nebula_settings_conditional($setting, $default='enabled') {
 		return false;
 	}
 }
+
+
+/*==========================
+ Specific Settings Functions
+ When using in templates these simplify the syntax to be less confusing.
+ ===========================*/
+
+function nebula_author_bios_enabled(){
+	return !nebula_settings_conditional('nebula_author_bios', 'disabled');
+}
+
+function nebula_comments_enabled(){
+	return !nebula_settings_conditional('nebula_comments', 'disabled');
+}
+
+function nebula_wireframing_enabled(){
+	return !nebula_settings_conditional('nebula_wireframing', 'disabled');
+}
+
+
 
 
 //Initialize the Nebula Submenu
@@ -122,7 +146,7 @@ function register_nebula_settings() {
 
 	register_setting('nebula_settings_group', 'nebula_wireframing');
 	register_setting('nebula_settings_group', 'nebula_admin_bar');
-	register_setting('nebula_settings_group', 'nebula_author_bio_pages');
+	register_setting('nebula_settings_group', 'nebula_author_bios');
 	register_setting('nebula_settings_group', 'nebula_comments');
 	register_setting('nebula_settings_group', 'nebula_disqus_shortname');
 	register_setting('nebula_settings_group', 'nebula_wp_core_updates_notify');
@@ -526,14 +550,14 @@ function nebula_settings_page(){
 		        </tr>
 
 				<tr valign="top">
-		        	<th scope="row">Author Bio Pages&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Author Bios&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select name="nebula_author_bio_pages">
-							<option value="default" <?php selected('default', get_option('nebula_author_bio_pages')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_author_bio_pages')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_author_bio_pages')); ?>>Disabled</option>
+						<select name="nebula_author_bios">
+							<option value="default" <?php selected('default', get_option('nebula_author_bios')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_author_bios')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_author_bios')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Allow authors to have bio pages that show their post archives. If disabled, it attempts to redirect to an About Us page. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Allow authors to have bios that show their info (and post archives). This also enables searching by author, and displaying author names on posts. If disabled, the author page attempts to redirect to an About Us page. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 

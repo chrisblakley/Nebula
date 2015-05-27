@@ -31,6 +31,8 @@ jQuery(document).ready(function() {
 
 	powerFooterWidthDist();
 	menuSearchReplacement();
+	autocompleteSearch();
+	advancedSearchTriggers();
 	searchValidator();
 	searchTermHighlighter();
 	singleResultDrawer();
@@ -737,6 +739,128 @@ function menuSearchReplacement(){
 			jQuery(this).removeClass('active');
 		}
 	});
+}
+
+//Search autocomplete
+function autocompleteSearch(){
+	jQuery(document).on('keydown.autocomplete', "#s, input.search", function(){
+		if ( !jQuery(this).hasClass('no-autocomplete') ) {
+			jQuery(this).autocomplete({
+				position: {
+					my: "left top",
+					at: "left bottom",
+					collision: "flip"
+				},
+				source: function(request, response){
+					jQuery.ajax({
+						dataType: 'json',
+						type: "POST",
+						url: bloginfo["admin_ajax"],
+						data: {
+							action: 'nebula_autocomplete_search',
+							data: request,
+						},
+						success: function(data){
+							response(data);
+						},
+						error: function(MLHttpRequest, textStatus, errorThrown){
+							ga('send', 'event', 'Contact', 'Error', 'Search Autocomplete');
+						},
+						timeout: 60000
+					});
+				},
+				select: function(event, ui){
+					ga('send', 'event', 'Search', 'Autocomplete Click', ui.item.label);
+		            window.location.href = ui.item.link;
+		        },
+		        minLength: 3,
+		    });
+	    }
+	});
+}
+
+//Advanced Search
+function advancedSearchTriggers(){
+	jQuery(document).on('keydown', '#s', function(){
+		if ( 1==1 ) { //@TODO: Don't trigger if just highlighting or non-character keys
+			advancedSearchWaiting();
+			waitForFinalEvent(function(){
+				if ( jQuery('#s').val().trim().length >= 3 ) {
+					advancedSearch();
+				} else {
+					console.log('value is less than 3 characters');
+				}
+			}, 1000, "advanced search 1");
+		}
+	});
+
+	jQuery(document).on('change', '.advanced-post-type', function(){
+		advancedSearchWaiting();
+		waitForFinalEvent(function(){
+			if ( jQuery('#s').val().trim() != '' || jQuery('.advanced-catstags').val() != '' ) { //@TODO: Something is up here.
+				advancedSearch();
+			}
+		}, 1000, "advanced search 2");
+	});
+
+	jQuery(document).on('change', '.advanced-catstags', function(){
+		advancedSearchWaiting();
+		waitForFinalEvent(function(){
+			advancedSearch();
+		}, 1000, "advanced search 3");
+	});
+}
+
+function advancedSearchWaiting(){
+	console.log('showing typing icon and waiting for the last event...');
+	jQuery('#advanced-search-results').slideUp();
+	//@TODO: Show typing icon
+	jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-keyboard-o').addClass('active');
+	setTimeout(function(){
+		jQuery('#advanced-search-indicator').removeClass('active');
+	}, 1000);
+}
+
+function advancedSearch(){
+	if ( 1==1 ) { //@TODO: If all fields are not empty
+		console.log('advanced search has started!');
+		jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-spin fa-spinner').addClass('active');
+		jQuery('#advanced-search-form').addClass('inactive');
+
+		jQuery.ajax({
+			type: "POST",
+			url: bloginfo["admin_ajax"],
+			data: {
+				action: 'nebula_advanced_search',
+				data: {
+					'term': jQuery('#s').val(),
+					'posttype': jQuery('.advanced-post-type').val(),
+					'catstags': jQuery('.advanced-catstags').val(),
+					'datefrom': jQuery('.advanced-date-from').val(),
+					'dateto': jQuery('.advanced-date-to').val(),
+				},
+			},
+			success: function(data){
+				jQuery('#advanced-search-results').html(data).slideDown();
+				console.log('success!');
+				jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-check-circle success').addClass('active');
+				jQuery('#advanced-search-form').removeClass('inactive');
+				setTimeout(function(){
+					jQuery('#advanced-search-indicator').removeClass('active');
+				}, 5000);
+			},
+			error: function(MLHttpRequest, textStatus, errorThrown){
+				ga('send', 'event', 'Contact', 'Error', 'Advanced Search');
+				console.log('ajax error :(');
+				jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-times-circle error').addClass('active');
+				jQuery('#advanced-search-form').removeClass('inactive');
+				setTimeout(function(){
+					jQuery('#advanced-search-indicator').removeClass('active');
+				}, 5000);
+			},
+			timeout: 60000
+		});
+	}
 }
 
 

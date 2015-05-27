@@ -369,7 +369,7 @@ function nebulaWordpressSettings() {
 
 	update_option('nebula_wireframing', 'Default');
 	update_option('nebula_admin_bar', 'Default');
-	update_option('nebula_author_bio_pages', 'Default');
+	update_option('nebula_author_bios', 'Default');
 	update_option('nebula_comments', 'Default');
 	update_option('nebula_disqus_shortname', '');
 	update_option('nebula_wp_core_updates_notify', 'Default');

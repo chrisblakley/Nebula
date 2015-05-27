@@ -26,24 +26,28 @@ get_header(); ?>
 			<h1>Search Results <?php get_search_query(); ?></h1>
 			<?php get_search_form(); ?>
 
-			<p>Your search criteria returned
-			<?php
-				$search_results = &new WP_Query("s=$s&showposts=-1");
-				echo $search_results->post_count . ' results.';
-				wp_reset_query();
-			?>
-			</p>
-			<?php get_template_part('loop', 'search'); ?>
+			<div id="searchresults">
+				<p>Your search criteria returned
+				<?php
+					$search_results = &new WP_Query("s=$s&showposts=-1");
+					echo $search_results->post_count . ' results.';
+					wp_reset_query();
+				?>
+				</p>
+				<?php get_template_part('loop', 'search'); ?>
+			</div><!--/#searchresults-->
 		<?php else : ?>
 			<h1>No Results Found</h1>
 			<?php get_search_form(); ?>
 
-			<p>Your search criteria returned 0 results.</p>
+			<div id="searchresults">
+				<p>Your search criteria returned 0 results.</p>
 
-			<script>
-				var badSearchTerm = jQuery('#s').val();
-				ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
-			</script>
+				<script>
+					var badSearchTerm = jQuery('#s').val();
+					ga('send', 'event', 'Internal Search', 'No Results', badSearchTerm, {'nonInteraction': 1});
+				</script>
+			</div><!--/#searchresults-->
 		<?php endif; ?>
 	</div><!--/columns-->
 

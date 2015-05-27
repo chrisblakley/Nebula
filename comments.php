@@ -1,4 +1,4 @@
-<?php if ( !nebula_settings_conditional('nebula_comments', 'disabled') ) : //nebula_comments is inverted because the condition refers to the Nebula function, not the setting. So, in functions true == disabled, but in this template, true == enabled. ?>
+<?php if ( nebula_comments_enabled() ) : ?>
 
 	<div id="nebulacommentswrapper">
 

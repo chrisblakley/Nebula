@@ -151,10 +151,11 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 
 
 .nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
-.wp_search_submit {color: #444 !important;}
-	.wp_search_submit:hover,
-	.wp_search_submit.hover,
-	.wp_search_submit:focus {color: #000 !important;}
+#wp_search_submit {color: #444 !important;}
+	#wp_search_submit:hover,
+	#wp_search_submit.hover,
+	#wp_search_submit:focus {color: #000 !important;}
+#searchsubmit {padding: 2px 5px !important;}
 
 .js .unhideonload {visibility: hidden;}
 	.loaded .unhideonload {visibility: visible;}
@@ -284,6 +285,17 @@ form fieldset {border: 1px solid #ccc;}
 .field.success input, .field.success .input, .field.success textarea, .field.success .textarea, .field.success .radio span, .field.success .checkbox span, .field.success .picker {border-color: #d8d8d8; color: #000; background: #efe;}
 
 .picker:after {content: "\f0d7"; font-family: "FontAwesome";}
+
+/* jQuery UI Autocomplete */
+.ui-autocomplete.ui-widget-content {background: rgba(255, 255, 255, 0.9); color: #444; box-shadow: 1px 3px 9px 0 rgba(0, 0, 0, 0.07); z-index: 9999 !important;}
+	.ui-autocomplete.ui-widget-content .ui-menu .ui-menu-item {font-size: 12px; padding: 3px 5px;}
+		.ui-autocomplete.ui-widget-content .ui-state-hover,
+		.ui-autocomplete.ui-widget-content .ui-widget-content .ui-state-hover,
+		.ui-autocomplete.ui-widget-content .ui-widget-header .ui-state-hover,
+		.ui-autocomplete.ui-widget-content .ui-state-focus,
+		.ui-autocomplete.ui-widget-content .ui-widget-content .ui-state-focus,
+		.ui-autocomplete.ui-widget-content .ui-widget-header .ui-state-focus {font-weight: normal; background: #0098D7; color: #fff; border: none;}
+
 
 #googlemap img {max-width: none;} /* Prevents glitchy UI within embedded Google maps */
 
@@ -525,6 +537,15 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; -webkit-transition: all 0.75s; -moz-transition: all 0.75s; -o-transition: all 0.75s; transition: all 0.75s;}
 	.wpcf7-form.sent ul {max-height: 0;}
+
+/* Advanced Search */
+#advanced-search-form {opacity: 1; -webkit-transition: opacity 0.5s; -moz-transition: opacity 0.5s; -o-transition: opacity 0.5s; transition: opacity 0.5s;}
+	#advanced-search-form.inactive {opacity: 0.3; pointer-events: none;}
+
+#advanced-search-indicator {opacity: 0; -webkit-transition: opacity 0.5s; -moz-transition: opacity 0.5s; -o-transition: opacity 0.5s; transition: opacity 0.5s;}
+	#advanced-search-indicator.active {opacity: 1;}
+	#advanced-search-indicator.success {color: green;}
+	#advanced-search-indicator.error {color: red;}
 
 #about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;}
 	.author-headshot {min-height: 100px; margin-bottom: 20px;}

@@ -9,7 +9,7 @@
 	class nebula_about_the_author extends WP_Widget {
 		function nebula_about_the_author() { //Constructor - name this the same as the class above
 			$name = 'Nebula - About the Author';
-			$description = 'Display author bio on single posts.';
+			$description = 'Display author bio on single posts. Be sure to enable the Author Bios function in <a href="themes.php?page=nebula_settings">Nebula Settings</a>!';
 			parent::WP_Widget(false, $name, array('description' => $description));
 		}
 
@@ -18,7 +18,7 @@
 			?>
 
 
-			<?php if ( is_single() ) : ?>
+			<?php if ( is_single() && nebula_author_bios_enabled() ) : ?>
 				<?php echo $before_widget; ?>
 
 				<?php echo $before_title . '(Author Name)' . $after_title; ?>

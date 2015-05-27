@@ -181,7 +181,7 @@ function enqueue_nebula_frontend() {
 	wp_enqueue_style('nebula-gumby');
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome');
-	//wp_enqueue_style('nebula-jquery_ui');
+	wp_enqueue_style('nebula-jquery_ui');
 	wp_enqueue_style('nebula-main');
 
 	if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ) {
@@ -224,7 +224,7 @@ function enqueue_nebula_frontend() {
 		//wp_enqueue_script('nebula-jquery_old');
 	}
 
-	if ( is_page(9999) ) { //Form pages (that use selects). The Chosen library is also dynamically loaded in main.js
+	if ( is_page_template('tpl-search.php') || is_page(9999) ) { //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in main.js.
 		wp_enqueue_style('nebula-chosen');
 		wp_enqueue_script('nebula-chosen');
 	}
