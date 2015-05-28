@@ -34,8 +34,15 @@ get_header(); ?>
 
 						<?php if ( nebula_author_bios_enabled() ) : ?>
 							<select class="chosen-select advanced-author" data-placeholder="Select author...">
-
+								<option></option>
+								<?php $users = get_users(); ?>
+								<?php foreach ($users as $user) : ?>
+									<?php if ( count_user_posts($user->ID) >= 1 ) : ?>
+										<option value="<?php echo $user->ID; ?>"><?php echo $user->display_name; ?></option>
+									<?php endif; ?>
+								<?php endforeach; ?>
 							</select>
+							<br/><br/>
 						<?php endif; ?>
 
 						<select class="chosen-select advanced-post-type" multiple data-placeholder="Select post types...">

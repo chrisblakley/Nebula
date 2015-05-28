@@ -6,13 +6,13 @@
 <link>http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html</link>
 <description>Yahoo! Weather for Syracuse, NY</description>
 <language>en-us</language>
-<lastBuildDate>Sun, 24 May 2015 7:53 pm EDT</lastBuildDate>
+<lastBuildDate>Wed, 27 May 2015 7:53 pm EDT</lastBuildDate>
 <ttl>60</ttl>
 <yweather:location city="Syracuse" region="NY" country="US"/>
 <yweather:units temperature="F" distance="mi" pressure="in" speed="mph"/>
-<yweather:wind chill="73" direction="240" speed="6"/>
-<yweather:atmosphere humidity="34" visibility="10" pressure="30.17" rising="1"/>
-<yweather:astronomy sunrise="5:31 am" sunset="8:29 pm"/>
+<yweather:wind chill="80" direction="220" speed="7"/>
+<yweather:atmosphere humidity="54" visibility="10" pressure="29.98" rising="1"/>
+<yweather:astronomy sunrise="5:29 am" sunset="8:29 pm"/>
 <image>
 <title>Yahoo! Weather</title>
 <width>142</width>
@@ -25,29 +25,29 @@
 <geo:lat>43.06</geo:lat>
 <geo:long>-76.14</geo:long>
 <link>http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html</link>
-<pubDate>Sun, 24 May 2015 7:53 pm EDT</pubDate>
-<yweather:condition text="Cloudy" code="26" temp="73" date="Sun, 24 May 2015 7:53 pm EDT"/>
+<pubDate>Wed, 27 May 2015 7:53 pm EDT</pubDate>
+<yweather:condition text="Mostly Cloudy" code="28" temp="80" date="Wed, 27 May 2015 7:53 pm EDT"/>
 <description><![CDATA[
-<img src="http://l.yimg.com/a/i/us/we/52/26.gif"/><br />
+<img src="http://l.yimg.com/a/i/us/we/52/28.gif"/><br />
 <b>Current Conditions:</b><br />
-Cloudy, 73 F<BR />
+Mostly Cloudy, 80 F<BR />
 <BR /><b>Forecast:</b><BR />
-Sun - Mostly Cloudy. High: 80 Low: 59<br />
-Mon - Cloudy. High: 85 Low: 66<br />
-Tue - Partly Cloudy. High: 87 Low: 68<br />
-Wed - Scattered Thunderstorms. High: 84 Low: 64<br />
-Thu - PM Thunderstorms. High: 78 Low: 60<br />
+Wed - Partly Cloudy. High: 84 Low: 65<br />
+Thu - Partly Cloudy. High: 73 Low: 54<br />
+Fri - Mostly Sunny. High: 87 Low: 69<br />
+Sat - Scattered Thunderstorms. High: 83 Low: 50<br />
+Sun - AM Showers. High: 66 Low: 47<br />
 <br />
 <a href="http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html">Full Forecast at Yahoo! Weather</a><BR/><BR/>
 (provided by <a href="http://www.weather.com" >The Weather Channel</a>)<br/>
 ]]></description>
-<yweather:forecast day="Sun" date="24 May 2015" low="59" high="80" text="Mostly Cloudy" code="27"/>
-<yweather:forecast day="Mon" date="25 May 2015" low="66" high="85" text="Cloudy" code="26"/>
-<yweather:forecast day="Tue" date="26 May 2015" low="68" high="87" text="Partly Cloudy" code="30"/>
-<yweather:forecast day="Wed" date="27 May 2015" low="64" high="84" text="Scattered Thunderstorms" code="38"/>
-<yweather:forecast day="Thu" date="28 May 2015" low="60" high="78" text="PM Thunderstorms" code="38"/>
-<guid isPermaLink="false">USNY1434_2015_05_28_7_00_EDT</guid>
+<yweather:forecast day="Wed" date="27 May 2015" low="65" high="84" text="Partly Cloudy" code="29"/>
+<yweather:forecast day="Thu" date="28 May 2015" low="54" high="73" text="Partly Cloudy" code="30"/>
+<yweather:forecast day="Fri" date="29 May 2015" low="69" high="87" text="Mostly Sunny" code="34"/>
+<yweather:forecast day="Sat" date="30 May 2015" low="50" high="83" text="Scattered Thunderstorms" code="38"/>
+<yweather:forecast day="Sun" date="31 May 2015" low="47" high="66" text="AM Showers" code="39"/>
+<guid isPermaLink="false">USNY1434_2015_05_31_7_00_EDT</guid>
 </item>
 </channel>
 </rss>
-<!-- fan1681.sports.bf1.yahoo.com Sun May 24 17:52:24 PDT 2015 -->
+<!-- fan1652.sports.bf1.yahoo.com Wed May 27 17:29:34 PDT 2015 -->

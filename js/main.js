@@ -770,7 +770,7 @@ function autocompleteSearch(){
 					});
 				},
 				select: function(event, ui){
-					ga('send', 'event', 'Search', 'Autocomplete Click', ui.item.label);
+					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
 		            window.location.href = ui.item.link;
 		        },
 		        minLength: 3,
@@ -787,6 +787,7 @@ function advancedSearchTriggers(){
 			waitForFinalEvent(function(){
 				if ( jQuery('#s').val().trim().length >= 3 ) {
 					advancedSearch();
+					ga('send', 'event', 'Internal Search', 'Advanced', '"' + jQuery('#s').val().trim() + '"');
 				} else {
 					console.log('value is less than 3 characters');
 				}
@@ -808,6 +809,13 @@ function advancedSearchTriggers(){
 		waitForFinalEvent(function(){
 			advancedSearch();
 		}, 1000, "advanced search 3");
+	});
+
+	jQuery(document).on('change', '.advanced-author', function(){
+		advancedSearchWaiting();
+		waitForFinalEvent(function(){
+			advancedSearch();
+		}, 1000, "advanced search 4");
 	});
 }
 
@@ -834,6 +842,7 @@ function advancedSearch(){
 				action: 'nebula_advanced_search',
 				data: {
 					'term': jQuery('#s').val(),
+					'author': jQuery('.advanced-author').val(),
 					'posttype': jQuery('.advanced-post-type').val(),
 					'catstags': jQuery('.advanced-catstags').val(),
 					'datefrom': jQuery('.advanced-date-from').val(),
