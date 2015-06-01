@@ -34,8 +34,15 @@ get_header(); ?>
 
 						<?php if ( nebula_author_bios_enabled() ) : ?>
 							<select class="chosen-select advanced-author" data-placeholder="Select author...">
-
+								<option></option>
+								<?php $users = get_users(); ?>
+								<?php foreach ($users as $user) : ?>
+									<?php if ( count_user_posts($user->ID) >= 1 ) : ?>
+										<option value="<?php echo $user->ID; ?>"><?php echo $user->display_name; ?></option>
+									<?php endif; ?>
+								<?php endforeach; ?>
 							</select>
+							<br/><br/>
 						<?php endif; ?>
 
 						<select class="chosen-select advanced-post-type" multiple data-placeholder="Select post types...">
@@ -81,7 +88,7 @@ get_header(); ?>
 
 						    <input type="text" name="s" id="s" class="no-autocomplete" placeholder="Search" style="width: 100%; font-size: 32px; font-weight: 300; padding: 0 10px; outline: none;" />
 						    <br/><br/>
-<!-- 						    <input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" style="float: right;" /> -->
+						    <input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" style="float: right; position: absolute; left: -9999px;" />
 					</form>
 
 					<i id="advanced-search-indicator" class="fa fa-spin fa-spinner"></i>

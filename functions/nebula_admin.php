@@ -352,12 +352,12 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 		//Get last modified filename and date
 		$dir = glob_r( get_template_directory() . '/*');
 		$last_date = 0;
-		$skip_files = array('dev.css');
+		$skip_files = array('dev.css', '/cache/'); //Files or directories to skip. Be specific!
 
-		foreach( $dir as $file ) {
-			if( is_file($file) ) {
+		foreach ( $dir as $file ) {
+			if ( is_file($file) ) {
 				$mod_date = filemtime($file);
-				if ( $mod_date > $last_date && !contains(basename($file), $skip_files) ) {
+				if ( $mod_date > $last_date && !contains($file, $skip_files) ) {
 					$last_date = $mod_date;
 					$last_filename = basename($file);
 					$last_file_path = str_replace(get_template_directory(), '', dirname($file)) . '/' . $last_filename;

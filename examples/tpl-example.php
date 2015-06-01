@@ -412,6 +412,10 @@ get_header(); ?>
 						include_once('includes/google_campaign_url_generator.php');
 					} ?>
 
+					<?php if (is_page(1556)) { //Spambot Domain Regex Generator
+						include_once('includes/spambot_regex_generator.php');
+					} ?>
+
 				<?php
 				/*==========================
 				 End Hard-Code Examples

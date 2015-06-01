@@ -709,6 +709,20 @@ function getwhois($domain, $tld) {
 }
 
 
+//Return TRUE if need new cache, return FALSE if cache file will be used.
+function nebula_need_updated_cache($cache_file=null, $interval=3600){
+	if ( !file_exists($cache_file) ) {
+		return true; //Cache file does not exist.
+	}
+
+	$modified = filemtime($cache_file);
+	$now = time();
+
+	if ( !$modified || (($now-$modified) > $interval) ) {
+		return true; //Cache file has not been modified -or- the modify date is older than the interval.
+	}
+}
+
 
 /*==========================
  Libraries

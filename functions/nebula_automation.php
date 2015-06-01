@@ -319,6 +319,7 @@ function nebulaWordpressSettings() {
 	update_option('nebula_site_owner', '');
 	update_option('nebula_contact_email', '');
 	update_option('nebula_ga_tracking_id', '');
+	update_option('nebula_hostnames', '');
 	update_option('nebula_keywords', '');
 	update_option('nebula_news_keywords', '');
 	update_option('nebula_phone_number', '');

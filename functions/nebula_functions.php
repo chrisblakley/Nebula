@@ -625,7 +625,6 @@ function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are 
 
 
 
-
 //Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.
 //Several ways to implement this:
 	//Inside the loop (or outside the loop for current post/page): nebula_the_excerpt('Read more &raquo;', 20, 1);
@@ -1395,17 +1394,12 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	}
 
 	$cache_file = get_template_directory() . '/includes/cache/weather-' . $zipcode;
-	$interval = 3600; //In seconds. 1 hour = 3600
-
 	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
-	$modified = ( file_exists($cache_file) ) ? filemtime($cache_file) : false;
-
-	$now = time();
 
 	global $current_weather;
 
 	//If the cache file has not been modified -or- if the time since modified date is longer than the interval -or- if forced fresh data is passed -or- if the requested zipcode is not the current stored zipcode
-	if ( !$modified || (($now-$modified) > $interval) || isset($fresh) || (isset($current_weather['zip']) && $zipcode != $current_weather['zip']) ) {
+	if ( nebula_need_updated_cache($cache_file) || isset($fresh) || (isset($current_weather['zip']) && $zipcode != $current_weather['zip']) ) {
 		$use_errors = libxml_use_internal_errors(true);
 		$xml = simplexml_load_file($url);
 		if ( !$xml ) {
