@@ -326,7 +326,7 @@ ul.bxslider {}
 
 /* Using borderimage instead of pointerevents so avoid the full dev version of Modernizr. Need to trigger on IE11+ */
 .borderimage #fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	.borderimage .mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
+	.borderimage.mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
 
 .mobilenavcon {display: none;}
 	a.directions div {line-height: 12px; padding-left: 35px;}
