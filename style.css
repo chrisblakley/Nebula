@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 2.8
+	Version: 2.11.0
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -324,8 +324,9 @@ ul.bxslider {}
    Header Area
    ========================================================================== */
 
-#fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	.mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
+/* Using borderimage instead of pointerevents so avoid the full dev version of Modernizr. Need to trigger on IE11+ */
+.borderimage #fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	.borderimage .mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
 
 .mobilenavcon {display: none;}
 	a.directions div {line-height: 12px; padding-left: 35px;}

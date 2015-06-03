@@ -790,6 +790,9 @@ function autocompleteSearch(){
 							data: request,
 						},
 						success: function(data){
+							jQuery.each(data, function(index, value) {
+								value.label = value.label.replace(/&#038;/g, "\&");
+							});
 							response(data);
 							jQuery('.nebula-search-iconable').removeClass('searching');
 						},

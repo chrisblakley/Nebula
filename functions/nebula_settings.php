@@ -505,7 +505,7 @@ function nebula_settings_page(){
 		        	<th scope="row">Twitter&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						URL: <input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/><br/>
-						Bearer Token: <input type="text" name="nebula_twitter_bearer_token" value="<?php echo get_option('nebula_twitter_bearer_token'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 296px;"/>
+						Bearer Token: <input type="text" name="nebula_twitter_bearer_token" value="<?php echo get_option('nebula_twitter_bearer_token'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
 						<p class="helper"><small>The URL of the associated Twitter page. The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
 					</td>
 		        </tr>

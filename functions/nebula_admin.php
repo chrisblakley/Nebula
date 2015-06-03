@@ -845,114 +845,30 @@ add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right() {
 	$nebula_theme_info = wp_get_theme();
 	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
+	$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
 
-	if ( contains($nebula_version_split[1], array('b', 'rc')) ) {
-		$nebula_version_year = (floor($nebula_version_split[0]/2)+2014)-1;
-	} else {
-		$nebula_version_year = floor($nebula_version_split[0]/2)+2014;
-	}
+	/*
+		First half of month: x.x.0
+		Second half of month: x.x.1
 
-	//@TODO "Nebula" 0: This switch seems like overkill. There's gotta be a more optimized way to do this logic.
-	switch ( $nebula_version_split[1] ) {
-		case '1':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'January';
-			} else {
-				$nebula_version_month = 'July';
-			}
-			$nebula_version_daterange = 'Second';
-			break;
-		case '3':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'February';
-			} else {
-				$nebula_version_month = 'August';
-			}
-			$nebula_version_daterange = 'Second';
-			break;
-		case '5':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'March';
-			} else {
-				$nebula_version_month = 'September';
-			}
-			$nebula_version_daterange = 'Second';
-			break;
-		case '7':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'April';
-			} else {
-				$nebula_version_month = 'October';
-			}
-			$nebula_version_daterange = 'Second';
-			break;
-		case '9':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'May';
-			} else {
-				$nebula_version_month = 'November';
-			}
-			$nebula_version_daterange = 'Second';
-			break;
-		case '0rc':
-			if ( intval($nebula_version_split[0])%2 == 0 ) { //These are swapped because the "next" version iterates a month early (so 2.0rc is in Second half of December).
-				$nebula_version_month = 'December';
-			} else {
-				$nebula_version_month = 'June';
-			}
-			$nebula_version_daterange = 'Second';
-			break;
+		July 2015	3.0.x
+		August		3.1.x
+		Sept		3.2.x
+		Oct			3.3.x
+		Nov			3.4.x
+		Dec			3.5.x
+		Jan 2016	3.6.x
+		Feb			3.7.x
+		Mar			3.8.x
+		Apr			3.9.x
+		May			3.10.x
+		June		3.11.x
+	*/
 
-		case '0b':
-			if ( intval($nebula_version_split[0])%2 == 0 ) { //These are swapped because the "next" version iterates a month early (so 2.0b is in First half of December).
-				$nebula_version_month = 'December';
-			} else {
-				$nebula_version_month = 'June';
-			}
-			$nebula_version_daterange = 'First';
-			break;
-		case '0':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'January';
-			} else {
-				$nebula_version_month = 'July';
-			}
-			$nebula_version_daterange = 'First';
-			break;
-		case '2':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'February';
-			} else {
-				$nebula_version_month = 'August';
-			}
-			$nebula_version_daterange = 'First';
-			break;
-		case '4':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'March';
-			} else {
-				$nebula_version_month = 'September';
-			}
-			$nebula_version_daterange = 'First';
-			break;
-		case '6':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'April';
-			} else {
-				$nebula_version_month = 'October';
-			}
-			$nebula_version_daterange = 'First';
-			break;
-		case '8':
-			if ( intval($nebula_version_split[0])%2 == 0 ) {
-				$nebula_version_month = 'May';
-			} else {
-				$nebula_version_month = 'November';
-			}
-			$nebula_version_daterange = 'Second';
-			break;
-	}
+	$nebula_version_year = ( $nebula_version['medium'] <= 5 ) ? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
+	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June');
+	$nebula_version_month = $nebula_months[$nebula_version['medium']];
+	$nebula_version_daterange = ( $nebula_version['medium'] == 1 ) ? 'Second' : 'First';
 
     return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
 }
-

@@ -2,6 +2,39 @@
 	.spambot-regex-con {width: 100%; min-height: 300px; font-size: 12px; font-family: monospace; padding: 5px 10px;}
 </style>
 
+<script>
+	jQuery(document).on('submit', '#customhostnameregex', function(e){
+		jQuery('i.fa-spinner').removeClass('hidden');
+
+		var hostnameData = [{
+			'hostnames': jQuery('#validhostnames').val().trim(),
+		}];
+		jQuery.ajax({
+			type: "POST",
+			url: bloginfo["admin_ajax"],
+			data: {
+				action: 'nebula_domain_regex_generator',
+				data: hostnameData,
+			},
+			success: function(response){
+				jQuery('#customregex').text(response);
+
+				jQuery('#customregex').removeClass('hidden');
+				jQuery('i.fa-spinner').addClass('hidden');
+			},
+			error: function(MLHttpRequest, textStatus, errorThrown){
+				jQuery('#generatorresults textarea').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
+				ga('send', 'event', 'Error', 'Domain Regex Generator', 'AJAX Error');
+				jQuery('i.fa-spinner').addClass('hidden');
+			},
+			timeout: 60000
+		});
+
+		e.preventDefault();
+		return false;
+	});
+</script>
+
 <div class="row">
 	<div class="sixteen columns">
 
@@ -25,9 +58,20 @@
 		<p>Enter your valid hostnames in Nebula Settings then run the function <?php echo do_shortcode('[code]<?php echo nebula_valid_hostname_regex(); ?>[/code]'); ?> on your own server (or expand the help icon in Nebula Settings)!</p>
 		<textarea class="spambot-regex-con"><?php echo nebula_valid_hostname_regex(); ?></textarea>
 
+		<br/><br/><hr/><br/>
 
-
-
+		<h2>Custom Valid Hostnames Include Regex Pattern</h2>
+		<p>Enter a comma-separated list of valid hostnames here (including domains, sub-domains, vanity domains, etc).</p>
+		<form id="customhostnameregex">
+			<div class="field">
+				<span>Valid Hostnames (Comma Separated)</span>
+				<input id="validhostnames" class="input" type="text" placeholder="gearside.com, gearsidecreative.com">
+			</div>
+			<div class="field btn primary medium">
+				<input class="submit" type="submit" value="Generate" style="padding-left: 15px; padding-right: 15px;">
+			</div><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
+		</form>
+		<textarea id="customregex" class="spambot-regex-con hidden"></textarea>
 
 		<p><em>Note: Google Analytics filters limit patterns to 255 characters.</em></p>
 
