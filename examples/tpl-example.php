@@ -394,6 +394,10 @@ get_header(); ?>
 						include_once('includes/equalize.php');
 					} ?>
 
+					<?php if (is_page(1577)) { //Chosen.js
+						include_once('includes/chosen.php');
+					} ?>
+
 					<?php
 					/*==========================
 					 Utilities
@@ -410,6 +414,10 @@ get_header(); ?>
 
 					<?php if (is_page(1259)) { //Google Campaign URL Builder
 						include_once('includes/google_campaign_url_generator.php');
+					} ?>
+
+					<?php if (is_page(1556)) { //Domain Regex Generators
+						include_once('includes/domain_regex_generators.php');
 					} ?>
 
 				<?php

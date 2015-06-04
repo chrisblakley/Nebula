@@ -74,6 +74,14 @@ pre.nebula-code.php,
 	.nebula-code.php::selection {background: #c8cde1;}
 
 
+/* RegEx */
+.nebula-code.codetitle.regex {color: #666;}
+
+pre.nebula-code.regex,
+.nebula-code.regex .gist-file {border: 1px solid #666; border-left: 5px solid #666;}
+	.nebula-code.regex::selection {background: #eee;}
+
+
 /* Shortcode */
 .nebula-code.codetitle.shortcode {color: #287DA2;}
 	.nebula-code.codetitle.shortcode:before {content: "\f19a"; font-family: "FontAwesome"; margin-right: 3px;}

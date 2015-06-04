@@ -88,7 +88,7 @@ get_header(); ?>
 
 						    <input type="text" name="s" id="s" class="no-autocomplete" placeholder="Search" style="width: 100%; font-size: 32px; font-weight: 300; padding: 0 10px; outline: none;" />
 						    <br/><br/>
-<!-- 						    <input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" style="float: right;" /> -->
+						    <input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" style="float: right; position: absolute; left: -9999px;" />
 					</form>
 
 					<i id="advanced-search-indicator" class="fa fa-spin fa-spinner"></i>

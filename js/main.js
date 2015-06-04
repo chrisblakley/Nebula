@@ -31,6 +31,7 @@ jQuery(document).ready(function() {
 
 	powerFooterWidthDist();
 	menuSearchReplacement();
+	mobileSearchPlaceholder();
 	autocompleteSearch();
 	advancedSearchTriggers();
 	searchValidator();
@@ -84,6 +85,7 @@ jQuery(document).ready(function() {
 	    	//Window resize functions here.
 	    	powerFooterWidthDist();
 			nebulaEqualize();
+			mobileSearchPlaceholder();
 
 	    	//Track size change
 	    	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
@@ -727,24 +729,52 @@ function nebulaEqualize(){
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.nebula-search').html('<form class="search" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" class="input search" name="s" placeholder="Search" x-webkit-speech/></form>');
+	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" x-webkit-speech/></form>');
 	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
 		jQuery(this).addClass('focus active');
 	});
 	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
 		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).removeClass('focus active focusError').attr('placeholder', 'Search');
-
+			jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
 		} else {
 			jQuery(this).removeClass('active');
 		}
 	});
 }
 
+//Only allow alphanumeric (and some special keys) to return true
+//Use inside of a keydown function, and pass the event data.
+function searchTriggerOnlyChars(e){
+	//@TODO "Nebula" 0: This still allows shortcuts like "cmd+a" to return true.
+
+	var spinnerRegex = new RegExp("^[a-zA-Z0-9]+$");
+	var allowedKeys = [8, 46];
+	var searchChar = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+
+	if ( spinnerRegex.test(searchChar) || allowedKeys.indexOf(e.which) > -1 ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 //Search autocomplete
 function autocompleteSearch(){
-	jQuery(document).on('keydown.autocomplete', "#s, input.search", function(){
+	jQuery(document).on('blur', ".nebula-search-iconable input", function(){
+		jQuery('.nebula-search-iconable').removeClass('searching');
+	});
+
+	jQuery("#s, input.search").keyup(function(e){
 		if ( !jQuery(this).hasClass('no-autocomplete') ) {
+			if ( jQuery(this).parents('form').hasClass('nebula-search-iconable') && jQuery(this).val().trim().length >= 2 && searchTriggerOnlyChars(e) ) {
+				jQuery(this).parents('.nebula-search-iconable').addClass('searching');
+				setTimeout(function(){
+					jQuery('.nebula-search-iconable').removeClass('searching');
+				}, 10000);
+			} else {
+				jQuery('.nebula-search-iconable').removeClass('searching');
+			}
+
 			jQuery(this).autocomplete({
 				position: {
 					my: "left top",
@@ -761,10 +791,15 @@ function autocompleteSearch(){
 							data: request,
 						},
 						success: function(data){
+							jQuery.each(data, function(index, value) {
+								value.label = value.label.replace(/&#038;/g, "\&");
+							});
 							response(data);
+							jQuery('.nebula-search-iconable').removeClass('searching');
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
-							ga('send', 'event', 'Contact', 'Error', 'Search Autocomplete');
+							ga('send', 'event', 'Internal Search', 'Error', 'Autocomplete Error');
+							jQuery('.nebula-search-iconable').removeClass('searching');
 						},
 						timeout: 60000
 					});
@@ -781,15 +816,15 @@ function autocompleteSearch(){
 
 //Advanced Search
 function advancedSearchTriggers(){
-	jQuery(document).on('keydown', '#s', function(){
-		if ( 1==1 ) { //@TODO: Don't trigger if just highlighting or non-character keys
+	jQuery('#s').keyup(function(e){
+		if ( searchTriggerOnlyChars(e) ) {
 			advancedSearchWaiting();
 			waitForFinalEvent(function(){
 				if ( jQuery('#s').val().trim().length >= 3 ) {
 					advancedSearch();
 					ga('send', 'event', 'Internal Search', 'Advanced', '"' + jQuery('#s').val().trim() + '"');
 				} else {
-					console.log('value is less than 3 characters');
+					//console.log('value is less than 3 characters');
 				}
 			}, 1000, "advanced search 1");
 		}
@@ -820,7 +855,7 @@ function advancedSearchTriggers(){
 }
 
 function advancedSearchWaiting(){
-	console.log('showing typing icon and waiting for the last event...');
+	//console.log('showing typing icon and waiting for the last event...');
 	jQuery('#advanced-search-results').slideUp();
 	//@TODO: Show typing icon
 	jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-keyboard-o').addClass('active');
@@ -831,7 +866,7 @@ function advancedSearchWaiting(){
 
 function advancedSearch(){
 	if ( 1==1 ) { //@TODO: If all fields are not empty
-		console.log('advanced search has started!');
+		//console.log('advanced search has started!');
 		jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-spin fa-spinner').addClass('active');
 		jQuery('#advanced-search-form').addClass('inactive');
 
@@ -851,7 +886,7 @@ function advancedSearch(){
 			},
 			success: function(data){
 				jQuery('#advanced-search-results').html(data).slideDown();
-				console.log('success!');
+				//console.log('success!');
 				jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-check-circle success').addClass('active');
 				jQuery('#advanced-search-form').removeClass('inactive');
 				setTimeout(function(){
@@ -860,7 +895,7 @@ function advancedSearch(){
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
 				ga('send', 'event', 'Contact', 'Error', 'Advanced Search');
-				console.log('ajax error :(');
+				//console.log('ajax error :(');
 				jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-times-circle error').addClass('active');
 				jQuery('#advanced-search-form').removeClass('inactive');
 				setTimeout(function(){
@@ -869,6 +904,16 @@ function advancedSearch(){
 			},
 			timeout: 60000
 		});
+	}
+}
+
+
+function mobileSearchPlaceholder(){
+	viewport = updateViewportDimensions();
+	if ( viewport.width <= 410 ) {
+		jQuery('#mobileheadersearch input').attr('placeholder', 'Search');
+	} else {
+		jQuery('#mobileheadersearch input').attr('placeholder', 'What are you looking for?');
 	}
 }
 
@@ -885,15 +930,16 @@ function searchValidator() {
 		}
 	});
 	jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
+		thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' ) ? jQuery(this).attr('data-prev-placeholder') : 'Search';
 		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
 			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 			jQuery(this).parent().find('.btn.submit').val('Go');
 		} else {
 			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-			jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', 'Search');
+			jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', thisPlaceholder);
 			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
 		}
-		if(e.type == 'paste'){
+		if ( e.type == 'paste' ){
 			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
 			jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
 			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
@@ -901,7 +947,7 @@ function searchValidator() {
 	})
 	jQuery('form.search').submit(function(){
 		if ( jQuery(this).find('.input.search').val() == '' || jQuery(this).find('.input.search').val().trim().length === 0 ) {
-			jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
+			jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
 			jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
 			return false;
 		} else {
@@ -1548,16 +1594,6 @@ var waitForFinalEvent = (function () {
 //This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading() {
 
-	//Only load Twitter if Twitter wrapper exists.
-	if ( jQuery('#twittercon').is('*') ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/twitter.js').done(function(){
-			twitterFeed();
-		}).fail(function(){
-			jQuery('#twittercon').css('border', '1px solid red').addClass('hidden');
-			ga('send', 'event', 'Error', 'JS Error', 'twitter.js could not be loaded.', {'nonInteraction': 1});
-		});
-	}
-
 	//Only load bxslider library on a page that calls bxslider.
 	if ( jQuery('.bxslider').is('*') ) {
 		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
@@ -1646,21 +1682,6 @@ function dataTablesActions(){
 	});
 }
 
-//Twitter Feed integration
-function twitterFeed() {
-    if ( typeof JQTWEET !== 'undefined' ) {
-        JQTWEET = JQTWEET || {};
-        //JQTWEET.search = '#hashtag';
-        JQTWEET.user = 'pinckneyhugo';
-        JQTWEET.numTweets = 3;
-        JQTWEET.template = '<div class="row tweetcon"><div class="four columns"><div class="twittericon">{AVA}</div></div><div class="twelve columns"><div class="twitteruser"><a href="{URL}" target="_blank">@{USER}</a></div><div class="twittertweet">{TEXT} <a class="twitterago" href="{URL}" target="_blank">{AGO}</a></div></div></div>',
-        JQTWEET.appendTo = '#twitter_update_list';
-        JQTWEET.loadTweets();
-
-        console.log('tweets loaded.');
-        console.debug(JQTWEET);
-    }
-} //end twitterFeed()
 
 //Place all bxSlider events inside this function!
 function bxSlider() {

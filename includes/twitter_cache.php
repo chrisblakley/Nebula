@@ -1,18 +1,18 @@
 <?php
 	/*
-	*	!!! Before testing this file: Create a new directory in the same directory as this file called "cache". Inside that directory, create a file (with no extension) called "twitter-cache".
-	*	Change the bearer token below to be the same as the one generated from the previous file!
+	*	!!! Before testing this file, make sure this file exists: /includes/cache/twitter-cache
 	*	Change the username below to be the desired Twitter username, and change the number of tweets as needed.
-	*	Default cache is 10 minutes (600), but can be changed.
 	*	Either run this file directly, or trigger it via JavaScript (the next file).
 	*/
 
-	if ( file_exists('../../../../wp-load.php') ) { require_once('../../../../wp-load.php'); } //@TODO: Remove this conditional. It is only needed for the Nebula example!
+	if ( file_exists('../../../../wp-load.php') ) { require_once('../../../../wp-load.php'); } //@TODO: Remove this conditional. It is only needed for the Nebula example! Update May 30, 2015: this might be needed regardless- using 2 custom functions: nebula_settings_conditional_text() and nebula_need_updated_cache()
 
 	error_reporting(0); //Prevent PHP errors from being cached.
 
 
 	/*** Settings ***/
+
+	//@TODO "Nebula" 0: Use query strings to set these parameters- including feed type! (except bearer token)
 
 	$username = 'Great_Blakes';
 	$listname = 'nebula'; //Only used for list feeds
@@ -26,16 +26,8 @@
 	$bearer = nebula_settings_conditional_text('nebula_twitter_bearer_token', '');
 
 	$cache_file = dirname(__FILE__) . '/cache/twitter-cache';
-	$interval = 600; //In seconds. Ten minutes = 600
 
-
-
-	/*** Do not edit below this line! ***/
-
-	$modified = filemtime($cache_file);
-	$now = time();
-
-	if ( !$modified || (($now-$modified) > $interval) ) {
+	if ( nebula_need_updated_cache($cache_file, 600) ) { //600 is a 10 minute cache
 		$context = stream_context_create(array(
 			'http' => array(
 				'method'=>'GET',

@@ -91,7 +91,7 @@
 							</p>
 						</div><!--/columns-->
 						<div class="four columns push_one">
-							<form class="search alignright" method="get" action="<?php echo home_url('/'); ?>">
+							<form class="nebula-search-iconable search alignright" method="get" action="<?php echo home_url('/'); ?>">
 								<input class="nebula-search open input search" type="search" name="s" placeholder="Search" />
 							</form>
 						</div><!--/columns-->

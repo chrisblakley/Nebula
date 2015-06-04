@@ -96,6 +96,7 @@ function register_nebula_settings() {
 	register_setting('nebula_settings_group', 'nebula_site_owner');
 	register_setting('nebula_settings_group', 'nebula_contact_email');
 	register_setting('nebula_settings_group', 'nebula_ga_tracking_id');
+	register_setting('nebula_settings_group', 'nebula_hostnames');
 	register_setting('nebula_settings_group', 'nebula_keywords');
 	register_setting('nebula_settings_group', 'nebula_news_keywords');
 	register_setting('nebula_settings_group', 'nebula_phone_number');
@@ -376,6 +377,16 @@ function nebula_settings_page(){
 					</td>
 		        </tr>
 		        <tr valign="top">
+		        	<th scope="row">Valid Hostnames&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_hostnames" value="<?php echo get_option('nebula_hostnames'); ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" style="width: 392px;" />
+						<p class="helper"><small>
+							These help generate regex patterns for Google Analytics filters. Enter a comma-separated list of all valid hostnames, domains (including vanity domains), and sub-domains that are associated with this website.<br/>
+							Include Filter RegEx pattern <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
+						</small></p>
+					</td>
+		        </tr>
+		        <tr valign="top">
 		        	<th scope="row">Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_keywords" value="<?php echo get_option('nebula_keywords'); ?>" placeholder="Keywords" style="width: 392px;" />
@@ -494,7 +505,7 @@ function nebula_settings_page(){
 		        	<th scope="row">Twitter&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						URL: <input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/><br/>
-						Bearer Token: <input type="text" name="nebula_twitter_bearer_token" value="<?php echo get_option('nebula_twitter_bearer_token'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 296px;"/>
+						Bearer Token: <input type="text" name="nebula_twitter_bearer_token" value="<?php echo get_option('nebula_twitter_bearer_token'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
 						<p class="helper"><small>The URL of the associated Twitter page. The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
 					</td>
 		        </tr>

@@ -156,6 +156,18 @@
 							?>
 						</nav><!--/mobilenav-->
 
+						<form id="mobileheadersearch" class="nebula-search-iconable search" method="get" action="<?php echo home_url('/'); ?>">
+							<?php
+								if ( $_GET['s'] ) {
+									$current_search = $_GET['s'];
+								} elseif ( $_GET['rs'] ) {
+									$current_search = $_GET['rs'];
+								}
+								$header_search_placeholder = ( isset($current_search) ) ? $current_search : 'What are you looking for?' ;
+							?>
+							<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" x-webkit-speech />
+						</form>
+
 					</div><!--/columns-->
 				</div><!--/row-->
 			</div><!--/topbarcon-->
