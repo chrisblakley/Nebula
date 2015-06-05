@@ -34,7 +34,8 @@ get_header(); ?>
 					</h1>
 
 					<div class="entry-meta">
-						<?php nebula_meta('on'); ?> <?php nebula_meta('dimensions'); ?>
+						<?php nebula_meta('on'); ?> <?php nebula_meta('dimensions'); ?> <?php nebula_meta('exif'); ?>
+
 						<span class="nebulasocialcon">
 			        		<?php
 				        		if ( is_dev() ) {

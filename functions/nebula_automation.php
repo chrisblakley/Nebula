@@ -404,6 +404,12 @@ function nebulaWordpressSettings() {
 	update_option('start_of_week', 0); //Start of the week to Sunday
 	update_option('permalink_structure', '/%postname%/'); //Set the permalink structure to be "pretty" style
 
+	//Prevent unecessary queries with widgets
+	add_option('widget_pages', array('_multiwidget' => 1));
+	add_option('widget_calendar', array('_multiwidget' => 1));
+	add_option('widget_tag_cloud', array('_multiwidget' => 1));
+	add_option('widget_nav_menu', array('_multiwidget' => 1));
+
 	//Update certain WordPress user meta values
 	//@TODO "Nebula" 0: Check the "CSS Classes" checkbox under "Screen Options" on the Appearance > Menus page so they are always visible on each menu item.
 

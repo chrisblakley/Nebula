@@ -14,9 +14,7 @@ jQuery(document).ready(function() {
 	//facebookConnect(); //@TODO "Social" 1: Uncomment here to enable Facebook Connect.
 	conditionalJSLoading();
 
-	//Init Custom Functions
 	gaEventTracking();
-
 	helperFunctions();
 	socialSharing();
 	dropdownWidthController();
@@ -121,6 +119,8 @@ jQuery(window).on('load', function() {
 	}, 1000);
 
 }); //End Window Load
+
+
 
 
 /*==========================
@@ -339,6 +339,7 @@ function prefillCommentAuthorCookieFields(name, email) {
 	});
 }
 
+
 //Social sharing buttons
 function socialSharing() {
     var loc = window.location;
@@ -390,6 +391,7 @@ function updateViewportDimensions() {
 
 	return viewportObject;
 }
+
 
 //Main dropdown nav dynamic width controller
 function dropdownWidthController() {
@@ -637,7 +639,7 @@ function mmenus() {
 			    "zposition": "back", //"back" (default), "front", "next"
 			    "position": "left" //"left" (default), "right", "top", "bottom"
 		    },
-		    "searchfield": { //This is for searching through the menu itself (NOT for site search)
+		    "searchfield": { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
 		    	"add": true,
 		    	"search": true,
 		    	"placeholder": 'Search',
@@ -1054,8 +1056,7 @@ function trySearch(phrase){
 function showSuggestedPage(title, url){
 	var hostname = new RegExp(location.host);
 	if ( hostname.test(url) ) {
-		jQuery('.suggestion').text(title);
-		jQuery('.suggestion').attr('href', url);
+		jQuery('.suggestion').attr('href', url).text(title);
 		jQuery('#suggestedpage').slideDown();
 	}
 }

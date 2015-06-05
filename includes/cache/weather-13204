@@ -6,13 +6,13 @@
 <link>http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html</link>
 <description>Yahoo! Weather for Syracuse, NY</description>
 <language>en-us</language>
-<lastBuildDate>Wed, 03 Jun 2015 7:29 am EDT</lastBuildDate>
+<lastBuildDate>Fri, 05 Jun 2015 5:53 am EDT</lastBuildDate>
 <ttl>60</ttl>
 <yweather:location city="Syracuse" region="NY" country="US"/>
 <yweather:units temperature="F" distance="mi" pressure="in" speed="mph"/>
-<yweather:wind chill="49" direction="80" speed="3"/>
-<yweather:atmosphere humidity="93" visibility="10" pressure="30.25" rising="0"/>
-<yweather:astronomy sunrise="5:25 am" sunset="8:36 pm"/>
+<yweather:wind chill="62" direction="160" speed="6"/>
+<yweather:atmosphere humidity="84" visibility="10" pressure="30.06" rising="0"/>
+<yweather:astronomy sunrise="5:25 am" sunset="8:38 pm"/>
 <image>
 <title>Yahoo! Weather</title>
 <width>142</width>
@@ -21,33 +21,33 @@
 <url>http://l.yimg.com/a/i/brand/purplelogo//uh/us/news-wea.gif</url>
 </image>
 <item>
-<title>Conditions for Syracuse, NY at 7:29 am EDT</title>
+<title>Conditions for Syracuse, NY at 5:53 am EDT</title>
 <geo:lat>43.06</geo:lat>
 <geo:long>-76.14</geo:long>
 <link>http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html</link>
-<pubDate>Wed, 03 Jun 2015 7:29 am EDT</pubDate>
-<yweather:condition text="Partly Cloudy" code="30" temp="49" date="Wed, 03 Jun 2015 7:29 am EDT"/>
+<pubDate>Fri, 05 Jun 2015 5:53 am EDT</pubDate>
+<yweather:condition text="Mostly Cloudy" code="28" temp="62" date="Fri, 05 Jun 2015 5:53 am EDT"/>
 <description><![CDATA[
-<img src="http://l.yimg.com/a/i/us/we/52/30.gif"/><br />
+<img src="http://l.yimg.com/a/i/us/we/52/28.gif"/><br />
 <b>Current Conditions:</b><br />
-Partly Cloudy, 49 F<BR />
+Mostly Cloudy, 62 F<BR />
 <BR /><b>Forecast:</b><BR />
-Wed - Partly Cloudy. High: 74 Low: 51<br />
-Thu - Mostly Sunny. High: 79 Low: 60<br />
-Fri - Partly Cloudy. High: 79 Low: 56<br />
-Sat - Partly Cloudy. High: 73 Low: 52<br />
-Sun - Partly Cloudy. High: 79 Low: 61<br />
+Fri - PM Thunderstorms. High: 79 Low: 56<br />
+Sat - Partly Cloudy. High: 72 Low: 46<br />
+Sun - Partly Cloudy. High: 80 Low: 59<br />
+Mon - Thunderstorms. High: 74 Low: 56<br />
+Tue - Sunny. High: 76 Low: 59<br />
 <br />
 <a href="http://us.rd.yahoo.com/dailynews/rss/weather/Syracuse__NY/*http://weather.yahoo.com/forecast/USNY1434_f.html">Full Forecast at Yahoo! Weather</a><BR/><BR/>
 (provided by <a href="http://www.weather.com" >The Weather Channel</a>)<br/>
 ]]></description>
-<yweather:forecast day="Wed" date="3 Jun 2015" low="51" high="74" text="Partly Cloudy" code="30"/>
-<yweather:forecast day="Thu" date="4 Jun 2015" low="60" high="79" text="Mostly Sunny" code="34"/>
-<yweather:forecast day="Fri" date="5 Jun 2015" low="56" high="79" text="Partly Cloudy" code="30"/>
-<yweather:forecast day="Sat" date="6 Jun 2015" low="52" high="73" text="Partly Cloudy" code="30"/>
-<yweather:forecast day="Sun" date="7 Jun 2015" low="61" high="79" text="Partly Cloudy" code="30"/>
-<guid isPermaLink="false">USNY1434_2015_06_07_7_00_EDT</guid>
+<yweather:forecast day="Fri" date="5 Jun 2015" low="56" high="79" text="PM Thunderstorms" code="38"/>
+<yweather:forecast day="Sat" date="6 Jun 2015" low="46" high="72" text="Partly Cloudy" code="30"/>
+<yweather:forecast day="Sun" date="7 Jun 2015" low="59" high="80" text="Partly Cloudy" code="30"/>
+<yweather:forecast day="Mon" date="8 Jun 2015" low="56" high="74" text="Thunderstorms" code="4"/>
+<yweather:forecast day="Tue" date="9 Jun 2015" low="59" high="76" text="Sunny" code="32"/>
+<guid isPermaLink="false">USNY1434_2015_06_09_7_00_EDT</guid>
 </item>
 </channel>
 </rss>
-<!-- fan1667.sports.bf1.yahoo.com Wed Jun  3 04:46:40 PDT 2015 -->
+<!-- fan471.sports.gq1.yahoo.com Fri Jun  5 03:17:17 PDT 2015 -->

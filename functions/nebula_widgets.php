@@ -21,11 +21,12 @@
 			<?php if ( is_single() && nebula_author_bios_enabled() ) : ?>
 				<?php echo $before_widget; ?>
 
-				<?php echo $before_title . '(Author Name)' . $after_title; ?>
-				<a href="#"><img src="<?php echo random_unsplash(125, 125); ?>" /></a>
+				<?php echo $before_title . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author_meta('display_name') . $after_title; ?>
+				<?php if ( get_the_author_meta('headshot_url') ) : ?>
+					<a href="<?php echo get_author_posts_url(get_the_author_meta('ID')); ?>"><img class="nebula-author-bio-thumbnail" src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" /></a>
+				<?php endif; ?>
 				<p>This widget is in development.</p>
 				<?php
-					//Get author headshot (and link to author archive)
 					//Get/echo author name (and link to author archive)
 					//Get author bio
 				?>

@@ -12,21 +12,23 @@
 	jQuery(document).ready(function() {
 
 		//Example 1
-		jQuery.getJSON(bloginfo['template_directory'] + '/includes/twitter_cache.php', function(data) {
-			jQuery('#tweet_user_photo1').attr('href', 'https://twitter.com/' + data[0].user.screen_name).append('<img src="' + data[0].user.profile_image_url + '" title="' + data[0].user.description + '" />');
-			jQuery('#tweet_user1').attr('href', 'https://twitter.com/' + data[0].user.screen_name).text('@' + data[0].user.screen_name);
+		//Fill pre-existing HTML with tweet data. This is good for displaying a single, latest tweet.
+		jQuery.getJSON(bloginfo['template_directory'] + '/includes/twitter_cache.php', function(response) {
+			jQuery('#tweet_user_photo1').attr('href', 'https://twitter.com/' + response[0].user.screen_name).append('<img src="' + response[0].user.profile_image_url + '" title="' + response[0].user.description + '" />');
+			jQuery('#tweet_user1').attr('href', 'https://twitter.com/' + response[0].user.screen_name).text('@' + response[0].user.screen_name);
 
-			var tweetTime = new Date(Date.parse(data[0].created_at));
-			jQuery('#tweet_body1').html(tweetLinks(data[0].text)).append(" <span class='twitter-posted-on'><i class='fa fa-clock-o'></i> " + timeAgo(tweetTime) + "</span>");
+			var tweetTime = new Date(Date.parse(response[0].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
+			jQuery('#tweet_body1').html(tweetLinks(response[0].text)).append(" <span class='twitter-posted-on'><i class='fa fa-clock-o'></i> " + timeAgo(tweetTime) + "</span>");
 		});
 
 		//Example 2
-		jQuery.getJSON(bloginfo['template_directory'] + '/includes/twitter_cache.php', function(data) {
-			jQuery.each(data, function(i) {
-				console.debug(data[i]); //Just to show all the data that is available.
+		//Generate the markup within a UL to display tweets. This method is good for showing multiple tweets.
+		jQuery.getJSON(bloginfo['template_directory'] + '/includes/twitter_cache.php', function(response) {
+			jQuery.each(response, function(i) {
+				//console.debug(response[i]); //Just to show all the data that is available.
 
-				var tweetTime = new Date(Date.parse(data[i].created_at));
-				jQuery('.example2').append('<li><a class="twitter-user-photo" href="https://twitter.com/' + data[i].user.screen_name + '" target="_blank"><img src="' + data[i].user.profile_image_url + '" title="' + data[i].user.description + '" /></a><strong><a href="https://twitter.com/' + data[i].user.screen_name + '" target="_blank">@' + data[i].user.screen_name + '</a></strong><br/><span>' + tweetLinks(data[i].text) + ' <span class="twitter-posted-on"><i class="fa fa-clock-o"></i> ' + timeAgo(tweetTime) + '</span></span></li>');
+				var tweetTime = new Date(Date.parse(response[i].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
+				jQuery('.example2').append('<li><a class="twitter-user-photo" href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank"><img src="' + response[i].user.profile_image_url + '" title="' + response[i].user.description + '" /></a><strong><a href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank">@' + response[i].user.screen_name + '</a></strong><br/><span>' + tweetLinks(response[i].text) + ' <span class="twitter-posted-on"><i class="fa fa-clock-o"></i> ' + timeAgo(tweetTime) + '</span></span></li>');
 			});
 		});
 

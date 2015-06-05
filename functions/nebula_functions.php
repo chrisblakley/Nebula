@@ -22,6 +22,7 @@ function track_google_pagespeed_checks() {
 	}
 }
 
+
 //Add the calling card to the browser console
 if ( nebula_settings_conditional('nebula_console_css') ) {
 	add_action('wp_head', 'nebula_calling_card');
@@ -473,11 +474,38 @@ function nebula_meta($meta, $secondary=1) {
 			$post_tags = '';
 		}
 		echo $post_tags;
-	} elseif ( $meta == 'dimensions' || $meta == 'size' || $meta == 'image' || $meta == 'photo' ) {
+	} elseif ( $meta == 'dimensions' || $meta == 'size' ) {
 		if ( wp_attachment_is_image() ) {
 			$metadata = wp_get_attachment_metadata();
-			echo '<i class="fa fa-expand"></i> <a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a>';
+			echo '<span class="meta-dimensions"><i class="fa fa-expand"></i> <a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
 		}
+	} elseif ( $meta == 'exif' || $meta == 'camera' ) {
+		$imgmeta = wp_get_attachment_metadata();
+	    if ( $imgmeta ) { //Check for Bad Data
+	        if ( $imgmeta['image_meta']['focal_length'] == 0 || $imgmeta['image_meta']['aperture'] == 0 || $imgmeta['image_meta']['shutter_speed'] == 0 || $imgmeta['image_meta']['iso'] == 0 ) {
+	            $output = 'No valid EXIF data found';
+	        } else { //Convert the shutter speed retrieve from database to fraction
+	            if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ) {
+	                if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ) {
+	                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . " second";
+	                } else {
+	                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . " second";
+	                }
+	            } else {
+	                $pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
+	            }
+
+	            $output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']).'</span> <span class="day">'.date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
+	            $output .= $imgmeta['image_meta']['camera'] . ', ';
+	            $output .= $imgmeta['image_meta']['focal_length'] . 'mm' . ', ';
+	            $output .= '<span style="font-style:italic;font-family: Trebuchet MS,Candara,Georgia; text-transform:lowercase">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
+	            $output .= $pshutter . ', ';
+	            $output .= $imgmeta['image_meta']['iso'] .' ISO';
+	        }
+	    }else {
+	        $output = 'No EXIF data found';
+	    }
+		echo '<span class="meta-exif"><i class="fa fa-camera"></i> ' . $output . '</span>';
 	} elseif ( $meta == 'comments' || $meta == 'comment' ) {
 		$comments_text = 'Comments';
 		if ( get_comments_number() == 0 ) {
@@ -499,6 +527,50 @@ function nebula_meta($meta, $secondary=1) {
 		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
 	}
 }
+
+
+
+
+
+
+/*
+//Displays camera exif information for an attachment
+function get_exif($att) {
+    $imgmeta = wp_get_attachment_metadata($att);
+    if ( $imgmeta ) { //Check for Bad Data
+        if ( $imgmeta['image_meta']['focal_length'] == 0 || $imgmeta['image_meta']['aperture'] == 0 || $imgmeta['image_meta']['shutter_speed'] == 0 || $imgmeta['image_meta']['iso'] == 0 ) {
+            $output = '';
+        } else { //Convert the shutter speed retrieve from database to fraction
+            if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ) {
+                if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ) {
+                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . " second";
+                } else {
+                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . " second";
+                }
+            } else {
+                $pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
+            }
+
+            $output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']).'</span> <span class="day">'.date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
+            $output .= $imgmeta['image_meta']['camera'] . ', ';
+            $output .= $imgmeta['image_meta']['focal_length'] . 'mm' . ', ';
+            $output .= '<span style="font-style:italic;font-family: Trebuchet MS,Candara,Georgia; text-transform:lowercase">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
+            $output .= $pshutter . ', ';
+            $output .= $imgmeta['image_meta']['iso'] .' ISO';
+        }
+    }else { //No Data Found
+        $output = 'No data found';
+    }
+    return $output;
+}
+*/
+
+
+
+
+
+
+
 
 
 

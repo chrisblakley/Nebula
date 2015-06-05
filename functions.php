@@ -93,6 +93,7 @@ function register_nebula_scripts() {
 	wp_register_script('nebula-twitter', get_template_directory_uri() . '/js/libs/twitter.js', array(), null, true);
 	wp_register_script('nebula-datatables', '//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.6/js/jquery.dataTables.min.js', array(), '1.10.6', true);
 	wp_register_script('nebula-chosen', '//cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js', array(), '1.4.2', true);
+	wp_register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js', array(), '2.10.3', true);
 	wp_register_script('nebula-maskedinput', '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js', array(), '1.3.1', true);
 	wp_register_script('nebula-main', get_template_directory_uri() . '/js/main.js?' . $GLOBALS['defer'], array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
 	wp_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', array('jquery'), null, true);
@@ -236,6 +237,7 @@ function enqueue_nebula_frontend() {
 
 	if ( is_page(9999) ) { //Twitter pages (conditional may need to change depending on type of page it's used on)
 		wp_enqueue_script('nebula-twitter');
+		//wp_enqueue_script('nebula-moment'); //Uncomment if using moment.js instead of Date.parse() for times.
 	}
 
 	if ( !$GLOBALS["mobile_detect"]->isMobile() && !$GLOBALS["mobile_detect"]->isTablet() ) { //Desktop traffic only

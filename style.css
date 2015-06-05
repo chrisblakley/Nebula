@@ -392,10 +392,10 @@ input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font
 	input.nebula-search.focus:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
 	input.nebula-search.focus::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
 form.nebula-search-iconable {position: relative; display: inline-block;}
-	form.nebula-search-iconable input.nebula-search, form.nebula-search-iconable .svg input.nebula-search {background: #eee;}
+	form.nebula-search-iconable input.nebula-search {background: #eee;}
+		.lte-ie8 form.nebula-search-iconable input.nebula-search {background: #eee url("images/search.png") no-repeat 6px center;}
 	.borderimage form.nebula-search-iconable:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage form.nebula-search-iconable.searching:before {content: '\f110'; -webkit-animation: fa-spin 2s infinite linear; animation: fa-spin 2s infinite linear;}
-
 
 
 /* Nebula Wordpress main navigation style defaults */
@@ -494,6 +494,8 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 	.posted-on,
 	.posted-in,
 	.posted-by {display: inline-block; margin-right: 10px; text-transform: uppercase; font-weight: bold;}
+	.meta-dimensions {display: inline-block; margin-right: 10px;}
+	.meta-exif {display: inline-block; margin-right: 10px;}
 	.nebulasocialcon {} /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */
 		.sharing-links {display: block; margin-top: 10px;}
 			.sharing-links.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
@@ -513,7 +515,7 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 	.entry-content ol,
 	#tinymce ol {margin: 0; padding-left: 20px;}
 
-.entry-caption {text-align: right; font-style: italic; color: #888;}
+.entry-caption {font-style: italic; color: #444; margin-top: 15px;}
 
 .prevnextcon {margin-top: 50px; margin-bottom: 30px;}
 	.prev-link-con {text-align: left;}
