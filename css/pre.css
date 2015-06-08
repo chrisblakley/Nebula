@@ -1,14 +1,21 @@
-pre.nebula-code {position: relative; display: block; height: auto; font: normal 12px/22px Monaco, Monospace !important; color:#222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0 0 20px 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
+.nebula-pre-con {margin: 0 0 20px 0;}
+	pre.nebula-code {position: relative; display: block; height: auto; font: normal 12px/22px Monaco, Monospace !important; color:#222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
 
 	/* .no-js pre.nebula-pre {margin: 10px 0 20px 0;} */
 
 	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
+
+.nebula-selectcopy-code {font-size: 10px; float: right; margin-top: -4px; opacity: 0.7;}
+	.nebula-selectcopy-code:hover,
+	.nebula-selectcopy-code.hover {opacity: 1;}
 
 /* ==========================================================================
    Languages
    ========================================================================== */
 
 /* Apache, Directive */
+.nebula-pre-con.apache a,
+.nebula-pre-con.directive a,
 .nebula-code.pretitle.apache,
 .nebula-code.pretitle.directive {color: #af2473;}
 
@@ -21,6 +28,8 @@ pre.nebula-code.directive,
 
 
 /* ActionScript, AS */
+.nebula-pre-con.as a,
+.nebula-pre-con.actionscript a,
 .nebula-code.codetitle.as,
 .nebula-code.codetitle.actionscript {color: #a42222;}
 
@@ -33,6 +42,7 @@ pre.nebula-code.actionscript,
 
 
 /* CSS */
+.nebula-pre-con.css a,
 .nebula-code.codetitle.css {color: #30a9dc;}
 	.nebula-code.codetitle.css:after {content: "\f13c"; font-family: "FontAwesome"; margin-left: 5px;}
 
@@ -42,6 +52,7 @@ pre.nebula-code.css,
 
 
 /* HTML */
+.nebula-pre-con.html a,
 .nebula-code.codetitle.html {color: #f1672c;}
 	.nebula-code.codetitle.html:before {content: "\f13b"; font-family: "FontAwesome"; margin-right: 3px;}
 
@@ -51,6 +62,9 @@ pre.nebula-code.html,
 
 
 /* JavaScript, jQuery, JS */
+.nebula-pre-con.js a,
+.nebula-pre-con.javascript a,
+.nebula-pre-con.jquery a,
 .nebula-code.codetitle.js,
 .nebula-code.codetitle.javascript,
 .nebula-code.codetitle.jquery {color: #f1bf26;}
@@ -67,6 +81,7 @@ pre.nebula-code.jquery,
 
 
 /* PHP */
+.nebula-pre-con.php a,
 .nebula-code.codetitle.php {color: #7f7fb2;}
 
 pre.nebula-code.php,
@@ -75,6 +90,7 @@ pre.nebula-code.php,
 
 
 /* RegEx */
+.nebula-pre-con.regex a,
 .nebula-code.codetitle.regex {color: #666;}
 
 pre.nebula-code.regex,
@@ -83,6 +99,7 @@ pre.nebula-code.regex,
 
 
 /* Shortcode */
+.nebula-pre-con.shortcode a,
 .nebula-code.codetitle.shortcode {color: #287DA2;}
 	.nebula-code.codetitle.shortcode:before {content: "\f19a"; font-family: "FontAwesome"; margin-right: 3px;}
 
@@ -92,6 +109,8 @@ pre.nebula-code.shortcode,
 
 
 /* MySQL, SQL */
+.nebula-pre-con.sql a,
+.nebula-pre-con.mysql a,
 .nebula-code.pretitle.sql,
 .nebula-code.pretitle.mysql {color: #116285;}
 

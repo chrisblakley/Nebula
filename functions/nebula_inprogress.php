@@ -6,6 +6,23 @@
  ===========================*/
 
 
+//Display WordPress debug messages for Devs who are admins with ?debug query string is used.
+//@TODO "Nebula" 0: Check security issues of using this.
+if ( array_key_exists('debug', $_GET) && is_dev() && current_user_can('manage_options') ) {
+	define('WP_DEBUG', true);
+	define('WP_DEBUG_DISPLAY', true);
+}
+
+
+
+
+//Only allow admins to modify Contact Forms //@TODO "Nebula" 0: Currently does not work because these constants are already defined!
+//define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
+//define('WPCF7_ADMIN_READ_WRITE_CAPABILITY', 'manage_options');
+
+
+
+
 
 /*
 //For automatically setting certain "Screen Options" settings by default.

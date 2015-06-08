@@ -78,9 +78,8 @@ jQuery(document).ready(function() {
 	}
 
 	jQuery(window).resize(function() {
-		waitForFinalEvent(function(){
-
-	    	//Window resize functions here.
+		debounce(function(){
+			//Window resize functions here.
 	    	powerFooterWidthDist();
 			nebulaEqualize();
 			mobileSearchPlaceholder();
@@ -95,8 +94,7 @@ jQuery(document).ready(function() {
 		    	}
 		    	viewport = updateViewportDimensions();
 	    	}
-
-		}, 500, "unique resize ID 1");
+		}, 500);
 	});
 
 
@@ -821,38 +819,38 @@ function advancedSearchTriggers(){
 	jQuery('#s').keyup(function(e){
 		if ( searchTriggerOnlyChars(e) ) {
 			advancedSearchWaiting();
-			waitForFinalEvent(function(){
+			debounce(function(){
 				if ( jQuery('#s').val().trim().length >= 3 ) {
 					advancedSearch();
 					ga('send', 'event', 'Internal Search', 'Advanced', '"' + jQuery('#s').val().trim() + '"');
 				} else {
 					//console.log('value is less than 3 characters');
 				}
-			}, 1000, "advanced search 1");
+			}, 1000);
 		}
 	});
 
 	jQuery(document).on('change', '.advanced-post-type', function(){
 		advancedSearchWaiting();
-		waitForFinalEvent(function(){
+		debounce(function(){
 			if ( jQuery('#s').val().trim() != '' || jQuery('.advanced-catstags').val() != '' ) { //@TODO: Something is up here.
 				advancedSearch();
 			}
-		}, 1000, "advanced search 2");
+		}, 1000);
 	});
 
 	jQuery(document).on('change', '.advanced-catstags', function(){
 		advancedSearchWaiting();
-		waitForFinalEvent(function(){
+		debounce(function(){
 			advancedSearch();
-		}, 1000, "advanced search 3");
+		}, 1000);
 	});
 
 	jQuery(document).on('change', '.advanced-author', function(){
 		advancedSearchWaiting();
-		waitForFinalEvent(function(){
+		debounce(function(){
 			advancedSearch();
-		}, 1000, "advanced search 4");
+		}, 1000);
 	});
 }
 
@@ -1576,19 +1574,32 @@ function errorLogAndFallback() {
 	}
 }
 
-//Waits until event (generally resize) finishes before triggering. Call with waitForFinalEvent();
-var waitForFinalEvent = (function () {
-	var timers = {};
-	return function (callback, ms, uniqueId) {
-		if (!uniqueId) {
-			uniqueId = "Don't call this twice without a uniqueId";
-		}
-		if (timers[uniqueId]) {
-			clearTimeout (timers[uniqueId]);
-		}
-		timers[uniqueId] = setTimeout(callback, ms);
-	};
-})(); //end waitForFinalEvent()
+
+
+//Waits for events to finish before triggering
+//Passing immediate triggers the function on the leading edge (instead of the trailing edge).
+var debounceTimers = {};
+function debounce(callback, wait, uniqueId, immediate){
+    if ( !uniqueId ){
+		uniqueId = "Don't call this twice without a uniqueId";
+	}
+
+    var context = this, args = arguments;
+    var later = function(){
+        debounceTimers[uniqueId] = null;
+        if ( !immediate ) {
+	        callback.apply(context, args);
+	    }
+    };
+    var callNow = immediate && !debounceTimers[uniqueId];
+
+    clearTimeout(debounceTimers[uniqueId]);
+    debounceTimers[uniqueId] = setTimeout(later, wait);
+    if ( callNow ) {
+	    callback.apply(context, args);
+	}
+};
+
 
 
 //Conditional JS Library Loading
@@ -1640,6 +1651,10 @@ function conditionalJSLoading() {
 		}).fail(function(){
 			ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.', {'nonInteraction': 1});
 		});
+	}
+
+	if ( jQuery('pre.nebula-code').is('*') ) {
+		nebula_pre();
 	}
 
 	if ( jQuery('.flag').is('*') ) {
@@ -1801,6 +1816,65 @@ function eraseCookie(name) {
 	}
 }
 
+
+function nebula_pre(){
+
+	try {
+		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
+			var selectCopyText = 'Copy to clipboard';
+		} else if ( document.body.createTextRange || window.getSelection ) {
+			var selectCopyText = 'Select All';
+		} else {
+			return false;
+		}
+	} catch(err){
+		if ( document.body.createTextRange || window.getSelection ) {
+			var selectCopyText = 'Select All';
+		} else {
+			return false;
+		}
+	}
+
+	jQuery('.nebula-pre-con').each(function(){
+		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>'); //@TODO: Test if copying is supported. If so, text should be "Copy" if not, test for selecting with "Select All", else hide entirely.
+	});
+
+	jQuery(document).on('click touch tap', '.nebula-selectcopy-code', function(){
+	    jQuery(this).parents('.nebula-pre-con').find('pre').selectText('copy');
+	    jQuery(this).text('Copied!');
+	    oThis = jQuery(this);
+	    setTimeout(function(){
+		    oThis.text('Copy to clipboard');
+	    }, 1500);
+		return false;
+	});
+}
+
+//Select (and optionally copy) text using .selectText();
+//@TODO "Nebula" 0: Convert this to a standard function so a callback function can be used (for success/error on copied text).
+jQuery.fn.selectText = function(copy){
+    if ( document.body.createTextRange ){
+        var range = document.body.createTextRange();
+        range.moveToElementText(this[0]);
+        range.select();
+    } else if ( window.getSelection ){
+        var selection = window.getSelection();
+        var range = document.createRange();
+        range.selectNodeContents(this[0]);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+	if ( copy ) {
+	    try { //Attempt to copy the selected range.
+			var successfulCopy = document.execCommand('copy');
+			//var msg = successfulCopy ? 'successful' : 'unsuccessful';
+			//console.log('Copy email command was ' + msg);
+		} catch(err){
+			//console.log('Unable to copy');
+		}
+	}
+};
 
 
 /* ==========================================================================

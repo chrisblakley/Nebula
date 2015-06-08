@@ -527,11 +527,6 @@ function search_theme_files() {
 }
 
 
-//Only allow admins to modify Contact Forms //@TODO "Nebula" 0: Currently does not work because these constants are already defined!
-//define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
-//define('WPCF7_ADMIN_READ_WRITE_CAPABILITY', 'manage_options');
-
-
 //Change default values for the upload media box
 //These can also be changed by navigating to .../wp-admin/options.php
 add_action('after_setup_theme', 'custom_media_display_settings');
@@ -716,8 +711,13 @@ function is_at_phg(){
 }
 
 
-
-
+//Enable All Settings page for only Developers who are Admins
+if ( is_dev() && !is_client() ) {
+	add_action('admin_menu', 'all_settings_link');
+	function all_settings_link() {
+	    add_options_page('All Settings', 'All Settings', 'administrator', 'options.php');
+	}
+}
 
 
 

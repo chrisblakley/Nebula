@@ -7,38 +7,41 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
 <script>
-	jQuery(document).ready(function() {
+	jQuery(document).ready(function(){
+
 
 		jQuery(document).on('click', function(){
 			inProgress(jQuery('.clicktest'));
-			waitForFinalEvent(function(){
+			debounce(function(){
 				checkThenFade(jQuery('.clicktest'));
-			}, 500, "clickexample");
+			}, 1000, 'click test');
 		});
 
 		jQuery(window).resize(function() {
 			inProgress(jQuery('.windowresize'));
-			waitForFinalEvent(function(){
+			debounce(function(){
 				checkThenFade(jQuery('.windowresize'));
-			}, 500, "resizeexample");
+			}, 1000, 'resize test');
 		});
 
 		jQuery(window).on('scroll', function(){
 			inProgress(jQuery('.windowscroll'));
-			waitForFinalEvent(function(){
+			debounce(function(){
 				checkThenFade(jQuery('.windowscroll'));
-			}, 500, "scrollexample");
+			}, 1000, 'scroll test');
 		});
 
 		jQuery(window).mousemove(function(){
 			inProgress(jQuery('.mousemove'));
-			waitForFinalEvent(function(){
+			debounce(function(){
 				checkThenFade(jQuery('.mousemove'));
-			}, 500, "mousemoveexample");
+			}, 1000, 'mouse move test');
 		});
 
 	});
 
+
+	//The following functions are only for this example and are not needed for debounce.
 
 	function inProgress(oThis) {
 		if ( !oThis.hasClass('activated') ) {
@@ -54,23 +57,6 @@
 			});
 		}, 1500);
 	}
-
-
-	/* This is bundled in main.js, so showing here for reference only.
-	//Waits until event (generally resize) finishes before triggering. Call with waitForFinalEvent();
-	var waitForFinalEvent = (function () {
-		var timers = {};
-		return function (callback, ms, uniqueId) {
-			if (!uniqueId) {
-				uniqueId = "Don't call this twice without a uniqueId";
-			}
-			if (timers[uniqueId]) {
-				clearTimeout (timers[uniqueId]);
-			}
-			timers[uniqueId] = setTimeout(callback, ms);
-		};
-	})(); //end waitForFinalEvent()
-	*/
 </script>
 
 

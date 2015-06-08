@@ -326,16 +326,16 @@ function pre_shortcode($atts, $content=''){
 	if ( $lang == '' && $language != '' ) {
 		$lang = $language;
 	}
-	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
+	$lang = strtolower(str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang));
 	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'regex', 'shortcode', 'sql');
 	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'RegEx', 'Shortcode', 'SQL');
 	$vislang = str_replace($search, $replace, $lang);
 
-	$return = '<span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
+	$return = '<div class="nebula-pre-con clearfix ' . $lang . '"><span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
 	if ( $color != '' ) {
 		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
-	$return .= $style . '" >' . $content . '</pre>';
+	$return .= $style . '" >' . $content . '</pre></div>';
 
 	return $return;
 } //end pre_shortcode()

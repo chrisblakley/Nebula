@@ -370,8 +370,8 @@ get_header(); ?>
 						include_once('includes/ambient_light_events.php');
 					} ?>
 
-					<?php if (is_page(1227)) { //Wait For Final Event
-						include_once('includes/waitforfinalevent.php');
+					<?php if (is_page(1227)) { //Debounce
+						include_once('includes/debounce.php');
 					} ?>
 
 					<?php if (is_page(1280)) { //WHOIS Info
@@ -396,6 +396,10 @@ get_header(); ?>
 
 					<?php if (is_page(1577)) { //Chosen.js
 						include_once('includes/chosen.php');
+					} ?>
+
+					<?php if (is_page(1590)) { //selectText()
+						include_once('includes/selecttext.php');
 					} ?>
 
 					<?php

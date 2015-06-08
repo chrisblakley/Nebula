@@ -49,7 +49,7 @@
 				}
 			});
 
-			waitForFinalEvent(function(){
+			debounce(function(){
 		    	generateCampaignURL();
 			}, 1000, "campaignurlgenerator");
 		});

@@ -280,7 +280,7 @@ function nebula_settings_page(){
 	<div class="wrap">
 		<h2>Nebula Settings</h2>
 		<?php
-			if (!current_user_can('manage_options')) {
+			if ( !current_user_can('manage_options') ) {
 			    wp_die('You do not have sufficient permissions to access this page.');
 			}
 		?>
