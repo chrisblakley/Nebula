@@ -20,16 +20,25 @@
 		//console.debug( document.queryCommandState('copy') );
 		//console.debug( document.queryCommandValue('copy') );
 
+
+
+		//This tests to see if selecting text is possible.
 		if ( document.body.createTextRange || window.getSelection ) {
 			jQuery('.example-select-supported').addClass('yep').html('Selecting text is supported in your browser');
 		} else {
 			jQuery('.example-select-supported').addClass('nope').html('Selecting text is NOT supported in your browser');
 		}
+
+
+		//Example of selecting text
 		jQuery(document).on('click touch tap', '.example-select-trigger', function(){
-		    jQuery('.example-select').selectText();
+		    selectText('.example-select');
 			return false;
 		});
 
+
+
+		//This just tests to see if copying is available.
 		try {
 			if ( document.queryCommandEnabled("copy") ) {
 				jQuery('.example-copy-supported').addClass('yep').html('Copying text is supported in your browser');
@@ -40,27 +49,43 @@
 			jQuery('.example-copy-supported').addClass('nope').html('Copying text is NOT supported in your browser.');
 		}
 
+
+		//Example of copying text
 		jQuery(document).on('click touch tap', '.example-copy-trigger', function(){
-		    jQuery('.example-copy').selectText('copy');
-		    jQuery('.example-copy-trigger').text('Attempted to copy!');
-		    setTimeout(function(){
-			    jQuery('.example-copy-trigger').text('Click here to copy the above text.');
-		    }, 2000);
-		    jQuery('.selectcopyexamplecon textarea').val('').attr('placeholder', 'Ok, now try pasting it here!');
+		    selectText('.example-copy', 'copy', function(success){
+			    if ( success ) {
+				    jQuery('.example-copy-supported').removeClass('maybe').addClass('yep').html('Copying text is supported in your browser');
+				    jQuery('.example-copy-trigger').text('Copied!');
+				    setTimeout(function(){
+					    jQuery('.example-copy-trigger').text('Click here to copy the above text.');
+				    }, 2000);
+				    jQuery('.selectcopyexamplecon textarea').val('').attr('placeholder', 'Ok, now try pasting it here!');
+				} else {
+					jQuery('.example-copy-trigger').text('Unable to copy text!');
+					jQuery('.example-copy-supported').removeClass('maybe').addClass('nope').html('Copying text is NOT supported in your browser.');
+				}
+		    });
 			return false;
 		});
 
 
-		//@TODO "Nebula" 0: See if you can paste on doc ready the contents of the clipboard. This should be an example of what *not* to do.
-/*
-		try {
-			var successfulPaste = document.execCommand('paste');
-			var msg = successfulPaste ? 'successful' : 'unsuccessful';
-			console.log('Paste command was ' + msg);
-		} catch(err){
-			console.log('Unable to paste');
-		}
-*/
+
+
+		//Attempt to paste into the textarea automatically when it's clicked...
+		jQuery('.selectcopyexamplecon textarea').on('click touch tap', function(){
+			jQuery(this).val('');
+			try {
+				var successfulPaste = document.execCommand('paste');
+				var msg = successfulPaste ? 'Automatic paste command was successful!' : 'Automatic paste command was unsuccessful. Please paste manually.';
+				jQuery(this).attr('placeholder', msg);
+			} catch(err){
+				jQuery(this).attr('placeholder', 'Automatic paste command was unsuccessful. Please paste manually.');
+			}
+		}).on('blur', function(){
+			jQuery(this).attr('placeholder', 'Click the copy link and then try pasting here to see if it worked...');
+		});
+
+
 
 	});
 </script>
@@ -91,7 +116,7 @@
 		</div>
 		<br/><br/><br/>
 
-		<textarea placeholder="Click the copy link and then try pasting here to see if it worked..." style="width: 100%; min-height: 150px;"></textarea>
+		<textarea id="testtextarea" placeholder="Click the copy link and then try pasting here to see if it worked..." style="width: 100%; min-height: 150px;"></textarea>
 
 	</div><!--/columns-->
 </div><!--/row-->

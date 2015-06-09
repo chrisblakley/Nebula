@@ -1817,8 +1817,8 @@ function eraseCookie(name) {
 }
 
 
+//Functionality for selecting and copying text using Nebula Pre tags.
 function nebula_pre(){
-
 	try {
 		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
 			var selectCopyText = 'Copy to clipboard';
@@ -1836,45 +1836,108 @@ function nebula_pre(){
 	}
 
 	jQuery('.nebula-pre-con').each(function(){
-		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>'); //@TODO: Test if copying is supported. If so, text should be "Copy" if not, test for selecting with "Select All", else hide entirely.
+		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>');
 	});
 
 	jQuery(document).on('click touch tap', '.nebula-selectcopy-code', function(){
-	    jQuery(this).parents('.nebula-pre-con').find('pre').selectText('copy');
-	    jQuery(this).text('Copied!');
 	    oThis = jQuery(this);
-	    setTimeout(function(){
-		    oThis.text('Copy to clipboard');
-	    }, 1500);
+
+	    if ( jQuery(this).text() == 'Copy to clipboard' ) {
+		    selectText(jQuery(this).parents('.nebula-pre-con').find('pre'), 'copy', function(success){
+			    if ( success ) {
+				    oThis.text('Copied!').removeClass('error').addClass('success');
+				    setTimeout(function(){
+					    oThis.text('Copy to clipboard').removeClass('success');
+				    }, 1500);
+			    } else {
+				    jQuery('.nebula-selectcopy-code').each(function(){
+					    jQuery(this).text('Select All');
+				    });
+				    oThis.text('Unable to copy.').addClass('error');
+				    setTimeout(function(){
+					    oThis.text('Select All').removeClass('error');
+				    }, 3500);
+			    }
+		    });
+	    } else {
+		    selectText(jQuery(this).parents('.nebula-pre-con').find('pre'), function(success){
+			    if ( success ) {
+				    oThis.text('Selected!').removeClass('error').addClass('success');
+				    setTimeout(function(){
+					    oThis.text('Select All').removeClass('success');
+				    }, 1500);
+			    } else {
+				    jQuery('.nebula-selectcopy-code').each(function(){
+					    jQuery(this).hide();
+				    });
+				    oThis.text('Unable to select.').addClass('error');
+			    }
+		    });
+	    }
 		return false;
 	});
 }
 
-//Select (and optionally copy) text using .selectText();
-//@TODO "Nebula" 0: Convert this to a standard function so a callback function can be used (for success/error on copied text).
-jQuery.fn.selectText = function(copy){
-    if ( document.body.createTextRange ){
-        var range = document.body.createTextRange();
-        range.moveToElementText(this[0]);
-        range.select();
-    } else if ( window.getSelection ){
-        var selection = window.getSelection();
-        var range = document.createRange();
-        range.selectNodeContents(this[0]);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
+//Select (and optionally copy) text
+function selectText(element, copy, callback){
+	if ( typeof element === 'string' ){
+		element = jQuery(element)[0];
+	} else if ( typeof element === 'object' && element.nodeType !== 1 ) {
+		element = element[0];
+	}
 
-	if ( copy ) {
-	    try { //Attempt to copy the selected range.
-			var successfulCopy = document.execCommand('copy');
-			//var msg = successfulCopy ? 'successful' : 'unsuccessful';
-			//console.log('Copy email command was ' + msg);
-		} catch(err){
-			//console.log('Unable to copy');
+	if ( typeof copy === 'function' ) {
+		callback = copy;
+		copy = null;
+	}
+
+	try {
+		if ( document.body.createTextRange ){
+			var range = document.body.createTextRange();
+			range.moveToElementText(element);
+			range.select();
+			if ( !copy && callback ) {
+				callback(true);
+				return false;
+			}
+		} else if ( window.getSelection ){
+			var selection = window.getSelection();
+			var range = document.createRange();
+			range.selectNodeContents(element);
+			selection.removeAllRanges();
+			selection.addRange(range);
+			if ( !copy && callback ) {
+				callback(true);
+				return false;
+			}
+		}
+	} catch(err){
+		if ( callback ) {
+			callback(false);
+			return false;
 		}
 	}
-};
+
+	if ( copy ) {
+		try {
+			var success = document.execCommand('copy');
+			if ( callback ) {
+				callback(success);
+				return false;
+			}
+		} catch(err){
+			if ( callback ) {
+				callback(false);
+				return false;
+			}
+		}
+	}
+
+	if ( callback ) {
+		callback(false);
+	}
+	return false;
+}
 
 
 /* ==========================================================================
