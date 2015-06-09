@@ -11,7 +11,7 @@ remove_filter('comment_text', 'wptexturize');
 //Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
 add_action('admin_head', 'admin_favicon');
 function admin_favicon() {
-	if ( array_key_exists('debug', $_GET) ) {
+	if ( is_debug() ) {
 		echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico?r' . mt_rand(1000, 99999) . ' />';
 	} else {
 		echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico" />';
@@ -553,11 +553,24 @@ function id_columns_content($column_name, $post_ID) {
 }
 
 
+//Remove most Yoast SEO columns
+add_filter('manage_edit-post_columns', 'remove_yoast_columns');
+add_filter('manage_edit-page_columns', 'remove_yoast_columns');
+function remove_yoast_columns($columns){
+	//unset($columns['wpseo-score']);
+	unset($columns['wpseo-title']);
+	unset($columns['wpseo-metadesc']);
+	unset($columns['wpseo-focuskw']);
+    return $columns;
+}
+
+
+
 //Duplicate post
 add_action( 'admin_action_duplicate_post_as_draft', 'duplicate_post_as_draft' );
 function duplicate_post_as_draft(){
 	global $wpdb;
-	if (! ( isset( $_GET['post']) || isset( $_POST['post'])  || ( isset($_REQUEST['action']) && 'duplicate_post_as_draft' == $_REQUEST['action'] ) ) ) {
+	if ( !(isset($_GET['post']) || isset($_POST['post'])  || (isset($_REQUEST['action']) && 'duplicate_post_as_draft' == $_REQUEST['action'])) ){
 		wp_die('No post to duplicate has been supplied!');
 	}
 
@@ -571,7 +584,7 @@ function duplicate_post_as_draft(){
 	$new_post_author = $current_user->ID;
 
 	//If post data exists, create the post duplicate
-	if (isset( $post ) && $post != null) {
+	if ( isset($post) && $post != null ){
 		//New post data array
 		$args = array(
 			'comment_status' => $post->comment_status,
@@ -601,7 +614,7 @@ function duplicate_post_as_draft(){
 
 		//Duplicate all post meta
 		$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
-		if (count($post_meta_infos)!=0) {
+		if ( count($post_meta_infos)!=0 ){
 			$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 			foreach ($post_meta_infos as $meta_info) {
 				$meta_key = $meta_info->meta_key;
@@ -613,7 +626,7 @@ function duplicate_post_as_draft(){
 		}
 
 		//Redirect to the edit post screen for the new draft
-		wp_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
+		wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
 		exit;
 	} else {
 		wp_die('Post creation failed, could not find original post: ' . $post_id);
@@ -624,8 +637,8 @@ function duplicate_post_as_draft(){
 //Additional post types with the following: add_filter('{post type name}_row_actions', 'rd_duplicate_post_link', 10, 2);
 add_filter( 'post_row_actions', 'rd_duplicate_post_link', 10, 2 );
 add_filter('page_row_actions', 'rd_duplicate_post_link', 10, 2);
-function rd_duplicate_post_link( $actions, $post ) {
-	if (current_user_can('edit_posts')) {
+function rd_duplicate_post_link($actions, $post){
+	if ( current_user_can('edit_posts') ){
 		$actions['duplicate'] = '<a href="admin.php?action=duplicate_post_as_draft&amp;post=' . $post->ID . '" title="Duplicate this item" rel="permalink">Duplicate</a>';
 	}
 	return $actions;
@@ -634,14 +647,14 @@ function rd_duplicate_post_link( $actions, $post ) {
 
 //Show File URL column on Media Library listings
 add_filter('manage_media_columns', 'muc_column');
-function muc_column( $cols ) {
+function muc_column($cols){
 	$cols["media_url"] = "File URL";
 	return $cols;
 }
 add_action('manage_media_custom_column', 'muc_value', 10, 2);
-function muc_value( $column_name, $id ) {
-	if ( $column_name == "media_url" ) {
-		echo '<input type="text" width="100%" value="' . wp_get_attachment_url( $id ) . '" readonly />';
+function muc_value( $column_name, $id ){
+	if ( $column_name == "media_url" ){
+		echo '<input type="text" width="100%" value="' . wp_get_attachment_url($id) . '" readonly />';
 		//echo '<input type="text" width="100%" onclick="jQuery(this).select();" value="'. wp_get_attachment_url( $id ). '" readonly />'; //This selects the text on click
 	}
 }
@@ -681,7 +694,7 @@ function is_dev() {
 function is_client() {
 	$clientIPs = explode(',', get_option('nebula_client_ip'));
 	foreach ( $clientIPs as $clientIP ) {
-		if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ) {
+		if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ){
 			return true;
 		}
 	}
@@ -718,78 +731,6 @@ if ( is_dev() && !is_client() ) {
 	    add_options_page('All Settings', 'All Settings', 'administrator', 'options.php');
 	}
 }
-
-
-
-
-
-
-
-
-
-/*
-//Found this PHP error log tracker dashboard metabox. Seems pretty cool. Research the possibility of including it more before implementing.
-//http://sltaylor.co.uk/blog/wordpress-dashboard-widget-php-errors-log/
-function slt_dashboardWidgets() {
-	wp_add_dashboard_widget( 'slt-php-errors', 'PHP errors', 'slt_PHPErrorsWidget' );
-}
-add_action( 'wp_dashboard_setup', 'slt_dashboardWidgets' );
-function slt_PHPErrorsWidget() {
-	$logfile = '/home3/cblakley/public_html/error_log'; // Enter the server path to your logs file here
-	$displayErrorsLimit = 100; // The maximum number of errors to display in the widget
-	$errorLengthLimit = 300; // The maximum number of characters to display for each error
-	$fileCleared = false;
-	$userCanClearLog = current_user_can('manage_options');
-
-	// Clear file?
-	if ( $userCanClearLog && isset( $_GET["slt-php-errors"] ) && $_GET["slt-php-errors"]=="clear" ) {
-		$handle = fopen( $logfile, "w" );
-		fclose( $handle );
-		$fileCleared = true;
-	}
-
-	// Read file
-	if ( file_exists( $logfile ) ) {
-		$errors = file( $logfile );
-		$errors = array_reverse( $errors );
-		if ( $fileCleared ) echo '<p><em>File cleared.</em></p>';
-		if ( $errors ) {
-			echo '<p>'.count( $errors ).' error';
-			if ( $errors != 1 ) echo 's';
-			echo '.';
-			if ( $userCanClearLog ) echo ' [ <b><a href="'.get_bloginfo("url").'/wp-admin/?slt-php-errors=clear" onclick="return confirm(\'Are you sure?\');">CLEAR LOG FILE</a></b> ]';
-			echo '</p>';
-			echo '<div id="slt-php-errors" style="height:250px;overflow:scroll;padding:2px;background-color:#faf9f7;border:1px solid #ccc;">';
-			echo '<ol style="padding:0;margin:0;">';
-			$i = 0;
-			foreach ( $errors as $error ) {
-				echo '<li style="padding:2px 4px 6px;border-bottom:1px solid #ececec;">';
-				$errorOutput = preg_replace( '/\[([^\]]+)\]/', '<b>[$1]</b>', $error, 1 );
-				if ( strlen( $errorOutput ) > $errorLengthLimit ) {
-					echo substr( $errorOutput, 0, $errorLengthLimit ).' [...]';
-				} else {
-					echo $errorOutput;
-				}
-				echo '</li>';
-				$i++;
-				if ( $i > $displayErrorsLimit ) {
-					echo '<li style="padding:2px;border-bottom:2px solid #ccc;"><em>More than '.$displayErrorsLimit.' errors in log...</em></li>';
-					break;
-				}
-			}
-			echo '</ol></div>';
-		} else {
-			echo '<p>No errors currently logged.</p>';
-		}
-	} else {
-		echo '<p><em>There was a problem reading the error log file.</em> The current template path is:</p><p>' . TEMPLATEPATH . '</p>';
-	}
-}
-*/
-
-
-
-
 
 
 

@@ -106,10 +106,6 @@ get_header(); ?>
 						include_once('includes/get.php');
 					} ?>
 
-					<?php if ( is_page(797) ) { //nebula_event()
-						//include_once('includes/nebula_event.php');
-					} ?>
-
 					<?php if ( is_page(829) ) { //Social Buttons
 						include_once('includes/social_buttons.php');
 					} ?>

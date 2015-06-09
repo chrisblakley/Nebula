@@ -103,7 +103,7 @@ function register_nebula_scripts() {
 
 
 //Control how scripts are loaded, and force clear cache for debugging
-if ( array_key_exists('debug', $_GET) ) {
+if ( is_debug() ) {
 	$GLOBALS["debug"] = true;
 	$GLOBALS["defer"] = '';
 	$GLOBALS["async"] = '';

@@ -765,7 +765,7 @@ function autocompleteSearch(){
 	});
 
 	jQuery("#s, input.search").keyup(function(e){
-		if ( !jQuery(this).hasClass('no-autocomplete') ) {
+		if ( !jQuery(this).hasClass('no-autocomplete') && !jQuery('html').hasClass('lte-ie8') ){
 			if ( jQuery(this).parents('form').hasClass('nebula-search-iconable') && jQuery(this).val().trim().length >= 2 && searchTriggerOnlyChars(e) ) {
 				jQuery(this).parents('.nebula-search-iconable').addClass('searching');
 				setTimeout(function(){
@@ -909,51 +909,55 @@ function advancedSearch(){
 
 
 function mobileSearchPlaceholder(){
-	viewport = updateViewportDimensions();
-	if ( viewport.width <= 410 ) {
-		jQuery('#mobileheadersearch input').attr('placeholder', 'Search');
-	} else {
-		jQuery('#mobileheadersearch input').attr('placeholder', 'What are you looking for?');
+	if ( !jQuery('html').hasClass('lte-ie8') ) {
+		viewport = updateViewportDimensions();
+		if ( viewport.width <= 410 ) {
+			jQuery('#mobileheadersearch input').attr('placeholder', 'Search');
+		} else {
+			jQuery('#mobileheadersearch input').attr('placeholder', 'What are you looking for?');
+		}
 	}
 }
 
 
 //Search Validator
 function searchValidator() {
-	jQuery('.lt-ie9 form.search .btn.submit').val('Search');
-	jQuery('.input.search').each(function(){
-		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
-		} else {
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
-			jQuery(this).parent().find('.input.search').removeClass('focusError');
-		}
-	});
-	jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
-		thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' ) ? jQuery(this).attr('data-prev-placeholder') : 'Search';
-		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
-			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
-			jQuery(this).parent().find('.btn.submit').val('Go');
-		} else {
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-			jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', thisPlaceholder);
-			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-		}
-		if ( e.type == 'paste' ){
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-			jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
-			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-		}
-	})
-	jQuery('form.search').submit(function(){
-		if ( jQuery(this).find('.input.search').val() == '' || jQuery(this).find('.input.search').val().trim().length === 0 ) {
-			jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
-			jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
-			return false;
-		} else {
-			return true;
-		}
-	});
+	if ( !jQuery('html').hasClass('lte-ie8') ) {
+		jQuery('.lt-ie9 form.search .btn.submit').val('Search');
+		jQuery('.input.search').each(function(){
+			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
+				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
+			} else {
+				jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
+				jQuery(this).parent().find('.input.search').removeClass('focusError');
+			}
+		});
+		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
+			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' ) ? jQuery(this).attr('data-prev-placeholder') : 'Search';
+			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
+				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
+				jQuery(this).parent().find('.btn.submit').val('Go');
+			} else {
+				jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
+				jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', thisPlaceholder);
+				jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
+			}
+			if ( e.type == 'paste' ){
+				jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
+				jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
+				jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
+			}
+		})
+		jQuery('form.search').submit(function(){
+			if ( jQuery(this).find('.input.search').val() == '' || jQuery(this).find('.input.search').val().trim().length === 0 ) {
+				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
+				jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
+				return false;
+			} else {
+				return true;
+			}
+		});
+	}
 } //End searchValidator
 
 

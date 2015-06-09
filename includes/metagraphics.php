@@ -4,7 +4,7 @@
 	*/
 
 	//Add a random query string when debugging to force-clear the cache.
-	if ( array_key_exists('debug', $_GET) ) {
+	if ( is_debug() ) {
 		$cache_query = '?nocache' . mt_rand(1000, 99999) . '=debug' . mt_rand(1000, 99999);
 	} else {
 		$cache_query = '';

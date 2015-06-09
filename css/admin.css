@@ -108,20 +108,17 @@ th#id {width: 50px;}
 
 /* Post/Page Listing Column Modifictions */
 .widefat td, .widefat td ol, .widefat td p, .widefat td ul {font-size: 12px !important;}
-.fixed .column-categories, .fixed .column-rel, .fixed .column-response, .fixed .column-role, .fixed .column-tags {width: 7%;}
-.fixed .column-author, .fixed .column-date, .fixed .column-format, .fixed .column-links, .fixed .column-parent, .fixed .column-posts {width: 7%;}
+.fixed .column-categories, .fixed .column-rel, .fixed .column-response, .fixed .column-role, .fixed .column-tags {font-size: 10px; width: 10%;}
+.fixed .column-author, .fixed .column-date, .fixed .column-format, .fixed .column-links, .fixed .column-parent, .fixed .column-posts {width: 10%;}
 .fixed .column-comments {width: 3%;}
 .widefat .column-id {padding-left: 0 !important; padding-right: 0 !important; font-size: 10px !important;}
-.row-title,
-td.plugin-title strong, td.post-title strong,
-.row-actions,
-.plugin-version-author-uri {font-size: 12px !important;}
+.row-title, td.plugin-title strong, td.post-title strong, .row-actions, .plugin-version-author-uri {font-size: 12px !important;}
 
 /* Wordpress SEO (Yoast) */
 .wpseo-admin-page #sidebar-container {display: none;}
 #wpseo-conf p.settings_error {display: none !important; visibility: hidden; height: 0; width: 0; opacity: 0; pointer-events: none;}
 	#wpseo-conf p.settings_error a {display: none !important; visibility: hidden; height: 0; width: 0; opacity: 0; pointer-events: none;}
-.widefat .column-wpseo-score {font-size: 10px !important; text-align: center; background: #fafafa;}
+.widefat .column-wpseo-score {font-size: 10px !important; /* text-align: center; */ /* background: #fafafa; */}
 	.wpseo-score-icon {margin-left: 0; width: 10px !important; height: 10px;}
 .widefat .column-wpseo-title {width: 200px; font-size: 10px !important; background: #fafafa;}
 .widefat .column-wpseo-metadesc {width: 200px; font-size: 10px !important; background: #fafafa;}
