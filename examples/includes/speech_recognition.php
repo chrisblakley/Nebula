@@ -330,7 +330,7 @@
 			}
 
 			//"Stop Listening" (should always be the last check)
-			phraseStopListening = ['stop listening', 'topless'];
+			phraseStopListening = ['stop listening', 'topless']; //Phrases that sound like "stop listening".
 			if ( checkAlternates(transcript, phraseStopListening) ) {
 				jQuery('#speech-help').text('Stopped because you said so.');
 				console.log('you requested stop listening');

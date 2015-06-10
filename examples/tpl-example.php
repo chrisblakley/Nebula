@@ -398,6 +398,10 @@ get_header(); ?>
 						include_once('includes/selecttext.php');
 					} ?>
 
+					<?php if (is_page(1601)) { //getUserMedia API
+						include_once('includes/getusermedia_api.php');
+					} ?>
+
 					<?php
 					/*==========================
 					 Utilities

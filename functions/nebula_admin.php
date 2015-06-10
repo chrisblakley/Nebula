@@ -554,8 +554,12 @@ function id_columns_content($column_name, $post_ID) {
 
 
 //Remove most Yoast SEO columns
-add_filter('manage_edit-post_columns', 'remove_yoast_columns');
-add_filter('manage_edit-page_columns', 'remove_yoast_columns');
+$post_types = get_post_types(array('public' => true), 'names');
+if ( is_array($post_types) && $post_types !== array() ){
+	foreach ( $post_types as $post_type ){
+		add_filter('manage_edit-' . $post_type . '_columns', 'remove_yoast_columns');
+	}
+}
 function remove_yoast_columns($columns){
 	//unset($columns['wpseo-score']);
 	unset($columns['wpseo-title']);
