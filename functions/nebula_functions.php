@@ -510,7 +510,7 @@ function get_exif($att){
             $output .= $pshutter . ', ';
             $output .= $imgmeta['image_meta']['iso'] .' ISO';
         }
-    }else { //No Data Found
+    } else { //No Data Found
         $output = 'No data found';
     }
     return $output;
@@ -1049,7 +1049,7 @@ function redirect_single_post(){
 function nebula_hero_search($placeholder='What are you looking for?'){
 	echo '<div id="nebula-hero-formcon">
 		<form id="nebula-hero-search" class="nebula-search-iconable search" method="get" action="' . home_url('/') . '">
-			<input type="search" class="nebula-search open input search" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
+			<input type="search" class="nebula-search open input search nofade" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
 		</form>
 	</div>';
 }
@@ -1060,11 +1060,6 @@ add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
 add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
 function nebula_autocomplete_search(){
 	//Search Term: $_POST['data']['term'] (string)
-
-/*
-	var_dump('made it here');
-	exit;
-*/
 
 	//Test for close or exact matches. Use: $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
 	function nebula_close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
@@ -1162,32 +1157,32 @@ function nebula_autocomplete_search(){
 
 	//Find menu items
 	$menus = get_transient('nebula_autocomplete_menus');
-	if ( $autocomplete_menus_cache === false ){
+	if ( $menus === false ){
 		$menus = get_terms('nav_menu');
 		set_transient('nebula_autocomplete_menus', $menus, 60*60); //1 hour cache
-		foreach ( $menus as $menu ){
-			$menu_items = wp_get_nav_menu_items($menu->term_id);
-			foreach ( $menu_items as $key => $menu_item ){
-			    $suggestion = array();
-			    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $suggestion['similarity']);
-			    if ( $suggestion['similarity'] >= 55 ){
-					$suggestion['label'] = $menu_item->title;
-					$suggestion['link'] = $menu_item->url;
-					$path_parts = pathinfo($menu_item->url);
-					$suggestion['classes'] = 'type-menu-item';
-					if ( $path_parts['extension'] ){
-						$suggestion['classes'] .= ' file-' . $path_parts['extension'];
-						$suggestion['external'] = true;
-					} elseif ( !strpos($suggestion['link'], nebula_url_components('domain')) ){
-						$suggestion['classes'] .= ' external-link';
-						$suggestion['external'] = true;
-					}
-					$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-					$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
-					$suggestions[] = $suggestion;
-					break;
-			    }
-			}
+	}
+	foreach ( $menus as $menu ){
+		$menu_items = wp_get_nav_menu_items($menu->term_id);
+		foreach ( $menu_items as $key => $menu_item ){
+		    $suggestion = array();
+		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $suggestion['similarity']);
+		    if ( $suggestion['similarity'] >= 55 ){
+				$suggestion['label'] = $menu_item->title;
+				$suggestion['link'] = $menu_item->url;
+				$path_parts = pathinfo($menu_item->url);
+				$suggestion['classes'] = 'type-menu-item';
+				if ( $path_parts['extension'] ){
+					$suggestion['classes'] .= ' file-' . $path_parts['extension'];
+					$suggestion['external'] = true;
+				} elseif ( !strpos($suggestion['link'], nebula_url_components('domain')) ){
+					$suggestion['classes'] .= ' external-link';
+					$suggestion['external'] = true;
+				}
+				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+				$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
+				$suggestions[] = $suggestion;
+				break;
+		    }
 		}
 	}
 

@@ -304,14 +304,23 @@ form fieldset {border: 1px solid #ccc;}
 
 .picker:after {content: "\f0d7"; font-family: "FontAwesome";}
 
+/* Fade placeholders on focus */
+input::-webkit-input-placeholder {font-weight: 300; color: rgba(153, 153, 153, 0.9); -webkit-transition: all 0.25s; transition: all 0.25s;}
+input:-moz-placeholder {font-weight: 300; color: rgba(153, 153, 153, 0.9); -moz-transition: all 0.25s; transition: all 0.25s;} /* Eventually remove this line. */
+input::-moz-placeholder {font-weight: 300; color: rgba(153, 153, 153, 0.9); -moz-transition: all 0.25s; transition: all 0.25s;}
+input:-ms-input-placeholder {font-weight: 300; color: rgba(153, 153, 153, 0.9); transition: all 0.25s;}
+	input:not(.nofade):focus::-webkit-input-placeholder {color: rgba(153, 153, 153, 0) !important;}
+	input:not(.nofade):focus:-moz-placeholder {color: rgba(153, 153, 153, 0) !important;} /* Eventually remove this line. */
+	input:not(.nofade):focus::-moz-placeholder {color: rgba(153, 153, 153, 0) !important;}
+	input:not(.nofade):focus:-ms-input-placeholder {color: rgba(153, 153, 153, 0) !important;}
 
 /* jQuery UI Autocomplete Hero Search */
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	form#nebula-hero-search:before {top: 6px; left: 10px; width: 16px; height: 16px; font-size: 16px;}
-	form#nebula-hero-search input {display: block; width: 100%; max-width: 558px; font-size: 18px; padding-left: 30px; background: rgba(255, 255, 255, 0.9);}
-		form#nebula-hero-search input.active {box-shadow: 0 0 25px rgba(0, 153, 216, 0.6);}
+	form#nebula-hero-search:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: 16px;}
+	form#nebula-hero-search input {display: block; width: 100%; max-width: 558px; font-size: 18px; padding: 5px 6px 5px 30px; background: rgba(255, 255, 255, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);}
+		form#nebula-hero-search input.active {background: rgba(255, 255, 255, 0.95); box-shadow: 0 0 25px rgba(0, 153, 216, 0.6);}
 		form#nebula-hero-search.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
-.form-identifier-nebula-hero-search {border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;}
+.form-identifier-nebula-hero-search {}
 	.form-identifier-nebula-hero-search .exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.9;}
 	.form-identifier-nebula-hero-search .close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.6;}
 	.form-identifier-nebula-hero-search .external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; font-size: 10px; opacity: 0.4;}
@@ -335,8 +344,9 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 		.ui-autocomplete.ui-widget-content li.no-results:before {content: '\00a0';}
 
 
+
 /* jQuery UI Autocomplete */
-.ui-autocomplete.ui-widget-content {margin-top: -10px; background: rgba(255, 255, 255, 0.9); color: #444; border: none; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.07); z-index: 9999 !important; overflow: hidden;}
+.ui-autocomplete.ui-widget-content {margin-top: -10px; background: rgba(255, 255, 255, 0.95); color: #444; border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;}
 	.ui-autocomplete.ui-widget-content .ui-menu .ui-menu-item {font-size: 12px; padding: 3px 5px;}
 		.ui-autocomplete.ui-widget-content .ui-state-hover,
 		.ui-autocomplete.ui-widget-content .ui-widget-content .ui-state-hover,
@@ -401,15 +411,10 @@ ul.bxslider {}
 		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 60%; height: 42px;}
 			.borderimage form#mobileheadersearch:before {color: #fff; font-size: 19px; width: 19px; height: 19px; top: 12px; left: 0;}
 			#mobileheadersearch input {width: 100%; color: #fff; font-size: 18px; padding-left: 24px; line-height: 42px; background: none; border: none; border-radius: 0;}
-				#mobileheadersearch input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); -webkit-transition: all 0.25s; transition: all 0.25s;}
-				#mobileheadersearch input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); -moz-transition: all 0.25s; transition: all 0.25s;}
-				#mobileheadersearch input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); -moz-transition: all 0.25s; transition: all 0.25s;}
-				#mobileheadersearch input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); transition: all 0.25s;}
-					#mobileheadersearch input:focus::-webkit-input-placeholder {color: rgba(255, 255, 255, 0);}
-					#mobileheadersearch input:focus:-moz-placeholder {color: rgba(255, 255, 255, 0);}
-					#mobileheadersearch input:focus::-moz-placeholder {color: rgba(255, 255, 255, 0);}
-					#mobileheadersearch input:focus:-ms-input-placeholder {color: rgba(255, 255, 255, 0);}
-
+				#mobileheadersearch input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+				#mobileheadersearch input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+				#mobileheadersearch input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+				#mobileheadersearch input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 
 /* Top row that appears at desktop sizes. */
 #secondarynavcon {position: relative; background: #444; z-index: 9999; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
@@ -480,8 +485,8 @@ ul.bxslider {}
 /* Homepage hero row */
 #heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	#heroslidercon .herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 152, 215, 0.5); z-index: 0;}
-	#heroslidercon h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 90px; line-height: 100px; font-weight: 800; z-index: 10; text-shadow: 0px 0px 50px rgba(0, 0, 0, 0.4); -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	#heroslidercon h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 32px; font-weight: 300; z-index: 1; text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7); -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#heroslidercon h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 90px; line-height: 100px; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#heroslidercon h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 32px; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 
 
 
