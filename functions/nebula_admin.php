@@ -321,7 +321,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . trim($domain_registrar) . '</strong>': '';
 		}
 		if ( trim($domain_registrar_html) != '' && $domain_reseller && strlen($domain_reseller) < 70 ) {
-			$domain_registrar_html .= '<small>(via ' . trim($domain_reseller) . ')</small></li>';
+			$domain_registrar_html .= ' <small>(via ' . trim($domain_reseller) . ')</small></li>';
 		} else {
 			$domain_registrar_html .= '</li>';
 		}
@@ -433,7 +433,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 				</script>';
 
 		echo '<ul class="serverdetections">';
-			if ( WP_DEBUG ) {
+			if ( is_debug() ) {
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
 			}
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
@@ -557,7 +557,7 @@ function id_columns_content($column_name, $post_ID) {
 $post_types = get_post_types(array('public' => true), 'names');
 if ( is_array($post_types) && $post_types !== array() ){
 	foreach ( $post_types as $post_type ){
-		add_filter('manage_edit-' . $post_type . '_columns', 'remove_yoast_columns');
+		add_filter('manage_edit-' . $post_type . '_columns', 'remove_yoast_columns'); //@TODO "Nebula" 0: This does not always work.
 	}
 }
 function remove_yoast_columns($columns){
@@ -796,24 +796,24 @@ function change_admin_footer_right() {
 		First half of month: x.x.0
 		Second half of month: x.x.1
 
-		July 2015	3.0.x
-		August		3.1.x
-		Sept		3.2.x
-		Oct			3.3.x
-		Nov			3.4.x
-		Dec			3.5.x
-		Jan 2016	3.6.x
-		Feb			3.7.x
-		Mar			3.8.x
-		Apr			3.9.x
-		May			3.10.x
-		June		3.11.x
+		May 2016	4.0.x
+		June		4.1.x
+		July		4.2.x
+		August		4.3.x
+		Sept		4.4.x
+		Oct			4.5.x
+		Nov			4.6.x
+		Dec			4.7.x
+		Jan	2017	4.8.x
+		Feb			4.9.x
+		Mar			4.10.x
+		Apr			4.11.x
 	*/
 
 	$nebula_version_year = ( $nebula_version['medium'] <= 5 ) ? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
 	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June');
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
-	$nebula_version_daterange = ( $nebula_version['medium'] == 1 ) ? 'Second' : 'First';
+	$nebula_version_daterange = ( $nebula_version['small'] == 1 ) ? 'Second' : 'First';
 
     return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
 }

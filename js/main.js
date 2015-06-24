@@ -1,32 +1,36 @@
 jQuery.noConflict();
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function(){
+
+	//Assign common global variables
+	pageWindow = jQuery(window);
+	pageDocument = jQuery(document);
+	pageHTML = jQuery('html');
+	pageBody = jQuery('body');
 
 	getQueryStrings();
 	if ( GET('killall') || GET('kill') || GET('die') ) {
 		throw ' (Manually terminated main.js)';
 	} else if ( GET('layout') ) {
-		console.log('Visualizing layout...');
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
 	facebookSDK();
 	//facebookConnect(); //@TODO "Social" 1: Uncomment here to enable Facebook Connect.
-	conditionalJSLoading();
-
-	gaEventTracking();
-	helperFunctions();
 	socialSharing();
-	dropdownWidthController();
-	overflowDetector();
-	subnavExpanders();
-	nebulaFixeder();
-	nebulaEqualize();
 
 	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
 	mmenus();
 	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
 
+	conditionalJSLoading();
+	gaEventTracking();
+	helperFunctions();
+	dropdownWidthController();
+	overflowDetector();
+	subnavExpanders();
+	//nebulaFixeder();
+	nebulaEqualize();
 	powerFooterWidthDist();
 	menuSearchReplacement();
 	mobileSearchPlaceholder();
@@ -36,14 +40,12 @@ jQuery(document).ready(function() {
 	searchTermHighlighter();
 	singleResultDrawer();
 	pageVisibility();
-	errorLogAndFallback();
 	cFormLocalStorage();
-	contactBackup();
 
 
 	//Detect if loaded in an iframe
-	if ( window != window.parent ) {
-		jQuery('html').addClass('in-iframe');
+	if ( window != window.parent ){
+		pageHTML.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ) {
 			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 		}
@@ -54,7 +56,7 @@ jQuery(document).ready(function() {
 		});
 	}
 
-	if ( jQuery('body').hasClass('search-no-results') || jQuery('body').hasClass('error404') ) {
+	if ( pageBody.hasClass('search-no-results') || pageBody.hasClass('error404') ) {
 		pageSuggestion();
 	}
 
@@ -68,49 +70,28 @@ jQuery(document).ready(function() {
 	getAllLocations();
 	mapActions();
 
-	//Fix for <p> tags wrapping my pre spans in the WYSIWYG
+	//Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
 
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
 
-	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+	if ( !pageHTML.hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 		viewport = updateViewportDimensions();
 	}
-
-	jQuery(window).resize(function() {
-		debounce(function(){
-			//Window resize functions here.
-	    	powerFooterWidthDist();
-			nebulaEqualize();
-			mobileSearchPlaceholder();
-
-	    	//Track size change
-	    	if ( !jQuery('html').hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
-		    	viewportResized = updateViewportDimensions();
-		    	if ( viewport.width > viewportResized.width ) {
-		    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
-		    	} else if ( viewport.width < viewportResized.width ) {
-		    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
-		    	}
-		    	viewport = updateViewportDimensions();
-	    	}
-		}, 500);
-	});
-
 
 }); //End Document Ready
 
 
-
-
-jQuery(window).on('load', function() {
+jQuery(window).on('load', function(){
 
 	jQuery('a, li, tr').removeClass('hover');
-	jQuery('html').addClass('loaded');
-	jQuery('.unhideonload').removeClass('hidden');
+	pageHTML.addClass('loaded');
 
+	//nebulaFixeder();
 	checkCformLocalStorage();
 	browserInfo();
+
+	jQuery('#nebula-hero-search input').focus();
 
 	setTimeout(function(){
 		emphasizeSearchTerms();
@@ -119,6 +100,24 @@ jQuery(window).on('load', function() {
 }); //End Window Load
 
 
+jQuery(window).on('resize', function(){
+	debounce(function(){
+    	powerFooterWidthDist();
+		nebulaEqualize();
+		mobileSearchPlaceholder();
+
+    	//Track size change
+    	if ( !pageHTML.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+	    	viewportResized = updateViewportDimensions();
+	    	if ( viewport.width > viewportResized.width ){
+	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    	} else if ( viewport.width < viewportResized.width ){
+	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
+	    	}
+	    	viewport = updateViewportDimensions();
+    	}
+	}, 500);
+}); //End Window Resize
 
 
 /*==========================
@@ -141,23 +140,24 @@ function helperFunctions(){
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
 	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
 	jQuery('a').each(function(){
-		var a = new RegExp('/' + window.location.host + '/');
-		if( !a.test(this.href) ) {
-			var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
-			jQuery(this).attr('rel', rel + 'external');
-		}
+	    var a = new RegExp('/' + window.location.host + '/');
+	    if ( !a.test(this.href) ){
+	        if ( this.href.indexOf('http') !== -1 ){ //excludes all non-http link (ex: mailto: and tel:)
+	            var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
+	            jQuery(this).attr('rel', rel + 'external');
+	        }
+	    }
 	});
-	jQuery('.lte-ie9 .nebulashadow.inner-bottom, .lte-ie9 .nebulashadow.above').hide(); //@TODO "Nebula" 0: Anything we can do here to alleviate the issue? May need to just hide
-} //end helperFunctions()
+} //end helperFunctions
 
 
 //Load the SDK asynchronously
 function facebookSDK(){
-	(function(d, s, id) {
+	(function(d, s, id){
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) return;
 		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_GB/all.js";
+		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&version=v2.3";
 		fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'facebook-jssdk'));
 }
@@ -178,8 +178,8 @@ function facebookConnect(){
 			checkFacebookStatus();
 
 			//Facebook Likes
-			FB.Event.subscribe('edge.create', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
+			FB.Event.subscribe('edge.create', function(href, widget){
+				var currentPage = pageDocument.attr('title');
 				ga('send', {
 					'hitType': 'social',
 					'socialNetwork': 'Facebook',
@@ -193,8 +193,8 @@ function facebookConnect(){
 			});
 
 			//Facebook Unlikes
-			FB.Event.subscribe('edge.remove', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
+			FB.Event.subscribe('edge.remove', function(href, widget){
+				var currentPage = pageDocument.attr('title');
 				ga('send', {
 					'hitType': 'social',
 					'socialNetwork': 'Facebook',
@@ -208,8 +208,8 @@ function facebookConnect(){
 			});
 
 			//Facebook Send/Share
-			FB.Event.subscribe('message.send', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
+			FB.Event.subscribe('message.send', function(href, widget){
+				var currentPage = pageDocument.attr('title');
 				ga('send', {
 					'hitType': 'social',
 					'socialNetwork': 'Facebook',
@@ -223,8 +223,8 @@ function facebookConnect(){
 			});
 
 			//Facebook Comments
-			FB.Event.subscribe('comment.create', function(href, widget) {
-				var currentPage = jQuery(document).attr('title');
+			FB.Event.subscribe('comment.create', function(href, widget){
+				var currentPage = pageDocument.attr('title');
 				ga('send', {
 					'hitType': 'social',
 					'socialNetwork': 'Facebook',
@@ -238,7 +238,7 @@ function facebookConnect(){
 			});
 		};
 
-		jQuery(document).on('click touch tap', '.facebook-connect', function(){
+		pageDocument.on('click touch tap', '.facebook-connect', function(){
 			facebookLoginLogout();
 			return false;
 		});
@@ -248,10 +248,10 @@ function facebookConnect(){
 }
 
 //Connect to Facebook without using Facebook Login button
-function facebookLoginLogout() {
+function facebookLoginLogout(){
 	if ( !FBstatus ) {
-		FB.login(function(response) {
-			if (response.authResponse) {
+		FB.login(function(response){
+			if (response.authResponse){
 				checkFacebookStatus();
 				ga('send', 'event', 'Social', 'Facebook Connect', FBuser.name);
 			} else {
@@ -260,7 +260,7 @@ function facebookLoginLogout() {
 			}
 		}, {scope:'public_profile,email'});
 	} else {
-		FB.logout(function(response) {
+		FB.logout(function(response){
 			if ( typeof Gumby != 'undefined' ) { Gumby.log('User has logged out.'); }
 			checkFacebookStatus();
 			prefillFacebookFields();
@@ -271,42 +271,44 @@ function facebookLoginLogout() {
 
 //Fetch Facebook user information
 function checkFacebookStatus() {
-	FB.getLoginStatus(function(response) {
-		if ( response.status === 'connected' ) { //User is logged into Facebook and is connected to this app.
+	FB.getLoginStatus(function(response){
+		var facebookConnectPStrong = jQuery('#facebook-connect p strong');
+		var facebookConnectLink = jQuery('.facebook-connect-con a');
+		if ( response.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
 			FBstatus = true;
-			FB.api('/me', function(response) {
+			FB.api('/me', function(response){
 				FBuser = response;
-				if ( typeof Gumby != 'undefined' ) { Gumby.log(response.name + ' has connected with this app.'); }
+				if ( typeof Gumby != 'undefined' ){ Gumby.log(response.name + ' has connected with this app.'); }
 				fbNameClass = response.name.replace(' ', '_');
-				jQuery('body').removeClass('fb-disconnected').addClass('fb-connected fb-user-' + fbNameClass);
+				pageBody.removeClass('fb-disconnected').addClass('fb-connected fb-user-' + fbNameClass);
 				prefillFacebookFields(response);
-				jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
+				facebookConnectLink.text('Logout').removeClass('disconnected').addClass('connected');
 
-				jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + response.first_name + '.'); //@TODO "Example" 2: This is an example- remove this line.
+				facebookConnectPStrong.text('You have been connected to Facebook, ' + response.first_name + '.'); //@TODO "Example" 2: This is an example- remove this line.
 				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //@TODO "Example" 2: This is an example- remove this line.
 			});
 
-			jQuery('#facebook-connect p strong').text('You have been connected to Facebook...'); //@TODO "Example" 2: This is an example- remove this line.
+			facebookConnectPStrong.text('You have been connected to Facebook...'); //@TODO "Example" 2: This is an example- remove this line.
 		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
 			if ( typeof Gumby != 'undefined' ) { Gumby.log('User is logged into Facebook, but has not connected to this app.'); }
-			jQuery('body').removeClass('fb-connected').addClass('fb-disconnected');
+			pageBody.removeClass('fb-connected').addClass('fb-disconnected');
 			FBstatus = false;
-			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
+			facebookConnectLink.text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
-			jQuery('#facebook-connect p strong').text('Please connect to this site by logging in below:'); //@TODO "Example" 2: This is an example- remove this line.
+			facebookConnectPStrong.text('Please connect to this site by logging in below:'); //@TODO "Example" 2: This is an example- remove this line.
 		} else { //User is not logged into Facebook.
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('User is not logged into Facebook.'); }
-			jQuery('body').removeClass('fb-connected fb-disconnected');
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('User is not logged into Facebook.'); }
+			pageBody.removeClass('fb-connected fb-disconnected');
 			FBstatus = false;
-			jQuery('.facebook-connect-con a').text('Connect with Facebook').removeClass('connected').addClass('disconnected');
+			facebookConnectLink.text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
-			jQuery('#facebook-connect p strong').text('You are not logged into Facebook. Log in below:'); //@TODO "Example" 2: This is an example- remove this line.
+			facebookConnectPStrong.text('You are not logged into Facebook. Log in below:'); //@TODO "Example" 2: This is an example- remove this line.
 		}
 	});
 }
 
 //Fill or clear form inputs with Facebook data
-function prefillFacebookFields(response) {
+function prefillFacebookFields(response){
 	if ( response ) {
 		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
 			jQuery(this).val(response.first_name + ' ' + response.last_name).trigger('keyup');
@@ -328,7 +330,7 @@ function prefillFacebookFields(response) {
 	}
 }
 
-function prefillCommentAuthorCookieFields(name, email) {
+function prefillCommentAuthorCookieFields(name, email){
 	jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
 		jQuery(this).val(name).trigger('keyup');
 	});
@@ -341,7 +343,7 @@ function prefillCommentAuthorCookieFields(name, email) {
 //Social sharing buttons
 function socialSharing() {
     var loc = window.location;
-    var title = jQuery(document).attr('title');
+    var title = pageDocument.attr('title');
     var encloc = encodeURI(loc);
     var enctitle = encodeURI(title);
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank');
@@ -386,7 +388,6 @@ function updateViewportDimensions() {
 		    history: viewportHistory
 		};
 	}
-
 	return viewportObject;
 }
 
@@ -395,7 +396,7 @@ function updateViewportDimensions() {
 function dropdownWidthController() {
 	jQuery('#primarynav .sub-menu').each(function(){
 		var bigWidth = 100;
-			if ( jQuery(this).children().width() > bigWidth ) {
+			if ( jQuery(this).children().width() > bigWidth ){
 				bigWidth = jQuery(this).children().width();
 			}
 		jQuery(this).css('width', bigWidth+15 + 'px');
@@ -406,7 +407,7 @@ function dropdownWidthController() {
 //Sub-menu viewport overflow detector
 function overflowDetector() {
     jQuery('#primarynav .menu > .menu-item').hover(function(){
-    	var viewportWidth = jQuery(window).width();
+    	var viewportWidth = pageWindow.width();
     	var submenuLeft = jQuery(this).offset().left;
     	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
     	if (submenuRight > viewportWidth) {
@@ -421,10 +422,10 @@ function overflowDetector() {
 
 
 //Vertical subnav expanders
-function subnavExpanders() {
+function subnavExpanders(){
     jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    jQuery(document).on('click touch tap', '.toplevelvert_expander', function(){
+    pageDocument.on('click touch tap', '.toplevelvert_expander', function(){
         jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
         return false;
     });
@@ -434,54 +435,40 @@ function subnavExpanders() {
 } //end subnavExpanders()
 
 
-//Show fixed bar when scrolling passed a particular element
-function nebulaFixeder() {
-	var fixedAfterSelector = '#logonavcon img'; //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
-	if ( jQuery(fixedAfterSelector).is('*') ) {
-		jQuery(window).on('scroll resize', function() {
-			if ( !jQuery('.mobilenavcon').is(':visible') && !jQuery('.nobar').is('*') ) {
-				var fixedBarBottom = jQuery(fixedAfterSelector).position().top + jQuery(fixedAfterSelector).outerHeight();
-		        var windowBottom = jQuery(window).scrollTop();
+//Affix the logo/navigation when scrolling passed it
+//@TODO "Nebula" 0: Ugh I don't really like this... It's almost fine, but the fixeElement.outerHeight() is before it shrinks, so there is 1 pixel or so where it puts the topbar beneath the fixed nav. Then, if you reload the page after scrolling down it does nothing until you scroll then it kicks in and animates the shrink all at once. Feels clunky as hell.
+function nebulaFixeder(){
+	var fixedElement = jQuery('#logonavcon'); //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
+	var fullBodyWrapper = jQuery('#fullbodywrapper');
+	if ( fixedElement.is('*') && pageWindow.width() > 767 ){
+		fixedDistance = fixedElement.position().top;
 
-		        if( windowBottom > fixedBarBottom ){
-		        	if ( !jQuery('.fixedbar').hasClass('active') ) {
-			        	jQuery('.fixedbar').addClass('active');
-					}
-		        } else {
-		        	if ( !jQuery('.fixedbar').hasClass('hidden') ) {
-			        	jQuery('.fixedbar').removeClass('active');
-		        	}
-		        }
+		pageWindow.on('scroll resize', function(){
+			if ( pageWindow.scrollTop() >= fixedDistance ){
+				fixedElement.addClass('fixed');
+				fullBodyWrapper.css('padding-top', fixedElement.outerHeight());
+			} else {
+				fixedElement.removeClass('fixed');
+				fullBodyWrapper.css('padding-top', '0');
 			}
 		});
+	} else {
+		fixedElement.removeClass('fixed');
+		fullBodyWrapper.css('padding-top', '0');
 	}
-} //end nebulaFixeder()
+}
 
 
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
-
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
-	//jQuery(document).on('mousedown', '.selector', function(e) {
+	//pageDocument.on('mousedown', '.selector', function(e) {
 	//  var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
-/*
-	@TODO "Nebula" 0: Testing other ways to console log GA events. Goal is to not have to write out the cat/action/label twice each time. Can we listen for the ga('send', 'event') and spit out all parameters?
-	//Callback test DELETE THIS
-	jQuery(document).on('click', "h1", function(){
-		console.log('triggering event');
-		ga('send', 'event', 'Callback testing', 'this is the actions', 'this is the label', {'hitCallback': function(){
-			console.log('test event with callback sent.');
-		}});
-		return false;
-	});
-*/
-
-
 	//External links
-	jQuery(document).on('mousedown touch tap', "a[rel*='external']", function(e){
+	pageDocument.on('mousedown touch tap', "a[rel*='external']", function(e){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
@@ -489,7 +476,7 @@ function gaEventTracking(){
 	});
 
 	//PDF View/Download
-	jQuery(document).on('mousedown touch tap', "a[href$='.pdf']", function(){
+	pageDocument.on('mousedown touch tap', "a[href$='.pdf']", function(e){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
@@ -502,25 +489,25 @@ function gaEventTracking(){
 	});
 
 	//Contact Form Submissions
-	jQuery(document).on('submit', '.wpcf7-form', function() {
+	pageDocument.on('submit', '.wpcf7-form', function(){
 		ga('send', 'event', 'Contact', 'Submit', 'Contact Form Submission');
 	});
 
 	//Generic Interal Search Tracking
-	jQuery(document).on('submit', '.search', function(){
+	pageDocument.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
 	});
 
 	//Mailto link tracking
-	jQuery(document).on('mousedown touch tap', 'a[href^="mailto"]', function(){
+	pageDocument.on('mousedown touch tap', 'a[href^="mailto"]', function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
 	});
 
 	//Telephone link tracking
-	jQuery(document).on('mousedown touch tap', 'a[href^="tel"]', function(){
+	pageDocument.on('mousedown touch tap', 'a[href^="tel"]', function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
@@ -528,17 +515,24 @@ function gaEventTracking(){
 	});
 
 	//SMS link tracking
-	jQuery(document).on('mousedown touch tap', 'a[href^="sms"]', function(){
+	pageDocument.on('mousedown touch tap', 'a[href^="sms"]', function(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber + intent);
 	});
 
+	//Non-Linked Image Clicks
+	jQuery('img').on('click tap touch', function(){
+		if ( !jQuery(this).parents('a').length ) {
+			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
+		}
+	});
+
 	//Word copy tracking
 	var copyCount = 0;
 	var copyOver = 0;
-	jQuery(document).on('cut copy', function(){
+	pageDocument.on('cut copy', function(){
 		copyCount++;
 		var words = [];
 		var selection = window.getSelection() + '';
@@ -549,9 +543,9 @@ function gaEventTracking(){
 		var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		var phonePattern = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;
 		emailPhone = jQuery.trim(words.join(' '));
-		if ( emailPattern.test(emailPhone) ) {
+		if ( emailPattern.test(emailPhone) ){
 			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone + ' (Intent)');
-		} else if ( phonePattern.test(emailPhone) ) {
+		} else if ( phonePattern.test(emailPhone) ){
 			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone + ' (Intent)');
 		}
 
@@ -575,15 +569,14 @@ function gaEventTracking(){
 	});
 
 	//AJAX Errors
-	jQuery(document).ajaxError(function(e, request, settings) {
+	pageDocument.ajaxError(function(e, request, settings){
 		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
 		ga('send', 'exception', e.result, true);
 	});
 
-
 	//Capture Print Intent
 	printed = 0;
-	var afterPrint = function() {
+	var afterPrint = function(){
 		if ( printed == 0 ) {
 			printed = 1;
 			ga('send', 'event', 'Print (Intent)');
@@ -591,9 +584,9 @@ function gaEventTracking(){
 	};
 	if ( window.matchMedia ) {
 		var mediaQueryList = window.matchMedia('print');
-		if ( mediaQueryList.addListener ) {
+		if ( mediaQueryList.addListener ){
 			mediaQueryList.addListener(function(mql) {
-				if ( !mql.matches ) {
+				if ( !mql.matches ){
 					afterPrint();
 				}
 			});
@@ -602,12 +595,12 @@ function gaEventTracking(){
 	window.onafterprint = afterPrint;
 
 
-} //End gaEventTracking()
+}
 
 
 //Google AdWords conversion tracking for AJAX
-function conversionTracker(conversionpage) {
-	if ( typeof conversionpage == 'undefined' ) {
+function conversionTracker(conversionpage){
+	if ( typeof conversionpage == 'undefined' ){
 		conversionpage = 'thanks.html';
 	}
 
@@ -619,8 +612,8 @@ function conversionTracker(conversionpage) {
 };
 
 
-function googlePlusCallback(jsonParam) {
-	if ( jsonParam.state == 'on' ) {
+function googlePlusCallback(jsonParam){
+	if ( jsonParam.state == 'on' ){
 		ga('send', 'event', 'Social', 'Google+ Like');
 	} else if ( jsonParam.state == 'off' ) {
 		ga('send', 'event', 'Social', 'Google+ Unlike');
@@ -630,8 +623,11 @@ function googlePlusCallback(jsonParam) {
 }
 
 function mmenus() {
-	if ( 'mmenu' in jQuery ) {
-		jQuery("#mobilenav").mmenu({
+	if ( 'mmenu' in jQuery ){
+		var mobileNav = jQuery('#mobilenav');
+		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
+
+		mobileNav.mmenu({
 		    //Options
 		    "offCanvas": {
 			    "zposition": "back", //"back" (default), "front", "next"
@@ -653,22 +649,25 @@ function mmenus() {
 			}
 		});
 
-		jQuery("#mobilenav").data('mmenu').bind('opening', function(){
-			//When mmenu has started opening
-			jQuery('a.mobilenavtrigger i').removeClass('fa-bars').addClass('fa-times');
-		}).bind('opened', function(){
-			//After mmenu has finished opening
-			history.replaceState(null, document.title, location);
-			history.pushState(null, document.title, location);
-		}).bind('closing', function(){
-			//When mmenu has started closing
-			jQuery('a.mobilenavtrigger i').removeClass('fa-times').addClass('fa-bars');
-		}).bind('closed', function(){
-			//After mmenu has finished closing
-		});
+		if ( mobileNav.length ){
+			mobileNav.data('mmenu').bind('opening', function(){
+				//When mmenu has started opening
+				mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').parents('.mobilenavtrigger').addClass('active');
+			}).bind('opened', function(){
+				//After mmenu has finished opening
+				history.replaceState(null, document.title, location);
+				history.pushState(null, document.title, location);
+			}).bind('closing', function(){
+				//When mmenu has started closing
+				mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').parents('.mobilenavtrigger').removeClass('active');
+			}).bind('closed', function(){
+				//After mmenu has finished closing
+			});
+		}
 
-		jQuery('.mm-search input').wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
-		jQuery('.mm-search input').on('keyup', function(){
+		var mmenuSearchInput = jQuery('.mm-search input');
+		mmenuSearchInput.wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
+		mmenuSearchInput.on('keyup', function(){
 			if ( jQuery(this).val().length > 0 ) {
 				jQuery('.clearsearch').removeClass('hidden');
 			} else {
@@ -676,15 +675,15 @@ function mmenus() {
 			}
 		});
 		jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-		jQuery(document).on('click touch tap', '.clearsearch a', function(){
-			jQuery('.mm-search input').val('').keyup();
+		pageDocument.on('click touch tap', '.clearsearch a', function(){
+			mmenuSearchInput.val('').keyup();
 			jQuery('.clearsearch').addClass('hidden');
 			return false;
 		});
 
 		//Close mmenu on back button click
-		if (window.history && window.history.pushState) {
-			window.addEventListener("popstate", function(e) {
+		if (window.history && window.history.pushState){
+			window.addEventListener("popstate", function(e){
 				if ( jQuery('html.mm-opened').is('*') ) {
 					jQuery(".mm-menu").trigger("close.mm");
 					e.stopPropagation();
@@ -692,44 +691,46 @@ function mmenus() {
 			}, false);
 		}
 	}
-} //end mmenus()
+}
 
 //Power Footer Width Distributor
-function powerFooterWidthDist() {
+function powerFooterWidthDist(){
 	var powerFooterWidth = jQuery('#powerfooter').width();
+	var powerFooterTopLIs = jQuery('#powerfooter ul.menu > li');
 	var topLevelFooterItems = 0;
-	jQuery('#powerfooter ul.menu > li').each(function(){
+	powerFooterTopLIs.each(function(){
 		topLevelFooterItems = topLevelFooterItems+1;
 	});
 	var footerItemWidth = powerFooterWidth/topLevelFooterItems-8;
-	if ( topLevelFooterItems == 0 ) {
+	if ( topLevelFooterItems == 0 ){
 		jQuery('.powerfootercon').addClass('hidden');
 	} else {
-		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
+		powerFooterTopLIs.css('width', footerItemWidth);
 	}
-} //end PowerFooterWidthDist
+}
 
 
 //Column height equalizer
 function nebulaEqualize(){
 	jQuery('.row.equalize').each(function(){
+		var oThis = jQuery(this);
 		tallestColumn = 0;
-		jQuery(this).find('.columns').css('min-height', 'none');
-		jQuery(this).find('.columns').each(function(){
-			if ( !jQuery(this).hasClass('no-equalize') ) {
-				columnHeight = jQuery(this).height();
-				if ( columnHeight > tallestColumn ) {
+		oThis.find('.columns').css('min-height', '0');
+		oThis.find('.columns').each(function(){
+			if ( !oThis.hasClass('no-equalize') ){
+				columnHeight = oThis.height();
+				if ( columnHeight > tallestColumn ){
 					tallestColumn = columnHeight;
 				}
 			}
 		});
-		jQuery(this).find('.columns').css('min-height', tallestColumn);
+		oThis.find('.columns').css('min-height', tallestColumn);
 	});
 }
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" x-webkit-speech/></form>');
+	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
 	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
 		jQuery(this).addClass('focus active');
 	});
@@ -746,12 +747,11 @@ function menuSearchReplacement(){
 //Use inside of a keydown function, and pass the event data.
 function searchTriggerOnlyChars(e){
 	//@TODO "Nebula" 0: This still allows shortcuts like "cmd+a" to return true.
-
 	var spinnerRegex = new RegExp("^[a-zA-Z0-9]+$");
 	var allowedKeys = [8, 46];
 	var searchChar = String.fromCharCode(!e.charCode ? e.which : e.charCode);
 
-	if ( spinnerRegex.test(searchChar) || allowedKeys.indexOf(e.which) > -1 ) {
+	if ( spinnerRegex.test(searchChar) || allowedKeys.indexOf(e.which) > -1 ){
 		return true;
 	} else {
 		return false;
@@ -760,26 +760,27 @@ function searchTriggerOnlyChars(e){
 
 //Search autocomplete
 function autocompleteSearch(){
-	jQuery(document).on('blur', ".nebula-search-iconable input", function(){
-		jQuery('.nebula-search-iconable').removeClass('searching');
+	pageDocument.on('blur', ".nebula-search-iconable input", function(){
+		jQuery('.nebula-search-iconable').removeClass('searching').removeClass('autocompleted');
 	});
 
-	jQuery("#s, input.search").keyup(function(e){
-		if ( !jQuery(this).hasClass('no-autocomplete') && !jQuery('html').hasClass('lte-ie8') ){
-			if ( jQuery(this).parents('form').hasClass('nebula-search-iconable') && jQuery(this).val().trim().length >= 2 && searchTriggerOnlyChars(e) ) {
-				jQuery(this).parents('.nebula-search-iconable').addClass('searching');
+	jQuery("#s, input.search").on('keypress paste', function(e){
+		thisSearchInput = jQuery(this);
+		if ( !thisSearchInput.hasClass('no-autocomplete') && !pageHTML.hasClass('lte-ie8') ){
+			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && thisSearchInput.val().trim().length >= 2 && searchTriggerOnlyChars(e) ){
+				thisSearchInput.parents('form').addClass('searching');
 				setTimeout(function(){
-					jQuery('.nebula-search-iconable').removeClass('searching');
+					thisSearchInput.parents('form').removeClass('searching');
 				}, 10000);
 			} else {
-				jQuery('.nebula-search-iconable').removeClass('searching');
+				thisSearchInput.parents('form').removeClass('searching');
 			}
 
-			jQuery(this).autocomplete({
+			thisSearchInput.autocomplete({
 				position: {
-					my: "left top",
+					my: "left top-2px",
 					at: "left bottom",
-					collision: "flip"
+					collision: "flip",
 				},
 				source: function(request, response){
 					jQuery.ajax({
@@ -791,25 +792,51 @@ function autocompleteSearch(){
 							data: request,
 						},
 						success: function(data){
-							jQuery.each(data, function(index, value) {
-								value.label = value.label.replace(/&#038;/g, "\&");
-							});
+							if ( data ) {
+								jQuery.each(data, function(index, value) {
+									value.label = value.label.replace(/&#038;/g, "\&");
+								});
+								ga('send', 'event', 'Internal Search', 'Autocomplete Search', request.term);
+							} else {
+								ga('send', 'event', 'Internal Search', 'Autocomplete Search (No Results)', request.term);
+							}
 							response(data);
-							jQuery('.nebula-search-iconable').removeClass('searching');
+							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
-							ga('send', 'event', 'Internal Search', 'Error', 'Autocomplete Error');
-							jQuery('.nebula-search-iconable').removeClass('searching');
+							ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
+							thisSearchInput.parents('form').removeClass('searching');
 						},
 						timeout: 60000
 					});
 				},
+				focus: function(event, ui){
+					event.preventDefault(); //Prevent input value from changing.
+				},
 				select: function(event, ui){
 					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
-		            window.location.href = ui.item.link;
+		            if ( typeof ui.item.external !== 'undefined' ){
+						window.open(ui.item.link, '_blank');
+		            } else {
+			            window.location.href = ui.item.link;
+		            }
+		        },
+		        open: function(){
+			        thisSearchInput.parents('form').addClass('autocompleted');
+			        var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
+					heroAutoCompleteDropdown.css('max-width', thisSearchInput.outerWidth());
+		        },
+		        close: function(){
+					thisSearchInput.parents('form').removeClass('autocompleted');
 		        },
 		        minLength: 3,
-		    });
+		    }).data("ui-autocomplete")._renderItem = function(ul, item){
+			    thisSimilarity = ( typeof item.similarity !== 'undefined' ) ? item.similarity.toFixed(1) + '% Match' : '';
+			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label + "</a>").appendTo(ul);
+			    return listItem;
+			};
+			var thisFormIdentifier = thisSearchInput.parents('form').attr('id') || thisSearchInput.parents('form').attr('name') || thisSearchInput.parents('form').attr('class');
+			thisSearchInput.autocomplete("widget").addClass("form-identifier-" + thisFormIdentifier);
 	    }
 	});
 }
@@ -820,37 +847,37 @@ function advancedSearchTriggers(){
 		if ( searchTriggerOnlyChars(e) ) {
 			advancedSearchWaiting();
 			debounce(function(){
-				if ( jQuery('#s').val().trim().length >= 3 ) {
+				if ( jQuery('#s').val().trim().length >= 3 ){
 					advancedSearch();
 					ga('send', 'event', 'Internal Search', 'Advanced', '"' + jQuery('#s').val().trim() + '"');
 				} else {
 					//console.log('value is less than 3 characters');
 				}
-			}, 1000);
+			}, 1000, 'advanced internal search');
 		}
 	});
 
-	jQuery(document).on('change', '.advanced-post-type', function(){
+	pageDocument.on('change', '.advanced-post-type', function(){
 		advancedSearchWaiting();
 		debounce(function(){
-			if ( jQuery('#s').val().trim() != '' || jQuery('.advanced-catstags').val() != '' ) { //@TODO: Something is up here.
+			if ( jQuery('#s').val().trim() != '' || jQuery('.advanced-catstags').val() != '' ){ //@TODO: Something is up here.
 				advancedSearch();
 			}
-		}, 1000);
+		}, 1000, 'advanced post-type');
 	});
 
-	jQuery(document).on('change', '.advanced-catstags', function(){
+	pageDocument.on('change', '.advanced-catstags', function(){
 		advancedSearchWaiting();
 		debounce(function(){
 			advancedSearch();
-		}, 1000);
+		}, 1000, 'advanced catstags');
 	});
 
-	jQuery(document).on('change', '.advanced-author', function(){
+	pageDocument.on('change', '.advanced-author', function(){
 		advancedSearchWaiting();
 		debounce(function(){
 			advancedSearch();
-		}, 1000);
+		}, 1000, 'advanced author');
 	});
 }
 
@@ -866,9 +893,10 @@ function advancedSearchWaiting(){
 
 function advancedSearch(){
 	if ( 1==1 ) { //@TODO: If all fields are not empty
-		//console.log('advanced search has started!');
-		jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-spin fa-spinner').addClass('active');
-		jQuery('#advanced-search-form').addClass('inactive');
+		var advancedSearchIndicator = jQuery('#advanced-search-indicator');
+		var advancedSearchForm = jQuery('#advanced-search-form');
+		advancedSearchIndicator.removeClass().addClass('fa fa-spin fa-spinner').addClass('active');
+		advancedSearchForm.addClass('inactive');
 
 		jQuery.ajax({
 			type: "POST",
@@ -887,19 +915,19 @@ function advancedSearch(){
 			success: function(data){
 				jQuery('#advanced-search-results').html(data).slideDown();
 				//console.log('success!');
-				jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-check-circle success').addClass('active');
-				jQuery('#advanced-search-form').removeClass('inactive');
+				advancedSearchIndicator.removeClass().addClass('fa fa-check-circle success').addClass('active');
+				advancedSearchForm.removeClass('inactive');
 				setTimeout(function(){
-					jQuery('#advanced-search-indicator').removeClass('active');
+					advancedSearchIndicator.removeClass('active');
 				}, 5000);
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
 				ga('send', 'event', 'Contact', 'Error', 'Advanced Search');
 				//console.log('ajax error :(');
-				jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-times-circle error').addClass('active');
-				jQuery('#advanced-search-form').removeClass('inactive');
+				advancedSearchIndicator.removeClass().addClass('fa fa-times-circle error').addClass('active');
+				advancedSearchForm.removeClass('inactive');
 				setTimeout(function(){
-					jQuery('#advanced-search-indicator').removeClass('active');
+					advancedSearchIndicator.removeClass('active');
 				}, 5000);
 			},
 			timeout: 60000
@@ -907,25 +935,26 @@ function advancedSearch(){
 	}
 }
 
-
+//Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
-	if ( !jQuery('html').hasClass('lte-ie8') ) {
+	if ( !pageHTML.hasClass('lte-ie8') ){
+		var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
 		viewport = updateViewportDimensions();
 		if ( viewport.width <= 410 ) {
-			jQuery('#mobileheadersearch input').attr('placeholder', 'Search');
+			mobileHeaderSearchInput.attr('placeholder', 'I\'m looking for...');
 		} else {
-			jQuery('#mobileheadersearch input').attr('placeholder', 'What are you looking for?');
+			mobileHeaderSearchInput.attr('placeholder', 'What are you looking for?');
 		}
 	}
 }
 
 
 //Search Validator
-function searchValidator() {
-	if ( !jQuery('html').hasClass('lte-ie8') ) {
+function searchValidator(){
+	if ( !pageHTML.hasClass('lte-ie8') ){
 		jQuery('.lt-ie9 form.search .btn.submit').val('Search');
 		jQuery('.input.search').each(function(){
-			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
+			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 			} else {
 				jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
@@ -934,7 +963,7 @@ function searchValidator() {
 		});
 		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
 			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' ) ? jQuery(this).attr('data-prev-placeholder') : 'Search';
-			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
+			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 				jQuery(this).parent().find('.btn.submit').val('Go');
 			} else {
@@ -949,7 +978,7 @@ function searchValidator() {
 			}
 		})
 		jQuery('form.search').submit(function(){
-			if ( jQuery(this).find('.input.search').val() == '' || jQuery(this).find('.input.search').val().trim().length === 0 ) {
+			if ( jQuery(this).find('.input.search').val() == '' || jQuery(this).find('.input.search').val().trim().length === 0 ){
 				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
 				jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
 				return false;
@@ -958,8 +987,7 @@ function searchValidator() {
 			}
 		});
 	}
-} //End searchValidator
-
+}
 
 //Highlight search terms
 function searchTermHighlighter(){
@@ -971,18 +999,17 @@ function searchTermHighlighter(){
 			jQuery(this).html(searchFinder);
 		});
 	}
-	function preg_quote(str) {
+	function preg_quote(str){
 		return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
 	}
 }
 
-
 //Emphasize the search Terms
-function emphasizeSearchTerms() {
+function emphasizeSearchTerms(){
 	var theSearchTerm = document.URL.split('?s=')[1];
-	if ( typeof theSearchTerm != 'undefined' ) {
+	if ( typeof theSearchTerm != 'undefined' ){
 		var origBGColor = jQuery('.searchresultword').css('background-color');
-		jQuery('.searchresultword').each(function(i) {
+		jQuery('.searchresultword').each(function(i){
 	    	var stallFor = 150 * parseInt(i);
 			jQuery(this).delay(stallFor).animate({
 			    backgroundColor: 'rgba(255, 255, 0, 0.5)',
@@ -1000,13 +1027,13 @@ function emphasizeSearchTerms() {
 
 //Single search result redirection drawer
 function singleResultDrawer(){
-	var theSearchTerm = document.URL.split('?rs=')[1]; //This is not needed if Search Everything can fix the "?s=" issue.
+	var theSearchTerm = document.URL.split('?rs=')[1];
 	if ( typeof theSearchTerm != 'undefined' ) {
-		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //This is not needed if Search Everything can fix the "?s=" issue.
-		jQuery('#searchform input#s').val(theSearchTerm); //This is not needed if Search Everything can fix the "?s=" issue.
+		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //@TODO "Nebula" 0: Combine into a single regex replace.
+		jQuery('#searchform input#s').val(theSearchTerm);
 	}
 
-	jQuery(document).on('click touch tap', '.headerdrawer .close', function(){
+	pageDocument.on('click touch tap', '.headerdrawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
 		jQuery('.headerdrawercon').slideUp();
@@ -1014,9 +1041,9 @@ function singleResultDrawer(){
 	});
 }
 
-//Suggestions for 404 page
+//Suggestions for 404 or no search results pages
 function pageSuggestion(){
-	if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_cse_api_key"] != '' ) {
+	if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_cse_api_key"] != '' ){
 		if ( GET().length ) {
 			var queryStrings = GET();
 		} else {
@@ -1026,7 +1053,7 @@ function pageSuggestion(){
 		var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
 		trySearch(phrase);
 
-		jQuery(document).on('mousedown touch tap', 'a.suggestion', function(e){
+		pageDocument.on('mousedown touch tap', 'a.suggestion', function(e){
 			var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 			var suggestedPage = jQuery(this).text();
 			ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage + intent);
@@ -1045,7 +1072,7 @@ function trySearch(phrase){
 	var API_URL = 'https://www.googleapis.com/customsearch/v1?';
 
 	// Send the request to the custom search API
-	jQuery.getJSON(API_URL, queryParams, function(response) {
+	jQuery.getJSON(API_URL, queryParams, function(response){
 		if (response.items && response.items.length) {
 			ga('send', 'event', 'Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location, {'nonInteraction': 1});
 			showSuggestedPage(response.items[0].title, response.items[0].link);
@@ -1067,15 +1094,16 @@ function showSuggestedPage(title, url){
 function pageVisibility(){
 	visFirstHidden = 0;
 	visibilityChangeActions();
-	jQuery(document).on('visibilitychange', function(){
+	pageDocument.on('visibilitychange', function(){
 		visibilityChangeActions();
 	});
 
 	function visibilityChangeActions(){
 		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
-			var pageTitle = jQuery(document).attr('title');
+			var pageTitle = pageDocument.attr('title');
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
-			//@TODO "Nebula" 0: prevent autoplay of videos
+			//@TODO "Nebula" 0: pause youtube
+			//@TODO "Nebula" 0: pause vimeo
 		}
 
 		if ( getPageVisibility() ) { //Page is hidden
@@ -1083,14 +1111,13 @@ function pageVisibility(){
 			//@TODO "Nebula" 0: pause vimeo
 			visFirstHidden = 1;
 			visTimerBefore = (new Date()).getTime();
-			var pageTitle = jQuery(document).attr('title');
+			var pageTitle = pageDocument.attr('title');
 			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1}); //@TODO: Page Visibility Hidden event tracking is off by default. Uncomment to enable.
 		} else { //Page is visible
-			//@TODO "Nebula" 0: resume autoplay of videos
 			if ( visFirstHidden == 1 ) {
 				var visTimerAfter = (new Date()).getTime();
 				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
-				var pageTitle = jQuery(document).attr('title');
+				var pageTitle = pageDocument.attr('title');
 				//ga('send', 'event', 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)', {'nonInteraction': 1}); //@TODO "Nebula" 0: Page Visibility Visible event tracking is off by default. Uncomment to enable.
 			}
 		}
@@ -1105,14 +1132,15 @@ function pageVisibility(){
 	}
 }
 
-function cFormLocalStorage() {
-	jQuery('.cform7-message').on('keyup', function(){
-    	localStorage.setItem('global_cform_message', jQuery('.cform7-message').val());
-		jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+function cFormLocalStorage(){
+	var cForm7Message = jQuery('.cform7-message');
+	cForm7Message.on('keyup', function(){
+    	localStorage.setItem('global_cform_message', cForm7Message.val());
+		cForm7Message.val(localStorage.getItem('global_cform_message'));
     });
 
-    jQuery(window).bind('storage',function(e){
-    	jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+    pageWindow.bind('storage',function(e){
+    	cForm7Message.val(localStorage.getItem('global_cform_message'));
     });
 
 	jQuery('form.wpcf7-form').submit(function(){
@@ -1120,13 +1148,14 @@ function cFormLocalStorage() {
 	});
 }
 
-function checkCformLocalStorage() {
+function checkCformLocalStorage(){
+	var cForm7Message = jQuery('.cform7-message');
 	if ( typeof localStorage.getItem('global_cform_message') !== 'undefined' && localStorage.getItem('global_cform_message') != 'undefined' ) {
-		if ( jQuery('.cform7-message').val() != '' ) {
-			localStorage.setItem('global_cform_message', jQuery('.cform7-message').val());
-			jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+		if ( cForm7Message.val() != '' ) {
+			localStorage.setItem('global_cform_message', cForm7Message.val());
+			cForm7Message.val(localStorage.getItem('global_cform_message'));
 		} else {
-			jQuery('.cform7-message').val(localStorage.getItem('global_cform_message'));
+			cForm7Message.val(localStorage.getItem('global_cform_message'));
 		}
 	} else {
 		localStorage.removeItem('global_cform_message');
@@ -1134,12 +1163,12 @@ function checkCformLocalStorage() {
 }
 
 //Contact form pre-validator
-function cFormPreValidator() {
+function cFormPreValidator(){
 	jQuery('.cform7-text').keyup(function(){
 		if ( jQuery(this).val() == '' ) {
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
 			jQuery(this).removeClass('wpcf7-not-valid');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
+		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
 			jQuery(this).parent().parent().removeClass('success').addClass('danger');
 		} else {
 			jQuery(this).parent().parent().removeClass('danger').addClass('success');
@@ -1150,7 +1179,7 @@ function cFormPreValidator() {
 		if ( jQuery(this).val() == '' ) {
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
 			jQuery(this).removeClass('wpcf7-not-valid').attr('placeholder', 'Your Name*');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
+		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
 			jQuery(this).parent().parent().removeClass('success').addClass('danger');
 		} else {
 			jQuery(this).parent().parent().removeClass('danger').addClass('success');
@@ -1162,9 +1191,9 @@ function cFormPreValidator() {
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
 			jQuery(this).removeClass('wpcf7-not-valid');
 			jQuery(this).attr('placeholder', 'Email Address*');
-		} else if ( jQuery(this).val().trim().length === 0 || jQuery(this).val().indexOf(' ') > 0 ) {
+		} else if ( jQuery(this).val().trim().length === 0 || jQuery(this).val().indexOf(' ') > 0 ){
 			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');
-		} else if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ) {
+		} else if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ){
 			jQuery(this).parent().parent().removeClass('success').removeClass('danger').addClass('warning');
 			jQuery(this).removeClass('wpcf7-not-valid');
 			jQuery(this).attr('placeholder', 'Email Address*');
@@ -1183,15 +1212,15 @@ function cFormPreValidator() {
 		jQuery(this).val(removeSpace);
 		//console.log('after trimming: ', removeSpace);
 
-		if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ) {
+		if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ){
 			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');
 		}
 	});
 
-	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
+	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ){
 		jQuery('.cform7-phone').mask("(999) 999-9999? x99999");
 		jQuery('.cform7-phone').keyup(function(){
-			if ( jQuery(this).val().replace(/\D/g,'').length >= 10 ) {
+			if ( jQuery(this).val().replace(/\D/g,'').length >= 10 ){
 				jQuery(this).parent().parent().addClass('success');
 			} else {
 				jQuery(this).parent().parent().removeClass('success');
@@ -1203,7 +1232,7 @@ function cFormPreValidator() {
 		jQuery('.cform7-bday').mask("m9/d9/y999");
 		currentYear = (new Date).getFullYear();
 		jQuery('.cform7-bday').keyup(function(){
-			if ( jQuery(this).val().replace(/\D/g,'').length === 8 ) {
+			if ( jQuery(this).val().replace(/\D/g,'').length === 8 ){
 				jQuery(this).parent().parent().addClass('success');
 			} else {
 				jQuery(this).parent().parent().removeClass('success');
@@ -1212,28 +1241,28 @@ function cFormPreValidator() {
 			var checkDay = jQuery(this).val().substr(3, 2);
 			var checkYear = jQuery(this).val().substr(jQuery(this).val().length - 4);
 			if ( checkYear != '____' ) {
-				if ( checkYear < 1900 || checkYear > currentYear) {
+				if ( checkYear < 1900 || checkYear > currentYear){
 					jQuery(this).parent().parent().removeClass('success').addClass('badyear');
 				} else {
 					jQuery(this).parent().parent().removeClass('badyear');
 				}
 			}
 			if ( checkMonth != '__' ) {
-				if ( checkMonth < 1 || checkMonth > 12) {
+				if ( checkMonth < 1 || checkMonth > 12){
 					jQuery(this).parent().parent().removeClass('success').addClass('badmonth');
 				} else {
 					jQuery(this).parent().parent().removeClass('badmonth');
 				}
 			}
 			if ( checkDay != '__' ) {
-				if ( checkDay < 1 || checkDay > 31) {
+				if ( checkDay < 1 || checkDay > 31){
 					jQuery(this).parent().parent().removeClass('success').addClass('badday');
 				} else {
 					jQuery(this).parent().parent().removeClass('badday');
 				}
 				//We could add specific checks for each individual month using checkMonth vs. checkDay.
 			}
-			if ( checkYear == '____' && checkMonth == '__' && checkDay == '__' ) {
+			if ( checkYear == '____' && checkMonth == '__' && checkDay == '__' ){
 				jQuery(this).parent().parent().removeClass('success').removeClass('danger').removeClass('badyear').removeClass('badmonth').removeClass('badday');
 			}
 			if ( jQuery(this).parent().parent().hasClass('badmonth') ) {
@@ -1253,7 +1282,7 @@ function cFormPreValidator() {
 			jQuery(this).parent().parent().removeClass('warning');
 			jQuery(this).removeClass('wpcf7-not-valid');
 			jQuery(this).attr('placeholder', 'Enter your message here.*');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
+		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
 			jQuery(this).parent().parent().addClass('warning');
 		} else {
 			jQuery(this).parent().parent().removeClass('danger');
@@ -1263,7 +1292,7 @@ function cFormPreValidator() {
 		}
 	});
 	jQuery('.cform7-message').blur(function(){
-		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
+		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
 			jQuery(this).parent().parent().removeClass('warning').addClass('danger');
 		} else if ( jQuery(this).val() == '' ) {
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
@@ -1272,15 +1301,15 @@ function cFormPreValidator() {
 		}
 	});
 	jQuery('.cform7-message').focus(function(){
-		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ) {
+		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
 			jQuery(this).parent().parent().removeClass('danger').addClass('warning');
 		} else {
 			jQuery(this).parent().parent().removeClass('danger').removeClass('warning').removeClass('success');
 		}
 	});
 	var reqFieldsEmpty = 0;
-	jQuery('.wpcf7-validates-as-required').each(function() {
-		if ( jQuery(this).val() == '' ) {
+	jQuery('.wpcf7-validates-as-required').each(function(){
+		if ( jQuery(this).val() == '' ){
 			reqFieldsEmpty++;
 		}
 	});
@@ -1292,7 +1321,7 @@ function cFormPreValidator() {
 	jQuery('#cform7-container').keyup(function(){
 		var obj = {};
 		var dangers = 0;
-		jQuery("#cform7-container li.danger").each(function() {
+		jQuery("#cform7-container li.danger").each(function(){
 		var cl = jQuery(this).attr("class");
 			if(!obj[cl]) {
 				obj[cl] = {};
@@ -1307,17 +1336,17 @@ function cFormPreValidator() {
 	});
 	jQuery('.wpcf7-form').submit(function(){
 		var intervalID = setInterval(function(){
-			if ( jQuery('input').hasClass('wpcf7-not-valid') ) {
+			if ( jQuery('input').hasClass('wpcf7-not-valid') ){
 				clearInterval(intervalID);
 				jQuery('.wpcf7-not-valid').parent().parent().addClass('danger');
 				jQuery('#cform7-container').parent().find('.wpcf7-submit').addClass('notallowed');
-				if ( jQuery('.cform7-name.wpcf7-not-valid').val() == '' ) {
+				if ( jQuery('.cform7-name.wpcf7-not-valid').val() == '' ){
 					jQuery('.cform7-name').attr('placeholder', 'Your name is required.');
 				}
-				if ( jQuery('.cform7-email.wpcf7-not-valid').val() == '' ) {
+				if ( jQuery('.cform7-email.wpcf7-not-valid').val() == '' ){
 					jQuery('.cform7-email').attr('placeholder', 'Your email is required.');
 				}
-				if ( jQuery('.cform7-message.wpcf7-not-valid').val() == '' ) {
+				if ( jQuery('.cform7-message.wpcf7-not-valid').val() == '' ){
 					jQuery('.cform7-message').attr('placeholder', 'Your message is required.');
 				}
 			} else {
@@ -1336,15 +1365,15 @@ function cFormSuccess(){
 
 //Allows only numerical input on specified inputs. Call this on keyUp? @TODO "Nebula" 0: Make the selector into oThis and pass that to the function from above.
 //The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
-function onlyNumbers() {
+function onlyNumbers(){
 	jQuery(".leftcolumn input[type='text']").each(function(){
 		this.value = this.value.replace(/[^0-9\.]/g, '');
 	});
 }
 
-function checkCommentVal(oThis) {
+function checkCommentVal(oThis){
 	//@TODO "Nebula" 0: Count how many required fields there are. If any of them don't have value, then trigger disabled
-	if ( jQuery(oThis).val() != '' ) {
+	if ( jQuery(oThis).val() != '' ){
 		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').removeClass('disabled');
 	} else {
 		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').addClass('disabled');
@@ -1352,11 +1381,11 @@ function checkCommentVal(oThis) {
 }
 
 function scrollTo() {
-	jQuery(document).on('click touch tap', 'a[href*=#]:not([href=#])', function() {
-		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ) {
+	pageDocument.on('click touch tap', 'a[href*=#]:not([href=#])', function(){
+		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
 			var target = jQuery(this.hash);
 			target = target.length ? target : jQuery('[name=' + this.hash.slice(1) +']');
-			if ( target.length ) {
+			if ( target.length ){
 				var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 				var nOffset = Math.floor(target.offset().top - headerHtOffset);
 				jQuery('html, body').animate({
@@ -1368,72 +1397,33 @@ function scrollTo() {
 	});
 }
 
-function contactBackup() {
-	checkCommentVal('.contact-form-message textarea');
-	jQuery('.contact-form-message textarea').on('keyup focus blur', function(){
-		checkCommentVal(this);
-	});
-
-	jQuery(document).on('click touch tap', 'disabled', function(){
-		return false;
-	});
-
-	jQuery(document).on('submit', '.contact-form-backup', function(e){
-		var contactData = [{
-			'name': jQuery(".contact-form-name input").val(),
-			'email': jQuery(".contact-form-email input").val(),
-			'message': jQuery(".contact-form-message textarea").val()
-		}];
-		jQuery.ajax({
-			type: "POST",
-			url: bloginfo["admin_ajax"],
-			data: {
-				action: 'nebula_backup_contact_send',
-				data: contactData,
-			},
-			success: function(response){
-				jQuery('.contact-form-backup input:not(#contact-submit), .contact-form-backup textarea').val('');
-				//Collapse the contact form and replace with sent notification
-				//call google adwords conversion tracker
-				//remove the contact form
-				ga('send', 'event', 'Contact', 'Submit', 'Backup Form Submission');
-			},
-			error: function(MLHttpRequest, textStatus, errorThrown){
-				ga('send', 'event', 'Contact', 'Error', 'Backup Form AJAX Error');
-			},
-			timeout: 60000
-		});
-		e.preventDefault();
-		return false;
-	});
-}
 
 //Fill browserinfo field with browser information (to send with forms).
-function browserInfo() {
+function browserInfo(){
 	var browserInfoVal = '';
 
-	if ( typeof navigator != 'undefined' ) {
+	if ( typeof navigator != 'undefined' ){
 		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
 		browserInfoVal += 'UA Lookup: http://udger.com/resources/online-parser\n\n';
 	}
 
-	browserInfoVal += 'HTML Classes: ' + jQuery('html').attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Body Classes: ' + jQuery('body').attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Viewport Size: ' + jQuery(window).width() + 'px x ' + jQuery(window).height() + 'px ' + '\n\n';
+	browserInfoVal += 'HTML Classes: ' + pageHTML.attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Body Classes: ' + pageBody.attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Viewport Size: ' + pageWindow.width() + 'px x ' + pageWindow.height() + 'px ' + '\n\n';
 
-	if ( typeof performance != 'undefined' ) {
+	if ( typeof performance != 'undefined' ){
 		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
 		var pageLoadTime = (performance.timing.loadEventStart-performance.timing.navigationStart)/1000;
 		browserInfoVal += 'Page Loading Time: ' + pageLoadTime + 's' + '\n\n';
 	}
 
-	if ( typeof performance != 'undefined' ) {
+	if ( typeof performance != 'undefined' ){
 		browserInfoVal += 'Referrer: ' + document.referrer + '\n';
 	} else {
 		browserInfoVal += 'Referrer: None (or Unknown)\n';
 	}
 
-	if ( typeof window.history != 'undefined' ) {
+	if ( typeof window.history != 'undefined' ){
 		browserInfoVal += 'History Depth: ' + window.history.length + '\n\n';
 	}
 
@@ -1444,8 +1434,8 @@ function browserInfo() {
 }
 
 //Create desktop notifications
-function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback) {
-	if ( checkNotificationPermission() ) {
+function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
+	if ( checkNotificationPermission() ){
 		//Set defaults
 		var defaults = {
 			dir: "auto", //Direction ["auto", "ltr", "rtl"] (optional)
@@ -1455,58 +1445,58 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			icon: bloginfo['template_directory'] + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
 		}
 
-		if ( typeof message === "undefined" ) {
+		if ( typeof message === "undefined" ){
 			message = defaults;
-			if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: message is undefined, using defaults.'); }
-		} else if ( typeof message === "string" ) {
+			if ( typeof Gumby != 'undefined' ){ Gumby.warn('Warning: message is undefined, using defaults.'); }
+		} else if ( typeof message === "string" ){
 			body = message;
 			message = defaults;
 			message.body = body;
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Note: message is a string, using defaults.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Note: message is a string, using defaults.'); }
 		} else {
-			if ( typeof message.dir === "undefined" ) {
+			if ( typeof message.dir === "undefined" ){
 				message.dir = defaults.dir;
 			}
-			if ( typeof message.lang === "undefined" ) {
+			if ( typeof message.lang === "undefined" ){
 				message.lang = defaults.lang;
 			}
-			if ( typeof message.body === "undefined" ) {
+			if ( typeof message.body === "undefined" ){
 				message.body = defaults.lang;
 				if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: No message body.'); }
 			}
-			if ( typeof message.tag === "undefined" ) {
+			if ( typeof message.tag === "undefined" ){
 				message.tag = defaults.tag;
 			}
-			if ( typeof message.icon === "undefined" ) {
+			if ( typeof message.icon === "undefined" ){
 				message.icon = defaults.icon;
 			}
 		}
 
 		instance = new Notification(title, message); //Trigger the notification
 
-		if ( typeof clickCallback !== "undefined" ) {
-			instance.onclick = function() {
+		if ( typeof clickCallback !== "undefined" ){
+			instance.onclick = function(){
 				clickCallback();
 			};
 		}
-		if ( typeof showCallback !== "undefined" ) {
-            instance.onshow = function(e) {
+		if ( typeof showCallback !== "undefined" ){
+            instance.onshow = function(e){
                 showCallback();
             };
         } else {
-            instance.onshow = function(e) {
-                setTimeout(function() {
+            instance.onshow = function(e){
+                setTimeout(function(){
                     instance.close();
                 }, 20000);
             }
         }
-		if ( typeof closeCallback !== "undefined" ) {
-			instance.onclose = function() {
+		if ( typeof closeCallback !== "undefined" ){
+			instance.onclose = function(){
 				closeCallback();
 			};
 		}
-		if ( typeof errorCallback !== "undefined" ) {
-			instance.onerror = function() {
+		if ( typeof errorCallback !== "undefined" ){
+			instance.onerror = function(){
 				errorCallback();
 			};
 		}
@@ -1514,19 +1504,19 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 	return false;
 }
 
-function checkNotificationPermission() {
+function checkNotificationPermission(){
 	Notification = window.Notification || window.mozNotification || window.webkitNotification;
-	if ( !(Notification) ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn("This browser does not support desktop notifications."); }
+	if ( !(Notification) ){
+		if ( typeof Gumby != 'undefined' ){ Gumby.warn("This browser does not support desktop notifications."); }
 		return false;
-	} else if ( Notification.permission === "granted" ) {
+	} else if ( Notification.permission === "granted" ){
 		return true;
-	} else if ( Notification.permission !== 'denied' ) {
-		Notification.requestPermission(function (permission) {
-			if( !('permission' in Notification) ) {
+	} else if ( Notification.permission !== 'denied' ){
+		Notification.requestPermission(function (permission){
+			if( !('permission' in Notification) ){
 				Notification.permission = permission;
 			}
-			if (permission === "granted") {
+			if (permission === "granted"){
 				return true;
 			}
 		});
@@ -1535,49 +1525,32 @@ function checkNotificationPermission() {
 }
 
 function nebulaVibrate(pattern) {
-	if ( typeof pattern === 'undefined' ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Vibration pattern was not provided. Using default.'); }
+	if ( typeof pattern === 'undefined' ){
+		if ( typeof Gumby != 'undefined' ){ Gumby.warn('Vibration pattern was not provided. Using default.'); }
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
-	} else if ( typeof pattern !== 'object' ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Vibration pattern is not an object. Using default.'); }
+	} else if ( typeof pattern !== 'object' ){
+		if ( typeof Gumby != 'undefined' ){ Gumby.warn('Vibration pattern is not an object. Using default.'); }
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	}
-	if ( checkVibration() ) {
+	if ( checkVibration() ){
 		navigator.vibrate(pattern);
 	}
 	return false;
 }
 
 function checkVibration() {
-	if ( !jQuery('body').hasClass('mobile') ) {
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support)."); }
+	if ( !pageBody.hasClass('mobile') ){
+		if ( typeof Gumby != 'undefined' ){ Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support)."); }
 	}
 
 	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
-	if ( !(Vibration) ) {
+	if ( !(Vibration) ){
 		Gumby.warn("This browser does not support vibration.");
 		return false;
 	} else {
 		return true;
 	}
 }
-
-//Detect and log errors, and fallback fixes
-function errorLogAndFallback() {
-	//Check if Contact Form 7 is active and if the selected form ID exists
-	if ( jQuery('.cform-disabled').is('*') ) {
-		ga('send', 'event', 'Error', 'Contact Form 7 Disabled', {'nonInteraction': 1});
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: Contact Form 7 is disabled! Reverting to mailto link.'); }
-	} else if ( jQuery('#cform7-container:contains("Not Found")').length > 0 ) {
-		jQuery('#cform7-container').text('').append('<li><div class="medium primary btn icon-left entypo fa fa-envelope"><a class="cform-not-found" href="mailto:' + bloginfo['admin_email'] + '?subject=Email%20submission%20from%20' + document.URL + '" target="_blank">Email Us</a></div><!--/button--></li>');
-		ga('send', 'event', 'Error', 'Contact Form 7 Form Not Found', {'nonInteraction': 1});
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: Contact Form 7 form is not found! Reverting to mailto link.'); }
-		jQuery(document).on('click touch tap', '.cform-not-found', function(){
-			ga('send', 'event', 'Contact', 'Submit (Intent)', 'Backup Mailto Intent');
-		});
-	}
-}
-
 
 
 //Waits for events to finish before triggering
@@ -1599,7 +1572,7 @@ function debounce(callback, wait, uniqueId, immediate){
 
     clearTimeout(debounceTimers[uniqueId]);
     debounceTimers[uniqueId] = setTimeout(later, wait);
-    if ( callNow ) {
+    if ( callNow ){
 	    callback.apply(context, args);
 	}
 };
@@ -1608,7 +1581,7 @@ function debounce(callback, wait, uniqueId, immediate){
 
 //Conditional JS Library Loading
 //This could be done better I think (also, it runs too late in the stack).
-function conditionalJSLoading() {
+function conditionalJSLoading(){
 
 	//Only load bxslider library on a page that calls bxslider.
 	if ( jQuery('.bxslider').is('*') ) {
@@ -1622,7 +1595,7 @@ function conditionalJSLoading() {
 
 	//Only load maskedinput.js library if phone or bday field exists.
 	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.maskedinput.js').done(function(){
+		jQuery.getScript('//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
 			ga('send', 'event', 'Error', 'JS Error', 'jquery.maskedinput.js could not be loaded.', {'nonInteraction': 1});
@@ -1642,26 +1615,29 @@ function conditionalJSLoading() {
 	}
 
 	//Only load dataTables library if dataTables table exists.
-	if ( jQuery('.dataTables_wrapper').is('*') ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.dataTables.min.js').done(function(){ //@TODO "Nebula" 0: Use CDN?
+    if ( jQuery('.dataTables_wrapper').is('*') ) {
+        jQuery.getScript('//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/js/jquery.dataTables.min.js').done(function(){
+            jQuery.getScript('//cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js').fail(function(){ //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
+                ga('send', 'event', 'Error', 'JS Error', 'dataTables.responsive.js could not be loaded', {'nonInteraction': 1});
+            });
+            nebulaLoadCSS('//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/css/jquery.dataTables.min.css');
+			nebulaLoadCSS('//cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css'); //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
 			dataTablesActions();
-		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
-		});
-		nebulaLoadCSS(bloginfo['template_directory'] + '/css/jquery.dataTables.css');
+        }).fail(function(){
+            ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
+        });
 
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-4.closure.js').done(function(){
-			//Do something
-		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-4.closure.js could not be loaded.', {'nonInteraction': 1});
-		});
-	}
+		//Only load Highlight if dataTables table exists.
+        jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
+            ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-5.closure.js could not be loaded.', {'nonInteraction': 1});
+        });
+    }
 
-	if ( jQuery('pre.nebula-code').is('*') ) {
+	if ( jQuery('pre.nebula-code').is('*') ){
 		nebula_pre();
 	}
 
-	if ( jQuery('.flag').is('*') ) {
+	if ( jQuery('.flag').is('*') ){
 		nebulaLoadCSS(bloginfo['template_directory'] + '/css/flags.css');
 	}
 } //end conditionalJSLoading()
@@ -1669,8 +1645,8 @@ function conditionalJSLoading() {
 
 //Dynamically load CSS files using JS
 function nebulaLoadCSS(url){
-	if ( document.createStyleSheet ) {
-	    try { document.createStyleSheet(url); } catch (e) {
+	if ( document.createStyleSheet ){
+	    try { document.createStyleSheet(url); } catch(e){
 		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
 	    }
 	} else {
@@ -1695,17 +1671,17 @@ function chosenSelectOptions(){
 }
 
 function dataTablesActions(){
-	jQuery(document).on('keyup', '.dataTables_wrapper .dataTables_filter input', function() { //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
+	pageDocument.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
 	    //console.log('keyup: ' + jQuery(this).val());
-	    jQuery('.dataTables_wrapper').removeHighlight();
-	    jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
+	    //jQuery('.dataTables_wrapper').removeHighlight();
+	    //jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
 	});
 }
 
 
 //Place all bxSlider events inside this function!
-function bxSlider() {
-	if ( typeof bxSlider !== 'undefined' ) {
+function bxSlider(){
+	if ( typeof bxSlider !== 'undefined' ){
 		jQuery('.exampleslider').bxSlider({
 			mode: 'horizontal', //'horizontal', 'vertical', 'fade'
 			speed: 800,
@@ -1734,22 +1710,24 @@ function bxSlider() {
 	}
 }
 
-function vimeoControls() {
+function vimeoControls(){
 	if ( jQuery('.vimeoplayer').is('*') ) {
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			if ( typeof Gumby != 'undefined' ) { Gumby.warn('froogaloop.js could not be loaded.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.warn('froogaloop.js could not be loaded.'); }
 		});
 	}
 
-	function createVimeoPlayers() {
-		var player = new Array();
+	function createVimeoPlayers(){
+		//To trigger events on these videos, use the syntax: player[0].api("play");
+		player = new Array();
 	    jQuery('iframe.vimeoplayer').each(function(i){
 			var vimeoiframeClass = jQuery(this).attr('id');
 			player[i] = $f(vimeoiframeClass);
-			player[i].addEvent('ready', function() {
-		    	if ( typeof Gumby != 'undefined' ) { Gumby.log('player is ready'); }
+			//@TODO "Nebula" 0: Add a named index to this array so it can be called by the video ID instead of the array index number
+			player[i].addEvent('ready', function(){
+		    	if ( typeof Gumby != 'undefined' ){ Gumby.log('player is ready'); }
 			    player[i].addEvent('play', onPlay);
 			    player[i].addEvent('pause', onPause);
 			    player[i].addEvent('seek', onSeek);
@@ -1759,34 +1737,34 @@ function vimeoControls() {
 		});
 	}
 
-	function onPlay(id) {
+	function onPlay(id){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
 	}
 
-	function onPause(id) {
+	function onPause(id){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
 	}
 
-	function onSeek(data, id) {
+	function onSeek(data, id){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
 	}
 
-	function onFinish(id) {
+	function onFinish(id){
 		var videoTitle = id.replace(/-/g, ' ');
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 	}
 
-	function onPlayProgress(data, id) {
+	function onPlayProgress(data, id){
 		//if ( typeof Gumby != 'undefined' ) { Gumby.log(data.seconds + 's played'); }
 	}
 }
 
 //Cookie Management
-function createCookie(name, value, days) {
-	if ( days ) {
+function createCookie(name, value, days){
+	if ( days ){
 		var date = new Date();
 		date.setTime(date.getTime()+(days*24*60*60*1000));
 		var expires = "; expires=" + date.toGMTString();
@@ -1794,18 +1772,18 @@ function createCookie(name, value, days) {
 		var expires = "";
 	}
 	document.cookie = name + "=" + value + expires + "; path=/";
-	if ( typeof Gumby != 'undefined' ) {
+	if ( typeof Gumby != 'undefined' ){
 		Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires);
 	}
 }
-function readCookie(name) {
+function readCookie(name){
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
-	for ( var i=0; i<ca.length; i++ ) {
+	for ( var i = 0; i < ca.length; i++ ){
 		var c = ca[i];
 		while (c.charAt(0) == ' ') {
 			c = c.substring(1, c.length);
-			if (c.indexOf(nameEQ) == 0) {
+			if ( c.indexOf(nameEQ) == 0 ){
 				if ( typeof Gumby != 'undefined' ) { Gumby.log('Cookie "' + name + '" exists.'); }
 				return c.substring(nameEQ.length, c.length);
 			}
@@ -1813,12 +1791,40 @@ function readCookie(name) {
 	}
 	return null;
 }
-function eraseCookie(name) {
+function eraseCookie(name){
 	createCookie(name, "", -1);
-	if ( typeof Gumby != 'undefined' ) {
+	if ( typeof Gumby != 'undefined' ){
 		Gumby.warn('Erased cookie: ' + name);
 	}
 }
+
+
+//Convert Twitter usernames, hashtags, and URLs to links.
+function tweetLinks(tweet){
+	var newString = tweet.replace(/(http(\S)*)/g, '<a href="' + "$1" + '" target="_blank">' + "$1" + '</a>'); //Links that begin with "http"
+	newString = newString.replace(/#(([a-zA-Z0-9_])*)/g, '<a href="https://twitter.com/hashtag/' + "$1" + '" target="_blank">#' + "$1" + '</a>'); //Link hashtags
+	newString = newString.replace(/@(([a-zA-Z0-9_])*)/g, '<a href="https://twitter.com/' + "$1" + '" target="_blank">@' + "$1" + '</a>'); //Link @username mentions
+	return newString;
+}
+
+//Convert time to relative.
+function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
+	var system_date = new Date(time);
+	var user_date = new Date();
+	var diff = Math.floor((user_date-system_date)/1000);
+	if (diff <= 1) return "just now";
+	if (diff < 20) return diff + " seconds ago";
+	if (diff < 60) return "less than a minute ago";
+	if (diff <= 90) return "one minute ago";
+	if (diff <= 3540) return Math.round(diff/60) + " minutes ago";
+	if (diff <= 5400) return "1 hour ago";
+	if (diff <= 86400) return Math.round(diff/3600) + " hours ago";
+	if (diff <= 129600) return "1 day ago";
+	if (diff < 604800) return Math.round(diff/86400) + " days ago";
+	if (diff <= 777600) return "1 week ago";
+	return "on " + system_date;
+}
+
 
 
 //Functionality for selecting and copying text using Nebula Pre tags.
@@ -1826,13 +1832,13 @@ function nebula_pre(){
 	try {
 		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
 			var selectCopyText = 'Copy to clipboard';
-		} else if ( document.body.createTextRange || window.getSelection ) {
+		} else if ( document.body.createTextRange || window.getSelection ){
 			var selectCopyText = 'Select All';
 		} else {
 			return false;
 		}
 	} catch(err){
-		if ( document.body.createTextRange || window.getSelection ) {
+		if ( document.body.createTextRange || window.getSelection ){
 			var selectCopyText = 'Select All';
 		} else {
 			return false;
@@ -1843,7 +1849,7 @@ function nebula_pre(){
 		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>');
 	});
 
-	jQuery(document).on('click touch tap', '.nebula-selectcopy-code', function(){
+	pageDocument.on('click touch tap', '.nebula-selectcopy-code', function(){
 	    oThis = jQuery(this);
 
 	    if ( jQuery(this).text() == 'Copy to clipboard' ) {
@@ -1886,11 +1892,11 @@ function nebula_pre(){
 function selectText(element, copy, callback){
 	if ( typeof element === 'string' ){
 		element = jQuery(element)[0];
-	} else if ( typeof element === 'object' && element.nodeType !== 1 ) {
+	} else if ( typeof element === 'object' && element.nodeType !== 1 ){
 		element = element[0];
 	}
 
-	if ( typeof copy === 'function' ) {
+	if ( typeof copy === 'function' ){
 		callback = copy;
 		copy = null;
 	}
@@ -1900,7 +1906,7 @@ function selectText(element, copy, callback){
 			var range = document.body.createTextRange();
 			range.moveToElementText(element);
 			range.select();
-			if ( !copy && callback ) {
+			if ( !copy && callback ){
 				callback(true);
 				return false;
 			}
@@ -1910,34 +1916,34 @@ function selectText(element, copy, callback){
 			range.selectNodeContents(element);
 			selection.removeAllRanges();
 			selection.addRange(range);
-			if ( !copy && callback ) {
+			if ( !copy && callback ){
 				callback(true);
 				return false;
 			}
 		}
 	} catch(err){
-		if ( callback ) {
+		if ( callback ){
 			callback(false);
 			return false;
 		}
 	}
 
-	if ( copy ) {
+	if ( copy ){
 		try {
 			var success = document.execCommand('copy');
-			if ( callback ) {
+			if ( callback ){
 				callback(success);
 				return false;
 			}
 		} catch(err){
-			if ( callback ) {
+			if ( callback ){
 				callback(false);
 				return false;
 			}
 		}
 	}
 
-	if ( callback ) {
+	if ( callback ){
 		callback(false);
 	}
 	return false;
@@ -1949,49 +1955,49 @@ function selectText(element, copy, callback){
    ========================================================================== */
 
 //Interactive Functions of the Google Map
-function mapActions() {
+function mapActions(){
 	originalWeatherText = jQuery('.mapweather').text();
-	jQuery(document).on('click touch tap', '.mapweather', function(){
-		if ( mapInfo['weather'] == 1 ) {
+	pageDocument.on('click touch tap', '.mapweather', function(){
+		if ( mapInfo['weather'] == 1 ){
 			mapInfo['weather'] = 0;
 			jQuery('.mapweather').removeClass('active').addClass('inactive').text(originalWeatherText);
 			jQuery('.mapweather-icon').removeClass('active').addClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Disabling weather layer.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Disabling weather layer.'); }
 		} else {
 			mapInfo['weather'] = 1;
 			jQuery('.mapweather').addClass('active').removeClass('inactive').text('Disable Weather');
 			jQuery('.mapweather-icon').addClass('active').removeClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling weather layer.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Enabling weather layer.'); }
 		}
 		renderMap(mapInfo);
 		return false;
 	});
 
 	originalTrafficText = jQuery('.maptraffic').text();
-	jQuery(document).on('click touch tap', '.maptraffic', function(){
-		if ( mapInfo['traffic'] == 1 ) {
+	pageDocument.on('click touch tap', '.maptraffic', function(){
+		if ( mapInfo['traffic'] == 1 ){
 			mapInfo['traffic'] = 0;
 			jQuery('.maptraffic').removeClass('active').addClass('inactive').text(originalTrafficText);
 			jQuery('.maptraffic-icon').removeClass('active').addClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Disabling traffic layer.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Disabling traffic layer.'); }
 		} else {
 			mapInfo['traffic'] = 1;
 			jQuery('.maptraffic').addClass('active').removeClass('inactive').text('Disable Traffic');
 			jQuery('.maptraffic-icon').addClass('active').removeClass('inactive');
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling traffic layer.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Enabling traffic layer.'); }
 		}
 		renderMap(mapInfo);
 		return false;
 	});
 
-	jQuery(document).on('click touch tap', '.mapgeolocation', function(){
-		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ) {
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Enabling location detection.'); }
+	pageDocument.on('click touch tap', '.mapgeolocation', function(){
+		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ){
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Enabling location detection.'); }
 			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
 			jQuery('.mapgeolocation').removeClass('inactive').attr('title', 'Requesting location...').text('Detecting Location...');
 			requestPosition();
 		} else {
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Removing detected location.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Removing detected location.'); }
 			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-ban success error').addClass('inactive fa-location-arrow');
 			jQuery(this).removeClass('active success failure').text('Detect Location').addClass('inactive').attr('title', 'Detect current location').css('color', '');
 			mapInfo['detectLoc'] = new Array(0, 0);
@@ -2001,21 +2007,21 @@ function mapActions() {
 	});
 
 	jQuery('.mapgeolocation').hover(function(){
-		if ( jQuery(this).hasClass('active') ) {
+		if ( jQuery(this).hasClass('active') ){
 			jQuery('.mapgeolocation-icon').removeClass('fa-location-arrow').addClass('fa-ban');
 		}
 	}, function(){
-		if ( jQuery(this).hasClass('active') ) {
+		if ( jQuery(this).hasClass('active') ){
 			jQuery('.mapgeolocation-icon').removeClass('fa-ban').addClass('fa-location-arrow');
 		}
 	});
 
 	originalRefreshText = jQuery('.maprefresh').text();
 	pleaseWait = 0;
-	jQuery(document).on('click touch tap', '.maprefresh', function(){
-		if ( !jQuery(this).hasClass('timeout') ) {
+	pageDocument.on('click touch tap', '.maprefresh', function(){
+		if ( !jQuery(this).hasClass('timeout') ){
 			pleaseWait = 0;
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('Refreshing the map.'); }
+			if ( typeof Gumby != 'undefined' ){ Gumby.log('Refreshing the map.'); }
 			renderMap(mapInfo);
 			jQuery('.maprefresh').addClass('timeout', function(){
 				jQuery('.maprefresh').text('Refreshing...');
@@ -2023,7 +2029,7 @@ function mapActions() {
 			});
 		} else {
 			pleaseWait++;
-			if ( pleaseWait < 10 ) {
+			if ( pleaseWait < 10 ){
 				jQuery('.maprefresh').text('Please wait...');
 			} else {
 				jQuery('.maprefresh').text('Hold your horses!');
@@ -2035,7 +2041,7 @@ function mapActions() {
 	//Event Listeners
 
 	//Refresh listener
-	jQuery(document).on('mapRendered', function(){
+	pageDocument.on('mapRendered', function(){
 		setTimeout(function(){
 			jQuery('.maprefresh').addClass('timeout').text('Refreshed!');
 			jQuery('.maprefresh-icon').removeClass('fa-refresh fa-spin inactive').addClass('fa-check-circle success');
@@ -2048,7 +2054,7 @@ function mapActions() {
 	});
 
 	//Geolocation Success listener
-	jQuery(document).on('geolocationSuccess', function(){
+	pageDocument.on('geolocationSuccess', function(){
 		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles <small>(' + mapInfo['detectLoc']['accMeters'].toFixed(2) + ' meters)</small></span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').addClass('active').attr('title', '');
@@ -2057,7 +2063,7 @@ function mapActions() {
 	});
 
 	//Geolocation Error listener
-	jQuery(document).on('geolocationError', function(){
+	pageDocument.on('geolocationError', function(){
 		jQuery('.mapgeolocation').removeClass('success').text(geolocationErrorMessage);
 		setTimeout(function(){
 			jQuery('.mapgeolocation').attr('title', '');
@@ -2067,20 +2073,20 @@ function mapActions() {
 } //End mapActions()
 
 //Request Geolocation
-function requestPosition() {
-	if ( typeof Gumby != 'undefined' ) { Gumby.log('Requesting location... May need to be accepted.'); }
+function requestPosition(){
+	if ( typeof Gumby != 'undefined' ){ Gumby.log('Requesting location... May need to be accepted.'); }
     var nav = null;
-    if (nav == null) {
+    if (nav == null){
         nav = window.navigator;
     }
     var geoloc = nav.geolocation;
-    if (geoloc != null) {
+    if (geoloc != null){
         geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true});
     }
 }
 
 //Geolocation Success
-function successCallback(position) {
+function successCallback(position){
 	jQuery('.mapgeolocation').removeClass('failure').addClass('success');
 
 	mapInfo['detectLoc'] = [];
@@ -2090,21 +2096,21 @@ function successCallback(position) {
 	mapInfo['detectLoc']['alt'] = position.coords.altitude;
 	mapInfo['detectLoc']['speed'] = position.coords.speed;
 
-	if ( ( mapInfo['detectLoc']['accMeters'] <= 25 ) ) {
+	if ( ( mapInfo['detectLoc']['accMeters'] <= 25 ) ){
 		mapInfo['detectLoc']['accColor'] = '#00bb00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 25 && mapInfo['detectLoc']['accMeters'] <= 50 ) {
+	} else if ( mapInfo['detectLoc']['accMeters'] > 25 && mapInfo['detectLoc']['accMeters'] <= 50 ){
 		mapInfo['detectLoc']['accColor'] = '#46d100';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 51 && mapInfo['detectLoc']['accMeters'] <= 150 ) {
+	} else if ( mapInfo['detectLoc']['accMeters'] > 51 && mapInfo['detectLoc']['accMeters'] <= 150 ){
 		mapInfo['detectLoc']['accColor'] = '#a4ed00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 151 && mapInfo['detectLoc']['accMeters'] <= 400 ) {
+	} else if ( mapInfo['detectLoc']['accMeters'] > 151 && mapInfo['detectLoc']['accMeters'] <= 400 ){
 		mapInfo['detectLoc']['accColor'] = '#f2ee00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 401 && mapInfo['detectLoc']['accMeters'] <= 800 ) {
+	} else if ( mapInfo['detectLoc']['accMeters'] > 401 && mapInfo['detectLoc']['accMeters'] <= 800 ){
 		mapInfo['detectLoc']['accColor'] = '#ffc600';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 801 && mapInfo['detectLoc']['accMeters'] <= 1500 ) {
+	} else if ( mapInfo['detectLoc']['accMeters'] > 801 && mapInfo['detectLoc']['accMeters'] <= 1500 ){
 		mapInfo['detectLoc']['accColor'] = '#ff6f00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 1501 && mapInfo['detectLoc']['accMeters'] <= 3000 ) {
+	} else if ( mapInfo['detectLoc']['accMeters'] > 1501 && mapInfo['detectLoc']['accMeters'] <= 3000 ){
 		mapInfo['detectLoc']['accColor'] = '#ff1900';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 3001 ) {
+	} else if ( mapInfo['detectLoc']['accMeters'] > 3001 ){
 		mapInfo['detectLoc']['accColor'] = '#ff0000';
 	} else {
 		mapInfo['detectLoc']['accColor'] = '#ff0000';
@@ -2113,23 +2119,23 @@ function successCallback(position) {
 
 	mapInfo['detectLoc']['accMiles'] = (mapInfo['detectLoc']['accMeters']*0.000621371).toFixed(2);
 
-	if ( mapInfo['detectLoc']['accMeters'] > 400 ) {
+	if ( mapInfo['detectLoc']['accMeters'] > 400 ){
 		lowAccText = 'Your location accuracy is ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).';
-		if ( typeof Gumby != 'undefined' ) { Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).'); }
+		if ( typeof Gumby != 'undefined' ){ Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).'); }
 		//Some kind of notification here...
 	}
 
-	jQuery(document).trigger('geolocationSuccess');
+	pageDocument.trigger('geolocationSuccess');
 	//A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
 
-	jQuery('body').addClass('geo-latlng-' + mapInfo['detectLoc'][0] + '_' + mapInfo['detectLoc'][1] + ' geo-acc-' + mapInfo['detectLoc']['accMeters']);
+	pageBody.addClass('geo-latlng-' + mapInfo['detectLoc'][0] + '_' + mapInfo['detectLoc'][1] + ' geo-acc-' + mapInfo['detectLoc']['accMeters']);
 	browserInfo();
 
 	ga('send', 'event', 'Geolocation', mapInfo['detectLoc'][0].toFixed(4) + ', ' + mapInfo['detectLoc'][1].toFixed(4), 'Accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' meters'); //@TODO "Nebula" 0: Add in actual location detection (from either gearside.com/ip, or Nebula's environment detection example and move this GA reporting to that (with business names in ga action). Maybe consider the Actions to be something like: "LAT, LNG (Business Name, City, State)"
 }
 
 //Geolocation Error
-function errorCallback(error) {
+function errorCallback(error){
     geolocationErrorMessage = "";
     // Check for known errors
     switch (error.code) {
@@ -2146,31 +2152,31 @@ function errorCallback(error) {
         	geolocationErrorMessage = "An unknown error has occurred.";
             break;
     }
-    if ( typeof Gumby != 'undefined' ) { Gumby.warn(geolocationErrorMessage); }
-    jQuery(document).trigger('geolocationError');
-    jQuery('body').addClass('geo-error');
+    if ( typeof Gumby != 'undefined' ){ Gumby.warn(geolocationErrorMessage); }
+    pageDocument.trigger('geolocationError');
+    pageBody.addClass('geo-error');
 	browserInfo();
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
 
 //Retreive Lat/Lng locations
-function getAllLocations() {
+function getAllLocations(){
 	mapInfo['markers'] = [];
 	jQuery('.latlngcon').each(function(i){
 		var alat = jQuery(this).find('.lat').text();
 		var alng = jQuery(this).find('.lng').text();
-		if ( typeof Gumby != 'undefined' ) { Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng); }
+		if ( typeof Gumby != 'undefined' ){ Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng); }
 		mapInfo['markers'][i] = [alat, alng];
 	});
 	renderMap(mapInfo);
 }
 
 //Render the Google Map
-function renderMap(mapInfo) {
-    if ( typeof Gumby != 'undefined' ) { Gumby.log('Rendering Google Map'); }
+function renderMap(mapInfo){
+    if ( typeof Gumby != 'undefined' ){ Gumby.log('Rendering Google Map'); }
 
-    if ( typeof google === 'undefined' ) {
-    	if ( typeof Gumby != 'undefined' ) { Gumby.log('google is not defined. Likely the Google Maps script is not being seen.'); }
+    if ( typeof google === 'undefined' ){
+    	if ( typeof Gumby != 'undefined' ){ Gumby.log('google is not defined. Likely the Google Maps script is not being seen.'); }
     	return false;
     } else {
     	var myOptions = {
@@ -2183,18 +2189,18 @@ function renderMap(mapInfo) {
 	    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	    var bounds = new google.maps.LatLngBounds();
 
-		if ( typeof mapInfo['traffic'] !== 'undefined' ) {
+		if ( typeof mapInfo['traffic'] !== 'undefined' ){
 			if ( mapInfo['traffic'] == 1 ) {
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Traffic is enabled.'); }
+				if ( typeof Gumby != 'undefined' ){ Gumby.log('Traffic is enabled.'); }
 				var trafficLayer = new google.maps.TrafficLayer();
 				trafficLayer.setMap(map);
 			}
 		}
 
 		//Map weather
-		if ( typeof mapInfo['weather'] !== 'undefined' ) {
+		if ( typeof mapInfo['weather'] !== 'undefined' ){
 			if ( mapInfo['weather'] == 1 ) {
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Weather is enabled.'); }
+				if ( typeof Gumby != 'undefined' ){ Gumby.log('Weather is enabled.'); }
 				var weatherLayer = new google.maps.weather.WeatherLayer({
 					temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
 				});
@@ -2219,9 +2225,9 @@ function renderMap(mapInfo) {
 
 
 		//Dynamic Markers (passed from getAllLocations()
-		if ( typeof mapInfo['markers'] !== 'undefined' ) {
+		if ( typeof mapInfo['markers'] !== 'undefined' ){
 			var marker, i;
-		    for (i = 0; i < mapInfo['markers'].length; i++) {
+		    for (i = 0; i < mapInfo['markers'].length; i++){
 		        var pos = new google.maps.LatLng(mapInfo['markers'][i][0], mapInfo['markers'][i][1]);
 		        bounds.extend(pos);
 		        marker = new google.maps.Marker({
@@ -2230,12 +2236,12 @@ function renderMap(mapInfo) {
 		            clickable: false,
 		            map: map
 		        });
-		        if ( typeof Gumby != 'undefined' ) { Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]); }
+		        if ( typeof Gumby != 'undefined' ){ Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]); }
 		    }(marker, i);
 	    }
 
 		//Detected Location Marker
-		if ( typeof mapInfo['detectLoc'] !== 'undefined' ) {
+		if ( typeof mapInfo['detectLoc'] !== 'undefined' ){
 			if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
 				var detectLoc = new google.maps.LatLng(mapInfo['detectLoc'][0], mapInfo['detectLoc'][1]);
 				marker = new google.maps.Marker({
@@ -2255,7 +2261,7 @@ function renderMap(mapInfo) {
 					radius: mapInfo['detectLoc']['accMeters']
 				});
 				circle.bindTo('center', marker, 'position');
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]); }
+				if ( typeof Gumby != 'undefined' ){ Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]); }
 
 				//var detectbounds = new google.maps.LatLngBounds();
 				bounds.extend(detectLoc);
@@ -2266,6 +2272,6 @@ function renderMap(mapInfo) {
 		map.fitBounds(bounds);
 		google.maps.event.trigger(map, "resize");
 
-		jQuery(document).trigger('mapRendered');
+		pageDocument.trigger('mapRendered');
 	}
 }

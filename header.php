@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<!--[if lt IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie6 lt-ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if IE 7 ]><html <?php language_attributes(); ?> class="no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
-<!--[if IEMobile]><html <?php language_attributes(); ?> class="no-js ie iem7" dir="ltr"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (is_debug()) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
+<?php $debug_class = ( is_debug() ) ? 'debug' : ''; ?>
+<!doctype html>
+<!--[if lt IE 7 ]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie6 lt-ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if IE 7 ]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if IE 8 ]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if IE 9 ]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
+<!--[if IEMobile]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie iem7" dir="ltr"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo $debug_class; ?> no-js"><!--<![endif]-->
 	<?php /* manifest="<?php echo get_template_directory_uri(); ?>/includes/manifest.appcache" */ //To begin setting up ApplicationCache, move this attribute to the <html> tag. ?>
 	<head>
 		<?php do_action('nebula_head_open'); ?>
@@ -13,11 +14,7 @@
 		<meta name="referrer" content="always">
 		<meta charset="<?php bloginfo('charset'); ?>" />
 
-		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage. ?>
-			<title><?php wp_title('-', true, 'right'); ?></title>
-		<?php else : ?>
-			<title><?php wp_title('-', true, 'right'); ?></title>
-		<?php endif; ?>
+		<title><?php wp_title('-', true, 'right'); ?></title>
 
 		<meta name="HandheldFriendly" content="True" />
 		<meta name="MobileOptimized" content="320" />
@@ -36,6 +33,10 @@
 		<!-- Open Graph Metadata -->
 		<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
 		<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : ?>
+			<?php if ( nebula_settings_conditional_text_bool('nebula_google_webmaster_tools_verification') ): ?>
+				<meta name="google-site-verification" content="<?php echo nebula_settings_conditional_text('nebula_google_webmaster_tools_verification', ''); ?>" />
+			<?php endif; ?>
+
 			<meta property="og:type" content="business.business" />
 			<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 			<meta property="og:title" content="<?php the_title(); ?>" />
@@ -135,22 +136,21 @@
 			<div id="fb-root"></div>
 
 			<noscript>
-				<?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that could be the issue. ?>
+				<?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that is a likely reason. ?>
 				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo nebula_url_components('all'); ?>&amp;t=<?php echo urlencode(get_the_title($post->ID)); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
 			</noscript>
 
 			<?php do_action('nebula_body_open'); ?>
 
-			<div id="topbarcon">
+			<div id="mobilebarcon">
 				<div class="row mobilenavcon">
 					<div class="sixteen columns clearfix">
-
-						<a class="mobilenavtrigger alignleft" href="#mobilenav"><i class="fa fa-bars"></i></a>
+						<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
 						<nav id="mobilenav">
 							<?php
-								if ( has_nav_menu('mobile') ) {
+								if ( has_nav_menu('mobile') ){
 									wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
-								} elseif ( has_nav_menu('header') ) {
+								} elseif ( has_nav_menu('primary') ){
 									wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
 								}
 							?>
@@ -167,51 +167,40 @@
 							?>
 							<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" x-webkit-speech />
 						</form>
-
 					</div><!--/columns-->
 				</div><!--/row-->
 			</div><!--/topbarcon-->
 
-			<?php if ( has_nav_menu('topnav') ) : ?>
-				<div class="row topnavcon">
-					<div class="sixteen columns">
-						<nav id="topnav">
-		        			<?php wp_nav_menu(array('theme_location' => 'topnav', 'depth' => '2')); ?>
-		        		</nav>
-					</div><!--/columns-->
-				</div><!--/row-->
+			<?php if ( has_nav_menu('secondary') ) : ?>
+				<div id="secondarynavcon" class="container">
+					<div class="row">
+						<div class="sixteen columns">
+							<nav id="secondarynav">
+			        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
+			        		</nav>
+						</div><!--/columns-->
+					</div><!--/row-->
+				</div><!--/container-->
 			<?php endif; ?>
 
-
-			<div id="logonavcon" class="row">
-				<div class="six columns">
-					<?php
-						//@TODO "Graphics" 4: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
-						//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
-					?>
-					<a class="logocon" href="<?php echo home_url(); ?>">
-						<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
-					</a>
-				</div><!--/columns-->
-				<div class="ten columns">
-					<?php if ( has_nav_menu('header') ) : ?>
-						<nav id="primarynav" class="clearfix">
-							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-		        		</nav>
-	        		<?php endif; ?>
-	        	</div><!--/columns-->
-			</div><!--/row-->
-
-			<div class="container fixedbar" style="position: fixed; top: 0; left: 0; z-index: 9999;">
+			<div id="logonavcon" class="container">
 				<div class="row">
-					<div class="four columns">
-						<a href="<?php echo home_url(); ?>"><i class="fa fa-home"></i> <?php echo bloginfo('name'); ?></a>
+					<div class="six columns">
+						<?php
+							//@TODO "Graphics" 4: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
+							//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
+						?>
+						<a class="logocon" href="<?php echo home_url(); ?>">
+							<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
+						</a>
 					</div><!--/columns-->
-					<div class="twelve columns">
-						<nav id="fixednav">
-							<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '2')); ?>
-		        		</nav>
-					</div><!--/columns-->
+					<div class="ten columns">
+						<?php if ( has_nav_menu('primary') ) : ?>
+							<nav id="primarynav" class="clearfix">
+								<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
+			        		</nav>
+		        		<?php endif; ?>
+		        	</div><!--/columns-->
 				</div><!--/row-->
 			</div><!--/container-->
 
@@ -225,7 +214,7 @@
 							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
 						</div><!--/columns-->
 					</div><!--/row-->
-					<hr/>
+					<hr class="zero" />
 				</div><!--/container-->
 			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
 				<div class="container headerdrawercon">
@@ -237,7 +226,7 @@
 							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
 						</div><!--/columns-->
 					</div><!--/row-->
-					<hr/>
+					<hr class="zero" />
 				</div><!--/container-->
 			<?php elseif ( is_404() || array_key_exists('s', $_GET) ) : ?>
 				<div id="suggestedpage" class="container headerdrawercon">
@@ -246,10 +235,9 @@
 						<div class="sixteen columns headerdrawer">
 							<h3>Did you mean?</h3>
 							<p><a class="suggestion" href="#"></a></p>
-
 							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
 						</div><!--/columns-->
 					</div><!--/row-->
-					<hr/>
+					<hr class="zero" />
 				</div><!--/container-->
 			<?php endif; ?>

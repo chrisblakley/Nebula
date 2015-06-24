@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: The WP Nebula is a springboard WordPress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 2.11.0
+	Version: 2.11.1
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -88,6 +88,31 @@ ul.menu {padding: 0;}
 #form-messages .error {color: red;}
 #form-messages .success {color: green;}
 
+
+input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	.svg input.nebula-search {background: #eee url("images/search.svg") no-repeat 6px center;}
+	input.nebula-search::-webkit-search-decoration,
+	input.nebula-search::-webkit-search-cancel-button {display: none;}
+	input.nebula-search:-moz-placeholder {color: #999;}
+	input.nebula-search::-webkit-input-placeholder {color: #999;}
+	input.nebula-search:-moz-placeholder {color: transparent;}
+	input.nebula-search::-webkit-input-placeholder {color: transparent;}
+	input.nebula-search:hover,
+	input.nebula-search.hover {background-color: #fff;}
+	input.nebula-search:focus,
+	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
+	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
+	input.nebula-search.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0, 153, 216, .5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
+	input.nebula-search.focus:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
+	input.nebula-search.focus::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
+form.nebula-search-iconable {position: relative; display: inline-block; margin: 0;}
+	form.nebula-search-iconable input.nebula-search {background: #eee;}
+		.lte-ie9 form.nebula-search-iconable input.nebula-search,
+		.ie10 form.nebula-search-iconable input.nebula-search {background: #eee url("images/search.png") no-repeat 6px center;}
+	.borderimage form.nebula-search-iconable:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	.borderimage form.nebula-search-iconable.searching:before {content: '\f110'; -webkit-animation: fa-spin 2s infinite linear; animation: fa-spin 2s infinite linear;}
+
+
 /* ==========================================================================
    Special File Type Indicators
    ========================================================================== */
@@ -155,10 +180,10 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 	#wp_search_submit:hover,
 	#wp_search_submit.hover,
 	#wp_search_submit:focus {color: #000 !important;}
-#searchsubmit {padding: 2px 5px !important;}
-
-.js .unhideonload {visibility: hidden;}
-	.loaded .unhideonload {visibility: visible;}
+#searchsubmit {/* padding: 2px 5px !important; */ background: #0098d7; border: 0; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+    #searchsubmit:hover,
+    #searchsubmit.hover,
+    #searchsubmit:focus {background: #95D600;}
 
 .nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
 
@@ -190,7 +215,7 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 a.nebulaframe {border: none;}
 	/* .nebulaframe.animate:hover:after {background-position-y: -24px;} */
 
-!.nebula-vmiddle, .nebula-vmiddle-con {-webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;} /* Prevent blurry half-pixel centering on parent element (Note: experimental CSS Level 4 selector!) */
+!.nebula-vmiddle, .nebula-vmiddle-con {-webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;} /* Prevent blurry half-pixel centering on parent element */
 	.nebula-vmiddle {position: relative; top: 50%; transform: translateY(-50%);}
 
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
@@ -201,13 +226,6 @@ div.nebula-button {margin-bottom: 10px;}
 	.searchresultword.transitionable {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 		article:hover .searchresultword,
 		article:focus .searchresultword {background: rgba(255, 255, 0, 0.5) !important;}
-
-.headerdrawercon {position: relative; background: rgba(0,0,0,0.0225);}
-	.headerdrawercon hr {margin: 0;}
-	.headerdrawer {position: relative; padding-top: 10px; text-align: center; font-size: 12px;}
-		.headerdrawer p {text-align: center;}
-		.headerdrawer a.close {position: absolute; top: 0; right: 0;}
-#suggestedpage {display: none;}
 
 .search .highlight {background: yellow;} /* Find Highlight color */
 
@@ -286,15 +304,56 @@ form fieldset {border: 1px solid #ccc;}
 
 .picker:after {content: "\f0d7"; font-family: "FontAwesome";}
 
+
+/* jQuery UI Autocomplete Hero Search */
+form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	form#nebula-hero-search:before {top: 6px; left: 10px; width: 16px; height: 16px; font-size: 16px;}
+	form#nebula-hero-search input {display: block; width: 100%; max-width: 558px; font-size: 18px; padding-left: 30px; background: rgba(255, 255, 255, 0.9);}
+		form#nebula-hero-search input.active {box-shadow: 0 0 25px rgba(0, 153, 216, 0.6);}
+		form#nebula-hero-search.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
+.form-identifier-nebula-hero-search {border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;}
+	.form-identifier-nebula-hero-search .exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.9;}
+	.form-identifier-nebula-hero-search .close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.6;}
+	.form-identifier-nebula-hero-search .external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; font-size: 10px; opacity: 0.4;}
+.ui-autocomplete.ui-widget-content li {position: relative;}
+	.ui-autocomplete.ui-widget-content li:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 23px; margin-right: 3px; text-align: center; font-size: 12px; opacity: 0.5;}
+	.ui-autocomplete.ui-widget-content li.type-post:before {content: '\f1ea';}
+	.ui-autocomplete.ui-widget-content li.type-page:before {content: '\f0f6';}
+	.ui-autocomplete.ui-widget-content li.type-category:before {content: '\f02e';}
+	.ui-autocomplete.ui-widget-content li.type-tag:before {content: '\f02b';}
+	.ui-autocomplete.ui-widget-content li.type-menu-item:before {content: '\f0c9';}
+	.ui-autocomplete.ui-widget-content li.type-event:before {content: '\f073';}
+	.ui-autocomplete.ui-widget-content li.type-product:before {content: '\f07a';}
+	.ui-autocomplete.ui-widget-content li.type-attachment:before {content: '\f1c5';}
+	.ui-autocomplete.ui-widget-content li.file-zip:before {content: '\f1c6';}
+	.ui-autocomplete.ui-widget-content li.type-user:before {content: '\f007';}
+	.ui-autocomplete.ui-widget-content li.page-home:before {content: '\f015';}
+	.ui-autocomplete.ui-widget-content li.sticky-post:before {content: '\f08d';}
+	.ui-autocomplete.ui-widget-content li.search-link {font-size: 12px; border-top: 1px dotted #ddd;}
+		.ui-autocomplete.ui-widget-content li.search-link a {opacity: 0.7;}
+		.ui-autocomplete.ui-widget-content li.more-results:before {content: '\f002';}
+		.ui-autocomplete.ui-widget-content li.no-results:before {content: '\00a0';}
+
+
 /* jQuery UI Autocomplete */
-.ui-autocomplete.ui-widget-content {background: rgba(255, 255, 255, 0.9); color: #444; box-shadow: 1px 3px 9px 0 rgba(0, 0, 0, 0.07); z-index: 9999 !important;}
+.ui-autocomplete.ui-widget-content {margin-top: -10px; background: rgba(255, 255, 255, 0.9); color: #444; border: none; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.07); z-index: 9999 !important; overflow: hidden;}
 	.ui-autocomplete.ui-widget-content .ui-menu .ui-menu-item {font-size: 12px; padding: 3px 5px;}
 		.ui-autocomplete.ui-widget-content .ui-state-hover,
 		.ui-autocomplete.ui-widget-content .ui-widget-content .ui-state-hover,
 		.ui-autocomplete.ui-widget-content .ui-widget-header .ui-state-hover,
-		.ui-autocomplete.ui-widget-content .ui-state-focus,
-		.ui-autocomplete.ui-widget-content .ui-widget-content .ui-state-focus,
-		.ui-autocomplete.ui-widget-content .ui-widget-header .ui-state-focus {font-weight: normal; background: #0098D7; color: #fff; border: none;}
+		.ui-autocomplete.ui-widget-content li.ui-state-focus,
+		.ui-autocomplete.ui-widget-content .ui-widget-content li.ui-state-focus,
+		.ui-autocomplete.ui-widget-content .ui-widget-header li.ui-state-focus,
+		.ui-autocomplete.ui-widget-content .ui-widget-header li.ui-state-active {margin: 0; font-weight: normal; background: #0098D7; color: #fff; border: none;}
+		.ui-autocomplete.ui-widget-content .ui-state-hover a,
+			.ui-autocomplete.ui-widget-content .ui-state-hover a:hover,
+			.ui-autocomplete.ui-widget-content .ui-state-hover a:link,
+			.ui-autocomplete.ui-widget-content .ui-state-hover a:visited,
+		.ui-autocomplete.ui-widget-content li.ui-state-focus a,
+			.ui-autocomplete.ui-widget-content li.ui-state-focus a:hover,
+			.ui-autocomplete.ui-widget-content li.ui-state-focus a:link,
+			.ui-autocomplete.ui-widget-content li.ui-state-focus a:visited {color: #fff;}
+		.ui-autocomplete.ui-widget-content li a {display: block; padding-left: 26px; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
 
 
 #googlemap img {max-width: none;} /* Prevents glitchy UI within embedded Google maps */
@@ -315,10 +374,6 @@ ul.bxslider {}
 		.ooyalacon .video {position: absolute; top: 0; padding-bottom: 0 !important; height: 100% !important;}
 
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
 
 /* ==========================================================================
    Header Area
@@ -328,149 +383,106 @@ ul.bxslider {}
 .borderimage #fullbodywrapper:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); z-index: 99995; pointer-events: none; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	.borderimage.mm-opening #fullbodywrapper:before {background: rgba(0, 0, 0, 0.7);}
 
-.mobilenavcon {display: none;}
-	a.directions div {line-height: 12px; padding-left: 35px;}
-	form#mobilesearch {}
-		form#mobilesearch input {width: 60%; margin-left: 15px; margin-top: 6px; /* background-color: none; border-radius: 0; border: none; */}
 
-#topbarcon {position: relative; background: #0098D7; width: 100%; height: 5px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
-	#topbarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
-		#topbarcon a:hover,
-		#topbarcon a.hover,
-		#topbarcon a:focus {color: #ccc;}
-	#topbarcon a.mobilenavtrigger {position: relative; z-index: 99999;}
-		/* .mm-opening #fullbodywrapper:hover a.mobilenavtrigger. {color: red;} @TODO "Nebula" 0: Not working. Is there a way to trigger a hover on #fullbodywrapper when mmenu is active? */
-	#topbarcon .rightside {text-align: right;}
-
-#mobilenav {visibility: hidden; height: 0;}
-	#mobilenav.mm-menu {visibility: visible; height: 100%;}
-
-#mobileheadersearch {margin-top: 6px; margin-left: 20px; width: 60%;}
-	.borderimage form#mobileheadersearch:before {color: #fff; font-size: 24px; width: 24px; height: 24px; top: 0; left: 0;}
-	#mobileheadersearch input {width: 100%; color: #fff; font-size: 18px; padding-left: 30px; background: none; border: none; border-radius: 0;}
-		#mobileheadersearch input::-webkit-input-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-		#mobileheadersearch input:-moz-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-		#mobileheadersearch input::-moz-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-		#mobileheadersearch input:-ms-input-placeholder {color: rgba(255, 255, 255, 0.7); -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-			#mobileheadersearch input:focus::-webkit-input-placeholder {color: rgba(255, 255, 255, 0);}
-			#mobileheadersearch input:focus:-moz-placeholder {color: rgba(255, 255, 255, 0);}
-			#mobileheadersearch input:focus::-moz-placeholder {color: rgba(255, 255, 255, 0);}
-			#mobileheadersearch input:focus:-ms-input-placeholder {color: rgba(255, 255, 255, 0);}
+/* Top row that appears at mobile sizes. */
+#mobilebarcon {position: relative; background: #0098D7; width: 100%; height: 0; overflow: hidden; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#mobilebarcon a {font-size: 32px; line-height: 36px; color: #fff; text-decoration: underline;}
+		#mobilebarcon a:hover,
+		#mobilebarcon a.hover,
+		#mobilebarcon a:focus {color: #ccc;}
+	#mobilebarcon .mobilenavcon {/* display: none; */}
+		#mobilebarcon a.mobilenavtrigger {position: relative; font-size: 24px; padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; background: rgba(255, 255, 255, 0.25); z-index: 99999;}
+			#mobilebarcon a.mobilenavtrigger:hover,
+			#mobilebarcon a.mobilenavtrigger.hover,
+			#mobilebarcon a.mobilenavtrigger:focus {color: #fff; background: rgba(255, 255, 255, 0.4);}
+			#mobilebarcon a.mobilenavtrigger.active {background: rgba(255, 255, 255, 0);}
+		#mobilenav {visibility: hidden; height: 0;}
+			#mobilenav.mm-menu {visibility: visible; height: 100%;}
+		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 60%; height: 42px;}
+			.borderimage form#mobileheadersearch:before {color: #fff; font-size: 19px; width: 19px; height: 19px; top: 12px; left: 0;}
+			#mobileheadersearch input {width: 100%; color: #fff; font-size: 18px; padding-left: 24px; line-height: 42px; background: none; border: none; border-radius: 0;}
+				#mobileheadersearch input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); -webkit-transition: all 0.25s; transition: all 0.25s;}
+				#mobileheadersearch input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); -moz-transition: all 0.25s; transition: all 0.25s;}
+				#mobileheadersearch input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); -moz-transition: all 0.25s; transition: all 0.25s;}
+				#mobileheadersearch input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9); transition: all 0.25s;}
+					#mobileheadersearch input:focus::-webkit-input-placeholder {color: rgba(255, 255, 255, 0);}
+					#mobileheadersearch input:focus:-moz-placeholder {color: rgba(255, 255, 255, 0);}
+					#mobileheadersearch input:focus::-moz-placeholder {color: rgba(255, 255, 255, 0);}
+					#mobileheadersearch input:focus:-ms-input-placeholder {color: rgba(255, 255, 255, 0);}
 
 
-/* Nebula Wordpress top navigation style defaults */
-nav#topnav {position: relative; z-index: 2000; margin-top: 5px;}
-	nav#topnav ul {float: right;}
-		nav#topnav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
-			nav#topnav ul li.menu-item:last-child,
-			nav#topnav ul li.menu-item.last-child {margin-right: 0;}
-			nav#topnav ul li.menu-item a {display: block; color: #444; font-size: 12px;}
-				nav#topnav ul li.menu-item a:hover,
-				nav#topnav ul li.menu-item a.hover,
-				nav#topnav ul li.menu-item a:focus {color: #95D600;}
-			nav#topnav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s; -moz-transition: opacity 0.25s; -o-transition: opacity 0.25s; transition: opacity 0.25s;}
-				nav#topnav ul li.menu-item.hover ul.sub-menu,
-				nav#topnav ul li.menu-item:hover ul.sub-menu,
-				nav#topnav ul li.menu-item:focus ul.sub-menu {left: 5px; opacity: 1;}
-				nav#topnav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
+/* Top row that appears at desktop sizes. */
+#secondarynavcon {position: relative; background: #444; z-index: 9999; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#secondarynav {position: relative; z-index: 2000;}
+		#secondarynav ul {float: right; margin: 0;}
+			#secondarynav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
+				#secondarynav ul li.menu-item:last-child,
+				#secondarynav ul li.menu-item.last-child {margin-right: 0;}
+				#secondarynav ul li.menu-item a {display: block; color: #fff; font-size: 11px;}
+					#secondarynav ul li.menu-item a:hover,
+					#secondarynav ul li.menu-item a.hover,
+					#secondarynav ul li.menu-item a:focus {color: #ccc;}
+				#secondarynav ul li.menu-item ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid #95D600; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); -webkit-transition: opacity 0.25s; -moz-transition: opacity 0.25s; -o-transition: opacity 0.25s; transition: opacity 0.25s;}
+					#secondarynav ul li.menu-item.hover ul.sub-menu,
+					#secondarynav ul li.menu-item:hover ul.sub-menu,
+					#secondarynav ul li.menu-item:focus ul.sub-menu {left: 5px; opacity: 1;}
+						#secondarynav ul.sub-menu li.menu-item a {display: block; color: #444; font-size: 11px;}
+							#secondarynav ul.sub-menu li.menu-item a:hover,
+							#secondarynav ul.sub-menu li.menu-item a.hover,
+							#secondarynav ul.sub-menu li.menu-item a:focus {color: #0098d7;}
+					#secondarynav ul li.menu-item ul.sub-menu li.menu-item {display: block; margin-right: auto; padding: 0;}
+				#secondarynav ul li.menu-item input.nebula-search {font-size: 11px; background: rgba(255, 255, 255, 0.8);}
 
 
-input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
-	.svg input.nebula-search {background: #eee url("images/search.svg") no-repeat 6px center;}
-	input.nebula-search::-webkit-search-decoration,
-	input.nebula-search::-webkit-search-cancel-button {display: none;}
-	input.nebula-search:-moz-placeholder {color: #999;}
-	input.nebula-search::-webkit-input-placeholder {color: #999;}
-	input.nebula-search:-moz-placeholder {color: transparent;}
-	input.nebula-search::-webkit-input-placeholder {color: transparent;}
-	input.nebula-search:hover,
-	input.nebula-search.hover {background-color: #fff;}
-	input.nebula-search:focus,
-	input.nebula-search.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	input.nebula-search.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: #444; cursor: auto;}
-	input.nebula-search.active {border-color: #0098d7; box-shadow: 0 0 5px rgba(0, 153, 216, .5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
-	input.nebula-search.focus:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
-	input.nebula-search.focus::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
-form.nebula-search-iconable {position: relative; display: inline-block;}
-	form.nebula-search-iconable input.nebula-search {background: #eee;}
-		.lte-ie8 form.nebula-search-iconable input.nebula-search {background: #eee url("images/search.png") no-repeat 6px center;}
-	.borderimage form.nebula-search-iconable:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
-	.borderimage form.nebula-search-iconable.searching:before {content: '\f110'; -webkit-animation: fa-spin 2s infinite linear; animation: fa-spin 2s infinite linear;}
 
-
-/* Nebula Wordpress main navigation style defaults */
-#logonavcon {}
+/* Logo and primary navigation row */
+#logonavcon {display: block; position: relative; width: 100%; background: #f6f6f6; background: rgba(246, 246, 246, 1); padding-top: 25px; box-shadow: none; z-index: 8000; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#logonavcon img {height: 90px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 	nav#primarynav {position: relative; z-index: 1000;}
-		nav#primarynav ul {}
+		nav#primarynav ul {margin-top: 34px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 		nav#primarynav ul:first-child,
-		nav#primarynav ul.first-child {float: right; margin-top: 26px;}
+		nav#primarynav ul.first-child {float: right;}
 			nav#primarynav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;}
-			.ie7 nav#primarynav ul li.menu-item {float: left;}
+			.ie7 nav#primarynav ul li.menu-item {float: left; font-size: 14px;}
 				nav#primarynav ul li.menu-item:last-child,
 				nav#primarynav ul li.menu-item.last-child {margin-right: 0;}
-				nav#primarynav ul li.menu-item a {display: block;}
+				nav#primarynav ul li.menu-item a {display: block; padding-bottom: 8px;}
 					nav#primarynav ul li.menu-item a:hover,
 					nav#primarynav ul li.menu-item a.hover,
 					nav#primarynav ul li.menu-item a:focus {}
-				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s, opacity 0.25s; -moz-transition: top 0.25s, opacity 0.25s; -o-transition: top 0.25s, opacity 0.25s; transition: top 0.25s, opacity 0.25s; background: lightgrey; background: linear-gradient(to bottom, white, gainsboro); z-index: 1001; border: 1px solid grey;}
+				nav#primarynav ul li.menu-item ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; -webkit-transition: top 0.25s, opacity 0.25s; -moz-transition: top 0.25s, opacity 0.25s; -o-transition: top 0.25s, opacity 0.25s; transition: top 0.25s, opacity 0.25s; background: #fff; background: rgba(255, 255, 255, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;}
 				.no-js nav#primarynav ul li.menu-item ul.sub-menu {width: 400px;}
 					nav#primarynav ul li.menu-item ul.sub-menu li {display: block; margin: 0;}
 						nav#primarynav ul li.menu-item ul.sub-menu li a {display: block; padding: 5px;}
 							nav#primarynav ul li.menu-item ul.sub-menu li a:hover,
 							nav#primarynav ul li.menu-item ul.sub-menu li a.hover,
-							nav#primarynav ul li.menu-item ul.sub-menu li a:focus {background: lightgrey; color: #fff;}
+							nav#primarynav ul li.menu-item ul.sub-menu li a:focus {background: #0098d7; color: #fff;}
 						nav#primarynav ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 				nav#primarynav ul li.menu-item:hover .sub-menu,
 				nav#primarynav ul li.menu-item.hover .sub-menu,
-				nav#primarynav ul li.menu-item:focus .sub-menu {left: 0; top: 23px; opacity: 1;}
+				nav#primarynav ul li.menu-item:focus .sub-menu {left: 10px; top: 30px; opacity: 1;}
 				.no-js nav#primarynav ul li.menu-item:last-child:hover ul.sub-menu,
 				.no-js nav#primarynav ul li.menu-item:last-child:focus ul.sub-menu {left: auto; right: 0;}
 
-.fixedbar {background: #0098D7; width: 100%; height: 0px; overflow: hidden; transition: all 0.5s;}
-	.fixedbar > div {display: none;}
-	.fixedbar.active {height: 20px;}
-		.fixedbar.active > div {display: block;}
-	.fixedbar a {display: block; font-size: 11px; color: #fff;}
-		.fixedbar a:hover,
-		.fixedbar a.hover,
-		.fixedbar a:focus {color: #ccc;}
-	.fixedbar i {font-size: 13px;}
+	#logonavcon.fixed {position: fixed; top: 0; left: 0; background: #f6f6f6; background: rgba(246, 246, 246, 0.98); padding-top: 0; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);}
+		#logonavcon.fixed img {height: 65px;}
+		#logonavcon.fixed nav#primarynav ul {margin-top: 22px;}
+			#logonavcon.fixed nav#primarynav ul li.menu-item {font-size: 12px;}
 
-/* Nebula Wordpress fixed navigation style defaults */
-nav#fixednav {position: relative; z-index: 1000;}
-	nav#fixednav ul {float: right;}
-		nav#fixednav ul li.menu-item {position: relative; display: inline-block; margin-right: 30px;}
-			nav#fixednav ul li.menu-item:last-child,
-			nav#fixednav ul li.menu-item.last-child {margin-right: 0;}
-			nav#fixednav ul li.menu-item a {}
-				nav#fixednav ul li.menu-item a:hover,
-				nav#fixednav ul li.menu-item a.hover,
-				nav#fixednav ul li.menu-item a:focus {}
-			nav#fixednav ul li.menu-item ul.sub-menu {display: none;}
+/* Row that contains event specific help: "Did you mean?", "Single result redirection", etc. */
+.headerdrawercon {position: relative; background: rgba(0, 0, 0, 0.05); z-index: 8888;}
+	.headerdrawer {position: relative; padding-top: 10px; text-align: center; font-size: 12px;}
+		.headerdrawer p {text-align: center;}
+		.headerdrawer a.close {position: absolute; top: 0; right: 0;}
+#suggestedpage {display: none;}
 
-/* Sample Hero and on-load animation */
-#heroslidercon {position: relative; height: 400px; margin: 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	#heroslidercon h3 {text-align: center; color: #fff; font-size: 60px; line-height: 60px; font-weight: 300; letter-spacing: 20px; margin-right: 0; padding-left: 20px; text-transform: uppercase; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
-	#heroslidercon h4 {text-align: center; color: #fff; font-size: 18px; letter-spacing: 10px; margin-top: 10px; padding-left: 10px; text-transform: uppercase; background: #000; background: rgba(0,0,0,0.5);}
 
-/* Example Heroslider with bxSlider */
-div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-transition: all 1s; -moz-transition: all 1s; -o-transition: all 1s; transition: all 1s;}
-	div#heroslider.closed {height: 0;}
-    div#heroslider .bx-wrapper {}
-        div#heroslider .bx-wrapper .bx-viewport {min-height: 500px; border: none; left: 0; z-index: 1;}
-            div#heroslider ul.bxslider {margin: 0; background: #222 url("images/black-linen.png"); height: 100%;}
-                div#heroslider ul.bxslider li {padding: 0; height: 100%;}
-                    div#heroslider ul.bxslider li div {position: absolute; top: 30%; left: 50%; width: 70%; max-width: 940px;}
-                        div#heroslider ul.bxslider li div p {display: table; position: relative; margin-left: -50%; padding: 10px 30px; color: #000; text-align: center; text-transform: uppercase; margin-bottom: 5px; background: #fff; background: rgba(255, 255, 255, 0.9); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.2);}
-                        div#heroslider ul.bxslider li div p.line1 {font-size: 48px;}
-                        div#heroslider ul.bxslider li div p.line2 {font-size: 24px;}
-                        div#heroslider ul.bxslider li div a {display: inline-block; position: relative; margin-left: -50%; padding: 10px 30px; color: #fff; font-size: 24px; text-align: center; text-transform: uppercase; background: #0098d7;}
-                            div#heroslider ul.bxslider li div a:hover,
-                            div#heroslider ul.bxslider li div a:focus {background: #95d600;}
-                    div#heroslider ul.bxslider li img {min-height: 100%; min-width: 1600px; /* width: 100%; */ margin: 0 auto; box-shadow: 0 0 50px 0 rgba(0,0,0,0.8)} /* Uncomment the width for the image to stretch across the entire viewport. */
-div#heroslider .bx-wrapper .bx-has-controls-direction {position: absolute; top: 50%; left: 50%; width: 100%; max-width: 1100px; height: 32px;}
-    div#heroslider .bx-wrapper .bx-has-controls-direction .bx-controls-direction {position: relative; height: 32px; left: -50%;}
-        div#heroslider .bx-wrapper .bx-controls-direction a {top: 0; margin-top: 0; z-index: 100;}
+/* Homepage hero row */
+#heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#heroslidercon .herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 152, 215, 0.5); z-index: 0;}
+	#heroslidercon h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 90px; line-height: 100px; font-weight: 800; z-index: 10; text-shadow: 0px 0px 50px rgba(0, 0, 0, 0.4); -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+	#heroslidercon h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 32px; font-weight: 300; z-index: 1; text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7); -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
+
 
 
 /* ==========================================================================
@@ -681,7 +693,7 @@ p.form-submit {}
 
 .wpcf7-not-valid-tip {display: none !important;}
 
-.field.danger:after, .field.warning:after, .field.success:after {top: 45% !important;}
+.field.danger:after, .field.warning:after, .field.success:after {/* top: 45% !important; */}
 .xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 45% !important;}
 
 div.wpcf7-validation-errors {font-size: 14px !important; color: #ca3838; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid #ca3838 !important; border-radius: 4px;}
@@ -743,7 +755,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 							nav#powerfooter ul li.menu-item ul.sub-menu li a:focus {color: #aaa;}
 						nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {display: none;}
 
-div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* background: rgba(0, 0, 0, 0.4); */}
+div.copyright {padding-top: 15px; background: #444; /* background: rgba(0, 0, 0, 0.4); */}
 	div.copyright p {font-size: 12px; color: #fff;}
 		a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 		div.copyright a {color: #fff;}
@@ -751,20 +763,25 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 			div.copyright a.hover,
 			div.copyright a:focus {color: #ccc;}
 
+.footer-search {float: right;}
+
 /* Nebula Desktop Helper Styles */
 .disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;}
 .disallowed.notallowed {cursor: not-allowed !important;}
 .focusError {background-color: #fcc !important; border: 1px solid #f88 !important; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
 
-@media only screen and (max-width: 767px) {
+/* Tablet */
+@media only screen and (max-width: 767px){
 
-	#topbarcon {min-height: 42px;}
-		.mobilenavcon {display: block;}
+	#mobilebarcon {height: 42px;}
+		#mobilebarcon .mobilenavcon {display: block;}
 
-	.topnavcon {display: none;}
+	.ui-autocomplete.ui-widget-content {background: rgba(255, 255, 255, 0.95);}
 
-	#logonavcon {text-align: center;}
+	#secondarynavcon {max-height: 0; opacity: 0; overflow: hidden;}
+
+	#logonavcon {padding-top: 0; text-align: center;}
 	.logocon {display: inline-block;}
 		.logocon img {width: 360px;}
 
@@ -791,13 +808,17 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 
 	.fixedbar {display: none;}
 
-	#heroslidercon {height: 100px; overflow: hidden; background-size: cover;}
-		#heroslidercon h3 {font-size: 28px; line-height: 40px;}
-		#heroslidercon h4 {font-size: 14px; display: none !important;}
+
+	#heroslidercon {padding: 50px 0; overflow: hidden; background-size: cover;}
+		#heroslidercon h1 {font-size: 60px; line-height: 70px;}
+		#heroslidercon h2 {font-size: 24px;}
+
+	div#nebula-hero-formcon {display: none !important;}
+		form#nebula-hero-search input {width: 92%; max-width: 650px;}
 
 	.author-headshot {text-align: center;}
 
-	.xoxo .search {display: none;}
+	.xoxo .sidebar-search {display: none;}
 
 	/* Nebula Wordpress power footer navigation responsive style defaults */
 	.powerfootercon {display: none;}
@@ -810,17 +831,15 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 					nav#powerfooter ul li.menu-item ul.sub-menu li a {}
 					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {}
 
-	div.copyright p {font-size: 11px;}
-
-	.footerlinks .search {display: none;}
-
-	/* Nebula Responsive Helper Styles */
-	.ipadblock {width: 100% !important;} /* Add this class to column divs that get stuck inline on iPad*/
+	.footer {padding-top: 0;}
+		div.copyright p {font-size: 11px;}
+		.footer .footer-search {display: none;}
 
 } /* End tablet media query */
 
 
-@media only screen and (max-width: 668px) { /* 1px larger than iPhone 6 landscape */
+/* Mobile Landscape (1px larger than iPhone 6 landscape) */
+@media only screen and (max-width: 668px){
 
 	.author-jobtitle {display: block;}
 	.author-contact {float: none; display: block;}
@@ -833,7 +852,19 @@ div.copyright {padding-top: 15px; padding-bottom: 30px; background: #444; /* bac
 } /* End mobile landscape media query */
 
 
-@media only screen and (max-width: 376px) { /* 1px larger than iPhone 6 */
+/* Mobile Portrait (1px larger than iPhone 6) */
+@media only screen and (max-width: 376px){
+
+	.borderimage form#mobileheadersearch:before {display: none;}
+		#mobileheadersearch input {padding-left: 0;}
+
+	#heroslidercon h1 {font-size: 48px; line-height: 60px;}
+	#heroslidercon h2 {font-size: 18px;}
+	form#nebula-hero-search input {width: 90%; max-width: 300px;}
+
+	.ui-autocomplete.ui-widget-content {width: 100% !important; top: 52px !important; left: 0px !important;}
+
+	.fullcontentcon {margin-top: 15px;}
 
 	#about-the-author .author-name {display: block; padding-bottom: 15px;}
 	.author-social {margin-top: 0;}
@@ -950,9 +981,7 @@ a.instagram {color: #3f729b;}
 a.soundcloud {color: #ff3300;}
 	a.soundcloud:hover, a.soundcloud.hover, a.soundcloud:focus {} /* darken... */
 
-@-ms-viewport{
-	width: device-width;
-}
+@-ms-viewport {width: device-width;}
 
 
 /* ==========================================================================

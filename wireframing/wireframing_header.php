@@ -4,7 +4,7 @@
 <!--[if IE 8 ]><html <?php language_attributes(); ?> class="no-js ie ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 9 ]><html <?php language_attributes(); ?> class="no-js ie ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IEMobile]><html <?php language_attributes(); ?> class="no-js ie iem7" dir="ltr"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo (is_debug()) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo ( is_debug() ) ? 'debug' : ' '; ?> no-js"><!--<![endif]-->
 	<?php /* manifest="<?php echo get_template_directory_uri(); ?>/includes/manifest.appcache" */ //To begin setting up ApplicationCache, move this attribute to the <html> tag. ?>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -54,7 +54,7 @@
 		</script>
 
 		<script> //Universal Analytics
-			var analyticsScript = ( <?php echo (is_debug()) ? 1 : 0; ?> ? 'analytics_debug.js' : 'analytics.js' );
+			var analyticsScript = ( <?php echo ( is_debug() ) ? 1 : 0; ?> ? 'analytics_debug.js' : 'analytics.js' );
 
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

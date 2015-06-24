@@ -103,16 +103,10 @@ function check_referrer() {
 //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
 add_action('wp_loaded', 'nebula_spambot_prevention');
 function nebula_spambot_prevention(){
-	$cached_spambots = get_template_directory() . '/includes/cache/common_referral_spambots.txt';
-
-	if ( nebula_need_updated_cache($cached_spambots) ) {
+	$common_referral_spambots = get_transient('nebula_spambots');
+	if ( $common_referral_spambots === false ){
 		$common_referral_spambots = file_get_contents('https://gist.githubusercontent.com/chrisblakley/e31a07380131e726d4b5/raw/common_referral_spambots.txt');
-		$cached_spambots_static = fopen($cached_spambots, 'w');
-		fwrite($cached_spambots_static, $common_referral_spambots);
-		fclose($cached_spambots_static);
-	} else {
-		//This file is updated automatically, but it doesn't hurt to replace it with the txt file here: http://gearside.com/common-referral-spambots/
-		$common_referral_spambots = file_get_contents(realpath(dirname(__FILE__) . '/..') . '/includes/cache/common_referral_spambots.txt');
+		set_transient('nebula_spambots', $common_referral_spambots, 60*60); //1 hour cache
 	}
 
 	if ( strlen($common_referral_spambots) > 0 ) {
@@ -158,8 +152,9 @@ function nebula_spambot_prevention(){
 function nebula_valid_hostname_regex($domains=null){
 	$domains = ( $domains ) ? $domains : array(nebula_url_components('domain'));
 	$settingsdomains = ( get_option('nebula_hostnames') ) ? explode(',', get_option('nebula_hostnames')) : array(nebula_url_components('domain'));
-	$fulldomains = array_merge($domains, $settingsdomains, array('translate.googleusercontent.com', 'webcache.googleusercontent.com', 'youtube.com', 'paypal.com'));
-	$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains);
+	$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com', 'youtube.com', 'paypal.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
+	$fulldomains = preg_filter('/^/', '.*', $fulldomains);
+	$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
 	$fulldomains = array_unique($fulldomains);
 	return implode("|", $fulldomains);
 }

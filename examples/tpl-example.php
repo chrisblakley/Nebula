@@ -38,6 +38,10 @@ get_header(); ?>
 	include_once('includes/hero_slider_bxslider.php');
 } ?>
 
+<?php if (is_page(1610)) { //Hero Video
+	include_once('includes/hero_video.php');
+} ?>
+
 <div class="container">
 	<div class="row">
 		<div class="eleven columns">
@@ -402,6 +406,14 @@ get_header(); ?>
 						include_once('includes/getusermedia_api.php');
 					} ?>
 
+					<?php if (is_page(1621)) { //Nebula Upload Data
+						include_once('includes/nebula_upload_data.php');
+					} ?>
+
+					<?php if (is_page(1731)) { //Transients API
+						include_once('includes/transients.php');
+					} ?>
+
 					<?php
 					/*==========================
 					 Utilities
@@ -422,6 +434,10 @@ get_header(); ?>
 
 					<?php if (is_page(1556)) { //Domain Regex Generators
 						include_once('includes/domain_regex_generators.php');
+					} ?>
+
+					<?php if (is_page(1631)) { //:Contains
+						include_once('includes/contains.php');
 					} ?>
 
 				<?php

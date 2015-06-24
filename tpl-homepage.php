@@ -13,11 +13,13 @@ do_action('nebula_header');
 get_header(); ?>
 
 <div id="heroslidercon">
+	<div class="herobgcolor"></div>
 	<div class="nebulashadow inner-top bulging"></div>
-	<div class="valign row" style="height: 100%;">
+	<div class="valign row" style="height: 100%; text-align: center;">
 		<div>
-			<h3><?php echo get_bloginfo('name'); ?></h3>
-			<h4><?php echo (get_bloginfo('description')) ? get_bloginfo('description') : 'Lorem Ipsum Dolor Sit Amet'; ?></h4>
+			<h1><?php echo get_bloginfo('name'); ?></h3>
+			<h2><?php echo (get_bloginfo('description')) ? get_bloginfo('description') : 'Lorem Ipsum Dolor Sit Amet'; ?></h4>
+			<?php nebula_hero_search(); ?>
 		</div>
 	</div>
 	<div class="nebulashadow inner-bottom bulging"></div>
@@ -28,7 +30,6 @@ get_header(); ?>
 		<div class="eleven columns">
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<h1 class="entry-title"><?php the_title(); ?></h1>
 					<div class="entry-content">
 						<?php the_content(); ?>
 

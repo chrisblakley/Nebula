@@ -91,8 +91,8 @@
 							</p>
 						</div><!--/columns-->
 						<div class="four columns push_one">
-							<form class="nebula-search-iconable search alignright" method="get" action="<?php echo home_url('/'); ?>">
-								<input class="nebula-search open input search" type="search" name="s" placeholder="Search" />
+							<form class="nebula-search-iconable search footer-search" method="get" action="<?php echo home_url('/'); ?>">
+								<input class="nebula-search open input search" type="search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech />
 							</form>
 						</div><!--/columns-->
 					</div><!--/row-->

@@ -152,33 +152,36 @@ jQuery(document).ready(function() {
 
 	//Detect external links in the TinyMCE link modal (to check the "new window" box).
 	linkTargetUsered = 0;
-	jQuery(document).on('click tap touch keyup', '#link-target-checkbox', function(){
+	jQuery(document).on('click tap touch keydown', '#wp-link-target', function(){
 		linkTargetUsered = 1;
 	});
-	jQuery(document).on('click tap touch', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){
+	jQuery(document).on('click tap touch', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){ //If clicking the submit button, the close "x", the modal background, or the cancel link.
 		linkTargetUsered = 0;
 	});
-	jQuery(document).on('keyup change focus blur', '#url-field', function(){
-		if ( linkTargetUsered == 0 ) {
-			currentVal = jQuery(this).val();
-			if ( currentVal == 'http' || currentVal == 'http:' || currentVal == 'http:/' || currentVal == 'http://' ) { //@TODO "Nebula" 0: This certainly could be written better.
-				jQuery('#link-target-checkbox').prop('checked', false);
-			} else if ( (currentVal.indexOf('http') >= 0 || currentVal.indexOf('www') >= 0) && currentVal.indexOf(location.host) < 0 ) { //if (has "http" or www) && NOT our domain
-				jQuery('#link-target-checkbox').prop('checked', true);
-			} else if ( currentVal.indexOf('.pdf') >= 0 ) { //if the link is a PDF or PDFX (the former catches the latter in a single conditional)
-				jQuery('#link-target-checkbox').prop('checked', true);
+	jQuery(document).on('keydown change focus blur paste', '#wp-link-url', function(){ //@TODO "Nebula" 0: This does not trigger when user does NOT type a protocol and pushes tab (WP adds the protocol automatically). Blur is not triggering...
+		currentVal = jQuery(this).val();
+		if ( linkTargetUsered == 0 ){
+			if ( /(h|ht+|https?)(:|:\/+)?$/.test(currentVal) ){
+				jQuery('#wp-link-target').prop('checked', false);
+			} else if ( (currentVal.indexOf('http') >= 0 || currentVal.indexOf('www') >= 0) && currentVal.indexOf(location.host) < 0 ){ //If (has "http" or www) && NOT our domain
+				jQuery('#wp-link-target').prop('checked', true);
+			} else if ( /\.(zip|rar|pdf|doc|xls|txt)(x)?$/.test(currentVal) ){ //If the link is a specific filetype
+				jQuery('#wp-link-target').prop('checked', true);
+			} else if ( currentVal.indexOf('mailto:') >= 0 || currentVal.indexOf('tel:') >= 0 ){ //If the link is a mailto.
+				jQuery('#wp-link-target').prop('checked', true);
 			} else {
-				jQuery('#link-target-checkbox').prop('checked', false);
+				jQuery('#wp-link-target').prop('checked', false);
 			}
 		}
 	});
-	jQuery(document).on('click tap touch', '#most-recent-results *', function(){
+	jQuery(document).on('click tap touch', '#most-recent-results *, #search-results *', function(){
 		if ( linkTargetUsered == 0 ) {
-			jQuery('#link-target-checkbox').prop('checked', false);
+			jQuery('#wp-link-target').prop('checked', false);
 		}
 	});
 
-
+	//Add .entry-content to the WYSIWYG to pull in more styles to match the front-end
+	jQuery('#wp-content-editor-container').addClass('entry-content'); //not working
 
 }); //End Document Ready
 

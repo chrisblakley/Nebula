@@ -6,12 +6,142 @@
  ===========================*/
 
 
+//@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage.
+//This would be moved to header.php once it works...
+if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) {
+	//echo '<title>' wp_title('-', true, 'right') . '</title>';
+} else {
+	//echo '<title>' . wp_title('-', true, 'right') . '</title>';
+}
+
+
+
+
 //Display WordPress debug messages for Devs who are admins with ?debug query string is used.
-//@TODO "Nebula" 0: Check security issues of using this.
+//It appears WP_DEBUG can only be defined true in wp-config.php
+//When it's true, it can be tested with: if ( WP_DEBUG ) ...
 if ( is_debug() && current_user_can('manage_options') ) {
 	define('WP_DEBUG', true);
 	define('WP_DEBUG_DISPLAY', true);
 }
+
+
+
+
+
+
+
+
+
+
+//Upload data from JS via nebula_upload_data();
+add_action('wp_ajax_nebula_upload_data', 'nebula_upload_data');
+add_action('wp_ajax_nopriv_nebula_upload_data', 'nebula_upload_data');
+function nebula_upload_data(){
+
+    //@TODO "Nebula" 0: Use a WordPress nonce for extra security.
+
+    if ( !$_POST['data']['data'] || $_POST['data']['data'] == '' ) {
+	    exit;
+    }
+
+    $data = $_POST['data']['data'];
+    $directory = ( $_POST['data']['directory'] == '' ) ? 'general' : $_POST['data']['directory'];
+    $category = ( $_POST['data']['category'] == '' ) ? false : $_POST['data']['category'];
+    $action = ( $_POST['data']['action'] == '' ) ? 'Upload' : $_POST['data']['action'];
+    $url = ( $_POST['data']['url'] == '' ) ? 'Unknown' : $_POST['data']['url'];
+
+	//Check the filesize of the data
+	if ( function_exists('mb_strlen') ){
+	    $filesize = mb_strlen($data, '8bit');
+	} else {
+	    $filesize = strlen($data);
+	}
+
+	$data .= "\r\n\r\n---
+		\r\nIP Address: " . $_SERVER['REMOTE_ADDR'] .
+		"\r\nUser Agent: " . $_SERVER["HTTP_USER_AGENT"] .
+		"\r\nURL: " . $url .
+		"\r\nFilesize: " . $filesize;
+	$this_id = uniqid();
+
+	$filetype = ( $_POST['data']['filetype'] == '' ) ? 'txt' : $_POST['data']['filetype'];
+    //Check filetype for bad extensions, check data for bad strings.
+    if ( !in_array($filetype, array('txt', 'jpg', 'png', 'gif', 'jpeg', 'doc', 'docx', 'csv', 'pdf')) || in_array($data, array('header(', 'Content-type:', '<?', 'htaccess', '.sql', 'DROP TABLE', 'base64')) ){ //|| in_array($directory, array('.'))
+	    echo 'You are attempting to upload something that is not allowed. ';
+
+	    $upload_dir = wp_upload_dir();
+
+	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ) {
+		    echo 'nebula_custom_data directory does not exist. Creating it! ';
+		    mkdir($upload_dir['basedir'] . '/nebula_custom_data');
+	    }
+
+	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/bad_data/') ) {
+		    echo 'nebula_custom_data/bad_data directory does not exist. Creating it! ';
+		    mkdir($upload_dir['basedir'] . '/nebula_custom_data/bad_data');
+	    }
+
+		$data .= "\r\nAttempted Directory: " . $directory .
+		"\r\nAttempted Filetype: " . $filetype;
+
+	    $file = $upload_dir['basedir'] . '/nebula_custom_data/bad_data/' . date('Y-m-d_H-i-s', strtotime('now')) . '_id' . $this_id . '.txt';
+	    $success = file_put_contents($file, $data);
+
+	    ga_send_event('Security Precaution', 'Nebula Upload Data Block', '/bad_data/...id' . $this_id);
+	    exit;
+    }
+
+	//@TODO "Nebula" 0: Somehow check if uploads directory is traversable. If so, die with a warning.
+
+    $upload_dir = wp_upload_dir();
+
+	if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ) {
+	    echo 'nebula_custom_data directory does not exist. Creating it! ';
+	    mkdir($upload_dir['basedir'] . '/nebula_custom_data');
+    }
+
+    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/') ) {
+	    echo 'nebula_custom_data/' . $directory . ' directory does not exist. Creating it! ';
+	    mkdir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory);
+    }
+
+    $file = $upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/' . date('Y-m-d_H-i-s', strtotime('now')) . '_id' . $this_id . '.' . $filetype;
+    $success = file_put_contents($file, $data);
+
+	if ( $category ) {
+		ga_send_event($category, $action, '/' . $directory . '/...id' . $this_id);
+	}
+
+    exit();
+
+/*
+			if ( ! function_exists( 'wp_handle_upload' ) ) {
+			    require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			}
+
+			$uploadedfile = $_FILES['file'];
+
+			$upload_overrides = array( 'test_form' => false );
+
+			$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
+
+			if ( $movefile && !isset( $movefile['error'] ) ) {
+			    echo "File is valid, and was successfully uploaded.\n";
+			    var_dump( $movefile);
+			} else {
+			    echo $movefile['error'];
+			}
+*/
+
+}
+
+
+
+
+
+
+
 
 
 
@@ -40,20 +170,23 @@ function set_user_metaboxes($user_id=NULL) {
 
 
 
+/*
+//Attempt to track Firefox Reader View
 add_action('nebula_article_end', 'track_firefox_reader_view');
 function track_firefox_reader_view() {
-	/*
-		@TODO "Nebula" 0: How do we target *only* Firefox Reader View?
-			- Remove the pixel w/ JS?
-			- Maybe an onerror inline trickery?
-			- I don't think the image gets reloaded or re-rendered on Reader View, so this still might not work.
-	*/
+
+	//	@TODO "Nebula" 0: How do we target *only* Firefox Reader View?
+	//		- Remove the pixel w/ JS?
+	//		- Maybe an onerror inline trickery?
+	//		- I don't think the image gets reloaded or re-rendered on Reader View, so this still might not work.
+
 
 	$referrer = ( $_SERVER['HTTP_REFERER'] ) ? '&utmr=' . $_SERVER['HTTP_REFERER']: '';
 
 	//Not working...
 	echo '<img src="http://www.google-analytics.com/__utm.gif?utmac=' . $GLOBALS['ga'] . '&utmt=event&utmwv=1&utmdt=' . urlencode(get_the_title()) . '&utmhn=' . nebula_url_components('hostname') . '&utmp=' . nebula_url_components('filepath') . '&utmn=' . rand(pow(10, 10-1), pow(10, 10)-1) . $referrer . '&utme=5(Firefox%20Reader%20View*Testing*This%20is%20just%20a%20test)" />';
 }
+*/
 
 
 

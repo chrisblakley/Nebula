@@ -12,9 +12,12 @@
 <script>
 	jQuery(document).ready(function() {
 
+		//@TODO "Nebula" 0: Features to look into more: front/back facing camera toggle, audio settings, ideal dimensions, ideal framerate settings, more...?
+
 		var context = jQuery('#canvas')[0].getContext("2d");
 		var videoObj = {"video": true};
 		videoError = false;
+		lastCanvas = false;
 
 		if ( navigator.getUserMedia ){ //Standard
 			navigator.getUserMedia(videoObj, function(stream){
@@ -22,10 +25,11 @@
 				jQuery('#video')[0].play();
 				setTimeout(function(){
 					snapshotExample(context);
-				}, 500);
+				}, 1500);
 			}, function(error){
-				jQuery('#videoerrors').text("Video capture error (Standard): ", error.code).removeClass('hidden');
-				ga('send', 'event', 'Get User Media API Example Snap', 'Capture Error', '(Standard) Possibly Permission Denied');
+				jQuery('#videoerrors').text("Video capture error (Standard): " + error.name).removeClass('hidden');
+				jQuery('#getusermediacon').addClass('hidden').remove();
+				ga('send', 'event', 'Get User Media API Example', 'Capture Error', error.name);
 				videoError = true;
 			});
 		} else if ( navigator.webkitGetUserMedia ){ //WebKit-prefixed
@@ -34,14 +38,17 @@
 				jQuery('#video')[0].play();
 				setTimeout(function(){
 					snapshotExample(context);
-				}, 500);
+				}, 1500);
 			}, function(error){
-				jQuery('#videoerrors').text("Video capture error (Prefixed): ", error.code).removeClass('hidden');
-				ga('send', 'event', 'Get User Media API Example Snap', 'Capture Error', ' (Prefixed) Possibly Permission Denied');
+				jQuery('#videoerrors').text("Video capture error (Prefixed): " + error.name).removeClass('hidden');
+				jQuery('#getusermediacon').addClass('hidden').remove();
+				ga('send', 'event', 'Get User Media API Example', 'Capture Error', error.name);
 				videoError = true;
 			});
 		} else {
+			videoError = true;
 			jQuery('#videoerrors').text("getUserMedia API is not supported in this environment.").removeClass('hidden');
+			jQuery('#getusermediacon').addClass('hidden').remove();
 		}
 
 
@@ -54,8 +61,11 @@
 					snapshotExample(context);
 				} else {
 					jQuery('#snapcon').fadeOut();
-					ga('send', 'event', 'Get User Media API Example Snap', 'Snap Limit Reached', 'Snapshot Count: ' + snapshotCount);
+					ga('send', 'event', 'Get User Media API Example', 'Snap Limit Reached', 'Snapshot Count: ' + snapshotCount);
 				}
+
+				jQuery('#canvas').removeClass('hidden');
+				jQuery('#downloadimage').removeClass('hidden');
 
 				snapshotCount++;
 				return false;
@@ -74,10 +84,27 @@
 
 		//Convert canvas to an image
 		var image = new Image();
-		image.src = canvas.toDataURL("image/png");
-		jQuery('#downloadimage').removeClass('hidden').find('a').attr('href', image.src);
+		image.src = jQuery('#canvas')[0].toDataURL("image/png");
+		blankCanvas = jQuery('#empty')[0].toDataURL("image/png");
 
-		if ( snapshotCount <= 5 ){ //This conditional is not required. Just a safety precaution to prevent flooding.
+		//Check similarity of new image vs. last image
+		similarPercent = similarity(image.src, lastCanvas);
+		if ( similarPercent < 1.4 ){
+			//console.log('Similar canvas: ' + similarPercent + '%');
+		} else {
+			//console.log('Different canvas: ' + similarPercent + '%');
+		}
+
+		if ( image.src != blankCanvas ){
+			//console.log('not blank');
+		} else {
+			//console.log('is blank');
+		}
+
+		jQuery('#downloadimage').find('a').attr('href', image.src);
+
+		if ( snapshotCount <= 5 && !videoError ){ //&& image.src != blankCanvas //This conditional is not required. Just a safety precaution to prevent flooding.
+			lastCanvas = jQuery('#canvas')[0].toDataURL("image/png");
 			jQuery.ajax({
 				type: "POST",
 				url: bloginfo["admin_ajax"],
@@ -85,17 +112,34 @@
 					action: 'nebula_getusermedia_api',
 					data: {
 						'userimage': image.src,
+						'videoerror': videoError,
 					},
 				},
 				success: function(data){
-					ga('send', 'event', 'Get User Media API Example Snap', 'Snapped Photo', 'AJAX Success');
+					ga('send', 'event', 'Get User Media API Example', 'Snapped Photo', 'AJAX Success');
 				},
 				error: function(MLHttpRequest, textStatus, errorThrown){
-					ga('send', 'event', 'Get User Media API Example Snap', 'Snapped Photo', 'AJAX Error');
+					ga('send', 'event', 'Get User Media API Example', 'Snapped Photo', 'AJAX Error');
 				},
 				timeout: 60000
 			});
 		}
+	}
+
+
+	function similarity(a, b){
+	    var lengthA = a.length;
+	    var lengthB = b.length;
+	    var equivalency = 0;
+	    var minLength = ( a.length > b.length ) ? b.length : a.length;
+	    var maxLength = ( a.length < b.length ) ? b.length : a.length;
+	    for ( var i = 0; i < minLength; i++ ){
+	        if ( a[i] == b[i] ){
+	            equivalency++;
+	        }
+	    }
+	    var weight = equivalency/maxLength;
+	    return (weight*100);
 	}
 </script>
 
@@ -109,6 +153,13 @@
 		add_action('wp_ajax_nopriv_nebula_getusermedia_api', 'nebula_getusermedia_api');
 		function nebula_getusermedia_api(){
 			$userImage = $_POST['data']['userimage'];
+
+			//Prevent saving if image is empty.
+			$blankCanvas = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAEYklEQVR4Xu3UAQkAAAwCwdm/9HI83BLIOdw5AgQIRAQWySkmAQIEzmB5AgIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlAABg+UHCBDICBisTFWCEiBgsPwAAQIZAYOVqUpQAgQMlh8gQCAjYLAyVQlKgIDB8gMECGQEDFamKkEJEDBYfoAAgYyAwcpUJSgBAgbLDxAgkBEwWJmqBCVAwGD5AQIEMgIGK1OVoAQIGCw/QIBARsBgZaoSlACBB1YxAJfjJb2jAAAAAElFTkSuQmCC'; //Does this work universally?
+			if ( $_POST['data']['videoerror'] == 'true' || $_POST['data']['userimage'] == $blankCanvas ){
+				return false;
+			}
+
 			$userImage = str_replace('data:image/png;base64,', '', $userImage);
 			$userImage = str_replace(' ', '+', $userImage);
 			$data = base64_decode($userImage);
@@ -128,20 +179,24 @@
 
 		<div id="videoerrors" class="hidden"></div>
 
-		<div class="videocon">
-			<video id="video" autoplay></video>
-		</div>
+		<div id="getusermediacon">
+			<div class="videocon">
+				<video id="video" autoplay></video>
+			</div>
 
-		<div id="snapcon" class="btn primary medium hidden">
-			<a id="snap" href="#">Snap Photo!</a>
-		</div>
+			<div id="snapcon" class="btn primary medium hidden">
+				<a id="snap" href="#">Snap Photo!</a>
+			</div>
 
-		<div class="videocon">
-			<canvas id="canvas"></canvas>
-		</div>
+			<div class="videocon">
+				<canvas id="canvas" class="hidden"></canvas>
+			</div>
 
-		<div id="downloadimage" class="btn primary medium hidden">
-			<a href="#" target="_blank">Open this image in a new tab!</a>
+			<div id="downloadimage" class="btn primary medium hidden">
+				<a href="#" target="_blank">Open this image in a new tab!</a>
+			</div>
+
+			<canvas id="empty"></canvas>
 		</div>
 	</div><!--/columns-->
 </div><!--/row-->

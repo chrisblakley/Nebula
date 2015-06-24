@@ -20,23 +20,30 @@ get_header(); ?>
 </div><!--/row-->
 
 <div class="row fullcontentcon">
-
 	<div class="ten columns">
 		<?php if ( have_posts() ) : ?>
 			<h1>Search Results <?php get_search_query(); ?></h1>
 			<?php get_search_form(); ?>
 
 			<div id="searchresults">
-				<p>Your search criteria returned
-				<?php
-					$search_results = &new WP_Query("s=$s&showposts=-1");
-					echo $search_results->post_count . ' results.';
-					wp_reset_query();
-				?>
-				</p>
+				<p>
+					Your search criteria returned
+					<?php if ( file_exists(WP_PLUGIN_DIR . '/relevanssi') && $wp_query->found_posts ) : //if Relevanssi is enabled ?>
+						<?php echo $wp_query->found_posts; ?>
+					<?php else: ?>
+						<?php
+							$search_results = &new WP_Query("s=$s&showposts=-1");
+							echo $search_results->post_count;
+							wp_reset_query();
+						?>
+					<?php endif; ?>
+					&nbsp;results.
+				 </p>
 				<?php get_template_part('loop', 'search'); ?>
 			</div><!--/#searchresults-->
 		<?php else : ?>
+			<?php //@TODO "Nebula" 0: Trigger GCSE suggestion drawer for search term. ?>
+
 			<h1>No Results Found</h1>
 			<?php get_search_form(); ?>
 
@@ -54,7 +61,6 @@ get_header(); ?>
 	<div class="five columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
-
 </div><!--/row-->
 
 <?php get_footer(); ?>

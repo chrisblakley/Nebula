@@ -36,7 +36,6 @@ function nebula_dequeues() {
 	if ( !is_admin() ) {
 		//Styles
 		wp_deregister_style('open-sans'); //WP Core - We load Open Sans ourselves (or whatever font the project calls for)
-		wp_deregister_style('dashicons'); //WP Core - Even though these are admin-only resources, I'd rather them not add any interpreted load time NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		wp_deregister_style('cff-font-awesome'); //Custom Facebook Feed - We enqueue the latest version of Font Awesome ourselves
 		wp_deregister_style('se-link-styles'); //Search Everything - (As far as I know) We do not use any of their styles (I believe they are for additional settings)
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
@@ -125,5 +124,11 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 		remove_meta_box('espresso_news_dashboard_widget', 'dashboard', 'normal'); //Event Espresso - Remove Dashboard Metabox
 		remove_meta_box('jwl_user_tinymce_dashboard_widget', 'dashboard', 'normal'); //WP Edit - Remove Dashboard Metabox (This plugin is not bundled with Nebula anymore [in favor of TinyMCE Advanced], but this can stay in case it is ever used).
 		//remove_action('init', 'wpseo_description_test'); //Wordpress SEO (Yoast) - Remove Meta Description test (@TODO "Nebula" 0: Not Working - this function is called all over the place...)
+		//remove_action('admin_init', 'after_update_notice', 15); //Wordpress SEO (Yoast) - Remove "WordPress SEO by Yoast has been updated" box (@TODO "Nebula" 0: Not Working)
+
+		//global $WPSEO_Admin_Init; //@TODO "Nebula" 0: Test this next time the box appears after an update.
+		//remove_action('admin_init', array($WPSEO_Admin_Init, 'after_update_notice'), 15); //@TODO "Nebula" 0: Test this next time the box appears after an update... didnt work
+
+
 	}
 }

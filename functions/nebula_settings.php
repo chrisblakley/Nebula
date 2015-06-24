@@ -132,6 +132,7 @@ function register_nebula_settings() {
 	register_setting('nebula_settings_group', 'nebula_business_hours_saturday_close');
 	register_setting('nebula_settings_group', 'nebula_business_hours_closed');
 
+	register_setting('nebula_settings_group', 'nebula_google_webmaster_tools_verification');
 	register_setting('nebula_settings_group', 'nebula_facebook_url');
 	register_setting('nebula_settings_group', 'nebula_facebook_app_id');
 	register_setting('nebula_settings_group', 'nebula_facebook_app_secret');
@@ -274,6 +275,15 @@ function nebula_settings_page(){
 				});
 			}
 
+			//Pull content from full meta tag HTML
+			jQuery('#nebula_google_webmaster_tools_verification').on('paste change blur', function(){
+				var gwtInputValue = jQuery('#nebula_google_webmaster_tools_verification').val();
+				if ( gwtInputValue.indexOf('<meta') >= 0 ){
+					var gwtContent = gwtInputValue.slice(gwtInputValue.indexOf('content="')+9, gwtInputValue.indexOf('" />'));
+					jQuery('#nebula_google_webmaster_tools_verification').val(gwtContent);
+				}
+			});
+
 		});
 	</script>
 
@@ -381,8 +391,8 @@ function nebula_settings_page(){
 					<td>
 						<input type="text" name="nebula_hostnames" value="<?php echo get_option('nebula_hostnames'); ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" style="width: 392px;" />
 						<p class="helper"><small>
-							These help generate regex patterns for Google Analytics filters. Enter a comma-separated list of all valid hostnames, domains (including vanity domains), and sub-domains that are associated with this website.<br/>
-							Include Filter RegEx pattern <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
+							These help generate regex patterns for Google Analytics filters. Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br/>
+							Include this RegEx pattern for a filter/segment <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
 						</small></p>
 					</td>
 		        </tr>
@@ -479,8 +489,13 @@ function nebula_settings_page(){
 
 
 
-
-
+				<tr valign="top">
+		        	<th scope="row">Google Webmaster Tools Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="nebula_google_webmaster_tools_verification" type="text" name="nebula_google_webmaster_tools_verification" value="<?php echo get_option('nebula_google_webmaster_tools_verification'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
+						<p class="helper"><small>This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Webmaster Tools</a>. Note: Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</small></p>
+					</td>
+		        </tr>
 		        <tr valign="top">
 		        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>

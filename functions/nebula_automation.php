@@ -81,8 +81,8 @@ function my_theme_register_required_plugins() {
             'required'  => false,
         ),
         array(
-            'name'      => 'Search Everything',
-            'slug'      => 'search-everything',
+            'name'      => 'Relevanssi',
+            'slug'      => 'relevanssi',
             'required'  => false,
         ),
         array(

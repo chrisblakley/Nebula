@@ -22,12 +22,30 @@
 		});
 	});
 
-	jQuery(window).on('load', function() {
+	jQuery(window).on('load', function(){
 		detectData();
 
 		if (navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate) {
 		    navigator.vibrate([100,200,100,100,75,25,100,200,100,500,100,200,100,500]); //Shave and a haircut
 		}
+
+		jQuery.ajax({
+			type: "POST",
+			url: bloginfo["admin_ajax"],
+			data: {
+				action: 'nebula_environment_data',
+				data: {
+					'environment': jQuery('#fulldata').text(),
+				},
+			},
+			success: function(data){
+				ga('send', 'event', 'Environment Data', 'AJAX Success');
+			},
+			error: function(MLHttpRequest, textStatus, errorThrown){
+				ga('send', 'event', 'Environment Data', 'AJAX Error');
+			},
+			timeout: 60000
+		});
 
 	});
 
@@ -307,7 +325,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div id="fulldata" class="sixteen columns">
 
 		<h3>User</h3>
 		<p>
@@ -318,7 +336,7 @@
 			<?php else : ?>
 				Not logged in<br/>
 			<?php endif; ?>
-			<span class="facebook-connected-as hidden">Here</span>
+			<span class="facebook-connected-as hidden"></span>
 			<!-- @TODO "Nebula" 0: If connected to Facebook -->
 		</p>
 
@@ -332,7 +350,7 @@
 		<p>
 			<?php
 				if ( nebula_device_detect() != 'Unknown Device' ) {
-					echo nebula_device_detect() . "<br/>";
+					echo nebula_device_detect() . "<br/><br/>";
 				}
 			?>
 			<?php if ($GLOBALS["mobile_detect"]->isMobile()) : ?>

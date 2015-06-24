@@ -21,7 +21,7 @@
 		<?php //Secondary Widget Area ?>
 	<?php endif; ?>
 
-	<li class="widget-container">
+	<li class="widget-container sidebar-search">
 		<h3>Search</h3>
 		<form class="search" method="get" action="<?php echo home_url('/'); ?>">
 			<ul>
@@ -33,20 +33,14 @@
 		</form><!--/search-->
 	</li>
 
-	<li class="widget-container">
-		<h3>Contact Us</h3>
-		<?php nebula_facebook_link(); ?>
-		<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
+	<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
+		<li class="widget-container">
+			<h3>Contact Us</h3>
+			<?php nebula_facebook_link(); ?>
 			<div id="cform7-container">
 				<?php echo do_shortcode('[contact-form-7 id="384" title="Contact Form 7 Documentation"]'); ?>
 			</div>
-		<?php else : ?>
-			<div class="row">
-				<div class="sixteen columns">
-					<?php nebula_backup_contact_form(); ?>
-				</div><!--/columns-->
-			</div><!--/row-->
-		<?php endif; ?>
-	</li>
+		</li>
+	<?php endif; ?>
 
 </ul>
