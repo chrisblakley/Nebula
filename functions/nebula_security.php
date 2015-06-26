@@ -104,7 +104,7 @@ function check_referrer() {
 add_action('wp_loaded', 'nebula_spambot_prevention');
 function nebula_spambot_prevention(){
 	$common_referral_spambots = get_transient('nebula_spambots');
-	if ( $common_referral_spambots === false ){
+	if ( empty($common_referral_spambots) ){
 		$common_referral_spambots = file_get_contents('https://gist.githubusercontent.com/chrisblakley/e31a07380131e726d4b5/raw/common_referral_spambots.txt');
 		set_transient('nebula_spambots', $common_referral_spambots, 60*60); //1 hour cache
 	}

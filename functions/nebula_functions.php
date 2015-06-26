@@ -28,12 +28,13 @@ if ( nebula_settings_conditional('nebula_console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card(){
 		//@TODO "Nebula" 0: if chrome or firefox... (find what other browsers support this)
-		echo "<script>
-			if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ){
-			console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');
-			console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');
-			}
-		</script>";
+		$console_log = "<script>if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ){";
+		if ( !$GLOBALS["mobile_detect"]->isMobile() && !$GLOBALS["mobile_detect"]->isTablet() ){
+			$console_log .= "console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');";
+		}
+		$console_log .= "console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');}</script>";
+
+		echo $console_log;
 	}
 }
 
@@ -671,7 +672,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 	$bearer = nebula_settings_conditional_text('nebula_twitter_bearer_token', '');
 
 	$tweets = get_transient('nebula_twitter_' . $username); //@TODO: The transient name should have the twitter name tied to it...
-	if ( $tweets === false ){
+	if ( empty($tweets) ){
 		$context = stream_context_create(array(
 			'http' => array(
 				'method'=>'GET',
@@ -1059,7 +1060,11 @@ function nebula_hero_search($placeholder='What are you looking for?'){
 add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
 add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
 function nebula_autocomplete_search(){
-	//Search Term: $_POST['data']['term'] (string)
+	$_POST['data']['term'] = trim($_POST['data']['term']);
+	if ( empty($_POST['data']['term']) ){
+		return false;
+		exit;
+	}
 
 	//Test for close or exact matches. Use: $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
 	function nebula_close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
@@ -1155,19 +1160,25 @@ function nebula_autocomplete_search(){
 		}
 	}
 
-	//Find menu items
 	$menus = get_transient('nebula_autocomplete_menus');
-	if ( $menus === false ){
+	if ( empty($menus) ){
 		$menus = get_terms('nav_menu');
 		set_transient('nebula_autocomplete_menus', $menus, 60*60); //1 hour cache
 	}
-	foreach ( $menus as $menu ){
+	foreach($menus as $menu){
 		$menu_items = wp_get_nav_menu_items($menu->term_id);
-		foreach ( $menu_items as $key => $menu_item ){
+		foreach ( $menu_items as $key => $menu_item ) {
 		    $suggestion = array();
-		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $suggestion['similarity']);
-		    if ( $suggestion['similarity'] >= 55 ){
-				$suggestion['label'] = $menu_item->title;
+		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $menu_title_similarity);
+		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->attr_title), $menu_attr_similarity);
+		    if ( $menu_title_similarity >= 65 || $menu_attr_similarity >= 65 ){
+				if ( $menu_title_similarity >= $menu_attr_similarity ){
+					$suggestion['similarity'] = $menu_title_similarity;
+					$suggestion['label'] = $menu_item->title;
+				} else {
+					$suggestion['similarity'] = $menu_attr_similarity;
+					$suggestion['label'] = $menu_item->attr_title;
+				}
 				$suggestion['link'] = $menu_item->url;
 				$path_parts = pathinfo($menu_item->url);
 				$suggestion['classes'] = 'type-menu-item';
@@ -1188,7 +1199,7 @@ function nebula_autocomplete_search(){
 
 	//Find categories
 	$categories = get_transient('nebula_autocomplete_categories');
-	if ( $categories === false ){
+	if ( empty($categories) ){
 		$categories = get_categories();
 		set_transient('nebula_autocomplete_categories', $categories, 60*60); //1 hour cache
 	}
@@ -1211,7 +1222,7 @@ function nebula_autocomplete_search(){
 
 	//Find tags
 	$tags = get_transient('nebula_autocomplete_tags');
-	if ( $tags === false ){
+	if ( empty($tags) ){
 		$tags = get_tags();
 		set_transient('nebula_autocomplete_tags', $tags, 60*60); //1 hour cache
 	}
@@ -1235,7 +1246,7 @@ function nebula_autocomplete_search(){
 	//Find authors (if author bios are enabled)
 	if ( nebula_author_bios_enabled() ){
 		$authors = get_transient('nebula_autocomplete_authors');
-		if ( $authors === false ){
+		if ( empty($authors) ){
 			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
 			set_transient('nebula_autocomplete_authors', $authors, 60*60); //1 hour cache
 		}
@@ -1659,7 +1670,7 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
 
 	$weather = get_transient('nebula_weather_' . $zipcode);
-	if ( $weather === false ){
+	if ( empty($weather) ){
 		$use_errors = libxml_use_internal_errors(true);
 		$xml = simplexml_load_file($url);
 		//@TODO "Nebula" 0: Need to come up with a way to pull default weather info in case yahooapis.com can't be reached.

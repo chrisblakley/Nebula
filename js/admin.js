@@ -134,7 +134,7 @@ jQuery(document).ready(function() {
 
 
 	if ( jQuery('.flag').is('*') ) {
-		Modernizr.load(bloginfo['template_directory'] + '/css/flags.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/css/flags.css');
 	}
 
 	//Hide TODO files with only hidden items
@@ -190,6 +190,24 @@ jQuery(window).on('load', function() {
 	//Window load functions here.
 
 }); //End Window Load
+
+
+//Dynamically load CSS files using JS
+function nebulaLoadCSS(url){
+	if ( document.createStyleSheet ){
+	    try { document.createStyleSheet(url); } catch(e){
+		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
+	    }
+	} else {
+	    var css;
+	    css = document.createElement('link');
+	    css.rel = 'stylesheet';
+	    css.type = 'text/css';
+	    css.media = "all";
+	    css.href = url;
+	    document.getElementsByTagName("head")[0].appendChild(css);
+	}
+}
 
 
 //Allow tab character in textareas

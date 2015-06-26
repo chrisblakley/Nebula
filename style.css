@@ -197,7 +197,6 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 	.no-js.lte-ie9 .nebulashadow.above {display: none; visibility: hidden; opacity: 0;}
 .nebulashadow, .nebulashadow.floating {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s;}
 .nebulashadow.bulging {height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain;}
-	.nebulashadow.buldging:before {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%;}
 .nebulashadow.curling {height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain;}
 .nebulashadow.hovering { height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain;}
 .nebulashadow.anchored-right {height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top center; background-size: contain;}

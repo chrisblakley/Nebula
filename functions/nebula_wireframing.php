@@ -4,8 +4,10 @@
 //Add wireframing body class
 add_filter('body_class', 'nebula_wireframing_body_classes');
 function nebula_wireframing_body_classes($classes) {
-    $classes[] = 'nebula-wireframing';
-    return $classes;
+    if ( nebula_wireframing_enabled() ){
+    	$classes[] = 'nebula-wireframing';
+	}
+	return $classes;
 }
 
 

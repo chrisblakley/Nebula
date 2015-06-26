@@ -85,7 +85,7 @@ jQuery(document).ready(function(){
 jQuery(window).on('load', function(){
 
 	jQuery('a, li, tr').removeClass('hover');
-	pageHTML.addClass('loaded');
+	jQuery('html').addClass('loaded');
 
 	//nebulaFixeder();
 	checkCformLocalStorage();
@@ -238,7 +238,7 @@ function facebookConnect(){
 			});
 		};
 
-		pageDocument.on('click touch tap', '.facebook-connect', function(){
+		jQuery(document).on('click touch tap', '.facebook-connect', function(){
 			facebookLoginLogout();
 			return false;
 		});
@@ -489,8 +489,9 @@ function gaEventTracking(){
 	});
 
 	//Contact Form Submissions
+	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to replace it by calling the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
 	pageDocument.on('submit', '.wpcf7-form', function(){
-		ga('send', 'event', 'Contact', 'Submit', 'Contact Form Submission');
+		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.');
 	});
 
 	//Generic Interal Search Tracking
@@ -598,18 +599,6 @@ function gaEventTracking(){
 }
 
 
-//Google AdWords conversion tracking for AJAX
-function conversionTracker(conversionpage){
-	if ( typeof conversionpage == 'undefined' ){
-		conversionpage = 'thanks.html';
-	}
-
-	var iframe = document.createElement('iframe');
-	iframe.style.width = '0px';
-	iframe.style.height = '0px';
-	document.body.appendChild(iframe);
-	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
-};
 
 
 function googlePlusCallback(jsonParam){
@@ -627,68 +616,70 @@ function mmenus() {
 		var mobileNav = jQuery('#mobilenav');
 		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
 
-		mobileNav.mmenu({
-		    //Options
-		    "offCanvas": {
-			    "zposition": "back", //"back" (default), "front", "next"
-			    "position": "left" //"left" (default), "right", "top", "bottom"
-		    },
-		    "searchfield": { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
-		    	"add": true,
-		    	"search": true,
-		    	"placeholder": 'Search',
-		    	"noResults": "No navigation items found.",
-		    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
-		    },
-		    "counters": true, //Display count of sub-menus
-		    "extensions": ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
-		}, {
-			//Configuration
-			"classNames": {
-				"selected": "current-menu-item"
-			}
-		});
-
-		if ( mobileNav.length ){
-			mobileNav.data('mmenu').bind('opening', function(){
-				//When mmenu has started opening
-				mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').parents('.mobilenavtrigger').addClass('active');
-			}).bind('opened', function(){
-				//After mmenu has finished opening
-				history.replaceState(null, document.title, location);
-				history.pushState(null, document.title, location);
-			}).bind('closing', function(){
-				//When mmenu has started closing
-				mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').parents('.mobilenavtrigger').removeClass('active');
-			}).bind('closed', function(){
-				//After mmenu has finished closing
-			});
-		}
-
-		var mmenuSearchInput = jQuery('.mm-search input');
-		mmenuSearchInput.wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
-		mmenuSearchInput.on('keyup', function(){
-			if ( jQuery(this).val().length > 0 ) {
-				jQuery('.clearsearch').removeClass('hidden');
-			} else {
-				jQuery('.clearsearch').addClass('hidden');
-			}
-		});
-		jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-		pageDocument.on('click touch tap', '.clearsearch a', function(){
-			mmenuSearchInput.val('').keyup();
-			jQuery('.clearsearch').addClass('hidden');
-			return false;
-		});
-
-		//Close mmenu on back button click
-		if (window.history && window.history.pushState){
-			window.addEventListener("popstate", function(e){
-				if ( jQuery('html.mm-opened').is('*') ) {
-					jQuery(".mm-menu").trigger("close.mm");
-					e.stopPropagation();
+		if ( mobileNav.is('*') ){
+			mobileNav.mmenu({
+			    //Options
+			    "offCanvas": {
+				    "zposition": "back", //"back" (default), "front", "next"
+				    "position": "left" //"left" (default), "right", "top", "bottom"
+			    },
+			    "searchfield": { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
+			    	"add": true,
+			    	"search": true,
+			    	"placeholder": 'Search',
+			    	"noResults": "No navigation items found.",
+			    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
+			    },
+			    "counters": true, //Display count of sub-menus
+			    "extensions": ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
+			}, {
+				//Configuration
+				"classNames": {
+					"selected": "current-menu-item"
 				}
-			}, false);
+			});
+
+			if ( mobileNav.length ){
+				mobileNav.data('mmenu').bind('opening', function(){
+					//When mmenu has started opening
+					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').parents('.mobilenavtrigger').addClass('active');
+				}).bind('opened', function(){
+					//After mmenu has finished opening
+					history.replaceState(null, document.title, location);
+					history.pushState(null, document.title, location);
+				}).bind('closing', function(){
+					//When mmenu has started closing
+					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').parents('.mobilenavtrigger').removeClass('active');
+				}).bind('closed', function(){
+					//After mmenu has finished closing
+				});
+			}
+
+			var mmenuSearchInput = jQuery('.mm-search input');
+			mmenuSearchInput.wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
+			mmenuSearchInput.on('keyup', function(){
+				if ( jQuery(this).val().length > 0 ) {
+					jQuery('.clearsearch').removeClass('hidden');
+				} else {
+					jQuery('.clearsearch').addClass('hidden');
+				}
+			});
+			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
+			pageDocument.on('click touch tap', '.clearsearch a', function(){
+				mmenuSearchInput.val('').keyup();
+				jQuery('.clearsearch').addClass('hidden');
+				return false;
+			});
+
+			//Close mmenu on back button click
+			if (window.history && window.history.pushState){
+				window.addEventListener("popstate", function(e){
+					if ( jQuery('html.mm-opened').is('*') ) {
+						jQuery(".mm-menu").trigger("close.mm");
+						e.stopPropagation();
+					}
+				}, false);
+			}
 		}
 	}
 }
@@ -766,7 +757,7 @@ function autocompleteSearch(){
 
 	jQuery("#s, input.search").on('keypress paste', function(e){
 		thisSearchInput = jQuery(this);
-		if ( !thisSearchInput.hasClass('no-autocomplete') && !pageHTML.hasClass('lte-ie8') ){
+		if ( !thisSearchInput.hasClass('no-autocomplete') && !pageHTML.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
 			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && thisSearchInput.val().trim().length >= 2 && searchTriggerOnlyChars(e) ){
 				thisSearchInput.parents('form').addClass('searching');
 				setTimeout(function(){
@@ -832,7 +823,7 @@ function autocompleteSearch(){
 		        minLength: 3,
 		    }).data("ui-autocomplete")._renderItem = function(ul, item){
 			    thisSimilarity = ( typeof item.similarity !== 'undefined' ) ? item.similarity.toFixed(1) + '% Match' : '';
-			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label + "</a>").appendTo(ul);
+			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
 			    return listItem;
 			};
 			var thisFormIdentifier = thisSearchInput.parents('form').attr('id') || thisSearchInput.parents('form').attr('name') || thisSearchInput.parents('form').attr('class');
@@ -1134,18 +1125,20 @@ function pageVisibility(){
 
 function cFormLocalStorage(){
 	var cForm7Message = jQuery('.cform7-message');
-	cForm7Message.on('keyup', function(){
-    	localStorage.setItem('global_cform_message', cForm7Message.val());
-		cForm7Message.val(localStorage.getItem('global_cform_message'));
-    });
+	if ( cForm7Message.length == 1 ){
+		cForm7Message.on('keyup', function(){
+	    	localStorage.setItem('global_cform_message', cForm7Message.val());
+			cForm7Message.val(localStorage.getItem('global_cform_message'));
+	    });
 
-    pageWindow.bind('storage',function(e){
-    	cForm7Message.val(localStorage.getItem('global_cform_message'));
-    });
+	    pageWindow.bind('storage',function(e){
+	    	cForm7Message.val(localStorage.getItem('global_cform_message'));
+	    });
 
-	jQuery('form.wpcf7-form').submit(function(){
-		localStorage.removeItem('global_cform_message');
-	});
+		jQuery('form.wpcf7-form').submit(function(){
+			localStorage.removeItem('global_cform_message');
+		});
+	}
 }
 
 function checkCformLocalStorage(){
@@ -1163,6 +1156,7 @@ function checkCformLocalStorage(){
 }
 
 //Contact form pre-validator
+//@TODO "Nebula" 0: This should be optimized or (better yet) use a 3rd party library. Must validate in real-time.
 function cFormPreValidator(){
 	jQuery('.cform7-text').keyup(function(){
 		if ( jQuery(this).val() == '' ) {
@@ -1356,12 +1350,36 @@ function cFormPreValidator(){
 	});
 } //end cFormPreValidator()
 
+
 //CForm7 submit success callback
-//Add on_sent_ok: "cFormSuccess();" to Additional Settings in WP Admin.
-function cFormSuccess(){
-    //Contact Form 7 Submit Success actions here. Could pass a parameter if needed.
-    //conversionTracker(); //Call conversion tracker if contact is a conversion goal.
+//Add on_sent_ok: "cFormSuccess();" to Additional Settings
+//First parameter should be the name of the form to send to Google Analytics (Default: "(not set)").
+//Second parameter should be either boolean (to use thanks.html) or string of another conversion page to use (Default: false).
+//This can be customized and duplicated as needed.
+function cFormSuccess(form, thanks){
+	if ( form ){
+		ga('send', 'event', 'Contact', 'Submit Success', form);
+	} else {
+		ga('send', 'event', 'Contact', 'Submit Success', '(not set)');
+	}
+
+    if ( thanks ){
+    	conversionTracker(thanks); //Call conversion tracker if contact is a conversion goal.
+	}
 }
+
+//Google AdWords conversion tracking for AJAX
+function conversionTracker(conversionpage){
+	if ( typeof conversionpage !== 'string' || conversionpage.indexOf('.') <= 0 ){
+		conversionpage = 'thanks.html';
+	}
+
+	var iframe = document.createElement('iframe');
+	iframe.style.width = '0px';
+	iframe.style.height = '0px';
+	document.body.appendChild(iframe);
+	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
+};
 
 //Allows only numerical input on specified inputs. Call this on keyUp? @TODO "Nebula" 0: Make the selector into oThis and pass that to the function from above.
 //The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
@@ -1539,7 +1557,7 @@ function nebulaVibrate(pattern) {
 }
 
 function checkVibration() {
-	if ( !pageBody.hasClass('mobile') ){
+	if ( !jQuery('body').hasClass('mobile') ){
 		if ( typeof Gumby != 'undefined' ){ Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support)."); }
 	}
 

@@ -88,7 +88,7 @@ get_header(); ?>
 					<?php if ( get_the_author_meta('jobtitle') ) : ?>
 						<?php echo esc_html(get_the_author_meta('jobtitle')); ?>
 						<?php if ( get_the_author_meta('jobcompany') ) : ?>
-							at
+							&nbsp;at
 						<?php endif; ?>
 					<?php endif; ?>
 					<?php if ( get_the_author_meta('jobcompany') ) : ?>

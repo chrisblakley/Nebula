@@ -165,7 +165,7 @@
 								}
 								$header_search_placeholder = ( isset($current_search) ) ? $current_search : 'What are you looking for?' ;
 							?>
-							<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" x-webkit-speech />
+							<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
 						</form>
 					</div><!--/columns-->
 				</div><!--/row-->

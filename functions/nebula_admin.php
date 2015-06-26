@@ -1,5 +1,15 @@
 <?php
 
+//Force expire query transients when posts/pages are saved.
+add_action('save_posts', 'nebula_clear_transients');
+function nebula_clear_transients(){
+	delete_transient('nebula_autocomplete_menus');
+	delete_transient('nebula_autocomplete_categories');
+	delete_transient('nebula_autocomplete_tags');
+	delete_transient('nebula_autocomplete_authors');
+}
+
+
 add_action('admin_init', 'set_nebula_initialized_date'); //This function is declared in nebula_automation.php. This check is to make sure it is set.
 
 //Disable auto curly quotes

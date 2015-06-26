@@ -8,9 +8,9 @@
 <div class="row">
 	<div class="sixteen columns">
 		<p>Toggle cookie: <a class="jscookie" href="#">OFF</a> Last set on: <span class="setdate">(not set)</span></p>
-		
+
 		<script>
-			jQuery(document).ready(function() {	
+			jQuery(document).ready(function() {
 				checkExample();
 				function checkExample() {
 					if ( readCookie('examplejs') ) {
@@ -21,7 +21,7 @@
 						jQuery('.setdate').text('(not set)');
 					}
 				}
-				
+
 				jQuery('.jscookie').on('click', function(){
 					if ( jQuery(this).hasClass('cookie-on') ) {
 						eraseCookie('examplejs');
@@ -45,15 +45,15 @@
 						ss = currentTime.getSeconds(); //Get seconds (0-59)
 						ss = ( ss <10 ? '0'+ss : ss ); //Add leading 0 to seconds (as needed)
 						currentTime = dddd + ', ' + MMMM + ' ' + d + ', ' + yyyy + ' @ ' + h + ':' + mm + ' ' + tt;
-						
-						createCookie('examplejs', currentTime);
+
+						createCookie('examplejs', currentTime, 9999);
 						checkExample();
 					}
 					return false;
 				});
 			});
 		</script>
-		
+
 		<br/>
 	</div><!--/columns-->
 </div><!--/row-->

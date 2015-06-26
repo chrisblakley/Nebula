@@ -46,8 +46,8 @@ add_action('admin_enqueue_scripts', 'register_nebula_styles');
 function register_nebula_styles() {
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 	wp_register_style('nebula-normalize', '//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', array(), '3.0.3', 'all');
-	wp_register_style('nebula-google_default_font', '//fonts.googleapis.com/css?family=Open+Sans:400,300,700,800', array(), null, 'all'); //Change the font URL here to easily change the default font (be sure to update stylesheets accordingly).
-	wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:400,300,700,800', array(), null, 'all');
+	wp_register_style('nebula-google_default_font', '//fonts.googleapis.com/css?family=Open+Sans:400,800', array(), null, 'all'); //Change the font URL here to easily change the default font (be sure to update stylesheets accordingly). Default weights are 400 and 800. Add 300 and/or 700 as needed.
+	wp_register_style('nebula-open_sans', '//fonts.googleapis.com/css?family=Open+Sans:400,800', array(), null, 'all'); //Default weights are 400 and 800. Add 300 and/or 700 as needed.
 	wp_register_style('nebula-open_sans_local', get_template_directory_uri() . '/css/open-sans.css', array(), null, 'all');
 	wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6.0', 'all');
 	wp_register_style('nebula-gumby_cdn', '//cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0', 'all'); //Only useful for 12 col primary
