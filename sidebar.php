@@ -6,6 +6,8 @@
 
 <ul class="xoxo">
 
+	<?php do_action('nebula_sidebar_open'); //When using this hook remember it is in a UL! ?>
+
 	<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ) : ?>
 		<?php //Primary Widget Area ?>
 	<?php endif; ?>
@@ -42,5 +44,7 @@
 			</div>
 		</li>
 	<?php endif; ?>
+
+	<?php do_action('nebula_sidebar_close'); //When using this hook remember it is in a UL! ?>
 
 </ul>

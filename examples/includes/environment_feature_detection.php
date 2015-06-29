@@ -346,6 +346,14 @@
 			<a href="http://udger.com/resources/online-parser" target="_blank" style="font-family: 'Open Sans', sans-serif;">User Agent Parser &raquo;</a>
 		</p>
 
+		<h3 class="hidden">Debug</h3>
+		<p class="hidden" style="font-family: monospace;">
+			Referrer: <?php echo $_SERVER["HTTP_REFERER"]; ?><br/>
+			Remote Host: <?php echo $_SERVER["REMOTE_HOST"]; ?><br/>
+			Hostname: <?php echo gethostname(); ?><br/>
+			HTTP Host: <?php echo $_SERVER["HTTP_HOST"]; ?><br/>
+		</p>
+
 		<h3>Device</h3>
 		<p>
 			<?php

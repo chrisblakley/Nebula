@@ -8,10 +8,10 @@ Wordpress developers will find all source code not obfuscated, so everything may
 
 To install, simply download the .zip, extract its contents, and upload to the /themes directory via FTP.
 
-- *[Setup Guide](http://gearside.com/nebula/documentation/get-started/)*
-- *[Testing Checklist](http://gearside.com/nebula/documentation/get-started/testing-checklist/)*
-- *[Launch Guide](http://gearside.com/nebula/documentation/get-started/launch-checklist/)*
+- *[Setup Guide](https://gearside.com/nebula/documentation/get-started/)*
+- *[Testing Checklist](https://gearside.com/nebula/documentation/get-started/testing-checklist/)*
+- *[Launch Guide](https://gearside.com/nebula/documentation/get-started/launch-checklist/)*
 
 ##Documentation
 
-Full documentation is available at [http://gearside.com/nebula](http://gearside.com/nebula) including custom functionality as well as examples of useful snippets.
+Full documentation is available at [http://gearside.com/nebula](https://gearside.com/nebula) including custom functionality as well as examples of useful snippets.

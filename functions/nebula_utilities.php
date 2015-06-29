@@ -37,24 +37,24 @@ function gaSendData($data) {
 }
 
 //Send Pageview Function for Server-Side Google Analytics
-function ga_send_pageview($hostname=null, $page=null, $title=null) {
-	if ( $GLOBALS['ga_v'] === null ) {
+function ga_send_pageview($hostname=null, $path=null, $title=null){
+	if ( empty($GLOBALS['ga_v']) ) {
 		$GLOBALS['ga_v'] = 1;
 	}
 
-	if ( $GLOBALS['ga_cid'] === null ) {
+	if ( empty($GLOBALS['ga_cid']) ) {
 		$GLOBALS['ga_cid'] = gaParseCookie();
 	}
 
-	if ( $hostname === null ) {
+	if ( empty($hostname) ) {
 		$hostname = nebula_url_components('hostname');
 	}
 
-	if ( $page === null ) {
-		$page = nebula_url_components('all');
+	if ( empty($path) ) {
+		$path = nebula_url_components('path');
 	}
 
-	if ( $title === null ) {
+	if ( empty($title) ) {
 		$title = get_the_title();
 	}
 
@@ -64,19 +64,21 @@ function ga_send_pageview($hostname=null, $page=null, $title=null) {
 		'cid' => $GLOBALS['ga_cid'],
 		't' => 'pageview',
 		'dh' => $hostname, //Document Hostname "gearside.com"
-		'dp' => $page, //Page "/something"
-		'dt' => $title //Title
+		'dp' => $path, //Path "/something"
+		'dt' => $title, //Title
+		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 	);
 	gaSendData($data);
 }
 
 //Send Event Function for Server-Side Google Analytics
-function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1) {
-	if ( $GLOBALS['ga_v'] === null ) {
+//@TODO "Nebula" 0: "WordPress" is still appearing in Google Analytics browser reports for these events!
+function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1){
+	if ( empty($GLOBALS['ga_v']) ) {
 		$GLOBALS['ga_v'] = 1;
 	}
 
-	if ( $GLOBALS['ga_cid'] === null ) {
+	if ( empty($GLOBALS['ga_cid']) ) {
 		$GLOBALS['ga_cid'] = gaParseCookie();
 	}
 
@@ -89,7 +91,10 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 		'ea' => $action, //Action (Required)
 		'el' => $label, //Label
 		'ev' => $value, //Value
-		'ni' => $ni //Non-Interaction
+		'ni' => $ni, //Non-Interaction
+		'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
+		'dp' => nebula_url_components('path'),
+		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 	);
 	gaSendData($data);
 }
@@ -705,21 +710,6 @@ function getwhois($domain, $tld) {
 		return $whois->GetData(1);
 	} else {
 		return 'A WHOIS error occurred.';
-	}
-}
-
-
-//Return TRUE if need new cache, return FALSE if cache file will be used.
-function nebula_need_updated_cache($cache_file=null, $interval=3600){
-	if ( !file_exists($cache_file) ) {
-		return true; //Cache file does not exist.
-	}
-
-	$modified = filemtime($cache_file);
-	$now = time();
-
-	if ( !$modified || (($now-$modified) > $interval) ) {
-		return true; //Cache file has not been modified -or- the modify date is older than the interval.
 	}
 }
 

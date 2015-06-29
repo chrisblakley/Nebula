@@ -138,7 +138,7 @@ if ( $GLOBALS["mobile_detect"]->isTablet() ) {
 } elseif ( $GLOBALS["mobile_detect"]->isMobile() ) {
 	$device_form_factor = 'mobile';
 } else {
-	$device_form_factor = 'dablet';
+	$device_form_factor = 'desktop';
 }
 $localize_bloginfo = array(
 	'name' => get_bloginfo("name"),

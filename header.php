@@ -124,7 +124,7 @@
 			})(window,document,'script','//www.google-analytics.com/' + analyticsScript,'ga');
 
 			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Settings or functions.php! ?>
-			//ga('require', 'displayfeatures');
+			//ga('require', 'displayfeatures'); //Uncomment this to enable remarketing and advertising reporting features for this web property (AdWords)
 			ga('send', 'pageview');
 			<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
 		</script>

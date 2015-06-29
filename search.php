@@ -20,7 +20,7 @@ get_header(); ?>
 </div><!--/row-->
 
 <div class="row fullcontentcon">
-	<div class="ten columns">
+	<div class="eleven columns">
 		<?php if ( have_posts() ) : ?>
 			<h1>Search Results <?php get_search_query(); ?></h1>
 			<?php get_search_form(); ?>
@@ -58,7 +58,7 @@ get_header(); ?>
 		<?php endif; ?>
 	</div><!--/columns-->
 
-	<div class="five columns push_one">
+	<div class="four columns push_one">
 		<?php get_sidebar(); ?>
 	</div><!--/columns-->
 </div><!--/row-->

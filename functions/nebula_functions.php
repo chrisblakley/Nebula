@@ -1151,6 +1151,7 @@ function nebula_autocomplete_search(){
 					$suggestion['external'] = true;
 					$suggestion['classes'] .= ' external-link';
 				}
+				$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
 				$suggestions[] = $suggestion;
 				$attachment_count++;
 			}
@@ -1160,6 +1161,7 @@ function nebula_autocomplete_search(){
 		}
 	}
 
+	//Find menu items
 	$menus = get_transient('nebula_autocomplete_menus');
 	if ( empty($menus) ){
 		$menus = get_terms('nav_menu');
@@ -1502,38 +1504,40 @@ function nebula_body_classes($classes){
 	}
 
 	//Post Information
-	global $post;
-	$segments = explode('/', trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ));
-	$parents = get_post_ancestors( $post->ID );
-	foreach ( $parents as $parent ){
-		$classes[] = 'ancestor-id-' . $parent;
-	}
-	foreach ( $segments as $segment ){
-		$classes[] = 'ancestor-of-' . $segment;
-	}
-	foreach ( get_the_category($post->ID) as $category ){
-		$classes[] = 'cat-' . $category->cat_ID . '-id';
+	if ( !is_search() && !is_archive() ){
+		global $post;
+		$segments = explode('/', trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ));
+		$parents = get_post_ancestors($post->ID);
+		foreach ( $parents as $parent ){
+			$classes[] = 'ancestor-id-' . $parent;
+		}
+		foreach ( $segments as $segment ){
+			$classes[] = 'ancestor-of-' . $segment;
+		}
+		foreach ( get_the_category($post->ID) as $category ){
+			$classes[] = 'cat-' . $category->cat_ID . '-id';
+		}
 	}
 	$nebula_theme_info = wp_get_theme();
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 
 	//Time of Day
 	$classes[] = ( currently_open() ) ? 'business-open' : 'business-closed';
-	if ( contains(date('H'), array('22', '23', '00')) ){
+	if ( contains(date('H'), array('23', '00', '01')) ){
 		$classes[] = 'time-early time-night';
-	} elseif ( contains(date('H'), array('01', '02', '03')) ){
+	} elseif ( contains(date('H'), array('02', '03', '04')) ){
 		$classes[] = 'time-late time-night';
-	} elseif ( contains(date('H'), array('04', '05', '06')) ){
+	} elseif ( contains(date('H'), array('05', '06', '07')) ){
 		$classes[] = 'time-early time-morning';
-	} elseif ( contains(date('H'), array('07', '08', '09')) ){
+	} elseif ( contains(date('H'), array('08', '09', '10')) ){
 		$classes[] = 'time-late time-morning';
-	} elseif ( contains(date('H'), array('10', '11', '12')) ){
+	} elseif ( contains(date('H'), array('11', '12', '13')) ){
 		$classes[] = 'time-early time-midday';
-	} elseif ( contains(date('H'), array('13', '14', '15')) ){
+	} elseif ( contains(date('H'), array('14', '15', '16')) ){
 		$classes[] = 'time-late time-midday';
-	} elseif ( contains(date('H'), array('16', '17', '18')) ){
+	} elseif ( contains(date('H'), array('17', '18', '19')) ){
 		$classes[] = 'time-early time-evening';
-	} elseif ( contains(date('H'), array('19', '20', '21')) ){
+	} elseif ( contains(date('H'), array('20', '21', '22')) ){
 		$classes[] = 'time-late time-evening';
 	}
 	if ( date('H') >= 12 ){
@@ -1553,6 +1557,13 @@ function nebula_body_classes($classes){
 			$classes[] = 'time-daylight';
 		} else {
 			$classes[] = 'time-darkness';
+		}
+
+		if ( strtotime('now') >= $sunrise-60*60 && strtotime('now') <= $sunrise+60*60 ){
+			$classes[] = 'time-sunrise';
+		}
+		if ( strtotime('now') >= $sunset-60*60 && strtotime('now') <= $sunset+60*60 ){
+			$classes[] = 'time-sunset';
 		}
 	}
 
