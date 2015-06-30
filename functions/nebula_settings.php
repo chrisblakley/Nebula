@@ -4,7 +4,7 @@
 add_action('init', 'global_nebula_vars');
 add_action('admin_init', 'global_nebula_vars');
 function global_nebula_vars(){
-    $GLOBALS['admin_user'] = get_userdata(1);
+    $GLOBALS['admin_user'] = get_userdata(1); //@TODO "Nebula" 0: Consider removing this altogether
     $GLOBALS['full_address'] = get_option('nebula_street_address') . ', ' . get_option('nebula_locality') . ', ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
     $GLOBALS['enc_address'] = get_option('nebula_street_address') . ' ' . get_option('nebula_locality') . ' ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
     $GLOBALS['enc_address'] = str_replace(' ', '+', $GLOBALS['enc_address']);

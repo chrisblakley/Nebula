@@ -20,6 +20,14 @@ function nebula_defer_async_scripts($url) {
 	}
 }
 
+//Enqueue required scripts strictly as needed
+add_action('comment_form_before', 'nebula_enqueue_comments_reply');
+function nebula_enqueue_comments_reply(){
+	if ( get_option('thread_comments') ){
+		wp_enqueue_script('comment-reply');
+	}
+}
+
 //Remove version query strings from styles/scripts (to allow caching)
 add_filter('script_loader_src', 'nebula_remove_script_version', 15, 1);
 add_filter('style_loader_src', 'nebula_remove_script_version', 15, 1);
@@ -37,7 +45,6 @@ function nebula_dequeues() {
 		//Styles
 		wp_deregister_style('open-sans'); //WP Core - We load Open Sans ourselves (or whatever font the project calls for)
 		wp_deregister_style('cff-font-awesome'); //Custom Facebook Feed - We enqueue the latest version of Font Awesome ourselves
-		wp_deregister_style('se-link-styles'); //Search Everything - (As far as I know) We do not use any of their styles (I believe they are for additional settings)
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
 
 		//Scripts
@@ -49,52 +56,17 @@ function nebula_dequeues() {
 		//Page specific dequeues
 		if ( is_front_page() ) {
 			//Styles
-			//wp_deregister_style('wp-pagenavi'); //WP PageNavi - Uncomment if pagination does NOT appear on the homepage.
 			wp_deregister_style('thickbox'); //WP Core Thickbox - Comment out if thickbox type gallery IS used on the homepage.
-			//wp_deregister_style('cff'); //Custom Facebook Feed - Uncomment if the Custom Facebook Feed does NOT appear on the homepage.
 
 			//Scripts
 			wp_deregister_script('thickbox'); //WP Thickbox - Comment out if thickbox type gallery IS used on the homepage.
-			//wp_deregister_script('cffscripts'); //Custom Facebook Feed - Uncomment if the Custom Facebook Feed does NOT appear on the homepage.
-			//wp_deregister_script('contact-form-7'); //Contact Form 7 - Uncomment if Contact Form 7 does NOT appear on the homepage.
-
-
 		}
-
-		/* @TODO "Nebula" 0: Styles/Scripts to consider for dequeue from homepage
-			- admin-bar.min.js
-		*/
 	}
 }
 
 //Force settings within plugins
 add_action('admin_init', 'nebula_plugin_force_settings');
 function nebula_plugin_force_settings(){
-	//WP Edit (This plugin is not bundled with Nebula anymore [in favor of TinyMCE Advanced], but this can stay in case it is ever used).
-	if ( file_exists(WP_PLUGIN_DIR . '/wp-edit') ) {
-		$plugin_options_global = get_option('wp_edit_global');
-		$plugin_options_global['disable_admin_links'] = 1;
-		update_option('wp_edit_global', $plugin_options_global);
-	}
-
-	//Search Everything
-	if ( file_exists(WP_PLUGIN_DIR . '/search-everything') ) {
-		$se_options = get_option('se_options');
-	    $se_options['se_use_highlight'] = false; //Disable search keyword highlighting (to prevent interference with Nebula keyword highlighting)
-	    $se_options['se_research_metabox'] = array ( //Disable "Research Everything" feature of Search Everything (including compose-screen metabox)
-			'visible_on_compose'		=> false,
-			'external_search_enabled'	=> false,
-			'notice_visible'			=> false,
-		);
-	    update_option('se_options', $se_options);
-		if ( function_exists('se_get_meta') ) {
-			$meta = se_get_meta();
-		    $meta['se_global_notice'] = 0; //Disable Search Everything global notice.
-		    $meta['show_options_page_notice'] = false; //Disable Search Everything options page notice.
-		    se_update_meta($meta);
-		}
-	}
-
 	//Wordpress SEO (Yoast)
 	if ( file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ) {
 		remove_submenu_page('wpseo_dashboard', 'wpseo_files'); //Remove the ability to edit files.
@@ -122,7 +94,6 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 		remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_meta_box('espresso_news_dashboard_widget', 'dashboard', 'normal'); //Event Espresso - Remove Dashboard Metabox
-		remove_meta_box('jwl_user_tinymce_dashboard_widget', 'dashboard', 'normal'); //WP Edit - Remove Dashboard Metabox (This plugin is not bundled with Nebula anymore [in favor of TinyMCE Advanced], but this can stay in case it is ever used).
 		//remove_action('init', 'wpseo_description_test'); //Wordpress SEO (Yoast) - Remove Meta Description test (@TODO "Nebula" 0: Not Working - this function is called all over the place...)
 		//remove_action('admin_init', 'after_update_notice', 15); //Wordpress SEO (Yoast) - Remove "WordPress SEO by Yoast has been updated" box (@TODO "Nebula" 0: Not Working)
 

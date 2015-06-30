@@ -125,7 +125,7 @@
 	jQuery(document).on('submit', '#whoistester', function(e){
 		if ( jQuery("#domain").val().trim() == '' ) {
 			jQuery("#domain").val('gearside.com');
-			var domainLookup = 'http://gearside.com?default';
+			var domainLookup = 'https://gearside.com?default';
 		} else {
 			var domainLookup = jQuery("#domain").val().trim();
 		}
@@ -133,7 +133,7 @@
 		ga('send', 'event', 'WHOIS Tester', domainLookup);
 
 		if ( domainLookup.indexOf('//') < 1 ) {
-			domainLookup = 'http://' + domainLookup;
+			domainLookup = 'https://' + domainLookup;
 		}
 
 		jQuery('#theactualiframe').remove();

@@ -1,7 +1,7 @@
 <?php
 
 //Set server timezone to match Wordpress
-date_default_timezone_set(get_option('timezone_string'));
+date_default_timezone_set(get_option('timezone_string')); //@TODO "Nebula" 0: date_default_timezone_set(): Timezone ID '' is invalid
 
 
 //Track Google Page Speed tests
@@ -1477,9 +1477,6 @@ function nebula_body_classes($classes){
 	$classes[] = str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_name']) . '_' . str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_math_number']); //Browser name and major version number
 
 	//Mobile
-	if ( $is_iphone ){
-    	$classes[] = 'iphone';
-    }
 	if ( $GLOBALS["mobile_detect"]->isMobile() ){
 		$classes[] = 'mobile';
 	} else {
@@ -1494,6 +1491,10 @@ function nebula_body_classes($classes){
 	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ){
 		$classes[] = 'androidos';
 	}
+	if ( $GLOBALS["mobile_detect"]->isIphone() ){
+    	$classes[] = 'iphone';
+    }
+
 
 	//User Information
 	$current_user = wp_get_current_user();
@@ -1551,18 +1552,18 @@ function nebula_body_classes($classes){
 		$lng = nebula_settings_conditional_text('nebula_longitude');
 		$gmt = intval(get_option('gmt_offset'));
 		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
-		$sunrise = strtotime($date . ' ' . date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
-		$sunset = strtotime($date . ' ' . date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+		$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
 		if ( time() >= $sunrise && time() <= $sunset ){
 			$classes[] = 'time-daylight';
 		} else {
 			$classes[] = 'time-darkness';
 		}
 
-		if ( strtotime('now') >= $sunrise-60*60 && strtotime('now') <= $sunrise+60*60 ){
+		if ( strtotime('now') >= $sunrise-60*45 && strtotime('now') <= $sunrise+60*45 ){ //45 minutes before and after true sunrise
 			$classes[] = 'time-sunrise';
 		}
-		if ( strtotime('now') >= $sunset-60*60 && strtotime('now') <= $sunset+60*60 ){
+		if ( strtotime('now') >= $sunset-60*45 && strtotime('now') <= $sunset+60*45 ){ //45 minutes before and after true sunset
 			$classes[] = 'time-sunset';
 		}
 	}

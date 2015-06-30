@@ -364,44 +364,41 @@ function nebula_device_detect($user_agent=''){
 }
 
 //Detect Operating System
-function nebula_os_detect($user_agent='') {
-	if ( $user_agent == '' ) {
+function nebula_os_detect($user_agent=''){
+	if ( $user_agent == '' ){
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
 	}
 
-	$os_platform    =   "Unknown OS Platform";
+	$os_platform = "Unknown OS Platform";
+    $os_array = array(
+		'/windows nt 6.3/i'     =>  'Windows 8.1',
+		'/windows nt 6.2/i'     =>  'Windows 8',
+		'/windows nt 6.1/i'     =>  'Windows 7',
+		'/windows nt 6.0/i'     =>  'Windows Vista',
+		'/windows nt 5.2/i'     =>  'Windows Server 2003/XP x64',
+		'/windows nt 5.1/i'     =>  'Windows XP',
+		'/windows xp/i'         =>  'Windows XP',
+		'/windows nt 5.0/i'     =>  'Windows 2000',
+		'/windows me/i'         =>  'Windows ME',
+		'/win98/i'              =>  'Windows 98',
+		'/win95/i'              =>  'Windows 95',
+		'/win16/i'              =>  'Windows 3.11',
+		'/macintosh|mac os x/i' =>  'Mac OS X',
+		'/mac_powerpc/i'        =>  'Mac OS 9',
+		'/linux/i'              =>  'Linux',
+		'/ubuntu/i'             =>  'Ubuntu',
+		'/iphone/i'             =>  'iPhone',
+		'/ipod/i'               =>  'iPod',
+		'/ipad/i'               =>  'iPad',
+		'/android/i'            =>  'Android',
+		'/blackberry/i'         =>  'BlackBerry',
+		'/webos/i'              =>  'Mobile'
+	);
 
-    $os_array       =   array(
-                            '/windows nt 6.3/i'     =>  'Windows 8.1',
-                            '/windows nt 6.2/i'     =>  'Windows 8',
-                            '/windows nt 6.1/i'     =>  'Windows 7',
-                            '/windows nt 6.0/i'     =>  'Windows Vista',
-                            '/windows nt 5.2/i'     =>  'Windows Server 2003/XP x64',
-                            '/windows nt 5.1/i'     =>  'Windows XP',
-                            '/windows xp/i'         =>  'Windows XP',
-                            '/windows nt 5.0/i'     =>  'Windows 2000',
-                            '/windows me/i'         =>  'Windows ME',
-                            '/win98/i'              =>  'Windows 98',
-                            '/win95/i'              =>  'Windows 95',
-                            '/win16/i'              =>  'Windows 3.11',
-                            '/macintosh|mac os x/i' =>  'Mac OS X',
-                            '/mac_powerpc/i'        =>  'Mac OS 9',
-                            '/linux/i'              =>  'Linux',
-                            '/ubuntu/i'             =>  'Ubuntu',
-                            '/iphone/i'             =>  'iPhone',
-                            '/ipod/i'               =>  'iPod',
-                            '/ipad/i'               =>  'iPad',
-                            '/android/i'            =>  'Android',
-                            '/blackberry/i'         =>  'BlackBerry',
-                            '/webos/i'              =>  'Mobile'
-                        );
-
-    foreach ($os_array as $regex => $value) {
-
-        if (preg_match($regex, $user_agent)) {
-            $os_platform    =   $value;
+    foreach ( $os_array as $regex => $value ){
+        if ( preg_match($regex, $user_agent) ){
+            $os_platform = $value;
         }
-
     }
 
     return $os_platform;
@@ -699,7 +696,7 @@ function whois_info($data, $domain='') {
 
 
 function getwhois($domain, $tld) {
-	require_once(TEMPLATEPATH . "/includes/class-whois.php");
+	require_once(get_template_directory() . "/includes/class-whois.php");
 	$whois = new Whois();
 
 	if( !$whois->ValidDomain($domain . '.' . $tld) ) {
@@ -722,7 +719,7 @@ function getwhois($domain, $tld) {
 //PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
 //Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
 //Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
-require_once TEMPLATEPATH . '/includes/Mobile_Detect.php'; //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
+require_once(get_template_directory() . '/includes/Mobile_Detect.php'); //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
 $GLOBALS["mobile_detect"] = new Mobile_Detect();
 
 
@@ -752,5 +749,5 @@ $GLOBALS["mobile_detect"] = new Mobile_Detect();
 	['engine_data'] - $a_engine_data,
 	['trident_data'] - $a_trident_data
 */
-require_once TEMPLATEPATH . '/includes/browser_detection.php';
+require_once(get_template_directory() . '/includes/browser_detection.php');
 $GLOBALS["browser_detect"] = browser_detection('full_assoc');

@@ -35,7 +35,7 @@
 		</form><!--/search-->
 	</li>
 
-	<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ) : ?>
+	<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && !is_front_page() ) : ?>
 		<li class="widget-container">
 			<h3>Contact Us</h3>
 			<?php nebula_facebook_link(); ?>

@@ -21,13 +21,18 @@ function nebula_prevent_bad_query_strings(){
 }
 
 //Disable Pingbacks to prevent security issues
-add_filter('xmlrpc_methods', disable_pingbacks($methods));
-add_filter('wp_xmlrpc_server_class', disable_pingbacks($methods));
-function disable_pingbacks($methods) {
-   //unset($methods['pingback.ping']);
-   //return $methods;
-   return false;
-};
+//@TODO "Nebula" 0: Undefined variable: method
+/*
+add_filter('xmlrpc_methods', disable_pingbacks($method));
+add_filter('wp_xmlrpc_server_class', disable_pingbacks($method));
+add_action('xmlrpc_call', disable_pingbacks($method));
+function disable_pingbacks($method){
+    if ( $method == 'pingback.ping' ){
+    	return false;
+    }
+}
+*/
+
 
 //Remove xpingback header
 add_filter('wp_headers', 'remove_x_pingback');

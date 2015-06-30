@@ -158,9 +158,9 @@
 
 						<form id="mobileheadersearch" class="nebula-search-iconable search" method="get" action="<?php echo home_url('/'); ?>">
 							<?php
-								if ( $_GET['s'] ) {
+								if ( !empty($_GET['s']) ) {
 									$current_search = $_GET['s'];
-								} elseif ( $_GET['rs'] ) {
+								} elseif ( !empty($_GET['rs']) ) {
 									$current_search = $_GET['rs'];
 								}
 								$header_search_placeholder = ( isset($current_search) ) ? $current_search : 'What are you looking for?' ;

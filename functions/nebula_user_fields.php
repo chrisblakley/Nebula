@@ -4,11 +4,13 @@
  WARNING: Custom user meta fields can not have hyphens in them! Use underscores or all one word!
  *********/
 
-wp_enqueue_script('thickbox');
-wp_enqueue_style('thickbox');
-wp_enqueue_script('media-upload');
-wp_enqueue_script('easy-author-image-uploader');
-
+add_action('admin_enqueue_scripts', 'enqueue_nebula_user_meta');
+function enqueue_nebula_user_meta(){
+	wp_enqueue_script('thickbox');
+	wp_enqueue_style('thickbox');
+	wp_enqueue_script('media-upload');
+	wp_enqueue_script('easy-author-image-uploader');
+}
 
 //Additional Contact Info fields
 add_filter('user_contactmethods', 'nebula_user_contactmethods');

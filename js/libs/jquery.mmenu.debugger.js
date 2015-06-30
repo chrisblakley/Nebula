@@ -40,7 +40,7 @@
 		}
 		msg += '.';
 
-		console.debug( msg );
+		_warn( msg );
 	};
 
 

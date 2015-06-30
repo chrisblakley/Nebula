@@ -30,11 +30,10 @@ function admin_favicon() {
 
 //Add classes to the admin body
 add_filter('admin_body_class', 'nebula_admin_body_classes');
-function nebula_admin_body_classes($classes) {
+function nebula_admin_body_classes($classes){
 	global $current_user;
 	$user_roles = $current_user->roles;
 	$classes .= array_shift($user_roles);
-	$classes .= $user_role;
 	return $classes;
 }
 
@@ -204,7 +203,8 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 							//Get the priority
 							preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
 							$todo_hidden = 0;
-							if ( $the_todo_ints[0][0] != '' ) {
+							$the_todo_icon_color = '#999';
+							if ( !empty($the_todo_ints[0][0]) ){
 								switch ( true ) {
 									case ( $the_todo_ints[0][0] >= 5 ) :
 										$todo_hidden = 0;
@@ -249,7 +249,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 
 							//Get the category
 							preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
-							if ( $the_todo_quote_check[0][0] != '' ) {
+							if ( !empty($the_todo_quote_check[0][0]) ) {
 								$the_todo_category = substr($the_todo_quote_check[0][0], 1, -1);
 								$the_todo_category_html = '<span class="todocategory" style="background: ' . $the_todo_icon_color . ';">' . $the_todo_category . '</span>';
 							} else {
@@ -266,7 +266,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ) {
 
 							$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
 							if ( $todo_last_filename != $todo_this_filename ) {
-								if ( $todo_last_filename != '' ) {
+								if ( !empty($todo_last_filename) ) {
 									echo '</div><!--/todofilewrap-->';
 								}
 
@@ -387,7 +387,12 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			$alldomains = explode(".", $url);
 			return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
 		}
-		$dnsrecord = ( function_exists('gethostname') ) ? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
+
+		if ( function_exists('gethostname') ){
+			set_error_handler(function(){ /* ignore errors */ });
+			$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) ) ? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
+			restore_error_handler();
+		}
 
 		function initial_install_date(){
 			if ( get_option('nebula_initialized') != '' ) { //&& (get_option('nebula_initialized') < getlastmod())
@@ -414,9 +419,12 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			$upload_max = '';
 		}
 
-		if ( ini_get('safe_mode') ) {
-			$safe_mode = '<small><strong><em>Safe Mode</em></strong></small>';
+		if ( function_exists('mysqli_connect') ){
+			$mysqli_connect = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
+			$mysql_version = mysqli_get_server_info($mysqli_connect);
 		}
+
+		$safe_mode = ( ini_get('safe_mode') ) ? '<small><strong><em>Safe Mode</em></strong></small>': '';
 
 		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 		echo '<script id="testloadscript">
@@ -449,15 +457,18 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
 
 			echo $domain_registrar_html;
-
 			if ( function_exists('gethostname') ) {
-				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Host: <strong>' . top_domain_name(gethostname()) . '</strong> <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small></li>';
+				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Host: <strong>' . top_domain_name(gethostname()) . '</strong>';
+				if ( !empty($dnsrecord[0]['target']) ){
+					echo ' <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small>';
+				}
+				echo '</li>';
 			}
 			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
 			echo '<li><i class="fa ' . $php_os_icon . ' fa-fw"></i> Server OS: <strong>' . PHP_OS . '</strong> <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
-			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong>' . phpversion() . '</strong> ' . $safe_mode . '</li>';
+			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong>' . PHP_VERSION . '</strong> ' . $safe_mode . '</li>';
 			echo '<li><i class="fa fa-cogs fa-fw"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
-			echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . mysql_get_server_info() . '</strong></li>';
+			echo ( !empty($mysql_version) ) ? '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . $mysql_version . '</strong></li>' : '';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
 			echo '<li><i class="fa fa-clock-o fa-fw"></i> <span title="' . get_home_url() . '" style="cursor: help;">Homepage</span> load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
@@ -691,7 +702,7 @@ function is_dev() {
 
 	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
 	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
 	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
 	foreach ( $devEmails as $devEmail ) {
@@ -715,7 +726,7 @@ function is_client() {
 
 	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
 	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
 	$clientEmails = explode(',', get_option('nebula_client_email_domain'));
 	foreach ( $clientEmails as $clientEmail ) {
@@ -742,7 +753,8 @@ function is_at_phg(){
 if ( is_dev() && !is_client() ) {
 	add_action('admin_menu', 'all_settings_link');
 	function all_settings_link() {
-	    add_options_page('All Settings', 'All Settings', 'administrator', 'options.php');
+	    //add_options_page('All Settings', 'All Settings', 'administrator', 'options.php');
+	    add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php');
 	}
 }
 
@@ -823,7 +835,7 @@ function change_admin_footer_right() {
 	$nebula_version_year = ( $nebula_version['medium'] <= 5 ) ? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
 	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June');
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
-	$nebula_version_daterange = ( $nebula_version['small'] == 1 ) ? 'Second' : 'First';
+	$nebula_version_daterange = ( empty($nebula_version['small']) ) ? 'First' : 'Second';
 
     return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
 }

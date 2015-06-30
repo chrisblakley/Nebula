@@ -14,4 +14,4 @@ To install, simply download the .zip, extract its contents, and upload to the /t
 
 ##Documentation
 
-Full documentation is available at [http://gearside.com/nebula](https://gearside.com/nebula) including custom functionality as well as examples of useful snippets.
+Full documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula) including custom functionality as well as examples of useful snippets.
