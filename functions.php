@@ -145,7 +145,7 @@ $localize_bloginfo = array(
 	'template_directory' => get_template_directory_uri(),
 	'stylesheet_url' => get_bloginfo("stylesheet_url"),
 	'home_url' => home_url(),
-	'admin_email' => get_option('admin_email'), //@TODO "Nebula" 0: Undefined index: admin_user. global_nebula_vars() isn't called until 'init' so it isnt set yet...
+	'admin_email' => get_option('admin_email'),
 	'admin_ajax' => admin_url('admin-ajax.php'),
 	'upload_dir' => $upload_dir['baseurl'],
 );

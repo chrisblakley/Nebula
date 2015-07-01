@@ -690,65 +690,6 @@ add_editor_style('css/editor-style.css');
 
 
 
-//Check if the current IP address matches any of the dev IP address from Nebula Settings
-//Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_dev() {
-	$devIPs = explode(',', get_option('nebula_dev_ip'));
-	foreach ( $devIPs as $devIP ) {
-		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
-			return true;
-		}
-	}
-
-	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
-	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
-
-	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
-	foreach ( $devEmails as $devEmail ) {
-		if ( trim($devEmail) == $current_user_domain ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-//Check if the current IP address matches any of the client IP address from Nebula Settings
-//Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_client() {
-	$clientIPs = explode(',', get_option('nebula_client_ip'));
-	foreach ( $clientIPs as $clientIP ) {
-		if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ){
-			return true;
-		}
-	}
-
-	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
-	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
-
-	$clientEmails = explode(',', get_option('nebula_client_email_domain'));
-	foreach ( $clientEmails as $clientEmail ) {
-		if ( trim($clientEmail) == $current_user_domain ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-//Check if the current IP address matches Pinckney Hugo Group.
-//Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_at_phg(){
-	if ( $_SERVER['REMOTE_ADDR'] == '72.43.235.106' ) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
 //Enable All Settings page for only Developers who are Admins
 if ( is_dev() && !is_client() ) {
 	add_action('admin_menu', 'all_settings_link');
@@ -838,4 +779,59 @@ function change_admin_footer_right() {
 	$nebula_version_daterange = ( empty($nebula_version['small']) ) ? 'First' : 'Second';
 
     return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
+}
+
+
+
+
+//Internal Search Keywords Metabox and Custom Field
+add_action('load-post.php', 'nebula_post_meta_boxes_setup');
+add_action('load-post-new.php', 'nebula_post_meta_boxes_setup');
+function nebula_add_post_meta_boxes(){
+	$builtin_types = array('post', 'page', 'attachment');
+	$custom_types = get_post_types(array('_builtin' => false));
+
+	foreach( $builtin_types as $builtin_type ){
+		add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', 'nebula_internal_search_keywords_meta_box', $builtin_type, 'side', 'default');
+	}
+
+	foreach( $custom_types as $custom_type ){
+		if ( !in_array($custom_type, array('acf', 'wpcf7_contact_form')) ){
+			add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', 'nebula_internal_search_keywords_meta_box', $custom_type, 'side', 'default');
+		}
+	}
+}
+function nebula_internal_search_keywords_meta_box($object, $box){
+	wp_nonce_field(basename(__FILE__), 'nebula_internal_search_keywords_nonce');
+	?>
+	<div>
+		<p style="font-size: 12px; color: #444;">Use plurals since parts of words will return in search results (unless plural has a different spelling than singular; then add both).</p>
+		<textarea id="nebula-internal-search-keywords" class="textarea" name="nebula-internal-search-keywords" placeholder="Additional keywords to help find this page..." style="width: 100%; min-height: 150px;"><?php echo get_post_meta($object->ID, 'nebula_internal_search_keywords', true); ?></textarea>
+	</div>
+<?php }
+function nebula_post_meta_boxes_setup() {
+	add_action('add_meta_boxes', 'nebula_add_post_meta_boxes');
+	add_action('save_post', 'nebula_save_post_class_meta', 10, 2);
+}
+function nebula_save_post_class_meta($post_id, $post){
+	if ( !isset($_POST['nebula_internal_search_keywords_nonce']) || !wp_verify_nonce($_POST['nebula_internal_search_keywords_nonce'], basename(__FILE__)) ){
+		return $post_id;
+	}
+
+	$post_type = get_post_type_object($post->post_type); //Get the post type object.
+
+	if ( !current_user_can($post_type->cap->edit_post, $post_id) ){ //Check if the current user has permission to edit the post.
+		return $post_id;
+	}
+
+	$new_meta_value = $_POST['nebula-internal-search-keywords']; //Get the posted data and sanitize it if needed.
+	$meta_value = get_post_meta($post_id, 'nebula_internal_search_keywords', true); //Get the meta value of the custom field key.
+
+	if ( $new_meta_value && $meta_value == '' ){ //If a new meta value was added and there was no previous value, add it.
+		add_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value, true);
+	} elseif ( $new_meta_value && $meta_value != $new_meta_value ){ //If the new meta value does not match the old value, update it.
+		update_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value);
+	} elseif ( $new_meta_value == '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
+		delete_post_meta($post_id, 'nebula_internal_search_keywords', $meta_value);
+	}
 }

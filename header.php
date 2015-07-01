@@ -50,7 +50,7 @@
 
 			<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 			<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated keywords. -->
-			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated news event keywords. --> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." -->
+			<meta name="news_keywords" content="<?php echo nebula_settings_conditional_text('nebula_news_keywords', ''); ?>" /><!-- @TODO "Nebula" 0: This should be on a per-post basis. Comma separated list of 10 keywords. --> <!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." -->
 			<meta name="author" content="<?php echo nebula_the_author(); ?>" />
 
 			<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />

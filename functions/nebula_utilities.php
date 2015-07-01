@@ -120,6 +120,66 @@ function ga_send_custom($array) {
 	}
 }
 
+
+//Check if the current IP address matches any of the dev IP address from Nebula Settings
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_dev() {
+	$devIPs = explode(',', get_option('nebula_dev_ip'));
+	foreach ( $devIPs as $devIP ) {
+		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
+			return true;
+		}
+	}
+
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
+	$current_user = wp_get_current_user();
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
+
+	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
+	foreach ( $devEmails as $devEmail ) {
+		if ( trim($devEmail) == $current_user_domain ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Check if the current IP address matches any of the client IP address from Nebula Settings
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_client() {
+	$clientIPs = explode(',', get_option('nebula_client_ip'));
+	foreach ( $clientIPs as $clientIP ) {
+		if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ){
+			return true;
+		}
+	}
+
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
+	$current_user = wp_get_current_user();
+	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
+
+	$clientEmails = explode(',', get_option('nebula_client_email_domain'));
+	foreach ( $clientEmails as $clientEmail ) {
+		if ( trim($clientEmail) == $current_user_domain ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Check if the current IP address matches Pinckney Hugo Group.
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_at_phg(){
+	if ( $_SERVER['REMOTE_ADDR'] == '72.43.235.106' ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
 	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) ? 'https' : 'http';
