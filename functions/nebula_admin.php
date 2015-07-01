@@ -395,9 +395,10 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 		}
 
 		function initial_install_date(){
-			if ( get_option('nebula_initialized') != '' ) { //&& (get_option('nebula_initialized') < getlastmod())
-				$install_date = '<strong>' . date('F j, Y', get_option('nebula_initialized')) . '</strong> <small>@</small> <strong>' . date('g:ia', get_option('nebula_initialized')) . '</strong> <small>(Nebula Init)</small>';
-			} else {
+			$nebula_initialized = get_option('nebula_initialized');
+			if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
+				$install_date = '<strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong> <small>(Nebula Init)</small>';
+			} else { //Use the last modified time of the admin page itself
 				$install_date = '<strong>' . date("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong> <small>(WP Detect)</small>';
 			}
 			return $install_date;

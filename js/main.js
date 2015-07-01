@@ -46,7 +46,7 @@ jQuery(document).ready(function(){
 	//Detect if loaded in an iframe
 	if ( window != window.parent ){
 		pageHTML.addClass('in-iframe');
-		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ) {
+		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
 			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 		}
 		jQuery('a').each(function(){

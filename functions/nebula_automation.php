@@ -90,13 +90,6 @@ function my_theme_register_required_plugins() {
             'slug'      => 'updraftplus',
             'required'  => false,
         ),
-/*
-        array(
-            'name'      => 'Theme Check',
-            'slug'      => 'theme-check',
-            'required'  => false,
-        ),
-*/
     );
 
     if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ) {
@@ -166,10 +159,17 @@ function nebulaActivation() {
 }
 
 function nebulaActivateComplete(){
-	set_nebula_initialized_date();
 
 	if ( current_user_can('manage_options') ) :
 		if ( isset($_GET['nebula-initialized']) ) : //If nebula has been initialized ?>
+
+			<?php
+				//@TODO "Nebula" 0: Is this where I should run these? I want to revisit this entire file...
+				nebula_initialization();
+				nebulaChangeHomeSetting();
+				nebulaWordpressSettings();
+			?>
+
 			<div id='nebula-activate-success' class='updated'>
 				<p>
 					<strong>Nebula has been initialized!</strong><br/>
@@ -211,7 +211,7 @@ function nebula_initialization(){
 		'post_type' => 'page',
 		'post_title' => 'Home',
 		'post_name' => 'home',
-		'post_content'   => "Nebula is a springboard Wordpress theme for developers. Inspired by the HTML5 Boilerplate, this theme creates the framework for development. Like other Wordpress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
+		'post_content'   => "Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
 
 Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced Wordpress techniques.",
 		'post_status' => 'publish',
@@ -426,6 +426,8 @@ function remove_core_bundled_plugins(){
 }
 
 function set_nebula_initialized_date(){
+	$nebula_initialized_date = date_parse(get_option('nebula_initialized'));
+
 	if ( 1==2 ) { //Set to true to force an initialization date (in case of some kind of accidental reset).
 		$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
 		if ( strtotime($force_date) !== false ) { //Check if provided date string is valid
@@ -433,10 +435,8 @@ function set_nebula_initialized_date(){
 			return false;
 		}
 	} else {
-		$nebula_initialized_date = date_parse(get_option('nebula_initialized'));
-
-		//If the nebula_initialized option is not set -or- set as an empty string -or- the parsed string error count is greater than 2 (known "errors" are accounted for) -or- the option has a PHP warning or error in it.
-		if ( get_option('nebula_initialized') === null || get_option('nebula_initialized') == '' || $nebula_initialized_date["error_count"] > 2 || contains(strtolower(get_option('nebula_initialized')), array('fatal', 'warning', 'error', 'on line')) ) {
+		//If the nebula_initialized option is empty -or- the parsed string error count is greater than 2 (known "errors" are accounted for) -or- the option has a PHP warning or error in it.
+		if ( empty($nebula_initialized_date) || $nebula_initialized_date["error_count"] > 2 || contains(strtolower(get_option('nebula_initialized')), array('fatal', 'warning', 'error', 'on line')) ){
 			update_option('nebula_initialized', date('U'));
 		}
 	}
