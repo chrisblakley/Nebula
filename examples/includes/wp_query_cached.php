@@ -3,7 +3,7 @@
 
 		<?php
 			$cached_query = get_transient('example_cached_query');
-			if ( $cached_query === false ){
+			if ( empty($cached_query) || is_debug() ){
 			    $cached_query = new WP_Query(array(
 			        'post_type' => 'event',
 			        'category_name' => 'concert',

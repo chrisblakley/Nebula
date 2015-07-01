@@ -823,7 +823,8 @@ function autocompleteSearch(){
 		        minLength: 3,
 		    }).data("ui-autocomplete")._renderItem = function(ul, item){
 			    thisSimilarity = ( typeof item.similarity !== 'undefined' ) ? item.similarity.toFixed(1) + '% Match' : '';
-			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
+			    thisLabel = ( item.label.length > 50 ) ? item.label.substring(0, 50) + '...' : item.label;
+			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + thisLabel.replace(/\\/g, '') + "</a>").appendTo(ul);
 			    return listItem;
 			};
 			var thisFormIdentifier = thisSearchInput.parents('form').attr('id') || thisSearchInput.parents('form').attr('name') || thisSearchInput.parents('form').attr('class');
@@ -1352,11 +1353,13 @@ function cFormPreValidator(){
 
 
 //CForm7 submit success callback
-//Add on_sent_ok: "cFormSuccess();" to Additional Settings
+//Add on_sent_ok: "cFormSuccess('Form Name Here');" to Additional Settings
 //First parameter should be the name of the form to send to Google Analytics (Default: "(not set)").
 //Second parameter should be either boolean (to use thanks.html) or string of another conversion page to use (Default: false).
 //This can be customized and duplicated as needed.
 function cFormSuccess(form, thanks){
+	//Enter Additional on_sent_ok functionality here since it can only be used once per contact form.
+
 	if ( form ){
 		ga('send', 'event', 'Contact', 'Submit Success', form);
 	} else {

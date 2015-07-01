@@ -672,7 +672,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 	$bearer = nebula_settings_conditional_text('nebula_twitter_bearer_token', '');
 
 	$tweets = get_transient('nebula_twitter_' . $username); //@TODO: The transient name should have the twitter name tied to it...
-	if ( empty($tweets) ){
+	if ( empty($tweets) || is_debug() ){
 		$context = stream_context_create(array(
 			'http' => array(
 				'method'=>'GET',
@@ -1163,7 +1163,7 @@ function nebula_autocomplete_search(){
 
 	//Find menu items
 	$menus = get_transient('nebula_autocomplete_menus');
-	if ( empty($menus) ){
+	if ( empty($menus) || is_debug() ){
 		$menus = get_terms('nav_menu');
 		set_transient('nebula_autocomplete_menus', $menus, 60*60); //1 hour cache
 	}
@@ -1201,7 +1201,7 @@ function nebula_autocomplete_search(){
 
 	//Find categories
 	$categories = get_transient('nebula_autocomplete_categories');
-	if ( empty($categories) ){
+	if ( empty($categories) || is_debug() ){
 		$categories = get_categories();
 		set_transient('nebula_autocomplete_categories', $categories, 60*60); //1 hour cache
 	}
@@ -1224,7 +1224,7 @@ function nebula_autocomplete_search(){
 
 	//Find tags
 	$tags = get_transient('nebula_autocomplete_tags');
-	if ( empty($tags) ){
+	if ( empty($tags) || is_debug() ){
 		$tags = get_tags();
 		set_transient('nebula_autocomplete_tags', $tags, 60*60); //1 hour cache
 	}
@@ -1248,7 +1248,7 @@ function nebula_autocomplete_search(){
 	//Find authors (if author bios are enabled)
 	if ( nebula_author_bios_enabled() ){
 		$authors = get_transient('nebula_autocomplete_authors');
-		if ( empty($authors) ){
+		if ( empty($authors) || is_debug() ){
 			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
 			set_transient('nebula_autocomplete_authors', $authors, 60*60); //1 hour cache
 		}
@@ -1682,7 +1682,7 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
 
 	$weather = get_transient('nebula_weather_' . $zipcode);
-	if ( empty($weather) ){
+	if ( empty($weather) || is_debug() ){
 		$use_errors = libxml_use_internal_errors(true);
 		$xml = simplexml_load_file($url);
 		//@TODO "Nebula" 0: Need to come up with a way to pull default weather info in case yahooapis.com can't be reached.

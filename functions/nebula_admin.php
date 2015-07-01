@@ -824,7 +824,7 @@ function nebula_save_post_class_meta($post_id, $post){
 		return $post_id;
 	}
 
-	$new_meta_value = $_POST['nebula-internal-search-keywords']; //Get the posted data and sanitize it if needed.
+	$new_meta_value = sanitize_text_field($_POST['nebula-internal-search-keywords']); //Get the posted data and sanitize it if needed.
 	$meta_value = get_post_meta($post_id, 'nebula_internal_search_keywords', true); //Get the meta value of the custom field key.
 
 	if ( $new_meta_value && $meta_value == '' ){ //If a new meta value was added and there was no previous value, add it.
