@@ -1407,15 +1407,6 @@ function nebula_advanced_search(){
 }
 
 
-//Check if user is using the debug query string.
-function is_debug(){
-	if ( array_key_exists('debug', $_GET) && is_dev() ){ //&& current_user_can('manage_options') maybe?
-		return true;
-	}
-	return false;
-}
-
-
 //Remove capital P core function
 remove_filter('the_title', 'capital_P_dangit', 11);
 remove_filter('the_content', 'capital_P_dangit', 11);

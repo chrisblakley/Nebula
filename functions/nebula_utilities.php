@@ -121,6 +121,15 @@ function ga_send_custom($array) {
 }
 
 
+//Check if user is using the debug query string.
+function is_debug(){
+	if ( (array_key_exists('debug', $_GET) && (is_dev() || is_client())) || WP_DEBUG ){
+		return true;
+	}
+	return false;
+}
+
+
 //Check if the current IP address matches any of the dev IP address from Nebula Settings
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_dev() {
