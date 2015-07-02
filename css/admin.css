@@ -103,8 +103,9 @@ th#id {width: 50px;}
 			.hidden_file.show-hidden-todos {display: block !important;}
 
 
-
-
+/* Hide theme activated notices in favor of Nebula activation notices (only on the themes page) */
+.themes-php #message2.updated.notice.is-dismissible.below-h2 {display: none;}
+.themes-php #setting-error-tgmpa {display: none !important;}
 
 /* Post/Page Listing Column Modifictions */
 .widefat td, .widefat td ol, .widefat td p, .widefat td ul {font-size: 12px !important;}

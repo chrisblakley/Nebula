@@ -9,9 +9,6 @@ function nebula_clear_transients(){
 	delete_transient('nebula_autocomplete_authors');
 }
 
-
-add_action('admin_init', 'set_nebula_initialized_date'); //This function is declared in nebula_automation.php. This check is to make sure it is set.
-
 //Disable auto curly quotes
 remove_filter('the_content', 'wptexturize');
 remove_filter('the_excerpt', 'wptexturize');

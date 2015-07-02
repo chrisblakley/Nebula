@@ -183,6 +183,55 @@ jQuery(document).ready(function() {
 	//Add .entry-content to the WYSIWYG to pull in more styles to match the front-end
 	jQuery('#wp-content-editor-container').addClass('entry-content'); //not working
 
+
+	//Initialize confirm dialog.
+	jQuery('#run-nebula-initialization').on('click tap touch', function(){
+		if ( !confirm('This will reset some WordPress settings, all Nebula settings, and reset the homepage content! Are you sure you want to initialize?') ) {
+			return false;
+		} else {
+			jQuery('.nebula-activated-description').html('<i class="fa fa-spinner fa-spin"></i> Running initialization...');
+
+			jQuery.ajax({
+				type: "POST",
+				url: bloginfo["admin_ajax"],
+				data: {
+					action: 'nebula_initialization'
+				},
+				success: function(data){
+					if ( data == '1' ){
+						jQuery('.nebula-activated-title').html('<i class="fa fa-check" style="color: green;"></i> Nebula has been initialized!');
+						jQuery('.nebula-activated-description').html('Settings have been updated. The home page has been updated and has been set as the static front page in <a href="options-reading.php">Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href="themes.php?page=nebula_settings">Nebula Settings</a>');
+						return false;
+					} else {
+						jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
+						jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+						jQuery('.nebula-activated-description').html('AJAX initialization has failed. Attempting standard initialization. <strong>This will reload the page in 3 seconds...</strong>');
+						setTimeout(function(){
+							window.location = 'themes.php?nebula-initialization=true';
+						}, 3000);
+					}
+				},
+				error: function(MLHttpRequest, textStatus, errorThrown){
+					jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
+					jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+					jQuery('.nebula-activated-description').html('An AJAX error has occurred. Attempting standard initialization. <strong>This will reload the page in 3 seconds...</strong>');
+					setTimeout(function(){
+						window.location = 'themes.php?nebula-initialization=true';
+					}, 3000);
+				},
+				timeout: 10000
+			});
+			return false;
+		}
+	});
+
+	//Remove query string once initialized.
+	if ( window.location.href.indexOf('?nebula-initialization=true') >= 0 ){
+		cleanURL = window.location.href.split('?');
+		history.replaceState(null, document.title, cleanURL[0]);
+	}
+
+
 }); //End Document Ready
 
 jQuery(window).on('load', function() {
