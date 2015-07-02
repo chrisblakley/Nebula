@@ -204,20 +204,22 @@ jQuery(document).ready(function() {
 						return false;
 					} else {
 						jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
-						jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
-						jQuery('.nebula-activated-description').html('AJAX initialization has failed. Attempting standard initialization. <strong>This will reload the page in 3 seconds...</strong>');
+						jQuery('.nebula-activated-title').html('<i class="fa fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+						jQuery('.nebula-activated-description').html('AJAX initialization has failed. Attempting standard initialization. <strong>This will reload the page in 2 seconds...</strong>');
 						setTimeout(function(){
+							jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
 							window.location = 'themes.php?nebula-initialization=true';
-						}, 3000);
+						}, 2000);
 					}
 				},
 				error: function(MLHttpRequest, textStatus, errorThrown){
 					jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
-					jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
-					jQuery('.nebula-activated-description').html('An AJAX error has occurred. Attempting standard initialization. <strong>This will reload the page in 3 seconds...</strong>');
+					jQuery('.nebula-activated-title').html('<i class="fa fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+					jQuery('.nebula-activated-description').html('An AJAX error has occurred. Attempting standard initialization. <strong>This will reload the page in 2 seconds...</strong>');
 					setTimeout(function(){
+						jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
 						window.location = 'themes.php?nebula-initialization=true';
-					}, 3000);
+					}, 2000);
 				},
 				timeout: 10000
 			});

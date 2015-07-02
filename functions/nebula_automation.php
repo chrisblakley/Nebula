@@ -144,8 +144,11 @@ function my_theme_register_required_plugins() {
 }
 
 
-add_action('after_switch_theme', 'nebula_activation'); //When Nebula has been activated
-if ( current_user_can('manage_options') && isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or if initializing the theme without AJAX
+add_action('after_switch_theme', 'nebula_activation_notice'); //When Nebula has been activated
+function nebula_activation_notice(){
+	add_action('admin_notices', 'nebula_activation');
+}
+if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or if initializing the theme without AJAX
 	add_action('admin_notices', 'nebula_activation');
 }
 function nebula_activation(){
@@ -155,7 +158,7 @@ function nebula_activation(){
 		nebula_initialization(true);
 	}
 ?>
-	<?php if ( $is_standard_initialization ): ?>
+	<?php if ( $is_standard_initialization && current_user_can('manage_options') ): ?>
 		<div id='nebula-activate-success' class='updated'>
 			<p>
 				<strong class="nebula-activated-title">Nebula has been initialized!</strong><br/>
