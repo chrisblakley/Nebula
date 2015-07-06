@@ -734,13 +734,21 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 /* ==========================================================================
    Footer Area
    ========================================================================== */
-.footer {padding-top: 20px; background: #0098d7;}
+.footer {background: #0098d7;}
 
 .twitterago {font-size: 12px; text-decoration: underline;}
 
-.widget-container {list-style: none;}
+.footerwidgets {padding-top: 20px; padding-bottom: 20px; background: #444;}
+	.widget-container {list-style: none;}
+		.footerwidgets .widget-title {font-size: 16px; text-transform: uppercase; color: #fff; font-weight: bold; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
+		.footerwidgets .textwidget,
+		.footerwidgets ul li {font-size: 12px; color: #fff;}
+		.footerwidgets a {color: #fff;}
+			.footerwidgets a:hover,
+			.footerwidgets a.hover,
+			.footerwidgets a:focus {color: #aaa;}
 
-.row.powerfootercon {margin-bottom: 30px;}
+.row.powerfootercon {padding-top: 20px; margin-bottom: 30px;}
 	nav#powerfooter {position: relative; z-index: 1000;}
 		nav#powerfooter ul {}
 			nav#powerfooter ul li.menu-item {position: relative; display: inline-block; float: left; margin: 0 5px; padding: 0 10px; width: 180px;}
@@ -748,13 +756,13 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 				nav#powerfooter ul li.menu-item.first-child {margin-left: 0; padding-left: 0;}
 				nav#powerfooter ul li.menu-item:last-child,
 				nav#powerfooter ul li.menu-item.last-child {margin-right: 0; padding-right: 0;}
-				nav#powerfooter ul li.menu-item a {display: block; color: #fff; font-size: 16px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #fff;}
+				nav#powerfooter ul li.menu-item a {display: block; color: #fff; font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px dotted #fff;}
 					nav#powerfooter ul li.menu-item a:hover,
 					nav#powerfooter ul li.menu-item a.hover,
 					nav#powerfooter ul li.menu-item a:focus {color: #aaa;}
 				nav#powerfooter ul li.menu-item ul.sub-menu {margin: 0; padding: 5px 0;}
 					nav#powerfooter ul li.menu-item ul.sub-menu li {display: block; margin: 0; padding: 0;}
-						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; color: #fff; font-size: 12px; font-weight: normal; text-transform: none; border-bottom: none;}
+						nav#powerfooter ul li.menu-item ul.sub-menu li a {display: block; color: #fff; font-size: 12px; font-weight: normal; text-transform: none; margin-bottom: 0; border-bottom: none;}
 							nav#powerfooter ul li.menu-item ul.sub-menu li a:hover,
 							nav#powerfooter ul li.menu-item ul.sub-menu li a.hover,
 							nav#powerfooter ul li.menu-item ul.sub-menu li a:focus {color: #aaa;}
@@ -939,6 +947,7 @@ div.copyright {padding-top: 15px; background: #444; /* background: rgba(0, 0, 0,
 div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
 .avoid-clicks {pointer-events: none;} /* Only supported in IE11+ */
 .allow-clicks {pointer-events: all;} /* Only supported in IE11+ */
+.filtered {display: none;}
 
 .aligncenter, .align-center {display: block; margin: 0 auto;}
 .alignleft, .align-left {float: left;}

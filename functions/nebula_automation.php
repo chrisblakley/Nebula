@@ -155,6 +155,7 @@ function nebula_activation(){
 	$is_standard_initialization = ( isset($_GET['nebula-initialization']) ) ? true : false; //Detect if non-AJAX initialization is needed. //@TODO: is there any way to do this besides query strings?
 
 	if ( $is_standard_initialization ){
+		//@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
 		nebula_initialization(true);
 	}
 ?>
@@ -312,91 +313,9 @@ function nebula_initialization_default_settings(){
 	global $wp_rewrite;
 
 	//Update Nebula settings options
-	update_option('nebula_overall', 'Enabled');
-	update_option('nebula_domain_expiration_alert', 'Never');
-	update_option('nebula_edited_yet', 'false');
-	update_option('nebula_domain_expiration_alert', 'Default');
-
-	update_option('nebula_site_owner', '');
-	update_option('nebula_contact_email', '');
-	update_option('nebula_ga_tracking_id', '');
-	update_option('nebula_hostnames', '');
-	update_option('nebula_keywords', '');
-	update_option('nebula_news_keywords', '');
-	update_option('nebula_phone_number', '');
-	update_option('nebula_fax_number', '');
-	update_option('nebula_latitude', '');
-	update_option('nebula_longitude', '');
-	update_option('nebula_street_address', '');
-	update_option('nebula_locality', '');
-	update_option('nebula_region', '');
-	update_option('nebula_postal_code', '');
-	update_option('nebula_country_name', '');
-
-	update_option('nebula_business_hours_sunday_enabled', '');
-	update_option('nebula_business_hours_sunday_open', '');
-	update_option('nebula_business_hours_sunday_close', '');
-	update_option('nebula_business_hours_monday_enabled', '');
-	update_option('nebula_business_hours_monday_open', '');
-	update_option('nebula_business_hours_monday_close', '');
-	update_option('nebula_business_hours_tuesday_enabled', '');
-	update_option('nebula_business_hours_tuesday_open', '');
-	update_option('nebula_business_hours_tuesday_close', '');
-	update_option('nebula_business_hours_wednesday_enabled', '');
-	update_option('nebula_business_hours_wednesday_open', '');
-	update_option('nebula_business_hours_wednesday_close', '');
-	update_option('nebula_business_hours_thursday_enabled', '');
-	update_option('nebula_business_hours_thursday_open', '');
-	update_option('nebula_business_hours_thursday_close', '');
-	update_option('nebula_business_hours_friday_enabled', '');
-	update_option('nebula_business_hours_friday_open', '');
-	update_option('nebula_business_hours_friday_close', '');
-	update_option('nebula_business_hours_saturday_enabled', '');
-	update_option('nebula_business_hours_saturday_open', '');
-	update_option('nebula_business_hours_saturday_close', '');
-	update_option('nebula_business_hours_closed', '');
-
-	update_option('nebula_facebook_url', '');
-	update_option('nebula_facebook_app_id', '');
-	update_option('nebula_facebook_app_secret', '');
-	update_option('nebula_facebook_access_token', '');
-	update_option('nebula_facebook_page_id', '');
-	update_option('nebula_facebook_admin_ids', '');
-	update_option('nebula_google_plus_url', '');
-	update_option('nebula_twitter_url', '');
-	update_option('nebula_twitter_bearer_token', '');
-	update_option('nebula_linkedin_url', '');
-	update_option('nebula_youtube_url', '');
-	update_option('nebula_instagram_url', '');
-
-	update_option('nebula_wireframing', 'Default');
-	update_option('nebula_admin_bar', 'Default');
-	update_option('nebula_author_bios', 'Default');
-	update_option('nebula_comments', 'Default');
-	update_option('nebula_disqus_shortname', '');
-	update_option('nebula_wp_core_updates_notify', 'Default');
-	update_option('nebula_plugin_update_warning', 'Default');
-	update_option('nebula_welcome_panel', 'Default');
-	update_option('nebula_unnecessary_metaboxes', 'Default');
-	update_option('nebula_dev_metabox', 'Default');
-	update_option('nebula_todo_metabox', 'Default');
-	update_option('nebula_domain_exp', 'Default');
-	update_option('nebula_dev_stylesheets', 'Default');
-	update_option('nebula_console_css', 'Default');
-	update_option('nebula_cse_id', '');
-	update_option('nebula_cse_api_key', '');
-
-	update_option('nebula_dev_ip', '');
-	update_option('nebula_dev_email_domain', '');
-	update_option('nebula_client_ip', '');
-	update_option('nebula_client_email_domain', '');
-	update_option('nebula_cpanel_url', '');
-	update_option('nebula_hosting_url', '');
-	update_option('nebula_registrar_url', '');
-	update_option('nebula_ga_url', '');
-	update_option('nebula_google_webmaster_tools_url', '');
-	update_option('nebula_google_adsense_url', '');
-	update_option('nebula_mention_url', '');
+	foreach ( $GLOBALS['nebula_settings_fields'] as $nebula_settings_field => $default ){
+		update_option($nebula_settings_field, $default);
+	}
 
 	//Update certain Wordpress Core options
 	update_option('blogdescription', ''); //Empty the site tagline

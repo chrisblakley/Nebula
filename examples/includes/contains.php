@@ -1,6 +1,6 @@
 <style>
 	#example-list p {margin: 0; padding: 0;}
-	.filtereditem {display: none;}
+	.filtered {display: none;} /* This class is in style.css, but also here for demonstration */
 </style>
 
 
@@ -12,8 +12,8 @@
 
 			console.log('filtering for: ' + filter);
 
-			jQuery('#example-list').find("*:not(:Contains(" + filter + "))").parents('li').addClass('filtereditem');
-			jQuery('#example-list').find("*:Contains(" + filter + ")").parents('li').removeClass('filtereditem');
+			jQuery('#example-list').find("*:not(:Contains(" + filter + "))").parents('li').addClass('filtered');
+			jQuery('#example-list').find("*:Contains(" + filter + ")").parents('li').removeClass('filtered');
 		});
 
 	});

@@ -1712,6 +1712,8 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 function vimeo_meta($videoID){
 	return false; //@TODO "Nebula" 0: This function interferes with proper Relevanssi indexing. Look into an entirely alternate way besides simplexml maybe?
 
+	//@TODO "Nebula" 0: Overhaul this function like the Youtube Meta function. Store the video info in a transient and pass parameters to the function instead of creating a global variable! Can the Vimeo video info data come in JSON format instead of XML? Might solve the Relevanssi indexing issue.
+
 	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
 	if ( !$xml ){
 		return 'A Vimeo API error occurred.';
@@ -1730,24 +1732,89 @@ function vimeo_meta($videoID){
 }
 
 
-function youtube_meta($videoID){
-	return false; //@TODO "Nebula" 0: Youtube API is updated and no longer allows anonymous requests :(
-
-	$xml = simplexml_load_string(file_get_contents("https://gdata.youtube.com/feeds/api/videos/" . $videoID)); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
-	if ( !$xml ){
-		return 'A Youtube API error occurred.';
+function youtube_meta($videoID, $meta=''){
+	switch ( $meta ){
+		case '':
+			return false;
+			break;
+		case 'origin':
+			return nebula_url_components('basedomain');
+			break;
+		case 'id':
+			return $videoID;
+			break;
+		case 'href':
+		case 'link':
+		case 'url':
+			return 'https://www.youtube.com/watch?v=' . $videoID;
+			break;
+		default:
+			break;
 	}
-	$GLOBALS['youtube_meta']['origin'] = nebula_url_components('basedomain');
-	$GLOBALS['youtube_meta']['id'] = $videoID;
-	$GLOBALS['youtube_meta']['title'] = $xml->title;
-	$GLOBALS['youtube_meta']['safetitle'] = str_replace(" ", "-", $GLOBALS['youtube_meta']['title']);
-	$GLOBALS['youtube_meta']['content'] = $xml->content;
-	$GLOBALS['youtube_meta']['href'] = $xml->link['href'];
-	$GLOBALS['youtube_meta']['author'] = $xml->author->name;
-	$temp = $xml->xpath('//yt:duration[@seconds]');
-    $GLOBALS['youtube_meta']['seconds'] = strval($temp[0]->attributes()->seconds);
-	$GLOBALS['youtube_meta']['duration'] = intval(gmdate("i", $GLOBALS['youtube_meta']['seconds'])) . gmdate(":s", $GLOBALS['youtube_meta']['seconds']);
-	return $GLOBALS['youtube_meta'];
+
+	$youtube_json = get_transient('nebula_youtube_' . $videoID);
+	if ( empty($youtube_json) || is_debug() ){
+		if ( get_option('nebula_google_server_api_key') == '' ){
+			if ( current_user_can('manage_options') || is_dev() ){
+				trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Settings (in the WordPress Admin).", E_USER_WARNING);
+				return false;
+			} else {
+				trigger_error("Google API Server Key not found.", E_USER_WARNING);
+				return false;
+			}
+		}
+		$youtube_json = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=" . $videoID . "&part=snippet,contentDetails,statistics&key=" . get_option('nebula_google_server_api_key')); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+		set_transient('nebula_youtube_' . $videoID, $youtube_json, 60*60); //1 hour expiration
+	}
+	$youtube_json = json_decode($youtube_json);
+
+	if ( !$youtube_json ){
+		return 'A Youtube Data API error occurred.';
+	}
+
+	switch ( $meta ){
+		case 'json':
+			return $youtube_json->items[0];
+			break;
+		case 'title':
+			return $youtube_json->items[0]->snippet->title;
+			break;
+		case 'safetitle':
+		case 'safe-title':
+			return str_replace(" ", "-", $youtube_json->items[0]->snippet->title);
+			break;
+		case 'description':
+		case 'content':
+			return $youtube_json->items[0]->snippet->description;;
+			break;
+		case 'thumbnail':
+			return $youtube_json->items[0]->snippet->thumbnails->high->url;;
+			break;
+		case 'author':
+		case 'channeltitle':
+		case 'channel':
+			return $youtube_json->items[0]->snippet->channelTitle;;
+			break;
+		case 'uploaded':
+		case 'published':
+		case 'date':
+			return $youtube_json->items[0]->snippet->publishedAt;;
+			break;
+		case 'seconds':
+		case 'duration':
+			$start = new DateTime('@0'); //Unix epoch
+		    $start->add(new DateInterval($youtube_json->items[0]->contentDetails->duration));
+		    $duration_seconds = intval($start->format('H'))*60*60 + intval($start->format('i'))*60 + intval($start->format('s'));
+		    if ( $meta == 'seconds' ){
+			    return $duration_seconds;
+		    } else {
+			    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
+		    }
+			break;
+		default:
+			break;
+	}
+	return false;
 }
 
 

@@ -155,7 +155,8 @@ $localize_clientinfo = array(
 );
 $localize_nebula_settings = array(
 	'nebula_cse_id' => get_option('nebula_cse_id'),
-	'nebula_cse_api_key' => get_option('nebula_cse_api_key'),
+	'nebula_google_browser_api_key' => get_option('nebula_google_browser_api_key'),
+	//'nebula_google_maps_api' => get_option('nebula_google_maps_api'), //To date, the Google Maps API key is not needed for JS integrations.
 	'isDev' => $jsAdmin,
 	'debug' => $GLOBALS["debug"],
 );

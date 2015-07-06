@@ -66,8 +66,10 @@
 				<div class="welcome-panel-column">
 					<h4>Administration</h4>
 					<ul>
+						<li><i class="fa fa-list-alt fa-fw"></i> <a href="themes.php?page=nebula_settings">Nebula Settings</a></li>
+
 						<?php if ( get_option('nebula_cpanel_url') != '' ) : ?>
-							<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo get_option('nebula_cpanel_url'); ?>" target="_blank">Control Panel</a></li>
+							<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo get_option('nebula_cpanel_url'); ?>" target="_blank">Server Control Panel</a></li>
 						<?php endif; ?>
 
 						<?php if ( get_option('nebula_hosting_url') != '' ) : ?>
@@ -75,7 +77,7 @@
 						<?php endif; ?>
 
 						<?php if ( get_option('nebula_registrar_url') != '' ) : ?>
-							<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo get_option('nebula_registrar_url'); ?>" target="_blank">Registrar</a></li>
+							<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo get_option('nebula_registrar_url'); ?>" target="_blank">Domain Registrar</a></li>
 						<?php endif; ?>
 
 						<?php if ( get_option('nebula_ga_url') != '' ) : ?>

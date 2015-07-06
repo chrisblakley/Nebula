@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="sixteen columns">
-		
+
 		<div class="container">
 			<div class="row">
 				<div class="eight columns">
@@ -21,8 +21,9 @@
 				</div><!--/columns-->
 			</div><!--/row-->
 		</div><!--/container-->
-		
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script>
+
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=weather"></script><!-- @TODO "Nebula" 0: Load with Google API loader -->
+
 		<div class="googlemapcon nebulaframe">
 			<div id="map_canvas" class="googlemap"></div>
 		</div>

@@ -414,6 +414,14 @@ get_header(); ?>
 						include_once('includes/transients.php');
 					} ?>
 
+					<?php if (is_page(1807)) { //Autocomplete Search
+						include_once('includes/autocomplete_search.php');
+					} ?>
+
+					<?php if (is_page(1786)) { //Autocomplete Address
+						include_once('includes/autocomplete_address.php');
+					} ?>
+
 					<?php
 					/*==========================
 					 Utilities
@@ -480,9 +488,11 @@ get_header(); ?>
 		</div><!--/columns-->
 		<div class="four columns push_one">
 			<ul class="xoxo">
-				<li>
-					<h3>Documentation</h3>
-					<?php wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999')); ?>
+				<li class="widget-container">
+					<?php if ( has_nav_menu('sidebar') ) : ?>
+						<h3>Documentation</h3>
+						<?php wp_nav_menu(array('theme_location' => 'sidebar')); ?>
+					<?php endif; ?>
 				</li>
 			</ul>
 		</div><!--/columns-->

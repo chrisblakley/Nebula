@@ -58,6 +58,10 @@ function nebula_author_bios_enabled(){
 	return !nebula_settings_conditional('nebula_author_bios', 'disabled');
 }
 
+function nebula_adwords_enabled(){
+	return !nebula_settings_conditional('nebula_adwords', 'disabled');
+}
+
 function nebula_comments_enabled(){
 	return !nebula_settings_conditional('nebula_comments', 'disabled');
 }
@@ -77,103 +81,103 @@ if ( is_admin() ) {
 
 //Create the Nebula Submenu
 function nebula_sub_menu() {
-	//add_options_page('Nebula Settings', 'Nebula Settings', 'manage_options', 'nebula_settings', 'nebula_settings_page');
 	add_theme_page('Nebula Settings', 'Nebula Settings', 'manage_options', 'nebula_settings', 'nebula_settings_page');
 }
 
 //Register each option
 function register_nebula_settings() {
-	/*
-		Note: When adding Nebula settings, be sure to add the field to nebulaWordpressSettings() in /functions/nebula_automation.php with a default value!
-			Ex: update_option('nebula_contact_email', ''); -or- update_option('nebula_plugin_update_warning', 'Default');
-	*/
+	$GLOBALS['nebula_settings_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
+		'nebula_overall' => 'Enabled',
+		'nebula_initialized' => '',
+		'nebula_edited_yet' => 'false',
+		'nebula_domain_expiration_alert' => 'Default',
+		'nebula_site_owner' => '',
+		'nebula_contact_email' => '',
+		'nebula_ga_tracking_id' => '',
+		'nebula_hostnames' => '',
+		'nebula_keywords' => '',
+		'nebula_phone_number' => '',
+		'nebula_fax_number' => '',
+		'nebula_latitude' => '',
+		'nebula_longitude' => '',
+		'nebula_street_address' => '',
+		'nebula_locality' => '',
+		'nebula_region' => '',
+		'nebula_postal_code' => '',
+		'nebula_country_name' => '',
+		'nebula_business_hours_sunday_enabled' => '',
+		'nebula_business_hours_sunday_open' => '',
+		'nebula_business_hours_sunday_close' => '',
+		'nebula_business_hours_monday_enabled' => '',
+		'nebula_business_hours_monday_open' => '',
+		'nebula_business_hours_monday_close' => '',
+		'nebula_business_hours_tuesday_enabled' => '',
+		'nebula_business_hours_tuesday_open' => '',
+		'nebula_business_hours_tuesday_close' => '',
+		'nebula_business_hours_wednesday_enabled' => '',
+		'nebula_business_hours_wednesday_open' => '',
+		'nebula_business_hours_wednesday_close' => '',
+		'nebula_business_hours_thursday_enabled' => '',
+		'nebula_business_hours_thursday_open' => '',
+		'nebula_business_hours_thursday_close' => '',
+		'nebula_business_hours_friday_enabled' => '',
+		'nebula_business_hours_friday_open' => '',
+		'nebula_business_hours_friday_close' => '',
+		'nebula_business_hours_saturday_enabled' => '',
+		'nebula_business_hours_saturday_open' => '',
+		'nebula_business_hours_saturday_close' => '',
+		'nebula_business_hours_closed' => '',
+		'nebula_google_webmaster_tools_verification' => '',
+		'nebula_facebook_url' => '',
+		'nebula_facebook_app_id' => '',
+		'nebula_facebook_app_secret' => '',
+		'nebula_facebook_access_token' => '',
+		'nebula_facebook_page_id' => '',
+		'nebula_facebook_admin_ids' => '',
+		'nebula_google_plus_url' => '',
+		'nebula_twitter_url' => '',
+		'nebula_twitter_consumer_key' => '',
+		'nebula_twitter_consumer_secret' => '',
+		'nebula_twitter_bearer_token' => '',
+		'nebula_linkedin_url' => '',
+		'nebula_youtube_url' => '',
+		'nebula_instagram_url' => '',
+		'nebula_wireframing' => 'Default',
+		'nebula_admin_bar' => 'Default',
+		'nebula_adwords' => 'Default',
+		'nebula_author_bios' => 'Default',
+		'nebula_comments' => 'Default',
+		'nebula_disqus_shortname' => '',
+		'nebula_wp_core_updates_notify' => 'Default',
+		'nebula_plugin_update_warning' => 'Default',
+		'nebula_welcome_panel' => 'Default',
+		'nebula_unnecessary_metaboxes' => 'Default',
+		'nebula_dev_metabox' => 'Default',
+		'nebula_todo_metabox' => 'Default',
+		'nebula_domain_exp' => 'Default',
+		'nebula_dev_stylesheets' => 'Default',
+		'nebula_console_css' => 'Default',
+		'nebula_cse_id' => '',
+		'nebula_google_server_api_key' => '',
+		'nebula_google_browser_api_key' => '',
+		'nebula_dev_ip' => '',
+		'nebula_dev_email_domain' => '',
+		'nebula_client_ip' => '',
+		'nebula_client_email_domain' => '',
+		'nebula_cpanel_url' => '',
+		'nebula_hosting_url' => '',
+		'nebula_registrar_url' => '',
+		'nebula_ga_url' => '',
+		'nebula_google_webmaster_tools_url' => '',
+		'nebula_google_maps_api' => '',
+		'nebula_google_adsense_url' => '',
+		'nebula_google_adwords_url' => '',
+		'nebula_mention_url' => '',
+	);
 
-	register_setting('nebula_settings_group', 'nebula_overall');
-	register_setting('nebula_settings_group', 'nebula_initialized');
-	register_setting('nebula_settings_group', 'nebula_edited_yet');
-	register_setting('nebula_settings_group', 'nebula_domain_expiration_alert');
-
-	register_setting('nebula_settings_group', 'nebula_site_owner');
-	register_setting('nebula_settings_group', 'nebula_contact_email');
-	register_setting('nebula_settings_group', 'nebula_ga_tracking_id');
-	register_setting('nebula_settings_group', 'nebula_hostnames');
-	register_setting('nebula_settings_group', 'nebula_keywords');
-	register_setting('nebula_settings_group', 'nebula_news_keywords');
-	register_setting('nebula_settings_group', 'nebula_phone_number');
-	register_setting('nebula_settings_group', 'nebula_fax_number');
-	register_setting('nebula_settings_group', 'nebula_latitude');
-	register_setting('nebula_settings_group', 'nebula_longitude');
-	register_setting('nebula_settings_group', 'nebula_street_address');
-	register_setting('nebula_settings_group', 'nebula_locality');
-	register_setting('nebula_settings_group', 'nebula_region');
-	register_setting('nebula_settings_group', 'nebula_postal_code');
-	register_setting('nebula_settings_group', 'nebula_country_name');
-
-	register_setting('nebula_settings_group', 'nebula_business_hours_sunday_enabled');
-	register_setting('nebula_settings_group', 'nebula_business_hours_sunday_open');
-	register_setting('nebula_settings_group', 'nebula_business_hours_sunday_close');
-	register_setting('nebula_settings_group', 'nebula_business_hours_monday_enabled');
-	register_setting('nebula_settings_group', 'nebula_business_hours_monday_open');
-	register_setting('nebula_settings_group', 'nebula_business_hours_monday_close');
-	register_setting('nebula_settings_group', 'nebula_business_hours_tuesday_enabled');
-	register_setting('nebula_settings_group', 'nebula_business_hours_tuesday_open');
-	register_setting('nebula_settings_group', 'nebula_business_hours_tuesday_close');
-	register_setting('nebula_settings_group', 'nebula_business_hours_wednesday_enabled');
-	register_setting('nebula_settings_group', 'nebula_business_hours_wednesday_open');
-	register_setting('nebula_settings_group', 'nebula_business_hours_wednesday_close');
-	register_setting('nebula_settings_group', 'nebula_business_hours_thursday_enabled');
-	register_setting('nebula_settings_group', 'nebula_business_hours_thursday_open');
-	register_setting('nebula_settings_group', 'nebula_business_hours_thursday_close');
-	register_setting('nebula_settings_group', 'nebula_business_hours_friday_enabled');
-	register_setting('nebula_settings_group', 'nebula_business_hours_friday_open');
-	register_setting('nebula_settings_group', 'nebula_business_hours_friday_close');
-	register_setting('nebula_settings_group', 'nebula_business_hours_saturday_enabled');
-	register_setting('nebula_settings_group', 'nebula_business_hours_saturday_open');
-	register_setting('nebula_settings_group', 'nebula_business_hours_saturday_close');
-	register_setting('nebula_settings_group', 'nebula_business_hours_closed');
-
-	register_setting('nebula_settings_group', 'nebula_google_webmaster_tools_verification');
-	register_setting('nebula_settings_group', 'nebula_facebook_url');
-	register_setting('nebula_settings_group', 'nebula_facebook_app_id');
-	register_setting('nebula_settings_group', 'nebula_facebook_app_secret');
-	register_setting('nebula_settings_group', 'nebula_facebook_access_token');
-	register_setting('nebula_settings_group', 'nebula_facebook_page_id');
-	register_setting('nebula_settings_group', 'nebula_facebook_admin_ids');
-	register_setting('nebula_settings_group', 'nebula_google_plus_url');
-	register_setting('nebula_settings_group', 'nebula_twitter_url');
-	register_setting('nebula_settings_group', 'nebula_twitter_bearer_token');
-	register_setting('nebula_settings_group', 'nebula_linkedin_url');
-	register_setting('nebula_settings_group', 'nebula_youtube_url');
-	register_setting('nebula_settings_group', 'nebula_instagram_url');
-
-	register_setting('nebula_settings_group', 'nebula_wireframing');
-	register_setting('nebula_settings_group', 'nebula_admin_bar');
-	register_setting('nebula_settings_group', 'nebula_author_bios');
-	register_setting('nebula_settings_group', 'nebula_comments');
-	register_setting('nebula_settings_group', 'nebula_disqus_shortname');
-	register_setting('nebula_settings_group', 'nebula_wp_core_updates_notify');
-	register_setting('nebula_settings_group', 'nebula_plugin_update_warning');
-	register_setting('nebula_settings_group', 'nebula_welcome_panel');
-	register_setting('nebula_settings_group', 'nebula_unnecessary_metaboxes');
-	register_setting('nebula_settings_group', 'nebula_dev_metabox');
-	register_setting('nebula_settings_group', 'nebula_todo_metabox');
-	register_setting('nebula_settings_group', 'nebula_domain_exp');
-	register_setting('nebula_settings_group', 'nebula_dev_stylesheets');
-	register_setting('nebula_settings_group', 'nebula_console_css');
-	register_setting('nebula_settings_group', 'nebula_cse_id');
-	register_setting('nebula_settings_group', 'nebula_cse_api_key');
-
-	register_setting('nebula_settings_group', 'nebula_dev_ip');
-	register_setting('nebula_settings_group', 'nebula_dev_email_domain');
-	register_setting('nebula_settings_group', 'nebula_client_ip');
-	register_setting('nebula_settings_group', 'nebula_client_email_domain');
-	register_setting('nebula_settings_group', 'nebula_cpanel_url');
-	register_setting('nebula_settings_group', 'nebula_hosting_url');
-	register_setting('nebula_settings_group', 'nebula_registrar_url');
-	register_setting('nebula_settings_group', 'nebula_ga_url');
-	register_setting('nebula_settings_group', 'nebula_google_webmaster_tools_url');
-	register_setting('nebula_settings_group', 'nebula_google_adsense_url');
-	register_setting('nebula_settings_group', 'nebula_mention_url');
+	foreach ( $GLOBALS['nebula_settings_fields'] as $nebula_settings_field => $default ){
+		register_setting('nebula_settings_group', $nebula_settings_field);
+	}
 }
 
 //Output the settings page
@@ -181,6 +185,8 @@ function nebula_settings_page(){
 ?>
 
 	<style>
+		h2 .nav-tab.nav-tab-inactive {font-weight: 400;}
+
 		.dependent.override,
 		.mobiletitle.override {opacity: 0.4; pointer-events: none;}
 		.form-table th {width: 250px;}
@@ -275,7 +281,7 @@ function nebula_settings_page(){
 				});
 			}
 
-			//Pull content from full meta tag HTML
+			//Pull content from full meta tag HTML (Google Webmaster Tools)
 			jQuery('#nebula_google_webmaster_tools_verification').on('paste change blur', function(){
 				var gwtInputValue = jQuery('#nebula_google_webmaster_tools_verification').val();
 				if ( gwtInputValue.indexOf('<meta') >= 0 ){
@@ -290,12 +296,16 @@ function nebula_settings_page(){
 	<div class="wrap">
 		<h2>Nebula Settings</h2>
 		<?php
-			if ( !current_user_can('manage_options') ) {
+			if ( !current_user_can('manage_options') || !is_dev() ){
 			    wp_die('You do not have sufficient permissions to access this page.');
+			} else {
+				if ( get_option('nebula_ga_tracking_id') == '' ){
+					echo '<strong>WARNING:</strong> Google Analytics tracking ID is currently not set!';
+				}
 			}
 		?>
 
-		<?php if ( $_GET['settings-updated'] == 'true' ) : ?>
+		<?php if ( $_GET['settings-updated'] == 'true' ): ?>
 			<div id="message" class="updated below-h2">
 				<p><strong>Nebula Settings</strong> have been updated.</p>
 			</div>
@@ -358,6 +368,7 @@ function nebula_settings_page(){
 			<h2 class="nav-tab-wrapper">
 	            <a id="metadata" class="nav-tab nav-tab-active" href="#">Metadata</a>
 	            <a id="functions" class="nav-tab nav-tab-inactive" href="#">Functions</a>
+	            <a id="apis" class="nav-tab nav-tab-inactive" href="#">APIs</a>
 	            <a id="administration" class="nav-tab nav-tab-inactive" href="#">Administration</a>
 	        </h2>
 
@@ -380,13 +391,6 @@ function nebula_settings_page(){
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">Google Analytics Tracking ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input type="text" name="nebula_ga_tracking_id" value="<?php echo get_option('nebula_ga_tracking_id'); ?>" placeholder="UA-00000000-1" />
-						<p class="helper"><small>This will add the tracking number to the appropriate locations. If left empty, the tracking ID will need to be entered in <strong>functions.php</strong>.</small></p>
-					</td>
-		        </tr>
-		        <tr valign="top">
 		        	<th scope="row">Valid Hostnames&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_hostnames" value="<?php echo get_option('nebula_hostnames'); ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" style="width: 392px;" />
@@ -401,13 +405,6 @@ function nebula_settings_page(){
 					<td>
 						<input type="text" name="nebula_keywords" value="<?php echo get_option('nebula_keywords'); ?>" placeholder="Keywords" style="width: 392px;" />
 						<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata.</small></p>
-					</td>
-		        </tr>
-		        <tr valign="top">
-		        	<th scope="row">News Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input type="text" name="nebula_news_keywords" value="<?php echo get_option('nebula_news_keywords'); ?>" placeholder="News Keywords" style="width: 392px;" />
-						<p class="helper"><small>Comma-separated list of news events (without quotes) that will be used as news keyword metadata. Currently, this is a global setting. In the future it should be overwritten by a per-post custom field (or pull from Yoast or likewise). <a href="https://support.google.com/news/publisher/answer/68297" target="_blank">More information &raquo;</a></small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">
@@ -489,63 +486,58 @@ function nebula_settings_page(){
 
 
 
-				<tr valign="top">
-		        	<th scope="row">Google Webmaster Tools Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input id="nebula_google_webmaster_tools_verification" type="text" name="nebula_google_webmaster_tools_verification" value="<?php echo get_option('nebula_google_webmaster_tools_verification'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
-						<p class="helper"><small>This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Webmaster Tools</a>. Note: Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</small></p>
-					</td>
-		        </tr>
+
 		        <tr valign="top">
 		        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						URL: <input type="text" name="nebula_facebook_url" value="<?php echo get_option('nebula_facebook_url'); ?>" placeholder="http://www.facebook.com/PinckneyHugo" style="width: 358px;"/><br/>
-						App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
-						App Secret: <input type="text" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br/>
-						Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/><br/>
 						Page ID: <input type="text" name="nebula_facebook_page_id" value="<?php echo get_option('nebula_facebook_page_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
 						Admin IDs: <input type="text" name="nebula_facebook_admin_ids" value="<?php echo get_option('nebula_facebook_admin_ids'); ?>" placeholder="0000, 0000, 0000" style="width: 153px;"/><br/>
-
-						<p class="helper"><small>The URL and App ID of the associated Facebook page/app. This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></small></p>
+						<p class="helper"><small>The URL (and optional page ID and admin IDs) of the associated Facebook page.</small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">Google+&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google+ URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						URL: <input type="text" name="nebula_google_plus_url" value="<?php echo get_option('nebula_google_plus_url'); ?>" placeholder="https://plus.google.com/106644717328415684498/about" style="width: 358px;"/>
+						<input type="text" name="nebula_google_plus_url" value="<?php echo get_option('nebula_google_plus_url'); ?>" placeholder="https://plus.google.com/106644717328415684498/about" style="width: 358px;"/>
 						<p class="helper"><small>The URL of the associated Google+ page. It is important to register with <a href="http://www.google.com/business/" target="_blank">Google Business</a> for the geolocation benefits (among other things)!</small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">Twitter&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Twitter URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						URL: <input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/><br/>
-						Bearer Token: <input type="text" name="nebula_twitter_bearer_token" value="<?php echo get_option('nebula_twitter_bearer_token'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
-						<p class="helper"><small>The URL of the associated Twitter page. The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
+						<input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/><br/>
+						<p class="helper"><small>The URL of the associated Twitter page.</small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">LinkedIn&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">LinkedIn URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						URL: <input type="text" name="nebula_linkedin_url" value="<?php echo get_option('nebula_linkedin_url'); ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" style="width: 358px;"/>
+						<input type="text" name="nebula_linkedin_url" value="<?php echo get_option('nebula_linkedin_url'); ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" style="width: 358px;"/>
 						<p class="helper"><small>The URL of the associated LinkedIn page.</small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">Youtube&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Youtube URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						URL: <input type="text" name="nebula_youtube_url" value="<?php echo get_option('nebula_youtube_url'); ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" style="width: 358px;"/>
+						<input type="text" name="nebula_youtube_url" value="<?php echo get_option('nebula_youtube_url'); ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" style="width: 358px;"/>
 						<p class="helper"><small>The URL of the associated YouTube page.</small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">Instagram&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Instagram URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						URL: <input type="text" name="nebula_instagram_url" value="<?php echo get_option('nebula_instagram_url'); ?>" placeholder="https://www.instagram.com/pinckneyhugo" style="width: 358px;"/>
+						<input type="text" name="nebula_instagram_url" value="<?php echo get_option('nebula_instagram_url'); ?>" placeholder="https://www.instagram.com/pinckneyhugo" style="width: 358px;"/>
 						<p class="helper"><small>The URL of the associated Instagram page.</small></p>
 					</td>
 		        </tr>
 		    </table>
+
+
+
+
+
+
 
 			<h2 class="mobiletitle">Functions</h2>
 			<hr class="mobiletitle"/>
@@ -575,6 +567,18 @@ function nebula_settings_page(){
 					</td>
 		        </tr>
 
+		        <tr valign="top">
+		        	<th scope="row">Google AdWords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_adwords">
+							<option value="default" <?php selected('default', get_option('nebula_adwords')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_adwords')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_adwords')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to integrate with Google AdWords. This can be used instead of pasting the Google AdWords snippet into the header! <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+
 				<tr valign="top">
 		        	<th scope="row">Author Bios&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
@@ -596,14 +600,6 @@ function nebula_settings_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_comments')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Ability to force disable comments. If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles). <em>(Default: Disabled)</em></small></p>
-					</td>
-		        </tr>
-
-				<tr valign="top">
-		        	<th scope="row">Disqus Shortname&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input type="text" name="nebula_disqus_shortname" value="<?php echo get_option('nebula_disqus_shortname'); ?>" style="width: 392px;" />
-						<p class="helper"><small> Enter your Disqus shortname here. <a href="https://disqus.com/admin/create/" target="_blank">Sign-up for an account here</a>. In your <a href="https://<?php echo get_option('nebula_disqus_shortname'); ?>.disqus.com/admin/settings/" target="_blank">Disqus account settings</a> (where you will find your shortname), please uncheck the "Discovery" box.</small></p>
 					</td>
 		        </tr>
 
@@ -715,22 +711,98 @@ function nebula_settings_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
-		        	<th scope="row">CSE Engine ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		    </table>
+
+
+
+			<h2 class="mobiletitle">APIs</h2>
+			<hr class="mobiletitle"/>
+
+			<table class="form-table dependent apis" style="display: none;">
+
+				<tr valign="top">
+		        	<th scope="row">Google Analytics Tracking ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_cse_id" value="<?php echo get_option('nebula_cse_id'); ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" />
-						<p class="helper"><small>Google Custom Search Engine ID (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
+						<input type="text" name="nebula_ga_tracking_id" value="<?php echo get_option('nebula_ga_tracking_id'); ?>" placeholder="UA-00000000-1" />
+						<p class="helper"><small>This will add the tracking number to the appropriate locations. If left empty, the tracking ID will need to be entered in <strong>functions.php</strong>.</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Google Webmaster Tools Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="nebula_google_webmaster_tools_verification" type="text" name="nebula_google_webmaster_tools_verification" value="<?php echo get_option('nebula_google_webmaster_tools_verification'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
+						<p class="helper"><small>This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Webmaster Tools</a>. Note: Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Google Public API&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						Browser Key: <input type="text" name="nebula_google_browser_api_key" value="<?php echo get_option('nebula_google_browser_api_key'); ?>" style="width: 392px;" /><br/>
+						Server Key: <input type="text" name="nebula_google_server_api_key" value="<?php echo get_option('nebula_google_server_api_key'); ?>" style="width: 392px;" />
+						<p class="helper"><small>In the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Under "Credentials" create a new key.<br/>Your current server IP address is <strong><?php echo gethostbyname(gethostname()); ?></strong> <em>(for server key whitelisting)</em>. Do not use the Server Key in JavaScript or any client-side code!</small></p>
 					</td>
 		        </tr>
 
 		        <tr valign="top">
-		        	<th scope="row">CSE API Key&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google Custom Search Engine&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_cse_api_key" value="<?php echo get_option('nebula_cse_api_key'); ?>" style="width: 392px;" />
-						<p class="helper"><small>Google Custom Search Engine API Key (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). On the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Then on the "APIs" page, find "Custom Search API" and toggle it on. Then under "Credentials" create a new key, choose "Browser Key".</small></p>
+						Engine ID: <input type="text" name="nebula_cse_id" value="<?php echo get_option('nebula_cse_id'); ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" /><br/>
+						<p class="helper"><small>Google Custom Search Engine (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
 					</td>
 		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">Google Maps&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="nebula_google_maps_api" type="text" name="nebula_google_maps_api" value="<?php echo get_option('nebula_google_maps_api'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
+						<p class="helper"><small>The Google Maps API key from the <a href="https://console.developers.google.com/project">Developers Console</a>. This is needed for any Google Maps integration.</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Disqus Shortname&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_disqus_shortname" value="<?php echo get_option('nebula_disqus_shortname'); ?>" style="width: 392px;" />
+						<p class="helper"><small> Enter your Disqus shortname here. <a href="https://disqus.com/admin/create/" target="_blank">Sign-up for an account here</a>. In your <a href="https://<?php echo get_option('nebula_disqus_shortname'); ?>.disqus.com/admin/settings/" target="_blank">Disqus account settings</a> (where you will find your shortname), please uncheck the "Discovery" box.</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
+						App Secret: <input type="text" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br/>
+						Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/><br/>
+						<p class="helper"><small>The App ID of the associated Facebook page/app. This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Twitter&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						Consumer Key: <input type="text" name="nebula_twitter_consumer_key" value="<?php echo get_option('nebula_twitter_consumer_key'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br/>
+						Consumer Secret: <input type="text" name="nebula_twitter_consumer_secret" value="<?php echo get_option('nebula_twitter_consumer_secret'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br/>
+						Bearer Token: <input type="text" name="nebula_twitter_bearer_token" value="<?php echo get_option('nebula_twitter_bearer_token'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
+						<p class="helper"><small>The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
+					</td>
+		        </tr>
+
+		        <?php if ( 1==2 ): //@TODO "Nebula" 0: Get this integrated into Nebula before enabling. ?>
+		        <tr valign="top">
+		        	<th scope="row">YouTube&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						Data: <input type="text" name="nebula_youtube_todo" value="<?php echo get_option('nebula_youtube_todo'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
+						<p class="helper"><small>The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
+					</td>
+		        </tr>
+		        <?php endif; ?>
+
 		    </table>
+
+
+
 
 			<h2 class="mobiletitle">Administration</h2>
 			<hr class="mobiletitle"/>
@@ -775,7 +847,7 @@ function nebula_settings_page(){
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">Control Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Server Control Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<?php
 							$serverProtocol = 'http://';
@@ -822,7 +894,14 @@ function nebula_settings_page(){
 		        	<th scope="row">Google AdSense URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_adsense_url" value="<?php echo get_option('nebula_google_adsense_url'); ?>" placeholder="https://www.google.com/adsense/app" style="width: 392px;" />
-						<p class="helper"><small>Direct link to this project's <a href="http://www.google.com/adsense/" target="_blank">Google AdSense</a> account.</small></p>
+						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account.</small></p>
+					</td>
+		        </tr>
+		        <tr valign="top">
+		        	<th scope="row">Google AdWords URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_google_adwords_url" value="<?php echo get_option('nebula_google_adwords_url'); ?>" placeholder="https://www.google.com/adwords/" style="width: 392px;" />
+						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adwords/" target="_blank">Google AdWords</a> account.</small></p>
 					</td>
 		        </tr>
 		        <tr valign="top">

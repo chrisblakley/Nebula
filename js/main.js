@@ -66,6 +66,9 @@ jQuery(document).ready(function(){
 
 	vimeoControls();
 
+	if ( jQuery('#address-autocomplete').is('*') ){
+		nebulaAddressAutocomplete('#address-autocomplete');
+	}
 	mapInfo = [];
 	getAllLocations();
 	mapActions();
@@ -91,7 +94,11 @@ jQuery(window).on('load', function(){
 	checkCformLocalStorage();
 	browserInfo();
 
-	jQuery('#nebula-hero-search input').focus();
+	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
+		if ( !jQuery('input:focus').is('*') ){
+			jQuery(this).focus();
+		}
+	});
 
 	setTimeout(function(){
 		emphasizeSearchTerms();
@@ -674,8 +681,8 @@ function mmenus() {
 			//Close mmenu on back button click
 			if (window.history && window.history.pushState){
 				window.addEventListener("popstate", function(e){
-					if ( jQuery('html.mm-opened').is('*') ) {
-						jQuery(".mm-menu").trigger("close.mm");
+					if ( jQuery('html.mm-opened').is('*') ){
+						mobileNav.data('mmenu').close();
 						e.stopPropagation();
 					}
 				}, false);
@@ -707,9 +714,9 @@ function nebulaEqualize(){
 		var oThis = jQuery(this);
 		tallestColumn = 0;
 		oThis.find('.columns').css('min-height', '0');
-		oThis.find('.columns').each(function(){
-			if ( !oThis.hasClass('no-equalize') ){
-				columnHeight = oThis.height();
+		oThis.find('.columns').each(function(i){
+			if ( !jQuery(this).hasClass('no-equalize') ){
+				columnHeight = jQuery(this).height();
 				if ( columnHeight > tallestColumn ){
 					tallestColumn = columnHeight;
 				}
@@ -755,7 +762,7 @@ function autocompleteSearch(){
 		jQuery('.nebula-search-iconable').removeClass('searching').removeClass('autocompleted');
 	});
 
-	jQuery("#s, input.search").on('keypress paste', function(e){
+	jQuery("input#s, input.search").on('keypress paste', function(e){
 		thisSearchInput = jQuery(this);
 		if ( !thisSearchInput.hasClass('no-autocomplete') && !pageHTML.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
 			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && thisSearchInput.val().trim().length >= 2 && searchTriggerOnlyChars(e) ){
@@ -1094,12 +1101,22 @@ function pageVisibility(){
 		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
 			var pageTitle = pageDocument.attr('title');
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
-			//@TODO "Nebula" 0: pause youtube
+
+			jQuery('iframe.youtubeplayer').each(function(){
+				if ( !jQuery(this).hasClass('ignore-visibility') ){
+					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
+				}
+			});
+
 			//@TODO "Nebula" 0: pause vimeo
 		}
 
 		if ( getPageVisibility() ) { //Page is hidden
-			//@TODO "Nebula" 0: pause youtube
+			jQuery('iframe.youtubeplayer').each(function(){
+				if ( !jQuery(this).hasClass('ignore-visibility') ){
+					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
+				}
+			});
 			//@TODO "Nebula" 0: pause vimeo
 			visFirstHidden = 1;
 			visTimerBefore = (new Date()).getTime();
@@ -1493,7 +1510,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			}
 		}
 
-		instance = new Notification(title, message); //Trigger the notification
+		instance = new Notification(title, message); //Trigger the notification //@TODO "Nebula" 0: This will be deprecated soon. Update to the service worker.
 
 		if ( typeof clickCallback !== "undefined" ){
 			instance.onclick = function(){
@@ -1654,7 +1671,8 @@ function conditionalJSLoading(){
         });
     }
 
-	if ( jQuery('pre.nebula-code').is('*') ){
+	if ( jQuery('pre.nebula-code').is('*') || jQuery('pre.nebula-pre').is('*') ){
+		nebulaLoadCSS(bloginfo['template_directory'] + '/css/pre.css');
 		nebula_pre();
 	}
 
@@ -1866,6 +1884,15 @@ function nebula_pre(){
 		}
 	}
 
+	//Format non-shortcode pre tags to be styled properly
+	jQuery('pre.nebula-code').each(function(){
+		if ( !jQuery(this).parent('.nebula-pre-con').is('*') ){
+			lang = jQuery(this).attr('class').replace('nebula-code', '').trim();
+			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-pre-con clearfix ' + lang.toLowerCase() + '"></div>');
+			jQuery(this).parents('.nebula-pre-con').prepend('<span class="nebula-pre nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
+		}
+	});
+
 	jQuery('.nebula-pre-con').each(function(){
 		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>');
 	});
@@ -1974,6 +2001,122 @@ function selectText(element, copy, callback){
 /* ==========================================================================
    Google Maps API v3 Functions
    ========================================================================== */
+
+
+//Places - Address Autocomplete
+function nebulaAddressAutocomplete(autocompleteInput){
+	if ( jQuery(autocompleteInput).is('*') ){ //If the addressAutocomplete ID exists
+		jQuery.getScript('https://www.google.com/jsapi', function(){
+		    google.load('maps', '3', {
+			    other_params: 'libraries=places',
+			    callback: function(){
+					addressAutocomplete = new google.maps.places.Autocomplete(
+						jQuery(autocompleteInput)[0],
+						{types: ['geocode']} //Restrict the search to geographical location types
+					);
+
+					google.maps.event.addListener(addressAutocomplete, 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
+						place = addressAutocomplete.getPlace(); //Get the place details from the addressAutocomplete object.
+
+						//Come up with a way so that everything doesn't need to be defined before detecting if it exists. Like "pushing" to the object.
+						addressComponents = {
+							'street': {
+								'number': null,
+								'name': null,
+								'full': null,
+							},
+							'city': null,
+							'county': null,
+							'state': {
+								'name': null,
+								'abbreviation': null,
+							},
+							'country': {
+								'name': null,
+								'abbreviation': null,
+							},
+							'zip': {
+								'code': null,
+								'suffix': null,
+								'full': null,
+							},
+						};
+
+						for ( var i = 0; i < place.address_components.length; i++ ){
+							//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
+							switch ( place.address_components[i].types[0] ){
+								case "street_number":
+									addressComponents.street.number = place.address_components[i].short_name; //123
+									break;
+								case "route":
+									addressComponents.street.name = place.address_components[i].long_name; //Street Name Rd.
+									break;
+								case "locality":
+									addressComponents.city = place.address_components[i].long_name; //Liverpool
+									break;
+								case "administrative_area_level_2":
+									addressComponents.county = place.address_components[i].long_name; //Onondaga County
+									break;
+								case "administrative_area_level_1":
+									addressComponents.state.name = place.address_components[i].long_name; //New York
+									addressComponents.state.abbreviation = place.address_components[i].short_name; //NY
+									break;
+								case "country":
+									addressComponents.country.name = place.address_components[i].long_name; //United States
+									addressComponents.country.abbreviation = place.address_components[i].short_name; //US
+									break;
+								case "postal_code":
+									addressComponents.zip.code = place.address_components[i].short_name; //13088
+									break;
+								case "postal_code_suffix":
+									addressComponents.zip.suffix = place.address_components[i].short_name; //4725
+									break;
+								default:
+									//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
+							}
+						}
+						if ( addressComponents.street.number && addressComponents.street.name ){
+							addressComponents.street.full = addressComponents.street.number + ' ' + addressComponents.street.name;
+						}
+						if ( addressComponents.zip.code && addressComponents.zip.suffix ){
+							addressComponents.zip.full = addressComponents.zip.code + '-' + addressComponents.zip.suffix;
+						}
+
+						jQuery(document).trigger('nebula_address_selected');
+						ga('send', 'event', 'Contact', 'Autocomplete Address', addressComponents.city + ', ' + addressComponents.state.abbreviation + ' ' + addressComponents.zip.code);
+					});
+
+					jQuery(autocompleteInput).on('focus', function(){
+						if ( navigator.geolocation ){
+							navigator.geolocation.getCurrentPosition(function(position){ //Bias to the user's geographical location.
+								var geolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+								var circle = new google.maps.Circle({
+									center: geolocation,
+									radius: position.coords.accuracy
+								});
+								addressAutocomplete.setBounds(circle.getBounds());
+							});
+						}
+					}).on('keydown', function(e){
+						if ( e.which == 13 && jQuery('.pac-container:visible').is('*') ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
+							return false;
+						}
+					});
+
+					if ( autocompleteInput == '#address-autocomplete' ){
+						jQuery(document).on('nebula_address_selected', function(){
+							//do any default stuff here.
+						});
+					}
+		    	} //End Google Maps callback
+		    }); //End Google Maps load
+		}).fail(function(){
+			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
+		});
+	}
+} //END nebulaAddressAutocomplete()
+
+
 
 //Interactive Functions of the Google Map
 function mapActions(){

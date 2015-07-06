@@ -7,66 +7,7 @@
 
 			<div class="footer">
 
-				<?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
-					<div class="row footerwidgets">
-						<?php if ( footerWidgetCounter() == 4 ) : ?>
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('First Footer Widget Area') ) : ?>
-									<?php //First Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Second Footer Widget Area') ) : ?>
-									<?php //Second Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Third Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
-									<?php //Fourth Footer Widget Area ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php elseif ( footerWidgetCounter() == 3 ) : ?>
-							<div class="four columns">
-								<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="four columns">
-								<?php if ( dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="eight columns">
-								<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php elseif ( footerWidgetCounter() == 2 ) : ?>
-							<div class="eight columns">
-								<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds (between 1-3). ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-							<div class="eight columns">
-								<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds (between 4-2). ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php else : //1 Active Widget ?>
-							<div class="sixteen columns">
-								<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Fourth Footer Widget Area') ) : ?>
-									<?php //Outputs the first active widget area it finds. ?>
-								<?php endif; ?>
-							</div><!--/columns-->
-						<?php endif; ?>
-
-					</div><!--/row-->
-				<?php endif; ?>
+				<?php include_once('includes/footer_widgets.php'); //Footer widget logic. ?>
 
 				<?php if ( has_nav_menu('footer') ) : ?>
 					<div class="container footerlinks">
@@ -134,15 +75,15 @@
 
 			<script>
 				//Check for Youtube Videos
-				if ( jQuery('.youtubeplayer').length ) {
+				if ( jQuery('.youtubeplayer').length ){
 					var players = {};
 					var tag = document.createElement('script');
-					tag.src = "http://www.youtube.com/iframe_api";
+					tag.src = "https://www.youtube.com/iframe_api";
 					var firstScriptTag = document.getElementsByTagName('script')[0];
 					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 				}
 
-				function onYouTubeIframeAPIReady(e) {
+				function onYouTubeIframeAPIReady(e){
 					jQuery('iframe.youtubeplayer').each(function(i){
 						var youtubeiframeClass = jQuery(this).attr('id');
 						players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
@@ -154,22 +95,19 @@
 					});
 				}
 
-				//Track Youtube Video Events
 				var pauseFlag = false;
-				function onPlayerReady(e) {
+				function onPlayerReady(e){
 				   //Do nothing
 				}
-				function onPlayerStateChange(e) {
-				    if (e.data == YT.PlayerState.PLAYING) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+				function onPlayerStateChange(e){
+					var videoTitle = e['target']['B']['videoData']['title'];
+				    if ( e.data == YT.PlayerState.PLAYING ){
 				        ga('send', 'event', 'Videos', 'Play', videoTitle);
 				        pauseFlag = true;
 				    }
-				    if (e.data == YT.PlayerState.ENDED) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+				    if ( e.data == YT.PlayerState.ENDED ){
 				        ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-				    } else if (e.data == YT.PlayerState.PAUSED && pauseFlag) {
-				        var videoTitle = e['target']['a']['id'].replace(/-/g, ' ');
+				    } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
 				        ga('send', 'event', 'Videos', 'Pause', videoTitle);
 				        pauseFlag = false;
 				    }

@@ -377,7 +377,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ) {
 
 		$secureServer = '';
 		if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) {
-			$secureServer = '<small><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
+			$secureServer = '<small class="secured-connection"><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
 		}
 
 		function top_domain_name($url){

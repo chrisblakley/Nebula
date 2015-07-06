@@ -84,6 +84,8 @@ th#id {width: 50px;}
 	div.precon {display: none; resize: none;}
 		.wp-admin pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 
+.secured-connection i {color: #00a200;}
+
 .linenumber {font-weight: bold;}
 
 .todo_help_icon {float: right; font-size: 10px;}

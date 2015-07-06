@@ -285,12 +285,16 @@ function vimeo_shortcode($atts){
 //Youtube
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
-	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0), $atts) );
+	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts) );
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
-	youtube_meta($id);
-	global $youtube_meta;
-	$youtube = '<article class="nebula-youtube youtube video"><iframe id="' . $youtube_meta['safetitle'] . '" class="youtubeplayer" ' . $width . ' ' . $height . ' src="//www.youtube.com/embed/' . $youtube_meta['id'] . '?wmode=transparent&enablejsapi=1&origin=' . $youtube_meta['origin'] . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
+
+	$flags = get_flags($atts);
+	if ( in_array('ignore_visibility', $flags) ){
+		$ignore_visibility = 'ignore-visibility';
+	}
+
+	$youtube = '<article class="nebula-youtube youtube video"><iframe id="' . youtube_meta($id, 'safetitle') . '" class="youtubeplayer ' . $class . ' ' . $ignore_visibility . '" ' . $width . ' ' . $height . ' src="//www.youtube.com/embed/' . youtube_meta($id, 'id') . '?wmode=transparent&enablejsapi=1&origin=' . youtube_meta($id, 'origin') . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
 	return $youtube;
 }
 
@@ -306,14 +310,8 @@ function code_shortcode($atts, $content=''){
 
 //Pre
 add_shortcode('pre', 'pre_shortcode');
-$GLOBALS['pre'] = 0;
 function pre_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );
-
-	if ( $GLOBALS['pre'] == 0 ) { //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
-		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
-		$GLOBALS['pre'] = 1;
-	}
 
 	$flags = get_flags($atts);
 	if ( !in_array('br', $flags) ) {

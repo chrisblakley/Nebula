@@ -95,32 +95,37 @@ function at_remove_wp_ver_css_js($src) {
 
 //Check referrer in order to comment
 add_action('check_comment_flood', 'check_referrer');
-function check_referrer() {
-	if ( !isset($_SERVER['HTTP_REFERER']) || $_SERVER['HTTP_REFERER'] == '' ) {
+function check_referrer(){
+	if ( !isset($_SERVER['HTTP_REFERER']) || $_SERVER['HTTP_REFERER'] == '' ){
 		wp_die('Please do not access this file directly.');
 	}
 }
 
 //Check referrer for known spambots
-//Traffic will be sent a 403 Forbidden error and never be able to see the site!
+//Traffic will be sent a 403 Forbidden error and never be able to see the site.
 //Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering).
-//Sometimes spambots target sites without event visiting. Discovering these and filtering them using GA is important too!
+//Sometimes spambots target sites without actually visiting. Discovering these and filtering them using GA is important too!
 //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
 add_action('wp_loaded', 'nebula_spambot_prevention');
 function nebula_spambot_prevention(){
-	$common_referral_spambots = get_transient('nebula_spambots');
-	if ( empty($common_referral_spambots) || is_debug() ){
-		$common_referral_spambots = file_get_contents('https://gist.githubusercontent.com/chrisblakley/e31a07380131e726d4b5/raw/common_referral_spambots.txt');
-		set_transient('nebula_spambots', $common_referral_spambots, 60*60); //1 hour cache
+	$spambot_blacklist = get_transient('nebula_spambot_blacklist');
+	if ( empty($spambot_blacklist) || is_debug() ){
+		/*
+			Good spambot blacklists:
+				https://gist.github.com/chrisblakley/e31a07380131e726d4b5 (raw: https://gist.githubusercontent.com/chrisblakley/e31a07380131e726d4b5/raw/common_referral_spambots.txt)
+				https://github.com/piwik/referrer-spam-blacklist/blob/master/spammers.txt (raw: https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt)
+		*/
+		$spambot_blacklist = file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
+		set_transient('nebula_spambot_blacklist', $spambot_blacklist, 60*60); //1 hour cache
 	}
 
-	if ( strlen($common_referral_spambots) > 0 ) {
+	if ( strlen($spambot_blacklist) > 0 ){
 		$GLOBALS['spambot_domains'] = array();
-		foreach(explode("\n", $common_referral_spambots) as $line) {
+		foreach( explode("\n", $spambot_blacklist) as $line ){
 			$GLOBALS['spambot_domains'][] = $line;
 		}
 
-		if ( count($GLOBALS['spambot_domains']) > 1 ) {
+		if ( count($GLOBALS['spambot_domains']) > 1 ){
 			if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $GLOBALS['spambot_domains']) ) {
 				ga_send_event('Security Precaution', 'Spambot Prevention', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 				header('HTTP/1.1 403 Forbidden');
