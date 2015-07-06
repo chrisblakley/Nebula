@@ -19,7 +19,7 @@
 
 	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 	<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated keywords. -->
-	<?php if ( get_field('news_keywords') ): //@TODO "Metadata" 1: The news keywords custom field is not bundled with Nebula and must be created to use this. News keywords are <=10 comma separated keywords. ?>
+	<?php if ( function_exists('get_field') && get_field('news_keywords') ): //@TODO "Metadata" 1: The news keywords custom field is not bundled with Nebula and must be created to use this. News keywords are <=10 comma separated keywords. ?>
 		<meta name="news_keywords" content="<?php echo get_field('news_keywords'); ?>" /><!-- @TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." -->
 	<?php endif; ?>
 	<meta name="author" content="<?php echo nebula_the_author(); ?>" />

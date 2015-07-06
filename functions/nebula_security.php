@@ -115,13 +115,13 @@ function nebula_spambot_prevention(){
 				https://gist.github.com/chrisblakley/e31a07380131e726d4b5 (raw: https://gist.githubusercontent.com/chrisblakley/e31a07380131e726d4b5/raw/common_referral_spambots.txt)
 				https://github.com/piwik/referrer-spam-blacklist/blob/master/spammers.txt (raw: https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt)
 		*/
-		$spambot_blacklist = file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
+		$spambot_blacklist = file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
 		set_transient('nebula_spambot_blacklist', $spambot_blacklist, 60*60); //1 hour cache
 	}
 
 	if ( strlen($spambot_blacklist) > 0 ){
 		$GLOBALS['spambot_domains'] = array();
-		foreach( explode("\n", $spambot_blacklist) as $line ){
+		foreach( explode("\n", $spambot_blacklist) as $line ){ //@TODO "Nebula" 0: continue; if empty line.
 			$GLOBALS['spambot_domains'][] = $line;
 		}
 
