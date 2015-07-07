@@ -17,7 +17,7 @@ function global_nebula_vars(){
 
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text($setting, $default = ''){
-	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ) {
+	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ){
 		return get_option($setting);
 	} else {
 		return $default;
@@ -27,7 +27,7 @@ function nebula_settings_conditional_text($setting, $default = ''){
 
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text_bool($setting, $true = true, $false = false){
-	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ) {
+	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ){
 		return $true;
 	} else {
 		return $false;
@@ -36,12 +36,12 @@ function nebula_settings_conditional_text_bool($setting, $true = true, $false = 
 
 
 //Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
-function nebula_settings_conditional($setting, $default='enabled') {
-	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' ) {
+function nebula_settings_conditional($setting, $default='enabled'){
+	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' ){
 		return true;
 	}
 
-	if ( (strtolower(get_option($setting)) == 'default') || (strtolower(get_option($setting)) == strtolower($default)) ) {
+	if ( (strtolower(get_option($setting)) == 'default') || (strtolower(get_option($setting)) == strtolower($default)) ){
 		return true;
 	} else {
 		return false;
@@ -74,18 +74,18 @@ function nebula_wireframing_enabled(){
 
 
 //Initialize the Nebula Submenu
-if ( is_admin() ) {
+if ( is_admin() ){
 	add_action('admin_menu', 'nebula_sub_menu');
 	add_action('admin_init', 'register_nebula_settings');
 }
 
 //Create the Nebula Submenu
-function nebula_sub_menu() {
+function nebula_sub_menu(){
 	add_theme_page('Nebula Settings', 'Nebula Settings', 'manage_options', 'nebula_settings', 'nebula_settings_page');
 }
 
 //Register each option
-function register_nebula_settings() {
+function register_nebula_settings(){
 	$GLOBALS['nebula_settings_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
 		'nebula_overall' => 'Enabled',
 		'nebula_initialized' => '',
@@ -209,14 +209,14 @@ function nebula_settings_page(){
 
 		.mobiletitle {display: none;}
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 782px){
 
 			.form-table th {width: 100%;}
 			input[type="text"] {width: 100% !important;}
 
 		}
 
-		@media only screen and (max-width: 400px) {
+		@media only screen and (max-width: 400px){
 			.nav-tab-wrapper {display: none;}
 			.mobiletitle {display: block;}
 			.form-table.dependent {display: block !important;}
@@ -227,7 +227,7 @@ function nebula_settings_page(){
 	</style>
 
 	<script>
-		jQuery(document).ready(function() {
+		jQuery(document).ready(function(){
 
 			toggleDependents();
 
@@ -244,8 +244,8 @@ function nebula_settings_page(){
 				toggleDependents();
 			});
 
-			function toggleDependents() {
-				if ( jQuery('#nebula_overall').val() == 'disabled' || jQuery('#nebula_overall').val() == 'override' ) {
+			function toggleDependents(){
+				if ( jQuery('#nebula_overall').val() == 'disabled' || jQuery('#nebula_overall').val() == 'override' ){
 					jQuery('.dependent, .mobiletitle').addClass('override');
 				} else {
 					jQuery('.dependent, .mobiletitle').removeClass('override');
@@ -257,7 +257,7 @@ function nebula_settings_page(){
 				jQuery('.nav-tab-active').removeClass('nav-tab-active').addClass('nav-tab-inactive');
 				jQuery('#' + tabID).removeClass('nav-tab-inactive').addClass('nav-tab-active');
 				jQuery('table.form-table.dependent').each(function(){
-					if ( !jQuery(this).hasClass(tabID) ) {
+					if ( !jQuery(this).hasClass(tabID) ){
 						jQuery(this).fadeOut(250);
 					} else {
 						jQuery(this).fadeIn(250);
@@ -271,9 +271,9 @@ function nebula_settings_page(){
 				businessHoursCheck();
 			});
 
-			function businessHoursCheck() {
+			function businessHoursCheck(){
 				jQuery('.businessday input[type="checkbox"]').each(function(){
-					if ( jQuery(this).prop('checked') ) {
+					if ( jQuery(this).prop('checked') ){
 						jQuery(this).parents('.businessday').removeClass('closed');
 					} else {
 						jQuery(this).parents('.businessday').addClass('closed');
@@ -851,7 +851,7 @@ function nebula_settings_page(){
 					<td>
 						<?php
 							$serverProtocol = 'http://';
-							if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) {
+							if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
 								$serverProtocol = 'https://';
 							}
 						?>

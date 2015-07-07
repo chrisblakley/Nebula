@@ -199,8 +199,8 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 .nebulashadow.bulging {height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain;}
 .nebulashadow.curling {height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain;}
 .nebulashadow.hovering { height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain;}
-.nebulashadow.anchored-right, .nebulashadow.rising-left {height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top center; background-size: contain;}
-.nebulashadow.anchored-left, .nebulashadow.rising-right {height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top center; background-size: contain;}
+.nebulashadow.anchored-right, .nebulashadow.rising-left {height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top right; background-size: contain;}
+.nebulashadow.anchored-left, .nebulashadow.rising-right {height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top left; background-size: contain;}
 
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;}
 	.nebulaframe:after, .nebulaframe.floating:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; pointer-events: none;}
@@ -208,8 +208,8 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 	.nebulaframe.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%; background: none;}
 .nebulaframe.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain; pointer-events: none;}
 .nebulaframe.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain; pointer-events: none;}
-.nebulaframe.anchored-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top center; background-size: contain; pointer-events: none;}
-.nebulaframe.anchored-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top center; background-size: contain; pointer-events: none;}
+.nebulaframe.anchored-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top right; background-size: contain; pointer-events: none;}
+.nebulaframe.anchored-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top left; background-size: contain; pointer-events: none;}
 
 a.nebulaframe {border: none;}
 	/* .nebulaframe.animate:hover:after {background-position-y: -24px;} */

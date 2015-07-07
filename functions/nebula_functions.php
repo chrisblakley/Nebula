@@ -1679,7 +1679,7 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 		//@TODO "Nebula" 0: Need to come up with a way to pull default weather info in case yahooapis.com can't be reached.
 		libxml_clear_errors();
 		libxml_use_internal_errors($use_errors);
-		set_transient('nebula_weather_' . $zipcode, $xml->asXML(), 60*60); //asXML() converts to string to it can be cached in the transient. 1 hour cache.
+		set_transient('nebula_weather_' . $zipcode, $xml->asXML(), 60*15); //asXML() converts to string to it can be cached in the transient. 15 minute cache.
 		$current_weather['cached'] = 'New';
 	} else {
 		$xml = simplexml_load_string($weather);
@@ -1709,34 +1709,81 @@ function nebula_weather($zipcode=null, $data=null, $fresh=null){
 }
 
 
-function vimeo_meta($videoID){
-	return false; //@TODO "Nebula" 0: This function interferes with proper Relevanssi indexing. Look into an entirely alternate way besides simplexml maybe?
-
-	//@TODO "Nebula" 0: Overhaul this function like the Youtube Meta function. Store the video info in a transient and pass parameters to the function instead of creating a global variable! Can the Vimeo video info data come in JSON format instead of XML? Might solve the Relevanssi indexing issue.
-
-	$xml = simplexml_load_string(file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".xml")); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
-	if ( !$xml ){
-		return 'A Vimeo API error occurred.';
+function vimeo_meta($videoID, $meta=''){
+	if ( $meta == 'id' ){
+		return $videoID;
 	}
-	$GLOBALS['vimeo_meta']['id'] = $videoID;
-	$GLOBALS['vimeo_meta']['title'] = $xml->video->title;
-	$GLOBALS['vimeo_meta']['safetitle'] = str_replace(" ", "-", $GLOBALS['vimeo_meta']['title']);
-	$GLOBALS['vimeo_meta']['description'] = $xml->video->description;
-	$GLOBALS['vimeo_meta']['upload_date'] = $xml->video->upload_date;
-	$GLOBALS['vimeo_meta']['thumbnail'] = $xml->video->thumbnail_large;
-	$GLOBALS['vimeo_meta']['url'] = $xml->video->url;
-	$GLOBALS['vimeo_meta']['user'] = $xml->video->user_name;
-	$GLOBALS['vimeo_meta']['seconds'] = strval($xml->video->duration);
-	$GLOBALS['vimeo_meta']['duration'] = intval(gmdate("i", $GLOBALS['vimeo_meta']['seconds'])) . gmdate(":s", $GLOBALS['vimeo_meta']['seconds']);
-	return $GLOBALS['vimeo_meta'];
+
+	$vimeo_json = get_transient('nebula_vimeo_' . $videoID);
+	if ( empty($vimeo_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+		$vimeo_json = file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".json"); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+		set_transient('nebula_vimeo_' . $videoID, $vimeo_json, 60*60); //1 hour expiration
+	}
+	$vimeo_json = json_decode($vimeo_json);
+
+	if ( !$vimeo_json ){
+		trigger_error('A Vimeo API error occurred (A video with ID ' . $videoID . ' may not exist).', E_USER_WARNING);
+		return false;
+	} elseif ( empty($vimeo_json[0]) ){
+		trigger_error('A Vimeo video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
+		return false;
+	} elseif ( $meta == '' ){
+		return true;
+	}
+
+	switch ( $meta ){
+		case 'json':
+			return $vimeo_json[0];
+			break;
+		case 'title':
+			return $vimeo_json[0]->title;
+			break;
+		case 'safetitle':
+		case 'safe-title':
+			return str_replace(" ", "-", $vimeo_json[0]->title);
+			break;
+		case 'description':
+		case 'content':
+			return $vimeo_json[0]->description;
+			break;
+		case 'thumbnail':
+			return $vimeo_json[0]->thumbnail_large;
+			break;
+		case 'author':
+		case 'channeltitle':
+		case 'channel':
+		case 'user':
+			return $vimeo_json[0]->user_name;
+			break;
+		case 'uploaded':
+		case 'published':
+		case 'date':
+		case 'upload_date':
+			return $vimeo_json[0]->upload_date;
+			break;
+		case 'href':
+		case 'link':
+		case 'url':
+			return $vimeo_json[0]->url;
+			break;
+		case 'seconds':
+		case 'duration':
+		    $duration_seconds = strval($vimeo_json[0]->duration);
+		    if ( $meta == 'seconds' ){
+			    return $duration_seconds;
+		    } else {
+			    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
+		    }
+			break;
+		default:
+			break;
+	}
+	return false;
 }
 
 
 function youtube_meta($videoID, $meta=''){
 	switch ( $meta ){
-		case '':
-			return false;
-			break;
 		case 'origin':
 			return nebula_url_components('basedomain');
 			break;
@@ -1753,7 +1800,7 @@ function youtube_meta($videoID, $meta=''){
 	}
 
 	$youtube_json = get_transient('nebula_youtube_' . $videoID);
-	if ( empty($youtube_json) || is_debug() ){
+	if ( empty($youtube_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		if ( get_option('nebula_google_server_api_key') == '' ){
 			if ( current_user_can('manage_options') || is_dev() ){
 				trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Settings (in the WordPress Admin).", E_USER_WARNING);
@@ -1769,7 +1816,13 @@ function youtube_meta($videoID, $meta=''){
 	$youtube_json = json_decode($youtube_json);
 
 	if ( !$youtube_json ){
-		return 'A Youtube Data API error occurred.';
+		trigger_error('A Youtube Data API error occurred.', E_USER_WARNING);
+		return false;
+	} elseif ( empty($youtube_json->items) ){
+		trigger_error('A Youtube video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
+		return false;
+	} elseif ( $meta == '' ){
+		return true;
 	}
 
 	switch ( $meta ){
@@ -1785,20 +1838,22 @@ function youtube_meta($videoID, $meta=''){
 			break;
 		case 'description':
 		case 'content':
-			return $youtube_json->items[0]->snippet->description;;
+			return $youtube_json->items[0]->snippet->description;
 			break;
 		case 'thumbnail':
-			return $youtube_json->items[0]->snippet->thumbnails->high->url;;
+			return $youtube_json->items[0]->snippet->thumbnails->high->url;
 			break;
 		case 'author':
 		case 'channeltitle':
 		case 'channel':
-			return $youtube_json->items[0]->snippet->channelTitle;;
+		case 'user':
+			return $youtube_json->items[0]->snippet->channelTitle;
 			break;
 		case 'uploaded':
 		case 'published':
 		case 'date':
-			return $youtube_json->items[0]->snippet->publishedAt;;
+		case 'upload_date':
+			return $youtube_json->items[0]->snippet->publishedAt;
 			break;
 		case 'seconds':
 		case 'duration':

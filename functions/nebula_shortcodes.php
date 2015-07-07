@@ -275,9 +275,7 @@ function vimeo_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );
 	$width = 'width="' . $width . '"';
 	$height = 'height="' . $height . '"';
-	vimeo_meta($id);
-	global $vimeo_meta;
-	$vimeo = '<article class="nebula-vimeo vimeo video"><iframe id="' . $vimeo_meta['safetitle'] . '" class="vimeoplayer" src="//player.vimeo.com/video/' . $vimeo_meta['id'] . '?api=1&player_id=' . $vimeo_meta['safetitle'] . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
+	$vimeo = '<article class="nebula-vimeo vimeo video"><iframe id="' . vimeo_meta($id, 'safetitle') . '" class="vimeoplayer" src="//player.vimeo.com/video/' . $id . '?api=1&player_id=' . vimeo_meta($id, 'safetitle') . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
 	return $vimeo;
 }
 
