@@ -6,7 +6,7 @@
 		div#heroslider.closed {height: 0;}
 	    div#heroslider .bx-wrapper {}
 	        div#heroslider .bx-wrapper .bx-viewport {min-height: 500px; border: none; left: 0; z-index: 1;}
-	            div#heroslider ul.bxslider {margin: 0; background: #222 url("images/black-linen.png"); height: 100%;}
+	            div#heroslider ul.bxslider {margin: 0; background: #222 url("<?php echo get_template_directory_uri(); ?>/examples/images/black-linen.png"); height: 100%;}
 	                div#heroslider ul.bxslider li {padding: 0; height: 100%;}
 	                    div#heroslider ul.bxslider li div {position: absolute; top: 30%; left: 50%; width: 70%; max-width: 940px;}
 	                        div#heroslider ul.bxslider li div p {display: table; position: relative; margin-left: -50%; padding: 10px 30px; color: #000; text-align: center; text-transform: uppercase; margin-bottom: 5px; background: #fff; background: rgba(255, 255, 255, 0.9); box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.2);}

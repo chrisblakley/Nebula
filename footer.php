@@ -43,6 +43,8 @@
 
 			<?php wp_footer(); ?>
 
+			<?php //Scripts are loaded in functions.php (so they can be registerred and enqueued). ?>
+
 			<script>
 				//Pull query strings from URL
 				function getQueryStrings() {

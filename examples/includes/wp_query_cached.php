@@ -16,8 +16,8 @@
 		?>
 
 		    <div class="home-feed-item event-feed-item">
-		            <h3><a href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>
-		            <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
+		        <h3><a href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>
+		        <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
 		    </div>
 
 		<?php endwhile; ?>

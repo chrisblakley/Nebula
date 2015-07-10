@@ -1,5 +1,7 @@
 <ul class="bxslider exampleslider">
-	<li><img src="http://placehold.it/800x400" title="Placeholder" /></li>
-	<li><img src="http://placebear.com/800/400" title="PlaceBear" /></li>
-	<li><img src="http://placekitten.com/800/400" title="PlaceKitten" /></li>
+	<li><img src="<?php echo random_unsplash(800, 400); ?>" /></li>
+	<li><img src="<?php echo random_unsplash(800, 400); ?>" /></li>
+	<li><img src="<?php echo random_unsplash(800, 400); ?>" /></li>
+	<li><img src="<?php echo random_unsplash(800, 400); ?>" /></li>
+	<li><img src="<?php echo random_unsplash(800, 400); ?>" /></li>
 </ul>

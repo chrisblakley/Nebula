@@ -11,7 +11,6 @@ if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
 
 get_header(); ?>
 
-
 <script src="<?php echo get_template_directory_uri();?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script>
 
 <section><!-- Do not duplicate this section because it has inline styles. -->
@@ -45,6 +44,14 @@ get_header(); ?>
 <div class="container">
 	<div class="row">
 		<div class="eleven columns">
+
+			<?php if ( get_field('example_filename') ): //Maybe instead of here it's in the main content area as a little notice box or something? ?>
+				<div class="example-filename">
+					<i class="fa fa-github"></i> Example Location: <a href="https://github.com/chrisblakley/Nebula/blob/master/examples/includes/<?php echo get_field('example_filename'); ?>" target="_blank" title="View the exact code snippet rendering this example.">/examples/includes/<?php echo get_field('example_filename'); ?></a>
+				</div>
+				<div class="nebulashadow anchored-left" style="opacity: 0.15;"></div>
+			<?php endif; ?>
+
 
 			<div class="container">
 				<div class="row">

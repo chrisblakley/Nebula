@@ -1,6 +1,7 @@
 #@TODO: Move to root directory.
 #@TODO: Rename this file to be: .htaccess
 #@TODO: Find/Replace "yourdomain" with the actual domain name!
+#@NOTE: Non-ghost referral spambots are blocked with PHP logic (to extract data) with a self-updating blacklist. Blocking referral spambots here in .htaccess would prevent that data!
 
 #Set Error Documents
 ErrorDocument 400 /?http=400
@@ -145,21 +146,6 @@ RewriteRule ^(.*)$ index.php [F,L]
 RewriteRule ^author/(.*)$ /about [R,L]
 RewriteCond %{QUERY_STRING} author=\d
 RewriteRule ^ /about? [L,R=301]
-
-
-#Block certain spambots from showing up as actual visitors
-#Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering)
-#Many spambots aren't actually visiting the site, so best practice is to also add the domain to the Referral Exclusion List (GA Admin > Property > Tracking Info > Referral Exclusion List)
-SetEnvIfNoCase Referer semalt.com spambot=yes
-SetEnvIfNoCase Referer econom.com spambot=yes
-SetEnvIfNoCase Referer buttons-for-website.com spambot=yes
-SetEnvIfNoCase Referer ilovevitaly.com spambot=yes
-SetEnvIfNoCase Referer ilovevitaly.ru spambot=yes
-SetEnvIfNoCase Referer darodar.com spambot=yes
-SetEnvIfNoCase Referer 7makemoneyonline.com spambot=yes
-Order allow,deny
-Allow from all
-Deny from env=spambot
 
 
 #Disable directory browsing

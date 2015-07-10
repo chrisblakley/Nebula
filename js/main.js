@@ -127,16 +127,24 @@ jQuery(window).on('resize', function(){
 }); //End Window Resize
 
 
+
 /*==========================
-
- Functions
-
+ Utilities
  ===========================*/
 
-//Custom css expression for a case-insensitive contains(). Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")...
-jQuery.expr[':'].Contains = function(a, i, m){
-    return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-};
+//Custom css expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
+//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")...
+jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
+
+//Check for content (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/var/empty.js
+function empty(r){var n,t,e,f,u=[n,null,!1,0,"","0"];for(e=0,f=u.length;f>e;e++)if(r===u[e])return!0;if("object"==typeof r){for(t in r)return!1;return!0}return!1} //@TODO "Nebula" 0: Test if this is working before implementing
+
+
+
+
+/*==========================
+ Functions
+ ===========================*/
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function helperFunctions(){
@@ -508,14 +516,14 @@ function gaEventTracking(){
 	});
 
 	//Mailto link tracking
-	pageDocument.on('mousedown touch tap', 'a[href^="mailto"]', function(){
+	pageDocument.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
 	});
 
 	//Telephone link tracking
-	pageDocument.on('mousedown touch tap', 'a[href^="tel"]', function(){
+	pageDocument.on('mousedown touch tap', 'a[href^="tel"]', function(e){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
@@ -523,7 +531,7 @@ function gaEventTracking(){
 	});
 
 	//SMS link tracking
-	pageDocument.on('mousedown touch tap', 'a[href^="sms"]', function(){
+	pageDocument.on('mousedown touch tap', 'a[href^="sms"]', function(e){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');

@@ -102,21 +102,25 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 //Send custom data to Google Analytics. Must pass an array of data to this function:
 //ga_send_custom(array('t' => 'event', 'ec' => 'Category Here', 'ea' => 'Action Here', 'el' => 'Label Here'));
 //https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-function ga_send_custom($array) {
+function ga_send_custom($array){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
 	$defaults = array(
 		'v' => $GLOBALS['ga_v'],
 		'tid' => $GLOBALS['ga'],
 		'cid' => $GLOBALS['ga_cid'],
 		't' => '',
-		'ni' => 1
+		'ni' => 1,
+		'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
+		'dp' => nebula_url_components('path'),
+		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 	);
 
 	$data = array_merge($defaults, $array);
 
-	if ( $data['t'] != '' ) {
+	if ( !empty($data['t']) ) {
 		gaSendData($data);
 	} else {
 		trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
+		return;
 	}
 }
 
@@ -602,7 +606,8 @@ function random_number_between_but_not($min=null, $max=null, $butNot=null) {
             }
         }
         if ( count($butNot) == $max-$min+1 ) {
-            return 'Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.';
+            trigger_error('Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.', E_USER_ERROR);
+            return false;
         }
         while ( in_array(($randnum = rand($min, $max)), $butNot));
     } else {
@@ -613,15 +618,38 @@ function random_number_between_but_not($min=null, $max=null, $butNot=null) {
 
 
 //Display a random stock photo from unsplash.it
-function random_unsplash($width=800, $height=600, $raw=0, $randID=0) {
-	$skipList = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-	if ( $randID == 0 ) {
-		$randID = random_number_between_but_not(0, 615, $skipList); //Update the second number here as more Unsplash.it photos become available.
-	}
-	if ( $raw ) {
-		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+function random_unsplash($width=800, $height=600, $raw=0, $random=0) {
+	$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
+	if ( $random == 0 ) {
+		$randID = random_number_between_but_not(0, 615, $skip_list); //Update the second number here as more Unsplash.it photos become available.
 	} else {
-		return 'http://unsplash.it/' . $width . '/' . $height . '?image=' . $randID . '" title="Unsplash ID #' . $randID;
+		$randID = $random;
+	}
+
+	$image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+
+	$check_image = @getimagesize($image_path); //Ignore errors (because that's what we're looking for)
+
+	$i++;
+	while ( !$check_image[0] ){
+		if ( $random != 0 || $i >= 5 ){
+			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
+			trigger_error('Unsplash image with ID ' . $randID . ' not found. Using Placehold.it instead.', E_USER_WARNING);
+			return 'https://placehold.it/' . $width . 'x' . $height . '/';
+		}
+
+	    $skip_list[] = $randID;
+	    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
+	    $randID = random_number_between_but_not(0, 615, $skipList);
+	    $image_path = '//unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+	    $check_image = getimagesize($image_path);
+	    $i++;
+	}
+
+	if ( $raw ) {
+		return $image_path;
+	} else {
+		return $image_path . '" title="Unsplash ID #' . $randID;
 	}
 }
 
