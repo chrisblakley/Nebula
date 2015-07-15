@@ -1,13 +1,13 @@
 <?php
-	//@TODO: Move this into functions.php and call it using the form action!
+	//This is only an example. Consider using wp_mail() instead of needing this file.
 
     // Only process POST reqeusts.
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        
+
         // Get the form fields and remove whitespace.
         $name = strip_tags(trim($_POST['data'][0]['name']));
 		$name = str_replace(array("\r","\n"),array(" "," "),$name);
-        
+
         $email = filter_var(trim($_POST['data'][0]['email']), FILTER_SANITIZE_EMAIL);
         $message = trim($_POST['data'][0]['message']);
 

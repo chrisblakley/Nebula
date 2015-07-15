@@ -14,7 +14,7 @@ function enqueue_nebula_user_meta(){
 
 //Additional Contact Info fields
 add_filter('user_contactmethods', 'nebula_user_contactmethods');
-function nebula_user_contactmethods($contactmethods) {
+function nebula_user_contactmethods($contactmethods){
     unset($contactmethods['yim']);
     unset($contactmethods['aim']);
     unset($contactmethods['jabber']);
@@ -29,16 +29,16 @@ function nebula_user_contactmethods($contactmethods) {
 
 
 add_action('admin_init', 'easy_author_image_init');
-function easy_author_image_init() {
+function easy_author_image_init(){
 	global $pagenow;
-	if ( $pagenow == 'media-upload.php' || $pagenow == 'async-upload.php' ) {
+	if ( $pagenow == 'media-upload.php' || $pagenow == 'async-upload.php' ){
 		add_filter('gettext', 'q_replace_thickbox_button_text', 1, 3); //Replace the button text for the uploader
 	}
 }
-function q_replace_thickbox_button_text($translated_text, $text, $domain) {
-	if ( $text == 'Insert into Post' ) {
+function q_replace_thickbox_button_text($translated_text, $text, $domain){
+	if ( $text == 'Insert into Post' ){
 		$referer = strpos(wp_get_referer(), 'profile');
-		if ( $referer != '' ) {
+		if ( $referer != '' ){
 			return 'Choose this photo.';
 		}
 	}
@@ -46,18 +46,18 @@ function q_replace_thickbox_button_text($translated_text, $text, $domain) {
 }
 
 //Show the fields in the user admin page
-if ( !user_can($current_user, 'subscriber') && !user_can($current_user, 'contributor') ) {
+if ( !user_can($current_user, 'subscriber') && !user_can($current_user, 'contributor') ){
 	add_action('show_user_profile', 'extra_profile_fields');
 	add_action('edit_user_profile', 'extra_profile_fields');
 }
-function extra_profile_fields($user) { ?>
+function extra_profile_fields($user){ ?>
 	<h3>Additional Information</h3>
 	<table class="form-table">
 		<tr class="headshot_button_con">
 			<th>
 				<label for="headshot_button"><span class="description">Headshot</span></label>
 			</th>
-			<?php $buttontext = ""; if( get_the_author_meta('headshot_url', $user->ID) ) {
+			<?php $buttontext = ""; if( get_the_author_meta('headshot_url', $user->ID) ){
 				$buttontext = "Change headshot";  } else { $buttontext = "Upload new headshot";
 			} ?>
 			<td>
@@ -126,8 +126,8 @@ function extra_profile_fields($user) { ?>
 //Save the field values to the DB
 add_action('personal_options_update', 'save_extra_profile_fields');
 add_action('edit_user_profile_update', 'save_extra_profile_fields');
-function save_extra_profile_fields($user_id) {
-	if ( !current_user_can('edit_user', $user_id) ) {
+function save_extra_profile_fields($user_id){
+	if ( !current_user_can('edit_user', $user_id) ){
 		return false;
 	}
 	update_user_meta($user_id, 'headshot', $_POST['headshot']);
@@ -140,6 +140,6 @@ function save_extra_profile_fields($user_id) {
 }
 
 
-function nebula_facebook_link() {
+function nebula_facebook_link(){
 	echo '<p class="facebook-connect-con"><i class="fa fa-facebook-square"></i> <a class="facebook-connect" href="#">Connect with Facebook</a></p>';
 }

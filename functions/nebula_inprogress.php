@@ -8,7 +8,7 @@
 
 //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage.
 //This would be moved to header.php once it works...
-if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) {
+if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ){
 	//echo '<title>' wp_title('-', true, 'right') . '</title>';
 } else {
 	//echo '<title>' . wp_title('-', true, 'right') . '</title>';
@@ -20,7 +20,7 @@ if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) {
 //Display WordPress debug messages for Devs who are admins with ?debug query string is used.
 //It appears WP_DEBUG can only be defined true in wp-config.php
 //When it's true, it can be tested with: if ( WP_DEBUG ) ...
-if ( is_debug() && current_user_can('manage_options') ) {
+if ( is_debug() && current_user_can('manage_options') ){
 	define('WP_DEBUG', true);
 	define('WP_DEBUG_DISPLAY', true);
 }
@@ -41,7 +41,7 @@ function nebula_upload_data(){
 
     //@TODO "Nebula" 0: Use a WordPress nonce for extra security.
 
-    if ( !$_POST['data']['data'] || $_POST['data']['data'] == '' ) {
+    if ( !$_POST['data']['data'] || $_POST['data']['data'] == '' ){
 	    exit;
     }
 
@@ -72,12 +72,12 @@ function nebula_upload_data(){
 
 	    $upload_dir = wp_upload_dir();
 
-	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ) {
+	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ){
 		    echo 'nebula_custom_data directory does not exist. Creating it! ';
 		    mkdir($upload_dir['basedir'] . '/nebula_custom_data');
 	    }
 
-	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/bad_data/') ) {
+	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/bad_data/') ){
 		    echo 'nebula_custom_data/bad_data directory does not exist. Creating it! ';
 		    mkdir($upload_dir['basedir'] . '/nebula_custom_data/bad_data');
 	    }
@@ -96,12 +96,12 @@ function nebula_upload_data(){
 
     $upload_dir = wp_upload_dir();
 
-	if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ) {
+	if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ){
 	    echo 'nebula_custom_data directory does not exist. Creating it! ';
 	    mkdir($upload_dir['basedir'] . '/nebula_custom_data');
     }
 
-    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/') ) {
+    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/') ){
 	    echo 'nebula_custom_data/' . $directory . ' directory does not exist. Creating it! ';
 	    mkdir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory);
     }
@@ -109,14 +109,14 @@ function nebula_upload_data(){
     $file = $upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/' . date('Y-m-d_H-i-s', strtotime('now')) . '_id' . $this_id . '.' . $filetype;
     $success = file_put_contents($file, $data);
 
-	if ( $category ) {
+	if ( $category ){
 		ga_send_event($category, $action, '/' . $directory . '/...id' . $this_id);
 	}
 
     exit();
 
 /*
-			if ( ! function_exists( 'wp_handle_upload' ) ) {
+			if ( ! function_exists( 'wp_handle_upload' ) ){
 			    require_once( ABSPATH . 'wp-admin/includes/file.php' );
 			}
 
@@ -126,7 +126,7 @@ function nebula_upload_data(){
 
 			$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
 
-			if ( $movefile && !isset( $movefile['error'] ) ) {
+			if ( $movefile && !isset( $movefile['error'] ) ){
 			    echo "File is valid, and was successfully uploaded.\n";
 			    var_dump( $movefile);
 			} else {
@@ -157,7 +157,7 @@ function nebula_upload_data(){
 /*
 //For automatically setting certain "Screen Options" settings by default.
 add_action('admin_init', 'set_user_metaboxes');
-function set_user_metaboxes($user_id=NULL) {
+function set_user_metaboxes($user_id=NULL){
     //css-classes-hide
 
     echo 'bacon. user meta keys: ';
@@ -173,7 +173,7 @@ function set_user_metaboxes($user_id=NULL) {
 /*
 //Attempt to track Firefox Reader View
 add_action('nebula_article_end', 'track_firefox_reader_view');
-function track_firefox_reader_view() {
+function track_firefox_reader_view(){
 
 	//	@TODO "Nebula" 0: How do we target *only* Firefox Reader View?
 	//		- Remove the pixel w/ JS?
@@ -196,11 +196,11 @@ function track_firefox_reader_view() {
 //This would go in /functions/nebula_admin.php
 //Found this PHP error log tracker dashboard metabox. Seems pretty cool. Research the possibility of including it more before implementing.
 //http://sltaylor.co.uk/blog/wordpress-dashboard-widget-php-errors-log/
-function slt_dashboardWidgets() {
+function slt_dashboardWidgets(){
 	wp_add_dashboard_widget( 'slt-php-errors', 'PHP errors', 'slt_PHPErrorsWidget' );
 }
 add_action( 'wp_dashboard_setup', 'slt_dashboardWidgets' );
-function slt_PHPErrorsWidget() {
+function slt_PHPErrorsWidget(){
 	$logfile = '/home3/cblakley/public_html/error_log'; // Enter the server path to your logs file here
 	$displayErrorsLimit = 100; // The maximum number of errors to display in the widget
 	$errorLengthLimit = 300; // The maximum number of characters to display for each error
@@ -208,18 +208,18 @@ function slt_PHPErrorsWidget() {
 	$userCanClearLog = current_user_can('manage_options');
 
 	// Clear file?
-	if ( $userCanClearLog && isset( $_GET["slt-php-errors"] ) && $_GET["slt-php-errors"]=="clear" ) {
+	if ( $userCanClearLog && isset( $_GET["slt-php-errors"] ) && $_GET["slt-php-errors"]=="clear" ){
 		$handle = fopen( $logfile, "w" );
 		fclose( $handle );
 		$fileCleared = true;
 	}
 
 	// Read file
-	if ( file_exists( $logfile ) ) {
+	if ( file_exists( $logfile ) ){
 		$errors = file( $logfile );
 		$errors = array_reverse( $errors );
 		if ( $fileCleared ) echo '<p><em>File cleared.</em></p>';
-		if ( $errors ) {
+		if ( $errors ){
 			echo '<p>'.count( $errors ).' error';
 			if ( $errors != 1 ) echo 's';
 			echo '.';
@@ -228,17 +228,17 @@ function slt_PHPErrorsWidget() {
 			echo '<div id="slt-php-errors" style="height:250px;overflow:scroll;padding:2px;background-color:#faf9f7;border:1px solid #ccc;">';
 			echo '<ol style="padding:0;margin:0;">';
 			$i = 0;
-			foreach ( $errors as $error ) {
+			foreach ( $errors as $error ){
 				echo '<li style="padding:2px 4px 6px;border-bottom:1px solid #ececec;">';
 				$errorOutput = preg_replace( '/\[([^\]]+)\]/', '<b>[$1]</b>', $error, 1 );
-				if ( strlen( $errorOutput ) > $errorLengthLimit ) {
+				if ( strlen( $errorOutput ) > $errorLengthLimit ){
 					echo substr( $errorOutput, 0, $errorLengthLimit ).' [...]';
 				} else {
 					echo $errorOutput;
 				}
 				echo '</li>';
 				$i++;
-				if ( $i > $displayErrorsLimit ) {
+				if ( $i > $displayErrorsLimit ){
 					echo '<li style="padding:2px;border-bottom:2px solid #ccc;"><em>More than '.$displayErrorsLimit.' errors in log...</em></li>';
 					break;
 				}

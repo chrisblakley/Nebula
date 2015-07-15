@@ -3,18 +3,17 @@
  * The Template for displaying all single posts.
  */
 
-if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
+if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 	die('Error 403: Forbidden.');
 }
 
-if ( get_post_format() ) {
+if ( get_post_format() ){
 	get_template_part('format', get_post_format());
 	exit;
 }
 
 do_action('nebula_header');
-
 get_header(); ?>
 
 <div class="row">
@@ -51,14 +50,14 @@ get_header(); ?>
 						<?php do_action('nebula_article_end'); //Currently used for testing. Can be deleted. ?>
 
 						<div class="row prevnextcon">
-							<?php if ( get_previous_post_link() ) : ?>
+							<?php if ( get_previous_post_link() ): ?>
 								<div class="<?php echo ( get_next_post_link() ) ? 'eight': 'sixteen'; ?> columns prev-link-con">
 									<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
 		                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
 								</div><!--/columns-->
 							<?php endif; ?>
 
-							<?php if ( get_next_post_link() ) : ?>
+							<?php if ( get_next_post_link() ): ?>
 								<div class="<?php echo ( get_previous_post_link() ) ? 'eight': 'sixteen'; ?> columns next-link-con">
 									<p class="prevnext-post-heading next-post-heading">Next Post</p>
 		                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
@@ -66,7 +65,7 @@ get_header(); ?>
 							<?php endif; ?>
 						</div><!--/row-->
 
-						<?php if ( current_user_can('manage_options') ) : ?>
+						<?php if ( current_user_can('manage_options') ): ?>
 							<div class="container entry-manage">
 								<div class="row">
 									<hr/>
@@ -91,5 +90,4 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-
 <?php do_action('nebula_footer'); ?>

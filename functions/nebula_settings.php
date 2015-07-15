@@ -10,7 +10,6 @@ function global_nebula_vars(){
     $GLOBALS['enc_address'] = str_replace(' ', '+', $GLOBALS['enc_address']);
 }
 
-
 /*==========================
  Global Nebula Settings Conditional Functions
  ===========================*/
@@ -24,7 +23,6 @@ function nebula_settings_conditional_text($setting, $default = ''){
 	}
 }
 
-
 //Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
 function nebula_settings_conditional_text_bool($setting, $true = true, $false = false){
 	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ){
@@ -33,7 +31,6 @@ function nebula_settings_conditional_text_bool($setting, $true = true, $false = 
 		return $false;
 	}
 }
-
 
 //Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
 function nebula_settings_conditional($setting, $default='enabled'){
@@ -47,7 +44,6 @@ function nebula_settings_conditional($setting, $default='enabled'){
 		return false;
 	}
 }
-
 
 /*==========================
  Specific Settings Functions
@@ -69,9 +65,6 @@ function nebula_comments_enabled(){
 function nebula_wireframing_enabled(){
 	return !nebula_settings_conditional('nebula_wireframing', 'disabled');
 }
-
-
-
 
 //Initialize the Nebula Submenu
 if ( is_admin() ){
@@ -132,6 +125,8 @@ function register_nebula_settings(){
 		'nebula_facebook_app_id' => '',
 		'nebula_facebook_app_secret' => '',
 		'nebula_facebook_access_token' => '',
+		'nebula_facebook_custom_audience_pixel_id' => '',
+		'nebula_facebook_custom_audience_pixel' => 'Default',
 		'nebula_facebook_page_id' => '',
 		'nebula_facebook_admin_ids' => '',
 		'nebula_google_plus_url' => '',
@@ -183,7 +178,6 @@ function register_nebula_settings(){
 //Output the settings page
 function nebula_settings_page(){
 ?>
-
 	<style>
 		h2 .nav-tab.nav-tab-inactive {font-weight: 400;}
 
@@ -535,10 +529,6 @@ function nebula_settings_page(){
 
 
 
-
-
-
-
 			<h2 class="mobiletitle">Functions</h2>
 			<hr class="mobiletitle"/>
 
@@ -576,6 +566,18 @@ function nebula_settings_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_adwords')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to integrate with Google AdWords. This can be used instead of pasting the Google AdWords snippet into the header! <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">Facebook Custom Audience Pixel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_facebook_custom_audience_pixel">
+							<option value="default" <?php selected('default', get_option('nebula_facebook_custom_audience_pixel')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_facebook_custom_audience_pixel')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_facebook_custom_audience_pixel')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Toggle the <a href="https://www.facebook.com/ads/manage/pixels/" target="_blank">Facebook Custom Audience Pixel</a> tracking. Be sure to add the pixel ID under the APIs tab! <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -775,6 +777,7 @@ function nebula_settings_page(){
 						App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
 						App Secret: <input type="text" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br/>
 						Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/><br/>
+						Custom Audience Pixel ID: <input type="text" name="nebula_facebook_custom_audience_pixel_id" value="<?php echo get_option('nebula_facebook_custom_audience_pixel_id'); ?>" placeholder="000000000000000" style="width: 295px;"/><br/>
 						<p class="helper"><small>The App ID of the associated Facebook page/app. This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></small></p>
 					</td>
 		        </tr>
@@ -918,7 +921,6 @@ function nebula_settings_page(){
 			<?php endif; ?>
 
 			<?php submit_button(); ?>
-
 		</form>
 	</div><!--/wrap-->
-<?php } ?>
+<?php }

@@ -501,18 +501,21 @@ function gaEventTracking(){
 		} else {
 			ga('send', 'event', 'PDF View', 'Text: ' + linkText + intent);
 		}
+		if ( typeof fbq == 'function' ){ fbq('track', 'ViewContent'); }
 	});
 
 	//Contact Form Submissions
 	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to replace it by calling the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
 	pageDocument.on('submit', '.wpcf7-form', function(){
 		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.');
+		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
 	//Generic Interal Search Tracking
 	pageDocument.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
+		if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
 	});
 
 	//Mailto link tracking
@@ -520,6 +523,7 @@ function gaEventTracking(){
 		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
+		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
 	//Telephone link tracking
@@ -528,6 +532,7 @@ function gaEventTracking(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber + intent);
+		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
 	//SMS link tracking
@@ -536,6 +541,7 @@ function gaEventTracking(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber + intent);
+		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
 	//Non-Linked Image Clicks
@@ -556,7 +562,7 @@ function gaEventTracking(){
 		wordsLength = words.length;
 
 		//Track Email or Phone copies as contact intent.
-		var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; //From JS Lint: Expected ']' and instead saw '['.
 		var phonePattern = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;
 		emailPhone = jQuery.trim(words.join(' '));
 		if ( emailPattern.test(emailPhone) ){
@@ -808,6 +814,7 @@ function autocompleteSearch(){
 							}
 							response(data);
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
+							if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
 							ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
@@ -857,6 +864,7 @@ function advancedSearchTriggers(){
 				if ( jQuery('#s').val().trim().length >= 3 ){
 					advancedSearch();
 					ga('send', 'event', 'Internal Search', 'Advanced', '"' + jQuery('#s').val().trim() + '"');
+					if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
 				} else {
 					//console.log('value is less than 3 characters');
 				}

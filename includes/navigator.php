@@ -1,8 +1,8 @@
 <?php
+	//@TODO "Nebula" 0: Consider using the Autocomplete function in nebula_functions.php here instead of this file?
 
 	$requested_page = $_POST['data'];
 	$resultCounter = 0;
-
 
 	//Check Page Titles
 	query_posts( array('post_type' => 'page', 'pagename' => $requested_page) );
@@ -12,7 +12,6 @@
 		exit();
 	endwhile;
 	wp_reset_query();
-
 
 	//Check Post Titles
 	if ( $resultCounter == 0 ) :
@@ -25,9 +24,7 @@
 		wp_reset_query();
 	endif;
 
-
 	$requested_slug = str_replace(' ', '-', $requested_page);
-
 
 	//Check Menu Items
 	if ( $resultCounter == 0 ) :
@@ -43,7 +40,6 @@
 		}
 	endif;
 
-
 	//Check category names
 	if ( $resultCounter == 0 ) :
 		$requestedCategory = get_category_by_slug($requested_slug);
@@ -53,7 +49,6 @@
 			echo get_category_link($categoryID);
 		}
 	endif;
-
 
 	//Check tags (this returns posts within a tag)
 	if ( $resultCounter == 0 ) :
@@ -65,11 +60,9 @@
 		}
 	endif;
 
-
 	//Return search results
 	if ( $resultCounter == 0 ) :
 		$requested_page = str_replace(' ', '+', $requested_page);
 		echo home_url() . '/?s=' . $requested_page;
 	endif;
-
 ?>

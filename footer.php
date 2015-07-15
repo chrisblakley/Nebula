@@ -6,10 +6,9 @@
 			<hr class="zero" style="margin-top: 30px;"/>
 
 			<div class="footer">
-
 				<?php include_once('includes/footer_widgets.php'); //Footer widget logic. ?>
 
-				<?php if ( has_nav_menu('footer') ) : ?>
+				<?php if ( has_nav_menu('footer') ): ?>
 					<div class="container footerlinks">
 						<div class="row powerfootercon">
 							<div class="sixteen columns">
@@ -47,7 +46,7 @@
 
 			<script>
 				//Pull query strings from URL
-				function getQueryStrings() {
+				function getQueryStrings(){
 					queries = new Array();
 				    var q = document.URL.split('?')[1];
 				    if ( q != undefined ){
@@ -61,14 +60,14 @@
 				}
 
 				//Search query strings for the passed parameter
-				function GET(query) {
+				function GET(query){
 					if ( typeof query === 'undefined' ) {
 						return queries;
 					}
 
-					if ( typeof queries[query] !== 'undefined' ) {
+					if ( typeof queries[query] !== 'undefined' ){
 						return queries[query];
-					} else if ( queries.hasOwnProperty(query) ) {
+					} else if ( queries.hasOwnProperty(query) ){
 						return query;
 					}
 					return false;

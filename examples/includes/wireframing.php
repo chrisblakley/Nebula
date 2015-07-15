@@ -31,12 +31,10 @@
 		</p>
 
 		<h2>Example</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_component("Breadcrumbs"); ?>
-<?php fpo_breadcrumbs(); ?>[/pre]'); ?>
+		<?php echo do_shortcode('[pre lang=php]<?php fpo_component("Breadcrumbs"); ?>[/pre]'); ?>
 		<div class="row">
 			<div class="sixteen columns">
-				<?php fpo_component('Breadcrumbs'); ?>
-				<?php fpo_breadcrumbs(); ?>
+				<?php //fpo_component('Breadcrumbs'); ?>
 			</div>
 		</div>
 	</div><!--/columns-->
@@ -63,12 +61,12 @@
 
 		<h2>Example</h2>
 		<?php echo do_shortcode('[pre lang=php]<?php fpo_component_start("Breadcrumbs"); ?>
-<?php fpo_breadcrumbs(); ?>
+<p>Breadcrumbs would go here.</p>
 <?php fpo_component_end(); ?>[/pre]'); ?>
 		<div class="row">
 			<div class="sixteen columns">
 				<?php fpo_component_start('Breadcrumbs'); ?>
-				<?php fpo_breadcrumbs(); ?>
+				<p>Breadcrumbs would go here.</p>
 				<?php fpo_component_end(); ?>
 			</div>
 		</div>
@@ -159,202 +157,6 @@
 <br/><br/>
 <hr/>
 <br/><br/>
-
-<!-- Form -->
-<div class="row">
-	<div class="sixteen columns">
-		<h2><strong>Form</strong></h2>
-		<p>The <?php echo do_shortcode('[code]fpo_form()[/code]'); ?> function will create a placeholder form. The class "nebula-fpo-form" is added to the element.</p>
-
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_form( $fields, $submit, $action ); ?>[/pre]'); ?>
-
-		<h2>Parameters</h2>
-		<p>
-			<strong>$fields</strong> (array of strings) (optional) An array of field names to be used in the mockup form. Default: <em>array('Name', 'Email', 'Message')</em><br/>
-			<strong>$submit</strong> (string) (optional) The text to use on the submit button. Default: <em>Send</em><br/>
-			<strong>$action</strong> (string) (optional) A URL to redirect to on submission. Default: <em>(AJAX Mailer)</em><br/>
-		</p>
-
-		<h2>Example</h2>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php fpo_form(); ?>
-			</div>
-		</div>
-	</div><!--/columns-->
-</div><!--/row-->
-
-<br/><br/>
-<hr/>
-<br/><br/>
-
-<!-- Slider -->
-<div class="row">
-	<div class="sixteen columns">
-		<h2><strong>Slider</strong></h2>
-		<p>The <?php echo do_shortcode('[code]fpo_slider()[/code]'); ?> function will create a placeholder slider. The class "nebula-fpo-slider" is added to the element.</p>
-
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_slider( $slides, $options ); ?>[/pre]'); ?>
-
-		<h2>Parameters</h2>
-		<p>
-			<strong>$slides</strong> (integer or array of strings) (optional) Either an integer of the amount of sample slides (random <a href="https://unsplash.com/" target="_blank">Unsplash</a> images), or an array of specific image URLs. Default: <em>3</em><br/>
-			<strong>$options</strong> (object) (optional) Slider options *NOT IMPLEMENTED YET*.<br/>
-		</p>
-
-		<h2>Example</h2>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php fpo_slider(5); ?>
-			</div>
-		</div>
-	</div><!--/columns-->
-</div><!--/row-->
-
-<br/><br/>
-<hr/>
-<br/><br/>
-
-<!-- Video -->
-<div class="row">
-	<div class="sixteen columns">
-		<h2><strong>Video</strong></h2>
-		<p>The <?php echo do_shortcode('[code]fpo_video()[/code]'); ?> function will create a placeholder video. The class "nebula-fpo-video" is added to the element.</p>
-
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_video( $id, $service ); ?>[/pre]'); ?>
-
-		<h2>Parameters</h2>
-		<p>
-			<strong>$id</strong> (string) (optional) The video ID. Default: <em>jtip7Gdcf0Q</em><br/>
-			<strong>$service</strong> (string) (optional) Which video service the ID is associated with. Default: <em>youtube</em><br/>
-			<strong>$width</strong> (string) (optional) The width of the video iframe. Default: <em>560</em><br/>
-			<strong>$height</strong> (string) (optional) The height of the video iframe. Default: <em>315</em><br/>
-		</p>
-
-		<h2>Example</h2>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php fpo_video(); ?>
-			</div>
-		</div>
-	</div><!--/columns-->
-</div><!--/row-->
-
-<br/><br/>
-<hr/>
-<br/><br/>
-
-<!-- Breadcrumbs -->
-<div class="row">
-	<div class="sixteen columns">
-		<h2><strong>Breadcrumbs</strong></h2>
-		<p>*Considered for Deprecation!</p>
-		<p>The <?php echo do_shortcode('[code]fpo_breadcrumbs()[/code]'); ?> function will create a placeholder breadcrumb. The class "nebula-fpo-breadcrumb" is added to the element.</p>
-
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_breadcrumbs( $crumbs ); ?>[/pre]'); ?>
-
-		<h2>Parameters</h2>
-		<p>
-			<strong>$crumbs</strong> (array) (optional) An array of hard-coded crumb names. Default: <em>None</em><br/>
-		</p>
-
-		<h2>Example</h2>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php fpo_breadcrumbs(array('Parent', 'Child', 'Current Page')); ?>
-			</div>
-		</div>
-	</div><!--/columns-->
-</div><!--/row-->
-
-<br/><br/>
-<hr/>
-<br/><br/>
-
-<!-- Menu -->
-<div class="row">
-	<div class="sixteen columns">
-		<h2><strong>Menu</strong></h2>
-		<p>*Considered for Deprecation!</p>
-		<p>The <?php echo do_shortcode('[code]fpo_menu()[/code]'); ?> function will create a placeholder menu. The class "nebula-fpo-menu" is added to the element.</p>
-
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_menu( $name, $items ); ?>[/pre]'); ?>
-
-		<h2>Parameters</h2>
-		<p>
-			<strong>$name</strong> (string) (optional) The name of a specific WordPress menu to pull from. Default: <em>None</em><br/>
-			<strong>$items</strong> (array) (optional) Hard-coded strings for placeholder links. Default: <em>None</em><br/>
-		</p>
-
-		<h2>Example</h2>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php fpo_menu(); ?>
-			</div>
-		</div>
-	</div><!--/columns-->
-</div><!--/row-->
-
-
-<br/><br/>
-<hr/>
-<br/><br/>
-
-<!-- Social Links -->
-<div class="row">
-	<div class="sixteen columns">
-		<h2><strong>Social (Links)</strong></h2>
-		<p>The <?php echo do_shortcode('[code]fpo_social_links()[/code]'); ?> function will create placeholder social media links. Please note that these are meant to be for links to social media profiles/pages (for like/share button placeholders, use [code]fpo_social_share()[/code]). The class "nebula-fpo-social-links" is added to the element.</p>
-
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_social_links( $accounts ); ?>[/pre]'); ?>
-
-		<h2>Parameters</h2>
-		<p>
-			<strong>$accounts</strong> (array) (optional) An array of which networks to use. These include "Facebook", "Twitter", "Google+", "LinkedIn", "Youtube", and "Instagram". They are not case-sensitive, and have aliases for various spellings/abbreviations. You can also add custom icons from Font Awesome (use the "fa-" syntax), or use an absolute URL to an image (it will be scaled down). If none are declared, they all appear. Default: <em>None</em><br/>
-		</p>
-
-		<h2>Example</h2>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php fpo_social_links(); ?>
-			</div>
-		</div>
-	</div><!--/columns-->
-</div><!--/row-->
-
-<br/><br/>
-<hr/>
-<br/><br/>
-
-<!-- Social Share -->
-<div class="row">
-	<div class="sixteen columns">
-		<h2><strong>Social (Share)</strong></h2>
-		<p>The <?php echo do_shortcode('[code]fpo_social_share()[/code]'); ?> function will create placeholder social media sharing buttons. Please note that these are meant to be for like/share buttons (for social media link placeholders, use [code]fpo_social_links()[/code]). The class "nebula-fpo-social-links" is added to the element.</p>
-
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_social_share( $accounts ); ?>[/pre]'); ?>
-
-		<h2>Parameters</h2>
-		<p>
-			<strong>$accounts</strong> (array) (optional) An array of which networks to use. These include "Facebook", "Twitter", "Google+", "LinkedIn", "Youtube", and "Email". They are not case-sensitive, and have aliases for various spellings/abbreviations. You can also add custom icons from Font Awesome (use the "fa-" syntax), or use an absolute URL to an image (it will be scaled down). If none are declared, they all appear. Default: <em>None</em><br/>
-		</p>
-
-		<h2>Example</h2>
-		<div class="row">
-			<div class="sixteen columns">
-				<?php fpo_social_share(); ?>
-			</div>
-		</div>
-	</div><!--/columns-->
-</div><!--/row-->
-
 
 
 

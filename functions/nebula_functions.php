@@ -3,7 +3,6 @@
 //Set server timezone to match Wordpress
 date_default_timezone_set(get_option('timezone_string')); //@TODO "Nebula" 0: date_default_timezone_set(): Timezone ID '' is invalid
 
-
 //Track Google Page Speed tests
 add_action('wp_footer', 'track_google_pagespeed_checks');
 function track_google_pagespeed_checks(){
@@ -22,7 +21,6 @@ function track_google_pagespeed_checks(){
 	}
 }
 
-
 //Add the calling card to the browser console
 if ( nebula_settings_conditional('nebula_console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
@@ -37,7 +35,6 @@ if ( nebula_settings_conditional('nebula_console_css') ){
 		echo $console_log;
 	}
 }
-
 
 //Check for dev stylesheets
 if ( nebula_settings_conditional('nebula_dev_stylesheets') ){
@@ -68,7 +65,6 @@ if ( nebula_settings_conditional('nebula_dev_stylesheets') ){
 	}
 }
 
-
 //Redirect to favicon to force-clear the cached version when ?favicon is added.
 add_action('wp_loaded', 'nebula_favicon_cache');
 function nebula_favicon_cache(){
@@ -95,7 +91,6 @@ if ( function_exists('remove_theme_support') ){
 //Add new image sizes
 add_image_size('open_graph_large', 1200, 630, 1);
 add_image_size('open_graph_small', 600, 315, 1);
-
 
 //Dynamic Page Titles
 add_filter('wp_title', 'filter_wp_title', 10, 2);
@@ -129,7 +124,6 @@ function filter_wp_title($title, $separator){
 	return $title;
 }
 
-
 //Determine if the author should be the Company Name or the specific author's name.
 function nebula_the_author($show_authors=1){
 	if ( !is_single() || $show_authors == 0 || !nebula_author_bios_enabled() ){
@@ -138,7 +132,6 @@ function nebula_the_author($show_authors=1){
 		return ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 	}
 }
-
 
 //List of HTTP status codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 add_action('nebula_header', 'nebula_http_status');
@@ -172,7 +165,7 @@ function nebula_http_status($status=200, $redirect=0){
 	}
 }
 
-
+//Register Widget Areas
 add_action('widgets_init', 'nebula_widgets_init');
 function nebula_widgets_init(){
 	//Sidebar 1
@@ -242,7 +235,6 @@ function nebula_widgets_init(){
 	) );
 }
 
-
 //Register the Navigation Menus
 add_action('after_setup_theme', 'nav_menu_locations');
 function nav_menu_locations(){
@@ -256,13 +248,11 @@ function nav_menu_locations(){
 	);
 }
 
-
 //Set email content type to be HTML by default
 add_filter('wp_mail_content_type', 'nebula_email_content_type');
 function nebula_email_content_type(){
     return "text/html";
 }
-
 
 /*** If the project uses comments, remove the next set of functions (six), or force this conditional to be false! ***/
 if ( nebula_settings_conditional('nebula_comments', 'disabled') ){
@@ -355,8 +345,6 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ){
 	}
 }
 
-
-
 //Prefill form fields with comment author cookie
 add_action('wp_head', 'comment_author_cookie');
 function comment_author_cookie(){
@@ -373,9 +361,6 @@ function comment_author_cookie(){
 	echo '</script>';
 }
 
-
-
-
 //Print the PHG logo as text with or without hover animation.
 function pinckney_hugo_group($anim){ pinckneyhugogroup($anim); }
 function phg($anim){ pinckneyhugogroup($anim); }
@@ -388,14 +373,6 @@ function pinckneyhugogroup($anim=false, $white=false){
 	}
 	echo '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
 }
-
-
-
-
-
-
-
-
 
 //Show different meta data information about the post. Typically used inside the loop.
 //Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
@@ -481,11 +458,6 @@ function nebula_meta($meta, $secondary=1){
 	}
 }
 
-
-
-
-
-
 /*
 //Displays camera exif information for an attachment
 function get_exif($att){
@@ -518,15 +490,7 @@ function get_exif($att){
 }
 */
 
-
-
-
-
-
-
-
-
-
+//Display Social Buttons
 function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
 	if ( is_string($networks) ){ //if $networks is a string, create an array for the string.
 		$networks = array($networks);
@@ -648,7 +612,6 @@ function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are 
 	$nebula_pinterest_pin = 1;
 }
 
-
 //Twitter cached feed
 //This function can be called with AJAX or as a standard function.
 add_action('wp_ajax_nebula_twitter_cache', 'nebula_twitter_cache');
@@ -697,7 +660,6 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		return $tweets;
 	}
 }
-
 
 //Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.
 //Several ways to implement this:
@@ -751,6 +713,7 @@ function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ){
 	return $string[0];
 }
 
+//Pass custom text to a Nebula-style excerpt
 function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=false, $more=false){
 	$string = strip_tags(strip_shortcodes($text), '');
 
@@ -773,7 +736,6 @@ function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=fal
 	return $string[0];
 }
 
-
 //Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
 //Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
 function nebula_manage($data){
@@ -794,7 +756,6 @@ function nebula_manage($data){
 	}
 }
 
-
 //Speech recognition AJAX for navigating
 add_action('wp_ajax_navigator', 'nebula_ajax_navigator');
 add_action('wp_ajax_nopriv_navigator', 'nebula_ajax_navigator');
@@ -803,7 +764,6 @@ function nebula_ajax_navigator(){
 	//include('includes/navigat-holder.php');
 	exit();
 }
-
 
 //Replace text on password protected posts to be more minimal
 add_filter('the_password_form', 'nebula_password_form_simplify');
@@ -816,8 +776,7 @@ function nebula_password_form_simplify(){
     return $output;
 }
 
-
-//Breadcrumbs
+//Breadcrumbs (Original credit: Jef Collier)
 function the_breadcrumb(){
 	global $post;
 	$delimiter = '<span class="arrow">&rsaquo;</span>'; //Delimiter between crumbs
@@ -921,19 +880,11 @@ function the_breadcrumb(){
 				echo $before . $post_type->labels->singular_name . $after;
 			}
 		} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
-
-
-
-
 			if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
 				echo '<a href="' . get_permalink($post->post_parent) . '">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter . ' ' . get_the_title();
 			} else {
 				echo get_the_title();
 			}
-
-
-
-
 		} elseif ( is_page() && !$post->post_parent ){
 			if ( $showCurrent == 1 ){
 				echo $before . get_the_title() . $after;
@@ -977,8 +928,7 @@ function the_breadcrumb(){
 		}
 		echo '</nav></div><!--/breadcrumbcon-->';
 	}
-} //End Breadcrumbs
-
+}
 
 //Always get custom fields with post queries
 add_filter('the_posts', 'nebula_always_get_post_custom');
@@ -989,9 +939,6 @@ function nebula_always_get_post_custom($posts){
     }
     return $posts;
 }
-
-
-
 
 //Override the default Wordpress search form
 //@TODO "Nebula" 0: Use this on template like 404 (and maybe even advanced search?) and search redirect (in header). Then expand this a little bit.
@@ -1005,7 +952,6 @@ function nebula_search_form($form){
     </form>';
     return $form;
 }
-
 
 //Prevent empty search query error (Show all results instead)
 add_action('pre_get_posts', 'redirect_empty_search');
@@ -1021,7 +967,6 @@ function redirect_empty_search($query){
 		}
 	}
 }
-
 
 //Redirect if only single search result
 add_action('template_redirect', 'redirect_single_post');
@@ -1046,7 +991,7 @@ function redirect_single_post(){
     }
 }
 
-
+//Easily create markup for a Hero area search input
 function nebula_hero_search($placeholder='What are you looking for?'){
 	echo '<div id="nebula-hero-formcon">
 		<form id="nebula-hero-search" class="nebula-search-iconable search" method="get" action="' . home_url('/') . '">
@@ -1054,7 +999,6 @@ function nebula_hero_search($placeholder='What are you looking for?'){
 		</form>
 	</div>';
 }
-
 
 //Autocomplete Search AJAX.
 add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
@@ -1169,7 +1113,7 @@ function nebula_autocomplete_search(){
 	}
 	foreach($menus as $menu){
 		$menu_items = wp_get_nav_menu_items($menu->term_id);
-		foreach ( $menu_items as $key => $menu_item ) {
+		foreach ( $menu_items as $key => $menu_item ){
 		    $suggestion = array();
 		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $menu_title_similarity);
 		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->attr_title), $menu_attr_similarity);
@@ -1294,11 +1238,10 @@ function nebula_autocomplete_search(){
 	$outputArray[] = $suggestion;
 
 	echo json_encode($outputArray); //Return data in JSON
-
 	exit;
 }
 
-
+//Advanced Search @TODO "Nebula" 0: In progress
 add_action('wp_ajax_nebula_advanced_search', 'nebula_advanced_search');
 add_action('wp_ajax_nopriv_nebula_advanced_search', 'nebula_advanced_search');
 function nebula_advanced_search(){
@@ -1402,10 +1345,8 @@ function nebula_advanced_search(){
 			<?php
 		}
 	}
-
 	exit;
 }
-
 
 //Remove capital P core function
 remove_filter('the_title', 'capital_P_dangit', 11);
@@ -1434,7 +1375,6 @@ function addBackPostFeed(){
     echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="'.get_bloginfo('rss2_url').'" />';
 }
 
-
 //Declare support for WooCommerce
 if ( is_plugin_active('woocommerce/woocommerce.php') ){
 	add_theme_support('woocommerce');
@@ -1451,7 +1391,6 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ){
 		echo '</section>';
 	}
 }
-
 
 //Add custom body classes
 add_filter('body_class', 'nebula_body_classes');
@@ -1485,7 +1424,6 @@ function nebula_body_classes($classes){
 	if ( $GLOBALS["mobile_detect"]->isIphone() ){
     	$classes[] = 'iphone';
     }
-
 
 	//User Information
 	$current_user = wp_get_current_user();
@@ -1569,7 +1507,6 @@ function nebula_body_classes($classes){
     return $classes;
 }
 
-
 //Add additional classes to post wrappers @TODO "Nebula" 0: Finish implementing this!
 //add_filter('post_class', 'nebula_post_classes');
 function nebula_post_classes($classes){
@@ -1583,7 +1520,6 @@ function nebula_post_classes($classes){
     return $classes;
 }
 
-
 //Make sure attachment URLs match the protocol (to prevent mixed content warnings).
 add_filter('wp_get_attachment_url', 'wp_get_attachment_url_example');
 function wp_get_attachment_url_example($url){
@@ -1596,7 +1532,6 @@ function wp_get_attachment_url_example($url){
         return $url;
     }
 }
-
 
 //Add more fields to attachments //@TODO "Nebula" 0: Enable this as needed. The below example adds a "License" field.
 //add_filter('attachment_fields_to_edit', 'nebula_attachment_fields', 10, 2);
@@ -1616,7 +1551,6 @@ function nebula_save_attachment_fields($attachment_id){
         update_post_meta($attachment_id, 'license', $license);
     }
 }
-
 
 //Check if the current time is within business hours.
 function currently_open(){
@@ -1658,56 +1592,99 @@ function currently_open(){
 	return false;
 }
 
-
 //Detect weather for Zip Code (using Yahoo! Weather)
-function nebula_weather($zipcode=null, $data=null, $fresh=null){
-	if ( $zipcode && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
+function nebula_weather($zipcode=null, $data=''){
+	if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
 		$data = $zipcode;
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
-	} elseif ( !$zipcode ){
+	} elseif ( empty($zipcode) ){
 		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
 	}
 
-	global $current_weather;
-	//$cache_file = get_template_directory() . '/includes/cache/weather-' . $zipcode;
-	$url = 'http://weather.yahooapis.com/forecastrss?p=' . $zipcode;
+	$weather_json = get_transient('nebula_weather_' . $zipcode);
+	if ( empty($weather_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+		$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
+		$weather_json = file_get_contents('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json'); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+		set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
+	}
+	$weather_json = json_decode($weather_json);
 
-	$weather = get_transient('nebula_weather_' . $zipcode);
-	if ( empty($weather) || is_debug() ){
-		$use_errors = libxml_use_internal_errors(true);
-		$xml = simplexml_load_file($url);
-		//@TODO "Nebula" 0: Need to come up with a way to pull default weather info in case yahooapis.com can't be reached.
-		libxml_clear_errors();
-		libxml_use_internal_errors($use_errors);
-		set_transient('nebula_weather_' . $zipcode, $xml->asXML(), 60*15); //asXML() converts to string to it can be cached in the transient. 15 minute cache.
-		$current_weather['cached'] = 'New';
-	} else {
-		$xml = simplexml_load_string($weather);
-		$current_weather['cached'] = 'Cached';
+	if ( !$weather_json || empty($weather_json) ){
+		trigger_error('A weather error occurred (Forecast for ' . $zipcode . ' may not exist).', E_USER_WARNING);
+		return false;
+	} elseif ( $data == '' ){
+		return true;
 	}
 
-	$current_weather['conditions'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->text;
-	$current_weather['temp'] = $xml->channel->item->children('yweather', TRUE)->condition->attributes()->temp;
-	$current_weather['city'] = $xml->channel->children('yweather', TRUE)->location->attributes()->city;
-	$current_weather['state'] = $xml->channel->children('yweather', TRUE)->location->attributes()->region;
-	$current_weather['city_state'] = $current_weather['city'] . ', ' . $current_weather['state'];
-	$current_weather['zip'] = $zipcode;
-	$current_weather['sunrise'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunrise;
-	$current_weather['sunset'] = $xml->channel->children('yweather', TRUE)->astronomy->attributes()->sunset;
-	$current_weather["sunrise_seconds"] = strtotime($current_weather['sunrise'])-strtotime('today'); //Sunrise in seconds
-	$current_weather["sunset_seconds"] = strtotime($current_weather['sunset'])-strtotime('today'); //Sunset in seconds
-	$current_weather["noon_seconds"] = (($current_weather["sunset_seconds"]-$current_weather["sunrise_seconds"])/2)+$current_weather["sunrise_seconds"]; //Solar noon in seconds
-	$current_weather['time_seconds'] = time()-strtotime("today");
-
-	if ( $data && isset($current_weather[$data]) ){
-		return $current_weather[$data];
-	} elseif ( $data && !isset($current_weather[$data]) ){
-		return 'Error: Requested data "' . $data . '" is not defined.';
-	} else {
-		return $current_weather;
+	switch ( $data ){
+		case 'json':
+			return $weather_json;
+			break;
+		case 'reported':
+		case 'build':
+		case 'lastBuildDate':
+			return $weather_json->query->results->channel->lastBuildDate;
+			break;
+		case 'city':
+			return $weather_json->query->results->channel->location->city;
+			break;
+		case 'state':
+		case 'region':
+			return $weather_json->query->results->channel->location->region;
+			break;
+		case 'country':
+			return $weather_json->query->results->channel->location->country;
+			break;
+		case 'location':
+			return $weather_json->query->results->channel->location->city . ', ' . $weather_json->query->results->channel->location->region;
+			break;
+		case 'latitude':
+		case 'lat':
+			return $weather_json->query->results->channel->item->lat;
+			break;
+		case 'longitude':
+		case 'long':
+		case 'lng':
+			return $weather_json->query->results->channel->item->long;
+			break;
+		case 'geo':
+		case 'geolocation':
+		case 'coordinates':
+			return $weather_json->query->results->channel->item->lat . ',' . $weather_json->query->results->channel->item->lat;
+			break;
+		case 'windchill':
+		case 'wind chill':
+		case 'chill':
+			return $weather_json->query->results->channel->wind->chill;
+			break;
+		case 'windspeed':
+		case 'wind speed':
+			return $weather_json->query->results->channel->wind->speed;
+			break;
+		case 'sunrise':
+			return $weather_json->query->results->channel->astronomy->sunrise;
+			break;
+		case 'sunset':
+			return $weather_json->query->results->channel->astronomy->sunset;
+			break;
+		case 'temp':
+		case 'temperature':
+			return $weather_json->query->results->channel->item->condition->temp;
+			break;
+		case 'condition':
+		case 'conditions':
+		case 'current':
+		case 'currently':
+			return $weather_json->query->results->channel->item->condition->text;
+			break;
+		case 'forecast':
+			return $weather_json->query->results->channel->item->forecast;
+			break;
+		default:
+			break;
 	}
+	return false;
 }
-
 
 function vimeo_meta($videoID, $meta=''){
 	if ( $meta == 'id' ){
@@ -1781,7 +1758,7 @@ function vimeo_meta($videoID, $meta=''){
 	return false;
 }
 
-
+//Get Youtube Video metadata
 function youtube_meta($videoID, $meta=''){
 	switch ( $meta ){
 		case 'origin':
@@ -1872,9 +1849,6 @@ function youtube_meta($videoID, $meta=''){
 	return false;
 }
 
-
-
-
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
 function nebula_tel_link($phone, $postd=''){
 	if ( $GLOBALS["mobile_detect"]->isMobile() ){
@@ -1953,8 +1927,6 @@ function nebula_phone_format($number, $format=''){
 	}
 }
 
-
-
 //Footer Widget Counter
 function footerWidgetCounter(){
 	$footerWidgetCount = 0;
@@ -1973,25 +1945,23 @@ function footerWidgetCounter(){
 	return $footerWidgetCount;
 }
 
-
-
 //Track PHP errors...
-register_shutdown_function('shutdownFunction');
+//Disabled for now. Will revisit when fatal errors can be caught/reported (PHP7?).
+//register_shutdown_function('shutdownFunction');
 function shutDownFunction(){
 	$error = error_get_last(); //Will return an error number, or null on normal end of script (without any errors).
 	if ( $error['type'] == 1 || $error['type'] == 16 || $error['type'] == 64 || $error['type'] == 4 || $error['type'] == 256 || $error['type'] == 4096 ){
-		ga_send_event('Error', 'PHP Error', 'Fatal Error [' . $error['type'] . ']: ' . $error['message'] . ' in ' . $error['file'] . ' on ' . $error['line'] . '.');
+		//ga_send_event('Error', 'PHP Error', 'Fatal Error [' . $error['type'] . ']: ' . $error['message'] . ' in ' . $error['file'] . ' on ' . $error['line'] . '.');
 	}
 }
-
-set_error_handler('nebula_error_handler');
+//set_error_handler('nebula_error_handler');
 function nebula_error_handler($error_level, $error_message, $error_file, $error_line, $error_contest){
     switch ( $error_level ){
         case E_WARNING:
         case E_CORE_WARNING:
         case E_COMPILE_WARNING:
         case E_USER_WARNING:
-            ga_send_event('Error', 'PHP Error', 'Warning [' . $error_level . ']: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
+            //ga_send_event('Error', 'PHP Error', 'Warning [' . $error_level . ']: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
             break;
         case E_NOTICE:
         case E_USER_NOTICE:
@@ -2003,14 +1973,8 @@ function nebula_error_handler($error_level, $error_message, $error_file, $error_
             //ga_send_event('Error', 'PHP Error', 'Strict ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track strict errors.
             break;
         default:
-            ga_send_event('Error', 'PHP Error', 'Unknown Error Level ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
+            //ga_send_event('Error', 'PHP Error', 'Unknown Error Level ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
             break;
     }
     return false; //After reporting, 'false' allows the original error handler to print errors.
 }
-
-
-
-
-
-

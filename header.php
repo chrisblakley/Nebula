@@ -12,9 +12,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta name="referrer" content="always">
 		<meta charset="<?php bloginfo('charset'); ?>" />
-
 		<title><?php wp_title('-', true, 'right'); ?></title>
-
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<meta name="HandheldFriendly" content="True" />
 		<meta name="MobileOptimized" content="320" />
@@ -23,28 +21,10 @@
 		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json" /> <!-- Web App Manifest Icons/Settings -->
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
-
-		<?php include_once('includes/metadata.php'); //All text components of metadata are declared in this file. ?>
-		<?php include_once('includes/metagraphics.php'); //All graphic components of metadata are declared in this file. ?>
-
+		<?php include_once('includes/metadata.php'); //All text components of metadata. ?>
+		<?php include_once('includes/metagraphics.php'); //All graphic components of metadata. ?>
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
-
-		<script> //Universal Analytics
-			<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
-			var analyticsScript = ( <?php echo ( is_debug() ) ? 1 : 0; ?> ? 'analytics_debug.js' : 'analytics.js' );
-
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/' + analyticsScript,'ga');
-
-			ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Settings or functions.php! ?>
-			<?php if ( nebula_adwords_enabled() ): //Enable AdWords integration in Nebula Settings, or delete this conditional. ?>
-				ga('require', 'displayfeatures');
-			<?php endif; ?>
-			ga('send', 'pageview');
-		</script>
-
+		<?php include_once('includes/analytics.php'); //Google Analytics and other analytics trackers. ?>
 		<?php wp_head(); ?>
 	</head>
 	<body <?php body_class(); ?>>
@@ -87,7 +67,7 @@
 				</div><!--/row-->
 			</div><!--/topbarcon-->
 
-			<?php if ( has_nav_menu('secondary') ) : ?>
+			<?php if ( has_nav_menu('secondary') ): ?>
 				<div id="secondarynavcon" class="container">
 					<div class="row">
 						<div class="sixteen columns">
@@ -111,7 +91,7 @@
 						</a>
 					</div><!--/columns-->
 					<div class="ten columns">
-						<?php if ( has_nav_menu('primary') ) : ?>
+						<?php if ( has_nav_menu('primary') ): ?>
 							<nav id="primarynav" class="clearfix">
 								<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
 			        		</nav>
@@ -120,7 +100,7 @@
 				</div><!--/row-->
 			</div><!--/container-->
 
-			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ) : ?>
+			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ): ?>
 				<div class="container headerdrawercon">
 					<hr/>
 					<div class="row">
@@ -132,7 +112,7 @@
 					</div><!--/row-->
 					<hr class="zero" />
 				</div><!--/container-->
-			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ) : ?>
+			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ): ?>
 				<div class="container headerdrawercon">
 					<hr/>
 					<div class="row">
@@ -144,7 +124,7 @@
 					</div><!--/row-->
 					<hr class="zero" />
 				</div><!--/container-->
-			<?php elseif ( is_404() || array_key_exists('s', $_GET) ) : ?>
+			<?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) || is_page_template('http_status.php') ): //Verify if !have_posts() triggers when we don't want it... ?>
 				<div id="suggestedpage" class="container headerdrawercon">
 					<hr/>
 					<div class="row">

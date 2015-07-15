@@ -3,15 +3,15 @@
 //Get flags where a parameter is declared in $atts that exists without a declared value
 /* Usage:
 	$flags = get_flags($atts);
-	if (in_array('your_flag', $flags) {
+	if (in_array('your_flag', $flags){
 	    // Flag is present
 	}
 */
-function get_flags($atts) {
+function get_flags($atts){
 	$flags = array();
-	if (is_array($atts)) {
-		foreach ($atts as $key => $value) {
-			if ($value != '' && is_numeric($key)) {
+	if (is_array($atts)){
+		foreach ($atts as $key => $value){
+			if ($value != '' && is_numeric($key)){
 				array_push($flags, $value);
 			}
 		}
@@ -19,14 +19,13 @@ function get_flags($atts) {
 	return $flags;
 }
 
-
 add_shortcode('div', 'div_shortcode');
 function div_shortcode($atts, $content=''){
 	extract( shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts) );
-	if ( $content ) {
+	if ( $content ){
 		$div = '<div class="nebula-div ' . $class . '" style="' . $style . '">' . $content . '</div>';
 	} else {
-		if ( $close ) {
+		if ( $close ){
 			$div = '</div><!-- /nebula-div -->';
 		} else {
 			$div = '<div class="nebula-div nebula-div-open' . $class . '" style="' . $style . '">';
@@ -39,7 +38,7 @@ function div_shortcode($atts, $content=''){
 //Gumby Grid Shortcodes
 
 //Colgrid
-if ( shortcode_exists( 'colgrid' ) ) {
+if ( shortcode_exists( 'colgrid' ) ){
 	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
 } else {
 	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
@@ -53,7 +52,7 @@ function colgrid_shortcode($atts, $content=''){
 } //end colgrid_grid()
 
 //Container
-if ( shortcode_exists( 'container' ) ) {
+if ( shortcode_exists( 'container' ) ){
 	add_shortcode('gumby_container', 'container_shortcode');
 } else {
 	add_shortcode('gumby_container', 'container_shortcode');
@@ -65,7 +64,7 @@ function container_shortcode($atts, $content=''){
 } //end container_grid()
 
 //Row
-if ( shortcode_exists('row') ) {
+if ( shortcode_exists('row') ){
 	add_shortcode('gumby_row', 'row_shortcode');
 } else {
 	add_shortcode('gumby_row', 'row_shortcode');
@@ -78,7 +77,7 @@ function row_shortcode($atts, $content=''){
 } //end row_grid()
 
 //Columns
-if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exists('cols') || shortcode_exists('col') ) {
+if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exists('cols') || shortcode_exists('col') ){
 	add_shortcode('gumby_column', 'column_shortcode');
 	add_shortcode('gumby_columns', 'column_shortcode');
 	add_shortcode('gumby_col', 'column_shortcode');
@@ -97,22 +96,22 @@ function column_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('columns' => '', 'push' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts) );
 
 	$flags = get_flags($atts);
-	if ( in_array('centered', $flags) ) {
+	if ( in_array('centered', $flags) ){
 		$centered = 'centered';
 		$key = array_search('centered', $flags);
 		unset($flags[$key]);
-	} elseif ( in_array('first', $flags) ) {
+	} elseif ( in_array('first', $flags) ){
 		$GLOBALS['col_counter'] = 1;
 		$first = 'margin-left: 0;';
 		$key = array_search('first', $flags);
-	} elseif ( $GLOBALS['col_counter'] == 0 ) {
+	} elseif ( $GLOBALS['col_counter'] == 0 ){
 		$GLOBALS['col_counter'] = 1;
 		$first = 'margin-left: 0;';
 	} else {
 		$GLOBALS['col_counter']++;
 	}
 
-	if ( in_array('last', $flags) ) {
+	if ( in_array('last', $flags) ){
 		$GLOBALS['col_counter'] = 0;
 		$key = array_search('last', $flags);
 		unset($flags[$key]);
@@ -120,7 +119,7 @@ function column_shortcode($atts, $content=''){
 
 	$columns = array_values($flags);
 
-	if ( $push ) {
+	if ( $push ){
 		$push = 'push_' . $push;
 	}
 
@@ -135,7 +134,7 @@ add_shortcode('hr', 'divider_shortcode');
 add_shortcode('line', 'divider_shortcode');
 function divider_shortcode($atts){
 	extract( shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts) );
-	if ( $space ) {
+	if ( $space ){
 		$above = $space;
 		$below = $space;
 	}
@@ -148,7 +147,7 @@ function divider_shortcode($atts){
 add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){
 	extract( shortcode_atts(array('type'=>'', 'color'=>'inherit', 'size'=>'inherit', 'class'=>''), $atts) );
-	if (strpos($type, 'fa-') !== false) {
+	if (strpos($type, 'fa-') !== false){
 	    $fa = 'fa ';
 	}
 	$extra_style = !empty($color) ? 'color:' . $color . ';' :'';
@@ -163,15 +162,15 @@ function button_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('size' => 'medium', 'type' => 'primary', 'pretty' => false, 'metro' => false, 'icon' => false, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
 
 	$flags = get_flags($atts);
-	if ( in_array('pretty', $flags) ) {
+	if ( in_array('pretty', $flags) ){
 		$btnstyle = ' pretty';
-	} elseif ( in_array('metro', $flags) ) {
+	} elseif ( in_array('metro', $flags) ){
 		$btnstyle = ' metro';
 	}
 
-	if ( $icon ) {
+	if ( $icon ){
 		$side = 'icon-' . $side;
-		if (strpos($icon, 'fa-') !== false) {
+		if (strpos($icon, 'fa-') !== false){
 		    $icon_family = 'fa ';
 		} else {
 			$icon_family = 'entypo ';
@@ -180,7 +179,7 @@ function button_shortcode($atts, $content=''){
 		$icon = '';
 	}
 
-	if ( $target ) {
+	if ( $target ){
 		$target = ' target="' . $target . '"';
 	}
 
@@ -212,51 +211,51 @@ function map_shortcode($atts){
 	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', 'overlay' => false, "class" => '', "style" => ''), $atts) );
 
 	$flags = get_flags($atts);
-	if ( in_array('overlay', $flags) ) {
+	if ( in_array('overlay', $flags) ){
 		$overlay = 'the-map-overlay';
 	} else {
 		$overlay = '';
 	}
 
-	if ( $key == '' ) {
+	if ( $key == '' ){
 		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO "APIs" 2: Replace with your own key to avoid designating a key every time.
 	}
-	if ( $q != '' ) {
+	if ( $q != '' ){
 		$q = str_replace(' ', '+', $q);
 		$q = '&q=' . $q;
 	}
-	if ( $mode == 'directions' ) {
-		if ( $origin != '' ) {
+	if ( $mode == 'directions' ){
+		if ( $origin != '' ){
 			$origin = str_replace(' ', '+', $origin);
 			$origin = '&origin=' . $origin;
 		}
-		if ( $destination != '' ) {
+		if ( $destination != '' ){
 			$destination = str_replace(' ', '+', $destination);
 			$destination = '&destination=' . $destination;
 		}
-		if ( $waypoints != '' ) {
+		if ( $waypoints != '' ){
 			$waypoints = str_replace(' ', '+', $waypoints);
 			$waypoints = '&waypoints=' . $waypoints;
 		}
-		if ( $avoid != '' ) {
+		if ( $avoid != '' ){
 			$avoid = '&avoid=' . $avoid;
 		}
 	}
-	if ( $center != '' ) {
+	if ( $center != '' ){
 		$center = '&center=' . $center;
 	}
-	if ( $language != '' ) {
+	if ( $language != '' ){
 		$language = '&language=' . $language;
 	}
-	if ( $region != '' ) {
+	if ( $region != '' ){
 		$region = '&region=' . $region;
 	}
-	if ( $zoom != '' ) {
+	if ( $zoom != '' ){
 		$zoom = '&zoom=' . $zoom;
 	}
 
 	$return = '<script>
-		jQuery(document).ready(function() {
+		jQuery(document).ready(function(){
 			jQuery(".the-map-overlay").on("click", function(){
 				jQuery(this).removeClass("the-map-overlay");
 			});
@@ -312,14 +311,14 @@ function pre_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );
 
 	$flags = get_flags($atts);
-	if ( !in_array('br', $flags) ) {
+	if ( !in_array('br', $flags) ){
 		$content = preg_replace('#<br\s*/?>#', '', $content);
 	}
 
 	$content = htmlspecialchars_decode($content);
 	$content = htmlspecialchars($content);
 
-	if ( $lang == '' && $language != '' ) {
+	if ( $lang == '' && $language != '' ){
 		$lang = $language;
 	}
 	$lang = strtolower(str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang));
@@ -328,7 +327,7 @@ function pre_shortcode($atts, $content=''){
 	$vislang = str_replace($search, $replace, $lang);
 
 	$return = '<div class="nebula-pre-con clearfix ' . $lang . '"><span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
-	if ( $color != '' ) {
+	if ( $color != '' ){
 		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
 	$return .= $style . '" >' . $content . '</pre></div>';
@@ -342,12 +341,12 @@ add_shortcode('gist', 'gist_shortcode');
 function gist_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) );
 
-	if ( $GLOBALS['pre'] == 0 ) { //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+	if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
 		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
 
-	if ( $lang == '' && $language != '' ) {
+	if ( $lang == '' && $language != '' ){
 		$lang = $language;
 	}
 	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
@@ -355,12 +354,12 @@ function gist_shortcode($atts, $content=''){
 	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
 	$vislang = str_replace($search, $replace, $lang);
 
-	if ( $file ) {
+	if ( $file ){
 		$file = '?file=' . $file;
 	}
 
 	$return = '<span class="nebula-gist nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><div class="nebula-code ' . $lang . ' ' . $class . '" style="';
-	if ( $color != '' ) {
+	if ( $color != '' ){
 		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
 	$return .= $style . '" ><script type="text/javascript" src="'. $content . $file . '"></script></div>';
@@ -377,26 +376,26 @@ function accordion_shortcode($atts, $content=''){
 
 	$return = '<div class="accordion ' . $class . ' ' . $type . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 
-	if ( $GLOBALS['accordion'] == 0 ) {
-		$return .= "<script>jQuery(document).ready(function() {
+	if ( $GLOBALS['accordion'] == 0 ){
+		$return .= "<script>jQuery(document).ready(function(){
 			jQuery('.accordion-item').each(function(){
-				if ( jQuery(this).hasClass('open') ) {
+				if ( jQuery(this).hasClass('open') ){
 					jQuery(this).children('.accordion-content-con').slideToggle();
 					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
 				}
 			});
 			jQuery('.accordion-item').on('click touch tap', function(){
-				if ( jQuery(this).parent('.accordion').hasClass('multiple') ) {
+				if ( jQuery(this).parent('.accordion').hasClass('multiple') ){
 					jQuery(this).children('.accordion-content-con').slideToggle();
 					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
 				}
-				if ( jQuery(this).parent('.accordion').hasClass('single') ) {
-					if ( jQuery(this).hasClass('accordion-collapsed') ) {
+				if ( jQuery(this).parent('.accordion').hasClass('single') ){
+					if ( jQuery(this).hasClass('accordion-collapsed') ){
 						jQuery(this).parent('.accordion').find('.accordion-item.accordion-expanded').children('.accordion-content-con').slideUp();
 						jQuery(this).parent('.accordion').find('.accordion-item.accordion-expanded').toggleClass('accordion-collapsed accordion-expanded');
 						jQuery(this).children('.accordion-content-con').slideToggle();
 					}
-					if ( jQuery(this).hasClass('accordion-expanded') ) {
+					if ( jQuery(this).hasClass('accordion-expanded') ){
 						jQuery(this).children('.accordion-content-con').slideUp();
 					}
 					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
@@ -461,9 +460,9 @@ add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '8000', 'speed' => '1000', 'frame' => false, 'titles' => false), $atts) );
 
-	if ( !$id ) {
+	if ( !$id ){
 		$id = 'nebula-slider-' . rand(1, 10000);
-	} elseif ( strlen($id) > 0 && ctype_digit(substr($id, 0, 1)) ) {
+	} elseif ( strlen($id) > 0 && ctype_digit(substr($id, 0, 1)) ){
 		$id = 'nebula-slider-' . $id;
 	}
 
@@ -473,29 +472,29 @@ function slider_shortcode($atts, $content=''){
 
 	$flags = get_flags($atts);
 
-	if ( !in_array('frame', $flags) ) {
+	if ( !in_array('frame', $flags) ){
 		$return .= '<style>
 			#' . $id . ' .bx-wrapper .bx-viewport {box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none; border: none; background: none;}
 		</style>';
-		if ( $mode == 'fade' ) {
+		if ( $mode == 'fade' ){
 			$return .= '<style>
 				#' . $id . ' .bx-wrapper .bx-viewport .nebula-slide {width: auto !important;}
 			</style>';
 		}
 	}
 
-	if ( in_array('titles', $flags) ) {
+	if ( in_array('titles', $flags) ){
 		$titles= 'true';
 	} else {
 		$titles= 'false';
 	}
 
-	if ( !in_array('controls', $flags) ) {
+	if ( !in_array('controls', $flags) ){
 		$controls = 'false';
 		$auto = 'true';
 	} else {
 		$controls = 'true';
-		if ( in_array('delay', $flags) ) {
+		if ( in_array('delay', $flags) ){
 			$auto = 'true';
 		} else {
 			$auto = 'false';
@@ -503,7 +502,7 @@ function slider_shortcode($atts, $content=''){
 	}
 
 	$return .= '<script>
-		jQuery(window).on("load", function() {
+		jQuery(window).on("load", function(){
 			setTimeout(function(){
 				jQuery(".' . $id . '").bxSlider({
 					mode: "' . $mode . '",
@@ -530,17 +529,17 @@ add_shortcode('slide', 'slide_shortcode');
 function slide_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('title' => '', 'link' => '', 'target' => ''), $atts) );
 
-	if ( $title != '' ) {
+	if ( $title != '' ){
 		$alt_and_title = 'alt="' . $title . '" title="' . $title . '"';
 	} else {
 		$alt_and_title = '';
 	}
 
-	if ( $link == '' ) {
+	if ( $link == '' ){
 		$linkopen = '';
 		$linkclose = '';
 	} else {
-		if ( $target == '' ) {
+		if ( $target == '' ){
 			$linkopen = '<a href="' . $link . '">';
 		} else {
 			$linkopen = '<a href="' . $link . '" target="' . $target . '">';
@@ -554,17 +553,17 @@ function slide_shortcode($atts, $content=''){
 
 
 //Map parameters of nested shortcodes
-function attribute_map($str, $att = null) {
+function attribute_map($str, $att = null){
     $res = array();
     $reg = get_shortcode_regex();
     preg_match_all('~'.$reg.'~',$str, $matches);
-    foreach($matches[2] as $key => $name) {
+    foreach($matches[2] as $key => $name){
         $parsed = shortcode_parse_atts($matches[3][$key]);
         $parsed = is_array($parsed) ? $parsed : array();
 
-        if(array_key_exists($name, $res)) {
+        if(array_key_exists($name, $res)){
             $arr = array();
-            if(is_array($res[$name])) {
+            if(is_array($res[$name])){
                 $arr = $res[$name];
             } else {
                 $arr[] = $res[$name];
@@ -582,7 +581,7 @@ function attribute_map($str, $att = null) {
 }
 
 //Remove empty <p> tags from Wordpress content (for nested shortcodes)
-function parse_shortcode_content($content) {
+function parse_shortcode_content($content){
    /* Parse nested shortcodes and add formatting. */
     $content = trim( do_shortcode( shortcode_unautop( $content ) ) );
     /* Remove '' from the start of the string. */
@@ -615,7 +614,7 @@ function register_shortcode_button($buttons){
     array_push($buttons, "nebulaaccordion", "nebulabio", "nebulabutton", "nebulaclear", "nebulacode", "nebuladiv", "nebulacolgrid", "nebulacontainer", "nebularow", "nebulacolumn", "nebulaicon", "nebulaline", "nebulamap", "nebulaspace", "nebulaslider", "nebulatooltip", "nebulavideo");
     return $buttons;
 }
-function add_shortcode_plugin($plugin_array) {
+function add_shortcode_plugin($plugin_array){
 	$plugin_array['nebulatoolbar'] = get_template_directory_uri() . '/js/shortcodes.js';
 	return $plugin_array;
 }

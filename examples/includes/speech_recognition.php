@@ -45,6 +45,9 @@
 <p id="ajaxnavtext" style="font-size: 12px; margin: 0; display: none;">Navigation is still being developed. Your request would have sent you here:</p>
 <input id="ajaxarea" type="text" disabled style="display: none; width: 100%; font-size: 12px; margin-bottom: 15px; padding: 3px 15px; border: 1px solid red;" />
 
+<p style="margin: 0; margin-top: 5px; font-size: 12px;">Say <strong>"I love Nebula"</strong> or better yet, introduce yourself and then say it!</p>
+<input id="ilovenebula" type="text" disabled style="width: 100%; font-size: 12px; padding: 3px 15px;" /><br/><br/>
+
 <div id="functionlist">
 	<h4>Functions</h4>
 
@@ -72,13 +75,11 @@
 	</ul>
 </div>
 
-<p style="margin: 0; margin-top: 5px; font-size: 12px;">Say <strong>"I love Nebula"</strong> or better yet, introduce yourself and then say it!</p>
-<input id="ilovenebula" type="text" disabled style="width: 100%; font-size: 12px; padding: 3px 15px;" />
-
 <script>
 	jQuery(document).ready(function() {
 		jQuery('#speech-help').text('Click on the microphone icon and begin speaking.');
 
+		window.speakerName = '';
 		var final_transcript = '';
 		var recognizing = false;
 		var ignore_onend;
@@ -228,7 +229,6 @@
 
 		function keyPhrases(transcript) {
 			transcript = transcript.toLowerCase();
-			speakerName = '';
 
 			//"My Name is _______"
 			phraseMyNameIs = ['my name is'];
@@ -245,8 +245,8 @@
 			//"I Love Nebula"
 			phraseILoveNebula = ['i love nebula', 'isle of nebula', 'i love allah', 'i love nutella', 'isle of nutella', 'isle of allah'];
 			if ( checkAlternates(transcript, phraseILoveNebula) ) {
-				if ( speakerName != '' ) {
-					jQuery('#ilovenebula').val('I love you too, ' + speakerName + '.' );
+				if ( window.speakerName != '' ) {
+					jQuery('#ilovenebula').val('I love you too, ' + window.speakerName + '.' );
 				} else {
 					jQuery('#ilovenebula').val('I love you too.');
 				}

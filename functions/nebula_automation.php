@@ -6,9 +6,8 @@ require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 //Detect and prompt install of Recommended and Optional plugins
 require_once(TEMPLATEPATH . '/includes/class-tgm-plugin-activation.php');
-
-add_action('tgmpa_register', 'my_theme_register_required_plugins'); //@todo: uncomment this
-function my_theme_register_required_plugins() {
+add_action('tgmpa_register', 'my_theme_register_required_plugins');
+function my_theme_register_required_plugins(){
     $plugins = array(
         array(
             'name'      => 'Admin Menu Tree Page View',
@@ -92,7 +91,7 @@ function my_theme_register_required_plugins() {
         ),
     );
 
-    if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ) {
+    if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
     	array_push($plugins, array(
     		'name'      => 'WooCommerce Google Analytics Integration',
     		'slug'      => 'woocommerce-google-analytics-integration',
@@ -143,8 +142,8 @@ function my_theme_register_required_plugins() {
 	*/
 }
 
-
-add_action('after_switch_theme', 'nebula_activation_notice'); //When Nebula has been activated
+//When Nebula has been activated
+add_action('after_switch_theme', 'nebula_activation_notice');
 function nebula_activation_notice(){
 	add_action('admin_notices', 'nebula_activation');
 }
@@ -152,7 +151,7 @@ if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or i
 	add_action('admin_notices', 'nebula_activation');
 }
 function nebula_activation(){
-	$is_standard_initialization = ( isset($_GET['nebula-initialization']) ) ? true : false; //Detect if non-AJAX initialization is needed. //@TODO: is there any way to do this besides query strings?
+	$is_standard_initialization = ( isset($_GET['nebula-initialization']) ) ? true : false; //Detect if non-AJAX initialization is needed.
 
 	if ( $is_standard_initialization ){
 		//@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
@@ -198,7 +197,6 @@ function nebula_activation(){
 	return;
 }
 
-
 //Nebula Initialization (Triggered by either AJAX or manually)
 add_action('wp_ajax_nebula_initialization', 'nebula_initialization');
 function nebula_initialization($standard=null){
@@ -218,7 +216,6 @@ function nebula_initialization($standard=null){
 	}
 }
 
-
 //Send a list of existing settings to the user's email (to test, trigger the function on admin_init)
 function nebula_initialization_email_prev_settings(){
 	$email_admin_timeout = get_transient('nebula_email_admin_timeout');
@@ -233,7 +230,7 @@ function nebula_initialization_email_prev_settings(){
 
 	//Carbon copy the admin if reset was done by another user.
 	$admin_user_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email'));
-	if ( $admin_user_email != $current_user->user_email ) {
+	if ( $admin_user_email != $current_user->user_email ){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}
 
@@ -242,10 +239,10 @@ function nebula_initialization_email_prev_settings(){
 	$message .= '<table style="width: 100%;>';
 
 	$options = $wpdb->get_results("SELECT * FROM $wpdb->options ORDER BY option_name");
-	foreach ( $options as $option ) {
-		if ( $option->option_name != '' ) {
-			if ( is_serialized($option->option_value) ) {
-				if ( is_serialized_string($option->option_value) ) {
+	foreach ( $options as $option ){
+		if ( $option->option_name != '' ){
+			if ( is_serialized($option->option_value) ){
+				if ( is_serialized_string($option->option_value) ){
 					$value = maybe_unserialize($option->option_value);
 					$options_to_update[] = $option->option_name;
 				} else {
@@ -257,14 +254,14 @@ function nebula_initialization_email_prev_settings(){
 			}
 			$message .= '<tr><td style="width: 40%; min-width: 330px;">';
 
-			if ( strpos(esc_html($option->option_name), 'nebula') !== false ) {
+			if ( strpos(esc_html($option->option_name), 'nebula') !== false ){
 				$message .= '<strong style="color: #0098d7;">' . esc_html($option->option_name) . '</strong>';
 			} else {
 				$message .= '<strong>' . esc_html($option->option_name) . '</strong>';
 			}
 
 			$message .=	'</td><td style="width: 60%;">';
-			if ( strpos($value, "\n") !== false ) {
+			if ( strpos($value, "\n") !== false ){
 				$message .= '<textarea rows="5" style="width: 95%; resize: vertical;">' . esc_textarea($value) . '</textarea>';
 			} else {
 				$message .= '<input type="text" value="' . esc_attr($value) . '" style="width: 95%;" />';
@@ -276,7 +273,7 @@ function nebula_initialization_email_prev_settings(){
 
 	//Set the content type to text/html for the email. Don't forget to reset after wp_mail()!
 	add_filter('wp_mail_content_type', 'set_html_content_type');
-	function set_html_content_type() {
+	function set_html_content_type(){
 		return 'text/html';
 	}
 	wp_mail($to, $subject, $message, $headers);
@@ -284,7 +281,6 @@ function nebula_initialization_email_prev_settings(){
 
 	set_transient('nebula_email_admin_timeout', 'true', 60*15); //15 minute expiration
 }
-
 
 //Create Homepage
 function nebual_initialization_create_homepage(){
@@ -306,7 +302,6 @@ Wordpress developers will find all source code not obfuscated, so everything may
 	update_option('page_on_front', $nebula_homepage->ID); //Or set the second parameter to '1'.
 	update_option('show_on_front', 'page');
 }
-
 
 //Nebula preferred default Wordpress settings
 function nebula_initialization_default_settings(){
@@ -335,14 +330,13 @@ function nebula_initialization_default_settings(){
 	$wp_rewrite->flush_rules();
 }
 
-
+//Remove unnecessary plugins bundled with core WordPress
 function nebula_initialization_delete_plugins(){
 	//Remove Hello Dolly plugin if it exists
-	if ( file_exists(WP_PLUGIN_DIR . '/hello.php') ) {
+	if ( file_exists(WP_PLUGIN_DIR . '/hello.php') ){
         delete_plugins(array('hello.php'));
     }
 }
-
 
 function nebula_is_initialized_before(){
 	$nebula_initialized_option = get_option('nebula_initialized');
@@ -358,9 +352,9 @@ function nebula_is_initialized_before(){
 
 //add_action('admin_init', 'nebula_initialization_set_install_date'); //Uncomment this line to force an initialization date.
 function nebula_initialization_set_install_date(){
-	if ( 1==2 ) { //Set to true to force an initialization date (in case of some kind of accidental reset).
+	if ( 1==2 ){ //Set to true to force an initialization date (in case of some kind of accidental reset).
 		$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
-		if ( strtotime($force_date) !== false ) { //Check if provided date string is valid
+		if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
 			update_option('nebula_initialized', strtotime($force_date));
 			return false;
 		}

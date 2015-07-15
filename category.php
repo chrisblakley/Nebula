@@ -3,13 +3,12 @@
  * The template for displaying Category Archive pages.
  */
 
-if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
+if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 	die('Error 403: Forbidden.');
 }
 
 do_action('nebula_header');
-
 get_header(); ?>
 
 <div class="row">
@@ -26,7 +25,7 @@ get_header(); ?>
 			<h1><i class="archiveicon fa fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 				<?php
 					$category_description = category_description();
-					if ( !empty($category_description) ) {
+					if ( !empty($category_description) ){
 						echo '' . $category_description . '';
 					}
 					get_template_part('loop', 'category');
@@ -41,5 +40,4 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-
 <?php do_action('nebula_footer'); ?>

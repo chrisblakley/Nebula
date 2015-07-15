@@ -3,13 +3,12 @@
  * Template Name: Full Width
  */
 
-if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
+if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 	die('Error 403: Forbidden.');
 }
 
 do_action('nebula_header');
-
 get_header(); ?>
 
 <div class="row">
@@ -42,7 +41,7 @@ get_header(); ?>
 						<?php the_content(); ?>
 
 						<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-						<?php if ( current_user_can('manage_options') ) : ?>
+						<?php if ( current_user_can('manage_options') ): ?>
 							<div class="container entry-manage">
 								<div class="row">
 									<hr/>
@@ -62,5 +61,4 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-
 <?php do_action('nebula_footer'); ?>

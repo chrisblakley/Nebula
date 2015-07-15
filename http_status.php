@@ -3,20 +3,18 @@
  * The template for displaying error pages (Besides 404).
  */
 
-if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
+if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 	die('Error 403: Forbidden.');
 }
 
-//@TODO "Nebula" 0: Add htaccess error redirects to the example htaccess file.
-
-if ( $GLOBALS['http'] >= 400 ) {
+if ( $GLOBALS['http'] >= 400 ){
 	$http_type = 'Error';
 } else {
 	$http_type = 'Status';
 }
 
-switch ( $GLOBALS['http'] ) {
+switch ( $GLOBALS['http'] ){
     case 100:
     	$http_name = 'Continue';
     	$http_description = "";
@@ -167,10 +165,11 @@ switch ( $GLOBALS['http'] ) {
     	break;
     default:
         $http_name = 'Unknown';
-    	$http_description = "An unknown error occured.";
+    	$http_description = "An unknown error occurred.";
     break;
 }
 
+do_action('nebula_header');
 get_header(); ?>
 
 <div class="row">
@@ -200,10 +199,10 @@ get_header(); ?>
 </div><!--/container-->
 
 <script>
-	if ( document.referrer.length ) {
-		ga('send', 'event', 'Error Page: 40999 (Description)', 'Referrer: ' + document.referrer, {'nonInteraction': 1});
+	if ( document.referrer.length ){
+		ga('send', 'event', 'HTTP Status Page', '<?php echo $http_type . ' ' . $GLOBALS['http'] . ' (' . $http_name . ')'; ?>', 'Referrer: ' + document.referrer, {'nonInteraction': 1});
 	} else {
-		ga('send', 'event', 'Error Page: 40999 (Description)', 'No Referrer (or Unknown)', {'nonInteraction': 1});
+		ga('send', 'event', 'HTTP Status Page', '<?php echo $http_type . ' ' . $GLOBALS['http'] . ' (' . $http_name . ')'; ?>', 'No Referrer (or Unknown)', {'nonInteraction': 1});
 	}
 
 	var thisURL = [location.protocol, '//', location.host, location.pathname].join('');
@@ -211,5 +210,4 @@ get_header(); ?>
 </script>
 
 <?php get_footer(); ?>
-
 <?php do_action('nebula_footer'); ?>

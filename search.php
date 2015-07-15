@@ -3,13 +3,12 @@
  * The template for displaying Search Results pages.
  */
 
-if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
+if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 	die('Error 403: Forbidden.');
 }
 
 do_action('nebula_header');
-
 get_header(); ?>
 
 <div class="row">
@@ -21,7 +20,7 @@ get_header(); ?>
 
 <div class="row fullcontentcon">
 	<div class="eleven columns">
-		<?php if ( have_posts() ) : ?>
+		<?php if ( have_posts() ): ?>
 			<h1>Search Results <?php get_search_query(); ?></h1>
 			<?php get_search_form(); ?>
 
@@ -42,8 +41,6 @@ get_header(); ?>
 				<?php get_template_part('loop', 'search'); ?>
 			</div><!--/#searchresults-->
 		<?php else : ?>
-			<?php //@TODO "Nebula" 0: Trigger GCSE suggestion drawer for search term. ?>
-
 			<h1>No Results Found</h1>
 			<?php get_search_form(); ?>
 
@@ -64,5 +61,4 @@ get_header(); ?>
 </div><!--/row-->
 
 <?php get_footer(); ?>
-
 <?php do_action('nebula_footer'); ?>

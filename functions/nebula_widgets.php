@@ -7,13 +7,13 @@
 	}
 
 	class nebula_about_the_author extends WP_Widget {
-		function nebula_about_the_author() { //Constructor - name this the same as the class above
+		function nebula_about_the_author(){ //Constructor - name this the same as the class above
 			$name = 'Nebula - About the Author';
 			$description = 'Display author bio on single posts. Be sure to enable the Author Bios function in <a href="themes.php?page=nebula_settings">Nebula Settings</a>!';
 			parent::WP_Widget(false, $name, array('description' => $description));
 		}
 
-		function widget($args, $instance) { //WP_Widget::widget - do not rename this
+		function widget($args, $instance){ //WP_Widget::widget - do not rename this
 			extract($args);
 			?>
 
@@ -38,12 +38,12 @@
 			<?php
 		}
 
-		function update($new_instance, $old_instance) { //WP_Widget::update - do not rename this
+		function update($new_instance, $old_instance){ //WP_Widget::update - do not rename this
 			$instance = $old_instance;
 			return $instance;
 		}
 
-		function form($instance) { //WP_Widget::form - do not rename this
+		function form($instance){ //WP_Widget::form - do not rename this
 			echo "<p>This widget has no form fields.</p>";
 		}
 
@@ -60,8 +60,6 @@
 	//@TODO "Nebula" 0: Twitter feed
 
 
-
-
 	//Nebula - Testing Widget
 	//add_action('widgets_init', 'register_example_widget');
 	function register_example_widget(){
@@ -69,13 +67,13 @@
 	}
 
 	class example_widget extends WP_Widget {
-		function example_widget() { //Constructor - name this the same as the class above
+		function example_widget(){ //Constructor - name this the same as the class above
 			$name = 'Nebula - Testing Widget';
 			$description = 'This widget is a template for testing new custom widgets.';
 			parent::WP_Widget(false, $name, array('description' => $description));
 		}
 
-		function widget($args, $instance) { //WP_Widget::widget - do not rename this
+		function widget($args, $instance){ //WP_Widget::widget - do not rename this
 			extract($args);
 			$title = apply_filters('widget_title', $instance['title']);
 			$message = $instance['message'];
@@ -98,14 +96,14 @@
 			<?php
 		}
 
-		function update($new_instance, $old_instance) { //WP_Widget::update - do not rename this
+		function update($new_instance, $old_instance){ //WP_Widget::update - do not rename this
 			$instance = $old_instance;
 			$instance['title'] = strip_tags($new_instance['title']);
 			$instance['message'] = strip_tags($new_instance['message']);
 			return $instance;
 		}
 
-		function form($instance) { //WP_Widget::form - do not rename this
+		function form($instance){ //WP_Widget::form - do not rename this
 
 			$title = esc_attr($instance['title']);
 			$message = esc_attr($instance['message']);

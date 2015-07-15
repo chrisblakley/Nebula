@@ -3,13 +3,12 @@
  * The template for displaying attachments.
  */
 
-if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
+if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 	die('Error 403: Forbidden.');
 }
 
 do_action('nebula_header');
-
 get_header(); ?>
 
 <div class="row">
@@ -21,13 +20,11 @@ get_header(); ?>
 
 <div class="container fullcontentcon">
 	<div class="row">
-
 		<div class="sixteen columns">
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<h1 class="entry-title">
-						<?php if ( wp_attachment_is_image() ) : ?>
+						<?php if ( wp_attachment_is_image() ): ?>
 							<i class="archiveicon fa fa-photo"></i>
 						<?php endif; ?>
 						<?php the_title(); ?>
@@ -49,7 +46,7 @@ get_header(); ?>
 
 					<div class="entry-content">
 						<div class="entry-attachment">
-							<?php if ( wp_attachment_is_image() ) : ?>
+							<?php if ( wp_attachment_is_image() ): ?>
 								<?php
 									$attachments = array_values(get_children(array('post_parent' => $post->post_parent, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'ASC', 'orderby' => 'menu_order ID')));
 									foreach ( $attachments as $k => $attachment ) {
@@ -80,23 +77,20 @@ get_header(); ?>
 										<div class="nav-next"><?php next_image_link(false); ?></div>
 									</nav><!-- #nav-below -->
 								<?php endif; ?>
-
 							<?php else : ?>
-
 								<a href="<?php echo wp_get_attachment_url(); ?>" title="<?php echo get_the_title(); ?>" ><?php echo basename(get_permalink()); ?></a>
-
 							<?php endif; ?>
 						</div><!-- .entry-attachment -->
 
 						<div class="entry-caption">
-							<?php if ( !empty($post->post_excerpt) ) : ?>
-								<?php the_excerpt(); //@TODO "Nebula" 0: Update to nebula_the_excerpt(); ?>
+							<?php if ( !empty($post->post_excerpt) ): ?>
+								<?php echo nebula_the_excerpt(); ?>
 							<?php endif; ?>
 						</div>
 
 						<?php the_content(); ?>
 
-						<?php if ( current_user_can('manage_options') ) : ?>
+						<?php if ( current_user_can('manage_options') ): ?>
 							<div class="container entry-manage">
 								<div class="row">
 									<hr/>
@@ -109,13 +103,10 @@ get_header(); ?>
 						<?php comments_template(); ?>
 					</div><!-- .entry-content -->
 				</article>
-
 			<?php endwhile; ?>
 		</div><!--/columns-->
-
 	</div><!--/row-->
 </div><!--/container-->
 
 <?php get_footer(); ?>
-
 <?php do_action('nebula_footer'); ?>

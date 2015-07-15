@@ -4,17 +4,15 @@
  */
 ?>
 
-<?php /* Display navigation to next/previous pages when applicable @TODO "Nebula" 0: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
-<?php if ( $wp_query->max_num_pages > 1 ): ?>
+<?php /* @TODO "Nebula" 0: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
+<?php if ( $wp_query->max_num_pages > 1 ): //Display navigation to next/previous pages when applicable ?>
 	<nav id="nav-above" class="navigation">
 		<div class="nav-previous"><?php next_posts_link('<span class="meta-nav">&larr;</span> Older posts'); ?></div>
 		<div class="nav-next"><?php previous_posts_link('Newer posts <span class="meta-nav">&rarr;</span>'); ?></div>
 	</nav><!-- #nav-above -->
 <?php endif; ?>
 
-<?php /* If there are no posts to display, such as an empty archive page */ ?>
-<?php //@TODO "Nebula" 0: Trigger the Google Custom Search Engine suggestion drawer here! ?>
-<?php if ( !have_posts() ): ?>
+<?php if ( !have_posts() ): //If there are no posts to display, such as an empty archive page ?>
 	<article id="post-0" class="post error404 not-found">
 		<h1 class="entry-title">Not Found</h1>
 		<div class="entry-content">
@@ -31,9 +29,7 @@
 ?>
 
 <?php while ( have_posts() ): the_post(); ?>
-
 	<?php if ( in_category('gallery') ): //Display posts in a Gallery ?>
-
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<div class="entry-meta">
 				<hr/>
@@ -59,13 +55,12 @@
 							<a class="size-thumbnail" href="<?php the_permalink(); ?>"><?php echo $image_img_tag; ?></a>
 						</div>
 
-						<p><em><?php printf( '<i class="fa fa-picture-o"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
-
-					<?php endif; // if $images ?>
+						<p><em><?php printf('<i class="fa fa-picture-o"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
+					<?php endif; ?>
 
 				<?php echo nebula_the_excerpt('Read More &raquo;', 50, 1); ?>
 
-				<?php endif; //post_password_required. ?>
+				<?php endif; ?>
 			</div>
 
 			<footer class="entry-utility">
@@ -82,12 +77,10 @@
 				<?php endif; ?>
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
-
 	<?php else : //Display all other posts (Non-Gallery) ?>
-
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
-			<?php if ( !in_array("page", get_post_class()) ): //Do not display entry meta for pages //@TODO "Nebula" 0: Drastically reduce the size of this area. ?>
+			<?php if ( !in_array("page", get_post_class()) ): //Do not display entry meta for pages //@TODO "Nebula" 0: Drastically reduce the visual size of this area. ?>
 				<div class="entry-meta">
 					<?php nebula_meta('on'); ?> <?php if ( !is_author() ){ nebula_meta('by'); } ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
 				</div>
@@ -132,9 +125,7 @@
 				<?php comments_template('', true); ?>
 			</div><!--/nebulacommentswrapper-->
 		<?php endif; ?>
-
-	<?php endif; //End if in Gallery ?>
-
+	<?php endif; ?>
 <?php endwhile; ?>
 
 <?php
@@ -142,7 +133,6 @@
 	   End the Loop
 	   ========================================================================== */
 ?>
-
 
 <?php /* Display navigation to next/previous pages when applicable @TODO "Nebula" 0: REMOVE THIS AND ADD PAGENAVI. Check if pagenavi exists, and fall back to this method! */ ?>
 <?php if (  $wp_query->max_num_pages > 1 ): ?>

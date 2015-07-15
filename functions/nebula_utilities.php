@@ -5,7 +5,7 @@ $GLOBALS['ga_cid'] = gaParseCookie(); //Anonymous Client ID
 
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
 function gaParseCookie(){
-	if (isset($_COOKIE['_ga'])) {
+	if (isset($_COOKIE['_ga'])){
 		list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
 		$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
 		$cid = $contents['cid'];
@@ -16,7 +16,7 @@ function gaParseCookie(){
 }
 
 //Generate UUID v4 function - needed to generate a CID when one isn't available
-function gaGenerateUUID() {
+function gaGenerateUUID(){
 	return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 		mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
 		mt_rand(0, 0xffff), //16 bits for "time_mid"
@@ -28,7 +28,7 @@ function gaGenerateUUID() {
 
 //Send Data to Google Analytics
 //https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-function gaSendData($data) {
+function gaSendData($data){
 	$getString = 'https://ssl.google-analytics.com/collect';
 	$getString .= '?payload_data&';
 	$getString .= http_build_query($data);
@@ -38,23 +38,23 @@ function gaSendData($data) {
 
 //Send Pageview Function for Server-Side Google Analytics
 function ga_send_pageview($hostname=null, $path=null, $title=null){
-	if ( empty($GLOBALS['ga_v']) ) {
+	if ( empty($GLOBALS['ga_v']) ){
 		$GLOBALS['ga_v'] = 1;
 	}
 
-	if ( empty($GLOBALS['ga_cid']) ) {
+	if ( empty($GLOBALS['ga_cid']) ){
 		$GLOBALS['ga_cid'] = gaParseCookie();
 	}
 
-	if ( empty($hostname) ) {
+	if ( empty($hostname) ){
 		$hostname = nebula_url_components('hostname');
 	}
 
-	if ( empty($path) ) {
+	if ( empty($path) ){
 		$path = nebula_url_components('path');
 	}
 
-	if ( empty($title) ) {
+	if ( empty($title) ){
 		$title = get_the_title();
 	}
 
@@ -74,11 +74,11 @@ function ga_send_pageview($hostname=null, $path=null, $title=null){
 //Send Event Function for Server-Side Google Analytics
 //@TODO "Nebula" 0: "WordPress" is still appearing in Google Analytics browser reports for these events!
 function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1){
-	if ( empty($GLOBALS['ga_v']) ) {
+	if ( empty($GLOBALS['ga_v']) ){
 		$GLOBALS['ga_v'] = 1;
 	}
 
-	if ( empty($GLOBALS['ga_cid']) ) {
+	if ( empty($GLOBALS['ga_cid']) ){
 		$GLOBALS['ga_cid'] = gaParseCookie();
 	}
 
@@ -116,14 +116,13 @@ function ga_send_custom($array){ //@TODO "Nebula" 0: Add additional parameters t
 
 	$data = array_merge($defaults, $array);
 
-	if ( !empty($data['t']) ) {
+	if ( !empty($data['t']) ){
 		gaSendData($data);
 	} else {
 		trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
 		return;
 	}
 }
-
 
 //Check if user is using the debug query string.
 function is_debug(){
@@ -133,13 +132,12 @@ function is_debug(){
 	return false;
 }
 
-
 //Check if the current IP address matches any of the dev IP address from Nebula Settings
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_dev() {
+function is_dev(){
 	$devIPs = explode(',', get_option('nebula_dev_ip'));
-	foreach ( $devIPs as $devIP ) {
-		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ) {
+	foreach ( $devIPs as $devIP ){
+		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ){
 			return true;
 		}
 	}
@@ -149,8 +147,8 @@ function is_dev() {
 	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
 	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
-	foreach ( $devEmails as $devEmail ) {
-		if ( trim($devEmail) == $current_user_domain ) {
+	foreach ( $devEmails as $devEmail ){
+		if ( trim($devEmail) == $current_user_domain ){
 			return true;
 		}
 	}
@@ -160,9 +158,9 @@ function is_dev() {
 
 //Check if the current IP address matches any of the client IP address from Nebula Settings
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_client() {
+function is_client(){
 	$clientIPs = explode(',', get_option('nebula_client_ip'));
-	foreach ( $clientIPs as $clientIP ) {
+	foreach ( $clientIPs as $clientIP ){
 		if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ){
 			return true;
 		}
@@ -173,8 +171,8 @@ function is_client() {
 	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
 	$clientEmails = explode(',', get_option('nebula_client_email_domain'));
-	foreach ( $clientEmails as $clientEmail ) {
-		if ( trim($clientEmail) == $current_user_domain ) {
+	foreach ( $clientEmails as $clientEmail ){
+		if ( trim($clientEmail) == $current_user_domain ){
 			return true;
 		}
 	}
@@ -185,30 +183,28 @@ function is_client() {
 //Check if the current IP address matches Pinckney Hugo Group.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_at_phg(){
-	if ( $_SERVER['REMOTE_ADDR'] == '72.43.235.106' ) {
+	if ( $_SERVER['REMOTE_ADDR'] == '72.43.235.106' ){
 		return true;
 	} else {
 		return false;
 	}
 }
 
-
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
-function nebula_requested_url($host="HTTP_HOST") { //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
+function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
 	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) ? 'https' : 'http';
 	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
 	return $full_url;
 }
 
-
 //Separate a URL into it's components.
-function nebula_url_components($segment="all", $url=null) {
-	if ( !$url ) {
+function nebula_url_components($segment="all", $url=null){
+	if ( !$url ){
 		$url = nebula_requested_url();
 	}
 
 	$url_compontents = parse_url($url);
-	if ( empty($url_compontents['host']) ) {
+	if ( empty($url_compontents['host']) ){
 		return;
 	}
 	$host = explode('.', $url_compontents['host']);
@@ -218,7 +214,7 @@ function nebula_url_components($segment="all", $url=null) {
 	$sld = substr($domain[0], 0, strpos($domain[0], '.'));
 	$tld = substr($domain[0], strpos($domain[0], '.'));
 
-	switch ($segment) {
+	switch ($segment){
 		case ('all') :
 		case ('href') :
 			return $url;
@@ -227,7 +223,7 @@ function nebula_url_components($segment="all", $url=null) {
 		case ('protocol') : //Protocol and Scheme are aliases and return the same value.
 		case ('scheme') : //Protocol and Scheme are aliases and return the same value.
 		case ('schema') :
-			if ( $url_compontents['scheme'] != '' ) {
+			if ( $url_compontents['scheme'] != '' ){
 				return $url_compontents['scheme'];
 			} else {
 				return false;
@@ -235,10 +231,10 @@ function nebula_url_components($segment="all", $url=null) {
 			break;
 
 		case ('port') :
-			if ( $url_compontents['port'] ) {
+			if ( $url_compontents['port'] ){
 				return $url_compontents['port'];
 			} else {
-				switch( $url_compontents['scheme'] ) {
+				switch( $url_compontents['scheme'] ){
 	                case ('http') :
 	                    return 80; //Default for http
 	                    break;
@@ -260,7 +256,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 		case ('user') : //Returns the username from this type of syntax: https://username:password@gearside.com/
 		case ('username') :
-			if ( $url_compontents['user'] ) {
+			if ( $url_compontents['user'] ){
 				return $url_compontents['user'];
 			} else {
 				return false;
@@ -269,7 +265,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 		case ('pass') : //Returns the password from this type of syntax: https://username:password@gearside.com/
 		case ('password') :
-			if ( $url_compontents['pass'] ) {
+			if ( $url_compontents['pass'] ){
 				return $url_compontents['pass'];
 			} else {
 				return false;
@@ -277,7 +273,7 @@ function nebula_url_components($segment="all", $url=null) {
 			break;
 
 		case ('authority') :
-			if ( $url_compontents['user'] && $url_compontents['pass'] ) {
+			if ( $url_compontents['user'] && $url_compontents['pass'] ){
 				return $url_compontents['user'] . ':' . $url_compontents['pass'] . '@' . $url_compontents['host'] . ':' . nebula_url_components('port', $url);
 			} else {
 				return false;
@@ -290,7 +286,7 @@ function nebula_url_components($segment="all", $url=null) {
 			break;
 
 		case ('www') :
-			if ( $host[0] == 'www' ) {
+			if ( $host[0] == 'www' ){
 				return 'www';
 			} else {
 				return false;
@@ -299,7 +295,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 		case ('subdomain') :
 		case ('sub_domain') :
-			if ( $host[0] != 'www' && $host[0] != $sld ) {
+			if ( $host[0] != 'www' && $host[0] != $sld ){
 				return $host[0];
 			} else {
 				return false;
@@ -335,7 +331,7 @@ function nebula_url_components($segment="all", $url=null) {
 
 		case ('file') : //Filename will be just the filename/extension.
 		case ('filename') :
-			if ( contains(basename($url_compontents['path']), array('.')) ) {
+			if ( contains(basename($url_compontents['path']), array('.')) ){
 				return basename($url_compontents['path']);
 			} else {
 				return false;
@@ -343,7 +339,7 @@ function nebula_url_components($segment="all", $url=null) {
 			break;
 
 		case ('extension') : //The extension only.
-		    if ( contains(basename($url_compontents['path']), array('.')) ) {
+		    if ( contains(basename($url_compontents['path']), array('.')) ){
 		        $file_parts = explode('.', $url_compontents['path']);
 		        return $file_parts[1];
 		    } else {
@@ -352,7 +348,7 @@ function nebula_url_components($segment="all", $url=null) {
 		    break;
 
 		case ('path') : //Path should be just the path without the filename/extension.
-			if ( contains(basename($url_compontents['path']), array('.')) ) { //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
+			if ( contains(basename($url_compontents['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
 				return str_replace(basename($url_compontents['path']), '', $url_compontents['path']);
 			} else {
 				return $url_compontents['path'];
@@ -380,10 +376,9 @@ function nebula_url_components($segment="all", $url=null) {
 	}
 }
 
-
 //Detect Device //@TODO "Nebula" 0: It would be unfeasible to try to keep this up-to-date... Maybe there is an XML/JSON we can use? If so, may need to keep the more unique ones (like game consoles) here.
 function nebula_device_detect($user_agent=''){
-	if ( $user_agent == '' ) {
+	if ( $user_agent == '' ){
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
 	}
 
@@ -427,8 +422,8 @@ function nebula_device_detect($user_agent=''){
 		'/regex_here/i' => 'Return_Value_Here', //linux && apple safari && (is mobile device...)
 	);
 
-	foreach ( $device_array as $regex => $value ) {
-		if ( preg_match($regex, $user_agent) ) {
+	foreach ( $device_array as $regex => $value ){
+		if ( preg_match($regex, $user_agent) ){
 			$user_device = $value;
 		}
 	}
@@ -477,7 +472,6 @@ function nebula_os_detect($user_agent=''){
     return $os_platform;
 }
 
-
 //Use WordPress core browser detection
 //@TODO "Nebula" 0: Look into using this in addition to a more powerful library.
 function wp_browser_detect(){
@@ -487,27 +481,24 @@ function wp_browser_detect(){
 	//$browser = get_browser(null, true); //@TODO "Nebula" 0: Find a server this works on and then wrap in if $browser, then echo the version number too
 	//@TODO "Nebula" 0: Also look into the function wp_check_browser_version().
 
-    if ( $is_lynx ) {
+    if ( $is_lynx ){
     	return 'Lynx';
-    } elseif ( $is_gecko ) {
+    } elseif ( $is_gecko ){
     	return 'Gecko';
-    } elseif ( $is_opera ) {
+    } elseif ( $is_opera ){
     	return 'Opera';
-    } elseif ( $is_NS4 ) {
+    } elseif ( $is_NS4 ){
     	return 'NS4';
-    } elseif ( $is_safari ) {
+    } elseif ( $is_safari ){
     	return 'Safari';
-    } elseif ( $is_chrome ) {
+    } elseif ( $is_chrome ){
     	return 'Chrome';
-    } elseif ( $is_IE ) {
+    } elseif ( $is_IE ){
     	return 'IE';
     } else {
     	return 'Unknown Browser';
     }
 }
-
-
-
 
 //Text limiter by words
 function string_limit_words($string, $word_limit){
@@ -521,7 +512,6 @@ function string_limit_words($string, $word_limit){
 	}
 	return $limited;
 }
-
 
 //Word limiter by characters
 function word_limit_chars($string, $charlimit, $continue=false){
@@ -541,11 +531,10 @@ function word_limit_chars($string, $charlimit, $continue=false){
 	return $newString;
 }
 
-
 //Traverse multidimensional arrays
-function in_array_r($needle, $haystack, $strict = true) {
-    foreach ($haystack as $item) {
-        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))) {
+function in_array_r($needle, $haystack, $strict = true){
+    foreach ($haystack as $item){
+        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))){
             return true;
         }
     }
@@ -553,23 +542,23 @@ function in_array_r($needle, $haystack, $strict = true) {
 }
 
 //Recursive Glob
-function glob_r($pattern, $flags = 0) {
+function glob_r($pattern, $flags = 0){
     $files = glob($pattern, $flags);
-    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir){
         $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
     }
     return $files;
 }
 
 //Add up the filesizes of files in a directory (and it's sub-directories)
-function foldersize($path) {
+function foldersize($path){
 	$total_size = 0;
 	$files = scandir($path);
 	$cleanPath = rtrim($path, '/') . '/';
-	foreach ( $files as $t ) {
-		if ( $t <> "." && $t <> "..") {
+	foreach ( $files as $t ){
+		if ( $t <> "." && $t <> ".."){
 			$currentFile = $cleanPath . $t;
-			if ( is_dir($currentFile) ) {
+			if ( is_dir($currentFile) ){
 				$size = foldersize($currentFile);
 				$total_size += $size;
 			} else {
@@ -582,9 +571,9 @@ function foldersize($path) {
 }
 
 //Checks to see if an array contains a string.
-function contains($str, array $arr) {
-    foreach ( $arr as $a ) {
-        if ( stripos($str, $a) !== false ) {
+function contains($str, array $arr){
+    foreach ( $arr as $a ){
+        if ( stripos($str, $a) !== false ){
         	return true;
         }
     }
@@ -593,19 +582,19 @@ function contains($str, array $arr) {
 
 //Generate a random integer between two numbers with an exclusion array
 //Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
-function random_number_between_but_not($min=null, $max=null, $butNot=null) {
-    if ( $min > $max ) { //If min is greater than max, swap variables
+function random_number_between_but_not($min=null, $max=null, $butNot=null){
+    if ( $min > $max ){ //If min is greater than max, swap variables
 		$tmp = $min;
 		$min = $max;
 		$max = $tmp;
     }
-    if ( gettype($butNot) == 'array' ) {
+    if ( gettype($butNot) == 'array' ){
         foreach( $butNot as $key => $skip ){
             if( $skip > $max || $skip < $min ){
                 unset($butNot[$key]);
             }
         }
-        if ( count($butNot) == $max-$min+1 ) {
+        if ( count($butNot) == $max-$min+1 ){
             trigger_error('Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.', E_USER_ERROR);
             return false;
         }
@@ -616,11 +605,10 @@ function random_number_between_but_not($min=null, $max=null, $butNot=null) {
     return $randnum;
 }
 
-
 //Display a random stock photo from unsplash.it
-function random_unsplash($width=800, $height=600, $raw=0, $random=0) {
+function random_unsplash($width=800, $height=600, $raw=0, $random=0){
 	$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-	if ( $random == 0 ) {
+	if ( $random == 0 ){
 		$randID = random_number_between_but_not(0, 615, $skip_list); //Update the second number here as more Unsplash.it photos become available.
 	} else {
 		$randID = $random;
@@ -646,22 +634,21 @@ function random_unsplash($width=800, $height=600, $raw=0, $random=0) {
 	    $i++;
 	}
 
-	if ( $raw ) {
+	if ( $raw ){
 		return $image_path;
 	} else {
 		return $image_path . '" title="Unsplash ID #' . $randID;
 	}
 }
 
-
 //Automatically convert HEX colors to RGB.
-function hex2rgb($color) {
-	if ( $color[0] == '#' ) {
+function hex2rgb($color){
+	if ( $color[0] == '#' ){
 		$color = substr($color, 1);
 	}
-	if ( strlen($color) == 6 ) {
+	if ( strlen($color) == 6 ){
 		list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-	} elseif ( strlen($color) == 3 ) {
+	} elseif ( strlen($color) == 3 ){
 		list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
 	} else {
 		return false;
@@ -672,14 +659,13 @@ function hex2rgb($color) {
 	return array('r' => $r, 'g' => $g, 'b' => $b);
 }
 
-
 //Check the brightness of a color. 0=darkest, 255=lightest, 256=false
 function nebula_color_brightness($hex){
 	//@TODO "Nebula" 0: If an rgb value is passed, (create then) run an rgb2hex() function
-	if ( strpos($hex, '#') !== false ) {
+	if ( strpos($hex, '#') !== false ){
 		preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
 
-		if ( strlen($hex_colors[0]) == 4 ) {
+		if ( strlen($hex_colors[0]) == 4 ){
 			$values = str_split($hex_colors[0]);
 			$full_hex = '#' . $values[1] . $values[1] . $values[2] . $values[2] . $values[3] . $values[3];
 		} else {
@@ -697,28 +683,28 @@ function nebula_color_brightness($hex){
 	}
 }
 
-function whois_info($data, $domain='') {
-
-	if ( $domain == '' ) {
+//Attempt to get WHOIS information from domain
+function whois_info($data, $domain=''){
+	if ( $domain == '' ){
 		$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
 	} else {
 		$whois = getwhois(nebula_url_components('sld', $domain), ltrim(nebula_url_components('tld', $domain), '.'));
 		$whois = preg_replace('!\s+!', ' ', $whois);
 	}
 
-	switch ( $data ) {
+	switch ( $data ){
 		case 'expiration':
 		case 'expiration_date':
 		case 'domain_expiration':
-			if ( contains($whois, array('Registrar Registration Expiration Date: ')) ) {
+			if ( contains($whois, array('Registrar Registration Expiration Date: ')) ){
 				return trim(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ")+40, 10));
-			} elseif ( contains($whois, array('Registry Expiry Date: ')) ) {
+			} elseif ( contains($whois, array('Registry Expiry Date: ')) ){
 				return trim(substr($whois, strpos($whois, "Registry Expiry Date: ")+22, 10));
-			} elseif ( contains($whois, array('Relevant dates: ')) ) {
+			} elseif ( contains($whois, array('Relevant dates: ')) ){
 				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 11));
-			} elseif ( contains($whois, array('Expiry date: ')) ) {
+			} elseif ( contains($whois, array('Expiry date: ')) ){
 				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 10));
-			} elseif ( contains($whois, array('Domain expires: ')) ) {
+			} elseif ( contains($whois, array('Domain expires: ')) ){
 				return trim(substr($whois, strpos($whois, "Domain expires: ")+16, 11));
 			}
 			return false;
@@ -727,27 +713,27 @@ function whois_info($data, $domain='') {
 		case 'registrar_name':
 			$domain_registrar_start = '';
 			$domain_registrar_stop = '';
-			if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
+			if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
 				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
 				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
 				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
+			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
 				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
 				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
 				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ) {
+			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
 				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
 				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
 				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ) {
+			} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
 				$domain_registrar_start = strpos($whois, "Sponsoring Registrar:")+21;
 				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
 				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ) {
+			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ){
 				$domain_registrar_start = strpos($whois, "Registrar:")+17;
 				$domain_registrar_stop = strpos($whois, "Number: ")-$domain_registrar_start;
 				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ) { //co.uk
+			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ){ //co.uk
 				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
 				$domain_registrar_stop = strpos($whois, "URL: ")-$domain_registrar_start;
 				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
@@ -755,15 +741,15 @@ function whois_info($data, $domain='') {
 			return false;
 			break;
 		case 'registrar_url':
-			if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ) {
+			if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ){
 				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
 				$domain_registrar_url_stop = strpos($whois, "Updated Date: ")-$domain_registrar_url_start;
 				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-			} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ) {
+			} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ){
 				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
 				$domain_registrar_url_stop = strpos($whois, "Update Date: ")-$domain_registrar_url_start;
 				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-			} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ) { //co.uk
+			} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ){ //co.uk
 				$domain_registrar_url_start = strpos($whois, "URL: ")+5;
 				$domain_registrar_url_stop = strpos($whois, "Relevant dates: ")-$domain_registrar_url_start;
 				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
@@ -773,10 +759,10 @@ function whois_info($data, $domain='') {
 		case 'reseller':
 		case 'reseller_name':
 			$domain_reseller = '';
-			if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ) {
+			if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ){
 				$reseller1 = strpos($whois, 'Reseller: ');
 				$reseller2 = strpos($whois, 'Reseller: ', $reseller1 + strlen('Reseller: '));
-				if ( $reseller2 ) {
+				if ( $reseller2 ){
 					$domain_reseller_start = strpos($whois, "Reseller: ")+10;
 					$domain_reseller_stop = $reseller2-$domain_reseller_start;
 					return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
@@ -791,35 +777,30 @@ function whois_info($data, $domain='') {
 	}
 }
 
-
-function getwhois($domain, $tld) {
+function getwhois($domain, $tld){
 	require_once(get_template_directory() . "/includes/class-whois.php");
 	$whois = new Whois();
 
-	if( !$whois->ValidDomain($domain . '.' . $tld) ) {
+	if( !$whois->ValidDomain($domain . '.' . $tld) ){
 		return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
 	}
 
-	if ( $whois->Lookup($domain . '.' . $tld) ) {
+	if ( $whois->Lookup($domain . '.' . $tld) ){
 		return $whois->GetData(1);
 	} else {
 		return 'A WHOIS error occurred.';
 	}
 }
 
-
 /*==========================
  Libraries
  ===========================*/
-
 
 //PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
 //Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
 //Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
 require_once(get_template_directory() . '/includes/Mobile_Detect.php'); //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
 $GLOBALS["mobile_detect"] = new Mobile_Detect();
-
-
 
 //Browser Detection
 //http://techpatterns.com/downloads/browser_detection.php
