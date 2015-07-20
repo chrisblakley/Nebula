@@ -1004,6 +1004,7 @@ function nebula_hero_search($placeholder='What are you looking for?'){
 add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
 add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
 function nebula_autocomplete_search(){
+	ini_set('memory_limit', '256M');
 	$_POST['data']['term'] = trim($_POST['data']['term']);
 	if ( empty($_POST['data']['term']) ){
 		return false;
@@ -1452,7 +1453,7 @@ function nebula_body_classes($classes){
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 
 	//Time of Day
-	$classes[] = ( currently_open() ) ? 'business-open' : 'business-closed';
+	$classes[] = ( business_open() ) ? 'business-open' : 'business-closed';
 	if ( contains(date('H'), array('23', '00', '01')) ){
 		$classes[] = 'time-early time-night';
 	} elseif ( contains(date('H'), array('02', '03', '04')) ){
@@ -1552,21 +1553,29 @@ function nebula_save_attachment_fields($attachment_id){
     }
 }
 
-//Check if the current time is within business hours.
-function currently_open(){
+//Check if the passed time is within business hours.
+function is_business_open($date=null, $general=0){ return business_open($date, $general); }
+function is_business_closed($date=null, $general=0){ return !business_open($date, $general); }
+function business_open($date=null, $general=0){
+	if ( empty($date) || $date == 'now' ){
+		$date = time();
+	} elseif ( strtotime($date) ){
+		$date = strtotime($date . ' ' . date('g:ia', strtotime('now')));
+	}
+	$today = strtolower(date('l', $date));
+
 	$businessHours = array();
 	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
 		$businessHours[$weekday] = array(
-			"enabled" => get_option('nebula_business_hours_' . $weekday . '_enabled'),
-			"open" => get_option('nebula_business_hours_' . $weekday . '_open'),
-			"close" => get_option('nebula_business_hours_' . $weekday . '_close')
+			'enabled' => get_option('nebula_business_hours_' . $weekday . '_enabled'),
+			'open' => get_option('nebula_business_hours_' . $weekday . '_open'),
+			'close' => get_option('nebula_business_hours_' . $weekday . '_close')
 		);
 	}
-	$today = strtolower(date('l'));
 
 	$days_off = explode(', ', get_option('nebula_business_hours_closed'));
 	foreach ( $days_off as $key => $day_off ){
-		$days_off[$key] = strtotime($day_off . ' ' . date('Y'));
+		$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
 
 		if ( date('N', $days_off[$key]) == 6 ){ //If the date is a Saturday
 			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
@@ -1574,21 +1583,23 @@ function currently_open(){
 			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
 		}
 
-		if ( date('Y-m-d', $days_off[$key]) == date('Y-m-d', strtotime('today')) ){
+		if ( date('Ymd', $days_off[$key]) == date('Ymd', $date) ){
 			return false;
 		}
 	}
 
 	if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Settings checkmark is checked for this day of the week.
-		$now = time();
+		if ( $general == 1 ){
+			return true;
+		}
 
-		$openToday = strtotime($businessHours[$today]['open']);
-		$closeToday = strtotime($businessHours[$today]['close']);
-
-		if ( $now >= $openToday && $now <= $closeToday ){
+		$openToday = date('Gi', strtotime($businessHours[$today]['open']));
+		$closeToday = date('Gi', strtotime($businessHours[$today]['close']));
+		if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
 			return true;
 		}
 	}
+
 	return false;
 }
 

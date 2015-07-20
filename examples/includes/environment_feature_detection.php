@@ -36,6 +36,7 @@
 				action: 'nebula_environment_data',
 				data: {
 					'environment': jQuery('#fulldata').text(),
+					'trigger': 'window',
 				},
 			},
 			success: function(data){
@@ -46,6 +47,7 @@
 			},
 			timeout: 60000
 		});
+
 
 	});
 
@@ -316,6 +318,26 @@
 				ga('send', 'event', 'Geolocation', window.lat.toFixed(4) + ', ' + window.lng.toFixed(4) + ' (Poor Accuracy' + cityState + ')', 'Accuracy: ' + window.accuracy + ' meters');
 			}
 			//console.debug(results[0]);
+
+			jQuery.ajax({
+				type: "POST",
+				url: bloginfo["admin_ajax"],
+				data: {
+					action: 'nebula_environment_data',
+					data: {
+						'environment': jQuery('#fulldata').text(),
+						'trigger': 'geo',
+					},
+				},
+				success: function(data){
+					ga('send', 'event', 'Environment Data', 'AJAX Success');
+				},
+				error: function(MLHttpRequest, textStatus, errorThrown){
+					ga('send', 'event', 'Environment Data', 'AJAX Error');
+				},
+				timeout: 60000
+			});
+
 		}, 250);
 
 	}

@@ -472,6 +472,8 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 add_action('wp_ajax_search_theme_files', 'search_theme_files');
 add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
 function search_theme_files(){
+	ini_set('max_execution_time', 120);
+	ini_set('memory_limit', '512M');
 	$searchTerm = stripslashes($_POST['data'][0]['searchData']);
 
 	if ( strlen($searchTerm) < 3 ){

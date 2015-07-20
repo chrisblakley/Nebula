@@ -4,9 +4,9 @@
 
 	/* .no-js pre.nebula-pre {margin: 10px 0 20px 0;} */
 
-	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
+	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
 
-.nebula-selectcopy-code {font-size: 10px; float: right; margin-top: -4px; opacity: 0.7;}
+.nebula-selectcopy-code {font-size: 10px; float: right; margin-top: -4px; font-weight: normal; opacity: 0.7;}
 	.nebula-selectcopy-code:hover,
 	.nebula-selectcopy-code.hover {opacity: 1;}
 	.nebula-pre-con .nebula-selectcopy-code.success {color: #58c026;}

@@ -1056,9 +1056,9 @@ function singleResultDrawer(){
 	});
 }
 
-//Suggestions for 404 or no search results pages
+//Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 function pageSuggestion(){
-	if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_cse_api_key"] != '' ){
+	if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_google_browser_api_key"] != '' ){
 		if ( GET().length ) {
 			var queryStrings = GET();
 		} else {
@@ -1079,7 +1079,7 @@ function pageSuggestion(){
 function trySearch(phrase){
 	var queryParams = {
 		cx: nebula_settings["nebula_cse_id"],
-		key: nebula_settings["nebula_cse_api_key"],
+		key: nebula_settings["nebula_google_browser_api_key"],
 		num: 10,
 		q: phrase,
 		alt: 'JSON'

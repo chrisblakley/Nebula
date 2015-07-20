@@ -46,6 +46,12 @@ get_header(); ?>
 	<div class="row">
 		<div class="eleven columns">
 
+			<?php if ( is_client() && get_post_meta(get_the_ID(), 'nebula_internal_search_keywords') ): //@TODO "Nebula" 0: Remove this after adding keywords to examples. ?>
+				<p style="text-align: center; padding: 2px 10px; margin: 0; border: 1px solid green;">This post <strong style="color: green;">has</strong> keywords.</p>
+			<?php elseif ( is_client() ): ?>
+				<p style="text-align: center; padding: 2px 10px; margin: 0; border: 1px solid red;">This post does <strong style="color: red;">not have</strong> keywords.</p>
+			<?php endif; ?>
+
 			<?php if ( get_field('example_filename') ): //Maybe instead of here it's in the main content area as a little notice box or something? ?>
 				<div class="example-filename">
 					<i class="fa fa-github"></i> Example Location: <a href="https://github.com/chrisblakley/Nebula/blob/master/examples/includes/<?php echo get_field('example_filename'); ?>" target="_blank" title="View the exact code snippet rendering this example.">/examples/includes/<?php echo get_field('example_filename'); ?></a>
@@ -85,7 +91,6 @@ get_header(); ?>
 				 Hard-Code Examples
 				 ===========================*/
 				?>
-
 					<?php if ( is_page(1408) ){ //Basic Wordpress Query
 						include_once('includes/wp_query_basic.php');
 					} ?>
