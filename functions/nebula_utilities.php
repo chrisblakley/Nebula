@@ -190,6 +190,19 @@ function is_at_phg(){
 	}
 }
 
+//Check for bot/crawler traffic
+//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
+function is_bot(){
+	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
+	foreach( $bots as $bot ){
+		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
+			return true;
+			break;
+		}
+	}
+	return false;
+}
+
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
 	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) ? 'https' : 'http';

@@ -133,7 +133,7 @@ jQuery(window).on('resize', function(){
  ===========================*/
 
 //Custom css expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
-//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")...
+//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
 jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
 
 //Check for content (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/var/empty.js
@@ -705,6 +705,14 @@ function mmenus() {
 	}
 }
 
+
+//Search Keywords
+function keywordSearch(container, parent, value){
+	jQuery(container).find("*:not(:Contains(" + value + "))").parents(parent).addClass('filtereditem');
+	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass('filtereditem');
+}
+
+
 //Power Footer Width Distributor
 function powerFooterWidthDist(){
 	var powerFooterWidth = jQuery('#powerfooter').width();
@@ -1128,6 +1136,8 @@ function pageVisibility(){
 		}
 
 		if ( getPageVisibility() ) { //Page is hidden
+			jQuery(document).trigger('nebula_page_hidden');
+			jQuery('body').addClass('page-visibility-hidden');
 			jQuery('iframe.youtubeplayer').each(function(){
 				if ( !jQuery(this).hasClass('ignore-visibility') ){
 					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
@@ -1140,6 +1150,8 @@ function pageVisibility(){
 			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1}); //@TODO: Page Visibility Hidden event tracking is off by default. Uncomment to enable.
 		} else { //Page is visible
 			if ( visFirstHidden == 1 ) {
+				jQuery(document).trigger('nebula_page_visible');
+				jQuery('body').removeClass('page-visibility-hidden');
 				var visTimerAfter = (new Date()).getTime();
 				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
 				var pageTitle = pageDocument.attr('title');
@@ -1649,7 +1661,7 @@ function conditionalJSLoading(){
 
 	//Only load maskedinput.js library if phone or bday field exists.
 	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
-		jQuery.getScript('//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js').done(function(){
+		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
 			ga('send', 'event', 'Error', 'JS Error', 'jquery.maskedinput.js could not be loaded.', {'nonInteraction': 1});
@@ -1660,22 +1672,22 @@ function conditionalJSLoading(){
 
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').is('*') ) {
-		jQuery.getScript('//cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
+		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
 			chosenSelectOptions();
 		}).fail(function(){
 			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
 		});
-		nebulaLoadCSS('//cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css');
+		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css');
 	}
 
 	//Only load dataTables library if dataTables table exists.
     if ( jQuery('.dataTables_wrapper').is('*') ) {
-        jQuery.getScript('//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/js/jquery.dataTables.min.js').done(function(){
-            jQuery.getScript('//cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js').fail(function(){ //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
+        jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/js/jquery.dataTables.min.js').done(function(){
+            jQuery.getScript('https://cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js').fail(function(){ //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
                 ga('send', 'event', 'Error', 'JS Error', 'dataTables.responsive.js could not be loaded', {'nonInteraction': 1});
             });
-            nebulaLoadCSS('//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/css/jquery.dataTables.min.css');
-			nebulaLoadCSS('//cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css'); //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
+            nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/css/jquery.dataTables.min.css');
+			nebulaLoadCSS('https://cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css'); //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
 			dataTablesActions();
         }).fail(function(){
             ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});

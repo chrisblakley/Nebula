@@ -52,22 +52,23 @@ function remove_x_pingback($headers){
 */
 add_filter('login_errors', 'nebula_login_errors');
 function nebula_login_errors($error){
+	if ( !is_bot() ){
+		$incorrect_username = '';
+		if ( contains($error, array('The password you entered for the username')) ){
+			$incorrect_username_start = strpos($error, "for the username ")+17;
+			$incorrect_username_stop = strpos($error, " is incorrect")-$incorrect_username_start;
+			$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
+		}
 
-	$incorrect_username = '';
-	if ( contains($error, array('The password you entered for the username')) ){
-		$incorrect_username_start = strpos($error, "for the username ")+17;
-		$incorrect_username_stop = strpos($error, " is incorrect")-$incorrect_username_start;
-		$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
-	}
+		if ( $incorrect_username != '' ){
+			ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
+		} else {
+			ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
+		}
 
-	if ( $incorrect_username != '' ){
-		ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
-	} else {
-		ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
-	}
-
-    $error = 'Login Error.';
-    return $error;
+	    $error = 'Login Error.';
+	    return $error;
+    }
 }
 
 //Disable the file editor

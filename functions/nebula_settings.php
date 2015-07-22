@@ -290,12 +290,12 @@ function nebula_settings_page(){
 	<div class="wrap">
 		<h2>Nebula Settings</h2>
 		<?php
-			if ( !current_user_can('manage_options') || !is_dev() ){
-			    wp_die('You do not have sufficient permissions to access this page.');
-			} else {
+			if ( current_user_can('manage_options') || is_dev() ){
 				if ( get_option('nebula_ga_tracking_id') == '' ){
 					echo '<strong>WARNING:</strong> Google Analytics tracking ID is currently not set!';
 				}
+			} else {
+				wp_die('You do not have sufficient permissions to access this page.');
 			}
 		?>
 
