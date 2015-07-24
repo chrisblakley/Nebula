@@ -435,6 +435,10 @@ get_header(); ?>
 						include_once('includes/autocomplete_address.php');
 					} ?>
 
+					<?php if ( is_page(1989) ){ //Google Maps containsLocation()
+						include_once('includes/google_maps_contains_location.php');
+					} ?>
+
 					<?php
 					/*==========================
 					 Utilities

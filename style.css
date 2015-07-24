@@ -45,7 +45,7 @@ textarea {resize: vertical;}
 ul {padding: 0;}
 	ul ul {margin: 4px 0 0 0;}
 
-h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;}
+/* h1, h2, h3, h4, h5, h6, p, span, a, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button {text-rendering: optimizelegibility;} @TODO "Nebula" 0: This was causing text rendering issues on Windows Chrome. */
 h1, h2, h3, h4, h5, h6 {line-height: 1.15538em;}
 h1 {font-size: 36px; font-weight: bold;}
 h2 {font-size: 28px;}

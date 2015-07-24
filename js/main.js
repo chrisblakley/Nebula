@@ -69,9 +69,6 @@ jQuery(document).ready(function(){
 	if ( jQuery('#address-autocomplete').is('*') ){
 		nebulaAddressAutocomplete('#address-autocomplete');
 	}
-	mapInfo = [];
-	getAllLocations();
-	mapActions();
 
 	//Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
@@ -270,13 +267,11 @@ function facebookLoginLogout(){
 				checkFacebookStatus();
 				ga('send', 'event', 'Social', 'Facebook Connect', FBuser.name);
 			} else {
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('User did not accept permissions.'); }
 				checkFacebookStatus();
 			}
 		}, {scope:'public_profile,email'});
 	} else {
 		FB.logout(function(response){
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('User has logged out.'); }
 			checkFacebookStatus();
 			prefillFacebookFields();
 		});
@@ -293,7 +288,6 @@ function checkFacebookStatus() {
 			FBstatus = true;
 			FB.api('/me', function(response){
 				FBuser = response;
-				if ( typeof Gumby != 'undefined' ){ Gumby.log(response.name + ' has connected with this app.'); }
 				fbNameClass = response.name.replace(' ', '_');
 				pageBody.removeClass('fb-disconnected').addClass('fb-connected fb-user-' + fbNameClass);
 				prefillFacebookFields(response);
@@ -305,14 +299,12 @@ function checkFacebookStatus() {
 
 			facebookConnectPStrong.text('You have been connected to Facebook...'); //@TODO "Example" 2: This is an example- remove this line.
 		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
-			if ( typeof Gumby != 'undefined' ) { Gumby.log('User is logged into Facebook, but has not connected to this app.'); }
 			pageBody.removeClass('fb-connected').addClass('fb-disconnected');
 			FBstatus = false;
 			facebookConnectLink.text('Connect with Facebook').removeClass('connected').addClass('disconnected');
 
 			facebookConnectPStrong.text('Please connect to this site by logging in below:'); //@TODO "Example" 2: This is an example- remove this line.
 		} else { //User is not logged into Facebook.
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('User is not logged into Facebook.'); }
 			pageBody.removeClass('fb-connected fb-disconnected');
 			FBstatus = false;
 			facebookConnectLink.text('Connect with Facebook').removeClass('connected').addClass('disconnected');
@@ -1468,7 +1460,7 @@ function scrollTo() {
 function browserInfo(){
 	var browserInfoVal = '';
 
-	if ( typeof navigator != 'undefined' ){
+	if ( typeof navigator !== 'undefined' ){
 		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
 		browserInfoVal += 'UA Lookup: http://udger.com/resources/online-parser\n\n';
 	}
@@ -1477,20 +1469,29 @@ function browserInfo(){
 	browserInfoVal += 'Body Classes: ' + pageBody.attr('class').split(' ').sort().join(', ') + '\n\n';
 	browserInfoVal += 'Viewport Size: ' + pageWindow.width() + 'px x ' + pageWindow.height() + 'px ' + '\n\n';
 
-	if ( typeof performance != 'undefined' ){
+	if ( typeof performance !== 'undefined' ){
 		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
 		var pageLoadTime = (performance.timing.loadEventStart-performance.timing.navigationStart)/1000;
 		browserInfoVal += 'Page Loading Time: ' + pageLoadTime + 's' + '\n\n';
 	}
 
-	if ( typeof performance != 'undefined' ){
+	if ( typeof performance !== 'undefined' ){
 		browserInfoVal += 'Referrer: ' + document.referrer + '\n';
 	} else {
 		browserInfoVal += 'Referrer: None (or Unknown)\n';
 	}
 
-	if ( typeof window.history != 'undefined' ){
+	if ( typeof window.history !== 'undefined' ){
 		browserInfoVal += 'History Depth: ' + window.history.length + '\n\n';
+	}
+
+	if ( typeof nebulaLocation !== 'undefined' ){
+		if ( !nebulaLocation.error ){
+			browserInfoVal += 'Geolocation: ' + nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude + '\n';
+			browserInfoVal += 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters (' + nebulaLocation.accuracy.miles + ' miles)\n\n';
+		} else {
+			browserInfoVal += 'Geolocation Error: ' + nebulaLocation.error.description + '\n\n';
+		}
 	}
 
 	browserInfoVal += 'IP Address: ' + clientinfo['remote_addr'] + '\n';
@@ -1513,12 +1514,10 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 
 		if ( typeof message === "undefined" ){
 			message = defaults;
-			if ( typeof Gumby != 'undefined' ){ Gumby.warn('Warning: message is undefined, using defaults.'); }
 		} else if ( typeof message === "string" ){
 			body = message;
 			message = defaults;
 			message.body = body;
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Note: message is a string, using defaults.'); }
 		} else {
 			if ( typeof message.dir === "undefined" ){
 				message.dir = defaults.dir;
@@ -1528,7 +1527,6 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			}
 			if ( typeof message.body === "undefined" ){
 				message.body = defaults.lang;
-				if ( typeof Gumby != 'undefined' ) { Gumby.warn('Warning: No message body.'); }
 			}
 			if ( typeof message.tag === "undefined" ){
 				message.tag = defaults.tag;
@@ -1573,7 +1571,6 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 function checkNotificationPermission(){
 	Notification = window.Notification || window.mozNotification || window.webkitNotification;
 	if ( !(Notification) ){
-		if ( typeof Gumby != 'undefined' ){ Gumby.warn("This browser does not support desktop notifications."); }
 		return false;
 	} else if ( Notification.permission === "granted" ){
 		return true;
@@ -1592,10 +1589,8 @@ function checkNotificationPermission(){
 
 function nebulaVibrate(pattern) {
 	if ( typeof pattern === 'undefined' ){
-		if ( typeof Gumby != 'undefined' ){ Gumby.warn('Vibration pattern was not provided. Using default.'); }
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	} else if ( typeof pattern !== 'object' ){
-		if ( typeof Gumby != 'undefined' ){ Gumby.warn('Vibration pattern is not an object. Using default.'); }
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	}
 	if ( checkVibration() ){
@@ -1605,13 +1600,8 @@ function nebulaVibrate(pattern) {
 }
 
 function checkVibration() {
-	if ( !jQuery('body').hasClass('mobile') ){
-		if ( typeof Gumby != 'undefined' ){ Gumby.warn("This is not a mobile device, so vibration may not work (even if it declares support)."); }
-	}
-
 	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 	if ( !(Vibration) ){
-		Gumby.warn("This browser does not support vibration.");
 		return false;
 	} else {
 		return true;
@@ -1782,7 +1772,7 @@ function vimeoControls(){
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			if ( typeof Gumby != 'undefined' ){ Gumby.warn('froogaloop.js could not be loaded.'); }
+			//do nothing
 		});
 	}
 
@@ -1794,7 +1784,6 @@ function vimeoControls(){
 			player[i] = $f(vimeoiframeClass);
 			//@TODO "Nebula" 0: Add a named index to this array so it can be called by the video ID instead of the array index number
 			player[i].addEvent('ready', function(){
-		    	if ( typeof Gumby != 'undefined' ){ Gumby.log('player is ready'); }
 			    player[i].addEvent('play', onPlay);
 			    player[i].addEvent('pause', onPause);
 			    player[i].addEvent('seek', onSeek);
@@ -1825,7 +1814,7 @@ function vimeoControls(){
 	}
 
 	function onPlayProgress(data, id){
-		//if ( typeof Gumby != 'undefined' ) { Gumby.log(data.seconds + 's played'); }
+		//data.seconds played
 	}
 }
 
@@ -1839,9 +1828,6 @@ function createCookie(name, value, days){
 		var expires = "";
 	}
 	document.cookie = name + "=" + value + expires + "; path=/";
-	if ( typeof Gumby != 'undefined' ){
-		Gumby.log('Created cookie: ' + name + ', with the value: ' + value + expires);
-	}
 }
 function readCookie(name){
 	var nameEQ = name + "=";
@@ -1851,7 +1837,6 @@ function readCookie(name){
 		while (c.charAt(0) == ' ') {
 			c = c.substring(1, c.length);
 			if ( c.indexOf(nameEQ) == 0 ){
-				if ( typeof Gumby != 'undefined' ) { Gumby.log('Cookie "' + name + '" exists.'); }
 				return c.substring(nameEQ.length, c.length);
 			}
 		}
@@ -1860,9 +1845,6 @@ function readCookie(name){
 }
 function eraseCookie(name){
 	createCookie(name, "", -1);
-	if ( typeof Gumby != 'undefined' ){
-		Gumby.warn('Erased cookie: ' + name);
-	}
 }
 
 
@@ -2145,128 +2127,8 @@ function nebulaAddressAutocomplete(autocompleteInput){
 } //END nebulaAddressAutocomplete()
 
 
-
-//Interactive Functions of the Google Map
-function mapActions(){
-	originalWeatherText = jQuery('.mapweather').text();
-	pageDocument.on('click touch tap', '.mapweather', function(){
-		if ( mapInfo['weather'] == 1 ){
-			mapInfo['weather'] = 0;
-			jQuery('.mapweather').removeClass('active').addClass('inactive').text(originalWeatherText);
-			jQuery('.mapweather-icon').removeClass('active').addClass('inactive');
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Disabling weather layer.'); }
-		} else {
-			mapInfo['weather'] = 1;
-			jQuery('.mapweather').addClass('active').removeClass('inactive').text('Disable Weather');
-			jQuery('.mapweather-icon').addClass('active').removeClass('inactive');
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Enabling weather layer.'); }
-		}
-		renderMap(mapInfo);
-		return false;
-	});
-
-	originalTrafficText = jQuery('.maptraffic').text();
-	pageDocument.on('click touch tap', '.maptraffic', function(){
-		if ( mapInfo['traffic'] == 1 ){
-			mapInfo['traffic'] = 0;
-			jQuery('.maptraffic').removeClass('active').addClass('inactive').text(originalTrafficText);
-			jQuery('.maptraffic-icon').removeClass('active').addClass('inactive');
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Disabling traffic layer.'); }
-		} else {
-			mapInfo['traffic'] = 1;
-			jQuery('.maptraffic').addClass('active').removeClass('inactive').text('Disable Traffic');
-			jQuery('.maptraffic-icon').addClass('active').removeClass('inactive');
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Enabling traffic layer.'); }
-		}
-		renderMap(mapInfo);
-		return false;
-	});
-
-	pageDocument.on('click touch tap', '.mapgeolocation', function(){
-		if ( typeof mapInfo['detectLoc'] === 'undefined' || mapInfo['detectLoc'][0] == 0 ){
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Enabling location detection.'); }
-			jQuery('.mapgeolocation-icon').removeClass('inactive fa-location-arrow').addClass('fa-spinner fa-spin');
-			jQuery('.mapgeolocation').removeClass('inactive').attr('title', 'Requesting location...').text('Detecting Location...');
-			requestPosition();
-		} else {
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Removing detected location.'); }
-			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-ban success error').addClass('inactive fa-location-arrow');
-			jQuery(this).removeClass('active success failure').text('Detect Location').addClass('inactive').attr('title', 'Detect current location').css('color', '');
-			mapInfo['detectLoc'] = new Array(0, 0);
-			renderMap(mapInfo);
-		}
-		return false;
-	});
-
-	jQuery('.mapgeolocation').hover(function(){
-		if ( jQuery(this).hasClass('active') ){
-			jQuery('.mapgeolocation-icon').removeClass('fa-location-arrow').addClass('fa-ban');
-		}
-	}, function(){
-		if ( jQuery(this).hasClass('active') ){
-			jQuery('.mapgeolocation-icon').removeClass('fa-ban').addClass('fa-location-arrow');
-		}
-	});
-
-	originalRefreshText = jQuery('.maprefresh').text();
-	pleaseWait = 0;
-	pageDocument.on('click touch tap', '.maprefresh', function(){
-		if ( !jQuery(this).hasClass('timeout') ){
-			pleaseWait = 0;
-			if ( typeof Gumby != 'undefined' ){ Gumby.log('Refreshing the map.'); }
-			renderMap(mapInfo);
-			jQuery('.maprefresh').addClass('timeout', function(){
-				jQuery('.maprefresh').text('Refreshing...');
-				jQuery('.maprefresh-icon').removeClass('inactive').addClass('fa-spin');
-			});
-		} else {
-			pleaseWait++;
-			if ( pleaseWait < 10 ){
-				jQuery('.maprefresh').text('Please wait...');
-			} else {
-				jQuery('.maprefresh').text('Hold your horses!');
-			}
-		}
-		return false;
-	});
-
-	//Event Listeners
-
-	//Refresh listener
-	pageDocument.on('mapRendered', function(){
-		setTimeout(function(){
-			jQuery('.maprefresh').addClass('timeout').text('Refreshed!');
-			jQuery('.maprefresh-icon').removeClass('fa-refresh fa-spin inactive').addClass('fa-check-circle success');
-		}, 500);
-
-		setTimeout(function(){ //Hide the refresh button to prevent spamming it
-			jQuery('.maprefresh').removeClass('timeout').text(originalRefreshText);
-			jQuery('.maprefresh-icon').removeClass('fa-check-circle success').addClass('fa-refresh inactive');
-		}, 10000);
-	});
-
-	//Geolocation Success listener
-	pageDocument.on('geolocationSuccess', function(){
-		jQuery('.mapgeolocation').text('Location Accuracy: ').append('<span>' + mapInfo['detectLoc']['accMiles'] + ' miles <small>(' + mapInfo['detectLoc']['accMeters'].toFixed(2) + ' meters)</small></span>').find('span').css('color', mapInfo['detectLoc']['accColor']);
-		setTimeout(function(){
-			jQuery('.mapgeolocation').addClass('active').attr('title', '');
-			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin inactive').addClass('fa-location-arrow');
-		}, 500);
-	});
-
-	//Geolocation Error listener
-	pageDocument.on('geolocationError', function(){
-		jQuery('.mapgeolocation').removeClass('success').text(geolocationErrorMessage);
-		setTimeout(function(){
-			jQuery('.mapgeolocation').attr('title', '');
-			jQuery('.mapgeolocation-icon').removeClass('fa-spinner fa-spin').addClass('fa-location-arrow error');
-		}, 500);
-	});
-} //End mapActions()
-
 //Request Geolocation
 function requestPosition(){
-	if ( typeof Gumby != 'undefined' ){ Gumby.log('Requesting location... May need to be accepted.'); }
     var nav = null;
     if (nav == null){
         nav = window.navigator;
@@ -2279,58 +2141,47 @@ function requestPosition(){
 
 //Geolocation Success
 function successCallback(position){
-	jQuery('.mapgeolocation').removeClass('failure').addClass('success');
+	nebulaLocation = {
+        'error': false,
+        'coordinates': { //A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
+            'latitude': position.coords.latitude,
+            'longitude': position.coords.longitude
+        },
+        'accuracy': {
+            'meters': position.coords.accuracy,
+            'miles': (position.coords.accuracy*0.000621371).toFixed(2),
+        },
+        'altitude': position.coords.altitude,
+        'speed': position.coords.speed,
+    }
 
-	mapInfo['detectLoc'] = [];
-	mapInfo['detectLoc'][0] = position.coords.latitude;
-	mapInfo['detectLoc'][1] = position.coords.longitude;
-	mapInfo['detectLoc']['accMeters'] = position.coords.accuracy;
-	mapInfo['detectLoc']['alt'] = position.coords.altitude;
-	mapInfo['detectLoc']['speed'] = position.coords.speed;
-
-	if ( ( mapInfo['detectLoc']['accMeters'] <= 25 ) ){
-		mapInfo['detectLoc']['accColor'] = '#00bb00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 25 && mapInfo['detectLoc']['accMeters'] <= 50 ){
-		mapInfo['detectLoc']['accColor'] = '#46d100';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 51 && mapInfo['detectLoc']['accMeters'] <= 150 ){
-		mapInfo['detectLoc']['accColor'] = '#a4ed00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 151 && mapInfo['detectLoc']['accMeters'] <= 400 ){
-		mapInfo['detectLoc']['accColor'] = '#f2ee00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 401 && mapInfo['detectLoc']['accMeters'] <= 800 ){
-		mapInfo['detectLoc']['accColor'] = '#ffc600';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 801 && mapInfo['detectLoc']['accMeters'] <= 1500 ){
-		mapInfo['detectLoc']['accColor'] = '#ff6f00';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 1501 && mapInfo['detectLoc']['accMeters'] <= 3000 ){
-		mapInfo['detectLoc']['accColor'] = '#ff1900';
-	} else if ( mapInfo['detectLoc']['accMeters'] > 3001 ){
-		mapInfo['detectLoc']['accColor'] = '#ff0000';
+	if ( nebulaLocation.accuracy.meters <= 25 ){
+		nebulaLocation.accuracy.color = '#00bb00';
+	} else if ( nebulaLocation.accuracy.meters > 25 && nebulaLocation.accuracy.meters <= 50 ){
+		nebulaLocation.accuracy.color = '#46d100';
+	} else if ( nebulaLocation.accuracy.meters > 51 && nebulaLocation.accuracy.meters <= 150 ){
+		nebulaLocation.accuracy.color = '#a4ed00';
+	} else if ( nebulaLocation.accuracy.meters > 151 && nebulaLocation.accuracy.meters <= 400 ){
+		nebulaLocation.accuracy.color = '#f2ee00';
+	} else if ( nebulaLocation.accuracy.meters > 401 && nebulaLocation.accuracy.meters <= 800 ){
+		nebulaLocation.accuracy.color = '#ffc600';
+	} else if ( nebulaLocation.accuracy.meters > 801 && nebulaLocation.accuracy.meters <= 1500 ){
+		nebulaLocation.accuracy.color = '#ff6f00';
+	} else if ( nebulaLocation.accuracy.meters > 1501 && nebulaLocation.accuracy.meters <= 3000 ){
+		nebulaLocation.accuracy.color = '#ff1900';
 	} else {
-		mapInfo['detectLoc']['accColor'] = '#ff0000';
-	}
-	renderMap(mapInfo);
-
-	mapInfo['detectLoc']['accMiles'] = (mapInfo['detectLoc']['accMeters']*0.000621371).toFixed(2);
-
-	if ( mapInfo['detectLoc']['accMeters'] > 400 ){
-		lowAccText = 'Your location accuracy is ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).';
-		if ( typeof Gumby != 'undefined' ){ Gumby.warn('Poor location accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' miles (as shown by the colored radius).'); }
-		//Some kind of notification here...
+		nebulaLocation.accuracy.color = '#ff0000';
 	}
 
 	pageDocument.trigger('geolocationSuccess');
-	//A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
-
-	pageBody.addClass('geo-latlng-' + mapInfo['detectLoc'][0] + '_' + mapInfo['detectLoc'][1] + ' geo-acc-' + mapInfo['detectLoc']['accMeters']);
+	pageBody.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude + '_' + nebulaLocation.coordinates.longitude + ' geo-acc-' + nebulaLocation.accuracy.meters);
 	browserInfo();
-
-	ga('send', 'event', 'Geolocation', mapInfo['detectLoc'][0].toFixed(4) + ', ' + mapInfo['detectLoc'][1].toFixed(4), 'Accuracy: ' + mapInfo['detectLoc']['accMiles'] + ' meters'); //@TODO "Nebula" 0: Add in actual location detection (from either gearside.com/ip, or Nebula's environment detection example and move this GA reporting to that (with business names in ga action). Maybe consider the Actions to be something like: "LAT, LNG (Business Name, City, State)"
+	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters');
 }
 
 //Geolocation Error
 function errorCallback(error){
-    geolocationErrorMessage = "";
-    // Check for known errors
-    switch (error.code) {
+    switch (error.code){
         case error.PERMISSION_DENIED:
             geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
             break;
@@ -2344,126 +2195,16 @@ function errorCallback(error){
         	geolocationErrorMessage = "An unknown error has occurred.";
             break;
     }
-    if ( typeof Gumby != 'undefined' ){ Gumby.warn(geolocationErrorMessage); }
+
+    nebulaLocation = {
+	    'error': {
+		    'code': error.code,
+			'description': geolocationErrorMessage
+	    }
+    }
+
     pageDocument.trigger('geolocationError');
     pageBody.addClass('geo-error');
 	browserInfo();
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
-}
-
-//Retreive Lat/Lng locations
-function getAllLocations(){
-	mapInfo['markers'] = [];
-	jQuery('.latlngcon').each(function(i){
-		var alat = jQuery(this).find('.lat').text();
-		var alng = jQuery(this).find('.lng').text();
-		if ( typeof Gumby != 'undefined' ){ Gumby.log(i + ': found location! lat: ' + alat + ', lng: ' + alng); }
-		mapInfo['markers'][i] = [alat, alng];
-	});
-	renderMap(mapInfo);
-}
-
-//Render the Google Map
-function renderMap(mapInfo){
-    if ( typeof Gumby != 'undefined' ){ Gumby.log('Rendering Google Map'); }
-
-    if ( typeof google === 'undefined' ){
-    	if ( typeof Gumby != 'undefined' ){ Gumby.log('google is not defined. Likely the Google Maps script is not being seen.'); }
-    	return false;
-    } else {
-    	var myOptions = {
-			zoom: 11,
-			scrollwheel: false,
-			zoomControl: true,
-			scaleControl: true,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		}
-	    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	    var bounds = new google.maps.LatLngBounds();
-
-		if ( typeof mapInfo['traffic'] !== 'undefined' ){
-			if ( mapInfo['traffic'] == 1 ) {
-				if ( typeof Gumby != 'undefined' ){ Gumby.log('Traffic is enabled.'); }
-				var trafficLayer = new google.maps.TrafficLayer();
-				trafficLayer.setMap(map);
-			}
-		}
-
-		//Map weather
-		if ( typeof mapInfo['weather'] !== 'undefined' ){
-			if ( mapInfo['weather'] == 1 ) {
-				if ( typeof Gumby != 'undefined' ){ Gumby.log('Weather is enabled.'); }
-				var weatherLayer = new google.maps.weather.WeatherLayer({
-					temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
-				});
-				weatherLayer.setMap(map);
-
-				var cloudLayer = new google.maps.weather.CloudLayer();
-				cloudLayer.setMap(map);
-			}
-		}
-
-
-	   	//Hard-Coded Custom Marker
-		//http://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
-		var phg = new google.maps.LatLng('43.0536608', '-76.1656');
-		bounds.extend(phg);
-		marker = new google.maps.Marker({
-	        position: phg,
-	        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
-	        clickable: false,
-	        map: map
-	    });
-
-
-		//Dynamic Markers (passed from getAllLocations()
-		if ( typeof mapInfo['markers'] !== 'undefined' ){
-			var marker, i;
-		    for (i = 0; i < mapInfo['markers'].length; i++){
-		        var pos = new google.maps.LatLng(mapInfo['markers'][i][0], mapInfo['markers'][i][1]);
-		        bounds.extend(pos);
-		        marker = new google.maps.Marker({
-		            position: pos,
-		            //icon:'../../wp-content/themes/gearside2014/images/map-icon-marker.png', //@TODO "Nebula" 0: It would be cool if these were specific icons for each location. Pull from frontend w/ var?
-		            clickable: false,
-		            map: map
-		        });
-		        if ( typeof Gumby != 'undefined' ){ Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]); }
-		    }(marker, i);
-	    }
-
-		//Detected Location Marker
-		if ( typeof mapInfo['detectLoc'] !== 'undefined' ){
-			if ( mapInfo['detectLoc'][0] != 0 ) { //Detected location is set
-				var detectLoc = new google.maps.LatLng(mapInfo['detectLoc'][0], mapInfo['detectLoc'][1]);
-				marker = new google.maps.Marker({
-			        position: detectLoc,
-			        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
-			        //animation: google.maps.Animation.DROP,
-			        clickable: false,
-			        map: map
-			    });
-			    var circle = new google.maps.Circle({
-					strokeColor: mapInfo['detectLoc']['accColor'],
-					strokeOpacity: 0.7,
-					strokeWeight: 1,
-					fillColor: mapInfo['detectLoc']['accColor'],
-					fillOpacity: 0.15,
-					map: map,
-					radius: mapInfo['detectLoc']['accMeters']
-				});
-				circle.bindTo('center', marker, 'position');
-				if ( typeof Gumby != 'undefined' ){ Gumby.log('Marker created for detected location: ' + mapInfo['detectLoc'][0] + ', ' + mapInfo['detectLoc'][1]); }
-
-				//var detectbounds = new google.maps.LatLngBounds();
-				bounds.extend(detectLoc);
-				//map.fitBounds(detectbounds); //Use this instead of the one below to center on detected location only (ignoring other markers)
-			}
-		}
-
-		map.fitBounds(bounds);
-		google.maps.event.trigger(map, "resize");
-
-		pageDocument.trigger('mapRendered');
-	}
 }
