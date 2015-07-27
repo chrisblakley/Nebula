@@ -1,11 +1,20 @@
-<script src="https://maps.googleapis.com/maps/api/js?libraries=geometry"></script><!-- @TODO "Nebula" 0: Load with Google API loader -->
 <script>
 	jQuery(document).ready(function() {
-		requestPosition();
+		jQuery.getScript('https://www.google.com/jsapi', function(){
+		    google.load('maps', '3', {
+		        other_params: 'libraries=geometry',
+		        callback: function(){
+		        	requestPosition();
+		        }
+		    });
+		}).fail(function(){
+		    ga('send', 'event', 'Error', 'JS Error', 'Google Maps Geometry script could not be loaded.', {'nonInteraction': 1});
+		});
 
 		jQuery(document).on('geolocationSuccess', function(){
 			nebula_checkSpecificLocation();
 			nebula_containsLocation_info();
+			renderMap();
 		});
 
 		jQuery(document).on('geolocationError', function(){
@@ -17,6 +26,115 @@
 	function nebula_checkSpecificLocation(){
 	    var latlng = new google.maps.LatLng(nebulaLocation.coordinates.latitude, nebulaLocation.coordinates.longitude);
 
+		//Admin/Upstairs
+		var adminUpstairsPolygon = new google.maps.Polygon({
+	        paths: [
+				new google.maps.LatLng(43.05365905348903, -76.16576135158539),
+				new google.maps.LatLng(43.05364925384085, -76.16546899080276),
+				new google.maps.LatLng(43.05376488958951, -76.16546362638474),
+				new google.maps.LatLng(43.05377076936752, -76.16575330495834)
+			]
+	    });
+	    if ( google.maps.geometry.poly.containsLocation(latlng, adminUpstairsPolygon) ){
+	        if ( nebulaLocation.altitude ){
+		        if ( nebulaLocation.altitude > 121 ){
+			        nebulaLocation.phg = 'Upstairs';
+		        } else {
+			        nebulaLocation.phg = 'Administrative';
+		        }
+	        } else {
+		        nebulaLocation.phg = 'Administrative or Upstairs';
+	        }
+
+	        return true;
+	    }
+
+		//Interactive
+		var interactivePolygon = new google.maps.Polygon({
+	        paths: [
+				new google.maps.LatLng(43.05387660527521, -76.16560578346252),
+				new google.maps.LatLng(43.05387170546869, -76.16548106074333),
+				new google.maps.LatLng(43.053760969737205, -76.16548374295235),
+				new google.maps.LatLng(43.05375900981094, -76.16560846567154)
+			]
+	    });
+	    if ( google.maps.geometry.poly.containsLocation(latlng, interactivePolygon) ){
+	        nebulaLocation.phg = 'Interactive';
+	        return true;
+	    }
+
+		//Courtyard
+		var courtyardPolygon = new google.maps.Polygon({
+	        paths: [
+				new google.maps.LatLng(43.054024579247326, -76.16565674543381),
+				new google.maps.LatLng(43.05402653916509, -76.16571441292763),
+				new google.maps.LatLng(43.05385210623873, -76.16572514176369),
+				new google.maps.LatLng(43.05385112627708, -76.16566479206085)
+			]
+	    });
+	    if ( google.maps.geometry.poly.containsLocation(latlng, courtyardPolygon) ){
+	        nebulaLocation.phg = 'Courtyard';
+	        return true;
+	    }
+
+	    //Main Offices
+		var mainOfficesPolygon = new google.maps.Polygon({
+	        paths: [
+				new google.maps.LatLng(43.054115715357135, -76.16565003991127),
+				new google.maps.LatLng(43.05392070351615, -76.16566881537437),
+				new google.maps.LatLng(43.053883465003636, -76.16548910737038),
+				new google.maps.LatLng(43.054108855654626, -76.16547033190727)
+			]
+	    });
+	    if ( google.maps.geometry.poly.containsLocation(latlng, mainOfficesPolygon) ){
+	        nebulaLocation.phg = 'Main Office Area';
+	        return true;
+	    }
+
+	    //Conference Room
+		var conferenceRoomPolygon = new google.maps.Polygon({
+	        paths: [
+				new google.maps.LatLng(43.054108855654626, -76.16547167301178),
+				new google.maps.LatLng(43.054276428166986, -76.16546228528023),
+				new google.maps.LatLng(43.054279368031544, -76.16559237241745),
+				new google.maps.LatLng(43.05411179552722, -76.16560444235802)
+			]
+	    });
+	    if ( google.maps.geometry.poly.containsLocation(latlng, conferenceRoomPolygon) ){
+	        nebulaLocation.phg = 'Conference Room';
+	        return true;
+	    }
+
+		//PR
+		var prPolygon = new google.maps.Polygon({
+	        paths: [
+				new google.maps.LatLng(43.054113755442216, -76.16564601659775),
+				new google.maps.LatLng(43.05412257505882, -76.16590216755867),
+				new google.maps.LatLng(43.05428720766966, -76.16589814424515),
+				new google.maps.LatLng(43.05427838807672, -76.16563931107521)
+			]
+	    });
+	    if ( google.maps.geometry.poly.containsLocation(latlng, prPolygon) ){
+	        nebulaLocation.phg = 'PR';
+	        return true;
+	    }
+
+		//Back Parking Lot
+		var backParkingPolygon = new google.maps.Polygon({
+	        paths: [
+				new google.maps.LatLng(43.05481540097902, -76.16596519947052),
+				new google.maps.LatLng(43.05429014753368, -76.16597324609756),
+				new google.maps.LatLng(43.054276428166986, -76.16542339324951),
+				new google.maps.LatLng(43.05438814292081, -76.1652597784996),
+				new google.maps.LatLng(43.05479384215749, -76.16525173187256)
+			]
+	    });
+	    if ( google.maps.geometry.poly.containsLocation(latlng, backParkingPolygon) ){
+	        nebulaLocation.phg = 'Back Parking Area';
+	        return true;
+	    }
+
+		//PHG Overall
 	    var phgPolygon = new google.maps.Polygon({
 	        paths: [
 	            new google.maps.LatLng(43.05484871914285, -76.16599742788821),
@@ -30,11 +148,8 @@
 	        ]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, phgPolygon) ){
-	        ga('send', 'event', 'PHG Location', lat + ', ' + lng);
-	        ga('set', 'dimension1', 'At Pinckney Hugo Group');
 	        nebulaLocation.phg = true;
 	    } else {
-		    ga('set', 'dimension1', 'Not at Pinckney Hugo Group');
 		    nebulaLocation.phg = false;
 	    }
 	}
@@ -43,8 +158,16 @@
 		if ( !nebulaLocation.error ){
 			jQuery('#location-results .latlng').html(nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
 			if ( nebulaLocation.phg ){
-				jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group.');
+				ga('send', 'event', 'PHG Location', nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
+				if ( typeof nebulaLocation.phg === 'string' ){
+					ga('set', 'dimension1', 'At PHG in ' + nebulaLocation.phg);
+					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group in <strong>' + nebulaLocation.phg + '</strong>.');
+				} else {
+					ga('set', 'dimension1', 'At Pinckney Hugo Group');
+					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group.');
+				}
 			} else {
+				ga('set', 'dimension1', 'Not at Pinckney Hugo Group');
 				jQuery('#location-results .specific-location').html('You are <strong style="color: maroon;">not</strong> at Pinckney Hugo Group.');
 			}
 
@@ -56,16 +179,81 @@
 		        ga('set', 'dimension2', 'Good (50m - 300m)');
 		    } else if ( nebulaLocation.accuracy.meters > 300 && nebulaLocation.accuracy.meters < 1500 ){
 		        var accText = 'Poor';
-		        ga('set', 'dimension2', 'Okay (300m - 1500m)');
+		        ga('set', 'dimension2', 'Poor (300m - 1500m)');
 		    } else {
-		        var accText = 'Terrible';
-		        ga('set', 'dimension2', 'Poor (>1500m)');
+		        var accText = 'Very Poor';
+		        ga('set', 'dimension2', 'Very Poor (>1500m)');
 		    }
 
-		    jQuery('#location-results .accuracy').html('<strong style="color: ' + nebulaLocation.accuracy.color + ';">' + accText + '</strong> location accuracy: ' + nebulaLocation.accuracy.meters + ' meters (' + nebulaLocation.accuracy.miles + ' miles).');
+		    jQuery('#location-results .accuracy').html('<strong style="color: ' + nebulaLocation.accuracy.color + ';">' + accText + '</strong> location accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters (' + nebulaLocation.accuracy.miles + ' miles). Altitude: ' + nebulaLocation.altitude.meters);
 
 		} else {
 			jQuery('#location-results .latlng').html('<strong>Error:</strong> ' + nebulaLocation.error.description);
+		}
+	}
+
+
+
+	//Render Google Map
+	function renderMap(){
+	    if ( typeof google === 'undefined' ){
+	    	return false;
+	    } else {
+	    	var myOptions = {
+				zoom: 11,
+				//scrollwheel: false,
+				zoomControl: true,
+				scaleControl: true,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+		    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+		    var bounds = new google.maps.LatLngBounds();
+
+			//PHG Polygon
+			var phgLoc = new google.maps.LatLng(43.05353287760792, -76.1650257388153);
+			var path = [
+				new google.maps.LatLng(43.054872237835816, -76.16603493690491),
+				new google.maps.LatLng(43.053515978470244, -76.1660885810852),
+				new google.maps.LatLng(43.05312399040743, -76.16611003875732),
+				new google.maps.LatLng(43.053100471044004, -76.16554141044617),
+				new google.maps.LatLng(43.05345326054855, -76.16556286811829),
+				new google.maps.LatLng(43.05344542080385, -76.16541266441345),
+				new google.maps.LatLng(43.05435874432114, -76.16526246070862),
+				new google.maps.LatLng(43.05484871914285, -76.16522490978241)
+			];
+			var polyline = new google.maps.Polygon({path:path, strokeColor: "#0098d7", strokeOpacity: 1.0, strokeWeight: 2});
+			polyline.setMap(map);
+			bounds.extend(phgLoc);
+
+			//Detected Location Marker
+			if ( nebulaLocation.coordinates.latitude != 0 ) { //Detected location is set
+				var detectLoc = new google.maps.LatLng(nebulaLocation.coordinates.latitude, nebulaLocation.coordinates.longitude);
+				marker = new google.maps.Marker({
+			        position: detectLoc,
+			        icon: 'https://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
+			        //animation: google.maps.Animation.DROP,
+			        clickable: false,
+			        map: map
+			    });
+			    var circle = new google.maps.Circle({
+					strokeColor: nebulaLocation.accuracy.color,
+					strokeOpacity: 0.7,
+					strokeWeight: 1,
+					fillColor: nebulaLocation.accuracy.color,
+					fillOpacity: 0.15,
+					map: map,
+					radius: nebulaLocation.accuracy.meters
+				});
+				circle.bindTo('center', marker, 'position');
+
+				//var detectbounds = new google.maps.LatLngBounds();
+				bounds.extend(detectLoc);
+				//map.fitBounds(detectbounds); //Use this instead of the one below to center on detected location only (ignoring other markers)
+			}
+			map.fitBounds(bounds);
+			google.maps.event.trigger(map, "resize");
+
+			jQuery(document).trigger('mapRendered');
 		}
 	}
 </script>
@@ -83,6 +271,13 @@
 			<p class="accuracy"></p>
 			<br/>
 			<p class="specific-location"></p>
+		</div>
+	</div><!--/columns-->
+</div><!--/row-->
+<div class="row">
+	<div class="sixteen columns">
+		<div class="googlemapcon">
+			<div id="map_canvas"></div>
 		</div>
 	</div><!--/columns-->
 </div><!--/row-->

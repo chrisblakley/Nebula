@@ -26,15 +26,7 @@ get_header(); ?>
 					<h1 class="entry-title"><?php the_title(); ?></h1>
 
 					<div class="entry-meta">
-						<span class="nebulasocialcon">
-			        		<?php
-				        		if ( is_dev() ) {
-					        		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 1);
-				        		} else {
-					        		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
-				        		}
-				        	?>
-			        	</span>
+						<span class="nebulasocialcon"><?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?></span>
 					</div>
 
 					<div class="entry-content">

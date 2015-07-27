@@ -14,12 +14,21 @@ get_header(); ?>
 
 <script src="<?php echo get_template_directory_uri();?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script>
 
-<section><!-- Do not duplicate this section because it has inline styles. -->
-	<div class="container" style="background: #0098d7;">
+<style>
+	#example-title-area .container {background: #0098d7;}
+		#example-title-area h1 {color: #fff;}
+		#example-title-area p {color: #fff;}
+		#example-title-area a {color: #fff; text-decoration: underline; white-space: nowrap;}
+			#example-title-area a:hover,
+			#example-title-area a.hover {color: #aaa;}
+</style>
+
+<section id="example-title-area"><!-- Do not duplicate this section because it has inline styles. -->
+	<div class="container">
 		<div class="row">
 			<div class="sixteen columns">
-				<h1 class="entry-title" style="color: #fff;"><?php the_title(); ?></h1>
-				<p style="color: #fff;"><?php the_field('description'); ?></p>
+				<h1 class="entry-title"><?php the_title(); ?></h1>
+				<p><?php the_field('description'); ?></p>
 			</div><!--/columns-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -46,9 +55,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="eleven columns">
 
-			<?php if ( is_client() && get_post_meta(get_the_ID(), 'nebula_internal_search_keywords') ): //@TODO "Nebula" 0: Remove this after adding keywords to examples. ?>
-				<p style="text-align: center; padding: 2px 10px; margin: 0; border: 1px solid green;">This post <strong style="color: green;">has</strong> keywords.</p>
-			<?php elseif ( is_client() ): ?>
+			<?php if ( is_client() && !get_post_meta(get_the_ID(), 'nebula_internal_search_keywords') ): //@TODO "Nebula" 0: Remove this after adding keywords to examples. ?>
 				<p style="text-align: center; padding: 2px 10px; margin: 0; border: 1px solid red;">This post does <strong style="color: red;">not have</strong> keywords.</p>
 			<?php endif; ?>
 
@@ -463,6 +470,10 @@ get_header(); ?>
 
 					<?php if ( is_page(1631) ){ //:Contains
 						include_once('includes/contains.php');
+					} ?>
+
+					<?php if ( is_page(2004) ){ //Google Map Polygon Converter
+						include_once('includes/google_polygon_array_converter.php');
 					} ?>
 
 				<?php

@@ -33,15 +33,7 @@ get_header(); ?>
 
 					<div class="entry-meta">
 						<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
-						<span class="nebulasocialcon">
-			        		<?php
-				        		if ( is_dev() ) {
-					        		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 1);
-				        		} else {
-					        		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
-				        		}
-				        	?>
-			        	</span>
+						<span class="nebulasocialcon"><?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?></span>
 					</div>
 
 					<div class="entry-content">

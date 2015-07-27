@@ -1,12 +1,13 @@
 <?php
 
 //Force expire query transients when posts/pages are saved.
-add_action('save_posts', 'nebula_clear_transients');
+add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){
 	delete_transient('nebula_autocomplete_menus');
 	delete_transient('nebula_autocomplete_categories');
 	delete_transient('nebula_autocomplete_tags');
 	delete_transient('nebula_autocomplete_authors');
+	delete_transient('nebula_everything_query');
 }
 
 //Disable auto curly quotes

@@ -1,5 +1,4 @@
 jQuery.noConflict();
-
 jQuery(document).ready(function(){
 
 	//Assign common global variables
@@ -15,33 +14,46 @@ jQuery(document).ready(function(){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
+	//Social
 	facebookSDK();
-	//facebookConnect(); //@TODO "Social" 1: Uncomment here to enable Facebook Connect.
+	facebookConnect();
+	prefillFacebookFields();
 	socialSharing();
 
-	/* Choose whether to use mmenu or doubletaptogo for mobile device navigation */
+	//Navigation
 	mmenus();
-	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo();
-
-	conditionalJSLoading();
-	gaEventTracking();
-	helperFunctions();
+	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo(); //@TODO: Either use mmenu or uncomment this line for mobile navigation.
 	dropdownWidthController();
 	overflowDetector();
-	subnavExpanders();
 	//nebulaFixeder();
-	nebulaEqualize();
-	powerFooterWidthDist();
 	menuSearchReplacement();
+	subnavExpanders();
+
+	//Search
 	mobileSearchPlaceholder();
 	autocompleteSearch();
 	advancedSearchTriggers();
 	searchValidator();
 	searchTermHighlighter();
 	singleResultDrawer();
-	pageVisibility();
-	cFormLocalStorage();
+	pageSuggestion();
 
+	//Forms
+	cFormLocalStorage();
+	prefillCommentAuthorCookieFields(cookieAuthorName, cookieAuthorEmail);
+	nebulaAddressAutocomplete('#address-autocomplete');
+
+	//Helpers
+	helperFunctions();
+	powerFooterWidthDist();
+	nebulaEqualize();
+
+	//Interaction
+	gaEventTracking();
+	pageVisibility();
+	vimeoControls();
+
+	conditionalJSLoading();
 
 	//Detect if loaded in an iframe
 	if ( window != window.parent ){
@@ -56,25 +68,8 @@ jQuery(document).ready(function(){
 		});
 	}
 
-	if ( pageBody.hasClass('search-no-results') || pageBody.hasClass('error404') ) {
-		pageSuggestion();
-	}
-
-	if ( cookieAuthorName ) {
-		prefillCommentAuthorCookieFields(cookieAuthorName, cookieAuthorEmail);
-	}
-
-	vimeoControls();
-
-	if ( jQuery('#address-autocomplete').is('*') ){
-		nebulaAddressAutocomplete('#address-autocomplete');
-	}
-
-	//Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
-	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px');
-
+	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
-
 	if ( !pageHTML.hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 		viewport = updateViewportDimensions();
 	}
@@ -83,7 +78,6 @@ jQuery(document).ready(function(){
 
 
 jQuery(window).on('load', function(){
-
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
 
@@ -126,20 +120,6 @@ jQuery(window).on('resize', function(){
 
 
 /*==========================
- Utilities
- ===========================*/
-
-//Custom css expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
-//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
-jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
-
-//Check for content (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/var/empty.js
-function empty(r){var n,t,e,f,u=[n,null,!1,0,"","0"];for(e=0,f=u.length;f>e;e++)if(r===u[e])return!0;if("object"==typeof r){for(t in r)return!1;return!0}return!1} //@TODO "Nebula" 0: Test if this is working before implementing
-
-
-
-
-/*==========================
  Functions
  ===========================*/
 
@@ -160,7 +140,7 @@ function helperFunctions(){
 	        }
 	    }
 	});
-} //end helperFunctions
+}
 
 
 //Load the SDK asynchronously
@@ -169,14 +149,14 @@ function facebookSDK(){
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) return;
 		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&version=v2.3";
+		js.src = "//connect.facebook.net/en_US/all.js";
 		fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'facebook-jssdk'));
 }
 
 //Facebook Connect functions
 function facebookConnect(){
-	if ( social['facebook_app_id'] ) {
+	if ( social['facebook_app_id'] ){
 		window.fbAsyncInit = function(){
 			FB.init({
 				appId: social['facebook_app_id'],
@@ -185,68 +165,25 @@ function facebookConnect(){
 				xfbml: true
 			});
 
-			window.FBuser = '';
-			window.FBstatus = false;
 			checkFacebookStatus();
-
-			//Facebook Likes
-			FB.Event.subscribe('edge.create', function(href, widget){
-				var currentPage = pageDocument.attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Like',
-					'socialTarget': href,
-					'page': currentPage
-				});
-				ga('send', 'event', 'Social', 'Facebook Like', {
-					'dimension1': 'Like'
-				});
+			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', 'event', 'Social', 'Facebook Like');
 			});
 
-			//Facebook Unlikes
-			FB.Event.subscribe('edge.remove', function(href, widget){
-				var currentPage = pageDocument.attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Unlike',
-					'socialTarget': href,
-					'page': currentPage
-				});
-				ga('send', 'event', 'Social', 'Facebook Unlike', {
-					'dimension1': 'Unlike'
-				});
+			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', 'event', 'Social', 'Facebook Unlike');
 			});
 
-			//Facebook Send/Share
-			FB.Event.subscribe('message.send', function(href, widget){
-				var currentPage = pageDocument.attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Send',
-					'socialTarget': href,
-					'page': currentPage
-				});
-				ga('send', 'event', 'Social', 'Facebook Share', {
-					'dimension1': 'Share'
-				});
+			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', 'event', 'Social', 'Facebook Share');
 			});
 
-			//Facebook Comments
-			FB.Event.subscribe('comment.create', function(href, widget){
-				var currentPage = pageDocument.attr('title');
-				ga('send', {
-					'hitType': 'social',
-					'socialNetwork': 'Facebook',
-					'socialAction': 'Comment',
-					'socialTarget': href,
-					'page': currentPage
-				});
-				ga('send', 'event', 'Social', 'Facebook Comment', {
-					'dimension1': 'Comment'
-				});
+			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', 'event', 'Social', 'Facebook Comment');
 			});
 		};
 
@@ -261,89 +198,93 @@ function facebookConnect(){
 
 //Connect to Facebook without using Facebook Login button
 function facebookLoginLogout(){
-	if ( !FBstatus ) {
+	if ( !nebulaFacebook.status ){
 		FB.login(function(response){
-			if (response.authResponse){
-				checkFacebookStatus();
-				ga('send', 'event', 'Social', 'Facebook Connect', FBuser.name);
-			} else {
-				checkFacebookStatus();
-			}
+			checkFacebookStatus();
 		}, {scope:'public_profile,email'});
 	} else {
 		FB.logout(function(response){
 			checkFacebookStatus();
-			prefillFacebookFields();
 		});
 	}
 	return false;
 }
 
 //Fetch Facebook user information
-function checkFacebookStatus() {
+function checkFacebookStatus(){
 	FB.getLoginStatus(function(response){
-		var facebookConnectPStrong = jQuery('#facebook-connect p strong');
-		var facebookConnectLink = jQuery('.facebook-connect-con a');
-		if ( response.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
-			FBstatus = true;
+		nebulaFacebook = {'status': response.status}
+		if ( nebulaFacebook.status == 'connected' ){ //User is logged into Facebook and is connected to this app.
 			FB.api('/me', function(response){
-				FBuser = response;
-				fbNameClass = response.name.replace(' ', '_');
-				pageBody.removeClass('fb-disconnected').addClass('fb-connected fb-user-' + fbNameClass);
-				prefillFacebookFields(response);
-				facebookConnectLink.text('Logout').removeClass('disconnected').addClass('connected');
-
-				facebookConnectPStrong.text('You have been connected to Facebook, ' + response.first_name + '.'); //@TODO "Example" 2: This is an example- remove this line.
-				jQuery('.fbpicture').attr('src', 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100'); //@TODO "Example" 2: This is an example- remove this line.
+				nebulaFacebook = {
+					'id': response.id,
+					'name': {
+						'first': response.first_name,
+						'last': response.last_name,
+						'full': response.name,
+					},
+					'gender': response.gender,
+					'email': response.email,
+					'image': {
+						'base': 'https://graph.facebook.com/' + response.id + '/picture',
+						'thumbnail': 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100',
+						'large': 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
+					},
+					'url': response.link,
+					'location': {
+						'locale': response.locale,
+						'timezone': response.timezone,
+					},
+					'verified': response.verified,
+				}
+				ga('send', 'event', 'Social', 'Facebook Connect', nebulaFacebook.id);
+				pageBody.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebulaFacebook.id);
+				pageDocument.trigger('fbConnected');
 			});
-
-			facebookConnectPStrong.text('You have been connected to Facebook...'); //@TODO "Example" 2: This is an example- remove this line.
-		} else if (response.status === 'not_authorized') { //User is logged into Facebook, but has not connected to this app.
-			pageBody.removeClass('fb-connected').addClass('fb-disconnected');
-			FBstatus = false;
-			facebookConnectLink.text('Connect with Facebook').removeClass('connected').addClass('disconnected');
-
-			facebookConnectPStrong.text('Please connect to this site by logging in below:'); //@TODO "Example" 2: This is an example- remove this line.
+		} else if ( nebulaFacebook.status == 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
+			pageBody.removeClass('fb-connected').addClass('fb-not_authorized');
+			pageDocument.trigger('fbNotAuthorized');
 		} else { //User is not logged into Facebook.
-			pageBody.removeClass('fb-connected fb-disconnected');
-			FBstatus = false;
-			facebookConnectLink.text('Connect with Facebook').removeClass('connected').addClass('disconnected');
-
-			facebookConnectPStrong.text('You are not logged into Facebook. Log in below:'); //@TODO "Example" 2: This is an example- remove this line.
+			pageBody.removeClass('fb-connected').addClass('fb-disconnected');
+			pageDocument.trigger('fbDisconnected');
 		}
 	});
 }
 
 //Fill or clear form inputs with Facebook data
-function prefillFacebookFields(response){
-	if ( response ) {
+function prefillFacebookFields(){
+	jQuery(document).on('fbConnected', function(){
 		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
-			jQuery(this).val(response.first_name + ' ' + response.last_name).trigger('keyup');
+			jQuery(this).val(nebulaFacebook.name.full).trigger('keyup');
 		});
 		jQuery('.fb-form-first-name, .cform7-first-name, input.first-name').each(function(){
-			jQuery(this).val(response.first_name).trigger('keyup');
+			jQuery(this).val(nebulaFacebook.name.first).trigger('keyup');
 		});
 		jQuery('.fb-form-last-name, .cform7-last-name, input.last-name').each(function(){
-			jQuery(this).val(response.last_name).trigger('keyup');
+			jQuery(this).val(nebulaFacebook.name.last).trigger('keyup');
 		});
 		jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
-			jQuery(this).val(response.email).trigger('keyup');
+			jQuery(this).val(nebulaFacebook.email).trigger('keyup');
 		});
 		browserInfo();
-	} else {
+	});
+
+	jQuery(document).on('fbNotAuthorized fbDisconnected', function(){
 		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, .fb-form-email, .comment-form-email input, input[type="email"]').each(function(){
 			jQuery(this).val('').trigger('keyup');
 		});
-	}
+	});
 }
 
 function prefillCommentAuthorCookieFields(name, email){
-	jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
-		jQuery(this).val(name).trigger('keyup');
-	});
-	jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
-		jQuery(this).val(email).trigger('keyup');
-	});
+	if ( cookieAuthorName ) {
+		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
+			jQuery(this).val(name).trigger('keyup');
+		});
+		jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
+			jQuery(this).val(email).trigger('keyup');
+		});
+	}
 }
 
 
@@ -856,99 +797,354 @@ function autocompleteSearch(){
 }
 
 //Advanced Search
+//@TODO "Nebula" 0: Advanced Search functionality is still in development.
 function advancedSearchTriggers(){
+	var advancedSearchForm = jQuery('#advanced-search-form');
+	haveAllEvents = 0;
+
+	jQuery('a#metatoggle').on('click touch tap', function(){
+		jQuery('#advanced-search-meta').toggleClass('active');
+		return false;
+	});
+
 	jQuery('#s').keyup(function(e){
-		if ( searchTriggerOnlyChars(e) ) {
-			advancedSearchWaiting();
-			debounce(function(){
-				if ( jQuery('#s').val().trim().length >= 3 ){
-					advancedSearch();
-					ga('send', 'event', 'Internal Search', 'Advanced', '"' + jQuery('#s').val().trim() + '"');
-					if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
-				} else {
-					//console.log('value is less than 3 characters');
-				}
-			}, 1000, 'advanced internal search');
+		advancedSearchPrep('Typing...');
+		debounce(function(){
+			if ( !empty(jQuery('#s').val()) ){
+				ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
+			}
+		}, 1500);
+	});
+
+	pageDocument.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
+		advancedSearchPrep();
+		if ( !empty(jQuery('#advanced-search-date-start')) ){
+			jQuery('#date-end-con').removeClass('hidden');
+		} else { //@TODO: Not working...
+			jQuery('#date-end-con').val('').addClass('hidden');
 		}
 	});
 
-	pageDocument.on('change', '.advanced-post-type', function(){
-		advancedSearchWaiting();
-		debounce(function(){
-			if ( jQuery('#s').val().trim() != '' || jQuery('.advanced-catstags').val() != '' ){ //@TODO: Something is up here.
-				advancedSearch();
+	//jQueryUI Datepicker
+	jQuery('#advanced-search-date-start').datepicker({
+		dateFormat: "MM d, yy",
+		altField: "#advanced-search-date-start-alt",
+		altFormat: "@",
+		onSelect: function(){
+			advancedSearchPrep();
+			if ( !empty(jQuery('#advanced-search-date-start')) ){
+				jQuery('#date-end-con').removeClass('hidden');
+			} else {
+				jQuery('#date-end-con').val('').addClass('hidden');
 			}
-		}, 1000, 'advanced post-type');
+		}
+	});
+	jQuery('#advanced-search-date-end').datepicker({
+		dateFormat: "MM d, yy",
+		altField: "#advanced-search-date-end-alt",
+		altFormat: "@",
+		onSelect: function(){
+			advancedSearchPrep();
+		}
 	});
 
-	pageDocument.on('change', '.advanced-catstags', function(){
-		advancedSearchWaiting();
-		debounce(function(){
-			advancedSearch();
-		}, 1000, 'advanced catstags');
+	//Reset form
+	jQuery('.resetfilters').on('click tap touch', function(){
+		advancedSearchForm[0].reset();
+		//@TODO: Chosen.js fields need to be reset manually... or something?
+		jQuery(this).removeClass('active');
+		advancedSearchPrep();
+		return false;
 	});
 
-	pageDocument.on('change', '.advanced-author', function(){
-		advancedSearchWaiting();
-		debounce(function(){
-			advancedSearch();
-		}, 1000, 'advanced author');
+	loadMoreEvents = 0;
+	jQuery('#load-more-events').on('click tap touch', function(){
+		if ( typeof globalEventObject === 'undefined' ){
+			advancedSearchPrep(10);
+
+			loadMoreEvents = 10;
+
+			jQuery('html, body').animate({
+				scrollTop: advancedSearchForm.offset().top-10
+			}, 500);
+
+			return false;
+		}
+
+		if ( !jQuery(this).hasClass('all-events-loaded') ){
+			loadMoreEvents = loadMoreEvents+10;
+			advancedSearch(loadMoreEvents);
+
+			jQuery('html, body').animate({
+				scrollTop: advancedSearchForm.offset().top-10
+			}, 500);
+		}
+
+		return false;
+	});
+
+	//Load Prev Events
+	//@todo: there is a bug here... i think?
+	jQuery('#load-prev-events').on('click tap touch', function(){
+		if ( !jQuery(this).hasClass('no-prev-events') ){
+			jQuery('html, body').animate({
+				scrollTop: advancedSearchForm.offset().top-10
+			}, 500);
+
+			loadMoreEvents = loadMoreEvents-10;
+			advancedSearch(loadMoreEvents);
+		}
+
+		return false;
 	});
 }
 
-function advancedSearchWaiting(){
-	//console.log('showing typing icon and waiting for the last event...');
-	jQuery('#advanced-search-results').slideUp();
-	//@TODO: Show typing icon
-	jQuery('#advanced-search-indicator').removeClass().addClass('fa fa-keyboard-o').addClass('active');
-	setTimeout(function(){
-		jQuery('#advanced-search-indicator').removeClass('active');
-	}, 1000);
-}
-
-function advancedSearch(){
-	if ( 1==1 ) { //@TODO: If all fields are not empty
-		var advancedSearchIndicator = jQuery('#advanced-search-indicator');
-		var advancedSearchForm = jQuery('#advanced-search-form');
-		advancedSearchIndicator.removeClass().addClass('fa fa-spin fa-spinner').addClass('active');
-		advancedSearchForm.addClass('inactive');
-
-		jQuery.ajax({
-			type: "POST",
-			url: bloginfo["admin_ajax"],
-			data: {
-				action: 'nebula_advanced_search',
+//Either AJAX for all posts, or search immediately (if in memory)
+function advancedSearchPrep(startingAt, waitingText){
+	var advancedSearchIndicator = jQuery('#advanced-search-indicator');
+	if ( !startingAt || typeof startingAt === 'string' ){
+		waitingText = startingAt;
+		startingAt = 0;
+	}
+	if ( haveAllEvents == 0 ){
+		if ( !waitingText ){
+			waitingText = 'Waiting for filters...';
+		}
+		advancedSearchIndicator.html('<i class="fa fa-fw fa-keyboard-o"></i> ' + waitingText);
+		debounce(function(){
+			advancedSearchIndicator.html('<i class="fa fa-fw fa-spin fa-spinner"></i> Loading posts...');
+			jQuery.ajax({
+				type: "POST",
+				url: bloginfo["admin_ajax"],
 				data: {
-					'term': jQuery('#s').val(),
-					'author': jQuery('.advanced-author').val(),
-					'posttype': jQuery('.advanced-post-type').val(),
-					'catstags': jQuery('.advanced-catstags').val(),
-					'datefrom': jQuery('.advanced-date-from').val(),
-					'dateto': jQuery('.advanced-date-to').val(),
+					action: 'nebula_advanced_search',
 				},
-			},
-			success: function(data){
-				jQuery('#advanced-search-results').html(data).slideDown();
-				//console.log('success!');
-				advancedSearchIndicator.removeClass().addClass('fa fa-check-circle success').addClass('active');
-				advancedSearchForm.removeClass('inactive');
-				setTimeout(function(){
-					advancedSearchIndicator.removeClass('active');
-				}, 5000);
-			},
-			error: function(MLHttpRequest, textStatus, errorThrown){
-				ga('send', 'event', 'Contact', 'Error', 'Advanced Search');
-				//console.log('ajax error :(');
-				advancedSearchIndicator.removeClass().addClass('fa fa-times-circle error').addClass('active');
-				advancedSearchForm.removeClass('inactive');
-				setTimeout(function(){
-					advancedSearchIndicator.removeClass('active');
-				}, 5000);
-			},
-			timeout: 60000
-		});
+				success: function(response){
+					haveAllEvents = 1;
+					advancedSearch(startingAt, response);
+				},
+				error: function(MLHttpRequest, textStatus, errorThrown){
+					jQuery('#advanced-search-results').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
+					haveAllEvents = 0;
+					ga('send', 'event', 'Error', 'AJAX Error', 'Advanced Search AJAX');
+				},
+				timeout: 60000
+			});
+		}, 1500, 'ajax search debounce');
+	} else {
+		advancedSearch(startingAt);
 	}
 }
+
+function advancedSearch(start, eventObject){
+	var advancedSearchIndicator = jQuery('#advanced-search-indicator');
+
+	if ( eventObject ){
+		globalEventObject = jQuery.parseJSON(eventObject);
+	}
+
+	//Search events object
+	filteredPostsObject = postSearch(globalEventObject);
+
+	jQuery('#advanced-search-results').html('');
+	i = ( start ) ? parseFloat(start) : 0;
+	if ( start != 0 ){
+		jQuery('#load-prev-events').removeClass('no-prev-events');
+	} else {
+		jQuery('#load-prev-events').addClass('no-prev-events');
+	}
+	if ( start+10 >= filteredPostsObject.length ){
+		var end = filteredPostsObject.length;
+		moreEvents(0);
+	} else {
+		var end = start+10;
+		moreEvents(1);
+	}
+
+	if ( filteredPostsObject.length > 0 ){
+		advancedSearchIndicator.html('<i class="fa fa-fw fa-calendar"></i> Showing <strong>' + (start+1) + '-' + end + '</strong> of <strong>' + filteredPostsObject.length + '</strong> results:');
+	} else {
+		advancedSearchIndicator.html('<i class="fa fa-fw fa-times-circle"></i> <strong>No pages found</strong> that match your filters.');
+		if ( !empty(jQuery('#s').val()) ){
+			ga('send', 'event', 'Internal Search', 'Advanced No Results', jQuery('#s').val());
+		}
+		moreEvents(0);
+		return false;
+	}
+
+	while ( i <= end-1 ){
+		if ( !filteredPostsObject[i] || typeof filteredPostsObject[i].posted === 'undefined' ){
+			moreEvents(0);
+			return;
+		}
+
+		//Date and Time
+		var postDate = new Date(filteredPostsObject[i].posted * 1000);
+		var year = postDate.getFullYear();
+		var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+		var month = months[postDate.getMonth()];
+		var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		var weekday = weekdays[postDate.getDay()];
+		var day = postDate.getDate();
+		var hour = postDate.getHours();
+		var ampm = ( hour >= 12 ) ? 'pm' : 'am';
+		if ( hour > 12 ){
+			hour -= 12;
+		} else if ( hour === 0 ){
+			hour = 12;
+		}
+		var minute = (( postDate.getMinutes() <= 9 ) ? '0' : '') + postDate.getMinutes();
+
+		//Categories
+		var postCats = '';
+		if ( filteredPostsObject[i].categories.length ){
+			eventCats = '<span class="post-cats"><i class="fa fa-fw fa-bookmark"></i> ' + filteredPostsObject[i].categories.join(', ') + '</span>';
+		}
+
+		//Tags
+		var postTags = '';
+		if ( filteredPostsObject[i].tags.length ){
+			eventTags = '<span class="post-tags"><i class="fa fa-fw fa-tags"></i> ' + filteredPostsObject[i].tags.join(', ') + '</span>';
+		}
+
+		//Description
+		var shortDescription = '';
+		if ( !empty(filteredPostsObject[i].description) ){
+			shortDescription = ( filteredPostsObject[i].description.length > 200 ) ? filteredPostsObject[i].description.substring(0, 200) + '...' : filteredPostsObject[i].description;
+		}
+
+		var markUp = '<div class="advanced-search-result">' +
+				'<h3><a href="' + filteredPostsObject[i].url + '">' + filteredPostsObject[i].title + '</a></h3>' +
+				'<p class="post-date-time">' + month + ' ' + day + ', ' + year +
+				'<p class="post-meta-tags">' + postCats + postTags + '</p>' +
+				'<p class="post-meta-description">' + shortDescription + '</p>' +
+				'<div class="hidden" style="display: none; visibility: hidden; pointer-events: none;">' + filteredPostsObject[i].custom.nebula_internal_search_keywords + '</div>' +
+			'</div>';
+		jQuery('#advanced-search-results').append(markUp);
+		i++;
+	}
+}
+
+function postSearch(posts){
+	var tempFilteringObject = JSON.parse(JSON.stringify(posts)); //Duplicate the object in memory
+	jQuery(tempFilteringObject).each(function(i){
+		var thisPost = this;
+
+		//Search Dates
+		if ( !empty(jQuery('#advanced-search-date-start-alt').val()) ){
+			var postDate = new Date(thisPost.posted*1000);
+			var postDateStamp = postDate.getFullYear() + '-' + postDate.getMonth() + '-' + postDate.getDate();
+			var searchDateStart = new Date(parseInt(jQuery('#advanced-search-date-start-alt').val()));
+			var searchDateStartStamp = searchDateStart.getFullYear() + '-' + searchDateStart.getMonth() + '-' + searchDateStart.getDate();
+
+			if ( !empty(jQuery('#advanced-search-date-end-alt').val()) ){
+				var searchDateEnd = new Date(parseInt(jQuery('#advanced-search-date-end-alt').val()));
+				if ( postDate < searchDateStart || postDate > searchDateEnd ){
+					delete tempFilteringObject[i]; //Date is not in the range
+					return;
+				}
+			} else {
+				if ( postDateStamp != searchDateStartStamp ){
+					delete tempFilteringObject[i]; //Date does not match exactly
+					return;
+				}
+			}
+		}
+
+		//Search Categories and Tags
+		if ( !empty(jQuery('#advanced-search-catstags').val()) ){
+			if ( !empty(thisPost.categories) || !empty(thisPost.tags) ){
+				jQuery.each(jQuery('#advanced-search-catstags').val(), function(key, value){
+					thisCatTag = value.split('__');
+					if ( thisCatTag[0] == 'category' ){
+						var categoryText = thisPost.categories.join(', ').toLowerCase().replace(/&amp;/g, '&');
+						if ( categoryText.indexOf(thisCatTag[1].toLowerCase()) < 0 ){
+							delete tempFilteringObject[i]; //Category does not match
+						}
+					} else {
+						var tagText = thisPost.tags.join(', ').toLowerCase().replace(/&amp;/g, '&');
+						if ( tagText.indexOf(thisCatTag[1].toLowerCase()) < 0 ){
+							delete tempFilteringObject[i]; //Tag does not match
+						}
+					}
+				});
+			} else {
+				delete tempFilteringObject[i]; //Post does not have categories or tags
+				return;
+			}
+		}
+
+		//Search Post Types (This is an inclusive filter)
+		if ( !empty(jQuery('#advanced-search-type').val()) ){
+			var requestedPostType = jQuery('#advanced-search-type').val().join(', ').toLowerCase();
+			if ( requestedPostType.indexOf(thisPost.type.toLowerCase()) < 0 ){
+				delete tempFilteringObject[i]; //Post Type does not match
+			}
+		}
+
+		//Search Author
+		if ( jQuery('#advanced-search-author').val() != '' ){
+			if ( thisPost.author.id != jQuery('#advanced-search-author').val() ){
+				delete tempFilteringObject[i]; //Author ID does not match
+				return;
+			}
+		}
+
+		//Keyword Filter
+		if ( jQuery('#s').val() != '' ){
+			thisEventString = JSON.stringify(thisPost).toLowerCase();
+			thisEventString += '';
+			if ( thisEventString.indexOf(jQuery('#s').val().toLowerCase()) < 0 ){
+				delete tempFilteringObject[i]; //Keyword not found
+				return;
+			}
+		}
+	});
+
+	tempFilteringObject = tempFilteringObject.filter(function(){return true;});
+	eventFormNeedReset();
+	return tempFilteringObject;
+}
+
+function moreEvents(bool){
+	if ( !bool ){
+		jQuery('#load-more-events').addClass('all-events-loaded');
+	} else {
+		jQuery('#load-more-events').removeClass('all-events-loaded');
+	}
+}
+
+//Show/Hide the reset button
+function eventFormNeedReset(){
+	hasValue = false;
+
+	//Check the category select dropdown
+/*
+	jQuery('#advanced-search-form select').each(function(){
+		if ( jQuery(this).find('option:selected').val() && jQuery(this).find('option:selected').val() != '' ){
+			jQuery('.resetfilters').addClass('active');
+			hasValue = true;
+			return false;
+		}
+	});
+*/
+
+	//@TODO: This is not disappearing when reset link itself is clicked.
+	//Check all other inputs
+	jQuery('#advanced-search-form input').each(function(){
+		if ( (jQuery(this).attr('type') != 'checkbox' && jQuery(this).val() != '') || jQuery(this).prop("checked") ){
+			jQuery('.resetfilters').addClass('active');
+			hasValue = true;
+			return false;
+		}
+	});
+
+	if ( !hasValue ){
+		jQuery('.resetfilters').removeClass('active');
+	}
+}
+//End Advanced Search functions
+
 
 //Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
@@ -1058,21 +1254,23 @@ function singleResultDrawer(){
 
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 function pageSuggestion(){
-	if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_google_browser_api_key"] != '' ){
-		if ( GET().length ) {
-			var queryStrings = GET();
-		} else {
-			var queryStrings = [''];
-		}
-		var path = window.location.pathname;
-		var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
-		trySearch(phrase);
+	if ( pageBody.hasClass('search-no-results') || pageBody.hasClass('error404') ) {
+		if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_google_browser_api_key"] != '' ){
+			if ( GET().length ) {
+				var queryStrings = GET();
+			} else {
+				var queryStrings = [''];
+			}
+			var path = window.location.pathname;
+			var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
+			trySearch(phrase);
 
-		pageDocument.on('mousedown touch tap', 'a.suggestion', function(e){
-			var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
-			var suggestedPage = jQuery(this).text();
-			ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage + intent);
-		});
+			pageDocument.on('mousedown touch tap', 'a.suggestion', function(e){
+				var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+				var suggestedPage = jQuery(this).text();
+				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage + intent);
+			});
+		}
 	}
 }
 
@@ -2135,7 +2333,8 @@ function requestPosition(){
     }
     var geoloc = nav.geolocation;
     if (geoloc != null){
-        geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true});
+        geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //One-time location poll
+        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebulaLocation object regularly, but be careful sending events to GA- may result in TONS of events)
     }
 }
 
@@ -2151,8 +2350,17 @@ function successCallback(position){
             'meters': position.coords.accuracy,
             'miles': (position.coords.accuracy*0.000621371).toFixed(2),
         },
-        'altitude': position.coords.altitude,
-        'speed': position.coords.speed,
+        'altitude': { //Above the mean sea level
+	        'meters': position.coords.altitude,
+	        'miles': (position.coords.altitude*0.000621371).toFixed(2),
+	        'accuracy': position.coords.altitudeAccuracy,
+        },
+        'speed': {
+	        'mps': position.coords.speed,
+	        'kph': (position.coords.speed*3.6).toFixed(2),
+	        'mph': (position.coords.speed*2.23694).toFixed(2),
+        },
+        'heading': position.coords.heading, //Degrees clockwise from North
     }
 
 	if ( nebulaLocation.accuracy.meters <= 25 ){
@@ -2208,3 +2416,18 @@ function errorCallback(error){
 	browserInfo();
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
+
+
+/*==========================
+ Utilities
+ ===========================*/
+
+//Custom css expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
+//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
+jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
+
+//Check for content (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/var/empty.js
+function empty(r){var n,t,e,f,u=[n,null,!1,0,"","0"];for(e=0,f=u.length;f>e;e++)if(r===u[e])return!0;if("object"==typeof r){for(t in r)return!1;return!0}return!1} //@TODO "Nebula" 0: Test if this is working before implementing
+
+//Parse dates (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/datetime/strtotime.js
+function strtotime(e,t){function a(e,t,a){var n,r=c[t];"undefined"!=typeof r&&(n=r-w.getDay(),0===n?n=7*a:n>0&&"last"===e?n-=7:0>n&&"next"===e&&(n+=7),w.setDate(w.getDate()+n))}function n(e){var t=e.split(" "),n=t[0],r=t[1].substring(0,3),s=/\d+/.test(n),u="ago"===t[2],i=("last"===n?-1:1)*(u?-1:1);if(s&&(i*=parseInt(n,10)),o.hasOwnProperty(r)&&!t[1].match(/^mon(day|\.)?$/i))return w["set"+o[r]](w["get"+o[r]]()+i);if("wee"===r)return w.setDate(w.getDate()+7*i);if("next"===n||"last"===n)a(n,r,i);else if(!s)return!1;return!0}var r,s,u,i,w,c,o,d,D,f,g,l=!1;if(!e)return l;if(e=e.replace(/^\s+|\s+$/g,"").replace(/\s{2,}/g," ").replace(/[\t\r\n]/g,"").toLowerCase(),s=e.match(/^(\d{1,4})([\-\.\/\:])(\d{1,2})([\-\.\/\:])(\d{1,4})(?:\s(\d{1,2}):(\d{2})?:?(\d{2})?)?(?:\s([A-Z]+)?)?$/),s&&s[2]===s[4])if(s[1]>1901)switch(s[2]){case"-":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return l;case"/":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else if(s[5]>1901)switch(s[2]){case"-":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case"/":return s[1]>12||s[3]>31?l:new Date(s[5],parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else switch(s[2]){case"-":return s[3]>12||s[5]>31||s[1]<70&&s[1]>38?l:(i=s[1]>=0&&s[1]<=38?+s[1]+2e3:s[1],new Date(i,parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case".":return s[5]>=70?s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3:s[5]<60&&!s[6]?s[1]>23||s[3]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0,s[9]||0)/1e3):l;case"/":return s[1]>12||s[3]>31||s[5]<70&&s[5]>38?l:(i=s[5]>=0&&s[5]<=38?+s[5]+2e3:s[5],new Date(i,parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case":":return s[1]>23||s[3]>59||s[5]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0)/1e3)}if("now"===e)return null===t||isNaN(t)?(new Date).getTime()/1e3|0:0|t;if(!isNaN(r=Date.parse(e)))return r/1e3|0;if(w=t?new Date(1e3*t):new Date,c={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6},o={yea:"FullYear",mon:"Month",day:"Date",hou:"Hours",min:"Minutes",sec:"Seconds"},D="(years?|months?|weeks?|days?|hours?|minutes?|min|seconds?|sec|sunday|sun\\.?|monday|mon\\.?|tuesday|tue\\.?|wednesday|wed\\.?|thursday|thu\\.?|friday|fri\\.?|saturday|sat\\.?)",f="([+-]?\\d+\\s"+D+"|(last|next)\\s"+D+")(\\sago)?",s=e.match(new RegExp(f,"gi")),!s)return l;for(g=0,d=s.length;d>g;g++)if(!n(s[g]))return l;return w.getTime()/1e3}

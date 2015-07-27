@@ -1238,114 +1238,97 @@ function nebula_autocomplete_search(){
 	$suggestion['classes'] = ( sizeof($suggestions) >= 1 ) ? 'more-results search-link' : 'no-results search-link';
 	$outputArray[] = $suggestion;
 
-	echo json_encode($outputArray); //Return data in JSON
+	echo json_encode($outputArray, JSON_PRETTY_PRINT);
 	exit;
 }
 
-//Advanced Search @TODO "Nebula" 0: In progress
+//Advanced Search
 add_action('wp_ajax_nebula_advanced_search', 'nebula_advanced_search');
 add_action('wp_ajax_nopriv_nebula_advanced_search', 'nebula_advanced_search');
 function nebula_advanced_search(){
-	/*
-		Search Term: $_POST['data']['term'] (string)
-		Post Type: $_POST['data']['posttype'] (array)
-		Categories & Tags: $_POST['data']['catstags'] (array) (prefixed with tag__ or category__ followed by the slug)
-		Date From: $_POST['data']['datefrom'] (string: YYYY-MM-DD)
-		Date To: $_POST['data']['dateto'] (string: YYYY-MM-DD)
-	*/
+	ini_set('memory_limit', '512M'); //Increase memory limit for this script.
 
-	//Date Range Filter: http://stackoverflow.com/questions/8034697/wordpress-get-posts-by-date-range
-
-	//Pull categories and tags from input.
-	$categories = array();
-	$tags = array();
-	if ( $_POST['data']['catstags'] ){
-		foreach ( $_POST['data']['catstags'] as $cattag ){
-			if ( strpos($cattag, 'category__') > -1 ){
-				$categories[] = substr($cattag, strpos($cattag, "category__")+10);
-			} elseif ( strpos($cattag, 'tag__') > -1 ){
-				$tags[] = substr($cattag, strpos($cattag, "tag__")+5);
-			}
-		}
+	$everything_query = get_transient('nebula_everything_query');
+	if ( empty($venue_query) ){
+		$everything_query = new WP_Query(array(
+			'post_type' => array('any'),
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'nopaging' => true
+		));
+		set_transient('nebula_everything_query', $everything_query, 60*60); //1 hour cache
 	}
-	array_map('intval', $categories);
-	array_map('intval', $tags);
+	$posts = $everything_query->get_posts();
 
-	$posttype = ( is_array($_POST['data']['posttype']) ) ? $_POST['data']['posttype'] : array('any'); //If post type field was not used, default to array('any').
+	foreach ( $posts as $post ){
+		$author = null;
+		if ( nebula_author_bios_enabled() ){ //&& $post->post_type != 'page' ?
+			$author = array(
+				'id' => $post->post_author,
+				'name' => array(
+					'first' => get_the_author_meta('first_name', $post->post_author),
+					'last' => get_the_author_meta('last_name', $post->post_author),
+					'display' => get_the_author_meta('display_name', $post->post_author),
+				),
+				'url' => get_author_posts_url($post->post_author),
+			);
+		}
 
-	//@TODO: Get meta_query working to search custom fields too!
+		$these_categories = array();
+		$event_categories = get_the_category($post->ID);
+		foreach ( $event_categories as $event_category ){
+			$these_categories[] = $event_category->name;
+		}
 
-/*
-	$args = array(
-		'post_type' => $posttype,
-		'post_status' => 'publish',
-		'posts_per_page' => -1,
-		'category__and' => $categories,
-		'tag__and' => $tags,
-		's' => $_POST['data']['term'],
-		//@TODO: Current meta_query only works as an AND... Need this to be an OR
-		'meta_query' => array(
-			array(
-				'value' => $_POST['data']['term'],
-				'compare' => 'LIKE'
-			)
-		)
-	);
-	$search = new WP_Query($args);
-*/
+		$these_tags = array();
+		$event_tags = wp_get_post_tags($post->ID);
+		foreach ( $event_tags as $event_tag ){
+			$these_tags[] = $event_tag->name;
+		}
 
-
-	//I like this method because it merges the two queries using WP_Query (instead of get_posts), but it doesn't appear that all results are coming through (only 1 result for "remarketing" instead of 2).
-	$q1 = new WP_Query(array(
-	    'post_type' => $posttype,
-		'post_status' => 'publish',
-		'posts_per_page' => -1,
-		'category__and' => $categories,
-		'tag__and' => $tags,
-		's' => $_POST['data']['term'],
-	));
-
-	$q2 = new WP_Query(array(
-	    'post_type' => $posttype,
-		'post_status' => 'publish',
-		'posts_per_page' => -1,
-		//'category__and' => $categories,
-		//'tag__and' => $tags,
-		'meta_query' => array(
-			array(
-				'value' => $_POST['data']['term'],
-				'compare' => 'LIKE'
-			)
-		)
-	));
-
-	$search = new WP_Query();
-	$search->posts = array_unique(array_merge($q1->posts, $q2->posts), SORT_REGULAR);
-	$search->post_count = count($search->posts);
-
-
-	$your_query = ( $_POST['data']['term'] ) ? '"' . $_POST['data']['term'] . '"' : 'your query'; //@TODO: sanitize search term here
-	$results_plural = ( $search->post_count == 1 ) ? 'result' : 'results';
-	echo 'There are <strong>' . $search->post_count . ' ' . $results_plural . '</strong> for ' . $your_query . '.<br/><br/>';
-
-	if ( $search->have_posts() ){
-		while ( $search->have_posts() ){
-			$search->the_post();
-
-			if ( !get_the_title() ){
+		$custom_fields = array();
+		foreach ( $post->custom_fields as $custom_field => $custom_value ){
+			if ( substr($custom_field, 0, 1) == '_' ){
 				continue;
 			}
-
-			?>
-
-			<p style="padding-bottom: 15px; border-bottom: 1px dotted #ccc;">
-				<a href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a><br/>
-				<span style="font-size: 12px;"><?php echo nebula_the_excerpt('', 10, 1); ?></span>
-			</p>
-
-			<?php
+			$custom_fields[$custom_field] = $custom_value[0];
 		}
-	}
+
+		$output[] = array(
+			'type' => $post->post_type,
+			'id' => $post->ID,
+			'posted' => strtotime($post->post_date),
+			'modified' => strtotime($post->post_modified),
+			'author' => $author,
+			'title' => $post->post_title,
+			'description' => strip_tags($post->post_content), //@todo: not correct!
+			'url' => get_the_permalink($post->ID),
+			'categories' => $these_categories,
+			'tags' => $these_tags,
+			'image' => array(
+				'full' => wp_get_attachment_image_src($post->_thumbnail_id, 'full')[0],
+				'thumbnail' => wp_get_attachment_image_src($post->_thumbnail_id, 'thumbnail')[0],
+			),
+			'custom' => $custom_fields,
+		);
+	} //END $posts foreach
+
+
+	//@TODO: if going to sort by text:
+/*
+	usort($output, function($a, $b) {
+		return strcmp($a['title'], $b['title']);
+	});
+*/
+
+	//@TODO: If going to sort by number:
+/*
+	usort($output, function($a, $b) {
+		return $a['posted'] - $b['posted'];
+	});
+*/
+
+	echo json_encode($output, JSON_PRETTY_PRINT);
 	exit;
 }
 

@@ -1,10 +1,17 @@
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script><!-- @TODO "Nebula" 0: Load with Google API loader -->
 <script>
 	jQuery(document).on('ready', function(){
 		mapInfo = [];
 		mapActions();
-		getAllLocations();
-		//requestPosition();
+
+		jQuery.getScript('https://www.google.com/jsapi', function(){
+		    google.load('maps', '3', {
+		        callback: function(){
+		        	getAllLocations();
+		        }
+		    });
+		}).fail(function(){
+		    ga('send', 'event', 'Error', 'JS Error', 'Google Maps script could not be loaded.', {'nonInteraction': 1});
+		});
 	});
 
 	//Retreive Lat/Lng locations
@@ -144,12 +151,12 @@
 			}
 
 		   	//Hard-Coded Custom Marker
-			//http://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
+			//https://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
 			var phg = new google.maps.LatLng('43.0536608', '-76.1656');
 			bounds.extend(phg);
 			marker = new google.maps.Marker({
 		        position: phg,
-		        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
+		        icon: 'https://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
 		        clickable: false,
 		        map: map
 		    });
@@ -176,7 +183,7 @@
 					var detectLoc = new google.maps.LatLng(nebulaLocation.coordinates.latitude, nebulaLocation.coordinates.longitude);
 					marker = new google.maps.Marker({
 				        position: detectLoc,
-				        icon: 'http://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
+				        icon: 'https://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
 				        //animation: google.maps.Animation.DROP,
 				        clickable: false,
 				        map: map

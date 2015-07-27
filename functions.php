@@ -74,7 +74,8 @@ function register_nebula_scripts() {
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
 	//wp_register_script($handle, $src, $dependencies, $version, $in_footer);
 	wp_register_script('nebula-jquery_old', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js', array(), '1.11.3', true);
-	wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.custom.64172.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
+	wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.dev.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
+	wp_register_script('nebula-modernizr3_dev', get_template_directory_uri() . '/js/libs/modernizr3.dev.js?' . $GLOBALS['defer'], array(), '3.0.0a3', false);
 	wp_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 	wp_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 	wp_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.4', true);
@@ -196,6 +197,7 @@ function enqueue_nebula_frontend() {
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
 	//wp_enqueue_script('nebula-modernizr_dev');
+	//wp_enqueue_script('nebula-modernizr3_dev');
 	wp_enqueue_script('nebula-modernizr'); //@TODO "Libraries" 1: Switch to this modernizr when launching (if not using advanced polyfills)
 
 	wp_enqueue_script('nebula-mmenu');
