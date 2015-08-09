@@ -17,7 +17,7 @@ get_header(); ?>
 	<div class="valign row" style="height: 100%; text-align: center;">
 		<div>
 			<h1><?php echo get_bloginfo('name'); ?></h3>
-			<h2><?php echo (get_bloginfo('description')) ? get_bloginfo('description') : 'Lorem Ipsum Dolor Sit Amet'; ?></h4>
+			<h2><?php echo ( get_bloginfo('description') )? get_bloginfo('description') : 'Lorem Ipsum Dolor Sit Amet'; ?></h4>
 			<?php nebula_hero_search(); ?>
 		</div>
 	</div>
@@ -52,4 +52,3 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-<?php do_action('nebula_footer'); ?>

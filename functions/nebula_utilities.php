@@ -17,7 +17,8 @@ function gaParseCookie(){
 
 //Generate UUID v4 function - needed to generate a CID when one isn't available
 function gaGenerateUUID(){
-	return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+	return sprintf(
+		'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 		mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
 		mt_rand(0, 0xffff), //16 bits for "time_mid"
 		mt_rand(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
@@ -190,22 +191,10 @@ function is_at_phg(){
 	}
 }
 
-//Check for bot/crawler traffic
-//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
-function is_bot(){
-	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
-	foreach( $bots as $bot ){
-		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
-			return true;
-			break;
-		}
-	}
-	return false;
-}
 
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
-	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ) ? 'https' : 'http';
+	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 )? 'https' : 'http';
 	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
 	return $full_url;
 }
@@ -389,101 +378,16 @@ function nebula_url_components($segment="all", $url=null){
 	}
 }
 
-//Detect Device //@TODO "Nebula" 0: It would be unfeasible to try to keep this up-to-date... Maybe there is an XML/JSON we can use? If so, may need to keep the more unique ones (like game consoles) here.
-function nebula_device_detect($user_agent=''){
-	if ( $user_agent == '' ){
-		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+//Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
+//Example: 'key' => 'dates_%_start_date',
+add_filter('posts_where' , 'nebula_fuzzy_posts_where');
+function nebula_fuzzy_posts_where($where){
+	if ( strpos($where, '_%_') > -1 ){
+		$where = preg_replace("/meta_key = ([\'\"])(.+)_%_/", "meta_key LIKE $1$2_%_", $where);
 	}
-
-	$user_device = "Unknown Device";
-
-	//The order of this array is important!
-	$device_array = array(
-		'/samsung-sgh-i337/i' => 'Samsung Galaxy S4',
-		'/lumia 928/i' => 'Nokia Lumia 928',
-		'/iphone1c2/i' => 'Apple iPhone 3G',
-		'/iPhone2C1/i' => 'Apple iPhone 3GS',
-		'/iPhone3C1/i' => 'Apple iPhone 4',
-		'/iPhone3C3/i' => 'Apple iPhone 4 CDMA',
-		'/iPhone4C1/i' => 'Apple iPhone 4S',
-		'/iPhone5C1/i' => 'Apple iPhone 5',
-		'/iPhone5C2/i' => 'Apple iPhone 5 CDMA',
-		'/iPhone5C3/i' => 'Apple iPhone 5C GSM',
-		'/iPhone5C4/i' => 'Apple iPhone 5C CDMA',
-		'/iPhone6C1/i' => 'Apple iPhone 5S GSM',
-		'/iPhone6C2/i' => 'Apple iPhone 5S CDMA',
-		'/iPad2C1/i' => 'Apple iPad 2 (WiFi only)',
-		'/iPad2C2/i' => 'Apple iPad 2 (WiFi + 3G GSM)',
-		'/iPad2C3/i' => 'Apple iPad 2 (WiFi + 3G CDMA)',
-		'/iPad3C1/i' => 'Apple iPad (3rd Generation) (WiFi only)',
-		'/iPad3C2/i' => 'Apple iPad (3rd Generation) (WiFi + 4G Verizon)',
-		'/iPad3C3/i' => 'Apple iPad (3rd Generation) (WiFi + 4G AT&T)',
-		'/iPad1C1/i' => 'Apple iPad 1',
-		'/iPad4C1/i' => 'Apple iPad Air',
-		'/cros/i' => 'ChromeBook',
-		'/regex_here/i' => 'Return_Value_Here', //windows && phone && iemobile
-		'/xbox/i' => 'Microsoft Xbox',
-		'/xbox one/i' => 'Microsoft Xbox One',
-		'/nintendo/i' => 'Nintendo',
-		'/wii/i' => 'Nintendo Wii',
-		'/wiiu/i' => 'Nintendo WiiU',
-		'/3DS/i' => 'Nintendo 3DS',
-		'/playstation 4/i' => 'Sony Playstation 4',
-		'/playstation 3/i' => 'Sony Playstation 3',
-		'/regex_here/i' => 'Return_Value_Here', //playstation && psp && portable
-		'/ipod/i' => 'Apple iPod Touch',
-		'/regex_here/i' => 'Return_Value_Here', //linux && apple safari && (is mobile device...)
-	);
-
-	foreach ( $device_array as $regex => $value ){
-		if ( preg_match($regex, $user_agent) ){
-			$user_device = $value;
-		}
-	}
-	return $user_device;
-
+	return $where;
 }
 
-//Detect Operating System
-function nebula_os_detect($user_agent=''){
-	if ( $user_agent == '' ){
-		$user_agent = $_SERVER['HTTP_USER_AGENT'];
-	}
-
-	$os_platform = "Unknown OS Platform";
-    $os_array = array(
-		'/windows nt 6.3/i'     =>  'Windows 8.1',
-		'/windows nt 6.2/i'     =>  'Windows 8',
-		'/windows nt 6.1/i'     =>  'Windows 7',
-		'/windows nt 6.0/i'     =>  'Windows Vista',
-		'/windows nt 5.2/i'     =>  'Windows Server 2003/XP x64',
-		'/windows nt 5.1/i'     =>  'Windows XP',
-		'/windows xp/i'         =>  'Windows XP',
-		'/windows nt 5.0/i'     =>  'Windows 2000',
-		'/windows me/i'         =>  'Windows ME',
-		'/win98/i'              =>  'Windows 98',
-		'/win95/i'              =>  'Windows 95',
-		'/win16/i'              =>  'Windows 3.11',
-		'/macintosh|mac os x/i' =>  'Mac OS X',
-		'/mac_powerpc/i'        =>  'Mac OS 9',
-		'/linux/i'              =>  'Linux',
-		'/ubuntu/i'             =>  'Ubuntu',
-		'/iphone/i'             =>  'iPhone',
-		'/ipod/i'               =>  'iPod',
-		'/ipad/i'               =>  'iPad',
-		'/android/i'            =>  'Android',
-		'/blackberry/i'         =>  'BlackBerry',
-		'/webos/i'              =>  'Mobile'
-	);
-
-    foreach ( $os_array as $regex => $value ){
-        if ( preg_match($regex, $user_agent) ){
-            $os_platform = $value;
-        }
-    }
-
-    return $os_platform;
-}
 
 //Use WordPress core browser detection
 //@TODO "Nebula" 0: Look into using this in addition to a more powerful library.
@@ -805,40 +709,281 @@ function getwhois($domain, $tld){
 	}
 }
 
+function nebula_compare_operator($a=null, $b=null, $c='=='){
+	if ( empty($a) || empty($b) ){
+		trigger_error('nebula_compare_operator requires values to compare.');
+		return false;
+	}
+
+	switch ( $c ){
+        case "=":
+        case "==":
+        case "e":
+        	return $a == $b;
+        case ">=":
+        case "=>":
+        case "gte":
+        case "ge":
+        	return $a >= $b;
+        case "<=":
+        case "=<":
+        case "lte":
+        case "le":
+        	return $a <= $b;
+        case ">":
+        case "gt":
+        	return $a > $b;
+        case "<":
+        case "lt":
+        	return $a < $b;
+		default:
+			trigger_error('nebula_compare_operator does not allow "' . $c . '".');
+			return false;
+    }
+}
+
+
 /*==========================
- Libraries
+ User Agent Parsing Functions/Helpers
  ===========================*/
 
-//PHP-Mobile-Detect - https://github.com/serbanghita/Mobile-Detect/wiki/Code-examples
-//Before running conditions using this, you must have $detect = new Mobile_Detect(); before the logic. In this case we are using the global variable $GLOBALS["mobile_detect"].
-//Logic can fire from "$GLOBALS["mobile_detect"]->isMobile()" or "$GLOBALS["mobile_detect"]->isTablet()" or "$GLOBALS["mobile_detect"]->is('AndroidOS')".
-require_once(get_template_directory() . '/includes/Mobile_Detect.php'); //@TODO "Nebula" 0: try changing TEMPLATEPATH to get_template_directory()
-$GLOBALS["mobile_detect"] = new Mobile_Detect();
+function nebula_is_mobile(){
+	if ( $GLOBALS["device_detect"]->isMobile() ){
+		return true;
+	}
+	return false;
+}
 
-//Browser Detection
-//http://techpatterns.com/downloads/browser_detection.php
-//Documentation: http://techpatterns.com/downloads/scripts/browser_detection_php_ar.txt
-//$GLOBALS["browser_detect"] is an associative array with the following structure:
-/*
-	['browser_working'] - $browser_working,
-	['browser_number'] - $browser_number,
-	['ie_version'] - $ie_version,
-	['dom'] - $b_dom_browser,
-	['safe'] - $b_safe_browser,
-	['os'] - $os_type,
-	['os_number'] - $os_number,
-	['browser_name'] - $browser_name,
-	['ua_type'] - $ua_type,
-	['browser_math_number'] - $browser_math_number,
-	['moz_data'] - $a_moz_data,
-	['webkit_data'] - $a_webkit_data,
-	['mobile_test'] - $mobile_test,
-	['mobile_data'] - $a_mobile_data,
-	['true_ie_number'] - $true_ie_number,
-	['run_time'] - $run_time,
-	['html_type'] - $html_type,
-	['engine_data'] - $a_engine_data,
-	['trident_data'] - $a_trident_data
-*/
-require_once(get_template_directory() . '/includes/browser_detection.php');
-$GLOBALS["browser_detect"] = browser_detection('full_assoc');
+function nebula_is_tablet(){
+	if ( $GLOBALS["device_detect"]->isTablet() ){
+		return true;
+	}
+	return false;
+}
+
+function nebula_is_desktop(){
+	if ( $GLOBALS["device_detect"]->isDesktop() ){
+		return true;
+	}
+	return false;
+}
+
+function nebula_get_os($info='full'){
+	$os = $GLOBALS["device_detect"]->getOs();
+	switch ( strtolower($info) ){
+		case 'full':
+			return $os['name'] . ' ' . $os['version'];
+			break;
+		case 'name':
+			return $os['name'];
+			break;
+		case 'version':
+			return $os['version'];
+			break;
+		default:
+			return false;
+			break;
+	}
+}
+
+function nebula_is_os($os=null, $version=null, $comparison='=='){
+	if ( empty($os) ){
+		trigger_error('nebula_is_os requires a parameter of requested operating system.');
+		return false;
+	}
+
+	switch ( strtolower($os) ){
+		case 'macintosh':
+			$os = 'mac';
+			break;
+		case 'win':
+			$os = 'windows';
+			break;
+	}
+
+	$actual_os = $GLOBALS["device_detect"]->getOs();
+	$actual_version = explode('.', $actual_os['version']);
+	$version_parts = explode('.', $version);
+	if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
+		if ( !empty($version) ){
+			if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
+				if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
+					if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return true;
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+	return false;
+}
+
+function nebula_get_device($info='model'){
+	$info = str_replace(' ', '', $info);
+	switch ( strtolower($info) ){
+		case 'full':
+			return $GLOBALS["device_detect"]->getBrandName() . ' ' . $GLOBALS["device_detect"]->getModel();
+			break;
+		case 'brand':
+		case 'brandname':
+		case 'make':
+			return $GLOBALS["device_detect"]->getBrandName();
+			break;
+		case 'model':
+		case 'version':
+		case 'name':
+			return $GLOBALS["device_detect"]->getModel();
+			break;
+		case 'type':
+			return $GLOBALS["device_detect"]->getDeviceName();
+			break;
+		case 'formfactor':
+			if ( nebula_is_mobile() ){
+				return 'mobile';
+			} elseif ( nebula_is_tablet() ){
+				return 'tablet';
+			} else {
+				return 'desktop';
+			}
+		default:
+			return false;
+			break;
+	}
+}
+
+function nebula_get_client($info){ return get_browser($info); }
+function nebula_get_browser($info='name'){
+	$client = $GLOBALS["device_detect"]->getClient();
+	switch ( strtolower($info) ){
+		case 'full':
+			return $client['name'] . ' ' . $client['version'];
+			break;
+		case 'name':
+		case 'browser':
+		case 'client':
+			return $client['name'];
+			break;
+		case 'version':
+			return $client['version'];
+			break;
+		case 'engine':
+			return $client['engine'];
+			break;
+		case 'type':
+			return $client['type'];
+			break;
+		default:
+			return false;
+			break;
+	}
+}
+
+function nebula_is_browser($browser=null, $version=null, $comparison='=='){
+	if ( empty($browser) ){
+		trigger_error('nebula_is_browser requires a parameter of requested browser.');
+		return false;
+	}
+
+	switch ( strtolower($browser) ){
+		case 'ie':
+			$browser = 'internet explorer';
+			break;
+		case 'ie7':
+			$browser = 'internet explorer';
+			$version = '7';
+			break;
+		case 'ie8':
+			$browser = 'internet explorer';
+			$version = '8';
+			break;
+		case 'ie9':
+			$browser = 'internet explorer';
+			$version = '9';
+			break;
+		case 'ie10':
+			$browser = 'internet explorer';
+			$version = '10';
+			break;
+		case 'ie11':
+			$browser = 'internet explorer';
+			$version = '11';
+			break;
+	}
+
+	$actual_browser = $GLOBALS["device_detect"]->getClient();
+	$actual_version = explode('.', $actual_browser['version']);
+	$version_parts = explode('.', $version);
+	if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
+		if ( !empty($version) ){
+			if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
+				if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
+					if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return true;
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+	return false;
+}
+
+function nebula_is_engine($engine=null){
+	if ( empty($engine) ){
+		trigger_error('nebula_is_engine requires a parameter of requested engine.');
+		return false;
+	}
+
+	switch ( strtolower($engine) ){
+		case 'ie':
+		case 'internet explorer':
+			$engine = 'trident';
+			break;
+		case 'web kit':
+			$engine = 'webkit';
+			break;
+	}
+
+	$actual_engine = $GLOBALS["device_detect"]->getClient();
+	if ( strpos(strtolower($actual_browser['engine']), strtolower($engine)) !== false ){
+		return true;
+	}
+	return false;
+}
+
+//Check for bot/crawler traffic
+//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
+function nebula_is_bot(){
+	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
+	foreach( $bots as $bot ){
+		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
+			return true;
+			break;
+		}
+	}
+
+	if ( $GLOBALS["device_detect"]->isBot() ){ //This might work fine on it's own without the above foreach loop
+		return true;
+		break;
+	}
+	return false;
+}
+
+//Device Detection v3.3 - https://github.com/piwik/device-detector
+//Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
+require_once(get_template_directory() . '/includes/device-detector/DeviceDetector.php');
+use DeviceDetector\DeviceDetector;
+$GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
+$GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
+$GLOBALS["device_detect"]->parse();

@@ -3,8 +3,8 @@
 	Theme URI: http://gearside.com/nebula
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
-	Version: 3.0.1
+	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
+	Version: 3.1.0
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -70,8 +70,8 @@ span {font-size: inherit;}
 /* ==========================================================================
    PHG Nebula custom styles
    ========================================================================== */
-::selection {background: #d5f3ff; color: black;}
-::-moz-selection {background: #d5f3ff; color: black;}
+::selection {background: #d5f3ff; color: #000;}
+::-moz-selection {background: #d5f3ff; color: #000;}
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: #0098D7; }
 a {color: #0098D7; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a:hover,
@@ -353,8 +353,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:hover,
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:link,
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:visited {color: #fff;}
-		.ui-autocomplete.ui-widget-content li a {display: block; padding-left: 26px; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
-
+		.ui-autocomplete.ui-widget-content li a {display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
 
 #googlemap img {max-width: none;} /* Prevents glitchy UI within embedded Google maps */
 
@@ -560,8 +559,9 @@ div.wp-pagination {float: right; margin-bottom: 20px;}
 	a#metatoggle {display: block; background: #0098d7; color: #fff; text-align: center; width: 100%; padding: 5px 10px;}
 		a#metatoggle.hover,
 		a#metatoggle:hover {background: #5b9ede;}
-	#advanced-search-meta {max-height: 0; margin-bottom: 15px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; /* overflow: hidden; */ border: 1px solid red;} /* overflow hidden prevents the dropdown selects from fully appearing */
-		#advanced-search-meta.active {max-height: 400px; border: 1px solid green;}
+	#advanced-search-meta {max-height: 0; margin-bottom: 15px; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; -o-transition: all 0.5s; transition: all 0.5s; overflow: hidden;}
+		#advanced-search-meta.active {max-height: 250px;}
+		#advanced-search-meta.finished {overflow: visible;}
 
 	.advanced-search-group.left-side {}
 		#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}

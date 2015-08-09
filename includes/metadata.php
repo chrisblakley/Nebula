@@ -1,7 +1,4 @@
-<?php //Check that all Open Graph data is working: https://developers.facebook.com/tools/debug ?>
-
-
-<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ) : ?>
+<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ): ?>
 	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 	<meta name="keywords" content="<?php echo nebula_settings_conditional_text('nebula_keywords', ''); ?>" /><!-- @TODO "Metadata" 1: Replace '' with comma-separated keywords. -->
 	<?php if ( function_exists('get_field') && get_field('news_keywords') ): //@TODO "Metadata" 1: The news keywords custom field is not bundled with Nebula and must be created to use this. News keywords are <=10 comma separated keywords. ?>
@@ -11,7 +8,7 @@
 <?php endif; ?>
 
 
-<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ) : ?>
+<?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ): ?>
 	<?php if ( nebula_settings_conditional_text_bool('nebula_google_webmaster_tools_verification') ): ?>
 		<meta name="google-site-verification" content="<?php echo nebula_settings_conditional_text('nebula_google_webmaster_tools_verification', ''); ?>" />
 	<?php endif; ?>
@@ -40,7 +37,7 @@
 
 
 <?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Settings. ?>
-<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ) : ?>
+<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): ?>
 	<?php if ( get_option('nebula_business_hours_' . $weekday . '_enabled') && get_option('nebula_business_hours_' . $weekday . '_open') != '' && get_option('nebula_business_hours_' . $weekday . '_close') != '' ) : ?>
 		<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
 		<meta property="business:hours:start" content="<?php echo get_option('nebula_business_hours_' . $weekday . '_open'); ?>" />

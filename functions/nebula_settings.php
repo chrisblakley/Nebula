@@ -353,7 +353,7 @@ function nebula_settings_page(){
 		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Last Domain Expiration Alert&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_alert')) ) ? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_alert')) : get_option('nebula_domain_expiration_alert'); ?>" disabled/>
+						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_alert')) )? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_alert')) : get_option('nebula_domain_expiration_alert'); ?>" disabled/>
 						<p class="helper"><small>Shows the date of the last domain expiration alert that was sent.</small></p>
 					</td>
 		        </tr>
@@ -875,8 +875,8 @@ function nebula_settings_page(){
 		        <tr valign="top">
 		        	<th scope="row">Domain Registrar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_registrar_url" value="<?php echo get_option('nebula_registrar_url'); ?>" placeholder="http://<?php echo whois_info('registrar_url'); ?><?php echo ( whois_info('reseller') ) ? '*' : ''; ?>" style="width: 392px;" />
-						<p class="helper"><small>Link to the domain registrar used for access to pointers, forwarding, and other information. <?php if ( whois_info('registrar') ) : ?> Registrar detected as <a href="http://<?php echo whois_info('registrar_url'); ?>"><?php echo whois_info('registrar'); ?></a><?php echo ( whois_info('reseller') ) ? ' *(via ' . whois_info('reseller') . ')' : ''; ?></small><?php endif; ?></p>
+						<input type="text" name="nebula_registrar_url" value="<?php echo get_option('nebula_registrar_url'); ?>" placeholder="http://<?php echo whois_info('registrar_url'); ?><?php echo ( whois_info('reseller') )? '*' : ''; ?>" style="width: 392px;" />
+						<p class="helper"><small>Link to the domain registrar used for access to pointers, forwarding, and other information. <?php if ( whois_info('registrar') ) : ?> Registrar detected as <a href="http://<?php echo whois_info('registrar_url'); ?>"><?php echo whois_info('registrar'); ?></a><?php echo ( whois_info('reseller') )? ' *(via ' . whois_info('reseller') . ')' : ''; ?></small><?php endif; ?></p>
 					</td>
 		        </tr>
 		        <tr valign="top">

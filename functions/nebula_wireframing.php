@@ -1,5 +1,4 @@
 <?php
-
 /*
 	A wireframing element is composed of a component which contains one or more fpo elements.
 	For example:
@@ -24,7 +23,7 @@ if ( !nebula_settings_conditional('nebula_wireframing', 'disabled') ){
 }
 function wireframe_bar(){
 	$current_user = wp_get_current_user();
-	$current_user_name = ( $current_user->user_firstname != '' ) ? $current_user->user_firstname : $current_user->display_name;
+	$current_user_name = ( $current_user->user_firstname != '' )? $current_user->user_firstname : $current_user->display_name;
 	$greetings = array('Hello', 'Hi', 'Hey', 'Welcome');
 
 	echo '<div id="wireframing-bar" class="container">
@@ -70,7 +69,6 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 			<p>Comment functionality coming soon.</p>
 		</div>
 	</div><!-- /fpo-component (' . $component . ') -->';
-
 }
 
 //Top header for each component (with opening .fpo div)
@@ -105,9 +103,9 @@ function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg=
 	if ( $bg == 'placeholder' ){
 		$bg = '';
 		$placeholder = '<svg x="0px" y="0px" width="100%" height="100%" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid #aaa; z-index: 1;">
-							<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
-							<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
-						</svg>';
+			<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
+			<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+		</svg>';
 	} else {
 		$placeholder = '';
 	}
@@ -121,13 +119,12 @@ function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg=
 	}
 
 	$return .= '<div class="nebula-fpo ' . $safe_title . ' valign ' . $classes . '" style="position: relative; text-align: center; width: ' . $width . '; height: ' . $height . '; padding: 10px; background: ' . $bg . '; ' . $styles . '">
-			<div style="position: relative; z-index: 5;">
-				<h3 style="font-size: 21px; color: ' . $text_hex . ';">' . $icon_html . ' ' . $title . '</h3>
-				<p style="font-size: 14px; color: rgba(' . $text_rgb . ',' . $text_rgb . ',' . $text_rgb . ',0.6);">' . $description . '</p>
-			</div>
-			' . $placeholder . '
-		</div>';
-
+		<div style="position: relative; z-index: 5;">
+			<h3 style="font-size: 21px; color: ' . $text_hex . ';">' . $icon_html . ' ' . $title . '</h3>
+			<p style="font-size: 14px; color: rgba(' . $text_rgb . ',' . $text_rgb . ',' . $text_rgb . ',0.6);">' . $description . '</p>
+		</div>
+		' . $placeholder . '
+	</div>';
 	echo $return;
 }
 
@@ -148,21 +145,14 @@ function fpo_image($width='100%', $height='200px', $type='none', $color='#000', 
 
 	if ( $imgsrc == '' ){
 		$return .= '<svg x="0px" y="0px" width="100%" height="100%" style="border: 1px solid ' . $color . ';">
-					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
-					<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
-				</svg>';
+			<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
+			<line fill="none" stroke="' . $color . '" stroke-miterlimit="10" x1="100%" y1="0" x2="0" y2="100%"/>
+		</svg>';
 	}
-
 	$return .= '</div>';
-
 	echo $return;
 }
-
-
-
 
 function fpo_text($text=''){
 	echo '<div class="fpo-text">' . $text . '</div>';
 }
-
-//eCommerce suite, ad buckets, lightbox,

@@ -210,4 +210,3 @@ get_header(); ?>
 </script>
 
 <?php get_footer(); ?>
-<?php do_action('nebula_footer'); ?>

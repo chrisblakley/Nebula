@@ -23,13 +23,13 @@ get_header(); ?>
 
 		<div class="eleven columns">
 			<h1><i class="archiveicon fa fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
-				<?php
-					$category_description = category_description();
-					if ( !empty($category_description) ){
-						echo '' . $category_description . '';
-					}
-					get_template_part('loop', 'category');
-				?>
+			<?php
+				$category_description = category_description();
+				if ( !empty($category_description) ){
+					echo $category_description . '';
+				}
+				get_template_part('loop', 'category');
+			?>
 		</div><!--/columns-->
 
 		<div class="four columns push_one">
@@ -40,4 +40,3 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-<?php do_action('nebula_footer'); ?>

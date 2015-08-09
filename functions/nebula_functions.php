@@ -25,13 +25,12 @@ function track_google_pagespeed_checks(){
 if ( nebula_settings_conditional('nebula_console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card(){
-		//@TODO "Nebula" 0: if chrome or firefox... (find what other browsers support this)
-		$console_log = "<script>if ( document.getElementsByTagName('html')[0].className.indexOf('lte-ie8') < 0 ){";
-		if ( !$GLOBALS["mobile_detect"]->isMobile() && !$GLOBALS["mobile_detect"]->isTablet() ){
+		$console_log = "<script>";
+		if ( nebula_is_desktop() && !nebula_is_browser('ie') ){
 			$console_log .= "console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');";
+			$console_log .= "console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');";
 		}
-		$console_log .= "console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');}</script>";
-
+		$console_log .= "</script>";
 		echo $console_log;
 	}
 }
@@ -52,7 +51,7 @@ if ( nebula_settings_conditional('nebula_dev_stylesheets') ){
 				$file_counter++;
 				$this_css_filename = basename($file);
 				$this_css_contents = file_get_contents($file); //Copy file contents
-				$empty_css = ( $this_css_contents == '' ) ? ' (empty)' : '';
+				$empty_css = ( $this_css_contents == '' )? ' (empty)' : '';
 				$dev_css_contents = file_get_contents(get_template_directory() . '/css/dev.css');
 				$dev_css_contents .= "/* ==========================================================================\r\n   " . get_template_directory_uri() . "/css/dev/" . $this_css_filename . $empty_css . "\r\n   ========================================================================== */\r\n\r\n" . $this_css_contents . "\r\n\r\n/* End of " . $this_css_filename . " */\r\n\r\n\r\n";
 				file_put_contents(get_template_directory() . '/css/dev.css', $dev_css_contents);
@@ -129,7 +128,7 @@ function nebula_the_author($show_authors=1){
 	if ( !is_single() || $show_authors == 0 || !nebula_author_bios_enabled() ){
 		return nebula_settings_conditional_text('nebula_site_owner', get_bloginfo('name'));
 	} else {
-		return ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
+		return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 	}
 }
 
@@ -398,7 +397,7 @@ function nebula_meta($meta, $secondary=1){
 	} elseif ( $meta == 'tags' || $meta == 'tag' ){
 		$tag_list = get_the_tag_list('', ', ');
 		if ( $tag_list ){
-			$tag_icon = ( count(get_the_tags()) > 1 ) ? 'tags' : 'tag';
+			$tag_icon = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
 			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-' . $tag_icon . '"></i> ' . $tag_list . '</span>';
 		} else {
 			$post_tags = '';
@@ -451,7 +450,7 @@ function nebula_meta($meta, $secondary=1){
 		} elseif ( get_comments_number() > 1 ){
 			$comment_icon = 'fa-comments';
 		}
-		$postlink = ( is_single() ) ? '' : get_the_permalink();
+		$postlink = ( is_single() )? '' : get_the_permalink();
 		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
 	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ){
 		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
@@ -539,27 +538,27 @@ function nebula_social($networks=array('facebook', 'twitter', 'google+'), $count
 
 function nebula_facebook_share($counts=0){?>
 	<div class="nebula-social-button facebook-share">
-		<div class="fb-share-button" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 ) ? 'button_count' : 'button'; ?>"></div>
+		<div class="fb-share-button" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>"></div>
 	</div>
 <?php }
 
 
 function nebula_facebook_like($counts=0){ ?>
 	<div class="nebula-social-button facebook-like">
-		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 ) ? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
+		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
 	</div>
 <?php }
 
 function nebula_facebook_both($counts=0){ ?>
 	<div class="nebula-social-button facebook-both">
-		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 ) ? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
+		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
 	</div>
 <?php }
 
 $nebula_twitter_tweet = 0;
 function nebula_twitter_tweet($counts=0){ ?>
 	<div class="nebula-social-button twitter-tweet">
-		<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 ) ? '': 'data-count="none"'; ?>>Tweet</a>
+		<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 )? '': 'data-count="none"'; ?>>Tweet</a>
 		<?php if ( $nebula_twitter_tweet == 0 ) : ?>
 			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 		<?php endif; ?>
@@ -571,7 +570,7 @@ function nebula_twitter_tweet($counts=0){ ?>
 $nebula_google_plus = 0;
 function nebula_google_plus($counts=0){ ?>
 	<div class="nebula-social-button google-plus-plus-one">
-		<div class="g-plusone" data-size="medium" <?php echo ( $counts != 0 ) ? '' : 'data-annotation="none"'; ?>></div>
+		<div class="g-plusone" data-size="medium" <?php echo ( $counts != 0 )? '' : 'data-annotation="none"'; ?>></div>
 		<?php if ( $nebula_google_plus == 0 ) : ?>
 			<script src="https://apis.google.com/js/platform.js" async defer></script>
 		<?php endif; ?>
@@ -586,7 +585,7 @@ function nebula_linkedin_share($counts=0){ //@TODO "Nebula" 0: Bubble counts are
 		<?php if ( $nebula_linkedin_share == 0 ) : ?>
 			<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
 		<?php endif; ?>
-		<script type="IN/Share" <?php echo ( $counts != 0 ) ? 'data-counter="right"' : ''; ?>></script>
+		<script type="IN/Share" <?php echo ( $counts != 0 )? 'data-counter="right"' : ''; ?>></script>
 	</div>
 <?php
 	$nebula_linkedin_share = 1;
@@ -601,7 +600,7 @@ function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are 
 	}
 ?>
 	<div class="nebula-social-button pinterest-pin">
-		<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts != 0 ) ? 'beside' : 'none'; ?>" data-pin-color="red">
+		<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts != 0 )? 'beside' : 'none'; ?>" data-pin-color="red">
 			<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" />
 		</a>
 		<?php if ( $nebula_pinterest_pin == 0 ) : ?>
@@ -618,10 +617,10 @@ add_action('wp_ajax_nebula_twitter_cache', 'nebula_twitter_cache');
 add_action('wp_ajax_nopriv_nebula_twitter_cache', 'nebula_twitter_cache');
 function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_tweets=5, $include_retweets=1){
 	if ( $_POST['data'] ){
-		$username = ( $_POST['data']['username'] ) ? $_POST['data']['username'] : 'Great_Blakes';
-		$listname = ( $_POST['data']['listname'] ) ? $_POST['data']['listname'] : null; //Only used for list feeds
-		$number_tweets = ( $_POST['data']['numbertweets'] ) ? $_POST['data']['numbertweets'] : 5;
-		$include_retweets = ( $_POST['data']['includeretweets'] ) ? $_POST['data']['includeretweets'] : 1; //1: Yes, 0: No
+		$username = ( $_POST['data']['username'] )? $_POST['data']['username'] : 'Great_Blakes';
+		$listname = ( $_POST['data']['listname'] )? $_POST['data']['listname'] : null; //Only used for list feeds
+		$number_tweets = ( $_POST['data']['numbertweets'] )? $_POST['data']['numbertweets'] : 5;
+		$include_retweets = ( $_POST['data']['includeretweets'] )? $_POST['data']['includeretweets'] : 1; //1: Yes, 0: No
 	}
 
 	error_reporting(0); //Prevent PHP errors from being cached.
@@ -807,7 +806,7 @@ function the_breadcrumb(){
 						if( $value != '' && !in_array($value, $skipThese) ){
 							$pieces = explode('-', $value);
 							$link_str = '';
-							$link = ($i == 0) ? $link : $link  . '/' . $value;
+							$link = ( $i == 0 )? $link : $link  . '/' . $value;
 							foreach ( $pieces as $key => $value ){
 								if ( !in_array($value, $dontCapThese) ){
 									$link_str .= ucfirst($value) . ' ';
@@ -1083,10 +1082,10 @@ function nebula_autocomplete_search(){
 			$suggestion = array();
 			$attachment_meta = wp_get_attachment_metadata($attachment->ID);
 			$path_parts = pathinfo($attachment_meta['file']);
-			$attachment_search_meta = ( get_the_title($attachment->ID) != '' ) ? get_the_title($attachment->ID) : $path_parts['filename'];
+			$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
 			similar_text(strtolower($_POST['data']['term']), strtolower($attachment_search_meta), $suggestion['similarity']);
 			if ( $suggestion['similarity'] >= 50 ){
-			    $suggestion['label'] = ( get_the_title($attachment->ID) != '' ) ? get_the_title($attachment->ID) : $path_parts['basename'];
+			    $suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
 				$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
 				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
 				if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
@@ -1198,7 +1197,7 @@ function nebula_autocomplete_search(){
 			set_transient('nebula_autocomplete_authors', $authors, 60*60); //1 hour cache
 		}
 		foreach ( $authors as $author ){
-			$author_name = ( $author->first_name != '' ) ? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
+			$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
 			if ( strtolower($author_name) == strtolower($_POST['data']['term']) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
 				$suggestion = array();
 				$suggestion['label'] = $author_name;
@@ -1233,9 +1232,9 @@ function nebula_autocomplete_search(){
 	//Link to search at the end of the list
 	//@TODO "Nebula" 0: The empty result is not working for some reason... (Press Enter... is never appearing)
 	$suggestion = array();
-	$suggestion['label'] = ( sizeof($suggestions) >= 1 ) ? '...more results for "' . $_POST['data']['term'] . '"' : 'Press enter to search for "' . $_POST['data']['term'] . '"';
+	$suggestion['label'] = ( sizeof($suggestions) >= 1 )? '...more results for "' . $_POST['data']['term'] . '"' : 'Press enter to search for "' . $_POST['data']['term'] . '"';
 	$suggestion['link'] = home_url('/') . '?s=' . str_replace(' ', '%20', $_POST['data']['term']);
-	$suggestion['classes'] = ( sizeof($suggestions) >= 1 ) ? 'more-results search-link' : 'no-results search-link';
+	$suggestion['classes'] = ( sizeof($suggestions) >= 1 )? 'more-results search-link' : 'no-results search-link';
 	$outputArray[] = $suggestion;
 
 	echo json_encode($outputArray, JSON_PRETTY_PRINT);
@@ -1294,6 +1293,9 @@ function nebula_advanced_search(){
 			$custom_fields[$custom_field] = $custom_value[0];
 		}
 
+		$full_size = wp_get_attachment_image_src($post->_thumbnail_id, 'full');
+		$thumbnail = wp_get_attachment_image_src($post->_thumbnail_id, 'thumbnail');
+
 		$output[] = array(
 			'type' => $post->post_type,
 			'id' => $post->ID,
@@ -1306,8 +1308,8 @@ function nebula_advanced_search(){
 			'categories' => $these_categories,
 			'tags' => $these_tags,
 			'image' => array(
-				'full' => wp_get_attachment_image_src($post->_thumbnail_id, 'full')[0],
-				'thumbnail' => wp_get_attachment_image_src($post->_thumbnail_id, 'thumbnail')[0],
+				'full' => $thumbnail[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
+				'thumbnail' => $full_size[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
 			),
 			'custom' => $custom_fields,
 		);
@@ -1316,14 +1318,14 @@ function nebula_advanced_search(){
 
 	//@TODO: if going to sort by text:
 /*
-	usort($output, function($a, $b) {
+	usort($output, function($a, $b){
 		return strcmp($a['title'], $b['title']);
 	});
 */
 
 	//@TODO: If going to sort by number:
 /*
-	usort($output, function($a, $b) {
+	usort($output, function($a, $b){
 		return $a['posted'] - $b['posted'];
 	});
 */
@@ -1379,35 +1381,16 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ){
 //Add custom body classes
 add_filter('body_class', 'nebula_body_classes');
 function nebula_body_classes($classes){
-
 	$spaces_and_dots = array(' ', '.');
 	$underscores_and_hyphens = array('_', '-');
 
-	//$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_device_detect())); //Add Device info to body classes //@TODO "Nebula" 0: Enable once better detection is set up.
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_os_detect())); //Add Operating System info to body classes
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, wp_browser_detect())); //Add Browser info to body classes
-	$classes[] = str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['os']) . '_' . str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['os_number']); //Alternate OS detection with OS version too
-	$classes[] = str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_working']); //Rendering engine
-	$classes[] = str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_name']) . '_' . str_replace($spaces_and_dots, $underscores_and_hyphens, $GLOBALS['browser_detect']['browser_math_number']); //Browser name and major version number
-
-	//Mobile
-	if ( $GLOBALS["mobile_detect"]->isMobile() ){
-		$classes[] = 'mobile';
-	} else {
-		$classes[] = 'no-mobile';
-	}
-	if ( $GLOBALS["mobile_detect"]->isTablet() ){
-		$classes[] = 'tablet';
-	}
-	if ( $GLOBALS["mobile_detect"]->isiOS() ){
-		$classes[] = 'ios';
-	}
-	if ( $GLOBALS["mobile_detect"]->isAndroidOS() ){
-		$classes[] = 'androidos';
-	}
-	if ( $GLOBALS["mobile_detect"]->isIphone() ){
-    	$classes[] = 'iphone';
-    }
+	//Device
+	$classes[] = strtolower(nebula_get_device('full')); //Device make and model
+	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('full'))); //Operating System name with version
+	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('name'))); //Operating System name
+	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('full'))); //Browser name and version
+	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
+	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
 
 	//User Information
 	$current_user = wp_get_current_user();
@@ -1418,9 +1401,9 @@ function nebula_body_classes($classes){
 	}
 
 	//Post Information
-	if ( !is_search() && !is_archive() ){
+	if ( !is_search() && !is_archive() && !is_front_page() ){
 		global $post;
-		$segments = explode('/', trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ));
+		$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 		$parents = get_post_ancestors($post->ID);
 		foreach ( $parents as $parent ){
 			$classes[] = 'ancestor-id-' . $parent;
@@ -1436,7 +1419,7 @@ function nebula_body_classes($classes){
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 
 	//Time of Day
-	$classes[] = ( business_open() ) ? 'business-open' : 'business-closed';
+	$classes[] = ( business_open() )? 'business-open' : 'business-closed';
 	if ( contains(date('H'), array('23', '00', '01')) ){
 		$classes[] = 'time-early time-night';
 	} elseif ( contains(date('H'), array('02', '03', '04')) ){
@@ -1481,8 +1464,9 @@ function nebula_body_classes($classes){
 		}
 	}
 
-	$classes[] = 'day-' . strtolower(date('l'));
-	$classes[] = 'month-' . strtolower(date('F'));
+	$classes[] = 'date-day-' . strtolower(date('l'));
+	$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
+	$classes[] = 'date-month-' . strtolower(date('F'));
 
 	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
 		$classes[] = 'error' . $GLOBALS['http'];
@@ -1845,7 +1829,7 @@ function youtube_meta($videoID, $meta=''){
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
 function nebula_tel_link($phone, $postd=''){
-	if ( $GLOBALS["mobile_detect"]->isMobile() ){
+	if ( nebula_is_mobile() ){
 		if ( $postd ){
 			$search = array('#', 'p', 'w');
 			$replace   = array('%23', ',', ';');
@@ -1862,8 +1846,8 @@ function nebula_tel_link($phone, $postd=''){
 
 //Create sms: link if on mobile, otherwise return unlinked, human-readable number
 function nebula_sms_link($phone, $message=''){
-	if ( $GLOBALS["mobile_detect"]->isMobile() ){
-		$sep = ( $GLOBALS["mobile_detect"]->isiOS() ) ? '?' : ';';
+	if ( nebula_is_mobile() ){
+		$sep = ( nebula_is_os('ios') )? '?' : ';';
 		//@TODO "Nebula" 0: Encode $message string here...?
 		return '<a class="nebula-sms-link" href="sms:' . nebula_phone_format($phone, 'tel') . $sep . 'body=' . $message . '">' . nebula_phone_format($phone, 'human') . '</a>';
 	} else {

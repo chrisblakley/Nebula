@@ -58,4 +58,3 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-<?php do_action('nebula_footer'); ?>

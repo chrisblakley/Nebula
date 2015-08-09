@@ -28,8 +28,8 @@
 
 			$domain_exp_unix = strtotime($domain_exp_detected);
 			$domain_exp = date("F j, Y", $domain_exp_unix);
-			$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: inherit;' ;
-			$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') ) ? ' <p style="' . $domain_exp_style . '">' . $domain_exp . '</p>' : '<p>Expiration Not Detected</p>';
+			$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') )? 'color: red; font-weight: bold;' : 'color: inherit;' ;
+			$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') )? ' <p style="' . $domain_exp_style . '">' . $domain_exp . '</p>' : '<p>Expiration Not Detected</p>';
 			echo '<h3>Detected Domain Expiration</h3>' . $domain_exp_html;
 
 
@@ -71,9 +71,9 @@
 
 
 			if ( $domain_registrar_url && strlen($domain_registrar_url) < 50 ) {
-				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 50 ) ? '<p><a href="//' . $domain_registrar_url . '" target="_blank">' . $domain_registrar . '</a></p>': '<p>Registrar Not Detected</p>';
+				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 50 )? '<p><a href="//' . $domain_registrar_url . '" target="_blank">' . $domain_registrar . '</a></p>': '<p>Registrar Not Detected</p>';
 			} else {
-				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 50 ) ? '<p>' . $domain_registrar . '</p>': '<p>Registrar Not Detected</p>';
+				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 50 )? '<p>' . $domain_registrar . '</p>': '<p>Registrar Not Detected</p>';
 			}
 
 			echo '<br/><h3>Detected Domain Registrar</h3>' . $domain_registrar_html;
@@ -92,7 +92,7 @@
 			}
 
 			if ( $domain_reseller && $domain_reseller != '' ) {
-				$domain_reseller_html = ( $domain_reseller && strlen($domain_reseller) < 30 ) ? '<p>' . $domain_reseller . '</p>': '<p>Reseller Not Detected</p>';
+				$domain_reseller_html = ( $domain_reseller && strlen($domain_reseller) < 30 )? '<p>' . $domain_reseller . '</p>': '<p>Reseller Not Detected</p>';
 				echo '<br/><h3>Detected Domain Reseller</h3>' . $domain_reseller_html;
 			}
 

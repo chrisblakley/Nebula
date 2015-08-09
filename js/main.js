@@ -8,9 +8,9 @@ jQuery(document).ready(function(){
 	pageBody = jQuery('body');
 
 	getQueryStrings();
-	if ( GET('killall') || GET('kill') || GET('die') ) {
+	if ( GET('killall') || GET('kill') || GET('die') ){
 		throw ' (Manually terminated main.js)';
-	} else if ( GET('layout') ) {
+	} else if ( GET('layout') ){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
@@ -122,6 +122,33 @@ jQuery(window).on('resize', function(){
 /*==========================
  Functions
  ===========================*/
+
+//Get query string parameters
+function getQueryStrings(){
+	queries = {};
+    var q = document.URL.split('?')[1];
+    if ( q ){
+        q = q.split('&');
+        for ( var i = 0; i < q.length; i++ ){
+            hash = q[i].split('=');
+            if ( hash[1] ){
+	            queries[hash[0]] = hash[1];
+            } else {
+	            queries[hash[0]] = true;
+            }
+        }
+	}
+}
+
+//Search query strings for the passed parameter
+function GET(query){
+	if ( !query ){
+		return queries;
+	} else {
+		return queries[query];
+	}
+	return false;
+}
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function helperFunctions(){
@@ -411,13 +438,13 @@ function nebulaFixeder(){
 function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//pageDocument.on('mousedown', '.selector', function(e) {
-	//  var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+	//  var intent = ( e.which >= 2 )? ' (Intent)' : '';
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
 	//External links
 	pageDocument.on('mousedown touch tap', "a[rel*='external']", function(e){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
 		ga('send', 'event', 'External Link', linkText + intent, destinationURL);
@@ -425,7 +452,7 @@ function gaEventTracking(){
 
 	//PDF View/Download
 	pageDocument.on('mousedown touch tap', "a[href$='.pdf']", function(e){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
 		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
@@ -453,7 +480,7 @@ function gaEventTracking(){
 
 	//Mailto link tracking
 	pageDocument.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
@@ -461,7 +488,7 @@ function gaEventTracking(){
 
 	//Telephone link tracking
 	pageDocument.on('mousedown touch tap', 'a[href^="tel"]', function(e){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber + intent);
@@ -470,7 +497,7 @@ function gaEventTracking(){
 
 	//SMS link tracking
 	pageDocument.on('mousedown touch tap', 'a[href^="sms"]', function(e){
-		var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber + intent);
@@ -785,9 +812,8 @@ function autocompleteSearch(){
 		        },
 		        minLength: 3,
 		    }).data("ui-autocomplete")._renderItem = function(ul, item){
-			    thisSimilarity = ( typeof item.similarity !== 'undefined' ) ? item.similarity.toFixed(1) + '% Match' : '';
-			    thisLabel = ( item.label.length > 50 ) ? item.label.substring(0, 50) + '...' : item.label;
-			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + thisLabel.replace(/\\/g, '') + "</a>").appendTo(ul);
+			    thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
+			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
 			    return listItem;
 			};
 			var thisFormIdentifier = thisSearchInput.parents('form').attr('id') || thisSearchInput.parents('form').attr('name') || thisSearchInput.parents('form').attr('class');
@@ -803,14 +829,22 @@ function advancedSearchTriggers(){
 	haveAllEvents = 0;
 
 	jQuery('a#metatoggle').on('click touch tap', function(){
-		jQuery('#advanced-search-meta').toggleClass('active');
+		jQuery('#advanced-search-meta').toggleClass('active', function(){
+			if ( jQuery('#advanced-search-meta').hasClass('active') ){
+				setTimeout(function(){
+					jQuery('#advanced-search-meta').addClass('finished');
+				}, 500);
+			} else {
+				jQuery('#advanced-search-meta').removeClass('finished');
+			}
+		});
 		return false;
 	});
 
 	jQuery('#s').keyup(function(e){
 		advancedSearchPrep('Typing...');
 		debounce(function(){
-			if ( !empty(jQuery('#s').val()) ){
+			if ( jQuery('#s').val() ){
 				ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
 			}
 		}, 1500);
@@ -818,7 +852,7 @@ function advancedSearchTriggers(){
 
 	pageDocument.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
 		advancedSearchPrep();
-		if ( !empty(jQuery('#advanced-search-date-start')) ){
+		if ( jQuery('#advanced-search-date-start') ){
 			jQuery('#date-end-con').removeClass('hidden');
 		} else { //@TODO: Not working...
 			jQuery('#date-end-con').val('').addClass('hidden');
@@ -832,7 +866,7 @@ function advancedSearchTriggers(){
 		altFormat: "@",
 		onSelect: function(){
 			advancedSearchPrep();
-			if ( !empty(jQuery('#advanced-search-date-start')) ){
+			if ( jQuery('#advanced-search-date-start') ){
 				jQuery('#date-end-con').removeClass('hidden');
 			} else {
 				jQuery('#date-end-con').val('').addClass('hidden');
@@ -947,7 +981,7 @@ function advancedSearch(start, eventObject){
 	filteredPostsObject = postSearch(globalEventObject);
 
 	jQuery('#advanced-search-results').html('');
-	i = ( start ) ? parseFloat(start) : 0;
+	i = ( start )? parseFloat(start) : 0;
 	if ( start != 0 ){
 		jQuery('#load-prev-events').removeClass('no-prev-events');
 	} else {
@@ -965,7 +999,7 @@ function advancedSearch(start, eventObject){
 		advancedSearchIndicator.html('<i class="fa fa-fw fa-calendar"></i> Showing <strong>' + (start+1) + '-' + end + '</strong> of <strong>' + filteredPostsObject.length + '</strong> results:');
 	} else {
 		advancedSearchIndicator.html('<i class="fa fa-fw fa-times-circle"></i> <strong>No pages found</strong> that match your filters.');
-		if ( !empty(jQuery('#s').val()) ){
+		if ( jQuery('#s').val() ){
 			ga('send', 'event', 'Internal Search', 'Advanced No Results', jQuery('#s').val());
 		}
 		moreEvents(0);
@@ -987,13 +1021,13 @@ function advancedSearch(start, eventObject){
 		var weekday = weekdays[postDate.getDay()];
 		var day = postDate.getDate();
 		var hour = postDate.getHours();
-		var ampm = ( hour >= 12 ) ? 'pm' : 'am';
+		var ampm = ( hour >= 12 )? 'pm' : 'am';
 		if ( hour > 12 ){
 			hour -= 12;
 		} else if ( hour === 0 ){
 			hour = 12;
 		}
-		var minute = (( postDate.getMinutes() <= 9 ) ? '0' : '') + postDate.getMinutes();
+		var minute = (( postDate.getMinutes() <= 9 )? '0' : '') + postDate.getMinutes();
 
 		//Categories
 		var postCats = '';
@@ -1009,8 +1043,8 @@ function advancedSearch(start, eventObject){
 
 		//Description
 		var shortDescription = '';
-		if ( !empty(filteredPostsObject[i].description) ){
-			shortDescription = ( filteredPostsObject[i].description.length > 200 ) ? filteredPostsObject[i].description.substring(0, 200) + '...' : filteredPostsObject[i].description;
+		if ( filteredPostsObject[i].description ){
+			shortDescription = ( filteredPostsObject[i].description.length > 200 )? filteredPostsObject[i].description.substring(0, 200) + '...' : filteredPostsObject[i].description;
 		}
 
 		var markUp = '<div class="advanced-search-result">' +
@@ -1031,13 +1065,13 @@ function postSearch(posts){
 		var thisPost = this;
 
 		//Search Dates
-		if ( !empty(jQuery('#advanced-search-date-start-alt').val()) ){
+		if ( jQuery('#advanced-search-date-start-alt').val() ){
 			var postDate = new Date(thisPost.posted*1000);
 			var postDateStamp = postDate.getFullYear() + '-' + postDate.getMonth() + '-' + postDate.getDate();
 			var searchDateStart = new Date(parseInt(jQuery('#advanced-search-date-start-alt').val()));
 			var searchDateStartStamp = searchDateStart.getFullYear() + '-' + searchDateStart.getMonth() + '-' + searchDateStart.getDate();
 
-			if ( !empty(jQuery('#advanced-search-date-end-alt').val()) ){
+			if ( jQuery('#advanced-search-date-end-alt').val() ){
 				var searchDateEnd = new Date(parseInt(jQuery('#advanced-search-date-end-alt').val()));
 				if ( postDate < searchDateStart || postDate > searchDateEnd ){
 					delete tempFilteringObject[i]; //Date is not in the range
@@ -1052,8 +1086,8 @@ function postSearch(posts){
 		}
 
 		//Search Categories and Tags
-		if ( !empty(jQuery('#advanced-search-catstags').val()) ){
-			if ( !empty(thisPost.categories) || !empty(thisPost.tags) ){
+		if ( jQuery('#advanced-search-catstags').val() ){
+			if ( thisPost.categories || thisPost.tags ){
 				jQuery.each(jQuery('#advanced-search-catstags').val(), function(key, value){
 					thisCatTag = value.split('__');
 					if ( thisCatTag[0] == 'category' ){
@@ -1075,7 +1109,7 @@ function postSearch(posts){
 		}
 
 		//Search Post Types (This is an inclusive filter)
-		if ( !empty(jQuery('#advanced-search-type').val()) ){
+		if ( jQuery('#advanced-search-type').val() ){
 			var requestedPostType = jQuery('#advanced-search-type').val().join(', ').toLowerCase();
 			if ( requestedPostType.indexOf(thisPost.type.toLowerCase()) < 0 ){
 				delete tempFilteringObject[i]; //Post Type does not match
@@ -1173,7 +1207,7 @@ function searchValidator(){
 			}
 		});
 		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
-			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' ) ? jQuery(this).attr('data-prev-placeholder') : 'Search';
+			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
 			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 				jQuery(this).parent().find('.btn.submit').val('Go');
@@ -1266,7 +1300,7 @@ function pageSuggestion(){
 			trySearch(phrase);
 
 			pageDocument.on('mousedown touch tap', 'a.suggestion', function(e){
-				var intent = ( e.which >= 2 ) ? ' (Intent)' : '';
+				var intent = ( e.which >= 2 )? ' (Intent)' : '';
 				var suggestedPage = jQuery(this).text();
 				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage + intent);
 			});
@@ -2382,9 +2416,9 @@ function successCallback(position){
 	}
 
 	pageDocument.trigger('geolocationSuccess');
-	pageBody.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude + '_' + nebulaLocation.coordinates.longitude + ' geo-acc-' + nebulaLocation.accuracy.meters);
+	pageBody.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebulaLocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebulaLocation.accuracy.meters.toFixed(0).replace('.', ''));
 	browserInfo();
-	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters');
+	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters');
 }
 
 //Geolocation Error
@@ -2425,9 +2459,6 @@ function errorCallback(error){
 //Custom css expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
 jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
-
-//Check for content (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/var/empty.js
-function empty(r){var n,t,e,f,u=[n,null,!1,0,"","0"];for(e=0,f=u.length;f>e;e++)if(r===u[e])return!0;if("object"==typeof r){for(t in r)return!1;return!0}return!1} //@TODO "Nebula" 0: Test if this is working before implementing
 
 //Parse dates (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/datetime/strtotime.js
 function strtotime(e,t){function a(e,t,a){var n,r=c[t];"undefined"!=typeof r&&(n=r-w.getDay(),0===n?n=7*a:n>0&&"last"===e?n-=7:0>n&&"next"===e&&(n+=7),w.setDate(w.getDate()+n))}function n(e){var t=e.split(" "),n=t[0],r=t[1].substring(0,3),s=/\d+/.test(n),u="ago"===t[2],i=("last"===n?-1:1)*(u?-1:1);if(s&&(i*=parseInt(n,10)),o.hasOwnProperty(r)&&!t[1].match(/^mon(day|\.)?$/i))return w["set"+o[r]](w["get"+o[r]]()+i);if("wee"===r)return w.setDate(w.getDate()+7*i);if("next"===n||"last"===n)a(n,r,i);else if(!s)return!1;return!0}var r,s,u,i,w,c,o,d,D,f,g,l=!1;if(!e)return l;if(e=e.replace(/^\s+|\s+$/g,"").replace(/\s{2,}/g," ").replace(/[\t\r\n]/g,"").toLowerCase(),s=e.match(/^(\d{1,4})([\-\.\/\:])(\d{1,2})([\-\.\/\:])(\d{1,4})(?:\s(\d{1,2}):(\d{2})?:?(\d{2})?)?(?:\s([A-Z]+)?)?$/),s&&s[2]===s[4])if(s[1]>1901)switch(s[2]){case"-":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return l;case"/":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else if(s[5]>1901)switch(s[2]){case"-":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case"/":return s[1]>12||s[3]>31?l:new Date(s[5],parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else switch(s[2]){case"-":return s[3]>12||s[5]>31||s[1]<70&&s[1]>38?l:(i=s[1]>=0&&s[1]<=38?+s[1]+2e3:s[1],new Date(i,parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case".":return s[5]>=70?s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3:s[5]<60&&!s[6]?s[1]>23||s[3]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0,s[9]||0)/1e3):l;case"/":return s[1]>12||s[3]>31||s[5]<70&&s[5]>38?l:(i=s[5]>=0&&s[5]<=38?+s[5]+2e3:s[5],new Date(i,parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case":":return s[1]>23||s[3]>59||s[5]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0)/1e3)}if("now"===e)return null===t||isNaN(t)?(new Date).getTime()/1e3|0:0|t;if(!isNaN(r=Date.parse(e)))return r/1e3|0;if(w=t?new Date(1e3*t):new Date,c={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6},o={yea:"FullYear",mon:"Month",day:"Date",hou:"Hours",min:"Minutes",sec:"Seconds"},D="(years?|months?|weeks?|days?|hours?|minutes?|min|seconds?|sec|sunday|sun\\.?|monday|mon\\.?|tuesday|tue\\.?|wednesday|wed\\.?|thursday|thu\\.?|friday|fri\\.?|saturday|sat\\.?)",f="([+-]?\\d+\\s"+D+"|(last|next)\\s"+D+")(\\sago)?",s=e.match(new RegExp(f,"gi")),!s)return l;for(g=0,d=s.length;d>g;g++)if(!n(s[g]))return l;return w.getTime()/1e3}

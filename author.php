@@ -122,7 +122,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="eleven columns">
 
-			<h2 class="articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' ) ? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h2>
+			<h2 class="articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h2>
 
 			<?php
 				rewind_posts();
@@ -139,4 +139,3 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-<?php do_action('nebula_footer'); ?>

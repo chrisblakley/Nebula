@@ -61,9 +61,9 @@ get_header(); ?>
 										<?php foreach($taxonomies as $tax): ?>
 											<?php
 												$terms = get_terms($tax);
-												$tax_human = ( $tax == 'category' ) ? 'Categories' : $tax;
-												$tax_human = ( $tax == 'post_tag' ) ? 'Tags' : $tax;
-												$tax = ( $tax == 'post_tag' ) ? 'tag' : $tax;
+												$tax_human = ( $tax == 'category' )? 'Categories' : $tax;
+												$tax_human = ( $tax == 'post_tag' )? 'Tags' : $tax;
+												$tax = ( $tax == 'post_tag' )? 'tag' : $tax;
 											?>
 											<optgroup label="<?php echo $tax_human; ?>">
 												<?php foreach ($terms as $term): ?>
@@ -161,4 +161,3 @@ get_header(); ?>
 </div><!--/container-->
 
 <?php get_footer(); ?>
-<?php do_action('nebula_footer'); ?>

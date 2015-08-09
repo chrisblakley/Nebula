@@ -45,10 +45,10 @@
 			return false;
 		}
 
-		directory = ( typeof directory == 'undefined' ) ? '' : directory;
-		filetype = ( typeof filetype == 'undefined' ) ? '' : filetype;
-		category = ( typeof category == 'undefined' ) ? '' : category;
-		action = ( typeof action == 'undefined' ) ? '' : action;
+		directory = ( typeof directory == 'undefined' )? '' : directory;
+		filetype = ( typeof filetype == 'undefined' )? '' : filetype;
+		category = ( typeof category == 'undefined' )? '' : category;
+		action = ( typeof action == 'undefined' )? '' : action;
 
 		if ( typeof category == 'function' ){
 			console.log('category is a function. changing to callback.');

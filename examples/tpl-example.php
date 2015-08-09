@@ -238,10 +238,6 @@ get_header(); ?>
 						//@TODO "Nebula" 0: Coming Soon
 					} ?>
 
-					<?php if ( is_page(346) ){ //PHP Mobile Detect
-						include_once('includes/php_mobile_detect.php');
-					} ?>
-
 					<?php if ( is_page(614) ){ //CSS Position: Sticky
 						//@TODO "Nebula" 0: Coming Soon
 					} ?>
@@ -374,10 +370,6 @@ get_header(); ?>
 						include_once('includes/nebula_url_components.php');
 					} ?>
 
-					<?php if ( is_page(1197) ){ //Nebula OS Detect
-						include_once('includes/nebula_os_detect.php');
-					} ?>
-
 					<?php if ( is_page(1203) ){ //Battery API
 						include_once('includes/battery_api.php');
 					} ?>
@@ -444,6 +436,10 @@ get_header(); ?>
 
 					<?php if ( is_page(1989) ){ //Google Maps containsLocation()
 						include_once('includes/google_maps_contains_location.php');
+					} ?>
+
+					<?php if ( is_page(2037) ){ //User Agent Parsing (Server-side Device Detection)
+						include_once('includes/user_agent_parsing.php');
 					} ?>
 
 					<?php

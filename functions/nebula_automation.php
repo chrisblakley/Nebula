@@ -151,7 +151,7 @@ if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or i
 	add_action('admin_notices', 'nebula_activation');
 }
 function nebula_activation(){
-	$is_standard_initialization = ( isset($_GET['nebula-initialization']) ) ? true : false; //Detect if non-AJAX initialization is needed.
+	$is_standard_initialization = ( isset($_GET['nebula-initialization']) )? true : false; //Detect if non-AJAX initialization is needed.
 
 	if ( $is_standard_initialization ){
 		//@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
@@ -289,7 +289,7 @@ function nebual_initialization_create_homepage(){
 		'post_type' => 'page',
 		'post_title' => 'Home',
 		'post_name' => 'home',
-		'post_content'   => "Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes the WP Nebula is not meant for the end-user.
+		'post_content'   => "Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 
 Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced Wordpress techniques.",
 		'post_status' => 'publish',

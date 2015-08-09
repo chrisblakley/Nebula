@@ -57,12 +57,17 @@ function extra_profile_fields($user){ ?>
 			<th>
 				<label for="headshot_button"><span class="description">Headshot</span></label>
 			</th>
-			<?php $buttontext = ""; if( get_the_author_meta('headshot_url', $user->ID) ){
-				$buttontext = "Change headshot";  } else { $buttontext = "Upload new headshot";
-			} ?>
+			<?php
+				$buttontext = "";
+				if( get_the_author_meta('headshot_url', $user->ID) ){
+					$buttontext = "Change headshot";
+				} else {
+					$buttontext = "Upload new headshot";
+				}
+			?>
 			<td>
 				<input id="headshot_button" type="button" class="button" value="<?php echo $buttontext; ?>" />
-				<?php if ( get_the_author_meta('headshot_url', $user->ID) ) : ?>
+				<?php if ( get_the_author_meta('headshot_url', $user->ID) ): ?>
 					<input id="headshot_remove" type="button" class="button" value="Remove headshot" />
 				<?php endif; ?>
 				<br/><span class="description">Please select "Full Size" when choosing the headshot.</span>
@@ -138,7 +143,6 @@ function save_extra_profile_fields($user_id){
 	update_user_meta($user_id, 'userlocation', $_POST['userlocation']);
 	update_user_meta($user_id, 'phonenumber', $_POST['phonenumber']);
 }
-
 
 function nebula_facebook_link(){
 	echo '<p class="facebook-connect-con"><i class="fa fa-facebook-square"></i> <a class="facebook-connect" href="#">Connect with Facebook</a></p>';

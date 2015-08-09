@@ -61,7 +61,7 @@
 
 	function detectData(){
 
-		var deviceVibration = ( navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate ? 'Supported' : 'Unsupported' );
+		var deviceVibration = ( navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate ? 'Vibration Supported' : 'Vibration Unsupported' );
 		jQuery('.devicevibration').html(deviceVibration);
 
 		//Feature Detection
@@ -354,7 +354,7 @@
 			<strong>IP Address:</strong> <a href="http://whatismyipaddress.com/ip/<?php echo $_SERVER["REMOTE_ADDR"]; ?>" target="_blank"><?php echo $_SERVER["REMOTE_ADDR"]; ?></a><br/>
 			<?php if ( is_user_logged_in() ) : ?>
 				<?php $current_user = wp_get_current_user(); ?>
-				Logged in as <?php echo $current_user->display_name; ?> <em>(<?php echo trim(ucwords($current_user->roles[0])); ?> <?php echo ( is_dev() ) ? ', Developer' : ''; ?>)</em><br/>
+				Logged in as <?php echo $current_user->display_name; ?> <em>(<?php echo trim(ucwords($current_user->roles[0])); ?> <?php echo ( is_dev() )? ', Developer' : ''; ?>)</em><br/>
 			<?php else : ?>
 				Not logged in<br/>
 			<?php endif; ?>
@@ -378,18 +378,9 @@
 
 		<h3>Device</h3>
 		<p>
-			<?php
-				if ( nebula_device_detect() != 'Unknown Device' ) {
-					echo nebula_device_detect() . "<br/><br/>";
-				}
-			?>
-			<?php if ($GLOBALS["mobile_detect"]->isMobile()) : ?>
-				<?php if ($GLOBALS["mobile_detect"]->isTablet()) : ?>
-					<span class="mquery mobile">Mobile (Tablet)</span>
-				<?php else : ?>
-					<span class="mquery mobile">Mobile</span>
-				<?php endif; ?>
-				<span class="thedevice"></span>
+			<?php if ( !nebula_is_desktop() ): ?>
+				<span><?php echo ucwords(nebula_get_device('formfactor')); ?>: <?php echo ucwords(nebula_get_device('type')); ?></span><br/>
+				<span><?php echo nebula_get_device('full'); ?></span>
 				<span class="mobilebatt"><br/>Battery: </span><span class="thebattery">(Info unavailable)</span>
 				<br/><span class="devicevibration"></span>
 			<?php else : ?>
@@ -400,18 +391,15 @@
 
 		<h3>Operating System</h3>
 		<p>
-			<?php echo nebula_os_detect(); ?><br/>
-			<strong>Version:</strong> <?php echo $GLOBALS['browser_detect']['os_number']; ?>
+			<?php echo nebula_get_os('full'); ?><br/>
 		</p>
 
 
 		<h3 class="browservardumptrigger">Browser</h3>
-		<?php $browser_name = ( $GLOBALS['browser_detect']['browser_name'] == 'msie' ) ? 'Internet Explorer' : $GLOBALS['browser_detect']['browser_name']; ?>
 		<p>
-			<?php echo ucwords($browser_name); ?> <?php echo $GLOBALS['browser_detect']['browser_math_number']; ?><br/>
-			<strong>Rendering Engine:</strong> <?php echo ucwords($GLOBALS['browser_detect']['engine_data'][0]); ?><br/>
+			<?php echo nebula_get_browser('full'); ?><br/>
+			<strong>Rendering Engine:</strong> <?php echo nebula_get_browser('engine'); ?><br/>
 		</p>
-		<pre class="browservardump hidden"><?php //var_dump($GLOBALS['browser_detect']); ?></pre>
 
 
 		<h3>Features</h3>

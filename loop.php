@@ -14,7 +14,7 @@
 
 <?php if ( !have_posts() ): //If there are no posts to display, such as an empty archive page ?>
 	<article id="post-0" class="post error404 not-found">
-		<h1 class="entry-title">Not Found</h1>
+		<h2 class="entry-title">Not Found</h2>
 		<div class="entry-content">
 			<p>No results were found for the requested archive.</p>
 			<?php get_search_form(); ?>
@@ -50,16 +50,13 @@
 							$image = array_shift($images);
 							$image_img_tag = wp_get_attachment_image($image->ID, 'thumbnail');
 						?>
-
 						<div class="gallery-thumb">
 							<a class="size-thumbnail" href="<?php the_permalink(); ?>"><?php echo $image_img_tag; ?></a>
 						</div>
-
 						<p><em><?php printf('<i class="fa fa-picture-o"></i> <a %1$s>%2$s photos</a>.', 'href="' . get_permalink() . '"', $total_images); ?></em></p>
 					<?php endif; ?>
 
-				<?php echo nebula_the_excerpt('Read More &raquo;', 50, 1); ?>
-
+					<?php echo nebula_the_excerpt('Read More &raquo;', 50, 1); ?>
 				<?php endif; ?>
 			</div>
 
@@ -79,8 +76,7 @@
 		</article><!-- #post-## -->
 	<?php else : //Display all other posts (Non-Gallery) ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
-			<?php if ( !in_array("page", get_post_class()) ): //Do not display entry meta for pages //@TODO "Nebula" 0: Drastically reduce the visual size of this area. ?>
+			<?php if ( !in_array("page", get_post_class()) ): //Do not display entry meta for pages ?>
 				<div class="entry-meta">
 					<?php nebula_meta('on'); ?> <?php if ( !is_author() ){ nebula_meta('by'); } ?> <?php nebula_meta('in'); ?> <?php nebula_meta('tags'); ?>
 				</div>
@@ -99,13 +95,13 @@
 					</div>
 				<?php else: ?>
 					<div class="entry-summary">
-						<?php echo nebula_the_excerpt('', 50, 1); //@TODO "Nebula" 0: Find the search term in the content and use nebula_custom_excerpt() to show that section. ?>
+						<?php echo nebula_the_excerpt('', 50, 1); ?>
 					</div>
 				<?php endif; ?>
 			<?php else : ?>
 				<div class="entry-content">
 					<?php echo nebula_the_excerpt('Read More &raquo;', 70, 1); ?>
-					<?php wp_link_pages( array('before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>') ); //@TODO "Nebula" 0: Pagenavi ?>
+					<?php wp_link_pages(array('before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>')); //@TODO "Nebula" 0: Pagenavi ?>
 				</div>
 			<?php endif; ?>
 

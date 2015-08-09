@@ -1,4 +1,4 @@
-<?php $debug_class = ( is_debug() ) ? 'debug' : ''; ?>
+<?php $debug_class = ( is_debug() )? 'debug' : ''; ?>
 <!doctype html><?php /* manifest="<?php echo get_template_directory_uri(); ?>/includes/manifest.appcache" */ //To begin setting up ApplicationCache, move this attribute inside the <html> tag. ?>
 <!--[if lt IE 7 ]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie6 lt-ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 7 ]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
@@ -59,7 +59,7 @@
 								} elseif ( !empty($_GET['rs']) ) {
 									$current_search = $_GET['rs'];
 								}
-								$header_search_placeholder = ( isset($current_search) ) ? $current_search : 'What are you looking for?' ;
+								$header_search_placeholder = ( isset($current_search) )? $current_search : 'What are you looking for?' ;
 							?>
 							<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
 						</form>

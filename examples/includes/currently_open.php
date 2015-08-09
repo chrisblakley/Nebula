@@ -29,7 +29,7 @@
 		<h3>How about November 24th of this year?</h3>
 		<?php
 			if ( date('Ymd') == date('Ymd', time()) ){
-				$tense = ( time() < strtotime('November 24') ) ? 'will be' : 'were';
+				$tense = ( time() < strtotime('November 24') )? 'will be' : 'were';
 			} else {
 				$tense = 'are';
 			}

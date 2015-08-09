@@ -149,7 +149,6 @@ function skip_extensions(){
 
 //TODO Metabox
 //This metabox tracks TODO messages throughout development.
-//@TODO "Nebula" 0: I think this can be way more optimized. It also is dependent on JS to hide filenames w/ only 0 priority TODOs.
 if ( nebula_settings_conditional('nebula_todo_metabox') ){
 	if ( is_dev() ){
 		add_action('wp_dashboard_setup', 'todo_metabox');
@@ -161,9 +160,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ){
 	}
 
 	function dashboard_todo_manager(){
-		echo '<p class="todoresults_title"><strong>Active @TODO Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p>';
-
-		echo '<div class="todo_results">';
+		echo '<p class="todoresults_title"><strong>Active @TODO Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p><div class="todo_results">';
 		$todo_last_filename = '';
 		$todo_dirpath = get_template_directory();
 		$todo_file_counter = 0;
@@ -178,15 +175,13 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ){
 				    $todo_counted = 1;
 			    }
 
-			    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'Mobile_Detect.php', 'class-tgm-plugin-activation.php');
-
+			    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'Mobile_Detect.php', 'device-detector', 'class-tgm-plugin-activation.php');
 			    if ( !contains(basename($todo_file), skip_extensions()) && !contains(basename($todo_file), $todo_skipFilenames) ){
 				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
 						$todo_hidden = 0;
 
 				        if ( stripos($todo_line, '@TODO') !== false ){
 				            $todo_actualLineNumber = $todo_lineNumber+1;
-
 							$the_full_todo = substr($todo_line, strpos($todo_line, "@TODO"));
 							$the_todo_meta = current(explode(":", $the_full_todo));
 
@@ -194,84 +189,60 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ){
 							preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
 							$todo_hidden = 0;
 							$the_todo_icon_color = '#999';
+							$todo_hidden_style = '';
+							$todo_hidden_class = '';
 							if ( !empty($the_todo_ints[0][0]) ){
 								switch ( true ){
 									case ( $the_todo_ints[0][0] >= 5 ) :
-										$todo_hidden = 0;
 										$the_todo_icon_color = '#d92827';
 										break;
 									case ( $the_todo_ints[0][0] == 4 ) :
-										$todo_hidden = 0;
 										$the_todo_icon_color = '#e38a2c';
 										break;
 									case ( $the_todo_ints[0][0] == 3 ) :
-										$todo_hidden = 0;
 										$the_todo_icon_color = '#dda65c';
 										break;
 									case ( $the_todo_ints[0][0] == 2 ) :
-										$todo_hidden = 0;
 										$the_todo_icon_color = '#d3bd9f';
 										break;
 									case ( $the_todo_ints[0][0] == 1 ) :
-										$todo_hidden = 0;
 										$the_todo_icon_color = '#ccc';
 										break;
 									case ( $the_todo_ints[0][0] == 0 ) :
 										$todo_hidden = 1;
 										$the_todo_icon_color = '#0098d7';
-										break;
-									default :
-										$todo_hidden = 0;
-										$the_todo_icon_color = '#999';
+										$todo_hidden_style = 'style="display: none;"';
+										$todo_hidden_class = 'hidden_todo';
 										break;
 								}
-							} else {
-								$todo_hidden = 0;
-							}
-
-							if ( $todo_hidden == 1 ){
-								$todo_hidden_style = 'style="display: none;"';
-								$todo_hidden_class = 'hidden_todo';
-							} else {
-								$todo_hidden_style = '';
-								$todo_hidden_class = '';
 							}
 
 							//Get the category
+							$the_todo_quote_check = '';
+							$the_todo_category = '';
+							$the_todo_category_html = '';
 							preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
 							if ( !empty($the_todo_quote_check[0][0]) ){
 								$the_todo_category = substr($the_todo_quote_check[0][0], 1, -1);
 								$the_todo_category_html = '<span class="todocategory" style="background: ' . $the_todo_icon_color . ';">' . $the_todo_category . '</span>';
-							} else {
-								$the_todo_quote_check = '';
-								$the_todo_category = '';
-								$the_todo_category_html = '';
 							}
 
 							//Get the message
-							$the_todo_message_full = substr($the_full_todo, strpos($the_full_todo, ":") + 1);
+							$the_todo_message_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
 							$end_todo_message_strings = array('-->', '?>', '*/');
 							$the_todo_message = explode($end_todo_message_strings[0], str_replace($end_todo_message_strings, $end_todo_message_strings[0], $the_todo_message_full));
-
 
 							$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
 							if ( $todo_last_filename != $todo_this_filename ){
 								if ( !empty($todo_last_filename) ){
 									echo '</div><!--/todofilewrap-->';
 								}
-
-
-								echo '<div class="todofilewrap">';
-								echo '<p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
+								echo '<div class="todofilewrap"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
 							}
 
-							echo '<div class="linewrap ' . $todo_hidden_class . '" ' . $todo_hidden_style . '>
-									<p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . $todo_actualLineNumber . '</a> <span class="todomessage">' . htmlentities($the_todo_message[0]) . '</span></p>
-									<div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div>
-								</div>';
+							echo '<div class="linewrap ' . $todo_hidden_class . '" ' . $todo_hidden_style . '><p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . $todo_actualLineNumber . '</a> <span class="todomessage">' . strip_tags($the_todo_message[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
 
 							$todo_last_filename = $todo_this_filename;
-
 							$todo_instance_counter++;
 							if ( $todo_counted == 0 ){
 								$todo_file_counter++;
@@ -282,8 +253,7 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ){
 			    }
 			}
 		}
-		echo '</div><!--/todofilewrap-->';
-		echo '</div><!--/todo_results-->';
+		echo '</div><!--/todofilewrap--></div><!--/todo_results-->';
 	}
 }
 
@@ -304,8 +274,8 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 
 		$domain_exp_unix = strtotime(trim($domain_exp_detected));
 		$domain_exp = date("F j, Y", $domain_exp_unix);
-		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') ) ? 'color: red; font-weight: bold;' : 'color: inherit;' ;
-		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') ) ? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
+		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') )? 'color: red; font-weight: bold;' : 'color: inherit;' ;
+		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') )? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
 
 		$domain_registrar_url = whois_info('registrar_url');
 		$domain_registrar = whois_info('registrar');
@@ -313,9 +283,9 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 
 		//Construct Registrar info to be echoed
 		if ( $domain_registrar_url && strlen($domain_registrar_url) < 70 ){
-			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong><a href="//' . trim($domain_registrar_url) . '" target="_blank">' . $domain_registrar . '</a></strong>': '';
+			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong><a href="//' . trim($domain_registrar_url) . '" target="_blank">' . $domain_registrar . '</a></strong>': '';
 		} else {
-			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 ) ? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . trim($domain_registrar) . '</strong>': '';
+			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . trim($domain_registrar) . '</strong>': '';
 		}
 		if ( trim($domain_registrar_html) != '' && $domain_reseller && strlen($domain_reseller) < 70 ){
 			$domain_registrar_html .= ' <small>(via ' . trim($domain_reseller) . ')</small></li>';
@@ -376,7 +346,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 
 		if ( function_exists('gethostname') ){
 			set_error_handler(function(){ /* ignore errors */ });
-			$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) ) ? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
+			$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) )? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
 			restore_error_handler();
 		}
 
@@ -411,7 +381,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 			$mysql_version = mysqli_get_server_info($mysqli_connect);
 		}
 
-		$safe_mode = ( ini_get('safe_mode') ) ? '<small><strong><em>Safe Mode</em></strong></small>': '';
+		$safe_mode = ( ini_get('safe_mode') )? '<small><strong><em>Safe Mode</em></strong></small>': '';
 
 		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 		echo '<script id="testloadscript">
@@ -455,16 +425,14 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 			echo '<li><i class="fa ' . $php_os_icon . ' fa-fw"></i> Server OS: <strong>' . PHP_OS . '</strong> <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
 			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong>' . PHP_VERSION . '</strong> ' . $safe_mode . '</li>';
 			echo '<li><i class="fa fa-cogs fa-fw"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
-			echo ( !empty($mysql_version) ) ? '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . $mysql_version . '</strong></li>' : '';
+			echo ( !empty($mysql_version) )? '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . $mysql_version . '</strong></li>' : '';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
 			echo '<li><i class="fa fa-clock-o fa-fw"></i> <span title="' . get_home_url() . '" style="cursor: help;">Homepage</span> load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small title="' . $last_file_path . '" style="cursor: help;">(' . $last_filename . ')</small></li>';
 		echo '</ul>';
-
 		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br/>';
-
 		echo '<div class="search_results"></div>';
 	}
 }
@@ -531,7 +499,7 @@ function search_theme_files(){
 		echo '<strong>' . $instance_counter . '</strong> instances in ';
 	}
 	echo '<strong>' . $file_counter . '</strong> file';
-	echo ( $file_counter == 1 ) ? '.</p>': 's.</p>';
+	echo ( $file_counter == 1 )? '.</p>': 's.</p>';
 	exit();
 }
 
@@ -584,7 +552,7 @@ function duplicate_post_as_draft(){
 	}
 
 	//Get the original post id
-	$post_id = (isset($_GET['post']) ? $_GET['post'] : $_POST['post']);
+	$post_id = ( isset($_GET['post'] )? $_GET['post'] : $_POST['post']);
 	//Get all the original post data
 	$post = get_post( $post_id );
 
@@ -749,10 +717,10 @@ function change_admin_footer_right(){
 		Apr			4.11.x
 	*/
 
-	$nebula_version_year = ( $nebula_version['medium'] <= 5 ) ? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
+	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
 	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June');
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
-	$nebula_version_daterange = ( empty($nebula_version['small']) ) ? 'First' : 'Second';
+	$nebula_version_daterange = ( empty($nebula_version['small']) )? 'First' : 'Second';
 
     return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
 }
@@ -792,14 +760,12 @@ function nebula_save_post_class_meta($post_id, $post){
 	}
 
 	$post_type = get_post_type_object($post->post_type); //Get the post type object.
-
 	if ( !current_user_can($post_type->cap->edit_post, $post_id) ){ //Check if the current user has permission to edit the post.
 		return $post_id;
 	}
 
 	$new_meta_value = sanitize_text_field($_POST['nebula-internal-search-keywords']); //Get the posted data and sanitize it if needed.
 	$meta_value = get_post_meta($post_id, 'nebula_internal_search_keywords', true); //Get the meta value of the custom field key.
-
 	if ( $new_meta_value && $meta_value == '' ){ //If a new meta value was added and there was no previous value, add it.
 		add_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value, true);
 	} elseif ( $new_meta_value && $meta_value != $new_meta_value ){ //If the new meta value does not match the old value, update it.

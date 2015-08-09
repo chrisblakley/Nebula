@@ -150,8 +150,8 @@ function icon_shortcode($atts){
 	if (strpos($type, 'fa-') !== false){
 	    $fa = 'fa ';
 	}
-	$extra_style = !empty($color) ? 'color:' . $color . ';' :'';
-	$extra_style .= !empty($size) ? 'font-size:' . $size . ';' :'';
+	$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
+	$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
 	return '<i class="' . $class . ' nebula-icon-shortcode ' . $fa . $type . '" style="' . $extra_style . '"></i>';
 }
 
@@ -183,8 +183,7 @@ function button_shortcode($atts, $content=''){
 		$target = ' target="' . $target . '"';
 	}
 
-	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
-
+	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . ' ' . $class . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
 } //end button_shortcode()
 
 
@@ -559,7 +558,7 @@ function attribute_map($str, $att = null){
     preg_match_all('~'.$reg.'~',$str, $matches);
     foreach($matches[2] as $key => $name){
         $parsed = shortcode_parse_atts($matches[3][$key]);
-        $parsed = is_array($parsed) ? $parsed : array();
+        $parsed = ( is_array($parsed) )? $parsed : array();
 
         if(array_key_exists($name, $res)){
             $arr = array();
@@ -569,11 +568,11 @@ function attribute_map($str, $att = null){
                 $arr[] = $res[$name];
             }
 
-            $arr[] = array_key_exists($att, $parsed) ? $parsed[$att] : $parsed;
+            $arr[] = ( array_key_exists($att, $parsed) )? $parsed[$att] : $parsed;
             $res[$name] = $arr;
 
         } else {
-            $res[$name] = array_key_exists($att, $parsed) ? $parsed[$att] : $parsed;
+            $res[$name] = ( array_key_exists($att, $parsed) )? $parsed[$att] : $parsed;
         }
     }
 
@@ -583,16 +582,16 @@ function attribute_map($str, $att = null){
 //Remove empty <p> tags from Wordpress content (for nested shortcodes)
 function parse_shortcode_content($content){
    /* Parse nested shortcodes and add formatting. */
-    $content = trim( do_shortcode( shortcode_unautop( $content ) ) );
+    $content = trim(do_shortcode(shortcode_unautop($content)));
     /* Remove '' from the start of the string. */
     if ( substr( $content, 0, 4 ) == '' )
-        $content = substr( $content, 4 );
+        $content = substr($content, 4);
     /* Remove '' from the end of the string. */
-    if ( substr( $content, -3, 3 ) == '' )
+    if ( substr($content, -3, 3 ) == '')
         $content = substr( $content, 0, -3 );
     /* Remove any instances of ''. */
-    $content = str_replace( array( '<p></p>' ), '', $content );
-    $content = str_replace( array( '<p>  </p>' ), '', $content );
+    $content = str_replace(array( '<p></p>'), '', $content);
+    $content = str_replace(array( '<p>  </p>'), '', $content);
     return $content;
 }
 //Move wpautop filter to AFTER shortcode is processed

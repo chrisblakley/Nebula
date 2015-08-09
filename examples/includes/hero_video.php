@@ -15,7 +15,7 @@
 	.heroshading {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3;
 		/* Various example backgrounds: */
 		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2));
-		background: rgba(0, 0, 0, 0.6) url('http://www.transparenttextures.com/patterns/subtlenet.png') repeat; /* Texture by http://www.transparenttextures.com/ - Please save image locally before deploying! */
+		background: rgba(0, 0, 0, 0.6) url('https://www.transparenttextures.com/patterns/subtlenet.png') repeat; /* Texture by https://www.transparenttextures.com/ - Please save image locally before deploying! */
 	}
 
 	#herocontent {position: relative; padding-top: 100px; z-index: 100;}
@@ -49,11 +49,11 @@
 
 <div class="container">
 	<div id="herovideo">
-	    <?php if ( !$GLOBALS["mobile_detect"]->isMobile() && !$GLOBALS["mobile_detect"]->isTablet() ): ?>
+	    <?php if ( nebula_is_desktop() ): ?>
 		    <video id="video-background" width="872" height="492" autobuffer autoplay muted loop>
-		        <source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm" type="video/webm" />
-		        <source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type="video/mp4" />
-		        <source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv" type="video/ogg" />
+		        <source src="https://clips.vorwaerts-gmbh.de/big_buck_bunny.webm" type="video/webm" />
+		        <source src="https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type="video/mp4" />
+		        <source src="https://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv" type="video/ogg" />
 
 	<!--
 		        <object  id="video-background" type="application/x-shockwave-flash" data="<?php echo get_template_directory_uri(); ?>/videos/NAM_Farm_Loop_01c.swf" style="width: 100%; height: 360px; z-index: 0;">
@@ -66,7 +66,7 @@
 	-->
 		    </video>
 		<?php endif; ?>
-		<img class="mobile-video-background" src="http://placehold.it/872x492"/>
+		<img class="mobile-video-background" src="https://placehold.it/872x492"/>
 
 		<div class="heroshading"></div>
 
@@ -84,7 +84,7 @@
 			<div id="fullherovideo" class="row">
 				<div class="sixteen columns">
 					<?php vimeo_meta('1084537'); ?>
-					<iframe id="<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" class="vimeoplayer" src="http://player.vimeo.com/video/<?php echo $GLOBALS['vimeo_meta']['id']; ?>?api=1&player_id=<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+					<iframe id="<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" class="vimeoplayer" src="https://player.vimeo.com/video/<?php echo $GLOBALS['vimeo_meta']['id']; ?>?api=1&player_id=<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 				</div><!--/column-->
 			</div><!--/row-->
 		</div>

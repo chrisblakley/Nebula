@@ -46,10 +46,10 @@ function nebula_upload_data(){
     }
 
     $data = $_POST['data']['data'];
-    $directory = ( $_POST['data']['directory'] == '' ) ? 'general' : $_POST['data']['directory'];
-    $category = ( $_POST['data']['category'] == '' ) ? false : $_POST['data']['category'];
-    $action = ( $_POST['data']['action'] == '' ) ? 'Upload' : $_POST['data']['action'];
-    $url = ( $_POST['data']['url'] == '' ) ? 'Unknown' : $_POST['data']['url'];
+    $directory = ( $_POST['data']['directory'] == '' )? 'general' : $_POST['data']['directory'];
+    $category = ( $_POST['data']['category'] == '' )? false : $_POST['data']['category'];
+    $action = ( $_POST['data']['action'] == '' )? 'Upload' : $_POST['data']['action'];
+    $url = ( $_POST['data']['url'] == '' )? 'Unknown' : $_POST['data']['url'];
 
 	//Check the filesize of the data
 	if ( function_exists('mb_strlen') ){
@@ -65,7 +65,7 @@ function nebula_upload_data(){
 		"\r\nFilesize: " . $filesize;
 	$this_id = uniqid();
 
-	$filetype = ( $_POST['data']['filetype'] == '' ) ? 'txt' : $_POST['data']['filetype'];
+	$filetype = ( $_POST['data']['filetype'] == '' )? 'txt' : $_POST['data']['filetype'];
     //Check filetype for bad extensions, check data for bad strings.
     if ( !in_array($filetype, array('txt', 'jpg', 'png', 'gif', 'jpeg', 'doc', 'docx', 'csv', 'pdf')) || in_array($data, array('header(', 'Content-type:', '<?', 'htaccess', '.sql', 'DROP TABLE', 'base64')) ){ //|| in_array($directory, array('.'))
 	    echo 'You are attempting to upload something that is not allowed. ';
@@ -168,25 +168,6 @@ function set_user_metaboxes($user_id=NULL){
 
 
 
-
-
-/*
-//Attempt to track Firefox Reader View
-add_action('nebula_article_end', 'track_firefox_reader_view');
-function track_firefox_reader_view(){
-
-	//	@TODO "Nebula" 0: How do we target *only* Firefox Reader View?
-	//		- Remove the pixel w/ JS?
-	//		- Maybe an onerror inline trickery?
-	//		- I don't think the image gets reloaded or re-rendered on Reader View, so this still might not work.
-
-
-	$referrer = ( $_SERVER['HTTP_REFERER'] ) ? '&utmr=' . $_SERVER['HTTP_REFERER']: '';
-
-	//Not working...
-	echo '<img src="http://www.google-analytics.com/__utm.gif?utmac=' . $GLOBALS['ga'] . '&utmt=event&utmwv=1&utmdt=' . urlencode(get_the_title()) . '&utmhn=' . nebula_url_components('hostname') . '&utmp=' . nebula_url_components('filepath') . '&utmn=' . rand(pow(10, 10-1), pow(10, 10)-1) . $referrer . '&utme=5(Firefox%20Reader%20View*Testing*This%20is%20just%20a%20test)" />';
-}
-*/
 
 
 

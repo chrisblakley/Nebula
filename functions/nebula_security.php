@@ -52,7 +52,7 @@ function remove_x_pingback($headers){
 */
 add_filter('login_errors', 'nebula_login_errors');
 function nebula_login_errors($error){
-	if ( !is_bot() ){
+	if ( !nebula_is_bot() ){
 		$incorrect_username = '';
 		if ( contains($error, array('The password you entered for the username')) ){
 			$incorrect_username_start = strpos($error, "for the username ")+17;
@@ -145,7 +145,7 @@ function nebula_spambot_prevention(){
 
 		//Use this to generate a regex string of common referral spambots (or a custom passes array of strings). Unfortunately Google Analytics limits filters to 255 characters.
 		function nebula_spambot_regex($domains=null){
-			$domains = ( $domains ) ? $domains : $GLOBALS['spambot_domains'];
+			$domains = ( $domains )? $domains : $GLOBALS['spambot_domains'];
 			$domains = str_replace(array('.', '-'), array('\.', '\-'), $domains);
 			return implode("|", $domains);
 		}
@@ -156,8 +156,8 @@ function nebula_spambot_prevention(){
 
 //Valid Hostname Regex
 function nebula_valid_hostname_regex($domains=null){
-	$domains = ( $domains ) ? $domains : array(nebula_url_components('domain'));
-	$settingsdomains = ( get_option('nebula_hostnames') ) ? explode(',', get_option('nebula_hostnames')) : array(nebula_url_components('domain'));
+	$domains = ( $domains )? $domains : array(nebula_url_components('domain'));
+	$settingsdomains = ( get_option('nebula_hostnames') )? explode(',', get_option('nebula_hostnames')) : array(nebula_url_components('domain'));
 	$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com', 'youtube.com', 'paypal.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 	$fulldomains = preg_filter('/^/', '.*', $fulldomains);
 	$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
