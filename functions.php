@@ -52,8 +52,8 @@ function register_nebula_styles(){
 	wp_register_style('nebula-gumby', get_template_directory_uri() . '/css/gumby.css', array(), '2.6.0', 'all');
 	wp_register_style('nebula-gumby_cdn', 'https://cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0', 'all'); //Only useful for 12 col primary
 	wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css', array(), '4.4.0', 'all');
-	wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.3.1/css/jquery.mmenu.all.css', array(), '5.3.1', 'all');
-	//wp_register_style('nebula-bxslider', get_template_directory_uri() . '/css/jquery.bxslider.css', array(), '4.1.2', 'none'); //bxSlider is conditionally loaded via main.js when needed.
+	wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.3.4/css/jquery.mmenu.all.min.css', array(), '5.3.4', 'all');
+	//wp_register_style('nebula-bxslider', 'https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.css', array(), '4.2.5', 'none'); //bxSlider is conditionally loaded via main.js when needed.
 	wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/css/jquery.dataTables.min.css', array(), '1.10.7', 'all');
 	wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css', array(), '1.4.2', 'all');
 	wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css', array(), '1.11.4', 'all');
@@ -79,11 +79,10 @@ function register_nebula_scripts(){
 	wp_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 	wp_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 	wp_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.4', true);
-	wp_register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.3.1/js/jquery.mmenu.min.all.js', array(), '5.3.1', true);
-	wp_register_script('nebula-mmenu_debugger', get_template_directory_uri() . '/js/libs/jquery.mmenu.debugger.js', array('nebula-mmenu'), '5.3.1', true);
-	wp_register_script('nebula-cssbs', get_template_directory_uri() . '/js/libs/css_browser_selector.js?' . $GLOBALS['async'], array(), '1.0', true);
+	wp_register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.3.4/js/jquery.mmenu.min.all.min.js', array(), '5.3.4', true);
+	//wp_register_script('nebula-mmenu_debugger', get_template_directory_uri() . '/js/libs/jquery.mmenu.debugger.js', array('nebula-mmenu'), '5.3.1', true);
 	wp_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js?' . $GLOBALS['defer'], array(), null, true);
-	//wp_register_script('nebula-bxslider', get_template_directory_uri() . '/js/libs/jquery.bxslider.min.js?' . $GLOBALS['defer'], array(), '4.1.2', true); //bxSlider is conditionally loaded via main.js when needed.
+	//wp_register_script('nebula-bxslider', 'https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js?' . $GLOBALS['defer'], array(), '4.2.5', true); //bxSlider is conditionally loaded via main.js when needed.
 	wp_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', array(), null, true);
 	wp_register_script('nebula-skrollr', 'https://cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.29/skrollr.min.js?' . $GLOBALS['gumby_debug'], array(), '0.6.29', true);
 	wp_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js?async', array(), null, true);
@@ -195,7 +194,6 @@ function enqueue_nebula_frontend(){
 	//wp_enqueue_script('nebula-modernizr3_dev');
 	wp_enqueue_script('nebula-modernizr');
 	wp_enqueue_script('nebula-mmenu');
-	//wp_enqueue_script('nebula-cssbs');
 	//wp_enqueue_script('nebula-doubletaptogo');
 	wp_enqueue_script('nebula-gumby');
 	wp_enqueue_script('nebula-main');
@@ -207,7 +205,7 @@ function enqueue_nebula_frontend(){
 	//Conditionals
 	if ( is_debug() ){ //When ?debug query string is used
 		wp_enqueue_script('nebula-performance_timing');
-		wp_enqueue_script('nebula-mmenu_debugger');
+		//wp_enqueue_script('nebula-mmenu_debugger');
 	}
 
 	if ( nebula_is_browser('ie', '9', '<=') ){ //Old IE
@@ -251,7 +249,6 @@ function enqueue_nebula_login(){
 	//Scripts
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('nebula-modernizr');
-	//wp_enqueue_script('nebula-cssbs');
 
 	wp_enqueue_script('nebula-login');
 	wp_localize_script('nebula-login', 'bloginfo', $localize_bloginfo);

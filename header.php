@@ -23,9 +23,11 @@
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		<?php include_once('includes/metadata.php'); //All text components of metadata. ?>
 		<?php include_once('includes/metagraphics.php'); //All graphic components of metadata. ?>
+
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
-		<?php include_once('includes/analytics.php'); //Google Analytics and other analytics trackers. ?>
 		<?php wp_head(); ?>
+
+		<?php include_once('includes/analytics.php'); //Google Analytics and other analytics trackers. ?>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
@@ -124,7 +126,7 @@
 					</div><!--/row-->
 					<hr class="zero" />
 				</div><!--/container-->
-			<?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) || is_page_template('http_status.php') ): //Verify if !have_posts() triggers when we don't want it... ?>
+			<?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) || is_page_template('http_status.php') ): ?>
 				<div id="suggestedpage" class="container headerdrawercon">
 					<hr/>
 					<div class="row">

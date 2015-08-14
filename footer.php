@@ -5,7 +5,7 @@
 ?>
 			<hr class="zero" style="margin-top: 30px;"/>
 
-			<div class="footer">
+			<div id="footer">
 				<?php include_once('includes/footer_widgets.php'); //Footer widget logic. ?>
 
 				<?php if ( has_nav_menu('footer') ): ?>
@@ -40,10 +40,21 @@
 
 			</div><!--/footer-->
 
-			<?php wp_footer(); ?>
-			<?php do_action('nebula_footer'); ?>
+			<?php //Pass data to JavaScript. Not localized with WP because needs to be able to be modified in header.php if desired. ?>
+			<script>
+				social = [];
+				social['facebook_url'] = "<?php echo $GLOBALS['social']['facebook_url']; ?>";
+				social['facebook_app_id'] = "<?php echo $GLOBALS['social']['facebook_app_id']; ?>";
+				social['twitter_url'] = "<?php echo $GLOBALS['social']['twitter_url']; ?>";
+				social['google_plus_url'] = "<?php echo $GLOBALS['social']['google_plus_url']; ?>";
+				social['linkedin_url'] = "<?php echo $GLOBALS['social']['linkedin_url']; ?>";
+				social['youtube_url'] = "<?php echo $GLOBALS['social']['youtube_url']; ?>";
+				social['instagram_url'] = "<?php echo $GLOBALS['social']['instagram_url']; ?>";
+			</script>
 
 			<?php //Scripts are loaded in functions.php (so they can be registerred and enqueued). ?>
+			<?php wp_footer(); ?>
+			<?php do_action('nebula_footer'); ?>
 
 			<script>
 				//Check for Youtube Videos

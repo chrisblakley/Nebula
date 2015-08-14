@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
-	Version: 3.1.0
+	Version: 3.1.1
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -354,6 +354,8 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:link,
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:visited {color: #fff;}
 		.ui-autocomplete.ui-widget-content li a {display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
+			.ie .ui-autocomplete.ui-widget-content li a,
+			.edge .ui-autocomplete.ui-widget-content li a {display: inline-block;}
 
 #googlemap img {max-width: none;} /* Prevents glitchy UI within embedded Google maps */
 
@@ -734,7 +736,7 @@ div.wpcf7-mail-sent-ok {font-size: 14px !important; color: #58C027; width: 100% 
 /* ==========================================================================
    Footer Area
    ========================================================================== */
-.footer {background: #0098d7;}
+#footer {background: #0098d7; background: linear-gradient(to bottom, #0098d7, #0080b5);}
 
 .twitterago {font-size: 12px; text-decoration: underline;}
 
@@ -837,9 +839,9 @@ div.copyright {padding-top: 15px; background: #444; /* background: rgba(0, 0, 0,
 					nav#powerfooter ul li.menu-item ul.sub-menu li a {}
 					nav#powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu {}
 
-	.footer {padding-top: 0;}
+	#footer {padding-top: 0;}
 		div.copyright p {font-size: 11px;}
-		.footer .footer-search {display: none;}
+		#footer .footer-search {display: none;}
 
 } /* End tablet media query */
 

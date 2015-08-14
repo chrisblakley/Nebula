@@ -26,7 +26,7 @@ if ( nebula_settings_conditional('nebula_console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card(){
 		$console_log = "<script>";
-		if ( nebula_is_desktop() && !nebula_is_browser('ie') ){
+		if ( nebula_is_desktop() && !nebula_is_browser('ie') && !nebula_is_browser('edge') ){
 			$console_log .= "console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');";
 			$console_log .= "console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');";
 		}
@@ -110,7 +110,6 @@ function filter_wp_title($title, $separator){
 	}
 
 	$title .= get_bloginfo('name', 'display');
-
 	$site_description = get_bloginfo('description', 'display');
 	if ( $site_description && (is_home() || is_front_page()) ){
 		$title .= ' ' . $separator . ' ' . $site_description;
@@ -140,7 +139,6 @@ function nebula_http_status($status=200, $redirect=0){
 	}
 
 	$GLOBALS['http'] = intval($status);
-
 	if ( is_int($GLOBALS['http']) && $GLOBALS['http'] != 0 && $GLOBALS['http'] != 200 ){
 		if ( $GLOBALS['http'] == '404' ){ //@TODO "Nebula" 0: Eventually consider removing the 404 page and using the http_status.php page.
 			global $wp_query;

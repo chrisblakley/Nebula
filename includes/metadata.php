@@ -79,16 +79,3 @@
 <meta name="ICBM" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>, <?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" /> <!-- Comma and space separated latitude;longitude. Replace each respsective '' with the appropriate value. -->
 <meta property="place:location:latitude" content="<?php echo nebula_settings_conditional_text('nebula_latitude', ''); ?>" />
 <meta property="place:location:longitude" content="<?php echo nebula_settings_conditional_text('nebula_longitude', ''); ?>" />
-
-
-<?php //Pass data to JavaScript. Not localized with WP because needs to be able to be modified in header.php if desired. ?>
-<script>
-	social = [];
-	social['facebook_url'] = "<?php echo $GLOBALS['social']['facebook_url']; ?>";
-	social['facebook_app_id'] = "<?php echo $GLOBALS['social']['facebook_app_id']; ?>";
-	social['twitter_url'] = "<?php echo $GLOBALS['social']['twitter_url']; ?>";
-	social['google_plus_url'] = "<?php echo $GLOBALS['social']['google_plus_url']; ?>";
-	social['linkedin_url'] = "<?php echo $GLOBALS['social']['linkedin_url']; ?>";
-	social['youtube_url'] = "<?php echo $GLOBALS['social']['youtube_url']; ?>";
-	social['instagram_url'] = "<?php echo $GLOBALS['social']['instagram_url']; ?>";
-</script>

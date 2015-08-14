@@ -70,6 +70,10 @@ ErrorDocument 405 /?http=405
 		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/svg+xml
 		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/x-font-ttf
 		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $font/opentype
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/png
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/jpg
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/jpeg
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/gif
 		FilterChain     COMPRESS
 		FilterProtocol  COMPRESS  DEFLATE change=yes;byteranges=no
 	</IfModule>
@@ -97,18 +101,22 @@ ErrorDocument 405 /?http=405
 #AddOutputFilterByType DEFLATE application/rss+xml
 #AddOutputFilterByType DEFLATE application/javascript
 #AddOutputFilterByType DEFLATE application/x-javascript
+#AddOutputFilterByType DEFLATE image/png
+#AddOutputFilterByType DEFLATE image/jpg
+#AddOutputFilterByType DEFLATE image/jpeg
+#AddOutputFilterByType DEFLATE image/gif
 
 
 #Cache filess for certain lengths of time
 #1 YEAR
-<FilesMatch "\.(ico|pdf|flv)$">
+<FilesMatch "\.(ico|pdf|flv|png|gif|swf|jpg|jpeg|svg|woff|mp3|css|php|html|js)$">
 	Header set Cache-Control "max-age=29030400, public"
 </FilesMatch>
 
 #1 WEEK
-<FilesMatch "\.(png|gif|swf|jpg|jpeg|svg|woff|mp3|css|php|html|js)$">
-	Header set Cache-Control "max-age=604800, public"
-</FilesMatch>
+#<FilesMatch "\.(png|gif|swf|jpg|jpeg|svg|woff|mp3|css|php|html|js)$">
+#	Header set Cache-Control "max-age=604800, public"
+#</FilesMatch>
 
 #2 DAYS
 <FilesMatch "\.(xml|txt)$">

@@ -11,7 +11,6 @@
  *
  *		- Once the page(s) or post(s) have been made, create the Experiment in Google Analytics (Behavior > Experiments) and copy the URLs into the appropriate fields.
  *		- Then copy the script it generates, and paste it in the nebula_ga_experiments() function in functions.php (Avoid using header.php to keep it clean).
- *
  */
 
 if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
@@ -20,11 +19,9 @@ if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
 }
 
 do_action('nebula_header');
-
 get_header();
 
 /* Edit the code below to match the theme, or duplicate the desired template and rename the template (above). Remember to make the desired variations to test individually on each template! */
-
 ?>
 
 <div class="row">
@@ -57,12 +54,10 @@ get_header();
 				</article><!-- #post-## -->
 
 				<?php comments_template(); ?>
-
 			<?php endwhile; ?>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->
 
 <?php get_footer(); ?>
-
 <?php do_action('nebula_footer'); ?>

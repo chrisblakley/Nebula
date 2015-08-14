@@ -12,10 +12,8 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_header');
 get_header(); ?>
 
-<script src="<?php echo get_template_directory_uri();?>/js/libs/css_browser_selector.js" <?php echo $GLOBALS["async"]; ?>></script>
-
 <style>
-	#example-title-area .container {background: #0098d7;}
+	#example-title-area .container {background: #0098d7; background: linear-gradient(to bottom, #0098d7, #008cc6);}
 		#example-title-area h1 {color: #fff;}
 		#example-title-area p {color: #fff;}
 		#example-title-area a {color: #fff; text-decoration: underline; white-space: nowrap;}

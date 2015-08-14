@@ -47,6 +47,7 @@ jQuery(document).ready(function(){
 	helperFunctions();
 	powerFooterWidthDist();
 	nebulaEqualize();
+	nebulaScrollTo();
 
 	//Interaction
 	gaEventTracking();
@@ -561,7 +562,7 @@ function gaEventTracking(){
 	var afterPrint = function(){
 		if ( printed == 0 ) {
 			printed = 1;
-			ga('send', 'event', 'Print (Intent)');
+			ga('send', 'event', 'Print (Intent)', 'Print');
 		}
 	};
 	if ( window.matchMedia ) {
@@ -1670,11 +1671,11 @@ function checkCommentVal(oThis){
 	}
 }
 
-function scrollTo() {
-	pageDocument.on('click touch tap', 'a[href*=#]:not([href=#])', function(){
+function nebulaScrollTo(){
+	pageDocument.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
 		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
 			var target = jQuery(this.hash);
-			target = target.length ? target : jQuery('[name=' + this.hash.slice(1) +']');
+			target = ( target.length )? target : jQuery('[name=' + this.hash.slice(1) +']');
 			if ( target.length ){
 				var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 				var nOffset = Math.floor(target.offset().top - headerHtOffset);
@@ -1684,6 +1685,16 @@ function scrollTo() {
 				return false;
 			}
 		}
+	});
+
+	pageDocument.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
+		if ( jQuery(this).attr('scrollto') ){
+			var scrollElement = jQuery(this).attr('scrollto');
+			jQuery('html, body').animate({
+				scrollTop: jQuery(scrollElement).offset().top
+			}, 500);
+		}
+		return false;
 	});
 }
 
@@ -1873,12 +1884,12 @@ function conditionalJSLoading(){
 
 	//Only load bxslider library on a page that calls bxslider.
 	if ( jQuery('.bxslider').is('*') ) {
-		jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.bxslider.min.js').done(function(){
+		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js').done(function(){
 			bxSlider();
 		}).fail(function(){
 			ga('send', 'event', 'Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
 		});
-		nebulaLoadCSS(bloginfo['template_directory'] + '/css/jquery.bxslider.css');
+		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.css');
 	}
 
 	//Only load maskedinput.js library if phone or bday field exists.
