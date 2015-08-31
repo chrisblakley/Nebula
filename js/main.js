@@ -1,11 +1,5 @@
 jQuery.noConflict();
-jQuery(document).ready(function(){
-
-	//Assign common global variables
-	pageWindow = jQuery(window);
-	pageDocument = jQuery(document);
-	pageHTML = jQuery('html');
-	pageBody = jQuery('body');
+jQuery(document).on('ready', function(){
 
 	getQueryStrings();
 	if ( GET('killall') || GET('kill') || GET('die') ){
@@ -13,6 +7,12 @@ jQuery(document).ready(function(){
 	} else if ( GET('layout') ){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
+
+	//Assign common global variables
+	pageWindow = jQuery(window);
+	pageDocument = jQuery(document);
+	pageHTML = jQuery('html');
+	pageBody = jQuery('body');
 
 	//Social
 	facebookSDK();
@@ -79,12 +79,8 @@ jQuery(document).ready(function(){
 
 
 jQuery(window).on('load', function(){
-	jQuery('a, li, tr').removeClass('hover');
-	jQuery('html').addClass('loaded');
-
 	//nebulaFixeder();
 	checkCformLocalStorage();
-	browserInfo();
 
 	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
 		if ( !jQuery('input:focus').is('*') ){
@@ -92,10 +88,25 @@ jQuery(window).on('load', function(){
 		}
 	});
 
+	jQuery('a, li, tr').removeClass('hover');
+	jQuery('html').addClass('loaded');
+
+	if ( typeof performance.timing !== 'undefined' ){
+		setTimeout(function(){
+			var perceivedLoad = performance.timing.loadEventEnd-performance.timing.navigationStart;
+			var actualLoad = performance.timing.loadEventEnd-performance.timing.responseEnd;
+			jQuery('html').addClass('lt-per_' + perceivedLoad + 'ms');
+			jQuery('html').addClass('lt-act_' + actualLoad + 'ms');
+			browserInfo();
+		}, 0);
+	} else {
+		jQuery('html').addClass('lt_unavailable');
+		browserInfo();
+	}
+
 	setTimeout(function(){
 		emphasizeSearchTerms();
 	}, 1000);
-
 }); //End Window Load
 
 
@@ -646,7 +657,7 @@ function mmenus() {
 					jQuery('.clearsearch').addClass('hidden');
 				}
 			});
-			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br/><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
+			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br /><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
 			pageDocument.on('click touch tap', '.clearsearch a', function(){
 				mmenuSearchInput.val('').keyup();
 				jQuery('.clearsearch').addClass('hidden');
@@ -1290,7 +1301,7 @@ function singleResultDrawer(){
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 function pageSuggestion(){
 	if ( pageBody.hasClass('search-no-results') || pageBody.hasClass('error404') ) {
-		if ( nebula_settings["nebula_cse_id"] != '' && nebula_settings["nebula_google_browser_api_key"] != '' ){
+		if ( nebula_options["nebula_cse_id"] != '' && nebula_options["nebula_google_browser_api_key"] != '' ){
 			if ( GET().length ) {
 				var queryStrings = GET();
 			} else {
@@ -1311,8 +1322,8 @@ function pageSuggestion(){
 
 function trySearch(phrase){
 	var queryParams = {
-		cx: nebula_settings["nebula_cse_id"],
-		key: nebula_settings["nebula_google_browser_api_key"],
+		cx: nebula_options["nebula_cse_id"],
+		key: nebula_options["nebula_google_browser_api_key"],
 		num: 10,
 		q: phrase,
 		alt: 'JSON'
@@ -1672,13 +1683,14 @@ function checkCommentVal(oThis){
 }
 
 function nebulaScrollTo(){
+	var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 	pageDocument.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
+		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
 			var target = jQuery(this.hash);
 			target = ( target.length )? target : jQuery('[name=' + this.hash.slice(1) +']');
 			if ( target.length ){
-				var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
-				var nOffset = Math.floor(target.offset().top - headerHtOffset);
+				var nOffset = Math.floor(target.offset().top-headerHtOffset+pOffset);
 				jQuery('html, body').animate({
 					scrollTop: nOffset
 				}, 500);
@@ -1688,10 +1700,11 @@ function nebulaScrollTo(){
 	});
 
 	pageDocument.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
+		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scrollto');
 			jQuery('html, body').animate({
-				scrollTop: jQuery(scrollElement).offset().top
+				scrollTop: Math.floor(jQuery(scrollElement).offset().top-headerHtOffset+pOffset)
 			}, 500);
 		}
 		return false;
@@ -1705,7 +1718,7 @@ function browserInfo(){
 
 	if ( typeof navigator !== 'undefined' ){
 		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
-		browserInfoVal += 'UA Lookup: http://udger.com/resources/online-parser\n\n';
+		browserInfoVal += 'http://udger.com/resources/online-parser\n\n';
 	}
 
 	browserInfoVal += 'HTML Classes: ' + pageHTML.attr('class').split(' ').sort().join(', ') + '\n\n';
@@ -1714,14 +1727,14 @@ function browserInfo(){
 
 	if ( typeof performance !== 'undefined' ){
 		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
-		var pageLoadTime = (performance.timing.loadEventStart-performance.timing.navigationStart)/1000;
-		browserInfoVal += 'Page Loading Time: ' + pageLoadTime + 's' + '\n\n';
-	}
-
-	if ( typeof performance !== 'undefined' ){
+		var perceivedLoadTime = (performance.timing.loadEventEnd-performance.timing.navigationStart)/1000;
+		var actualLoadTime = (performance.timing.loadEventEnd-performance.timing.responseEnd)/1000;
+		browserInfoVal += 'Perceived Load Time: ' + perceivedLoadTime + 's' + '\n';
+		browserInfoVal += 'Actual Page Load Time: ' + actualLoadTime + 's' + '\n\n';
 		browserInfoVal += 'Referrer: ' + document.referrer + '\n';
 	} else {
-		browserInfoVal += 'Referrer: None (or Unknown)\n';
+		browserInfoVal += 'Page load time not available.\n\n';
+		browserInfoVal += 'Referrer not available.\n';
 	}
 
 	if ( typeof window.history !== 'undefined' ){
@@ -1731,14 +1744,15 @@ function browserInfo(){
 	if ( typeof nebulaLocation !== 'undefined' ){
 		if ( !nebulaLocation.error ){
 			browserInfoVal += 'Geolocation: ' + nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude + '\n';
-			browserInfoVal += 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters (' + nebulaLocation.accuracy.miles + ' miles)\n\n';
+			browserInfoVal += 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters (' + nebulaLocation.accuracy.miles + ' miles)\n';
+			browserInfoVal += 'https://www.google.com/maps/place/' + nebulaLocation.coordinates.latitude + ',' + nebulaLocation.coordinates.longitude + '\n\n';
 		} else {
 			browserInfoVal += 'Geolocation Error: ' + nebulaLocation.error.description + '\n\n';
 		}
 	}
 
 	browserInfoVal += 'IP Address: ' + clientinfo['remote_addr'] + '\n';
-	browserInfoVal += 'IP Lookup: http://whatismyipaddress.com/ip/' + clientinfo['remote_addr'];
+	browserInfoVal += 'http://whatismyipaddress.com/ip/' + clientinfo['remote_addr'];
 
 	jQuery('textarea.browserinfo').addClass('hidden').css('display', 'none').val(browserInfoVal);
 }

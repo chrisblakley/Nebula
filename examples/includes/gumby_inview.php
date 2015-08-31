@@ -19,7 +19,7 @@
 <div class="row">
 	<div class="sixteen columns">
 		<h3 style="text-align: center;">--Scroll down!--</h3>
-		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 	</div>
 </div><!--/row-->
 

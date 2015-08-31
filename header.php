@@ -104,7 +104,7 @@
 
 			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ): ?>
 				<div class="container headerdrawercon">
-					<hr/>
+					<hr />
 					<div class="row">
 						<div class="sixteen columns headerdrawer">
 							<span>Your search returned only one result. You have been automatically redirected.</span>
@@ -116,7 +116,7 @@
 				</div><!--/container-->
 			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ): ?>
 				<div class="container headerdrawercon">
-					<hr/>
+					<hr />
 					<div class="row">
 						<div class="sixteen columns headerdrawer invalid">
 							<span>Your search was invalid. Please try again.</span>
@@ -128,7 +128,7 @@
 				</div><!--/container-->
 			<?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) || is_page_template('http_status.php') ): ?>
 				<div id="suggestedpage" class="container headerdrawercon">
-					<hr/>
+					<hr />
 					<div class="row">
 						<div class="sixteen columns headerdrawer">
 							<h3>Did you mean?</h3>

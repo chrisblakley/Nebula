@@ -103,7 +103,7 @@
 	<a class="basicnotify" href="#">Basic Notification</a>
 </div>
 
-<br/><br/><br/><p>The following button passes everything and uses the callbacks too:</p>
+<br /><br /><br /><p>The following button passes everything and uses the callbacks too:</p>
 <div class="medium primary btn">
 	<a class="fullnotify" href="#">Fully Customized</a>
 </div>

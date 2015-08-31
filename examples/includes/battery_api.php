@@ -97,10 +97,10 @@
 
 		<h2>Battery Status</h2>
 		<p class="batteryinfo batterysupported">
-			<strong>Percentage:</strong> <span class="batterypercentage">Unsupported</span><br/>
-			<strong>Status:</strong> <span class="batterystatus">Unsupported</span><br/>
-			<strong class="batteryfullyitem">Fully Charged:</strong> <span class="batteryfullyitem batteryfully">Unsupported</span><br/>
-			<strong class="batteryremainingitem">Remaining Charge:</strong> <span class="batteryremainingitem batteryremaining">Unsupported</span><br/>
+			<strong>Percentage:</strong> <span class="batterypercentage">Unsupported</span><br />
+			<strong>Status:</strong> <span class="batterystatus">Unsupported</span><br />
+			<strong class="batteryfullyitem">Fully Charged:</strong> <span class="batteryfullyitem batteryfully">Unsupported</span><br />
+			<strong class="batteryremainingitem">Remaining Charge:</strong> <span class="batteryremainingitem batteryremaining">Unsupported</span><br />
 		</p>
 		<p class="batterynotsupported hidden">Unsupported</p>
 

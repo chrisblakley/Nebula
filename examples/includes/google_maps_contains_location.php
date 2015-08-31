@@ -26,6 +26,48 @@
 	function nebula_checkSpecificLocation(){
 	    var latlng = new google.maps.LatLng(nebulaLocation.coordinates.latitude, nebulaLocation.coordinates.longitude);
 
+
+
+
+
+				/*
+					//How to pull locations from a custom field to create a polygon
+					if ( google.maps.geometry.poly.containsLocation(latlng, nysfPolygon) ){
+						if ( nysfLocation.accuracy.meters <= 200 ){
+							jQuery.getJSON("http://nysfair.org/venues.json", function(data){
+								jQuery(data).each(function(i){
+									if ( data[i].location.polygon && data[i].location.polygon != '' ){
+										var polygonArray = null;
+										var polygonArray = JSON.parse(data[i].location.polygon);
+										var venuePath = [];
+										jQuery(polygonArray).each(function(i){
+											venuePath.push(new google.maps.LatLng(polygonArray[i][0], polygonArray[i][1]));
+										});
+										var thisPolygon = new google.maps.Polygon({
+											paths: venuePath
+										});
+
+										if ( google.maps.geometry.poly.containsLocation(latlng, thisPolygon) ){
+											ga('send', 'event', 'Fairgrounds Location', lat + ', ' + lng, data[i].name);
+											ga('set', 'dimension1', data[i].name);
+											return true;
+									    }
+									}
+								});
+							});
+						}
+					}
+				*/
+
+
+
+
+
+
+
+
+
+
 		//Admin/Upstairs
 		var adminUpstairsPolygon = new google.maps.Polygon({
 	        paths: [
@@ -269,7 +311,7 @@
 		<div id="location-results">
 			<p class="latlng"></p>
 			<p class="accuracy"></p>
-			<br/>
+			<br />
 			<p class="specific-location"></p>
 		</div>
 	</div><!--/columns-->

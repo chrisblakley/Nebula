@@ -1,4 +1,11 @@
 <?php
+	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+		die('Error 403: Forbidden.');
+	}
+?>
+
+<?php
 	/* Favicons
 		Favicons for various usage. PNG icons are used as needed by browsers in addition to Android homescreen bookmarks.
 	*/

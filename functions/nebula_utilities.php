@@ -133,7 +133,7 @@ function is_debug(){
 	return false;
 }
 
-//Check if the current IP address matches any of the dev IP address from Nebula Settings
+//Check if the current IP address matches any of the dev IP address from Nebula Options
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_dev(){
 	$devIPs = explode(',', get_option('nebula_dev_ip'));
@@ -143,7 +143,7 @@ function is_dev(){
 		}
 	}
 
-	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Options
 	$current_user = wp_get_current_user();
 	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
@@ -157,7 +157,7 @@ function is_dev(){
 	return false;
 }
 
-//Check if the current IP address matches any of the client IP address from Nebula Settings
+//Check if the current IP address matches any of the client IP address from Nebula Options
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_client(){
 	$clientIPs = explode(',', get_option('nebula_client_ip'));
@@ -167,7 +167,7 @@ function is_client(){
 		}
 	}
 
-	//Check if the current user's email domain matches any of the dev email domains from Nebula Settings
+	//Check if the current user's email domain matches any of the dev email domains from Nebula Options
 	$current_user = wp_get_current_user();
 	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
@@ -695,7 +695,7 @@ function whois_info($data, $domain=''){
 }
 
 function getwhois($domain, $tld){
-	require_once(get_template_directory() . "/includes/class-whois.php");
+	require_once(get_template_directory() . "/includes/libs/class-whois.php");
 	$whois = new Whois();
 
 	if( !$whois->ValidDomain($domain . '.' . $tld) ){
@@ -982,7 +982,7 @@ function nebula_is_bot(){
 
 //Device Detection v3.3 - https://github.com/piwik/device-detector
 //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
-require_once(get_template_directory() . '/includes/device-detector/DeviceDetector.php');
+require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
 use DeviceDetector\DeviceDetector;
 $GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
 $GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)

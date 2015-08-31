@@ -107,7 +107,7 @@
 				<a id="uploadtest" href="#">Upload a test!</a>
 			</div>
 
-			<br/><br/>
+			<br /><br />
 		</div>
 		<textarea id="debugresponse" placeholder="AJAX response information will appear here."></textarea>
 

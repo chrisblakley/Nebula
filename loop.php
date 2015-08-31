@@ -32,9 +32,9 @@
 	<?php if ( in_category('gallery') ): //Display posts in a Gallery ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<div class="entry-meta">
-				<hr/>
+				<hr />
 				<?php nebula_meta('on'); ?> <?php nebula_meta('in'); ?>
-				<hr/>
+				<hr />
 			</div>
 
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
@@ -66,9 +66,9 @@
 				<?php if ( current_user_can('manage_options') ): ?>
 					<div class="container entry-manage">
 						<div class="row">
-							<hr/>
+							<hr />
 							<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-							<hr/>
+							<hr />
 						</div>
 					</div>
 				<?php endif; ?>
@@ -108,15 +108,15 @@
 			<?php if ( current_user_can('manage_options') ): //@TODO "Nebula" 0: Either drastically reduce the size of this or remove it. Maybe it's just an edit icon and link next to the title? ?>
 				<div class="container entry-manage">
 					<div class="row">
-						<hr/>
+						<hr />
 						<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-						<hr/>
+						<hr />
 					</div>
 				</div>
 			<?php endif; ?>
 		</article>
 
-		<?php if ( nebula_settings_conditional('nebula_comments', 'disabled') ): ?>
+		<?php if ( nebula_options_conditional('nebula_comments', 'disabled') ): ?>
 			<div id="nebulacommentswrapper">
 				<?php comments_template('', true); ?>
 			</div><!--/nebulacommentswrapper-->

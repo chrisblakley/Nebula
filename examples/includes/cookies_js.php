@@ -54,6 +54,6 @@
 			});
 		</script>
 
-		<br/>
+		<br />
 	</div><!--/columns-->
 </div><!--/row-->

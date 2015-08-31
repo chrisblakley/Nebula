@@ -4,11 +4,12 @@
 
 
 <script>
-	jQuery(document).ready(function() {
+	jQuery(document).on('ready', function(){
+
 
 	});
 
-	jQuery(window).on('load', function() {
+	jQuery(window).on('load', function(){
 
 	});
 </script>

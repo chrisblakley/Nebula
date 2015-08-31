@@ -11,7 +11,7 @@
 
 <div class="row">
 	<div class="sixteen columns">
-		<br/>
+		<br />
 		<h4>Available Data</h4>
 		<p>Using the 'json' parameter: <?php echo do_shortcode("[code]nebula_weather('13204', 'json')[/code]"); ?></p>
 		<?php echo do_shortcode('[pre lang=js]' . json_encode(nebula_weather('13204', 'json'), JSON_PRETTY_PRINT) . '[/pre]'); ?>

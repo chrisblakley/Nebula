@@ -34,7 +34,7 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/>
+<br />
 
 <div class="row">
 	<div class="sixteen columns" style="text-align: center;">

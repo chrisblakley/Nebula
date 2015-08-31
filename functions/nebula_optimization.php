@@ -42,7 +42,6 @@ add_action('wp_print_styles', 'nebula_dequeues', 9999);
 function nebula_dequeues(){
 	if ( !is_admin() ){
 		//Styles
-		wp_deregister_style('open-sans'); //WP Core - We load Open Sans ourselves (or whatever font the project calls for)
 		wp_deregister_style('cff-font-awesome'); //Custom Facebook Feed - We enqueue the latest version of Font Awesome ourselves
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
 
@@ -85,7 +84,11 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 	if ( !is_admin() ){
 		//Frontend
 		//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
-		remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
+
+		if ( !nebula_admin_bar_enabled() ){
+			remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
+		}
+
 		if ( get_the_ID() == 1 ){ remove_action('wp_footer', 'cff_js', 10); } //Custom Facebook Feed - Remove the feed from the homepage. @TODO "Plugins" 2: Update to any page/post type that should NOT have the Facebook Feed
 	} else {
 		//WP Admin
@@ -103,7 +106,16 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 }
 
 //Remove the Admin Bar entirely
-show_admin_bar(false);
+if ( !nebula_admin_bar_enabled() ){
+	show_admin_bar(false);
+} else {
+	//Remove admin bar logo
+	add_action('wp_before_admin_bar_render', 'remove_admin_bar_logo', 0);
+	function remove_admin_bar_logo() {
+		global $wp_admin_bar;
+		$wp_admin_bar->remove_menu('wp-logo');
+	}
+}
 
 //Disable Emojis
 add_action('init', 'disable_wp_emojicons');

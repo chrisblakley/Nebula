@@ -15,14 +15,14 @@
 		<h3>Super Duper Time Cacher</h3>
 		<?php if ( $new_date_time_cache ): ?>
 			<p>
-				<strong>A winner is you!</strong><br/>
-				You are storing a <span style="color: green;">brand new</span> transient!<br/>
+				<strong>A winner is you!</strong><br />
+				You are storing a <span style="color: green;">brand new</span> transient!<br />
 				This transient is now set to: <strong style="color: green;"><?php echo $the_date_time; ?></strong>
 			</p>
 		<?php else: ?>
 			<p>
-				<strong>Someone beat you to it!</strong><br/>
-				You are viewing <span style="color: maroon;">cached data</span> from a transient.<br/>
+				<strong>Someone beat you to it!</strong><br />
+				You are viewing <span style="color: maroon;">cached data</span> from a transient.<br />
 				The transient was set on: <strong style="color: maroon;"><?php echo $the_date_time; ?></strong>
 			</p>
 		<?php endif; ?>

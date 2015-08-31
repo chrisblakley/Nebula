@@ -5,7 +5,7 @@ require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 //Detect and prompt install of Recommended and Optional plugins
-require_once(TEMPLATEPATH . '/includes/class-tgm-plugin-activation.php');
+require_once(TEMPLATEPATH . '/includes/libs/class-tgm-plugin-activation.php');
 add_action('tgmpa_register', 'my_theme_register_required_plugins');
 function my_theme_register_required_plugins(){
     $plugins = array(
@@ -161,10 +161,10 @@ function nebula_activation(){
 	<?php if ( $is_standard_initialization && current_user_can('manage_options') ): ?>
 		<div id='nebula-activate-success' class='updated'>
 			<p>
-				<strong class="nebula-activated-title">Nebula has been initialized!</strong><br/>
+				<strong class="nebula-activated-title">Nebula has been initialized!</strong><br />
 				<span class="nebula-activated-description">
-					Settings have been updated. The home page has been updated and has been set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br/>
-					<strong>Next step:</strong> Configure <a href='themes.php?page=nebula_settings'>Nebula Settings</a>
+					Options have been updated. The home page has been updated and has been set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br />
+					<strong>Next step:</strong> Configure <a href='themes.php?page=nebula_options'>Nebula Options</a>
 				</span>
 			</p>
 		</div>
@@ -172,9 +172,9 @@ function nebula_activation(){
 		<?php if ( nebula_is_initialized_before() ): ?>
 			<div id='nebula-activate-success' class='updated'>
 				<p>
-					<strong class="nebula-activated-title">Nebula has been re-activated!</strong><br/>
+					<strong class="nebula-activated-title">Nebula has been re-activated!</strong><br />
 					<?php if ( current_user_can('manage_options') ): ?>
-						<span class="nebula-activated-description">To re-run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula settings!'>click here</a>.</span>
+						<span class="nebula-activated-description">To re-run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>.</span>
 					<?php else: ?>
 						You have re-activated Nebula. Contact the site administrator if the automated Nebula initialization processes need to be re-run.
 					<?php endif; ?>
@@ -183,9 +183,9 @@ function nebula_activation(){
 		<?php else: ?>
 			<div id='nebula-activate-success' class='updated'>
 				<p>
-					<strong class="nebula-activated-title">Nebula has been activated!</strong><br/>
+					<strong class="nebula-activated-title">Nebula has been activated!</strong><br />
 					<?php if ( current_user_can('manage_options') ): ?>
-						<span class="nebula-activated-description">To run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula settings!'>click here</a>.</span>
+						<span class="nebula-activated-description">To run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>.</span>
 					<?php else: ?>
 						You have activated Nebula. Contact the site administrator to run the automated Nebula initialization processes.
 					<?php endif; ?>
@@ -229,7 +229,7 @@ function nebula_initialization_email_prev_settings(){
 	$headers[] = 'From: ' . get_bloginfo('name');
 
 	//Carbon copy the admin if reset was done by another user.
-	$admin_user_email = nebula_settings_conditional_text('nebula_contact_email', get_option('admin_email'));
+	$admin_user_email = nebula_options_conditional_text('nebula_contact_email', get_option('admin_email'));
 	if ( $admin_user_email != $current_user->user_email ){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}
@@ -307,9 +307,9 @@ Wordpress developers will find all source code not obfuscated, so everything may
 function nebula_initialization_default_settings(){
 	global $wp_rewrite;
 
-	//Update Nebula settings options
-	foreach ( $GLOBALS['nebula_settings_fields'] as $nebula_settings_field => $default ){
-		update_option($nebula_settings_field, $default);
+	//Update Nebula options
+	foreach ( $GLOBALS['nebula_options_fields'] as $nebula_options_field => $default ){
+		update_option($nebula_options_field, $default);
 	}
 
 	//Update certain Wordpress Core options

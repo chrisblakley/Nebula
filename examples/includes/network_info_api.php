@@ -23,8 +23,8 @@
 
 		<h2>Network Information</h2>
 		<p class="networkinfo">
-			<strong>Connection Type:</strong> <span class="connectiontype"></span><br/>
-			<strong>Connection Speed:</strong> <span class="connectionspeed"></span><br/>
+			<strong>Connection Type:</strong> <span class="connectiontype"></span><br />
+			<strong>Connection Speed:</strong> <span class="connectionspeed"></span><br />
 		</p>
 
 	</div><!--/columns-->

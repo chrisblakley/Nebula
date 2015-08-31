@@ -59,7 +59,7 @@
 				jQuery.each(response, function(i){
 					//console.debug(response[i]); //Just to show all the data that is available.
 					var tweetTime = new Date(Date.parse(response[i].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
-					jQuery('.example2').append('<li><a class="twitter-user-photo" href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank"><img src="' + response[i].user.profile_image_url_https + '" title="' + response[i].user.description + '" /></a><strong><a href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank">@' + response[i].user.screen_name + '</a></strong><br/><span>' + tweetLinks(response[i].text) + ' <span class="twitter-posted-on"><i class="fa fa-clock-o"></i> ' + timeAgo(tweetTime) + '</span></span></li>');
+					jQuery('.example2').append('<li><a class="twitter-user-photo" href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank"><img src="' + response[i].user.profile_image_url_https + '" title="' + response[i].user.description + '" /></a><strong><a href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank">@' + response[i].user.screen_name + '</a></strong><br /><span>' + tweetLinks(response[i].text) + ' <span class="twitter-posted-on"><i class="fa fa-clock-o"></i> ' + timeAgo(tweetTime) + '</span></span></li>');
 				});
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
@@ -75,19 +75,19 @@
 	<div class="sixteen columns">
 
 		<div>
-			<strong>Example 1</strong><br/>
+			<strong>Example 1</strong><br />
 			<span>Fill pre-existing HTML with tweet data. This is good for displaying a single, latest tweet.</span>
 		</div>
 		<p class="example1">
 			<a id="tweet_user_photo1" class="twitter-user-photo" href="#" target="_blank"></a>
-			<strong><a id="tweet_user1" target="_blank" href="#">Loading Tweets...</a></strong><br/>
+			<strong><a id="tweet_user1" target="_blank" href="#">Loading Tweets...</a></strong><br />
 			<span id="tweet_body1"></span>
 		</p>
 
-		<br/>
+		<br />
 
 		<div>
-			<strong>Example 2</strong><br/>
+			<strong>Example 2</strong><br />
 			<span>Generate the markup within a UL to display tweets. This method is good for showing multiple tweets.</span>
 		</div>
 		<ul class="example2"></ul>

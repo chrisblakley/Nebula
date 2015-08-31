@@ -19,7 +19,7 @@ get_header(); ?>
 <div class="row">
 	<div class="sixteen columns">
 		<?php the_breadcrumb(); ?>
-		<hr/>
+		<hr />
 	</div><!--/columns-->
 </div><!--/row-->
 
@@ -79,7 +79,7 @@ get_header(); ?>
 
 
 			<div class="author-meta">
-				<hr/>
+				<hr />
 				<span class="author-jobtitle">
 					<?php if ( get_the_author_meta('jobtitle') || get_the_author_meta('jobcompany') ): ?>
 						<i class="fa fa-building"></i>
@@ -110,7 +110,7 @@ get_header(); ?>
 						<span class="author-phonenumber"><i class="fa fa-phone"></i> <?php echo nebula_tel_link(get_the_author_meta('phonenumber')); ?></span>
 					<?php endif; ?>
 				</span>
-				<hr/>
+				<hr />
 			</div>
 
 			<p class="authorbio"><?php echo esc_html(the_author_meta('description')); ?></p>

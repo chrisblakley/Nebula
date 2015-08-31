@@ -1,27 +1,26 @@
 jQuery.noConflict();
-
-jQuery(document).ready(function() {
+jQuery(document).on('ready', function(){
 
 	getQueryStrings();
-	if ( GET('killall') || GET('kill') || GET('die') ) {
+	if ( GET('killall') || GET('kill') || GET('die') ){
 		throw ' (Manually terminated admin.js)';
 	}
 
-	if ( clientinfo['remote_addr'] == '72.43.235.106' ) {
+	if ( clientinfo['remote_addr'] == '72.43.235.106' ){
 		jQuery('html').addClass('phg');
 	}
 
-	jQuery(function() {
+	jQuery(function(){
 	    jQuery("#post textarea").allowTabChar();
 	});
 
-	if ( jQuery('body').hasClass('profile-php') ) {
-		jQuery('#headshot_button').on('click tap touch', function() {
+	if ( jQuery('body').hasClass('profile-php') ){
+		jQuery('#headshot_button').on('click tap touch', function(){
 			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
 
-		window.send_to_editor = function(html) {
+		window.send_to_editor = function(html){
 			var image_url = jQuery(html).attr('src');
 			jQuery('#headshot_url').val(image_url); //updates our hidden field that will update our author's meta when the form is saved
 			tb_remove();
@@ -29,7 +28,6 @@ jQuery(document).ready(function() {
 
 			jQuery('#submit_options_form').trigger('click');
 			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
-
 		}
 
 		jQuery('#headshot_remove').on('click tap touch', function(){
@@ -40,7 +38,7 @@ jQuery(document).ready(function() {
 
 
 
-		jQuery('#avatar_button').on('click tap touch', function() {
+		jQuery('#avatar_button').on('click tap touch', function(){
 			tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
@@ -52,15 +50,13 @@ jQuery(document).ready(function() {
 		});
 	}
 
-
-
 	if ( !jQuery('li#menu-comments').is(':visible') ) {
-		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_settings">Nebula Settings</a>)</small>.');
+		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small>.');
 	}
 
 	//Re-initialize confirm dialog.
 	jQuery('.reinitializenebula').on('click tap touch', function(){
-		if ( !confirm('This will reset all Nebula settings and reset the homepage content! Are you sure you want to re-initialize?') ) {
+		if ( !confirm('This will reset all Nebula options and reset the homepage content! Are you sure you want to re-initialize?') ) {
 			return false;
 		}
 	});
@@ -72,7 +68,6 @@ jQuery(document).ready(function() {
 
 	jQuery(document).on("submit", ".searchfiles", function(e){
 		if ( jQuery("input.findterm").val().trim().length >= 3 ) {
-
 			jQuery("#searchprogress").removeClass().addClass("fa fa-spinner fa-fw fa-spin");
 
 			jQuery.ajax({
@@ -107,7 +102,7 @@ jQuery(document).ready(function() {
 	});
 
 
-	if ( jQuery('.flag').is('*') ) {
+	if ( jQuery('.flag').is('*') ){
 		nebulaLoadCSS(bloginfo['template_directory'] + '/css/flags.css');
 	}
 
@@ -160,7 +155,7 @@ jQuery(document).ready(function() {
 
 	//Initialize confirm dialog.
 	jQuery('#run-nebula-initialization').on('click tap touch', function(){
-		if ( !confirm('This will reset some WordPress settings, all Nebula settings, and reset the homepage content! Are you sure you want to initialize?') ) {
+		if ( !confirm('This will reset some WordPress settings, all Nebula options, and reset the homepage content! Are you sure you want to initialize?') ) {
 			return false;
 		} else {
 			jQuery('.nebula-activated-description').html('<i class="fa fa-spinner fa-spin"></i> Running initialization...');
@@ -174,7 +169,7 @@ jQuery(document).ready(function() {
 				success: function(data){
 					if ( data == '1' ){
 						jQuery('.nebula-activated-title').html('<i class="fa fa-check" style="color: green;"></i> Nebula has been initialized!');
-						jQuery('.nebula-activated-description').html('Settings have been updated. The home page has been updated and has been set as the static front page in <a href="options-reading.php">Settings > Reading</a>.<br/><strong>Next step:</strong> Configure <a href="themes.php?page=nebula_settings">Nebula Settings</a>');
+						jQuery('.nebula-activated-description').html('Settings have been updated. The home page has been updated and has been set as the static front page in <a href="options-reading.php">Settings > Reading</a>.<br /><strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>');
 						return false;
 					} else {
 						jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
@@ -210,7 +205,7 @@ jQuery(document).ready(function() {
 
 }); //End Document Ready
 
-jQuery(window).on('load', function() {
+jQuery(window).on('load', function(){
 
 	//Window load functions here.
 
@@ -264,8 +259,8 @@ function nebulaLoadCSS(url){
 
 
 //Allow tab character in textareas
-(function($) {
-    function pasteIntoInput(el, text) {
+(function($){
+    function pasteIntoInput(el, text){
         el.focus();
         var val = el.value;
         if (typeof el.selectionStart == "number") {
@@ -280,8 +275,8 @@ function nebulaLoadCSS(url){
         }
     }
 
-    function allowTabChar(el) {
-        jQuery(el).keydown(function(e) {
+    function allowTabChar(el){
+        jQuery(el).keydown(function(e){
             if (e.which == 9) {
                 pasteIntoInput(this, "\t");
                 return false;
@@ -289,19 +284,19 @@ function nebulaLoadCSS(url){
         });
 
         // For Opera, which only allows suppression of keypress events, not keydown
-        jQuery(el).keypress(function(e) {
+        jQuery(el).keypress(function(e){
             if (e.which == 9) {
                 return false;
             }
         });
     }
 
-    $.fn.allowTabChar = function() {
-        if (this.jquery) {
-            this.each(function() {
+    $.fn.allowTabChar = function(){
+        if (this.jquery){
+            this.each(function(){
                 if (this.nodeType == 1) {
                     var nodeName = this.nodeName.toLowerCase();
-                    if (nodeName == "textarea" || (nodeName == "input" && this.type == "text")) {
+                    if (nodeName == "textarea" || (nodeName == "input" && this.type == "text")){
                         allowTabChar(this);
                     }
                 }

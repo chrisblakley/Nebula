@@ -351,12 +351,12 @@
 
 		<h3>User</h3>
 		<p>
-			<strong>IP Address:</strong> <a href="http://whatismyipaddress.com/ip/<?php echo $_SERVER["REMOTE_ADDR"]; ?>" target="_blank"><?php echo $_SERVER["REMOTE_ADDR"]; ?></a><br/>
+			<strong>IP Address:</strong> <a href="http://whatismyipaddress.com/ip/<?php echo $_SERVER["REMOTE_ADDR"]; ?>" target="_blank"><?php echo $_SERVER["REMOTE_ADDR"]; ?></a><br />
 			<?php if ( is_user_logged_in() ) : ?>
 				<?php $current_user = wp_get_current_user(); ?>
-				Logged in as <?php echo $current_user->display_name; ?> <em>(<?php echo trim(ucwords($current_user->roles[0])); ?> <?php echo ( is_dev() )? ', Developer' : ''; ?>)</em><br/>
+				Logged in as <?php echo $current_user->display_name; ?> <em>(<?php echo trim(ucwords($current_user->roles[0])); ?> <?php echo ( is_dev() )? ', Developer' : ''; ?>)</em><br />
 			<?php else : ?>
-				Not logged in<br/>
+				Not logged in<br />
 			<?php endif; ?>
 			<span class="facebook-connected-as hidden"></span>
 			<!-- @TODO "Nebula" 0: If connected to Facebook -->
@@ -364,25 +364,25 @@
 
 		<h3>User Agent</h3>
 		<p style="font-family: monospace;">
-			<?php echo $_SERVER["HTTP_USER_AGENT"]; ?><br/>
+			<?php echo $_SERVER["HTTP_USER_AGENT"]; ?><br />
 			<a href="http://udger.com/resources/online-parser" target="_blank" style="font-family: 'Open Sans', sans-serif;">User Agent Parser &raquo;</a>
 		</p>
 
 		<h3 class="hidden">Debug</h3>
 		<p class="hidden" style="font-family: monospace;">
-			Referrer: <?php echo $_SERVER["HTTP_REFERER"]; ?><br/>
-			Remote Host: <?php echo $_SERVER["REMOTE_HOST"]; ?><br/>
-			Hostname: <?php echo gethostname(); ?><br/>
-			HTTP Host: <?php echo $_SERVER["HTTP_HOST"]; ?><br/>
+			Referrer: <?php echo $_SERVER["HTTP_REFERER"]; ?><br />
+			Remote Host: <?php echo $_SERVER["REMOTE_HOST"]; ?><br />
+			Hostname: <?php echo gethostname(); ?><br />
+			HTTP Host: <?php echo $_SERVER["HTTP_HOST"]; ?><br />
 		</p>
 
 		<h3>Device</h3>
 		<p>
 			<?php if ( !nebula_is_desktop() ): ?>
-				<span><?php echo ucwords(nebula_get_device('formfactor')); ?>: <?php echo ucwords(nebula_get_device('type')); ?></span><br/>
+				<span><?php echo ucwords(nebula_get_device('formfactor')); ?>: <?php echo ucwords(nebula_get_device('type')); ?></span><br />
 				<span><?php echo nebula_get_device('full'); ?></span>
-				<span class="mobilebatt"><br/>Battery: </span><span class="thebattery">(Info unavailable)</span>
-				<br/><span class="devicevibration"></span>
+				<span class="mobilebatt"><br />Battery: </span><span class="thebattery">(Info unavailable)</span>
+				<br /><span class="devicevibration"></span>
 			<?php else : ?>
 				Desktop
 			<?php endif; ?>
@@ -391,14 +391,14 @@
 
 		<h3>Operating System</h3>
 		<p>
-			<?php echo nebula_get_os('full'); ?><br/>
+			<?php echo nebula_get_os('full'); ?><br />
 		</p>
 
 
 		<h3 class="browservardumptrigger">Browser</h3>
 		<p>
-			<?php echo nebula_get_browser('full'); ?><br/>
-			<strong>Rendering Engine:</strong> <?php echo nebula_get_browser('engine'); ?><br/>
+			<?php echo nebula_get_browser('full'); ?><br />
+			<strong>Rendering Engine:</strong> <?php echo nebula_get_browser('engine'); ?><br />
 		</p>
 
 
@@ -408,27 +408,27 @@
 
 		<h3>Screen</h3>
 		<p class="screen-info">
-			<strong>Resolution:</strong> <span class="jsdetection resolution">Enable JavaScript to detect screen resolution.</span><br/>
-			<strong>Viewport Size:</strong> <span class="jsdetection viewport-size">Enable JavaScript to detect viewport dimensions.</span><br/>
-			<strong>Pixel Density:</strong> <span class="jsdetection pixel-density">Enable JavaScript to detect pixel density.</span><br/>
-			<strong>Color Depth:</strong> <span class="jsdetection color-depth">Enable JavaScript to detect color depth.</span><br/>
+			<strong>Resolution:</strong> <span class="jsdetection resolution">Enable JavaScript to detect screen resolution.</span><br />
+			<strong>Viewport Size:</strong> <span class="jsdetection viewport-size">Enable JavaScript to detect viewport dimensions.</span><br />
+			<strong>Pixel Density:</strong> <span class="jsdetection pixel-density">Enable JavaScript to detect pixel density.</span><br />
+			<strong>Color Depth:</strong> <span class="jsdetection color-depth">Enable JavaScript to detect color depth.</span><br />
 		</p>
 
 
 		<h3>Miscellaneous</h3>
 		<p class="miscellaneous-info">
-			<strong>JavaScript:</strong> <span class="javascript-enabled">Disabled</span><br/>
-			<strong>Cookies:</strong> <span class="jsdetection cookies-enabled">Enable JavaScript to detect cookies.</span><br/>
-			<strong>Flash:</strong> <span class="jsdetection flashversion">Enable JavaScript to detect flash version.</span><br/>
+			<strong>JavaScript:</strong> <span class="javascript-enabled">Disabled</span><br />
+			<strong>Cookies:</strong> <span class="jsdetection cookies-enabled">Enable JavaScript to detect cookies.</span><br />
+			<strong>Flash:</strong> <span class="jsdetection flashversion">Enable JavaScript to detect flash version.</span><br />
 		</p>
 
 
 		<h3>Location</h3>
 		<p>
-			<strong>Coordinates:</strong> <span class="jsdetection coord">Enable JavaScript to detect coordinates.</span><br/>
-			<strong>City:</strong> <span class="jsdetection address">Enable JavaScript to detect city.</span><br/>
-			<strong>Closest Business:</strong> <span class="jsdetection actualplace">Enable JavaScript to detect registerred location.</span><br/>
-			<strong>Location Accuracy:</strong> <span class="jsdetection locacc">Enable JavaScript to detect accuracy.</span><br/>
+			<strong>Coordinates:</strong> <span class="jsdetection coord">Enable JavaScript to detect coordinates.</span><br />
+			<strong>City:</strong> <span class="jsdetection address">Enable JavaScript to detect city.</span><br />
+			<strong>Closest Business:</strong> <span class="jsdetection actualplace">Enable JavaScript to detect registerred location.</span><br />
+			<strong>Location Accuracy:</strong> <span class="jsdetection locacc">Enable JavaScript to detect accuracy.</span><br />
 		</p>
 		<div id="test_map_canvas" class="googlemaptester"></div>
 

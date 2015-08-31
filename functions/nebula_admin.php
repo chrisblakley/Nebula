@@ -37,7 +37,7 @@ function nebula_admin_body_classes($classes){
 }
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ){
+if ( !nebula_admin_bar_enabled() ){
 	add_action('wp_print_scripts', 'dequeue_admin_bar', 9999);
 	add_action('wp_print_styles', 'dequeue_admin_bar', 9999);
 	function dequeue_admin_bar(){
@@ -61,12 +61,12 @@ if ( nebula_settings_conditional('nebula_admin_bar', 'disabled') ){
 }
 
 //Disable Wordpress Core update notifications in WP Admin
-if ( nebula_settings_conditional('nebula_wp_core_updates_notify', 'disabled') ){
+if ( nebula_options_conditional('nebula_wp_core_updates_notify', 'disabled') ){
 	add_filter('pre_site_transient_update_core', create_function('$a', "return null;"));
 }
 
 //Show update warning on Wordpress Core/Plugin update admin pages
-if ( nebula_settings_conditional('nebula_plugin_update_warning') ){
+if ( nebula_options_conditional('nebula_plugin_update_warning') ){
 	if ( $pagenow == 'plugins.php' ){
 		add_action('admin_notices', 'plugin_warning');
 		function plugin_warning(){
@@ -97,7 +97,6 @@ remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
 //Custom login screen
 add_action('login_head', 'custom_login_css');
 function custom_login_css(){
-	//Only use BG image and animation on direct requests (disable for iframe logins after session timeouts).
 	if ( empty($_POST['signed_request']) ){
 	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $GLOBALS['ga'] . "', 'auto');</script>";
 	}
@@ -116,7 +115,7 @@ function new_wp_login_title(){
 }
 
 //Welcome Panel
-if ( nebula_settings_conditional('nebula_welcome_panel') ){
+if ( nebula_options_conditional('nebula_welcome_panel') ){
 	remove_action('welcome_panel','wp_welcome_panel');
 	add_action('welcome_panel','nebula_welcome_panel');
 	function nebula_welcome_panel(){
@@ -127,7 +126,7 @@ if ( nebula_settings_conditional('nebula_welcome_panel') ){
 }
 
 //Remove unnecessary Dashboard metaboxes
-if ( nebula_settings_conditional('nebula_unnecessary_metaboxes') ){
+if ( nebula_options_conditional('nebula_unnecessary_metaboxes') ){
 	add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
 	function remove_dashboard_metaboxes(){
 		//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
@@ -149,7 +148,7 @@ function skip_extensions(){
 
 //TODO Metabox
 //This metabox tracks TODO messages throughout development.
-if ( nebula_settings_conditional('nebula_todo_metabox') ){
+if ( nebula_options_conditional('nebula_todo_metabox') ){
 	if ( is_dev() ){
 		add_action('wp_dashboard_setup', 'todo_metabox');
 	}
@@ -259,8 +258,8 @@ if ( nebula_settings_conditional('nebula_todo_metabox') ){
 
 
 //Developer Info Metabox
-//If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Settings).
-if ( nebula_settings_conditional('nebula_dev_metabox') ){
+//If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
+if ( nebula_options_conditional('nebula_dev_metabox') ){
 	if ( is_dev() ){
 		add_action('wp_dashboard_setup', 'dev_info_metabox');
 	}
@@ -293,7 +292,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 			$domain_registrar_html .= '</li>';
 		}
 
-		if ( nebula_settings_conditional('nebula_domain_exp', 'enabled') ){
+		if ( nebula_options_conditional('nebula_domain_exp', 'enabled') ){
 			if ( get_option('nebula_domain_expiration_alert') == 'Never' || get_option('nebula_domain_expiration_alert') < strtotime('-2 weeks') ){
 				if ( $domain_exp != 'December 31, 1969' && $domain_exp_unix > strtotime("3/27/1986")  ){
 					if ( $domain_exp_unix < strtotime('+1 week') ){ //If domain is expiring within a week, email all admin users.
@@ -432,7 +431,7 @@ if ( nebula_settings_conditional('nebula_dev_metabox') ){
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small title="' . $last_file_path . '" style="cursor: help;">(' . $last_filename . ')</small></li>';
 		echo '</ul>';
-		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br/>';
+		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
 		echo '<div class="search_results"></div>';
 	}
 }
@@ -462,7 +461,7 @@ function search_theme_files(){
 		die();
 	}
 
-	echo '<p class="resulttext">Search results for <strong>"' . $searchTerm . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br/>';
+	echo '<p class="resulttext">Search results for <strong>"' . $searchTerm . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br />';
 
 	$file_counter = 0;
 	$instance_counter = 0;
@@ -494,7 +493,7 @@ function search_theme_files(){
 		    }
 		}
 	}
-	echo '<br/><p class="resulttext">Found ';
+	echo '<br /><p class="resulttext">Found ';
 	if ( $instance_counter ){
 		echo '<strong>' . $instance_counter . '</strong> instances in ';
 	}
@@ -673,7 +672,7 @@ function nebula_help_tabs(){
 			'content' => '
 				<h2>Nebula Overview</h2>
 				<p>' . $youarehere . '<strong><a class="nebula_help_link" href="' . get_admin_url() . '">Dashboard</a></strong> - Nebula help content coming soon.</p>
-				<p><strong><a class="nebula_help_link" href="' . get_admin_url() . 'themes.php?page=nebula_settings">Settings</a></strong> - Nebula help content coming soon.</p>
+				<p><strong><a class="nebula_help_link" href="' . get_admin_url() . 'themes.php?page=nebula_options">Options</a></strong> - Nebula help content coming soon.</p>
 				<p><strong>Shortcodes</strong> - Nebula help content coming soon.</p>
 			',
 		));

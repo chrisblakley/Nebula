@@ -97,60 +97,76 @@ function check_referrer(){
 	}
 }
 
-//Check referrer for known spambots
+//Check referrer for known spambots and blacklisted domains
 //Traffic will be sent a 403 Forbidden error and never be able to see the site.
 //Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering).
 //Sometimes spambots target sites without actually visiting. Discovering these and filtering them using GA is important too!
 //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
-add_action('wp_loaded', 'nebula_spambot_prevention');
-function nebula_spambot_prevention(){
-	$spambot_blacklist = get_transient('nebula_spambot_blacklist');
-	if ( empty($spambot_blacklist) || is_debug() ){
+add_action('wp_loaded', 'nebula_domain_prevention');
+function nebula_domain_prevention(){
+
+	$domain_blacklist = get_transient('nebula_domain_blacklist');
+	if ( empty($domain_blacklist) || is_debug() ){
 		/*
 			Good spambot blacklists:
 				https://gist.github.com/chrisblakley/e31a07380131e726d4b5 (raw: https://gist.githubusercontent.com/chrisblakley/e31a07380131e726d4b5/raw/common_referral_spambots.txt)
 				https://github.com/piwik/referrer-spam-blacklist/blob/master/spammers.txt (raw: https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt)
 		*/
-		$spambot_blacklist = file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
-		set_transient('nebula_spambot_blacklist', $spambot_blacklist, 60*60); //1 hour cache
+
+		$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
+		if ( $domain_blacklist !== false ){
+			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60); //1 hour cache
+		}
 	}
 
-	if ( strlen($spambot_blacklist) > 0 ){
-		$GLOBALS['spambot_domains'] = array();
-		foreach( explode("\n", $spambot_blacklist) as $line ){ //@TODO "Nebula" 0: continue; if empty line.
-			$GLOBALS['spambot_domains'][] = $line;
+	if ( $domain_blacklist !== false && strlen($domain_blacklist) > 0 ){
+		$GLOBALS['domain_blacklist'] = array();
+		foreach( explode("\n", $domain_blacklist) as $line ){ //@TODO "Nebula" 0: continue; if empty line.
+			$GLOBALS['domain_blacklist'][] = $line;
 		}
 
-		if ( count($GLOBALS['spambot_domains']) > 1 ){
-			if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $GLOBALS['spambot_domains']) ){
-				ga_send_event('Security Precaution', 'Spambot Prevention', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+		//Additional blacklisted domains
+		$additional_blacklisted_domains = array(
+			//'secureserver.net',
+		);
+		$GLOBALS['domain_blacklist'] = array_merge($GLOBALS['domain_blacklist'], $additional_blacklisted_domains);
+
+		if ( count($GLOBALS['domain_blacklist']) > 1 ){
+			if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $GLOBALS['domain_blacklist']) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 				header('HTTP/1.1 403 Forbidden');
 				die;
 			}
 
-			if ( isset($_SERVER['REMOTE_HOST']) && contains(strtolower($_SERVER['REMOTE_HOST']), $GLOBALS['spambot_domains']) ){
-				ga_send_event('Security Precaution', 'Spambot Prevention', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+			if ( isset($_SERVER['REMOTE_HOST']) && contains(strtolower($_SERVER['REMOTE_HOST']), $GLOBALS['domain_blacklist']) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 				header('HTTP/1.1 403 Forbidden');
 				die;
 			}
 
-			if ( isset($_SERVER['SERVER_NAME']) && contains(strtolower($_SERVER['SERVER_NAME']), $GLOBALS['spambot_domains']) ){
-				ga_send_event('Security Precaution', 'Spambot Prevention', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (Bot IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+			if ( isset($_SERVER['SERVER_NAME']) && contains(strtolower($_SERVER['SERVER_NAME']), $GLOBALS['domain_blacklist']) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				header('HTTP/1.1 403 Forbidden');
+				die;
+			}
+
+			if ( isset($_SERVER['REMOTE_ADDR']) && contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $GLOBALS['domain_blacklist']) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 				header('HTTP/1.1 403 Forbidden');
 				die;
 			}
 		} else {
-			ga_send_event('Security Precaution', 'Error', 'common_referral_spambots.txt has no entries!');
+			ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
 		}
 
 		//Use this to generate a regex string of common referral spambots (or a custom passes array of strings). Unfortunately Google Analytics limits filters to 255 characters.
 		function nebula_spambot_regex($domains=null){
-			$domains = ( $domains )? $domains : $GLOBALS['spambot_domains'];
+			$domains = ( $domains )? $domains : $GLOBALS['domain_blacklist'];
 			$domains = str_replace(array('.', '-'), array('\.', '\-'), $domains);
 			return implode("|", $domains);
 		}
 	} else {
-		ga_send_event('Security Precaution', 'Error', 'common_referral_spambots.txt is not a file!');
+		ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
 	}
 }
 

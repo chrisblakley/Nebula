@@ -38,12 +38,12 @@
 
 <div class="row">
 	<div class="sixteen columns">
-		<hr/>
+		<hr />
 		<div id="facebook-connect" style="margin-top: 15px;">
 			<p><strong>Connect with Facebook to see how the banner can obtain user information too:</strong></p>
 			<?php nebula_facebook_link(); ?>
 		</div>
-		<hr/>
+		<hr />
 	</div><!--/columns-->
 </div><!--/row-->
 

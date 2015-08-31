@@ -27,7 +27,7 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 	.index-php .welcome-panel-content {margin: 0;}
 		.index-php .welcome-panel .about-description {font-size: 13px;}
 			.index-php .welcome-panel h4 {/* margin-top: 8px; */}
-			.index-php .welcome-panel li {color: #444; font-size: 13px;}
+			.index-php .welcome-panel li {color: #444; font-size: 13px; padding-bottom: 0;}
 				.index-php .welcome-panel li strong {color: #000;}
 	.admin-user-info {text-transform: capitalize;}
 
@@ -64,8 +64,8 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 
 li.comment-count {display: none;}
 
-.appearance_page_nebula_settings .form-table th {width: 300px;}
-.appearance_page_nebula_settings textarea {width: 392px; height: 60px; resize: vertical; font-size: 12px;}
+.appearance_page_nebula_options .form-table th {width: 300px;}
+.appearance_page_nebula_options textarea {width: 392px; height: 60px; resize: vertical; font-size: 12px;}
 
 .form-table .helper {padding: 0 10px; margin: 10px 0; background: #f9f9f9; border-radius: 8px;}
 

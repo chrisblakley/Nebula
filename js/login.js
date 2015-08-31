@@ -1,9 +1,8 @@
 jQuery.noConflict();
-
-jQuery(document).ready(function() {
+jQuery(document).on('ready', function(){
 
 	getQueryStrings();
-	if ( GET('killall') || GET('kill') || GET('die') ) {
+	if ( GET('killall') || GET('kill') || GET('die') ){
 		throw ' (Manually terminated login.js)';
 	}
 
@@ -15,17 +14,17 @@ jQuery(document).ready(function() {
 		ga('send', 'event', 'Password Reset', 'User: ' + resetUser);
 	});
 
-	if ( jQuery('.flag').is('*') ) {
+	if ( jQuery('.flag').is('*') ){
 		nebulaLoadCSS(bloginfo['template_directory'] + '/css/flags.css');
 	}
 
 }); //End Document Ready
 
 
-jQuery(window).on('load', function() {
+jQuery(window).on('load', function(){
 
 	//Don't animate the modal on error/message pages
-	if( jQuery('#login_error').length || jQuery('#login .message').length ) {
+	if( jQuery('#login_error').length || jQuery('#login .message').length ){
 		jQuery('#login').css('display', 'block');
 	} else {
 		jQuery('#login').fadeIn(750);
@@ -60,7 +59,6 @@ function GET(query){
 	}
 	return false;
 }
-
 
 //Dynamically load CSS files using JS
 function nebulaLoadCSS(url){

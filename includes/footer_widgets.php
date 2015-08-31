@@ -1,3 +1,10 @@
+<?php
+	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+		die('Error 403: Forbidden.');
+	}
+?>
+
 <?php if ( footerWidgetCounter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
 	<div class="container footerwidgets">
 		<div class="row">

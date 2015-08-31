@@ -19,7 +19,7 @@
 			<?php if ( nebula_is_browser('ie') ): ?>
 				Is it less than IE10? <strong><?php echo ( nebula_is_browser('ie', 10, '<') )? 'Yes' : 'No'; ?></strong>
 			<?php elseif ( nebula_is_browser('chrome') ): ?>
-				Is it less than Chrome 44? <strong><?php echo ( nebula_is_browser('chrome', 43, 'lt') )? 'Yes' : 'No'; ?></strong><br/>
+				Is it less than Chrome 44? <strong><?php echo ( nebula_is_browser('chrome', 43, 'lt') )? 'Yes' : 'No'; ?></strong><br />
 			<?php elseif ( nebula_is_browser('firefox') ): ?>
 				Is it less than Firefox 35? <strong><?php echo ( nebula_is_browser('firefox', 38, '<') )? 'Yes' : 'No'; ?></strong>
 			<?php elseif ( nebula_is_browser('safari') ): ?>
@@ -29,10 +29,10 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/>
+<br />
 <div class="row">
 	<div class="sixteen columns">
-		<hr/>
+		<hr />
 		<p>See all data Nebula can see - <a href="https://gearside.com/nebula/documentation/utilities/environment-feature-detection/">Full environment detection &raquo;</a></p>
 	</div><!--/columns-->
 </div><!--/row-->

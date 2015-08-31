@@ -18,7 +18,7 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/><br/>
+<br /><br />
 
 <h3>"no-equalize" on third column (cyan)</h3>
 <div class="row equalize">

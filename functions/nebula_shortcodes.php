@@ -148,7 +148,7 @@ add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){
 	extract( shortcode_atts(array('type'=>'', 'color'=>'inherit', 'size'=>'inherit', 'class'=>''), $atts) );
 	if (strpos($type, 'fa-') !== false){
-	    $fa = 'fa ';
+	    $fa = 'fa fa-fw ';
 	}
 	$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
 	$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
@@ -183,7 +183,7 @@ function button_shortcode($atts, $content=''){
 		$target = ' target="' . $target . '"';
 	}
 
-	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . ' ' . $class . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
+	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . ' ' . $class . '" style="' . $style . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
 } //end button_shortcode()
 
 

@@ -175,7 +175,7 @@ get_header(); ?>
 <div class="row">
 	<div class="sixteen columns">
 		<?php the_breadcrumb(); ?>
-		<hr/>
+		<hr />
 	</div><!--/columns-->
 </div><!--/row-->
 

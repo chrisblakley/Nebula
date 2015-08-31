@@ -76,7 +76,7 @@
 				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 50 )? '<p>' . $domain_registrar . '</p>': '<p>Registrar Not Detected</p>';
 			}
 
-			echo '<br/><h3>Detected Domain Registrar</h3>' . $domain_registrar_html;
+			echo '<br /><h3>Detected Domain Registrar</h3>' . $domain_registrar_html;
 
 
 			//Get Reseller Name
@@ -93,12 +93,12 @@
 
 			if ( $domain_reseller && $domain_reseller != '' ) {
 				$domain_reseller_html = ( $domain_reseller && strlen($domain_reseller) < 30 )? '<p>' . $domain_reseller . '</p>': '<p>Reseller Not Detected</p>';
-				echo '<br/><h3>Detected Domain Reseller</h3>' . $domain_reseller_html;
+				echo '<br /><h3>Detected Domain Reseller</h3>' . $domain_reseller_html;
 			}
 
 
 
-			echo '<br/><h3>Full WHOIS Detection</h3><p>' . str_replace("\n", '<br/>', $whois) . '</p>';
+			echo '<br /><h3>Full WHOIS Detection</h3><p>' . str_replace("\n", '<br />', $whois) . '</p>';
 
 			exit();
 		}
@@ -191,7 +191,7 @@
 <div class="row">
 	<div class="sixteen columns">
 
-		<br/>
+		<br />
 		<h2>WHOIS Tester</h2>
 		<p>Enter a domain to see what WHOIS data is detected.</p>
 

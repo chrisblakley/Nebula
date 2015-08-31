@@ -70,7 +70,7 @@ function extra_profile_fields($user){ ?>
 				<?php if ( get_the_author_meta('headshot_url', $user->ID) ): ?>
 					<input id="headshot_remove" type="button" class="button" value="Remove headshot" />
 				<?php endif; ?>
-				<br/><span class="description">Please select "Full Size" when choosing the headshot.</span>
+				<br /><span class="description">Please select "Full Size" when choosing the headshot.</span>
 			</td>
 		</tr>
 		<tr>

@@ -1,9 +1,8 @@
 jQuery.noConflict();
-
-jQuery(window).on('load', function() {
+jQuery(window).on('load', function(){
 
 	iframe = document.getElementById("content_ifr");
-	if ( typeof iframe !== 'undefined' ) {
+	if ( typeof iframe !== 'undefined' ){
 		win = iframe.contentWindow;
 		doc = win.document;
 	}
@@ -14,23 +13,23 @@ jQuery(window).on('load', function() {
 /*==========================
  Nebula TinyMCE Toolbar
  ===========================*/
-(function() {
+(function(){
 	tinymce.create('tinymce.plugins.nebulatoolbar', {
-		init : function(ed, url) {
+		init : function(ed, url){
 			ed.addButton('nebulaaccordion', {
 				title: 'Insert Accordion',
 				image: bloginfo['template_directory'] + '/images/admin/nebulaaccordion.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
-					ed.selection.setContent('[accordion type="single"]<br/>[accordion_item title="TITLE_HERE" default="open"]CONTENT_HERE[/accordion_item]<br/>[/accordion]');
+					ed.selection.setContent('[accordion type="single"]<br />[accordion_item title="TITLE_HERE" default="open"]CONTENT_HERE[/accordion_item]<br />[/accordion]');
 				}
 			}),
 			ed.addButton('nebulabio', {
 				title: 'Insert Bio',
 				image: bloginfo['template_directory'] + '/images/admin/nebulabio.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
 					ed.selection.setContent('[bio]');
 				}
@@ -39,7 +38,7 @@ jQuery(window).on('load', function() {
 				title: 'Insert Button',
 				image: bloginfo['template_directory'] + '/images/admin/nebulabutton.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
 					ed.selection.setContent('[button size=medium type=primary pretty icon=icon-mail href=http://pinckneyhugo.com/ target=_blank]Click Here[/button]');
 				}
@@ -48,7 +47,7 @@ jQuery(window).on('load', function() {
 				title : 'Insert Clear',
 				image : bloginfo['template_directory'] + '/images/admin/nebulaclear.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
 					ed.selection.setContent('[clear]');
 				}
@@ -60,14 +59,14 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				menu: [{
 					text: 'Tag',
-					onclick : function() {
-						if (win.getSelection) {
+					onclick : function(){
+						if ( win.getSelection ){
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ) {
+						if ( typeof selectedText != undefined && selectedText != '' ){
 							ed.selection.setContent('[code]' + selectedText + '[/code]');
 						} else {
 							ed.selection.setContent('[code]CONTENT_HERE[/code]');
@@ -75,14 +74,14 @@ jQuery(window).on('load', function() {
 					}
 				}, {
 					text: 'Pre',
-					onclick : function() {
-						if (win.getSelection) {
+					onclick : function(){
+						if ( win.getSelection ){
 							var selectedText = win.getSelection().toString();
-						} else if (doc.selection && doc.selection.createRange) {
+						} else if (doc.selection && doc.selection.createRange){
 							var selectedText = doc.selection.createRange().text;
 						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ) {
+						if ( typeof selectedText != undefined && selectedText != '' ){
 							ed.selection.setContent('[pre lang=LANGUAGE]' + selectedText + '[/pre]');
 						} else {
 							ed.selection.setContent('[pre lang=LANGUAGE]CONTENT_HERE[/pre]');
@@ -90,7 +89,7 @@ jQuery(window).on('load', function() {
 					}
 				}, {
 					text: 'Gist',
-					onclick : function() {
+					onclick : function(){
 						ed.focus();
 						ed.selection.setContent('[gist file=FILENAME lang=LANGUAGE]URL[/gist]');
 					}
@@ -100,14 +99,14 @@ jQuery(window).on('load', function() {
 				title : 'Insert Div',
 				image : bloginfo['template_directory'] + '/images/admin/nebuladiv.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
-					if (win.getSelection) {
+				onclick : function(){
+					if ( win.getSelection ){
 						var selectedText = win.getSelection().toString();
-					} else if (doc.selection && doc.selection.createRange) {
+					} else if ( doc.selection && doc.selection.createRange ){
 						var selectedText = doc.selection.createRange().text;
 					}
 					ed.focus();
-					if ( typeof selectedText != undefined && selectedText != '' ) {
+					if ( typeof selectedText != undefined && selectedText != '' ){
 						ed.selection.setContent('[div class="CLASSES" style=STYLES]' + selectedText + '[/div]');
 					} else {
 						ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]');
@@ -121,14 +120,14 @@ jQuery(window).on('load', function() {
 				classes : 'widget btn nebula-icon',
 				menu: [{
 					text: 'Colgrid',
-					onclick : function() {
-						if (win.getSelection) {
+					onclick : function(){
+						if ( win.getSelection ){
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ) {
+						if ( typeof selectedText != undefined && selectedText != '' ){
 							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + selectedText + '[/colspan]');
 						} else {
 							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]');
@@ -137,13 +136,13 @@ jQuery(window).on('load', function() {
 				}, {
 					text: 'Container',
 					onclick : function() {
-						if (win.getSelection) {
+						if ( win.getSelection ){
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ) {
+						if ( typeof selectedText != undefined && selectedText != '' ){
 							ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + selectedText + '[/container]');
 						} else {
 							ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]');
@@ -152,13 +151,13 @@ jQuery(window).on('load', function() {
 				}, {
 					text: 'Row',
 					onclick : function() {
-						if (win.getSelection) {
+						if ( win.getSelection ){
 							var selectedText = win.getSelection().toString();
 						} else if (doc.selection && doc.selection.createRange) {
 							var selectedText = doc.selection.createRange().text;
 						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ) {
+						if ( typeof selectedText != undefined && selectedText != '' ){
 							ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + selectedText + '[/row]');
 						} else {
 							ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]');
@@ -166,14 +165,14 @@ jQuery(window).on('load', function() {
 					}
 				}, {
 					text: 'Column',
-					onclick : function() {
-						if (win.getSelection) {
+					onclick : function(){
+						if ( win.getSelection ){
 							var selectedText = win.getSelection().toString();
-						} else if (doc.selection && doc.selection.createRange) {
+						} else if ( doc.selection && doc.selection.createRange ){
 							var selectedText = doc.selection.createRange().text;
 						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ) {
+						if ( typeof selectedText != undefined && selectedText != '' ){
 							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + selectedText + '[/columns]');
 						} else {
 							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]');
@@ -186,7 +185,7 @@ jQuery(window).on('load', function() {
 				type: 'splitbutton',
 				icon: 'nebulaicon',
 				classes : 'widget btn colorbutton nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
 					ed.selection.setContent('[icon type=icon-home color=COLOR size=SIZE class="CLASSES"]');
 				},
@@ -206,7 +205,7 @@ jQuery(window).on('load', function() {
 				title : 'Insert Line',
 				image : bloginfo['template_directory'] + '/images/admin/nebulaline.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
 					ed.selection.setContent('[line space=5]');
 				}
@@ -216,31 +215,31 @@ jQuery(window).on('load', function() {
 				type: 'splitbutton',
 				icon : 'nebulamap',
 				classes : 'widget btn colorbutton nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
 					ed.selection.setContent('[map q="Pinckney Hugo Group"]');
 				},
 				menu: [{
 					text: 'Place',
-					onclick : function() {
+					onclick : function(){
 						ed.focus();
 						ed.selection.setContent('[map q="Pinckney Hugo Group"]');
 					}
 				}, {
 					text: 'Directions',
-					onclick : function() {
+					onclick : function(){
 						ed.focus();
 						ed.selection.setContent('[map mode=directions origin="Pinckney Hugo Group" destination="Destiny USA"]');
 					}
 				}, {
 					text: 'Search',
-					onclick : function() {
+					onclick : function(){
 						ed.focus();
 						ed.selection.setContent('[map mode=search q="Food in Syracuse, NY"]');
 					}
 				}, {
 					text: 'View',
-					onclick : function() {
+					onclick : function(){
 						ed.focus();
 						ed.selection.setContent('[map mode=view center="43.0536364,-76.1657063" zoom=19 maptype=satellite]');
 					}
@@ -250,16 +249,16 @@ jQuery(window).on('load', function() {
 				title : 'Insert Slider',
 				image : bloginfo['template_directory'] + '/images/admin/nebulaslider.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
-					ed.selection.setContent('[slider frame status]<br/>[slide title="TITLE_HERE" link=http://www.pinckneyhugo.com target=_blank]IMAGE_URL_HERE[/slide]<br/>[/slider]');
+					ed.selection.setContent('[slider frame status]<br />[slide title="TITLE_HERE" link=http://www.pinckneyhugo.com target=_blank]IMAGE_URL_HERE[/slide]<br />[/slider]');
 				}
 			}),
 			ed.addButton('nebulaspace', {
 				title : 'Insert Vertical Space',
 				image : bloginfo['template_directory'] + '/images/admin/nebulaspace.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
+				onclick : function(){
 					ed.focus();
 					ed.selection.setContent('[space height=25]');
 				}
@@ -268,14 +267,14 @@ jQuery(window).on('load', function() {
 				title: 'Insert Tooltip',
 				image: bloginfo['template_directory'] + '/images/admin/nebulatooltip.png',
 				classes : 'widget btn nebula-icon',
-				onclick : function() {
-					if (win.getSelection) {
+				onclick : function(){
+					if ( win.getSelection ){
 						var selectedText = win.getSelection().toString();
-					} else if (doc.selection && doc.selection.createRange) {
+					} else if ( doc.selection && doc.selection.createRange ){
 						var selectedText = doc.selection.createRange().text;
 					}
 					ed.focus();
-					if ( typeof selectedText != undefined && selectedText != '' ) {
+					if ( typeof selectedText != undefined && selectedText != '' ){
 						ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]' + selectedText + '[/tooltip]');
 					} else {
 						ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]CONTENT[/tooltip]');
@@ -306,7 +305,7 @@ jQuery(window).on('load', function() {
 				}]
 			});
 		},
-		createControl : function(n, cm) {
+		createControl : function(n, cm){
 			return null;
 		}
 	});

@@ -17,9 +17,9 @@
 							<h2 class="news-title entry-title sticky-title"><i class="fa fa-thumb-tack"></i> <a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 							<div class="entry-meta">
-								<hr/>
+								<hr />
 								<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
-								<hr/>
+								<hr />
 							</div>
 
 							<div class="entry-content sticky-content">
@@ -29,9 +29,9 @@
 									<div class="container entry-manage">
 										<div class="row">
 											<div class="sixteen columns">
-												<hr/>
+												<hr />
 												<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-												<hr/>
+												<hr />
 											</div><!--/columns-->
 										</div>
 									</div>

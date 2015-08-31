@@ -147,7 +147,7 @@
 <div class="row">
 	<div class="sixteen columns">
 		<p>Enter values below and the campaign URL will generate automatically. Click the <i class="fa fa-question-circle"></i> links for a description of the field and examples.</p>
-		<br/>
+		<br />
 	</div><!--/columns-->
 </div><!--/row-->
 
@@ -169,7 +169,7 @@
 					<span>
 						<input type="text" id="campaign-source" class="builderinput text input builderrequired">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> The source of the campaign such as a search engine, newsletter name, or referrer.<br/>Examples: google, facebook, newsletter 4, coupon</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> The source of the campaign such as a search engine, newsletter name, or referrer.<br />Examples: google, facebook, newsletter 4, coupon</p>
 				</li>
 
 				<li class="field">
@@ -177,7 +177,7 @@
 					<span>
 						<input type="text" id="campaign-medium" class="builderinput text input builderrequired">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> The medium of the campaign such as email, or cost-per-click.<br/>Examples: cpc, banner, email, retargeting, display</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> The medium of the campaign such as email, or cost-per-click.<br />Examples: cpc, banner, email, retargeting, display</p>
 				</li>
 
 				<li class="field">
@@ -193,7 +193,7 @@
 					<span>
 						<input type="text" id="campaign-content" class="builderinput text input">
 					</span>
-					<p class="inputhelp-description"><em>(Optional)</em> Used for differentiating ads/links that point to the same URL.<br/>Examples: buffalo, ottawa, syracuse, logo link, text link</p>
+					<p class="inputhelp-description"><em>(Optional)</em> Used for differentiating ads/links that point to the same URL.<br />Examples: buffalo, ottawa, syracuse, logo link, text link</p>
 				</li>
 
 				<li class="field">
@@ -201,7 +201,7 @@
 					<span>
 						<input type="text" id="campaign-name" class="builderinput text input builderrequired">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> Used for identifying a specific promotion or campaign.<br/>Examples: clearance sale, promo code, slogan</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> Used for identifying a specific promotion or campaign.<br />Examples: clearance sale, promo code, slogan</p>
 				</li>
 			</ul>
 		</form>
@@ -220,13 +220,13 @@
 			</li>
 		</ul>
 
-		<p class="example-report hidden">How traffic from this link would appear in Google Analytics:<br/>
-			<strong>Acquisition > All Traffic: </strong> "<span class="ex-source"></span> / <span class="ex-medium"></span>"<br/>
+		<p class="example-report hidden">How traffic from this link would appear in Google Analytics:<br />
+			<strong>Acquisition > All Traffic: </strong> "<span class="ex-source"></span> / <span class="ex-medium"></span>"<br />
 			<strong>Acquisition > Campaigns:</strong> "<span class="ex-name"></span>"
 		</p>
 
-		<br/>
-		<br/>
+		<br />
+		<br />
 
 		<ul id="lastcampaignurl">
 			<li class="field">
@@ -242,12 +242,12 @@
 
 <div class="row">
 	<div class="sixteen columns">
-		<br/>
-		<hr/>
+		<br />
+		<hr />
 
 		<h2>Google Analytics Campaign Tracking FAQ</h2>
 
-		<br/>
+		<br />
 
 		<p class="faq">
 			<span class="question">What does "UTM" stand for?</span>

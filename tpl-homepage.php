@@ -35,9 +35,9 @@ get_header(); ?>
 						<?php if ( current_user_can('manage_options') ): ?>
 							<div class="container entry-manage">
 								<div class="row">
-									<hr/>
+									<hr />
 									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr/>
+									<hr />
 								</div>
 							</div>
 						<?php endif; ?>

@@ -14,7 +14,7 @@ get_header(); ?>
 <div class="row">
 	<div class="sixteen columns">
 		<?php the_breadcrumb(); ?>
-		<hr/>
+		<hr />
 	</div><!--/columns-->
 </div><!--/row-->
 
@@ -36,9 +36,9 @@ get_header(); ?>
 						<?php if ( current_user_can('manage_options') ): ?>
 							<div class="container entry-manage">
 								<div class="row">
-									<hr/>
+									<hr />
 									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr/>
+									<hr />
 								</div>
 							</div>
 						<?php endif; ?>

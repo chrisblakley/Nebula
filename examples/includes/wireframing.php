@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/wireframing.css" />
 
-<?php if ( nebula_settings_conditional('nebula_wireframing') == 'disabled' || nebula_settings_conditional('nebula_wireframing') == 'default' ) : ?>
-	<p style="background: maroon; color: #fff; padding: 10px 15px;"><strong>Warning:</strong> Wireframing is currently <strong>disabled</strong> in this instance of WordPress. JavaScript functions will not work unless it is re-enabled on the Nebula Settings page.</p>
+<?php if ( nebula_options_conditional('nebula_wireframing') == 'disabled' || nebula_options_conditional('nebula_wireframing') == 'default' ) : ?>
+	<p style="background: maroon; color: #fff; padding: 10px 15px;"><strong>Warning:</strong> Wireframing is currently <strong>disabled</strong> in this instance of WordPress. JavaScript functions will not work unless it is re-enabled on the Nebula Options page.</p>
 <?php endif; ?>
 
 <div class="row" style="background: #0098d7; color: #fff; padding: 10px 15px;">
@@ -11,9 +11,9 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/><br/>
-<hr/>
-<br/><br/>
+<br /><br />
+<hr />
+<br /><br />
 
 <!-- Component -->
 <div class="row">
@@ -26,8 +26,8 @@
 
 		<h2>Parameters</h2>
 		<p>
-			<strong>$name</strong> (string) (required) The name of the component. Default: <em>Component</em><br/>
-			<strong>$icon</strong> (string) (optional) A Font Awesome icon to use next to the component name. Can be an empty string for no icon. Default: <em>fa-cube</em><br/>
+			<strong>$name</strong> (string) (required) The name of the component. Default: <em>Component</em><br />
+			<strong>$icon</strong> (string) (optional) A Font Awesome icon to use next to the component name. Can be an empty string for no icon. Default: <em>fa-cube</em><br />
 		</p>
 
 		<h2>Example</h2>
@@ -40,9 +40,9 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/><br/>
-<hr/>
-<br/><br/>
+<br /><br />
+<hr />
+<br /><br />
 
 <!-- Component Start/End -->
 <div class="row">
@@ -55,8 +55,8 @@
 
 		<h2>Parameters</h2>
 		<p>
-			<strong>$name</strong> (string) (required) The name of the component. Default: <em>Component</em><br/>
-			<strong>$icon</strong> (string) (optional) A Font Awesome icon to use next to the component name. Can be an empty string for no icon. Default: <em>fa-cube</em><br/>
+			<strong>$name</strong> (string) (required) The name of the component. Default: <em>Component</em><br />
+			<strong>$icon</strong> (string) (optional) A Font Awesome icon to use next to the component name. Can be an empty string for no icon. Default: <em>fa-cube</em><br />
 		</p>
 
 		<h2>Example</h2>
@@ -73,9 +73,9 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/><br/>
-<hr/>
-<br/>
+<br /><br />
+<hr />
+<br />
 
 <div class="row" style="background: #0098d7; color: #fff; padding: 10px 15px; margin-top: 50px;">
 	<div class="sixteen columns">
@@ -84,7 +84,7 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/><br/>
+<br /><br />
 
 <!-- FPO -->
 <div class="row">
@@ -97,14 +97,14 @@
 
 		<h2>Parameters</h2>
 		<p>
-			<strong>$title</strong> (string) (required) The text that appears in the center of the placeholder box. Default: <em>None</em><br/>
-			<strong>$description</strong> (string) (optional) The description of what this placeholder box represents. It is recommended to use double quotes around this parameter (but not required). Default: <em>None</em><br/>
-			<strong>$width</strong> (string) (optional) The width of the placeholder box. Default: <em>100%</em><br/>
-			<strong>$height</strong> (string) (optional) The height of the placeholder box. Default: <em>250px</em><br/>
-			<strong>$bg</strong> (string) (optional) The background color (or CSS style) of the box. Use "placeholder" to denote a placeholder background image. Default: <em>#ddd</em><br/>
-			<strong>$icon</strong> (string) (optional) <a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font Awesome</a> icon to appear next to the title. Can use "fa-" syntax or just the icon name. Default: <em>None</em><br/>
-			<strong>$styles</strong> (string) (optional) Additional styles to add to the element. Default: <em>None</em><br/>
-			<strong>$classes</strong> (string) (optional) Additional classes to add to the element. Default: <em>None</em><br/>
+			<strong>$title</strong> (string) (required) The text that appears in the center of the placeholder box. Default: <em>None</em><br />
+			<strong>$description</strong> (string) (optional) The description of what this placeholder box represents. It is recommended to use double quotes around this parameter (but not required). Default: <em>None</em><br />
+			<strong>$width</strong> (string) (optional) The width of the placeholder box. Default: <em>100%</em><br />
+			<strong>$height</strong> (string) (optional) The height of the placeholder box. Default: <em>250px</em><br />
+			<strong>$bg</strong> (string) (optional) The background color (or CSS style) of the box. Use "placeholder" to denote a placeholder background image. Default: <em>#ddd</em><br />
+			<strong>$icon</strong> (string) (optional) <a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font Awesome</a> icon to appear next to the title. Can use "fa-" syntax or just the icon name. Default: <em>None</em><br />
+			<strong>$styles</strong> (string) (optional) Additional styles to add to the element. Default: <em>None</em><br />
+			<strong>$classes</strong> (string) (optional) Additional classes to add to the element. Default: <em>None</em><br />
 		</p>
 
 		<h2>Examples</h2>
@@ -119,9 +119,9 @@
 	</div><!--/columns-->
 </div><!--/row-->
 
-<br/><br/>
-<hr/>
-<br/><br/>
+<br /><br />
+<hr />
+<br /><br />
 
 <!-- Image -->
 <div class="row">
@@ -134,12 +134,12 @@
 
 		<h2>Parameters</h2>
 		<p>
-			<strong>$width</strong> (string) (optional) The width of the placeholder image. Default: <em>100%</em><br/>
-			<strong>$height</strong> (string) (optional) The height of the placeholder image. Default: <em>250px</em><br/>
-			<strong>$type</strong> (string) (optional) The type of placeholder image to use. Options include "none", "photo". Default: <em>"none"</em><br/>
-			<strong>$color</strong> (string) (optional) The color of the placeholder image strokes. Default: <em>"#ddd"</em><br/>
-			<strong>$styles</strong> (string) (optional) Additional styles to add to the element. Default: <em>None</em><br/>
-			<strong>$classes</strong> (string) (optional) Additional classes to add to the element. Default: <em>None</em><br/>
+			<strong>$width</strong> (string) (optional) The width of the placeholder image. Default: <em>100%</em><br />
+			<strong>$height</strong> (string) (optional) The height of the placeholder image. Default: <em>250px</em><br />
+			<strong>$type</strong> (string) (optional) The type of placeholder image to use. Options include "none", "photo". Default: <em>"none"</em><br />
+			<strong>$color</strong> (string) (optional) The color of the placeholder image strokes. Default: <em>"#ddd"</em><br />
+			<strong>$styles</strong> (string) (optional) Additional styles to add to the element. Default: <em>None</em><br />
+			<strong>$classes</strong> (string) (optional) Additional classes to add to the element. Default: <em>None</em><br />
 		</p>
 
 		<h2>Examples</h2>
@@ -154,13 +154,13 @@
 	</div>
 </div><!--/row-->
 
-<br/><br/>
-<hr/>
-<br/><br/>
+<br /><br />
+<hr />
+<br /><br />
 
 
 
 
 
 
-<br/><br/><br/><br/><br/><br/>
+<br /><br /><br /><br /><br /><br />

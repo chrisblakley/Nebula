@@ -139,8 +139,8 @@ a.icon[href$=".css"] {text-decoration: none; border-bottom: 1px dotted #30a9dc;}
 a.icon[href$=".swf"], a.icon[href$=".fla"] {text-decoration: none; border-bottom: 1px dotted #C31E24;}
 	li.icon a[href$=".swf"]:before, a.icon[href$=".swf"]:before, li.icon a[href$=".fla"]:before, a.icon[href$=".fla"]:before {content: '\f1c9'; font-family: "FontAwesome"; color: #C31E24; margin-right: 5px;}
 
-a.off {text-decoration: none; border: none;}
-	a.off:before {content: '';}
+a.off, a.no-icon, a.noicon {text-decoration: none; border: none;}
+	a.off:before, a.no-icon:before, a.noicon:before {content: '' !important; margin-right: 0 !important;}
 a.white {color: #fff;}
 	a.white:hover,
 	a.white.hover {color: #ccc;}
@@ -353,9 +353,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:hover,
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:link,
 			.ui-autocomplete.ui-widget-content li.ui-state-focus a:visited {color: #fff;}
-		.ui-autocomplete.ui-widget-content li a {display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
-			.ie .ui-autocomplete.ui-widget-content li a,
-			.edge .ui-autocomplete.ui-widget-content li a {display: inline-block;}
+		.ui-autocomplete.ui-widget-content li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; /* width: 90%; */ -webkit-transition: none; -moz-transition: none; -o-transition: none; transition: none;}
 
 #googlemap img {max-width: none;} /* Prevents glitchy UI within embedded Google maps */
 

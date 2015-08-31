@@ -150,16 +150,17 @@
 				}
 			}
 
-		   	//Hard-Coded Custom Marker
+			//Hard-Coded Custom Marker
+			//List of Google icons: https://sites.google.com/site/gmapsdevelopment/
 			//https://mt.google.com/vt/icon?psize=27&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1
 			var phg = new google.maps.LatLng('43.0536608', '-76.1656');
 			bounds.extend(phg);
 			marker = new google.maps.Marker({
-		        position: phg,
-		        icon: 'https://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
-		        clickable: false,
-		        map: map
-		    });
+				position: phg,
+				icon: 'https://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=PHG&scale=1',
+				clickable: false,
+				map: map
+			});
 
 			//Dynamic Markers (passed from getAllLocations()
 			if ( typeof mapInfo['markers'] !== 'undefined' ){
@@ -178,6 +179,7 @@
 		    }
 
 			//Detected Location Marker
+			//List of Google icons: https://sites.google.com/site/gmapsdevelopment/
 			if ( typeof nebulaLocation !== 'undefined' && mapInfo['userLocation'] ){
 				if ( nebulaLocation.coordinates.latitude != 0 ) { //Detected location is set
 					var detectLoc = new google.maps.LatLng(nebulaLocation.coordinates.latitude, nebulaLocation.coordinates.longitude);
@@ -203,6 +205,14 @@
 					bounds.extend(detectLoc);
 					//map.fitBounds(detectbounds); //Use this instead of the one below to center on detected location only (ignoring other markers)
 				}
+			}
+
+			//Don't zoom in too far on only one marker
+			if ( bounds.getNorthEast().equals(bounds.getSouthWest()) ){
+				var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat()+0.0005, bounds.getNorthEast().lng()+0.0005);
+				var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat()-0.0005, bounds.getNorthEast().lng()-0.0005);
+				bounds.extend(extendPoint1);
+				bounds.extend(extendPoint2);
 			}
 			map.fitBounds(bounds);
 			google.maps.event.trigger(map, "resize");
@@ -237,6 +247,6 @@
 		<div class="googlemapcon nebulaframe">
 			<div id="map_canvas" class="googlemap"></div>
 		</div>
-		<br/>
+		<br />
 	</div><!--/columns-->
 </div><!--/row-->

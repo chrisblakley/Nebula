@@ -11,34 +11,34 @@ function global_nebula_vars(){
 }
 
 /*==========================
- Global Nebula Settings Conditional Functions
+ Global Nebula Options Conditional Functions
  ===========================*/
 
-//Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
-function nebula_settings_conditional_text($setting, $default = ''){
-	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ){
-		return get_option($setting);
+//Determine if a function should be used based on several Nebula Options conditions (for text inputs).
+function nebula_options_conditional_text($option, $default=''){
+	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($option) ){
+		return get_option($option);
 	} else {
 		return $default;
 	}
 }
 
-//Determine if a function should be used based on several Nebula Settings conditions (for text inputs).
-function nebula_settings_conditional_text_bool($setting, $true = true, $false = false){
-	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($setting) ){
+//Determine if a function should be used based on several Nebula Options conditions (for text inputs).
+function nebula_options_conditional_text_bool($option, $true=true, $false=false){
+	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($option) ){
 		return $true;
 	} else {
 		return $false;
 	}
 }
 
-//Determine if a function should be used based on several Nebula Settings conditions (for select inputs).
-function nebula_settings_conditional($setting, $default='enabled'){
+//Determine if a function should be used based on several Nebula Options conditions (for select inputs).
+function nebula_options_conditional($option, $default='enabled'){
 	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' ){
 		return true;
 	}
 
-	if ( (strtolower(get_option($setting)) == 'default') || (strtolower(get_option($setting)) == strtolower($default)) ){
+	if ( (strtolower(get_option($option)) == 'default') || (strtolower(get_option($option)) == strtolower($default)) ){
 		return true;
 	} else {
 		return false;
@@ -46,40 +46,60 @@ function nebula_settings_conditional($setting, $default='enabled'){
 }
 
 /*==========================
- Specific Settings Functions
+ Specific Options Functions
  When using in templates these simplify the syntax to be less confusing.
  ===========================*/
 
+function nebula_admin_bar_enabled(){
+	return nebula_options_conditional('nebula_admin_bar', 'enabled');
+}
+
 function nebula_author_bios_enabled(){
-	return !nebula_settings_conditional('nebula_author_bios', 'disabled');
+	return !nebula_options_conditional('nebula_author_bios', 'disabled');
 }
 
 function nebula_adwords_enabled(){
-	return !nebula_settings_conditional('nebula_adwords', 'disabled');
+	return !nebula_options_conditional('nebula_adwords', 'disabled');
 }
 
 function nebula_comments_enabled(){
-	return !nebula_settings_conditional('nebula_comments', 'disabled');
+	return !nebula_options_conditional('nebula_comments', 'disabled');
 }
 
 function nebula_wireframing_enabled(){
-	return !nebula_settings_conditional('nebula_wireframing', 'disabled');
+	return !nebula_options_conditional('nebula_wireframing', 'disabled');
+}
+
+function nebula_google_font_option(){
+	if ( nebula_options_conditional_text_bool('nebula_google_font_url') ){
+		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', nebula_options_conditional_text('nebula_google_font_url', 'http://fonts.googleapis.com/css?family=Open+Sans:400,800'));
+	} elseif ( nebula_options_conditional_text_bool('nebula_google_font_family') ) {
+		$google_font_family = preg_replace('/ /', '+', nebula_options_conditional_text('nebula_google_font_family', 'Open Sans'));
+		$google_font_weights = preg_replace('/ /', '', nebula_options_conditional_text('nebula_google_font_weights', '400,800'));
+		$google_font = 'http://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights;
+
+		$google_font_contents = @file_get_contents($google_font); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
+		if ( $google_font_contents !== false ){
+			return $google_font;
+		}
+	}
+	return false;
 }
 
 //Initialize the Nebula Submenu
 if ( is_admin() ){
 	add_action('admin_menu', 'nebula_sub_menu');
-	add_action('admin_init', 'register_nebula_settings');
+	add_action('admin_init', 'register_nebula_options');
 }
 
 //Create the Nebula Submenu
 function nebula_sub_menu(){
-	add_theme_page('Nebula Settings', 'Nebula Settings', 'manage_options', 'nebula_settings', 'nebula_settings_page');
+	add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', 'nebula_options_page');
 }
 
 //Register each option
-function register_nebula_settings(){
-	$GLOBALS['nebula_settings_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
+function register_nebula_options(){
+	$GLOBALS['nebula_options_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
 		'nebula_overall' => 'Enabled',
 		'nebula_initialized' => '',
 		'nebula_edited_yet' => 'false',
@@ -87,6 +107,9 @@ function register_nebula_settings(){
 		'nebula_site_owner' => '',
 		'nebula_contact_email' => '',
 		'nebula_ga_tracking_id' => '',
+		'nebula_google_font_family' => '',
+		'nebula_google_font_weights' => '',
+		'nebula_google_font_url' => '',
 		'nebula_hostnames' => '',
 		'nebula_keywords' => '',
 		'nebula_phone_number' => '',
@@ -170,19 +193,18 @@ function register_nebula_settings(){
 		'nebula_mention_url' => '',
 	);
 
-	foreach ( $GLOBALS['nebula_settings_fields'] as $nebula_settings_field => $default ){
-		register_setting('nebula_settings_group', $nebula_settings_field);
+	foreach ( $GLOBALS['nebula_options_fields'] as $nebula_options_field => $default ){
+		register_setting('nebula_options_group', $nebula_options_field);
 	}
 }
 
-//Output the settings page
-function nebula_settings_page(){
+//Output the options page
+function nebula_options_page(){
 ?>
 	<style>
 		h2 .nav-tab.nav-tab-inactive {font-weight: 400;}
 
-		.dependent.override,
-		.mobiletitle.override {opacity: 0.4; pointer-events: none;}
+		.override {opacity: 0.4; pointer-events: none;}
 		.form-table th {width: 250px;}
 		a {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
 		a.help {text-decoration: none; color: #ccc;}
@@ -204,7 +226,6 @@ function nebula_settings_page(){
 		.mobiletitle {display: none;}
 
 		@media only screen and (max-width: 782px){
-
 			.form-table th {width: 100%;}
 			input[type="text"] {width: 100% !important;}
 
@@ -222,7 +243,6 @@ function nebula_settings_page(){
 
 	<script>
 		jQuery(document).ready(function(){
-
 			toggleDependents();
 
 			jQuery('a.help').on('click', function(){
@@ -284,11 +304,31 @@ function nebula_settings_page(){
 				}
 			});
 
+			//Pull content from full Google Fonts HTML
+			jQuery('#nebula_google_font_url').on('paste change blur', function(){
+				var gfInputValue = jQuery('#nebula_google_font_url').val();
+				if ( gfInputValue.indexOf('<link href=') >= 0 ){
+					var gfContent = gfInputValue.replace(/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/g, '');
+					jQuery('#nebula_google_font_url').val(gfContent);
+				}
+
+				if ( gfInputValue.trim() ){
+					jQuery('#nebula_google_font_family, #nebula_google_font_weights').addClass('override');
+				} else {
+					jQuery('#nebula_google_font_family, #nebula_google_font_weights').removeClass('override');
+				}
+			});
+			if ( jQuery('#nebula_google_font_url').val().trim() ){
+				jQuery('#nebula_google_font_family, #nebula_google_font_weights').addClass('override');
+			} else {
+				jQuery('#nebula_google_font_family, #nebula_google_font_weights').removeClass('override');
+			}
+
 		});
 	</script>
 
 	<div class="wrap">
-		<h2>Nebula Settings</h2>
+		<h2>Nebula Options</h2>
 		<?php
 			if ( current_user_can('manage_options') || is_dev() ){
 				if ( get_option('nebula_ga_tracking_id') == '' ){
@@ -301,7 +341,7 @@ function nebula_settings_page(){
 
 		<?php if ( $_GET['settings-updated'] == 'true' ): ?>
 			<div id="message" class="updated below-h2">
-				<p><strong>Nebula Settings</strong> have been updated.</p>
+				<p><strong>Nebula Options</strong> have been updated.</p>
 			</div>
 		<?php endif; ?>
 
@@ -309,29 +349,29 @@ function nebula_settings_page(){
 
 		<?php if ( get_option('nebula_overall') == 'override' ) : ?>
 			<div id="setting-error-settings_updated" class="error settings-error">
-				<p><strong>Override!</strong><br/>These settings have been overridden using functions.php. Remove the override to re-enable use of this page!</p>
+				<p><strong>Override!</strong><br />These options have been overridden using functions.php. Remove the override to re-enable use of this page!</p>
 			</div>
 		<?php endif; ?>
 
-		<hr/>
+		<hr />
 
 		<form method="post" action="options.php">
 			<?php
-				settings_fields('nebula_settings_group');
-				do_settings_sections('nebula_settings_group');
+				settings_fields('nebula_options_group');
+				do_settings_sections('nebula_options_group');
 			?>
 
 			<table class="form-table global">
 
 		        <?php if ( is_dev() ) : ?>
 			        <tr valign="top">
-			        	<th scope="row">Nebula Settings&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+			        	<th scope="row">Nebula Options&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_overall" id="nebula_overall">
 								<option value="enabled" <?php selected('enabled', get_option('nebula_overall')); ?>>Enabled</option>
 								<option value="disabled" <?php selected('disabled', get_option('nebula_overall')); selected('override', get_option('nebula_overall')); ?>>Disabled</option>
 							</select>
-							<p class="helper"><small>Enable/Disable this settings page. If disabled, all settings will use <strong style="text-transform: uppercase;">default values</strong> and can only be edited via functions.php! This <strong style="text-transform: uppercase;">does not</strong> disable all settings!</small></p>
+							<p class="helper"><small>Enable/Disable this options page. If disabled, all options will use <strong style="text-transform: uppercase;">default values</strong> and can only be edited via functions.php! This <strong style="text-transform: uppercase;">does not</strong> disable all options!</small></p>
 						</td>
 			        </tr>
 		        <?php endif; ?>
@@ -347,7 +387,7 @@ function nebula_settings_page(){
 		        	<th scope="row">Edited Yet?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" name="nebula_edited_yet" value="true" disabled/>
-						<p class="helper"><small>Has any user saved the Nebula Settings on this DB yet (Basically, has the save button on this page been clicked)? This will always be "true" on this page (even if it is not saved yet)! Note: This is a string, not a boolean!</small></p>
+						<p class="helper"><small>Has any user saved the Nebula Options on this DB yet (Basically, has the save button on this page been clicked)? This will always be "true" on this page (even if it is not saved yet)! Note: This is a string, not a boolean!</small></p>
 					</td>
 		        </tr>
 		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
@@ -389,7 +429,7 @@ function nebula_settings_page(){
 					<td>
 						<input type="text" name="nebula_hostnames" value="<?php echo get_option('nebula_hostnames'); ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" style="width: 392px;" />
 						<p class="helper"><small>
-							These help generate regex patterns for Google Analytics filters. Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br/>
+							These help generate regex patterns for Google Analytics filters. Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br />
 							Include this RegEx pattern for a filter/segment <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
 						</small></p>
 					</td>
@@ -426,7 +466,7 @@ function nebula_settings_page(){
 		        <tr valign="top">
 		        	<th scope="row">Address&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_street_address" value="<?php echo get_option('nebula_street_address'); ?>" placeholder="760 West Genesee Street" style="width: 392px;" /><br/>
+						<input type="text" name="nebula_street_address" value="<?php echo get_option('nebula_street_address'); ?>" placeholder="760 West Genesee Street" style="width: 392px;" /><br />
 						<input type="text" name="nebula_locality" value="<?php echo get_option('nebula_locality'); ?>" placeholder="Syracuse"  style="width: 194px;" />
 						<input type="text" name="nebula_region" value="<?php echo get_option('nebula_region'); ?>" placeholder="NY"  style="width: 40px;" />
 						<input type="text" name="nebula_postal_code" value="<?php echo get_option('nebula_postal_code'); ?>" placeholder="13204"  style="width: 70px;" />
@@ -474,7 +514,7 @@ function nebula_settings_page(){
 		        	<th scope="row">Days Off&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<textarea name="nebula_business_hours_closed"><?php echo get_option('nebula_business_hours_closed'); ?></textarea>
-						<p class="helper"><small>Comma-separated list of special days the business is closed (like holidays). These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank">Here is a good reference for holiday occurrences.</a><br/><strong>Note:</strong> This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</small></p>
+						<p class="helper"><small>Comma-separated list of special days the business is closed (like holidays). These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank">Here is a good reference for holiday occurrences.</a><br /><strong>Note:</strong> This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</small></p>
 					</td>
 		        </tr>
 
@@ -484,9 +524,9 @@ function nebula_settings_page(){
 		        <tr valign="top">
 		        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						URL: <input type="text" name="nebula_facebook_url" value="<?php echo get_option('nebula_facebook_url'); ?>" placeholder="http://www.facebook.com/PinckneyHugo" style="width: 358px;"/><br/>
-						Page ID: <input type="text" name="nebula_facebook_page_id" value="<?php echo get_option('nebula_facebook_page_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
-						Admin IDs: <input type="text" name="nebula_facebook_admin_ids" value="<?php echo get_option('nebula_facebook_admin_ids'); ?>" placeholder="0000, 0000, 0000" style="width: 153px;"/><br/>
+						URL: <input type="text" name="nebula_facebook_url" value="<?php echo get_option('nebula_facebook_url'); ?>" placeholder="http://www.facebook.com/PinckneyHugo" style="width: 358px;"/><br />
+						Page ID: <input type="text" name="nebula_facebook_page_id" value="<?php echo get_option('nebula_facebook_page_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br />
+						Admin IDs: <input type="text" name="nebula_facebook_admin_ids" value="<?php echo get_option('nebula_facebook_admin_ids'); ?>" placeholder="0000, 0000, 0000" style="width: 153px;"/><br />
 						<p class="helper"><small>The URL (and optional page ID and admin IDs) of the associated Facebook page.</small></p>
 					</td>
 		        </tr>
@@ -500,7 +540,7 @@ function nebula_settings_page(){
 		        <tr valign="top">
 		        	<th scope="row">Twitter URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/><br/>
+						<input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/><br />
 						<p class="helper"><small>The URL of the associated Twitter page.</small></p>
 					</td>
 		        </tr>
@@ -553,7 +593,7 @@ function nebula_settings_page(){
 							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_bar')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_bar')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -730,6 +770,15 @@ function nebula_settings_page(){
 					</td>
 		        </tr>
 
+		        <tr valign="top">
+		        	<th scope="row">Google Font&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="nebula_google_font_family" type="text" name="nebula_google_font_family" value="<?php echo get_option('nebula_google_font_family'); ?>" placeholder="Open Sans" /><input id="nebula_google_font_weights" type="text" name="nebula_google_font_weights" value="<?php echo get_option('nebula_google_font_weights'); ?>" placeholder="400,800" style="width: 150px;" /><br />
+						or: <input id="nebula_google_font_url" type="text" name="nebula_google_font_url" value="<?php echo get_option('nebula_google_font_url'); ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" style="width: 400px;" />
+						<p class="helper"><small>Choose which <a href="https://www.google.com/fonts" target="_blank">Google Font</a> is used by default for this site (weights should be comma-separated). Or, paste the entire font URL. Defaults: Open Sans 400,800</small></p>
+					</td>
+		        </tr>
+
 				<tr valign="top">
 		        	<th scope="row">Google Webmaster Tools Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
@@ -741,16 +790,16 @@ function nebula_settings_page(){
 				<tr valign="top">
 		        	<th scope="row">Google Public API&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						Browser Key: <input type="text" name="nebula_google_browser_api_key" value="<?php echo get_option('nebula_google_browser_api_key'); ?>" style="width: 392px;" /><br/>
+						Browser Key: <input type="text" name="nebula_google_browser_api_key" value="<?php echo get_option('nebula_google_browser_api_key'); ?>" style="width: 392px;" /><br />
 						Server Key: <input type="text" name="nebula_google_server_api_key" value="<?php echo get_option('nebula_google_server_api_key'); ?>" style="width: 392px;" />
-						<p class="helper"><small>In the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Under "Credentials" create a new key.<br/>Your current server IP address is <strong><?php echo gethostbyname(gethostname()); ?></strong> <em>(for server key whitelisting)</em>. Do not use the Server Key in JavaScript or any client-side code!</small></p>
+						<p class="helper"><small>In the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Under "Credentials" create a new key.<br />Your current server IP address is <strong><?php echo gethostbyname(gethostname()); ?></strong> <em>(for server key whitelisting)</em>. Do not use the Server Key in JavaScript or any client-side code!</small></p>
 					</td>
 		        </tr>
 
 		        <tr valign="top">
 		        	<th scope="row">Google Custom Search Engine&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						Engine ID: <input type="text" name="nebula_cse_id" value="<?php echo get_option('nebula_cse_id'); ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" /><br/>
+						Engine ID: <input type="text" name="nebula_cse_id" value="<?php echo get_option('nebula_cse_id'); ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" /><br />
 						<p class="helper"><small>Google Custom Search Engine (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
 					</td>
 		        </tr>
@@ -774,10 +823,10 @@ function nebula_settings_page(){
 				<tr valign="top">
 		        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br/>
-						App Secret: <input type="text" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br/>
-						Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/><br/>
-						Custom Audience Pixel ID: <input type="text" name="nebula_facebook_custom_audience_pixel_id" value="<?php echo get_option('nebula_facebook_custom_audience_pixel_id'); ?>" placeholder="000000000000000" style="width: 295px;"/><br/>
+						App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br />
+						App Secret: <input type="text" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br />
+						Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/><br />
+						Custom Audience Pixel ID: <input type="text" name="nebula_facebook_custom_audience_pixel_id" value="<?php echo get_option('nebula_facebook_custom_audience_pixel_id'); ?>" placeholder="000000000000000" style="width: 295px;"/><br />
 						<p class="helper"><small>The App ID of the associated Facebook page/app. This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></small></p>
 					</td>
 		        </tr>
@@ -785,8 +834,8 @@ function nebula_settings_page(){
 				<tr valign="top">
 		        	<th scope="row">Twitter&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						Consumer Key: <input type="text" name="nebula_twitter_consumer_key" value="<?php echo get_option('nebula_twitter_consumer_key'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br/>
-						Consumer Secret: <input type="text" name="nebula_twitter_consumer_secret" value="<?php echo get_option('nebula_twitter_consumer_secret'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br/>
+						Consumer Key: <input type="text" name="nebula_twitter_consumer_key" value="<?php echo get_option('nebula_twitter_consumer_key'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br />
+						Consumer Secret: <input type="text" name="nebula_twitter_consumer_secret" value="<?php echo get_option('nebula_twitter_consumer_secret'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br />
 						Bearer Token: <input type="text" name="nebula_twitter_bearer_token" value="<?php echo get_option('nebula_twitter_bearer_token'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
 						<p class="helper"><small>The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
 					</td>

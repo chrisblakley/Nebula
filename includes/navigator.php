@@ -1,4 +1,11 @@
 <?php
+	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+		die('Error 403: Forbidden.');
+	}
+?>
+
+<?php
 	//@TODO "Nebula" 0: Consider using the Autocomplete function in nebula_functions.php here instead of this file?
 
 	$requested_page = $_POST['data'];

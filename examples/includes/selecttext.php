@@ -10,7 +10,6 @@
 	.example-text-here {border: 1px solid #888; padding: 5px 10px;}
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
 
@@ -68,9 +67,6 @@
 			return false;
 		});
 
-
-
-
 		//Attempt to paste into the textarea automatically when it's clicked...
 		jQuery('.selectcopyexamplecon textarea').on('click touch tap', function(){
 			jQuery(this).val('');
@@ -84,37 +80,31 @@
 		}).on('blur', function(){
 			jQuery(this).attr('placeholder', 'Click the copy link and then try pasting here to see if it worked...');
 		});
-
-
-
 	});
 </script>
-
 
 <div class="row selectcopyexamplecon">
 	<div class="sixteen columns">
 
-		<br/><br/><br/>
+		<br /><br /><br />
 
 		<div class="example-select-supported"><i class="fa fa-spin fa-spinner"></i> Testing browser support...</div>
 		<div class="example-text-here example-select">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam faucibus ligula elit, non feugiat lectus ultrices eu. Sed eget interdum dui. Fusce tempus varius turpis, a viverra mi iaculis euismod.</div>
-		<br/>
+		<br />
 		<div class="medium primary btn">
 			<a class="example-select-trigger" href="#">Click here to select the above text.</a>
 		</div>
-		<br/><br/>
 
-		<hr/>
-
-		<br/>
+		<br /><br /><hr /><br />
 
 		<div class="example-copy-supported"><i class="fa fa-spin fa-spinner"></i> Testing browser support...</div>
 		<div class="example-text-here example-copy">Morbi ac lorem dictum, placerat eros id, tempor ligula. Mauris vitae consequat lacus, eget suscipit nisi. Donec auctor magna augue, non fringilla quam vulputate sit amet. Etiam laoreet nibh vitae mi porta fringilla.</div>
-		<br/>
+		<br />
 		<div class="medium primary btn">
 			<a class="example-copy-trigger" href="#">Click here to copy the above text.</a>
 		</div>
-		<br/><br/><br/>
+
+		<br /><br /><br />
 
 		<textarea id="testtextarea" placeholder="Click the copy link and then try pasting here to see if it worked..." style="width: 100%; min-height: 150px;"></textarea>
 

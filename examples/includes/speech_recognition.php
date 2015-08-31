@@ -46,30 +46,30 @@
 <input id="ajaxarea" type="text" disabled style="display: none; width: 100%; font-size: 12px; margin-bottom: 15px; padding: 3px 15px; border: 1px solid red;" />
 
 <p style="margin: 0; margin-top: 5px; font-size: 12px;">Say <strong>"I love Nebula"</strong> or better yet, introduce yourself and then say it!</p>
-<input id="ilovenebula" type="text" disabled style="width: 100%; font-size: 12px; padding: 3px 15px;" /><br/><br/>
+<input id="ilovenebula" type="text" disabled style="width: 100%; font-size: 12px; padding: 3px 15px;" /><br /><br />
 
 <div id="functionlist">
 	<h4>Functions</h4>
 
 	<ul style="font-size: 12px;">
 		<li>
-			<strong>"My name is ________"</strong><br/>
+			<strong>"My name is ________"</strong><br />
 			<span>Introduce yourself.</span>
 		</li>
 		<li>
-			<strong>"Search for _________"</strong><br/>
+			<strong>"Search for _________"</strong><br />
 			<span>Trigger a Wordpress search.</span>
 		</li>
 		<li>
-			<strong>"Navigate to _________"</strong><br/>
+			<strong>"Navigate to _________"</strong><br />
 			<span>Query through page titles, post titles, menu items, categories, and tags (in that order) to find the request. If not found, trigger search results.</span>
 		</li>
 		<li>
-			<strong>"Driving Directions"</strong><br/>
+			<strong>"Driving Directions"</strong><br />
 			<span>Receive directions to PHG from your current location.</span>
 		</li>
 		<li>
-			<strong>"Stop Listening"</strong><br/>
+			<strong>"Stop Listening"</strong><br />
 			<span>Stop all speech recognition.</span>
 		</li>
 	</ul>

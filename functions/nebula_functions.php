@@ -22,7 +22,7 @@ function track_google_pagespeed_checks(){
 }
 
 //Add the calling card to the browser console
-if ( nebula_settings_conditional('nebula_console_css') ){
+if ( nebula_options_conditional('nebula_console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card(){
 		$console_log = "<script>";
@@ -36,7 +36,7 @@ if ( nebula_settings_conditional('nebula_console_css') ){
 }
 
 //Check for dev stylesheets
-if ( nebula_settings_conditional('nebula_dev_stylesheets') ){
+if ( nebula_options_conditional('nebula_dev_stylesheets') ){
 	if ( is_writable(get_template_directory() . '/css/dev.css') ){
 		add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
 	} else {
@@ -125,7 +125,7 @@ function filter_wp_title($title, $separator){
 //Determine if the author should be the Company Name or the specific author's name.
 function nebula_the_author($show_authors=1){
 	if ( !is_single() || $show_authors == 0 || !nebula_author_bios_enabled() ){
-		return nebula_settings_conditional_text('nebula_site_owner', get_bloginfo('name'));
+		return nebula_options_conditional_text('nebula_site_owner', get_bloginfo('name'));
 	} else {
 		return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 	}
@@ -252,7 +252,7 @@ function nebula_email_content_type(){
 }
 
 /*** If the project uses comments, remove the next set of functions (six), or force this conditional to be false! ***/
-if ( nebula_settings_conditional('nebula_comments', 'disabled') ){
+if ( nebula_options_conditional('nebula_comments', 'disabled') ){
 
 	//Remove the Activity metabox
 	add_action('wp_dashboard_setup', 'remove_activity_metabox');
@@ -277,9 +277,9 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ){
 	}
 
 	//Remove comments links from admin bar
-	add_action('wp_loaded', 'disable_comments_admin_bar');
+	add_action('wp_loaded', 'disable_comments_admin_bar'); //@TODO "Nebula" 0: If comments are disabled
 	function disable_comments_admin_bar(){
-		if (is_admin_bar_showing()){
+		if ( nebula_admin_bar_enabled() ){
 			//global $wp_admin_bar; //@TODO "Nebula" 0: NULL
 			//$wp_admin_bar->remove_menu('wp-logo');
 			//$wp_admin_bar->remove_menu('comments');
@@ -333,10 +333,10 @@ if ( nebula_settings_conditional('nebula_comments', 'disabled') ){
 	if ( $filename == 'edit-comments.php' ){
 		add_action('admin_notices', 'disqus_link');
 		function disqus_link(){
-			if ( nebula_settings_conditional_text_bool('nebula_disqus_shortname') ){
-				echo "<div class='nebula_admin_notice updated'><p>You are using the Disqus commenting system. <a href='https://" . nebula_settings_conditional_text('nebula_disqus_shortname', '') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
+			if ( nebula_options_conditional_text_bool('nebula_disqus_shortname') ){
+				echo "<div class='nebula_admin_notice updated'><p>You are using the Disqus commenting system. <a href='https://" . nebula_options_conditional_text('nebula_disqus_shortname', '') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
 			} else {
-				echo "<div class='nebula_admin_notice error'><p>You are using the Disqus commenting system, <strong>BUT</strong> you have not set your shortname in <a href='themes.php?page=nebula_settings'>Nebula Settings</a>, so we can't send you directly to your comment listing! <a href='https://disqus.com/admin/moderate' target='_blank'>Go to Disqus &raquo;</a></p></div>";
+				echo "<div class='nebula_admin_notice error'><p>You are using the Disqus commenting system, <strong>BUT</strong> you have not set your shortname in <a href='themes.php?page=nebula_options'>Nebula Options</a>, so we can't send you directly to your comment listing! <a href='https://disqus.com/admin/moderate' target='_blank'>Go to Disqus &raquo;</a></p></div>";
 			}
 		}
 	}
@@ -629,7 +629,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $username . '&count=' . $number_tweets . '&include_rts=' . $include_retweets;
 	}
 
-	$bearer = nebula_settings_conditional_text('nebula_twitter_bearer_token', '');
+	$bearer = nebula_options_conditional_text('nebula_twitter_bearer_token', '');
 
 	$tweets = get_transient('nebula_twitter_' . $username); //@TODO: The transient name should have the twitter name tied to it...
 	if ( empty($tweets) || is_debug() ){
@@ -1404,16 +1404,21 @@ function nebula_body_classes($classes){
 		$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 		$parents = get_post_ancestors($post->ID);
 		foreach ( $parents as $parent ){
-			$classes[] = 'ancestor-id-' . $parent;
+			if ( !empty($parent) ){
+				$classes[] = 'ancestor-id-' . $parent;
+			}
 		}
 		foreach ( $segments as $segment ){
-			$classes[] = 'ancestor-of-' . $segment;
+			if ( !empty($segment) ){
+				$classes[] = 'ancestor-of-' . $segment;
+			}
 		}
 		foreach ( get_the_category($post->ID) as $category ){
 			$classes[] = 'cat-' . $category->cat_ID . '-id';
 		}
 	}
 	$nebula_theme_info = wp_get_theme();
+	$classes[] = 'nebula';
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 
 	//Time of Day
@@ -1441,9 +1446,9 @@ function nebula_body_classes($classes){
 		$classes[] = 'time-am';
 	}
 
-	if ( nebula_settings_conditional_text_bool('nebula_latitude') && nebula_settings_conditional_text_bool('nebula_longitude') ){
-		$lat = nebula_settings_conditional_text('nebula_latitude');
-		$lng = nebula_settings_conditional_text('nebula_longitude');
+	if ( nebula_options_conditional_text_bool('nebula_latitude') && nebula_options_conditional_text_bool('nebula_longitude') ){
+		$lat = nebula_options_conditional_text('nebula_latitude');
+		$lng = nebula_options_conditional_text('nebula_longitude');
 		$gmt = intval(get_option('gmt_offset'));
 		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
 		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
@@ -1553,7 +1558,7 @@ function business_open($date=null, $general=0){
 		}
 	}
 
-	if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Settings checkmark is checked for this day of the week.
+	if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
 		if ( $general == 1 ){
 			return true;
 		}
@@ -1572,9 +1577,9 @@ function business_open($date=null, $general=0){
 function nebula_weather($zipcode=null, $data=''){
 	if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
 		$data = $zipcode;
-		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
+		$zipcode = nebula_options_conditional_text('nebula_postal_code', '13204');
 	} elseif ( empty($zipcode) ){
-		$zipcode = nebula_settings_conditional_text('nebula_postal_code', '13204');
+		$zipcode = nebula_options_conditional_text('nebula_postal_code', '13204');
 	}
 
 	$weather_json = get_transient('nebula_weather_' . $zipcode);
@@ -1756,7 +1761,7 @@ function youtube_meta($videoID, $meta=''){
 	if ( empty($youtube_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		if ( get_option('nebula_google_server_api_key') == '' ){
 			if ( current_user_can('manage_options') || is_dev() ){
-				trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Settings (in the WordPress Admin).", E_USER_WARNING);
+				trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Options (in the WordPress Admin).", E_USER_WARNING);
 				return false;
 			} else {
 				trigger_error("Google API Server Key not found.", E_USER_WARNING);

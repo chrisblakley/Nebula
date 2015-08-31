@@ -1,3 +1,10 @@
+<?php
+	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+		die('Error 403: Forbidden.');
+	}
+?>
+
 <div id="phg-welcome" class="welcome-panel-content gearside-welcome">
 	<div id="welcome-content">
 		<div class="logocon">
@@ -6,7 +13,7 @@
 
 		<h3><a href="<?php echo home_url('/'); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>
 		<p class="about-description">Designed and Developed by <?php pinckneyhugogroup(1); ?>.</p>
-		<hr/>
+		<hr />
 
 		<div class="welcome-panel-column-container">
 			<div class="welcome-panel-column">
@@ -60,7 +67,7 @@
 				<div class="welcome-panel-column">
 					<h4>Administration</h4>
 					<ul>
-						<li><i class="fa fa-list-alt fa-fw"></i> <a href="themes.php?page=nebula_settings">Nebula Settings</a></li>
+						<li><i class="fa fa-list-alt fa-fw"></i> <a href="themes.php?page=nebula_options">Nebula Options</a></li>
 
 						<?php if ( get_option('nebula_cpanel_url') != '' ): ?>
 							<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo get_option('nebula_cpanel_url'); ?>" target="_blank">Server Control Panel</a></li>
@@ -96,7 +103,7 @@
 					</ul>
 
 					<?php if ( get_option('nebula_cpanel_url') == '' && get_option('nebula_hosting_url') == '' && get_option('nebula_registrar_url') == '' && get_option('nebula_ga_url') == '' && get_option('nebula_google_webmaster_tools_url') == '' && get_option('nebula_google_adsense_url') == '' && get_option('nebula_google_adwords_url') == '' && get_option('nebula_mention_url') == '' ): ?>
-						<p><em>Add administrative links to <strong><a href="themes.php?page=nebula_settings">Nebula Settings</a></strong> to see them here.</em></p>
+						<p><em>Add administrative links to <strong><a href="themes.php?page=nebula_options">Nebula Options</a></strong> to see them here.</em></p>
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
@@ -135,7 +142,7 @@
 
 				<?php if ( get_option('nebula_facebook_url') == '' && get_option('nebula_twitter_url') == '' && get_option('nebula_google_plus_url') == '' && get_option('nebula_linkedin_url') == '' && get_option('nebula_youtube_url') == '' && get_option('nebula_instagram_url') == '' && get_option('nebula_disqus_shortname') == '' ): ?>
 					<?php if ( current_user_can('manage_options') ): ?>
-						<p>Add social links to <strong><a href="themes.php?page=nebula_settings">Nebula Settings</a></strong> to see them here.</em></p>
+						<p>Add social links to <strong><a href="themes.php?page=nebula_options">Nebula Options</a></strong> to see them here.</em></p>
 					<?php else : ?>
 						<p><i class="fa fa-frown-o fa-fw"></i> <em>No social links are set up.</em></p>
 					<?php endif; ?>
