@@ -166,7 +166,7 @@
 
 <script>
 	jQuery(document).ready(function(){
-		if ( jQuery('.index-php').length ){
+		if ( jQuery('.index-php').is('*') ){
 			jQuery('#welcome-panel').removeClass('hidden');
 			jQuery('.welcome-panel-close').addClass('hidden');
 			jQuery('#wp_welcome_panel-hide').parent().addClass('hidden').css('display', 'none');

@@ -21,6 +21,8 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 
 
 .nebula_help_link {text-decoration: none;}
+i.help {cursor: help; color: #aaa; -webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
+	i.help:hover {color: #444;}
 
 .index-php .welcome-panel {display: block; padding: 8px 12px; overflow: hidden;}
 

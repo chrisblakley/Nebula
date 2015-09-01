@@ -104,12 +104,10 @@ function register_nebula_options(){
 		'nebula_initialized' => '',
 		'nebula_edited_yet' => 'false',
 		'nebula_domain_expiration_alert' => 'Default',
+
+		//Metadata Tab
 		'nebula_site_owner' => '',
 		'nebula_contact_email' => '',
-		'nebula_ga_tracking_id' => '',
-		'nebula_google_font_family' => '',
-		'nebula_google_font_weights' => '',
-		'nebula_google_font_url' => '',
 		'nebula_hostnames' => '',
 		'nebula_keywords' => '',
 		'nebula_phone_number' => '',
@@ -143,29 +141,26 @@ function register_nebula_options(){
 		'nebula_business_hours_saturday_open' => '',
 		'nebula_business_hours_saturday_close' => '',
 		'nebula_business_hours_closed' => '',
-		'nebula_google_webmaster_tools_verification' => '',
 		'nebula_facebook_url' => '',
-		'nebula_facebook_app_id' => '',
+		'nebula_facebook_page_id' => '',
+		'nebula_facebook_admin_ids' => '',
 		'nebula_facebook_app_secret' => '',
 		'nebula_facebook_access_token' => '',
 		'nebula_facebook_custom_audience_pixel_id' => '',
-		'nebula_facebook_custom_audience_pixel' => 'Default',
-		'nebula_facebook_page_id' => '',
-		'nebula_facebook_admin_ids' => '',
 		'nebula_google_plus_url' => '',
 		'nebula_twitter_url' => '',
-		'nebula_twitter_consumer_key' => '',
-		'nebula_twitter_consumer_secret' => '',
-		'nebula_twitter_bearer_token' => '',
 		'nebula_linkedin_url' => '',
 		'nebula_youtube_url' => '',
 		'nebula_instagram_url' => '',
+
+		//Functions Tab
 		'nebula_wireframing' => 'Default',
 		'nebula_admin_bar' => 'Default',
+		'nebula_admin_notices' => 'Default',
 		'nebula_adwords' => 'Default',
+		'nebula_facebook_custom_audience_pixel' => 'Default',
 		'nebula_author_bios' => 'Default',
 		'nebula_comments' => 'Default',
-		'nebula_disqus_shortname' => '',
 		'nebula_wp_core_updates_notify' => 'Default',
 		'nebula_plugin_update_warning' => 'Default',
 		'nebula_welcome_panel' => 'Default',
@@ -175,9 +170,24 @@ function register_nebula_options(){
 		'nebula_domain_exp' => 'Default',
 		'nebula_dev_stylesheets' => 'Default',
 		'nebula_console_css' => 'Default',
-		'nebula_cse_id' => '',
+
+		//APIs Tab
+		'nebula_ga_tracking_id' => '',
+		'nebula_google_font_family' => '',
+		'nebula_google_font_weights' => '',
+		'nebula_google_font_url' => '',
+		'nebula_google_webmaster_tools_verification' => '',
 		'nebula_google_server_api_key' => '',
 		'nebula_google_browser_api_key' => '',
+		'nebula_cse_id' => '',
+		'nebula_google_maps_api' => '',
+		'nebula_disqus_shortname' => '',
+		'nebula_facebook_app_id' => '',
+		'nebula_twitter_consumer_key' => '',
+		'nebula_twitter_consumer_secret' => '',
+		'nebula_twitter_bearer_token' => '',
+
+		//Administration Tab
 		'nebula_dev_ip' => '',
 		'nebula_dev_email_domain' => '',
 		'nebula_client_ip' => '',
@@ -187,7 +197,6 @@ function register_nebula_options(){
 		'nebula_registrar_url' => '',
 		'nebula_ga_url' => '',
 		'nebula_google_webmaster_tools_url' => '',
-		'nebula_google_maps_api' => '',
 		'nebula_google_adsense_url' => '',
 		'nebula_google_adwords_url' => '',
 		'nebula_mention_url' => '',
@@ -330,24 +339,21 @@ function nebula_options_page(){
 	<div class="wrap">
 		<h2>Nebula Options</h2>
 		<?php
-			if ( current_user_can('manage_options') || is_dev() ){
-				if ( get_option('nebula_ga_tracking_id') == '' ){
-					echo '<strong>WARNING:</strong> Google Analytics tracking ID is currently not set!';
-				}
-			} else {
+			if ( !current_user_can('manage_options') && !is_dev() ){
 				wp_die('You do not have sufficient permissions to access this page.');
 			}
 		?>
 
 		<?php if ( $_GET['settings-updated'] == 'true' ): ?>
-			<div id="message" class="updated below-h2">
+			<div class="updated notice is-dismissible">
 				<p><strong>Nebula Options</strong> have been updated.</p>
+				<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 			</div>
 		<?php endif; ?>
 
 		<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the functions.php file. It can also be disabled below, or overridden via functions.php if that makes you feel better.</p>
 
-		<?php if ( get_option('nebula_overall') == 'override' ) : ?>
+		<?php if ( get_option('nebula_overall') == 'override' ): ?>
 			<div id="setting-error-settings_updated" class="error settings-error">
 				<p><strong>Override!</strong><br />These options have been overridden using functions.php. Remove the override to re-enable use of this page!</p>
 			</div>
@@ -363,7 +369,7 @@ function nebula_options_page(){
 
 			<table class="form-table global">
 
-		        <?php if ( is_dev() ) : ?>
+		        <?php if ( is_dev() ): ?>
 			        <tr valign="top">
 			        	<th scope="row">Nebula Options&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
@@ -594,6 +600,18 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_bar')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">Nebula Admin Notices&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_admin_notices">
+							<option value="default" <?php selected('default', get_option('nebula_admin_notices')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_notices')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_notices')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Show Nebula-specific admin notices (Note: This does not toggle WordPress core, or plugin, admin notices). <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 

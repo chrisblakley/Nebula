@@ -28,6 +28,13 @@ if ( is_debug() && current_user_can('manage_options') ){
 
 
 
+//Upload a file to the Media Library //@TODO "Nebula" 0: In progress
+function nebula_upload_to_media_library($filepath){
+	if ( !file_exists($filepath) || strlen(trim($filepath)) == 0 ){
+		return;
+	}
+	$result = wp_handle_upload($filepath);
+}
 
 
 

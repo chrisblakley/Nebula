@@ -201,9 +201,7 @@ function nebula_activation(){
 add_action('wp_ajax_nebula_initialization', 'nebula_initialization');
 function nebula_initialization($standard=null){
 	if ( current_user_can('manage_options') ){
-
 		nebula_initialization_email_prev_settings();
-
 		nebual_initialization_create_homepage();
 		nebula_initialization_default_settings();
 		nebula_initialization_delete_plugins();
@@ -317,6 +315,7 @@ function nebula_initialization_default_settings(){
 	update_option('timezone_string', 'America/New_York'); //Change Timezone
 	update_option('start_of_week', 0); //Start of the week to Sunday
 	update_option('permalink_structure', '/%postname%/'); //Set the permalink structure to be "pretty" style
+	update_option('', '');
 
 	//Prevent unecessary queries with widgets
 	add_option('widget_pages', array('_multiwidget' => 1));

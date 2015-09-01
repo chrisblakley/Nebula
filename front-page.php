@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Homepage
+ * The template for displaying the front page.
  */
 
 if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
@@ -14,13 +14,15 @@ get_header(); ?>
 <div id="heroslidercon">
 	<div class="herobgcolor"></div>
 	<div class="nebulashadow inner-top bulging"></div>
-	<div class="valign row" style="height: 100%; text-align: center;">
-		<div>
-			<h1><?php echo get_bloginfo('name'); ?></h3>
-			<h2><?php echo ( get_bloginfo('description') )? get_bloginfo('description') : 'Lorem Ipsum Dolor Sit Amet'; ?></h4>
-			<?php nebula_hero_search(); ?>
-		</div>
-	</div>
+	<div class="row">
+		<div class="sixteen columns">
+			<h1><?php echo get_bloginfo('name'); ?></h1>
+			<?php if ( get_bloginfo('description') != '' ): ?>
+				<h2><?php echo get_bloginfo('description'); ?></h2>
+			<?php endif; ?>
+			<div class="text-center"><?php nebula_hero_search(); ?></div>
+		</div><!--/columns-->
+	</div><!--/row-->
 	<div class="nebulashadow inner-bottom bulging"></div>
 </div><!--/heroslidercon-->
 

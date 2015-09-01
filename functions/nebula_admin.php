@@ -114,6 +114,29 @@ function new_wp_login_title(){
     return get_option('blogname');
 }
 
+//Nebula Admin Notices
+if ( nebula_options_conditional('nebula_admin_notices') ){
+	add_action('admin_notices', 'nebula_admin_notices');
+	function nebula_admin_notices(){
+		if ( current_user_can('manage_options') || is_dev() ){
+			//Check for Google Analytics Tracking ID
+			if ( get_option('nebula_ga_tracking_id') == '' && $GLOBALS['ga'] == '' ){
+				echo '<div class="error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
+			}
+
+			//Check for "Discourage searching engines..." setting
+			if ( get_option('blog_public') == 0 ){
+				echo '<div class="error"><p><a href="options-reading.php">Search Engine Visibility</a> is currently disabled!</p></div>';
+			}
+
+			//Check for "Just Another WordPress Blog" tagline
+			if ( strtolower(get_bloginfo('description')) == 'just another wordpress site' ){
+				echo '<div class="error"><p><a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!</p></div>';
+			}
+		}
+	}
+}
+
 //Welcome Panel
 if ( nebula_options_conditional('nebula_welcome_panel') ){
 	remove_action('welcome_panel','wp_welcome_panel');
