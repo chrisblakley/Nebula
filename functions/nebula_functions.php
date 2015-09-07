@@ -49,11 +49,10 @@ if ( nebula_options_conditional('nebula_dev_stylesheets') ){
 			$file_path_info = pathinfo($file);
 			if ( is_file($file) && $file_path_info['extension'] == 'css' ){
 				$file_counter++;
-				$this_css_filename = basename($file);
 				$this_css_contents = file_get_contents($file); //Copy file contents
 				$empty_css = ( $this_css_contents == '' )? ' (empty)' : '';
 				$dev_css_contents = file_get_contents(get_template_directory() . '/css/dev.css');
-				$dev_css_contents .= "/* ==========================================================================\r\n   " . get_template_directory_uri() . "/css/dev/" . $this_css_filename . $empty_css . "\r\n   ========================================================================== */\r\n\r\n" . $this_css_contents . "\r\n\r\n/* End of " . $this_css_filename . " */\r\n\r\n\r\n";
+				$dev_css_contents .= "/* ==========================================================================\r\n   " . get_template_directory_uri() . "/css/dev/" . $file_path_info['filename'] . $empty_css . "\r\n   ========================================================================== */\r\n\r\n" . $this_css_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . " */\r\n\r\n\r\n";
 				file_put_contents(get_template_directory() . '/css/dev.css', $dev_css_contents);
 			}
 		}
@@ -243,6 +242,21 @@ function nav_menu_locations(){
 		'footer' => 'Footer Menu'
 		)
 	);
+}
+
+//Update user online status
+add_action('init', 'nebula_users_status_init');
+add_action('admin_init', 'nebula_users_status_init');
+function nebula_users_status_init(){
+	$logged_in_users = get_transient('users_status');
+	$user = wp_get_current_user();
+
+	//Check if the current user needs to update his online status; he does if he doesn't exist in the list
+	$no_need_to_update = isset($logged_in_users[$user->ID]) && $logged_in_users[$user->ID] > (time()-(15*60)); //15 Minutes
+	if ( !$no_need_to_update ){
+		$logged_in_users[$user->ID] = time();
+		set_transient('users_status', $logged_in_users, 30*60); //30 minutes
+	}
 }
 
 //Set email content type to be HTML by default

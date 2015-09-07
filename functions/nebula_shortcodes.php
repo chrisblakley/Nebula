@@ -119,7 +119,7 @@ function column_shortcode($atts, $content=''){
 
 	$columns = array_values($flags);
 
-	if ( $push ){
+	if ( !empty($push) ){
 		$push = 'push_' . $push;
 	}
 
@@ -168,7 +168,7 @@ function button_shortcode($atts, $content=''){
 		$btnstyle = ' metro';
 	}
 
-	if ( $icon ){
+	if ( !empty($icon) ){
 		$side = 'icon-' . $side;
 		if (strpos($icon, 'fa-') !== false){
 		    $icon_family = 'fa ';
@@ -216,10 +216,10 @@ function map_shortcode($atts){
 		$overlay = '';
 	}
 
-	if ( $key == '' ){
+	if ( empty($key) ){
 		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO "APIs" 2: Replace with your own key to avoid designating a key every time.
 	}
-	if ( $q != '' ){
+	if ( !empty($q) ){
 		$q = str_replace(' ', '+', $q);
 		$q = '&q=' . $q;
 	}
@@ -240,16 +240,16 @@ function map_shortcode($atts){
 			$avoid = '&avoid=' . $avoid;
 		}
 	}
-	if ( $center != '' ){
+	if ( !empty($center) ){
 		$center = '&center=' . $center;
 	}
-	if ( $language != '' ){
+	if ( !empty($language) ){
 		$language = '&language=' . $language;
 	}
-	if ( $region != '' ){
+	if ( !empty($region) ){
 		$region = '&region=' . $region;
 	}
-	if ( $zoom != '' ){
+	if ( !empty($zoom) ){
 		$zoom = '&zoom=' . $zoom;
 	}
 
@@ -317,7 +317,7 @@ function pre_shortcode($atts, $content=''){
 	$content = htmlspecialchars_decode($content);
 	$content = htmlspecialchars($content);
 
-	if ( $lang == '' && $language != '' ){
+	if ( empty($lang) && !empty($language) ){
 		$lang = $language;
 	}
 	$lang = strtolower(str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang));
@@ -345,7 +345,7 @@ function gist_shortcode($atts, $content=''){
 		$GLOBALS['pre'] = 1;
 	}
 
-	if ( $lang == '' && $language != '' ){
+	if ( empty($lang) && !empty($language) ){
 		$lang = $language;
 	}
 	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
@@ -366,6 +366,36 @@ function gist_shortcode($atts, $content=''){
 	return $return;
 } //end gist_shortcode()
 
+//Github embedding
+add_shortcode('github', 'github_shortcode');
+function github_shortcode($atts, $content=''){
+	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) );
+
+	if ( !empty($file) ){
+		$file_contents = @file_get_contents($file);
+
+		if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+			echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/css/pre.css" />';
+			$GLOBALS['pre'] = 1;
+		}
+
+		if ( empty($lang) && !empty($language) ){
+			$lang = $language;
+		}
+		$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
+		$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
+		$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
+		$vislang = str_replace($search, $replace, $lang);
+
+		$return = '<div class="nebula-pre-con clearfix ' . $lang . '"><span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
+		if ( $color != '' ){
+			$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
+		}
+		$return .= $style . '" >' . $file_contents . '</pre></div>';
+
+		return $return;
+	}
+}
 
 //Accordion
 $GLOBALS['accordion'] = 0;
@@ -528,17 +558,17 @@ add_shortcode('slide', 'slide_shortcode');
 function slide_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('title' => '', 'link' => '', 'target' => ''), $atts) );
 
-	if ( $title != '' ){
+	if ( !empty($title) ){
 		$alt_and_title = 'alt="' . $title . '" title="' . $title . '"';
 	} else {
 		$alt_and_title = '';
 	}
 
-	if ( $link == '' ){
+	if ( empty($link) ){
 		$linkopen = '';
 		$linkclose = '';
 	} else {
-		if ( $target == '' ){
+		if ( empty($target) ){
 			$linkopen = '<a href="' . $link . '">';
 		} else {
 			$linkopen = '<a href="' . $link . '" target="' . $target . '">';

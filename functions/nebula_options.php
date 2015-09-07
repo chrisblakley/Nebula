@@ -168,6 +168,7 @@ function register_nebula_options(){
 		'nebula_dev_metabox' => 'Default',
 		'nebula_todo_metabox' => 'Default',
 		'nebula_domain_exp' => 'Default',
+		'nebula_scss' => 'Default',
 		'nebula_dev_stylesheets' => 'Default',
 		'nebula_console_css' => 'Default',
 
@@ -744,6 +745,18 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_domain_exp')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Send an email to all site admins if the detected domain expiration date is within one week. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">SCSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_scss">
+							<option value="default" <?php selected('default', get_option('nebula_scss')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_scss')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_scss')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Enable the bundled SCSS compiler. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 

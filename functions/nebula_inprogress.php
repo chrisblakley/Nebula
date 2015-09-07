@@ -6,6 +6,11 @@
  ===========================*/
 
 
+
+
+
+
+
 //@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage.
 //This would be moved to header.php once it works...
 if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ){

@@ -1,0 +1,1162 @@
+/*
+	Theme Name: Nebula
+	Theme URI: http://gearside.com/nebula
+	Author: Pinckney Hugo Group
+	Author URI: http://www.pinckneyhugo.com
+	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
+	Version: 3.2.0
+	License: GNU General Public License v2.0
+	License URI: http://www.gnu.org/licenses/gpl-2.0.html
+	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
+*/
+
+//@TODO "Wordpress" 4: Change the Theme Name (above) to be the client/project and the year!
+//Do not change the "Version"! This is to track the Nebula version of initial development.
+
+
+// ===========================
+// Global variables and Mixins
+// ===========================
+
+$primary_color: #0098d7;
+$secondary_color: #95d600;
+$text_color: #444;
+$font_stack: 'Open Sans', sans-serif;
+
+//.element {@include font-size(16);}
+@mixin font-size($size: 12){
+	font-size: $size + px; font-size: (0.1334*$size) + rem; //@TODO "Nebula" 0: Do we want to use a default em line-height here?
+	line-height: 1.625em;
+}
+
+//.element {@include line-height(16);}
+@mixin line-height($height: 12){
+    line-height: $height + px; line-height: (0.1136*$height) + rem;
+}
+
+//.element {@include prefix((transition: all 0.25s), webkit ms);}
+@mixin prefix($map, $vendors: webkit moz ms o){
+	@each $prop, $value in $map {
+		@if $vendors {
+			@each $vendor in $vendors {
+				#{"-" + $vendor + "-" + $prop}: #{$value};
+			}
+		}
+		#{$prop}: #{$value};
+	}
+}
+
+//.element a {@include link-colors(red, orange, yellow, green, blue);}
+@mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
+	color: $normal;
+	@if $visited {
+		&:visited {color: $visited;}
+	}
+	@if $focus {
+		&:focus {color: $focus;}
+	}
+	@if $hover {
+		&:hover,
+		&.hover {color: $hover;}
+	}
+	@if $active {
+		&:active {color: $active;}
+	}
+}
+
+//.element {@include background-color(#333, 0.5);}
+@mixin background-color($color, $opacity: 1){
+    background: $color; background: rgba($color, $opacity);
+}
+
+//.element {@include linear-gradient(#31B7D7, #EDAC7D);}
+//.element {@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
+@mixin linear-gradient($direction, $color-stops...) {
+	background: nth(nth($color-stops, 1), 1); background: linear-gradient($direction, $color-stops);
+}
+
+//@TODO "Nebula" 0: Consider Implementing this breakpoint mixin. Very complicated, but very powerful. http://www.zell-weekeat.com/mappy-breakpoints/
+//.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-device-width: 320px)"){color: green;};}
+$media_stack: (
+	(group: widescreen, rule: "only screen and (min-width: 1400px)"),
+	(group: tablet_landscape, rule: "only screen and (max-width: 1023px)"),
+	(group: tablet, rule: "only screen and (max-width: 767px)"),
+	(group: mobile_landscape, rule: "only screen and (max-width: 668px)"),
+	(group: mobile, rule: "only screen and (max-width: 376px)"),
+	(group: print, rule: "only print"),
+	(group: custom, rule: "only screen and ")
+);
+@mixin media($group, $custom_rule: ""){
+	@each $media in $media_stack {
+		@if $group == map-get($media, group) {
+			$rule: map-get($media, rule);
+			@media #{$rule} #{$custom_rule} {& {@content}}
+		}
+	}
+}
+
+//.element {@include clearfix();}
+@mixin clearfix(){
+	&:before,
+	&:after {content: ""; display: table;}
+	&:after {clear: both;}
+}
+
+$background_color: #f6f6f6;
+$danger_color: #ca3838;
+$warning_color: #f6b83f;
+$success_color: #58c026;
+
+
+// ===========================
+// PHG Custom Styles
+// ===========================
+
+html {height: auto; font-size: 62.5%; color: $text_color;}
+body {overflow-x: hidden; background: $background_color; color: $text_color;}
+#tinymce.mceContentBody {padding: 10px 15px !important; background: $background_color;}
+button, input, select, textarea {color: $text_color; @include font-size(14);}
+::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
+::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
+hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
+	&.zero {margin: 0;}
+	//@TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended.
+	.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
+	.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); /* mix-blend-mode: multiply; */}
+}
+
+img {vertical-align: middle;}
+fieldset {border: 0; margin: 0; padding: 0;}
+textarea {resize: vertical;}
+ul {padding: 0;
+	ul {margin: 4px 0 0 0;}
+}
+
+h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.625em;
+	a {color: $primary_color;}
+}
+h1 {@include font-size(36); font-weight: bold;}
+h2 {@include font-size(28);}
+h3 {@include font-size(21);}
+h4 {@include font-size(18);}
+h5 {@include font-size(16);}
+h6 {@include font-size(14);}
+p, li, dt, dl, div {@include font-size(14); @include line-height(22);}
+span {font-size: inherit;}
+.chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
+
+a {@include link-colors($primary_color, $secondary_color); @include prefix((transition: all 0.25s));}
+	.btn > a:hover {color: #fff;}
+
+ul.menu {padding: 0;}
+
+#form-messages {
+	.sending {color: $warning_color;}
+	.error {color: $danger_color;}
+	.success {color: $success_color;}
+}
+
+
+input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; @include font-size(12); background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+	&:hover,
+	&.hover {background-color: #fff;}
+	&:focus,
+	&.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: $text_color; cursor: auto;}
+	&.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: $text_color; cursor: auto;}
+	&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(0, 153, 216, .5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
+	.svg & {background: #eee url("images/search.svg") no-repeat 6px center;}
+}
+	//Note: Can not use nested SCSS selectors on placeholder pseudos!
+	input.nebula-search::-webkit-search-decoration,
+	input.nebula-search::-webkit-search-cancel-button {display: none;}
+	input.nebula-search:-moz-placeholder {color: #999;}
+	input.nebula-search::-webkit-input-placeholder {color: #999;}
+	input.nebula-search:-moz-placeholder {color: transparent;}
+	input.nebula-search::-webkit-input-placeholder {color: transparent;}
+	input.nebula-search.focus:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
+	input.nebula-search.focus::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
+
+form.nebula-search-iconable {position: relative; display: inline-block; margin: 0;
+	input.nebula-search {background: #eee;
+		.lte-ie9 &,
+		.ie10 & {background: #eee url("images/search.png") no-repeat 6px center;}
+	}
+	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit);}
+}
+
+
+// ===========================
+// Special File Type Indicators
+// ===========================
+
+//@include file_icon(doc docx, f1c2, #2b5797);
+@mixin file_icon($filetypes, $unicode: f016, $color: $text_color, $specific: false){
+	@each $filetype in $filetypes {
+		@if $specific {
+			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
+				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
+			}
+		} @else {
+			a[href$=".#{$filetype}"], li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
+				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
+			}
+		}
+	}
+}
+
+@include file_icon(doc docx, f1c2, #2b5797);
+@include file_icon(xls xlsx, f1c3, #1e7145);
+@include file_icon(ppt pptx, f1c4, #d04525);
+@include file_icon(pdf pdfx, f1c1, #eb3b00);
+@include file_icon(zip zipx rar gz tar, f1c6, #777);
+@include file_icon(txt rtf, f0f6, #777);
+@include file_icon(html, f1c9, #f1672c, true);
+@include file_icon(php, f1c9, #5a68a5, true);
+@include file_icon(js, f1c9, #f1bf26, true);
+@include file_icon(css scss, f1c9, #30a9dc, true);
+@include file_icon(swf, f1c9, #c31e24, true);
+
+a.off, a.no-icon, a.noicon {text-decoration: none; border: none;
+	&:before {content: "" !important; margin-right: 0 !important;}
+}
+a.white {@include link-colors(#fff, #ccc);
+	&:before {color: #fff !important;}
+}
+
+
+/* Table styles - Restyle here as needed */
+table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ /* Sets a fixed width for all cells, and removes cellspacing. */}
+	/* Table Rows */
+	table tr {}
+		table tr.odd {/* background: #f5f5f5; */}
+		table tr:hover,
+		table tr.hover {/* background: #e2e2e2; */}
+	/* Table Cells */
+	table tr td {/* text-align: center; border: none; border: 1px solid #ddd; */}
+	table tr td:first-child {/* font-weight: inherit; */}
+	table tr td {/* padding: 0; font-size: inherit; */}
+	table tr td, table tbody tr td {/* font-size: inherit; */}
+	table thead tr:first-child td,
+	table thead tr.first-child td {/* font-weight: bold; color: #fff; */}
+	table tr td:hover,
+	table tr td.hover {/* background: #d2d2d2; */}
+	/* Table Heading Cells */
+	table tr th {/* background: $secondary_color !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff; */}
+	/* Table Heading Rows */
+	table thead tr td {/* background: $primary_color !important; adding: 10px 0; */}
+	/* Table Footer Rows */
+	table tfoot tr td {/* background: grey !important; color: #fff; */}
+
+
+.nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
+#wp_search_submit {color: $text_color !important;
+	&:hover,
+	&.hover {color: #000 !important;}
+}
+#searchsubmit {/* padding: 2px 5px !important; */ background: $primary_color; border: 0; @include prefix((transition: all 0.25s));
+	&:hover,
+	&.hover {background: $secondary_color;}
+}
+
+.nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
+
+.nebulashadow {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; @include prefix((transition: all 0.5s));
+	&.above {height: 12px; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); @include prefix((transform: scaleY(-1))); @include prefix((filter: flipv), ms);}
+	&.below {height: 12px; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));}
+	&.inner-top {top: 0; left: 0; height: 12px; position: absolute; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));}
+	&.inner-bottom {bottom: 0; left: 0; height: 12px; position: absolute; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); @include prefix((transform: scaleY(-1)); @include prefix((filter: flipv), ms);}
+	&.bulging {height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain;}
+	&.curling {height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain;}
+	&.hovering {height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain;}
+	&.anchored-right, &.rising-left {height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top right; background-size: contain;}
+	&.anchored-left, &.rising-right {height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top left; background-size: contain;}
+	.lte-ie9 &.inner-bottom,
+	.lte-ie9 &.above {transform: none; filter:-; -ms-filter:-; display: none;
+		.no-js.& {display: none; visibility: hidden; opacity: 0;}
+	}
+}
+
+.nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;
+	&:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; @include prefix((transition: all 0.5s)); pointer-events: none;}
+	&.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain; pointer-events: none;}
+	&.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%; background: none;}
+	&.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain; pointer-events: none;}
+	&.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain; pointer-events: none;}
+	&.anchored-right:after, &.rising-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top right; background-size: contain; pointer-events: none;}
+	&.anchored-left:after, &.rising-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top left; background-size: contain; pointer-events: none;}
+	a& {border: none;}
+	/* &.animate:hover:after {background-position-y: -24px;} */
+}
+
+//!.nebula-vmiddle, .nebula-vmiddle-con {@include prefix((transform-style: preserve-3d));} //Prevent blurry half-pixel centering on parent element
+	.nebula-vmiddle {position: relative; top: 50%; @include prefix((transform: translateY(-50%)));}
+
+code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
+
+div.nebula-button {margin-bottom: 10px;}
+
+.searchresultword {@include background-color(lighten($primary_color, 95%), 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; @include prefix((transition: none 0.25s));
+	&.transitionable {@include prefix((transition: all 0.25s));}
+	article:hover & {@include background-color(#ff0, 0.5);} //@TODO: Need !important
+}
+
+.search .highlight {@include background-color(lighten($primary_color, 95%), 0.2);}
+
+//Google Maps
+.googlemapcon {width: 100%; height: 250px;
+	a,
+	i {@include prefix((transition: all 0.25s));}
+}
+	#map_canvas {width: 100%; height: 100%;}
+
+	.mapgeolocation-icon.error {color: $danger_color;}
+
+	.maprefresh {overflow: hidden; white-space: nowrap;
+		&.timeout {color: #aaa; cursor: default;}
+	}
+
+	.maprefresh-icon.success {color: $success_color;}
+
+	.mapweather-icon.inactive,
+	.maptraffic-icon.inactive,
+	.maprefresh-icon.inactive,
+	.mapgeolocation-icon.inactive {opacity: 0.4;}
+
+$facebook_color: #3b5998;
+.facebook-connect-con {@include font-size(12);
+	i,
+	a {@include link-colors($facebook_color, darken($facebook_color, 15%)); color: $facebook_color;}
+}
+
+
+// ===========================
+// Specific library feature modifications
+// ===========================
+
+/* Gumby overrides */
+.row {max-width: 1080px;} //Default Gumby Row max-width is 980px. Be sure to update $content_width in functions.php to reflect this change!
+
+//Default font override
+h1, h2, h3, h4, h5, h6,
+body,
+p,
+.btn, .skiplink,
+.field input, .field input[type="*"], .field textarea,
+.prepend .adjoined, .append .adjoined,
+.picker,
+.alert,
+.tab-nav > li > li > a,
+.tab-nav > li > a {font-family: $font_stack;}
+
+abbr, acronym {cursor: pointer; border-bottom: none; color: auto;}
+
+.pinterest-pin a {@include prefix((transition: none 0.25s));}
+#___plusone_0 {width: 60px !important;}
+
+/* Allows tab text to wrap to a new line */
+.tab-nav > li.active > a {height: auto; line-height: inherit;}
+    .tab-nav > li > a {height: auto; line-height: inherit; padding-top: 7px; padding-bottom: 7px;}
+.tab-content {padding-top: 0;
+	p:first-child {margin-top: 0;}
+    ul {padding-left: 20px;
+	    li {list-style: disc;}
+    }
+}
+
+body .video-override .video {padding-bottom: 0px !important; height: auto !important;} /* Overrides Gumby video setting */
+i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
+.btn, .skiplink {@include prefix((transition: all 0.25s));}
+
+form fieldset {border: 1px solid #ccc;}
+
+.field .input {@include font-size(14); @include line-height(22);}
+
+.field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: $danger_color;}
+.field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: $danger_color; color: #000; background: #f0c5c5;}
+
+.field.warning:after {font-family: "FontAwesome"; content: "\f071"; color: $warning_color;}
+.field.warning input, .field.warning .input, .field.warning textarea, .field.warning .textarea, .field.warning .radio span, .field.warning .checkbox span, .field.warning .picker {border-color: #d8d8d8; color: #000; background: #ffd;}
+
+.field.success:after {font-family: "FontAwesome"; content: "\f00c"; color: $success_color;}
+.field.success input, .field.success .input, .field.success textarea, .field.success .textarea, .field.success .radio span, .field.success .checkbox span, .field.success .picker {border-color: #d8d8d8; color: #000; background: #efe;}
+
+.picker:after {content: "\f0d7"; font-family: "FontAwesome";}
+
+//Fade placeholders on focus
+//Note: Can not use nested SCSS selectors on placeholder pseudos!
+$placeholder_color: rgba(153, 153, 153, 0.9);
+$placeholder_color_focus: rgba(153, 153, 153, 0) !important;
+input::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), webkit);}
+input:-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);} /* Eventually remove this line. */
+input::-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);}
+input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), ms);}
+	input:not(.nofade):focus::-webkit-input-placeholder {color: $placeholder_color_focus;}
+	input:not(.nofade):focus:-moz-placeholder {color: $placeholder_color_focus;} /* Eventually remove this line. */
+	input:not(.nofade):focus::-moz-placeholder {color: $placeholder_color_focus;}
+	input:not(.nofade):focus:-ms-input-placeholder {color: $placeholder_color_focus;}
+
+//jQuery UI Autocomplete Hero Search
+div#nebula-hero-formcon {@include media(tablet){display: none !important;};}
+form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
+	&:before {top: 9px; left: 10px; width: 16px; height: 16px; @include font-size(16);}
+	input {display: block; width: 100%; max-width: 558px; @include font-size(18); padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
+		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(0, 153, 216, 0.6);}
+		@include media(tablet){width: 92%; max-width: 650px;};
+		@include media(mobile){width: 90%; max-width: 300px;};
+	}
+	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
+}
+.form-identifier-nebula-hero-search {
+	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; @include font-size(10); opacity: 0.9;}
+	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; @include font-size(10); opacity: 0.6;}
+	.external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; @include font-size(10); opacity: 0.4;}
+}
+.ui-autocomplete.ui-widget-content li {position: relative;
+	&:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 23px; margin-right: 3px; text-align: center; @include font-size(12); opacity: 0.5;}
+	&.type-post:before {content: '\f1ea';}
+	&.type-page:before {content: '\f0f6';}
+	&.type-category:before {content: '\f02e';}
+	&.type-tag:before {content: '\f02b';}
+	&.type-menu-item:before {content: '\f0c9';}
+	&.type-event:before {content: '\f073';}
+	&.type-product:before {content: '\f07a';}
+	&.type-attachment:before {content: '\f1c5';}
+	&.file-zip:before {content: '\f1c6';}
+	&.type-user:before {content: '\f007';}
+	&.page-home:before {content: '\f015';}
+	&.sticky-post:before {content: '\f08d';}
+	&.search-link {@include font-size(12); border-top: 1px dotted #ddd;
+		a {opacity: 0.7;}
+	}
+	&.more-results:before {content: '\f002';}
+	&.no-results:before {content: '\00a0';}
+	@include media(mobile){width: 100% !important; top: 52px !important; left: 0px !important;};
+}
+
+
+//jQuery UI Autocomplete
+.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); color: $text_color; border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
+	.ui-menu .ui-menu-item {@include font-size(12); padding: 3px 5px;}
+	.ui-state-hover,
+	.ui-widget-content .ui-state-hover,
+	.ui-widget-header .ui-state-hover,
+	li.ui-state-focus,
+	.ui-widget-content li.ui-state-focus,
+	.ui-widget-header li.ui-state-focus,
+	.ui-widget-header li.ui-state-active {margin: 0; font-weight: normal; background: $primary_color; color: #fff; border: none;}
+	.ui-state-hover a,
+	li.ui-state-focus a {@include link-colors(#fff, #fff, #fff, #fff, #fff);}
+	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; /* width: 90%; */ @include prefix((transition: none 0.25s));}
+	@include media(tablet){@include background-color(#fff, 0.95);};
+}
+
+
+#googlemap img {max-width: none;} //Prevents glitchy UI within embedded Google maps
+
+div.bx-wrapper {
+	div.bx-viewport {left: 0 !important;}
+	div.bx-caption {bottom: 10px; @include background-color(#000, 0.8);
+		span {@include font-size(14);}
+	}
+}
+
+ul.bxslider {
+	li {padding-bottom: 0;}
+}
+
+//Anchor tags that should not have transitions
+.bx-controls-direction a,
+.search-choice-close {@include prefix((transition: none 0.25s));}
+
+//Responsive Ooyala Player
+.ooyalacon {position: relative; width: 100%; padding: 56.25% 0 0 0; //56.25% = 16:9 ratio
+	.innerWrapper {position: absolute !important; top: 0; left: 0; width: 100%; height: 100%;}
+	.video {position: absolute; top: 0; padding-bottom: 0 !important; height: 100% !important;}
+}
+
+
+// ===========================
+// Header
+// ===========================
+
+//Using borderimage instead of pointerevents so avoid the full dev version of Modernizr. Need to trigger on IE11+
+#fullbodywrapper {
+	.borderimage &:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color(#000, 0); z-index: 99995; pointer-events: none; @include prefix((transition: all 0.5s));}
+	.borderimage.mm-opening &:before {@include background-color(#000, 0.7);}
+}
+
+.fixedbar {@include media(tablet){display: none;};}
+
+//Top row that appears at mobile sizes.
+#mobilebarcon {position: relative; background: $primary_color; width: 100%; height: 0; overflow: hidden; @include prefix((transition: all 0.5s));
+	a {@include font-size(32); @include line-height(36); @include link-colors(#fff, #ccc); text-decoration: underline;}
+	.mobilenavcon {/* display: none; */
+		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 60%; height: 42px;
+			input {width: 100%; color: #fff; @include font-size(18); padding-left: 24px; line-height: 42px; background: none; border: none; border-radius: 0;
+				@include media(mobile){padding-left: 0;};
+			}
+			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			.borderimage &:before {color: #fff; @include font-size(19); width: 19px; height: 19px; top: 12px; left: 0;
+				@include media(mobile){display: none;};
+			}
+		}
+		@include media(tablet){display: block;};
+	}
+	a.mobilenavtrigger {position: relative; @include font-size(24); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; @include background-color(#fff, 0.25); z-index: 99999;
+		&:hover,
+		&.hover {color: #fff; @include background-color(#fff, 0.4);}
+		&.active {@include background-color(#fff, 0);}
+	}
+	@include media(tablet){height: 42px;};
+}
+#mobilenav {visibility: hidden; height: 0;
+	&.mm-menu {visibility: visible; height: 100%;}
+}
+
+
+
+
+//Top row that appears at desktop sizes.
+#secondarynavcon {position: relative; background: #444; z-index: 9999; @include prefix((transition: all 0.5s));
+	#secondarynav {position: relative; z-index: 2000;
+		ul {float: right; margin: 0;
+			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
+				&:last-child,
+				&.last-child {margin-right: 0;}
+				a {display: block; @include link-colors(#fff, #ccc);  @include font-size(11);}
+				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); @include prefix((transition: opacity 0.25s));
+					li.menu-item {display: block; margin-right: auto; padding: 0;
+						a {display: block; @include link-colors($text_color, $primary_color);  @include font-size(11);}
+					}
+				}
+				&:hover ul.sub-menu,
+				&.hover ul.sub-menu {left: 5px; opacity: 1;}
+				input.nebula-search {@include font-size(11); @include background-color(#fff, 0.8);}
+			}
+		}
+	}
+	@include media(tablet){max-height: 0; opacity: 0; overflow: hidden;};
+}
+
+
+//Logo and primary navigation row
+#logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 25px; box-shadow: none; z-index: 8000; @include prefix((transition: all 0.5s));
+	img {height: 90px; @include prefix((transition: all 0.5s));}
+	&.fixed {position: fixed; top: 0; left: 0; @include background-color(#f6f6f6, 0.98); padding-top: 0; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		img {height: 65px;}
+		#primarynav ul {margin-top: 22px;
+			li.menu-item {@include font-size(12);}
+		}
+	}
+	.logocon {
+		img {
+			@include media(tablet){width: 360px;};
+		}
+		@include media(tablet){display: inline-block;};
+	}
+	#primarynav {position: relative; z-index: 1000;
+		ul {margin-top: 34px; @include prefix((transition: all 0.5s));
+			&:first-child,
+			&.first-child {float: right;}
+			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
+				&:last-child,
+				&.last-child {margin-right: 0;}
+				.ie7 & {float: left; @include font-size(14);}
+				a {display: block; padding-bottom: 8px;
+					@include media(tablet){min-height: 44px; line-height: 44px;};
+				}
+				ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; @include prefix((transition: top 0.25s, opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
+					.no-js & {width: 400px;}
+					li {display: block; margin: 0;
+						a {display: block; padding: 5px;
+							&:hover,
+							&.hover {background: $primary_color; color: #fff;
+								@include media(tablet){background: grey;};
+							}
+							@include media(tablet){padding: 0;};
+						}
+						ul.sub-menu {display: none;
+							@include media(tablet){display: none;};
+						}
+					}
+					@include media(tablet){position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;};
+				}
+				&:hover,
+				&.hover {
+					& ul.sub-menu {left: 10px; top: 30px; opacity: 1;}
+					@include media(tablet){left: auto; top: 0; display: block; width: 100% !important;};
+				}
+				.no-js &:last-child:hover ul.sub-menu {left: auto; right: 0;}
+				@include media(tablet){display: block; width: 100%; text-align: center;};
+			}
+		}
+		@include media(tablet){display: none;};
+	}
+	@include media(tablet){padding-top: 0; text-align: center;};
+}
+
+//Row that contains event specific help: "Did you mean?", "Single result redirection", etc.
+.headerdrawercon {position: relative; @include background-color(#000, 0.05); z-index: 8888;
+	.headerdrawer {position: relative; padding-top: 10px; text-align: center; @include font-size(12);
+		p {text-align: center;}
+		a.close {position: absolute; top: 0; right: 0;}
+	}
+}
+
+#suggestedpage {display: none;}
+
+//Homepage hero row
+#heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; @include prefix((transition: all 0.5s));
+	.herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color($primary_color, 0.5); z-index: 0;}
+	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; @include font-size(90); @include line-height(100); font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
+		@include media(tablet){@include font-size(60); @include line-height(70);};
+		@include media(mobile){@include font-size(48); @include line-height(60);};
+	}
+	h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; @include font-size(32); font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+		@include media(tablet){@include font-size(24);};
+		@include media(mobile){@include font-size(18);};
+	}
+	@include media(tablet){padding: 50px 0; overflow: hidden; background-size: cover;};
+}
+
+
+// ===========================
+// Content
+// ===========================
+
+.breadcrumbcon {position: relative; z-index: 1;
+	.breadcrumbs {@include font-size(10); @include line-height(14);}
+}
+
+.fullcontentcon {margin-top: 30px;
+	@include media(mobile){margin-top: 15px;};
+}
+
+.archiveicon {color: #999;}
+
+.row.multi-column-query {margin-bottom: 30px;}
+
+.sticky-title i {@include font-size(20);}
+
+h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
+
+.entry-meta {@include font-size(12);
+	i {margin-right: 2px;}
+}
+	.posted-on,
+	.posted-in,
+	.posted-by {display: inline-block; margin-right: 10px; text-transform: uppercase; font-weight: bold;}
+	.meta-dimensions {display: inline-block; margin-right: 10px;}
+	.meta-exif {display: inline-block; margin-right: 10px;}
+	.nebulasocialcon {} /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */
+		.sharing-links {display: block; margin-top: 10px;}
+			.sharing-links.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
+			.nebula-social-button {display: inline-block; margin-right: 10px;}
+				.nebula-social-button.facebook-share .fb_iframe_widget span {vertical-align: inherit !important;}
+
+.entry-social {
+	ul {
+		li {display: inline;
+			&.facebook-like {}
+			&.facebook-share {}
+			&.twitter {}
+		}
+	}
+}
+
+//@TODO "Nebula" 0: This would probably be a good place to use an extend
+.entry-content {margin-top: 10px; @include font-size(14); @include line-height(22);}
+	.entry-content ul,
+	#tinymce ul {padding-left: 20px; list-style: disc;}
+	.entry-content ol,
+	#tinymce ol {margin: 0; padding-left: 20px;}
+
+.entry-caption {font-style: italic; color: $text_color; margin-top: 15px;}
+
+.prevnextcon {margin-top: 50px; margin-bottom: 30px;}
+	.prev-link-con {text-align: left;}
+	.next-link-con {text-align: right;}
+		.prevnext-post-heading {@include font-size(9); text-transform: uppercase; font-weight: bold; margin: 0; padding: 0;}
+			.prev-post-heading {}
+			.next-post-heading {}
+		.prevnext-post-link {@include font-size(12);}
+			.prev-post-link {}
+			.next-post-link {}
+
+.entry-manage {@include font-size(12); margin-top: 15px; margin-bottom: 30px;}
+	.nebula-manage-edit {
+		@include media(mobile_landscape){display: block; text-align: center;};
+	}
+		.post-edit,
+		.post-admin {display: inline-block; margin-right: 10px;}
+	.post-modified {float: right;
+		@include media(mobile_landscape){float: none; display: block; text-align: center;};
+	}
+
+.search-results .fullcontentcon article,
+.archive .fullcontentcon article {margin-top: 50px;}
+
+
+//wp-pagenavi Pagination
+div.wp-pagenavi {float: right; margin-bottom: 20px;
+	span.pages {}
+	span.current {}
+	a.page {}
+	a.nextpostslink {}
+	a.previouspostslink {}
+}
+
+//WP Core Pagination
+div.wp-pagination {float: right; margin-bottom: 20px;
+	a.page-numbers {}
+	span.page-numbers.current {}
+	a.page-numbers.next {}
+	a.page-numbers.prev {}
+}
+
+.wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; @include prefix((transition: all 0.75s));}
+	.wpcf7-form.sent ul {max-height: 0;}
+
+//Advanced Search
+#advanced-search-form {margin-bottom: 0; opacity: 1; @include prefix((transition: opacity 0.5s));
+	&.inactive {opacity: 0.3; pointer-events: none;}
+}
+
+	a#metatoggle {display: block; background: $primary_color; color: #fff; text-align: center; width: 100%; padding: 5px 10px;
+		&:hover,
+		&.hover {background: darken($primary_color, 15%);}
+	}
+	#advanced-search-meta {max-height: 0; margin-bottom: 15px; @include prefix((transition: all 0.5s)); overflow: hidden;
+		&.active {max-height: 250px;}
+		&.finished {overflow: visible;}
+	}
+
+	.advanced-search-group.left-side {}
+		#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
+	.right-side .advanced-search-group {margin-bottom: 10px;}
+
+	#advanced-search-form .advanced-search-keyword {width: 100%; @include font-size(24); font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
+
+.advanced-search-result {border-bottom: 1px dotted #ccc; padding-bottom: 10px; margin-top: 5px;}
+	.post-date-time {margin-bottom: 5px;}
+	.post-meta-tags {margin: 0;}
+		.post-cats {margin-right: 10px;}
+
+.more-or-prev-events {display: block; width: 100%; height: 50px; line-height: 50px; color: #fff; margin: 25px 0;
+	&:hover,
+	&.hover {color: #fff;}
+	&.all-events-loaded,
+	&.no-prev-events {pointer-events: none; opacity: 0.3;}
+}
+
+a.resetfilters {@include font-size(12); color: $danger_color; opacity: 0;
+	&:hover,
+	&.hover {color: darken($danger_color, 15%);}
+	&.active {opacity: 1;}
+}
+
+#advanced-search-indicator {margin-bottom: 15px;}
+
+#about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;
+	.author-headshot {min-height: 100px; margin-bottom: 20px;
+		img {width: 100%; max-width: 200px; /* border-radius: 500px; */ @include prefix((transition: all 0.75s));}
+		@include media(tablet){text-align: center;};
+	}
+	.author-name {display: inline-block; padding: 0;
+		@include media(mobile){display: block; padding-bottom: 15px;};
+	}
+	.author-location {white-space: nowrap;}
+	.author-social {float: right; margin-top: 17px;
+		@include media(mobile){margin-top: 0;};
+	}
+	.author-meta {margin-top: 5px; margin-bottom: 12px; @include font-size(12);
+		i {margin-right: 2px;}
+	}
+	.author-jobtitle {
+		@include media(mobile_landscape){display: block;};
+	}
+	.author-contact {float: right;
+		.author-email {white-space: nowrap; margin-right: 10px;}
+		.author-phonenumber {white-space: nowrap;}
+		@include media(mobile_landscape){float: none; display: block;};
+	}
+}
+
+h2.articles-by {padding-top: 0;}
+.bypostauthor {}
+
+//Comments
+li.comment div.comment-meta {
+	@include media(mobile_landscape){display: block;};
+}
+#nebulacommentswrapper {}
+	#disqus_thread {margin-top: 20px;}
+
+//Misc. WP Core styles
+.gallery-caption {@include font-size(12);}
+
+
+
+// ===========================
+// Sidebar
+// ===========================
+
+.xoxo {padding: 0; margin: 0;}
+	.xoxo li.widget-container {margin: 10px 0 30px 0;
+		&:first-child,
+		&.first-child {margin-top: 0;}
+		h3 {@include font-size(14); font-weight: bold; text-transform: uppercase; margin-bottom: 15px;}
+	}
+
+	.xoxo ul.menu {
+		a {display: block; padding-right: 20px;}
+		li.current-menu-item {
+			a {color: $secondary_color;}
+			.sub-menu a {@include link-colors($primary_color, $secondary_color);}
+		}
+		li.menu-item {position: relative; padding: 5px 0 5px 0;
+			ul.sub-menu {/* padding-left: 20px; */
+				li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid $secondary_color;}
+			}
+		}
+	}
+
+	li.widget_archive label {display: none;}
+
+	li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
+
+	//Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list.
+	.xoxo .tagcloud a {display: inline-block; margin: 6px 3px 0 0; padding: 1px 8px; border-radius: 5px; @include background-color($primary_color, 0.1); color: $primary_color; @include font-size(14); //Font size needs !important
+		&:hover,
+		&.hover {@include background-color($primary_color, 0.25); color: $primary_color;}
+	}
+
+	.xoxo .sidebar-search {@include media(tablet){display: none;};}
+
+/* Nebula expandable sidebar subnav style defaults */
+a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;
+	i {@include font-size(18); display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
+	&.plus i {@include prefix((transform: rotate(0deg)));}
+}
+
+.xoxo form.search input[type="text"] {width: 77% !important; @include font-size(12); @include line-height(24); height: auto !important; vertical-align: top;} //Font size and line height needs !important
+
+input[type="submit"] {color: #fff;}
+form.search .submit.btn {line-height: 24px !important; width: 22% !important; height: auto !important;}
+
+.formcon {}
+
+h3.comment-reply-title {@include font-size(12);}
+
+.logged-in-as {margin: 0;}
+.contact-form-heading {display: block; margin: 0; @include font-size(11); font-weight: bold;}
+
+p.contact-form-name,
+p.comment-form-author {
+	input {@include font-size(12);}
+}
+
+p.contact-form-email,
+p.comment-form-email {
+	input {@include font-size(12);}
+}
+
+p.contact-form-message,
+p.comment-form-comment {margin: 0;
+	textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; @include font-size(12);}
+}
+	.no-js p.comment-form-comment textarea {min-height: 150px;}
+
+p.form-submit {}
+	p.contact-form-submit input,
+	#cform7-container .submit,
+	p.form-submit input {border: 0; background: $primary_color; padding: 4px 10px; @include prefix((transition: all 0.25s));
+		&:hover,
+		&.hover {background: $secondary_color;}
+		&.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
+	}
+		.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; @include font-size(0); @include line-height(0); @include background-color(#fff, 0); color: rgba(255, 255, 255, 0);} //Font size and line height needs !important
+		.screen-reader-response {display: none;}
+
+#cform7-container {margin: 0;
+	.field {margin-bottom: 3px;}
+	input[type="text"],
+	input[type="email"] {width: 100% !important; @include font-size(12); @include line-height(24); height: auto !important;} //Font size and line height needs !important
+	.cform7-phone-area {width: 20%; @include font-size(12);}
+	.cform7-phone-prefix {width: 20%; @include font-size(12);}
+	.cform7-phone-line {width: 25%; @include font-size(12);}
+	.cform7-phone-ext {width: 22%; @include font-size(12);}
+	.cform7-message {@include font-size(12); @include line-height(16); padding-top: 7px; resize: vertical !important;} //Line height needs !important
+}
+
+.wpcf7-not-valid-tip {display: none !important;}
+
+.field.danger:after, .field.warning:after, .field.success:after {/* top: 45% !important; */}
+.xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 45% !important;}
+
+div.wpcf7-validation-errors {@include font-size(14); color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
+div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
+
+
+//Offcanvas Mmenu Modifications
+.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
+.mm-list a {border: none;
+	&.mm-subopen {width: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
+	&.mm-subopen + a, .mm-list a.mm-subopen + span {margin-right: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
+	&.mm-subopen:hover {@include background-color(#000, 0.1);}
+}
+.mm-list > li > a:hover {@include background-color(#000, 0.1);}
+.mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; @include background-color(#000, 0.05);}
+.mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {margin-top: 0px;}
+.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {margin-left: 0;}
+.clearsearch {text-align: center; margin-top: 20px;
+	a {color: #a36d6d;} /* May not need to style this color. */
+}
+.mm-menu li.current_page_item {@include background-color(#fff); font-weight: bold; color: #000;
+	a:not(.mm-next):before {content: "\f138"; font-family: "FontAwesome"; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
+}
+.mm-listview .mm-next {width: 90px;
+	&:hover,
+	&.hover {@include background-color(#000, 0.05);}
+	&:after {@include prefix((transition: right 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275)));}
+	&:hover:after,
+	&.hover:after {right: 15px;}
+}
+
+.doasitesearch {display: block; margin-bottom: 15px;}
+
+// ===========================
+// Footer
+// ===========================
+
+#footer {@include linear-gradient(to bottom, $primary_color, darken($primary_color, 15%));
+	@include media(tablet){padding-top: 0;};
+}
+
+.twitterago {@include font-size(12); text-decoration: underline;}
+
+.footerwidgets {padding-top: 20px; padding-bottom: 20px; background: $text_color;}
+	.widget-container {list-style: none;}
+		.footerwidgets .widget-title {@include font-size(16); text-transform: uppercase; color: #fff; font-weight: bold; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
+		.footerwidgets .textwidget,
+		.footerwidgets ul li {@include font-size(12); color: #fff;}
+		.footerwidgets a {@include link-colors(#fff, #aaa);}
+
+.row.powerfootercon {padding-top: 20px; margin-bottom: 30px;
+	@include media(tablet){display: none;};
+}
+	#powerfooter {position: relative; z-index: 1000;
+		ul {
+			li.menu-item {position: relative; display: inline-block; float: left; margin: 0 5px; padding: 0 10px; width: 180px;
+				&:first-child,
+				&.first-child {margin-left: 0; padding-left: 0;}
+				&:last-child,
+				&.last-child {margin-right: 0; padding-right: 0;}
+				a {display: block; @include link-colors(#fff, #aaa); @include font-size(16); font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px dotted #fff;
+					@include media(tablet){border-bottom: none;};
+				}
+				ul.sub-menu {margin: 0; padding: 5px 0;
+					li {display: block; margin: 0; padding: 0;
+						a {display: block; @include link-colors(#fff, #aaa); @include font-size(12); font-weight: normal; text-transform: none; margin-bottom: 0; border-bottom: none;}
+						ul.sub-menu {display: none;}
+						@include media(tablet){padding: 0 0 0 10px; border-left: 1px solid $secondary_color;};
+					}
+					@include media(tablet){padding: 5px 0 5px 35px;};
+				}
+				@include media(tablet){display: block; margin: 0; padding: 0; width: 100% !important;};
+			}
+		}
+	}
+
+div.copyright {padding-top: 15px; @include background-color(#444);
+	p {@include font-size(12); color: #fff;
+		@include media(tablet){@include font-size(11);};
+	}
+	a {@include link-colors(#fff, #ccc);}
+}
+
+a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
+
+.footer-search {float: right;
+	@include media(tablet){display: none;};
+}
+
+/* Nebula Desktop Helper Styles */
+.disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;
+	&.notallowed {cursor: not-allowed !important;}
+}
+.focusError {background-color: #fcc !important; border: 1px solid #f88 !important; @include prefix((transition: all 0.25s));}
+
+
+/* IE7 Gumby Adjustments */
+.ie7 .column, .ie7 .columns {margin-left: 1.7% !important;}
+.ie7 .column.first-child, .ie7 .columns.first-child, .ie7 .alpha {margin-left: 0px !important;}
+.ie7 .row .push_one {margin-left: 8.1% !important;}
+
+
+// ===========================
+// Shortcodes
+// ===========================
+
+.google-map-overlay {position: relative; overflow: hidden;
+	&:before {content: "Click to enable interactivity."; position: absolute; bottom: -50px; width: 100%; @include background-color(#000, 0.5); text-align: center; color: #fff; overflow: hidden; opacity: 0; @include prefix((transition: all 0.25s));}
+	&.the-map-overlay {cursor: pointer;
+		&:hover:before,
+		&.hover:before {@include background-color(#000, 0.9); padding: 24px 0;}
+		&:before {bottom: 6px; opacity: 1; padding: 8px 0; height: auto;}
+		iframe {pointer-events: none;}
+	}
+}
+
+.ttip {cursor: text;
+	&:before,
+	&:after {bottom: 0%; @include prefix((transition: all 0.25s));}
+	.ie &:before,
+	.ie &:after,
+	&:hover:after,
+	&:hover:before {bottom: 101%; @include prefix((transition: all 0.25s));}
+}
+
+.gist {
+	.line-numbers {@include font-size(12);}
+	.file-data pre,
+	.line-data {@include font-size(12);}
+}
+
+.nebula-youtube {margin-bottom: 15px;}
+.nebula-vimeo {margin-bottom: 15px;}
+
+.accordion {position: relative; margin-top: 10px; margin-bottom: 10px;}
+	.accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; @include prefix((transition: border-color 0.3s ease));
+		.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: 124.8%; color: #2c3e50; background-color: #fafafa; cursor: pointer;}
+		.accordion-toggle .accordion-heading:before {content: "\f067"; font-family: "FontAwesome"; position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: 74%; @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
+		&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; @include prefix((transform: rotate(0)));}
+		.accordion-content-con {display: none;
+			.accordion-content {padding: 15px; border-top: 2px solid #e5e5e5;}
+		}
+	}
+
+
+// ===========================
+// Helpers
+// ===========================
+
+//Image replacement
+.ir {background-color: transparent; border: 0; overflow: hidden; *text-indent: -9999px;
+	&:before {content: ""; display: block; width: 0; height: 100%;}
+}
+.hidden {display: none !important; visibility: hidden;} //Hide from both screenreaders and browsers
+.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; //Hide only visually, but have it available for screenreaders
+	&.focusable:active,
+	&.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;} //Allow the element to be focusable when navigated to via the keyboard
+}
+.invisible {visibility: hidden;} //Hide visually and from screenreaders, but maintain layout
+.clearfix {@include clearfix();}
+div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
+.avoid-clicks {pointer-events: none;} //Only supported in IE11+
+.allow-clicks {pointer-events: all;} //Only supported in IE11+
+.filtered {display: none;}
+
+.aligncenter, .align-center {display: block; margin: 0 auto;}
+.alignleft, .align-left {float: left;}
+.alignright, .align-right {float: right;}
+.wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
+.wp-caption-text {}
+
+//Windows Chrome Font Bug Fix: http://stackoverflow.com/questions/22011139/google-fonts-are-not-rendering-on-google-chrome @TODO: "Nebula" 0: Not Working...
+/*
+body * {-webkit-animation-duration: 0.1s; -webkit-animation-name: fontfix; -webkit-animation-iteration-count: 1; -webkit-animation-timing-function: linear; -webkit-animation-delay: 0.1s;}
+@-webkit-keyframes fontfix{from {opacity: 1;} to {opacity: 1;}}
+*/
+
+$phg_cyan: #0098d7;
+$phg_green: #95d600;
+$phg_grey: #9fa1a4;
+a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
+	&.white {background: url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
+		span {color: #fff;}
+		&:hover span, &.hover span {color: #aaa;}
+	}
+	span {@include prefix((transition: all 0.25s));
+		&.pinckney {color: $phg_cyan;}
+		&.hugo {color: $phg_green;}
+		&.group {color: $phg_grey;}
+	}
+	&:hover span.pinckney, &.hover span.pinckney {color: darken($phg_cyan, 15%);}
+	&:hover span.hugo, &.hover span.hugo {color: darken($phg_green, 15%);}
+	&:hover span.group, &.hover span.group {color: darken($phg_grey, 15%);}
+}
+
+a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("images/phg/phg-symbol.svg") -15px 6px no-repeat; @include prefix((transition: all 0.25s));
+	span {margin-right: 3px; @include prefix((transition: all 0.25s));
+		&:last-child {margin-right: 0;}
+		&.pinckney {color: inherit;}
+		&.hugo {color: inherit;}
+		&.group {color: inherit;}
+	}
+	&:hover,
+	&.hover {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
+		span {margin-right: 0px;
+			&.pinckney {color: darken($phg_cyan, 15%);}
+			&.hugo {color: darken($phg_green, 15%);}
+			&.group {color: darken($phg_grey, 15%);}
+		}
+	}
+}
+
+$facebook_color: #3b5998;
+a.facebook {@include link-colors($facebook_color, darken($facebook_color, 15%));}
+$twitter_color: #55acee;
+a.twitter {@include link-colors($twitter_color, darken($twitter_color, 15%));}
+$google_plus_color: #d73d32;
+a.googleplus {@include link-colors($google_plus_color, darken($google_plus_color, 15%));}
+$linkedin_color: #0077b5;
+a.linkedin {@include link-colors($linkedin_color, darken($linkedin_color, 15%));}
+$github_color: #333;
+a.github {@include link-colors($github_color, darken($github_color, 15%));}
+$youtube_color: #cc181e;
+a.youtube {@include link-colors($youtube_color, darken($youtube_color, 15%));}
+$instagram_color: #3f729b;
+a.instagram {@include link-colors($instagram_color, darken($instagram_color, 15%));}
+$soundcloud_color: #ff3300;
+a.soundcloud {@include link-colors($soundcloud_color, darken($soundcloud_color, 15%));}
+
+@-ms-viewport {width: device-width;}
+
+//Print styles
+@media print {
+	* {/* background: transparent !important;  */ color: #000 !important; box-shadow: none !important; text-shadow: none !important;}
+	a, a:visited {text-decoration: underline;}
+	/* .entry-content a[href]:after {content: " (" attr(href) ")";} */
+
+	.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {content: "";} /* Don't show links for images, or javascript/internal links */
+	thead {display: table-header-group;}
+	tr, img {page-break-inside: avoid;}
+	img {max-width: 100% !important;}
+	@page {margin: 0.5cm;}
+	p, h2, h3 {orphans: 3; widows: 3;}
+	h2, h3 {page-break-after: avoid;}
+}
+
+
+// ===========================
+// Nebula Debug
+// ===========================
+
+.border-red, .outline-red {outline: 1px solid red;}
+.border-orange, .outline-orange {outline: 1px solid orange;}
+.border-yellow, .outline-yellow {outline: 1px solid yellow;}
+.border-green, .outline-green {outline: 1px solid green;}
+.border-blue, .border-indigo, .outline-blue, .outline-indigo {outline: 1px solid blue;}
+.border-purple, .border-violet, .outline-purple, .outline-violet {outline: 1px solid purple;}
+
+.background-red, .bg-red {background: red;}
+.background-orange, .bg-orange {background: orange;}
+.background-yellow, .bg-yellow {background: yellow;}
+.background-green, .bg-green {background: green;}
+.background-blue, .bg-blue, .background-indigo, .bg-indigo {background: blue;}
+.background-purple, .bg-purple, .background-violet, .bg-violet {background: purple;}

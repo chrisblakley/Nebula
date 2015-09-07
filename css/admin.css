@@ -1,3 +1,5 @@
+/* scss disabled */
+
 a.phg {margin-left: 3px; padding-left: 15px; background: url("../images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;}
 	a.phg span {-webkit-transition: all 0.25s; -moz-transition: all 0.25s; -o-transition: all 0.25s; transition: all 0.25s;}
 	a.phg span.pinckney {color: #0099d8;}

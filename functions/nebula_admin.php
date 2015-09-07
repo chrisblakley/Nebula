@@ -525,7 +525,6 @@ function search_theme_files(){
 	exit();
 }
 
-
 //Change default values for the upload media box
 //These can also be changed by navigating to .../wp-admin/options.php
 add_action('after_setup_theme', 'custom_media_display_settings');
@@ -535,18 +534,43 @@ function custom_media_display_settings(){
 	//update_option('image_default_size', 'large');
 }
 
-//Add ID column on post/page listings
-add_filter('manage_posts_columns', 'id_columns_head');
-add_action('manage_posts_custom_column', 'id_columns_content', 10, 2);
-add_filter('manage_pages_columns', 'id_columns_head');
-add_action('manage_pages_custom_column', 'id_columns_content', 10, 2);
-function id_columns_head($defaults){
+//Add columns to user listings
+add_filter('manage_users_columns', 'nebula_user_columns_head');
+function nebula_user_columns_head($defaults){
+    $defaults['company'] = 'Company';
+    $defaults['status'] = 'Status';
     $defaults['id'] = 'ID';
     return $defaults;
 }
-function id_columns_content($column_name, $post_ID){
+add_action('manage_users_custom_column', 'nebula_user_columns_content', 15, 3);
+function nebula_user_columns_content($value='', $column_name, $id){
+    if ( $column_name == 'company' ){
+		return get_the_author_meta('jobcompany', $id);
+	}
+    if ( $column_name == 'status' ){
+		if ( nebula_is_user_online($id) ){
+			return '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
+		} else {
+			return ( nebula_user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula_user_last_online($id)) . '</em></small>' : '';
+		}
+	}
+	if ( $column_name == 'id' ){
+		return $id;
+	}
+}
+
+//Add ID column on post/page listings
+add_filter('manage_posts_columns', 'nebual_id_columns_head');
+add_filter('manage_pages_columns', 'nebual_id_columns_head');
+function nebual_id_columns_head($defaults){
+    $defaults['id'] = 'ID';
+    return $defaults;
+}
+add_action('manage_posts_custom_column', 'nebula_id_columns_content', 15, 3);
+add_action('manage_pages_custom_column', 'nebula_id_columns_content', 15, 3);
+function nebula_id_columns_content($column_name, $id){
     if ( $column_name == 'id' ){
-		echo $post_ID;
+		echo $id;
 	}
 }
 

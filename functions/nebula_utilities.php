@@ -133,6 +133,21 @@ function is_debug(){
 	return false;
 }
 
+//Check if a user has been online in the last 15 minutes
+function nebula_is_user_online($id){
+	$logged_in_users = get_transient('users_status');
+	return isset($logged_in_users[$id]) && ($logged_in_users[$id] > (time()-(15*60))); //15 Minutes
+}
+
+function nebula_user_last_online($id){
+	$logged_in_users = get_transient('users_status');
+	if ( isset($logged_in_users[$id]) ){
+		return $logged_in_users[$id];
+	} else {
+		return false;
+	}
+}
+
 //Check if the current IP address matches any of the dev IP address from Nebula Options
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_dev(){
@@ -740,6 +755,78 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
 			trigger_error('nebula_compare_operator does not allow "' . $c . '".');
 			return false;
     }
+}
+
+
+
+
+
+/*
+function __autoload($className){
+    $className = ltrim($className, '\\');
+    $fileName  = '';
+    $namespace = '';
+    if ($lastNsPos = strripos($className, '\\')) {
+        $namespace = substr($className, 0, $lastNsPos);
+        $className = substr($className, $lastNsPos + 1);
+        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+    }
+    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+    // $fileName .= $className . '.php'; //sometimes you need a custom structure
+    //require_once "library/class.php"; //or include a class manually
+    require $fileName;
+}
+*/
+
+
+/*==========================
+	SCSS Compiling
+	http://leafo.net/scssphp/docs/
+ ===========================*/
+
+if ( nebula_options_conditional('nebula_scss') ){
+	if ( is_writable(get_template_directory() . '/style.css') ){
+		add_action('init', 'nebula_render_scss');
+		add_action('admin_init', 'nebula_render_scss');
+	} else {
+		//@TODO "Nebula" 0: Somehow need to notify that permission is denied to write files (thinking an HTML comment). Need to not do it before headers are sent, though.
+	}
+}
+function nebula_render_scss($specific_scss=null){
+	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php');
+	$scss = new \Leafo\ScssPhp\Compiler(); //This can't be the proper way to invoke this... but it works.
+	$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact');
+	if ( is_debug() ){
+		$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
+	}
+
+	if ( empty($specific_scss) ){
+		foreach ( glob(get_template_directory() . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+			$file_path_info = pathinfo($file);
+
+			if ( is_file($file) && $file_path_info['extension'] == 'scss' ){
+				$file_counter++;
+				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css' : get_template_directory() . '/css/' . $file_path_info['filename'] . '.css';
+
+				if ( is_debug() | !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) ){ //If .css file doesn't exist, or is older than .scss file
+					$existing_css_contents = ( file_exists($css_filepath) )? file_get_contents($css_filepath) : '';
+					if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
+						$this_scss_contents = file_get_contents($file); //Copy SCSS file contents
+						$compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
+						file_put_contents($css_filepath, $compiled_css); //Save the rendered CSS
+					}
+				}
+			}
+		}
+	} else {
+		if ( file_exists($specific_scss) ){ //If $specific_scss is a filepath
+			$scss_contents = file_get_contents($specific_scss); //Copy SCSS file contents
+			$compiled_css = $scss->compile($scss_contents); //Compile the SCSS
+			file_put_contents(str_replace('.scss', '.css', $specific_scss), $compiled_css); //Save the rendered CSS in the same directory
+		} else { //If $scss_file is raw SCSS string
+			return $scss->compile($specific_scss); //Return the rendered CSS
+		}
+	}
 }
 
 
