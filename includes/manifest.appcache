@@ -11,7 +11,7 @@ CACHE:
 #../js/libs/
 #../images/logo.png
 #../style.css
-#../css/dev.css
+#../stylesheets/css/dev.css
 
 FALLBACK:
 #An optional section specifying fallback pages if a resource is inaccessible. The first URI is the resource, the second is the fallback. Both URIs must be relative and from the same origin as the manifest file. Wildcards may be used.

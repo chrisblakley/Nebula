@@ -1947,12 +1947,12 @@ function conditionalJSLoading(){
     }
 
 	if ( jQuery('pre.nebula-code').is('*') || jQuery('pre.nebula-pre').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/css/pre.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/css/pre.css');
 		nebula_pre();
 	}
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/css/flags.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/css/flags.css');
 	}
 } //end conditionalJSLoading()
 

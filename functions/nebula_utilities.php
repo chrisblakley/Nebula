@@ -801,12 +801,12 @@ function nebula_render_scss($specific_scss=null){
 	}
 
 	if ( empty($specific_scss) ){
-		foreach ( glob(get_template_directory() . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+		foreach ( glob(get_template_directory() . '/stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 			$file_path_info = pathinfo($file);
 
 			if ( is_file($file) && $file_path_info['extension'] == 'scss' ){
 				$file_counter++;
-				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css' : get_template_directory() . '/css/' . $file_path_info['filename'] . '.css';
+				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css' : get_template_directory() . '/stylesheets/css/' . $file_path_info['filename'] . '.css';
 
 				if ( is_debug() | !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) ){ //If .css file doesn't exist, or is older than .scss file
 					$existing_css_contents = ( file_exists($css_filepath) )? file_get_contents($css_filepath) : '';

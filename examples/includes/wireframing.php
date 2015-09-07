@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/wireframing.css" />
+<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/stylesheets/css/wireframing.css" />
 
 <?php if ( nebula_options_conditional('nebula_wireframing') == 'disabled' || nebula_options_conditional('nebula_wireframing') == 'default' ) : ?>
 	<p style="background: maroon; color: #fff; padding: 10px 15px;"><strong>Warning:</strong> Wireframing is currently <strong>disabled</strong> in this instance of WordPress. JavaScript functions will not work unless it is re-enabled on the Nebula Options page.</p>

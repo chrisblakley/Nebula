@@ -15,7 +15,7 @@ jQuery(document).on('ready', function(){
 	});
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/css/flags.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/css/flags.css');
 	}
 
 }); //End Document Ready

@@ -37,28 +37,28 @@ if ( nebula_options_conditional('nebula_console_css') ){
 
 //Check for dev stylesheets
 if ( nebula_options_conditional('nebula_dev_stylesheets') ){
-	if ( is_writable(get_template_directory() . '/css/dev.css') ){
+	if ( is_writable(get_template_directory() . '/stylesheets/css/dev.css') ){
 		add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
 	} else {
 		//@TODO "Nebula" 0: Somehow need to notify that permission is denied to write files (thinking an HTML comment). Need to not do it before headers are sent, though.
 	}
 	function combine_dev_stylesheets(){
 		$file_counter = 0;
-		file_put_contents(get_template_directory() . '/css/dev.css', '/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/'); //Empty /css/dev.css
-		foreach ( glob(get_template_directory() . '/css/dev/*.css') as $file ){
+		file_put_contents(get_template_directory() . '/stylesheets/css/dev.css', '/* scss disabled */ /**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/'); //Empty /stylesheets/css/dev.css
+		foreach ( glob(get_template_directory() . '/stylesheets/css/dev/*.css') as $file ){
 			$file_path_info = pathinfo($file);
 			if ( is_file($file) && $file_path_info['extension'] == 'css' ){
 				$file_counter++;
 				$this_css_contents = file_get_contents($file); //Copy file contents
 				$empty_css = ( $this_css_contents == '' )? ' (empty)' : '';
-				$dev_css_contents = file_get_contents(get_template_directory() . '/css/dev.css');
-				$dev_css_contents .= "/* ==========================================================================\r\n   " . get_template_directory_uri() . "/css/dev/" . $file_path_info['filename'] . $empty_css . "\r\n   ========================================================================== */\r\n\r\n" . $this_css_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . " */\r\n\r\n\r\n";
-				file_put_contents(get_template_directory() . '/css/dev.css', $dev_css_contents);
+				$dev_css_contents = file_get_contents(get_template_directory() . '/stylesheets/css/dev.css');
+				$dev_css_contents .= "/* ==========================================================================\r\n   " . get_template_directory_uri() . "/stylesheets/css/dev/" . $file_path_info['filename'] . $empty_css . "\r\n   ========================================================================== */\r\n\r\n" . $this_css_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . " */\r\n\r\n\r\n";
+				file_put_contents(get_template_directory() . '/stylesheets/css/dev.css', $dev_css_contents);
 			}
 		}
 
 		if ( $file_counter > 0 ){
-			wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/css/dev.css?c=' . $file_counter, array('nebula-main'), null);
+			wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . $file_counter, array('nebula-main'), null);
 		}
 	}
 }
