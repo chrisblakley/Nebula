@@ -1,3 +1,4 @@
+@import 'variables';
 @import 'mixins';
 
 a {color: $primary_color !important; @include prefix((transition: all 0.25s)); text-decoration: none;

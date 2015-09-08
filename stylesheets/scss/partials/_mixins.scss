@@ -1,11 +1,6 @@
 // ===========================
-// Global variables and Mixins
+// Mixins
 // ===========================
-
-$primary_color: #0098d7;
-$secondary_color: #95d600;
-$text_color: #444;
-$font_stack: 'Open Sans', sans-serif;
 
 //.element {@include font-size(16);}
 @mixin font-size($size: 12){
@@ -85,8 +80,3 @@ $media_stack: (
 	&:after {content: ""; display: table;}
 	&:after {clear: both;}
 }
-
-$background_color: #f6f6f6;
-$danger_color: #ca3838;
-$warning_color: #f6b83f;
-$success_color: #58c026;

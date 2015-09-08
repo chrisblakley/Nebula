@@ -13,7 +13,7 @@
 //@TODO "Wordpress" 4: Change the Theme Name (above) to be the client/project and the year!
 //Do not change the "Version"! This is to track the Nebula version of initial development.
 
-//Colors and fonts are defined in /partials/_mixins.scss
+@import 'variables';
 @import 'mixins';
 
 // ===========================

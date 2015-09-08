@@ -29,9 +29,6 @@ div.space {clear: both; display: block; overflow: hidden; visibility: hidden; wi
 // Brand colors
 // ===========================
 
-$phg_cyan: #0098d7;
-$phg_green: #95d600;
-$phg_grey: #9fa1a4;
 a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
 	&.white {background: url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
 		span {color: #fff;}
@@ -64,21 +61,13 @@ a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; b
 	}
 }
 
-$facebook_color: #3b5998;
 a.facebook {@include link-colors($facebook_color, darken($facebook_color, 15%));}
-$twitter_color: #55acee;
 a.twitter {@include link-colors($twitter_color, darken($twitter_color, 15%));}
-$google_plus_color: #d73d32;
 a.googleplus {@include link-colors($google_plus_color, darken($google_plus_color, 15%));}
-$linkedin_color: #0077b5;
 a.linkedin {@include link-colors($linkedin_color, darken($linkedin_color, 15%));}
-$github_color: #333;
 a.github {@include link-colors($github_color, darken($github_color, 15%));}
-$youtube_color: #cc181e;
 a.youtube {@include link-colors($youtube_color, darken($youtube_color, 15%));}
-$instagram_color: #3f729b;
 a.instagram {@include link-colors($instagram_color, darken($instagram_color, 15%));}
-$soundcloud_color: #ff3300;
 a.soundcloud {@include link-colors($soundcloud_color, darken($soundcloud_color, 15%));}
 
 
