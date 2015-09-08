@@ -1,356 +1,356 @@
- .nebula_help_link { text-decoration:none; }
+ /* line 4,  */ .nebula_help_link { text-decoration:none; }
 
- i.help { cursor:help; color:#aaa; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 5,  */ i.help { cursor:help; color:#aaa; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- i.help:hover { color:#444; }
+ /* line 6,  */ i.help:hover { color:#444; }
 
- .index-php .welcome-panel { display:block; padding:8px 12px; overflow:hidden; }
+ /* line 9,  */ /* line 10,  */ .index-php .welcome-panel { display:block; padding:8px 12px; overflow:hidden; }
 
- .index-php .welcome-panel .about-description { font-size:13px; }
+ /* line 11,  */ .index-php .welcome-panel .about-description { font-size:13px; }
 
- .index-php .welcome-panel h4 { /* margin-top: 8px; */ }
+ /* line 12,  */ .index-php .welcome-panel h4 { /* margin-top: 8px; */ }
 
- .index-php .welcome-panel li { color:#444; font-size:13px; padding-bottom:0; }
+ /* line 13,  */ .index-php .welcome-panel li { color:#444; font-size:13px; padding-bottom:0; }
 
- .index-php .welcome-panel li strong { color:#000; }
+ /* line 14,  */ .index-php .welcome-panel li strong { color:#000; }
 
- .index-php .welcome-panel-content { margin:0; }
+ /* line 17,  */ .index-php .welcome-panel-content { margin:0; }
 
- .admin-user-info { text-transform:capitalize; }
+ /* line 20,  */ .admin-user-info { text-transform:capitalize; }
 
- #welcome-photo { position:absolute; top:0; right:0; height:100%; width:47%; padding:5px 20px; }
+ /* line 24,  */ #welcome-photo { position:absolute; top:0; right:0; height:100%; width:47%; padding:5px 20px; }
 
- .phg-info { position:relative; background:rgba(0, 0, 0, 0.6); position:absolute; bottom:10px; left:0; width:100%; padding:5px 12px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 25,  */ .phg-info { position:relative; background:rgba(0, 0, 0, 0.6); position:absolute; bottom:10px; left:0; width:100%; padding:5px 12px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .js .jsinfo { bottom:-50px; -webkit-transition:all 0.5s ease 0s; -moz-transition:all 0.5s ease 0s; -o-transition:all 0.5s ease 0s; transition:all 0.5s ease 0s; }
+ /* line 26,  */ .js .jsinfo { bottom:-50px; -webkit-transition:all 0.5s ease 0s; -moz-transition:all 0.5s ease 0s; -o-transition:all 0.5s ease 0s; transition:all 0.5s ease 0s; }
 
- .phg-info:hover { background:rgba(0, 0, 0, 0.8); }
+ /* line 27,  */ .phg-info:hover { background:rgba(0, 0, 0, 0.8); }
 
- .phg-info h4 { margin:0; height:25px; overflow:hidden; opacity:1; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 28,  */ .phg-info h4 { margin:0; height:25px; overflow:hidden; opacity:1; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .phg-info span,.phg-info a { display:inline-block; color:#fff; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 29,  */ .phg-info span,.phg-info a { display:inline-block; color:#fff; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .phg-info a:hover { color:#0098d7; }
+ /* line 31,  */ .phg-info a:hover { color:#0098d7; }
 
- .phg-info p { color:#fff; margin:0; }
+ /* line 32,  */ .phg-info p { color:#fff; margin:0; }
 
- .phg-info.maininfo { z-index:50; }
+ /* line 33,  */ .phg-info.maininfo { z-index:50; }
 
- .phg-info.mapinfo { z-index:25; }
+ /* line 34,  */ .phg-info.mapinfo { z-index:25; }
 
- .welcome-photo-bg { position:absolute; top:0; left:0; height:100%; width:100%; background:url("../../images/phg/welcome.jpg") center 90% no-repeat; background-size:cover; z-index:40; }
+ /* line 35,  */ .welcome-photo-bg { position:absolute; top:0; left:0; height:100%; width:100%; background:url("../../images/phg/welcome.jpg") center 90% no-repeat; background-size:cover; z-index:40; }
 
- .weclome-map { position:absolute; top:0; left:0; height:100%; width:100%; padding:0; }
+ /* line 37,  */ .weclome-map { position:absolute; top:0; left:0; height:100%; width:100%; padding:0; }
 
- #welcome-content { width:50%; }
+ /* line 39,  */ #welcome-content { width:50%; }
 
- .index-php .welcome-panel .welcome-panel-column:first-child { width:33% !important; }
+ /* line 40,  */ .index-php .welcome-panel .welcome-panel-column:first-child { width:33% !important; }
 
- .index-php .welcome-panel .welcome-panel-column { min-width:100px; }
+ /* line 41,  */ .index-php .welcome-panel .welcome-panel-column { min-width:100px; }
 
- #welcome-content .logocon { float:left; max-width:22%; /* max-height: 56px; */ margin-right:15px; }
+ /* line 42,  */ #welcome-content .logocon { float:left; max-width:22%; /* max-height: 56px; */ margin-right:15px; }
 
- #welcome-content .logocon a { display:inline-block; }
+ /* line 43,  */ #welcome-content .logocon a { display:inline-block; }
 
- #welcome-content .logocon a img { max-height:75px; width:auto; }
+ /* line 44,  */ #welcome-content .logocon a img { max-height:75px; width:auto; }
 
- #welcome-content hr { margin:10px 0 0 -12px; border-bottom:none; border-top:1px solid #eee; width:5000px; }
+ /* line 45,  */ #welcome-content hr { margin:10px 0 0 -12px; border-bottom:none; border-top:1px solid #eee; width:5000px; }
 
- #wpbody-content { padding-bottom:40px; }
+ /* line 47,  */ #wpbody-content { padding-bottom:40px; }
 
- #dashboard-widgets .meta-box-sortables { min-height:0; }
+ /* line 48,  */ #dashboard-widgets .meta-box-sortables { min-height:0; }
 
- .metabox-holder .postbox-container .empty-container { height:100px; margin-bottom:25px !important; }
+ /* line 49,  */ .metabox-holder .postbox-container .empty-container { height:100px; margin-bottom:25px !important; }
 
- .wp-admin .hide-if-no-customize { display:none; visibility:hidden; opacity:0; }
+ /* line 51,  */ .wp-admin .hide-if-no-customize { display:none; visibility:hidden; opacity:0; }
 
- li.comment-count { display:none; }
+ /* line 53,  */ li.comment-count { display:none; }
 
- .appearance_page_nebula_options .form-table th { width:300px; }
+ /* line 55,  */ /* line 56,  */ .appearance_page_nebula_options .form-table th { width:300px; }
 
- .appearance_page_nebula_options textarea { width:392px; height:60px; resize:vertical; font-size:12px; }
+ /* line 57,  */ .appearance_page_nebula_options textarea { width:392px; height:60px; resize:vertical; font-size:12px; }
 
- .form-table .helper { padding:0 10px; margin:10px 0; background:#f9f9f9; border-radius:8px; }
+ /* line 60,  */ .form-table .helper { padding:0 10px; margin:10px 0; background:#f9f9f9; border-radius:8px; }
 
- th#id { width:50px; }
+ /* line 62,  */ th#id { width:50px; }
 
- .wp-admin #testloadcon { pointer-events:none; opacity:0; visibility:hidden; display:none; }
+ /* line 64,  */ .wp-admin #testloadcon { pointer-events:none; opacity:0; visibility:hidden; display:none; }
 
- .wp-admin form.searchfiles { display:inline-block; margin-bottom:10px; width:90%; }
+ /* line 66,  */ .wp-admin form.searchfiles { display:inline-block; margin-bottom:10px; width:90%; }
 
- .wp-admin input.findterm { padding:2px 5px; font-size:12px; border-radius:4px; width:46%; }
+ /* line 67,  */ .wp-admin input.findterm { padding:2px 5px; font-size:12px; border-radius:4px; width:46%; }
 
- .wp-admin #wpbody .searchdirectory { font-size:12px; height:23px; vertical-align:top; }
+ /* line 68,  */ .wp-admin #wpbody .searchdirectory { font-size:12px; height:23px; vertical-align:top; }
 
- .wp-admin input.searchterm { font-size:12px; line-height:11px; height:22px; margin:1px 1px; outline:none !important; }
+ /* line 69,  */ .wp-admin input.searchterm { font-size:12px; line-height:11px; height:22px; margin:1px 1px; outline:none !important; }
 
- .wp-admin .search_results { max-height:0px; opacity:0; font-size:10px; background:#f6f6f6; padding:5px; border:1px solid #ddd; border-radius:4px; overflow:auto; white-space:nowrap; -webkit-transition:all 1s ease 0s; -moz-transition:all 1s ease 0s; -o-transition:all 1s ease 0s; transition:all 1s ease 0s; }
+ /* line 70,  */ .wp-admin .search_results { max-height:0px; opacity:0; font-size:10px; background:#f6f6f6; padding:5px; border:1px solid #ddd; border-radius:4px; overflow:auto; white-space:nowrap; -webkit-transition:all 1s ease 0s; -moz-transition:all 1s ease 0s; -o-transition:all 1s ease 0s; transition:all 1s ease 0s; }
 
- .wp-admin .search_results.done { max-height:500px; opacity:1; }
+ /* line 71,  */ .wp-admin .search_results.done { max-height:500px; opacity:1; }
 
- .wp-admin .resulttext { font-size:10px; margin:0; }
+ /* line 73,  */ .wp-admin .resulttext { font-size:10px; margin:0; }
 
- div.precon { display:none; resize:none; }
+ /* line 74,  */ div.precon { display:none; resize:none; }
 
- .wp-admin pre.actualline { display:table; font-family:monospace; font-size:10px; margin:0; color:#666; background:#fff; padding:2px 5px; border-radius:5px; resize:none; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 75,  */ .wp-admin pre.actualline { display:table; font-family:monospace; font-size:10px; margin:0; color:#666; background:#fff; padding:2px 5px; border-radius:5px; resize:none; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .secured-connection i { color:#00a200; }
+ /* line 77,  */ .secured-connection i { color:#00a200; }
 
- .linenumber { font-weight:bold; }
+ /* line 79,  */ .linenumber { font-weight:bold; }
 
- .todo_help_icon { float:right; font-size:10px; }
+ /* line 81,  */ .todo_help_icon { float:right; font-size:10px; }
 
- .todo_help_con { display:none; overflow:hidden; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 82,  */ .todo_help_con { display:none; overflow:hidden; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .todo_help_desc { font-size:10px; margin:0; color:#666; }
+ /* line 83,  */ .todo_help_desc { font-size:10px; margin:0; color:#666; }
 
- .todoresults_title { margin-bottom:0; }
+ /* line 85,  */ .todoresults_title { margin-bottom:0; }
 
- .todo_results { font-size:10px; background:#f6f6f6; padding:5px; margin-top:10px; border:1px solid #ddd; border-radius:4px; overflow:auto; white-space:nowrap; height:350px; resize:vertical; }
+ /* line 86,  */ .todo_results { font-size:10px; background:#f6f6f6; padding:5px; margin-top:10px; border:1px solid #ddd; border-radius:4px; overflow:auto; white-space:nowrap; height:350px; resize:vertical; }
 
- .todofilewrap { margin-bottom:10px; }
+ /* line 87,  */ .todofilewrap { margin-bottom:10px; }
 
- .todofilename { font-size:12px; margin:0; }
+ /* line 88,  */ .todofilename { font-size:12px; margin:0; }
 
- .todoresult { font-size:10px; margin:0; padding:0; }
+ /* line 89,  */ .todoresult { font-size:10px; margin:0; padding:0; }
 
- .todocategory { background:#ccc; color:#fff; padding:0 5px; text-align:center; border-radius:10px; text-transform:uppercase; font-size:8px; }
+ /* line 90,  */ .todocategory { background:#ccc; color:#fff; padding:0 5px; text-align:center; border-radius:10px; text-transform:uppercase; font-size:8px; }
 
- .todocategory i { color:#ccc; }
+ /* line 91,  */ .todocategory i { color:#ccc; }
 
- .hidden_todo,.hidden_file { display:none; }
+ /* line 92,  */ .hidden_todo,.hidden_file { display:none; }
 
- .hidden_todo.show-hidden-todos,.hidden_file.show-hidden-todos { display:block !important; }
+ /* line 94,  */ .hidden_todo.show-hidden-todos,.hidden_file.show-hidden-todos { display:block !important; }
 
- /* Hide theme activated notices in favor of Nebula activation notices (only on the themes page) */ .themes-php #message2.updated.notice.is-dismissible.below-h2 { display:none; }
+ /* Hide theme activated notices in favor of Nebula activation notices (only on the themes page) */ /* line 99,  */ /* line 100,  */ .themes-php #message2.updated.notice.is-dismissible.below-h2 { display:none; }
 
- .themes-php #setting-error-tgmpa { display:none !important; }
+ /* line 101,  */ .themes-php #setting-error-tgmpa { display:none !important; }
 
- /* Post/Page Listing Column Modifictions */ .widefat td,.widefat td ol,.widefat td p,.widefat td ul { font-size:12px !important; }
+ /* Post/Page Listing Column Modifictions */ /* line 105,  */ .widefat td,.widefat td ol,.widefat td p,.widefat td ul { font-size:12px !important; }
 
- .fixed .column-categories,.fixed .column-rel,.fixed .column-response,.fixed .column-role,.fixed .column-tags { font-size:10px; width:10%; }
+ /* line 106,  */ .fixed .column-categories,.fixed .column-rel,.fixed .column-response,.fixed .column-role,.fixed .column-tags { font-size:10px; width:10%; }
 
- .fixed .column-author,.fixed .column-date,.fixed .column-format,.fixed .column-links,.fixed .column-parent,.fixed .column-posts { width:10%; }
+ /* line 107,  */ .fixed .column-author,.fixed .column-date,.fixed .column-format,.fixed .column-links,.fixed .column-parent,.fixed .column-posts { width:10%; }
 
- .fixed .column-comments { width:3%; }
+ /* line 108,  */ .fixed .column-comments { width:3%; }
 
- .widefat .column-id { padding-left:0 !important; padding-right:0 !important; font-size:10px !important; }
+ /* line 109,  */ .widefat .column-id { padding-left:0 !important; padding-right:0 !important; font-size:10px !important; }
 
- .row-title,td.plugin-title strong,td.post-title strong,.row-actions,.plugin-version-author-uri { font-size:12px !important; }
+ /* line 110,  */ .row-title,td.plugin-title strong,td.post-title strong,.row-actions,.plugin-version-author-uri { font-size:12px !important; }
 
- /* Wordpress SEO (Yoast) */ .wpseo-admin-page #sidebar-container { display:none; }
+ /* Wordpress SEO (Yoast) */ /* line 113,  */ .wpseo-admin-page #sidebar-container { display:none; }
 
- #wpseo-conf p.settings_error { display:none !important; visibility:hidden; height:0; width:0; opacity:0; pointer-events:none; }
+ /* line 114,  */ #wpseo-conf p.settings_error { display:none !important; visibility:hidden; height:0; width:0; opacity:0; pointer-events:none; }
 
- #wpseo-conf p.settings_error a { display:none !important; visibility:hidden; height:0; width:0; opacity:0; pointer-events:none; }
+ /* line 115,  */ #wpseo-conf p.settings_error a { display:none !important; visibility:hidden; height:0; width:0; opacity:0; pointer-events:none; }
 
- .widefat .column-wpseo-score { font-size:10px !important; /* text-align: center; */ /* background: #fafafa; */ }
+ /* line 116,  */ .widefat .column-wpseo-score { font-size:10px !important; /* text-align: center; */ /* background: #fafafa; */ }
 
- .wpseo-score-icon { margin-left:0; width:10px !important; height:10px; }
+ /* line 117,  */ .wpseo-score-icon { margin-left:0; width:10px !important; height:10px; }
 
- .widefat .column-wpseo-title { width:200px; font-size:10px !important; background:#fafafa; }
+ /* line 118,  */ .widefat .column-wpseo-title { width:200px; font-size:10px !important; background:#fafafa; }
 
- .widefat .column-wpseo-metadesc { width:200px; font-size:10px !important; background:#fafafa; }
+ /* line 119,  */ .widefat .column-wpseo-metadesc { width:200px; font-size:10px !important; background:#fafafa; }
 
- .widefat .column-wpseo-focuskw { width:100px; font-size:10px !important; background:#fafafa; }
+ /* line 120,  */ .widefat .column-wpseo-focuskw { width:100px; font-size:10px !important; background:#fafafa; }
 
  /*==========================
  Nebula TinyMCE Toolbar
- ===========================*/ #dashboard_right_now a[href$="options-reading.php"] { color:red !important; font-weight:700; }
+ ===========================*/ /* line 126,  */ #dashboard_right_now a[href$="options-reading.php"] { color:red !important; font-weight:700; }
 
- #dashboard_right_now a[href$="options-reading.php"]:before { content:'!'; background:red; color:white; padding:0 7px; margin-right:5px; }
+ /* line 127,  */ #dashboard_right_now a[href$="options-reading.php"]:before { content:'!'; background:red; color:white; padding:0 7px; margin-right:5px; }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon { background-image:url("../../images/admin/nebulaicon.png"); }
+ /* line 130,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon { background-image:url("../../images/admin/nebulaicon.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap { background-image:url("../../images/admin/nebulamap.png"); }
+ /* line 133,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap { background-image:url("../../images/admin/nebulamap.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode { background-image:url("../../images/admin/nebulacode.png"); }
+ /* line 136,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode { background-image:url("../../images/admin/nebulacode.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid { background-image:url("../../images/admin/nebulacolgrid.png"); }
+ /* line 139,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid { background-image:url("../../images/admin/nebulacolgrid.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo { background-image:url("../../images/admin/nebulavideo.png"); }
+ /* line 142,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo { background-image:url("../../images/admin/nebulavideo.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i { background-position:0px 0px; background-repeat:no-repeat; }
+ /* line 145,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i { background-position:0px 0px; background-repeat:no-repeat; }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i,#wp-fullscreen-buttons .mce-btn.mce-nebula-icon:hover button i,#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"] i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:hover button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] i { background-position:0px -20px; background-repeat:no-repeat; }
+ /* line 148,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i,#wp-fullscreen-buttons .mce-btn.mce-nebula-icon:hover button i,#wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"] i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:hover button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] i { background-position:0px -20px; background-repeat:no-repeat; }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"],.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] { background:#ebebeb; border-color:#999; -webkit-box-shadow:inset 0 2px 5px -3px rgba(0, 0, 0, .3); box-shadow:inset 0 2px 5px -3px rgba(0, 0, 0, .3); }
+ /* line 155,  */ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon[aria-expanded="true"],.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon[aria-expanded="true"] { background:#ebebeb; border-color:#999; -webkit-box-shadow:inset 0 2px 5px -3px rgba(0, 0, 0, .3); box-shadow:inset 0 2px 5px -3px rgba(0, 0, 0, .3); }
 
- #footer-upgrade strong { cursor:help; }
+ /* line 159,  */ #footer-upgrade strong { cursor:help; }
 
- @media only screen and (max-width:1800px) and (min-width:1500px) { #welcome-photo { width:30%; }
+ @media only screen and (max-width:1800px) and (min-width:1500px) { /* line 163,  */ #welcome-photo { width:30%; }
 
- #welcome-content { width:67%; }
-
- }
-
- @media only screen and (max-width:1499px) and (min-width:800px) { #welcome-photo { width:45%; }
-
- #welcome-content { width:50%; }
-
- .index-php .welcome-panel .welcome-panel-column { width:31% !important; }
+ /* line 164,  */ #welcome-content { width:67%; }
 
  }
 
- @media screen and (max-width:1110px) { #welcome-photo { display:none; }
+ @media only screen and (max-width:1499px) and (min-width:800px) { /* line 168,  */ #welcome-photo { width:45%; }
 
- #welcome-content { width:100%; }
+ /* line 169,  */ #welcome-content { width:50%; }
 
- }
-
- @media only screen and (max-width:900px) and (min-width:501px) { .index-php .welcome-panel .welcome-panel-column:first-child { width:33%; float:left; }
-
- .index-php .welcome-panel .welcome-panel-column { width:33%; float:left; }
-
- .index-php .welcome-panel .welcome-panel-column li { display:block; }
+ /* line 170,  */ .index-php .welcome-panel .welcome-panel-column { width:31% !important; }
 
  }
 
- @media only screen and (max-width:500px) { #welcome-content .logocon { display:none; }
+ @media screen and (max-width:1110px) { /* line 174,  */ #welcome-photo { display:none; }
 
- .index-php .welcome-panel .welcome-panel-column:first-child { width:100% !important; }
+ /* line 175,  */ #welcome-content { width:100%; }
 
  }
 
- .nebula_admin_notice a { color:#0098d7; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ @media only screen and (max-width:900px) and (min-width:501px) { /* line 179,  */ .index-php .welcome-panel .welcome-panel-column:first-child { width:33%; float:left; }
 
- .nebula_admin_notice a:hover { color:#95d600; }
+ /* line 180,  */ .index-php .welcome-panel .welcome-panel-column { width:33%; float:left; }
 
- .update-nag a,.update-core-php input#upgrade,.update-core-php input#upgrade-plugins,.update-core-php input#upgrade-plugins-2,.plugins-php .update-message a,.plugins-php .deactivate a { cursor:not-allowed; }
+ /* line 181,  */ .index-php .welcome-panel .welcome-panel-column li { display:block; }
 
- .myhidden { display:none; visibility:hidden; opacity:0; }
+ }
 
- .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
+ @media only screen and (max-width:500px) { /* line 185,  */ #welcome-content .logocon { display:none; }
 
- .ir { background-color:transparent; border:0; overflow:hidden; *text-indent:-9999px; }
+ /* line 186,  */ .index-php .welcome-panel .welcome-panel-column:first-child { width:100% !important; }
 
- .ir:before { content:""; display:block; width:0; height:100%; }
+ }
 
- .hidden { display:none !important; visibility:hidden; }
+ /* line 190,  */ .nebula_admin_notice a { color:#0098d7; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .visuallyhidden { border:0; clip:rect(0 0 0 0); height:1px; margin:-1px; overflow:hidden; padding:0; position:absolute; width:1px; }
+ /* line 191,  */ .nebula_admin_notice a:hover { color:#95d600; }
 
- .visuallyhidden.focusable:active,.visuallyhidden.focusable:focus { clip:auto; height:auto; margin:0; overflow:visible; position:static; width:auto; }
+ /* line 193,  */ .update-nag a,.update-core-php input#upgrade,.update-core-php input#upgrade-plugins,.update-core-php input#upgrade-plugins-2,.plugins-php .update-message a,.plugins-php .deactivate a { cursor:not-allowed; }
 
- .invisible { visibility:hidden; }
+ /* line 200,  */ .myhidden { display:none; visibility:hidden; opacity:0; }
 
- .clearfix:before,.clearfix:after { content:""; display:table; }
+ /* line 201,  */ .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
- .clearfix:after { clear:both; }
+ /* line 6, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .ir { background-color:transparent; border:0; overflow:hidden; *text-indent:-9999px; }
 
- div.space { clear:both; display:block; overflow:hidden; visibility:hidden; width:0; height:0; }
+ /* line 7, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .ir:before { content:""; display:block; width:0; height:100%; }
 
- .avoid-clicks { pointer-events:none; }
+ /* line 9, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .hidden { display:none !important; visibility:hidden; }
 
- .allow-clicks { pointer-events:all; }
+ /* line 10, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .visuallyhidden { border:0; clip:rect(0 0 0 0); height:1px; margin:-1px; overflow:hidden; padding:0; position:absolute; width:1px; }
 
- .filtered { display:none; }
+ /* line 11, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .visuallyhidden.focusable:active,.visuallyhidden.focusable:focus { clip:auto; height:auto; margin:0; overflow:visible; position:static; width:auto; }
 
- .aligncenter,.align-center { display:block; margin:0 auto; }
+ /* line 14, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .invisible { visibility:hidden; }
 
- .alignleft,.align-left { float:left; }
+ /* line 15, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ /* line 79, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:before,.clearfix:after { content:""; display:table; }
 
- .alignright,.align-right { float:right; }
+ /* line 81, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:after { clear:both; }
 
- .wp-caption { border:1px solid #666; text-align:center; background:#ccc; padding:10px; margin:10px; }
+ /* line 16, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ div.space { clear:both; display:block; overflow:hidden; visibility:hidden; width:0; height:0; }
 
- a.phg { margin-left:3px; padding-left:15px; background:url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
+ /* line 17, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .avoid-clicks { pointer-events:none; }
 
- a.phg.white { background:url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
+ /* line 18, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .allow-clicks { pointer-events:all; }
 
- a.phg.white span { color:#fff; }
+ /* line 19, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .filtered { display:none; }
 
- a.phg.white:hover span,a.phg.white.hover span { color:#aaa; }
+ /* line 21, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .aligncenter,.align-center { display:block; margin:0 auto; }
 
- a.phg span { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 22, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .alignleft,.align-left { float:left; }
 
- a.phg span.pinckney { color:#0098d7; }
+ /* line 23, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .alignright,.align-right { float:right; }
 
- a.phg span.hugo { color:#95d600; }
+ /* line 24, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .wp-caption { border:1px solid #666; text-align:center; background:#ccc; padding:10px; margin:10px; }
 
- a.phg span.group { color:#9fa1a4; }
+ /* line 32, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg { margin-left:3px; padding-left:15px; background:url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
 
- a.phg:hover span.pinckney,a.phg.hover span.pinckney { color:#00628b; }
+ /* line 33, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.white { background:url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
 
- a.phg:hover span.hugo,a.phg.hover span.hugo { color:#608a00; }
+ /* line 34, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.white span { color:#fff; }
 
- a.phg:hover span.group,a.phg.hover span.group { color:#787b7f; }
+ /* line 35, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.white:hover span,a.phg.white.hover span { color:#aaa; }
 
- a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 37, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg span { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- a.phg.anim span { margin-right:3px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg span.pinckney { color:#0098d7; }
 
- a.phg.anim span:last-child { margin-right:0; }
+ /* line 39, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg span.hugo { color:#95d600; }
 
- a.phg.anim span.pinckney { color:inherit; }
+ /* line 40, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg span.group { color:#9fa1a4; }
 
- a.phg.anim span.hugo { color:inherit; }
+ /* line 42, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg:hover span.pinckney,a.phg.hover span.pinckney { color:#00628b; }
 
- a.phg.anim span.group { color:inherit; }
+ /* line 43, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg:hover span.hugo,a.phg.hover span.hugo { color:#608a00; }
 
- a.phg.anim:hover,a.phg.anim.hover { margin-left:3px; padding-left:15px; background:url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
+ /* line 44, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg:hover span.group,a.phg.hover span.group { color:#787b7f; }
 
- a.phg.anim:hover span,a.phg.anim.hover span { margin-right:0px; }
+ /* line 47, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- a.phg.anim:hover span.pinckney,a.phg.anim.hover span.pinckney { color:#00628b; }
+ /* line 48, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim span { margin-right:3px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- a.phg.anim:hover span.hugo,a.phg.anim.hover span.hugo { color:#608a00; }
+ /* line 49, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim span:last-child { margin-right:0; }
 
- a.phg.anim:hover span.group,a.phg.anim.hover span.group { color:#787b7f; }
+ /* line 50, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim span.pinckney { color:inherit; }
 
- a.facebook { color:#3b5998; }
+ /* line 51, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim span.hugo { color:inherit; }
 
- a.facebook:hover,a.facebook.hover { color:#263961; }
+ /* line 52, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim span.group { color:inherit; }
 
- a.twitter { color:#55acee; }
+ /* line 54, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim:hover,a.phg.anim.hover { margin-left:3px; padding-left:15px; background:url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
 
- a.twitter:hover,a.twitter.hover { color:#1689e0; }
+ /* line 56, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim:hover span,a.phg.anim.hover span { margin-right:0px; }
 
- a.googleplus { color:#d73d32; }
+ /* line 57, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim:hover span.pinckney,a.phg.anim.hover span.pinckney { color:#00628b; }
 
- a.googleplus:hover,a.googleplus.hover { color:#9e271f; }
+ /* line 58, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim:hover span.hugo,a.phg.anim.hover span.hugo { color:#608a00; }
 
- a.linkedin { color:#0077b5; }
+ /* line 59, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.phg.anim:hover span.group,a.phg.anim.hover span.group { color:#787b7f; }
 
- a.linkedin:hover,a.linkedin.hover { color:#004569; }
+ /* line 64, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.facebook { color:#3b5998; }
 
- a.github { color:#333; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.facebook:hover,a.facebook.hover { color:#263961; }
 
- a.github:hover,a.github.hover { color:#0d0d0d; }
+ /* line 65, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.twitter { color:#55acee; }
 
- a.youtube { color:#cc181e; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.twitter:hover,a.twitter.hover { color:#1689e0; }
 
- a.youtube:hover,a.youtube.hover { color:#881014; }
+ /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.googleplus { color:#d73d32; }
 
- a.instagram { color:#3f729b; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.googleplus:hover,a.googleplus.hover { color:#9e271f; }
 
- a.instagram:hover,a.instagram.hover { color:#294a65; }
+ /* line 67, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.linkedin { color:#0077b5; }
 
- a.soundcloud { color:#f30; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.linkedin:hover,a.linkedin.hover { color:#004569; }
 
- a.soundcloud:hover,a.soundcloud.hover { color:#b32400; }
+ /* line 68, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.github { color:#333; }
 
- .border-red,.outline-red { outline:1px solid red; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.github:hover,a.github.hover { color:#0d0d0d; }
 
- .border-orange,.outline-orange { outline:1px solid orange; }
+ /* line 69, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.youtube { color:#cc181e; }
 
- .border-yellow,.outline-yellow { outline:1px solid yellow; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.youtube:hover,a.youtube.hover { color:#881014; }
 
- .border-green,.outline-green { outline:1px solid green; }
+ /* line 70, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.instagram { color:#3f729b; }
 
- .border-blue,.border-indigo,.outline-blue,.outline-indigo { outline:1px solid blue; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.instagram:hover,a.instagram.hover { color:#294a65; }
 
- .border-purple,.border-violet,.outline-purple,.outline-violet { outline:1px solid purple; }
+ /* line 71, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ a.soundcloud { color:#f30; }
 
- .background-red,.bg-red { background:red; }
+ /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ a.soundcloud:hover,a.soundcloud.hover { color:#b32400; }
 
- .background-orange,.bg-orange { background:orange; }
+ /* line 78, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .border-red,.outline-red { outline:1px solid red; }
 
- .background-yellow,.bg-yellow { background:yellow; }
+ /* line 79, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .border-orange,.outline-orange { outline:1px solid orange; }
 
- .background-green,.bg-green { background:green; }
+ /* line 80, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .border-yellow,.outline-yellow { outline:1px solid yellow; }
 
- .background-blue,.bg-blue,.background-indigo,.bg-indigo { background:blue; }
+ /* line 81, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .border-green,.outline-green { outline:1px solid green; }
 
- .background-purple,.bg-purple,.background-violet,.bg-violet { background:purple; }
+ /* line 82, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .border-blue,.border-indigo,.outline-blue,.outline-indigo { outline:1px solid blue; }
+
+ /* line 83, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .border-purple,.border-violet,.outline-purple,.outline-violet { outline:1px solid purple; }
+
+ /* line 85, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .background-red,.bg-red { background:red; }
+
+ /* line 86, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .background-orange,.bg-orange { background:orange; }
+
+ /* line 87, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .background-yellow,.bg-yellow { background:yellow; }
+
+ /* line 88, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .background-green,.bg-green { background:green; }
+
+ /* line 89, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .background-blue,.bg-blue,.background-indigo,.bg-indigo { background:blue; }
+
+ /* line 90, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .background-purple,.bg-purple,.background-violet,.bg-violet { background:purple; }
 

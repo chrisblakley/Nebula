@@ -60,7 +60,7 @@
 
 		<br /><br /><hr /><br />
 
-		<h2>Custom Valid Hostnames Include Regex Pattern</h2>
+		<h2 id="customhostnames">Custom Valid Hostnames Include Regex Pattern</h2>
 		<p>Enter a comma-separated list of valid hostnames here (including domains, sub-domains, vanity domains, etc).</p>
 		<form id="customhostnameregex">
 			<div class="field">

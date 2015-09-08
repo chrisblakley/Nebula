@@ -64,7 +64,6 @@ ul.menu {padding: 0;}
 	.success {color: $success_color;}
 }
 
-
 input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; @include font-size(12); background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
 	&:hover,
 	&.hover {background-color: #fff;}
@@ -92,7 +91,6 @@ form.nebula-search-iconable {position: relative; display: inline-block; margin: 
 	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit);}
 }
-
 
 // ===========================
 // Special File Type Indicators

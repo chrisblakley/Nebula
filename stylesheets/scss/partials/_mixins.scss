@@ -50,7 +50,7 @@
 
 //.element {@include linear-gradient(#31B7D7, #EDAC7D);}
 //.element {@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
-@mixin linear-gradient($direction, $color-stops...) {
+@mixin linear-gradient($direction, $color-stops...){
 	background: nth(nth($color-stops, 1), 1); background: linear-gradient($direction, $color-stops);
 }
 

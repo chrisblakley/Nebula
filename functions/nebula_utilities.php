@@ -785,11 +785,11 @@ function __autoload($className){
  ===========================*/
 
 if ( nebula_options_conditional('nebula_scss') ){
-	if ( is_writable(get_template_directory() . '/style.css') ){
+	if ( is_writable(get_template_directory()) ){
 		add_action('init', 'nebula_render_scss');
 		add_action('admin_init', 'nebula_render_scss');
 	} else {
-		//@TODO "Nebula" 0: Somehow need to notify that permission is denied to write files (thinking an HTML comment). Need to not do it before headers are sent, though.
+		echo '<!-- Directory is not writable for SCSS! -->';
 	}
 }
 function nebula_render_scss($specific_scss=null){
