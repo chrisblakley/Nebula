@@ -795,6 +795,7 @@ if ( nebula_options_conditional('nebula_scss') ){
 function nebula_render_scss($specific_scss=null){
 	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php');
 	$scss = new \Leafo\ScssPhp\Compiler(); //This can't be the proper way to invoke this... but it works.
+	$scss->addImportPath(get_template_directory() . '/stylesheets/scss/partials/');
 	$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact');
 	if ( is_debug() ){
 		$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.

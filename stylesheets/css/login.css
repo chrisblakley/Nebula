@@ -1,59 +1,162 @@
-/* scss disabled */
+ a { color:#0098d7 !important; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; text-decoration:none; }
 
-a {color: #0098D7 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s; text-decoration: none;}
-a:hover {color: #95D600 !important; text-decoration: underline;}
+ a:hover { color:#95d600 !important; text-decoration:underline; }
 
-/*body*/
-body.login {background: #f2f2f2; background: linear-gradient(to bottom, #f2f2f2, #ddd);}
+ body.login { background:#f2f2f2; background:linear-gradient(to bottom, #f2f2f2, #ddd); }
 
-/*content area*/
-.js #login {display: none;}
-body.login div#login h1 {}
-	body.login div#login h1 a {width:auto;}
+ body.login form { margin:0 auto; }
 
-.login form {margin: 0 auto;}
+ .js body.login div#login { display:none; }
 
-.ipcon {margin: 20px 0 -20px 0;}
-	.ipcon p {font-size: 12px; margin: 0; padding: 0; color: #888;}
+ body.login div#login h1 a { width:auto; background:url("../../images/logo.png") center center no-repeat; background-size:contain; }
 
-.centertext {text-align: center;}
+ .svg body.login div#login h1 a { background:url("../../images/logo.svg") center center no-repeat; background-size:contain; }
 
-/*logo*/
-body.login div#login h1 a {background: url("../../images/logo.png") center center no-repeat; background-size: contain;}
-.svg body.login div#login h1 a {background: url("../../images/logo.svg") center center no-repeat; background-size: contain;}
+ body.login div#login form#loginform p.submit input.button-primary { background:#0098d7; background:linear-gradient(to bottom, #0098d7, #005071); border:1px solid #00080b; }
 
-/*message (ex: You are now logged out)*/
-body.login p.message {}
+ body.login div#login form#loginform p.submit input.button-primary:hover { background:#005071; background:linear-gradient(to bottom, #005071, #00080b); border:1px solid #000; }
 
-body.login div#login_error {}
+ body.login div#login p#nav a { color:#0098d7 !important; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; text-decoration:none; }
 
-/*form*/
-body.login div#login form#loginform {}
-body.login div#login form#loginform p {}
-body.login div#login form#loginform p label {}
-body.login div#login form#loginform input {}
-body.login div#login form#loginform input#user_login {}
-body.login div#login form#loginform input#user_pass {}
-body.login div#login form#loginform p.forgetmenot {}
-body.login div#login form#loginform p.forgetmenot input#rememberme {}
-body.login div#login form#loginform p.submit {}
-body.login div#login form#loginform p.submit input#wp-submit {}
-body.login div#login form#loginform p.submit input.button-primary {background-image: linear-gradient(to bottom, #0098D7/*1*/, #005c82/*2*/); border: 1px solid #004460/*3*/;} /* 1=Brand color, 2=Brand-5, 3=Brand-7 */
-body.login div#login form#loginform p.submit input.button-primary:hover {background-image: linear-gradient(to bottom, #005c82/*1*/, #00202d/*2*/); border: 1px solid #00080b/*3*/;} /* 1=Brand-5, 2=Brand-10, 3=Brand-12 */
-body.login div#login form#loginform p.submit input.button-primary:active {}
+ body.login div#login p#nav a:hover { color:#0098d7 !important; text-decoration:underline; }
 
-/*Lost your password?*/
-body.login div#login p#nav {}
-body.login div#login p#nav a {color: #0098D7 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s; text-decoration: none;}
-body.login div#login p#nav a:hover {color: #95D600 !important; text-decoration: underline;}
+ body.login div#login p#backtoblog a { color:#0098d7 !important; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; text-decoration:none; }
 
+ body.login div#login p#backtoblog a:hover { color:#95d600 !important; text-decoration:underline; }
 
-/*Back to site*/
-body.login div#login p#backtoblog {}
-body.login div#login p#backtoblog a {color: #0098D7 !important; -webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s; text-decoration: none;}
-body.login div#login p#backtoblog a:hover {color: #95D600 !important; text-decoration: underline;}
+ .ipcon { margin:20px 0 -20px 0; }
 
+ .ipcon p { font-size:12px; margin:0; padding:0; color:#888; }
 
-.clearfix:before, .clearfix:after {content: " "; display: table;}
-.clearfix:after {clear: both;}
-.clearfix {*zoom: 1;}
+ .ir { background-color:transparent; border:0; overflow:hidden; *text-indent:-9999px; }
+
+ .ir:before { content:""; display:block; width:0; height:100%; }
+
+ .hidden { display:none !important; visibility:hidden; }
+
+ .visuallyhidden { border:0; clip:rect(0 0 0 0); height:1px; margin:-1px; overflow:hidden; padding:0; position:absolute; width:1px; }
+
+ .visuallyhidden.focusable:active,.visuallyhidden.focusable:focus { clip:auto; height:auto; margin:0; overflow:visible; position:static; width:auto; }
+
+ .invisible { visibility:hidden; }
+
+ .clearfix:before,.clearfix:after { content:""; display:table; }
+
+ .clearfix:after { clear:both; }
+
+ div.space { clear:both; display:block; overflow:hidden; visibility:hidden; width:0; height:0; }
+
+ .avoid-clicks { pointer-events:none; }
+
+ .allow-clicks { pointer-events:all; }
+
+ .filtered { display:none; }
+
+ .aligncenter,.align-center { display:block; margin:0 auto; }
+
+ .alignleft,.align-left { float:left; }
+
+ .alignright,.align-right { float:right; }
+
+ .wp-caption { border:1px solid #666; text-align:center; background:#ccc; padding:10px; margin:10px; }
+
+ a.phg { margin-left:3px; padding-left:15px; background:url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
+
+ a.phg.white { background:url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
+
+ a.phg.white span { color:#fff; }
+
+ a.phg.white:hover span,a.phg.white.hover span { color:#aaa; }
+
+ a.phg span { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+
+ a.phg span.pinckney { color:#0098d7; }
+
+ a.phg span.hugo { color:#95d600; }
+
+ a.phg span.group { color:#9fa1a4; }
+
+ a.phg:hover span.pinckney,a.phg.hover span.pinckney { color:#00628b; }
+
+ a.phg:hover span.hugo,a.phg.hover span.hugo { color:#608a00; }
+
+ a.phg:hover span.group,a.phg.hover span.group { color:#787b7f; }
+
+ a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+
+ a.phg.anim span { margin-right:3px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+
+ a.phg.anim span:last-child { margin-right:0; }
+
+ a.phg.anim span.pinckney { color:inherit; }
+
+ a.phg.anim span.hugo { color:inherit; }
+
+ a.phg.anim span.group { color:inherit; }
+
+ a.phg.anim:hover,a.phg.anim.hover { margin-left:3px; padding-left:15px; background:url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
+
+ a.phg.anim:hover span,a.phg.anim.hover span { margin-right:0px; }
+
+ a.phg.anim:hover span.pinckney,a.phg.anim.hover span.pinckney { color:#00628b; }
+
+ a.phg.anim:hover span.hugo,a.phg.anim.hover span.hugo { color:#608a00; }
+
+ a.phg.anim:hover span.group,a.phg.anim.hover span.group { color:#787b7f; }
+
+ a.facebook { color:#3b5998; }
+
+ a.facebook:hover,a.facebook.hover { color:#263961; }
+
+ a.twitter { color:#55acee; }
+
+ a.twitter:hover,a.twitter.hover { color:#1689e0; }
+
+ a.googleplus { color:#d73d32; }
+
+ a.googleplus:hover,a.googleplus.hover { color:#9e271f; }
+
+ a.linkedin { color:#0077b5; }
+
+ a.linkedin:hover,a.linkedin.hover { color:#004569; }
+
+ a.github { color:#333; }
+
+ a.github:hover,a.github.hover { color:#0d0d0d; }
+
+ a.youtube { color:#cc181e; }
+
+ a.youtube:hover,a.youtube.hover { color:#881014; }
+
+ a.instagram { color:#3f729b; }
+
+ a.instagram:hover,a.instagram.hover { color:#294a65; }
+
+ a.soundcloud { color:#f30; }
+
+ a.soundcloud:hover,a.soundcloud.hover { color:#b32400; }
+
+ .border-red,.outline-red { outline:1px solid red; }
+
+ .border-orange,.outline-orange { outline:1px solid orange; }
+
+ .border-yellow,.outline-yellow { outline:1px solid yellow; }
+
+ .border-green,.outline-green { outline:1px solid green; }
+
+ .border-blue,.border-indigo,.outline-blue,.outline-indigo { outline:1px solid blue; }
+
+ .border-purple,.border-violet,.outline-purple,.outline-violet { outline:1px solid purple; }
+
+ .background-red,.bg-red { background:red; }
+
+ .background-orange,.bg-orange { background:orange; }
+
+ .background-yellow,.bg-yellow { background:yellow; }
+
+ .background-green,.bg-green { background:green; }
+
+ .background-blue,.bg-blue,.background-indigo,.bg-indigo { background:blue; }
+
+ .background-purple,.bg-purple,.background-violet,.bg-violet { background:purple; }
+

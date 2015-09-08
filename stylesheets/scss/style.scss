@@ -13,100 +13,8 @@
 //@TODO "Wordpress" 4: Change the Theme Name (above) to be the client/project and the year!
 //Do not change the "Version"! This is to track the Nebula version of initial development.
 
-
-// ===========================
-// Global variables and Mixins
-// ===========================
-
-$primary_color: #0098d7;
-$secondary_color: #95d600;
-$text_color: #444;
-$font_stack: 'Open Sans', sans-serif;
-
-//.element {@include font-size(16);}
-@mixin font-size($size: 12){
-	font-size: $size + px; font-size: (0.1334*$size) + rem; //@TODO "Nebula" 0: Do we want to use a default em line-height here?
-	line-height: 1.625em;
-}
-
-//.element {@include line-height(16);}
-@mixin line-height($height: 12){
-    line-height: $height + px; line-height: (0.1136*$height) + rem;
-}
-
-//.element {@include prefix((transition: all 0.25s), webkit ms);}
-@mixin prefix($map, $vendors: webkit moz ms o){
-	@each $prop, $value in $map {
-		@if $vendors {
-			@each $vendor in $vendors {
-				#{"-" + $vendor + "-" + $prop}: #{$value};
-			}
-		}
-		#{$prop}: #{$value};
-	}
-}
-
-//.element a {@include link-colors(red, orange, yellow, green, blue);}
-@mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
-	color: $normal;
-	@if $visited {
-		&:visited {color: $visited;}
-	}
-	@if $focus {
-		&:focus {color: $focus;}
-	}
-	@if $hover {
-		&:hover,
-		&.hover {color: $hover;}
-	}
-	@if $active {
-		&:active {color: $active;}
-	}
-}
-
-//.element {@include background-color(#333, 0.5);}
-@mixin background-color($color, $opacity: 1){
-    background: $color; background: rgba($color, $opacity);
-}
-
-//.element {@include linear-gradient(#31B7D7, #EDAC7D);}
-//.element {@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
-@mixin linear-gradient($direction, $color-stops...) {
-	background: nth(nth($color-stops, 1), 1); background: linear-gradient($direction, $color-stops);
-}
-
-//@TODO "Nebula" 0: Consider Implementing this breakpoint mixin. Very complicated, but very powerful. http://www.zell-weekeat.com/mappy-breakpoints/
-//.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-device-width: 320px)"){color: green;};}
-$media_stack: (
-	(group: widescreen, rule: "only screen and (min-width: 1400px)"),
-	(group: tablet_landscape, rule: "only screen and (max-width: 1023px)"),
-	(group: tablet, rule: "only screen and (max-width: 767px)"),
-	(group: mobile_landscape, rule: "only screen and (max-width: 668px)"),
-	(group: mobile, rule: "only screen and (max-width: 376px)"),
-	(group: print, rule: "only print"),
-	(group: custom, rule: "only screen and ")
-);
-@mixin media($group, $custom_rule: ""){
-	@each $media in $media_stack {
-		@if $group == map-get($media, group) {
-			$rule: map-get($media, rule);
-			@media #{$rule} #{$custom_rule} {& {@content}}
-		}
-	}
-}
-
-//.element {@include clearfix();}
-@mixin clearfix(){
-	&:before,
-	&:after {content: ""; display: table;}
-	&:after {clear: both;}
-}
-
-$background_color: #f6f6f6;
-$danger_color: #ca3838;
-$warning_color: #f6b83f;
-$success_color: #58c026;
-
+//Colors and fonts are defined in /partials/_mixins.scss
+@import 'mixins';
 
 // ===========================
 // PHG Custom Styles
@@ -1040,32 +948,8 @@ a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 		}
 	}
 
-
-// ===========================
-// Helpers
-// ===========================
-
-//Image replacement
-.ir {background-color: transparent; border: 0; overflow: hidden; *text-indent: -9999px;
-	&:before {content: ""; display: block; width: 0; height: 100%;}
-}
-.hidden {display: none !important; visibility: hidden;} //Hide from both screenreaders and browsers
-.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; //Hide only visually, but have it available for screenreaders
-	&.focusable:active,
-	&.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;} //Allow the element to be focusable when navigated to via the keyboard
-}
-.invisible {visibility: hidden;} //Hide visually and from screenreaders, but maintain layout
-.clearfix {@include clearfix();}
-div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
-.avoid-clicks {pointer-events: none;} //Only supported in IE11+
-.allow-clicks {pointer-events: all;} //Only supported in IE11+
-.filtered {display: none;}
-
-.aligncenter, .align-center {display: block; margin: 0 auto;}
-.alignleft, .align-left {float: left;}
-.alignright, .align-right {float: right;}
-.wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
-.wp-caption-text {}
+//Helper classes, brand colors, and debug classes are defined in /partials/_helpers.scss
+@import 'helpers';
 
 //Windows Chrome Font Bug Fix: http://stackoverflow.com/questions/22011139/google-fonts-are-not-rendering-on-google-chrome @TODO: "Nebula" 0: Not Working...
 /*
@@ -1073,57 +957,6 @@ body * {-webkit-animation-duration: 0.1s; -webkit-animation-name: fontfix; -webk
 @-webkit-keyframes fontfix{from {opacity: 1;} to {opacity: 1;}}
 */
 
-$phg_cyan: #0098d7;
-$phg_green: #95d600;
-$phg_grey: #9fa1a4;
-a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
-	&.white {background: url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
-		span {color: #fff;}
-		&:hover span, &.hover span {color: #aaa;}
-	}
-	span {@include prefix((transition: all 0.25s));
-		&.pinckney {color: $phg_cyan;}
-		&.hugo {color: $phg_green;}
-		&.group {color: $phg_grey;}
-	}
-	&:hover span.pinckney, &.hover span.pinckney {color: darken($phg_cyan, 15%);}
-	&:hover span.hugo, &.hover span.hugo {color: darken($phg_green, 15%);}
-	&:hover span.group, &.hover span.group {color: darken($phg_grey, 15%);}
-}
-
-a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("images/phg/phg-symbol.svg") -15px 6px no-repeat; @include prefix((transition: all 0.25s));
-	span {margin-right: 3px; @include prefix((transition: all 0.25s));
-		&:last-child {margin-right: 0;}
-		&.pinckney {color: inherit;}
-		&.hugo {color: inherit;}
-		&.group {color: inherit;}
-	}
-	&:hover,
-	&.hover {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
-		span {margin-right: 0px;
-			&.pinckney {color: darken($phg_cyan, 15%);}
-			&.hugo {color: darken($phg_green, 15%);}
-			&.group {color: darken($phg_grey, 15%);}
-		}
-	}
-}
-
-$facebook_color: #3b5998;
-a.facebook {@include link-colors($facebook_color, darken($facebook_color, 15%));}
-$twitter_color: #55acee;
-a.twitter {@include link-colors($twitter_color, darken($twitter_color, 15%));}
-$google_plus_color: #d73d32;
-a.googleplus {@include link-colors($google_plus_color, darken($google_plus_color, 15%));}
-$linkedin_color: #0077b5;
-a.linkedin {@include link-colors($linkedin_color, darken($linkedin_color, 15%));}
-$github_color: #333;
-a.github {@include link-colors($github_color, darken($github_color, 15%));}
-$youtube_color: #cc181e;
-a.youtube {@include link-colors($youtube_color, darken($youtube_color, 15%));}
-$instagram_color: #3f729b;
-a.instagram {@include link-colors($instagram_color, darken($instagram_color, 15%));}
-$soundcloud_color: #ff3300;
-a.soundcloud {@include link-colors($soundcloud_color, darken($soundcloud_color, 15%));}
 
 @-ms-viewport {width: device-width;}
 
@@ -1141,22 +974,3 @@ a.soundcloud {@include link-colors($soundcloud_color, darken($soundcloud_color, 
 	p, h2, h3 {orphans: 3; widows: 3;}
 	h2, h3 {page-break-after: avoid;}
 }
-
-
-// ===========================
-// Nebula Debug
-// ===========================
-
-.border-red, .outline-red {outline: 1px solid red;}
-.border-orange, .outline-orange {outline: 1px solid orange;}
-.border-yellow, .outline-yellow {outline: 1px solid yellow;}
-.border-green, .outline-green {outline: 1px solid green;}
-.border-blue, .border-indigo, .outline-blue, .outline-indigo {outline: 1px solid blue;}
-.border-purple, .border-violet, .outline-purple, .outline-violet {outline: 1px solid purple;}
-
-.background-red, .bg-red {background: red;}
-.background-orange, .bg-orange {background: orange;}
-.background-yellow, .bg-yellow {background: yellow;}
-.background-green, .bg-green {background: green;}
-.background-blue, .bg-blue, .background-indigo, .bg-indigo {background: blue;}
-.background-purple, .bg-purple, .background-violet, .bg-violet {background: purple;}

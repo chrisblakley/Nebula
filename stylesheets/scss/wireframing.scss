@@ -1,0 +1,51 @@
+@import 'mixins';
+
+/* div, h1, h2, h3, h4, h5, h6, p, span, a, a:hover, a.hover, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button, .active {@include prefix((filter: grayscale(100%)));} */ /* @TODO "Nebula" 0: Adding div to this list gets a white page. */
+
+body {@include prefix((filter: grayscale(100%)));
+	/* &:after {content: 'Wireframing is Active'; font-size: 8px;} */
+}
+
+#wireframing-bar {position: relative; background: black; color: #fff; padding-top: 5px; padding-bottom: 5px;}
+
+.fixedbar {display: none;}
+
+img, a.logocon {-webkit-filter: none; -moz-filter: none; -ms-filter: none; -o-filter: none; filter: none;}
+
+
+.fpo-component-open {}
+.fpo-component {background: #e2e2e2; padding: 5px 10px 1px 10px;}
+	.fpo-component-con {
+		.component-name {display: block; color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px;}
+		.component-comment-toggle {float: right; color: #222;
+			&:hover,
+			&.hover,
+			&.active {color: $primary_color;
+				&:hover,
+				&.hover {color: #222;}
+			}
+		}
+	}
+
+.component-icon {font-size: 11px;}
+
+.component-comment-drawer {display: none; background: #eee; border: 1px solid #bbb; border-top: none; padding: 0 10px 1px 10px;
+	.comment-header {display: block; font-size: 12px; color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 4px;}
+	p {font-size: 12px;}
+}
+
+.fpo {background: #e2e2e2; padding: 5px 10px 5px 10px; margin-bottom: 15px;} /* Not sure if I'm a fan of this margin-bottom. */
+.fpo-menu {
+	ul.sub-menu {border: 1px solid red;}
+}
+
+@import 'helpers';
+
+a.fpo-social-link-item {font-size: 18px; margin-right: 10px;
+	&.facebook {color: $facebook_color;}
+	&.twitter {color: $twitter_color;}
+	&.google-plus {color: $google_plus_color;}
+	&.linkedin {color: $linkedin_color;}
+	&.youtube {color: $youtube_color;}
+	&.instagram {color: $instagram_color;}
+}

@@ -103,7 +103,7 @@ jQuery(document).on('ready', function(){
 
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/css/flags.css');
+		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/libs/flags.css');
 	}
 
 	//Hide TODO files with only hidden items

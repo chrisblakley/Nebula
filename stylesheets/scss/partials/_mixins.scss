@@ -1,0 +1,92 @@
+// ===========================
+// Global variables and Mixins
+// ===========================
+
+$primary_color: #0098d7;
+$secondary_color: #95d600;
+$text_color: #444;
+$font_stack: 'Open Sans', sans-serif;
+
+//.element {@include font-size(16);}
+@mixin font-size($size: 12){
+	font-size: $size + px; font-size: (0.1334*$size) + rem; //@TODO "Nebula" 0: Do we want to use a default em line-height here?
+	line-height: 1.625em;
+}
+
+//.element {@include line-height(16);}
+@mixin line-height($height: 12){
+    line-height: $height + px; line-height: (0.1136*$height) + rem;
+}
+
+//.element {@include prefix((transition: all 0.25s), webkit ms);}
+@mixin prefix($map, $vendors: webkit moz ms o){
+	@each $prop, $value in $map {
+		@if $vendors {
+			@each $vendor in $vendors {
+				#{"-" + $vendor + "-" + $prop}: #{$value};
+			}
+		}
+		#{$prop}: #{$value};
+	}
+}
+
+//.element a {@include link-colors(red, orange, yellow, green, blue);}
+@mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
+	color: $normal;
+	@if $visited {
+		&:visited {color: $visited;}
+	}
+	@if $focus {
+		&:focus {color: $focus;}
+	}
+	@if $hover {
+		&:hover,
+		&.hover {color: $hover;}
+	}
+	@if $active {
+		&:active {color: $active;}
+	}
+}
+
+//.element {@include background-color(#333, 0.5);}
+@mixin background-color($color, $opacity: 1){
+    background: $color; background: rgba($color, $opacity);
+}
+
+//.element {@include linear-gradient(#31B7D7, #EDAC7D);}
+//.element {@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
+@mixin linear-gradient($direction, $color-stops...) {
+	background: nth(nth($color-stops, 1), 1); background: linear-gradient($direction, $color-stops);
+}
+
+//@TODO "Nebula" 0: Consider Implementing this breakpoint mixin. Very complicated, but very powerful. http://www.zell-weekeat.com/mappy-breakpoints/
+//.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-device-width: 320px)"){color: green;};}
+$media_stack: (
+	(group: widescreen, rule: "only screen and (min-width: 1400px)"),
+	(group: tablet_landscape, rule: "only screen and (max-width: 1023px)"),
+	(group: tablet, rule: "only screen and (max-width: 767px)"),
+	(group: mobile_landscape, rule: "only screen and (max-width: 668px)"),
+	(group: mobile, rule: "only screen and (max-width: 376px)"),
+	(group: print, rule: "only print"),
+	(group: custom, rule: "only screen and ")
+);
+@mixin media($group, $custom_rule: ""){
+	@each $media in $media_stack {
+		@if $group == map-get($media, group) {
+			$rule: map-get($media, rule);
+			@media #{$rule} #{$custom_rule} {& {@content}}
+		}
+	}
+}
+
+//.element {@include clearfix();}
+@mixin clearfix(){
+	&:before,
+	&:after {content: ""; display: table;}
+	&:after {clear: both;}
+}
+
+$background_color: #f6f6f6;
+$danger_color: #ca3838;
+$warning_color: #f6b83f;
+$success_color: #58c026;
