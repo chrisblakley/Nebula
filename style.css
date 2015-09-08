@@ -380,23 +380,23 @@
 
  /* line 303,  */ input:not(.nofade):focus:-ms-input-placeholder { color:rgba(153, 153, 153, 0) !important; }
 
- /* line 306,  */ @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ div#nebula-hero-formcon { display:none !important; }
+ /* line 306,  */ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ div#nebula-hero-formcon { display:none !important; }
 
  }
 
  /* line 307,  */ form#nebula-hero-search { position:relative; margin:0; width:100%; max-width:600px; text-align:center; z-index:100; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- /* line 308,  */ form#nebula-hero-search:before { top:9px; left:10px; width:16px; height:16px; font-size:16px; font-size:2.1344rem; line-height:1.625em; }
+ /* line 308,  */ form#nebula-hero-search:before { top:9px; left:10px; width:16px; height:16px; font-size:16px; line-height:16px; }
 
- /* line 309,  */ form#nebula-hero-search input { display:block; width:100%; max-width:558px; font-size:18px; font-size:2.4012rem; line-height:1.625em; padding:5px 6px 5px 30px; background:#fff; background:rgba(255, 255, 255, 0.9); border-radius:0; box-shadow:0px 3px 16px rgba(0, 0, 0, 0.2); }
+ /* line 309,  */ form#nebula-hero-search input { display:block; width:100%; max-width:558px; font-size:18px; line-height:23px; padding:5px 6px 5px 30px; background:#fff; background:rgba(255, 255, 255, 0.9); border-radius:0; box-shadow:0px 3px 16px rgba(0, 0, 0, 0.2); }
 
  /* line 310,  */ form#nebula-hero-search input.active { background:#fff; background:rgba(255, 255, 255, 0.95); box-shadow:0 0 25px rgba(0, 153, 216, 0.6); }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ form#nebula-hero-search input { width:92%; max-width:650px; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ form#nebula-hero-search input { width:92%; max-width:650px; }
 
  }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ form#nebula-hero-search input { width:90%; max-width:300px; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ form#nebula-hero-search input { width:90%; max-width:300px; }
 
  }
 
@@ -444,7 +444,7 @@
 
  /* line 339,  */ .ui-autocomplete.ui-widget-content li.no-results:before { content:'\00a0'; }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .ui-autocomplete.ui-widget-content li { width:100% !important; top:52px !important; left:0px !important; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .ui-autocomplete.ui-widget-content li { width:100% !important; top:52px !important; left:0px !important; }
 
  }
 
@@ -466,7 +466,7 @@
 
  /* line 356,  */ .ui-autocomplete.ui-widget-content li a { display:inline-block; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; /* width: 90%; */ -webkit-transition:none 0.25s; -moz-transition:none 0.25s; -ms-transition:none 0.25s; -o-transition:none 0.25s; transition:none 0.25s; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .ui-autocomplete.ui-widget-content { background:#fff; background:rgba(255, 255, 255, 0.95); }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .ui-autocomplete.ui-widget-content { background:#fff; background:rgba(255, 255, 255, 0.95); }
 
  }
 
@@ -492,7 +492,7 @@
 
  /* line 392,  */ .borderimage.mm-opening #fullbodywrapper:before { background:#000; background:rgba(0, 0, 0, 0.7); }
 
- /* line 395,  */ @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .fixedbar { display:none; }
+ /* line 395,  */ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .fixedbar { display:none; }
 
  }
 
@@ -508,7 +508,7 @@
 
  /* line 402,  */ #mobilebarcon .mobilenavcon #mobileheadersearch input { width:100%; color:#fff; font-size:18px; font-size:2.4012rem; line-height:1.625em; padding-left:24px; line-height:42px; background:none; border:none; border-radius:0; }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #mobilebarcon .mobilenavcon #mobileheadersearch input { padding-left:0; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #mobilebarcon .mobilenavcon #mobileheadersearch input { padding-left:0; }
 
  }
 
@@ -522,11 +522,11 @@
 
  /* line 409,  */ .borderimage #mobilebarcon .mobilenavcon #mobileheadersearch:before { color:#fff; font-size:19px; font-size:2.5346rem; line-height:1.625em; width:19px; height:19px; top:12px; left:0; }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .borderimage #mobilebarcon .mobilenavcon #mobileheadersearch:before { display:none; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .borderimage #mobilebarcon .mobilenavcon #mobileheadersearch:before { display:none; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #mobilebarcon .mobilenavcon { display:block; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #mobilebarcon .mobilenavcon { display:block; }
 
  }
 
@@ -536,7 +536,7 @@
 
  /* line 418,  */ #mobilebarcon a.mobilenavtrigger.active { background:#fff; background:rgba(255, 255, 255, 0); }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #mobilebarcon { height:42px; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #mobilebarcon { height:42px; }
 
  }
 
@@ -570,7 +570,7 @@
 
  /* line 444,  */ #secondarynavcon #secondarynav ul li.menu-item input.nebula-search { font-size:11px; font-size:1.4674rem; line-height:1.625em; background:#fff; background:rgba(255, 255, 255, 0.8); }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #secondarynavcon { max-height:0; opacity:0; overflow:hidden; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #secondarynavcon { max-height:0; opacity:0; overflow:hidden; }
 
  }
 
@@ -586,11 +586,11 @@
 
  /* line 458,  */ #logonavcon.fixed #primarynav ul li.menu-item { font-size:12px; font-size:1.6008rem; line-height:1.625em; }
 
- /* line 461,  */ /* line 462,  */ @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon .logocon img { width:360px; }
+ /* line 461,  */ /* line 462,  */ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon .logocon img { width:360px; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon .logocon { display:inline-block; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon .logocon { display:inline-block; }
 
  }
 
@@ -608,7 +608,7 @@
 
  /* line 475,  */ #logonavcon #primarynav ul li.menu-item a { display:block; padding-bottom:8px; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item a { min-height:44px; line-height:44px; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item a { min-height:44px; line-height:44px; }
 
  }
 
@@ -622,41 +622,41 @@
 
  /* line 482,  */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li a:hover,#logonavcon #primarynav ul li.menu-item ul.sub-menu li a.hover { background:#0098d7; color:#fff; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li a:hover,#logonavcon #primarynav ul li.menu-item ul.sub-menu li a.hover { background:grey; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li a:hover,#logonavcon #primarynav ul li.menu-item ul.sub-menu li a.hover { background:grey; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li a { padding:0; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li a { padding:0; }
 
  }
 
  /* line 488,  */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li ul.sub-menu { display:none; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li ul.sub-menu { display:none; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu li ul.sub-menu { display:none; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu { position:relative; top:0; left:auto; max-width:none; opacity:1; display:none; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item ul.sub-menu { position:relative; top:0; left:auto; max-width:none; opacity:1; display:none; }
 
  }
 
  /* line 494,  */ /* line 496,  */ #logonavcon #primarynav ul li.menu-item:hover ul.sub-menu,#logonavcon #primarynav ul li.menu-item.hover ul.sub-menu { left:10px; top:30px; opacity:1; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item:hover,#logonavcon #primarynav ul li.menu-item.hover { left:auto; top:0; display:block; width:100% !important; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item:hover,#logonavcon #primarynav ul li.menu-item.hover { left:auto; top:0; display:block; width:100% !important; }
 
  }
 
  /* line 499,  */ .no-js #logonavcon #primarynav ul li.menu-item:last-child:hover ul.sub-menu { left:auto; right:0; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item { display:block; width:100%; text-align:center; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav ul li.menu-item { display:block; width:100%; text-align:center; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav { display:none; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon #primarynav { display:none; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon { padding-top:0; text-align:center; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #logonavcon { padding-top:0; text-align:center; }
 
  }
 
@@ -676,25 +676,25 @@
 
  /* line 521,  */ #heroslidercon h1 { position:relative; text-align:center; color:#fff; margin:0; padding:0; font-size:90px; font-size:12.006rem; line-height:1.625em; line-height:100px; line-height:11.36rem; font-weight:800; z-index:10; text-shadow:0 3px 16px rgba(0, 0, 0, 0.3); -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h1 { font-size:60px; font-size:8.004rem; line-height:1.625em; line-height:70px; line-height:7.952rem; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h1 { font-size:60px; font-size:8.004rem; line-height:1.625em; line-height:70px; line-height:7.952rem; }
 
  }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h1 { font-size:48px; font-size:6.4032rem; line-height:1.625em; line-height:60px; line-height:6.816rem; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h1 { font-size:48px; font-size:6.4032rem; line-height:1.625em; line-height:60px; line-height:6.816rem; }
 
  }
 
  /* line 525,  */ #heroslidercon h2 { position:relative; text-align:center; color:#fff; margin:0; padding:0; font-size:32px; font-size:4.2688rem; line-height:1.625em; font-weight:300; z-index:1; text-shadow:0 3px 10px rgba(0, 0, 0, 0.5); -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h2 { font-size:24px; font-size:3.2016rem; line-height:1.625em; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h2 { font-size:24px; font-size:3.2016rem; line-height:1.625em; }
 
  }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h2 { font-size:18px; font-size:2.4012rem; line-height:1.625em; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon h2 { font-size:18px; font-size:2.4012rem; line-height:1.625em; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon { padding:50px 0; overflow:hidden; background-size:cover; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #heroslidercon { padding:50px 0; overflow:hidden; background-size:cover; }
 
  }
 
@@ -704,7 +704,7 @@
 
  /* line 541,  */ .fullcontentcon { margin-top:30px; }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .fullcontentcon { margin-top:15px; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .fullcontentcon { margin-top:15px; }
 
  }
 
@@ -756,7 +756,7 @@
 
  /* line 596,  */ .entry-manage { font-size:12px; font-size:1.6008rem; line-height:1.625em; margin-top:15px; margin-bottom:30px; }
 
- /* line 597,  */ @media only screen and (max-width: 668px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .nebula-manage-edit { display:block; text-align:center; }
+ /* line 597,  */ @media only screen and (max-width: 668px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .nebula-manage-edit { display:block; text-align:center; }
 
  }
 
@@ -764,7 +764,7 @@
 
  /* line 602,  */ .post-modified { float:right; }
 
- @media only screen and (max-width: 668px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .post-modified { float:none; display:block; text-align:center; }
+ @media only screen and (max-width: 668px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .post-modified { float:none; display:block; text-align:center; }
 
  }
 
@@ -826,13 +826,13 @@
 
  /* line 672,  */ #about-the-author .author-headshot img { width:100%; max-width:200px; /* border-radius: 500px; */ -webkit-transition:all 0.75s; -moz-transition:all 0.75s; -ms-transition:all 0.75s; -o-transition:all 0.75s; transition:all 0.75s; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-headshot { text-align:center; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-headshot { text-align:center; }
 
  }
 
  /* line 675,  */ #about-the-author .author-name { display:inline-block; padding:0; }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-name { display:block; padding-bottom:15px; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-name { display:block; padding-bottom:15px; }
 
  }
 
@@ -840,7 +840,7 @@
 
  /* line 679,  */ #about-the-author .author-social { float:right; margin-top:17px; }
 
- @media only screen and (max-width: 376px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-social { margin-top:0; }
+ @media only screen and (max-width: 376px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-social { margin-top:0; }
 
  }
 
@@ -848,7 +848,7 @@
 
  /* line 683,  */ #about-the-author .author-meta i { margin-right:2px; }
 
- /* line 685,  */ @media only screen and (max-width: 668px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-jobtitle { display:block; }
+ /* line 685,  */ @media only screen and (max-width: 668px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-jobtitle { display:block; }
 
  }
 
@@ -858,13 +858,13 @@
 
  /* line 690,  */ #about-the-author .author-contact .author-phonenumber { white-space:nowrap; }
 
- @media only screen and (max-width: 668px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-contact { float:none; display:block; }
+ @media only screen and (max-width: 668px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #about-the-author .author-contact { float:none; display:block; }
 
  }
 
  /* line 695,  */ h2.articles-by { padding-top:0; }
 
- /* line 699,  */ @media only screen and (max-width: 668px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ li.comment div.comment-meta { display:block; }
+ /* line 699,  */ @media only screen and (max-width: 668px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ li.comment div.comment-meta { display:block; }
 
  }
 
@@ -902,7 +902,7 @@
 
  /* line 740,  */ .xoxo .tagcloud a:hover,.xoxo .tagcloud a.hover { background:#0098d7; background:rgba(0, 152, 215, 0.25); color:#0098d7; }
 
- /* line 744,  */ @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .xoxo .sidebar-search { display:none; }
+ /* line 744,  */ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .xoxo .sidebar-search { display:none; }
 
  }
 
@@ -1000,7 +1000,7 @@
 
  /* line 829,  */ .mm-listview .mm-next:hover,.mm-listview .mm-next.hover { background:#000; background:rgba(0, 0, 0, 0.05); }
 
- /* line 831,  */ .mm-listview .mm-next:after { -webkit-transition:right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); -moz-transition:right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); -ms-transition:right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); -o-transition:right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); transition:right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+ /* line 831,  */ .mm-listview .mm-next:after { -webkit-transition:right 0.5s cubic-bezier(0.250, 0.250, 0.750, 0.750); -moz-transition:right 0.5s cubic-bezier(0.250, 0.250, 0.750, 0.750); -ms-transition:right 0.5s cubic-bezier(0.250, 0.250, 0.750, 0.750); -o-transition:right 0.5s cubic-bezier(0.250, 0.250, 0.750, 0.750); transition:right 0.5s cubic-bezier(0.250, 0.250, 0.750, 0.750); }
 
  /* line 832,  */ .mm-listview .mm-next:hover:after,.mm-listview .mm-next.hover:after { right:15px; }
 
@@ -1008,7 +1008,7 @@
 
  /* line 842,  */ #footer { background:#0098d7; background:linear-gradient(to bottom, #0098d7, #00628b); }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #footer { padding-top:0; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #footer { padding-top:0; }
 
  }
 
@@ -1028,7 +1028,7 @@
 
  /* line 855,  */ .row.powerfootercon { padding-top:20px; margin-bottom:30px; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .row.powerfootercon { display:none; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .row.powerfootercon { display:none; }
 
  }
 
@@ -1044,7 +1044,7 @@
 
  /* line 38, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item a:hover,#powerfooter ul li.menu-item a.hover { color:#aaa; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item a { border-bottom:none; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item a { border-bottom:none; }
 
  }
 
@@ -1058,15 +1058,15 @@
 
  /* line 871,  */ #powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu { display:none; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item ul.sub-menu li { padding:0 0 0 10px; border-left:1px solid #95d600; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item ul.sub-menu li { padding:0 0 0 10px; border-left:1px solid #95d600; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item ul.sub-menu { padding:5px 0 5px 35px; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item ul.sub-menu { padding:5px 0 5px 35px; }
 
  }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item { display:block; margin:0; padding:0; width:100% !important; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ #powerfooter ul li.menu-item { display:block; margin:0; padding:0; width:100% !important; }
 
  }
 
@@ -1074,7 +1074,7 @@
 
  /* line 882,  */ div.copyright p { font-size:12px; font-size:1.6008rem; line-height:1.625em; color:#fff; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ div.copyright p { font-size:11px; font-size:1.4674rem; line-height:1.625em; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ div.copyright p { font-size:11px; font-size:1.4674rem; line-height:1.625em; }
 
  }
 
@@ -1086,7 +1086,7 @@
 
  /* line 890,  */ .footer-search { float:right; }
 
- @media only screen and (max-width: 767px)  { /* line 72, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .footer-search { display:none; }
+ @media only screen and (max-width: 767px)  { /* line 66, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .footer-search { display:none; }
 
  }
 
@@ -1154,9 +1154,9 @@
 
  /* line 14, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .invisible { visibility:hidden; }
 
- /* line 15, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ /* line 79, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:before,.clearfix:after { content:""; display:table; }
+ /* line 15, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ /* line 73, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:before,.clearfix:after { content:""; display:table; }
 
- /* line 81, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:after { clear:both; }
+ /* line 75, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:after { clear:both; }
 
  /* line 16, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ div.space { clear:both; display:block; overflow:hidden; visibility:hidden; width:0; height:0; }
 

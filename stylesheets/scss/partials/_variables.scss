@@ -2,20 +2,36 @@
 // Global variables
 // ===========================
 
-$primary_color: #0098d7;
-$secondary_color: #95d600;
-$text_color: #444;
-$font_stack: 'Open Sans', sans-serif;
-$background_color: #f6f6f6;
+$primary_color: #0098d7 !default;
+$secondary_color: #95d600 !default;
+$text_color: #444 !default;
+$font_stack: 'Open Sans', sans-serif !default;
+$background_color: #f6f6f6 !default;
 
-$danger_color: #ca3838;
-$warning_color: #f6b83f;
-$success_color: #58c026;
+//Media Queries
+$media_queries: (
+	widescreen: "only screen and (min-width: 1400px)",
+	tablet_landscape: "only screen and (max-width: 1023px)",
+	tablet: "only screen and (max-width: 767px)",
+	mobile_landscape: "only screen and (max-width: 668px)",
+	mobile: "only screen and (max-width: 376px)"
+);
 
+$danger_color: #ca3838 !default;
+$warning_color: #f6b83f !default;
+$success_color: #58c026 !default;
+
+//Custom Easings
+$custom_easings: (
+	name_here: "0.250, 0.250, 0.750, 0.750",
+);
+
+//PHG Logo
 $phg_cyan: #0098d7;
 $phg_green: #95d600;
 $phg_grey: #9fa1a4;
 
+//Social Networks
 $facebook_color: #3b5998;
 $twitter_color: #55acee;
 $google_plus_color: #d73d32;

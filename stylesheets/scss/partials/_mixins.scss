@@ -54,21 +54,15 @@
 	background: nth(nth($color-stops, 1), 1); background: linear-gradient($direction, $color-stops);
 }
 
-//@TODO "Nebula" 0: Consider Implementing this breakpoint mixin. Very complicated, but very powerful. http://www.zell-weekeat.com/mappy-breakpoints/
 //.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-device-width: 320px)"){color: green;};}
-$media_stack: (
-	(group: widescreen, rule: "only screen and (min-width: 1400px)"),
-	(group: tablet_landscape, rule: "only screen and (max-width: 1023px)"),
-	(group: tablet, rule: "only screen and (max-width: 767px)"),
-	(group: mobile_landscape, rule: "only screen and (max-width: 668px)"),
-	(group: mobile, rule: "only screen and (max-width: 376px)"),
-	(group: print, rule: "only print"),
-	(group: custom, rule: "only screen and ")
+$additional_queries: (
+	print: "only print",
+	custom: "only screen and "
 );
+$all_media_queries: map-merge($media_queries, $additional_queries); //Combine $media_queries from /partials/_variables.scss and $additional_queries above.
 @mixin media($group, $custom_rule: ""){
-	@each $media in $media_stack {
-		@if $group == map-get($media, group) {
-			$rule: map-get($media, rule);
+	@each $name, $rule in $all_media_queries {
+		@if $group == $name {
 			@media #{$rule} #{$custom_rule} {& {@content}}
 		}
 	}
@@ -79,4 +73,47 @@ $media_stack: (
 	&:before,
 	&:after {content: ""; display: table;}
 	&:after {clear: both;}
+}
+
+
+$easings: (
+	linear: "0.250, 0.250, 0.750, 0.750",
+	ease: "0.250, 0.100, 0.250, 1.000",
+	ease-in: "0.420, 0.000, 1.000, 1.000",
+	ease-in-out: "0.000, 0.000, 0.580, 1.000",
+	easeInQuad: "0.550, 0.085, 0.680, 0.530",
+	easeInCubic: "0.550, 0.055, 0.675, 0.190",
+	easeInQuart: "0.895, 0.030, 0.685, 0.220",
+	easeInQuint: "0.895, 0.030, 0.685, 0.220",
+	easeInSine: "0.470, 0.000, 0.745, 0.715",
+	easeInExpo: "0.950, 0.050, 0.795, 0.035",
+	easeInCirc: "0.600, 0.040, 0.980, 0.335",
+	easeInBack: "0.600, -0.280, 0.735, 0.045",
+	easeOutQuad: "0.250, 0.460, 0.450, 0.940",
+	easeOutCubic: "0.215, 0.610, 0.355, 1.000",
+	easeOutQuart: "0.165, 0.840, 0.440, 1.000",
+	easeOutQuint: "0.230, 1.000, 0.320, 1.000",
+	easeOutSine: "0.390, 0.575, 0.565, 1.000",
+	easeOutExpo: "0.190, 1.000, 0.220, 1.000",
+	easeOutCirc: "0.075, 0.820, 0.165, 1.000",
+	easeOutBack: "0.175, 0.885, 0.320, 1.275",
+	easeInOutQuad: "0.455, 0.030, 0.515, 0.955",
+	easeInOutCubic: "0.645, 0.045, 0.355, 1.000",
+	easeInOutQuart: "0.770, 0.000, 0.175, 1.000",
+	easeInOutQuint: "0.860, 0.000, 0.070, 1.000",
+	easeInOutSine: "0.445, 0.050, 0.550, 0.950",
+	easeInOutExpo: "1.000, 0.000, 0.000, 1.000",
+	easeInOutCirc: "0.785, 0.135, 0.150, 0.860",
+	easeInOutBack: "0.680, -0.550, 0.265, 1.550",
+	custom: ""
+);
+$all_easings: map-merge($easings, $custom_easings); //Combine $custom_easings from /partials/_variables.scss and $easings above.
+//.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}
+//.example {@include prefix((transition: right 0.5s easing(custom, "0.190, 1.000, 0.220, 1.000")));}
+@function easing($ease: linear, $custom: ""){
+	@each $name, $values in $all_easings {
+		@if $ease == $name {
+			@return cubic-bezier(unquote(#{$values}) unquote(#{$custom}));
+		}
+	}
 }

@@ -234,9 +234,9 @@
 
  /* line 14, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ .invisible { visibility:hidden; }
 
- /* line 15, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ /* line 79, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:before,.clearfix:after { content:""; display:table; }
+ /* line 15, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ /* line 73, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:before,.clearfix:after { content:""; display:table; }
 
- /* line 81, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:after { clear:both; }
+ /* line 75, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_mixins.scss */ .clearfix:after { clear:both; }
 
  /* line 16, /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/stylesheets/scss/partials/_helpers.scss */ div.space { clear:both; display:block; overflow:hidden; visibility:hidden; width:0; height:0; }
 

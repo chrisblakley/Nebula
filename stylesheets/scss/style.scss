@@ -305,8 +305,8 @@ input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @inclu
 //jQuery UI Autocomplete Hero Search
 div#nebula-hero-formcon {@include media(tablet){display: none !important;};}
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
-	&:before {top: 9px; left: 10px; width: 16px; height: 16px; @include font-size(16);}
-	input {display: block; width: 100%; max-width: 558px; @include font-size(18); padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
+	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: 16px; line-height: 16px;}
+	input {display: block; width: 100%; max-width: 558px; font-size: 18px; line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
 		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(0, 153, 216, 0.6);}
 		@include media(tablet){width: 92%; max-width: 650px;};
 		@include media(mobile){width: 90%; max-width: 300px;};
@@ -828,7 +828,7 @@ div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 10
 .mm-listview .mm-next {width: 90px;
 	&:hover,
 	&.hover {@include background-color(#000, 0.05);}
-	&:after {@include prefix((transition: right 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275)));}
+	&:after {@include prefix((transition: right 0.5s easing(linear)));} //cubic-bezier(0.175, 0.885, 0.320, 1.275) /* testthis */
 	&:hover:after,
 	&.hover:after {right: 15px;}
 }
