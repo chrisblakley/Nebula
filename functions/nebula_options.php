@@ -1,44 +1,12 @@
 <?php
 
-//Store global strings as needed
-add_action('init', 'global_nebula_vars');
-add_action('admin_init', 'global_nebula_vars');
-function global_nebula_vars(){
-    $GLOBALS['admin_user'] = get_userdata(1); //@TODO "Nebula" 0: Consider removing this altogether
-    $GLOBALS['full_address'] = get_option('nebula_street_address') . ', ' . get_option('nebula_locality') . ', ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
-    $GLOBALS['enc_address'] = get_option('nebula_street_address') . ' ' . get_option('nebula_locality') . ' ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
-    $GLOBALS['enc_address'] = str_replace(' ', '+', $GLOBALS['enc_address']);
-}
-
 /*==========================
  Global Nebula Options Conditional Functions
  ===========================*/
 
-//Determine if a function should be used based on several Nebula Options conditions (for text inputs).
-function nebula_options_conditional_text($option, $default=''){
-	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($option) ){
-		return get_option($option);
-	} else {
-		return $default;
-	}
-}
-
-//Determine if a function should be used based on several Nebula Options conditions (for text inputs).
-function nebula_options_conditional_text_bool($option, $true=true, $false=false){
-	if ( strtolower(get_option('nebula_overall')) == 'enabled' && get_option($option) ){
-		return $true;
-	} else {
-		return $false;
-	}
-}
-
-//Determine if a function should be used based on several Nebula Options conditions (for select inputs).
-function nebula_options_conditional($option, $default='enabled'){
-	if ( strtolower(get_option('nebula_overall')) == 'override' || strtolower(get_option('nebula_overall')) == 'disabled' ){
-		return true;
-	}
-
-	if ( (strtolower(get_option($option)) == 'default') || (strtolower(get_option($option)) == strtolower($default)) ){
+//If the Nebula Option is either Default or the passed declaration
+function nebula_option($option, $declaration='enabled'){
+	if ( (strtolower(get_option($option)) == 'default') || (strtolower(get_option($option)) == strtolower($declaration)) ){
 		return true;
 	} else {
 		return false;
@@ -50,40 +18,52 @@ function nebula_options_conditional($option, $default='enabled'){
  When using in templates these simplify the syntax to be less confusing.
  ===========================*/
 
+function nebula_full_address($encoded=false){
+	if ( !get_option('nebula_street_address') ){
+		return false;
+	}
+
+	$full_address = get_option('nebula_street_address') . ' ' . get_option('nebula_locality') . ' ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
+    if ( $encoded ){
+	    $full_address = str_replace(' ', '+', $GLOBALS['enc_address']);
+    }
+	return $full_address;
+}
+
 function nebula_admin_bar_enabled(){
-	return nebula_options_conditional('nebula_admin_bar', 'enabled');
+	return nebula_option('nebula_admin_bar', 'enabled');
 }
 
 function nebula_author_bios_enabled(){
-	return !nebula_options_conditional('nebula_author_bios', 'disabled');
+	return !nebula_option('nebula_author_bios', 'disabled');
 }
 
 function nebula_adwords_enabled(){
-	return !nebula_options_conditional('nebula_adwords', 'disabled');
+	return !nebula_option('nebula_adwords', 'disabled');
 }
 
 function nebula_comments_enabled(){
-	return !nebula_options_conditional('nebula_comments', 'disabled');
+	return !nebula_option('nebula_comments', 'disabled');
 }
 
 function nebula_wireframing_enabled(){
-	return !nebula_options_conditional('nebula_wireframing', 'disabled');
+	return !nebula_option('nebula_wireframing', 'disabled');
 }
 
 function nebula_google_font_option(){
-	if ( nebula_options_conditional_text_bool('nebula_google_font_url') ){
-		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', nebula_options_conditional_text('nebula_google_font_url', 'http://fonts.googleapis.com/css?family=Open+Sans:400,800'));
-	} elseif ( nebula_options_conditional_text_bool('nebula_google_font_family') ) {
-		$google_font_family = preg_replace('/ /', '+', nebula_options_conditional_text('nebula_google_font_family', 'Open Sans'));
-		$google_font_weights = preg_replace('/ /', '', nebula_options_conditional_text('nebula_google_font_weights', '400,800'));
+	if ( get_option('nebula_google_font_url') ){
+		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', get_option('nebula_google_font_url'));
+	} elseif ( get_option('nebula_google_font_family') ) {
+		$google_font_family = preg_replace('/ /', '+', get_option('nebula_google_font_family', 'Open Sans'));
+		$google_font_weights = preg_replace('/ /', '', get_option('nebula_google_font_weights', '400,800'));
 		$google_font = 'http://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights;
-
 		$google_font_contents = @file_get_contents($google_font); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
 		if ( $google_font_contents !== false ){
 			return $google_font;
 		}
+	} else {
+		return 'http://fonts.googleapis.com/css?family=Open+Sans:400,800';
 	}
-	return false;
 }
 
 //Initialize the Nebula Submenu
@@ -100,7 +80,6 @@ function nebula_sub_menu(){
 //Register each option
 function register_nebula_options(){
 	$GLOBALS['nebula_options_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
-		'nebula_overall' => 'Enabled',
 		'nebula_initialized' => '',
 		'nebula_edited_yet' => 'false',
 		'nebula_domain_expiration_alert' => 'Default',
@@ -187,6 +166,8 @@ function register_nebula_options(){
 		'nebula_twitter_consumer_key' => '',
 		'nebula_twitter_consumer_secret' => '',
 		'nebula_twitter_bearer_token' => '',
+		'nebula_instagram_user_id' => '',
+		'nebula_instagram_access_token' => '',
 
 		//Administration Tab
 		'nebula_dev_ip' => '',
@@ -211,50 +192,8 @@ function register_nebula_options(){
 //Output the options page
 function nebula_options_page(){
 ?>
-	<style>
-		h2 .nav-tab.nav-tab-inactive {font-weight: 400;}
-
-		.override {opacity: 0.4; pointer-events: none;}
-		.form-table th {width: 250px;}
-		a {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
-		a.help {text-decoration: none; color: #ccc;}
-			a.help:hover,
-			a.help.active {color: #0074a2;}
-		a.reset {text-decoration: none; color: red;}
-		p.helper {display: none; color: #777;}
-			p.helper.active {display: block;}
-
-		input[type="text"],
-		input[type="password"] {width: 206px; font-size: 12px;}
-
-		.businessday span,
-		.businessday input {-webkit-transition: all 0.25s ease 0s; -moz-transition: all 0.25s ease 0s; -o-transition: all 0.25s ease 0s; transition: all 0.25s ease 0s;}
-			.businessday.closed span,
-			.businessday.closed input {opacity: 0.4; pointer-events: none;}
-			.businessday input[type="checkbox"] {opacity: 1 !important; pointer-events: all;}
-
-		.mobiletitle {display: none;}
-
-		@media only screen and (max-width: 782px){
-			.form-table th {width: 100%;}
-			input[type="text"] {width: 100% !important;}
-
-		}
-
-		@media only screen and (max-width: 400px){
-			.nav-tab-wrapper {display: none;}
-			.mobiletitle {display: block;}
-			.form-table.dependent {display: block !important;}
-
-			.businessday span {font-size: 12px; width: 80px !important;}
-			input.business-hour {width: 23% !important; display: inline-block !important; font-size: 12px !important;}
-		}
-	</style>
-
 	<script>
 		jQuery(document).ready(function(){
-			toggleDependents();
-
 			jQuery('a.help').on('click', function(){
 				jQuery(this).toggleClass('active');
 				jQuery(this).parents('tr').find('p.helper').animate({
@@ -263,18 +202,6 @@ function nebula_options_page(){
 		        }, 250);
 				return false;
 			});
-
-			jQuery('#nebula_overall').on('change', function(){
-				toggleDependents();
-			});
-
-			function toggleDependents(){
-				if ( jQuery('#nebula_overall').val() == 'disabled' || jQuery('#nebula_overall').val() == 'override' ){
-					jQuery('.dependent, .mobiletitle').addClass('override');
-				} else {
-					jQuery('.dependent, .mobiletitle').removeClass('override');
-				}
-			}
 
 			jQuery('.nav-tab').on('click', function(){
 				var tabID = jQuery(this).attr('id');
@@ -352,15 +279,7 @@ function nebula_options_page(){
 			</div>
 		<?php endif; ?>
 
-		<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the functions.php file. It can also be disabled below, or overridden via functions.php if that makes you feel better.</p>
-
-		<?php if ( get_option('nebula_overall') == 'override' ): ?>
-			<div id="setting-error-settings_updated" class="error settings-error">
-				<p><strong>Override!</strong><br />These options have been overridden using functions.php. Remove the override to re-enable use of this page!</p>
-			</div>
-		<?php endif; ?>
-
-		<hr />
+		<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the functions.php file.</p>
 
 		<form method="post" action="options.php">
 			<?php
@@ -369,20 +288,6 @@ function nebula_options_page(){
 			?>
 
 			<table class="form-table global">
-
-		        <?php if ( is_dev() ): ?>
-			        <tr valign="top">
-			        	<th scope="row">Nebula Options&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-						<td>
-							<select name="nebula_overall" id="nebula_overall">
-								<option value="enabled" <?php selected('enabled', get_option('nebula_overall')); ?>>Enabled</option>
-								<option value="disabled" <?php selected('disabled', get_option('nebula_overall')); selected('override', get_option('nebula_overall')); ?>>Disabled</option>
-							</select>
-							<p class="helper"><small>Enable/Disable this options page. If disabled, all options will use <strong style="text-transform: uppercase;">default values</strong> and can only be edited via functions.php! This <strong style="text-transform: uppercase;">does not</strong> disable all options!</small></p>
-						</td>
-			        </tr>
-		        <?php endif; ?>
-
 		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Initialized?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
@@ -427,7 +332,7 @@ function nebula_options_page(){
 		        <tr valign="top">
 		        	<th scope="row">Contact Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_contact_email" value="<?php echo get_option('nebula_contact_email'); ?>" placeholder="<?php echo get_option('admin_email', $GLOBALS['admin_user']->user_email); ?>" />
+						<input type="text" name="nebula_contact_email" value="<?php echo get_option('nebula_contact_email'); ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
 						<p class="helper"><small>The main contact email address. If left empty, the admin email address will be used (shown by placeholder).</small></p>
 					</td>
 		        </tr>
@@ -872,12 +777,21 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
+				<tr valign="top">
+		        	<th scope="row">Instagram&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						User ID: <input type="text" name="nebula_instagram_user_id" value="<?php echo get_option('nebula_instagram_user_id'); ?>" placeholder="00000000" style="width: 296px;"/><br />
+						Access Token: <input type="text" name="nebula_instagram_access_token" value="<?php echo get_option('nebula_instagram_access_token'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br />
+						<p class="helper"><small>The user ID and access token are used for creating custom Instagram feeds. Here are instructions for <a href="http://www.otzberg.net/iguserid/" target="_blank">finding your User ID</a>, or <a href="http://jelled.com/instagram/access-token" target="_blank">generating your access token</a>. <a href="https://smashballoon.com/instagram-feed/token/" target="_blank">This tool can retrieve both at once</a> by connecting to your Instagram account.</small></p>
+					</td>
+		        </tr>
+
 		        <?php if ( 1==2 ): //@TODO "Nebula" 0: Get this integrated into Nebula before enabling. ?>
 		        <tr valign="top">
 		        	<th scope="row">YouTube&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						Data: <input type="text" name="nebula_youtube_todo" value="<?php echo get_option('nebula_youtube_todo'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
-						<p class="helper"><small>The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
+						<p class="helper"><small>Coming soon...</a></small></p>
 					</td>
 		        </tr>
 		        <?php endif; ?>

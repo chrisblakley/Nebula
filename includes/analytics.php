@@ -25,7 +25,7 @@
 	<?php endif; ?>
 <?php endif; ?>
 
-<?php if ( !nebula_options_conditional('nebula_facebook_custom_audience_pixel', 'disabled') ): //Facebook Custom Audience Pixel ?>
+<?php if ( !nebula_option('nebula_facebook_custom_audience_pixel', 'disabled') ): //Facebook Custom Audience Pixel ?>
 	<?php if ( get_option('nebula_facebook_custom_audience_pixel_id') != '' ): ?>
 		<script>
 			!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?

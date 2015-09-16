@@ -116,7 +116,7 @@
 			<?php endif; ?>
 		</article>
 
-		<?php if ( nebula_options_conditional('nebula_comments', 'disabled') ): ?>
+		<?php if ( nebula_option('nebula_comments', 'disabled') ): ?>
 			<div id="nebulacommentswrapper">
 				<?php comments_template('', true); ?>
 			</div><!--/nebulacommentswrapper-->

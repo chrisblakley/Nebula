@@ -28,18 +28,18 @@
 		.nebula-code.pretitle.#{$language} {color: $color;}
 
 		pre.nebula-code.#{$language},
-		.nebula-gist.#{$language} .gist-file, {border: 1px solid $color; border-left: 5px solid $color;}
-			.nebula-code.#{$language}::selection {background: lighten($color, 50%); background: rgba(lighten($color, 20%), 0.25);}
+		.nebula-code.#{$language} .gist-file, {border: 1px solid $color; border-left: 5px solid $color;}
+			.nebula-code.#{$language}::selection {background: lighten($color, 50%); background: rgba(lighten($color, 20%), 0.25);} //::Selection does not work with SASS parent selectors
 	}
 }
 
 @include nebula_pre(apache directive, #af2473);
-@include nebula_pre(html htm, #f1672c, f13b);
+@include nebula_pre(html htm, brand(html), f13b);
 @include nebula_pre(actionscript as, #a42222);
-@include nebula_pre(css, #30a9dc, f13c);
-@include nebula_pre(scss, #c6538c);
-@include nebula_pre(javascript js jquery, #f1bf26);
-@include nebula_pre(php, #7f7fb2);
+@include nebula_pre(css, brand(css), f13c);
+@include nebula_pre(sass scss, brand(sass));
+@include nebula_pre(javascript js jquery, brand(javascript));
+@include nebula_pre(php, brand(php));
 @include nebula_pre(regex, #666);
-@include nebula_pre(shortcode, #287DA2, f19a);
+@include nebula_pre(shortcode, brand(wordpress), f19a);
 @include nebula_pre(sql mysql, #116285);

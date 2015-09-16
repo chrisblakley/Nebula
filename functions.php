@@ -13,7 +13,7 @@ require_once('functions/nebula_utilities.php'); //Nebula Utilities
 /*==========================
  Google Analytics Tracking ID (Nebula Options Functions required)
  ===========================*/
-$GLOBALS['ga'] = nebula_options_conditional_text('nebula_ga_tracking_id', ''); //@TODO "Analytics" 5: Change Google Analytics Tracking ID here or in Nebula Options (or both)!
+$GLOBALS['ga'] = get_option('nebula_ga_tracking_id', ''); //@TODO "Analytics" 5: Change Google Analytics Tracking ID here or in Nebula Options (or both)!
 
 
 /*==========================
@@ -31,12 +31,6 @@ require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be c
 //require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)
 
 
-//To force override the Nebula Options, uncomment the line below.
-//This will disable changes made from the Nebula Options page, and only allow edits from the functions files themselves.
-//(To revert, comment out and choose "Enabled" in the Nebula Options page)
-/* update_option('nebula_overall', 'override'); */
-
-
 /*==========================
  Register All Stylesheets
  ===========================*/
@@ -45,13 +39,12 @@ add_action('login_enqueue_scripts', 'register_nebula_styles');
 add_action('admin_enqueue_scripts', 'register_nebula_styles');
 function register_nebula_styles(){
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
-	if ( nebula_google_font_option() ){
-		wp_register_style('nebula-google_font', nebula_google_font_option(), array(), null, 'all');
-	}
+	wp_register_style('nebula-google_font', nebula_google_font_option(), array(), null, 'all');
 	wp_register_style('nebula-normalize', 'https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', array(), '3.0.3', 'all');
 	wp_register_style('nebula-gumby', get_template_directory_uri() . '/stylesheets/libs/gumby.css', array(), '2.6.0', 'all');
 	wp_register_style('nebula-gumby_cdn', 'https://cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0', 'all'); //Only useful for 12 col primary
 	wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css', array(), '4.4.0', 'all');
+	wp_register_style('nebula-animate_css', 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.4.0/animate.min.css', array(), '3.4.0', 'all');
 	wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.3.4/css/jquery.mmenu.all.min.css', array(), '5.3.4', 'all');
 	//wp_register_style('nebula-bxslider', 'https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.css', array(), '4.2.5', 'none'); //bxSlider is conditionally loaded via main.js when needed.
 	wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.8/css/jquery.dataTables.min.css', array(), '1.10.8', 'all');
@@ -74,8 +67,7 @@ function register_nebula_scripts(){
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
 	//wp_register_script($handle, $src, $dependencies, $version, $in_footer);
 	wp_register_script('nebula-jquery_old', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js', array(), '1.11.3', true);
-	wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.dev.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
-	wp_register_script('nebula-modernizr3_dev', get_template_directory_uri() . '/js/libs/modernizr3.dev.js?' . $GLOBALS['defer'], array(), '3.0.0a3', false); //@TODO "Nebula" 0: Replace Modernizr with v3 once released (CDNJS?).
+	wp_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.dev.js?' . $GLOBALS['defer'], array(), '3.0.0a4', false);
 	wp_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 	wp_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js?' . $GLOBALS['defer'], array(), '2.8.3', false);
 	wp_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js?' . $GLOBALS['defer'], array(), '1.11.4', true);
@@ -139,7 +131,7 @@ $localize_bloginfo = array(
 	'template_directory' => get_template_directory_uri(),
 	'stylesheet_url' => get_bloginfo("stylesheet_url"),
 	'home_url' => home_url(),
-	'admin_email' => get_option('admin_email'),
+	//'admin_email' => base64_encode(get_option('admin_email')), //Removed until actually needed somewhere.
 	'admin_ajax' => admin_url('admin-ajax.php'),
 	'upload_dir' => $upload_dir['baseurl'],
 );
@@ -175,10 +167,11 @@ function enqueue_nebula_frontend(){
 	wp_enqueue_style('nebula-gumby');
 	wp_enqueue_style('nebula-mmenu');
 	wp_enqueue_style('nebula-font_awesome');
+	//wp_enqueue_style('nebula-animate_css');
 	wp_enqueue_style('nebula-jquery_ui');
 	wp_enqueue_style('nebula-main');
 
-	if ( !nebula_options_conditional('nebula_wireframing', 'disabled') ){
+	if ( !nebula_option('nebula_wireframing', 'disabled') ){
 		wp_enqueue_style('nebula-wireframing');
 		wp_enqueue_script('nebula-wireframing');
 	}
@@ -189,7 +182,6 @@ function enqueue_nebula_frontend(){
 	//wp_enqueue_script('swfobject');
 	//wp_enqueue_script('hoverIntent');
 	//wp_enqueue_script('nebula-modernizr_dev');
-	//wp_enqueue_script('nebula-modernizr3_dev');
 	wp_enqueue_script('nebula-modernizr');
 	wp_enqueue_script('nebula-mmenu');
 	//wp_enqueue_script('nebula-doubletaptogo');

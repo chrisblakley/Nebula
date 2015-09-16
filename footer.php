@@ -26,8 +26,7 @@
 							<p>
 								<a class="footerlogo" href="<?php echo home_url(); ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/meta/favicon-36x36.png" /></a>
 								<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong> (v<?php $nebula_theme_info = wp_get_theme(); echo $nebula_theme_info->get('Version'); ?>)</a>, all rights reserved.<br />
-								<?php $nebula_full_address = nebula_options_conditional_text_bool('nebula_street_address', $GLOBALS['full_address'], ''); //@TODO "Metadata" 3: Add address here. ?>
-								<a href="https://www.google.com/maps/place/<?php echo urlencode($nebula_full_address); ?>" target="_blank"><?php echo $nebula_full_address; ?></a>
+								<a href="https://www.google.com/maps/place/<?php echo nebula_full_address(1); ?>" target="_blank"><?php echo nebula_full_address(); ?></a>
 							</p>
 						</div><!--/columns-->
 						<div class="four columns push_one">

@@ -61,21 +61,16 @@ if ( !nebula_admin_bar_enabled() ){
 }
 
 //Disable Wordpress Core update notifications in WP Admin
-if ( nebula_options_conditional('nebula_wp_core_updates_notify', 'disabled') ){
+if ( nebula_option('nebula_wp_core_updates_notify', 'disabled') ){
 	add_filter('pre_site_transient_update_core', create_function('$a', "return null;"));
 }
 
 //Show update warning on Wordpress Core/Plugin update admin pages
-if ( nebula_options_conditional('nebula_plugin_update_warning') ){
-	if ( $pagenow == 'plugins.php' ){
+if ( nebula_option('nebula_plugin_update_warning') ){
+	if ( $pagenow == 'plugins.php' || $pagenow == 'update-core.php' ){
 		add_action('admin_notices', 'plugin_warning');
 		function plugin_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
-		}
-	} elseif ( $pagenow == 'update-core.php'){
-		add_action('admin_notices', 'plugin_warning');
-		function plugin_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com/'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
 		}
 	}
 } else {
@@ -115,30 +110,38 @@ function new_wp_login_title(){
 }
 
 //Nebula Admin Notices
-if ( nebula_options_conditional('nebula_admin_notices') ){
+if ( nebula_option('nebula_admin_notices') ){
 	add_action('admin_notices', 'nebula_admin_notices');
 	function nebula_admin_notices(){
 		if ( current_user_can('manage_options') || is_dev() ){
+			//Check PHP version
+			$php_version_lifecycle = nebula_php_version_support();
+			if ( $php_version_lifecycle['lifecycle'] == 'security' ){
+				echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>v' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong>' . date('F j, Y', $php_version_lifecycle['security']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+			} elseif ( $php_version_lifecycle['lifecycle'] == 'end' ){
+				echo '<div class="nebula-admin-notice error"><p>PHP <strong>v' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong>' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+			}
+
 			//Check for Google Analytics Tracking ID
 			if ( get_option('nebula_ga_tracking_id') == '' && $GLOBALS['ga'] == '' ){
-				echo '<div class="error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
+				echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
 			}
 
 			//Check for "Discourage searching engines..." setting
 			if ( get_option('blog_public') == 0 ){
-				echo '<div class="error"><p><a href="options-reading.php">Search Engine Visibility</a> is currently disabled!</p></div>';
+				echo '<div class="nebula-admin-notice error"><p><a href="options-reading.php">Search Engine Visibility</a> is currently disabled!</p></div>';
 			}
 
 			//Check for "Just Another WordPress Blog" tagline
 			if ( strtolower(get_bloginfo('description')) == 'just another wordpress site' ){
-				echo '<div class="error"><p><a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!</p></div>';
+				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!</p></div>';
 			}
 		}
 	}
 }
 
 //Welcome Panel
-if ( nebula_options_conditional('nebula_welcome_panel') ){
+if ( nebula_option('nebula_welcome_panel') ){
 	remove_action('welcome_panel','wp_welcome_panel');
 	add_action('welcome_panel','nebula_welcome_panel');
 	function nebula_welcome_panel(){
@@ -149,7 +152,7 @@ if ( nebula_options_conditional('nebula_welcome_panel') ){
 }
 
 //Remove unnecessary Dashboard metaboxes
-if ( nebula_options_conditional('nebula_unnecessary_metaboxes') ){
+if ( nebula_option('nebula_unnecessary_metaboxes') ){
 	add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
 	function remove_dashboard_metaboxes(){
 		//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
@@ -171,7 +174,7 @@ function skip_extensions(){
 
 //TODO Metabox
 //This metabox tracks TODO messages throughout development.
-if ( nebula_options_conditional('nebula_todo_metabox') ){
+if ( nebula_option('nebula_todo_metabox') ){
 	if ( is_dev() ){
 		add_action('wp_dashboard_setup', 'todo_metabox');
 	}
@@ -282,7 +285,7 @@ if ( nebula_options_conditional('nebula_todo_metabox') ){
 
 //Developer Info Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
-if ( nebula_options_conditional('nebula_dev_metabox') ){
+if ( nebula_option('nebula_dev_metabox') ){
 	if ( is_dev() ){
 		add_action('wp_dashboard_setup', 'dev_info_metabox');
 	}
@@ -315,7 +318,7 @@ if ( nebula_options_conditional('nebula_dev_metabox') ){
 			$domain_registrar_html .= '</li>';
 		}
 
-		if ( nebula_options_conditional('nebula_domain_exp', 'enabled') ){
+		if ( nebula_option('nebula_domain_exp', 'enabled') ){
 			if ( get_option('nebula_domain_expiration_alert') == 'Never' || get_option('nebula_domain_expiration_alert') < strtotime('-2 weeks') ){
 				if ( $domain_exp != 'December 31, 1969' && $domain_exp_unix > strtotime("3/27/1986")  ){
 					if ( $domain_exp_unix < strtotime('+1 week') ){ //If domain is expiring within a week, email all admin users.
@@ -430,9 +433,11 @@ if ( nebula_options_conditional('nebula_dev_metabox') ){
 				</script>';
 
 		echo '<ul class="serverdetections">';
+/*
 			if ( is_debug() ){
 				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
 			}
+*/
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
 
 			echo $domain_registrar_html;
@@ -445,7 +450,22 @@ if ( nebula_options_conditional('nebula_dev_metabox') ){
 			}
 			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
 			echo '<li><i class="fa ' . $php_os_icon . ' fa-fw"></i> Server OS: <strong>' . PHP_OS . '</strong> <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
-			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong>' . PHP_VERSION . '</strong> ' . $safe_mode . '</li>';
+
+			$php_version_color = 'inherit';
+			$php_version_info = '';
+			$php_version_cursor = 'normal';
+			$php_version_lifecycle = nebula_php_version_support();
+			if ( $php_version_lifecycle['lifecycle'] == 'security' ){
+				$php_version_color = '#ca8038';
+				$php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['security']) . '.';
+				$php_version_cursor = 'help';
+			} elseif ( $php_version_lifecycle['lifecycle'] == 'end' ){
+				$php_version_color = '#ca3838';
+				$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
+				$php_version_cursor = 'help';
+			}
+			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> ' . $safe_mode . '</li>';
+
 			echo '<li><i class="fa fa-cogs fa-fw"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
 			echo ( !empty($mysql_version) )? '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . $mysql_version . '</strong></li>' : '';
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
@@ -681,8 +701,8 @@ function muc_value( $column_name, $id ){
 	}
 }
 
-//Enable editor-style.css for the WYSIWYG editor.
-add_editor_style('css/editor-style.css');
+//Enable editor style for the TinyMCE WYSIWYG editor.
+add_editor_style('stylesheets/css/tinymce.css');
 
 //Enable All Settings page for only Developers who are Admins
 if ( is_dev() && !is_client() ){

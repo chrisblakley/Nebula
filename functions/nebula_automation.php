@@ -227,7 +227,7 @@ function nebula_initialization_email_prev_settings(){
 	$headers[] = 'From: ' . get_bloginfo('name');
 
 	//Carbon copy the admin if reset was done by another user.
-	$admin_user_email = nebula_options_conditional_text('nebula_contact_email', get_option('admin_email'));
+	$admin_user_email = get_option('nebula_contact_email', get_option('admin_email'));
 	if ( $admin_user_email != $current_user->user_email ){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}

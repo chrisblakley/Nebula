@@ -281,7 +281,7 @@
 				ignore_onend = true;
 				recognition.stop();
 				ga('send', 'event', 'Speech Recognition', 'Driving Directions');
-				window.location.href = 'https://www.google.com/maps/dir/Current+Location/<?php echo nebula_settings_conditional_text_bool('nebula_street_address', $GLOBALS['enc_address'], '760+West+Genesee+Street+Syracuse+NY+13204'); ?>';
+				window.location.href = 'https://www.google.com/maps/dir/Current+Location/<?php echo ( nebula_full_address() )? nebula_full_address(1) : '760+West+Genesee+Street+Syracuse+NY+13204'; ?>';
 			}
 
 			//"Navigate to ________"

@@ -16,7 +16,7 @@
 
  /* line 27,  */ .nebula-pre-con.apache a,.nebula-code.pretitle.apache { color:#af2473; }
 
- /* line 30,  */ pre.nebula-code.apache,.nebula-gist.apache .gist-file { border:1px solid #af2473; border-left:5px solid #af2473; }
+ /* line 30,  */ pre.nebula-code.apache,.nebula-code.apache .gist-file { border:1px solid #af2473; border-left:5px solid #af2473; }
 
  /* line 32,  */ .nebula-code.apache::selection { background:#f7dbeb; background:rgba(221, 92, 165, 0.25); }
 
@@ -24,35 +24,35 @@
 
  /* line 27,  */ .nebula-pre-con.directive a,.nebula-code.pretitle.directive { color:#af2473; }
 
- /* line 30,  */ pre.nebula-code.directive,.nebula-gist.directive .gist-file { border:1px solid #af2473; border-left:5px solid #af2473; }
+ /* line 30,  */ pre.nebula-code.directive,.nebula-code.directive .gist-file { border:1px solid #af2473; border-left:5px solid #af2473; }
 
  /* line 32,  */ .nebula-code.directive::selection { background:#f7dbeb; background:rgba(221, 92, 165, 0.25); }
 
- /* line 22,  */ .nebula-code.codetitle.html { color:#f1672c; }
+ /* line 22,  */ .nebula-code.codetitle.html { color:#e34f26; }
 
  /* line 24,  */ .nebula-code.codetitle.html:before { content:"\f13b"; font-family:"FontAwesome"; margin-right:3px; }
 
- /* line 27,  */ .nebula-pre-con.html a,.nebula-code.pretitle.html { color:#f1672c; }
+ /* line 27,  */ .nebula-pre-con.html a,.nebula-code.pretitle.html { color:#e34f26; }
 
- /* line 30,  */ pre.nebula-code.html,.nebula-gist.html .gist-file { border:1px solid #f1672c; border-left:5px solid #f1672c; }
+ /* line 30,  */ pre.nebula-code.html,.nebula-code.html .gist-file { border:1px solid #e34f26; border-left:5px solid #e34f26; }
 
- /* line 32,  */ .nebula-code.html::selection { background:#fff; background:rgba(247, 172, 140, 0.25); }
+ /* line 32,  */ .nebula-code.html::selection { background:#fff; background:rgba(239, 152, 128, 0.25); }
 
- /* line 22,  */ .nebula-code.codetitle.htm { color:#f1672c; }
+ /* line 22,  */ .nebula-code.codetitle.htm { color:#e34f26; }
 
  /* line 24,  */ .nebula-code.codetitle.htm:before { content:"\f13b"; font-family:"FontAwesome"; margin-right:3px; }
 
- /* line 27,  */ .nebula-pre-con.htm a,.nebula-code.pretitle.htm { color:#f1672c; }
+ /* line 27,  */ .nebula-pre-con.htm a,.nebula-code.pretitle.htm { color:#e34f26; }
 
- /* line 30,  */ pre.nebula-code.htm,.nebula-gist.htm .gist-file { border:1px solid #f1672c; border-left:5px solid #f1672c; }
+ /* line 30,  */ pre.nebula-code.htm,.nebula-code.htm .gist-file { border:1px solid #e34f26; border-left:5px solid #e34f26; }
 
- /* line 32,  */ .nebula-code.htm::selection { background:#fff; background:rgba(247, 172, 140, 0.25); }
+ /* line 32,  */ .nebula-code.htm::selection { background:#fff; background:rgba(239, 152, 128, 0.25); }
 
  /* line 22,  */ .nebula-code.codetitle.actionscript { color:#a42222; }
 
  /* line 27,  */ .nebula-pre-con.actionscript a,.nebula-code.pretitle.actionscript { color:#a42222; }
 
- /* line 30,  */ pre.nebula-code.actionscript,.nebula-gist.actionscript .gist-file { border:1px solid #a42222; border-left:5px solid #a42222; }
+ /* line 30,  */ pre.nebula-code.actionscript,.nebula-code.actionscript .gist-file { border:1px solid #a42222; border-left:5px solid #a42222; }
 
  /* line 32,  */ .nebula-code.actionscript::selection { background:#f5d0d0; background:rgba(219, 81, 81, 0.25); }
 
@@ -60,7 +60,7 @@
 
  /* line 27,  */ .nebula-pre-con.as a,.nebula-code.pretitle.as { color:#a42222; }
 
- /* line 30,  */ pre.nebula-code.as,.nebula-gist.as .gist-file { border:1px solid #a42222; border-left:5px solid #a42222; }
+ /* line 30,  */ pre.nebula-code.as,.nebula-code.as .gist-file { border:1px solid #a42222; border-left:5px solid #a42222; }
 
  /* line 32,  */ .nebula-code.as::selection { background:#f5d0d0; background:rgba(219, 81, 81, 0.25); }
 
@@ -70,15 +70,23 @@
 
  /* line 27,  */ .nebula-pre-con.css a,.nebula-code.pretitle.css { color:#30a9dc; }
 
- /* line 30,  */ pre.nebula-code.css,.nebula-gist.css .gist-file { border:1px solid #30a9dc; border-left:5px solid #30a9dc; }
+ /* line 30,  */ pre.nebula-code.css,.nebula-code.css .gist-file { border:1px solid #30a9dc; border-left:5px solid #30a9dc; }
 
  /* line 32,  */ .nebula-code.css::selection { background:#fff; background:rgba(135, 205, 235, 0.25); }
+
+ /* line 22,  */ .nebula-code.codetitle.sass { color:#c6538c; }
+
+ /* line 27,  */ .nebula-pre-con.sass a,.nebula-code.pretitle.sass { color:#c6538c; }
+
+ /* line 30,  */ pre.nebula-code.sass,.nebula-code.sass .gist-file { border:1px solid #c6538c; border-left:5px solid #c6538c; }
+
+ /* line 32,  */ .nebula-code.sass::selection { background:#fff; background:rgba(223, 160, 191, 0.25); }
 
  /* line 22,  */ .nebula-code.codetitle.scss { color:#c6538c; }
 
  /* line 27,  */ .nebula-pre-con.scss a,.nebula-code.pretitle.scss { color:#c6538c; }
 
- /* line 30,  */ pre.nebula-code.scss,.nebula-gist.scss .gist-file { border:1px solid #c6538c; border-left:5px solid #c6538c; }
+ /* line 30,  */ pre.nebula-code.scss,.nebula-code.scss .gist-file { border:1px solid #c6538c; border-left:5px solid #c6538c; }
 
  /* line 32,  */ .nebula-code.scss::selection { background:#fff; background:rgba(223, 160, 191, 0.25); }
 
@@ -86,7 +94,7 @@
 
  /* line 27,  */ .nebula-pre-con.javascript a,.nebula-code.pretitle.javascript { color:#f1bf26; }
 
- /* line 30,  */ pre.nebula-code.javascript,.nebula-gist.javascript .gist-file { border:1px solid #f1bf26; border-left:5px solid #f1bf26; }
+ /* line 30,  */ pre.nebula-code.javascript,.nebula-code.javascript .gist-file { border:1px solid #f1bf26; border-left:5px solid #f1bf26; }
 
  /* line 32,  */ .nebula-code.javascript::selection { background:#fff; background:rgba(247, 219, 134, 0.25); }
 
@@ -94,7 +102,7 @@
 
  /* line 27,  */ .nebula-pre-con.js a,.nebula-code.pretitle.js { color:#f1bf26; }
 
- /* line 30,  */ pre.nebula-code.js,.nebula-gist.js .gist-file { border:1px solid #f1bf26; border-left:5px solid #f1bf26; }
+ /* line 30,  */ pre.nebula-code.js,.nebula-code.js .gist-file { border:1px solid #f1bf26; border-left:5px solid #f1bf26; }
 
  /* line 32,  */ .nebula-code.js::selection { background:#fff; background:rgba(247, 219, 134, 0.25); }
 
@@ -102,7 +110,7 @@
 
  /* line 27,  */ .nebula-pre-con.jquery a,.nebula-code.pretitle.jquery { color:#f1bf26; }
 
- /* line 30,  */ pre.nebula-code.jquery,.nebula-gist.jquery .gist-file { border:1px solid #f1bf26; border-left:5px solid #f1bf26; }
+ /* line 30,  */ pre.nebula-code.jquery,.nebula-code.jquery .gist-file { border:1px solid #f1bf26; border-left:5px solid #f1bf26; }
 
  /* line 32,  */ .nebula-code.jquery::selection { background:#fff; background:rgba(247, 219, 134, 0.25); }
 
@@ -110,7 +118,7 @@
 
  /* line 27,  */ .nebula-pre-con.php a,.nebula-code.pretitle.php { color:#7f7fb2; }
 
- /* line 30,  */ pre.nebula-code.php,.nebula-gist.php .gist-file { border:1px solid #7f7fb2; border-left:5px solid #7f7fb2; }
+ /* line 30,  */ pre.nebula-code.php,.nebula-code.php .gist-file { border:1px solid #7f7fb2; border-left:5px solid #7f7fb2; }
 
  /* line 32,  */ .nebula-code.php::selection { background:#fff; background:rgba(191, 191, 216, 0.25); }
 
@@ -118,25 +126,25 @@
 
  /* line 27,  */ .nebula-pre-con.regex a,.nebula-code.pretitle.regex { color:#666; }
 
- /* line 30,  */ pre.nebula-code.regex,.nebula-gist.regex .gist-file { border:1px solid #666; border-left:5px solid #666; }
+ /* line 30,  */ pre.nebula-code.regex,.nebula-code.regex .gist-file { border:1px solid #666; border-left:5px solid #666; }
 
  /* line 32,  */ .nebula-code.regex::selection { background:#e6e6e6; background:rgba(153, 153, 153, 0.25); }
 
- /* line 22,  */ .nebula-code.codetitle.shortcode { color:#287da2; }
+ /* line 22,  */ .nebula-code.codetitle.shortcode { color:#21759b; }
 
  /* line 24,  */ .nebula-code.codetitle.shortcode:before { content:"\f19a"; font-family:"FontAwesome"; margin-right:3px; }
 
- /* line 27,  */ .nebula-pre-con.shortcode a,.nebula-code.pretitle.shortcode { color:#287da2; }
+ /* line 27,  */ .nebula-pre-con.shortcode a,.nebula-code.pretitle.shortcode { color:#21759b; }
 
- /* line 30,  */ pre.nebula-code.shortcode,.nebula-gist.shortcode .gist-file { border:1px solid #287da2; border-left:5px solid #287da2; }
+ /* line 30,  */ pre.nebula-code.shortcode,.nebula-code.shortcode .gist-file { border:1px solid #21759b; border-left:5px solid #21759b; }
 
- /* line 32,  */ .nebula-code.shortcode::selection { background:#d4ebf5; background:rgba(90, 176, 214, 0.25); }
+ /* line 32,  */ .nebula-code.shortcode::selection { background:#c8e6f3; background:rgba(74, 172, 216, 0.25); }
 
  /* line 22,  */ .nebula-code.codetitle.sql { color:#116285; }
 
  /* line 27,  */ .nebula-pre-con.sql a,.nebula-code.pretitle.sql { color:#116285; }
 
- /* line 30,  */ pre.nebula-code.sql,.nebula-gist.sql .gist-file { border:1px solid #116285; border-left:5px solid #116285; }
+ /* line 30,  */ pre.nebula-code.sql,.nebula-code.sql .gist-file { border:1px solid #116285; border-left:5px solid #116285; }
 
  /* line 32,  */ .nebula-code.sql::selection { background:#a2dbf3; background:rgba(29, 165, 223, 0.25); }
 
@@ -144,7 +152,7 @@
 
  /* line 27,  */ .nebula-pre-con.mysql a,.nebula-code.pretitle.mysql { color:#116285; }
 
- /* line 30,  */ pre.nebula-code.mysql,.nebula-gist.mysql .gist-file { border:1px solid #116285; border-left:5px solid #116285; }
+ /* line 30,  */ pre.nebula-code.mysql,.nebula-code.mysql .gist-file { border:1px solid #116285; border-left:5px solid #116285; }
 
  /* line 32,  */ .nebula-code.mysql::selection { background:#a2dbf3; background:rgba(29, 165, 223, 0.25); }
 

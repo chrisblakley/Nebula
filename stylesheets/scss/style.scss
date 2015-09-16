@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
-	Version: 3.2.0
+	Version: 3.2.1
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -15,6 +15,8 @@
 
 @import 'variables';
 @import 'mixins';
+@import 'helpers';
+
 
 // ===========================
 // PHG Custom Styles
@@ -22,16 +24,9 @@
 
 html {height: auto; font-size: 62.5%; color: $text_color;}
 body {overflow-x: hidden; background: $background_color; color: $text_color;}
-#tinymce.mceContentBody {padding: 10px 15px !important; background: $background_color;}
 button, input, select, textarea {color: $text_color; @include font-size(14);}
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
-hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
-	&.zero {margin: 0;}
-	//@TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended.
-	.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
-	.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); /* mix-blend-mode: multiply; */}
-}
 
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
@@ -64,14 +59,14 @@ ul.menu {padding: 0;}
 	.success {color: $success_color;}
 }
 
-input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; @include font-size(12); background: #eee url("images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; @include font-size(12); background: #eee url($template_directory + "/images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
 	&:hover,
 	&.hover {background-color: #fff;}
 	&:focus,
 	&.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: $text_color; cursor: auto;}
 	&.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: $text_color; cursor: auto;}
-	&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(0, 153, 216, .5);} /* @TODO "Nebula" 0: Change RGBa to be primary color */
-	.svg & {background: #eee url("images/search.svg") no-repeat 6px center;}
+	&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), .5);}
+	.svg & {background: #eee url($template_directory + "/images/search.svg") no-repeat 6px center;}
 }
 	//Note: Can not use nested SCSS selectors on placeholder pseudos!
 	input.nebula-search::-webkit-search-decoration,
@@ -86,74 +81,11 @@ input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; @inc
 form.nebula-search-iconable {position: relative; display: inline-block; margin: 0;
 	input.nebula-search {background: #eee;
 		.lte-ie9 &,
-		.ie10 & {background: #eee url("images/search.png") no-repeat 6px center;}
+		.ie10 & {background: #eee url($template_directory + "/images/search.png") no-repeat 6px center;}
 	}
 	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit);}
 }
-
-// ===========================
-// Special File Type Indicators
-// ===========================
-
-//@include file_icon(doc docx, f1c2, #2b5797);
-@mixin file_icon($filetypes, $unicode: f016, $color: $text_color, $specific: false){
-	@each $filetype in $filetypes {
-		@if $specific {
-			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
-			}
-		} @else {
-			a[href$=".#{$filetype}"], li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
-			}
-		}
-	}
-}
-
-@include file_icon(doc docx, f1c2, #2b5797);
-@include file_icon(xls xlsx, f1c3, #1e7145);
-@include file_icon(ppt pptx, f1c4, #d04525);
-@include file_icon(pdf pdfx, f1c1, #eb3b00);
-@include file_icon(zip zipx rar gz tar, f1c6, #777);
-@include file_icon(txt rtf, f0f6, #777);
-@include file_icon(html, f1c9, #f1672c, true);
-@include file_icon(php, f1c9, #5a68a5, true);
-@include file_icon(js, f1c9, #f1bf26, true);
-@include file_icon(css scss, f1c9, #30a9dc, true);
-@include file_icon(swf, f1c9, #c31e24, true);
-
-a.off, a.no-icon, a.noicon {text-decoration: none; border: none;
-	&:before {content: "" !important; margin-right: 0 !important;}
-}
-a.white {@include link-colors(#fff, #ccc);
-	&:before {color: #fff !important;}
-}
-
-
-/* Table styles - Restyle here as needed */
-table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ /* Sets a fixed width for all cells, and removes cellspacing. */}
-	/* Table Rows */
-	table tr {}
-		table tr.odd {/* background: #f5f5f5; */}
-		table tr:hover,
-		table tr.hover {/* background: #e2e2e2; */}
-	/* Table Cells */
-	table tr td {/* text-align: center; border: none; border: 1px solid #ddd; */}
-	table tr td:first-child {/* font-weight: inherit; */}
-	table tr td {/* padding: 0; font-size: inherit; */}
-	table tr td, table tbody tr td {/* font-size: inherit; */}
-	table thead tr:first-child td,
-	table thead tr.first-child td {/* font-weight: bold; color: #fff; */}
-	table tr td:hover,
-	table tr td.hover {/* background: #d2d2d2; */}
-	/* Table Heading Cells */
-	table tr th {/* background: $secondary_color !important; border: none; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #fff; */}
-	/* Table Heading Rows */
-	table thead tr td {/* background: $primary_color !important; adding: 10px 0; */}
-	/* Table Footer Rows */
-	table tfoot tr td {/* background: grey !important; color: #fff; */}
-
 
 .nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
 #wp_search_submit {color: $text_color !important;
@@ -167,16 +99,16 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 
 .nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
 
-.nebulashadow {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; @include prefix((transition: all 0.5s));
+.nebulashadow {margin-top: 0; margin-top: attr(offset, px, 0); height: 24px; background: url($template_directory + "/images/shadow-floating.png") no-repeat top center; background-size: contain; @include prefix((transition: all 0.5s));
 	&.above {height: 12px; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); @include prefix((transform: scaleY(-1))); @include prefix((filter: flipv), ms);}
 	&.below {height: 12px; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));}
 	&.inner-top {top: 0; left: 0; height: 12px; position: absolute; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));}
 	&.inner-bottom {bottom: 0; left: 0; height: 12px; position: absolute; width: 100%; @include linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); @include prefix((transform: scaleY(-1)); @include prefix((filter: flipv), ms);}
-	&.bulging {height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain;}
-	&.curling {height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain;}
-	&.hovering {height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain;}
-	&.anchored-right, &.rising-left {height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top right; background-size: contain;}
-	&.anchored-left, &.rising-right {height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top left; background-size: contain;}
+	&.bulging {height: 24px; background: url($template_directory + "/images/shadow-bulging.png") no-repeat top center; background-size: contain;}
+	&.curling {height: 24px; background: url($template_directory + "/images/shadow-curling.png") no-repeat top center; background-size: contain;}
+	&.hovering {height: 35px; background: url($template_directory + "/images/shadow-hovering.png") no-repeat top center; background-size: contain;}
+	&.anchored-right, &.rising-left {height: 24px; background: url($template_directory + "/images/shadow-anchored-right.png") no-repeat top right; background-size: contain;}
+	&.anchored-left, &.rising-right {height: 24px; background: url($template_directory + "/images/shadow-anchored-left.png") no-repeat top left; background-size: contain;}
 	.lte-ie9 &.inner-bottom,
 	.lte-ie9 &.above {transform: none; filter:-; -ms-filter:-; display: none;
 		.no-js.& {display: none; visibility: hidden; opacity: 0;}
@@ -184,13 +116,13 @@ table {/* table-layout: fixed; border-collapse: collapse; border-spacing: 0; */ 
 }
 
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;
-	&:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-floating.png") no-repeat top center; background-size: contain; @include prefix((transition: all 0.5s)); pointer-events: none;}
-	&.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-bulging.png") no-repeat top center; background-size: contain; pointer-events: none;}
+	&:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-floating.png") no-repeat top center; background-size: contain; @include prefix((transition: all 0.5s)); pointer-events: none;}
+	&.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-bulging.png") no-repeat top center; background-size: contain; pointer-events: none;}
 	&.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; background: red; color: #fff; text-align: center; width: 100%; background: none;}
-	&.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-curling.png") no-repeat top center; background-size: contain; pointer-events: none;}
-	&.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url("images/shadow-hovering.png") no-repeat top center; background-size: contain; pointer-events: none;}
-	&.anchored-right:after, &.rising-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-right.png") no-repeat top right; background-size: contain; pointer-events: none;}
-	&.anchored-left:after, &.rising-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url("images/shadow-anchored-left.png") no-repeat top left; background-size: contain; pointer-events: none;}
+	&.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-curling.png") no-repeat top center; background-size: contain; pointer-events: none;}
+	&.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url($template_directory + "/images/shadow-hovering.png") no-repeat top center; background-size: contain; pointer-events: none;}
+	&.anchored-right:after, &.rising-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-anchored-right.png") no-repeat top right; background-size: contain; pointer-events: none;}
+	&.anchored-left:after, &.rising-right:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-anchored-left.png") no-repeat top left; background-size: contain; pointer-events: none;}
 	a& {border: none;}
 	/* &.animate:hover:after {background-position-y: -24px;} */
 }
@@ -229,10 +161,11 @@ div.nebula-button {margin-bottom: 10px;}
 	.maprefresh-icon.inactive,
 	.mapgeolocation-icon.inactive {opacity: 0.4;}
 
-$facebook_color: #3b5998;
+	#googlemap img {max-width: none;} //Prevents glitchy UI within embedded Google maps
+
 .facebook-connect-con {@include font-size(12);
 	i,
-	a {@include link-colors($facebook_color, darken($facebook_color, 15%)); color: $facebook_color;}
+	a {@include link-colors(brand(facebook), darken(brand(facebook), 15%)); color: brand(facebook);}
 }
 
 
@@ -307,7 +240,7 @@ div#nebula-hero-formcon {@include media(tablet){display: none !important;};}
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
 	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: 16px; line-height: 16px;}
 	input {display: block; width: 100%; max-width: 558px; font-size: 18px; line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
-		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(0, 153, 216, 0.6);}
+		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 		@include media(tablet){width: 92%; max-width: 650px;};
 		@include media(mobile){width: 90%; max-width: 300px;};
 	}
@@ -356,9 +289,6 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; /* width: 90%; */ @include prefix((transition: none 0.25s));}
 	@include media(tablet){@include background-color(#fff, 0.95);};
 }
-
-
-#googlemap img {max-width: none;} //Prevents glitchy UI within embedded Google maps
 
 div.bx-wrapper {
 	div.bx-viewport {left: 0 !important;}
@@ -423,11 +353,8 @@ ul.bxslider {
 	&.mm-menu {visibility: visible; height: 100%;}
 }
 
-
-
-
 //Top row that appears at desktop sizes.
-#secondarynavcon {position: relative; background: #444; z-index: 9999; @include prefix((transition: all 0.5s));
+#secondarynavcon {position: relative; @include background-color($dark_primary_color); z-index: 9999; @include prefix((transition: all 0.5s));
 	#secondarynav {position: relative; z-index: 2000;
 		ul {float: right; margin: 0;
 			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
@@ -448,7 +375,6 @@ ul.bxslider {
 	@include media(tablet){max-height: 0; opacity: 0; overflow: hidden;};
 }
 
-
 //Logo and primary navigation row
 #logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 25px; box-shadow: none; z-index: 8000; @include prefix((transition: all 0.5s));
 	img {height: 90px; @include prefix((transition: all 0.5s));}
@@ -459,9 +385,7 @@ ul.bxslider {
 		}
 	}
 	.logocon {
-		img {
-			@include media(tablet){width: 360px;};
-		}
+		img {@include media(tablet){width: 360px;};}
 		@include media(tablet){display: inline-block;};
 	}
 	#primarynav {position: relative; z-index: 1000;
@@ -516,7 +440,7 @@ ul.bxslider {
 #suggestedpage {display: none;}
 
 //Homepage hero row
-#heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url("images/phg/phg-nebula.jpg") fixed center center; background-size: cover; @include prefix((transition: all 0.5s));
+#heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url($template_directory + "/images/phg/phg-nebula.jpg") fixed center center; background-size: cover; @include prefix((transition: all 0.5s));
 	.herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color($primary_color, 0.5); z-index: 0;}
 	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; @include font-size(90); @include line-height(100); font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
 		@include media(tablet){@include font-size(60); @include line-height(70);};
@@ -552,17 +476,19 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 
 .entry-meta {@include font-size(12);
 	i {margin-right: 2px;}
-}
 	.posted-on,
 	.posted-in,
 	.posted-by {display: inline-block; margin-right: 10px; text-transform: uppercase; font-weight: bold;}
 	.meta-dimensions {display: inline-block; margin-right: 10px;}
 	.meta-exif {display: inline-block; margin-right: 10px;}
 	.nebulasocialcon {} /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */
-		.sharing-links {display: block; margin-top: 10px;}
-			.sharing-links.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
-			.nebula-social-button {display: inline-block; margin-right: 10px;}
-				.nebula-social-button.facebook-share .fb_iframe_widget span {vertical-align: inherit !important;}
+		.sharing-links {display: block; margin-top: 10px;
+			&.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
+		}
+			.nebula-social-button {display: inline-block; margin-right: 10px;
+				&.facebook-share .fb_iframe_widget span {vertical-align: inherit !important;}
+			}
+}
 
 .entry-social {
 	ul {
@@ -575,11 +501,10 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 }
 
 //@TODO "Nebula" 0: This would probably be a good place to use an extend
-.entry-content {margin-top: 10px; @include font-size(14); @include line-height(22);}
-	.entry-content ul,
-	#tinymce ul {padding-left: 20px; list-style: disc;}
-	.entry-content ol,
-	#tinymce ol {margin: 0; padding-left: 20px;}
+.entry-content {margin-top: 10px; @include font-size(14); @include line-height(22);
+	ul {padding-left: 20px; list-style: disc;}
+	ol {margin: 0; padding-left: 20px;}
+}
 
 .entry-caption {font-style: italic; color: $text_color; margin-top: 15px;}
 
@@ -597,8 +522,8 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 	.nebula-manage-edit {
 		@include media(mobile_landscape){display: block; text-align: center;};
 	}
-		.post-edit,
-		.post-admin {display: inline-block; margin-right: 10px;}
+	.post-edit,
+	.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;
 		@include media(mobile_landscape){float: none; display: block; text-align: center;};
 	}
@@ -618,10 +543,11 @@ div.wp-pagenavi {float: right; margin-bottom: 20px;
 
 //WP Core Pagination
 div.wp-pagination {float: right; margin-bottom: 20px;
-	a.page-numbers {}
+	a.page-numbers {
+		&.prev {}
+		&.next {}
+	}
 	span.page-numbers.current {}
-	a.page-numbers.next {}
-	a.page-numbers.prev {}
 }
 
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; @include prefix((transition: all 0.75s));}
@@ -706,7 +632,6 @@ li.comment div.comment-meta {
 .gallery-caption {@include font-size(12);}
 
 
-
 // ===========================
 // Sidebar
 // ===========================
@@ -732,7 +657,6 @@ li.comment div.comment-meta {
 	}
 
 	li.widget_archive label {display: none;}
-
 	li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
 
 	//Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list.
@@ -743,7 +667,7 @@ li.comment div.comment-meta {
 
 	.xoxo .sidebar-search {@include media(tablet){display: none;};}
 
-/* Nebula expandable sidebar subnav style defaults */
+//Nebula expandable sidebar subnav style defaults
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;
 	i {@include font-size(18); display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
 	&.plus i {@include prefix((transform: rotate(0deg)));}
@@ -752,7 +676,7 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 .xoxo form.search input[type="text"] {width: 77% !important; @include font-size(12); @include line-height(24); height: auto !important; vertical-align: top;} //Font size and line height needs !important
 
 input[type="submit"] {color: #fff;}
-form.search .submit.btn {line-height: 24px !important; width: 22% !important; height: auto !important;}
+form.search .submit.btn {line-height: 24px !important; width: 22% !important; height: auto !important; @include font-size(12); @include line-height(24);}
 
 .formcon {}
 
@@ -807,7 +731,6 @@ p.form-submit {}
 div.wpcf7-validation-errors {@include font-size(14); color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
 div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
 
-
 //Offcanvas Mmenu Modifications
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
 .mm-list a {border: none;
@@ -828,12 +751,13 @@ div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 10
 .mm-listview .mm-next {width: 90px;
 	&:hover,
 	&.hover {@include background-color(#000, 0.05);}
-	&:after {@include prefix((transition: right 0.5s easing(linear)));} //cubic-bezier(0.175, 0.885, 0.320, 1.275) /* testthis */
+	&:after {@include prefix((transition: right 0.5s easing(custom, "0.175, 0.885, 0.320, 1.275")));}
 	&:hover:after,
 	&.hover:after {right: 15px;}
 }
 
 .doasitesearch {display: block; margin-bottom: 15px;}
+
 
 // ===========================
 // Footer
@@ -845,12 +769,14 @@ div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 10
 
 .twitterago {@include font-size(12); text-decoration: underline;}
 
-.footerwidgets {padding-top: 20px; padding-bottom: 20px; background: $text_color;}
-	.widget-container {list-style: none;}
-		.footerwidgets .widget-title {@include font-size(16); text-transform: uppercase; color: #fff; font-weight: bold; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
-		.footerwidgets .textwidget,
-		.footerwidgets ul li {@include font-size(12); color: #fff;}
-		.footerwidgets a {@include link-colors(#fff, #aaa);}
+.footerwidgets {padding-top: 20px; padding-bottom: 20px; @include background-color($dark_primary_color);
+	.widget-container {list-style: none;
+		.widget-title {@include font-size(16); text-transform: uppercase; color: #fff; font-weight: bold; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
+		.textwidget,
+		ul li {@include font-size(12); color: #fff;}
+		a {@include link-colors(#fff, #aaa);}
+	}
+}
 
 .row.powerfootercon {padding-top: 20px; margin-bottom: 30px;
 	@include media(tablet){display: none;};
@@ -878,7 +804,7 @@ div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 10
 		}
 	}
 
-div.copyright {padding-top: 15px; @include background-color(#444);
+div.copyright {padding-top: 15px; @include background-color($dark_primary_color);
 	p {@include font-size(12); color: #fff;
 		@include media(tablet){@include font-size(11);};
 	}
@@ -896,12 +822,6 @@ a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 	&.notallowed {cursor: not-allowed !important;}
 }
 .focusError {background-color: #fcc !important; border: 1px solid #f88 !important; @include prefix((transition: all 0.25s));}
-
-
-/* IE7 Gumby Adjustments */
-.ie7 .column, .ie7 .columns {margin-left: 1.7% !important;}
-.ie7 .column.first-child, .ie7 .columns.first-child, .ie7 .alpha {margin-left: 0px !important;}
-.ie7 .row .push_one {margin-left: 8.1% !important;}
 
 
 // ===========================
@@ -937,24 +857,22 @@ a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 .nebula-vimeo {margin-bottom: 15px;}
 
 .accordion {position: relative; margin-top: 10px; margin-bottom: 10px;}
-	.accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; @include prefix((transition: border-color 0.3s ease));
-		.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: 124.8%; color: #2c3e50; background-color: #fafafa; cursor: pointer;}
-		.accordion-toggle .accordion-heading:before {content: "\f067"; font-family: "FontAwesome"; position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: 74%; @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
-		&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; @include prefix((transform: rotate(0)));}
-		.accordion-content-con {display: none;
-			.accordion-content {padding: 15px; border-top: 2px solid #e5e5e5;}
-		}
+.accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; @include prefix((transition: border-color 0.3s ease));
+	.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: 124.8%; color: #2c3e50; background-color: #fafafa; cursor: pointer;
+		&:before {content: "\f067"; font-family: "FontAwesome"; position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: 74%; @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
 	}
 
-//Helper classes, brand colors, and debug classes are defined in /partials/_helpers.scss
-@import 'helpers';
+	&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; @include prefix((transform: rotate(0)));}
+	.accordion-content-con {display: none;
+		.accordion-content {padding: 15px; border-top: 2px solid #e5e5e5;}
+	}
+}
 
 //Windows Chrome Font Bug Fix: http://stackoverflow.com/questions/22011139/google-fonts-are-not-rendering-on-google-chrome @TODO: "Nebula" 0: Not Working...
 /*
 body * {-webkit-animation-duration: 0.1s; -webkit-animation-name: fontfix; -webkit-animation-iteration-count: 1; -webkit-animation-timing-function: linear; -webkit-animation-delay: 0.1s;}
 @-webkit-keyframes fontfix{from {opacity: 1;} to {opacity: 1;}}
 */
-
 
 @-ms-viewport {width: device-width;}
 

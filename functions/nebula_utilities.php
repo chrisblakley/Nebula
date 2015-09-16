@@ -757,26 +757,49 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
     }
 }
 
+//Check the current (or passed) PHP version against the PHP support timeline.
+function nebula_php_version_support($php_version=PHP_VERSION){
+	//@TODO "Nebula" 0: Find a way to pull this from a Github Gist or something where it can be updated once and pulled for all Nebula sites. Use a transient once implemented.
+	$php_timeline = array( //Must be in descending order!
+		'5.6' => array(
+			'security' => strtotime('28 Aug 2016'),
+			'end' => strtotime('28 Aug 2017')
+		),
+		'5.5' => array(
+			'security' => strtotime('10 Jul 2015'),
+			'end' => strtotime('10 Jul 2016')
+		),
+		'5.4' => array(
+			'security' => strtotime('14 Sep 2014'),
+			'end' => strtotime('14 Sep 2015')
+		),
+		'5.3' => array(
+			'end' => strtotime('14 Aug 2014')
+		),
+		'5.2' => array( //WordPress does not support PHP versions prior to 5.2.4
+			'end' => strtotime('6 Jan 2011')
+		)
+	);
 
-
-
-
-/*
-function __autoload($className){
-    $className = ltrim($className, '\\');
-    $fileName  = '';
-    $namespace = '';
-    if ($lastNsPos = strripos($className, '\\')) {
-        $namespace = substr($className, 0, $lastNsPos);
-        $className = substr($className, $lastNsPos + 1);
-        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
-    }
-    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-    // $fileName .= $className . '.php'; //sometimes you need a custom structure
-    //require_once "library/class.php"; //or include a class manually
-    require $fileName;
+	foreach ( $php_timeline as $php_timeline_version => $php_timeline_dates ){
+		if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
+			$output = array();
+			if ( !empty($php_timeline_dates['security']) && time() < $php_timeline_dates['security'] ){
+				$output['lifecycle'] = 'active';
+			} elseif ( !empty($php_timeline_dates['security']) && (time() >= $php_timeline_dates['security'] && time() < $php_timeline_dates['end']) ){
+				$output['lifecycle'] = 'security';
+			} elseif ( time() >= $php_timeline_dates['end'] ) {
+				$output['lifecycle'] = 'end';
+			} else {
+				$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
+			}
+			$output['security'] = $php_timeline_dates['security'];
+			$output['end'] = $php_timeline_dates['end'];
+			return $output;
+			break;
+		}
+	}
 }
-*/
 
 
 /*==========================
@@ -784,7 +807,7 @@ function __autoload($className){
 	http://leafo.net/scssphp/docs/
  ===========================*/
 
-if ( nebula_options_conditional('nebula_scss') ){
+if ( nebula_option('nebula_scss') ){
 	if ( is_writable(get_template_directory()) ){
 		add_action('init', 'nebula_render_scss');
 		add_action('admin_init', 'nebula_render_scss');
@@ -793,7 +816,7 @@ if ( nebula_options_conditional('nebula_scss') ){
 	}
 }
 function nebula_render_scss($specific_scss=null){
-	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php');
+	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //scssphp is a compiler for SCSS 3.x
 	$scss = new \Leafo\ScssPhp\Compiler(); //This can't be the proper way to invoke this... but it works.
 	$scss->addImportPath(get_template_directory() . '/stylesheets/scss/partials/');
 	$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact');
@@ -802,19 +825,27 @@ function nebula_render_scss($specific_scss=null){
 	}
 
 	if ( empty($specific_scss) ){
+		$latest_partial = 0;
+		foreach ( glob(get_template_directory() . '/stylesheets/scss/partials/*') as $partial_file ){
+			if ( filemtime($partial_file) > $latest_partial ){
+				$latest_partial = filemtime($partial_file);
+			}
+		}
+
 		foreach ( glob(get_template_directory() . '/stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 			$file_path_info = pathinfo($file);
 
-			if ( is_file($file) && $file_path_info['extension'] == 'scss' ){
+			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file esits, and has .scss extension, and doesn't begin with "_".
 				$file_counter++;
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css' : get_template_directory() . '/stylesheets/css/' . $file_path_info['filename'] . '.css';
 
-				if ( is_debug() | !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) ){ //If .css file doesn't exist, or is older than .scss file
+				if ( is_debug() || !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) ){ //If .css file doesn't exist, or is older than .scss file (or any partial)
 					$existing_css_contents = ( file_exists($css_filepath) )? file_get_contents($css_filepath) : '';
 					if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
 						$this_scss_contents = file_get_contents($file); //Copy SCSS file contents
 						$compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
-						file_put_contents($css_filepath, $compiled_css); //Save the rendered CSS
+						$enhanced_css = nebula_scss_variables($compiled_css); //Compile server-side variables into SCSS
+						file_put_contents($css_filepath, $enhanced_css); //Save the rendered CSS
 					}
 				}
 			}
@@ -823,11 +854,20 @@ function nebula_render_scss($specific_scss=null){
 		if ( file_exists($specific_scss) ){ //If $specific_scss is a filepath
 			$scss_contents = file_get_contents($specific_scss); //Copy SCSS file contents
 			$compiled_css = $scss->compile($scss_contents); //Compile the SCSS
-			file_put_contents(str_replace('.scss', '.css', $specific_scss), $compiled_css); //Save the rendered CSS in the same directory
+			$enhanced_css = nebula_scss_variables($compiled_css); //Compile server-side variables into SCSS
+			file_put_contents(str_replace('.scss', '.css', $specific_scss), $enhanced_css); //Save the rendered CSS in the same directory
 		} else { //If $scss_file is raw SCSS string
-			return $scss->compile($specific_scss); //Return the rendered CSS
+			$compiled_css = $scss->compile($specific_scss);
+			return nebula_scss_variables($compiled_css); //Return the rendered CSS
 		}
 	}
+}
+
+//Compile server-side variables into SCSS
+function nebula_scss_variables($scss){
+	$scss = preg_replace("(<%template_directory%>)", get_template_directory_uri(), $scss); //Template Directory
+	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path
+	return $scss;
 }
 
 

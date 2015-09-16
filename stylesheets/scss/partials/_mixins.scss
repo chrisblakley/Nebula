@@ -4,16 +4,19 @@
 
 //.element {@include font-size(16);}
 @mixin font-size($size: 12){
-	font-size: $size + px; font-size: (0.1334*$size) + rem; //@TODO "Nebula" 0: Do we want to use a default em line-height here?
-	line-height: 1.625em;
+	font-size: $size + px;
+	font-size: (0.1334*$size) + rem; //I'm actually not in love with using REMs...
+	line-height: 1.625em; //@TODO "Nebula" 0: Do we want to use a default em line-height here? Not in love with this either (harder to override- must declare line-height after this mixin).
 }
 
 //.element {@include line-height(16);}
 @mixin line-height($height: 12){
-    line-height: $height + px; line-height: (0.1136*$height) + rem;
+    line-height: $height + px;
+    line-height: (0.1136*$height) + rem; //I'm actually not in love with using REMs...
 }
 
 //.element {@include prefix((transition: all 0.25s), webkit ms);}
+//.element {@include prefix((animation: animation-name 2s infinite linear));}
 @mixin prefix($map, $vendors: webkit moz ms o){
 	@each $prop, $value in $map {
 		@if $vendors {
@@ -23,6 +26,12 @@
 		}
 		#{$prop}: #{$value};
 	}
+}
+
+//@include keyframes(slide-down){0% {opacity: 1;} 90% {opacity: 0;}}
+@mixin keyframes($animation-name){
+	@-webkit-keyframes $animation-name {@content;}
+	@keyframes $animation-name {@content;}
 }
 
 //.element a {@include link-colors(red, orange, yellow, green, blue);}
@@ -50,8 +59,8 @@
 
 //.element {@include linear-gradient(#31B7D7, #EDAC7D);}
 //.element {@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
-@mixin linear-gradient($direction, $color-stops...){
-	background: nth(nth($color-stops, 1), 1); background: linear-gradient($direction, $color-stops);
+@mixin linear-gradient($direction, $colors...){
+	background: nth(nth($colors, 1), 1); background: linear-gradient($direction, $colors);
 }
 
 //.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-device-width: 320px)"){color: green;};}
@@ -75,36 +84,121 @@ $all_media_queries: map-merge($media_queries, $additional_queries); //Combine $m
 	&:after {clear: both;}
 }
 
+//.element-solid {@include arrow('top','left', 10px, #4fade3);}
+//.element-border {@include arrow('top','left', 10px, #eee, #4fade3, 6px);}
+@mixin arrow($side: "right", $align: "center", $size: 20px, $color: #f6f6f6, $borderColor: "none", $borderSize: 3px) {
+	$selector: "&:after, &:before";
+	@if $borderColor == "none" {
+		$selector: "&:after";
+	}
+	#{$selector} {border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; visibility: visible;}
+	&:after {border-width: $size; @include arrow_helper($size, $color, $size, $side, $align);}
+
+	@if $borderColor != "none" {
+		&:before {border-width: $borderSize + $size; @include arrow_helper($size + $borderSize, $borderColor, $size - $borderSize, $side, $align);}
+	}
+}
+@mixin arrow_helper($arrowSize, $arrowColor, $margin, $side, $align) {
+	@if $side == "top" {
+		border-bottom-color: $arrowColor; top: -2 * $arrowSize;
+	}
+	@if $side == "bottom" {
+		border-top-color: $arrowColor; bottom: -2 * $arrowSize;
+	}
+	@if $side == "left" {
+		border-right-color: $arrowColor; left: -2 * $arrowSize;
+	}
+	@if $side == "right" {
+		border-left-color: $arrowColor; right: -2 * $arrowSize;
+	}
+	@if $side == "right" or $side == "left" {
+		@if $align == "center" {
+			top: 50%; margin-top: -$arrowSize;
+		} @else if $align == "top" {
+			top: $margin;
+		} @else if $align == "bottom" {
+			bottom: $margin;
+		}
+	}
+	@if $side == "bottom" or $side == "top" {
+		@if $align == "center" {
+			right: 50%; margin-right: -$arrowSize;
+		} @else if $align == "left" {
+			left: $margin;
+		} @else if $align == "right" {
+			right: $margin;
+		}
+	}
+}
+
+
+// ===========================
+// Functions
+// ===========================
+
+//.example {color: brand(facebook);}
+//.example {color: brand(flickr, secondary);}
+//.example {color: brand(flickr, 2);}
+@function brand($name, $index: 1){
+	@if $index == 0 {
+		$index: 1;
+	}
+
+	$index_names: (primary: 1, secondary: 2, tertiary: 3, quaternary: 4, quinary: 5, senary: 6, septenary: 7, octonary: 8, nonary: 9, denary: 10);
+	@if map-has-key($index_names, $index) {
+		$index: map_get($index_names, $index);
+	}
+
+	$brand_colors: map-get($brands, $name);
+	@if $index > length($brand_colors) {
+		//@warn '#{$name} does not have a color in the index of #{$index}';
+		$index: 1;
+	}
+
+	@if length($brand_colors) == 1 {
+		@return $brand_colors;
+	}
+
+	@each $current_color in $brand_colors {
+		$i: index($brand_colors, $current_color);
+		//@warn '#{$current_color} is in the index of #{$i}';
+		@if $i == $index {
+			@return $current_color;
+		}
+	}
+}
 
 $easings: (
-	linear: "0.250, 0.250, 0.750, 0.750",
-	ease: "0.250, 0.100, 0.250, 1.000",
-	ease-in: "0.420, 0.000, 1.000, 1.000",
-	ease-in-out: "0.000, 0.000, 0.580, 1.000",
-	easeInQuad: "0.550, 0.085, 0.680, 0.530",
-	easeInCubic: "0.550, 0.055, 0.675, 0.190",
-	easeInQuart: "0.895, 0.030, 0.685, 0.220",
-	easeInQuint: "0.895, 0.030, 0.685, 0.220",
-	easeInSine: "0.470, 0.000, 0.745, 0.715",
-	easeInExpo: "0.950, 0.050, 0.795, 0.035",
-	easeInCirc: "0.600, 0.040, 0.980, 0.335",
-	easeInBack: "0.600, -0.280, 0.735, 0.045",
-	easeOutQuad: "0.250, 0.460, 0.450, 0.940",
-	easeOutCubic: "0.215, 0.610, 0.355, 1.000",
-	easeOutQuart: "0.165, 0.840, 0.440, 1.000",
-	easeOutQuint: "0.230, 1.000, 0.320, 1.000",
-	easeOutSine: "0.390, 0.575, 0.565, 1.000",
-	easeOutExpo: "0.190, 1.000, 0.220, 1.000",
-	easeOutCirc: "0.075, 0.820, 0.165, 1.000",
-	easeOutBack: "0.175, 0.885, 0.320, 1.275",
-	easeInOutQuad: "0.455, 0.030, 0.515, 0.955",
+	linear: 		"0.250, 0.250, 0.750, 0.750",
+	ease: 			"0.250, 0.100, 0.250, 1.000",
+	ease-in: 		"0.420, 0.000, 1.000, 1.000",
+	easeIn: 		"0.420, 0.000, 1.000, 1.000",
+	ease-in-out: 	"0.000, 0.000, 0.580, 1.000",
+	easeInOut: 		"0.000, 0.000, 0.580, 1.000",
+	easeInQuad: 	"0.550, 0.085, 0.680, 0.530",
+	easeInCubic: 	"0.550, 0.055, 0.675, 0.190",
+	easeInQuart: 	"0.895, 0.030, 0.685, 0.220",
+	easeInQuint: 	"0.895, 0.030, 0.685, 0.220",
+	easeInSine: 	"0.470, 0.000, 0.745, 0.715",
+	easeInExpo: 	"0.950, 0.050, 0.795, 0.035",
+	easeInCirc: 	"0.600, 0.040, 0.980, 0.335",
+	easeInBack: 	"0.600, -0.280, 0.735, 0.045",
+	easeOutQuad: 	"0.250, 0.460, 0.450, 0.940",
+	easeOutCubic: 	"0.215, 0.610, 0.355, 1.000",
+	easeOutQuart: 	"0.165, 0.840, 0.440, 1.000",
+	easeOutQuint: 	"0.230, 1.000, 0.320, 1.000",
+	easeOutSine: 	"0.390, 0.575, 0.565, 1.000",
+	easeOutExpo: 	"0.190, 1.000, 0.220, 1.000",
+	easeOutCirc: 	"0.075, 0.820, 0.165, 1.000",
+	easeOutBack: 	"0.175, 0.885, 0.320, 1.275",
+	easeInOutQuad: 	"0.455, 0.030, 0.515, 0.955",
 	easeInOutCubic: "0.645, 0.045, 0.355, 1.000",
 	easeInOutQuart: "0.770, 0.000, 0.175, 1.000",
 	easeInOutQuint: "0.860, 0.000, 0.070, 1.000",
-	easeInOutSine: "0.445, 0.050, 0.550, 0.950",
-	easeInOutExpo: "1.000, 0.000, 0.000, 1.000",
-	easeInOutCirc: "0.785, 0.135, 0.150, 0.860",
-	easeInOutBack: "0.680, -0.550, 0.265, 1.550",
+	easeInOutSine: 	"0.445, 0.050, 0.550, 0.950",
+	easeInOutExpo: 	"1.000, 0.000, 0.000, 1.000",
+	easeInOutCirc: 	"0.785, 0.135, 0.150, 0.860",
+	easeInOutBack: 	"0.680, -0.550, 0.265, 1.550",
 	custom: ""
 );
 $all_easings: map-merge($easings, $custom_easings); //Combine $custom_easings from /partials/_variables.scss and $easings above.

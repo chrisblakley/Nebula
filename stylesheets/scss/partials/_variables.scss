@@ -8,6 +8,9 @@ $text_color: #444 !default;
 $font_stack: 'Open Sans', sans-serif !default;
 $background_color: #f6f6f6 !default;
 
+$dark_primary_color: darken(desaturate($primary_color, 95%), 20%);
+$dark_secondary_color: darken(desaturate($secondary_color, 95%), 20%);
+
 //Media Queries
 $media_queries: (
 	widescreen: "only screen and (min-width: 1400px)",
@@ -19,24 +22,44 @@ $media_queries: (
 
 $danger_color: #ca3838 !default;
 $warning_color: #f6b83f !default;
+$info_color: #00a0d2 !default;
 $success_color: #58c026 !default;
+
+$template_directory: "<%template_directory%>"; //This variable is modified using PHP when compiled. Do not change!
 
 //Custom Easings
 $custom_easings: (
 	name_here: "0.250, 0.250, 0.750, 0.750",
 );
 
-//PHG Logo
-$phg_cyan: #0098d7;
-$phg_green: #95d600;
-$phg_grey: #9fa1a4;
-
-//Social Networks
-$facebook_color: #3b5998;
-$twitter_color: #55acee;
-$google_plus_color: #d73d32;
-$linkedin_color: #0077b5;
-$github_color: #333;
-$youtube_color: #cc181e;
-$instagram_color: #3f729b;
-$soundcloud_color: #ff3300;
+//Brand Colors
+$brands: (
+	phg: (#0098d7 #95d600 #9fa1a4),
+	facebook: (#3b5998),
+	twitter: (#55acee),
+	google_plus: (#d73d32),
+	google: (#4285f4 #db4437 #f4b400 #0f9d58 #e7e6dd),
+	linkedin: (#0077b5 #000 #313335),
+	github: (#333 #4183c4 #999999),
+	youtube: (#cd201f),
+	vimeo: (#162221 #1ab7ea),
+	instagram: (#3f729b),
+	pinterest: (#cc2127),
+	soundcloud: (#ff8800 #ff3300),
+	tumblr: (#35465c),
+	twitch: (#6441a5),
+	vine: (#00b488),
+	disqus: (#2e9fff),
+	flickr: (#0063dc #ff0084),
+	yelp: (#af0606),
+	paypal: (#003087 #009cde #012169),
+	wordpress: (#21759b #d54e21 #464646),
+	android: (#a4c639),
+	microsoft: (#f65314 #7cbb00 #00a1f1 #ffbb00),
+	windows: (#00bcf2),
+	html: (#e34f26),
+	css: (#30a9dc),
+	sass: (#c6538c),
+	javascript: (#f1bf26),
+	php: (#7f7fb2),
+);

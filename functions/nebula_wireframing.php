@@ -18,7 +18,7 @@ function nebula_wireframing_body_classes($classes){
 }
 
 //Wireframe Top Bar
-if ( !nebula_options_conditional('nebula_wireframing', 'disabled') ){
+if ( !nebula_option('nebula_wireframing', 'disabled') ){
 	add_action('nebula_body_open', 'wireframe_bar');
 }
 function wireframe_bar(){
@@ -47,7 +47,7 @@ function wireframe_bar(){
 //Top header for each component
 function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
-	if ( !nebula_options_conditional('nebula_wireframing', 'disabled') ){
+	if ( !nebula_option('nebula_wireframing', 'disabled') ){
 		return false;
 	}
 
@@ -73,7 +73,7 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
 //Top header for each component (with opening .fpo div)
 function fpo_component_start($component='Component', $icon='fa-cube'){
-	if ( !nebula_options_conditional('nebula_wireframing', 'disabled') ){
+	if ( !nebula_option('nebula_wireframing', 'disabled') ){
 		return false;
 	}
 	fpo_component($component, $icon, '');
@@ -82,7 +82,7 @@ function fpo_component_start($component='Component', $icon='fa-cube'){
 
 //Closes .fpo div (from fpo_component_start)
 function fpo_component_end(){
-	if ( !nebula_options_conditional('nebula_wireframing', 'disabled') ){
+	if ( !nebula_option('nebula_wireframing', 'disabled') ){
 		return false;
 	}
 	echo '</div><!-- /fpo -->';

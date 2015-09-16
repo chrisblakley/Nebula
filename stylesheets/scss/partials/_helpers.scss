@@ -2,6 +2,13 @@
 // Helpers
 // ===========================
 
+hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
+	//@TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended.
+	.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
+	.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); /* mix-blend-mode: multiply; */}
+	&.zero {margin: 0;}
+}
+
 //Image replacement
 .ir {background-color: transparent; border: 0; overflow: hidden; *text-indent: -9999px;
 	&:before {content: ""; display: block; width: 0; height: 100%;}
@@ -26,49 +33,133 @@ div.space {clear: both; display: block; overflow: hidden; visibility: hidden; wi
 
 
 // ===========================
-// Brand colors
+// Social Media Badges
 // ===========================
 
-a.phg {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
-	&.white {background: url("images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
-		span {color: #fff;}
-		&:hover span, &.hover span {color: #aaa;}
-	}
-	span {@include prefix((transition: all 0.25s));
-		&.pinckney {color: $phg_cyan;}
-		&.hugo {color: $phg_green;}
-		&.group {color: $phg_grey;}
-	}
-	&:hover span.pinckney, &.hover span.pinckney {color: darken($phg_cyan, 15%);}
-	&:hover span.hugo, &.hover span.hugo {color: darken($phg_green, 15%);}
-	&:hover span.group, &.hover span.group {color: darken($phg_grey, 15%);}
+//Instagram - https://instagram.com/accounts/badges/
+.ig-b- {display: inline-block; transition: none;
+	&:hover {background-position: 0 -60px;}
+	&:active {background-position: 0 -120px;}
+	img {visibility: hidden;}
+}
+.ig-b-v-24 {width: 137px; height: 24px; background: url("https://badges.instagram.com/static/images/ig-badge-view-sprite-24.png") no-repeat 0 0;}
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx){
+	.ig-b-v-24 {background-image: url("https://badges.instagram.com/static/images/ig-badge-view-sprite-24@2x.png"); background-size: 160px 178px;}
 }
 
-a.phg.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url("images/phg/phg-symbol.svg") -15px 6px no-repeat; @include prefix((transition: all 0.25s));
-	span {margin-right: 3px; @include prefix((transition: all 0.25s));
-		&:last-child {margin-right: 0;}
-		&.pinckney {color: inherit;}
-		&.hugo {color: inherit;}
-		&.group {color: inherit;}
-	}
-	&:hover,
-	&.hover {margin-left: 3px; padding-left: 15px; background: url("images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
-		span {margin-right: 0px;
-			&.pinckney {color: darken($phg_cyan, 15%);}
-			&.hugo {color: darken($phg_green, 15%);}
-			&.group {color: darken($phg_grey, 15%);}
+// ===========================
+// Basic Animation
+// For more options, consider enabling animate.css from functions.php
+// ===========================
+
+.nebula-spin {@include prefix((animation: nebula-spin 2s infinite linear), webkit);}
+@include keyframes(nebula-spin){
+	0% {@include prefix((transform: rotate(0deg)), webkit);}
+	100% {@include prefix((transform: rotate(359deg)), webkit);}
+}
+
+.nebula-flash {@include prefix((animation: nebula-fade 4s infinite linear), webkit);}
+@include keyframes(nebula-fade){
+	0%, 100% {opacity: 1;}
+	50% {opacity: 0;}
+}
+
+// ===========================
+// Special File Type Indicators
+// ===========================
+
+//@include file_icon(doc docx, f1c2, #2b5797);
+@mixin file_icon($filetypes, $unicode: f016, $color: $text_color, $specific: false){
+	@each $filetype in $filetypes {
+		@if $specific {
+			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
+				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
+			}
+		} @else {
+			a[href$=".#{$filetype}"], li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
+				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
+			}
 		}
 	}
 }
 
-a.facebook {@include link-colors($facebook_color, darken($facebook_color, 15%));}
-a.twitter {@include link-colors($twitter_color, darken($twitter_color, 15%));}
-a.googleplus {@include link-colors($google_plus_color, darken($google_plus_color, 15%));}
-a.linkedin {@include link-colors($linkedin_color, darken($linkedin_color, 15%));}
-a.github {@include link-colors($github_color, darken($github_color, 15%));}
-a.youtube {@include link-colors($youtube_color, darken($youtube_color, 15%));}
-a.instagram {@include link-colors($instagram_color, darken($instagram_color, 15%));}
-a.soundcloud {@include link-colors($soundcloud_color, darken($soundcloud_color, 15%));}
+@include file_icon(doc docx, f1c2, #2b5797);
+@include file_icon(xls xlsx, f1c3, #1e7145);
+@include file_icon(ppt pptx, f1c4, #d04525);
+@include file_icon(pdf pdfx, f1c1, #eb3b00);
+@include file_icon(zip zipx rar gz tar, f1c6, #777);
+@include file_icon(txt rtf, f0f6, #777);
+@include file_icon(html, f1c9, #f1672c, true);
+@include file_icon(php, f1c9, #5a68a5, true);
+@include file_icon(js, f1c9, #f1bf26, true);
+@include file_icon(css scss, f1c9, #30a9dc, true);
+@include file_icon(swf, f1c9, #c31e24, true);
+
+a.off, a.no-icon, a.noicon {text-decoration: none; border: none;
+	&:before {content: "" !important; margin-right: 0 !important;}
+}
+a.white, li.icon.white a {@include link-colors(#fff, #ccc);
+	&:before {color: #fff !important;}
+}
+
+
+// ===========================
+// Brand colors
+// ===========================
+
+a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
+	&.white {background: url($template_directory + "/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
+		span {color: #fff;}
+		&:hover span, &.hover span {color: #aaa;}
+	}
+	span {@include prefix((transition: all 0.25s));
+		&.pinckney {color: brand(phg);}
+		&.hugo {color: brand(phg, 2);}
+		&.group {color: brand(phg, 3);}
+	}
+	&:hover,
+	&.hover {
+		span.pinckney {color: darken(brand(phg), 15%);}
+		span.hugo {color: darken(brand(phg, 2), 15%);}
+		span.group {color: darken(brand(phg, 3), 15%);}
+	}
+
+	&.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url($template_directory + "/images/phg/phg-symbol.svg") -15px 6px no-repeat; @include prefix((transition: all 0.25s));
+		span {margin-right: 3px; @include prefix((transition: all 0.25s));
+			&:last-child {margin-right: 0;}
+			&.pinckney {color: inherit;}
+			&.hugo {color: inherit;}
+			&.group {color: inherit;}
+		}
+		&:hover,
+		&.hover {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
+			span {margin-right: 0px;
+				&.pinckney {color: darken(brand(phg), 15%);}
+				&.hugo {color: darken(brand(phg, 2), 15%);}
+				&.group {color: darken(brand(phg, 3), 15%);}
+			}
+		}
+	}
+}
+
+
+
+//@include brand_link(facebook);
+@mixin brand_link($brand){
+	@if brand($brand) == brand($brand, 2){
+		a.#{$brand} {@include link-colors(brand($brand), darken(brand($brand), 15%));}
+	} @else {
+		a.#{$brand} {@include link-colors(brand($brand), (brand($brand, 2));}
+	}
+}
+@include brand_link(facebook);
+@include brand_link(twitter);
+@include brand_link(google_plus);
+@include brand_link(linkedin);
+@include brand_link(github);
+@include brand_link(youtube);
+@include brand_link(instagram);
+@include brand_link(soundcloud);
 
 
 // ===========================

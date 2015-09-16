@@ -22,7 +22,7 @@ function track_google_pagespeed_checks(){
 }
 
 //Add the calling card to the browser console
-if ( nebula_options_conditional('nebula_console_css') ){
+if ( nebula_option('nebula_console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card(){
 		$console_log = "<script>";
@@ -36,7 +36,7 @@ if ( nebula_options_conditional('nebula_console_css') ){
 }
 
 //Check for dev stylesheets
-if ( nebula_options_conditional('nebula_dev_stylesheets') ){
+if ( nebula_option('nebula_dev_stylesheets') ){
 	if ( is_writable(get_template_directory() . '/stylesheets/css/dev.css') ){
 		add_action('wp_enqueue_scripts', 'combine_dev_stylesheets');
 	} else {
@@ -124,7 +124,7 @@ function filter_wp_title($title, $separator){
 //Determine if the author should be the Company Name or the specific author's name.
 function nebula_the_author($show_authors=1){
 	if ( !is_single() || $show_authors == 0 || !nebula_author_bios_enabled() ){
-		return nebula_options_conditional_text('nebula_site_owner', get_bloginfo('name'));
+		return get_option('nebula_site_owner', get_bloginfo('name'));
 	} else {
 		return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 	}
@@ -266,7 +266,7 @@ function nebula_email_content_type(){
 }
 
 /*** If the project uses comments, remove the next set of functions (six), or force this conditional to be false! ***/
-if ( nebula_options_conditional('nebula_comments', 'disabled') ){
+if ( nebula_option('nebula_comments', 'disabled') ){
 
 	//Remove the Activity metabox
 	add_action('wp_dashboard_setup', 'remove_activity_metabox');
@@ -347,8 +347,8 @@ if ( nebula_options_conditional('nebula_comments', 'disabled') ){
 	if ( $filename == 'edit-comments.php' ){
 		add_action('admin_notices', 'disqus_link');
 		function disqus_link(){
-			if ( nebula_options_conditional_text_bool('nebula_disqus_shortname') ){
-				echo "<div class='nebula_admin_notice updated'><p>You are using the Disqus commenting system. <a href='https://" . nebula_options_conditional_text('nebula_disqus_shortname', '') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
+			if ( get_option('nebula_disqus_shortname') ){
+				echo "<div class='nebula_admin_notice updated'><p>You are using the Disqus commenting system. <a href='https://" . get_option('nebula_disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
 			} else {
 				echo "<div class='nebula_admin_notice error'><p>You are using the Disqus commenting system, <strong>BUT</strong> you have not set your shortname in <a href='themes.php?page=nebula_options'>Nebula Options</a>, so we can't send you directly to your comment listing! <a href='https://disqus.com/admin/moderate' target='_blank'>Go to Disqus &raquo;</a></p></div>";
 			}
@@ -643,7 +643,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $username . '&count=' . $number_tweets . '&include_rts=' . $include_retweets;
 	}
 
-	$bearer = nebula_options_conditional_text('nebula_twitter_bearer_token', '');
+	$bearer = get_option('nebula_twitter_bearer_token', '');
 
 	$tweets = get_transient('nebula_twitter_' . $username); //@TODO: The transient name should have the twitter name tied to it...
 	if ( empty($tweets) || is_debug() ){
@@ -1460,9 +1460,9 @@ function nebula_body_classes($classes){
 		$classes[] = 'time-am';
 	}
 
-	if ( nebula_options_conditional_text_bool('nebula_latitude') && nebula_options_conditional_text_bool('nebula_longitude') ){
-		$lat = nebula_options_conditional_text('nebula_latitude');
-		$lng = nebula_options_conditional_text('nebula_longitude');
+	if ( get_option('nebula_latitude') && get_option('nebula_longitude') ){
+		$lat = get_option('nebula_latitude');
+		$lng = get_option('nebula_longitude');
 		$gmt = intval(get_option('gmt_offset'));
 		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
 		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
@@ -1591,9 +1591,9 @@ function business_open($date=null, $general=0){
 function nebula_weather($zipcode=null, $data=''){
 	if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
 		$data = $zipcode;
-		$zipcode = nebula_options_conditional_text('nebula_postal_code', '13204');
+		$zipcode = get_option('nebula_postal_code', '13204');
 	} elseif ( empty($zipcode) ){
-		$zipcode = nebula_options_conditional_text('nebula_postal_code', '13204');
+		$zipcode = get_option('nebula_postal_code', '13204');
 	}
 
 	$weather_json = get_transient('nebula_weather_' . $zipcode);
