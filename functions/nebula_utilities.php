@@ -759,10 +759,10 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
 
 //Check the current (or passed) PHP version against the PHP support timeline.
 function nebula_php_version_support($php_version=PHP_VERSION){
-	$php_timeline_json_file = get_template_directory() . '/includes/json/php_timeline.json';
+	$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
 	$php_timeline = get_transient('nebula_php_timeline');
 	if ( empty($php_timeline) || is_debug() ){
-		$php_timeline = @file_get_contents('https://gist.githubusercontent.com/chrisblakley/790928afe5f092eeb8fd/raw/php_timeline.json');
+		$php_timeline = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
 		if ( $php_timeline !== false ){
 			if ( is_writable(get_template_directory()) ){
 				file_put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
