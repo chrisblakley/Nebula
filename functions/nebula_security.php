@@ -105,17 +105,17 @@ function check_referrer(){
 add_action('wp_loaded', 'nebula_domain_prevention');
 function nebula_domain_prevention(){
 
+	$domain_blacklist_json_file = get_template_directory() . '/includes/json/domain_blacklist.json';
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
-	if ( empty($domain_blacklist) || is_debug() ){
-		/*
-			Good spambot blacklists:
-				https://gist.github.com/chrisblakley/e31a07380131e726d4b5 (raw: https://gist.githubusercontent.com/chrisblakley/e31a07380131e726d4b5/raw/common_referral_spambots.txt)
-				https://github.com/piwik/referrer-spam-blacklist/blob/master/spammers.txt (raw: https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt)
-		*/
-
+	if ( empty($domain_blacklist) || is_debug() || 1==1 ){
 		$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
 		if ( $domain_blacklist !== false ){
+			if ( is_writable(get_template_directory()) ){
+				file_put_contents($domain_blacklist_json_file, $domain_blacklist); //Store it locally.
+			}
 			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60); //1 hour cache
+		} else {
+			$domain_blacklist = file_get_contents($domain_blacklist_json_file);
 		}
 	}
 

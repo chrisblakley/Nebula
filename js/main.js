@@ -164,20 +164,23 @@ function GET(query){
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function helperFunctions(){
-	jQuery('li:even, tr:even').not('.dataTables_wrapper tr').addClass('even');
-	jQuery('li:odd, tr:odd').not('.dataTables_wrapper tr').addClass('odd');
-	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child');
-	jQuery('li:last-child, tr:last-child').addClass('last-child');
-	jQuery('.column:first-child, .columns:first-child').addClass('first-child');
-	jQuery('a:hover, li:hover, tr:hover').addClass('hover');
+	jQuery('li:even, tr:even').not('.dataTables_wrapper tr').addClass('even'); //IE8 support
+	jQuery('li:odd, tr:odd').not('.dataTables_wrapper tr').addClass('odd'); //IE8 support
+	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child'); //IE6 support
+	jQuery('li:last-child, tr:last-child').addClass('last-child'); //IE8 support
+	jQuery('.column:first-child, .columns:first-child').addClass('first-child'); //IE6 support
+	jQuery('a:hover, li:hover, tr:hover').addClass('hover'); //IE8 support
 	jQuery('a').each(function(){
-	    var a = new RegExp('/' + window.location.host + '/');
-	    if ( !a.test(this.href) ){
-	        if ( this.href.indexOf('http') !== -1 ){ //excludes all non-http link (ex: mailto: and tel:)
-	            var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
-	            jQuery(this).attr('rel', rel + 'external');
-	        }
-	    }
+		var a = new RegExp('/' + window.location.host + '/');
+		if ( !a.test(this.href) ){
+			if ( this.href.indexOf('http') !== -1 ){ //excludes all non-http link (ex: mailto: and tel:)
+				var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
+				jQuery(this).attr('rel', rel + 'external');
+			}
+		}
+	});
+	jQuery('a.icon img, li.icon a img').each(function(){
+		jQuery(this).parent('a').removeClass('icon').addClass('no-icon'); //Remove filetype icons from images within <a> tags.
 	});
 }
 

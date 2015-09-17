@@ -343,12 +343,11 @@ if ( nebula_option('nebula_comments', 'disabled') ){
 		return true;
 	}
 
-	$filename = basename($_SERVER['REQUEST_URI']);
-	if ( $filename == 'edit-comments.php' ){
+	if ( $pagenow == 'edit-comments.php' ){
 		add_action('admin_notices', 'disqus_link');
 		function disqus_link(){
 			if ( get_option('nebula_disqus_shortname') ){
-				echo "<div class='nebula_admin_notice updated'><p>You are using the Disqus commenting system. <a href='https://" . get_option('nebula_disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
+				echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . get_option('nebula_disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
 			} else {
 				echo "<div class='nebula_admin_notice error'><p>You are using the Disqus commenting system, <strong>BUT</strong> you have not set your shortname in <a href='themes.php?page=nebula_options'>Nebula Options</a>, so we can't send you directly to your comment listing! <a href='https://disqus.com/admin/moderate' target='_blank'>Go to Disqus &raquo;</a></p></div>";
 			}
@@ -667,7 +666,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		echo $tweets;
 		exit;
 	} else {
-		error_reporting(1);
+		error_reporting(1); //Re-enable PHP error reporting
 		return $tweets;
 	}
 }

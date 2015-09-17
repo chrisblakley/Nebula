@@ -759,42 +759,35 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
 
 //Check the current (or passed) PHP version against the PHP support timeline.
 function nebula_php_version_support($php_version=PHP_VERSION){
-	//@TODO "Nebula" 0: Find a way to pull this from a Github Gist or something where it can be updated once and pulled for all Nebula sites. Use a transient once implemented.
-	$php_timeline = array( //Must be in descending order!
-		'5.6' => array(
-			'security' => strtotime('28 Aug 2016'),
-			'end' => strtotime('28 Aug 2017')
-		),
-		'5.5' => array(
-			'security' => strtotime('10 Jul 2015'),
-			'end' => strtotime('10 Jul 2016')
-		),
-		'5.4' => array(
-			'security' => strtotime('14 Sep 2014'),
-			'end' => strtotime('14 Sep 2015')
-		),
-		'5.3' => array(
-			'end' => strtotime('14 Aug 2014')
-		),
-		'5.2' => array( //WordPress does not support PHP versions prior to 5.2.4
-			'end' => strtotime('6 Jan 2011')
-		)
-	);
+	$php_timeline_json_file = get_template_directory() . '/includes/json/php_timeline.json';
+	$php_timeline = get_transient('nebula_php_timeline');
+	if ( empty($php_timeline) || is_debug() ){
+		$php_timeline = @file_get_contents('https://gist.githubusercontent.com/chrisblakley/790928afe5f092eeb8fd/raw/php_timeline.json');
+		if ( $php_timeline !== false ){
+			if ( is_writable(get_template_directory()) ){
+				file_put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
+			}
+			set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
+		} else {
+			$php_timeline = file_get_contents($php_timeline_json_file);
+		}
+	}
+	$php_timeline = json_decode($php_timeline);
 
-	foreach ( $php_timeline as $php_timeline_version => $php_timeline_dates ){
+	foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
 		if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
 			$output = array();
-			if ( !empty($php_timeline_dates['security']) && time() < $php_timeline_dates['security'] ){
+			if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
 				$output['lifecycle'] = 'active';
-			} elseif ( !empty($php_timeline_dates['security']) && (time() >= $php_timeline_dates['security'] && time() < $php_timeline_dates['end']) ){
+			} elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
 				$output['lifecycle'] = 'security';
-			} elseif ( time() >= $php_timeline_dates['end'] ) {
+			} elseif ( time() >= strtotime($php_timeline_dates->end) ) {
 				$output['lifecycle'] = 'end';
 			} else {
 				$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
 			}
-			$output['security'] = $php_timeline_dates['security'];
-			$output['end'] = $php_timeline_dates['end'];
+			$output['security'] = strtotime($php_timeline_dates->security);
+			$output['end'] = strtotime($php_timeline_dates->end);
 			return $output;
 			break;
 		}

@@ -39,9 +39,9 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 					@include media(custom, map_get($admin_media_queries, mobile)){display: none;};
 				}
 				hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
-			@include media(custom, map_get($admin_media_queries, widescreen)){width: 67%;};
-			@include media(custom, map_get($admin_media_queries, desktop)){width: 50%;};
-			@include media(custom, map_get($admin_media_queries, non_widescreen)){width: 100%;};
+				@include media(custom, map_get($admin_media_queries, widescreen)){width: 67%;};
+				@include media(custom, map_get($admin_media_queries, desktop)){width: 50%;};
+				@include media(custom, map_get($admin_media_queries, non_widescreen)){width: 100%;};
 			}
 
 			#welcome-photo {position: absolute; top: 0; right: 0; height: 100%; width: 47%; padding: 5px 20px;
