@@ -31,7 +31,7 @@
 	                <p class="line2">dolor sit amet, consectetur adipiscing elit.</p>
 	                <a class="nebulaframe anchored-right" href="#" onclick="return false;">bibendum hendrerit sed</a>
 	            </div>
-	            <img class="random-unsplash" src="<?php echo random_unsplash(1600, 500); ?>" alt="Slide 1" />
+	            <img class="random-unsplash" src="<?php echo unsplash_it(1600, 500); ?>" alt="Slide 1" />
 	        </li>
 	        <li>
 	            <div>
@@ -39,7 +39,7 @@
 	                <p class="line2">luctus ac metus elementum, lacinia aliquam nisi.</p>
 	                <a class="nebulaframe anchored-right" href="#" onclick="return false;">Aenean euismod justo</a>
 	            </div>
-	            <img class="random-unsplash" src="<?php echo random_unsplash(1600, 500); ?>" alt="Slide 2" />
+	            <img class="random-unsplash" src="<?php echo unsplash_it(1600, 500); ?>" alt="Slide 2" />
 	        </li>
 	        <li>
 	            <div>
@@ -47,7 +47,7 @@
 	                <p class="line2">vulputate sollicitudin in diam Phasellus.</p>
 	                <a class="nebulaframe anchored-right" href="#" onclick="return false;">ultricies sit amet </a>
 	            </div>
-	            <img class="random-unsplash" src="<?php echo random_unsplash(1600, 500); ?>" alt="Slide 3" />
+	            <img class="random-unsplash" src="<?php echo unsplash_it(1600, 500); ?>" alt="Slide 3" />
 	        </li>
 	        <li>
 	            <div>
@@ -55,7 +55,7 @@
 	                <p class="line2">sed ullamcorper magna volutpat sed.</p>
 	                <a class="nebulaframe anchored-right" href="#" onclick="return false;">Nullam egestas faucibus</a>
 	            </div>
-	            <img class="random-unsplash" src="<?php echo random_unsplash(1600, 500); ?>" alt="Slide 4" />
+	            <img class="random-unsplash" src="<?php echo unsplash_it(1600, 500); ?>" alt="Slide 4" />
 	        </li>
 	        <li>
 	            <div>
@@ -63,7 +63,7 @@
 	                <p class="line2">in augue cursus, ac bibendum ante vestibulum.</p>
 	                <a class="nebulaframe anchored-right" href="#" onclick="return false;">Vivamus faucibus eget</a>
 	            </div>
-	            <img class="random-unsplash" src="<?php echo random_unsplash(1600, 500); ?>" alt="Slide 5" />
+	            <img class="random-unsplash" src="<?php echo unsplash_it(1600, 500); ?>" alt="Slide 5" />
 	        </li>
 	    </ul>
 	    <div class="nebulashadow inner-bottom bulging" style="z-index: 2;"></div>

@@ -109,11 +109,11 @@ function nebula_domain_prevention(){
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
 	if ( empty($domain_blacklist) || is_debug() || 1==1 ){
 		$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
-		if ( $domain_blacklist !== false ){
+		if ( empty($domain_blacklist) ){
 			$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt'); //In case piwik is not available (or changes).
 		}
 
-		if ( $domain_blacklist !== false ){
+		if ( !empty($domain_blacklist) ){
 			if ( is_writable(get_template_directory()) ){
 				file_put_contents($domain_blacklist_json_file, $domain_blacklist); //Store it locally.
 			}
@@ -123,7 +123,7 @@ function nebula_domain_prevention(){
 		}
 	}
 
-	if ( $domain_blacklist !== false && strlen($domain_blacklist) > 0 ){
+	if ( !empty($domain_blacklist) ){
 		$GLOBALS['domain_blacklist'] = array();
 		foreach( explode("\n", $domain_blacklist) as $line ){ //@TODO "Nebula" 0: continue; if empty line.
 			$GLOBALS['domain_blacklist'][] = $line;

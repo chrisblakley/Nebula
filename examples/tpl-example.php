@@ -53,7 +53,7 @@ get_header(); ?>
 	<div class="row">
 		<div class="eleven columns">
 
-			<?php if ( get_field('example_filename') ): //Maybe instead of here it's in the main content area as a little notice box or something? ?>
+			<?php if ( get_field('example_filename') ): ?>
 				<div class="example-filename">
 					<i class="fa fa-github"></i> Example Location: <a href="https://github.com/chrisblakley/Nebula/blob/master/examples/includes/<?php echo get_field('example_filename'); ?>" target="_blank" title="View the exact code snippet rendering this example.">/examples/includes/<?php echo get_field('example_filename'); ?></a><br />
 					<i class="fa fa-code"></i> Example Include: <code class="nebula-code" title="Copy/Paste this snippet to see this example on the Nebula implementation on your server.">&lt;?php include('examples/includes/<?php echo get_field('example_filename'); ?>'); ?&gt;</code>
@@ -80,11 +80,70 @@ get_header(); ?>
 							<?php echo do_shortcode(get_field('example')); ?>
 							<br />
 						<?php endif; ?>
-						<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+
+						<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 							<?php the_content(); ?>
 						<?php endwhile; ?>
+
+
+						<?php if ( is_page(15) ): //Top-level Documentation Page ?>
+							<style>
+								ul.documentation-search-list {padding: 0;}
+								li.documentation-search-item {list-style: none; padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px dotted #ccc;}
+									li.documentation-search-item strong {font-size: 14px;}
+									li.documentation-search-item p {font-size: 12px; margin: 0;}
+							</style>
+
+							<script>
+								jQuery(document).on('keyup', '.documentationsearch', function(){
+									jQuery('.documentation-search-list li').find("*:not(:Contains(" + jQuery('.documentationsearch').val().trim() + "))").parents('li').addClass('hidden').removeClass('visible');
+									jQuery('.documentation-search-list li').find("*:Contains(" + jQuery('.documentationsearch').val().trim() + ")").parents('li').removeClass('hidden').addClass('visible');
+
+									debounce(function(){
+										ga('send', 'event', 'Documentation Filter', 'Keyword', jQuery('.documentationsearch').val());
+									}, 1000, 'documentation filter debounce');
+								});
+							</script>
+
+							<div id="nebula-documentation-search-con">
+								<strong><i class="fa fa-search"></i> Documentation Filter</strong>
+								<div class="field">
+									<input class="input documentationsearch" type="text" placeholder="Real-time filter" />
+								</div>
+
+								<ul class="documentation-search-list">
+									<?php
+										$nebula_documentation_search_query = new WP_Query(array(
+											'post_type' => 'page',
+											//Just get example template pages...
+											'showposts' => -1,
+											'orderby' => 'title',
+											'order' => 'asc'
+										));
+										while ( $nebula_documentation_search_query->have_posts() ): $nebula_documentation_search_query->the_post();
+									?>
+										<li class="documentation-search-item">
+											<p>
+												<strong><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></strong><br />
+												<i class="fa fa-fw fa-tag" style="color: #888;"></i> <?php echo get_the_title(wp_get_post_parent_id(get_the_id())); ?> &nbsp;&nbsp; <?php echo ( get_field('example_filename') )? '<i class="fa fa-fw fa-file-text-o" style="color: #888;"></i> <a href="https://github.com/chrisblakley/Nebula/blob/master/examples/includes/' . get_field('example_filename') . '" target="_blank" title="View the exact code snippet rendering this example.">' . get_field('example_filename') . '</a>' : ''; ?><br/>
+												<?php echo strip_tags(get_field('description'), '<a>'); ?>
+											</p>
+											<p class="documentation-search-item-keywords hidden">
+												<span><?php echo strip_tags($post->post_content); ?></span>
+												<span><?php echo strip_tags(get_field('usage')); ?></span>
+												<span><?php echo strip_tags(get_field('parameters')); ?></span>
+												<span><?php echo strip_tags(get_field('example')); ?></span>
+												<span><?php echo get_field('keywords'); ?></span>
+											</p>
+										</lil>
+									<?php endwhile ?>
+									<?php wp_reset_query(); ?>
+								</ul>
+							</div>
+						<?php endif; ?>
 					</div><!--/columns-->
 				</div><!--/row-->
+
 
 				<?php if ( is_page(1408) ){ //Basic Wordpress Query
 					include_once('includes/wp_query_basic.php');
@@ -338,8 +397,12 @@ get_header(); ?>
 					include_once('includes/wireframing.php');
 				} ?>
 
-				<?php if ( is_page(1105) ){ //Random Unsplash
-					include_once('includes/random_unsplash.php');
+				<?php if ( is_page(1105) ){ //Unsplash.it Image
+					include_once('includes/unsplash_it.php');
+				} ?>
+
+				<?php if ( is_page(2094) ){ //Placehold.it Image
+					include_once('includes/placehold_it.php');
 				} ?>
 
 				<?php if ( is_page(1079) ){ //Flash Banner Analytics
@@ -428,6 +491,10 @@ get_header(); ?>
 
 				<?php if ( is_page(2037) ){ //User Agent Parsing (Server-side Device Detection)
 					include_once('includes/user_agent_parsing.php');
+				} ?>
+
+				<?php if ( is_page(2098) ){ //Is Available
+					include_once('includes/nebula_is_available.php');
 				} ?>
 
 				<?php

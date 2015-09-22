@@ -132,7 +132,7 @@ function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg=
 function fpo_image($width='100%', $height='200px', $type='none', $color='#000', $styles='', $classes=''){
 	$imgsrc = '';
 	if ( $type == 'unsplash' || $type == 'photo' || $width == 'unsplash' || $width == 'photo' ){
-		$imgsrc = random_unsplash(800, 600, 1);
+		$imgsrc = unsplash_it(800, 600, 1);
 	} elseif ( strpos($type, '#') !== false ){
 		$color = $type;
 	}

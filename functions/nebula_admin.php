@@ -1,5 +1,33 @@
 <?php
 
+//Add the current page ID to the Admin Bar
+add_action('admin_bar_menu', 'nebula_admin_bar_page_id', 800);
+function nebula_admin_bar_page_id( $wp_admin_bar ){
+	if ( is_admin() ){
+		$new_content_node = $wp_admin_bar->get_node('view');
+		if ( $new_content_node ){
+			$new_content_node->title = 'View Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
+			$wp_admin_bar->add_node($new_content_node);
+		}
+	} else {
+		$new_content_node = $wp_admin_bar->get_node('edit');
+		if ( $new_content_node ){
+			$new_content_node->title = 'Edit Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
+			$wp_admin_bar->add_node($new_content_node);
+		}
+	}
+}
+
+//Add a link to Nebula Options on the Admin Bar
+add_action('admin_bar_menu', 'nebula_admin_bar_nebula_options', 90);
+function nebula_admin_bar_nebula_options($wp_admin_bar){
+	$wp_admin_bar->add_node(array(
+		'id' => 'nebula-options',
+		'title' => '<i class="fa fa-fw fa-cog" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240,245,250,.6); margin-right: 5px;"></i> Nebula Options',
+		'href' => get_admin_url() . 'themes.php?page=nebula_options'
+	));
+}
+
 //Force expire query transients when posts/pages are saved.
 add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){

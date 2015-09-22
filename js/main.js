@@ -104,6 +104,18 @@ jQuery(window).on('load', function(){
 		browserInfo();
 	}
 
+	//console.debug(window.ga);
+	//console.debug(GoogleAnalyticsObject);
+/*
+	if ( typeof window.ga === undefined ){
+		console.log('google analytics is blocked.');
+	} else {
+		console.log('google analytics is available');
+	}
+*/
+
+
+
 	setTimeout(function(){
 		emphasizeSearchTerms();
 	}, 1000);

@@ -15,7 +15,7 @@ function gaParseCookie(){
 	return $cid;
 }
 
-//Generate UUID v4 function - needed to generate a CID when one isn't available
+//Generate UUID v4 function (needed to generate a CID when one isn't available)
 function gaGenerateUUID(){
 	return sprintf(
 		'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -512,6 +512,22 @@ function contains($str, array $arr){
     return false;
 }
 
+//Check if a website is available
+function nebula_is_available($domain){
+	$curlInit = curl_init($domain);
+	curl_setopt($curlInit, CURLOPT_CONNECTTIMEOUT, 10);
+	curl_setopt($curlInit, CURLOPT_HEADER, true);
+	curl_setopt($curlInit, CURLOPT_NOBODY, true);
+	curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
+	$response = curl_exec($curlInit);
+	curl_close($curlInit);
+
+	if ( $response ){
+		return true;
+	}
+	return false;
+}
+
 //Generate a random integer between two numbers with an exclusion array
 //Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
 function random_number_between_but_not($min=null, $max=null, $butNot=null){
@@ -537,32 +553,44 @@ function random_number_between_but_not($min=null, $max=null, $butNot=null){
     return $randnum;
 }
 
-//Display a random stock photo from unsplash.it
-function random_unsplash($width=800, $height=600, $raw=0, $random=0){
+//Call a placeholder image from Unsplash.it
+function unsplash_it($width=800, $height=600, $raw=false, $random=false){
 	$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-	if ( $random == 0 ){
-		$randID = random_number_between_but_not(0, 615, $skip_list); //Update the second number here as more Unsplash.it photos become available.
+	if ( !is_int($random) ){
+		$randID = random_number_between_but_not(0, 800, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
 	} else {
 		$randID = $random;
 	}
 
-	$image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+	//Check if unsplash.it is online
+	if ( !nebula_is_available('https://unsplash.it') ){
+		ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Unsplash.it Not Available');
+		if ( $raw ){
+			return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838');
+		} else {
+			return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838') . '" title="Unsplash.it is not available.';
+		}
+	}
 
-	$check_image = @getimagesize($image_path); //Ignore errors (because that's what we're looking for)
+	$image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+	$check_image = nebula_is_available($image_path); //Ignore errors (because that's what we're looking for)
 
 	$i++;
-	while ( !$check_image[0] ){
-		if ( $random != 0 || $i >= 5 ){
+	while ( !$check_image ){
+		if ( !$random || $i >= 5 ){
 			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
-			trigger_error('Unsplash image with ID ' . $randID . ' not found. Using Placehold.it instead.', E_USER_WARNING);
-			return 'https://placehold.it/' . $width . 'x' . $height . '/';
+			if ( $raw ){
+				placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f');
+			} else {
+				return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f') . '" title="Unsplash image with ID ' . $randID . ' not found.';
+			}
 		}
 
 	    $skip_list[] = $randID;
 	    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
 	    $randID = random_number_between_but_not(0, 615, $skipList);
-	    $image_path = '//unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
-	    $check_image = getimagesize($image_path);
+	    $image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+	    $check_image = nebula_is_available($image_path); //Ignore errors (because that's what we're looking for)
 	    $i++;
 	}
 
@@ -572,6 +600,18 @@ function random_unsplash($width=800, $height=600, $raw=0, $random=0){
 		return $image_path . '" title="Unsplash ID #' . $randID;
 	}
 }
+
+//Call a placeholder image from Placehold.it
+function placehold_it($width=800, $height=600, $text=false, $color=false){
+	if ( nebula_is_available('https://placehold.it') ){
+		$text = ( $text )? '?text=' . str_replace(' ', '+', $text) : '';
+		$color = ( $color )? str_replace('#', '', $color) . '/' : '';
+		return 'https://placehold.it/' . $width . 'x' . $height . '/' . $color . $text;
+	} else {
+		return get_template_directory_uri() . '/images/x.png'; //Placehold.it is not available.
+	}
+}
+
 
 //Automatically convert HEX colors to RGB.
 function hex2rgb($color){
@@ -709,7 +749,15 @@ function whois_info($data, $domain=''){
 	}
 }
 
+//Returns WHOIS information from the passed domain.
 function getwhois($domain, $tld){
+	if ( empty($domain) ){
+		$domain = nebula_url_components('sld'); //Default value is current domain
+	}
+	if ( empty($tld) ){
+		$tld = nebula_url_components('tld'); //Default value is current domain
+	}
+
 	require_once(get_template_directory() . "/includes/libs/class-whois.php");
 	$whois = new Whois();
 
@@ -724,6 +772,7 @@ function getwhois($domain, $tld){
 	}
 }
 
+//Compare values using passed parameters
 function nebula_compare_operator($a=null, $b=null, $c='=='){
 	if ( empty($a) || empty($b) ){
 		trigger_error('nebula_compare_operator requires values to compare.');
@@ -763,7 +812,7 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 	$php_timeline = get_transient('nebula_php_timeline');
 	if ( empty($php_timeline) || is_debug() ){
 		$php_timeline = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
-		if ( $php_timeline !== false ){
+		if ( !empty($php_timeline) ){
 			if ( is_writable(get_template_directory()) ){
 				file_put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
 			}
@@ -868,6 +917,7 @@ function nebula_scss_variables($scss){
  User Agent Parsing Functions/Helpers
  ===========================*/
 
+//Boolean return if the user's device is mobile.
 function nebula_is_mobile(){
 	if ( $GLOBALS["device_detect"]->isMobile() ){
 		return true;
@@ -875,6 +925,7 @@ function nebula_is_mobile(){
 	return false;
 }
 
+//Boolean return if the user's device is a tablet.
 function nebula_is_tablet(){
 	if ( $GLOBALS["device_detect"]->isTablet() ){
 		return true;
@@ -882,6 +933,7 @@ function nebula_is_tablet(){
 	return false;
 }
 
+//Boolean return if the user's device is a desktop.
 function nebula_is_desktop(){
 	if ( $GLOBALS["device_detect"]->isDesktop() ){
 		return true;
@@ -889,6 +941,7 @@ function nebula_is_desktop(){
 	return false;
 }
 
+//Returns the requested information of the operating system of the user's device.
 function nebula_get_os($info='full'){
 	$os = $GLOBALS["device_detect"]->getOs();
 	switch ( strtolower($info) ){
@@ -907,6 +960,7 @@ function nebula_get_os($info='full'){
 	}
 }
 
+//Check to see how the operating system version of the user's device compares to a passed version number.
 function nebula_is_os($os=null, $version=null, $comparison='=='){
 	if ( empty($os) ){
 		trigger_error('nebula_is_os requires a parameter of requested operating system.');
@@ -945,6 +999,7 @@ function nebula_is_os($os=null, $version=null, $comparison='=='){
 	return false;
 }
 
+//Returns the requested information of the model of the user's device.
 function nebula_get_device($info='model'){
 	$info = str_replace(' ', '', $info);
 	switch ( strtolower($info) ){
@@ -978,6 +1033,7 @@ function nebula_get_device($info='model'){
 	}
 }
 
+//Returns the requested information of the browser being used.
 function nebula_get_client($info){ return get_browser($info); }
 function nebula_get_browser($info='name'){
 	$client = $GLOBALS["device_detect"]->getClient();
@@ -1005,6 +1061,7 @@ function nebula_get_browser($info='name'){
 	}
 }
 
+//Check to see how the browser version compares to a passed version number.
 function nebula_is_browser($browser=null, $version=null, $comparison='=='){
 	if ( empty($browser) ){
 		trigger_error('nebula_is_browser requires a parameter of requested browser.');
@@ -1060,6 +1117,7 @@ function nebula_is_browser($browser=null, $version=null, $comparison='=='){
 	return false;
 }
 
+//Check to see if the rendering engine matches a passed parameter.
 function nebula_is_engine($engine=null){
 	if ( empty($engine) ){
 		trigger_error('nebula_is_engine requires a parameter of requested engine.');
