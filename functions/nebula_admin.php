@@ -1,33 +1,5 @@
 <?php
 
-//Add the current page ID to the Admin Bar
-add_action('admin_bar_menu', 'nebula_admin_bar_page_id', 800);
-function nebula_admin_bar_page_id( $wp_admin_bar ){
-	if ( is_admin() ){
-		$new_content_node = $wp_admin_bar->get_node('view');
-		if ( $new_content_node ){
-			$new_content_node->title = 'View Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
-			$wp_admin_bar->add_node($new_content_node);
-		}
-	} else {
-		$new_content_node = $wp_admin_bar->get_node('edit');
-		if ( $new_content_node ){
-			$new_content_node->title = 'Edit Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
-			$wp_admin_bar->add_node($new_content_node);
-		}
-	}
-}
-
-//Add a link to Nebula Options on the Admin Bar
-add_action('admin_bar_menu', 'nebula_admin_bar_nebula_options', 90);
-function nebula_admin_bar_nebula_options($wp_admin_bar){
-	$wp_admin_bar->add_node(array(
-		'id' => 'nebula-options',
-		'title' => '<i class="fa fa-fw fa-cog" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240,245,250,.6); margin-right: 5px;"></i> Nebula Options',
-		'href' => get_admin_url() . 'themes.php?page=nebula_options'
-	));
-}
-
 //Force expire query transients when posts/pages are saved.
 add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){
@@ -85,6 +57,42 @@ if ( !nebula_admin_bar_enabled() ){
 			* html body { margin-top: 0px !important; }
 			</style>';
 		}
+	}
+} else {
+	//Add the current page ID to the Admin Bar
+	add_action('admin_bar_menu', 'nebula_admin_bar_page_id', 800);
+	function nebula_admin_bar_page_id($wp_admin_bar){
+		if ( is_admin() ){
+			$new_content_node = $wp_admin_bar->get_node('view');
+			if ( $new_content_node ){
+				$new_content_node->title = 'View Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
+				$wp_admin_bar->add_node($new_content_node);
+			}
+		} else {
+			$new_content_node = $wp_admin_bar->get_node('edit');
+			if ( $new_content_node ){
+				$new_content_node->title = 'Edit Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
+				$wp_admin_bar->add_node($new_content_node);
+			}
+		}
+	}
+
+	//Add a link to Nebula Options on the Admin Bar
+	add_action('admin_bar_menu', 'nebula_admin_bar_nebula_options', 90);
+	function nebula_admin_bar_nebula_options($wp_admin_bar){
+		$wp_admin_bar->add_node(array(
+			'id' => 'nebula-options',
+			'title' => '<i class="fa fa-fw fa-cog" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240,245,250,.6); margin-right: 5px;"></i> Nebula Options',
+			'href' => get_admin_url() . 'themes.php?page=nebula_options'
+		));
+
+		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula-options',
+			'id' => 'nebula-options-help',
+			'title' => 'Help & Documentation &raquo;',
+			'href' => 'https://gearside.com/nebula/documentation/options/',
+			'meta' => array('target' => '_blank')
+		));
 	}
 }
 
@@ -247,7 +255,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 							if ( !empty($the_todo_ints[0][0]) ){
 								switch ( true ){
 									case ( $the_todo_ints[0][0] >= 5 ) :
-										$the_todo_icon_color = '#d92827';
+										$the_todo_icon_color = '#ca3838';
 										break;
 									case ( $the_todo_ints[0][0] == 4 ) :
 										$the_todo_icon_color = '#e38a2c';
@@ -261,7 +269,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 									case ( $the_todo_ints[0][0] == 1 ) :
 										$the_todo_icon_color = '#ccc';
 										break;
-									case ( $the_todo_ints[0][0] == 0 ) :
+									case ( $the_todo_ints[0][0] <= 0 ) :
 										$todo_hidden = 1;
 										$the_todo_icon_color = '#0098d7';
 										$todo_hidden_style = 'style="display: none;"';
@@ -371,7 +379,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 		//Get last modified filename and date
 		$dir = glob_r( get_template_directory() . '/*');
 		$last_date = 0;
-		$skip_files = array('dev.css', '/cache/'); //Files or directories to skip. Be specific!
+		$skip_files = array('dev.css', '/cache/', '/includes/data/'); //Files or directories to skip. Be specific!
 
 		foreach ( $dir as $file ){
 			if ( is_file($file) ){
@@ -458,7 +466,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 				    if ( result > 5 ){ jQuery(".slowicon").addClass("fa-warning"); }
 				    jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
 				}
-				</script>';
+			</script>';
 
 		echo '<ul class="serverdetections">';
 /*
@@ -789,14 +797,12 @@ function change_admin_footer_left(){
 //Right Side
 add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right(){
+	global $wp_version;
 	$nebula_theme_info = wp_get_theme();
 	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
 	$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
 
 	/*
-		First half of month: x.x.0
-		Second half of month: x.x.1
-
 		May 2016	4.0.x
 		June		4.1.x
 		July		4.2.x
@@ -809,14 +815,14 @@ function change_admin_footer_right(){
 		Feb			4.9.x
 		Mar			4.10.x
 		Apr			4.11.x
+		x represents the day of the month.
 	*/
 
 	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
-	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June');
+	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June'); //Modify this array when 4.0 is released (May is first)
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
-	$nebula_version_daterange = ( empty($nebula_version['small']) )? 'First' : 'Second';
-
-    return '<span title="' . $nebula_version_daterange . ' half of ' . $nebula_version_month . ' ' . $nebula_version_year . '"><a href="http://gearside.com/nebula" target="_blank">Nebula</a> v<strong>' . $nebula_theme_info->get('Version') . '</strong></span>';
+	$nebula_version_day = ( empty($nebula_version['small']) )? ', ' : ' ' . $nebula_version['small'] . ', ';
+    return '<span><a href="https://wordpress.org/news/category/releases/" target="_blank">WordPress</a> v<strong>' . $wp_version . '</strong></span>, <span title="' . $nebula_version_month . $nebula_version_day . $nebula_version_year . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> v<strong class="nebula">' . $nebula_theme_info->get('Version') . '</strong></span>';
 }
 
 //Internal Search Keywords Metabox and Custom Field

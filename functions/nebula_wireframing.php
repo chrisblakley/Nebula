@@ -8,40 +8,33 @@
 	<?php fpo_component_end(); ?>
 */
 
-//Add wireframing body class
-add_filter('body_class', 'nebula_wireframing_body_classes');
-function nebula_wireframing_body_classes($classes){
-    if ( nebula_wireframing_enabled() ){
-    	$classes[] = 'nebula-wireframing';
+if ( nebula_wireframing_enabled() ){
+	//Add wireframing body class
+	add_filter('body_class', 'nebula_wireframing_body_classes');
+	function nebula_wireframing_body_classes($classes){
+	    $classes[] = 'nebula-wireframing';
+		return $classes;
 	}
-	return $classes;
-}
 
-//Wireframe Top Bar
-if ( !nebula_option('nebula_wireframing', 'disabled') ){
-	add_action('nebula_body_open', 'wireframe_bar');
-}
-function wireframe_bar(){
-	$current_user = wp_get_current_user();
-	$current_user_name = ( $current_user->user_firstname != '' )? $current_user->user_firstname : $current_user->display_name;
-	$greetings = array('Hello', 'Hi', 'Hey', 'Welcome');
+	//Add a link to Nebula Wireframing on the Admin Bar
+	add_action('admin_bar_menu', 'nebula_admin_bar_nebula_wireframing', 900);
+	function nebula_admin_bar_nebula_wireframing($wp_admin_bar){
+		$wp_admin_bar->add_node(array(
+			'id' => 'nebula-wireframing',
+			'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240,245,250,.6); margin-right: 5px;"></i> Wireframing Enabled',
+			'href' => get_admin_url() . 'themes.php?page=nebula_options'
+		));
 
-	echo '<div id="wireframing-bar" class="container">
-		<div class="row">
-			<div class="sixteen columns">
-				<ul class="two_up tiles">
-					<li><a class="phg" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a></li>
-					<li style="text-align: right;">';
-					if ( is_user_logged_in() ){
-						echo '<span>' . $greetings[array_rand($greetings)] . ', <a href="' . get_admin_url() . '"><strong>' . $current_user_name . '</strong></a>.</span>';
-					} else {
-						echo '<span><a href="' . wp_login_url(get_permalink()) . '"><strong>Login</strong></a></span>';
-					}
-					echo '</li>
-				</ul>
-			</div>
-		</div>
-	</div>';
+		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula-wireframing',
+			'id' => 'nebula-wireframing-help',
+			'title' => 'Help & Documentation &raquo;',
+			'href' => 'https://gearside.com/nebula/documentation/custom-functionality/wireframing/',
+			'meta' => array('target' => '_blank')
+		));
+
+		$wp_admin_bar->remove_menu('wpseo-menu'); //SEO menu not important during wireframing
+	}
 }
 
 //Top header for each component
@@ -130,6 +123,14 @@ function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg=
 
 //Placeholder image... Consider deprecating this function
 function fpo_image($width='100%', $height='200px', $type='none', $color='#000', $styles='', $classes=''){
+	if ( is_int($width) ){
+		$width .= 'px';
+	}
+
+	if ( is_int($height) ){
+		$height .= 'px';
+	}
+
 	$imgsrc = '';
 	if ( $type == 'unsplash' || $type == 'photo' || $width == 'unsplash' || $width == 'photo' ){
 		$imgsrc = unsplash_it(800, 600, 1);

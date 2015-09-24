@@ -16,7 +16,6 @@ function track_google_pagespeed_checks(){
 			global $post;
 			$currentTitle = get_the_title($post->ID);
 		}
-
 		ga_send_event('Google Page Speed', $currentURL, $currentTitle);
 	}
 }
@@ -290,18 +289,11 @@ if ( nebula_option('nebula_comments', 'disabled') ){
 		return false;
 	}
 
-	//Remove comments links from admin bar
-	add_action('wp_loaded', 'disable_comments_admin_bar'); //@TODO "Nebula" 0: If comments are disabled
-	function disable_comments_admin_bar(){
-		if ( nebula_admin_bar_enabled() ){
-			//global $wp_admin_bar; //@TODO "Nebula" 0: NULL
-			//$wp_admin_bar->remove_menu('wp-logo');
-			//$wp_admin_bar->remove_menu('comments');
-			//remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 50); //@TODO "Nebula" 0: Not working
-			add_filter('admin_head', 'admin_bar_hide_comments');
-			function admin_bar_hide_comments(){
-				echo '<style>#wp-admin-bar-comments {display: none;}</style>'; //Temporary fix until PHP removal is possible.
-			}
+	//Remove comments menu from Admin Bar
+	if ( nebula_admin_bar_enabled() ){
+		add_action('admin_bar_menu', 'nebula_admin_bar_remove_comments', 900);
+		function nebula_admin_bar_remove_comments($wp_admin_bar){
+			$wp_admin_bar->remove_menu('comments');
 		}
 	}
 
@@ -343,14 +335,19 @@ if ( nebula_option('nebula_comments', 'disabled') ){
 		return true;
 	}
 
-	if ( $pagenow == 'edit-comments.php' ){
+	//Remove comments menu from Admin Bar (if using Disqus)
+	if ( get_option('nebula_disqus_shortname') && nebula_admin_bar_enabled() ){
+		add_action('admin_bar_menu', 'nebula_admin_bar_remove_comments', 900);
+		function nebula_admin_bar_remove_comments($wp_admin_bar){
+			$wp_admin_bar->remove_menu('comments');
+		}
+	}
+
+	//Link to Disqus on comments page (if using Disqus)
+	if ( $pagenow == 'edit-comments.php' && get_option('nebula_disqus_shortname') ){
 		add_action('admin_notices', 'disqus_link');
 		function disqus_link(){
-			if ( get_option('nebula_disqus_shortname') ){
-				echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . get_option('nebula_disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
-			} else {
-				echo "<div class='nebula_admin_notice error'><p>You are using the Disqus commenting system, <strong>BUT</strong> you have not set your shortname in <a href='themes.php?page=nebula_options'>Nebula Options</a>, so we can't send you directly to your comment listing! <a href='https://disqus.com/admin/moderate' target='_blank'>Go to Disqus &raquo;</a></p></div>";
-			}
+			echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . get_option('nebula_disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
 		}
 	}
 }

@@ -23,9 +23,9 @@ function nebula_full_address($encoded=false){
 		return false;
 	}
 
-	$full_address = get_option('nebula_street_address') . ' ' . get_option('nebula_locality') . ' ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
+	$full_address = get_option('nebula_street_address') . ', ' . get_option('nebula_locality') . ', ' . get_option('nebula_region') . ' ' . get_option('nebula_postal_code');
     if ( $encoded ){
-	    $full_address = str_replace(' ', '+', $GLOBALS['enc_address']);
+	    $full_address = str_replace(array(', ', ' '), '+', $full_address);
     }
 	return $full_address;
 }

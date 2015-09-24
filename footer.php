@@ -25,7 +25,7 @@
 						<div class="eleven columns ">
 							<p>
 								<a class="footerlogo" href="<?php echo home_url(); ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/meta/favicon-36x36.png" /></a>
-								<?php echo date("Y"); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong> (v<?php $nebula_theme_info = wp_get_theme(); echo $nebula_theme_info->get('Version'); ?>)</a>, all rights reserved.<br />
+								<?php echo date('Y'); ?> &copy; <a href="<?php echo home_url(); ?>"><strong><?php bloginfo('name'); ?></strong> (v<?php $nebula_theme_info = wp_get_theme(); echo $nebula_theme_info->get('Version'); ?>)</a>, all rights reserved.<br />
 								<a href="https://www.google.com/maps/place/<?php echo nebula_full_address(1); ?>" target="_blank"><?php echo nebula_full_address(); ?></a>
 							</p>
 						</div><!--/columns-->
