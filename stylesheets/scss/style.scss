@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
-	Version: 3.2.24
+	Version: 3.2.25
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -24,7 +24,7 @@
 
 html {height: auto; font-size: 62.5%; color: $text_color;}
 body {overflow-x: hidden; background: $background_color; color: $text_color;}
-button, input, select, textarea {color: $text_color; @include font-size(14);}
+button, input, select, textarea {color: $text_color; font-size: 14px;}
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 
@@ -35,16 +35,16 @@ ul {padding: 0;
 	ul {margin: 4px 0 0 0;}
 }
 
-h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.625em;
+h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.15538em;
 	a {color: $primary_color;}
 }
-h1 {@include font-size(36); font-weight: bold;}
-h2 {@include font-size(28);}
-h3 {@include font-size(21);}
-h4 {@include font-size(18);}
-h5 {@include font-size(16);}
-h6 {@include font-size(14);}
-p, li, dt, dl, div {@include font-size(14); @include line-height(22);}
+h1 {font-size: 36px; font-weight: bold;}
+h2 {font-size: 28px;}
+h3 {font-size: 21px;}
+h4 {font-size: 18px;}
+h5 {font-size: 16px;}
+h6 {font-size: 14px;}
+p, li, dt, dl, div {font-size: 14px; line-height: 1.625em;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
@@ -59,7 +59,7 @@ ul.menu {padding: 0;}
 	.success {color: $success_color;}
 }
 
-input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; @include font-size(12); background: #eee url($template_directory + "/images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url($template_directory + "/images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
 	&:hover,
 	&.hover {background-color: #fff;}
 	&:focus,
@@ -163,7 +163,7 @@ div.nebula-button {margin-bottom: 10px;}
 
 	#googlemap img {max-width: none;} //Prevents glitchy UI within embedded Google maps
 
-.facebook-connect-con {@include font-size(12);
+.facebook-connect-con {font-size: 12px;
 	i,
 	a {@include link-colors(brand(facebook), darken(brand(facebook), 15%)); color: brand(facebook);}
 }
@@ -209,7 +209,7 @@ i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 
 form fieldset {border: 1px solid #ccc;}
 
-.field .input {@include font-size(14); @include line-height(22);}
+.field .input {font-size: 14px; line-height: 22px;}
 
 .field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: $danger_color;}
 .field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: $danger_color; color: #000; background: #f0c5c5;}
@@ -247,12 +247,12 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
 }
 .form-identifier-nebula-hero-search {
-	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; @include font-size(10); opacity: 0.9;}
-	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; @include font-size(10); opacity: 0.6;}
-	.external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; @include font-size(10); opacity: 0.4;}
+	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.9;}
+	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.6;}
+	.external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; font-size: 10px; opacity: 0.4;}
 }
 .ui-autocomplete.ui-widget-content li {position: relative;
-	&:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 23px; margin-right: 3px; text-align: center; @include font-size(12); opacity: 0.5;}
+	&:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 23px; margin-right: 3px; text-align: center; font-size: 12px; opacity: 0.5;}
 	&.type-post:before {content: '\f1ea';}
 	&.type-page:before {content: '\f0f6';}
 	&.type-category:before {content: '\f02e';}
@@ -265,7 +265,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	&.type-user:before {content: '\f007';}
 	&.page-home:before {content: '\f015';}
 	&.sticky-post:before {content: '\f08d';}
-	&.search-link {@include font-size(12); border-top: 1px dotted #ddd;
+	&.search-link {font-size: 12px; border-top: 1px dotted #ddd;
 		a {opacity: 0.7;}
 	}
 	&.more-results:before {content: '\f002';}
@@ -276,7 +276,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 
 //jQuery UI Autocomplete
 .ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); color: $text_color; border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
-	.ui-menu .ui-menu-item {@include font-size(12); padding: 3px 5px;}
+	.ui-menu .ui-menu-item {font-size: 12px; padding: 3px 5px;}
 	.ui-state-hover,
 	.ui-widget-content .ui-state-hover,
 	.ui-widget-header .ui-state-hover,
@@ -293,7 +293,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 div.bx-wrapper {
 	div.bx-viewport {left: 0 !important;}
 	div.bx-caption {bottom: 10px; @include background-color(#000, 0.8);
-		span {@include font-size(14);}
+		span {font-size: 14px;}
 	}
 }
 
@@ -326,23 +326,23 @@ ul.bxslider {
 
 //Top row that appears at mobile sizes.
 #mobilebarcon {position: relative; background: $primary_color; width: 100%; height: 0; overflow: hidden; @include prefix((transition: all 0.5s));
-	a {@include font-size(32); @include line-height(36); @include link-colors(#fff, #ccc); text-decoration: underline;}
+	a {font-size: 32px; @include link-colors(#fff, #ccc); text-decoration: underline;}
 	.mobilenavcon {/* display: none; */
 		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 60%; height: 42px;
-			input {width: 100%; color: #fff; @include font-size(18); padding-left: 24px; line-height: 42px; background: none; border: none; border-radius: 0;
+			input {width: 100%; color: #fff; font-size: 18px; padding-left: 24px; line-height: 42px; background: none; border: none; border-radius: 0;
 				@include media(mobile){padding-left: 0;};
 			}
 			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
-			.borderimage &:before {color: #fff; @include font-size(19); width: 19px; height: 19px; top: 12px; left: 0;
+			.borderimage &:before {color: #fff; font-size: 19px; width: 19px; height: 19px; top: 12px; left: 0;
 				@include media(mobile){display: none;};
 			}
 		}
 		@include media(tablet){display: block;};
 	}
-	a.mobilenavtrigger {position: relative; @include font-size(24); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; @include background-color(#fff, 0.25); z-index: 99999;
+	a.mobilenavtrigger {position: relative; font-size: 24px; padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; @include background-color(#fff, 0.25); z-index: 99999;
 		&:hover,
 		&.hover {color: #fff; @include background-color(#fff, 0.4);}
 		&.active {@include background-color(#fff, 0);}
@@ -360,15 +360,15 @@ ul.bxslider {
 			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
 				&:last-child,
 				&.last-child {margin-right: 0;}
-				a {display: block; @include link-colors(#fff, #ccc);  @include font-size(11);}
+				a {display: block; @include link-colors(#fff, #ccc);  font-size: 11px;}
 				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); @include prefix((transition: opacity 0.25s));
 					li.menu-item {display: block; margin-right: auto; padding: 0;
-						a {display: block; @include link-colors($text_color, $primary_color);  @include font-size(11);}
+						a {display: block; @include link-colors($text_color, $primary_color);  font-size: 11px;}
 					}
 				}
 				&:hover ul.sub-menu,
 				&.hover ul.sub-menu {left: 5px; opacity: 1;}
-				input.nebula-search {@include font-size(11); @include background-color(#fff, 0.8);}
+				input.nebula-search {font-size: 11px; @include background-color(#fff, 0.8);}
 			}
 		}
 	}
@@ -381,7 +381,7 @@ ul.bxslider {
 	&.fixed {position: fixed; top: 0; left: 0; @include background-color(#f6f6f6, 0.98); padding-top: 0; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
 		img {height: 65px;}
 		#primarynav ul {margin-top: 22px;
-			li.menu-item {@include font-size(12);}
+			li.menu-item {font-size: 12px;}
 		}
 	}
 	.logocon {
@@ -395,7 +395,7 @@ ul.bxslider {
 			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
 				&:last-child,
 				&.last-child {margin-right: 0;}
-				.ie7 & {float: left; @include font-size(14);}
+				.ie7 & {float: left; font-size: 14px;}
 				a {display: block; padding-bottom: 8px;
 					@include media(tablet){min-height: 44px; line-height: 44px;};
 				}
@@ -431,7 +431,7 @@ ul.bxslider {
 
 //Row that contains event specific help: "Did you mean?", "Single result redirection", etc.
 .headerdrawercon {position: relative; @include background-color(#000, 0.05); z-index: 8888;
-	.headerdrawer {position: relative; padding-top: 10px; text-align: center; @include font-size(12);
+	.headerdrawer {position: relative; padding-top: 10px; text-align: center; font-size: 12px;
 		p {text-align: center;}
 		a.close {position: absolute; top: 0; right: 0;}
 	}
@@ -442,13 +442,13 @@ ul.bxslider {
 //Homepage hero row
 #heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url($template_directory + "/images/phg/phg-nebula.jpg") fixed center center; background-size: cover; @include prefix((transition: all 0.5s));
 	.herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color($primary_color, 0.5); z-index: 0;}
-	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; @include font-size(90); @include line-height(100); font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
-		@include media(tablet){@include font-size(60); @include line-height(70);};
-		@include media(mobile){@include font-size(48); @include line-height(60);};
+	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 90px; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
+		@include media(tablet){font-size: 60px;};
+		@include media(mobile){font-size: 48px;};
 	}
-	h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; @include font-size(32); font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
-		@include media(tablet){@include font-size(24);};
-		@include media(mobile){@include font-size(18);};
+	h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 32px; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+		@include media(tablet){font-size: 24px;};
+		@include media(mobile){font-size: 18px;};
 	}
 	@include media(tablet){padding: 50px 0; overflow: hidden; background-size: cover;};
 }
@@ -459,7 +459,7 @@ ul.bxslider {
 // ===========================
 
 .breadcrumbcon {position: relative; z-index: 1;
-	.breadcrumbs {@include font-size(10); @include line-height(14);}
+	.breadcrumbs {font-size: 10px;}
 }
 
 .fullcontentcon {margin-top: 30px;
@@ -470,11 +470,11 @@ ul.bxslider {
 
 .row.multi-column-query {margin-bottom: 30px;}
 
-.sticky-title i {@include font-size(20);}
+.sticky-title i {font-size: 20px;}
 
 h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 
-.entry-meta {@include font-size(12);
+.entry-meta {font-size: 12px;
 	i {margin-right: 2px;}
 	.posted-on,
 	.posted-in,
@@ -500,8 +500,7 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 	}
 }
 
-//@TODO "Nebula" 0: This would probably be a good place to use an extend
-.entry-content {margin-top: 10px; @include font-size(14); @include line-height(22);
+.entry-content {margin-top: 10px; font-size: 14px;
 	ul {padding-left: 20px; list-style: disc;}
 	ol {margin: 0; padding-left: 20px;}
 }
@@ -511,14 +510,14 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 .prevnextcon {margin-top: 50px; margin-bottom: 30px;}
 	.prev-link-con {text-align: left;}
 	.next-link-con {text-align: right;}
-		.prevnext-post-heading {@include font-size(9); text-transform: uppercase; font-weight: bold; margin: 0; padding: 0;}
+		.prevnext-post-heading {font-size: 9px; text-transform: uppercase; font-weight: bold; margin: 0; padding: 0;}
 			.prev-post-heading {}
 			.next-post-heading {}
-		.prevnext-post-link {@include font-size(12);}
+		.prevnext-post-link {font-size: 12px;}
 			.prev-post-link {}
 			.next-post-link {}
 
-.entry-manage {@include font-size(12); margin-top: 15px; margin-bottom: 30px;}
+.entry-manage {font-size: 12px; margin-top: 15px; margin-bottom: 30px;}
 	.nebula-manage-edit {
 		@include media(mobile_landscape){display: block; text-align: center;};
 	}
@@ -571,7 +570,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;
 		#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
 	.right-side .advanced-search-group {margin-bottom: 10px;}
 
-	#advanced-search-form .advanced-search-keyword {width: 100%; @include font-size(24); font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
+	#advanced-search-form .advanced-search-keyword {width: 100%; font-size: 24px; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
 
 .advanced-search-result {border-bottom: 1px dotted #ccc; padding-bottom: 10px; margin-top: 5px;}
 	.post-date-time {margin-bottom: 5px;}
@@ -585,7 +584,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;
 	&.no-prev-events {pointer-events: none; opacity: 0.3;}
 }
 
-a.resetfilters {@include font-size(12); color: $danger_color; opacity: 0;
+a.resetfilters {font-size: 12px; color: $danger_color; opacity: 0;
 	&:hover,
 	&.hover {color: darken($danger_color, 15%);}
 	&.active {opacity: 1;}
@@ -605,7 +604,7 @@ a.resetfilters {@include font-size(12); color: $danger_color; opacity: 0;
 	.author-social {float: right; margin-top: 17px;
 		@include media(mobile){margin-top: 0;};
 	}
-	.author-meta {margin-top: 5px; margin-bottom: 12px; @include font-size(12);
+	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: 12px;
 		i {margin-right: 2px;}
 	}
 	.author-jobtitle {
@@ -629,7 +628,7 @@ li.comment div.comment-meta {
 	#disqus_thread {margin-top: 20px;}
 
 //Misc. WP Core styles
-.gallery-caption {@include font-size(12);}
+.gallery-caption {font-size: 12px;}
 
 
 // ===========================
@@ -640,7 +639,7 @@ li.comment div.comment-meta {
 	.xoxo li.widget-container {margin: 10px 0 30px 0;
 		&:first-child,
 		&.first-child {margin-top: 0;}
-		h3 {@include font-size(14); font-weight: bold; text-transform: uppercase; margin-bottom: 15px;}
+		h3 {font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px;}
 	}
 
 	.xoxo ul.menu {
@@ -660,7 +659,7 @@ li.comment div.comment-meta {
 	li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
 
 	//Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list.
-	.xoxo .tagcloud a {display: inline-block; margin: 6px 3px 0 0; padding: 1px 8px; border-radius: 5px; @include background-color($primary_color, 0.1); color: $primary_color; @include font-size(14); //Font size needs !important
+	.xoxo .tagcloud a {display: inline-block; margin: 6px 3px 0 0; padding: 1px 8px; border-radius: 5px; @include background-color($primary_color, 0.1); color: $primary_color; font-size: 14px; //Font size needs !important
 		&:hover,
 		&.hover {@include background-color($primary_color, 0.25); color: $primary_color;}
 	}
@@ -669,35 +668,35 @@ li.comment div.comment-meta {
 
 //Nebula expandable sidebar subnav style defaults
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;
-	i {@include font-size(18); display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
+	i {font-size: 18px; display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
 	&.plus i {@include prefix((transform: rotate(0deg)));}
 }
 
-.xoxo form.search input[type="text"] {width: 77% !important; @include font-size(12); @include line-height(24); height: auto !important; vertical-align: top;} //Font size and line height needs !important
+.xoxo form.search input[type="text"] {width: 77% !important; font-size: 12px; line-height: 24px; height: auto !important; vertical-align: top;} //Font size and line height needs !important
 
 input[type="submit"] {color: #fff;}
-form.search .submit.btn {line-height: 24px !important; width: 22% !important; height: auto !important; @include font-size(12); @include line-height(24);}
+form.search .submit.btn {width: 22% !important; height: auto !important; font-size: 12px; line-height: 24px !important;}
 
 .formcon {}
 
-h3.comment-reply-title {@include font-size(12);}
+h3.comment-reply-title {font-size: 12px;}
 
 .logged-in-as {margin: 0;}
-.contact-form-heading {display: block; margin: 0; @include font-size(11); font-weight: bold;}
+.contact-form-heading {display: block; margin: 0; font-size: 11px; font-weight: bold;}
 
 p.contact-form-name,
 p.comment-form-author {
-	input {@include font-size(12);}
+	input {font-size: 12px;}
 }
 
 p.contact-form-email,
 p.comment-form-email {
-	input {@include font-size(12);}
+	input {font-size: 12px;}
 }
 
 p.contact-form-message,
 p.comment-form-comment {margin: 0;
-	textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; @include font-size(12);}
+	textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: 12px;}
 }
 	.no-js p.comment-form-comment textarea {min-height: 150px;}
 
@@ -709,18 +708,18 @@ p.form-submit {}
 		&.hover {background: $secondary_color;}
 		&.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
 	}
-		.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; @include font-size(0); @include line-height(0); @include background-color(#fff, 0); color: rgba(255, 255, 255, 0);} //Font size and line height needs !important
+		.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff, 0); color: rgba(255, 255, 255, 0);} //Font size and line height needs !important
 		.screen-reader-response {display: none;}
 
 #cform7-container {margin: 0;
 	.field {margin-bottom: 3px;}
 	input[type="text"],
-	input[type="email"] {width: 100% !important; @include font-size(12); @include line-height(24); height: auto !important;} //Font size and line height needs !important
-	.cform7-phone-area {width: 20%; @include font-size(12);}
-	.cform7-phone-prefix {width: 20%; @include font-size(12);}
-	.cform7-phone-line {width: 25%; @include font-size(12);}
-	.cform7-phone-ext {width: 22%; @include font-size(12);}
-	.cform7-message {@include font-size(12); @include line-height(16); padding-top: 7px; resize: vertical !important;} //Line height needs !important
+	input[type="email"] {width: 100% !important; font-size: 12px; line-height: 24px; height: auto !important;} //Font size and line height needs !important
+	.cform7-phone-area {width: 20%; font-size: 12px;}
+	.cform7-phone-prefix {width: 20%; font-size: 12px;}
+	.cform7-phone-line {width: 25%; font-size: 12px;}
+	.cform7-phone-ext {width: 22%; font-size: 12px;}
+	.cform7-message {font-size: 12px; line-height: 16px; padding-top: 7px; resize: vertical !important;} //Line height needs !important
 }
 
 .wpcf7-not-valid-tip {display: none !important;}
@@ -728,8 +727,8 @@ p.form-submit {}
 .field.danger:after, .field.warning:after, .field.success:after {/* top: 45% !important; */}
 .xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 45% !important;}
 
-div.wpcf7-validation-errors {@include font-size(14); color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
-div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
+div.wpcf7-validation-errors {font-size: 14px; color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
+div.wpcf7-mail-sent-ok {font-size: 14px; color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
 
 //Offcanvas Mmenu Modifications
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
@@ -767,13 +766,13 @@ div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 10
 	@include media(tablet){padding-top: 0;};
 }
 
-.twitterago {@include font-size(12); text-decoration: underline;}
+.twitterago {font-size: 12px; text-decoration: underline;}
 
 .footerwidgets {padding-top: 20px; padding-bottom: 20px; @include background-color($dark_primary_color);
 	.widget-container {list-style: none;
-		.widget-title {@include font-size(16); text-transform: uppercase; color: #fff; font-weight: bold; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
+		.widget-title {font-size: 16px; text-transform: uppercase; color: #fff; font-weight: bold; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
 		.textwidget,
-		ul li {@include font-size(12); color: #fff;}
+		ul li {font-size: 12px; color: #fff;}
 		a {@include link-colors(#fff, #aaa);}
 	}
 }
@@ -788,12 +787,12 @@ div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 10
 				&.first-child {margin-left: 0; padding-left: 0;}
 				&:last-child,
 				&.last-child {margin-right: 0; padding-right: 0;}
-				a {display: block; @include link-colors(#fff, #aaa); @include font-size(16); font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px dotted #fff;
+				a {display: block; @include link-colors(#fff, #aaa); font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px dotted #fff;
 					@include media(tablet){border-bottom: none;};
 				}
 				ul.sub-menu {margin: 0; padding: 5px 0;
 					li {display: block; margin: 0; padding: 0;
-						a {display: block; @include link-colors(#fff, #aaa); @include font-size(12); font-weight: normal; text-transform: none; margin-bottom: 0; border-bottom: none;}
+						a {display: block; @include link-colors(#fff, #aaa); font-size: 12px; font-weight: normal; text-transform: none; margin-bottom: 0; border-bottom: none;}
 						ul.sub-menu {display: none;}
 						@include media(tablet){padding: 0 0 0 10px; border-left: 1px solid $secondary_color;};
 					}
@@ -805,8 +804,8 @@ div.wpcf7-mail-sent-ok {@include font-size(14); color: $success_color; width: 10
 	}
 
 div.copyright {padding-top: 15px; @include background-color($dark_primary_color);
-	p {@include font-size(12); color: #fff;
-		@include media(tablet){@include font-size(11);};
+	p {font-size: 12px; color: #fff;
+		@include media(tablet){font-size: 11px;};
 	}
 	a {@include link-colors(#fff, #ccc);}
 }
@@ -848,9 +847,9 @@ a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 }
 
 .gist {
-	.line-numbers {@include font-size(12);}
+	.line-numbers {font-size: 12px;}
 	.file-data pre,
-	.line-data {@include font-size(12);}
+	.line-data {font-size: 12px;}
 }
 
 .nebula-youtube {margin-bottom: 15px;}

@@ -2,19 +2,6 @@
 // Mixins
 // ===========================
 
-//.element {@include font-size(16);}
-@mixin font-size($size: 12){
-	font-size: $size + px;
-	font-size: (0.1334*$size) + rem; //I'm actually not in love with using REMs...
-	line-height: 1.625em; //@TODO "Nebula" 0: Do we want to use a default em line-height here? Not in love with this either (harder to override- must declare line-height after this mixin).
-}
-
-//.element {@include line-height(16);}
-@mixin line-height($height: 12){
-    line-height: $height + px;
-    line-height: (0.1136*$height) + rem; //I'm actually not in love with using REMs...
-}
-
 //.element {@include prefix((transition: all 0.25s), webkit ms);}
 //.element {@include prefix((animation: animation-name 2s infinite linear));}
 @mixin prefix($map, $vendors: webkit moz ms o){
