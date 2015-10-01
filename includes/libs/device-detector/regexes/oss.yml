@@ -102,6 +102,22 @@
   name: 'AmigaOS'
   version: ''
 
+##########
+# ThreadX
+##########
+- regex: 'ThreadX(?:/(\d+[\.\d]*))?'
+  name: 'ThreadX'
+  version: '$1'
+
+##########
+# MTK / Nucleus
+##########
+- regex: 'Nucleus(?:(?: |/v?)(\d+[\.\d]*))?'
+  name: 'MTK / Nucleus'
+  version: '$1'
+- regex: 'MTK(?:(?: |/v?)(\d+[\.\d]*))?'
+  name: 'MTK / Nucleus'
+  version: '$1'
 
 ##########
 # Linux
@@ -225,7 +241,7 @@
 ##########
 # iOS
 ##########
-- regex: '(?:CPU OS|iPhone OS|iOS)[ _](\d+(?:[_\.]\d+)*)'
+- regex: '(?:CPU OS|iPh(?:one)? OS|iOS)[ _](\d+(?:[_\.]\d+)*)'
   name: 'iOS'
   version: '$1'
 

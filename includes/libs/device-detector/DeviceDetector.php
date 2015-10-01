@@ -13,15 +13,15 @@
 namespace DeviceDetector;
 
 require_once(realpath(dirname(__FILE__) . '/..') . '/spyc.php'); //This file is not included with Device Detector
-require_once(dirname(__FILE__) . '/Cache/Cache.php');
-require_once(dirname(__FILE__) . '/Cache/StaticCache.php');
-require_once(dirname(__FILE__) . '/Parser/ParserAbstract.php');
-require_once(dirname(__FILE__) . '/Parser/Bot.php');
-require_once(dirname(__FILE__) . '/Parser/OperatingSystem.php');
-require_once(dirname(__FILE__) . '/Parser/VendorFragment.php');
-require_once(dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php');
-require_once(dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php');
-require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine.php');
+require_once(dirname(__FILE__) . '/Cache/Cache.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Cache/StaticCache.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Parser/ParserAbstract.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Parser/Bot.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Parser/OperatingSystem.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Parser/VendorFragment.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php'); //This line has been modified for Nebula
+require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine.php'); //This line has been modified for Nebula
 
 use DeviceDetector\Cache\StaticCache;
 use DeviceDetector\Cache\Cache;
@@ -62,7 +62,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.3.0';
+    const VERSION = '3.4.2';
 
     /**
      * Holds all registered client types
@@ -220,7 +220,7 @@ class DeviceDetector
      */
     public function addClientParser($parser)
     {
-	    require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');
+	    require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');  //This line has been added for Nebula
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Client\\'.$parser)) {
             $className = 'DeviceDetector\\Parser\\Client\\'.$parser;
             $parser = new $className();
@@ -251,7 +251,7 @@ class DeviceDetector
      */
     public function addDeviceParser($parser)
     {
-	    require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php');
+	    require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php'); //This line has been added for Nebula
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Device\\'.$parser)) {
             $className = 'DeviceDetector\\Parser\\Device\\'.$parser;
             $parser = new $className();
@@ -654,6 +654,13 @@ class DeviceDetector
 
         if (is_null($this->device) && ($osShortName == 'WRT' || ($osShortName == 'WIN' && version_compare($osVersion, '8.0'))) && $this->isTouchEnabled()) {
             $this->device = DeviceParserAbstract::DEVICE_TYPE_TABLET;
+        }
+
+        /**
+         * All devices running Opera TV Store are assumed to be a tv
+         */
+        if ($this->matchUserAgent('Opera TV Store')) {
+            $this->device = DeviceParserAbstract::DEVICE_TYPE_TV;
         }
 
         // set device type to desktop for all devices running a desktop os that were not detected as an other device type

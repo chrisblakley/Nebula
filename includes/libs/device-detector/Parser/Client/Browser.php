@@ -28,6 +28,7 @@ class Browser extends ClientParserAbstract
      */
     protected static $availableBrowsers = array(
         '36' => '360 Phone Browser',
+        '3B' => '360 Browser',
         'AA' => 'Avant Browser',
         'AB' => 'ABrowse',
         'AG' => 'ANTGalio',
@@ -56,6 +57,7 @@ class Browser extends ClientParserAbstract
         'CP' => 'ChromePlus',
         'CR' => 'Chromium',
         'CS' => 'Cheshire',
+        'DE' => 'Deepnet Explorer',
         'DF' => 'Dolphin',
         'DI' => 'Dillo',
         'EL' => 'Elinks',
@@ -106,6 +108,7 @@ class Browser extends ClientParserAbstract
         'OB' => 'Obigo',
         'OD' => 'Odyssey Web Browser',
         'OF' => 'Off By One',
+        'OE' => 'ONE Browser',
         'OI' => 'Opera Mini',
         'OM' => 'Opera Mobile',
         'OP' => 'Opera',

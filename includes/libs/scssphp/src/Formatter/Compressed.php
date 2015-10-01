@@ -37,14 +37,6 @@ class Compressed extends Formatter
     /**
      * {@inheritdoc}
      */
-    public function indentStr($n = 0)
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function stripSemicolon(&$lines)
     {
         if (($count = count($lines))
@@ -57,8 +49,10 @@ class Compressed extends Formatter
     /**
      * {@inheritdoc}
      */
-    public function blockLines($inner, $block)
+    public function blockLines($block)
     {
+        $inner = $this->indentStr();
+
         $glue = $this->break . $inner;
 
         foreach ($block->lines as $index => $line) {

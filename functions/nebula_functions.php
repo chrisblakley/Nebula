@@ -3,23 +3,6 @@
 //Set server timezone to match Wordpress
 date_default_timezone_set(get_option('timezone_string')); //@TODO "Nebula" 0: date_default_timezone_set(): Timezone ID '' is invalid
 
-//Track Google Page Speed tests
-add_action('wp_footer', 'track_google_pagespeed_checks');
-function track_google_pagespeed_checks(){
-	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
-		$protocol = stripos($_SERVER['SERVER_PROTOCOL'], 'https') === true ? 'https://' : 'http://';
-		$currentURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
-		if ( strpos($currentURL, ".js") !== false ){
-			exit();
-		} else {
-			global $post;
-			$currentTitle = get_the_title($post->ID);
-		}
-		ga_send_event('Google Page Speed', $currentURL, $currentTitle);
-	}
-}
-
 //Add the calling card to the browser console
 if ( nebula_option('nebula_console_css') ){
 	add_action('wp_head', 'nebula_calling_card');

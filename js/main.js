@@ -3,16 +3,18 @@ jQuery(document).on('ready', function(){
 
 	getQueryStrings();
 	if ( GET('killall') || GET('kill') || GET('die') ){
-		throw ' (Manually terminated main.js)';
+		throw new Error('(Manually terminated inject.js)');
 	} else if ( GET('layout') ){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
 	//Assign common global variables
-	pageWindow = jQuery(window);
-	pageDocument = jQuery(document);
-	pageHTML = jQuery('html');
-	pageBody = jQuery('body');
+	thisPage = {
+        'window': jQuery(window),
+        'document': jQuery(document),
+        'html': jQuery('html'),
+        'body': jQuery('body')
+    }
 
 	//Social
 	facebookSDK();
@@ -58,12 +60,12 @@ jQuery(document).on('ready', function(){
 
 	//Detect if loaded in an iframe
 	if ( window != window.parent ){
-		pageHTML.addClass('in-iframe');
+		thisPage.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
 			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 		}
 		jQuery('a').each(function(){
-			if ( jQuery(this).attr('href') != '#' ) {
+			if ( jQuery(this).attr('href') != '#' ){
 				jQuery(this).attr('target', '_parent');
 			}
 		});
@@ -71,7 +73,7 @@ jQuery(document).on('ready', function(){
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
-	if ( !pageHTML.hasClass('lte-ie8') ) { //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+	if ( !thisPage.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 		viewport = updateViewportDimensions();
 	}
 
@@ -104,18 +106,6 @@ jQuery(window).on('load', function(){
 		browserInfo();
 	}
 
-	//console.debug(window.ga);
-	//console.debug(GoogleAnalyticsObject);
-/*
-	if ( typeof window.ga === undefined ){
-		console.log('google analytics is blocked.');
-	} else {
-		console.log('google analytics is available');
-	}
-*/
-
-
-
 	setTimeout(function(){
 		emphasizeSearchTerms();
 	}, 1000);
@@ -129,7 +119,7 @@ jQuery(window).on('resize', function(){
 		mobileSearchPlaceholder();
 
     	//Track size change
-    	if ( !pageHTML.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+    	if ( !thisPage.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 	    	viewportResized = updateViewportDimensions();
 	    	if ( viewport.width > viewportResized.width ){
 	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
@@ -196,7 +186,6 @@ function helperFunctions(){
 	});
 }
 
-
 //Load the SDK asynchronously
 function facebookSDK(){
 	(function(d, s, id){
@@ -221,22 +210,22 @@ function facebookConnect(){
 
 			checkFacebookStatus();
 			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Like');
 			});
 
 			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Unlike');
 			});
 
 			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Share');
 			});
 
 			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': pageDocument.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Comment');
 			});
 		};
@@ -292,15 +281,15 @@ function checkFacebookStatus(){
 					'verified': response.verified,
 				}
 				ga('send', 'event', 'Social', 'Facebook Connect', nebulaFacebook.id);
-				pageBody.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebulaFacebook.id);
-				pageDocument.trigger('fbConnected');
+				thisPage.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebulaFacebook.id);
+				thisPage.document.trigger('fbConnected');
 			});
 		} else if ( nebulaFacebook.status == 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
-			pageBody.removeClass('fb-connected').addClass('fb-not_authorized');
-			pageDocument.trigger('fbNotAuthorized');
+			thisPage.body.removeClass('fb-connected').addClass('fb-not_authorized');
+			thisPage.document.trigger('fbNotAuthorized');
 		} else { //User is not logged into Facebook.
-			pageBody.removeClass('fb-connected').addClass('fb-disconnected');
-			pageDocument.trigger('fbDisconnected');
+			thisPage.body.removeClass('fb-connected').addClass('fb-disconnected');
+			thisPage.document.trigger('fbDisconnected');
 		}
 	});
 }
@@ -331,7 +320,7 @@ function prefillFacebookFields(){
 }
 
 function prefillCommentAuthorCookieFields(name, email){
-	if ( cookieAuthorName ) {
+	if ( cookieAuthorName ){
 		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
 			jQuery(this).val(name).trigger('keyup');
 		});
@@ -343,9 +332,9 @@ function prefillCommentAuthorCookieFields(name, email){
 
 
 //Social sharing buttons
-function socialSharing() {
+function socialSharing(){
     var loc = window.location;
-    var title = pageDocument.attr('title');
+    var title = thisPage.document.attr('title');
     var encloc = encodeURI(loc);
     var enctitle = encodeURI(title);
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank');
@@ -357,10 +346,10 @@ function socialSharing() {
 
 
 //Create an object of the viewport dimensions
-function updateViewportDimensions() {
+function updateViewportDimensions(){
 	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
 
-	if ( typeof viewport === 'undefined' ) {
+	if ( typeof viewport === 'undefined' ){
 		var viewportHistory = 0;
 		//console.log('creating viewport History: ' + viewportHistory);
 	} else {
@@ -373,7 +362,7 @@ function updateViewportDimensions() {
 	var x = w.innerWidth || e.clientWidth || g.clientWidth;
 	var y = w.innerHeight || e.clientHeight || g.clientHeight;
 
-	if ( viewportHistory == 0 ) {
+	if ( viewportHistory == 0 ){
 		var viewportObject = {
 			initialWidth: x,
 			initialHeight: y,
@@ -395,7 +384,7 @@ function updateViewportDimensions() {
 
 
 //Main dropdown nav dynamic width controller
-function dropdownWidthController() {
+function dropdownWidthController(){
 	jQuery('#primarynav .sub-menu').each(function(){
 		var bigWidth = 100;
 			if ( jQuery(this).children().width() > bigWidth ){
@@ -407,12 +396,12 @@ function dropdownWidthController() {
 
 
 //Sub-menu viewport overflow detector
-function overflowDetector() {
+function overflowDetector(){
     jQuery('#primarynav .menu > .menu-item').hover(function(){
-    	var viewportWidth = pageWindow.width();
+    	var viewportWidth = thisPage.window.width();
     	var submenuLeft = jQuery(this).offset().left;
     	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-    	if (submenuRight > viewportWidth) {
+    	if ( submenuRight > viewportWidth ){
 			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
     	} else {
 			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
@@ -427,7 +416,7 @@ function overflowDetector() {
 function subnavExpanders(){
     jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    pageDocument.on('click touch tap', '.toplevelvert_expander', function(){
+    thisPage.document.on('click touch tap', '.toplevelvert_expander', function(){
         jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
         return false;
     });
@@ -442,11 +431,11 @@ function subnavExpanders(){
 function nebulaFixeder(){
 	var fixedElement = jQuery('#logonavcon'); //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
 	var fullBodyWrapper = jQuery('#fullbodywrapper');
-	if ( fixedElement.is('*') && pageWindow.width() > 767 ){
+	if ( fixedElement.is('*') && thisPage.window.width() > 767 ){
 		fixedDistance = fixedElement.position().top;
 
-		pageWindow.on('scroll resize', function(){
-			if ( pageWindow.scrollTop() >= fixedDistance ){
+		thisPage.window.on('scroll resize', function(){
+			if ( thisPage.window.scrollTop() >= fixedDistance ){
 				fixedElement.addClass('fixed');
 				fullBodyWrapper.css('padding-top', fixedElement.outerHeight());
 			} else {
@@ -464,13 +453,13 @@ function nebulaFixeder(){
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
-	//pageDocument.on('mousedown', '.selector', function(e) {
+	//thisPage.document.on('mousedown', '.selector', function(e){
 	//  var intent = ( e.which >= 2 )? ' (Intent)' : '';
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
 	//External links
-	pageDocument.on('mousedown touch tap', "a[rel*='external']", function(e){
+	thisPage.document.on('mousedown touch tap', "a[rel*='external']", function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var destinationURL = jQuery(this).attr('href');
@@ -478,12 +467,12 @@ function gaEventTracking(){
 	});
 
 	//PDF View/Download
-	pageDocument.on('mousedown touch tap', "a[href$='.pdf']", function(e){
+	thisPage.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href');
 		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
-		if ( linkText == '' || linkText == 'Download') {
+		if ( linkText == '' || linkText == 'Download' ){
 			ga('send', 'event', 'PDF View', 'File: ' + fileName + intent);
 		} else {
 			ga('send', 'event', 'PDF View', 'Text: ' + linkText + intent);
@@ -493,20 +482,20 @@ function gaEventTracking(){
 
 	//Contact Form Submissions
 	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to replace it by calling the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
-	pageDocument.on('submit', '.wpcf7-form', function(){
+	thisPage.document.on('submit', '.wpcf7-form', function(){
 		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.');
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
 	//Generic Interal Search Tracking
-	pageDocument.on('submit', '.search', function(){
+	thisPage.document.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
 	});
 
 	//Mailto link tracking
-	pageDocument.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
+	thisPage.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
@@ -514,7 +503,7 @@ function gaEventTracking(){
 	});
 
 	//Telephone link tracking
-	pageDocument.on('mousedown touch tap', 'a[href^="tel"]', function(e){
+	thisPage.document.on('mousedown touch tap', 'a[href^="tel"]', function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
@@ -523,7 +512,7 @@ function gaEventTracking(){
 	});
 
 	//SMS link tracking
-	pageDocument.on('mousedown touch tap', 'a[href^="sms"]', function(e){
+	thisPage.document.on('mousedown touch tap', 'a[href^="sms"]', function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
@@ -533,7 +522,7 @@ function gaEventTracking(){
 
 	//Non-Linked Image Clicks
 	jQuery('img').on('click tap touch', function(){
-		if ( !jQuery(this).parents('a').length ) {
+		if ( !jQuery(this).parents('a').length ){
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
 		}
 	});
@@ -541,7 +530,7 @@ function gaEventTracking(){
 	//Word copy tracking
 	var copyCount = 0;
 	var copyOver = 0;
-	pageDocument.on('cut copy', function(){
+	thisPage.document.on('cut copy', function(){
 		copyCount++;
 		var words = [];
 		var selection = window.getSelection() + '';
@@ -558,19 +547,19 @@ function gaEventTracking(){
 			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone + ' (Intent)');
 		}
 
-		if ( copyCount < 13 ) {
-			if (words.length > 8) {
+		if ( copyCount < 13 ){
+			if ( words.length > 8 ){
 				words = words.slice(0, 8).join(' ');
 				ga('send', 'event', 'Copied Text', words + '... [' + wordsLength + ' words]');
 			} else {
-				if ( selection == '' || selection == ' ' ) {
+				if ( selection == '' || selection == ' ' ){
 					ga('send', 'event', 'Copied Text', '[0 words]');
 				} else {
 					ga('send', 'event', 'Copied Text', selection);
 				}
 			}
 		} else {
-			if ( copyOver == 0 ) {
+			if ( copyOver == 0 ){
 				ga('send', 'event', 'Copied Text', '[Copy limit reached]');
 			}
 			copyOver = 1;
@@ -578,7 +567,7 @@ function gaEventTracking(){
 	});
 
 	//AJAX Errors
-	pageDocument.ajaxError(function(e, request, settings){
+	thisPage.document.ajaxError(function(e, request, settings){
 		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
 		ga('send', 'exception', e.result, true);
 	});
@@ -586,15 +575,15 @@ function gaEventTracking(){
 	//Capture Print Intent
 	printed = 0;
 	var afterPrint = function(){
-		if ( printed == 0 ) {
+		if ( printed == 0 ){
 			printed = 1;
 			ga('send', 'event', 'Print (Intent)', 'Print');
 		}
 	};
-	if ( window.matchMedia ) {
+	if ( window.matchMedia ){
 		var mediaQueryList = window.matchMedia('print');
 		if ( mediaQueryList.addListener ){
-			mediaQueryList.addListener(function(mql) {
+			mediaQueryList.addListener(function(mql){
 				if ( !mql.matches ){
 					afterPrint();
 				}
@@ -602,24 +591,19 @@ function gaEventTracking(){
 		}
 	}
 	window.onafterprint = afterPrint;
-
-
 }
-
-
-
 
 function googlePlusCallback(jsonParam){
 	if ( jsonParam.state == 'on' ){
 		ga('send', 'event', 'Social', 'Google+ Like');
-	} else if ( jsonParam.state == 'off' ) {
+	} else if ( jsonParam.state == 'off' ){
 		ga('send', 'event', 'Social', 'Google+ Unlike');
 	} else {
 		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]');
 	}
 }
 
-function mmenus() {
+function mmenus(){
 	if ( 'mmenu' in jQuery ){
 		var mobileNav = jQuery('#mobilenav');
 		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
@@ -666,14 +650,14 @@ function mmenus() {
 			var mmenuSearchInput = jQuery('.mm-search input');
 			mmenuSearchInput.wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
 			mmenuSearchInput.on('keyup', function(){
-				if ( jQuery(this).val().length > 0 ) {
+				if ( jQuery(this).val().length > 0 ){
 					jQuery('.clearsearch').removeClass('hidden');
 				} else {
 					jQuery('.clearsearch').addClass('hidden');
 				}
 			});
 			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br /><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-			pageDocument.on('click touch tap', '.clearsearch a', function(){
+			thisPage.document.on('click touch tap', '.clearsearch a', function(){
 				mmenuSearchInput.val('').keyup();
 				jQuery('.clearsearch').addClass('hidden');
 				return false;
@@ -699,7 +683,6 @@ function keywordSearch(container, parent, value){
 	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass('filtereditem');
 }
 
-
 //Power Footer Width Distributor
 function powerFooterWidthDist(){
 	var powerFooterWidth = jQuery('#powerfooter').width();
@@ -715,7 +698,6 @@ function powerFooterWidthDist(){
 		powerFooterTopLIs.css('width', footerItemWidth);
 	}
 }
-
 
 //Column height equalizer
 function nebulaEqualize(){
@@ -742,7 +724,7 @@ function menuSearchReplacement(){
 		jQuery(this).addClass('focus active');
 	});
 	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
-		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ) {
+		if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ){
 			jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
 		} else {
 			jQuery(this).removeClass('active');
@@ -767,13 +749,13 @@ function searchTriggerOnlyChars(e){
 
 //Search autocomplete
 function autocompleteSearch(){
-	pageDocument.on('blur', ".nebula-search-iconable input", function(){
+	thisPage.document.on('blur', ".nebula-search-iconable input", function(){
 		jQuery('.nebula-search-iconable').removeClass('searching').removeClass('autocompleted');
 	});
 
 	jQuery("input#s, input.search").on('keypress paste', function(e){
 		thisSearchInput = jQuery(this);
-		if ( !thisSearchInput.hasClass('no-autocomplete') && !pageHTML.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
+		if ( !thisSearchInput.hasClass('no-autocomplete') && !thisPage.html.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
 			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && thisSearchInput.val().trim().length >= 2 && searchTriggerOnlyChars(e) ){
 				thisSearchInput.parents('form').addClass('searching');
 				setTimeout(function(){
@@ -799,8 +781,8 @@ function autocompleteSearch(){
 							data: request,
 						},
 						success: function(data){
-							if ( data ) {
-								jQuery.each(data, function(index, value) {
+							if ( data ){
+								jQuery.each(data, function(index, value){
 									value.label = value.label.replace(/&#038;/g, "\&");
 								});
 								ga('send', 'event', 'Internal Search', 'Autocomplete Search', request.term);
@@ -877,7 +859,7 @@ function advancedSearchTriggers(){
 		}, 1500);
 	});
 
-	pageDocument.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
+	thisPage.document.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
 		advancedSearchPrep();
 		if ( jQuery('#advanced-search-date-start') ){
 			jQuery('#date-end-con').removeClass('hidden');
@@ -1209,10 +1191,10 @@ function eventFormNeedReset(){
 
 //Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
-	if ( !pageHTML.hasClass('lte-ie8') ){
+	if ( !thisPage.html.hasClass('lte-ie8') ){
 		var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
 		viewport = updateViewportDimensions();
-		if ( viewport.width <= 410 ) {
+		if ( viewport.width <= 410 ){
 			mobileHeaderSearchInput.attr('placeholder', 'I\'m looking for...');
 		} else {
 			mobileHeaderSearchInput.attr('placeholder', 'What are you looking for?');
@@ -1223,7 +1205,7 @@ function mobileSearchPlaceholder(){
 
 //Search Validator
 function searchValidator(){
-	if ( !pageHTML.hasClass('lte-ie8') ){
+	if ( !thisPage.html.hasClass('lte-ie8') ){
 		jQuery('.lt-ie9 form.search .btn.submit').val('Search');
 		jQuery('.input.search').each(function(){
 			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ){
@@ -1264,7 +1246,7 @@ function searchValidator(){
 //Highlight search terms
 function searchTermHighlighter(){
 	var theSearchTerm = document.URL.split('?s=')[1];
-	if ( typeof theSearchTerm != 'undefined' ) {
+	if ( typeof theSearchTerm !== 'undefined' ){
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
 		jQuery('article .entry-title a, article .entry-summary').each(function(i){
 			var searchFinder = jQuery(this).text().replace(new RegExp( '(' + preg_quote(theSearchTerm) + ')' , 'gi' ), '<span class="searchresultword">$1</span>');
@@ -1279,14 +1261,14 @@ function searchTermHighlighter(){
 //Emphasize the search Terms
 function emphasizeSearchTerms(){
 	var theSearchTerm = document.URL.split('?s=')[1];
-	if ( typeof theSearchTerm != 'undefined' ){
+	if ( typeof theSearchTerm !== 'undefined' ){
 		var origBGColor = jQuery('.searchresultword').css('background-color');
 		jQuery('.searchresultword').each(function(i){
 	    	var stallFor = 150 * parseInt(i);
 			jQuery(this).delay(stallFor).animate({
 			    backgroundColor: 'rgba(255, 255, 0, 0.5)',
 			    borderColor: 'rgba(255, 255, 0, 1)',
-			}, 500, 'swing', function() {
+			}, 500, 'swing', function(){
 			    jQuery(this).delay(1000).animate({
 				    backgroundColor: origBGColor,
 				}, 1000, 'swing', function(){
@@ -1300,12 +1282,12 @@ function emphasizeSearchTerms(){
 //Single search result redirection drawer
 function singleResultDrawer(){
 	var theSearchTerm = document.URL.split('?rs=')[1];
-	if ( typeof theSearchTerm != 'undefined' ) {
+	if ( typeof theSearchTerm !== 'undefined' ){
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //@TODO "Nebula" 0: Combine into a single regex replace.
 		jQuery('#searchform input#s').val(theSearchTerm);
 	}
 
-	pageDocument.on('click touch tap', '.headerdrawer .close', function(){
+	thisPage.document.on('click touch tap', '.headerdrawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
 		jQuery('.headerdrawercon').slideUp();
@@ -1315,9 +1297,9 @@ function singleResultDrawer(){
 
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 function pageSuggestion(){
-	if ( pageBody.hasClass('search-no-results') || pageBody.hasClass('error404') ) {
+	if ( thisPage.body.hasClass('search-no-results') || thisPage.body.hasClass('error404') ){
 		if ( nebula_options["nebula_cse_id"] != '' && nebula_options["nebula_google_browser_api_key"] != '' ){
-			if ( GET().length ) {
+			if ( GET().length ){
 				var queryStrings = GET();
 			} else {
 				var queryStrings = [''];
@@ -1326,7 +1308,7 @@ function pageSuggestion(){
 			var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
 			trySearch(phrase);
 
-			pageDocument.on('mousedown touch tap', 'a.suggestion', function(e){
+			thisPage.document.on('mousedown touch tap', 'a.suggestion', function(e){
 				var intent = ( e.which >= 2 )? ' (Intent)' : '';
 				var suggestedPage = jQuery(this).text();
 				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage + intent);
@@ -1347,7 +1329,7 @@ function trySearch(phrase){
 
 	// Send the request to the custom search API
 	jQuery.getJSON(API_URL, queryParams, function(response){
-		if (response.items && response.items.length) {
+		if ( response.items && response.items.length ){
 			ga('send', 'event', 'Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location, {'nonInteraction': 1});
 			showSuggestedPage(response.items[0].title, response.items[0].link);
 		} else {
@@ -1358,7 +1340,7 @@ function trySearch(phrase){
 
 function showSuggestedPage(title, url){
 	var hostname = new RegExp(location.host);
-	if ( hostname.test(url) ) {
+	if ( hostname.test(url) ){
 		jQuery('.suggestion').attr('href', url).text(title);
 		jQuery('#suggestedpage').slideDown();
 	}
@@ -1368,13 +1350,13 @@ function showSuggestedPage(title, url){
 function pageVisibility(){
 	visFirstHidden = 0;
 	visibilityChangeActions();
-	pageDocument.on('visibilitychange', function(){
+	thisPage.document.on('visibilitychange', function(){
 		visibilityChangeActions();
 	});
 
 	function visibilityChangeActions(){
-		if ( document.visibilityState == 'prerender' ) { //Page was prerendered
-			var pageTitle = pageDocument.attr('title');
+		if ( document.visibilityState == 'prerender' ){ //Page was prerendered
+			var pageTitle = thisPage.document.attr('title');
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
 
 			jQuery('iframe.youtubeplayer').each(function(){
@@ -1386,7 +1368,7 @@ function pageVisibility(){
 			//@TODO "Nebula" 0: pause vimeo
 		}
 
-		if ( getPageVisibility() ) { //Page is hidden
+		if ( getPageVisibility() ){ //Page is hidden
 			jQuery(document).trigger('nebula_page_hidden');
 			jQuery('body').addClass('page-visibility-hidden');
 			jQuery('iframe.youtubeplayer').each(function(){
@@ -1397,22 +1379,22 @@ function pageVisibility(){
 			//@TODO "Nebula" 0: pause vimeo
 			visFirstHidden = 1;
 			visTimerBefore = (new Date()).getTime();
-			var pageTitle = pageDocument.attr('title');
+			var pageTitle = thisPage.document.attr('title');
 			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1}); //@TODO: Page Visibility Hidden event tracking is off by default. Uncomment to enable.
 		} else { //Page is visible
-			if ( visFirstHidden == 1 ) {
+			if ( visFirstHidden == 1 ){
 				jQuery(document).trigger('nebula_page_visible');
 				jQuery('body').removeClass('page-visibility-hidden');
 				var visTimerAfter = (new Date()).getTime();
 				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
-				var pageTitle = pageDocument.attr('title');
+				var pageTitle = thisPage.document.attr('title');
 				//ga('send', 'event', 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)', {'nonInteraction': 1}); //@TODO "Nebula" 0: Page Visibility Visible event tracking is off by default. Uncomment to enable.
 			}
 		}
 	}
 
 	function getPageVisibility(){
-		if ( typeof document.hidden != "undefined" ) {
+		if ( typeof document.hidden !== "undefined" ){
 			return document.hidden;
 		} else {
 			return false;
@@ -1428,7 +1410,7 @@ function cFormLocalStorage(){
 			cForm7Message.val(localStorage.getItem('global_cform_message'));
 	    });
 
-	    pageWindow.bind('storage',function(e){
+	    thisPage.window.bind('storage',function(e){
 	    	cForm7Message.val(localStorage.getItem('global_cform_message'));
 	    });
 
@@ -1440,8 +1422,8 @@ function cFormLocalStorage(){
 
 function checkCformLocalStorage(){
 	var cForm7Message = jQuery('.cform7-message');
-	if ( typeof localStorage.getItem('global_cform_message') !== 'undefined' && localStorage.getItem('global_cform_message') != 'undefined' ) {
-		if ( cForm7Message.val() != '' ) {
+	if ( typeof localStorage.getItem('global_cform_message') !== 'undefined' && typeof localStorage.getItem('global_cform_message') !== 'undefined' ){
+		if ( cForm7Message.val() != '' ){
 			localStorage.setItem('global_cform_message', cForm7Message.val());
 			cForm7Message.val(localStorage.getItem('global_cform_message'));
 		} else {
@@ -1456,7 +1438,7 @@ function checkCformLocalStorage(){
 //@TODO "Nebula" 0: This should be optimized or (better yet) use a 3rd party library. Must validate in real-time.
 function cFormPreValidator(){
 	jQuery('.cform7-text').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
+		if ( jQuery(this).val() == '' ){
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
 			jQuery(this).removeClass('wpcf7-not-valid');
 		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
@@ -1467,7 +1449,7 @@ function cFormPreValidator(){
 		}
 	});
 	jQuery('.cform7-name').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
+		if ( jQuery(this).val() == '' ){
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
 			jQuery(this).removeClass('wpcf7-not-valid').attr('placeholder', 'Your Name*');
 		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
@@ -1478,7 +1460,7 @@ function cFormPreValidator(){
 		}
 	});
 	jQuery('.cform7-email').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
+		if ( jQuery(this).val() == '' ){
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
 			jQuery(this).removeClass('wpcf7-not-valid');
 			jQuery(this).attr('placeholder', 'Email Address*');
@@ -1531,21 +1513,21 @@ function cFormPreValidator(){
 			var checkMonth = jQuery(this).val().substr(0, 2);
 			var checkDay = jQuery(this).val().substr(3, 2);
 			var checkYear = jQuery(this).val().substr(jQuery(this).val().length - 4);
-			if ( checkYear != '____' ) {
+			if ( checkYear != '____' ){
 				if ( checkYear < 1900 || checkYear > currentYear){
 					jQuery(this).parent().parent().removeClass('success').addClass('badyear');
 				} else {
 					jQuery(this).parent().parent().removeClass('badyear');
 				}
 			}
-			if ( checkMonth != '__' ) {
+			if ( checkMonth != '__' ){
 				if ( checkMonth < 1 || checkMonth > 12){
 					jQuery(this).parent().parent().removeClass('success').addClass('badmonth');
 				} else {
 					jQuery(this).parent().parent().removeClass('badmonth');
 				}
 			}
-			if ( checkDay != '__' ) {
+			if ( checkDay != '__' ){
 				if ( checkDay < 1 || checkDay > 31){
 					jQuery(this).parent().parent().removeClass('success').addClass('badday');
 				} else {
@@ -1556,11 +1538,11 @@ function cFormPreValidator(){
 			if ( checkYear == '____' && checkMonth == '__' && checkDay == '__' ){
 				jQuery(this).parent().parent().removeClass('success').removeClass('danger').removeClass('badyear').removeClass('badmonth').removeClass('badday');
 			}
-			if ( jQuery(this).parent().parent().hasClass('badmonth') ) {
+			if ( jQuery(this).parent().parent().hasClass('badmonth') ){
 				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else if ( jQuery(this).parent().parent().hasClass('badday') ) {
+			} else if ( jQuery(this).parent().parent().hasClass('badday') ){
 				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else if ( jQuery(this).parent().parent().hasClass('badyear') ) {
+			} else if ( jQuery(this).parent().parent().hasClass('badyear') ){
 				jQuery(this).parent().parent().removeClass('success').addClass('danger');
 			} else {
 				jQuery(this).parent().parent().removeClass('danger');
@@ -1568,7 +1550,7 @@ function cFormPreValidator(){
 		});
 	} //Close of if phone or bday input exists
 	jQuery('.cform7-message').keyup(function(){
-		if ( jQuery(this).val() == '' ) {
+		if ( jQuery(this).val() == '' ){
 			jQuery(this).parent().parent().removeClass('danger');
 			jQuery(this).parent().parent().removeClass('warning');
 			jQuery(this).removeClass('wpcf7-not-valid');
@@ -1585,7 +1567,7 @@ function cFormPreValidator(){
 	jQuery('.cform7-message').blur(function(){
 		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
 			jQuery(this).parent().parent().removeClass('warning').addClass('danger');
-		} else if ( jQuery(this).val() == '' ) {
+		} else if ( jQuery(this).val() == '' ){
 			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
 		} else {
 			jQuery(this).parent().parent().removeClass('danger').addClass('success');
@@ -1604,7 +1586,7 @@ function cFormPreValidator(){
 			reqFieldsEmpty++;
 		}
 	});
-	if ( reqFieldsEmpty > 0 ) {
+	if ( reqFieldsEmpty > 0 ){
 		jQuery('#cform7-container').parent().find('.wpcf7-submit').addClass('disallowed');
 	} else {
 		jQuery('#cform7-container').parent().find('.wpcf7-submit').removeClass('disallowed');
@@ -1614,12 +1596,12 @@ function cFormPreValidator(){
 		var dangers = 0;
 		jQuery("#cform7-container li.danger").each(function(){
 		var cl = jQuery(this).attr("class");
-			if(!obj[cl]) {
+			if ( !obj[cl] ){
 				obj[cl] = {};
 				dangers++;
 				}
 			});
-		if ( dangers > 0 ) {
+		if ( dangers > 0 ){
 			jQuery(this).parent().find('.wpcf7-submit').addClass('disallowed').addClass('notallowed');
 		} else {
 			jQuery(this).parent().find('.wpcf7-submit').removeClass('disallowed').removeClass('notallowed');
@@ -1699,7 +1681,7 @@ function checkCommentVal(oThis){
 
 function nebulaScrollTo(){
 	var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
-	pageDocument.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
+	thisPage.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
 			var target = jQuery(this.hash);
@@ -1714,7 +1696,7 @@ function nebulaScrollTo(){
 		}
 	});
 
-	pageDocument.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
+	thisPage.document.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scrollto');
@@ -1736,9 +1718,16 @@ function browserInfo(){
 		browserInfoVal += 'http://udger.com/resources/online-parser\n\n';
 	}
 
-	browserInfoVal += 'HTML Classes: ' + pageHTML.attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Body Classes: ' + pageBody.attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Viewport Size: ' + pageWindow.width() + 'px x ' + pageWindow.height() + 'px ' + '\n\n';
+	if ( typeof clientinfo !== 'undefined' ){
+		var fullDevice = ( clientinfo.device.full.trim() )? ' (' + clientinfo.device.full + ')' : '';
+		browserInfoVal += 'Device: ' + clientinfo.device.type + fullDevice + '\n';
+		browserInfoVal += 'Operating System: ' + clientinfo.os.full + '\n';
+		browserInfoVal += 'Browser: ' + clientinfo.browser.full + ' (' + clientinfo.browser.engine + ')\n\n';
+	}
+
+	browserInfoVal += 'HTML Classes: ' + thisPage.html.attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Body Classes: ' + thisPage.body.attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Viewport Size: ' + thisPage.window.width() + 'px x ' + thisPage.window.height() + 'px ' + '\n\n';
 
 	if ( typeof performance !== 'undefined' ){
 		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
@@ -1859,7 +1848,7 @@ function checkNotificationPermission(){
 	return false;
 }
 
-function nebulaVibrate(pattern) {
+function nebulaVibrate(pattern){
 	if ( typeof pattern === 'undefined' ){
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	} else if ( typeof pattern !== 'object' ){
@@ -1871,7 +1860,7 @@ function nebulaVibrate(pattern) {
 	return false;
 }
 
-function checkVibration() {
+function checkVibration(){
 	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 	if ( !(Vibration) ){
 		return false;
@@ -1892,7 +1881,7 @@ function debounce(callback, wait, uniqueId, immediate){
     var context = this, args = arguments;
     var later = function(){
         debounceTimers[uniqueId] = null;
-        if ( !immediate ) {
+        if ( !immediate ){
 	        callback.apply(context, args);
 	    }
     };
@@ -1912,7 +1901,7 @@ function debounce(callback, wait, uniqueId, immediate){
 function conditionalJSLoading(){
 
 	//Only load bxslider library on a page that calls bxslider.
-	if ( jQuery('.bxslider').is('*') ) {
+	if ( jQuery('.bxslider').is('*') ){
 		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js').done(function(){
 			bxSlider();
 		}).fail(function(){
@@ -1922,7 +1911,7 @@ function conditionalJSLoading(){
 	}
 
 	//Only load maskedinput.js library if phone or bday field exists.
-	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ) {
+	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ){
 		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js').done(function(){
 			cFormPreValidator();
 		}).fail(function(){
@@ -1933,7 +1922,7 @@ function conditionalJSLoading(){
 	}
 
 	//Only load Chosen library if 'chosen-select' class exists.
-	if ( jQuery('.chosen-select').is('*') ) {
+	if ( jQuery('.chosen-select').is('*') ){
 		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
 			chosenSelectOptions();
 		}).fail(function(){
@@ -1943,7 +1932,7 @@ function conditionalJSLoading(){
 	}
 
 	//Only load dataTables library if dataTables table exists.
-    if ( jQuery('.dataTables_wrapper').is('*') ) {
+    if ( jQuery('.dataTables_wrapper').is('*') ){
         jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/js/jquery.dataTables.min.js').done(function(){
             jQuery.getScript('https://cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js').fail(function(){ //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
                 ga('send', 'event', 'Error', 'JS Error', 'dataTables.responsive.js could not be loaded', {'nonInteraction': 1});
@@ -2000,7 +1989,7 @@ function chosenSelectOptions(){
 }
 
 function dataTablesActions(){
-	pageDocument.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
+	thisPage.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
 	    //console.log('keyup: ' + jQuery(this).val());
 	    //jQuery('.dataTables_wrapper').removeHighlight();
 	    //jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
@@ -2040,7 +2029,7 @@ function bxSlider(){
 }
 
 function vimeoControls(){
-	if ( jQuery('.vimeoplayer').is('*') ) {
+	if ( jQuery('.vimeoplayer').is('*') ){
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
@@ -2106,7 +2095,7 @@ function readCookie(name){
 	var ca = document.cookie.split(';');
 	for ( var i = 0; i < ca.length; i++ ){
 		var c = ca[i];
-		while (c.charAt(0) == ' ') {
+		while ( c.charAt(0) == ' ' ){
 			c = c.substring(1, c.length);
 			if ( c.indexOf(nameEQ) == 0 ){
 				return c.substring(nameEQ.length, c.length);
@@ -2179,12 +2168,12 @@ function nebula_pre(){
 		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>');
 	});
 
-	pageDocument.on('click touch tap', '.nebula-selectcopy-code', function(){
+	thisPage.document.on('click touch tap', '.nebula-selectcopy-code', function(){
 	    oThis = jQuery(this);
 
-	    if ( jQuery(this).text() == 'Copy to clipboard' ) {
+	    if ( jQuery(this).text() == 'Copy to clipboard' ){
 		    selectText(jQuery(this).parents('.nebula-pre-con').find('pre'), 'copy', function(success){
-			    if ( success ) {
+			    if ( success ){
 				    oThis.text('Copied!').removeClass('error').addClass('success');
 				    setTimeout(function(){
 					    oThis.text('Copy to clipboard').removeClass('success');
@@ -2201,7 +2190,7 @@ function nebula_pre(){
 		    });
 	    } else {
 		    selectText(jQuery(this).parents('.nebula-pre-con').find('pre'), function(success){
-			    if ( success ) {
+			    if ( success ){
 				    oThis.text('Selected!').removeClass('error').addClass('success');
 				    setTimeout(function(){
 					    oThis.text('Select All').removeClass('success');
@@ -2455,8 +2444,8 @@ function successCallback(position){
 		nebulaLocation.accuracy.color = '#ff0000';
 	}
 
-	pageDocument.trigger('geolocationSuccess');
-	pageBody.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebulaLocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebulaLocation.accuracy.meters.toFixed(0).replace('.', ''));
+	thisPage.document.trigger('geolocationSuccess');
+	thisPage.body.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebulaLocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebulaLocation.accuracy.meters.toFixed(0).replace('.', ''));
 	browserInfo();
 	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters');
 }
@@ -2485,8 +2474,8 @@ function errorCallback(error){
 	    }
     }
 
-    pageDocument.trigger('geolocationError');
-    pageBody.addClass('geo-error');
+    thisPage.document.trigger('geolocationError');
+    thisPage.body.addClass('geo-error');
 	browserInfo();
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }

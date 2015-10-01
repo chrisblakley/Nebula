@@ -109,6 +109,14 @@
     name: 'Baidu'
     url: 'http://www.baidu.com'
 
+- regex: 'BazQux'
+  name: 'BazQux Reader'
+  url: 'https://bazqux.com/fetcher'
+  category: 'Feed Fetcher'
+  producer:
+    name: ''
+    url: ''
+
 - regex: 'MSNBot|msrbot|bingbot|BingPreview|msnbot-(UDiscovery|NewsBlogs)|adidxbot'
   name: 'BingBot'
   category: 'Search bot'
@@ -292,6 +300,14 @@
   producer:
     name: ''
     url: ''
+
+- regex: 'Feed Wrangler'
+  name: 'Feed Wrangler'
+  url: 'https://feedwrangler.net/'
+  category: 'Feed Fetcher'
+  producer:
+    name: 'David Smith & Developing Perspective, LLC'
+    url: 'https://david-smith.org'
 
 - regex: '(Meta)?Feedly(Bot|App)?'
   name: 'Feedly'
@@ -541,6 +557,14 @@
     name: 'OpenWebSpider Lab'
     url: 'http://lab.openwebspider.org'
 
+- regex: 'OrangeBot|VoilaBot'
+  name: 'Orange Bot'
+  category: 'Search bot'
+  url: 'http://lemoteur.orange.fr'
+  producer:
+    name: 'Orange'
+    url: 'http://www.orange.fr'
+
 - regex: 'PaperLiBot'
   name: 'PaperLiBot'
   category: 'Search bot'
@@ -789,14 +813,6 @@
     name: 'Alentum Software Ltd.'
     url: 'http://www.alentum.com'
 
-- regex: 'VoilaBot'
-  name: 'Voila Bot'
-  category: 'Search bot'
-  url: 'http://www.voila.fr'
-  producer:
-    name: ''
-    url: ''
-
 - regex: 'Jigsaw'
   name: 'W3C CSS Validator'
   category: 'Validator'
@@ -881,6 +897,14 @@
   name: 'Yahoo! Slurp'
   category: 'Search bot'
   url: 'http://help.yahoo.com/ysearch/slurp'
+  producer:
+    name: 'Yahoo! Inc.'
+    url: 'http://www.yahoo.com'
+
+- regex: 'Yahoo Link Preview'
+  name: 'Yahoo Link Preview'
+  category: 'Crawler'
+  url: 'https://help.yahoo.com/kb/mail/yahoo-link-preview-SLN23615.html'
   producer:
     name: 'Yahoo! Inc.'
     url: 'http://www.yahoo.com'

@@ -40,7 +40,7 @@ if ( nebula_wireframing_enabled() ){
 //Top header for each component
 function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
-	if ( !nebula_option('nebula_wireframing', 'disabled') ){
+	if ( !nebula_wireframing_enabled() ){
 		return false;
 	}
 
@@ -66,7 +66,7 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
 //Top header for each component (with opening .fpo div)
 function fpo_component_start($component='Component', $icon='fa-cube'){
-	if ( !nebula_option('nebula_wireframing', 'disabled') ){
+	if ( !nebula_wireframing_enabled() ){
 		return false;
 	}
 	fpo_component($component, $icon, '');
@@ -75,7 +75,7 @@ function fpo_component_start($component='Component', $icon='fa-cube'){
 
 //Closes .fpo div (from fpo_component_start)
 function fpo_component_end(){
-	if ( !nebula_option('nebula_wireframing', 'disabled') ){
+	if ( !nebula_wireframing_enabled() ){
 		return false;
 	}
 	echo '</div><!-- /fpo -->';

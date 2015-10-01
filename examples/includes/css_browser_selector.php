@@ -42,3 +42,160 @@ div.cssbs {position: relative; display: table; height: 150px; min-width: 300px; 
 		<div class="cssbs"></div>
 	</div><!--/columns-->
 </div><!--/row-->
+
+<br/><br/><hr/><br/><br/>
+<?php
+	$browsers = json_decode(gzdecode(file_get_contents('https://analytics.usa.gov/data/live/browsers.json')));
+	$ie = json_decode(gzdecode(file_get_contents('https://analytics.usa.gov/data/live/ie.json')));
+	$devices = json_decode(gzdecode(file_get_contents('https://analytics.usa.gov/data/live/devices.json')));
+	$operating_systems = json_decode(gzdecode(file_get_contents('https://analytics.usa.gov/data/live/os.json')));
+	$windows = json_decode(gzdecode(file_get_contents('https://analytics.usa.gov/data/live/windows.json')));
+
+	//Create market_share array structure
+	$market_share = array(
+		'totals' => array(
+			'browsers' => array(
+				'all' => $browsers->totals->visits,
+				'ie' => $ie->totals->visits,
+			),
+			'devices' => $devices->totals->visits,
+			'os' => array(
+				'all' => $operating_systems->totals->visits,
+				'windows' => $operating_systems->totals->visits,
+			),
+		),
+		'browsers' => array(),
+		'devices' => array(),
+		'os' => array(),
+	);
+
+	//Add browsers to $market_share array
+	if ( !empty($market_share['totals']['browsers']['all']) ){
+		foreach ( $browsers->totals->browser as $browser => $visits ){
+			$market_share['browsers'][$browser] = array(
+				'total' => $visits,
+				'percent' => round(($visits/$market_share['totals']['browsers']['all'])*100, 2)
+			);
+		}
+	}
+
+	//Add IE to browser $market_share array
+	if ( !empty($market_share['totals']['browsers']['ie']) ){
+		foreach ( $ie->totals->ie_version as $ie_version => $visits ){
+			$market_share['browsers']['Internet Explorer']['IE ' . str_replace('.0', '', $ie_version)] = array(
+				'total' => $visits,
+				'ie percent' => round(($visits/$market_share['totals']['browsers']['ie'])*100, 2),
+				'percent' => round(($visits/$market_share['totals']['browsers']['all'])*100, 2),
+			);
+		}
+	}
+
+	//Add devices to $market_share array
+	if ( !empty($market_share['totals']['devices']) ){
+		foreach ( $devices->totals->devices as $device => $visits ){
+			$market_share['devices'][$device] = array(
+				'total' => $visits,
+				'percent' => round(($visits/$market_share['totals']['devices'])*100, 2)
+			);
+		}
+	}
+
+	//Add OS to $market_share array
+	if ( !empty($market_share['totals']['os']['all']) ){
+		foreach ( $operating_systems->totals->os as $os => $visits ){
+			$market_share['os'][$os] = array(
+				'total' => $visits,
+				'percent' => round(($visits/$market_share['totals']['os']['all'])*100, 2)
+			);
+		}
+	}
+
+	//Add Windows to OS $market_share array
+	if ( !empty($market_share['totals']['os']['windows']) ){
+		foreach ( $windows->totals->os_version as $windows_version => $visits ){
+			$market_share['os']['Windows']['Windows ' . $windows_version] = array(
+				'total' => $visits,
+				'windows percent' => round(($visits/$market_share['totals']['os']['windows'])*100, 2),
+				'percent' => round(($visits/$market_share['totals']['os']['all'])*100, 2),
+			);
+		}
+	}
+
+	echo 'Market Share Data (Provided by analytics.usa.gov)';
+	echo do_shortcode('[pre]' . json_encode($market_share, JSON_PRETTY_PRINT) . '[/pre]');
+?>
+<br/><br/><hr/><br/><br/>
+
+<?php
+	//Sort browsers by percent
+?>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/data.js"></script>
+<script src="http://code.highcharts.com/modules/drilldown.js"></script>
+<script>
+	jQuery('#container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Browser market shares'
+        },
+        subtitle: {
+            text: 'Click the IE column to view versions.'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Market share (%)'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}%'
+                }
+            }
+        },
+        series: [{
+            name: "Browser",
+            colorByPoint: true,
+            data: [
+	            <?php foreach ( $market_share['browsers'] as $browser => $value ): ?>
+					<?php if ( $value['percent'] < 0.8 ){ continue; } ?>
+					{
+						name: "<?php echo $browser; ?>",
+						y: <?php echo $value['percent']; ?>,
+						drilldown: "<?php echo $browser; ?>"
+					},
+		        <?php endforeach; ?>
+            ]
+        }],
+        drilldown: {
+            series: [{
+                name: "Internet Explorer",
+                id: "Internet Explorer",
+                data: [
+		            <?php foreach ( $market_share['browsers']['Internet Explorer'] as $version => $value ): ?>
+						<?php if ( $version == 'total' || $version == 'percent' ){ continue; } ?>
+						[
+							"<?php echo $version; ?>",
+							<?php echo $value['ie percent']; ?>
+						],
+			        <?php endforeach; ?>
+	            ]
+            }]
+        }
+    });
+</script>
+
+<br/><br/><hr/><br/><br/>

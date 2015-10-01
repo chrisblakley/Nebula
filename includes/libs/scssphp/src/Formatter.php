@@ -58,13 +58,11 @@ abstract class Formatter
     /**
      * Return indentation (whitespace)
      *
-     * @param integer $n
-     *
      * @return string
      */
-    protected function indentStr($n = 0)
+    protected function indentStr()
     {
-        return str_repeat($this->indentChar, max($this->indentLevel + $n, 0));
+        return '';
     }
 
     /**
@@ -92,16 +90,44 @@ abstract class Formatter
     /**
      * Output lines inside a block
      *
-     * @param string    $inner
      * @param \stdClass $block
      */
-    protected function blockLines($inner, $block)
+    protected function blockLines($block)
     {
+        $inner = $this->indentStr();
+
         $glue = $this->break . $inner;
+
         echo $inner . implode($glue, $block->lines);
 
         if (! empty($block->children)) {
             echo $this->break;
+        }
+    }
+
+    /**
+     * Output block selectors
+     *
+     * @param \stdClass $block
+     */
+    protected function blockSelectors($block)
+    {
+        $inner = $this->indentStr();
+
+        echo $inner
+            . implode($this->tagSeparator, $block->selectors)
+            . $this->open . $this->break;
+    }
+
+    /**
+     * Output block children
+     *
+     * @param \stdClass $block
+     */
+    protected function blockChildren($block)
+    {
+        foreach ($block->children as $child) {
+            $this->block($child);
         }
     }
 
@@ -116,24 +142,20 @@ abstract class Formatter
             return;
         }
 
-        $inner = $pre = $this->indentStr();
+        $pre = $this->indentStr();
 
         if (! empty($block->selectors)) {
-            echo $pre
-                . implode($this->tagSeparator, $block->selectors)
-                . $this->open . $this->break;
+            $this->blockSelectors($block);
 
             $this->indentLevel++;
-
-            $inner = $this->indentStr();
         }
 
         if (! empty($block->lines)) {
-            $this->blockLines($inner, $block);
+            $this->blockLines($block);
         }
 
-        foreach ($block->children as $child) {
-            $this->block($child);
+        if (! empty($block->children)) {
+            $this->blockChildren($block);
         }
 
         if (! empty($block->selectors)) {

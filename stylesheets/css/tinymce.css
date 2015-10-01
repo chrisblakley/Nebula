@@ -1,4 +1,4 @@
- hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background:#fff; background:#fff; margin:3px 0; padding:0; }
+ hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background:#fff; background:rgba(255, 255, 255, 1); margin:3px 0; padding:0; }
 
  .rgba hr { display:block; height:1px; border:0; margin:3px 0; padding:0; /* mix-blend-mode: screen; */ }
 

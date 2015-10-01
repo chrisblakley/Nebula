@@ -17,7 +17,11 @@ $media_queries: (
 	tablet_landscape: "only screen and (max-width: 1023px)",
 	tablet: "only screen and (max-width: 767px)",
 	mobile_landscape: "only screen and (max-width: 668px)",
-	mobile: "only screen and (max-width: 376px)"
+	mobile: "only screen and (max-width: 376px)",
+	xl: "(min-width: 75em)", //Bootstrap 4 Defaults //@TODO "Nebula" 0: Confirm these media queries.
+	lg: "(min-width: 62em)", //Bootstrap 4 Defaults //@TODO "Nebula" 0: Confirm these media queries.
+	md: "(min-width: 48em)", //Bootstrap 4 Defaults //@TODO "Nebula" 0: Confirm these media queries.
+	sm: "(min-width: 34em)", //Bootstrap 4 Defaults //@TODO "Nebula" 0: Confirm these media queries.
 );
 
 $danger_color: #ca3838 !default;

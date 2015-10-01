@@ -97,6 +97,28 @@ function check_referrer(){
 	}
 }
 
+//Track Notable Bots
+add_action('wp_footer', 'track_notable_bots');
+function track_notable_bots(){
+	//Google Page Speed
+	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
+		$protocol = stripos($_SERVER['SERVER_PROTOCOL'], 'https') === true ? 'https://' : 'http://';
+		$currentURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+		if ( strpos($currentURL, ".js") !== false ){
+			exit();
+		}
+		global $post;
+		ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID));
+	}
+
+	//Internet Archive Wayback Machine
+	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
+		global $post;
+		ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID));
+	}
+}
+
 //Check referrer for known spambots and blacklisted domains
 //Traffic will be sent a 403 Forbidden error and never be able to see the site.
 //Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering).
