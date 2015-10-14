@@ -2,7 +2,7 @@ jQuery.noConflict();
 jQuery(document).on('ready', function(){
 
 	getQueryStrings();
-	if ( GET('killall') || GET('kill') || GET('die') ){
+	if ( get('killall') || get('kill') || get('die') ){
 		throw ' (Manually terminated admin.js)';
 	}
 
@@ -108,16 +108,10 @@ jQuery(document).on('ready', function(){
 
 	//Hide TODO files with only hidden items
 	jQuery('.todofilewrap').each(function(){
-		if ( jQuery(this).find('.linewrap').length == jQuery(this).find('.hidden_todo').length ) {
-			jQuery(this).addClass('hidden_file').css('display', 'none');
+		if ( jQuery(this).find('.linewrap').length == jQuery(this).find('.todo-priority-0').length ) {
+			jQuery(this).addClass('hidden');
 		}
 	});
-
-	jQuery('.togglehiddentodos').on('click tap touch', function(){
-		jQuery('.hidden_todo, .hidden_file').toggleClass('show-hidden-todos');
-		return false;
-	});
-
 
 	//Detect external links in the TinyMCE link modal (to check the "new window" box).
 	linkTargetUsered = 0;
@@ -230,7 +224,7 @@ function getQueryStrings(){
 }
 
 //Search query strings for the passed parameter
-function GET(query){
+function get(query){
 	if ( !query ){
 		return queries;
 	} else {

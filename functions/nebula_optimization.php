@@ -3,6 +3,16 @@
 //Add IE compatibility header
 header("X-UA-Compatible: IE=edge");
 
+//Extend registering scripts to include async/defer executions (used by the nebula_defer_async_scripts() funtion)
+function nebula_register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
+	if ( !is_debug() ){
+		$path = ( !empty($exec) )? $src . '?' . $exec : $src;
+	} else {
+		$path = $src;
+	}
+	wp_register_script($handle, $path, $deps, $ver, $in_footer);
+}
+
 //Control which scripts use defer/async using a query string.
 //Note: Not an ideal solution, but works until WP Core updates wp_enqueue_script(); to allow for deferring.
 add_filter('clean_url', 'nebula_defer_async_scripts', 11, 1);

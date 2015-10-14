@@ -866,7 +866,7 @@ function nebula_render_scss($specific_scss=null){
 		$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
 	}
 
-	if ( empty($specific_scss) ){
+	if ( empty($specific_scss) || $specific_scss == 'all' ){
 		$latest_partial = 0;
 		foreach ( glob(get_template_directory() . '/stylesheets/scss/partials/*') as $partial_file ){
 			if ( filemtime($partial_file) > $latest_partial ){
@@ -881,7 +881,8 @@ function nebula_render_scss($specific_scss=null){
 				$file_counter++;
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css' : get_template_directory() . '/stylesheets/css/' . $file_path_info['filename'] . '.css';
 
-				if ( is_debug() || !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) ){ //If .css file doesn't exist, or is older than .scss file (or any partial)
+				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $specific_scss == 'all' ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
+					ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
 					$existing_css_contents = ( file_exists($css_filepath) )? file_get_contents($css_filepath) : '';
 					if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
 						$this_scss_contents = file_get_contents($file); //Copy SCSS file contents

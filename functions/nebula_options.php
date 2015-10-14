@@ -56,13 +56,13 @@ function nebula_google_font_option(){
 	} elseif ( get_option('nebula_google_font_family') ) {
 		$google_font_family = preg_replace('/ /', '+', get_option('nebula_google_font_family', 'Open Sans'));
 		$google_font_weights = preg_replace('/ /', '', get_option('nebula_google_font_weights', '400,800'));
-		$google_font = 'http://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights;
+		$google_font = 'https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights;
 		$google_font_contents = @file_get_contents($google_font); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
 		if ( $google_font_contents !== false ){
 			return $google_font;
 		}
 	} else {
-		return 'http://fonts.googleapis.com/css?family=Open+Sans:400,800';
+		return 'https://fonts.googleapis.com/css?family=Open+Sans:400,800';
 	}
 }
 
@@ -168,6 +168,8 @@ function register_nebula_options(){
 		'nebula_twitter_bearer_token' => '',
 		'nebula_instagram_user_id' => '',
 		'nebula_instagram_access_token' => '',
+		'nebula_instagram_client_id' => '',
+		'nebula_instagram_client_secret' => '',
 
 		//Administration Tab
 		'nebula_dev_ip' => '',
@@ -782,7 +784,9 @@ function nebula_options_page(){
 					<td>
 						User ID: <input type="text" name="nebula_instagram_user_id" value="<?php echo get_option('nebula_instagram_user_id'); ?>" placeholder="00000000" style="width: 296px;"/><br />
 						Access Token: <input type="text" name="nebula_instagram_access_token" value="<?php echo get_option('nebula_instagram_access_token'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br />
-						<p class="helper"><small>The user ID and access token are used for creating custom Instagram feeds. Here are instructions for <a href="http://www.otzberg.net/iguserid/" target="_blank">finding your User ID</a>, or <a href="http://jelled.com/instagram/access-token" target="_blank">generating your access token</a>. <a href="https://smashballoon.com/instagram-feed/token/" target="_blank">This tool can retrieve both at once</a> by connecting to your Instagram account.</small></p>
+						Client ID: <input type="text" name="nebula_instagram_client_id" value="<?php echo get_option('nebula_instagram_client_id'); ?>" placeholder="00000000" style="width: 296px;"/><br />
+						Client Secret: <input type="text" name="nebula_instagram_client_secret" value="<?php echo get_option('nebula_instagram_client_secret'); ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br />
+						<p class="helper"><small>The user ID and access token are used for creating custom Instagram feeds. Here are instructions for <a href="http://www.otzberg.net/iguserid/" target="_blank">finding your User ID</a>, or <a href="http://jelled.com/instagram/access-token" target="_blank">generating your access token</a>. <a href="https://smashballoon.com/instagram-feed/token/" target="_blank">This tool can retrieve both at once</a> by connecting to your Instagram account.<br />For client ID and client secret, register an application using the <a href="https://instagram.com/developer/" target="_blank">Instagram API</a> platform then Register a new Client ID.</small></p>
 					</td>
 		        </tr>
 

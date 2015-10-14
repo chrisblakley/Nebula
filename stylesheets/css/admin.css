@@ -1,4 +1,9 @@
- hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background:#fff; background:rgba(255, 255, 255, 1); margin:3px 0; padding:0; }
+ /*
+ .element {
+ @include yep(opacity, csstransforms){opacity: 0; transform: translateX(10px);}
+ @include nope(opacity, csstransforms){visibility: hidden; left: 10px;}
+ }
+ */ hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background:#fff; background:rgba(255, 255, 255, 1); margin:3px 0; padding:0; }
 
  .rgba hr { display:block; height:1px; border:0; margin:3px 0; padding:0; /* mix-blend-mode: screen; */ }
 
@@ -480,15 +485,25 @@
 
  #todo_manager .todo_results .todofilewrap .todofilename { font-size:12px; margin:0; }
 
- #todo_manager .todo_results .todofilewrap .todoresult { font-size:10px; margin:0; padding:0; }
+ #todo_manager .todo_results .todofilewrap .linewrap .todocategory { background:#ccc; color:#fff; padding:0 5px; text-align:center; border-radius:10px; text-transform:uppercase; font-size:8px; }
 
- #todo_manager .todo_results .todofilewrap .todoresult .todocategory { background:#ccc; color:#fff; padding:0 5px; text-align:center; border-radius:10px; text-transform:uppercase; font-size:8px; }
+ #todo_manager .todo_results .todofilewrap .linewrap .todocategory i { color:#ccc; }
 
- #todo_manager .todo_results .todofilewrap .todoresult .todocategory i { color:#ccc; }
+ #todo_manager .todo_results .todofilewrap .linewrap.todo-priority-5 .todocategory { background:#d92827 !important; }
 
- #todo_manager .hidden_todo,#todo_manager .hidden_file { display:none; }
+ #todo_manager .todo_results .todofilewrap .linewrap.todo-priority-4 .todocategory { background:#e38a2c; }
 
- #todo_manager .hidden_todo.show-hidden-todos,#todo_manager .hidden_file.show-hidden-todos { display:block !important; }
+ #todo_manager .todo_results .todofilewrap .linewrap.todo-priority-3 .todocategory { background:#dda65c; }
+
+ #todo_manager .todo_results .todofilewrap .linewrap.todo-priority-2 .todocategory { background:#d3bd9f; }
+
+ #todo_manager .todo_results .todofilewrap .linewrap.todo-priority-1 .todocategory,#todo_manager .todo_results .todofilewrap .linewrap.todo-priority- .todocategory { background:#ccc; }
+
+ #todo_manager .todo_results .todofilewrap .linewrap.todo-priority-0 { display:none; }
+
+ #todo_manager .todo_results .todofilewrap .linewrap.todo-priority-0 .todocategory { background:#0098d7; }
+
+ #todo_manager .todo_results .todofilewrap .linewrap .todoresult { font-size:10px; margin:0; padding:0; }
 
  .linenumber { font-weight:bold; }
 

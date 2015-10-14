@@ -159,16 +159,32 @@ th#id {width: 50px;}
 	.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 350px; resize: vertical;
 		.todofilewrap {margin-bottom: 10px;
 			.todofilename {font-size: 12px; margin: 0;}
-			.todoresult {font-size: 10px; margin: 0; padding: 0;
+			.linewrap {
 				.todocategory {background: #ccc; color: #fff; padding: 0 5px; text-align: center; border-radius: 10px; text-transform: uppercase; font-size: 8px;
 					i {color: #ccc;}
 				}
+				&.todo-priority-5 {
+					.todocategory {background: #d92827 !important;} //@todo: danger color
+				}
+				&.todo-priority-4 {
+					.todocategory {background: #e38a2c;}
+				}
+				&.todo-priority-3 {
+					.todocategory {background: #dda65c;}
+				}
+				&.todo-priority-2 {
+					.todocategory {background: #d3bd9f;}
+				}
+				&.todo-priority-1,
+				&.todo-priority- {
+					.todocategory {background: #ccc;}
+				}
+				&.todo-priority-0 {display: none;
+					.todocategory {background: #0098d7;} //@todo: primary color var
+				}
+				.todoresult {font-size: 10px; margin: 0; padding: 0;}
 			}
 		}
-	}
-	.hidden_todo,
-	.hidden_file {display: none;
-		&.show-hidden-todos {display: block !important;}
 	}
 }
 

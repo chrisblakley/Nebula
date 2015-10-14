@@ -2,7 +2,7 @@ jQuery.noConflict();
 jQuery(document).on('ready', function(){
 
 	getQueryStrings();
-	if ( GET('killall') || GET('kill') || GET('die') ){
+	if ( get('killall') || get('kill') || get('die') ){
 		throw ' (Manually terminated login.js)';
 	}
 
@@ -51,7 +51,7 @@ function getQueryStrings(){
 }
 
 //Search query strings for the passed parameter
-function GET(query){
+function get(query){
 	if ( !query ){
 		return queries;
 	} else {

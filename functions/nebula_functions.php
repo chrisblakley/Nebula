@@ -732,11 +732,7 @@ function nebula_manage($data){
 	if ( $data == 'edit' || $data == 'admin' ){
 		echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="fa fa-wrench"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="fa fa-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
 	} elseif ( $data == 'modified' || $data == 'mod' ){
-		if ( get_the_modified_author() ){
-			$manage_author = get_the_modified_author();
-		} else {
-			$manage_author = get_the_author();
-		}
+		$manage_author = ( get_the_modified_author() )? get_the_modified_author() : get_the_author();
 		echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . $manage_author . '</strong></span>';
 	} elseif ( $data == 'info' ){
 		if ( wp_attachment_is_image() ){

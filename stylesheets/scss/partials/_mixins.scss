@@ -56,10 +56,10 @@ $additional_queries: (
 	custom: "only screen and "
 );
 $all_media_queries: map-merge($media_queries, $additional_queries); //Combine $media_queries from /partials/_variables.scss and $additional_queries above.
-@mixin media($group, $custom_rule: ""){
+@mixin media($group, $custom: ""){
 	@each $name, $rule in $all_media_queries {
 		@if $group == $name {
-			@media #{$rule} #{$custom_rule} {& {@content}}
+			@media #{$rule} #{$custom} {& {@content}}
 		}
 	}
 }
@@ -118,6 +118,57 @@ $all_media_queries: map-merge($media_queries, $additional_queries); //Combine $m
 	}
 }
 
+/*
+	.element {
+		@include yep(opacity, csstransforms){opacity: 0; transform: translateX(10px);}
+		@include nope(opacity, csstransforms){visibility: hidden; left: 10px;}
+	}
+*/
+@mixin modernizr($features, $supports){
+	$everything-okay: true;
+	$prefix: if($supports, '', 'no-'); //Use the 'no-' prefix if checking for unsuported features (e.g. `.no-translate3d`)
+	$selector: if($supports, '', (unquote('.no-js'))); //Features selector: create a string if checking for supported features -or- create a list if checking for unsuported features
+	$placeholder: if($supports, '%yep', '%nope'); //The placeholder (e.g. `%yep-translate3d` or `%nope-opacity`)
+	@each $feature in $features { //Generate placeholder and selectors
+		@if ( type-of($feature) != string ){ //Making sure $feature is a string
+			$everything-okay: false;
+			@warn '`#{$feature} is not a string for `modernizr`';
+		} @else {
+			$placeholder: $placeholder + '-' + $feature; //Add feature name to the placeholder string (e.g. '%yep' + '-' + 'translate3d' or '%nope' + '-' + 'translate3d')
+			$new-selector: #{'.' + $prefix + $feature}; //Define the new selector string (e.g. `.translate3d` or `.no-translate3d`)
+			$selector: if($supports, $selector + $new-selector, append($selector, $new-selector, comma)); //Append the new selector (to the string if yep, to the list if nope)
+		}
+	}
+	@if ( $everything-okay == true ){
+		#{$placeholder} & {@content;}
+		@at-root #{$selector} {@extend #{$placeholder};}
+	}
+}
+@mixin yep($features...) { //modernizr alias
+	@include modernizr($features, $supports: true){@content;}
+}
+@mixin nope($features...) { //modernizr alias
+	@include modernizr($features, $supports: false){@content;}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ===========================
 // Functions
@@ -160,8 +211,10 @@ $easings: (
 	ease: 			"0.250, 0.100, 0.250, 1.000",
 	ease-in: 		"0.420, 0.000, 1.000, 1.000",
 	easeIn: 		"0.420, 0.000, 1.000, 1.000",
-	ease-in-out: 	"0.000, 0.000, 0.580, 1.000",
-	easeInOut: 		"0.000, 0.000, 0.580, 1.000",
+	ease-out: 		"0.000, 0.000, 0.580, 1.000",
+	easeOut: 		"0.000, 0.000, 0.580, 1.000",
+	ease-in-out: 	"0.420, 0.000, 0.580, 1.000",
+	easeInOut: 		"0.420, 0.000, 0.580, 1.000",
 	easeInQuad: 	"0.550, 0.085, 0.680, 0.530",
 	easeInCubic: 	"0.550, 0.055, 0.675, 0.190",
 	easeInQuart: 	"0.895, 0.030, 0.685, 0.220",
@@ -195,6 +248,8 @@ $all_easings: map-merge($easings, $custom_easings); //Combine $custom_easings fr
 	@each $name, $values in $all_easings {
 		@if $ease == $name {
 			@return cubic-bezier(unquote(#{$values}) unquote(#{$custom}));
+		} @else {
+			//@warn '#{$ease} not found in the easings map.';
 		}
 	}
 }

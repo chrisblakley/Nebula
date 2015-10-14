@@ -20,7 +20,6 @@
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json" /> <!-- Web App Manifest Icons/Settings -->
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
-		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 		<?php include_once('includes/metadata.php'); //All text components of metadata. ?>
 		<?php include_once('includes/metagraphics.php'); //All graphic components of metadata. ?>
 

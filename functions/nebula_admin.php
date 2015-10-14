@@ -62,19 +62,40 @@ if ( !nebula_admin_bar_enabled() ){
 	//Add the current page ID to the Admin Bar
 	add_action('admin_bar_menu', 'nebula_admin_bar_page_id', 800);
 	function nebula_admin_bar_page_id($wp_admin_bar){
-		if ( is_admin() ){
-			$new_content_node = $wp_admin_bar->get_node('view');
-			if ( $new_content_node ){
-				$new_content_node->title = 'View Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
-				$wp_admin_bar->add_node($new_content_node);
-			}
-		} else {
-			$new_content_node = $wp_admin_bar->get_node('edit');
-			if ( $new_content_node ){
-				$new_content_node->title = 'Edit Page <span style="font-size: 10px; color: #a0a5aa; color: rgba(240,245,250,.6);">(ID: ' . get_the_id() . ')</span>';
-				$wp_admin_bar->add_node($new_content_node);
-			}
+		$node_id = ( is_admin() )? 'view' : 'edit';
+		$new_content_node = $wp_admin_bar->get_node($node_id);
+		if ( $new_content_node ){
+			$new_content_node->title = ucfirst($node_id) . ' Page <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(ID: ' . get_the_id() . ')</span>';
+			$wp_admin_bar->add_node($new_content_node);
 		}
+
+		//Add created date under View/Edit node
+		//@TODO "Nebula" 0: get_the_author() is not working when in Admin
+		$wp_admin_bar->add_node(array(
+			'parent' => $node_id,
+			'id' => 'nebula-created',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-calendar-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Created: ' . get_the_date() . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . get_the_author() . ')</span>',
+			'href' => get_edit_post_link(),
+			'meta' => array('target' => '_blank')
+		));
+
+		//Add modified date under View/Edit node
+		if ( get_the_modified_date() != get_the_date() ){ //If the post has been modified
+			$manage_author = ( get_the_modified_author() )? get_the_modified_author() : get_the_author();
+			$wp_admin_bar->add_node(array(
+				'parent' => $node_id,
+				'id' => 'nebula-modified',
+				'title' => '<i class="nebula-admin-fa fa fa-fw fa-clock-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Modified: ' . get_the_modified_date() . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . $manage_author . ')</span>',
+				'href' => get_edit_post_link(),
+				'meta' => array('target' => '_blank')
+			));
+		}
+
+		/* @TODO "Nebula" 0: Other information to consider under the View/Edit node:
+			- Status (Published, Draft, etc)
+			- Visibility (Public)
+			- Revisions (count)
+		*/
 	}
 
 	//Add a link to Nebula Options on the Admin Bar
@@ -82,7 +103,7 @@ if ( !nebula_admin_bar_enabled() ){
 	function nebula_admin_bar_nebula_options($wp_admin_bar){
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula-options',
-			'title' => '<i class="fa fa-fw fa-cog" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240,245,250,.6); margin-right: 5px;"></i> Nebula Options',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-cog" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula Options',
 			'href' => get_admin_url() . 'themes.php?page=nebula_options'
 		));
 
@@ -228,7 +249,6 @@ if ( nebula_option('nebula_todo_metabox') ){
 		$todo_instance_counter = 0;
 		foreach ( glob_r($todo_dirpath . '/*') as $todo_file ){
 			$todo_counted = 0;
-			$todo_hidden = 0;
 			if ( is_file($todo_file) ){
 			    if ( strpos(basename($todo_file), '@TODO') !== false ){
 				    echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
@@ -236,47 +256,15 @@ if ( nebula_option('nebula_todo_metabox') ){
 				    $todo_counted = 1;
 			    }
 
-			    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'Mobile_Detect.php', 'device-detector', 'class-tgm-plugin-activation.php');
+			    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', '/includes/libs');
 			    if ( !contains(basename($todo_file), skip_extensions()) && !contains(basename($todo_file), $todo_skipFilenames) ){
 				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
-						$todo_hidden = 0;
-
 				        if ( stripos($todo_line, '@TODO') !== false ){
-				            $todo_actualLineNumber = $todo_lineNumber+1;
 							$the_full_todo = substr($todo_line, strpos($todo_line, "@TODO"));
 							$the_todo_meta = current(explode(":", $the_full_todo));
 
 							//Get the priority
 							preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
-							$todo_hidden = 0;
-							$the_todo_icon_color = '#999';
-							$todo_hidden_style = '';
-							$todo_hidden_class = '';
-							if ( !empty($the_todo_ints[0][0]) ){
-								switch ( true ){
-									case ( $the_todo_ints[0][0] >= 5 ) :
-										$the_todo_icon_color = '#ca3838';
-										break;
-									case ( $the_todo_ints[0][0] == 4 ) :
-										$the_todo_icon_color = '#e38a2c';
-										break;
-									case ( $the_todo_ints[0][0] == 3 ) :
-										$the_todo_icon_color = '#dda65c';
-										break;
-									case ( $the_todo_ints[0][0] == 2 ) :
-										$the_todo_icon_color = '#d3bd9f';
-										break;
-									case ( $the_todo_ints[0][0] == 1 ) :
-										$the_todo_icon_color = '#ccc';
-										break;
-									case ( $the_todo_ints[0][0] <= 0 ) :
-										$todo_hidden = 1;
-										$the_todo_icon_color = '#0098d7';
-										$todo_hidden_style = 'style="display: none;"';
-										$todo_hidden_class = 'hidden_todo';
-										break;
-								}
-							}
 
 							//Get the category
 							$the_todo_quote_check = '';
@@ -285,7 +273,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 							preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
 							if ( !empty($the_todo_quote_check[0][0]) ){
 								$the_todo_category = substr($the_todo_quote_check[0][0], 1, -1);
-								$the_todo_category_html = '<span class="todocategory" style="background: ' . $the_todo_icon_color . ';">' . $the_todo_category . '</span>';
+								$the_todo_category_html = '<span class="todocategory">' . $the_todo_category . '</span>';
 							}
 
 							//Get the message
@@ -301,7 +289,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 								echo '<div class="todofilewrap"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
 							}
 
-							echo '<div class="linewrap ' . $todo_hidden_class . '" ' . $todo_hidden_style . '><p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . $todo_actualLineNumber . '</a> <span class="todomessage">' . strip_tags($the_todo_message[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
+							echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_category)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_message[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
 
 							$todo_last_filename = $todo_this_filename;
 							$todo_instance_counter++;

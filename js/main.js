@@ -2,9 +2,9 @@ jQuery.noConflict();
 jQuery(document).on('ready', function(){
 
 	getQueryStrings();
-	if ( GET('killall') || GET('kill') || GET('die') ){
+	if ( get('killall') || get('kill') || get('die') ){
 		throw new Error('(Manually terminated inject.js)');
-	} else if ( GET('layout') ){
+	} else if ( get('layout') ){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
@@ -93,7 +93,7 @@ jQuery(window).on('load', function(){
 	jQuery('a, li, tr').removeClass('hover');
 	jQuery('html').addClass('loaded');
 
-	if ( typeof performance.timing !== 'undefined' ){
+	if ( typeof performance !== 'undefined' ){
 		setTimeout(function(){
 			var perceivedLoad = performance.timing.loadEventEnd-performance.timing.navigationStart;
 			var actualLoad = performance.timing.loadEventEnd-performance.timing.responseEnd;
@@ -155,7 +155,7 @@ function getQueryStrings(){
 }
 
 //Search query strings for the passed parameter
-function GET(query){
+function get(query){
 	if ( !query ){
 		return queries;
 	} else {
@@ -1299,8 +1299,8 @@ function singleResultDrawer(){
 function pageSuggestion(){
 	if ( thisPage.body.hasClass('search-no-results') || thisPage.body.hasClass('error404') ){
 		if ( nebula_options["nebula_cse_id"] != '' && nebula_options["nebula_google_browser_api_key"] != '' ){
-			if ( GET().length ){
-				var queryStrings = GET();
+			if ( get().length ){
+				var queryStrings = get();
 			} else {
 				var queryStrings = [''];
 			}
@@ -1719,7 +1719,7 @@ function browserInfo(){
 	}
 
 	if ( typeof clientinfo !== 'undefined' ){
-		var fullDevice = ( clientinfo.device.full.trim() )? ' (' + clientinfo.device.full + ')' : '';
+		var fullDevice = ( clientinfo.device.full.trim().length )? ' (' + clientinfo.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
 		browserInfoVal += 'Device: ' + clientinfo.device.type + fullDevice + '\n';
 		browserInfoVal += 'Operating System: ' + clientinfo.os.full + '\n';
 		browserInfoVal += 'Browser: ' + clientinfo.browser.full + ' (' + clientinfo.browser.engine + ')\n\n';

@@ -527,6 +527,10 @@ get_header(); ?>
 					include_once('includes/google_polygon_array_converter.php');
 				} ?>
 
+				<?php if ( is_page(2109) ){ //Custom SASS Mixins and Functions
+					include_once('includes/sass_mixins_functions.php');
+				} ?>
+
 				<?php if ( current_user_can('manage_options') ): ?>
 					<div class="container entry-manage">
 						<div class="row">

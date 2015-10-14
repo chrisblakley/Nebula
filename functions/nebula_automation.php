@@ -169,6 +169,8 @@ function nebula_activation(){
 			</p>
 		</div>
 	<?php else: ?>
+		<?php nebula_render_scss('all'); //Re-render all SCSS files. ?>
+
 		<?php if ( nebula_is_initialized_before() ): ?>
 			<div id='nebula-activate-success' class='updated'>
 				<p>
@@ -206,6 +208,7 @@ function nebula_initialization($standard=null){
 		nebula_initialization_default_settings();
 		nebula_initialization_delete_plugins();
 		nebula_initialization_set_install_date();
+		nebula_render_scss('all'); //Re-render all SCSS files.
 
 		if ( empty($standard) ){ //If AJAX initialization
 			echo '1';
@@ -315,7 +318,7 @@ function nebula_initialization_default_settings(){
 	update_option('timezone_string', 'America/New_York'); //Change Timezone
 	update_option('start_of_week', 0); //Start of the week to Sunday
 	update_option('permalink_structure', '/%postname%/'); //Set the permalink structure to be "pretty" style
-	update_option('', '');
+	update_option('default_ping_status', 'closed'); //Close pingbacks and trackbacks by default
 
 	//Prevent unecessary queries with widgets
 	add_option('widget_pages', array('_multiwidget' => 1));

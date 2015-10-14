@@ -158,7 +158,33 @@
 <hr />
 <br /><br />
 
+<!-- BG Image -->
+<div class="row">
+	<div class="sixteen columns">
+		<h2><strong>Background Image</strong></h2>
+		<p>Background placeholder images (useful for CSS) can be created using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function or the <?php echo do_shortcode('[code]fpo_bg_image()[/code]'); ?> function. This function must be placed in a style tag on the desired HTML element.</p>
 
+		<h2>Usage</h2>
+		<?php echo do_shortcode('[pre lang=php]<?php fpo_image($bg, $type, $color); ?>[/pre]'); ?>
+		<?php echo do_shortcode('[pre lang=php]<?php fpo_bg_image($type, $color); ?>[/pre]'); ?>
+
+		<h2>Parameters</h2>
+		<p>
+			<strong>$bg</strong> (string/boolean) (required) Tells the function to return a background image. Pass as "bg", or "background". This parameter is only needed if using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function! Default: <em>none</em><br />
+			<strong>$type</strong> (string) (optional) The type of placeholder image to use. Options include "none", "photo". Default: <em>"none"</em><br />
+			<strong>$color</strong> (string) (optional) The color of the placeholder image strokes. Default: <em>"#aaa"</em><br />
+		</p>
+
+		<h2>Examples</h2>
+		<?php echo do_shortcode('[pre lang=php]<div class="row" style="<?php fpo_bg_image(); ?>">[/pre]'); ?>
+
+		<div class="row" style="<?php fpo_bg_image(); ?>">
+			<div class="eight columns push_eight">
+				<p style="text-align: center; margin: 0; padding: 25px; background: rgba(255, 0, 0, 0.75); color: #fff;">Lorem ipsum dolor sit amet.</p>
+			</div>
+		</div>
+	</div>
+</div><!--/row-->
 
 
 
