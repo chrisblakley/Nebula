@@ -623,6 +623,16 @@ function mmenus(){
 			    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
 			    },
 			    "counters": true, //Display count of sub-menus
+			    "iconPanels": true, //Layer panels on top of each other
+				"navbar": {
+					"title": "Menu"
+				},
+				"navbars": [{
+					"position": "bottom",
+					"content": [
+						"<span>" + bloginfo['name'] + "</span>"
+					]
+				}],
 			    "extensions": ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
 			}, {
 				//Configuration
