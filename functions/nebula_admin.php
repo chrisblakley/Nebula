@@ -109,8 +109,15 @@ if ( !nebula_admin_bar_enabled() ){
 
 		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula-options',
+			'id' => 'nebula-options-scss',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-paint-brush" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Re-process All SCSS Files',
+			'href' => esc_url(add_query_arg('sass', 'true')),
+		));
+
+		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula-options',
 			'id' => 'nebula-options-help',
-			'title' => 'Help & Documentation &raquo;',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
 			'href' => 'https://gearside.com/nebula/documentation/options/',
 			'meta' => array('target' => '_blank')
 		));
@@ -192,6 +199,15 @@ if ( nebula_option('nebula_admin_notices') ){
 			//Check for "Just Another WordPress Blog" tagline
 			if ( strtolower(get_bloginfo('description')) == 'just another wordpress site' ){
 				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!</p></div>';
+			}
+
+			//Check if all SCSS files were processed manually.
+			if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
+				if ( is_dev() || is_client() ){
+					echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
+				} else {
+					echo '<div class="nebula-admin-notice error"><p>You do not have permissions to manually process all SCSS files.</p></div>';
+				}
 			}
 		}
 	}

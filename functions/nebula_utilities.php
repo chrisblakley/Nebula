@@ -126,9 +126,19 @@ function ga_send_custom($array){ //@TODO "Nebula" 0: Add additional parameters t
 }
 
 //Check if user is using the debug query string.
-function is_debug(){
-	if ( (array_key_exists('debug', $_GET) && (is_dev() || is_client())) || WP_DEBUG ){
-		return true;
+//$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
+function is_debug($strict=false){
+	$very_strict = ( $strict > 1 )? $strict : false;
+	if ( array_key_exists('debug', $_GET) ){
+		if ( !empty($strict) ){
+			if ( is_dev($very_strict) || is_client($very_strict) ){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
 	}
 	return false;
 }
@@ -149,12 +159,15 @@ function nebula_user_last_online($id){
 }
 
 //Check if the current IP address matches any of the dev IP address from Nebula Options
+//Passing $strict bypasses IP check, so user must be a dev and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_dev(){
-	$devIPs = explode(',', get_option('nebula_dev_ip'));
-	foreach ( $devIPs as $devIP ){
-		if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ){
-			return true;
+function is_dev($strict=false){
+	if ( empty($strict) ){
+		$devIPs = explode(',', get_option('nebula_dev_ip'));
+		foreach ( $devIPs as $devIP ){
+			if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ){
+				return true;
+			}
 		}
 	}
 
@@ -173,12 +186,15 @@ function is_dev(){
 }
 
 //Check if the current IP address matches any of the client IP address from Nebula Options
+//Passing $strict bypasses IP check, so user must be a client and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_client(){
-	$clientIPs = explode(',', get_option('nebula_client_ip'));
-	foreach ( $clientIPs as $clientIP ){
-		if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ){
-			return true;
+function is_client($strict=false){
+	if ( empty($strict) ){
+		$clientIPs = explode(',', get_option('nebula_client_ip'));
+		foreach ( $clientIPs as $clientIP ){
+			if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ){
+				return true;
+			}
 		}
 	}
 
@@ -910,9 +926,25 @@ function nebula_render_scss($specific_scss=null){
 function nebula_scss_variables($scss){
 	$scss = preg_replace("(<%template_directory%>)", get_template_directory_uri(), $scss); //Template Directory
 	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path
+	$scss .= '/* Processed on ' . date('l, F j, Y \a\t g:ia', time()) . ' */';
+	update_option('nebula_scss_last_processed', time());
 	return $scss;
 }
 
+//If SASS should be manually re-generated
+if ( nebula_option('nebula_scss') ){
+	if ( is_writable(get_template_directory()) ){
+		add_action('init', 'nebula_sass_manual_trigger');
+		add_action('admin_init', 'nebula_sass_manual_trigger');
+	} else {
+		echo '<!-- Directory is not writable for SCSS! -->';
+	}
+}
+function nebula_sass_manual_trigger(){
+	if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || $_GET['settings-updated'] == 'true') && (is_dev() || is_client()) ){
+		nebula_render_scss('all'); //Re-render all SCSS files.
+	}
+}
 
 /*==========================
  User Agent Parsing Functions/Helpers

@@ -28,7 +28,7 @@ if ( nebula_wireframing_enabled() ){
 		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula-wireframing',
 			'id' => 'nebula-wireframing-help',
-			'title' => 'Help & Documentation &raquo;',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
 			'href' => 'https://gearside.com/nebula/documentation/custom-functionality/wireframing/',
 			'meta' => array('target' => '_blank')
 		));

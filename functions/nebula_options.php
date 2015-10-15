@@ -83,6 +83,7 @@ function register_nebula_options(){
 		'nebula_initialized' => '',
 		'nebula_edited_yet' => 'false',
 		'nebula_domain_expiration_alert' => 'Default',
+		'nebula_scss_last_processed' => '0',
 
 		//Metadata Tab
 		'nebula_site_owner' => '',
@@ -276,7 +277,7 @@ function nebula_options_page(){
 
 		<?php if ( $_GET['settings-updated'] == 'true' ): ?>
 			<div class="updated notice is-dismissible">
-				<p><strong>Nebula Options</strong> have been updated.</p>
+				<p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
 				<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 			</div>
 		<?php endif; ?>
@@ -663,7 +664,7 @@ function nebula_options_page(){
 							<option value="enabled" <?php selected('enabled', get_option('nebula_scss')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_scss')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Enable the bundled SCSS compiler. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Enable the bundled SCSS compiler. Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( get_option('nebula_scss_last_processed') )? date('l, F j, Y - g:ia', get_option('nebula_scss_last_processed')) : 'Never'; ?></strong>. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
