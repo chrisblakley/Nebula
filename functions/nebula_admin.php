@@ -107,11 +107,13 @@ if ( !nebula_admin_bar_enabled() ){
 			'href' => get_admin_url() . 'themes.php?page=nebula_options'
 		));
 
+		$scss_last_processed = ( get_option('nebula_scss_last_processed') )? date('l, F j, Y - g:i:sa', get_option('nebula_scss_last_processed')) : 'Never';
 		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula-options',
 			'id' => 'nebula-options-scss',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-paint-brush" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Re-process All SCSS Files',
 			'href' => esc_url(add_query_arg('sass', 'true')),
+			'meta' => array('title' => 'Last: ' . $scss_last_processed)
 		));
 
 		$wp_admin_bar->add_node(array(
@@ -513,6 +515,9 @@ if ( nebula_option('nebula_dev_metabox') ){
 			echo '<li><i class="fa fa-clock-o fa-fw"></i> <span title="' . get_home_url() . '" style="cursor: help;">Homepage</span> load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
 			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small title="' . $last_file_path . '" style="cursor: help;">(' . $last_filename . ')</small></li>';
+
+			$scss_last_processed = ( get_option('nebula_scss_last_processed') )? '<strong>' . date("F j, Y", get_option('nebula_scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", get_option('nebula_scss_last_processed')) . '</strong>' : '<strong>Never</strong>';
+			echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
 		echo '</ul>';
 		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
 		echo '<div class="search_results"></div>';
@@ -523,6 +528,8 @@ if ( nebula_option('nebula_dev_metabox') ){
 add_action('wp_ajax_search_theme_files', 'search_theme_files');
 add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
 function search_theme_files(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
 	ini_set('max_execution_time', 120);
 	ini_set('memory_limit', '512M');
 	$searchTerm = stripslashes($_POST['data'][0]['searchData']);

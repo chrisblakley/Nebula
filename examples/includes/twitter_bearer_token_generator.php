@@ -8,7 +8,8 @@
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["admin_ajax"],
+			url: bloginfo["ajax_url"],
+			//@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
 			data: {
 				action: 'nebula_twitter_bearer_token_generator',
 				data: consumerData,

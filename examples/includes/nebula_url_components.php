@@ -5,6 +5,8 @@
 		add_action('wp_ajax_nebula_url_components_tester', 'nebula_url_components_tester');
 		add_action('wp_ajax_nopriv_nebula_url_components_tester', 'nebula_url_components_tester');
 		function nebula_url_components_tester() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
 			echo '
 				<strong>"all"</strong> <em>(default)</em>: ' . nebula_url_components("all", $_POST['data'][0]['url']) . '<br />
 				<strong>"protocol"</strong>: ' . nebula_url_components("protocol", $_POST['data'][0]['url']) . '<br />
@@ -39,8 +41,9 @@
 			}];
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["admin_ajax"],
+				url: bloginfo["ajax_url"],
 				data: {
+					nonce: bloginfo["ajax_nonce"],
 					action: 'nebula_url_components_tester',
 					data: urlData,
 				},

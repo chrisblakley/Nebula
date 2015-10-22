@@ -15,8 +15,9 @@
 		//Fill pre-existing HTML with tweet data. This is good for displaying a single, latest tweet.
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["admin_ajax"],
+			url: bloginfo["ajax_url"],
 			data: {
+				nonce: bloginfo["ajax_nonce"],
 				action: 'nebula_twitter_cache',
 				data: {
 					'username': 'Great_Blakes',
@@ -33,7 +34,13 @@
 				} else {
 					jQuery('#tweet_user_photo1').attr('href', 'https://twitter.com/' + response[0].user.screen_name).append('<img src="' + response[0].user.profile_image_url_https + '" title="' + response[0].user.description + '" />');
 					jQuery('#tweet_user1').attr('href', 'https://twitter.com/' + response[0].user.screen_name).text('@' + response[0].user.screen_name);
-					var tweetTime = new Date(Date.parse(response[0].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
+
+					if ( clientinfo['browser']['name'] == 'Safari' ){
+						var tweetTime = new Date(response[0].created_at);
+					} else {
+						var tweetTime = new Date(Date.parse(response[0].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
+					}
+
 					jQuery('#tweet_body1').html(tweetLinks(response[0].text)).append(" <span class='twitter-posted-on'><i class='fa fa-clock-o'></i> " + timeAgo(tweetTime) + "</span>");
 				}
 			},
@@ -48,8 +55,9 @@
 		//Generate the markup within a UL to display tweets. This method is good for showing multiple tweets.
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["admin_ajax"],
+			url: bloginfo["ajax_url"],
 			data: {
+				nonce: bloginfo["ajax_nonce"],
 				action: 'nebula_twitter_cache',
 				data: {
 					'username': 'Great_Blakes',
@@ -65,7 +73,13 @@
 				} else {
 					jQuery.each(response, function(i){
 						//console.debug(response[i]); //Just to show all the data that is available.
-						var tweetTime = new Date(Date.parse(response[i].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
+
+						if ( clientinfo['browser']['name'] == 'Safari' ){
+							var tweetTime = new Date(response[i].created_at);
+						} else {
+							var tweetTime = new Date(Date.parse(response[i].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
+						}
+
 						jQuery('.example2').append('<li><a class="twitter-user-photo" href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank"><img src="' + response[i].user.profile_image_url_https + '" title="' + response[i].user.description + '" /></a><strong><a href="https://twitter.com/' + response[i].user.screen_name + '" target="_blank">@' + response[i].user.screen_name + '</a></strong><br /><span>' + tweetLinks(response[i].text) + ' <span class="twitter-posted-on"><i class="fa fa-clock-o"></i> ' + timeAgo(tweetTime) + '</span></span></li>');
 					});
 				}

@@ -461,7 +461,20 @@ function gaEventTracking(){
 	//External links
 	thisPage.document.on('mousedown touch tap', "a[rel*='external']", function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
+
 		var linkText = jQuery(this).text();
+		if ( linkText.trim() == '' ){
+			if ( jQuery(this).find('img').attr('alt') ){
+				linkText = jQuery(this).find('img').attr('alt');
+			} else if ( jQuery(this).find('img').is('*') ){
+				linkText = jQuery(this).find('img').attr('src').substr(fileName.lastIndexOf("/")+1);
+			} else if ( jQuery(this).find('img').attr('title') ){
+				linkText = jQuery(this).find('img').attr('title');
+			} else {
+				linkText = '(unknown)';
+			}
+		}
+
 		var destinationURL = jQuery(this).attr('href');
 		ga('send', 'event', 'External Link', linkText + intent, destinationURL);
 	});
@@ -470,8 +483,7 @@ function gaEventTracking(){
 	thisPage.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
-		var fileName = jQuery(this).attr('href');
-		fileName = fileName.substr(fileName.lastIndexOf("/")+1);
+		var fileName = jQuery(this).attr('href').substr(fileName.lastIndexOf("/")+1);
 		if ( linkText == '' || linkText == 'Download' ){
 			ga('send', 'event', 'PDF View', 'File: ' + fileName + intent);
 		} else {
@@ -520,10 +532,20 @@ function gaEventTracking(){
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
-	//Non-Linked Image Clicks
+	//Non-Linked Click Attempts
 	jQuery('img').on('click tap touch', function(){
 		if ( !jQuery(this).parents('a').length ){
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
+		}
+	});
+	jQuery('.btn').on('click tap touch', function(e){
+		if ( e.target != this ){
+			return; //Only continue if the button is clicked, but not the <a> link.
+		}
+		if ( jQuery(this).find('a').is('*') ){
+			ga('send', 'event', 'Non-Linked Click Attempt', 'Button', jQuery(this).find('a').text());
+		} else {
+			ga('send', 'event', 'Non-Linked Click Attempt', 'Button', '(no <a> tag) ' + jQuery(this).text());
 		}
 	});
 
@@ -785,8 +807,9 @@ function autocompleteSearch(){
 					jQuery.ajax({
 						dataType: 'json',
 						type: "POST",
-						url: bloginfo["admin_ajax"],
+						url: bloginfo["ajax_url"],
 						data: {
+							nonce: bloginfo["ajax_nonce"],
 							action: 'nebula_autocomplete_search',
 							data: request,
 						},
@@ -968,7 +991,8 @@ function advancedSearchPrep(startingAt, waitingText){
 			advancedSearchIndicator.html('<i class="fa fa-fw fa-spin fa-spinner"></i> Loading posts...');
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["admin_ajax"],
+				url: bloginfo["ajax_url"],
+				//@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
 				data: {
 					action: 'nebula_advanced_search',
 				},

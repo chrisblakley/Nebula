@@ -72,8 +72,9 @@ jQuery(document).on('ready', function(){
 
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo['admin_ajax'],
+				url: bloginfo['ajax_url'],
 				data: {
+					nonce: bloginfo["ajax_nonce"],
 					action: "search_theme_files",
 					data: [{
 						"directory": jQuery("select.searchdirectory").val(),
@@ -156,8 +157,9 @@ jQuery(document).on('ready', function(){
 
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["admin_ajax"],
+				url: bloginfo["ajax_url"],
 				data: {
+					nonce: bloginfo["ajax_nonce"],
 					action: 'nebula_initialization'
 				},
 				success: function(data){

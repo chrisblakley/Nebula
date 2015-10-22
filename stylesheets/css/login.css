@@ -49,37 +49,37 @@
 
  .nebula-vmiddle { position:relative; top:50%; -webkit-transform:translateY(-50%); -moz-transform:translateY(-50%); -ms-transform:translateY(-50%); -o-transform:translateY(-50%); transform:translateY(-50%); }
 
- hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background:#fff; background:rgba(255, 255, 255, 1); margin:3px 0; padding:0; }
+ body:not(.wp-admin) hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background:#fff; background:rgba(255, 255, 255, 1); margin:3px 0; padding:0; }
 
- .rgba hr { display:block; height:1px; border:0; margin:3px 0; padding:0; /* mix-blend-mode: screen; */ }
+ .rgba body:not(.wp-admin) hr { display:block; height:1px; border:0; margin:3px 0; padding:0; /* mix-blend-mode: screen; */ }
 
- .rgba hr:before { content:''; position:relative; top:-1px; height:1px; display:block; background:#000; background:rgba(0, 0, 0, 0.2); /* mix-blend-mode: multiply; */ }
+ .rgba body:not(.wp-admin) hr:before { content:''; position:relative; top:-1px; height:1px; display:block; background:#000; background:rgba(0, 0, 0, 0.2); /* mix-blend-mode: multiply; */ }
 
- hr.zero { margin:0; }
+ body:not(.wp-admin) hr.zero { margin:0; }
 
- .ir { background-color:transparent; border:0; overflow:hidden; *text-indent:-9999px; }
+ body:not(.wp-admin) .ir { background-color:transparent; border:0; overflow:hidden; *text-indent:-9999px; }
 
- .ir:before { content:""; display:block; width:0; height:100%; }
+ body:not(.wp-admin) .ir:before { content:""; display:block; width:0; height:100%; }
 
- .hidden { display:none !important; visibility:hidden; }
+ body:not(.wp-admin) .hidden { display:none !important; visibility:hidden; }
 
- .visuallyhidden { border:0; clip:rect(0 0 0 0); height:1px; margin:-1px; overflow:hidden; padding:0; position:absolute; width:1px; }
+ body:not(.wp-admin) .visuallyhidden { border:0; clip:rect(0 0 0 0); height:1px; margin:-1px; overflow:hidden; padding:0; position:absolute; width:1px; }
 
- .visuallyhidden.focusable:active,.visuallyhidden.focusable:focus { clip:auto; height:auto; margin:0; overflow:visible; position:static; width:auto; }
+ body:not(.wp-admin) .visuallyhidden.focusable:active,body:not(.wp-admin) .visuallyhidden.focusable:focus { clip:auto; height:auto; margin:0; overflow:visible; position:static; width:auto; }
 
- .invisible { visibility:hidden; }
+ body:not(.wp-admin) .invisible { visibility:hidden; }
 
- .clearfix:before,.clearfix:after { content:""; display:table; }
+ body:not(.wp-admin) .clearfix:before,body:not(.wp-admin) .clearfix:after { content:""; display:table; }
 
- .clearfix:after { clear:both; }
+ body:not(.wp-admin) .clearfix:after { clear:both; }
 
- div.space { clear:both; display:block; overflow:hidden; visibility:hidden; width:0; height:0; }
+ body:not(.wp-admin) div.space { clear:both; display:block; overflow:hidden; visibility:hidden; width:0; height:0; }
 
- .avoid-clicks { pointer-events:none; }
+ body:not(.wp-admin) .avoid-clicks { pointer-events:none; }
 
- .allow-clicks { pointer-events:all; }
+ body:not(.wp-admin) .allow-clicks { pointer-events:all; }
 
- .filtered { display:none; }
+ body:not(.wp-admin) .filtered { display:none; }
 
  .aligncenter,.align-center { display:block; margin:0 auto; }
 
@@ -241,11 +241,11 @@
 
  a.phg span.group { color:#9fa1a4; }
 
- a.phg:hover span.pinckney,a.phg.hover span.pinckney { color:#00628b; }
+ a.phg:hover span.pinckney,a.phg.hover span.pinckney { color:#0098d7; }
 
- a.phg:hover span.hugo,a.phg.hover span.hugo { color:#608a00; }
+ a.phg:hover span.hugo,a.phg.hover span.hugo { color:#95d600; }
 
- a.phg:hover span.group,a.phg.hover span.group { color:#787b7f; }
+ a.phg:hover span.group,a.phg.hover span.group { color:#9fa1a4; }
 
  a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") -15px 6px no-repeat; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
@@ -263,11 +263,11 @@
 
  a.phg.anim:hover span,a.phg.anim.hover span { margin-right:0px; }
 
- a.phg.anim:hover span.pinckney,a.phg.anim.hover span.pinckney { color:#00628b; }
+ a.phg.anim:hover span.pinckney,a.phg.anim.hover span.pinckney { color:#0098d7; }
 
- a.phg.anim:hover span.hugo,a.phg.anim.hover span.hugo { color:#608a00; }
+ a.phg.anim:hover span.hugo,a.phg.anim.hover span.hugo { color:#95d600; }
 
- a.phg.anim:hover span.group,a.phg.anim.hover span.group { color:#787b7f; }
+ a.phg.anim:hover span.group,a.phg.anim.hover span.group { color:#9fa1a4; }
 
  a.facebook { color:#3b5998; }
 
@@ -355,4 +355,4 @@
 
  .ipcon p { font-size:12px; margin:0; padding:0; color:#888; }
 
-/* Processed on Thursday, October 15, 2015 at 2:22pm */
+/* Processed on Tuesday, October 20, 2015 at 5:29pm */

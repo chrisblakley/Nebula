@@ -5,6 +5,7 @@
 		add_action('wp_ajax_nebula_whois_tester', 'nebula_whois_tester');
 		add_action('wp_ajax_nopriv_nebula_whois_tester', 'nebula_whois_tester');
 		function nebula_whois_tester() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 
 			if ( contains($_POST['data'][0]['domain'], array('http://', 'https://', '//')) ) {
 				$domain_to_test = $_POST['data'][0]['domain'];
@@ -157,8 +158,9 @@
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["admin_ajax"],
+			url: bloginfo["ajax_url"],
 			data: {
+				nonce: bloginfo["ajax_nonce"],
 				action: 'nebula_whois_tester',
 				data: domainData,
 			},

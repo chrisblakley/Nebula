@@ -247,9 +247,10 @@ function nebula_email_content_type(){
     return "text/html";
 }
 
-/*** If the project uses comments, remove the next set of functions (six), or force this conditional to be false! ***/
-if ( nebula_option('nebula_comments', 'disabled') ){
 
+
+
+if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
 	//Remove the Activity metabox
 	add_action('wp_dashboard_setup', 'remove_activity_metabox');
 	function remove_activity_metabox(){
@@ -293,36 +294,20 @@ if ( nebula_option('nebula_comments', 'disabled') ){
 		}
 	}
 
-	//Disable support for comments and trackbacks in post types, Redirect any user trying to access comments page
+	//Disable support for comments in post types, Redirect any user trying to access comments page
 	add_action('admin_init', 'disable_comments_admin_menu_redirect');
 	function disable_comments_admin_menu_redirect(){
 		global $pagenow;
-		if ($pagenow === 'edit-comments.php' || $pagenow === 'options-discussion.php'){
+		if ( $pagenow === 'edit-comments.php' || $pagenow === 'options-discussion.php' ){
 			wp_redirect(admin_url());
 			exit;
 		}
 
 		$post_types = get_post_types();
-		foreach ($post_types as $post_type){
-			if(post_type_supports($post_type, 'comments')){
+		foreach ( $post_types as $post_type ){
+			if ( post_type_supports($post_type, 'comments') ){
 				remove_post_type_support($post_type, 'comments');
-				remove_post_type_support($post_type, 'trackbacks');
 			}
-		}
-	}
-} else {
-	//Open comments on the front-end
-	add_filter('comments_open', 'enable_comments_status', 20, 2);
-	add_filter('pings_open', 'enable_comments_status', 20, 2);
-	function enable_comments_status(){
-		return true;
-	}
-
-	//Remove comments menu from Admin Bar (if using Disqus)
-	if ( get_option('nebula_disqus_shortname') && nebula_admin_bar_enabled() ){
-		add_action('admin_bar_menu', 'nebula_admin_bar_remove_comments', 900);
-		function nebula_admin_bar_remove_comments($wp_admin_bar){
-			$wp_admin_bar->remove_menu('comments');
 		}
 	}
 
@@ -332,6 +317,22 @@ if ( nebula_option('nebula_comments', 'disabled') ){
 		function disqus_link(){
 			echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . get_option('nebula_disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
 		}
+	}
+} else { //If WP core comments are enabled
+	//Open comments on the front-end
+	add_filter('comments_open', 'enable_comments_status', 20, 2);
+	add_filter('pings_open', 'enable_comments_status', 20, 2);
+	function enable_comments_status(){
+		return true;
+	}
+}
+
+//Disable support for trackbacks in post types
+add_action('admin_init', 'nebula_disable_trackbacks');
+function nebula_disable_trackbacks(){
+	$post_types = get_post_types();
+	foreach ( $post_types as $post_type ){
+		remove_post_type_support($post_type, 'trackbacks');
 	}
 }
 
@@ -607,6 +608,8 @@ function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are 
 add_action('wp_ajax_nebula_twitter_cache', 'nebula_twitter_cache');
 add_action('wp_ajax_nopriv_nebula_twitter_cache', 'nebula_twitter_cache');
 function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_tweets=5, $include_retweets=1){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
 	if ( $_POST['data'] ){
 		$username = ( $_POST['data']['username'] )? $_POST['data']['username'] : 'Great_Blakes';
 		$listname = ( $_POST['data']['listname'] )? $_POST['data']['listname'] : null; //Only used for list feeds
@@ -746,6 +749,7 @@ function nebula_manage($data){
 add_action('wp_ajax_navigator', 'nebula_ajax_navigator');
 add_action('wp_ajax_nopriv_navigator', 'nebula_ajax_navigator');
 function nebula_ajax_navigator(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 	include('includes/navigator.php');
 	//include('includes/navigat-holder.php');
 	exit();
@@ -990,6 +994,8 @@ function nebula_hero_search($placeholder='What are you looking for?'){
 add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
 add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
 function nebula_autocomplete_search(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
 	ini_set('memory_limit', '256M');
 	$_POST['data']['term'] = trim($_POST['data']['term']);
 	if ( empty($_POST['data']['term']) ){
@@ -1232,6 +1238,8 @@ function nebula_autocomplete_search(){
 add_action('wp_ajax_nebula_advanced_search', 'nebula_advanced_search');
 add_action('wp_ajax_nopriv_nebula_advanced_search', 'nebula_advanced_search');
 function nebula_advanced_search(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
 	ini_set('memory_limit', '512M'); //Increase memory limit for this script.
 
 	$everything_query = get_transient('nebula_everything_query');

@@ -5,11 +5,24 @@
  ===========================*/
 
 //If the Nebula Option is either Default or the passed declaration
+//This function is used for options with set choices (dropdowns)
 function nebula_option($option, $declaration='enabled'){
 	if ( (strtolower(get_option($option)) == 'default') || (strtolower(get_option($option)) == strtolower($declaration)) ){
 		return true;
 	} else {
 		return false;
+	}
+}
+
+//Get the option value from the DB (for text inputs)
+//Use this if the option exists in the DB, but is empty and still needs a default value; the get_option() function from WP core only returns the default (2nd parameter) if the option does not exist.
+function nebula_get_option($option, $default=false){
+	$data = get_option($option);
+
+	if ( empty($data) ){
+		return $default;
+	} else {
+		return $data;
 	}
 }
 

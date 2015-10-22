@@ -4,6 +4,7 @@
 	add_action('wp_ajax_nebula_example_ajax', 'nebula_example_ajax_function');
 	add_action('wp_ajax_nopriv_nebula_example_ajax', 'nebula_example_ajax_function');
 	function nebula_example_ajax_function() {
+		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 		echo 'Success! Your message was: "' . $_POST['data'][0]['message'] . '"';
 		exit();
 	}
@@ -17,8 +18,9 @@
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["admin_ajax"],
+			url: bloginfo["ajax_url"],
 			data: {
+				nonce: bloginfo["ajax_nonce"],
 				action: 'nebula_example_ajax',
 				data: messageData,
 			},

@@ -107,8 +107,9 @@
 			lastCanvas = jQuery('#canvas')[0].toDataURL("image/png");
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["admin_ajax"],
+				url: bloginfo["ajax_url"],
 				data: {
+					nonce: bloginfo["ajax_nonce"],
 					action: 'nebula_getusermedia_api',
 					data: {
 						'userimage': image.src,
@@ -152,6 +153,8 @@
 		add_action('wp_ajax_nebula_getusermedia_api', 'nebula_getusermedia_api');
 		add_action('wp_ajax_nopriv_nebula_getusermedia_api', 'nebula_getusermedia_api');
 		function nebula_getusermedia_api(){
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
 			$userImage = $_POST['data']['userimage'];
 
 			//Prevent saving if image is empty.

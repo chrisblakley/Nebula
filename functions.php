@@ -13,7 +13,7 @@ require_once('functions/nebula_utilities.php'); //Nebula Utilities
 /*==========================
  Google Analytics Tracking ID
  ===========================*/
-$GLOBALS['ga'] = get_option('nebula_ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
+$GLOBALS['ga'] = nebula_get_option('nebula_ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
 
 
 /*==========================
@@ -121,7 +121,8 @@ $localize_bloginfo = array(
 	'stylesheet_url' => get_bloginfo("stylesheet_url"),
 	'home_url' => home_url(),
 	//'admin_email' => base64_encode(get_option('admin_email')), //Removed until actually needed somewhere.
-	'admin_ajax' => admin_url('admin-ajax.php'),
+	'ajax_url' => admin_url('admin-ajax.php'),
+	'ajax_nonce' => wp_create_nonce('nebula_ajax_nonce'),
 	'upload_dir' => $upload_dir['baseurl'],
 );
 $localize_clientinfo = array(
@@ -167,12 +168,12 @@ function enqueue_nebula_frontend(){
 
 	//Stylesheets
 	wp_enqueue_style('nebula-normalize');
-	wp_enqueue_style('nebula-google_font');
 	wp_enqueue_style('nebula-gumby');
 	wp_enqueue_style('nebula-mmenu');
-	wp_enqueue_style('nebula-font_awesome');
 	//wp_enqueue_style('nebula-animate_css');
 	wp_enqueue_style('nebula-jquery_ui');
+	wp_enqueue_style('nebula-font_awesome');
+	wp_enqueue_style('nebula-google_font');
 	wp_enqueue_style('nebula-main');
 
 	if ( !nebula_option('nebula_wireframing', 'disabled') ){
@@ -299,16 +300,15 @@ function nebula_set_content_width(){
     }
 }
 
-
 //Add new image sizes
 //Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.
 //add_image_size('example', 32, 32, 1);
 
+//Title tag support allows WordPress core to create the <title> tag.
+add_theme_support('title-tag');
 
-//Add/remove post formats as needed
-//http://codex.wordpress.org/Post_Formats
+//Add/remove post formats as needed - http://codex.wordpress.org/Post_Formats
 //add_theme_support('post-formats', array('aside', 'chat', 'status', 'gallery', 'link', 'image', 'quote', 'video', 'audio')); //Add to below as they are used.
-
 
 
 

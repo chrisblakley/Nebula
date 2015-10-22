@@ -50,8 +50,7 @@ function nebula_upload_to_media_library($filepath){
 add_action('wp_ajax_nebula_upload_data', 'nebula_upload_data');
 add_action('wp_ajax_nopriv_nebula_upload_data', 'nebula_upload_data');
 function nebula_upload_data(){
-
-    //@TODO "Nebula" 0: Use a WordPress nonce for extra security.
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 
     if ( !$_POST['data']['data'] || $_POST['data']['data'] == '' ){
 	    exit;

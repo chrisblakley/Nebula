@@ -32,6 +32,7 @@
 	/* &.animate:hover:after {background-position-y: -24px;} */
 }
 
+//Note: To use nebula-vmiddle, the parent element must have a set height (not a min-height)!
 //!.nebula-vmiddle, .nebula-vmiddle-con {@include prefix((transform-style: preserve-3d));} //Prevent blurry half-pixel centering on parent element
 	.nebula-vmiddle {position: relative; top: 50%; @include prefix((transform: translateY(-50%)));}
 
@@ -40,28 +41,30 @@
 // Generic Helpers
 // ===========================
 
-hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
-	//@TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended.
-	.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
-	.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); /* mix-blend-mode: multiply; */}
-	&.zero {margin: 0;}
-}
+//Front-end only helpers
+body:not(.wp-admin) {
+	hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
+		//@TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended.
+		.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
+		.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); /* mix-blend-mode: multiply; */}
+		&.zero {margin: 0;}
+	}
 
-//Image replacement
-.ir {background-color: transparent; border: 0; overflow: hidden; *text-indent: -9999px;
-	&:before {content: ""; display: block; width: 0; height: 100%;}
+	.ir {background-color: transparent; border: 0; overflow: hidden; *text-indent: -9999px; //Image replacement
+		&:before {content: ""; display: block; width: 0; height: 100%;}
+	}
+	.hidden {display: none !important; visibility: hidden;} //Hide from both screenreaders and browsers
+	.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; //Hide only visually, but have it available for screenreaders
+		&.focusable:active,
+		&.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;} //Allow the element to be focusable when navigated to via the keyboard
+	}
+	.invisible {visibility: hidden;} //Hide visually and from screenreaders, but maintain layout
+	.clearfix {@include clearfix();}
+	div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
+	.avoid-clicks {pointer-events: none;} //Only supported in IE11+
+	.allow-clicks {pointer-events: all;} //Only supported in IE11+
+	.filtered {display: none;}
 }
-.hidden {display: none !important; visibility: hidden;} //Hide from both screenreaders and browsers
-.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; //Hide only visually, but have it available for screenreaders
-	&.focusable:active,
-	&.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;} //Allow the element to be focusable when navigated to via the keyboard
-}
-.invisible {visibility: hidden;} //Hide visually and from screenreaders, but maintain layout
-.clearfix {@include clearfix();}
-div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
-.avoid-clicks {pointer-events: none;} //Only supported in IE11+
-.allow-clicks {pointer-events: all;} //Only supported in IE11+
-.filtered {display: none;}
 
 .aligncenter, .align-center {display: block; margin: 0 auto;}
 .alignleft, .align-left {float: left;}
@@ -157,9 +160,9 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory
 	}
 	&:hover,
 	&.hover {
-		span.pinckney {color: darken(brand(phg), 15%);}
-		span.hugo {color: darken(brand(phg, 2), 15%);}
-		span.group {color: darken(brand(phg, 3), 15%);}
+		span.pinckney {color: brand(phg);}
+		span.hugo {color: brand(phg, 2);}
+		span.group {color: brand(phg, 3);}
 	}
 
 	&.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url($template_directory + "/images/phg/phg-symbol.svg") -15px 6px no-repeat; @include prefix((transition: all 0.25s));
@@ -172,9 +175,9 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory
 		&:hover,
 		&.hover {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
 			span {margin-right: 0px;
-				&.pinckney {color: darken(brand(phg), 15%);}
-				&.hugo {color: darken(brand(phg, 2), 15%);}
-				&.group {color: darken(brand(phg, 3), 15%);}
+				&.pinckney {color: brand(phg);}
+				&.hugo {color: brand(phg, 2);}
+				&.group {color: brand(phg, 3);}
 			}
 		}
 	}
