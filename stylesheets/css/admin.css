@@ -393,6 +393,8 @@
 
  .index-php .welcome-panel #phg-welcome #welcome-photo .welcome-photo-bg { position:absolute; top:0; left:0; height:100%; width:100%; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/welcome.jpg") center 90% no-repeat; background-size:cover; z-index:40; }
 
+ .index-php .welcome-panel #phg-welcome #welcome-photo .welcome-photo-bg.hidden { display:none !important; visibility:hidden; border:3px solid blue; }
+
  .index-php .welcome-panel #phg-welcome #welcome-photo .weclome-map { position:absolute; top:0; left:0; height:100%; width:100%; padding:0; }
 
  .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info { position:relative; background:rgba(0, 0, 0, 0.6); position:absolute; bottom:10px; left:0; width:100%; padding:5px 12px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
@@ -407,7 +409,7 @@
 
  .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info span { display:inline-block; color:#fff; }
 
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info a { display:inline-block; color:#fff; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info a { display:inline-block; color:#fff; -webkit-box-shadow:none; -moz-box-shadow:none; -ms-box-shadow:none; -o-box-shadow:none; box-shadow:none; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info a:hover { color:#0098d7; }
 
@@ -627,4 +629,4 @@
 
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
-/* Processed on Tuesday, October 20, 2015 at 5:29pm */
+/* Processed on Saturday, October 24, 2015 at 5:05pm */

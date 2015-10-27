@@ -207,6 +207,7 @@ function nebula_initialization($standard=null){
 		nebual_initialization_create_homepage();
 		nebula_initialization_default_settings();
 		nebula_initialization_delete_plugins();
+		nebula_initialization_deactivate_widgets();
 		nebula_initialization_set_install_date();
 		nebula_render_scss('all'); //Re-render all SCSS files.
 
@@ -353,6 +354,11 @@ function nebula_initialization_delete_plugins(){
 	if ( file_exists(WP_PLUGIN_DIR . '/hello.php') ){
         delete_plugins(array('hello.php'));
     }
+}
+
+//Deactivate default sidebar widgets.
+function nebula_initialization_deactivate_widgets(){
+	update_option('sidebars_widgets', array());
 }
 
 function nebula_is_initialized_before(){

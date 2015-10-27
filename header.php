@@ -31,76 +31,78 @@
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
-			<div id="fb-root"></div>
+			<div id="header">
+				<div id="fb-root"></div>
 
-			<noscript>
-				<?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that is a likely reason. ?>
-				<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo nebula_url_components('all'); ?>&amp;t=<?php echo urlencode(get_the_title($post->ID)); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
-			</noscript>
+				<noscript>
+					<?php //Certain security plugins and htaccess settings can prevent the query strings in this iframe src from working. If page info for "JavaScript Disabled" in GA is not right, that is a likely reason. ?>
+					<iframe class="hidden" src="<?php echo get_template_directory_uri(); ?>/includes/no-js.php?h=<?php echo home_url('/'); ?>&amp;p=<?php echo nebula_url_components('all'); ?>&amp;t=<?php echo urlencode(get_the_title($post->ID)); ?>" width="0" height="0" style="display:none;position:absolute;"></iframe>
+				</noscript>
 
-			<?php do_action('nebula_body_open'); ?>
+				<?php do_action('nebula_body_open'); ?>
 
-			<div id="mobilebarcon">
-				<div class="row mobilenavcon">
-					<div class="sixteen columns clearfix">
-						<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
-						<nav id="mobilenav">
-							<?php
-								if ( has_nav_menu('mobile') ){
-									wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
-								} elseif ( has_nav_menu('primary') ){
-									wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
-								}
-							?>
-						</nav><!--/mobilenav-->
+				<div id="mobilebarcon">
+					<div class="row mobilenavcon">
+						<div class="sixteen columns clearfix">
+							<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
+							<nav id="mobilenav">
+								<?php
+									if ( has_nav_menu('mobile') ){
+										wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
+									} elseif ( has_nav_menu('primary') ){
+										wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
+									}
+								?>
+							</nav><!--/mobilenav-->
 
-						<form id="mobileheadersearch" class="nebula-search-iconable search" method="get" action="<?php echo home_url('/'); ?>">
-							<?php
-								if ( !empty($_GET['s']) ) {
-									$current_search = $_GET['s'];
-								} elseif ( !empty($_GET['rs']) ) {
-									$current_search = $_GET['rs'];
-								}
-								$header_search_placeholder = ( isset($current_search) )? $current_search : 'What are you looking for?' ;
-							?>
-							<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
-						</form>
-					</div><!--/columns-->
-				</div><!--/row-->
-			</div><!--/topbarcon-->
-
-			<?php if ( has_nav_menu('secondary') ): ?>
-				<div id="secondarynavcon" class="container">
-					<div class="row">
-						<div class="sixteen columns">
-							<nav id="secondarynav">
-			        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
-			        		</nav>
+							<form id="mobileheadersearch" class="nebula-search-iconable search" method="get" action="<?php echo home_url('/'); ?>">
+								<?php
+									if ( !empty($_GET['s']) ) {
+										$current_search = $_GET['s'];
+									} elseif ( !empty($_GET['rs']) ) {
+										$current_search = $_GET['rs'];
+									}
+									$header_search_placeholder = ( isset($current_search) )? $current_search : 'What are you looking for?' ;
+								?>
+								<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
+							</form>
 						</div><!--/columns-->
 					</div><!--/row-->
-				</div><!--/container-->
-			<?php endif; ?>
+				</div><!--/topbarcon-->
 
-			<div id="logonavcon" class="container">
-				<div class="row">
-					<div class="six columns">
-						<?php
-							//@TODO "Graphics" 4: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
-							//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
-						?>
-						<a class="logocon" href="<?php echo home_url(); ?>">
-							<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
-						</a>
-					</div><!--/columns-->
-					<div class="ten columns">
-						<?php if ( has_nav_menu('primary') ): ?>
-							<nav id="primarynav" class="clearfix">
-								<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
-			        		</nav>
-		        		<?php endif; ?>
-		        	</div><!--/columns-->
-				</div><!--/row-->
-			</div><!--/container-->
+				<?php if ( has_nav_menu('secondary') ): ?>
+					<div id="secondarynavcon" class="container">
+						<div class="row">
+							<div class="sixteen columns">
+								<nav id="secondarynav">
+				        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
+				        		</nav>
+							</div><!--/columns-->
+						</div><!--/row-->
+					</div><!--/container-->
+				<?php endif; ?>
+
+				<div id="logonavcon" class="container">
+					<div class="row">
+						<div class="six columns">
+							<?php
+								//@TODO "Graphics" 4: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
+								//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
+							?>
+							<a class="logocon" href="<?php echo home_url(); ?>">
+								<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
+							</a>
+						</div><!--/columns-->
+						<div class="ten columns">
+							<?php if ( has_nav_menu('primary') ): ?>
+								<nav id="primarynav" class="clearfix">
+									<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
+				        		</nav>
+			        		<?php endif; ?>
+			        	</div><!--/columns-->
+					</div><!--/row-->
+				</div><!--/container-->
+			</div><!--/header-->
 
 			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ): ?>
 				<div class="container headerdrawercon">

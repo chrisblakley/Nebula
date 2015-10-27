@@ -46,8 +46,12 @@ window.onload = function(){
 		colorLogic(7, 0.1, 0.03);
 
 		values[8] = (performance.timing.loadEventEnd-performance.timing.navigationStart)/1000;
-		pageSpeed[8] = 'Total Page Load Time: ' + values[8];
+		pageSpeed[8] = 'Perceived Page Load Time: ' + values[8];
 		colorLogic(8, 5, 2);
+
+		values[9] = (performance.timing.loadEventEnd-performance.timing.responseEnd)/1000;
+		pageSpeed[9] = 'Actual Page Load Time: ' + values[9];
+		colorLogic(9, 5, 2);
 
 		console.group('******* PERFORMANCE TIMING RESULTS *******');
 		if ( !!window.chrome || navigator.userAgent.toLowerCase().indexOf('firefox') > -1 || navigator.userAgent.toLowerCase().indexOf('safari') != -1 ) {

@@ -1,6 +1,10 @@
 jQuery.noConflict();
-jQuery(document).on('ready', function(){
 
+/*==========================
+ DOM Ready
+ ===========================*/
+
+jQuery(document).on('ready', function(){
 	getQueryStrings();
 	if ( get('killall') || get('kill') || get('die') ){
 		throw new Error('(Manually terminated inject.js)');
@@ -8,7 +12,7 @@ jQuery(document).on('ready', function(){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
-	//Assign common global variables
+	//Cache common global selectors
 	thisPage = {
         'window': jQuery(window),
         'document': jQuery(document),
@@ -46,39 +50,30 @@ jQuery(document).on('ready', function(){
 	nebulaAddressAutocomplete('#address-autocomplete');
 
 	//Helpers
-	helperFunctions();
+	addHelperClasses();
 	powerFooterWidthDist();
 	nebulaEqualize();
 	nebulaScrollTo();
 
 	//Interaction
 	gaEventTracking();
+	scrollDepth();
 	pageVisibility();
 	vimeoControls();
 
 	conditionalJSLoading();
-
-	//Detect if loaded in an iframe
-	if ( window != window.parent ){
-		thisPage.html.addClass('in-iframe');
-		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
-			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
-		}
-		jQuery('a').each(function(){
-			if ( jQuery(this).attr('href') != '#' ){
-				jQuery(this).attr('target', '_parent');
-			}
-		});
-	}
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
 	if ( !thisPage.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 		viewport = updateViewportDimensions();
 	}
-
 }); //End Document Ready
 
+
+/*==========================
+ Window Load
+ ===========================*/
 
 jQuery(window).on('load', function(){
 	//nebulaFixeder();
@@ -97,6 +92,9 @@ jQuery(window).on('load', function(){
 		setTimeout(function(){
 			var perceivedLoad = performance.timing.loadEventEnd-performance.timing.navigationStart;
 			var actualLoad = performance.timing.loadEventEnd-performance.timing.responseEnd;
+			ga('send', 'timing', 'Performance Timing', 'Perceived Load', Math.round(perceivedLoad), 'Navigation start to window load');
+			ga('send', 'timing', 'Performance Timing', 'Actual Load', Math.round(actualLoad), 'Server response until window load');
+
 			jQuery('html').addClass('lt-per_' + perceivedLoad + 'ms');
 			jQuery('html').addClass('lt-act_' + actualLoad + 'ms');
 			browserInfo();
@@ -111,6 +109,10 @@ jQuery(window).on('load', function(){
 	}, 1000);
 }); //End Window Load
 
+
+/*==========================
+ Window Resize
+ ===========================*/
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
@@ -132,59 +134,190 @@ jQuery(window).on('resize', function(){
 }); //End Window Resize
 
 
-
 /*==========================
- Functions
+ Detection Functions
  ===========================*/
 
-//Get query string parameters
-function getQueryStrings(){
-	queries = {};
-    var q = document.URL.split('?')[1];
-    if ( q ){
-        q = q.split('&');
-        for ( var i = 0; i < q.length; i++ ){
-            hash = q[i].split('=');
-            if ( hash[1] ){
-	            queries[hash[0]] = hash[1];
-            } else {
-	            queries[hash[0]] = true;
-            }
-        }
+//Detect if loaded in an iframe
+function iframeDetection(){
+	if ( window != window.parent ){
+		thisPage.html.addClass('in-iframe');
+		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
+			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
+		}
+		jQuery('a').each(function(){
+			if ( jQuery(this).attr('href') != '#' ){
+				jQuery(this).attr('target', '_parent');
+			}
+		});
 	}
 }
 
-//Search query strings for the passed parameter
-function get(query){
-	if ( !query ){
-		return queries;
+//Create an object of the viewport dimensions
+function updateViewportDimensions(){
+	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
+
+	if ( typeof viewport === 'undefined' ){
+		var viewportHistory = 0;
+		//console.log('creating viewport History: ' + viewportHistory);
 	} else {
-		return queries[query];
+		var viewportHistory = viewport.history+1;
+		viewport.prevWidth = viewport.width; //Not pushing to the object...
+		viewport.prevHeight = viewport.height; //Not pushing to the object...
+		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
 	}
-	return false;
+
+	var x = w.innerWidth || e.clientWidth || g.clientWidth;
+	var y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+	if ( viewportHistory == 0 ){
+		var viewportObject = {
+			initialWidth: x,
+			initialHeight: y,
+			width: x,
+			height: y,
+			history: viewportHistory
+		};
+	} else {
+		viewportObject = {
+		    initialWidth: viewport.initialWidth,
+			initialHeight: viewport.initialHeight,
+		    width: x,
+		    height: y,
+		    history: viewportHistory
+		};
+	}
+	return viewportObject;
 }
 
-//Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
-function helperFunctions(){
-	jQuery('li:even, tr:even').not('.dataTables_wrapper tr').addClass('even'); //IE8 support
-	jQuery('li:odd, tr:odd').not('.dataTables_wrapper tr').addClass('odd'); //IE8 support
-	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child'); //IE6 support
-	jQuery('li:last-child, tr:last-child').addClass('last-child'); //IE8 support
-	jQuery('.column:first-child, .columns:first-child').addClass('first-child'); //IE6 support
-	jQuery('a:hover, li:hover, tr:hover').addClass('hover'); //IE8 support
-	jQuery('a').each(function(){
-		var a = new RegExp('/' + window.location.host + '/');
-		if ( !a.test(this.href) ){
-			if ( this.href.indexOf('http') !== -1 ){ //excludes all non-http link (ex: mailto: and tel:)
-				var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
-				jQuery(this).attr('rel', rel + 'external');
+//Sub-menu viewport overflow detector
+function overflowDetector(){
+    jQuery('#primarynav .menu > .menu-item').hover(function(){
+    	var viewportWidth = thisPage.window.width();
+    	var submenuLeft = jQuery(this).offset().left;
+    	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
+    	if ( submenuRight > viewportWidth ){
+			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
+    	} else {
+			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
+    	}
+    }, function(){
+	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
+    });
+}
+
+//Fill browserinfo field with browser information (to send with forms).
+function browserInfo(){
+	var browserInfoVal = '';
+
+	if ( typeof navigator !== 'undefined' ){
+		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
+		browserInfoVal += 'http://udger.com/resources/online-parser\n\n';
+	}
+
+	if ( typeof clientinfo !== 'undefined' ){
+		var fullDevice = ( clientinfo.device.full.trim().length )? ' (' + clientinfo.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
+		browserInfoVal += 'Device: ' + clientinfo.device.type + fullDevice + '\n';
+		browserInfoVal += 'Operating System: ' + clientinfo.os.full + '\n';
+		browserInfoVal += 'Browser: ' + clientinfo.browser.full + ' (' + clientinfo.browser.engine + ')\n\n';
+	}
+
+	browserInfoVal += 'HTML Classes: ' + thisPage.html.attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Body Classes: ' + thisPage.body.attr('class').split(' ').sort().join(', ') + '\n\n';
+	browserInfoVal += 'Viewport Size: ' + thisPage.window.width() + 'px x ' + thisPage.window.height() + 'px ' + '\n\n';
+
+	if ( typeof performance !== 'undefined' ){
+		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
+		var perceivedLoadTime = (performance.timing.loadEventEnd-performance.timing.navigationStart)/1000;
+		var actualLoadTime = (performance.timing.loadEventEnd-performance.timing.responseEnd)/1000;
+		browserInfoVal += 'Perceived Load Time: ' + perceivedLoadTime + 's' + '\n';
+		browserInfoVal += 'Actual Page Load Time: ' + actualLoadTime + 's' + '\n\n';
+		browserInfoVal += 'Referrer: ' + document.referrer + '\n';
+	} else {
+		browserInfoVal += 'Page load time not available.\n\n';
+		browserInfoVal += 'Referrer not available.\n';
+	}
+
+	if ( typeof window.history !== 'undefined' ){
+		if ( gaCustomDimensions['sessionID'] ){
+			browserInfoVal += 'Session ID: ' + sessionID + '\n\n';
+		}
+		browserInfoVal += 'History Depth: ' + window.history.length + '\n\n';
+	}
+
+	if ( typeof nebulaLocation !== 'undefined' ){
+		if ( !nebulaLocation.error ){
+			browserInfoVal += 'Geolocation: ' + nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude + '\n';
+			browserInfoVal += 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters (' + nebulaLocation.accuracy.miles + ' miles)\n';
+			browserInfoVal += 'https://www.google.com/maps/place/' + nebulaLocation.coordinates.latitude + ',' + nebulaLocation.coordinates.longitude + '\n\n';
+		} else {
+			browserInfoVal += 'Geolocation Error: ' + nebulaLocation.error.description + '\n\n';
+		}
+	}
+
+	browserInfoVal += 'IP Address: ' + clientinfo['remote_addr'] + '\n';
+	browserInfoVal += 'http://whatismyipaddress.com/ip/' + clientinfo['remote_addr'];
+
+	jQuery('textarea.browserinfo').addClass('hidden').css('display', 'none').val(browserInfoVal);
+}
+
+//Page Visibility
+function pageVisibility(){
+	visFirstHidden = false;
+	visibilityChangeActions();
+	thisPage.document.on('visibilitychange', function(){
+		visibilityChangeActions();
+	});
+
+	function visibilityChangeActions(){
+		if ( document.visibilityState == 'prerender' ){ //Page was prerendered
+			var pageTitle = thisPage.document.attr('title');
+			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
+
+			jQuery('iframe.youtubeplayer').each(function(){
+				if ( !jQuery(this).hasClass('ignore-visibility') ){ //Use this class to allow specific Youtube videos to continue playing regardless of page visibility
+					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
+				}
+			});
+
+			//@TODO "Nebula" 0: pause vimeo
+		}
+
+		if ( getPageVisibility() ){ //Page is hidden
+			jQuery(document).trigger('nebula_page_hidden');
+			jQuery('body').addClass('page-visibility-hidden');
+			nebulaTimer('pageVisibilityHidden', 'start');
+			jQuery('iframe.youtubeplayer').each(function(){
+				if ( !jQuery(this).hasClass('ignore-visibility') ){ //Use this class to allow specific Youtube videos to continue playing regardless of page visibility
+					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
+				}
+			});
+			//@TODO "Nebula" 0: pause vimeo
+			visFirstHidden = true;
+		} else { //Page is visible
+			if ( visFirstHidden ){
+				jQuery(document).trigger('nebula_page_visible');
+				jQuery('body').removeClass('page-visibility-hidden');
+				ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'end')), 'Page in background tab for this time');
 			}
 		}
-	});
-	jQuery('a.icon img, li.icon a img').each(function(){
-		jQuery(this).parent('a').removeClass('icon').addClass('no-icon'); //Remove filetype icons from images within <a> tags.
-	});
+	}
+
+	function getPageVisibility(){
+		if ( typeof document.hidden !== "undefined" ){
+			return document.hidden;
+		} else {
+			return false;
+		}
+	}
 }
+
+
+
+
+/*==========================
+ Social Functions
+ ===========================*/
 
 //Load the SDK asynchronously
 function facebookSDK(){
@@ -330,6 +463,23 @@ function prefillCommentAuthorCookieFields(name, email){
 	}
 }
 
+//Convert Twitter usernames, hashtags, and URLs to links.
+function tweetLinks(tweet){
+	var newString = tweet.replace(/(http(\S)*)/g, '<a href="' + "$1" + '" target="_blank">' + "$1" + '</a>'); //Links that begin with "http"
+	newString = newString.replace(/#(([a-zA-Z0-9_])*)/g, '<a href="https://twitter.com/hashtag/' + "$1" + '" target="_blank">#' + "$1" + '</a>'); //Link hashtags
+	newString = newString.replace(/@(([a-zA-Z0-9_])*)/g, '<a href="https://twitter.com/' + "$1" + '" target="_blank">@' + "$1" + '</a>'); //Link @username mentions
+	return newString;
+}
+
+function googlePlusCallback(jsonParam){
+	if ( jsonParam.state == 'on' ){
+		ga('send', 'event', 'Social', 'Google+ Like');
+	} else if ( jsonParam.state == 'off' ){
+		ga('send', 'event', 'Social', 'Google+ Unlike');
+	} else {
+		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]');
+	}
+}
 
 //Social sharing buttons
 function socialSharing(){
@@ -345,113 +495,14 @@ function socialSharing(){
 } //end socialSharing()
 
 
-//Create an object of the viewport dimensions
-function updateViewportDimensions(){
-	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
-
-	if ( typeof viewport === 'undefined' ){
-		var viewportHistory = 0;
-		//console.log('creating viewport History: ' + viewportHistory);
-	} else {
-		var viewportHistory = viewport.history+1;
-		viewport.prevWidth = viewport.width; //Not pushing to the object...
-		viewport.prevHeight = viewport.height; //Not pushing to the object...
-		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
-	}
-
-	var x = w.innerWidth || e.clientWidth || g.clientWidth;
-	var y = w.innerHeight || e.clientHeight || g.clientHeight;
-
-	if ( viewportHistory == 0 ){
-		var viewportObject = {
-			initialWidth: x,
-			initialHeight: y,
-			width: x,
-			height: y,
-			history: viewportHistory
-		};
-	} else {
-		viewportObject = {
-		    initialWidth: viewport.initialWidth,
-			initialHeight: viewport.initialHeight,
-		    width: x,
-		    height: y,
-		    history: viewportHistory
-		};
-	}
-	return viewportObject;
-}
-
-
-//Main dropdown nav dynamic width controller
-function dropdownWidthController(){
-	jQuery('#primarynav .sub-menu').each(function(){
-		var bigWidth = 100;
-			if ( jQuery(this).children().width() > bigWidth ){
-				bigWidth = jQuery(this).children().width();
-			}
-		jQuery(this).css('width', bigWidth+15 + 'px');
-	});
-} //end dropdownWidthController()
-
-
-//Sub-menu viewport overflow detector
-function overflowDetector(){
-    jQuery('#primarynav .menu > .menu-item').hover(function(){
-    	var viewportWidth = thisPage.window.width();
-    	var submenuLeft = jQuery(this).offset().left;
-    	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-    	if ( submenuRight > viewportWidth ){
-			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
-    	} else {
-			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
-    	}
-    }, function(){
-	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
-    });
-} //end overflowDetector()
-
-
-//Vertical subnav expanders
-function subnavExpanders(){
-    jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
-    jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    thisPage.document.on('click touch tap', '.toplevelvert_expander', function(){
-        jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
-        return false;
-    });
-    //Automatically expand subnav to show current page
-    jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
-    jQuery('.current-menu-item').children('.toplevelvert_expander').click();
-} //end subnavExpanders()
-
-
-//Affix the logo/navigation when scrolling passed it
-//@TODO "Nebula" 0: Ugh I don't really like this... It's almost fine, but the fixeElement.outerHeight() is before it shrinks, so there is 1 pixel or so where it puts the topbar beneath the fixed nav. Then, if you reload the page after scrolling down it does nothing until you scroll then it kicks in and animates the shrink all at once. Feels clunky as hell.
-function nebulaFixeder(){
-	var fixedElement = jQuery('#logonavcon'); //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
-	var fullBodyWrapper = jQuery('#fullbodywrapper');
-	if ( fixedElement.is('*') && thisPage.window.width() > 767 ){
-		fixedDistance = fixedElement.position().top;
-
-		thisPage.window.on('scroll resize', function(){
-			if ( thisPage.window.scrollTop() >= fixedDistance ){
-				fixedElement.addClass('fixed');
-				fullBodyWrapper.css('padding-top', fixedElement.outerHeight());
-			} else {
-				fixedElement.removeClass('fixed');
-				fullBodyWrapper.css('padding-top', '0');
-			}
-		});
-	} else {
-		fixedElement.removeClass('fixed');
-		fullBodyWrapper.css('padding-top', '0');
-	}
-}
-
+/*==========================
+ Analytics Functions
+ ===========================*/
 
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
+	gaDimensionsMetrics();
+
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//thisPage.document.on('mousedown', '.selector', function(e){
 	//  var intent = ( e.which >= 2 )? ' (Intent)' : '';
@@ -493,9 +544,13 @@ function gaEventTracking(){
 	});
 
 	//Contact Form Submissions
-	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to replace it by calling the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
+	jQuery('.wpcf7-form *').on('click touch tap focus', function(){
+		nebulaTimer('wpcf7-form', 'start');
+	});
+	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to use the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
 	thisPage.document.on('submit', '.wpcf7-form', function(){
 		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.');
+		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer('wpcf7-form', 'end')), 'Initial form focus until submit');
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
@@ -615,138 +670,135 @@ function gaEventTracking(){
 	window.onafterprint = afterPrint;
 }
 
-function googlePlusCallback(jsonParam){
-	if ( jsonParam.state == 'on' ){
-		ga('send', 'event', 'Social', 'Google+ Like');
-	} else if ( jsonParam.state == 'off' ){
-		ga('send', 'event', 'Social', 'Google+ Unlike');
-	} else {
-		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]');
-	}
+//Store Custom Dimension and Custom Metric ID strings from Google Analytics
+function gaDimensionsMetrics(){
+	//@TODO "Nebula" 0: Create Nebula Options for these? Maybe a new tab in Nebula Options for "Analytics"? -Need more "presets" available to pull the trigger on that.
+
+	//Create various custom dimensions and custom metrics in Google Analytics, then store the strings ("dimension3", "metric5", etc.) here in these objects.
+	//Refer to this post to see what dimensions are available: https://gearside.com/nebula/documentation/get-started/recommended-services/google-analytics-custom-definitions-ideas/
+	gaCustomDimensions = {
+        'scrollDepth': '', //Scroll depth information such as "Scanner" or "Reader".
+        'BusinessHours': '', //Passes "During Business Hours", or "Non-Business Hours" if business hours are available.
+        'sessionID': '', //Make a unique ID system so that you can group hits into specific user sessions
+        'userID': '', //If available, passes user IDs as custom dimensions. //@TODO "Nebula" 0: Haven't gotten this to work (without passing the dimension along with the initial analytics call in head)
+    }
+
+    gaCustomMetrics = {
+        '': '',
+    }
+
+	if ( gaCustomDimensions['sessionID'] ){
+    	sessionID = new Date().getTime() + '.' + Math.random().toString(36).substring(5);
+    	ga('set', gaCustomDimensions['sessionID'], sessionID);
+    }
 }
 
-function mmenus(){
-	if ( 'mmenu' in jQuery ){
-		var mobileNav = jQuery('#mobilenav');
-		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
+//Detect scroll depth for engagement and more accurate bounce rate
+function scrollDepth(){
+	var headerHeight = ( jQuery('#header').is('*') )? jQuery('#header').height() : 250;
+	var entryContent = jQuery('.entry-content');
 
-		if ( mobileNav.is('*') ){
-			mobileNav.mmenu({
-			    //Options
-			    "offCanvas": {
-				    "zposition": "back", //"back" (default), "front", "next"
-				    "position": "left" //"left" (default), "right", "top", "bottom"
-			    },
-			    "searchfield": { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
-			    	"add": true,
-			    	"search": true,
-			    	"placeholder": 'Search',
-			    	"noResults": "No navigation items found.",
-			    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
-			    },
-			    "counters": true, //Display count of sub-menus
-			    "iconPanels": true, //Layer panels on top of each other
-				"navbar": {
-					"title": "Menu"
-				},
-				"navbars": [{
-					"position": "bottom",
-					"content": [
-						"<span>" + bloginfo['name'] + "</span>"
-					]
-				}],
-			    "extensions": ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
-			}, {
-				//Configuration
-				"classNames": {
-					"selected": "current-menu-item"
-				}
-			});
+	//Flags
+	var timer = 0;
+	var isScroller = false;
+	var isReader = false;
+	var endContent = false;
+	var endPage = false;
 
-			if ( mobileNav.length ){
-				mobileNav.data('mmenu').bind('opening', function(){
-					//When mmenu has started opening
-					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').parents('.mobilenavtrigger').addClass('active');
-				}).bind('opened', function(){
-					//After mmenu has finished opening
-					history.replaceState(null, document.title, location);
-					history.pushState(null, document.title, location);
-				}).bind('closing', function(){
-					//When mmenu has started closing
-					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').parents('.mobilenavtrigger').removeClass('active');
-				}).bind('closed', function(){
-					//After mmenu has finished closing
-				});
-			}
+	//Reading time calculations
+	var startTime = new Date();
+	var beginning = startTime.getTime();
+	var totalTime = 0;
 
-			var mmenuSearchInput = jQuery('.mm-search input');
-			mmenuSearchInput.wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
-			mmenuSearchInput.on('keyup', function(){
-				if ( jQuery(this).val().length > 0 ){
-					jQuery('.clearsearch').removeClass('hidden');
-				} else {
-					jQuery('.clearsearch').addClass('hidden');
-				}
-			});
-			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br /><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-			thisPage.document.on('click touch tap', '.clearsearch a', function(){
-				mmenuSearchInput.val('').keyup();
-				jQuery('.clearsearch').addClass('hidden');
-				return false;
-			});
+	jQuery(window).on('scroll', function(){
+		if ( !isScroller ){
+			ga('send', 'event', 'Scroll Depth', 'Initial scroll', '(signifies non-bounced users)');
+			isScroller = true;
+		}
 
-			//Close mmenu on back button click
-			if (window.history && window.history.pushState){
-				window.addEventListener("popstate", function(e){
-					if ( jQuery('html.mm-opened').is('*') ){
-						mobileNav.data('mmenu').close();
-						e.stopPropagation();
+		if ( timer ){
+			clearTimeout(timer);
+		}
+		timer = setTimeout(scrollLocation, 100); //Use a buffer so we don't call scrollLocation too often.
+	});
+
+	//Check the scroll location
+	function scrollLocation(){
+		viewportBottom = jQuery(window).height()+jQuery(window).scrollTop();
+		documentHeight = jQuery(document).height();
+
+		//When the user scrolls past the header
+		var becomesReaderAt = ( entryContent.is('*') )? entryContent.offset().top : headerHeight;
+		if ( viewportBottom > becomesReaderAt && !isReader ){
+			currentTime = new Date();
+			readStartTime = currentTime.getTime();
+			timeToScroll = (readStartTime-beginning)/1000;
+
+			ga('send', 'event', 'Scroll Depth', 'Began reading', Math.round(timeToScroll) + ' seconds (since pageload)');
+			ga('send', 'timing', 'Scroll Depth', 'Began reading', Math.round(timeToScroll*1000), 'Scrolled from top of page to top of entry-content');
+			isReader = true;
+		}
+
+		//When the reader reaches the end of the entry-content
+		if ( entryContent.is('*') ){
+			if ( viewportBottom >= entryContent.offset().top+entryContent.innerHeight() && !endContent ){
+				currentTime = new Date();
+				readEndTime = currentTime.getTime();
+				readTime = (readEndTime-readStartTime)/1000;
+
+				//Send Custom Dimensions
+				if ( gaCustomDimensions['scrollDepth'] ){
+					if ( readTime < 10 ){
+						ga('set', gaCustomDimensions['scrollDepth'], 'Previewer');
+					} else if ( readTime < 60 ){
+						ga('set', gaCustomDimensions['scrollDepth'], 'Scanner');
+					} else {
+						ga('set', gaCustomDimensions['scrollDepth'], 'Reader');
 					}
-				}, false);
+				}
+
+				ga('send', 'event', 'Scroll Depth', 'Finished reading', Math.round(readTime) + ' seconds (since reading began)');
+				ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), 'Scrolled from top of entry-content to bottom');
+				endContent = true;
 			}
+		}
+
+		//If user has hit the bottom of the page
+		if ( viewportBottom >= documentHeight && !endPage ){
+			currentTime = new Date();
+			endTime = currentTime.getTime();
+			totalTime = (endTime-readStartTime)/1000;
+
+			ga('send', 'event', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime) + ' seconds (since pageload)');
+			ga('send', 'timing', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom');
+
+			endPage = true;
 		}
 	}
 }
 
+//Google AdWords conversion tracking for AJAX
+function conversionTracker(conversionpage){
+	if ( typeof conversionpage !== 'string' || conversionpage.indexOf('.') <= 0 ){
+		conversionpage = 'thanks.html';
+	}
+
+	var iframe = document.createElement('iframe');
+	iframe.style.width = '0px';
+	iframe.style.height = '0px';
+	document.body.appendChild(iframe);
+	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
+};
+
+
+/*==========================
+ Search Functions
+ ===========================*/
 
 //Search Keywords
 function keywordSearch(container, parent, value){
 	jQuery(container).find("*:not(:Contains(" + value + "))").parents(parent).addClass('filtereditem');
 	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass('filtereditem');
-}
-
-//Power Footer Width Distributor
-function powerFooterWidthDist(){
-	var powerFooterWidth = jQuery('#powerfooter').width();
-	var powerFooterTopLIs = jQuery('#powerfooter ul.menu > li');
-	var topLevelFooterItems = 0;
-	powerFooterTopLIs.each(function(){
-		topLevelFooterItems = topLevelFooterItems+1;
-	});
-	var footerItemWidth = powerFooterWidth/topLevelFooterItems-8;
-	if ( topLevelFooterItems == 0 ){
-		jQuery('.powerfootercon').addClass('hidden');
-	} else {
-		powerFooterTopLIs.css('width', footerItemWidth);
-	}
-}
-
-//Column height equalizer
-function nebulaEqualize(){
-	jQuery('.row.equalize').each(function(){
-		var oThis = jQuery(this);
-		tallestColumn = 0;
-		oThis.find('.columns').css('min-height', '0');
-		oThis.find('.columns').each(function(i){
-			if ( !jQuery(this).hasClass('no-equalize') ){
-				columnHeight = jQuery(this).height();
-				if ( columnHeight > tallestColumn ){
-					tallestColumn = columnHeight;
-				}
-			}
-		});
-		oThis.find('.columns').css('min-height', tallestColumn);
-	});
 }
 
 //Menu Search Replacement
@@ -787,6 +839,8 @@ function autocompleteSearch(){
 
 	jQuery("input#s, input.search").on('keypress paste', function(e){
 		thisSearchInput = jQuery(this);
+		nebulaTimer('autocompleteSearch', 'start');
+		nebulaTimer('autocompleteResponse', 'start');
 		if ( !thisSearchInput.hasClass('no-autocomplete') && !thisPage.html.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
 			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && thisSearchInput.val().trim().length >= 2 && searchTriggerOnlyChars(e) ){
 				thisSearchInput.parents('form').addClass('searching');
@@ -822,6 +876,7 @@ function autocompleteSearch(){
 							} else {
 								ga('send', 'event', 'Internal Search', 'Autocomplete Search (No Results)', request.term);
 							}
+							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'Initial search until server results');
 							response(data);
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
 							if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
@@ -838,6 +893,7 @@ function autocompleteSearch(){
 				},
 				select: function(event, ui){
 					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
+		            ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From initial search until navigation');
 		            if ( typeof ui.item.external !== 'undefined' ){
 						window.open(ui.item.link, '_blank');
 		            } else {
@@ -1183,46 +1239,6 @@ function postSearch(posts){
 	return tempFilteringObject;
 }
 
-function moreEvents(bool){
-	if ( !bool ){
-		jQuery('#load-more-events').addClass('all-events-loaded');
-	} else {
-		jQuery('#load-more-events').removeClass('all-events-loaded');
-	}
-}
-
-//Show/Hide the reset button
-function eventFormNeedReset(){
-	hasValue = false;
-
-	//Check the category select dropdown
-/*
-	jQuery('#advanced-search-form select').each(function(){
-		if ( jQuery(this).find('option:selected').val() && jQuery(this).find('option:selected').val() != '' ){
-			jQuery('.resetfilters').addClass('active');
-			hasValue = true;
-			return false;
-		}
-	});
-*/
-
-	//@TODO: This is not disappearing when reset link itself is clicked.
-	//Check all other inputs
-	jQuery('#advanced-search-form input').each(function(){
-		if ( (jQuery(this).attr('type') != 'checkbox' && jQuery(this).val() != '') || jQuery(this).prop("checked") ){
-			jQuery('.resetfilters').addClass('active');
-			hasValue = true;
-			return false;
-		}
-	});
-
-	if ( !hasValue ){
-		jQuery('.resetfilters').removeClass('active');
-	}
-}
-//End Advanced Search functions
-
-
 //Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
 	if ( !thisPage.html.hasClass('lte-ie8') ){
@@ -1380,61 +1396,10 @@ function showSuggestedPage(title, url){
 	}
 }
 
-//Page Visibility
-function pageVisibility(){
-	visFirstHidden = 0;
-	visibilityChangeActions();
-	thisPage.document.on('visibilitychange', function(){
-		visibilityChangeActions();
-	});
 
-	function visibilityChangeActions(){
-		if ( document.visibilityState == 'prerender' ){ //Page was prerendered
-			var pageTitle = thisPage.document.attr('title');
-			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
-
-			jQuery('iframe.youtubeplayer').each(function(){
-				if ( !jQuery(this).hasClass('ignore-visibility') ){
-					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
-				}
-			});
-
-			//@TODO "Nebula" 0: pause vimeo
-		}
-
-		if ( getPageVisibility() ){ //Page is hidden
-			jQuery(document).trigger('nebula_page_hidden');
-			jQuery('body').addClass('page-visibility-hidden');
-			jQuery('iframe.youtubeplayer').each(function(){
-				if ( !jQuery(this).hasClass('ignore-visibility') ){
-					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
-				}
-			});
-			//@TODO "Nebula" 0: pause vimeo
-			visFirstHidden = 1;
-			visTimerBefore = (new Date()).getTime();
-			var pageTitle = thisPage.document.attr('title');
-			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1}); //@TODO: Page Visibility Hidden event tracking is off by default. Uncomment to enable.
-		} else { //Page is visible
-			if ( visFirstHidden == 1 ){
-				jQuery(document).trigger('nebula_page_visible');
-				jQuery('body').removeClass('page-visibility-hidden');
-				var visTimerAfter = (new Date()).getTime();
-				var visTimerResult = (visTimerAfter - visTimerBefore)/1000;
-				var pageTitle = thisPage.document.attr('title');
-				//ga('send', 'event', 'Page Visibility', 'Visible', pageTitle + ' (Hidden for: ' + visTimerResult + 's)', {'nonInteraction': 1}); //@TODO "Nebula" 0: Page Visibility Visible event tracking is off by default. Uncomment to enable.
-			}
-		}
-	}
-
-	function getPageVisibility(){
-		if ( typeof document.hidden !== "undefined" ){
-			return document.hidden;
-		} else {
-			return false;
-		}
-	}
-}
+/*==========================
+ Contact Form Functions
+ ===========================*/
 
 function cFormLocalStorage(){
 	var cForm7Message = jQuery('.cform7-message');
@@ -1683,19 +1648,6 @@ function cFormSuccess(form, thanks){
 	}
 }
 
-//Google AdWords conversion tracking for AJAX
-function conversionTracker(conversionpage){
-	if ( typeof conversionpage !== 'string' || conversionpage.indexOf('.') <= 0 ){
-		conversionpage = 'thanks.html';
-	}
-
-	var iframe = document.createElement('iframe');
-	iframe.style.width = '0px';
-	iframe.style.height = '0px';
-	document.body.appendChild(iframe);
-	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
-};
-
 //Allows only numerical input on specified inputs. Call this on keyUp? @TODO "Nebula" 0: Make the selector into oThis and pass that to the function from above.
 //The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
 function onlyNumbers(){
@@ -1713,222 +1665,10 @@ function checkCommentVal(oThis){
 	}
 }
 
-function nebulaScrollTo(){
-	var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
-	thisPage.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
-		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
-		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
-			var target = jQuery(this.hash);
-			target = ( target.length )? target : jQuery('[name=' + this.hash.slice(1) +']');
-			if ( target.length ){
-				var nOffset = Math.floor(target.offset().top-headerHtOffset+pOffset);
-				jQuery('html, body').animate({
-					scrollTop: nOffset
-				}, 500);
-				return false;
-			}
-		}
-	});
 
-	thisPage.document.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
-		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
-		if ( jQuery(this).attr('scrollto') ){
-			var scrollElement = jQuery(this).attr('scrollto');
-			jQuery('html, body').animate({
-				scrollTop: Math.floor(jQuery(scrollElement).offset().top-headerHtOffset+pOffset)
-			}, 500);
-		}
-		return false;
-	});
-}
-
-
-//Fill browserinfo field with browser information (to send with forms).
-function browserInfo(){
-	var browserInfoVal = '';
-
-	if ( typeof navigator !== 'undefined' ){
-		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
-		browserInfoVal += 'http://udger.com/resources/online-parser\n\n';
-	}
-
-	if ( typeof clientinfo !== 'undefined' ){
-		var fullDevice = ( clientinfo.device.full.trim().length )? ' (' + clientinfo.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
-		browserInfoVal += 'Device: ' + clientinfo.device.type + fullDevice + '\n';
-		browserInfoVal += 'Operating System: ' + clientinfo.os.full + '\n';
-		browserInfoVal += 'Browser: ' + clientinfo.browser.full + ' (' + clientinfo.browser.engine + ')\n\n';
-	}
-
-	browserInfoVal += 'HTML Classes: ' + thisPage.html.attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Body Classes: ' + thisPage.body.attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Viewport Size: ' + thisPage.window.width() + 'px x ' + thisPage.window.height() + 'px ' + '\n\n';
-
-	if ( typeof performance !== 'undefined' ){
-		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
-		var perceivedLoadTime = (performance.timing.loadEventEnd-performance.timing.navigationStart)/1000;
-		var actualLoadTime = (performance.timing.loadEventEnd-performance.timing.responseEnd)/1000;
-		browserInfoVal += 'Perceived Load Time: ' + perceivedLoadTime + 's' + '\n';
-		browserInfoVal += 'Actual Page Load Time: ' + actualLoadTime + 's' + '\n\n';
-		browserInfoVal += 'Referrer: ' + document.referrer + '\n';
-	} else {
-		browserInfoVal += 'Page load time not available.\n\n';
-		browserInfoVal += 'Referrer not available.\n';
-	}
-
-	if ( typeof window.history !== 'undefined' ){
-		browserInfoVal += 'History Depth: ' + window.history.length + '\n\n';
-	}
-
-	if ( typeof nebulaLocation !== 'undefined' ){
-		if ( !nebulaLocation.error ){
-			browserInfoVal += 'Geolocation: ' + nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude + '\n';
-			browserInfoVal += 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters (' + nebulaLocation.accuracy.miles + ' miles)\n';
-			browserInfoVal += 'https://www.google.com/maps/place/' + nebulaLocation.coordinates.latitude + ',' + nebulaLocation.coordinates.longitude + '\n\n';
-		} else {
-			browserInfoVal += 'Geolocation Error: ' + nebulaLocation.error.description + '\n\n';
-		}
-	}
-
-	browserInfoVal += 'IP Address: ' + clientinfo['remote_addr'] + '\n';
-	browserInfoVal += 'http://whatismyipaddress.com/ip/' + clientinfo['remote_addr'];
-
-	jQuery('textarea.browserinfo').addClass('hidden').css('display', 'none').val(browserInfoVal);
-}
-
-//Create desktop notifications
-function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
-	if ( checkNotificationPermission() ){
-		//Set defaults
-		var defaults = {
-			dir: "auto", //Direction ["auto", "ltr", "rtl"] (optional)
-			lang: "en-US", //Language (optional)
-			body: "", //Body message (optional)
-			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-			icon: bloginfo['template_directory'] + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
-		}
-
-		if ( typeof message === "undefined" ){
-			message = defaults;
-		} else if ( typeof message === "string" ){
-			body = message;
-			message = defaults;
-			message.body = body;
-		} else {
-			if ( typeof message.dir === "undefined" ){
-				message.dir = defaults.dir;
-			}
-			if ( typeof message.lang === "undefined" ){
-				message.lang = defaults.lang;
-			}
-			if ( typeof message.body === "undefined" ){
-				message.body = defaults.lang;
-			}
-			if ( typeof message.tag === "undefined" ){
-				message.tag = defaults.tag;
-			}
-			if ( typeof message.icon === "undefined" ){
-				message.icon = defaults.icon;
-			}
-		}
-
-		instance = new Notification(title, message); //Trigger the notification //@TODO "Nebula" 0: This will be deprecated soon. Update to the service worker.
-
-		if ( typeof clickCallback !== "undefined" ){
-			instance.onclick = function(){
-				clickCallback();
-			};
-		}
-		if ( typeof showCallback !== "undefined" ){
-            instance.onshow = function(e){
-                showCallback();
-            };
-        } else {
-            instance.onshow = function(e){
-                setTimeout(function(){
-                    instance.close();
-                }, 20000);
-            }
-        }
-		if ( typeof closeCallback !== "undefined" ){
-			instance.onclose = function(){
-				closeCallback();
-			};
-		}
-		if ( typeof errorCallback !== "undefined" ){
-			instance.onerror = function(){
-				errorCallback();
-			};
-		}
-	}
-	return false;
-}
-
-function checkNotificationPermission(){
-	Notification = window.Notification || window.mozNotification || window.webkitNotification;
-	if ( !(Notification) ){
-		return false;
-	} else if ( Notification.permission === "granted" ){
-		return true;
-	} else if ( Notification.permission !== 'denied' ){
-		Notification.requestPermission(function (permission){
-			if( !('permission' in Notification) ){
-				Notification.permission = permission;
-			}
-			if (permission === "granted"){
-				return true;
-			}
-		});
-	}
-	return false;
-}
-
-function nebulaVibrate(pattern){
-	if ( typeof pattern === 'undefined' ){
-		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
-	} else if ( typeof pattern !== 'object' ){
-		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
-	}
-	if ( checkVibration() ){
-		navigator.vibrate(pattern);
-	}
-	return false;
-}
-
-function checkVibration(){
-	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
-	if ( !(Vibration) ){
-		return false;
-	} else {
-		return true;
-	}
-}
-
-
-//Waits for events to finish before triggering
-//Passing immediate triggers the function on the leading edge (instead of the trailing edge).
-var debounceTimers = {};
-function debounce(callback, wait, uniqueId, immediate){
-    if ( !uniqueId ){
-		uniqueId = "Don't call this twice without a uniqueId";
-	}
-
-    var context = this, args = arguments;
-    var later = function(){
-        debounceTimers[uniqueId] = null;
-        if ( !immediate ){
-	        callback.apply(context, args);
-	    }
-    };
-    var callNow = immediate && !debounceTimers[uniqueId];
-
-    clearTimeout(debounceTimers[uniqueId]);
-    debounceTimers[uniqueId] = setTimeout(later, wait);
-    if ( callNow ){
-	    callback.apply(context, args);
-	}
-};
-
-
+/*==========================
+ Optimization Functions
+ ===========================*/
 
 //Conditional JS Library Loading
 //This could be done better I think (also, it runs too late in the stack).
@@ -1992,8 +1732,7 @@ function conditionalJSLoading(){
 	if ( jQuery('.flag').is('*') ){
 		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/css/flags.css');
 	}
-} //end conditionalJSLoading()
-
+}
 
 //Dynamically load CSS files using JS
 function nebulaLoadCSS(url){
@@ -2012,106 +1751,363 @@ function nebulaLoadCSS(url){
 	}
 }
 
-function chosenSelectOptions(){
-	jQuery('.chosen-select').chosen({
-		'disable_search_threshold': 5,
-		'search_contains': true,
-		'no_results_text': "No results found.",
-		'allow_single_deselect': true,
-		'width': "100%"
-	});
-}
 
-function dataTablesActions(){
-	thisPage.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
-	    //console.log('keyup: ' + jQuery(this).val());
-	    //jQuery('.dataTables_wrapper').removeHighlight();
-	    //jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
-	});
-}
+/* ==========================================================================
+   Google Maps Functions
+   ========================================================================== */
 
+//Places - Address Autocomplete
+function nebulaAddressAutocomplete(autocompleteInput){
+	if ( jQuery(autocompleteInput).is('*') ){ //If the addressAutocomplete ID exists
+		jQuery.getScript('https://www.google.com/jsapi', function(){
+		    google.load('maps', '3', {
+			    other_params: 'libraries=places',
+			    callback: function(){
+					addressAutocomplete = new google.maps.places.Autocomplete(
+						jQuery(autocompleteInput)[0],
+						{types: ['geocode']} //Restrict the search to geographical location types
+					);
 
-//Place all bxSlider events inside this function!
-function bxSlider(){
-	if ( typeof bxSlider !== 'undefined' ){
-		jQuery('.exampleslider').bxSlider({
-			mode: 'horizontal', //'horizontal', 'vertical', 'fade'
-			speed: 800,
-			captions: false,
-			auto: true,
-			pause: 6000,
-			autoHover: true,
-			adaptiveHeight: true,
-			useCSS: false,
-			easing: 'easeInOutCubic',
-			controls: false
-		});
+					google.maps.event.addListener(addressAutocomplete, 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
+						place = addressAutocomplete.getPlace(); //Get the place details from the addressAutocomplete object.
 
-		jQuery('.heroslider').bxSlider({
-			mode: 'fade',
-			speed: 800,
-			captions: false,
-			pager: false,
-			auto: false,
-			pause: 10000,
-			autoHover: true,
-			adaptiveHeight: true,
-			useCSS: true,
-			controls: true
-		});
-	}
-}
+						//Come up with a way so that everything doesn't need to be defined before detecting if it exists. Like "pushing" to the object.
+						addressComponents = {
+							'street': {
+								'number': null,
+								'name': null,
+								'full': null,
+							},
+							'city': null,
+							'county': null,
+							'state': {
+								'name': null,
+								'abbreviation': null,
+							},
+							'country': {
+								'name': null,
+								'abbreviation': null,
+							},
+							'zip': {
+								'code': null,
+								'suffix': null,
+								'full': null,
+							},
+						};
 
-function vimeoControls(){
-	if ( jQuery('.vimeoplayer').is('*') ){
-        jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
-			createVimeoPlayers();
+						for ( var i = 0; i < place.address_components.length; i++ ){
+							//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
+							switch ( place.address_components[i].types[0] ){
+								case "street_number":
+									addressComponents.street.number = place.address_components[i].short_name; //123
+									break;
+								case "route":
+									addressComponents.street.name = place.address_components[i].long_name; //Street Name Rd.
+									break;
+								case "locality":
+									addressComponents.city = place.address_components[i].long_name; //Liverpool
+									break;
+								case "administrative_area_level_2":
+									addressComponents.county = place.address_components[i].long_name; //Onondaga County
+									break;
+								case "administrative_area_level_1":
+									addressComponents.state.name = place.address_components[i].long_name; //New York
+									addressComponents.state.abbreviation = place.address_components[i].short_name; //NY
+									break;
+								case "country":
+									addressComponents.country.name = place.address_components[i].long_name; //United States
+									addressComponents.country.abbreviation = place.address_components[i].short_name; //US
+									break;
+								case "postal_code":
+									addressComponents.zip.code = place.address_components[i].short_name; //13088
+									break;
+								case "postal_code_suffix":
+									addressComponents.zip.suffix = place.address_components[i].short_name; //4725
+									break;
+								default:
+									//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
+							}
+						}
+						if ( addressComponents.street.number && addressComponents.street.name ){
+							addressComponents.street.full = addressComponents.street.number + ' ' + addressComponents.street.name;
+						}
+						if ( addressComponents.zip.code && addressComponents.zip.suffix ){
+							addressComponents.zip.full = addressComponents.zip.code + '-' + addressComponents.zip.suffix;
+						}
+
+						jQuery(document).trigger('nebula_address_selected');
+						ga('send', 'event', 'Contact', 'Autocomplete Address', addressComponents.city + ', ' + addressComponents.state.abbreviation + ' ' + addressComponents.zip.code);
+					});
+
+					jQuery(autocompleteInput).on('focus', function(){
+						if ( navigator.geolocation ){
+							navigator.geolocation.getCurrentPosition(function(position){ //Bias to the user's geographical location.
+								var geolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+								var circle = new google.maps.Circle({
+									center: geolocation,
+									radius: position.coords.accuracy
+								});
+								addressAutocomplete.setBounds(circle.getBounds());
+							});
+						}
+					}).on('keydown', function(e){
+						if ( e.which == 13 && jQuery('.pac-container:visible').is('*') ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
+							return false;
+						}
+					});
+
+					if ( autocompleteInput == '#address-autocomplete' ){
+						jQuery(document).on('nebula_address_selected', function(){
+							//do any default stuff here.
+						});
+					}
+		    	} //End Google Maps callback
+		    }); //End Google Maps load
 		}).fail(function(){
-			//do nothing
+			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
 		});
-	}
-
-	function createVimeoPlayers(){
-		//To trigger events on these videos, use the syntax: player[0].api("play");
-		player = new Array();
-	    jQuery('iframe.vimeoplayer').each(function(i){
-			var vimeoiframeClass = jQuery(this).attr('id');
-			player[i] = $f(vimeoiframeClass);
-			//@TODO "Nebula" 0: Add a named index to this array so it can be called by the video ID instead of the array index number
-			player[i].addEvent('ready', function(){
-			    player[i].addEvent('play', onPlay);
-			    player[i].addEvent('pause', onPause);
-			    player[i].addEvent('seek', onSeek);
-			    player[i].addEvent('finish', onFinish);
-			    player[i].addEvent('playProgress', onPlayProgress);
-			});
-		});
-	}
-
-	function onPlay(id){
-	    var videoTitle = id.replace(/-/g, ' ');
-	    ga('send', 'event', 'Videos', 'Play', videoTitle);
-	}
-
-	function onPause(id){
-	    var videoTitle = id.replace(/-/g, ' ');
-	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
-	}
-
-	function onSeek(data, id){
-	    var videoTitle = id.replace(/-/g, ' ');
-	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
-	}
-
-	function onFinish(id){
-		var videoTitle = id.replace(/-/g, ' ');
-		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-	}
-
-	function onPlayProgress(data, id){
-		//data.seconds played
 	}
 }
+
+//Request Geolocation
+function requestPosition(){
+    var nav = null;
+    if (nav == null){
+        nav = window.navigator;
+    }
+    var geoloc = nav.geolocation;
+    if (geoloc != null){
+        geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //One-time location poll
+        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebulaLocation object regularly, but be careful sending events to GA- may result in TONS of events)
+    }
+}
+
+//Geolocation Success
+function successCallback(position){
+	nebulaLocation = {
+        'error': false,
+        'coordinates': { //A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
+            'latitude': position.coords.latitude,
+            'longitude': position.coords.longitude
+        },
+        'accuracy': {
+            'meters': position.coords.accuracy,
+            'miles': (position.coords.accuracy*0.000621371).toFixed(2),
+        },
+        'altitude': { //Above the mean sea level
+	        'meters': position.coords.altitude,
+	        'miles': (position.coords.altitude*0.000621371).toFixed(2),
+	        'accuracy': position.coords.altitudeAccuracy,
+        },
+        'speed': {
+	        'mps': position.coords.speed,
+	        'kph': (position.coords.speed*3.6).toFixed(2),
+	        'mph': (position.coords.speed*2.23694).toFixed(2),
+        },
+        'heading': position.coords.heading, //Degrees clockwise from North
+    }
+
+	if ( nebulaLocation.accuracy.meters <= 25 ){
+		nebulaLocation.accuracy.color = '#00bb00';
+	} else if ( nebulaLocation.accuracy.meters > 25 && nebulaLocation.accuracy.meters <= 50 ){
+		nebulaLocation.accuracy.color = '#46d100';
+	} else if ( nebulaLocation.accuracy.meters > 51 && nebulaLocation.accuracy.meters <= 150 ){
+		nebulaLocation.accuracy.color = '#a4ed00';
+	} else if ( nebulaLocation.accuracy.meters > 151 && nebulaLocation.accuracy.meters <= 400 ){
+		nebulaLocation.accuracy.color = '#f2ee00';
+	} else if ( nebulaLocation.accuracy.meters > 401 && nebulaLocation.accuracy.meters <= 800 ){
+		nebulaLocation.accuracy.color = '#ffc600';
+	} else if ( nebulaLocation.accuracy.meters > 801 && nebulaLocation.accuracy.meters <= 1500 ){
+		nebulaLocation.accuracy.color = '#ff6f00';
+	} else if ( nebulaLocation.accuracy.meters > 1501 && nebulaLocation.accuracy.meters <= 3000 ){
+		nebulaLocation.accuracy.color = '#ff1900';
+	} else {
+		nebulaLocation.accuracy.color = '#ff0000';
+	}
+
+	thisPage.document.trigger('geolocationSuccess');
+	thisPage.body.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebulaLocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebulaLocation.accuracy.meters.toFixed(0).replace('.', ''));
+	browserInfo();
+	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters');
+}
+
+//Geolocation Error
+function errorCallback(error){
+    switch (error.code){
+        case error.PERMISSION_DENIED:
+            geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
+            break;
+        case error.POSITION_UNAVAILABLE:
+            geolocationErrorMessage = "Data from location services is currently unavailable.";
+            break;
+        case error.TIMEOUT:
+            geolocationErrorMessage = "Location could not be determined within a specified timeout period.";
+            break;
+        default:
+        	geolocationErrorMessage = "An unknown error has occurred.";
+            break;
+    }
+
+    nebulaLocation = {
+	    'error': {
+		    'code': error.code,
+			'description': geolocationErrorMessage
+	    }
+    }
+
+    thisPage.document.trigger('geolocationError');
+    thisPage.body.addClass('geo-error');
+	browserInfo();
+    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
+}
+
+
+/*==========================
+ Helper Functions
+ These functions enhance other aspects of the site like HTML/CSS.
+ ===========================*/
+
+//Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
+function addHelperClasses(){
+	jQuery('li:even, tr:even').not('.dataTables_wrapper tr').addClass('even'); //IE8 support
+	jQuery('li:odd, tr:odd').not('.dataTables_wrapper tr').addClass('odd'); //IE8 support
+	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child'); //IE6 support
+	jQuery('li:last-child, tr:last-child').addClass('last-child'); //IE8 support
+	jQuery('.column:first-child, .columns:first-child').addClass('first-child'); //IE6 support
+	jQuery('a:hover, li:hover, tr:hover').addClass('hover'); //IE8 support
+	jQuery('a').each(function(){
+		var a = new RegExp('/' + window.location.host + '/');
+		if ( !a.test(this.href) ){
+			if ( this.href.indexOf('http') !== -1 ){ //excludes all non-http link (ex: mailto: and tel:)
+				var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
+				jQuery(this).attr('rel', rel + 'external');
+			}
+		}
+	});
+	jQuery('a.icon img, li.icon a img').each(function(){
+		jQuery(this).parent('a').removeClass('icon').addClass('no-icon'); //Remove filetype icons from images within <a> tags.
+	});
+}
+
+//Column height equalizer
+function nebulaEqualize(){
+	jQuery('.row.equalize').each(function(){
+		var oThis = jQuery(this);
+		tallestColumn = 0;
+		oThis.find('.columns').css('min-height', '0');
+		oThis.find('.columns').each(function(i){
+			if ( !jQuery(this).hasClass('no-equalize') ){
+				columnHeight = jQuery(this).height();
+				if ( columnHeight > tallestColumn ){
+					tallestColumn = columnHeight;
+				}
+			}
+		});
+		oThis.find('.columns').css('min-height', tallestColumn);
+	});
+}
+
+//Power Footer Width Distributor
+function powerFooterWidthDist(){
+	var powerFooterWidth = jQuery('#powerfooter').width();
+	var powerFooterTopLIs = jQuery('#powerfooter ul.menu > li');
+	var topLevelFooterItems = 0;
+	powerFooterTopLIs.each(function(){
+		topLevelFooterItems = topLevelFooterItems+1;
+	});
+	var footerItemWidth = powerFooterWidth/topLevelFooterItems-8;
+	if ( topLevelFooterItems == 0 ){
+		jQuery('.powerfootercon').addClass('hidden');
+	} else {
+		powerFooterTopLIs.css('width', footerItemWidth);
+	}
+}
+
+function nebulaScrollTo(){
+	var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+	thisPage.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
+		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
+		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
+			var target = jQuery(this.hash);
+			target = ( target.length )? target : jQuery('[name=' + this.hash.slice(1) +']');
+			if ( target.length ){
+				var nOffset = Math.floor(target.offset().top-headerHtOffset+pOffset);
+				jQuery('html, body').animate({
+					scrollTop: nOffset
+				}, 500);
+				return false;
+			}
+		}
+	});
+
+	thisPage.document.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
+		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
+		if ( jQuery(this).attr('scrollto') ){
+			var scrollElement = jQuery(this).attr('scrollto');
+			jQuery('html, body').animate({
+				scrollTop: Math.floor(jQuery(scrollElement).offset().top-headerHtOffset+pOffset)
+			}, 500);
+		}
+		return false;
+	});
+}
+
+
+/*==========================
+ Utility Functions
+ These functions simplify and enhance other JavaScript functions
+ ===========================*/
+
+//Get query string parameters
+function getQueryStrings(){
+	queries = {};
+    var q = document.URL.split('?')[1];
+    if ( q ){
+        q = q.split('&');
+        for ( var i = 0; i < q.length; i++ ){
+            hash = q[i].split('=');
+            if ( hash[1] ){
+	            queries[hash[0]] = hash[1];
+            } else {
+	            queries[hash[0]] = true;
+            }
+        }
+	}
+}
+
+//Search query strings for the passed parameter
+function get(query){
+	if ( !query ){
+		return queries;
+	} else {
+		return queries[query];
+	}
+	return false;
+}
+
+//Waits for events to finish before triggering
+//Passing immediate triggers the function on the leading edge (instead of the trailing edge).
+var debounceTimers = {};
+function debounce(callback, wait, uniqueId, immediate){
+    if ( !uniqueId ){
+		uniqueId = "Don't call this twice without a uniqueId";
+	}
+
+    var context = this, args = arguments;
+    var later = function(){
+        debounceTimers[uniqueId] = null;
+        if ( !immediate ){
+	        callback.apply(context, args);
+	    }
+    };
+    var callNow = immediate && !debounceTimers[uniqueId];
+
+    clearTimeout(debounceTimers[uniqueId]);
+    debounceTimers[uniqueId] = setTimeout(later, wait);
+    if ( callNow ){
+	    callback.apply(context, args);
+	}
+};
 
 //Cookie Management
 function createCookie(name, value, days){
@@ -2142,13 +2138,46 @@ function eraseCookie(name){
 	createCookie(name, "", -1);
 }
 
+//Time specific events. Unique ID is required.
+function nebulaTimer(uniqueID, startStop){
+	if ( typeof nebulaTimings === 'undefined' ){
+		nebulaTimings = [];
+	}
 
-//Convert Twitter usernames, hashtags, and URLs to links.
-function tweetLinks(tweet){
-	var newString = tweet.replace(/(http(\S)*)/g, '<a href="' + "$1" + '" target="_blank">' + "$1" + '</a>'); //Links that begin with "http"
-	newString = newString.replace(/#(([a-zA-Z0-9_])*)/g, '<a href="https://twitter.com/hashtag/' + "$1" + '" target="_blank">#' + "$1" + '</a>'); //Link hashtags
-	newString = newString.replace(/@(([a-zA-Z0-9_])*)/g, '<a href="https://twitter.com/' + "$1" + '" target="_blank">@' + "$1" + '</a>'); //Link @username mentions
-	return newString;
+	if ( !uniqueID ){
+		return false;
+	}
+
+	if ( !startStop ){
+		if ( typeof nebulaTimings[uniqueID] === 'undefined' ){
+			startStop = 'start';
+		} else {
+			startStop = 'end';
+		}
+	}
+
+	if ( startStop == 'start' && typeof nebulaTimings[uniqueID] !== 'undefined' ){
+		return false; //This timer has already started.
+	}
+
+	if ( startStop != 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
+		return false; //Can not end a timing that hasn't started.
+	}
+
+	if ( startStop != 'start' && typeof nebulaTimings[uniqueID].duration !== 'undefined' ){
+		return nebulaTimings[uniqueID].duration; //This timer has already stopped, returning data.
+	}
+
+	currentTime = new Date();
+	if ( startStop == 'start' ){
+		nebulaTimings[uniqueID] = {};
+		nebulaTimings[uniqueID].started = currentTime.getTime();
+		nebulaTimings[uniqueID].duration = 0;
+	} else {
+		nebulaTimings[uniqueID].stopped = currentTime.getTime();
+		nebulaTimings[uniqueID].duration = (nebulaTimings[uniqueID].stopped-nebulaTimings[uniqueID].started);
+		return nebulaTimings[uniqueID].duration;
+	}
 }
 
 //Convert time to relative.
@@ -2170,6 +2199,12 @@ function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-time
 }
 
 
+
+
+
+/*==========================
+ Miscellaneous Functions
+ ===========================*/
 
 //Functionality for selecting and copying text using Nebula Pre tags.
 function nebula_pre(){
@@ -2302,221 +2337,406 @@ function selectText(element, copy, callback){
 	return false;
 }
 
+function chosenSelectOptions(){
+	jQuery('.chosen-select').chosen({
+		'disable_search_threshold': 5,
+		'search_contains': true,
+		'no_results_text': "No results found.",
+		'allow_single_deselect': true,
+		'width': "100%"
+	});
+}
 
-/* ==========================================================================
-   Google Maps API v3 Functions
-   ========================================================================== */
+function dataTablesActions(){
+	thisPage.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
+	    //console.log('keyup: ' + jQuery(this).val());
+	    //jQuery('.dataTables_wrapper').removeHighlight();
+	    //jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
+	});
+}
 
 
-//Places - Address Autocomplete
-function nebulaAddressAutocomplete(autocompleteInput){
-	if ( jQuery(autocompleteInput).is('*') ){ //If the addressAutocomplete ID exists
-		jQuery.getScript('https://www.google.com/jsapi', function(){
-		    google.load('maps', '3', {
-			    other_params: 'libraries=places',
-			    callback: function(){
-					addressAutocomplete = new google.maps.places.Autocomplete(
-						jQuery(autocompleteInput)[0],
-						{types: ['geocode']} //Restrict the search to geographical location types
-					);
+//Place all bxSlider events inside this function!
+function bxSlider(){
+	if ( typeof bxSlider !== 'undefined' ){
+		jQuery('.exampleslider').bxSlider({
+			mode: 'horizontal', //'horizontal', 'vertical', 'fade'
+			speed: 800,
+			captions: false,
+			auto: true,
+			pause: 6000,
+			autoHover: true,
+			adaptiveHeight: true,
+			useCSS: false,
+			easing: 'easeInOutCubic',
+			controls: false
+		});
 
-					google.maps.event.addListener(addressAutocomplete, 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
-						place = addressAutocomplete.getPlace(); //Get the place details from the addressAutocomplete object.
-
-						//Come up with a way so that everything doesn't need to be defined before detecting if it exists. Like "pushing" to the object.
-						addressComponents = {
-							'street': {
-								'number': null,
-								'name': null,
-								'full': null,
-							},
-							'city': null,
-							'county': null,
-							'state': {
-								'name': null,
-								'abbreviation': null,
-							},
-							'country': {
-								'name': null,
-								'abbreviation': null,
-							},
-							'zip': {
-								'code': null,
-								'suffix': null,
-								'full': null,
-							},
-						};
-
-						for ( var i = 0; i < place.address_components.length; i++ ){
-							//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
-							switch ( place.address_components[i].types[0] ){
-								case "street_number":
-									addressComponents.street.number = place.address_components[i].short_name; //123
-									break;
-								case "route":
-									addressComponents.street.name = place.address_components[i].long_name; //Street Name Rd.
-									break;
-								case "locality":
-									addressComponents.city = place.address_components[i].long_name; //Liverpool
-									break;
-								case "administrative_area_level_2":
-									addressComponents.county = place.address_components[i].long_name; //Onondaga County
-									break;
-								case "administrative_area_level_1":
-									addressComponents.state.name = place.address_components[i].long_name; //New York
-									addressComponents.state.abbreviation = place.address_components[i].short_name; //NY
-									break;
-								case "country":
-									addressComponents.country.name = place.address_components[i].long_name; //United States
-									addressComponents.country.abbreviation = place.address_components[i].short_name; //US
-									break;
-								case "postal_code":
-									addressComponents.zip.code = place.address_components[i].short_name; //13088
-									break;
-								case "postal_code_suffix":
-									addressComponents.zip.suffix = place.address_components[i].short_name; //4725
-									break;
-								default:
-									//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
-							}
-						}
-						if ( addressComponents.street.number && addressComponents.street.name ){
-							addressComponents.street.full = addressComponents.street.number + ' ' + addressComponents.street.name;
-						}
-						if ( addressComponents.zip.code && addressComponents.zip.suffix ){
-							addressComponents.zip.full = addressComponents.zip.code + '-' + addressComponents.zip.suffix;
-						}
-
-						jQuery(document).trigger('nebula_address_selected');
-						ga('send', 'event', 'Contact', 'Autocomplete Address', addressComponents.city + ', ' + addressComponents.state.abbreviation + ' ' + addressComponents.zip.code);
-					});
-
-					jQuery(autocompleteInput).on('focus', function(){
-						if ( navigator.geolocation ){
-							navigator.geolocation.getCurrentPosition(function(position){ //Bias to the user's geographical location.
-								var geolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-								var circle = new google.maps.Circle({
-									center: geolocation,
-									radius: position.coords.accuracy
-								});
-								addressAutocomplete.setBounds(circle.getBounds());
-							});
-						}
-					}).on('keydown', function(e){
-						if ( e.which == 13 && jQuery('.pac-container:visible').is('*') ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
-							return false;
-						}
-					});
-
-					if ( autocompleteInput == '#address-autocomplete' ){
-						jQuery(document).on('nebula_address_selected', function(){
-							//do any default stuff here.
-						});
-					}
-		    	} //End Google Maps callback
-		    }); //End Google Maps load
-		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
+		jQuery('.heroslider').bxSlider({
+			mode: 'fade',
+			speed: 800,
+			captions: false,
+			pager: false,
+			auto: false,
+			pause: 10000,
+			autoHover: true,
+			adaptiveHeight: true,
+			useCSS: true,
+			controls: true
 		});
 	}
-} //END nebulaAddressAutocomplete()
-
-
-//Request Geolocation
-function requestPosition(){
-    var nav = null;
-    if (nav == null){
-        nav = window.navigator;
-    }
-    var geoloc = nav.geolocation;
-    if (geoloc != null){
-        geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //One-time location poll
-        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebulaLocation object regularly, but be careful sending events to GA- may result in TONS of events)
-    }
 }
 
-//Geolocation Success
-function successCallback(position){
-	nebulaLocation = {
-        'error': false,
-        'coordinates': { //A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
-            'latitude': position.coords.latitude,
-            'longitude': position.coords.longitude
-        },
-        'accuracy': {
-            'meters': position.coords.accuracy,
-            'miles': (position.coords.accuracy*0.000621371).toFixed(2),
-        },
-        'altitude': { //Above the mean sea level
-	        'meters': position.coords.altitude,
-	        'miles': (position.coords.altitude*0.000621371).toFixed(2),
-	        'accuracy': position.coords.altitudeAccuracy,
-        },
-        'speed': {
-	        'mps': position.coords.speed,
-	        'kph': (position.coords.speed*3.6).toFixed(2),
-	        'mph': (position.coords.speed*2.23694).toFixed(2),
-        },
-        'heading': position.coords.heading, //Degrees clockwise from North
-    }
-
-	if ( nebulaLocation.accuracy.meters <= 25 ){
-		nebulaLocation.accuracy.color = '#00bb00';
-	} else if ( nebulaLocation.accuracy.meters > 25 && nebulaLocation.accuracy.meters <= 50 ){
-		nebulaLocation.accuracy.color = '#46d100';
-	} else if ( nebulaLocation.accuracy.meters > 51 && nebulaLocation.accuracy.meters <= 150 ){
-		nebulaLocation.accuracy.color = '#a4ed00';
-	} else if ( nebulaLocation.accuracy.meters > 151 && nebulaLocation.accuracy.meters <= 400 ){
-		nebulaLocation.accuracy.color = '#f2ee00';
-	} else if ( nebulaLocation.accuracy.meters > 401 && nebulaLocation.accuracy.meters <= 800 ){
-		nebulaLocation.accuracy.color = '#ffc600';
-	} else if ( nebulaLocation.accuracy.meters > 801 && nebulaLocation.accuracy.meters <= 1500 ){
-		nebulaLocation.accuracy.color = '#ff6f00';
-	} else if ( nebulaLocation.accuracy.meters > 1501 && nebulaLocation.accuracy.meters <= 3000 ){
-		nebulaLocation.accuracy.color = '#ff1900';
-	} else {
-		nebulaLocation.accuracy.color = '#ff0000';
+function vimeoControls(){
+	if ( jQuery('.vimeoplayer').is('*') ){
+        jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
+			createVimeoPlayers();
+		}).fail(function(){
+			//do nothing
+		});
 	}
 
-	thisPage.document.trigger('geolocationSuccess');
-	thisPage.body.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebulaLocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebulaLocation.accuracy.meters.toFixed(0).replace('.', ''));
-	browserInfo();
-	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters');
+	function createVimeoPlayers(){
+		//To trigger events on these videos, use the syntax: player[0].api("play");
+		player = new Array();
+	    jQuery('iframe.vimeoplayer').each(function(i){
+			var vimeoiframeClass = jQuery(this).attr('id');
+			player[i] = $f(vimeoiframeClass);
+			//@TODO "Nebula" 0: Add a named index to this array so it can be called by the video ID instead of the array index number
+			player[i].addEvent('ready', function(){
+			    player[i].addEvent('play', onPlay);
+			    player[i].addEvent('pause', onPause);
+			    player[i].addEvent('seek', onSeek);
+			    player[i].addEvent('finish', onFinish);
+			    player[i].addEvent('playProgress', onPlayProgress);
+			});
+		});
+	}
+
+	function onPlay(id){
+	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('send', 'event', 'Videos', 'Play', videoTitle);
+	    nebulaTimer('vimeo_' + videoTitle, 'start');
+	}
+
+	function onPause(id){
+	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
+	    ga('send', 'timing', 'Vimeo', 'Paused', Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')), videoTitle);
+	}
+
+	function onSeek(data, id){
+	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
+	}
+
+	function onFinish(id){
+		var videoTitle = id.replace(/-/g, ' ');
+		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
+		ga('send', 'timing', 'Vimeo', 'Finished', Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')), videoTitle);
+	}
+
+	function onPlayProgress(data, id){
+		//data.seconds played
+	}
 }
 
-//Geolocation Error
-function errorCallback(error){
-    switch (error.code){
-        case error.PERMISSION_DENIED:
-            geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
-            break;
-        case error.POSITION_UNAVAILABLE:
-            geolocationErrorMessage = "Data from location services is currently unavailable.";
-            break;
-        case error.TIMEOUT:
-            geolocationErrorMessage = "Location could not be determined within a specified timeout period.";
-            break;
-        default:
-        	geolocationErrorMessage = "An unknown error has occurred.";
-            break;
-    }
+//Create desktop notifications
+function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
+	if ( checkNotificationPermission() ){
+		//Set defaults
+		var defaults = {
+			dir: "auto", //Direction ["auto", "ltr", "rtl"] (optional)
+			lang: "en-US", //Language (optional)
+			body: "", //Body message (optional)
+			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
+			icon: bloginfo['template_directory'] + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
+		}
 
-    nebulaLocation = {
-	    'error': {
-		    'code': error.code,
-			'description': geolocationErrorMessage
-	    }
-    }
+		if ( typeof message === "undefined" ){
+			message = defaults;
+		} else if ( typeof message === "string" ){
+			body = message;
+			message = defaults;
+			message.body = body;
+		} else {
+			if ( typeof message.dir === "undefined" ){
+				message.dir = defaults.dir;
+			}
+			if ( typeof message.lang === "undefined" ){
+				message.lang = defaults.lang;
+			}
+			if ( typeof message.body === "undefined" ){
+				message.body = defaults.lang;
+			}
+			if ( typeof message.tag === "undefined" ){
+				message.tag = defaults.tag;
+			}
+			if ( typeof message.icon === "undefined" ){
+				message.icon = defaults.icon;
+			}
+		}
 
-    thisPage.document.trigger('geolocationError');
-    thisPage.body.addClass('geo-error');
-	browserInfo();
-    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
+		instance = new Notification(title, message); //Trigger the notification //@TODO "Nebula" 0: This will be deprecated soon. Update to the service worker.
+
+		if ( typeof clickCallback !== "undefined" ){
+			instance.onclick = function(){
+				clickCallback();
+			};
+		}
+		if ( typeof showCallback !== "undefined" ){
+            instance.onshow = function(e){
+                showCallback();
+            };
+        } else {
+            instance.onshow = function(e){
+                setTimeout(function(){
+                    instance.close();
+                }, 20000);
+            }
+        }
+		if ( typeof closeCallback !== "undefined" ){
+			instance.onclose = function(){
+				closeCallback();
+			};
+		}
+		if ( typeof errorCallback !== "undefined" ){
+			instance.onerror = function(){
+				errorCallback();
+			};
+		}
+	}
+	return false;
 }
+
+function checkNotificationPermission(){
+	Notification = window.Notification || window.mozNotification || window.webkitNotification;
+	if ( !(Notification) ){
+		return false;
+	} else if ( Notification.permission === "granted" ){
+		return true;
+	} else if ( Notification.permission !== 'denied' ){
+		Notification.requestPermission(function (permission){
+			if( !('permission' in Notification) ){
+				Notification.permission = permission;
+			}
+			if (permission === "granted"){
+				return true;
+			}
+		});
+	}
+	return false;
+}
+
+function nebulaVibrate(pattern){
+	if ( typeof pattern === 'undefined' ){
+		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
+	} else if ( typeof pattern !== 'object' ){
+		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
+	}
+	if ( checkVibration() ){
+		navigator.vibrate(pattern);
+	}
+	return false;
+}
+
+function checkVibration(){
+	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+	if ( !(Vibration) ){
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function moreEvents(bool){
+	if ( !bool ){
+		jQuery('#load-more-events').addClass('all-events-loaded');
+	} else {
+		jQuery('#load-more-events').removeClass('all-events-loaded');
+	}
+}
+
+//Show/Hide the reset button
+function eventFormNeedReset(){
+	hasValue = false;
+
+	//Check the category select dropdown
+/*
+	jQuery('#advanced-search-form select').each(function(){
+		if ( jQuery(this).find('option:selected').val() && jQuery(this).find('option:selected').val() != '' ){
+			jQuery('.resetfilters').addClass('active');
+			hasValue = true;
+			return false;
+		}
+	});
+*/
+
+	//@TODO: This is not disappearing when reset link itself is clicked.
+	//Check all other inputs
+	jQuery('#advanced-search-form input').each(function(){
+		if ( (jQuery(this).attr('type') != 'checkbox' && jQuery(this).val() != '') || jQuery(this).prop("checked") ){
+			jQuery('.resetfilters').addClass('active');
+			hasValue = true;
+			return false;
+		}
+	});
+
+	if ( !hasValue ){
+		jQuery('.resetfilters').removeClass('active');
+	}
+}
+
+function mmenus(){
+	if ( 'mmenu' in jQuery ){
+		var mobileNav = jQuery('#mobilenav');
+		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
+
+		if ( mobileNav.is('*') ){
+			mobileNav.mmenu({
+			    //Options
+			    "offCanvas": {
+				    "zposition": "back", //"back" (default), "front", "next"
+				    "position": "left" //"left" (default), "right", "top", "bottom"
+			    },
+			    "searchfield": { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
+			    	"add": true,
+			    	"search": true,
+			    	"placeholder": 'Search',
+			    	"noResults": "No navigation items found.",
+			    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
+			    },
+			    "counters": true, //Display count of sub-menus
+			    "iconPanels": false, //Layer panels on top of each other
+				"navbar": {
+					"title": "Menu"
+				},
+				"navbars": [{
+					"position": "bottom",
+					"content": [
+						"<span>" + bloginfo['name'] + "</span>"
+					]
+				}],
+			    "extensions": ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
+			}, {
+				//Configuration
+				"classNames": {
+					"selected": "current-menu-item"
+				}
+			});
+
+			if ( mobileNav.length ){
+				mobileNav.data('mmenu').bind('opening', function(){
+					//When mmenu has started opening
+					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').parents('.mobilenavtrigger').addClass('active');
+					nebulaTimer('mmenu', 'start');
+				}).bind('opened', function(){
+					//After mmenu has finished opening
+					history.replaceState(null, document.title, location);
+					history.pushState(null, document.title, location);
+				}).bind('closing', function(){
+					//When mmenu has started closing
+					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').parents('.mobilenavtrigger').removeClass('active');
+					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'end')), 'From opening mmenu until closing mmenu');
+				}).bind('closed', function(){
+					//After mmenu has finished closing
+				});
+			}
+
+			jQuery(document).on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
+				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'end')), 'From opening mmenu until navigation');
+			});
+
+
+			var mmenuSearchInput = jQuery('.mm-search input');
+			mmenuSearchInput.wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
+			mmenuSearchInput.on('keyup', function(){
+				if ( jQuery(this).val().length > 0 ){
+					jQuery('.clearsearch').removeClass('hidden');
+				} else {
+					jQuery('.clearsearch').addClass('hidden');
+				}
+			});
+			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br /><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
+			thisPage.document.on('click touch tap', '.clearsearch a', function(){
+				mmenuSearchInput.val('').keyup();
+				jQuery('.clearsearch').addClass('hidden');
+				return false;
+			});
+
+			//Close mmenu on back button click
+			if (window.history && window.history.pushState){
+				window.addEventListener("popstate", function(e){
+					if ( jQuery('html.mm-opened').is('*') ){
+						mobileNav.data('mmenu').close();
+						e.stopPropagation();
+					}
+				}, false);
+			}
+		}
+	}
+}
+
+//Main dropdown nav dynamic width controller
+function dropdownWidthController(){
+	jQuery('#primarynav .sub-menu').each(function(){
+		var bigWidth = 100;
+			if ( jQuery(this).children().width() > bigWidth ){
+				bigWidth = jQuery(this).children().width();
+			}
+		jQuery(this).css('width', bigWidth+15 + 'px');
+	});
+} //end dropdownWidthController()
+
+
+
+
+//Vertical subnav expanders
+function subnavExpanders(){
+    jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
+    jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
+    thisPage.document.on('click touch tap', '.toplevelvert_expander', function(){
+        jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
+        return false;
+    });
+    //Automatically expand subnav to show current page
+    jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
+    jQuery('.current-menu-item').children('.toplevelvert_expander').click();
+} //end subnavExpanders()
+
+
+//Affix the logo/navigation when scrolling passed it
+//@TODO "Nebula" 0: Ugh I don't really like this... It's almost fine, but the fixeElement.outerHeight() is before it shrinks, so there is 1 pixel or so where it puts the topbar beneath the fixed nav. Then, if you reload the page after scrolling down it does nothing until you scroll then it kicks in and animates the shrink all at once. Feels clunky as hell.
+function nebulaFixeder(){
+	var fixedElement = jQuery('#logonavcon'); //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
+	var fullBodyWrapper = jQuery('#fullbodywrapper');
+	if ( fixedElement.is('*') && thisPage.window.width() > 767 ){
+		fixedDistance = fixedElement.position().top;
+
+		thisPage.window.on('scroll resize', function(){
+			if ( thisPage.window.scrollTop() >= fixedDistance ){
+				fixedElement.addClass('fixed');
+				fullBodyWrapper.css('padding-top', fixedElement.outerHeight());
+			} else {
+				fixedElement.removeClass('fixed');
+				fullBodyWrapper.css('padding-top', '0');
+			}
+		});
+	} else {
+		fixedElement.removeClass('fixed');
+		fullBodyWrapper.css('padding-top', '0');
+	}
+}
+
+
+
+
+
+
 
 
 /*==========================
- Utilities
+ Extension Functions
  ===========================*/
 
 //Custom css expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/

@@ -98,18 +98,19 @@ if ( !nebula_admin_bar_enabled() ){
 		*/
 	}
 
-	//Add a link to Nebula Options on the Admin Bar
+	//Add Nebula links to the Admin Bar
 	add_action('admin_bar_menu', 'nebula_admin_bar_nebula_options', 90);
 	function nebula_admin_bar_nebula_options($wp_admin_bar){
 		$wp_admin_bar->add_node(array(
-			'id' => 'nebula-options',
-			'title' => '<i class="nebula-admin-fa fa fa-fw fa-cog" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula Options',
-			'href' => get_admin_url() . 'themes.php?page=nebula_options'
+			'id' => 'nebula',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula',
+			'href' => 'https://gearside.com/nebula/',
+			'meta' => array('target' => '_blank')
 		));
 
 		$scss_last_processed = ( get_option('nebula_scss_last_processed') )? date('l, F j, Y - g:i:sa', get_option('nebula_scss_last_processed')) : 'Never';
 		$wp_admin_bar->add_node(array(
-			'parent' => 'nebula-options',
+			'parent' => 'nebula',
 			'id' => 'nebula-options-scss',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-paint-brush" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Re-process All SCSS Files',
 			'href' => esc_url(add_query_arg('sass', 'true')),
@@ -117,10 +118,41 @@ if ( !nebula_admin_bar_enabled() ){
 		));
 
 		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula',
+			'id' => 'nebula-options',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-cog" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Options',
+			'href' => get_admin_url() . 'themes.php?page=nebula_options'
+		));
+
+		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula-options',
 			'id' => 'nebula-options-help',
-			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation',
 			'href' => 'https://gearside.com/nebula/documentation/options/',
+			'meta' => array('target' => '_blank')
+		));
+
+		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula',
+			'id' => 'nebula-github',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-github" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula Github',
+			'href' => 'https://github.com/chrisblakley/Nebula',
+			'meta' => array('target' => '_blank')
+		));
+
+		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula-github',
+			'id' => 'nebula-github-issues',
+			'title' => 'Issues',
+			'href' => 'https://github.com/chrisblakley/Nebula/issues',
+			'meta' => array('target' => '_blank')
+		));
+
+		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula-github',
+			'id' => 'nebula-github-changelog',
+			'title' => 'Changelog',
+			'href' => 'https://github.com/chrisblakley/Nebula/commits/master',
 			'meta' => array('target' => '_blank')
 		));
 	}

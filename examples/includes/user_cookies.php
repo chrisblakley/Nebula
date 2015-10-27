@@ -5,6 +5,8 @@
 		Consider using a $_SESSION instead of cookies.
 		Encode or hash the data.
 
+		Consider using WordPress sessions instead of cookies too.
+
 		Overall user cookie ideas:
 			- Make it an object with all known information
 				- Last browser used (or an array of browsers used)

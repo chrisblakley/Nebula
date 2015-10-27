@@ -85,12 +85,15 @@
 					var videoTitle = e['target']['B']['videoData']['title'];
 				    if ( e.data == YT.PlayerState.PLAYING ){
 				        ga('send', 'event', 'Videos', 'Play', videoTitle);
+				        nebulaTimer('youtube_' + videoTitle, 'start');
 				        pauseFlag = true;
 				    }
 				    if ( e.data == YT.PlayerState.ENDED ){
 				        ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
+				        ga('send', 'timing', 'Youtube', 'Finished', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
 				    } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
 				        ga('send', 'event', 'Videos', 'Pause', videoTitle);
+				        ga('send', 'timing', 'Youtube', 'Paused', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
 				        pauseFlag = false;
 				    }
 				}

@@ -45,7 +45,9 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 			}
 
 			#welcome-photo {position: absolute; top: 0; right: 0; height: 100%; width: 47%; padding: 5px 20px;
-				.welcome-photo-bg {position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: url($template_directory + "/images/phg/welcome.jpg") center 90% no-repeat; background-size: cover; z-index: 40;}
+				.welcome-photo-bg {position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: url($template_directory + "/images/phg/welcome.jpg") center 90% no-repeat; background-size: cover; z-index: 40;
+					&.hidden {display: none !important; visibility: hidden; border: 3px solid blue;}
+				}
 				.weclome-map {position: absolute; top: 0; left: 0; height: 100%; width: 100%; padding: 0;}
 				.phg-info {position: relative; background: rgba(0,0,0,0.6); position: absolute; bottom: 10px; left: 0; width: 100%; padding: 5px 12px; @include prefix((transition: all 0.25s));
 					&:hover {background: rgba(0,0,0,0.8);}
@@ -53,7 +55,7 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 					&.mapinfo {z-index: 25;}
 					h4 {margin: 0; height: 25px; overflow: hidden; opacity: 1; @include prefix((transition: all 0.25s));}
 					span {display: inline-block; color: #fff;}
-					a {display: inline-block; color: #fff; @include prefix((transition: all 0.25s));
+					a {display: inline-block; color: #fff; @include prefix((box-shadow: none)); @include prefix((transition: all 0.25s));
 						&:hover {color: brand(phg);}
 					}
 					p {color: #fff; margin: 0;}

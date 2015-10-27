@@ -159,45 +159,13 @@
 		</div>
 		<div class="welcome-photo-bg"></div>
 		<div class="weclome-map">
-			<iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E&q=Pinckney+Hugo+Group&zoom=14&maptype=roadmap"></iframe>
+			<?php
+				$welcome_map_query = array(
+					'https://www.google.com/maps/embed/v1/place?q=Pinckney+Hugo+Group&zoom=14&maptype=roadmap',
+					'https://www.google.com/maps/embed/v1/streetview?location=43.0535211,-76.1656785&heading=25&pitch=0&fov=50'
+				);
+			?>
+			<iframe src="<?php echo $welcome_map_query[mt_rand(0, count($welcome_map_query)-1)]; ?>&key=AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E" width="100%" height="100%" frameborder="0" style="border: none;"></iframe>
 		</div>
 	</div>
 </div>
-
-<script>
-	jQuery(document).ready(function(){
-		if ( jQuery('.index-php').is('*') ){
-			jQuery('#welcome-panel').removeClass('hidden');
-			jQuery('.welcome-panel-close').addClass('hidden');
-			jQuery('#wp_welcome_panel-hide').parent().addClass('hidden').css('display', 'none');
-
-			jQuery('.showmap').hover(function(){
-				jQuery('.welcome-photo-bg').stop().fadeOut();
-			}, function(){
-				jQuery('.welcome-photo-bg').stop().fadeIn();
-			});
-
-			var address = jQuery('.maptoggle').text();
-			jQuery('.maptoggle').on('click tap touch', function(e){
-				if ( jQuery('.maininfo').hasClass('no-map') ){
-					jQuery('.maininfo').removeClass('no-map');
-					jQuery('.welcome-photo-bg').addClass('hidden');
-					jQuery('.maptoggle').html("&laquo; Back");
-					jQuery('.maininfo h4, .hideformap').addClass('noheight');
-				} else {
-					jQuery('.maininfo').addClass('no-map');
-					jQuery('.welcome-photo-bg').removeClass('hidden');
-					jQuery('.maptoggle').text(address);
-					jQuery('.maininfo h4, .hideformap').removeClass('noheight');
-				}
-				return false;
-			});
-		}
-	});
-
-	jQuery(window).on('load', function(){
-		setTimeout(function(){
-			jQuery('.jsinfo').removeClass('jsinfo');
-		}, 350);
-	});
-</script>

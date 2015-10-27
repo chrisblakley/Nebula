@@ -10,6 +10,35 @@ jQuery(document).on('ready', function(){
 		jQuery('html').addClass('phg');
 	}
 
+	//Welcome Panel
+	if ( jQuery('.index-php').is('*') ){
+		jQuery('#welcome-panel').removeClass('hidden');
+		jQuery('.welcome-panel-close').addClass('hidden');
+		jQuery('#wp_welcome_panel-hide').parent().addClass('hidden').css('display', 'none');
+
+		jQuery('.showmap').hover(function(){
+			jQuery('.welcome-photo-bg').stop().fadeOut();
+		}, function(){
+			jQuery('.welcome-photo-bg').stop().fadeIn();
+		});
+
+		var address = jQuery('.maptoggle').text();
+		jQuery('.maptoggle').on('click tap touch', function(e){ //@TODO "Nebula" 0: After click and hover out, the map still disappears...
+			if ( jQuery('.maininfo').hasClass('no-map') ){
+				jQuery('.maininfo').removeClass('no-map');
+				jQuery('.welcome-photo-bg').addClass('hidden');
+				jQuery('.maptoggle').html("&laquo; Back");
+				jQuery('.maininfo h4, .hideformap').addClass('noheight');
+			} else {
+				jQuery('.maininfo').addClass('no-map');
+				jQuery('.welcome-photo-bg').removeClass('hidden');
+				jQuery('.maptoggle').text(address);
+				jQuery('.maininfo h4, .hideformap').removeClass('noheight');
+			}
+			return false;
+		});
+	}
+
 	jQuery(function(){
 	    jQuery("#post textarea").allowTabChar();
 	});
@@ -203,7 +232,10 @@ jQuery(document).on('ready', function(){
 
 jQuery(window).on('load', function(){
 
-	//Window load functions here.
+	//Welcome panel...?
+	setTimeout(function(){
+		jQuery('.jsinfo').removeClass('jsinfo');
+	}, 350);
 
 }); //End Window Load
 
