@@ -48,8 +48,8 @@
 										});
 
 										if ( google.maps.geometry.poly.containsLocation(latlng, thisPolygon) ){
-											ga('send', 'event', 'Fairgrounds Location', lat + ', ' + lng, data[i].name);
 											ga('set', 'dimension1', data[i].name);
+											ga('send', 'event', 'Fairgrounds Location', lat + ', ' + lng, data[i].name);
 											return true;
 									    }
 									}
@@ -199,19 +199,6 @@
 	function nebula_containsLocation_info(){
 		if ( !nebulaLocation.error ){
 			jQuery('#location-results .latlng').html(nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
-			if ( nebulaLocation.phg ){
-				ga('send', 'event', 'PHG Location', nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
-				if ( typeof nebulaLocation.phg === 'string' ){
-					ga('set', 'dimension1', 'At PHG in ' + nebulaLocation.phg);
-					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group in <strong>' + nebulaLocation.phg + '</strong>.');
-				} else {
-					ga('set', 'dimension1', 'At Pinckney Hugo Group');
-					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group.');
-				}
-			} else {
-				ga('set', 'dimension1', 'Not at Pinckney Hugo Group');
-				jQuery('#location-results .specific-location').html('You are <strong style="color: maroon;">not</strong> at Pinckney Hugo Group.');
-			}
 
 			if ( nebulaLocation.accuracy.meters < 50 ){
 		        var accText = 'Excellent';
@@ -226,6 +213,20 @@
 		        var accText = 'Very Poor';
 		        ga('set', 'dimension2', 'Very Poor (>1500m)');
 		    }
+
+			if ( nebulaLocation.phg ){
+				if ( typeof nebulaLocation.phg === 'string' ){
+					ga('set', 'dimension1', 'At PHG in ' + nebulaLocation.phg);
+					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group in <strong>' + nebulaLocation.phg + '</strong>.');
+				} else {
+					ga('set', 'dimension1', 'At Pinckney Hugo Group');
+					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group.');
+				}
+				ga('send', 'event', 'PHG Location', nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
+			} else {
+				ga('set', 'dimension1', 'Not at Pinckney Hugo Group');
+				jQuery('#location-results .specific-location').html('You are <strong style="color: maroon;">not</strong> at Pinckney Hugo Group.');
+			}
 
 		    jQuery('#location-results .accuracy').html('<strong style="color: ' + nebulaLocation.accuracy.color + ';">' + accText + '</strong> location accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters (' + nebulaLocation.accuracy.miles + ' miles). Altitude: ' + nebulaLocation.altitude.meters);
 

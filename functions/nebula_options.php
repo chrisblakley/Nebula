@@ -26,6 +26,20 @@ function nebula_get_option($option, $default=false){
 	}
 }
 
+function nebula_get_custom_dimension($option, $default=false){
+	$data = get_option($option);
+
+	if ( empty($data) ){
+		return $default;
+	} else {
+		if ( $data[0] == 'd' && strlen($data) >= 10 && strlen($data) <= 12 ){
+			return $data;
+		} else {
+			return $default;
+		}
+	}
+}
+
 /*==========================
  Specific Options Functions
  When using in templates these simplify the syntax to be less confusing.
@@ -165,12 +179,24 @@ function register_nebula_options(){
 		'nebula_dev_stylesheets' => 'Default',
 		'nebula_console_css' => 'Default',
 
-		//APIs Tab
+		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
+		'nebula_google_webmaster_tools_verification' => '',
+		'nebula_cd_namedlocation' => '',
+		'nebula_cd_businesshours' => '',
+		'nebula_cd_contactmethod' => '',
+		'nebula_cd_scrolldepth' => '',
+		'nebula_cd_sessionid' => '',
+		'nebula_cd_timestamp' => '',
+		'nebula_cd_userid' => '',
+		'nebula_cd_usertype' => '',
+		'nebula_cd_videowatcher' => '',
+		'nebula_cd_weather' => '',
+
+		//APIs Tab
 		'nebula_google_font_family' => '',
 		'nebula_google_font_weights' => '',
 		'nebula_google_font_url' => '',
-		'nebula_google_webmaster_tools_verification' => '',
 		'nebula_google_server_api_key' => '',
 		'nebula_google_browser_api_key' => '',
 		'nebula_cse_id' => '',
@@ -277,6 +303,15 @@ function nebula_options_page(){
 				jQuery('#nebula_google_font_family, #nebula_google_font_weights').removeClass('override');
 			}
 
+			//Validate custom dimension IDs
+			jQuery('input.dimension').on('blur keyup paste change', function(){
+				if ( jQuery(this).val().match(/^dimension([0-9]{1,3})$/i) || jQuery(this).val() == '' ){
+					jQuery(this).removeClass('error');
+				} else {
+					jQuery(this).addClass('error');
+				}
+			});
+
 		});
 	</script>
 
@@ -330,6 +365,12 @@ function nebula_options_page(){
 			<h2 class="nav-tab-wrapper">
 	            <a id="metadata" class="nav-tab nav-tab-active" href="#">Metadata</a>
 	            <a id="functions" class="nav-tab nav-tab-inactive" href="#">Functions</a>
+	            <a id="analytics" class="nav-tab nav-tab-inactive" href="#">
+		            Analytics
+					<?php if ( !get_option('nebula_ga_tracking_id') ): ?>
+		        		<i class="fa fa-exclamation-circle" title="Warning: No Google Analytics Tracking ID!" style="cursor: help;"></i>
+		        	<?php endif; ?>
+		        </a>
 	            <a id="apis" class="nav-tab nav-tab-inactive" href="#">APIs</a>
 	            <a id="administration" class="nav-tab nav-tab-inactive" href="#">Administration</a>
 	        </h2>
@@ -445,8 +486,6 @@ function nebula_options_page(){
 						<p class="helper"><small>Comma-separated list of special days the business is closed (like holidays). These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank">Here is a good reference for holiday occurrences.</a><br /><strong>Note:</strong> This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</small></p>
 					</td>
 		        </tr>
-
-
 
 
 		        <tr valign="top">
@@ -708,26 +747,25 @@ function nebula_options_page(){
 		    </table>
 
 
-
-			<h2 class="mobiletitle">APIs</h2>
+			<h2 class="mobiletitle">Analytics</h2>
 			<hr class="mobiletitle"/>
 
-			<table class="form-table dependent apis" style="display: none;">
+			<table class="form-table dependent analytics" style="display: none;">
 
 				<tr valign="top">
-		        	<th scope="row">Google Analytics Tracking ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">
+			        	<?php if ( !get_option('nebula_ga_tracking_id') ): ?>
+			        		<strong style="color: red;">
+			        	<?php endif; ?>
+			        	Google Analytics Tracking ID&nbsp;
+			        	<?php if ( !get_option('nebula_ga_tracking_id') ): ?>
+			        		</strong>
+			        	<?php endif; ?>
+			        	<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a>
+			        </th>
 					<td>
 						<input type="text" name="nebula_ga_tracking_id" value="<?php echo get_option('nebula_ga_tracking_id'); ?>" placeholder="UA-00000000-1" />
 						<p class="helper"><small>This will add the tracking number to the appropriate locations. If left empty, the tracking ID will need to be entered in <strong>functions.php</strong>.</small></p>
-					</td>
-		        </tr>
-
-		        <tr valign="top">
-		        	<th scope="row">Google Font&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input id="nebula_google_font_family" type="text" name="nebula_google_font_family" value="<?php echo get_option('nebula_google_font_family'); ?>" placeholder="Open Sans" /><input id="nebula_google_font_weights" type="text" name="nebula_google_font_weights" value="<?php echo get_option('nebula_google_font_weights'); ?>" placeholder="400,800" style="width: 150px;" /><br />
-						or: <input id="nebula_google_font_url" type="text" name="nebula_google_font_url" value="<?php echo get_option('nebula_google_font_url'); ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" style="width: 400px;" />
-						<p class="helper"><small>Choose which <a href="https://www.google.com/fonts" target="_blank">Google Font</a> is used by default for this site (weights should be comma-separated). Or, paste the entire font URL. Defaults: Open Sans 400,800</small></p>
 					</td>
 		        </tr>
 
@@ -736,6 +774,110 @@ function nebula_options_page(){
 					<td>
 						<input id="nebula_google_webmaster_tools_verification" type="text" name="nebula_google_webmaster_tools_verification" value="<?php echo get_option('nebula_google_webmaster_tools_verification'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
 						<p class="helper"><small>This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Webmaster Tools</a>. Note: Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Custom Dimensions</h3>
+						<p>These are optional dimensions that can be passed into Google Analytics. To set these up, define the Custom Dimension in the Google Analytics property, then paste the dimension ID string ("dimension1", "dimension12", etc.) into the appropriate input field here. The scope for each dimension are noted in their respective help sections below. Dimensions that require additional code are marked with a *.</p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_businesshours" value="<?php echo get_option('nebula_cd_businesshours'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Passes "During Business Hours", or "Non-Business Hours" if business hours are available. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">Contact Method&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_contactmethod" value="<?php echo get_option('nebula_cd_contactmethod'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">Named Location*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_namedlocation" value="<?php echo get_option('nebula_cd_namedlocation'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Allows named location information to be sent after being detected using map polygons. <em>*Note: Additional code is required for this to work!</em> <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Scroll Depth&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_scrolldepth" value="<?php echo get_option('nebula_cd_scrolldepth'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Scroll depth information such as "Scanner" or "Reader". <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">Session ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_sessionid" value="<?php echo get_option('nebula_cd_sessionid'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>ID system so that you can group hits into specific user sessions. This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <strong>Scope: Session</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_timestamp" value="<?php echo get_option('nebula_cd_timestamp'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Adds an ISO timestamp (in the user's local time) with timezone offset <em>(Ex: "2015-10-27T17:25:27.466-04:00")</em>. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_userid" value="<?php echo get_option('nebula_cd_userid'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Scroll depth information such as "Scanner" or "Reader". <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">User Type&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_usertype" value="<?php echo get_option('nebula_cd_usertype'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Video Watcher&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_videowatcher" value="<?php echo get_option('nebula_cd_videowatcher'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sets a dimension when videos are started and finished. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+		        	<th scope="row">Weather&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_weather" value="<?php echo get_option('nebula_cd_weather'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends the current weather conditions as a dimension. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+		    </table>
+
+
+
+			<h2 class="mobiletitle">APIs</h2>
+			<hr class="mobiletitle"/>
+
+			<table class="form-table dependent apis" style="display: none;">
+
+		        <tr valign="top">
+		        	<th scope="row">Google Font&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="nebula_google_font_family" type="text" name="nebula_google_font_family" value="<?php echo get_option('nebula_google_font_family'); ?>" placeholder="Open Sans" /><input id="nebula_google_font_weights" type="text" name="nebula_google_font_weights" value="<?php echo get_option('nebula_google_font_weights'); ?>" placeholder="400,800" style="width: 150px;" /><br />
+						or: <input id="nebula_google_font_url" type="text" name="nebula_google_font_url" value="<?php echo get_option('nebula_google_font_url'); ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" style="width: 400px;" />
+						<p class="helper"><small>Choose which <a href="https://www.google.com/fonts" target="_blank">Google Font</a> is used by default for this site (weights should be comma-separated). Or, paste the entire font URL. Defaults: Open Sans 400,800</small></p>
 					</td>
 		        </tr>
 

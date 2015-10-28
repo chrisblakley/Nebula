@@ -5,17 +5,14 @@
 	}
 ?>
 
-<?php
-	/* Favicons
-		Favicons for various usage. PNG icons are used as needed by browsers in addition to Android homescreen bookmarks.
-	*/
 
-	//Add a random query string when debugging to force-clear the cache.
-	if ( is_debug() ) {
-		$cache_query = '?nocache' . mt_rand(1000, 99999) . '=debug' . mt_rand(1000, 99999);
-	} else {
-		$cache_query = '';
-	}
+<?php
+	/*==========================
+	 Favicons
+	 Favicons for various usage. PNG icons are used as needed by browsers in addition to Android homescreen bookmarks.
+	 ===========================*/
+
+	$cache_query = ( is_debug() )? '?nocache' . mt_rand(1000, 99999) . '=debug' . mt_rand(1000, 99999) : ''; //Add a random query string when debugging to force-clear the cache.
 ?>
 <link rel="shortcut icon" href="<?php echo get_template_directory_uri(); ?>/images/meta/favicon.ico<?php echo $cache_query; ?>"><?php //@TODO "Graphics" 5: Need to create a 16x16 ICO favicon. Consider transparent BG. ?>
 <link rel="icon" type="image/png" href="<?php echo get_template_directory_uri(); ?>/images/meta/favicon-16x16.png<?php echo $cache_query; ?>" sizes="16x16"><?php //@TODO "Graphics" 1: 16x16 PNG favicon. Consider transparent BG. ?>
@@ -26,10 +23,13 @@
 
 
 
+
+
 <?php
-	/* Apple iOS
-		iOS icons for homescreen bookmarks and startup image. For certain Android devices the apple-touch-icon and apple-touch-icon-precomposed are used for homescreen icons.
-	*/
+	/*==========================
+	 Apple iOS
+	 iOS icons for homescreen bookmarks and startup image. For certain Android devices the apple-touch-icon and apple-touch-icon-precomposed are used for homescreen icons.
+	 ===========================*/
 ?>
 <link rel="apple-touch-startup-image" href="<?php echo get_template_directory_uri(); ?>/images/meta/apple-startup.png<?php echo $cache_query; ?>"><?php //@TODO "Graphics" 1: Create an Apple startup screen 320x480px. ?>
 <link rel="apple-touch-icon" sizes="36x36" href="<?php echo get_template_directory_uri(); ?>/images/meta/apple-touch-icon-36x36.png<?php echo $cache_query; ?>"><?php //@TODO "Graphics" 1: Create an Apple icon 36x36px. Used by Manifest JSON. ?>
@@ -47,34 +47,44 @@
 
 
 
+
+
+
 <?php
-	/* Open Graph
-		Open Graph images are used primarily by Facebook and Google+, but Nebula also utilizes this image for other various functions (ex: desktop notifications) as the default image. The Twitter image also uses og-thumb.png as declared below. Create at least one og-thumb.png image, but this meta can be declared multiple times for alternate graphics! Use PNG to avoid compression artifacts!.
-	*/
+	/*==========================
+	 Open Graph
+	 Open Graph images are used primarily by Facebook and Google+, but Nebula also utilizes this image for other various functions (ex: desktop notifications) as the default image. The Twitter image also uses og-thumb.png as declared below. Create at least one og-thumb.png image, but this meta can be declared multiple times for alternate graphics! Use PNG to avoid compression artifacts!
+	 ===========================*/
 ?>
-<?php if ( has_post_thumbnail($post->ID) ) : ?>
+<?php if ( has_post_thumbnail($post->ID) ): ?>
 	<meta property="og:image" content="<?php get_the_post_thumbnail($post->ID, 'open_graph_large'); ?>" />
 	<meta property="og:image" content="<?php get_the_post_thumbnail($post->ID, 'open_graph_small'); ?>" />
 <?php endif; ?>
-
 <meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/meta/og-thumb.png<?php echo $cache_query; ?>" /><?php //@TODO "Graphics" 4: Create at least one Open Graph image. Minimum Size: 600x315px. ?>
 <meta property="og:image" content="<?php echo get_template_directory_uri(); ?>/images/meta/og-thumb2.png<?php echo $cache_query; ?>" /><?php //@TODO "Graphics" 1: Minimum Size: 600x315px. ?>
 
 
 
+
+
 <?php
-	/* Twitter
-		Other Twitter Card metadata is set in header.php.
-	*/
+	/*==========================
+	 Twitter
+	 Other Twitter Card metadata is set in header.php.
+	 ===========================*/
 ?>
 <meta name="twitter:image" content="<?php echo get_template_directory_uri(); ?>/images/meta/twitter-card.png<?php echo $cache_query; ?>" /><?php //@TODO "Graphics" 1: Size: 240x180px. ?>
 
 
 
+
+
+
 <?php
-	/* Windows Tiles
-		Windows Tiles are declared below and four additional sizes (and a duplicate color declaration) are set within browserconfig.xml. Note: I don't know why the image files name dimensions are different than the actual dimensions... It was the recommended name/values.
-	*/
+	/*==========================
+	 Windows Tiles
+	 Windows Tiles are declared below and four additional sizes (and a duplicate color declaration) are set within browserconfig.xml. Note: I don't know why the image files name dimensions are different than the actual dimensions... It was the recommended name/values.
+	 ===========================*/
 ?>
 <meta name="application-name" content="<?php bloginfo('name') ?>" />
 <meta name="msapplication-TileColor" content="#0098d7" /><?php //@TODO "Graphics" 2: Update this color to match the brand. Be careful if this color is the same as the favicon logo because it won't show up when the live tile triggers. ?>

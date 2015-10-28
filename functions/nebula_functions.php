@@ -72,37 +72,6 @@ if ( function_exists('remove_theme_support') ){
 add_image_size('open_graph_large', 1200, 630, 1);
 add_image_size('open_graph_small', 600, 315, 1);
 
-//Dynamic Page Titles
-add_filter('wp_title', 'filter_wp_title', 10, 2);
-function filter_wp_title($title, $separator){
-	if ( is_feed() ){
-		return $title;
-	}
-
-	global $paged, $page;
-
-	if ( is_search() ){
-		$title = 'Search results';
-		if ( $paged >= 2 ){
-			$title .= ' ' . $separator . ' Page ' . $paged;
-		}
-		$title .= ' ' . $separator . ' ' . get_bloginfo('name', 'display');
-		return $title;
-	}
-
-	$title .= get_bloginfo('name', 'display');
-	$site_description = get_bloginfo('description', 'display');
-	if ( $site_description && (is_home() || is_front_page()) ){
-		$title .= ' ' . $separator . ' ' . $site_description;
-	}
-
-	if ( $paged >= 2 || $page >= 2 ){
-		$title .= ' ' . $separator . ' Page ' . max($paged, $page);
-	}
-
-	return $title;
-}
-
 //Determine if the author should be the Company Name or the specific author's name.
 function nebula_the_author($show_authors=1){
 	if ( !is_single() || $show_authors == 0 || !nebula_author_bios_enabled() ){
@@ -246,8 +215,6 @@ add_filter('wp_mail_content_type', 'nebula_email_content_type');
 function nebula_email_content_type(){
     return "text/html";
 }
-
-
 
 
 if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
@@ -934,10 +901,10 @@ function nebula_always_get_post_custom($posts){
 //@TODO "Nebula" 0: Use this on template like 404 (and maybe even advanced search?) and search redirect (in header). Then expand this a little bit.
 add_filter('get_search_form', 'nebula_search_form');
 function nebula_search_form($form){
-    $form = '<form role="search" method="get" id="searchform" action="' . home_url( '/' ) . '" >
+    $form = '<form role="search" method="get" id="searchform" action="' . home_url('/') . '" >
 	    <div>
 		    <input type="text" value="' . get_search_query() . '" name="s" id="s" />
-		    <input type="submit" id="searchsubmit" class="wp_search_submit" value="'. esc_attr__( 'Search' ) .'" />
+		    <input type="submit" id="searchsubmit" class="wp_search_submit" value="'. esc_attr__('Search') .'" />
 	    </div>
     </form>';
     return $form;

@@ -9,6 +9,8 @@
 	<head>
 		<?php do_action('nebula_head_open'); ?>
 
+		<?php //Title tag is handled by WordPress core. ?>
+
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta name="referrer" content="always">
 		<meta charset="<?php bloginfo('charset'); ?>" />
@@ -18,7 +20,7 @@
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 
-		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json" /> <!-- Web App Manifest Icons/Settings -->
+		<link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/includes/manifest.json" /><?php //Web App Manifest Icons/Settings ?>
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 
 		<?php include_once('includes/metadata.php'); //All text components of metadata. ?>

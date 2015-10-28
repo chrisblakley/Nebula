@@ -501,11 +501,10 @@ function socialSharing(){
 
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
-	gaDimensionsMetrics();
-
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//thisPage.document.on('mousedown', '.selector', function(e){
 	//  var intent = ( e.which >= 2 )? ' (Intent)' : '';
+	//	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
@@ -535,6 +534,7 @@ function gaEventTracking(){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href').substr(fileName.lastIndexOf("/")+1);
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		if ( linkText == '' || linkText == 'Download' ){
 			ga('send', 'event', 'PDF View', 'File: ' + fileName + intent);
 		} else {
@@ -549,6 +549,8 @@ function gaEventTracking(){
 	});
 	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to use the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
 	thisPage.document.on('submit', '.wpcf7-form', function(){
+		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form');
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.');
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer('wpcf7-form', 'end')), 'Initial form focus until submit');
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
@@ -565,6 +567,8 @@ function gaEventTracking(){
 	thisPage.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
+		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
@@ -574,6 +578,8 @@ function gaEventTracking(){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
+		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber + intent);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
@@ -583,6 +589,8 @@ function gaEventTracking(){
 		var intent = ( e.which >= 2 )? ' (Intent)' : '';
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
+		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber + intent);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
@@ -668,29 +676,6 @@ function gaEventTracking(){
 		}
 	}
 	window.onafterprint = afterPrint;
-}
-
-//Store Custom Dimension and Custom Metric ID strings from Google Analytics
-function gaDimensionsMetrics(){
-	//@TODO "Nebula" 0: Create Nebula Options for these? Maybe a new tab in Nebula Options for "Analytics"? -Need more "presets" available to pull the trigger on that.
-
-	//Create various custom dimensions and custom metrics in Google Analytics, then store the strings ("dimension3", "metric5", etc.) here in these objects.
-	//Refer to this post to see what dimensions are available: https://gearside.com/nebula/documentation/get-started/recommended-services/google-analytics-custom-definitions-ideas/
-	gaCustomDimensions = {
-        'scrollDepth': '', //Scroll depth information such as "Scanner" or "Reader".
-        'BusinessHours': '', //Passes "During Business Hours", or "Non-Business Hours" if business hours are available.
-        'sessionID': '', //Make a unique ID system so that you can group hits into specific user sessions
-        'userID': '', //If available, passes user IDs as custom dimensions. //@TODO "Nebula" 0: Haven't gotten this to work (without passing the dimension along with the initial analytics call in head)
-    }
-
-    gaCustomMetrics = {
-        '': '',
-    }
-
-	if ( gaCustomDimensions['sessionID'] ){
-    	sessionID = new Date().getTime() + '.' + Math.random().toString(36).substring(5);
-    	ga('set', gaCustomDimensions['sessionID'], sessionID);
-    }
 }
 
 //Detect scroll depth for engagement and more accurate bounce rate
@@ -1637,6 +1622,9 @@ function cFormPreValidator(){
 function cFormSuccess(form, thanks){
 	//Enter Additional on_sent_ok functionality here since it can only be used once per contact form.
 
+	ga('set', gaCustomDimensions['contactMethod'], 'Contact Form');
+	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+
 	if ( form ){
 		ga('send', 'event', 'Contact', 'Submit Success', form);
 	} else {
@@ -1836,6 +1824,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 						}
 
 						jQuery(document).trigger('nebula_address_selected');
+						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
 						ga('send', 'event', 'Contact', 'Autocomplete Address', addressComponents.city + ', ' + addressComponents.state.abbreviation + ' ' + addressComponents.zip.code);
 					});
 
@@ -2180,6 +2169,27 @@ function nebulaTimer(uniqueID, startStop){
 	}
 }
 
+//Get user's local time as ISO string with offset at the end
+function isoTimestamp(){
+	var now = new Date();
+	var tzo = -now.getTimezoneOffset();
+	var dif = tzo >= 0 ? '+' : '-';
+	var pad = function(num) {
+		var norm = Math.abs(Math.floor(num));
+		return (norm < 10 ? '0' : '') + norm;
+	};
+
+	return now.getFullYear()
+	+ '-' + pad(now.getMonth()+1)
+	+ '-' + pad(now.getDate())
+	+ 'T' + pad(now.getHours())
+	+ ':' + pad(now.getMinutes())
+	+ ':' + pad(now.getSeconds())
+	+ '.' + pad(now.getMilliseconds())
+	+ dif + pad(tzo/60)
+	+ ':' + pad(tzo%60);
+}
+
 //Convert time to relative.
 function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
 	var system_date = new Date(time);
@@ -2415,12 +2425,17 @@ function vimeoControls(){
 
 	function onPlay(id){
 	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+	    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
 	    nebulaTimer('vimeo_' + videoTitle, 'start');
 	}
 
 	function onPause(id){
 	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
+	    //@TODO "Nebula" 0: send metric gaCustomMetrics['videoPercentage'] here.
+	    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
 	    ga('send', 'timing', 'Vimeo', 'Paused', Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')), videoTitle);
 	}
@@ -2432,6 +2447,8 @@ function vimeoControls(){
 
 	function onFinish(id){
 		var videoTitle = id.replace(/-/g, ' ');
+		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 		ga('send', 'timing', 'Vimeo', 'Finished', Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')), videoTitle);
 	}
