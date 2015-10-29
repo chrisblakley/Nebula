@@ -65,8 +65,8 @@ function nebula_author_bios_enabled(){
 	return !nebula_option('nebula_author_bios', 'disabled');
 }
 
-function nebula_adwords_enabled(){
-	return !nebula_option('nebula_adwords', 'disabled');
+function nebula_ga_remarketing_enabled(){
+	return !nebula_option('nebula_ga_remarketing', 'disabled');
 }
 
 function nebula_comments_enabled(){
@@ -115,7 +115,6 @@ function register_nebula_options(){
 		//Metadata Tab
 		'nebula_site_owner' => '',
 		'nebula_contact_email' => '',
-		'nebula_hostnames' => '',
 		'nebula_keywords' => '',
 		'nebula_phone_number' => '',
 		'nebula_fax_number' => '',
@@ -164,7 +163,7 @@ function register_nebula_options(){
 		'nebula_wireframing' => 'Default',
 		'nebula_admin_bar' => 'Default',
 		'nebula_admin_notices' => 'Default',
-		'nebula_adwords' => 'Default',
+		'nebula_ga_remarketing' => 'Default',
 		'nebula_facebook_custom_audience_pixel' => 'Default',
 		'nebula_author_bios' => 'Default',
 		'nebula_comments' => 'Default',
@@ -181,12 +180,15 @@ function register_nebula_options(){
 
 		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
+		'nebula_hostnames' => '',
 		'nebula_google_webmaster_tools_verification' => '',
+		'nebula_cd_author' => '',
+		'nebula_cd_businesshours' => '',
+		'nebula_cd_categories' => '',
+		'nebula_cd_contactmethod' => '',
 		'nebula_cd_geolocation' => '',
 		'nebula_cd_geoname' => '',
 		'nebula_cd_geoaccuracy' => '',
-		'nebula_cd_businesshours' => '',
-		'nebula_cd_contactmethod' => '',
 		'nebula_cd_notablebrowser' => '',
 		'nebula_cd_scrolldepth' => '',
 		'nebula_cd_sessionid' => '',
@@ -398,30 +400,20 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 		        <tr valign="top">
-		        	<th scope="row">Valid Hostnames&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input type="text" name="nebula_hostnames" value="<?php echo get_option('nebula_hostnames'); ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" style="width: 392px;" />
-						<p class="helper"><small>
-							These help generate regex patterns for Google Analytics filters. Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br />
-							Include this RegEx pattern for a filter/segment <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
-						</small></p>
-					</td>
-		        </tr>
-		        <tr valign="top">
 		        	<th scope="row">Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_keywords" value="<?php echo get_option('nebula_keywords'); ?>" placeholder="Keywords" style="width: 392px;" />
 						<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Phone Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_phone_number" value="<?php echo get_option('nebula_phone_number'); ?>" placeholder="1-315-478-6700" />
 						<p class="helper"><small>The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Fax Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_fax_number" value="<?php echo get_option('nebula_fax_number'); ?>" placeholder="1-315-426-1392" />
@@ -448,7 +440,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<div class="businessday">
@@ -483,7 +475,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">Days Off&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<textarea name="nebula_business_hours_closed"><?php echo get_option('nebula_business_hours_closed'); ?></textarea>
@@ -501,35 +493,35 @@ function nebula_options_page(){
 						<p class="helper"><small>The URL (and optional page ID and admin IDs) of the associated Facebook page.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Google+ URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_plus_url" value="<?php echo get_option('nebula_google_plus_url'); ?>" placeholder="https://plus.google.com/106644717328415684498/about" style="width: 358px;"/>
 						<p class="helper"><small>The URL of the associated Google+ page. It is important to register with <a href="http://www.google.com/business/" target="_blank">Google Business</a> for the geolocation benefits (among other things)!</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Twitter URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_twitter_url" value="<?php echo get_option('nebula_twitter_url'); ?>" placeholder="https://twitter.com/pinckneyhugo" style="width: 358px;"/><br />
 						<p class="helper"><small>The URL of the associated Twitter page.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">LinkedIn URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_linkedin_url" value="<?php echo get_option('nebula_linkedin_url'); ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" style="width: 358px;"/>
 						<p class="helper"><small>The URL of the associated LinkedIn page.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Youtube URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_youtube_url" value="<?php echo get_option('nebula_youtube_url'); ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" style="width: 358px;"/>
 						<p class="helper"><small>The URL of the associated YouTube page.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Instagram URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_instagram_url" value="<?php echo get_option('nebula_instagram_url'); ?>" placeholder="https://www.instagram.com/pinckneyhugo" style="width: 358px;"/>
@@ -544,7 +536,7 @@ function nebula_options_page(){
 			<hr class="mobiletitle"/>
 
 			<table class="form-table dependent functions" style="display: none;">
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Wireframe Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_wireframing">
@@ -556,7 +548,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_admin_bar">
@@ -568,7 +560,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Nebula Admin Notices&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_admin_notices">
@@ -580,19 +572,19 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
-		        	<th scope="row">Google AdWords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        <tr class="short" valign="top">
+		        	<th scope="row">GA Remarketing&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select name="nebula_adwords">
-							<option value="default" <?php selected('default', get_option('nebula_adwords')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_adwords')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_adwords')); ?>>Disabled</option>
+						<select name="nebula_ga_remarketing">
+							<option value="default" <?php selected('default', get_option('nebula_ga_remarketing')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_ga_remarketing')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_ga_remarketing')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to integrate with Google AdWords. This can be used instead of pasting the Google AdWords snippet into the header! <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to enable remarketing integration with Google Analytics. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Facebook Custom Audience Pixel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_facebook_custom_audience_pixel">
@@ -604,7 +596,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">Author Bios&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_author_bios">
@@ -616,7 +608,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Comments&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_comments">
@@ -628,7 +620,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_wp_core_updates_notify">
@@ -640,7 +632,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_plugin_update_warning">
@@ -652,7 +644,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_welcome_panel">
@@ -664,7 +656,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_unnecessary_metaboxes">
@@ -676,7 +668,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_dev_metabox">
@@ -688,7 +680,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">TODO Manager Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_todo_metabox">
@@ -700,7 +692,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">Domain Expiration Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_domain_exp">
@@ -712,7 +704,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">SCSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_scss">
@@ -724,7 +716,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Developer Stylesheets&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_dev_stylesheets">
@@ -736,7 +728,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Console CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_console_css">
@@ -774,6 +766,17 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr valign="top">
+		        	<th scope="row">Valid Hostnames&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_hostnames" value="<?php echo get_option('nebula_hostnames'); ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" style="width: 392px;" />
+						<p class="helper"><small>
+							These help generate regex patterns for Google Analytics filters. Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br />
+							Include this RegEx pattern for a filter/segment <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
+						</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
 		        	<th scope="row">Google Webmaster Tools Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input id="nebula_google_webmaster_tools_verification" type="text" name="nebula_google_webmaster_tools_verification" value="<?php echo get_option('nebula_google_webmaster_tools_verification'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
@@ -788,7 +791,15 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="nebula_dimension" valign="top">
+				<tr class="short" valign="top">
+		        	<th scope="row">Author&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_author" value="<?php echo get_option('nebula_cd_author'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Tracks the article author's name on single posts. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
 		        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_businesshours" value="<?php echo get_option('nebula_cd_businesshours'); ?>" placeholder="dimension0" />
@@ -796,15 +807,23 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="nebula_dimension" valign="top">
-		        	<th scope="row">Contact Method&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+				<tr class="short" valign="top">
+		        	<th scope="row">Categories&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="dimension" type="text" name="nebula_cd_contactmethod" value="<?php echo get_option('nebula_cd_contactmethod'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Session</strong></small></p>
+						<input class="dimension" type="text" name="nebula_cd_categories" value="<?php echo get_option('nebula_cd_categories'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends a string of all the post's categories to the pageview hit. <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 
-				<tr class="nebula_dimension" valign="top">
+		        <tr class="short" valign="top">
+		        	<th scope="row">&raquo; Contact Method&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_contactmethod" value="<?php echo get_option('nebula_cd_contactmethod'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
 		        	<th scope="row">Geolocation*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_geolocation" value="<?php echo get_option('nebula_cd_geolocation'); ?>" placeholder="dimension0" />
@@ -812,7 +831,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="nebula_dimension" valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">Geolocation Accuracy*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_geoaccuracy" value="<?php echo get_option('nebula_cd_geoaccuracy'); ?>" placeholder="dimension0" />
@@ -820,7 +839,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="nebula_dimension" valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Geolocation Name*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_geoname" value="<?php echo get_option('nebula_cd_geoname'); ?>" placeholder="dimension0" />
@@ -828,7 +847,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="nebula_dimension" valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Notable Browser&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_notablebrowser" value="<?php echo get_option('nebula_cd_notablebrowser'); ?>" placeholder="dimension0" />
@@ -836,7 +855,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="nebula_dimension" valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">Scroll Depth&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_scrolldepth" value="<?php echo get_option('nebula_cd_scrolldepth'); ?>" placeholder="dimension0" />
@@ -844,31 +863,31 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="nebula_dimension" valign="top">
-		        	<th scope="row">Session ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        <tr class="short" valign="top">
+		        	<th scope="row">&raquo; Session ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_sessionid" value="<?php echo get_option('nebula_cd_sessionid'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>ID system so that you can group hits into specific user sessions. This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <strong>Scope: Session</strong></small></p>
+						<p class="helper"><small>ID system so that you can group hits into specific user sessions. This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 
-				<tr class="nebula_dimension" valign="top">
-		        	<th scope="row">Staff&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+				<tr class="short" valign="top">
+		        	<th scope="row">&raquo; Staff&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_staff" value="<?php echo get_option('nebula_cd_staff'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <strong>Scope: User</strong></small></p>
+						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <strong>Scope: User</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 
-				<tr class="nebula_dimension" valign="top">
-		        	<th scope="row">Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+				<tr class="short" valign="top">
+		        	<th scope="row">&raquo; Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_timestamp" value="<?php echo get_option('nebula_cd_timestamp'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Adds an ISO timestamp (in the user's local time) with timezone offset <em>(Ex: "2015-10-27T17:25:27.466-04:00")</em>. <strong>Scope: Hit</strong></small></p>
+						<p class="helper"><small>Adds an ISO timestamp (in the user's local time) with timezone offset <em>(Ex: "2015-10-27T17:25:27.466-04:00")</em>. <strong>Scope: Hit</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 
-		        <tr class="nebula_dimension" valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_userid" value="<?php echo get_option('nebula_cd_userid'); ?>" placeholder="dimension0" />
@@ -876,7 +895,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="nebula_dimension" valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">Video Watcher&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_videowatcher" value="<?php echo get_option('nebula_cd_videowatcher'); ?>" placeholder="dimension0" />
@@ -884,7 +903,15 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="nebula_dimension" valign="top">
+				<tr class="short" valign="top">
+		        	<th scope="row">Word Count&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_wordcount" value="<?php echo get_option('nebula_cd_wordcount'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends word count range for single posts. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
 		        	<th scope="row">Weather&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_weather" value="<?php echo get_option('nebula_cd_weather'); ?>" placeholder="dimension0" />
@@ -892,7 +919,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="nebula_dimension" valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Temperature&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_temperature" value="<?php echo get_option('nebula_cd_temperature'); ?>" placeholder="dimension0" />
@@ -1001,14 +1028,14 @@ function nebula_options_page(){
 			<hr class="mobiletitle"/>
 
 			<table class="form-table dependent administration" style="display: none;">
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_dev_ip" value="<?php echo get_option('nebula_dev_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
 						<p class="helper"><small>Comma-separated IP addresses of the developer to enable specific console logs and other dev info. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<?php
 		        		$current_user = wp_get_current_user();
 						list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
@@ -1020,14 +1047,14 @@ function nebula_options_page(){
 						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable specific console logs and other dev info. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Client IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_client_ip" value="<?php echo get_option('nebula_client_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
 						<p class="helper"><small>Comma-separated IP addresses of the client to enable certain features. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<?php
 		        		$current_user = wp_get_current_user();
 						list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
@@ -1039,7 +1066,7 @@ function nebula_options_page(){
 						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable certain features. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Server Control Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<?php
@@ -1052,7 +1079,7 @@ function nebula_options_page(){
 						<p class="helper"><small>Link to the control panel of the hosting account. cPanel on this domain would be <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a>.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Hosting&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<?php
@@ -1062,42 +1089,42 @@ function nebula_options_page(){
 						<p class="helper"><small>Link to the server host for easy access to support and other information. Server detected as <a href="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>" target="_blank">http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?></a>.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Domain Registrar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_registrar_url" value="<?php echo get_option('nebula_registrar_url'); ?>" placeholder="http://<?php echo whois_info('registrar_url'); ?><?php echo ( whois_info('reseller') )? '*' : ''; ?>" style="width: 392px;" />
 						<p class="helper"><small>Link to the domain registrar used for access to pointers, forwarding, and other information. <?php if ( whois_info('registrar') ) : ?> Registrar detected as <a href="http://<?php echo whois_info('registrar_url'); ?>"><?php echo whois_info('registrar'); ?></a><?php echo ( whois_info('reseller') )? ' *(via ' . whois_info('reseller') . ')' : ''; ?></small><?php endif; ?></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Google Analytics URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_ga_url" value="<?php echo get_option('nebula_ga_url'); ?>" placeholder="http://www.google.com/analytics/..." style="width: 392px;" />
 						<p class="helper"><small>Link directly to this project's <a href="http://www.google.com/analytics/" target="_blank">Google Analytics</a> report.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Google Webmaster Tools URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_webmaster_tools_url" value="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/webmasters/tools/" target="_blank">Google Webmaster</a> Tools.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Google AdSense URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_adsense_url" value="<?php echo get_option('nebula_google_adsense_url'); ?>" placeholder="https://www.google.com/adsense/app" style="width: 392px;" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Google AdWords URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_adwords_url" value="<?php echo get_option('nebula_google_adwords_url'); ?>" placeholder="https://www.google.com/adwords/" style="width: 392px;" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adwords/" target="_blank">Google AdWords</a> account.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Mention URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_mention_url" value="<?php echo get_option('nebula_mention_url'); ?>" placeholder="https://web.mention.com/" style="width: 392px;" />

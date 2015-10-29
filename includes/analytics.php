@@ -16,13 +16,15 @@
 
 		ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Options or functions.php! ?>
 
-		<?php if ( nebula_adwords_enabled() ): //Enable AdWords integration in Nebula Options, or delete this conditional. ?>
+		<?php if ( nebula_ga_remarketing_enabled() ): ?>
 			ga('require', 'displayfeatures');
 		<?php endif; ?>
 
 		//Create various custom dimensions and custom metrics in Google Analytics, then store the strings ("dimension3", "metric5", etc.) in Nebula Options.
 		gaCustomDimensions = {
+			'author': '<?php echo nebula_get_custom_definition('nebula_cd_author'); //Hit ?>',
 			'businessHours': '<?php echo nebula_get_custom_definition('nebula_cd_businesshours'); //Hit ?>',
+			'categories': '<?php echo nebula_get_custom_definition('nebula_cd_categories'); //Hit ?>',
 			'contactMethod': '<?php echo nebula_get_custom_definition('nebula_cd_contactmethod'); //Session ?>',
 			'geolocation': '<?php echo nebula_get_custom_definition('nebula_cd_geolocation'); //Session ?>',
 			'geoAccuracy': '<?php echo nebula_get_custom_definition('nebula_cd_geoaccuracy'); //Session ?>',
@@ -34,9 +36,47 @@
 			'timestamp': '<?php echo nebula_get_custom_definition('nebula_cd_timestamp'); //Hit ?>',
 			'userID': '<?php echo nebula_get_custom_definition('nebula_cd_userid'); //User ?>',
 			'videoWatcher': '<?php echo nebula_get_custom_definition('nebula_cd_videowatcher'); //Session ?>',
+			'wordCount': '<?php echo nebula_get_custom_definition('nebula_cd_wordcount'); //Hit ?>',
 			'weather': '<?php echo nebula_get_custom_definition('nebula_cd_weather'); //Hit ?>',
 			'temperature': '<?php echo nebula_get_custom_definition('nebula_cd_temperature'); //Hit ?>',
 		}
+
+		<?php if ( is_single() ): ?>
+			<?php if ( nebula_author_bios_enabled() && nebula_get_custom_definition('nebula_cd_author') ): ?>
+				ga('set', gaCustomDimensions['author'], '<?php echo get_the_author(); ?>');
+			<?php endif; ?>
+
+			<?php if ( nebula_get_custom_definition('nebula_cd_categories') ): ?>
+				<?php
+					foreach(get_the_category() as $category){
+						$cats[] = $category->name;
+					}
+					$post_cats = ( !empty($cats) )? implode(sort($cats), ', ') : 'No Categories';
+				?>
+				ga('set', gaCustomDimensions['categories'], '<?php echo $post_cats; ?>');
+			<?php endif; ?>
+
+			<?php if ( nebula_get_custom_definition('nebula_cd_wordcount') ): ?>
+				<?php
+					global $post;
+					$word_count = str_word_count(strip_tags($post->post_content));
+					if ( is_int($word_count) ){
+						if ( $word_count < 500 ){
+							$word_count_range = '<500';
+						} elseif ( $word_count < 1000 ){
+							$word_count_range = '500 - 999';
+						} elseif ( $word_count < 1500 ){
+							$word_count_range = '1,000 - 1,499';
+						} elseif ( $word_count < 2000 ){
+							$word_count_range = '1,500 - 1,999';
+						} else {
+							$word_count_range = '2,000+';
+						}
+					}
+				?>
+				ga('set', gaCustomDimensions['wordCount'], '<?php echo $word_count_range; ?>');
+			<?php endif; ?>
+		<?php endif; ?>
 
 		<?php if ( nebula_get_custom_definition('nebula_cd_businesshours') ): ?>
 			ga('set', gaCustomDimensions['businessHours'], '<?php echo ( business_open() )? 'During Business Hours' : 'Non-Business Hours'; ?>');

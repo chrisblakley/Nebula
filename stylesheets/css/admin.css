@@ -459,7 +459,7 @@
 
  }
 
- .appearance_page_nebula_options tr.nebula_dimension th,.appearance_page_nebula_options tr.nebula_dimension td { padding-top:5px; padding-bottom:5px; }
+ .appearance_page_nebula_options tr.short th,.appearance_page_nebula_options tr.short td { padding-top:5px; padding-bottom:5px; }
 
  .appearance_page_nebula_options input.dimension.error { border:1px solid #ca3838; background:#ca3838; background:rgba(202, 56, 56, 0.1); }
 
@@ -633,4 +633,4 @@
 
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
-/* Processed on Wednesday, October 28, 2015 at 10:08pm */
+/* Processed on Thursday, October 29, 2015 at 2:58pm */
