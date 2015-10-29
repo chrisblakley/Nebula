@@ -97,6 +97,8 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 		@include media(custom, map_get($admin_media_queries, tablet)){width: 100% !important;};
 	}
 
+	tr.nebula_dimension th,
+	tr.nebula_dimension td {padding-top: 5px; padding-bottom: 5px;}
 	input.dimension.error {border: 1px solid $danger_color; @include background-color($danger_color, 0.1);}
 
 	.businessday {

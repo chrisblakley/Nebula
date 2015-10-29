@@ -21,26 +21,35 @@ function nebula_prevent_bad_query_strings(){
 }
 
 //Disable Pingbacks to prevent security issues
-//@TODO "Nebula" 0: Undefined variable: method
-/*
-add_filter('xmlrpc_methods', disable_pingbacks($method));
-add_filter('wp_xmlrpc_server_class', disable_pingbacks($method));
-add_action('xmlrpc_call', disable_pingbacks($method));
-function disable_pingbacks($method){
-    if ( $method == 'pingback.ping' ){
-    	return false;
-    }
-}
-*/
-
-//Remove xpingback header
-add_filter('wp_headers', 'remove_x_pingback');
-function remove_x_pingback($headers){
-    unset($headers['X-Pingback']);
-    return $headers;
+//Disable X-Pingback HTTP Header.
+add_filter('wp_headers', 'nebula_remove_x_pingback', 11, 2);
+function nebula_remove_x_pingback($headers){
+	if ( isset($headers['X-Pingback']) ){
+		unset($headers['X-Pingback']);
+	}
+	return $headers;
 }
 
-//Prevent login error messages from giving too much information
+//Disable XMLRPC by hijacking and blocking the option.
+add_filter('pre_option_enable_xmlrpc', 'nebula_disable_xmlrpc');
+function nebula_disable_xmlrpc($state){
+	return false; //To leave XMLRPC intact and drop just Pingback: return $state;
+}
+
+//Remove rsd_link from filters (<link rel="EditURI" />).
+add_action('wp', 'nebula_remove_rsd_link', 9);
+function nebula_remove_rsd_link(){
+	remove_action('wp_head', 'rsd_link');
+}
+
+//Hijack pingback_url for get_bloginfo (<link rel="pingback" />).
+add_filter('bloginfo_url', 'nebula_hijack_pingback_url', 11, 2);
+function nebula_hijack_pingback_url($output, $property){
+	return ( $property == 'pingback_url' )? null : $output;
+}
+
+
+
 /*
 	@TODO "Security" 4: It is advised to create a Custom Alert in Google Analytics with the following settings:
 	Name: Possible Brute Force Attack
@@ -50,6 +59,7 @@ function remove_x_pingback($headers){
 		This applies to: Event Action, Contains, Attempted User
 		Alert me when: Total Events, Is greater than, 5 //May need to adjust this number to account for more actual users (depending on how many true logins are expected per day).
 */
+//Prevent login error messages from giving too much information
 add_filter('login_errors', 'nebula_login_errors');
 function nebula_login_errors($error){
 	if ( !nebula_is_bot() ){
@@ -109,13 +119,15 @@ function track_notable_bots(){
 			exit();
 		}
 		global $post;
-		ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID));
+		$custom_dimension = ( nebula_get_custom_definition('nebula_cd_notablebrowser') )? array('cd' . str_replace('dimension', '', nebula_get_custom_definition('nebula_cd_notablebrowser')) => 'Google%20Page%20Speed%20Bot') : null;
+		ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0, $custom_dimension);
 	}
 
 	//Internet Archive Wayback Machine
 	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
 		global $post;
-		ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID));
+		$custom_dimension = ( nebula_get_custom_definition('nebula_cd_notablebrowser') )? array('cd' . str_replace('dimension', '', nebula_get_custom_definition('nebula_cd_notablebrowser')) => 'Internet%20Archive%20Wayback%20Machine') : null;
+		ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0, $custom_dimension);
 	}
 }
 
@@ -126,10 +138,9 @@ function track_notable_bots(){
 //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
 add_action('wp_loaded', 'nebula_domain_prevention');
 function nebula_domain_prevention(){
-
 	$domain_blacklist_json_file = get_template_directory() . '/includes/data/domain_blacklist.txt';
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
-	if ( empty($domain_blacklist) || is_debug() || 1==1 ){
+	if ( empty($domain_blacklist) || is_debug() ){
 		$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
 		if ( empty($domain_blacklist) ){
 			$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt'); //In case piwik is not available (or changes).

@@ -7,7 +7,7 @@
 
 <?php if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ): ?>
 	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
-	<meta name="keywords" content="<?php echo nebula_get_option('nebula_keywords', ''); ?>" />
+	<meta name="keywords" content="<?php echo get_option('nebula_keywords'); ?>" />
 	<?php if ( function_exists('get_field') && get_field('news_keywords') ): //News keywords are <=10 comma separated keywords. ?>
 		<meta name="news_keywords" content="<?php echo get_field('news_keywords'); ?>" /><?php //@TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." ?>
 	<?php endif; ?>
@@ -32,17 +32,17 @@
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
 
 	<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
-	<meta property="business:contact_data:phone_number" content="+<?php echo nebula_get_option('nebula_phone_number', ''); //Ex: "1-315-478-6700" ?>" />
-	<meta property="business:contact_data:fax_number" content="+<?php echo nebula_get_option('nebula_fax_number', ''); //Ex: "1-315-478-6700" ?>" />
-	<meta property="business:contact_data:street_address" content="<?php echo nebula_get_option('nebula_street_address', ''); ?>" />
-	<meta property="business:contact_data:locality" content="<?php echo nebula_get_option('nebula_locality', ''); //City ?>" />
-	<meta property="business:contact_data:region" content="<?php echo nebula_get_option('nebula_region', ''); //State ?>" />
-	<meta property="business:contact_data:postal_code" content="<?php echo nebula_get_option('nebula_postal_code', ''); //Zip ?>" />
-	<meta property="business:contact_data:country_name" content="<?php echo nebula_get_option('nebula_country_name', 'USA'); //Country ?>" />
+	<meta property="business:contact_data:phone_number" content="+<?php echo get_option('nebula_phone_number'); ?>" />
+	<meta property="business:contact_data:fax_number" content="+<?php echo get_option('nebula_fax_number'); ?>" />
+	<meta property="business:contact_data:street_address" content="<?php echo get_option('nebula_street_address'); ?>" />
+	<meta property="business:contact_data:locality" content="<?php echo get_option('nebula_locality'); ?>" />
+	<meta property="business:contact_data:region" content="<?php echo get_option('nebula_region'); ?>" />
+	<meta property="business:contact_data:postal_code" content="<?php echo get_option('nebula_postal_code'); ?>" />
+	<meta property="business:contact_data:country_name" content="<?php echo get_option('nebula_country_name'); ?>" />
 <?php endif; ?>
 
 
-<?php //Business hours of operation. Times should be in the format "5:30 pm" or "17:30". Remove from Foreach loop to override Nebula Options. ?>
+<?php //Business hours of operation. ?>
 <?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): ?>
 	<?php if ( get_option('nebula_business_hours_' . $weekday . '_enabled') && get_option('nebula_business_hours_' . $weekday . '_open') != '' && get_option('nebula_business_hours_' . $weekday . '_close') != '' ) : ?>
 		<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
@@ -53,16 +53,13 @@
 
 
 <?php //Facebook Metadata ?>
-<?php $GLOBALS['social']['facebook_url'] = nebula_get_option('nebula_facebook_url', ''); //Enter the URL of the Facebook page here (or in Nebula Options). ?>
-<?php $GLOBALS['social']['facebook_access_token'] = nebula_get_option('nebula_facebook_access_token', ''); //Do NOT share or store in browser-facing code. ?>
-<meta property="fb:app_id" content="<?php echo $GLOBALS['social']['facebook_app_id'] = nebula_get_option('nebula_facebook_app_id', ''); //Facebook App ID Instructions: http://smashballoon.com/custom-facebook-feed/access-token/ ?>" />
-<meta property="fb:page_id" content="<?php echo $GLOBALS['social']['facebook_page_id'] = nebula_get_option('nebula_facebook_page_id', ''); ?>" />
-<meta property="fb:admins" content="<?php echo $GLOBALS['social']['facebook_admin_ids'] = nebula_get_option('facebook_admin_ids', ''); //Comma separated IDs of FB admins. Ex: "1234,2345,3456" ?>" />
+<meta property="fb:app_id" content="<?php echo get_option('nebula_facebook_app_id'); ?>" />
+<meta property="fb:page_id" content="<?php echo get_option('nebula_facebook_page_id'); ?>" />
+<meta property="fb:admins" content="<?php echo get_option('facebook_admin_ids'); ?>" />
 
 
 <?php //Twitter Metadata ?>
 <?php //twitter:image is located in includes/metagraphics.php ?>
-<?php $GLOBALS['social']['twitter_url'] = nebula_get_option('nebula_twitter_url', ''); //Enter the URL of the Twitter page here (or in Nebula Options). ?>
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="<?php the_title(); ?>" />
 <meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
@@ -70,18 +67,10 @@
 <meta name="twitter:creator" content="" /><?php //"@username" of content creator ?>
 
 
-<?php //Other Social Metadata ?>
-<?php //Be sure to create/update information on Google Business! http://www.google.com/business/ ?>
-<?php $GLOBALS['social']['google_plus_url'] = nebula_get_option('nebula_google_plus_url', ''); //Enter the URL of the Google+ page here (or in Nebula Options). ?>
-<?php $GLOBALS['social']['linkedin_url'] = nebula_get_option('nebula_linkedin_url', ''); //Enter the URL of the LinkedIn page here (or in Nebula Options). ?>
-<?php $GLOBALS['social']['youtube_url'] = nebula_get_option('nebula_youtube_url', ''); //Enter the URL of the Youtube page here (or in Nebula Options). ?>
-<?php $GLOBALS['social']['instagram_url'] = nebula_get_option('nebula_instagram_url', ''); //Enter the URL of the Instagram page here (or in Nebula Options). ?>
-
-
 <?php //Local/Geolocation Metadata ?>
-<meta name="geo.placename" content="<?php echo nebula_get_option('nebula_locality', ''); ?>, <?php echo nebula_get_option('nebula_region', ''); //The city (and state if needed). Replace each respective '' with the appropriate value. ?>" />
-<meta name="geo.position" content="<?php echo nebula_get_option('nebula_latitude', ''); ?>;<?php echo nebula_get_option('nebula_longitude', ''); //Semi-colon separated latitude;longitude. Replace each respsective '' with the appropriate value. ?>" />
+<meta name="geo.placename" content="<?php echo get_option('nebula_locality'); ?>, <?php echo get_option('nebula_region'); ?>" />
+<meta name="geo.position" content="<?php echo get_option('nebula_latitude'); ?>;<?php echo get_option('nebula_longitude'); ?>" />
 <meta name="geo.region" content="<?php echo bloginfo('language'); ?>" />
-<meta name="ICBM" content="<?php echo nebula_get_option('nebula_latitude', ''); ?>, <?php echo nebula_get_option('nebula_longitude', ''); //Comma and space separated latitude;longitude. Replace each respsective '' with the appropriate value. ?>" />
-<meta property="place:location:latitude" content="<?php echo nebula_get_option('nebula_latitude', ''); ?>" />
-<meta property="place:location:longitude" content="<?php echo nebula_get_option('nebula_longitude', ''); ?>" />
+<meta name="ICBM" content="<?php echo get_option('nebula_latitude'); ?>, <?php echo get_option('nebula_longitude'); ?>" />
+<meta property="place:location:latitude" content="<?php echo get_option('nebula_latitude'); ?>" />
+<meta property="place:location:longitude" content="<?php echo get_option('nebula_longitude'); ?>" />

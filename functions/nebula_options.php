@@ -26,13 +26,13 @@ function nebula_get_option($option, $default=false){
 	}
 }
 
-function nebula_get_custom_dimension($option, $default=false){
+function nebula_get_custom_definition($option, $default=false){
 	$data = get_option($option);
 
 	if ( empty($data) ){
 		return $default;
 	} else {
-		if ( $data[0] == 'd' && strlen($data) >= 10 && strlen($data) <= 12 ){
+		if ( preg_match('/^dimension([0-9]{1,3})$/', $data) ){
 			return $data;
 		} else {
 			return $default;
@@ -182,16 +182,20 @@ function register_nebula_options(){
 		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
 		'nebula_google_webmaster_tools_verification' => '',
-		'nebula_cd_namedlocation' => '',
+		'nebula_cd_geolocation' => '',
+		'nebula_cd_geoname' => '',
+		'nebula_cd_geoaccuracy' => '',
 		'nebula_cd_businesshours' => '',
 		'nebula_cd_contactmethod' => '',
+		'nebula_cd_notablebrowser' => '',
 		'nebula_cd_scrolldepth' => '',
 		'nebula_cd_sessionid' => '',
 		'nebula_cd_timestamp' => '',
 		'nebula_cd_userid' => '',
-		'nebula_cd_usertype' => '',
+		'nebula_cd_staff' => '',
 		'nebula_cd_videowatcher' => '',
 		'nebula_cd_weather' => '',
+		'nebula_cd_temperature' => '',
 
 		//APIs Tab
 		'nebula_google_font_family' => '',
@@ -780,43 +784,67 @@ function nebula_options_page(){
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
 						<h3>Custom Dimensions</h3>
-						<p>These are optional dimensions that can be passed into Google Analytics. To set these up, define the Custom Dimension in the Google Analytics property, then paste the dimension ID string ("dimension1", "dimension12", etc.) into the appropriate input field here. The scope for each dimension are noted in their respective help sections below. Dimensions that require additional code are marked with a *.</p>
+						<p>These are optional dimensions that can be passed into Google Analytics which allows for 20 custom dimensions (or 200 for Google Analytics Premium). To set these up, define the Custom Dimension in the Google Analytics property, then paste the dimension index string ("dimension1", "dimension12", etc.) into the appropriate input field below. The scope for each dimension are noted in their respective help sections. Dimensions that require additional code are marked with a *.</p>
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr class="nebula_dimension" valign="top">
 		        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_businesshours" value="<?php echo get_option('nebula_cd_businesshours'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Passes "During Business Hours", or "Non-Business Hours" if business hours are available. <strong>Scope: Hit</strong></small></p>
+						<p class="helper"><small>Passes "During Business Hours", or "Non-Business Hours" if business hours metadata has been entered. <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="nebula_dimension" valign="top">
 		        	<th scope="row">Contact Method&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_contactmethod" value="<?php echo get_option('nebula_cd_contactmethod'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Hit</strong></small></p>
+						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Session</strong></small></p>
 					</td>
 		        </tr>
 
-		        <tr valign="top">
-		        	<th scope="row">Named Location*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+				<tr class="nebula_dimension" valign="top">
+		        	<th scope="row">Geolocation*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="dimension" type="text" name="nebula_cd_namedlocation" value="<?php echo get_option('nebula_cd_namedlocation'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Allows named location information to be sent after being detected using map polygons. <em>*Note: Additional code is required for this to work!</em> <strong>Scope: Hit</strong></small></p>
+						<input class="dimension" type="text" name="nebula_cd_geolocation" value="<?php echo get_option('nebula_cd_geolocation'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Allows latitude and longitude coordinates to be sent after being detected. <em>*Note: Additional code is required for this to work!</em> <strong>Scope: Session</strong></small></p>
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr class="nebula_dimension" valign="top">
+		        	<th scope="row">Geolocation Accuracy*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_geoaccuracy" value="<?php echo get_option('nebula_cd_geoaccuracy'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Allows geolocation accuracy to be sent after being detected. <em>*Note: Additional code is required for this to work!</em> <strong>Scope: Session</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="nebula_dimension" valign="top">
+		        	<th scope="row">Geolocation Name*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_geoname" value="<?php echo get_option('nebula_cd_geoname'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Allows named location information to be sent after being detected using map polygons. <em>*Note: Additional code is required for this to work!</em> <strong>Scope: Session</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="nebula_dimension" valign="top">
+		        	<th scope="row">Notable Browser&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_notablebrowser" value="<?php echo get_option('nebula_cd_notablebrowser'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends data when notable browser info is detected (such as notable bot traffic or JavaScript disabled). <strong>Scope: Session</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="nebula_dimension" valign="top">
 		        	<th scope="row">Scroll Depth&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_scrolldepth" value="<?php echo get_option('nebula_cd_scrolldepth'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Scroll depth information such as "Scanner" or "Reader". <strong>Scope: Hit</strong></small></p>
+						<p class="helper"><small>Information tied to the event such as "Scanner" or "Reader". <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="nebula_dimension" valign="top">
 		        	<th scope="row">Session ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_sessionid" value="<?php echo get_option('nebula_cd_sessionid'); ?>" placeholder="dimension0" />
@@ -824,7 +852,15 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr class="nebula_dimension" valign="top">
+		        	<th scope="row">Staff&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_staff" value="<?php echo get_option('nebula_cd_staff'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <strong>Scope: User</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="nebula_dimension" valign="top">
 		        	<th scope="row">Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_timestamp" value="<?php echo get_option('nebula_cd_timestamp'); ?>" placeholder="dimension0" />
@@ -832,35 +868,35 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="nebula_dimension" valign="top">
 		        	<th scope="row">User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_userid" value="<?php echo get_option('nebula_cd_userid'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Scroll depth information such as "Scanner" or "Reader". <strong>Scope: Hit</strong></small></p>
+						<p class="helper"><small>If allowing visitors to create WordPress accounts, this will send user IDs to Google Analytics. <strong>Scope: User</strong></small></p>
 					</td>
 		        </tr>
 
-		        <tr valign="top">
-		        	<th scope="row">User Type&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_usertype" value="<?php echo get_option('nebula_cd_usertype'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <strong>Scope: Hit</strong></small></p>
-					</td>
-		        </tr>
-
-				<tr valign="top">
+				<tr class="nebula_dimension" valign="top">
 		        	<th scope="row">Video Watcher&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_videowatcher" value="<?php echo get_option('nebula_cd_videowatcher'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Sets a dimension when videos are started and finished. <strong>Scope: Hit</strong></small></p>
+						<p class="helper"><small>Sets a dimension when videos are started and finished. <strong>Scope: Session</strong></small></p>
 					</td>
 		        </tr>
 
-		        <tr valign="top">
+		        <tr class="nebula_dimension" valign="top">
 		        	<th scope="row">Weather&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_weather" value="<?php echo get_option('nebula_cd_weather'); ?>" placeholder="dimension0" />
 						<p class="helper"><small>Sends the current weather conditions as a dimension. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="nebula_dimension" valign="top">
+		        	<th scope="row">Temperature&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_temperature" value="<?php echo get_option('nebula_cd_temperature'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends temperature ranges in 5&deg;F intervals. <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 		    </table>

@@ -39,78 +39,9 @@
 
 			</div><!--/footer-->
 
-			<?php //Pass data to JavaScript. Not localized with WordPress core because these need to be able to be modified in header.php if desired. ?>
-			<script>
-				social = [];
-				social['facebook_url'] = "<?php echo $GLOBALS['social']['facebook_url']; ?>";
-				social['facebook_app_id'] = "<?php echo $GLOBALS['social']['facebook_app_id']; ?>";
-				social['twitter_url'] = "<?php echo $GLOBALS['social']['twitter_url']; ?>";
-				social['google_plus_url'] = "<?php echo $GLOBALS['social']['google_plus_url']; ?>";
-				social['linkedin_url'] = "<?php echo $GLOBALS['social']['linkedin_url']; ?>";
-				social['youtube_url'] = "<?php echo $GLOBALS['social']['youtube_url']; ?>";
-				social['instagram_url'] = "<?php echo $GLOBALS['social']['instagram_url']; ?>";
-			</script>
-
 			<?php //Scripts are loaded in functions.php (so they can be registerred and enqueued). ?>
 			<?php wp_footer(); ?>
 			<?php do_action('nebula_footer'); ?>
-
-			<script>
-				<?php //@TODO "Nebula" 0: Why does this only work in footer.php? ?>
-				//Check for Youtube Videos
-				if ( jQuery('.youtubeplayer').length ){
-					var players = {};
-					var tag = document.createElement('script');
-					tag.src = "https://www.youtube.com/iframe_api";
-					var firstScriptTag = document.getElementsByTagName('script')[0];
-					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-				}
-
-				function onYouTubeIframeAPIReady(e){
-					jQuery('iframe.youtubeplayer').each(function(i){
-						var youtubeiframeClass = jQuery(this).attr('id');
-						players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
-							events: {
-								'onReady': onPlayerReady,
-								'onStateChange': onPlayerStateChange,
-								'onError': onPlayerError
-							}
-						});
-					});
-				}
-
-				var pauseFlag = false;
-				function onPlayerError(e){
-					var videoTitle = e['target']['B']['videoData']['title'];
-					ga('send', 'event', 'Error', 'Youtube API', videoTitle + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
-				}
-				function onPlayerReady(e){
-				   //Do nothing
-				}
-				function onPlayerStateChange(e){
-					var videoTitle = e['target']['B']['videoData']['title'];
-				    if ( e.data == YT.PlayerState.PLAYING ){
-				        ga('set', gaCustomDimensions['videoWatcher'], 'Started');
-				        ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-				        ga('send', 'event', 'Videos', 'Play', videoTitle);
-				        nebulaTimer('youtube_' + videoTitle, 'start');
-				        pauseFlag = true;
-				    }
-				    if ( e.data == YT.PlayerState.ENDED ){
-				        ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
-				        ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-				        ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-				        ga('send', 'timing', 'Youtube', 'Finished', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
-				    } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
-				        ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-				        //@TODO "Nebula" 0: send metric gaCustomMetrics['videoPercentage'] here.
-				        ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-				        ga('send', 'event', 'Videos', 'Pause', videoTitle);
-				        ga('send', 'timing', 'Youtube', 'Paused', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
-				        pauseFlag = false;
-				    }
-				}
-			</script>
 
 		</div><!--/fullbodywrapper-->
 	</body>

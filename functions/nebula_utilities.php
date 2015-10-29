@@ -59,6 +59,8 @@ function ga_send_pageview($hostname=null, $path=null, $title=null){
 		$title = get_the_title();
 	}
 
+	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 	$data = array(
 		'v' => $GLOBALS['ga_v'],
 		'tid' => $GLOBALS['ga'],
@@ -74,7 +76,7 @@ function ga_send_pageview($hostname=null, $path=null, $title=null){
 
 //Send Event Function for Server-Side Google Analytics
 //@TODO "Nebula" 0: "WordPress" is still appearing in Google Analytics browser reports for these events!
-function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1){
+function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
 	if ( empty($GLOBALS['ga_v']) ){
 		$GLOBALS['ga_v'] = 1;
 	}
@@ -83,6 +85,8 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 		$GLOBALS['ga_cid'] = gaParseCookie();
 	}
 
+	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 	$data = array(
 		'v' => $GLOBALS['ga_v'],
 		'tid' => $GLOBALS['ga'],
@@ -97,13 +101,18 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 		'dp' => nebula_url_components('path'),
 		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 	);
+
+	$data = array_merge($data, $array);
+
 	gaSendData($data);
 }
 
 //Send custom data to Google Analytics. Must pass an array of data to this function:
 //ga_send_custom(array('t' => 'event', 'ec' => 'Category Here', 'ea' => 'Action Here', 'el' => 'Label Here'));
 //https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-function ga_send_custom($array){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
+function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
+	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 	$defaults = array(
 		'v' => $GLOBALS['ga_v'],
 		'tid' => $GLOBALS['ga'],

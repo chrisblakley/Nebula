@@ -12,7 +12,7 @@
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/<?php echo ( is_debug() )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
+		})(window,document,'script','//www.google-analytics.com/<?php echo ( is_debug(1) )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
 
 		ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Options or functions.php! ?>
 
@@ -22,48 +22,77 @@
 
 		//Create various custom dimensions and custom metrics in Google Analytics, then store the strings ("dimension3", "metric5", etc.) in Nebula Options.
 		gaCustomDimensions = {
-	        'namedLocation': '<?php echo nebula_get_custom_dimension('nebula_cd_namedlocation'); ?>',
-	        'businessHours': '<?php echo nebula_get_custom_dimension('nebula_cd_businesshours'); ?>',
-	        'contactMethod': '<?php echo nebula_get_custom_dimension('nebula_cd_contactmethod'); ?>',
-	        'scrollDepth': '<?php echo nebula_get_custom_dimension('nebula_cd_scrolldepth'); ?>',
-	        'sessionID': '<?php echo nebula_get_custom_dimension('nebula_cd_sessionid'); ?>',
-	        'timestamp': '<?php echo nebula_get_custom_dimension('nebula_cd_timestamp'); ?>',
-	        'userID': '<?php echo nebula_get_custom_dimension('nebula_cd_userid'); ?>',
-	        'userType': '<?php echo nebula_get_custom_dimension('nebula_cd_usertype'); ?>',
-	        'videoWatcher': '<?php echo nebula_get_custom_dimension('nebula_cd_videowatcher'); ?>',
-	        'weather': '<?php echo nebula_get_custom_dimension('nebula_cd_weather'); ?>',
-	    }
+			'businessHours': '<?php echo nebula_get_custom_definition('nebula_cd_businesshours'); //Hit ?>',
+			'contactMethod': '<?php echo nebula_get_custom_definition('nebula_cd_contactmethod'); //Session ?>',
+			'geolocation': '<?php echo nebula_get_custom_definition('nebula_cd_geolocation'); //Session ?>',
+			'geoAccuracy': '<?php echo nebula_get_custom_definition('nebula_cd_geoaccuracy'); //Session ?>',
+			'geoName': '<?php echo nebula_get_custom_definition('nebula_cd_geoname'); //Session ?>',
+			'notablebrowser': '<?php echo nebula_get_custom_definition('nebula_cd_notablebrowser'); //Session ?>',
+			'scrollDepth': '<?php echo nebula_get_custom_definition('nebula_cd_scrolldepth'); //Hit ?>',
+			'sessionID': '<?php echo nebula_get_custom_definition('nebula_cd_sessionid'); //Session ?>',
+			'staff': '<?php echo nebula_get_custom_definition('nebula_cd_staff'); //User ?>',
+			'timestamp': '<?php echo nebula_get_custom_definition('nebula_cd_timestamp'); //Hit ?>',
+			'userID': '<?php echo nebula_get_custom_definition('nebula_cd_userid'); //User ?>',
+			'videoWatcher': '<?php echo nebula_get_custom_definition('nebula_cd_videowatcher'); //Session ?>',
+			'weather': '<?php echo nebula_get_custom_definition('nebula_cd_weather'); //Hit ?>',
+			'temperature': '<?php echo nebula_get_custom_definition('nebula_cd_temperature'); //Hit ?>',
+		}
 
-		<?php if ( nebula_get_custom_dimension('nebula_cd_businesshours') ): ?>
+		<?php if ( nebula_get_custom_definition('nebula_cd_businesshours') ): ?>
 			ga('set', gaCustomDimensions['businessHours'], '<?php echo ( business_open() )? 'During Business Hours' : 'Non-Business Hours'; ?>');
 		<?php endif; ?>
 
-		<?php if ( nebula_get_custom_dimension('nebula_cd_sessionid') ): ?>
-			<?php $debugSession = ( is_debug() )? 'D.' : ''; ?>
-			var sessionID = new Date().getTime() + '.<?php echo $debugSession; ?>' + Math.random().toString(36).substring(5);
+		<?php if ( nebula_get_custom_definition('nebula_cd_sessionid') ): ?>
+			<?php
+				$session_info = ( is_debug() )? 'Dbg.' : '';
+				$session_info .= ( nebula_wireframing_enabled() )? 'Wr.' : '';
+				if ( is_client() ){
+					$session_info .= 'Cl.';
+				} elseif ( is_dev() ){
+					$session_info .= 'Dv.';
+				}
+				$session_info .= ( is_user_logged_in() )? 'Li.' : '';
+				$session_info .= ( nebula_is_bot() )? 'Bt.' : '';
+			?>
+			var sessionID = new Date().getTime() + '.<?php echo $session_info; ?>' + Math.random().toString(36).substring(5);
 			ga('set', gaCustomDimensions['sessionID'], sessionID);
 		<?php endif; ?>
 
 		<?php $current_user = wp_get_current_user(); ?>
-		<?php if ( $current_user && nebula_get_custom_dimension('nebula_cd_userid') ): ?>
+		<?php if ( $current_user && nebula_get_custom_definition('nebula_cd_userid') ): ?>
 			ga('set', gaCustomDimensions['userID'], '<?php echo $current_user->ID; ?>');
 		<?php endif; ?>
 
-		<?php if ( nebula_get_custom_dimension('nebula_cd_usertype') && (is_dev() || is_client()) ): ?>
+		<?php if ( nebula_get_custom_definition('nebula_cd_staff') && (is_dev() || is_client()) ): ?>
 			<?php $usertype = ( is_client() )? 'Client' : 'Developer'; ?>
-			ga('set', gaCustomDimensions['userType'], '<?php echo $usertype; ?>');
+			ga('set', gaCustomDimensions['staff'], '<?php echo $usertype; ?>');
 		<?php endif; ?>
 
-		<?php if ( nebula_get_custom_dimension('nebula_cd_weather') ): ?>
+		//Get time as ISO string with timezone offset
+		function isoTimestamp(){
+			var now = new Date();
+			var tzo = -now.getTimezoneOffset();
+			var dif = ( tzo >= 0 )? '+' : '-';
+			var pad = function(num){
+				var norm = Math.abs(Math.floor(num));
+				return (( norm < 10 )? '0' : '') + norm;
+			};
+			return now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + 'T' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + dif + pad(tzo/60) + ':' + pad(tzo%60);
+		}
+		<?php if ( nebula_get_custom_definition('nebula_cd_timestamp') ): ?>
+			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		<?php endif; ?>
+
+		<?php if ( nebula_get_custom_definition('nebula_cd_weather') ): ?>
 			ga('set', gaCustomDimensions['weather'], '<?php echo nebula_weather('conditions'); ?>');
 		<?php endif; ?>
-
-		<?php if ( 1==2 ): //@TODO "Nebula" 0: Come up with some preset custom metrics. ?>
-		    gaCustomMetrics = {
-		        'locationAccuracy': '<?php echo nebula_get_custom_dimension('nebula_cm_locationaccuracy'); ?>',
-		        'videoPercentage': '<?php echo nebula_get_custom_dimension('nebula_cm_videopercentage'); //Consider something like this: https://www.thyngster.com/measure-your-videos-engagement-with-google-analytics/ ?>',
-		    }
-	    <?php endif; ?>
+		<?php if ( nebula_get_custom_definition('nebula_cd_temperature') ): ?>
+			<?php
+				$temp_round = floor(nebula_weather('temperature')/5)*5;
+				$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F';
+			?>
+			ga('set', gaCustomDimensions['temperature'], '<?php echo $temp_range; ?>');
+		<?php endif; ?>
 
 		ga('send', 'pageview'); //Sends pageview along with set dimensions.
 	</script>

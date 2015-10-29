@@ -459,6 +459,8 @@
 
  }
 
+ .appearance_page_nebula_options tr.nebula_dimension th,.appearance_page_nebula_options tr.nebula_dimension td { padding-top:5px; padding-bottom:5px; }
+
  .appearance_page_nebula_options input.dimension.error { border:1px solid #ca3838; background:#ca3838; background:rgba(202, 56, 56, 0.1); }
 
  .appearance_page_nebula_options .businessday span { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
@@ -631,4 +633,4 @@
 
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
-/* Processed on Tuesday, October 27, 2015 at 5:05pm */
+/* Processed on Wednesday, October 28, 2015 at 10:08pm */

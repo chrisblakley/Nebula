@@ -133,11 +133,17 @@ function register_nebula_scripts(){
 		'nebula_cse_id' => get_option('nebula_cse_id'),
 		'nebula_google_browser_api_key' => get_option('nebula_google_browser_api_key'),
 		//'nebula_google_maps_api' => get_option('nebula_google_maps_api'), //To date, the Google Maps API key is not needed for JS integrations.
+		'facebook_url' => get_option('nebula_facebook_url'),
+		'facebook_app_id' => get_option('nebula_facebook_app_id'),
+		'twitter_url' => get_option('nebula_twitter_url'),
+		'google_plus_url' => get_option('nebula_google_plus_url'),
+		'linkedin_url' => get_option('nebula_linkedin_url'),
+		'youtube_url' => get_option('nebula_youtube_url'),
+		'instagram_url' => get_option('nebula_instagram_url'),
 		'manage_options' => current_user_can('manage_options'),
 		'debug' => is_debug(),
 	);
 }
-
 
 //Force clear cache for debugging and load debug scripts
 if ( is_debug() ){

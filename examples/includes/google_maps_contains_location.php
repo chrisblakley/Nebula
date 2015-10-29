@@ -202,29 +202,29 @@
 
 			if ( nebulaLocation.accuracy.meters < 50 ){
 		        var accText = 'Excellent';
-		        ga('set', 'dimension2', 'Excellent (<50m)');
+		        ga('set', gaCustomDimensions['geoAccuracy'], 'Excellent (<50m)');
 		    } else if ( nebulaLocation.accuracy.meters > 50 && nebulaLocation.accuracy.meters < 300 ){
 		        var accText = 'Good';
-		        ga('set', 'dimension2', 'Good (50m - 300m)');
+		        ga('set', gaCustomDimensions['geoAccuracy'], 'Good (50m - 300m)');
 		    } else if ( nebulaLocation.accuracy.meters > 300 && nebulaLocation.accuracy.meters < 1500 ){
 		        var accText = 'Poor';
-		        ga('set', 'dimension2', 'Poor (300m - 1500m)');
+		        ga('set', gaCustomDimensions['geoAccuracy'], 'Poor (300m - 1500m)');
 		    } else {
 		        var accText = 'Very Poor';
-		        ga('set', 'dimension2', 'Very Poor (>1500m)');
+		        ga('set', gaCustomDimensions['geoAccuracy'], 'Very Poor (>1500m)');
 		    }
 
 			if ( nebulaLocation.phg ){
 				if ( typeof nebulaLocation.phg === 'string' ){
-					ga('set', 'dimension1', 'At PHG in ' + nebulaLocation.phg);
+					ga('set', gaCustomDimensions['geoName'], 'At PHG in ' + nebulaLocation.phg);
 					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group in <strong>' + nebulaLocation.phg + '</strong>.');
 				} else {
-					ga('set', 'dimension1', 'At Pinckney Hugo Group');
+					ga('set', gaCustomDimensions['geoName'], 'At Pinckney Hugo Group');
 					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group.');
 				}
 				ga('send', 'event', 'PHG Location', nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
 			} else {
-				ga('set', 'dimension1', 'Not at Pinckney Hugo Group');
+				ga('set', gaCustomDimensions['geoName'], 'Not at Pinckney Hugo Group');
 				jQuery('#location-results .specific-location').html('You are <strong style="color: maroon;">not</strong> at Pinckney Hugo Group.');
 			}
 
