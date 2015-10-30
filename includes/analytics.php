@@ -25,11 +25,13 @@
 			'author': '<?php echo nebula_get_custom_definition('nebula_cd_author'); //Hit ?>',
 			'businessHours': '<?php echo nebula_get_custom_definition('nebula_cd_businesshours'); //Hit ?>',
 			'categories': '<?php echo nebula_get_custom_definition('nebula_cd_categories'); //Hit ?>',
+			'tags': '<?php echo nebula_get_custom_definition('nebula_cd_tags'); //Hit ?>',
 			'contactMethod': '<?php echo nebula_get_custom_definition('nebula_cd_contactmethod'); //Session ?>',
 			'geolocation': '<?php echo nebula_get_custom_definition('nebula_cd_geolocation'); //Session ?>',
 			'geoAccuracy': '<?php echo nebula_get_custom_definition('nebula_cd_geoaccuracy'); //Session ?>',
 			'geoName': '<?php echo nebula_get_custom_definition('nebula_cd_geoname'); //Session ?>',
 			'notablebrowser': '<?php echo nebula_get_custom_definition('nebula_cd_notablebrowser'); //Session ?>',
+			'relativeTime': '<?php echo nebula_get_custom_definition('nebula_cd_relativetime'); //Hit ?>',
 			'scrollDepth': '<?php echo nebula_get_custom_definition('nebula_cd_scrolldepth'); //Hit ?>',
 			'sessionID': '<?php echo nebula_get_custom_definition('nebula_cd_sessionid'); //Session ?>',
 			'staff': '<?php echo nebula_get_custom_definition('nebula_cd_staff'); //User ?>',
@@ -51,9 +53,21 @@
 					foreach(get_the_category() as $category){
 						$cats[] = $category->name;
 					}
-					$post_cats = ( !empty($cats) )? implode(sort($cats), ', ') : 'No Categories';
+					sort($cats);
+					$post_cats = ( !empty($cats) )? implode(', ', $cats) : 'No Categories';
 				?>
 				ga('set', gaCustomDimensions['categories'], '<?php echo $post_cats; ?>');
+			<?php endif; ?>
+
+			<?php if ( nebula_get_custom_definition('nebula_cd_tags') ): ?>
+				<?php
+					foreach(get_the_tags() as $tag){
+						$tags[] = $tag->name;
+					}
+					sort($tags);
+					$post_tags = ( !empty($tags) )? implode(', ', $tags) : 'No Tags';
+				?>
+				ga('set', gaCustomDimensions['tags'], '<?php echo $post_tags; ?>');
 			<?php endif; ?>
 
 			<?php if ( nebula_get_custom_definition('nebula_cd_wordcount') ): ?>
@@ -62,24 +76,47 @@
 					$word_count = str_word_count(strip_tags($post->post_content));
 					if ( is_int($word_count) ){
 						if ( $word_count < 500 ){
-							$word_count_range = '<500';
+							$word_count_range = '<500 words';
 						} elseif ( $word_count < 1000 ){
-							$word_count_range = '500 - 999';
+							$word_count_range = '500 - 999 words';
 						} elseif ( $word_count < 1500 ){
-							$word_count_range = '1,000 - 1,499';
+							$word_count_range = '1,000 - 1,499 words';
 						} elseif ( $word_count < 2000 ){
-							$word_count_range = '1,500 - 1,999';
+							$word_count_range = '1,500 - 1,999 words';
 						} else {
-							$word_count_range = '2,000+';
+							$word_count_range = '2,000+ words';
 						}
 					}
 				?>
 				ga('set', gaCustomDimensions['wordCount'], '<?php echo $word_count_range; ?>');
 			<?php endif; ?>
-		<?php endif; ?>
+		<?php endif; //if is_single() ?>
 
 		<?php if ( nebula_get_custom_definition('nebula_cd_businesshours') ): ?>
 			ga('set', gaCustomDimensions['businessHours'], '<?php echo ( business_open() )? 'During Business Hours' : 'Non-Business Hours'; ?>');
+		<?php endif; ?>
+
+		<?php if ( nebula_get_custom_definition('nebula_cd_relativetime') ): ?>
+			<?php
+				if ( contains(date('H'), array('23', '00', '01')) ){
+					$relative_time = 'Early Night';
+				} elseif ( contains(date('H'), array('02', '03', '04')) ){
+					$relative_time = 'Late Night';
+				} elseif ( contains(date('H'), array('05', '06', '07')) ){
+					$relative_time = 'Early Morning';
+				} elseif ( contains(date('H'), array('08', '09', '10')) ){
+					$relative_time = 'Late Morning';
+				} elseif ( contains(date('H'), array('11', '12', '13')) ){
+					$relative_time = 'Early Midday';
+				} elseif ( contains(date('H'), array('14', '15', '16')) ){
+					$relative_time = 'Late Midday';
+				} elseif ( contains(date('H'), array('17', '18', '19')) ){
+					$relative_time = 'Early Evening';
+				} elseif ( contains(date('H'), array('20', '21', '22')) ){
+					$$relative_time = 'Late Evening';
+				}
+			?>
+			ga('set', gaCustomDimensions['relativeTime'], '<?php echo $relative_time; ?>');
 		<?php endif; ?>
 
 		<?php if ( nebula_get_custom_definition('nebula_cd_sessionid') ): ?>

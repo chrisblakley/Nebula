@@ -185,11 +185,13 @@ function register_nebula_options(){
 		'nebula_cd_author' => '',
 		'nebula_cd_businesshours' => '',
 		'nebula_cd_categories' => '',
+		'nebula_cd_tags' => '',
 		'nebula_cd_contactmethod' => '',
 		'nebula_cd_geolocation' => '',
 		'nebula_cd_geoname' => '',
 		'nebula_cd_geoaccuracy' => '',
 		'nebula_cd_notablebrowser' => '',
+		'nebula_cd_relativetime' => '',
 		'nebula_cd_scrolldepth' => '',
 		'nebula_cd_sessionid' => '',
 		'nebula_cd_timestamp' => '',
@@ -784,10 +786,19 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
+
+
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
-						<h3>Custom Dimensions</h3>
-						<p>These are optional dimensions that can be passed into Google Analytics which allows for 20 custom dimensions (or 200 for Google Analytics Premium). To set these up, define the Custom Dimension in the Google Analytics property, then paste the dimension index string ("dimension1", "dimension12", etc.) into the appropriate input field below. The scope for each dimension are noted in their respective help sections. Dimensions that require additional code are marked with a *.</p>
+						<h2>Custom Dimensions</h2>
+						<p>These are optional dimensions that can be passed into Google Analytics which allows for 20 custom dimensions (or 200 for Google Analytics Premium). To set these up, define the Custom Dimension in the Google Analytics property, then paste the dimension index string ("dimension1", "dimension12", etc.) into the appropriate input field below. The scope for each dimension is noted in their respective help sections. Dimensions that require additional code are marked with a *.</p>
+					</td>
+		        </tr>
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Post Data</h3>
 					</td>
 		        </tr>
 
@@ -800,14 +811,6 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
-		        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_businesshours" value="<?php echo get_option('nebula_cd_businesshours'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Passes "During Business Hours", or "Non-Business Hours" if business hours metadata has been entered. <strong>Scope: Hit</strong></small></p>
-					</td>
-		        </tr>
-
-				<tr class="short" valign="top">
 		        	<th scope="row">Categories&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_categories" value="<?php echo get_option('nebula_cd_categories'); ?>" placeholder="dimension0" />
@@ -816,10 +819,106 @@ function nebula_options_page(){
 		        </tr>
 
 		        <tr class="short" valign="top">
-		        	<th scope="row">&raquo; Contact Method&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Tags&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="dimension" type="text" name="nebula_cd_contactmethod" value="<?php echo get_option('nebula_cd_contactmethod'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+						<input class="dimension" type="text" name="nebula_cd_tags" value="<?php echo get_option('nebula_cd_tags'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends a string of all the post's tags to the pageview hit. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Word Count&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_wordcount" value="<?php echo get_option('nebula_cd_wordcount'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends word count range for single posts. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Scroll Depth&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_scrolldepth" value="<?php echo get_option('nebula_cd_scrolldepth'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Information tied to the event such as "Scanner" or "Reader". <em>This dimension is tied to events, so pageviews will not have data (use the Top Event report).</em> <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Business Data</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_businesshours" value="<?php echo get_option('nebula_cd_businesshours'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Passes "During Business Hours", or "Non-Business Hours" if business hours metadata has been entered. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Relative Time&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_relativetime" value="<?php echo get_option('nebula_cd_relativetime'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends the relative time (Ex: "Late Morning", "Early Evening", etc.) based on the business timezone (via WordPress settings). <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Weather&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_weather" value="<?php echo get_option('nebula_cd_weather'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends the current weather conditions (at the business location) as a dimension. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Temperature&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_temperature" value="<?php echo get_option('nebula_cd_temperature'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends temperature ranges (at the business location) in 5&deg;F intervals. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>User Data</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">&raquo; Staff&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_staff" value="<?php echo get_option('nebula_cd_staff'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <em>Note: Session ID does contain this information, but this is explicitly more human readable.</em> <strong>Scope: User</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">&raquo; Session ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_sessionid" value="<?php echo get_option('nebula_cd_sessionid'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>ID system so that you can group hits into specific user sessions. This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_userid" value="<?php echo get_option('nebula_cd_userid'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>If allowing visitors to create WordPress accounts, this will send user IDs to Google Analytics. <strong>Scope: User</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">&raquo; Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_timestamp" value="<?php echo get_option('nebula_cd_timestamp'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>Adds an ISO timestamp (in the user's local time) with timezone offset <em>(Ex: "2015-10-27T17:25:27.466-04:00")</em>. <strong>Scope: Hit</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 
@@ -855,43 +954,19 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="short" valign="top">
-		        	<th scope="row">Scroll Depth&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_scrolldepth" value="<?php echo get_option('nebula_cd_scrolldepth'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Information tied to the event such as "Scanner" or "Reader". <strong>Scope: Hit</strong></small></p>
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Conversion Data</h3>
 					</td>
 		        </tr>
 
 		        <tr class="short" valign="top">
-		        	<th scope="row">&raquo; Session ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">&raquo; Contact Method&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="dimension" type="text" name="nebula_cd_sessionid" value="<?php echo get_option('nebula_cd_sessionid'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>ID system so that you can group hits into specific user sessions. This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
-					</td>
-		        </tr>
-
-				<tr class="short" valign="top">
-		        	<th scope="row">&raquo; Staff&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_staff" value="<?php echo get_option('nebula_cd_staff'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <strong>Scope: User</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
-					</td>
-		        </tr>
-
-				<tr class="short" valign="top">
-		        	<th scope="row">&raquo; Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_timestamp" value="<?php echo get_option('nebula_cd_timestamp'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Adds an ISO timestamp (in the user's local time) with timezone offset <em>(Ex: "2015-10-27T17:25:27.466-04:00")</em>. <strong>Scope: Hit</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_userid" value="<?php echo get_option('nebula_cd_userid'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>If allowing visitors to create WordPress accounts, this will send user IDs to Google Analytics. <strong>Scope: User</strong></small></p>
+						<input class="dimension" type="text" name="nebula_cd_contactmethod" value="<?php echo get_option('nebula_cd_contactmethod'); ?>" placeholder="dimension0" />
+						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 
@@ -903,29 +978,6 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="short" valign="top">
-		        	<th scope="row">Word Count&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_wordcount" value="<?php echo get_option('nebula_cd_wordcount'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Sends word count range for single posts. <strong>Scope: Hit</strong></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Weather&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_weather" value="<?php echo get_option('nebula_cd_weather'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Sends the current weather conditions as a dimension. <strong>Scope: Hit</strong></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Temperature&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_temperature" value="<?php echo get_option('nebula_cd_temperature'); ?>" placeholder="dimension0" />
-						<p class="helper"><small>Sends temperature ranges in 5&deg;F intervals. <strong>Scope: Hit</strong></small></p>
-					</td>
-		        </tr>
 		    </table>
 
 

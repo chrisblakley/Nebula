@@ -75,13 +75,15 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 
 	.form-table {
 		&.dependent {@include media(custom, map_get($admin_media_queries, mobile)){display: block !important;};}
+		h2 {}
+		h3 {margin: 0;}
 		th {width: 250px;
 			@include media(custom, map_get($admin_media_queries, tablet)){width: 100%;};
 		}
 	}
 
 	a {@include prefix((transition: all 0.25s));
-		&.help {text-decoration: none; color: #ccc;
+		&.help {text-decoration: none; color: #ccc; box-shadow: none; cursor: help;
 			&:hover,
 			&.active {color: #0074a2;}
 		}

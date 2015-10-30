@@ -435,6 +435,8 @@
 
  }
 
+ .appearance_page_nebula_options .form-table h3 { margin:0; }
+
  .appearance_page_nebula_options .form-table th { width:250px; }
 
  @media only screen and  (max-width: 900px) and (min-width: 501px) { .appearance_page_nebula_options .form-table th { width:100%; }
@@ -443,7 +445,7 @@
 
  .appearance_page_nebula_options a { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .appearance_page_nebula_options a.help { text-decoration:none; color:#ccc; }
+ .appearance_page_nebula_options a.help { text-decoration:none; color:#ccc; box-shadow:none; cursor:help; }
 
  .appearance_page_nebula_options a.help:hover,.appearance_page_nebula_options a.help.active { color:#0074a2; }
 
@@ -633,4 +635,4 @@
 
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
-/* Processed on Thursday, October 29, 2015 at 2:58pm */
+/* Processed on Thursday, October 29, 2015 at 11:43pm */
