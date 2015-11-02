@@ -76,7 +76,7 @@ get_header(); ?>
 							</div><!--/columns-->
 							<div class="eight columns right-side">
 								<div class="advanced-search-group">
-									<?php if ( nebula_author_bios_enabled() ): ?>
+									<?php if ( nebula_is_option_enabled('authorbios') ): ?>
 										<span class="contact-form-heading">Post Author</span>
 										<select id="advanced-search-author" class="chosen-select" data-placeholder="Select author...">
 											<option></option>

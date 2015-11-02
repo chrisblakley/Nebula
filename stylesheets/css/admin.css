@@ -429,6 +429,8 @@
 
  }
 
+ .appearance_page_nebula_options a { box-shadow:none; }
+
  .appearance_page_nebula_options h2 .nav-tab.nav-tab-inactive { font-weight:400; }
 
  @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .form-table.dependent { display:block !important; }
@@ -635,4 +637,4 @@
 
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
-/* Processed on Thursday, October 29, 2015 at 11:43pm */
+/* Processed on Monday, November 2, 2015 at 4:36pm */

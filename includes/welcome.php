@@ -37,13 +37,13 @@
 					</li>
 
 					<?php
-						switch ($user_info->roles[0]) {
-						    case 'administrator' : $fa_role = 'fa-key'; break;
-						    case 'editor' : $fa_role = 'fa-scissors'; break;
-						    case 'author' : $fa_role = 'fa-pencil-square'; break;
-						    case 'contributor' : $fa_role = 'fa-send'; break;
-						    case 'subscriber' : $fa_role = 'fa-ticket'; break;
-						    default : $fa_role = 'fa-user'; break;
+						switch ($user_info->roles[0]){
+						    case 'administrator': $fa_role = 'fa-key'; break;
+						    case 'editor': $fa_role = 'fa-scissors'; break;
+						    case 'author': $fa_role = 'fa-pencil-square'; break;
+						    case 'contributor': $fa_role = 'fa-send'; break;
+						    case 'subscriber': $fa_role = 'fa-ticket'; break;
+						    default: $fa_role = 'fa-user'; break;
 						}
 					?>
 					<li>

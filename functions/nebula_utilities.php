@@ -231,6 +231,15 @@ function is_at_phg(){
 	}
 }
 
+//Check if the current site is live to the public.
+//Note: This checks if the home URL matches any of the valid hostnames- so it will not work for subdomains or subdirectories!
+function is_site_live(){
+	if ( strpos(get_option('nebula_hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
+		return true;
+	} else {
+		return false;
+	}
+}
 
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
@@ -257,14 +266,14 @@ function nebula_url_components($segment="all", $url=null){
 	$tld = substr($domain[0], strpos($domain[0], '.'));
 
 	switch ($segment){
-		case ('all') :
-		case ('href') :
+		case ('all'):
+		case ('href'):
 			return $url;
 			break;
 
-		case ('protocol') : //Protocol and Scheme are aliases and return the same value.
-		case ('scheme') : //Protocol and Scheme are aliases and return the same value.
-		case ('schema') :
+		case ('protocol'): //Protocol and Scheme are aliases and return the same value.
+		case ('scheme'): //Protocol and Scheme are aliases and return the same value.
+		case ('schema'):
 			if ( $url_compontents['scheme'] != '' ){
 				return $url_compontents['scheme'];
 			} else {
@@ -272,21 +281,21 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('port') :
+		case ('port'):
 			if ( $url_compontents['port'] ){
 				return $url_compontents['port'];
 			} else {
 				switch( $url_compontents['scheme'] ){
-	                case ('http') :
+	                case ('http'):
 	                    return 80; //Default for http
 	                    break;
-	                case 'https':
+	                case ('https'):
 	                    return 443; //Default for https
 	                    break;
-	                case 'ftp':
+	                case ('ftp'):
 	                    return 21; //Default for ftp
 	                    break;
-	                case 'ftps':
+	                case ('ftps'):
 	                    return 990; //Default for ftps
 	                    break;
 	                default:
@@ -296,8 +305,8 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('user') : //Returns the username from this type of syntax: https://username:password@gearside.com/
-		case ('username') :
+		case ('user'): //Returns the username from this type of syntax: https://username:password@gearside.com/
+		case ('username'):
 			if ( $url_compontents['user'] ){
 				return $url_compontents['user'];
 			} else {
@@ -305,8 +314,8 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('pass') : //Returns the password from this type of syntax: https://username:password@gearside.com/
-		case ('password') :
+		case ('pass'): //Returns the password from this type of syntax: https://username:password@gearside.com/
+		case ('password'):
 			if ( $url_compontents['pass'] ){
 				return $url_compontents['pass'];
 			} else {
@@ -314,7 +323,7 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('authority') :
+		case ('authority'):
 			if ( $url_compontents['user'] && $url_compontents['pass'] ){
 				return $url_compontents['user'] . ':' . $url_compontents['pass'] . '@' . $url_compontents['host'] . ':' . nebula_url_components('port', $url);
 			} else {
@@ -322,8 +331,8 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('host') : //In http://something.example.com the host is "something.example.com"
-		case ('hostname') :
+		case ('host'): //In http://something.example.com the host is "something.example.com"
+		case ('hostname'):
 			return $url_compontents['host'];
 			break;
 
@@ -335,8 +344,8 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('subdomain') :
-		case ('sub_domain') :
+		case ('subdomain'):
+		case ('sub_domain'):
 			if ( $host[0] != 'www' && $host[0] != $sld ){
 				return $host[0];
 			} else {
@@ -348,31 +357,31 @@ function nebula_url_components($segment="all", $url=null){
 			return $domain[0];
 			break;
 
-		case ('basedomain') : //In http://example.com/something the basedomain is "http://example.com"
-		case ('base_domain') :
+		case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"
+		case ('base_domain'):
 		case ('origin') :
 			return $url_compontents['scheme'] . '://' . $domain[0];
 			break;
 
 		case ('sld') : //In example.com the sld is "example"
-		case ('second_level_domain') :
-		case ('second-level_domain') :
+		case ('second_level_domain'):
+		case ('second-level_domain'):
 			return $sld;
 			break;
 
 		case ('tld') : //In example.com the tld is ".com"
-		case ('top_level_domain') :
-		case ('top-level_domain') :
+		case ('top_level_domain'):
+		case ('top-level_domain'):
 			return $tld;
 			break;
 
-		case ('filepath') : //Filepath will be both path and file/extension
-		case ('pathname') :
+		case ('filepath'): //Filepath will be both path and file/extension
+		case ('pathname'):
 			return $url_compontents['path'];
 			break;
 
-		case ('file') : //Filename will be just the filename/extension.
-		case ('filename') :
+		case ('file'): //Filename will be just the filename/extension.
+		case ('filename'):
 			if ( contains(basename($url_compontents['path']), array('.')) ){
 				return basename($url_compontents['path']);
 			} else {
@@ -380,7 +389,7 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('extension') : //The extension only.
+		case ('extension'): //The extension only.
 		    if ( contains(basename($url_compontents['path']), array('.')) ){
 		        $file_parts = explode('.', $url_compontents['path']);
 		        return $file_parts[1];
@@ -389,7 +398,7 @@ function nebula_url_components($segment="all", $url=null){
 		    }
 		    break;
 
-		case ('path') : //Path should be just the path without the filename/extension.
+		case ('path'): //Path should be just the path without the filename/extension.
 			if ( contains(basename($url_compontents['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
 				return str_replace(basename($url_compontents['path']), '', $url_compontents['path']);
 			} else {
@@ -397,18 +406,18 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('query') :
-		case ('queries') :
-		case ('search') :
+		case ('query'):
+		case ('queries'):
+		case ('search'):
 			return $url_compontents['query'];
 			break;
 
-		case ('fragment') :
-		case ('fragments') :
-		case ('anchor') :
+		case ('fragment'):
+		case ('fragments'):
+		case ('anchor'):
 		case ('hash') :
-		case ('hashtag') :
-		case ('id') :
+		case ('hashtag'):
+		case ('id'):
 			return $url_compontents['fragment'];
 			break;
 
@@ -879,7 +888,7 @@ if ( nebula_option('nebula_scss') ){
 		add_action('init', 'nebula_render_scss');
 		add_action('admin_init', 'nebula_render_scss');
 	} else {
-		echo '<!-- Directory is not writable for SCSS! -->';
+		//add_action head, echo "Directory is not writeable for SCSS"?
 	}
 }
 function nebula_render_scss($specific_scss=null){
@@ -945,8 +954,6 @@ if ( nebula_option('nebula_scss') ){
 	if ( is_writable(get_template_directory()) ){
 		add_action('init', 'nebula_sass_manual_trigger');
 		add_action('admin_init', 'nebula_sass_manual_trigger');
-	} else {
-		echo '<!-- Directory is not writable for SCSS! -->';
 	}
 }
 function nebula_sass_manual_trigger(){

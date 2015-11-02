@@ -20,6 +20,10 @@ jQuery(document).on('ready', function(){
         'body': jQuery('body')
     }
 
+	//Detection
+	homescreenDetection();
+	iframeDetection();
+
 	//Social
 	facebookSDK();
 	facebookConnect();
@@ -149,11 +153,21 @@ function iframeDetection(){
 			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 		}
+		//Break out of the iframe when link is clicked.
 		jQuery('a').each(function(){
 			if ( jQuery(this).attr('href') != '#' ){
 				jQuery(this).attr('target', '_parent');
 			}
 		});
+	}
+}
+
+//Detect if loaded from the homescreen ("installed" as an app)
+function homescreenDetection(){
+	if ( navigator.standalone || get('hs') ){
+		//alert('loaded from hs'); @TODO "Nebula" 0: Query string is not working, so this detection method doesn't work.
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
 	}
 }
 
@@ -2027,7 +2041,7 @@ function nebulaEqualize(){
 		oThis.find('.columns').css('min-height', '0');
 		oThis.find('.columns').each(function(i){
 			if ( !jQuery(this).hasClass('no-equalize') ){
-				columnHeight = jQuery(this).height();
+				columnHeight = jQuery(this).outerHeight();
 				if ( columnHeight > tallestColumn ){
 					tallestColumn = columnHeight;
 				}

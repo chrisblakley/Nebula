@@ -17,6 +17,54 @@ if ( nebula_option('nebula_console_css') ){
 	}
 }
 
+//Check for warnings and send them to the console.
+add_action('wp_head', 'nebula_console_warnings');
+function nebula_console_warnings($console_warnings=array()){
+	if ( is_dev() && nebula_get_option('nebula_admin_notices') ){
+		//If search indexing is disabled
+		if ( get_option('blog_public') == 0 ){
+			if ( is_site_live() ){
+				$console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
+			} elseif ( !nebula_is_option_enabled('wireframing') ){
+				$console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
+			}
+		}
+
+		if ( is_site_live() && nebula_is_option_enabled('wireframing') ){
+			$console_warnings[] = array('error', 'Wireframing mode is still enabled!');
+		}
+
+		//If no Google Analytics tracking ID
+		if ( empty($GLOBALS['ga']) ){
+			$console_warnings[] = array('error', 'No Google Analytics tracking ID!');
+		}
+
+		//If Facebook Pixel is enabled but empty
+		if ( !nebula_option('nebula_facebook_custom_audience_pixel', 'disabled') && get_option('nebula_facebook_custom_audience_pixel_id') == '' ){
+			$console_warnings[] = array('error', 'Facebook Custom Audience Pixel is enabled, but the pixel ID is empty!');
+		}
+
+		//If there are warnings, send them to the console.
+		if ( !empty($console_warnings) ){
+			echo '<script>';
+			foreach( $console_warnings as $console_warning ){
+				if ( is_string($console_warning) ){
+					$console_warning = array($console_warning);
+				}
+				if ( !in_array($console_warning[0], array('log', 'warn', 'error')) ){
+					$warn_level = 'log';
+					$the_warning = $console_warning[0];
+				} else {
+					$warn_level = $console_warning[0];
+					$the_warning = $console_warning[1];
+				}
+				echo 'console.' . $warn_level . '("Nebula: ' . $the_warning . '");';
+			}
+			echo '</script>';
+		}
+	}
+}
+
 //Check for dev stylesheets
 if ( nebula_option('nebula_dev_stylesheets') ){
 	if ( is_writable(get_template_directory() . '/stylesheets/css/dev.css') ){
@@ -43,6 +91,57 @@ if ( nebula_option('nebula_dev_stylesheets') ){
 			wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . $file_counter, array('nebula-main'), null);
 		}
 	}
+}
+
+//Create/Write a manifest JSON file
+if ( is_writable(get_template_directory()) ){
+	add_action('init', 'nebula_manifest_json');
+	add_action('admin_init', 'nebula_manifest_json');
+}
+function nebula_manifest_json(){
+	$GLOBALS['manifest_json'] = '/includes/manifest.json';
+	$manifest_json = '{
+		"short_name": "' . get_bloginfo('name') . '",
+		"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
+		"icons": [{
+			"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-36x36.png",
+			"sizes": "36x36",
+			"type": "image/png",
+			"density": "0.75"
+		}, {
+			"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-48x48.png",
+			"sizes": "48x48",
+			"type": "image/png",
+			"density": "1.0"
+		}, {
+			"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-72x72.png",
+			"sizes": "72x72",
+			"type": "image/png",
+			"density": "1.5"
+		}, {
+			"src": "' . get_template_directory_uri() . '/images/meta/favicon-96x96.png",
+			"sizes": "96x96",
+			"type": "image/png",
+			"density": "2.0"
+		}, {
+			"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-144x144.png",
+			"sizes": "144x144",
+			"type": "image/png",
+			"density": "3.0"
+		}, {
+			"src": "' . get_template_directory_uri() . '/images/meta/favicon-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"density": "4.0"
+		}],
+		"start_url": "' . home_url() . '?hs=1",
+		"display": "standalone",
+		"orientation": "portrait"
+	}';
+
+	//@TODO "Nebula" 0: "start_url" with a query string is not working. Manifest is confirmed working, just not the query string.
+
+	file_put_contents(get_template_directory() . $GLOBALS['manifest_json'], $manifest_json);
 }
 
 //Redirect to favicon to force-clear the cached version when ?favicon is added.
@@ -74,7 +173,7 @@ add_image_size('open_graph_small', 600, 315, 1);
 
 //Determine if the author should be the Company Name or the specific author's name.
 function nebula_the_author($show_authors=1){
-	if ( !is_single() || $show_authors == 0 || !nebula_author_bios_enabled() ){
+	if ( !is_single() || $show_authors == 0 || !nebula_is_option_enabled('authorbios') ){
 		return get_option('nebula_site_owner', get_bloginfo('name'));
 	} else {
 		return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
@@ -241,7 +340,7 @@ if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_s
 	}
 
 	//Remove comments menu from Admin Bar
-	if ( nebula_admin_bar_enabled() ){
+	if ( nebula_is_option_enabled('adminbar') ){
 		add_action('admin_bar_menu', 'nebula_admin_bar_remove_comments', 900);
 		function nebula_admin_bar_remove_comments($wp_admin_bar){
 			$wp_admin_bar->remove_menu('comments');
@@ -343,7 +442,7 @@ function nebula_meta($meta, $secondary=1){
 		}
 		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} elseif ( $meta == 'author' || $meta == 'by' ){
-		if ( nebula_author_bios_enabled() ){
+		if ( nebula_is_option_enabled('authorbios') ){
 			echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
 		}
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
@@ -594,7 +693,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 
 	$bearer = get_option('nebula_twitter_bearer_token', '');
 
-	$tweets = get_transient('nebula_twitter_' . $username); //@TODO: The transient name should have the twitter name tied to it...
+	$tweets = get_transient('nebula_twitter_' . $username);
 	if ( empty($tweets) || is_debug() ){
 		$context = stream_context_create(array(
 			'http' => array(
@@ -1150,7 +1249,7 @@ function nebula_autocomplete_search(){
 	}
 
 	//Find authors (if author bios are enabled)
-	if ( nebula_author_bios_enabled() ){
+	if ( nebula_is_option_enabled('authorbios') ){
 		$authors = get_transient('nebula_autocomplete_authors');
 		if ( empty($authors) || is_debug() ){
 			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
@@ -1223,7 +1322,7 @@ function nebula_advanced_search(){
 
 	foreach ( $posts as $post ){
 		$author = null;
-		if ( nebula_author_bios_enabled() ){ //&& $post->post_type != 'page' ?
+		if ( nebula_is_option_enabled('authorbios') ){ //&& $post->post_type != 'page' ?
 			$author = array(
 				'id' => $post->post_author,
 				'name' => array(
@@ -1387,22 +1486,9 @@ function nebula_body_classes($classes){
 
 	//Time of Day
 	$classes[] = ( business_open() )? 'business-open' : 'business-closed';
-	if ( contains(date('H'), array('23', '00', '01')) ){
-		$classes[] = 'time-early time-night';
-	} elseif ( contains(date('H'), array('02', '03', '04')) ){
-		$classes[] = 'time-late time-night';
-	} elseif ( contains(date('H'), array('05', '06', '07')) ){
-		$classes[] = 'time-early time-morning';
-	} elseif ( contains(date('H'), array('08', '09', '10')) ){
-		$classes[] = 'time-late time-morning';
-	} elseif ( contains(date('H'), array('11', '12', '13')) ){
-		$classes[] = 'time-early time-midday';
-	} elseif ( contains(date('H'), array('14', '15', '16')) ){
-		$classes[] = 'time-late time-midday';
-	} elseif ( contains(date('H'), array('17', '18', '19')) ){
-		$classes[] = 'time-early time-evening';
-	} elseif ( contains(date('H'), array('20', '21', '22')) ){
-		$classes[] = 'time-late time-evening';
+	$relative_time = nebula_relative_time();
+	foreach( $relative_time as $relative_desc ){
+		$classes[] = 'time-' . $relative_desc;
 	}
 	if ( date('H') >= 12 ){
 		$classes[] = 'time-pm';
@@ -1443,7 +1529,7 @@ function nebula_body_classes($classes){
 }
 
 //Add additional classes to post wrappers @TODO "Nebula" 0: Finish implementing this!
-//add_filter('post_class', 'nebula_post_classes');
+add_filter('post_class', 'nebula_post_classes');
 function nebula_post_classes($classes){
     global $wp_query;
     if ( $wp_query->current_post == 0 ){ //If first post in a query
@@ -1535,6 +1621,27 @@ function business_open($date=null, $general=0){
 	}
 
 	return false;
+}
+
+//Get the relative time of day
+function nebula_relative_time(){
+	if ( contains(date('H'), array('23', '00', '01')) ){
+		return array('early', 'night');
+	} elseif ( contains(date('H'), array('02', '03', '04')) ){
+		return array('late', 'night');
+	} elseif ( contains(date('H'), array('05', '06', '07')) ){
+		return array('early', 'morning');
+	} elseif ( contains(date('H'), array('08', '09', '10')) ){
+		return array('late', 'morning');
+	} elseif ( contains(date('H'), array('11', '12', '13')) ){
+		return array('early', 'midday');
+	} elseif ( contains(date('H'), array('14', '15', '16')) ){
+		return array('late', 'midday');
+	} elseif ( contains(date('H'), array('17', '18', '19')) ){
+		return array('early', 'evening');
+	} elseif ( contains(date('H'), array('20', '21', '22')) ){
+		return array('late', 'evening');
+	}
 }
 
 //Detect weather for Zip Code (using Yahoo! Weather)

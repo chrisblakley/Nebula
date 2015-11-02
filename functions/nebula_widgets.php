@@ -18,7 +18,7 @@
 			?>
 
 
-			<?php if ( is_single() && nebula_author_bios_enabled() ) : ?>
+			<?php if ( is_single() && nebula_is_option_enabled('authorbios') ) : ?>
 				<?php echo $before_widget; ?>
 
 				<?php echo $before_title . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author_meta('display_name') . $after_title; ?>

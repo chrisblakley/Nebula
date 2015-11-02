@@ -1,4 +1,4 @@
-<?php if ( nebula_comments_enabled() ): ?>
+<?php if ( nebula_is_option_enabled('comments') ): ?>
 	<div id="nebulacommentswrapper">
 		<?php if ( get_option('nebula_disqus_shortname') ): ?>
 			<div id="disqus_thread"></div>

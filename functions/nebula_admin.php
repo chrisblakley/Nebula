@@ -20,11 +20,8 @@ remove_filter('comment_text', 'wptexturize');
 //@TODO "Nebula" 0: Update for WP 4.3 - Favicon will be a General Setting
 add_action('admin_head', 'admin_favicon');
 function admin_favicon(){
-	if ( is_debug() ){
-		echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico?r' . mt_rand(1000, 99999) . ' />';
-	} else {
-		echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico" />';
-	}
+	$cache_buster = ( is_debug() )? '?r' . mt_rand(1000, 99999) : '';
+	echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico' . $cache_buster . '" />';
 }
 
 //Add classes to the admin body
@@ -37,7 +34,7 @@ function nebula_admin_body_classes($classes){
 }
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-if ( !nebula_admin_bar_enabled() ){
+if ( !nebula_is_option_enabled('adminbar') ){
 	add_action('wp_print_scripts', 'dequeue_admin_bar', 9999);
 	add_action('wp_print_styles', 'dequeue_admin_bar', 9999);
 	function dequeue_admin_bar(){

@@ -8,7 +8,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	die('Error 403: Forbidden.');
 }
 
-if ( !nebula_author_bios_enabled() ){
+if ( !nebula_is_option_enabled('authorbios') ){
 	header('Location: ' . home_url('/') . '?s=about');
 	die('Error 403: Forbidden.');
 }

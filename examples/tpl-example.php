@@ -300,7 +300,8 @@ get_header(); ?>
 						} ?>
 
 						<?php if ( is_page(737) ){ //Notification API
-							include_once('includes/notification_api.php');
+							//include_once('includes/notification_api.php');
+							include_once('includes/push_notifications.php');
 						} ?>
 
 						<?php if ( is_page(760) ){ //bxSlider

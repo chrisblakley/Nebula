@@ -71,6 +71,7 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 
 //Nebula Options Page
 .appearance_page_nebula_options {
+	a {box-shadow: none;}
 	h2 .nav-tab.nav-tab-inactive {font-weight: 400;}
 
 	.form-table {
