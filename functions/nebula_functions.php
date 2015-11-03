@@ -39,11 +39,6 @@ function nebula_console_warnings($console_warnings=array()){
 			$console_warnings[] = array('error', 'No Google Analytics tracking ID!');
 		}
 
-		//If Facebook Pixel is enabled but empty
-		if ( !nebula_option('nebula_facebook_custom_audience_pixel', 'disabled') && get_option('nebula_facebook_custom_audience_pixel_id') == '' ){
-			$console_warnings[] = array('error', 'Facebook Custom Audience Pixel is enabled, but the pixel ID is empty!');
-		}
-
 		//If there are warnings, send them to the console.
 		if ( !empty($console_warnings) ){
 			echo '<script>';
@@ -95,11 +90,13 @@ if ( nebula_option('nebula_dev_stylesheets') ){
 
 //Create/Write a manifest JSON file
 if ( is_writable(get_template_directory()) ){
-	add_action('init', 'nebula_manifest_json');
-	add_action('admin_init', 'nebula_manifest_json');
+	$GLOBALS['manifest_json'] = '/includes/manifest.json';
+	if ( filemtime(get_template_directory() . $GLOBALS['manifest_json']) > (time()-(60*60*24)) || is_debug() ){
+		add_action('init', 'nebula_manifest_json');
+		add_action('admin_init', 'nebula_manifest_json');
+	}
 }
 function nebula_manifest_json(){
-	$GLOBALS['manifest_json'] = '/includes/manifest.json';
 	$manifest_json = '{
 		"short_name": "' . get_bloginfo('name') . '",
 		"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
@@ -369,8 +366,7 @@ if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_s
 			exit;
 		}
 
-		$post_types = get_post_types();
-		foreach ( $post_types as $post_type ){
+		foreach ( get_post_types() as $post_type ){
 			if ( post_type_supports($post_type, 'comments') ){
 				remove_post_type_support($post_type, 'comments');
 			}

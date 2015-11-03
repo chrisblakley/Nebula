@@ -167,6 +167,17 @@ function nebula_user_last_online($id){
 	}
 }
 
+function nebula_user_online_count(){
+	$logged_in_users = get_transient('users_status');
+	$user_online_count = 0;
+	foreach ( $logged_in_users as $user_id => $status ){
+		if ( $user_id != 0 && isset($status) && ($status > (time()-(15*60))) ){
+			$user_online_count++;
+		}
+	}
+	return $user_online_count;
+}
+
 //Check if the current IP address matches any of the dev IP address from Nebula Options
 //Passing $strict bypasses IP check, so user must be a dev and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
@@ -877,6 +888,43 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 	}
 }
 
+//Get Nebula version information
+function nebula_version(){
+	$nebula_theme_info = wp_get_theme();
+	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
+	$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
+
+	/*
+		May 2016	4.0.x
+		June		4.1.x
+		July		4.2.x
+		August		4.3.x
+		Sept		4.4.x
+		Oct			4.5.x
+		Nov			4.6.x
+		Dec			4.7.x
+		Jan	2017	4.8.x
+		Feb			4.9.x
+		Mar			4.10.x
+		Apr			4.11.x
+		x represents the day of the month.
+	*/
+
+	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
+	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June'); //Modify this array when 4.0 is released (May is first)
+	$nebula_version_month = $nebula_months[$nebula_version['medium']];
+	$nebula_version_day = ( empty($nebula_version['small']) )? ', ' : ' ' . $nebula_version['small'] . ', ';
+
+	return array(
+		'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2],
+		'large' => $nebula_version_split[0],
+		'medium' => $nebula_version_split[1],
+		'small' => $nebula_version_split[2],
+		'year' => $nebula_version_year,
+		'month' => $nebula_version_month,
+		'day' => $nebula_version_day,
+	);;
+}
 
 /*==========================
 	SCSS Compiling

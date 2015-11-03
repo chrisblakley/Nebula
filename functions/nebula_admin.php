@@ -212,9 +212,9 @@ if ( nebula_option('nebula_admin_notices') ){
 			//Check PHP version
 			$php_version_lifecycle = nebula_php_version_support();
 			if ( $php_version_lifecycle['lifecycle'] == 'security' ){
-				echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>v' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong>' . date('F j, Y', $php_version_lifecycle['security']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+				echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong>' . date('F j, Y', $php_version_lifecycle['security']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 			} elseif ( $php_version_lifecycle['lifecycle'] == 'end' ){
-				echo '<div class="nebula-admin-notice error"><p>PHP <strong>v' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong>' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+				echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong>' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 			}
 
 			//Check for Google Analytics Tracking ID
@@ -260,14 +260,92 @@ if ( nebula_option('nebula_unnecessary_metaboxes') ){
 	add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
 	function remove_dashboard_metaboxes(){
 		//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
-		//global $wp_meta_boxes;
-		//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
-
 	    remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
 	    remove_meta_box('dashboard_secondary', 'dashboard', 'side');
 	    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
 	    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
 	    remove_meta_box('dashboard_quick_press', 'dashboard', 'side');
+
+		if ( nebula_option('nebula_ataglance_metabox') ){
+	    	remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
+	    }
+	}
+}
+
+//"At a Glance" metabox replacement
+if ( nebula_option('nebula_ataglance_metabox') ){
+	add_action('wp_dashboard_setup', 'nebula_ataglance_metabox');
+	function nebula_ataglance_metabox(){
+		global $wp_meta_boxes;
+		wp_add_dashboard_widget('nebula_ataglance', 'At a Glance', 'dashboard_nebula_ataglance');
+	}
+	function dashboard_nebula_ataglance(){
+		global $wp_version;
+		global $wp_post_types;
+		$nebula_theme_info = wp_get_theme();
+
+		echo '<ul class="serverdetections">';
+			echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
+			$nebula_version_info = nebula_version();
+			echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . $nebula_version_info['full'] . '</strong> <small>(Released: ' . $nebula_version_info['month'] . $nebula_version_info['day'] . $nebula_version_info['year'] . ')</small></li>';
+
+			foreach ( get_post_types() as $post_type ){
+			    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
+				    continue;
+			    }
+				$count_pages = wp_count_posts($post_type);
+				$labels_plural = ( $count_pages->publish == 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+				switch ( $post_type ){
+					case ('post'):
+						$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
+						break;
+					case ('page'):
+						$post_icon_img = '<i class="fa fa-file-text fa-fw"></i>';
+						break;
+					case ('wpcf7_contact_form'):
+						$post_icon_img = '<i class="fa fa-envelope fa-fw"></i>';
+						break;
+					default:
+						$post_icon = $wp_post_types[$post_type]->menu_icon;
+						if ( !empty($post_icon) ){
+							if ( strpos('dashicons-', $post_icon) >= 0 ){
+								$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
+							} else {
+								$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
+							}
+						} else {
+							$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
+						}
+						break;
+				}
+				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_pages->publish . '</strong> ' . $labels_plural . '</a></li>';
+			}
+
+			$all_plugins = get_plugins();
+			$active_plugins = get_option('active_plugins', array());
+			echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> Plugins</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
+
+			$user_count = count_users();
+			$users_icon = 'users';
+			$users_plural = 'Users';
+			if ( $user_count['total_users'] == 1 ){
+				$users_plural = 'User';
+				$users_icon = 'user';
+			}
+			echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula_user_online_count() . ' currently active)</small></li>';
+
+			if ( nebula_option('nebula_comments', 'enabled') && get_option('nebula_disqus_shortname') == '' ){
+				$comments_count = wp_count_comments();
+				$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
+				echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
+			} else {
+				if ( nebula_option('nebula_comments', 'disabled') ){
+					echo '<li><i class="fa fa-comments-o fa-fw"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
+				} else {
+					echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . get_option('nebula_disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
+				}
+			}
+		echo '</ul>';
 	}
 }
 
@@ -414,7 +492,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 		//Get last modified filename and date
 		$dir = glob_r( get_template_directory() . '/*');
 		$last_date = 0;
-		$skip_files = array('dev.css', '/cache/', '/includes/data/'); //Files or directories to skip. Be specific!
+		$skip_files = array('dev.css', '/cache/', '/includes/data/', 'manifest.json'); //Files or directories to skip. Be specific!
 
 		foreach ( $dir as $file ){
 			if ( is_file($file) ){
@@ -838,31 +916,8 @@ function change_admin_footer_left(){
 add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right(){
 	global $wp_version;
-	$nebula_theme_info = wp_get_theme();
-	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
-	$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
-
-	/*
-		May 2016	4.0.x
-		June		4.1.x
-		July		4.2.x
-		August		4.3.x
-		Sept		4.4.x
-		Oct			4.5.x
-		Nov			4.6.x
-		Dec			4.7.x
-		Jan	2017	4.8.x
-		Feb			4.9.x
-		Mar			4.10.x
-		Apr			4.11.x
-		x represents the day of the month.
-	*/
-
-	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
-	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June'); //Modify this array when 4.0 is released (May is first)
-	$nebula_version_month = $nebula_months[$nebula_version['medium']];
-	$nebula_version_day = ( empty($nebula_version['small']) )? ', ' : ' ' . $nebula_version['small'] . ', ';
-    return '<span><a href="https://wordpress.org/news/category/releases/" target="_blank">WordPress</a> v<strong>' . $wp_version . '</strong></span>, <span title="' . $nebula_version_month . $nebula_version_day . $nebula_version_year . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> v<strong class="nebula">' . $nebula_theme_info->get('Version') . '</strong></span>';
+	$nebula_version_info = nebula_version();
+    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="' . $nebula_version_info['month'] . $nebula_version_info['day'] . $nebula_version_info['year'] . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong class="nebula">' . $nebula_version_info['full'] . '</strong></span>';
 }
 
 //Internal Search Keywords Metabox and Custom Field

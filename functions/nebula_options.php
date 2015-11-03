@@ -172,7 +172,6 @@ function register_nebula_options(){
 		'nebula_facebook_admin_ids' => '',
 		'nebula_facebook_app_secret' => '',
 		'nebula_facebook_access_token' => '',
-		'nebula_facebook_custom_audience_pixel_id' => '',
 		'nebula_google_plus_url' => '',
 		'nebula_twitter_url' => '',
 		'nebula_linkedin_url' => '',
@@ -183,13 +182,14 @@ function register_nebula_options(){
 		'nebula_wireframing' => 'Default',
 		'nebula_admin_bar' => 'Default',
 		'nebula_admin_notices' => 'Default',
-		'nebula_facebook_custom_audience_pixel' => 'Default',
+
 		'nebula_author_bios' => 'Default',
 		'nebula_comments' => 'Default',
 		'nebula_wp_core_updates_notify' => 'Default',
 		'nebula_plugin_update_warning' => 'Default',
 		'nebula_welcome_panel' => 'Default',
 		'nebula_unnecessary_metaboxes' => 'Default',
+		'nebula_ataglance_metabox' => 'Default',
 		'nebula_dev_metabox' => 'Default',
 		'nebula_todo_metabox' => 'Default',
 		'nebula_domain_exp' => 'Default',
@@ -203,6 +203,7 @@ function register_nebula_options(){
 		'nebula_ga_linkid' => 'Default',
 		'nebula_hostnames' => '',
 		'nebula_google_webmaster_tools_verification' => '',
+		'nebula_facebook_custom_audience_pixel_id' => '',
 		'nebula_cd_author' => '',
 		'nebula_cd_businesshours' => '',
 		'nebula_cd_categories' => '',
@@ -360,8 +361,6 @@ function nebula_options_page(){
 			</div>
 		<?php endif; ?>
 
-		<p>These settings are optional overrides to the functions set by Nebula. This page is for convenience and is not needed if you feel like just modifying the functions.php file.</p>
-
 		<form method="post" action="options.php">
 			<?php
 				settings_fields('nebula_options_group');
@@ -410,26 +409,40 @@ function nebula_options_page(){
 
 			<table class="form-table dependent metadata">
 		        <tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Site Information</h3>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
 		        	<th scope="row">Site Owner&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_site_owner" value="<?php echo get_option('nebula_site_owner'); ?>" placeholder="<?php echo bloginfo('name'); ?>" />
 						<p class="helper"><small>The name of the company (or person) who this website is for. This is used when using nebula_the_author(0) with author names disabled.</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Contact Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_contact_email" value="<?php echo get_option('nebula_contact_email'); ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
 						<p class="helper"><small>The main contact email address. If left empty, the admin email address will be used (shown by placeholder).</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_keywords" value="<?php echo get_option('nebula_keywords'); ?>" placeholder="Keywords" style="width: 392px;" />
-						<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata.</small></p>
+						<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata. Note: This meta is rarely used by site crawlers.</small></p>
 					</td>
 		        </tr>
+
+
+		        <tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Business Information</h3>
+					</td>
+		        </tr>
+
 		        <tr class="short" valign="top">
 		        	<th scope="row">Phone Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
@@ -444,7 +457,7 @@ function nebula_options_page(){
 						<p class="helper"><small>The fax number used for Open Graph data. Use the format: "1-315-426-1392".</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Geolocation&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						Lat: <input type="text" name="nebula_latitude" value="<?php echo get_option('nebula_latitude'); ?>" placeholder="43.0536854" style="width: 100px;" />
@@ -452,7 +465,7 @@ function nebula_options_page(){
 						<p class="helper"><small>The latitude and longitude of the physical location (or headquarters if multiple locations). Use the format "43.0536854".</small></p>
 					</td>
 		        </tr>
-		        <tr valign="top">
+		        <tr class="short" valign="top">
 		        	<th scope="row">Address&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_street_address" value="<?php echo get_option('nebula_street_address'); ?>" placeholder="760 West Genesee Street" style="width: 392px;" /><br />
@@ -507,6 +520,11 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Social Networks</h3>
+					</td>
+		        </tr>
 
 		        <tr valign="top">
 		        	<th scope="row">Facebook&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
@@ -560,6 +578,12 @@ function nebula_options_page(){
 			<hr class="mobiletitle"/>
 
 			<table class="form-table dependent functions" style="display: none;">
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Front-End</h3>
+					</td>
+		        </tr>
+
 		        <tr class="short" valign="top">
 		        	<th scope="row">Wireframe Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
@@ -569,44 +593,6 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_wireframing')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>When prototyping, enable this setting to use the greyscale stylesheet. <em>(Default: Disabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_admin_bar">
-							<option value="default" <?php selected('default', get_option('nebula_admin_bar')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_bar')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_bar')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Nebula Admin Notices&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_admin_notices">
-							<option value="default" <?php selected('default', get_option('nebula_admin_notices')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_notices')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_notices')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Show Nebula-specific admin notices (Note: This does not toggle WordPress core, or plugin, admin notices). <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Facebook Custom Audience Pixel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_facebook_custom_audience_pixel">
-							<option value="default" <?php selected('default', get_option('nebula_facebook_custom_audience_pixel')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_facebook_custom_audience_pixel')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_facebook_custom_audience_pixel')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Toggle the <a href="https://www.facebook.com/ads/manage/pixels/" target="_blank">Facebook Custom Audience Pixel</a> tracking. Be sure to add the pixel ID under the APIs tab! <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -634,87 +620,22 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="short" valign="top">
-		        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_wp_core_updates_notify">
-							<option value="default" <?php selected('default', get_option('nebula_wp_core_updates_notify')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_wp_core_updates_notify')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_wp_core_updates_notify')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Control whether or not the Wordpress Core update notifications show up on the admin pages. <em>(Default: Disabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_plugin_update_warning">
-							<option value="default" <?php selected('default', get_option('nebula_plugin_update_warning')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_plugin_update_warning')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_plugin_update_warning')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Control whether or not the plugin update warning appears on admin pages. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_welcome_panel">
-							<option value="default" <?php selected('default', get_option('nebula_welcome_panel')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_welcome_panel')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_welcome_panel')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Control the Welcome Panel with useful links related to the project. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_unnecessary_metaboxes">
-							<option value="default" <?php selected('default', get_option('nebula_unnecessary_metaboxes')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_unnecessary_metaboxes')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_unnecessary_metaboxes')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Remove metaboxes on the Dashboard that are not necessary for most users. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_dev_metabox">
-							<option value="default" <?php selected('default', get_option('nebula_dev_metabox')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_dev_metabox')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_dev_metabox')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Control the Developer Information Metabox with useful server information. Requires a user with a matching email address domain to the "Developer Email Domains" setting (under the Administration tab). <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">TODO Manager Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_todo_metabox">
-							<option value="default" <?php selected('default', get_option('nebula_todo_metabox')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_todo_metabox')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_todo_metabox')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Finds TODO messages in theme files to track open issues. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
 				<tr class="short" valign="top">
-		        	<th scope="row">Domain Expiration Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Console CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select name="nebula_domain_exp">
-							<option value="default" <?php selected('default', get_option('nebula_domain_exp')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_domain_exp')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_domain_exp')); ?>>Disabled</option>
+						<select name="nebula_console_css">
+							<option value="default" <?php selected('default', get_option('nebula_console_css')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_console_css')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_console_css')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Send an email to all site admins if the detected domain expiration date is within one week. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Adds CSS to the browser console. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Stylesheets</h3>
 					</td>
 		        </tr>
 
@@ -742,15 +663,142 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr class="short" valign="top">
-		        	<th scope="row">Console CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Admin Notifications</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Nebula Admin Notices&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select name="nebula_console_css">
-							<option value="default" <?php selected('default', get_option('nebula_console_css')); ?>>Default</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_console_css')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_console_css')); ?>>Disabled</option>
+						<select name="nebula_admin_notices">
+							<option value="default" <?php selected('default', get_option('nebula_admin_notices')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_notices')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_notices')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Adds CSS to the browser console. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Show Nebula-specific admin notices (Note: This does not toggle WordPress core, or plugin, admin notices). <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_wp_core_updates_notify">
+							<option value="default" <?php selected('default', get_option('nebula_wp_core_updates_notify')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_wp_core_updates_notify')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_wp_core_updates_notify')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Control whether or not the Wordpress Core update notifications show up on the admin pages. <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_plugin_update_warning">
+							<option value="default" <?php selected('default', get_option('nebula_plugin_update_warning')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_plugin_update_warning')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_plugin_update_warning')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Control whether or not the plugin update warning appears on admin pages. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Domain Expiration Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_domain_exp">
+							<option value="default" <?php selected('default', get_option('nebula_domain_exp')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_domain_exp')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_domain_exp')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Send an email to all site admins if the detected domain expiration date is within one week. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+
+
+
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Admin References</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_admin_bar">
+							<option value="default" <?php selected('default', get_option('nebula_admin_bar')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_bar')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_bar')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_welcome_panel">
+							<option value="default" <?php selected('default', get_option('nebula_welcome_panel')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_welcome_panel')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_welcome_panel')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Control the Welcome Panel with useful links related to the project. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_unnecessary_metaboxes">
+							<option value="default" <?php selected('default', get_option('nebula_unnecessary_metaboxes')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_unnecessary_metaboxes')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_unnecessary_metaboxes')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Remove metaboxes on the Dashboard that are not necessary for most users. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Nebula At a Glance Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_ataglance_metabox">
+							<option value="default" <?php selected('default', get_option('nebula_ataglance_metabox')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_ataglance_metabox')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_ataglance_metabox')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Replaces the core WordPress "At a Glance" metabox with more information. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_dev_metabox">
+							<option value="default" <?php selected('default', get_option('nebula_dev_metabox')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_dev_metabox')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_dev_metabox')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Control the Developer Information Metabox with useful server information. Requires a user with a matching email address domain to the "Developer Email Domains" setting (under the Administration tab). <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">TODO Manager Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_todo_metabox">
+							<option value="default" <?php selected('default', get_option('nebula_todo_metabox')); ?>>Default</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_todo_metabox')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_todo_metabox')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Finds TODO messages in theme files to track open issues. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -822,7 +870,13 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-
+		        <tr class="short" valign="top">
+		        	<th scope="row">Facebook Custom Audience Pixel ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_facebook_custom_audience_pixel_id" value="<?php echo get_option('nebula_facebook_custom_audience_pixel_id'); ?>" placeholder="000000000000000" style="width: 295px;"/><br />
+						<p class="helper"><small>Toggle the <a href="https://developers.facebook.com/docs/facebook-pixel" target="_blank">Facebook Custom Audience Pixel</a> tracking.<em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
 
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
@@ -1124,6 +1178,12 @@ function nebula_options_page(){
 			<hr class="mobiletitle"/>
 
 			<table class="form-table dependent administration" style="display: none;">
+		        <tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Staff</h3>
+					</td>
+		        </tr>
+
 		        <tr class="short" valign="top">
 		        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
@@ -1162,6 +1222,14 @@ function nebula_options_page(){
 						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable certain features. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
+
+
+		        <tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Useful Links</h3>
+					</td>
+		        </tr>
+
 		        <tr class="short" valign="top">
 		        	<th scope="row">Server Control Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
