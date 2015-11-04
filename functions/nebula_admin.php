@@ -468,7 +468,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 		}
 
 		if ( nebula_option('nebula_domain_exp', 'enabled') ){
-			if ( get_option('nebula_domain_expiration_alert') == 'Never' || get_option('nebula_domain_expiration_alert') < strtotime('-2 weeks') ){
+			if ( get_option('nebula_domain_expiration_last') == 'Never' || get_option('nebula_domain_expiration_last') < strtotime('-2 weeks') ){
 				if ( $domain_exp != 'December 31, 1969' && $domain_exp_unix > strtotime("3/27/1986")  ){
 					if ( $domain_exp_unix < strtotime('+1 week') ){ //If domain is expiring within a week, email all admin users.
 						$adminUsers = get_users(array('role' => 'Administrator'));
@@ -483,7 +483,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 						$exp_notice_message = "Your domain " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different). This notice was triggered because the expiration date is within 1 week. It has been sent to all administrators of " . get_bloginfo('name') . " (" . home_url('/') . "), and will only be sent once!";
 
 						wp_mail($exp_notice_to, $exp_notice_subject, $exp_notice_message);
-						update_option('nebula_domain_expiration_alert', date('U'));
+						update_option('nebula_domain_expiration_last', date('U'));
 					}
 				}
 			}

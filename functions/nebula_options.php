@@ -4,38 +4,28 @@
  Global Nebula Options Conditional Functions
  ===========================*/
 
-//If the Nebula Option is either Default or the passed declaration
-//This function is used for options with set choices (dropdowns)
-function nebula_option($option, $declaration='enabled'){
-	if ( (strtolower(get_option($option)) == 'default') || (strtolower(get_option($option)) == strtolower($declaration)) ){
-		return true;
-	} else {
-		return false;
-	}
-}
-
-//Get the option value from the DB (for text inputs)
-//Use this if the option exists in the DB, but is empty and still needs a default value; the get_option() function from WP core only returns the default (2nd parameter) if the option does not exist.
-function nebula_get_option($option, $default=false){
+//If the desired option is an enabled/disabled dropdown check against that, else check for the option and return the default.
+//Dropdowns: $operand is what to check against (typically 'enabled' or 'disabled').
+//Texts: $operand is the default value to return if option is false.
+function nebula_option($option, $operand=false){
 	$data = get_option($option);
+	$is_dropdown = in_array($operand, array('enabled', 'disabled'));
 
 	if ( empty($data) ){
-		return $default;
-	} else {
-		return $data;
-	}
-}
-
-function nebula_get_custom_definition($option, $default=false){
-	$data = get_option($option);
-
-	if ( empty($data) ){
-		return $default;
-	} else {
-		if ( preg_match('/^dimension([0-9]{1,3})$/', $data) ){
-			return $data;
+		if ( $is_dropdown ){
+			return false;
 		} else {
-			return $default;
+			return $operand;
+		}
+	} else {
+		if ( $is_dropdown ){
+			if ( strtolower($data) == strtolower($operand) ){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return $data;
 		}
 	}
 }
@@ -129,7 +119,7 @@ function register_nebula_options(){
 	$GLOBALS['nebula_options_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
 		'nebula_initialized' => '',
 		'nebula_edited_yet' => 'false',
-		'nebula_domain_expiration_alert' => 'Default',
+		'nebula_domain_expiration_last' => 'Never',
 		'nebula_scss_last_processed' => '0',
 
 		//Metadata Tab
@@ -179,28 +169,28 @@ function register_nebula_options(){
 		'nebula_instagram_url' => '',
 
 		//Functions Tab
-		'nebula_wireframing' => 'Default',
-		'nebula_admin_bar' => 'Default',
-		'nebula_admin_notices' => 'Default',
-
-		'nebula_author_bios' => 'Default',
-		'nebula_comments' => 'Default',
-		'nebula_wp_core_updates_notify' => 'Default',
-		'nebula_plugin_update_warning' => 'Default',
-		'nebula_welcome_panel' => 'Default',
-		'nebula_unnecessary_metaboxes' => 'Default',
-		'nebula_ataglance_metabox' => 'Default',
-		'nebula_dev_metabox' => 'Default',
-		'nebula_todo_metabox' => 'Default',
-		'nebula_domain_exp' => 'Default',
-		'nebula_scss' => 'Default',
-		'nebula_dev_stylesheets' => 'Default',
-		'nebula_console_css' => 'Default',
+		'nebula_wireframing' => 'Disabled',
+		'nebula_admin_bar' => 'Enabled',
+		'nebula_admin_notices' => 'Enabled',
+		'nebula_author_bios' => 'Disabled',
+		'nebula_comments' => 'Disabled',
+		'nebula_wp_core_updates_notify' => 'Disabled',
+		'nebula_plugin_update_warning' => 'Enabled',
+		'nebula_welcome_panel' => 'Enabled',
+		'nebula_unnecessary_metaboxes' => 'Enabled',
+		'nebula_ataglance_metabox' => 'Enabled',
+		'nebula_dev_metabox' => 'Enabled',
+		'nebula_todo_metabox' => 'Enabled',
+		'nebula_domain_exp' => 'Enabled',
+		'nebula_scss' => 'Enabled',
+		'nebula_dev_stylesheets' => 'Enabled',
+		'nebula_appcache_manifest' => 'Disabled',
+		'nebula_console_css' => 'Enabled',
 
 		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
-		'nebula_ga_displayfeatures' => 'Default',
-		'nebula_ga_linkid' => 'Default',
+		'nebula_ga_displayfeatures' => 'Disabled',
+		'nebula_ga_linkid' => 'Disabled',
 		'nebula_hostnames' => '',
 		'nebula_google_webmaster_tools_verification' => '',
 		'nebula_facebook_custom_audience_pixel_id' => '',
@@ -342,6 +332,13 @@ function nebula_options_page(){
 					jQuery(this).addClass('error');
 				}
 			});
+			jQuery('input.metric').on('blur keyup paste change', function(){
+				if ( jQuery(this).val().match(/^metric([0-9]{1,3})$/i) || jQuery(this).val() == '' ){
+					jQuery(this).removeClass('error');
+				} else {
+					jQuery(this).addClass('error');
+				}
+			});
 
 		});
 	</script>
@@ -385,7 +382,7 @@ function nebula_options_page(){
 		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Last Domain Expiration Alert&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_alert')) )? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_alert')) : get_option('nebula_domain_expiration_alert'); ?>" disabled/>
+						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_last')) )? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_last')) : get_option('nebula_domain_expiration_last'); ?>" disabled/>
 						<p class="helper"><small>Shows the date of the last domain expiration alert that was sent.</small></p>
 					</td>
 		        </tr>
@@ -588,7 +585,7 @@ function nebula_options_page(){
 		        	<th scope="row">Wireframe Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_wireframing">
-							<option value="default" <?php selected('default', get_option('nebula_wireframing')); ?>>Default</option>
+							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_wireframing')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_wireframing')); ?>>Disabled</option>
 						</select>
@@ -600,7 +597,7 @@ function nebula_options_page(){
 		        	<th scope="row">Author Bios&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_author_bios">
-							<option value="default" <?php selected('default', get_option('nebula_author_bios')); ?>>Default</option>
+							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_author_bios')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_author_bios')); ?>>Disabled</option>
 						</select>
@@ -612,7 +609,7 @@ function nebula_options_page(){
 		        	<th scope="row">Comments&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_comments">
-							<option value="default" <?php selected('default', get_option('nebula_comments')); ?>>Default</option>
+							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_comments')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_comments')); ?>>Disabled</option>
 						</select>
@@ -621,10 +618,22 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
+		        	<th scope="row">App Cache Manifest&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_appcache_manifest">
+							<option disabled>Default: Disabled</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_appcache_manifest')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_appcache_manifest')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Enabled the appcache manifest for offline "app" storage. <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
 		        	<th scope="row">Console CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_console_css">
-							<option value="default" <?php selected('default', get_option('nebula_console_css')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_console_css')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_console_css')); ?>>Disabled</option>
 						</select>
@@ -643,7 +652,7 @@ function nebula_options_page(){
 		        	<th scope="row">SCSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_scss">
-							<option value="default" <?php selected('default', get_option('nebula_scss')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_scss')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_scss')); ?>>Disabled</option>
 						</select>
@@ -655,7 +664,7 @@ function nebula_options_page(){
 		        	<th scope="row">Developer Stylesheets&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_dev_stylesheets">
-							<option value="default" <?php selected('default', get_option('nebula_dev_stylesheets')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_dev_stylesheets')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_dev_stylesheets')); ?>>Disabled</option>
 						</select>
@@ -675,7 +684,7 @@ function nebula_options_page(){
 		        	<th scope="row">Nebula Admin Notices&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_admin_notices">
-							<option value="default" <?php selected('default', get_option('nebula_admin_notices')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_notices')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_notices')); ?>>Disabled</option>
 						</select>
@@ -687,7 +696,7 @@ function nebula_options_page(){
 		        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_wp_core_updates_notify">
-							<option value="default" <?php selected('default', get_option('nebula_wp_core_updates_notify')); ?>>Default</option>
+							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_wp_core_updates_notify')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_wp_core_updates_notify')); ?>>Disabled</option>
 						</select>
@@ -699,7 +708,7 @@ function nebula_options_page(){
 		        	<th scope="row">Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_plugin_update_warning">
-							<option value="default" <?php selected('default', get_option('nebula_plugin_update_warning')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_plugin_update_warning')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_plugin_update_warning')); ?>>Disabled</option>
 						</select>
@@ -711,7 +720,7 @@ function nebula_options_page(){
 		        	<th scope="row">Domain Expiration Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_domain_exp">
-							<option value="default" <?php selected('default', get_option('nebula_domain_exp')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_domain_exp')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_domain_exp')); ?>>Disabled</option>
 						</select>
@@ -734,7 +743,7 @@ function nebula_options_page(){
 		        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_admin_bar">
-							<option value="default" <?php selected('default', get_option('nebula_admin_bar')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_bar')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_bar')); ?>>Disabled</option>
 						</select>
@@ -746,7 +755,7 @@ function nebula_options_page(){
 		        	<th scope="row">Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_welcome_panel">
-							<option value="default" <?php selected('default', get_option('nebula_welcome_panel')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_welcome_panel')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_welcome_panel')); ?>>Disabled</option>
 						</select>
@@ -758,7 +767,7 @@ function nebula_options_page(){
 		        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_unnecessary_metaboxes">
-							<option value="default" <?php selected('default', get_option('nebula_unnecessary_metaboxes')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_unnecessary_metaboxes')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_unnecessary_metaboxes')); ?>>Disabled</option>
 						</select>
@@ -770,7 +779,7 @@ function nebula_options_page(){
 		        	<th scope="row">Nebula At a Glance Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_ataglance_metabox">
-							<option value="default" <?php selected('default', get_option('nebula_ataglance_metabox')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_ataglance_metabox')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_ataglance_metabox')); ?>>Disabled</option>
 						</select>
@@ -782,7 +791,7 @@ function nebula_options_page(){
 		        	<th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_dev_metabox">
-							<option value="default" <?php selected('default', get_option('nebula_dev_metabox')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_dev_metabox')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_dev_metabox')); ?>>Disabled</option>
 						</select>
@@ -794,7 +803,7 @@ function nebula_options_page(){
 		        	<th scope="row">TODO Manager Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_todo_metabox">
-							<option value="default" <?php selected('default', get_option('nebula_todo_metabox')); ?>>Default</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_todo_metabox')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_todo_metabox')); ?>>Disabled</option>
 						</select>
@@ -831,7 +840,7 @@ function nebula_options_page(){
 		        	<th scope="row">Display Features&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_ga_displayfeatures">
-							<option value="default" <?php selected('default', get_option('nebula_ga_displayfeatures')); ?>>Default</option>
+							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_ga_displayfeatures')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_ga_displayfeatures')); ?>>Disabled</option>
 						</select>
@@ -843,7 +852,7 @@ function nebula_options_page(){
 		        	<th scope="row">Enhanced Link Attribution (Link ID)&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_ga_displayfeatures">
-							<option value="default" <?php selected('default', get_option('nebula_ga_linkid')); ?>>Default</option>
+							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_ga_linkid')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_ga_linkid')); ?>>Disabled</option>
 						</select>

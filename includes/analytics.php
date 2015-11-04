@@ -26,39 +26,39 @@
 
 		<?php //Create various custom dimensions and custom metrics in Google Analytics, then store the strings ("dimension3", "metric5", etc.) in Nebula Options. ?>
 		gaCustomDimensions = {
-			'author': '<?php echo nebula_get_custom_definition('nebula_cd_author'); //Hit ?>',
-			'businessHours': '<?php echo nebula_get_custom_definition('nebula_cd_businesshours'); //Hit ?>',
-			'categories': '<?php echo nebula_get_custom_definition('nebula_cd_categories'); //Hit ?>',
-			'tags': '<?php echo nebula_get_custom_definition('nebula_cd_tags'); //Hit ?>',
-			'contactMethod': '<?php echo nebula_get_custom_definition('nebula_cd_contactmethod'); //Session ?>',
-			'geolocation': '<?php echo nebula_get_custom_definition('nebula_cd_geolocation'); //Session ?>',
-			'geoAccuracy': '<?php echo nebula_get_custom_definition('nebula_cd_geoaccuracy'); //Session ?>',
-			'geoName': '<?php echo nebula_get_custom_definition('nebula_cd_geoname'); //Session ?>',
-			'notablebrowser': '<?php echo nebula_get_custom_definition('nebula_cd_notablebrowser'); //Session ?>',
-			'relativeTime': '<?php echo nebula_get_custom_definition('nebula_cd_relativetime'); //Hit ?>',
-			'scrollDepth': '<?php echo nebula_get_custom_definition('nebula_cd_scrolldepth'); //Hit ?>',
-			'sessionID': '<?php echo nebula_get_custom_definition('nebula_cd_sessionid'); //Session ?>',
-			'staff': '<?php echo nebula_get_custom_definition('nebula_cd_staff'); //User ?>',
-			'timestamp': '<?php echo nebula_get_custom_definition('nebula_cd_timestamp'); //Hit ?>',
-			'userID': '<?php echo nebula_get_custom_definition('nebula_cd_userid'); //User ?>',
-			'videoWatcher': '<?php echo nebula_get_custom_definition('nebula_cd_videowatcher'); //Session ?>',
-			'wordCount': '<?php echo nebula_get_custom_definition('nebula_cd_wordcount'); //Hit ?>',
-			'weather': '<?php echo nebula_get_custom_definition('nebula_cd_weather'); //Hit ?>',
-			'temperature': '<?php echo nebula_get_custom_definition('nebula_cd_temperature'); //Hit ?>',
-			'publishYear': '<?php echo nebula_get_custom_definition('nebula_cd_publishyear'); //Hit ?>',
+			'author': '<?php echo nebula_option('nebula_cd_author'); //Hit ?>',
+			'businessHours': '<?php echo nebula_option('nebula_cd_businesshours'); //Hit ?>',
+			'categories': '<?php echo nebula_option('nebula_cd_categories'); //Hit ?>',
+			'tags': '<?php echo nebula_option('nebula_cd_tags'); //Hit ?>',
+			'contactMethod': '<?php echo nebula_option('nebula_cd_contactmethod'); //Session ?>',
+			'geolocation': '<?php echo nebula_option('nebula_cd_geolocation'); //Session ?>',
+			'geoAccuracy': '<?php echo nebula_option('nebula_cd_geoaccuracy'); //Session ?>',
+			'geoName': '<?php echo nebula_option('nebula_cd_geoname'); //Session ?>',
+			'notablebrowser': '<?php echo nebula_option('nebula_cd_notablebrowser'); //Session ?>',
+			'relativeTime': '<?php echo nebula_option('nebula_cd_relativetime'); //Hit ?>',
+			'scrollDepth': '<?php echo nebula_option('nebula_cd_scrolldepth'); //Hit ?>',
+			'sessionID': '<?php echo nebula_option('nebula_cd_sessionid'); //Session ?>',
+			'staff': '<?php echo nebula_option('nebula_cd_staff'); //User ?>',
+			'timestamp': '<?php echo nebula_option('nebula_cd_timestamp'); //Hit ?>',
+			'userID': '<?php echo nebula_option('nebula_cd_userid'); //User ?>',
+			'videoWatcher': '<?php echo nebula_option('nebula_cd_videowatcher'); //Session ?>',
+			'wordCount': '<?php echo nebula_option('nebula_cd_wordcount'); //Hit ?>',
+			'weather': '<?php echo nebula_option('nebula_cd_weather'); //Hit ?>',
+			'temperature': '<?php echo nebula_option('nebula_cd_temperature'); //Hit ?>',
+			'publishYear': '<?php echo nebula_option('nebula_cd_publishyear'); //Hit ?>',
 		}
 
 		<?php
 			if ( is_single() ){
-				if ( nebula_is_option_enabled('authorbios') && nebula_get_custom_definition('nebula_cd_author') ){
+				if ( nebula_is_option_enabled('authorbios') && nebula_option('nebula_cd_author') ){
 					echo 'ga("set", gaCustomDimensions["author"], "' . get_the_author() . '");';
 				}
 
-				if ( nebula_get_custom_definition('nebula_cd_publishyear') ){
+				if ( nebula_option('nebula_cd_publishyear') ){
 					echo 'ga("set", gaCustomDimensions["publishYear"], "' . get_the_date('Y') . '");';
 				}
 
-				if ( nebula_get_custom_definition('nebula_cd_categories') ){
+				if ( nebula_option('nebula_cd_categories') ){
 					foreach(get_the_category() as $category){
 						$cats[] = $category->name;
 					}
@@ -67,7 +67,7 @@
 					echo 'ga("set", gaCustomDimensions["categories"], "' . $post_cats . '");';
 				}
 
-				if ( nebula_get_custom_definition('nebula_cd_tags') ){
+				if ( nebula_option('nebula_cd_tags') ){
 					foreach(get_the_tags() as $tag){
 						$tags[] = $tag->name;
 					}
@@ -76,7 +76,7 @@
 					echo 'ga("set", gaCustomDimensions["tags"], "' . $post_tags . '");';
 				}
 
-				if ( nebula_get_custom_definition('nebula_cd_wordcount') ){
+				if ( nebula_option('nebula_cd_wordcount') ){
 					global $post;
 					$word_count = str_word_count(strip_tags($post->post_content));
 					if ( is_int($word_count) ){
@@ -96,17 +96,17 @@
 				}
 			}
 
-			if ( nebula_get_custom_definition('nebula_cd_businesshours') ){
+			if ( nebula_option('nebula_cd_businesshours') ){
 				$business_open = ( business_open() )? 'During Business Hours' : 'Non-Business Hours';
 				echo 'ga("set", gaCustomDimensions["businessHours"], "' . $business_open . '");';
 			}
 
-			if ( nebula_get_custom_definition('nebula_cd_relativetime') ){
+			if ( nebula_option('nebula_cd_relativetime') ){
 				$relative_time = implode(' ', nebula_relative_time());
 				echo 'ga("set", gaCustomDimensions["relativeTime"], "' . ucwords($relative_time) . '");';
 			}
 
-			if ( nebula_get_custom_definition('nebula_cd_sessionid') ){
+			if ( nebula_option('nebula_cd_sessionid') ){
 				$session_info = ( is_debug() )? 'Dbg.' : '';
 				$session_info .= ( nebula_is_option_enabled('wireframing') )? 'Wr.' : '';
 				if ( is_client() ){
@@ -122,11 +122,11 @@
 			}
 
 			$current_user = wp_get_current_user();
-			if ( $current_user && nebula_get_custom_definition('nebula_cd_userid') ){
+			if ( $current_user && nebula_option('nebula_cd_userid') ){
 				echo 'ga("set", gaCustomDimensions["userID"], "' . $current_user->ID . '");';
 			}
 
-			if ( nebula_get_custom_definition('nebula_cd_staff') ){
+			if ( nebula_option('nebula_cd_staff') ){
 				$skip = false;
 				if ( is_dev() ){
 					$usertype = 'Developer';
@@ -166,14 +166,14 @@
 				}
 			}
 
-			if ( nebula_get_custom_definition('nebula_cd_timestamp') ){
+			if ( nebula_option('nebula_cd_timestamp') ){
 				echo 'ga("set", gaCustomDimensions["timestamp"], isoTimestamp());';
 			}
 
-			if ( nebula_get_custom_definition('nebula_cd_weather') ){
+			if ( nebula_option('nebula_cd_weather') ){
 				echo 'ga("set", gaCustomDimensions["weather"], "' . nebula_weather('conditions') . '");';
 			}
-			if ( nebula_get_custom_definition('nebula_cd_temperature') ){
+			if ( nebula_option('nebula_cd_temperature') ){
 				$temp_round = floor(nebula_weather('temperature')/5)*5;
 				$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F';
 				echo 'ga("set", gaCustomDimensions["temperature"], "' . $temp_range . '");';

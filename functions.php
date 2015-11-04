@@ -13,7 +13,7 @@ require_once('functions/nebula_utilities.php'); //Nebula Utilities
 /*==========================
  Google Analytics Tracking ID
  ===========================*/
-$GLOBALS['ga'] = nebula_get_option('nebula_ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
+$GLOBALS['ga'] = nebula_option('nebula_ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
 
 
 /*==========================

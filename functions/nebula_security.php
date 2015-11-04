@@ -119,15 +119,13 @@ function track_notable_bots(){
 			exit();
 		}
 		global $post;
-		$custom_dimension = ( nebula_get_custom_definition('nebula_cd_notablebrowser') )? array('cd' . str_replace('dimension', '', nebula_get_custom_definition('nebula_cd_notablebrowser')) => 'Google%20Page%20Speed%20Bot') : null;
 		ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0, $custom_dimension);
 	}
 
 	//Internet Archive Wayback Machine
 	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
 		global $post;
-		$custom_dimension = ( nebula_get_custom_definition('nebula_cd_notablebrowser') )? array('cd' . str_replace('dimension', '', nebula_get_custom_definition('nebula_cd_notablebrowser')) => 'Internet%20Archive%20Wayback%20Machine') : null;
-		ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0, $custom_dimension);
+		ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0);
 	}
 }
 

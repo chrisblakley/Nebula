@@ -20,7 +20,7 @@ if ( nebula_option('nebula_console_css') ){
 //Check for warnings and send them to the console.
 add_action('wp_head', 'nebula_console_warnings');
 function nebula_console_warnings($console_warnings=array()){
-	if ( is_dev() && nebula_get_option('nebula_admin_notices') ){
+	if ( is_dev() && nebula_option('nebula_admin_notices') ){
 		//If search indexing is disabled
 		if ( get_option('blog_public') == 0 ){
 			if ( is_site_live() ){
