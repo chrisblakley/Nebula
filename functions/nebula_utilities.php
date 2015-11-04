@@ -891,6 +891,7 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 //Get Nebula version information
 function nebula_version(){
 	$nebula_theme_info = wp_get_theme();
+
 	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
 	$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
 
@@ -943,12 +944,18 @@ function nebula_render_scss($specific_scss=null){
 	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //scssphp is a compiler for SCSS 3.x
 	$scss = new \Leafo\ScssPhp\Compiler(); //This can't be the proper way to invoke this... but it works.
 	$scss->addImportPath(get_template_directory() . '/stylesheets/scss/partials/');
-	$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact');
-	if ( is_debug() ){
-		$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
+
+	if ( nebula_option('nebula_minify_css', 'enabled') && !is_debug() ){
+		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving comments for WordPress). Note: Comments must start with a "/*!" to be pr
+	} else {
+		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
+		if ( is_debug() ){
+			$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
+		}
 	}
 
 	if ( empty($specific_scss) || $specific_scss == 'all' ){
+		//Partials
 		$latest_partial = 0;
 		foreach ( glob(get_template_directory() . '/stylesheets/scss/partials/*') as $partial_file ){
 			if ( filemtime($partial_file) > $latest_partial ){
@@ -956,13 +963,48 @@ function nebula_render_scss($specific_scss=null){
 			}
 		}
 
+		//Combine Developer Stylesheets
+		if ( nebula_option('nebula_dev_stylesheets') ){
+			$file_counter = 0;
+			$partials = array('variables', 'mixins', 'helpers');
+			$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
+			file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
+			foreach ( glob(get_template_directory() . '/stylesheets/scss/dev/*.scss') as $file ){
+				$file_path_info = pathinfo($file);
+				if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
+					$file_counter++;
+
+					//Include partials in dev.scss
+					if ( $file_counter == 1 ){
+						$import_partials = '';
+						foreach ( $partials as $partial ){
+							$import_partials .= "@import '" . $partial . "';\r\n";
+						}
+						file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning . $import_partials . "\r\n");
+					}
+
+					$this_scss_contents = file_get_contents($file); //Copy file contents
+					$empty_scss = ( $this_scss_contents == '' )? ' (empty)' : '';
+					$dev_scss_contents = file_get_contents(get_template_directory() . '/stylesheets/scss/dev.scss');
+					$dev_scss_contents .= "\r\n/* ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . get_template_directory_uri() . "/stylesheets/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
+					file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $dev_scss_contents);
+				}
+			}
+			if ( $file_counter > 0 ){
+				add_action('wp_enqueue_scripts', 'enqueue_dev_styles');
+				function enqueue_dev_styles(){
+					wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
+				}
+			}
+		}
+
+		//Compile each SCSS file
 		foreach ( glob(get_template_directory() . '/stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 			$file_path_info = pathinfo($file);
 
-			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file esits, and has .scss extension, and doesn't begin with "_".
+			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
 				$file_counter++;
-				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css' : get_template_directory() . '/stylesheets/css/' . $file_path_info['filename'] . '.css';
-
+				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css': get_template_directory() . '/stylesheets/css/' . $file_path_info['filename'] . '.css';
 				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $specific_scss == 'all' ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
 					ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
 					$existing_css_contents = ( file_exists($css_filepath) )? file_get_contents($css_filepath) : '';
@@ -998,7 +1040,7 @@ function nebula_scss_variables($scss){
 }
 
 //If SASS should be manually re-generated
-if ( nebula_option('nebula_scss') ){
+if ( nebula_option('nebula_scss', 'enabled') ){
 	if ( is_writable(get_template_directory()) ){
 		add_action('init', 'nebula_sass_manual_trigger');
 		add_action('admin_init', 'nebula_sass_manual_trigger');
@@ -1009,6 +1051,7 @@ function nebula_sass_manual_trigger(){
 		nebula_render_scss('all'); //Re-render all SCSS files.
 	}
 }
+
 
 /*==========================
  User Agent Parsing Functions/Helpers

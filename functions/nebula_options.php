@@ -9,20 +9,27 @@
 //Texts: $operand is the default value to return if option is false.
 function nebula_option($option, $operand=false){
 	$data = get_option($option);
-	$is_dropdown = in_array($operand, array('enabled', 'disabled'));
+	$requested_dropdown = in_array(strtolower($operand), array('enabled', 'disabled'));
+	$data_dropdown = in_array(strtolower($data), array('enabled', 'disabled'));
 
 	if ( empty($data) ){
-		if ( $is_dropdown ){
+		if ( $requested_dropdown ){
 			return false;
 		} else {
 			return $operand;
 		}
 	} else {
-		if ( $is_dropdown ){
+		if ( $requested_dropdown ){ //If $operand suggests a dropdown option, match $data against it.
 			if ( strtolower($data) == strtolower($operand) ){
 				return true;
 			} else {
 				return false;
+			}
+		} elseif ( $data_dropdown ){ //If $operand is a default fallback, but $data suggests a dropdown option.
+			if ( strtolower($data) == 'enabled' ){
+				return true;
+			} else {
+				return $operand;
 			}
 		} else {
 			return $data;
@@ -183,6 +190,7 @@ function register_nebula_options(){
 		'nebula_todo_metabox' => 'Enabled',
 		'nebula_domain_exp' => 'Enabled',
 		'nebula_scss' => 'Enabled',
+		'nebula_minify_css' => 'Disabled',
 		'nebula_dev_stylesheets' => 'Enabled',
 		'nebula_appcache_manifest' => 'Disabled',
 		'nebula_console_css' => 'Enabled',
@@ -657,6 +665,18 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_scss')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Enable the bundled SCSS compiler. Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( get_option('nebula_scss_last_processed') )? date('l, F j, Y - g:ia', get_option('nebula_scss_last_processed')) : 'Never'; ?></strong>. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Minify CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_minify_css">
+							<option disabled>Default: Disabled</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_minify_css')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_minify_css')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Minify the compiled CSS. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 

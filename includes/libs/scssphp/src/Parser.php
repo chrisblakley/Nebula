@@ -20,8 +20,8 @@ use Leafo\ScssPhp\Compiler;
  */
 class Parser
 {
-    const SOURCE_POSITION = -1;
-    const SOURCE_PARSER   = -2;
+    const SOURCE_INDEX    = -1;
+    const SOURCE_POSITION = -2;
 
     /**
      * @var array
@@ -71,7 +71,7 @@ class Parser
     protected static $commentMultiRight = '*/';
 
     private $sourceName;
-    private $rootParser;
+    private $sourceIndex;
     private $charset;
     private $count;
     private $env;
@@ -83,13 +83,13 @@ class Parser
      * Constructor
      *
      * @param string  $sourceName
-     * @param boolean $rootParser
+     * @param integer $sourceIndex
      */
-    public function __construct($sourceName = null, $rootParser = true)
+    public function __construct($sourceName, $sourceIndex = 0)
     {
-        $this->sourceName = $sourceName ?: '(stdin)';
-        $this->rootParser = $rootParser;
-        $this->charset = null;
+        $this->sourceName  = $sourceName ?: '(stdin)';
+        $this->sourceIndex = $sourceIndex;
+        $this->charset     = null;
 
         if (empty(self::$operatorStr)) {
             self::$operatorStr = $this->makeOperatorStr(self::$operators);
@@ -491,10 +491,7 @@ class Parser
                     $statement = array('charset', $charset);
 
                     $statement[self::SOURCE_POSITION] = $s;
-
-                    if (! $this->rootParser) {
-                        $statement[self::SOURCE_PARSER] = $this;
-                    }
+                    $statement[self::SOURCE_INDEX] = $this->sourceIndex;
 
                     $this->charset = $statement;
                 }
@@ -510,8 +507,12 @@ class Parser
                 ($this->variable($dirValue) || $this->openString('{', $dirValue) || true) &&
                 $this->literal('{')
             ) {
-                $directive = $this->pushSpecialBlock('directive', $s);
-                $directive->name = $dirName;
+                if ($dirName === 'media') {
+                    $directive = $this->pushSpecialBlock('media', $s);
+                } else {
+                    $directive = $this->pushSpecialBlock('directive', $s);
+                    $directive->name = $dirName;
+                }
 
                 if (isset($dirValue)) {
                     $directive->value = $dirValue;
@@ -668,6 +669,7 @@ class Parser
 
                     return true;
                 }
+
                 // goes below...
             } else {
                 return false;
@@ -691,7 +693,7 @@ class Parser
         $b->parent = $this->env;
 
         $b->sourcePosition = $pos;
-        $b->sourceParser = $this;
+        $b->sourceIndex = $this->sourceIndex;
         $b->selectors = $selectors;
         $b->comments = array();
 
@@ -776,10 +778,7 @@ class Parser
     {
         if ($pos !== null) {
             $statement[self::SOURCE_POSITION] = $pos;
-
-            if (! $this->rootParser) {
-                $statement[self::SOURCE_PARSER] = $this;
-            }
+            $statement[self::SOURCE_INDEX] = $this->sourceIndex;
         }
 
         $this->env->children[] = $statement;
@@ -1122,6 +1121,14 @@ class Parser
         $s = $this->seek();
 
         if ($this->literal('not', false) && $this->whitespace() && $this->value($inner)) {
+            $out = array('unary', 'not', $inner, $this->inParens);
+
+            return true;
+        }
+
+        $this->seek($s);
+
+        if ($this->literal('not', false) && $this->parenValue($inner)) {
             $out = array('unary', 'not', $inner, $this->inParens);
 
             return true;
