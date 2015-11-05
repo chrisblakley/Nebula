@@ -282,12 +282,10 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 	function dashboard_nebula_ataglance(){
 		global $wp_version;
 		global $wp_post_types;
-		$nebula_theme_info = wp_get_theme();
 
 		echo '<ul class="serverdetections">';
 			echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
-			$nebula_version_info = nebula_version();
-			echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . $nebula_version_info['full'] . '</strong> <small>(Released: ' . $nebula_version_info['month'] . $nebula_version_info['day'] . $nebula_version_info['year'] . ')</small></li>';
+			echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small>(Committed: ' . nebula_version('date') . ')</small></li>';
 
 			foreach ( get_post_types() as $post_type ){
 			    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
@@ -916,8 +914,7 @@ function change_admin_footer_left(){
 add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right(){
 	global $wp_version;
-	$nebula_version_info = nebula_version();
-    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="' . $nebula_version_info['month'] . $nebula_version_info['day'] . $nebula_version_info['year'] . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong class="nebula">' . $nebula_version_info['full'] . '</strong></span>';
+    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula_version('date') . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong class="nebula">' . nebula_version('version') . '</strong></span>';
 }
 
 //Internal Search Keywords Metabox and Custom Field

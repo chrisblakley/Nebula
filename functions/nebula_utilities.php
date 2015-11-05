@@ -889,7 +889,7 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 }
 
 //Get Nebula version information
-function nebula_version(){
+function nebula_version($return=false){
 	$nebula_theme_info = wp_get_theme();
 
 	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
@@ -914,22 +914,42 @@ function nebula_version(){
 	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
 	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June'); //Modify this array when 4.0 is released (May is first)
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
-	$nebula_version_day = ( empty($nebula_version['small']) )? ', ' : ' ' . $nebula_version['small'] . ', ';
+	$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
+	$nebula_version_day_formated = ( empty($nebula_version['small']) )? ' ' : ' ' . $nebula_version['small'] . ', ';
 
-	return array(
+	$nebula_version_info = array(
 		'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2],
 		'large' => $nebula_version_split[0],
 		'medium' => $nebula_version_split[1],
 		'small' => $nebula_version_split[2],
+		'utc' => strtotime($nebula_version_month . $nebula_version_day_formated . $nebula_version_year),
+		'date' => $nebula_version_month . $nebula_version_day_formated . $nebula_version_year,
 		'year' => $nebula_version_year,
 		'month' => $nebula_version_month,
 		'day' => $nebula_version_day,
-	);;
+	);
+
+	switch ( str_replace(array(' ', '_', '-'), '', strtolower($return)) ){
+		case ('version'):
+		case ('full'):
+			return $nebula_version_info['full'];
+			break;
+		case ('date'):
+			return $nebula_version_info['date'];
+			break;
+		case ('time'):
+		case ('utc'):
+			return $nebula_version_info['utc'];
+			break;
+		default:
+			return $nebula_version_info;
+			break;
+	}
 }
 
 /*==========================
 	SCSS Compiling
-	http://leafo.net/scssphp/docs/
+	SCSSPHP v0.3.3 - http://leafo.net/scssphp/docs/
  ===========================*/
 
 if ( nebula_option('nebula_scss') ){
@@ -941,12 +961,12 @@ if ( nebula_option('nebula_scss') ){
 	}
 }
 function nebula_render_scss($specific_scss=null){
-	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //scssphp is a compiler for SCSS 3.x
-	$scss = new \Leafo\ScssPhp\Compiler(); //This can't be the proper way to invoke this... but it works.
+	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
+	$scss = new \Leafo\ScssPhp\Compiler();
 	$scss->addImportPath(get_template_directory() . '/stylesheets/scss/partials/');
 
 	if ( nebula_option('nebula_minify_css', 'enabled') && !is_debug() ){
-		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving comments for WordPress). Note: Comments must start with a "/*!" to be pr
+		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
 	} else {
 		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
 		if ( is_debug() ){
@@ -968,8 +988,13 @@ function nebula_render_scss($specific_scss=null){
 			$file_counter = 0;
 			$partials = array('variables', 'mixins', 'helpers');
 			$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
-			file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
-			foreach ( glob(get_template_directory() . '/stylesheets/scss/dev/*.scss') as $file ){
+			$dev_stylesheet_files = glob(get_template_directory() . '/stylesheets/scss/dev/*css');
+			$dev_scss_file = file_get_contents(get_template_directory() . '/stylesheets/scss/dev.scss');
+
+			if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
+				file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
+			}
+			foreach ( $dev_stylesheet_files as $file ){
 				$file_path_info = pathinfo($file);
 				if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
 					$file_counter++;
@@ -980,7 +1005,7 @@ function nebula_render_scss($specific_scss=null){
 						foreach ( $partials as $partial ){
 							$import_partials .= "@import '" . $partial . "';\r\n";
 						}
-						file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning . $import_partials . "\r\n");
+						file_put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
 					}
 
 					$this_scss_contents = file_get_contents($file); //Copy file contents
