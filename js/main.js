@@ -539,9 +539,8 @@ function gaEventTracking(){
 
 	//External links
 	thisPage.document.on('mousedown touch tap', "a[rel*='external']", function(e){
-		if ( e.which >= 2 ){
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-		}
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
 		var linkText = jQuery(this).text();
 		if ( linkText.trim() == '' ){
@@ -563,9 +562,8 @@ function gaEventTracking(){
 
 	//PDF View/Download
 	thisPage.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
-		if ( e.which >= 2 ){
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-		}
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href').substr(fileName.lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
@@ -600,9 +598,8 @@ function gaEventTracking(){
 
 	//Mailto link tracking
 	thisPage.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
-		if ( e.which >= 2 ){
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-		}
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
@@ -612,9 +609,8 @@ function gaEventTracking(){
 
 	//Telephone link tracking
 	thisPage.document.on('mousedown touch tap', 'a[href^="tel"]', function(e){
-		if ( e.which >= 2 ){
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-		}
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
@@ -625,9 +621,8 @@ function gaEventTracking(){
 
 	//SMS link tracking
 	thisPage.document.on('mousedown touch tap', 'a[href^="sms"]', function(e){
-		if ( e.which >= 2 ){
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-		}
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
@@ -1409,9 +1404,8 @@ function pageSuggestion(){
 			trySearch(phrase);
 
 			thisPage.document.on('mousedown touch tap', 'a.suggestion', function(e){
-				if ( e.which >= 2 ){
-					ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-				}
+				eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+				ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 				var suggestedPage = jQuery(this).text();
 				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage);
