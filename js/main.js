@@ -530,14 +530,18 @@ function socialSharing(){
 function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//thisPage.document.on('mousedown', '.selector', function(e){
-	//  var intent = ( e.which >= 2 )? ' (Intent)' : '';
+	//  if ( e.which >= 2 ){
+	//		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+	//	}
 	//	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
 	//External links
 	thisPage.document.on('mousedown touch tap', "a[rel*='external']", function(e){
-		var intent = ( e.which >= 2 )? ' (Intent)' : '';
+		if ( e.which >= 2 ){
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		}
 
 		var linkText = jQuery(this).text();
 		if ( linkText.trim() == '' ){
@@ -554,19 +558,21 @@ function gaEventTracking(){
 
 		var destinationURL = jQuery(this).attr('href');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		ga('send', 'event', 'External Link', linkText + intent, destinationURL);
+		ga('send', 'event', 'External Link', linkText, destinationURL);
 	});
 
 	//PDF View/Download
 	thisPage.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
-		var intent = ( e.which >= 2 )? ' (Intent)' : '';
+		if ( e.which >= 2 ){
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		}
 		var linkText = jQuery(this).text();
 		var fileName = jQuery(this).attr('href').substr(fileName.lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		if ( linkText == '' || linkText == 'Download' ){
-			ga('send', 'event', 'PDF View', 'File: ' + fileName + intent);
+			ga('send', 'event', 'PDF View', 'File: ' + fileName);
 		} else {
-			ga('send', 'event', 'PDF View', 'Text: ' + linkText + intent);
+			ga('send', 'event', 'PDF View', 'Text: ' + linkText);
 		}
 		if ( typeof fbq == 'function' ){ fbq('track', 'ViewContent'); }
 	});
@@ -594,33 +600,39 @@ function gaEventTracking(){
 
 	//Mailto link tracking
 	thisPage.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
-		var intent = ( e.which >= 2 )? ' (Intent)' : '';
+		if ( e.which >= 2 ){
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		}
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress + intent);
+		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
 	//Telephone link tracking
 	thisPage.document.on('mousedown touch tap', 'a[href^="tel"]', function(e){
-		var intent = ( e.which >= 2 )? ' (Intent)' : '';
+		if ( e.which >= 2 ){
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		}
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber + intent);
+		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
 	//SMS link tracking
 	thisPage.document.on('mousedown touch tap', 'a[href^="sms"]', function(e){
-		var intent = ( e.which >= 2 )? ' (Intent)' : '';
+		if ( e.which >= 2 ){
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		}
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber + intent);
+		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
 	});
 
@@ -660,10 +672,12 @@ function gaEventTracking(){
 		emailPhone = jQuery.trim(words.join(' '));
 		if ( emailPattern.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
-			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone + ' (Intent)');
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone);
 		} else if ( phonePattern.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
-			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone + ' (Intent)');
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone);
 		}
 
 		if ( copyCount < 13 ){
@@ -698,7 +712,8 @@ function gaEventTracking(){
 		if ( printed == 0 ){
 			printed = 1;
 			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-			ga('send', 'event', 'Print (Intent)', 'Print');
+			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+			ga('send', 'event', 'Print', 'Print');
 		}
 	};
 	if ( window.matchMedia ){
@@ -1394,10 +1409,12 @@ function pageSuggestion(){
 			trySearch(phrase);
 
 			thisPage.document.on('mousedown touch tap', 'a.suggestion', function(e){
-				var intent = ( e.which >= 2 )? ' (Intent)' : '';
+				if ( e.which >= 2 ){
+					ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+				}
 				var suggestedPage = jQuery(this).text();
 				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage + intent);
+				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage);
 			});
 		}
 	}

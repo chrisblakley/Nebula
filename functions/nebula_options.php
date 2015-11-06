@@ -218,6 +218,7 @@ function register_nebula_options(){
 		'nebula_cd_userid' => '',
 		'nebula_cd_staff' => '',
 		'nebula_cd_videowatcher' => '',
+		'nebula_cd_eventintent' => '',
 		'nebula_cd_weather' => '',
 		'nebula_cd_temperature' => '',
 		'nebula_cd_publishyear' => '',
@@ -1086,6 +1087,14 @@ function nebula_options_page(){
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
 						<h3>Conversion Data</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">&raquo; Event Intent&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_eventintent" value="<?php echo get_option('nebula_cd_eventintent'); ?>" />
+						<p class="helper"><small>Log whether the event was true, or just a possible intention. <strong>Scope: Hit</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 

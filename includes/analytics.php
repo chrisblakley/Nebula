@@ -42,6 +42,7 @@
 			'timestamp': '<?php echo nebula_option('nebula_cd_timestamp'); //Hit ?>',
 			'userID': '<?php echo nebula_option('nebula_cd_userid'); //User ?>',
 			'videoWatcher': '<?php echo nebula_option('nebula_cd_videowatcher'); //Session ?>',
+			'eventIntent': '<?php echo nebula_option('nebula_cd_eventintent'); //Hit ?>',
 			'wordCount': '<?php echo nebula_option('nebula_cd_wordcount'); //Hit ?>',
 			'weather': '<?php echo nebula_option('nebula_cd_weather'); //Hit ?>',
 			'temperature': '<?php echo nebula_option('nebula_cd_temperature'); //Hit ?>',
