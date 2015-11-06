@@ -1128,7 +1128,7 @@ function nebula_options_page(){
 					<td>
 						Browser Key: <input type="text" name="nebula_google_browser_api_key" value="<?php echo get_option('nebula_google_browser_api_key'); ?>" style="width: 392px;" /><br />
 						Server Key: <input type="text" name="nebula_google_server_api_key" value="<?php echo get_option('nebula_google_server_api_key'); ?>" style="width: 392px;" />
-						<p class="helper"><small>In the <a href="https://console.developers.google.com/project">Developers Console</a> make a new project (if you don't have one yet). Under "Credentials" create a new key.<br />Your current server IP address is <strong><?php echo gethostbyname(gethostname()); ?></strong> <em>(for server key whitelisting)</em>. Do not use the Server Key in JavaScript or any client-side code!</small></p>
+						<p class="helper"><small>In the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a> make a new project (if you don't have one yet). Under "Credentials" create a new key.<br />Your current server IP address is <strong><?php echo gethostbyname(gethostname()); ?></strong> <em>(for server key whitelisting)</em>. Do not use the Server Key in JavaScript or any client-side code!</small></p>
 					</td>
 		        </tr>
 
@@ -1144,7 +1144,7 @@ function nebula_options_page(){
 		        	<th scope="row">Google Maps&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input id="nebula_google_maps_api" type="text" name="nebula_google_maps_api" value="<?php echo get_option('nebula_google_maps_api'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
-						<p class="helper"><small>The Google Maps API key from the <a href="https://console.developers.google.com/project">Developers Console</a>. This is needed for any Google Maps integration.</small></p>
+						<p class="helper"><small>The Google Maps API key from the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a>. This is needed for any Google Maps integration.</small></p>
 					</td>
 		        </tr>
 

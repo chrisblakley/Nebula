@@ -155,27 +155,37 @@ function is_debug($strict=false){
 //Check if a user has been online in the last 15 minutes
 function nebula_is_user_online($id){
 	$logged_in_users = get_transient('users_status');
-	return isset($logged_in_users[$id]) && ($logged_in_users[$id] > (time()-(15*60))); //15 Minutes
+	return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-900; //15 Minutes
 }
 
+//Check when a user was last online.
 function nebula_user_last_online($id){
 	$logged_in_users = get_transient('users_status');
-	if ( isset($logged_in_users[$id]) ){
-		return $logged_in_users[$id];
+	if ( isset($logged_in_users[$id]['last']) ){
+		return $logged_in_users[$id]['last'];
 	} else {
 		return false;
 	}
 }
 
-function nebula_user_online_count(){
+//Get a count of online users, or an array of online user IDs.
+function nebula_online_users($return='count'){
 	$logged_in_users = get_transient('users_status');
 	$user_online_count = 0;
-	foreach ( $logged_in_users as $user_id => $status ){
-		if ( $user_id != 0 && isset($status) && ($status > (time()-(15*60))) ){
+	$online_users = array();
+
+	foreach ( $logged_in_users as $user ){
+		if ( isset($user['last']) && $user['last'] > time()-900 ){
+			$online_users[] = $user['id'];
 			$user_online_count++;
 		}
 	}
-	return $user_online_count;
+
+	if ( $return == 'count' ){
+		return $user_online_count;
+	} else {
+		return $online_users;
+	}
 }
 
 //Check if the current IP address matches any of the dev IP address from Nebula Options
@@ -989,7 +999,7 @@ function nebula_render_scss($specific_scss=null){
 			$partials = array('variables', 'mixins', 'helpers');
 			$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
 			$dev_stylesheet_files = glob(get_template_directory() . '/stylesheets/scss/dev/*css');
-			$dev_scss_file = file_get_contents(get_template_directory() . '/stylesheets/scss/dev.scss');
+			$dev_scss_file = @file_get_contents(get_template_directory() . '/stylesheets/scss/dev.scss');
 
 			if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
 				file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss

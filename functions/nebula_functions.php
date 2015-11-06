@@ -271,10 +271,14 @@ function nebula_users_status_init(){
 	$user = wp_get_current_user();
 
 	//Check if the current user needs to update his online status; he does if he doesn't exist in the list
-	$no_need_to_update = isset($logged_in_users[$user->ID]) && $logged_in_users[$user->ID] > (time()-(15*60)); //15 Minutes
+	$no_need_to_update = isset($logged_in_users[$user->ID]['last']) && $logged_in_users[$user->ID]['last'] > time()-900; //15 Minutes
 	if ( !$no_need_to_update ){
-		$logged_in_users[$user->ID] = time();
-		set_transient('users_status', $logged_in_users, 30*60); //30 minutes
+		$logged_in_users[$user->ID] = array(
+			'id' => $user->ID,
+			'username' => $user->user_login,
+			'last' => time(),
+		);
+		set_transient('users_status', $logged_in_users, 1800); //30 minutes
 	}
 }
 

@@ -330,7 +330,7 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 				$users_plural = 'User';
 				$users_icon = 'user';
 			}
-			echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula_user_online_count() . ' currently active)</small></li>';
+			echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula_online_users('count') . ' currently active)</small></li>';
 
 			if ( nebula_option('nebula_comments', 'enabled') && get_option('nebula_disqus_shortname') == '' ){
 				$comments_count = wp_count_comments();

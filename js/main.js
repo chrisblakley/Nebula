@@ -631,7 +631,7 @@ function gaEventTracking(){
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
 		}
 	});
-	jQuery('.btn').on('click tap touch', function(e){
+	jQuery('.btn:not(input)').on('click tap touch', function(e){
 		if ( e.target != this ){
 			return; //Only continue if the button is clicked, but not the <a> link.
 		}
@@ -897,18 +897,23 @@ function autocompleteSearch(){
 								jQuery.each(data, function(index, value){
 									value.label = value.label.replace(/&#038;/g, "\&");
 								});
-								ga('send', 'event', 'Internal Search', 'Autocomplete Search', request.term);
+								noSearchResults = '';
 							} else {
-								ga('send', 'event', 'Internal Search', 'Autocomplete Search (No Results)', request.term);
+								noSearchResults = ' (No Results)';
 							}
+							debounce(function(){
+								ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
+								if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
+							}, 500, 'autocomplete success buffer');
 							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'Initial search until server results');
 							response(data);
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
-							if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
 							ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-							ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
+							debounce(function(){
+								ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
+							}, 500, 'autocomplete error buffer');
 							thisSearchInput.parents('form').removeClass('searching');
 						},
 						timeout: 60000
