@@ -325,8 +325,8 @@ function nebula_initialization_default_settings(){
 	global $wp_rewrite;
 
 	//Update Nebula options
-	foreach ( $GLOBALS['nebula_options_fields'] as $nebula_options_field => $default ){
-		update_option($nebula_options_field, $default);
+	foreach ( $GLOBALS['nebula_options_fields'] as $nebula_option_name => $default_value ){
+		update_option($nebula_option_name, $default_value);
 	}
 
 	//Update certain Wordpress Core options

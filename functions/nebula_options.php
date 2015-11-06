@@ -176,29 +176,29 @@ function register_nebula_options(){
 		'nebula_instagram_url' => '',
 
 		//Functions Tab
-		'nebula_wireframing' => 'Disabled',
-		'nebula_admin_bar' => 'Enabled',
-		'nebula_admin_notices' => 'Enabled',
-		'nebula_author_bios' => 'Disabled',
-		'nebula_comments' => 'Disabled',
-		'nebula_wp_core_updates_notify' => 'Disabled',
-		'nebula_plugin_update_warning' => 'Enabled',
-		'nebula_welcome_panel' => 'Enabled',
-		'nebula_unnecessary_metaboxes' => 'Enabled',
-		'nebula_ataglance_metabox' => 'Enabled',
-		'nebula_dev_metabox' => 'Enabled',
-		'nebula_todo_metabox' => 'Enabled',
-		'nebula_domain_exp' => 'Enabled',
-		'nebula_scss' => 'Enabled',
-		'nebula_minify_css' => 'Disabled',
-		'nebula_dev_stylesheets' => 'Enabled',
-		'nebula_appcache_manifest' => 'Disabled',
-		'nebula_console_css' => 'Enabled',
+		'nebula_wireframing' => 'disabled',
+		'nebula_admin_bar' => 'enabled',
+		'nebula_admin_notices' => 'enabled',
+		'nebula_author_bios' => 'disabled',
+		'nebula_comments' => 'disabled',
+		'nebula_wp_core_updates_notify' => 'disabled',
+		'nebula_plugin_update_warning' => 'enabled',
+		'nebula_welcome_panel' => 'enabled',
+		'nebula_unnecessary_metaboxes' => 'enabled',
+		'nebula_ataglance_metabox' => 'enabled',
+		'nebula_dev_metabox' => 'enabled',
+		'nebula_todo_metabox' => 'enabled',
+		'nebula_domain_exp' => 'enabled',
+		'nebula_scss' => 'enabled',
+		'nebula_minify_css' => 'disabled',
+		'nebula_dev_stylesheets' => 'enabled',
+		'nebula_appcache_manifest' => 'disabled',
+		'nebula_console_css' => 'enabled',
 
 		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
-		'nebula_ga_displayfeatures' => 'Disabled',
-		'nebula_ga_linkid' => 'Disabled',
+		'nebula_ga_displayfeatures' => 'disabled',
+		'nebula_ga_linkid' => 'disabled',
 		'nebula_hostnames' => '',
 		'nebula_google_webmaster_tools_verification' => '',
 		'nebula_facebook_custom_audience_pixel_id' => '',
@@ -255,8 +255,8 @@ function register_nebula_options(){
 		'nebula_mention_url' => '',
 	);
 
-	foreach ( $GLOBALS['nebula_options_fields'] as $nebula_options_field => $default ){
-		register_setting('nebula_options_group', $nebula_options_field);
+	foreach ( $GLOBALS['nebula_options_fields'] as $nebula_option_name => $default_value ){
+		register_setting('nebula_options_group', $nebula_option_name);
 	}
 }
 
