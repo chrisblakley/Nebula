@@ -530,9 +530,8 @@ function socialSharing(){
 function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//thisPage.document.on('mousedown', '.selector', function(e){
-	//  if ( e.which >= 2 ){
-	//		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-	//	}
+	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+	//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 	//	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
@@ -709,6 +708,7 @@ function gaEventTracking(){
 			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('send', 'event', 'Print', 'Print');
+			console.log('old print intent...');
 		}
 	};
 	if ( window.matchMedia ){
@@ -722,6 +722,7 @@ function gaEventTracking(){
 		}
 	}
 	window.onafterprint = afterPrint;
+
 }
 
 //Detect scroll depth for engagement and more accurate bounce rate

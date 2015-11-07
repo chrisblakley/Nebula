@@ -1075,7 +1075,7 @@ function nebula_options_page(){
 		        </tr>
 
 		        <tr class="short" valign="top">
-		        	<th scope="row">Notable Browser&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row"><em>Notable Browser</em>&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_notablebrowser" value="<?php echo get_option('nebula_cd_notablebrowser'); ?>" />
 						<p class="helper"><small>Sends data when notable browser info is detected (such as notable bot traffic or JavaScript disabled). <strong>Scope: Session</strong><br /><em>&raquo; This dimension is currently experimental.</em></small></p>

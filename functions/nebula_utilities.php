@@ -171,21 +171,20 @@ function nebula_user_last_online($id){
 //Get a count of online users, or an array of online user IDs.
 function nebula_online_users($return='count'){
 	$logged_in_users = get_transient('users_status');
+	if ( empty($logged_in_users) ){
+		return ( $return == 'count' )? 0 : false;
+	}
 	$user_online_count = 0;
 	$online_users = array();
 
 	foreach ( $logged_in_users as $user ){
 		if ( isset($user['last']) && $user['last'] > time()-900 ){
-			$online_users[] = $user['id'];
+			$online_users[] = $user;
 			$user_online_count++;
 		}
 	}
 
-	if ( $return == 'count' ){
-		return $user_online_count;
-	} else {
-		return $online_users;
-	}
+	return ( $return == 'count' )? $user_online_count : $online_users;
 }
 
 //Check if the current IP address matches any of the dev IP address from Nebula Options
