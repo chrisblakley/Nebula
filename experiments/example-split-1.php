@@ -18,7 +18,7 @@ if ( !defined('ABSPATH') ) { //Redirect (for logging) if accessed directly
 	die('Error 403: Forbidden.');
 }
 
-do_action('nebula_header');
+do_action('nebula_preheaders');
 get_header();
 
 /* Edit the code below to match the theme, or duplicate the desired template and rename the template (above). Remember to make the desired variations to test individually on each template! */

@@ -169,7 +169,7 @@ switch ( $GLOBALS['http'] ){
     break;
 }
 
-do_action('nebula_header');
+do_action('nebula_preheaders');
 get_header(); ?>
 
 <div class="row">

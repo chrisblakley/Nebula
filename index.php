@@ -8,7 +8,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	die('Error 403: Forbidden.');
 }
 
-do_action('nebula_header');
+do_action('nebula_preheaders');
 get_header(); ?>
 
 <?php get_template_part('loop', 'index'); ?>

@@ -10,6 +10,37 @@ function nebula_log_direct_access_attempts(){
 	}
 }
 
+//Detect HTTP status error codes and redirect to the appropriate page.
+//List of HTTP status codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+add_action('nebula_preheaders', 'nebula_http_status');
+function nebula_http_status($status=200, $redirect=0){
+	if ( isset($_GET['http']) ){
+		$status = $_GET['http'];
+	}
+
+	$GLOBALS['http'] = intval($status);
+	if ( is_int($GLOBALS['http']) && $GLOBALS['http'] != 0 && $GLOBALS['http'] != 200 ){
+		if ( $GLOBALS['http'] == '404' ){
+			global $wp_query;
+			$wp_query->set_404();
+			status_header(404);
+			if ( $redirect == 1 || 1==2 ){
+				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
+			} else {
+				get_template_part('404');
+			}
+		} else {
+			status_header(403);
+			if ( $redirect == 1 || 1==2 ){
+				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
+			} else {
+				get_template_part('http_status');
+			}
+		}
+		die();
+	}
+}
+
 //Prevent known bot/brute-force query strings.
 //This is less for security and more for preventing garbage data in Google Analytics reports.
 add_action('wp_loaded', 'nebula_prevent_bad_query_strings');
@@ -112,14 +143,10 @@ add_action('wp_footer', 'track_notable_bots');
 function track_notable_bots(){
 	//Google Page Speed
 	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
-		$protocol = stripos($_SERVER['SERVER_PROTOCOL'], 'https') === true ? 'https://' : 'http://';
-		$currentURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
-		if ( strpos($currentURL, ".js") !== false ){
-			exit();
+		if ( nebula_url_components('extension') != 'js' ){
+			global $post;
+			ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0);
 		}
-		global $post;
-		ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0, $custom_dimension);
 	}
 
 	//Internet Archive Wayback Machine
@@ -169,24 +196,28 @@ function nebula_domain_prevention(){
 		if ( count($GLOBALS['domain_blacklist']) > 1 ){
 			if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $GLOBALS['domain_blacklist']) ){
 				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
 				header('HTTP/1.1 403 Forbidden');
 				die;
 			}
 
 			if ( isset($_SERVER['REMOTE_HOST']) && contains(strtolower($_SERVER['REMOTE_HOST']), $GLOBALS['domain_blacklist']) ){
 				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
 				header('HTTP/1.1 403 Forbidden');
 				die;
 			}
 
 			if ( isset($_SERVER['SERVER_NAME']) && contains(strtolower($_SERVER['SERVER_NAME']), $GLOBALS['domain_blacklist']) ){
 				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
 				header('HTTP/1.1 403 Forbidden');
 				die;
 			}
 
 			if ( isset($_SERVER['REMOTE_ADDR']) && contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $GLOBALS['domain_blacklist']) ){
 				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
 				header('HTTP/1.1 403 Forbidden');
 				die;
 			}

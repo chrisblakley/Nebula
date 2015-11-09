@@ -178,7 +178,7 @@ function nebula_online_users($return='count'){
 	$online_users = array();
 
 	foreach ( $logged_in_users as $user ){
-		if ( isset($user['last']) && $user['last'] > time()-900 ){
+		if ( !empty($user['username']) && isset($user['last']) && $user['last'] > time()-900 ){
 			$online_users[] = $user;
 			$user_online_count++;
 		}
@@ -409,7 +409,7 @@ function nebula_url_components($segment="all", $url=null){
 			}
 			break;
 
-		case ('extension'): //The extension only.
+		case ('extension'): //The extension only (without ".")
 		    if ( contains(basename($url_compontents['path']), array('.')) ){
 		        $file_parts = explode('.', $url_compontents['path']);
 		        return $file_parts[1];
@@ -1068,6 +1068,8 @@ function nebula_render_scss($specific_scss=null){
 function nebula_scss_variables($scss){
 	$scss = preg_replace("(<%template_directory%>)", get_template_directory_uri(), $scss); //Template Directory
 	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path
+	do_action('nebula_scss_variables');
+
 	$scss .= '/* Processed on ' . date('l, F j, Y \a\t g:ia', time()) . ' */';
 	update_option('nebula_scss_last_processed', time());
 	return $scss;

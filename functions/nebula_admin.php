@@ -57,8 +57,8 @@ if ( !nebula_is_option_enabled('adminbar') ){
 	}
 } else {
 	//Add the current page ID to the Admin Bar
-	add_action('admin_bar_menu', 'nebula_admin_bar_page_id', 800);
-	function nebula_admin_bar_page_id($wp_admin_bar){
+	add_action('admin_bar_menu', 'nebula_admin_bar_menus', 800);
+	function nebula_admin_bar_menus($wp_admin_bar){
 		$node_id = ( is_admin() )? 'view' : 'edit';
 		$new_content_node = $wp_admin_bar->get_node($node_id);
 		if ( $new_content_node ){
@@ -93,11 +93,7 @@ if ( !nebula_is_option_enabled('adminbar') ){
 			- Visibility (Public)
 			- Revisions (count)
 		*/
-	}
 
-	//Add Nebula links to the Admin Bar
-	add_action('admin_bar_menu', 'nebula_admin_bar_nebula_options', 90);
-	function nebula_admin_bar_nebula_options($wp_admin_bar){
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula',
@@ -344,6 +340,8 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 				}
 			}
 		echo '</ul>';
+
+		do_action('nebula_ataglance');
 	}
 }
 
@@ -365,6 +363,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 	}
 
 	function dashboard_todo_manager(){
+		do_action('nebula_todo_manager');
 		echo '<p class="todoresults_title"><strong>Active @TODO Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p><div class="todo_results">';
 		$todo_last_filename = '';
 		$todo_dirpath = get_template_directory();
@@ -442,6 +441,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 		wp_add_dashboard_widget('phg_developer_info', 'Developer Information', 'dashboard_developer_info');
 	}
 	function dashboard_developer_info(){
+		do_action('nebula_developer_info');
 		$domain_exp_detected = whois_info('expiration');
 
 		$domain_exp_unix = strtotime(trim($domain_exp_detected));

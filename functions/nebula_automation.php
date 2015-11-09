@@ -77,17 +77,22 @@ function my_theme_register_required_plugins(){
         array(
             'name'      => 'Wordpress SEO by Yoast',
             'slug'      => 'wordpress-seo',
-            'required'  => false,
+            'required'  => true,
         ),
         array(
             'name'      => 'Relevanssi',
             'slug'      => 'relevanssi',
-            'required'  => false,
+            'required'  => true,
         ),
         array(
             'name'      => 'UpdraftPlus Backup and Restoration',
             'slug'      => 'updraftplus',
             'required'  => false,
+        ),
+        array(
+            'name'      => 'Wordfence Security',
+            'slug'      => 'wordfence',
+            'required'  => true,
         ),
     );
 

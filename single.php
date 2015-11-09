@@ -13,7 +13,7 @@ if ( get_post_format() ){
 	exit;
 }
 
-do_action('nebula_header');
+do_action('nebula_preheaders');
 get_header(); ?>
 
 <div class="row">

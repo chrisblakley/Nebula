@@ -149,37 +149,6 @@ function nebula_the_author($show_authors=1){
 	}
 }
 
-//List of HTTP status codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-add_action('nebula_header', 'nebula_http_status');
-function nebula_http_status($status=200, $redirect=0){
-	if ( isset($_GET['http']) ){
-		$status = $_GET['http'];
-	}
-
-	$GLOBALS['http'] = intval($status);
-	if ( is_int($GLOBALS['http']) && $GLOBALS['http'] != 0 && $GLOBALS['http'] != 200 ){
-		if ( $GLOBALS['http'] == '404' ){ //@TODO "Nebula" 0: Eventually consider removing the 404 page and using the http_status.php page.
-			global $wp_query;
-			$wp_query->set_404();
-			status_header(404);
-			if ( $redirect == 1 ){
-				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
-			} else {
-				get_template_part('404');
-			}
-			die();
-		} else {
-			status_header(403);
-			if ( $redirect == 1 ){
-				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
-			} else {
-				get_template_part('http_status');
-			}
-			die();
-		}
-	}
-}
-
 //Register Widget Areas
 add_action('widgets_init', 'nebula_widgets_init');
 function nebula_widgets_init(){
@@ -969,7 +938,7 @@ function nebula_always_get_post_custom($posts){
 }
 
 //Override the default Wordpress search form
-//@TODO "Nebula" 0: Use this on template like 404 (and maybe even advanced search?) and search redirect (in header). Then expand this a little bit.
+//@TODO "Nebula" 0: Use this on templates like 404 (and maybe even advanced search?) and search redirect (in header). Then expand this a little bit.
 add_filter('get_search_form', 'nebula_search_form');
 function nebula_search_form($form){
     $form = '<form role="search" method="get" id="searchform" action="' . home_url('/') . '" >

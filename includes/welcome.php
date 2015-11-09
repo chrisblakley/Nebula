@@ -54,13 +54,14 @@
 					</li>
 					<li>
 						<?php if ( is_at_phg() ): ?>
-							<img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" onerror="this.onerror=null; this.src=""<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
+							<img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
 						<?php else: ?>
 							<i class="fa fa-laptop fa-fw"></i>
 						<?php endif; ?>
 						IP Address: <strong class="admin-user-info admin-user-ip"><?php echo $_SERVER["REMOTE_ADDR"]; ?></strong>
 					</li>
 				</ul>
+				<?php do_action('nebula_welcome'); ?>
 			</div>
 
 			<?php if ( current_user_can('manage_options') ): ?>
