@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
-	Version: 3.4.8
+	Version: 3.4.11
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -410,7 +410,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 #suggestedpage {display: none;}
 
-//Homepage hero row
+//Homepage Hero
 #heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url($template_directory + "/images/phg/phg-nebula.jpg") fixed center center; background-size: cover; @include prefix((transition: all 0.5s));
 	.herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color($primary_color, 0.5); z-index: 0;}
 	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 90px; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
@@ -424,14 +424,24 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	@include media(tablet){padding: 50px 0; overflow: hidden; background-size: cover;};
 }
 
+#bigheadingcon {background: $primary_color; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
+	h1, h2, h3, h4, h5, h6, p {color: #fff;}
+	a {color: #fff; text-decoration: underline; white-space: nowrap;
+		&:hover,
+		&.hover {color: #aaa;}
+	}
+}
+
+.breadcrumbbar {background-color: rgba(0, 0, 0, 0.0225); margin-bottom: 30px;}
+.breadcrumbcon {position: relative; z-index: 1;
+	.breadcrumbs {font-size: 10px;}
+}
+
 
 // ===========================
 // Content
 // ===========================
 
-.breadcrumbcon {position: relative; z-index: 1;
-	.breadcrumbs {font-size: 10px;}
-}
 
 .fullcontentcon {margin-top: 30px;
 	@include media(mobile){margin-top: 15px;};
@@ -498,9 +508,8 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 		@include media(mobile_landscape){float: none; display: block; text-align: center;};
 	}
 
-.search-results .fullcontentcon article,
-.archive .fullcontentcon article {margin-top: 50px;}
-
+#searchresults article,
+.archive .fullcontentcon article {margin-bottom: 50px;}
 
 //wp-pagenavi Pagination
 div.wp-pagenavi {float: right; margin-bottom: 20px;

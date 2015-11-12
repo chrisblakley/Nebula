@@ -12,16 +12,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<style>
-	#example-title-area .container {background: #0098d7; background: linear-gradient(to bottom, #0098d7, #008cc6);}
-		#example-title-area h1 {color: #fff;}
-		#example-title-area p {color: #fff;}
-		#example-title-area a {color: #fff; text-decoration: underline; white-space: nowrap;}
-			#example-title-area a:hover,
-			#example-title-area a.hover {color: #aaa;}
-</style>
-
-<section id="example-title-area"><!-- Do not duplicate this section because it has inline styles. -->
+<section id="bigheadingcon">
 	<div class="container">
 		<div class="row">
 			<div class="sixteen columns">
@@ -32,7 +23,7 @@ get_header(); ?>
 	</div><!--/container-->
 </section>
 
-<div class="container" style="background-color: rgba(0, 0, 0, 0.0225); margin-bottom: 30px;">
+<div class="breadcrumbbar">
 	<div class="row">
 		<div class="sixteen columns">
 			<?php the_breadcrumb(); ?>
@@ -532,6 +523,10 @@ get_header(); ?>
 
 						<?php if ( is_page(2109) ){ //Custom SASS Mixins and Functions
 							include_once('includes/sass_mixins_functions.php');
+						} ?>
+
+						<?php if ( is_page(2150) ){ //Generate a custom Google Analytics utm.gif paramters
+							include_once('includes/google_analytics_utm_gif.php');
 						} ?>
 
 						<?php if ( current_user_can('manage_options') ): ?>

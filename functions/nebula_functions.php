@@ -791,54 +791,14 @@ function the_breadcrumb(){
 		return false;
 	} else {
 		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
-		if ( function_exists('is_pod_page') ){
-			if ( is_pod_page() ){
-				$skipThese = array('wordsgohere'); //An array of words(?) to skip. //array('detail', 'concentration')
-
-				//Explode the URI and turn each virtual path into a crumb.
-				$url_parts = explode('/', $_SERVER['REQUEST_URI']);
-				$link;
-				$i = 0;
-				foreach ( $url_parts as $key => $value ){
-					if ( $key != (count($url_parts)-1) ){
-						if( $value != '' && !in_array($value, $skipThese) ){
-							$pieces = explode('-', $value);
-							$link_str = '';
-							$link = ( $i == 0 )? $link : $link  . '/' . $value;
-							foreach ( $pieces as $key => $value ){
-								if ( !in_array($value, $dontCapThese) ){
-									$link_str .= ucfirst($value) . ' ';
-								} else{
-									$link_str .= $value . ' ';
-								}
-							}
-							echo '<a href="' . $homeLink . $link . '/">' . $link_str . '</a> ' . $delimiter . ' ';
-						}
-						$i++;
-					}
-
-					//Strip out the <a> tags
-					if ( $key == (count($url_parts)-1) ){
-						$pieces = explode('-', $value);
-						foreach( $pieces as $key => $value ){
-							if( !in_array($value, $dontCapThese) ){
-								$txt_str .= ucfirst($value) . ' ';
-							} else{
-								$txt_str .= $value . ' ';
-							}
-						}
-						echo $txt_str;
-					}
-				}
-			}
-		} elseif ( is_category() ){
+		if ( is_category() ){
 			$thisCat = get_category(get_query_var('cat'), false);
 			if ( $thisCat->parent != 0 ){
 				echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
 			}
 			echo $before . 'Category: ' . single_cat_title('', false) . $after;
 		} elseif ( is_search() ){
-			echo $before . 'Search results for "' . get_search_query() . '"' . $after;
+			echo $before . 'Search results' . $after;
 		} elseif ( is_day() ){
 			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
 			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';

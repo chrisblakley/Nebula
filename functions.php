@@ -325,9 +325,6 @@ add_theme_support('title-tag');
 
 
 
-
-
-
 //Google Analytics Experiments (Split Tests)
 //Documentation: http://gearside.com/nebula/documentation/custom-functionality/split-tests-using-google-analytics-experiments-with-nebula/
 //Add a new condition for each experiment group. There can be as many concurrent experiments as needed (just make sure there is no overlap!)

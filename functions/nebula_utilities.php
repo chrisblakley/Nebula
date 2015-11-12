@@ -1,22 +1,22 @@
 <?php
 
 $GLOBALS['ga_v'] = 1; //Version
-$GLOBALS['ga_cid'] = gaParseCookie(); //Anonymous Client ID
+$GLOBALS['ga_cid'] = ga_parse_cookie(); //Anonymous Client ID
 
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
-function gaParseCookie(){
-	if (isset($_COOKIE['_ga'])){
+function ga_parse_cookie(){
+	if ( isset($_COOKIE['_ga']) ){
 		list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
 		$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
 		$cid = $contents['cid'];
 	} else {
-		$cid = gaGenerateUUID();
+		$cid = ga_generate_UUID();
 	}
 	return $cid;
 }
 
 //Generate UUID v4 function (needed to generate a CID when one isn't available)
-function gaGenerateUUID(){
+function ga_generate_UUID(){
 	return sprintf(
 		'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 		mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
@@ -27,9 +27,67 @@ function gaGenerateUUID(){
 	);
 }
 
+//Generate Domain Hash
+function ga_generate_domain_hash($domain){
+	if ( empty($domain) ){
+		$domain = nebula_url_components('domain');
+	}
+
+	$a = 0;
+	for ( $i = strlen($domain)-1; $i >= 0; $i-- ){
+		$ascii = ord($domain[$i]);
+		$a = (($a<<6)&268435455)+$ascii+($ascii<<14);
+		$c = $a&266338304;
+		$a = ( $c != 0 )? $a^($c>>21) : $a;
+	}
+	return $a;
+}
+
+//Generate the full path of a Google Analytics __utm.gif with necessary parameters.
+//https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
+function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
+	//@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
+
+	$cookies = array(
+		'utma' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . mt_rand(1000000000, 9999999999) . '.' . time() . '.' . time() . '.' . time() . '.1', //Domain Hash . Random ID . Time of First Visit . Time of Last Visit . Time of Current Visit . Session Counter ***Absolutely Required***
+		'utmz' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . time() . '.1.1.', //Campaign Data (Domain Hash . Time . Counter . Counter)
+		'utmcsr' => '-', //Campaign Source "google"
+		'utmccn' => '-', //Campaign Name "(organic)"
+		'utmcmd' => '-', //Campaign Medium "organic"
+		'utmctr' => '-', //Campaign Terms (for paid search)
+		'utmcct' => '-', //Campaign Content Description
+	);
+	$cookies = array_merge($cookies, $user_cookies);
+
+	$data = array(
+		'utmwv' => '5.3.8', //Tracking code version *** REQUIRED ***
+		'utmac' => $GLOBALS['ga'], //Account string, appears on all requests *** REQUIRED ***
+		'utmdt' => get_the_title(), //Page title, which is a URL-encoded string *** REQUIRED ***
+		'utmp' => nebula_url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
+		'utmcc' => '__utma=' . $cookies['utma'] . ';+', //Cookie values. This request parameter sends all the cookies requested from the page. *** REQUIRED ***
+
+		'utmhn' => nebula_url_components('hostname'), //Host name, which is a URL-encoded string
+		'utmn' => rand(pow(10, 10-1), pow(10, 10)-1), //Unique ID generated for each GIF request to prevent caching of the GIF image
+		'utms' => '1', //Session requests. Updates every time a __utm.gif request is made. Stops incrementing at 500 (max number of GIF requests per session).
+		'utmul' => str_replace('-', '_', get_bloginfo('language')), //Language encoding for the browser. Some browsers don’t set this, in which case it is set to '-'
+		'utmje' => '0', //Indicates if browser is Java enabled. 1 is true.
+		'utmhid' => mt_rand(1000000000, 9999999999), //A random number used to link the GA GIF request with AdSense
+		'utmr' => $_SERVER['HTTP_REFERER'], //Referral, complete URL. If none, it is set to '-'
+		'utmu' => 'q~', //This is a new parameter that contains some internal state that helps improve ga.js
+	);
+	$data = array_merge($data, $user_parameters);
+
+	//Append Campaign Data to the Cookie parameter
+	if ( !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) ){
+		$data['utmcc'] = '__utma=' . $cookies['utma'] . ';+__utmz=' . $cookies['utmz'] . 'utmcsr=' . $cookies['utmcsr'] . '|utmccn=' . $cookies['utmccn'] . '|utmcmd=' . $cookies['utmcmd'] . '|utmctr=' . $cookies['utmctr'] . '|utmcct=' . $cookies['utmcct'] . ';+';
+	}
+
+	return 'https://ssl.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
+}
+
 //Send Data to Google Analytics
 //https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-function gaSendData($data){
+function ga_send_data($data){
 	$getString = 'https://ssl.google-analytics.com/collect';
 	$getString .= '?payload_data&';
 	$getString .= http_build_query($data);
@@ -44,7 +102,7 @@ function ga_send_pageview($hostname=null, $path=null, $title=null){
 	}
 
 	if ( empty($GLOBALS['ga_cid']) ){
-		$GLOBALS['ga_cid'] = gaParseCookie();
+		$GLOBALS['ga_cid'] = ga_parse_cookie();
 	}
 
 	if ( empty($hostname) ){
@@ -71,7 +129,7 @@ function ga_send_pageview($hostname=null, $path=null, $title=null){
 		'dt' => $title, //Title
 		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 	);
-	gaSendData($data);
+	ga_send_data($data);
 }
 
 //Send Event Function for Server-Side Google Analytics
@@ -82,7 +140,7 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 	}
 
 	if ( empty($GLOBALS['ga_cid']) ){
-		$GLOBALS['ga_cid'] = gaParseCookie();
+		$GLOBALS['ga_cid'] = ga_parse_cookie();
 	}
 
 	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
@@ -104,7 +162,7 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 
 	$data = array_merge($data, $array);
 
-	gaSendData($data);
+	ga_send_data($data);
 }
 
 //Send custom data to Google Analytics. Must pass an array of data to this function:
@@ -127,7 +185,7 @@ function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional para
 	$data = array_merge($defaults, $array);
 
 	if ( !empty($data['t']) ){
-		gaSendData($data);
+		ga_send_data($data);
 	} else {
 		trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
 		return;
@@ -998,7 +1056,7 @@ function nebula_render_scss($specific_scss=null){
 			$partials = array('variables', 'mixins', 'helpers');
 			$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
 			$dev_stylesheet_files = glob(get_template_directory() . '/stylesheets/scss/dev/*css');
-			$dev_scss_file = @file_get_contents(get_template_directory() . '/stylesheets/scss/dev.scss');
+			$dev_scss_file = get_template_directory() . '/stylesheets/scss/dev.scss';
 
 			if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
 				file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
@@ -1068,9 +1126,11 @@ function nebula_render_scss($specific_scss=null){
 function nebula_scss_variables($scss){
 	$scss = preg_replace("(<%template_directory%>)", get_template_directory_uri(), $scss); //Template Directory
 	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path
+	$scss = preg_replace("<%__utm.gif%>", ga_UTM_gif(), $scss); //GA __utm.gif pixel with parameters for tracking via CSS
+
 	do_action('nebula_scss_variables');
 
-	$scss .= '/* Processed on ' . date('l, F j, Y \a\t g:ia', time()) . ' */';
+	$scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
 	update_option('nebula_scss_last_processed', time());
 	return $scss;
 }

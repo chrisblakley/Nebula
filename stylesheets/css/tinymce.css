@@ -5,7 +5,7 @@
  }
  */ .nebulaborder { padding:5px; background:#fff; border:1px solid #aaa; }
 
- .nebulashadow { margin-top:0; margin-top:attr(offset, px, 0); height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ .nebulashadow { margin-top:0; margin-top:attr(offset, px, 0); height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
  .nebulashadow.above { height:12px; width:100%; background:rgba(0, 0, 0, 0.2); background:linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); -webkit-transform:scaleY(-1); -moz-transform:scaleY(-1); -ms-transform:scaleY(-1); -o-transform:scaleY(-1); transform:scaleY(-1); -ms-filter:flipv; filter:flipv; }
 
@@ -331,4 +331,5 @@
 
  body#tinymce.wp-editor a:hover,body#tinymce.wp-editor a.hover { color:#95d600; }
 
-/* Processed on Friday, November 6, 2015 at 12:44pm */
+
+/* Processed on Wednesday, November 11, 2015 at 8:28pm */

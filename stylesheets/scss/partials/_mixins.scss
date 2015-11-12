@@ -50,7 +50,7 @@
 	background: nth(nth($colors, 1), 1); background: linear-gradient($direction, $colors);
 }
 
-//.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-device-width: 320px)"){color: green;};}
+//.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-width: 320px)"){color: green;};}
 $additional_queries: (
 	print: "only print",
 	custom: "only screen and "
@@ -69,6 +69,14 @@ $all_media_queries: map-merge($media_queries, $additional_queries); //Combine $m
 	&:before,
 	&:after {content: ""; display: table;}
 	&:after {clear: both;}
+}
+
+//.element {@include zoom(1.5);}
+//.element {@include zoom(0.75, center top);}
+@mixin zoom($zoom: 1, $origin: 0 0){
+	@include prefix((transform: scale($zoom)));
+	@include prefix((transform-origin: $origin));
+	.ie8 & {zoom: $zoom;}
 }
 
 //.element-solid {@include arrow('top','left', 10px, #4fade3);}

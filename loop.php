@@ -104,16 +104,6 @@
 					<?php wp_link_pages(array('before' => '<div class="page-link">' . 'Pages:', 'after' => '</div>')); //@TODO "Nebula" 0: Pagenavi ?>
 				</div>
 			<?php endif; ?>
-
-			<?php if ( current_user_can('manage_options') ): //@TODO "Nebula" 0: Either drastically reduce the size of this or remove it. Maybe it's just an edit icon and link next to the title? ?>
-				<div class="container entry-manage">
-					<div class="row">
-						<hr />
-						<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-						<hr />
-					</div>
-				</div>
-			<?php endif; ?>
 		</article>
 
 		<?php if ( nebula_option('nebula_comments', 'disabled') ): ?>
