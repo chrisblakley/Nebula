@@ -4,7 +4,7 @@
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
-	Version: 3.4.11
+	Version: 3.4.12
 	License: GNU General Public License v2.0
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -325,7 +325,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Top row that appears at desktop sizes.
-#secondarynavcon {position: relative; @include background-color($dark_primary_color); z-index: 9999; @include prefix((transition: all 0.5s));
+#secondarynavcon {position: relative; @include background-color($dark_primary_color); z-index: 5000; @include prefix((transition: all 0.5s));
 	#secondarynav {position: relative; z-index: 2000;
 		ul {float: right; margin: 0;
 			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
@@ -347,14 +347,19 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Logo and primary navigation row
-#logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 25px; box-shadow: none; z-index: 8000; @include prefix((transition: all 0.5s));
+#logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 25px; box-shadow: none; z-index: 8000; @include prefix((transition: all .5s easing(easeInOutCubic)));
 	img {height: 90px; @include prefix((transition: all 0.5s));}
-	&.fixed {position: fixed; top: 0; left: 0; @include background-color(#f6f6f6, 0.98); padding-top: 0; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+
+	//When below offset
+	&.headroom--not-top {position: fixed; top: 0; left: 0; width: 100%; padding-top: 0; @include background-color(#f6f6f6, 0.98); box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); z-index: 9999;
 		img {height: 65px;}
 		#primarynav ul {margin-top: 22px;
 			li.menu-item {font-size: 12px;}
 		}
 	}
+	&.headroom--below {transform: translateY(-100%);} //When scrolled past the header (custom Nebula extension)
+	&.headroom--pinned {transform: translateY(0%);} //When scrolling up
+
 	.logocon {
 		img {@include media(tablet){width: 360px;};}
 		@include media(tablet){display: inline-block;};
@@ -399,6 +404,11 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	}
 	@include media(tablet){padding-top: 0; text-align: center;};
 }
+
+.headroom--pinned body {}
+.headroom--unpinned body {}
+.headroom--top body {}
+.headroom--not-top body {}
 
 //Row that contains event specific help: "Did you mean?", "Single result redirection", etc.
 .headerdrawercon {position: relative; @include background-color(#000, 0.05); z-index: 8888;

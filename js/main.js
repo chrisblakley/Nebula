@@ -14,10 +14,10 @@ jQuery(document).on('ready', function(){
 
 	//Cache common global selectors
 	thisPage = {
-        'window': jQuery(window),
-        'document': jQuery(document),
-        'html': jQuery('html'),
-        'body': jQuery('body')
+        window: jQuery(window),
+        document: jQuery(document),
+        html: jQuery('html'),
+        body: jQuery('body')
     }
 
 	//Detection
@@ -35,9 +35,9 @@ jQuery(document).on('ready', function(){
 	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo(); //@TODO: Either use mmenu or uncomment this line for mobile navigation.
 	dropdownWidthController();
 	overflowDetector();
-	//nebulaFixeder();
 	menuSearchReplacement();
 	subnavExpanders();
+	initHeadroom();
 
 	//Search
 	mobileSearchPlaceholder();
@@ -81,7 +81,6 @@ jQuery(document).on('ready', function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
-	//nebulaFixeder();
 	checkCformLocalStorage();
 
 	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
@@ -121,6 +120,7 @@ jQuery(window).on('load', function(){
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
+		initHeadroom();
     	powerFooterWidthDist();
 		nebulaEqualize();
 		mobileSearchPlaceholder();
@@ -416,25 +416,25 @@ function checkFacebookStatus(){
 		if ( nebulaFacebook.status == 'connected' ){ //User is logged into Facebook and is connected to this app.
 			FB.api('/me', function(response){
 				nebulaFacebook = {
-					'id': response.id,
-					'name': {
-						'first': response.first_name,
-						'last': response.last_name,
-						'full': response.name,
+					id: response.id,
+					name: {
+						first: response.first_name,
+						last: response.last_name,
+						full: response.name,
 					},
-					'gender': response.gender,
-					'email': response.email,
-					'image': {
-						'base': 'https://graph.facebook.com/' + response.id + '/picture',
-						'thumbnail': 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100',
-						'large': 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
+					gender: response.gender,
+					email: response.email,
+					image: {
+						base: 'https://graph.facebook.com/' + response.id + '/picture',
+						thumbnail: 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100',
+						large: 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
 					},
-					'url': response.link,
-					'location': {
-						'locale': response.locale,
-						'timezone': response.timezone,
+					url: response.link,
+					location: {
+						locale: response.locale,
+						timezone: response.timezone,
 					},
-					'verified': response.verified,
+					verified: response.verified,
 				}
 				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 				ga('send', 'event', 'Social', 'Facebook Connect', nebulaFacebook.id);
@@ -1831,25 +1831,25 @@ function nebulaAddressAutocomplete(autocompleteInput){
 
 						//Come up with a way so that everything doesn't need to be defined before detecting if it exists. Like "pushing" to the object.
 						addressComponents = {
-							'street': {
-								'number': null,
-								'name': null,
-								'full': null,
+							street: {
+								number: null,
+								name: null,
+								full: null,
 							},
-							'city': null,
-							'county': null,
-							'state': {
-								'name': null,
-								'abbreviation': null,
+							city: null,
+							county: null,
+							state: {
+								name: null,
+								abbreviation: null,
 							},
-							'country': {
-								'name': null,
-								'abbreviation': null,
+							country: {
+								name: null,
+								abbreviation: null,
 							},
-							'zip': {
-								'code': null,
-								'suffix': null,
-								'full': null,
+							zip: {
+								code: null,
+								suffix: null,
+								full: null,
 							},
 						};
 
@@ -1946,26 +1946,26 @@ function requestPosition(){
 //Geolocation Success
 function successCallback(position){
 	nebulaLocation = {
-        'error': false,
-        'coordinates': { //A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
-            'latitude': position.coords.latitude,
-            'longitude': position.coords.longitude
+        error: false,
+        coordinates: { //A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
         },
-        'accuracy': {
-            'meters': position.coords.accuracy,
-            'miles': (position.coords.accuracy*0.000621371).toFixed(2),
+        accuracy: {
+            meters: position.coords.accuracy,
+            miles: (position.coords.accuracy*0.000621371).toFixed(2),
         },
-        'altitude': { //Above the mean sea level
-	        'meters': position.coords.altitude,
-	        'miles': (position.coords.altitude*0.000621371).toFixed(2),
-	        'accuracy': position.coords.altitudeAccuracy,
+        altitude: { //Above the mean sea level
+	        meters: position.coords.altitude,
+	        miles: (position.coords.altitude*0.000621371).toFixed(2),
+	        accuracy: position.coords.altitudeAccuracy,
         },
-        'speed': {
-	        'mps': position.coords.speed,
-	        'kph': (position.coords.speed*3.6).toFixed(2),
-	        'mph': (position.coords.speed*2.23694).toFixed(2),
+        speed: {
+	        mps: position.coords.speed,
+	        kph: (position.coords.speed*3.6).toFixed(2),
+	        mph: (position.coords.speed*2.23694).toFixed(2),
         },
-        'heading': position.coords.heading, //Degrees clockwise from North
+        heading: position.coords.heading, //Degrees clockwise from North
     }
 
 	if ( nebulaLocation.accuracy.meters < 50 ){
@@ -2397,11 +2397,11 @@ function selectText(element, copy, callback){
 
 function chosenSelectOptions(){
 	jQuery('.chosen-select').chosen({
-		'disable_search_threshold': 5,
-		'search_contains': true,
-		'no_results_text': "No results found.",
-		'allow_single_deselect': true,
-		'width': "100%"
+		disable_search_threshold: 5,
+		search_contains: true,
+		no_results_text: "No results found.",
+		allow_single_deselect: true,
+		width: "100%"
 	});
 }
 
@@ -2461,9 +2461,9 @@ function onYouTubeIframeAPIReady(e){
 		var youtubeiframeClass = jQuery(this).attr('id');
 		players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
 			events: {
-				'onReady': onPlayerReady,
-				'onStateChange': onPlayerStateChange,
-				'onError': onPlayerError
+				onReady: onPlayerReady,
+				onStateChange: onPlayerStateChange,
+				onError: onPlayerError
 			}
 		});
 	});
@@ -2717,33 +2717,33 @@ function mmenus(){
 		if ( mobileNav.is('*') ){
 			mobileNav.mmenu({
 			    //Options
-			    "offCanvas": {
-				    "zposition": "back", //"back" (default), "front", "next"
-				    "position": "left" //"left" (default), "right", "top", "bottom"
+			    offCanvas: {
+				    zposition: "back", //"back" (default), "front", "next"
+				    position: "left" //"left" (default), "right", "top", "bottom"
 			    },
-			    "searchfield": { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
-			    	"add": true,
-			    	"search": true,
-			    	"placeholder": 'Search',
-			    	"noResults": "No navigation items found.",
-			    	"showLinksOnly": false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
+			    searchfield: { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
+			    	add: true,
+			    	search: true,
+			    	placeholder: 'Search',
+			    	noResults: "No navigation items found.",
+			    	showLinksOnly: false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
 			    },
-			    "counters": true, //Display count of sub-menus
-			    "iconPanels": false, //Layer panels on top of each other
-				"navbar": {
-					"title": "Menu"
+			    counters: true, //Display count of sub-menus
+			    iconPanels: false, //Layer panels on top of each other
+				navbar: {
+					title: "Menu"
 				},
-				"navbars": [{
-					"position": "bottom",
-					"content": [
+				navbars: [{
+					position: "bottom",
+					content: [
 						"<span>" + bloginfo['name'] + "</span>"
 					]
 				}],
-			    "extensions": ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
+			    extensions: ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
 			}, {
 				//Configuration
-				"classNames": {
-					"selected": "current-menu-item"
+				classNames: {
+					selected: "current-menu-item"
 				}
 			});
 
@@ -2826,35 +2826,64 @@ function subnavExpanders(){
     jQuery('.current-menu-item').children('.toplevelvert_expander').click();
 } //end subnavExpanders()
 
-
 //Affix the logo/navigation when scrolling passed it
-//@TODO "Nebula" 0: Ugh I don't really like this... It's almost fine, but the fixeElement.outerHeight() is before it shrinks, so there is 1 pixel or so where it puts the topbar beneath the fixed nav. Then, if you reload the page after scrolling down it does nothing until you scroll then it kicks in and animates the shrink all at once. Feels clunky as hell.
-function nebulaFixeder(){
-	var fixedElement = jQuery('#logonavcon'); //@TODO "Header" 3: Verify this selector is correct to trigger the fixed header.
-	var fullBodyWrapper = jQuery('#fullbodywrapper');
-	if ( fixedElement.is('*') && thisPage.window.width() > 767 ){
-		fixedDistance = fixedElement.position().top;
+function initHeadroom(){
+	var headerElement = jQuery('#header');
+	var fixedElement = jQuery('#logonavcon');
 
-		thisPage.window.on('scroll resize', function(){
-			if ( thisPage.window.scrollTop() >= fixedDistance ){
-				fixedElement.addClass('fixed');
-				fullBodyWrapper.css('padding-top', fixedElement.outerHeight());
-			} else {
-				fixedElement.removeClass('fixed');
-				fullBodyWrapper.css('padding-top', '0');
-			}
-		});
-	} else {
-		fixedElement.removeClass('fixed');
-		fullBodyWrapper.css('padding-top', '0');
+	if ( !fixedElement.is('*') ){
+		return false;
 	}
+
+	if ( !headerElement.is('*') ){
+		headerElement = thisPage.body; //@TODO: If this fallback happens, the padding would need to move to the top.
+	}
+
+	if ( typeof headroom !== 'undefined' ){
+		headroom.destroy();
+	}
+
+	var clonedFixedElement = fixedElement.clone().addClass('headroom--not-top').css({position: "absolute", left: "-10000px"}).appendTo('body'); //See the future: Get final height of fixedElement with unknown CSS properties
+	var finalBufferSize = clonedFixedElement.outerHeight();
+	clonedFixedElement.remove();
+
+	window.headroom = new Headroom(fixedElement[0], {
+		offset: fixedElement.offset().top, //Vertical offset in px before element is first unpinned
+		tolerance: 3, //Scroll tolerance in px before state changes
+		classes: {
+			initial: "headroom", //When element is initialised
+			pinned: "headroom--pinned", //When scrolling up
+			unpinned: "headroom--unpinned", //When scrolling down
+			top: "headroom--top", //When above offset
+			notTop: "headroom--not-top" //When below offset
+		},
+		onPin: function(){ //Callback when pinned, 'this' is headroom object
+			thisPage.document.removeClass('headroom--unpinned headroom--top headroom--not-top').addClass('headroom--pinned');
+		},
+		onUnpin: function(){ //Callback when unpinned, 'this' is headroom object
+			thisPage.document.removeClass('headroom--pinned headroom--top headroom--not-top').addClass('headroom--unpinned');
+		},
+		onTop: function(){ //Callback when above offset, 'this' is headroom object
+			thisPage.document.removeClass('headroom--pinned headroom--unpinned headroom--not-top').addClass('headroom--top');
+			headerElement.css('padding-bottom', '0');
+		},
+		onNotTop: function(){ //Callback when below offset, 'this' is headroom object
+			thisPage.document.removeClass('headroom--pinned headroom--unpinned headroom--top').addClass('headroom--not-top');
+			headerElement.css('padding-bottom', fixedElement.outerHeight()).stop().animate({paddingBottom: finalBufferSize}, 400, "linear"); //Add padding buffer to header and animate (slightly faster than CSS) to finalBufferSize
+		},
+	});
+	headroom.init();
+
+	//Custom Nebula extension for .headroom--below
+	jQuery(window).on('scroll', function(){
+		var distance = jQuery(document).scrollTop();
+		if ( jQuery(document).scrollTop() > headerElement.offset().top+headerElement.outerHeight() ){
+			fixedElement.addClass('headroom--below');
+		} else if ( fixedElement.hasClass('headroom--below') ){
+			fixedElement.removeClass('headroom--below');
+		}
+	});
 }
-
-
-
-
-
-
 
 
 /*==========================

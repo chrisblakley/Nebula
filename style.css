@@ -4,7 +4,7 @@
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
- Version: 3.4.11
+ Version: 3.4.12
  License: GNU General Public License v2.0
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -697,7 +697,7 @@
 
  #mobilenav.mm-menu { visibility:visible; height:100%; }
 
- #secondarynavcon { position:relative; background:#363a3b; background:rgba(54, 58, 59, 1); z-index:9999; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ #secondarynavcon { position:relative; background:#363a3b; background:rgba(54, 58, 59, 1); z-index:5000; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
  #secondarynavcon #secondarynav { position:relative; z-index:2000; }
 
@@ -727,17 +727,21 @@
 
  }
 
- #logonavcon { display:block; position:relative; width:100%; background:#f6f6f6; background:rgba(246, 246, 246, 1); padding-top:25px; box-shadow:none; z-index:8000; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ #logonavcon { display:block; position:relative; width:100%; background:#f6f6f6; background:rgba(246, 246, 246, 1); padding-top:25px; box-shadow:none; z-index:8000; -webkit-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); -moz-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); -ms-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); -o-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); }
 
  #logonavcon img { height:90px; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- #logonavcon.fixed { position:fixed; top:0; left:0; background:#f6f6f6; background:rgba(246, 246, 246, 0.98); padding-top:0; box-shadow:0px 0px 20px rgba(0, 0, 0, 0.1); }
+ #logonavcon.headroom--not-top { position:fixed; top:0; left:0; width:100%; padding-top:0; background:#f6f6f6; background:rgba(246, 246, 246, 0.98); box-shadow:0px 0px 20px rgba(0, 0, 0, 0.1); z-index:9999; }
 
- #logonavcon.fixed img { height:65px; }
+ #logonavcon.headroom--not-top img { height:65px; }
 
- #logonavcon.fixed #primarynav ul { margin-top:22px; }
+ #logonavcon.headroom--not-top #primarynav ul { margin-top:22px; }
 
- #logonavcon.fixed #primarynav ul li.menu-item { font-size:12px; }
+ #logonavcon.headroom--not-top #primarynav ul li.menu-item { font-size:12px; }
+
+ #logonavcon.headroom--below { transform:translateY(-100%); }
+
+ #logonavcon.headroom--pinned { transform:translateY(0%); }
 
  @media only screen and (max-width: 767px)  { #logonavcon .logocon img { width:360px; }
 
@@ -1325,4 +1329,4 @@
  }
 
 
-/* Processed on Wednesday, November 11, 2015 at 8:28pm */
+/* Processed on Thursday, November 12, 2015 at 11:45pm */

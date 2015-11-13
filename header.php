@@ -33,6 +33,7 @@
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
+
 			<div id="header">
 				<div id="fb-root"></div>
 

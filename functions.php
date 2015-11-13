@@ -77,6 +77,7 @@ function register_nebula_scripts(){
 	//nebula_register_script('nebula-bxslider', 'https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js', 'defer', array(), '4.2.5', true); //bxSlider is conditionally loaded via main.js when needed.
 	nebula_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', null, array(), null, true);
 	nebula_register_script('nebula-skrollr', 'https://cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.30/skrollr.min.js', 'gumby-debug', array(), '0.6.30', true);
+	nebula_register_script('nebula-headroom', 'https://cdnjs.cloudflare.com/ajax/libs/headroom/0.7.0/headroom.min.js', null, array(), '0.7.0', true);
 	nebula_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js', 'async', array(), null, true);
 	nebula_register_script('nebula-respond', 'https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js', 'defer', array(), '1.4.2', true);
 	nebula_register_script('nebula-html5shiv', 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js', 'defer', array(), '3.7.3', true);
@@ -196,6 +197,7 @@ function enqueue_nebula_frontend(){
 	wp_enqueue_script('nebula-modernizr');
 	wp_enqueue_script('nebula-mmenu');
 	//wp_enqueue_script('nebula-doubletaptogo');
+	wp_enqueue_script('nebula-headroom');
 	wp_enqueue_script('nebula-gumby');
 	wp_enqueue_script('nebula-main');
 	wp_localize_script('nebula-main', 'bloginfo', $localize_bloginfo);
