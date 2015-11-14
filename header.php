@@ -85,12 +85,8 @@
 				<div id="logonavcon" class="container">
 					<div class="row">
 						<div class="six columns">
-							<?php
-								//@TODO "Graphics" 4: Logo should have at least two versions: logo.svg and logo.png - Save them out in the images directory then update the paths below.
-								//Important: Do not delete the /phg/ directory from the server; we use our logo in the WP Admin (among other places)!
-							?>
 							<a class="logocon" href="<?php echo home_url(); ?>">
-								<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" onerror="this.onerror=null; this.src='<?php echo get_template_directory_uri(); ?>/images/logo.png'" alt="<?php bloginfo('name'); ?>"/>
+								<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
 							</a>
 						</div><!--/columns-->
 						<div class="ten columns">
@@ -111,7 +107,7 @@
 						<div class="sixteen columns headerdrawer">
 							<span>Your search returned only one result. You have been automatically redirected.</span>
 							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
+							<?php echo get_search_form(); ?>
 						</div><!--/columns-->
 					</div><!--/row-->
 					<hr class="zero" />
@@ -123,7 +119,7 @@
 						<div class="sixteen columns headerdrawer invalid">
 							<span>Your search was invalid. Please try again.</span>
 							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-							<?php echo get_search_form(); echo '<script>document.getElementById("s") && document.getElementById("s").focus();</script>' . PHP_EOL; ?>
+							<?php echo get_search_form(); ?>
 						</div><!--/columns-->
 					</div><!--/row-->
 					<hr class="zero" />

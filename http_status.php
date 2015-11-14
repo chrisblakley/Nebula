@@ -187,7 +187,7 @@ get_header(); ?>
 				<h1><?php echo $http_type; ?> <?php echo $GLOBALS['http']; ?>: <?php echo $http_name; ?></h1>
 				<p><?php echo $http_description; ?></p>
 
-				<?php get_search_form(); echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>' . PHP_EOL; ?>
+				<?php get_search_form(); ?>
 			</article>
 		</div><!--/columns-->
 

@@ -27,7 +27,6 @@ get_header(); ?>
 </div><!--/heroslidercon-->
 
 <div class="container fullcontentcon">
-
 	<div class="row">
 		<div class="eleven columns">
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>

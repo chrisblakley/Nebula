@@ -40,6 +40,7 @@ jQuery(document).on('ready', function(){
 	initHeadroom();
 
 	//Search
+	jQuery('#post-0 #s, .headerdrawer #s').focus(); //Automatically focus on specific search inputs
 	mobileSearchPlaceholder();
 	autocompleteSearch();
 	advancedSearchTriggers();
@@ -55,6 +56,7 @@ jQuery(document).on('ready', function(){
 
 	//Helpers
 	addHelperClasses();
+	errorMitigation();
 	powerFooterWidthDist();
 	nebulaEqualize();
 	nebulaScrollTo();
@@ -2050,6 +2052,25 @@ function addHelperClasses(){
 	});
 }
 
+//Try to fix some errors automatically
+function errorMitigation(){
+	//Try to fall back to .png on .svg errors. Else log the broken image.
+	jQuery('img').on('error', function(){
+		thisImage = jQuery(this);
+		imagePath = thisImage.attr('src');
+		if ( imagePath.split('.').pop() == 'svg' ){
+			fallbackPNG = imagePath.replace('.svg', '.png');
+			jQuery.get(fallbackPNG).done(function(){
+				thisImage.prop('src', fallbackPNG);
+			}).fail(function() {
+				ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
+			});
+		} else {
+			ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
+		}
+	});
+}
+
 //Column height equalizer
 function nebulaEqualize(){
 	jQuery('.row.equalize').each(function(){
@@ -2839,8 +2860,12 @@ function initHeadroom(){
 		headerElement = thisPage.body; //@TODO: If this fallback happens, the padding would need to move to the top.
 	}
 
-	if ( typeof headroom !== 'undefined' ){
+	if ( typeof headroom !== 'undefined' || !window.matchMedia("(min-width: 767px)").matches ){ //If headroom needs to be re-init or if tablet or mobile
 		headroom.destroy();
+
+		if ( !window.matchMedia("(min-width: 767px)").matches ){
+			return false;
+		}
 	}
 
 	var clonedFixedElement = fixedElement.clone().addClass('headroom--not-top').css({position: "absolute", left: "-10000px"}).appendTo('body'); //See the future: Get final height of fixedElement with unknown CSS properties
@@ -2849,7 +2874,7 @@ function initHeadroom(){
 
 	window.headroom = new Headroom(fixedElement[0], {
 		offset: fixedElement.offset().top, //Vertical offset in px before element is first unpinned
-		tolerance: 3, //Scroll tolerance in px before state changes
+		tolerance: 2, //Scroll tolerance in px before state changes
 		classes: {
 			initial: "headroom", //When element is initialised
 			pinned: "headroom--pinned", //When scrolling up
@@ -2858,25 +2883,25 @@ function initHeadroom(){
 			notTop: "headroom--not-top" //When below offset
 		},
 		onPin: function(){ //Callback when pinned, 'this' is headroom object
-			thisPage.document.removeClass('headroom--unpinned headroom--top headroom--not-top').addClass('headroom--pinned');
+			thisPage.document.removeClass('headroom--unpinned').addClass('headroom--pinned');
 		},
 		onUnpin: function(){ //Callback when unpinned, 'this' is headroom object
-			thisPage.document.removeClass('headroom--pinned headroom--top headroom--not-top').addClass('headroom--unpinned');
+			thisPage.document.removeClass('headroom--pinned').addClass('headroom--unpinned');
 		},
 		onTop: function(){ //Callback when above offset, 'this' is headroom object
-			thisPage.document.removeClass('headroom--pinned headroom--unpinned headroom--not-top').addClass('headroom--top');
+			thisPage.document.removeClass('headroom--not-top').addClass('headroom--top');
 			headerElement.css('padding-bottom', '0');
 		},
 		onNotTop: function(){ //Callback when below offset, 'this' is headroom object
-			thisPage.document.removeClass('headroom--pinned headroom--unpinned headroom--top').addClass('headroom--not-top');
+			thisPage.document.removeClass('headroom--top').addClass('headroom--not-top');
 			headerElement.css('padding-bottom', fixedElement.outerHeight()).stop().animate({paddingBottom: finalBufferSize}, 400, "linear"); //Add padding buffer to header and animate (slightly faster than CSS) to finalBufferSize
 		},
 	});
 	headroom.init();
 
-	//Custom Nebula extension for .headroom--below
+	//Custom Nebula extension for .headroom--below //@TODO "Nebula" 0: Could this be moved into onNotTop?
 	jQuery(window).on('scroll', function(){
-		var distance = jQuery(document).scrollTop();
+		var distance = thisPage.document.scrollTop();
 		if ( jQuery(document).scrollTop() > headerElement.offset().top+headerElement.outerHeight() ){
 			fixedElement.addClass('headroom--below');
 		} else if ( fixedElement.hasClass('headroom--below') ){

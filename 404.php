@@ -26,7 +26,7 @@ get_header(); ?>
 				<h1>Not Found</h1>
 				<p>The page you requested could not be found.</p>
 
-				<?php get_search_form(); echo '<script>document.getElementById(\'s\') && document.getElementById(\'s\').focus();</script>' . PHP_EOL; ?>
+				<?php get_search_form(); ?>
 			</article>
 		</div><!--/columns-->
 
