@@ -11,18 +11,32 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="row">
-	<div class="sixteen columns">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/columns-->
-</div><!--/row-->
+<section id="bigheadingcon">
+	<div class="container">
+		<div class="row">
+			<div class="sixteen columns">
+				<h1><i class="fa fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
+				<?php if ( 1==2 ): //@TODO "Nebula" 0: pull the category description if it exists ?>
+				<p>Category description from WordPress here...</p>
+				<?php endif; ?>
+			</div><!--/columns-->
+		</div><!--/row-->
+	</div><!--/container-->
+</section>
+
+<div class="breadcrumbbar">
+	<div class="row">
+		<div class="sixteen columns">
+			<?php the_breadcrumb(); ?>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<hr />
+</div><!--/container-->
 
 <div class="container fullcontentcon">
 	<div class="row">
 
 		<div class="eleven columns">
-			<h1><i class="archiveicon fa fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 			<?php
 				$category_description = category_description();
 				if ( !empty($category_description) ){

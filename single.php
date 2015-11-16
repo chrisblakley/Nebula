@@ -58,16 +58,6 @@ get_header(); ?>
 								</div><!--/columns-->
 							<?php endif; ?>
 						</div><!--/row-->
-
-						<?php if ( current_user_can('manage_options') ): ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<hr />
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr />
-								</div>
-							</div>
-						<?php endif; ?>
 					</div><!-- .entry-content -->
 				</article><!-- #post-## -->
 

@@ -62,16 +62,6 @@
 
 			<footer class="entry-utility">
 				<a href="<?php echo get_term_link('gallery', 'category'); ?>">More Galleries</a>
-
-				<?php if ( current_user_can('manage_options') ): ?>
-					<div class="container entry-manage">
-						<div class="row">
-							<hr />
-							<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-							<hr />
-						</div>
-					</div>
-				<?php endif; ?>
 			</footer><!-- .entry-utility -->
 		</article><!-- #post-## -->
 	<?php else : //Display all other posts (Non-Gallery) ?>

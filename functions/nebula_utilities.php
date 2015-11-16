@@ -1148,6 +1148,45 @@ function nebula_sass_manual_trigger(){
 	}
 }
 
+//Pull certain colors from .../mixins/_variables.scss
+function nebula_sass_color($color='primary'){
+	$scss_variables = get_transient('nebula_scss_variables');
+	if ( empty($menus) || is_debug() ){
+		$variables_file = get_template_directory() . '/stylesheets/scss/partials/_variables.scss';
+		if ( !file_exists($variables_file) ){
+			return false;
+		}
+		$scss_variables = file_get_contents($variables_file);
+		set_transient('nebula_scss_variables', $scss_variables, 60*60); //1 hour cache
+	}
+
+	switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){
+		case 'primary':
+		case 'primarycolor':
+		case 'first':
+		case 'main':
+		case 'brand':
+			$color_search = 'primary_color';
+			break;
+		case 'secondary':
+		case 'secondarycolor':
+		case 'second':
+			$color_search = 'secondary_color';
+			break;
+		case 'tertiary':
+		case 'tertiarycolor':
+		case 'third':
+			$color_search = 'tertiary_color';
+			break;
+		default:
+			return false;
+			break;
+	}
+
+	preg_match('/\$' . $color_search . ': (\S*)(;| !default;)/', $scss_variables, $matches);
+	return $matches[1];
+}
+
 
 /*==========================
  User Agent Parsing Functions/Helpers

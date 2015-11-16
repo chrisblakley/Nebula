@@ -222,6 +222,17 @@ function register_nebula_options(){
 		'nebula_cd_weather' => '',
 		'nebula_cd_temperature' => '',
 		'nebula_cd_publishyear' => '',
+		'nebula_cm_notableformviews' => '',
+		'nebula_cm_notableformsubmissions' => '',
+		'nebula_cm_notabledownloads' => '',
+		'nebula_cm_engagedreaders' => '',
+		'nebula_cm_videoplaytime' => '',
+		'nebula_cm_videostarts' => '',
+		'nebula_cm_videocompletions' => '',
+		'nebula_cm_pagesuggestions' => '',
+		'nebula_cm_pagesuggestionsaccepted' => '',
+		'nebula_cm_autocompletesearches' => '',
+		'nebula_cm_autocompletesearchclicks' => '',
 
 		//APIs Tab
 		'nebula_google_font_family' => '',
@@ -1114,6 +1125,122 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
+
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h2>Custom Metrics</h2>
+						<p>These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in Calculated Metrics formulas.</p>
+					</td>
+		        </tr>
+
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Conversion Data</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Notable Downloads*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_notabledownloads" value="<?php echo get_option('nebula_cm_notabledownloads'); ?>" />
+						<p class="helper"><small>Tracks when a user downloads a notable file. Note: To use, add the class "notable" to either the &lt;a&gt; or its parent. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Notable Form Views*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_notableformviews" value="<?php echo get_option('nebula_cm_notableformviews'); ?>" />
+						<p class="helper"><small>Tracks when a user views a page containing a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or the submit input/button. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Notable Form Submissions*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_notableformsubmissions" value="<?php echo get_option('nebula_cm_notableformsubmissions'); ?>" />
+						<p class="helper"><small>Tracks when a user submits a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or the submit input/button. Also note that this metric can not account for validation errors. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Engaged Readers&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_engagedreaders" value="<?php echo get_option('nebula_cm_engagedreaders'); ?>" />
+						<p class="helper"><small>Counts when a user has completed reading an article (and is not determined to be a "scanner"). <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Video Data</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Video Starts&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_videostarts" value="<?php echo get_option('nebula_cm_videostarts'); ?>" />
+						<p class="helper"><small>Tracks when a user begins playing a video. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Video Play Time&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_videoplaytime" value="<?php echo get_option('nebula_cm_videoplaytime'); ?>" />
+						<p class="helper"><small>Tracks playing duration when a user pauses or completes a video. <strong>Scope: Hit, Format: Time</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Video Completions&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_videocompletions" value="<?php echo get_option('nebula_cm_videocompletions'); ?>" />
+						<p class="helper"><small>Tracks when a user completes playing a video. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Miscellaneous</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Autocomplete Searches&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_autocompletesearches" value="<?php echo get_option('nebula_cm_autocompletesearches'); ?>" />
+						<p class="helper"><small>Tracks when a set of autocomplete search results is returned to the user (count is the search, not the result quantity). <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Autocomplete Search Clicks&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_autocompletesearchclicks" value="<?php echo get_option('nebula_cm_autocompletesearchclicks'); ?>" />
+						<p class="helper"><small>Tracks when a user clicks an autocomplete search result. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Page Suggestions&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_pagesuggestions" value="<?php echo get_option('nebula_cm_pagesuggestions'); ?>" />
+						<p class="helper"><small>Tracks when a page is suggested to the user. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Page Suggestions Accepted&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_pagesuggestionsaccepted" value="<?php echo get_option('nebula_cm_pagesuggestionsaccepted'); ?>" />
+						<p class="helper"><small>Tracks when a user clicks a page suggestion. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
 		    </table>
 
 
@@ -1171,7 +1298,6 @@ function nebula_options_page(){
 						App ID: <input type="text" name="nebula_facebook_app_id" value="<?php echo get_option('nebula_facebook_app_id'); ?>" placeholder="000000000000000" style="width: 153px;"/><br />
 						App Secret: <input type="text" name="nebula_facebook_app_secret" value="<?php echo get_option('nebula_facebook_app_secret'); ?>" placeholder="00000000000000000000000000000000" style="width: 311px;"/><br />
 						Access Token: <input type="text" name="nebula_facebook_access_token" value="<?php echo get_option('nebula_facebook_access_token'); ?>" placeholder="000000000000000|000000000000000000000000000" style="width: 295px;"/><br />
-						Custom Audience Pixel ID: <input type="text" name="nebula_facebook_custom_audience_pixel_id" value="<?php echo get_option('nebula_facebook_custom_audience_pixel_id'); ?>" placeholder="000000000000000" style="width: 295px;"/><br />
 						<p class="helper"><small>The App ID of the associated Facebook page/app. This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></small></p>
 					</td>
 		        </tr>
@@ -1299,35 +1425,35 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
-		        	<th scope="row">Google Analytics URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google Analytics&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_ga_url" value="<?php echo get_option('nebula_ga_url'); ?>" placeholder="http://www.google.com/analytics/..." style="width: 392px;" />
 						<p class="helper"><small>Link directly to this project's <a href="http://www.google.com/analytics/" target="_blank">Google Analytics</a> report.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
-		        	<th scope="row">Google Webmaster Tools URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google Webmaster Tools&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_webmaster_tools_url" value="<?php echo get_option('nebula_google_webmaster_tools_url'); ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/webmasters/tools/" target="_blank">Google Webmaster</a> Tools.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
-		        	<th scope="row">Google AdSense URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google AdSense&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_adsense_url" value="<?php echo get_option('nebula_google_adsense_url'); ?>" placeholder="https://www.google.com/adsense/app" style="width: 392px;" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
-		        	<th scope="row">Google AdWords URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google AdWords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_google_adwords_url" value="<?php echo get_option('nebula_google_adwords_url'); ?>" placeholder="https://www.google.com/adwords/" style="width: 392px;" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adwords/" target="_blank">Google AdWords</a> account.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
-		        	<th scope="row">Mention URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Mention&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_mention_url" value="<?php echo get_option('nebula_mention_url'); ?>" placeholder="https://web.mention.com/" style="width: 392px;" />
 						<p class="helper"><small>Direct link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account.</small></p>

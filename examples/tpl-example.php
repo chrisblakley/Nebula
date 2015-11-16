@@ -529,27 +529,14 @@ get_header(); ?>
 							include_once('includes/google_analytics_utm_gif.php');
 						} ?>
 
-						<?php if ( current_user_can('manage_options') ): ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<div class="sixteen columns">
-										<hr />
-										<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-										<hr />
-									</div><!--/columns-->
-								</div>
+						<div class="container entry-manage">
+							<div class="row">
+								<div class="sixteen columns">
+									<hr />
+									<?php nebula_manage('modified'); ?>
+								</div><!--/columns-->
 							</div>
-						<?php else : ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<div class="sixteen columns">
-										<hr />
-										<?php nebula_manage('modified'); ?>
-										<hr />
-									</div><!--/columns-->
-								</div>
-							</div>
-						<?php endif; ?>
+						</div>
 
 					</div><!--/entry-content-->
 

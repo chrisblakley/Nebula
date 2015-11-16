@@ -4,7 +4,7 @@
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
- Version: 3.4.13
+ Version: 3.4.15
  License: GNU General Public License v2.0
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -287,9 +287,9 @@
 
  a.twitter:hover,a.twitter.hover { color:#1689e0; }
 
- a.google_plus { color:#d73d32; }
+ a.googleplus { color:#d73d32; }
 
- a.google_plus:hover,a.google_plus.hover { color:#9e271f; }
+ a.googleplus:hover,a.googleplus.hover { color:#9e271f; }
 
  a.linkedin { color:#0077b5; }
 
@@ -432,6 +432,8 @@
  #wp_search_submit:hover,#wp_search_submit.hover { color:#000 !important; }
 
  #searchsubmit { /* padding: 2px 5px !important; */ background:#0098d7; border:0; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+
+ #bigheadingcon #searchsubmit { background:#95d600; }
 
  #searchsubmit:hover,#searchsubmit.hover { background:#95d600; }
 
@@ -731,7 +733,7 @@
 
  #logonavcon img { height:90px; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- #logonavcon.headroom--not-top { position:fixed; top:0; left:0; width:100%; padding-top:0; background:#f6f6f6; background:rgba(246, 246, 246, 0.98); box-shadow:0px 0px 20px rgba(0, 0, 0, 0.1); z-index:9999; }
+ #logonavcon.headroom--not-top { position:fixed; top:0; left:0; width:100%; padding-top:0; background:#f6f6f6; background:rgba(246, 246, 246, 0.97); box-shadow:0px 0px 20px rgba(0, 0, 0, 0.1); z-index:9999; }
 
  #logonavcon.headroom--not-top img { height:65px; }
 
@@ -797,7 +799,7 @@
 
  }
 
- #logonavcon #primarynav ul li.menu-item:hover ul.sub-menu,#logonavcon #primarynav ul li.menu-item.hover ul.sub-menu { left:10px; top:30px; opacity:1; }
+ #logonavcon #primarynav ul li.menu-item:hover ul.sub-menu,#logonavcon #primarynav ul li.menu-item.hover ul.sub-menu { left:10px; top:25px; opacity:1; }
 
  @media only screen and (max-width: 767px)  { #logonavcon #primarynav ul li.menu-item:hover,#logonavcon #primarynav ul li.menu-item.hover { left:auto; top:0; display:block; width:100% !important; }
 
@@ -874,8 +876,6 @@
  @media only screen and (max-width: 376px)  { .fullcontentcon { margin-top:15px; }
 
  }
-
- .archiveicon { color:#999; }
 
  .row.multi-column-query { margin-bottom:30px; }
 
@@ -1329,4 +1329,4 @@
  }
 
 
-/* Processed on Friday, November 13, 2015 at 9:05am */
+/* Processed on Sunday, November 15, 2015 at 9:14pm */

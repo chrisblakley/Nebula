@@ -11,12 +11,24 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="row">
-	<div class="sixteen columns">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/columns-->
-</div><!--/row-->
+<section id="bigheadingcon">
+	<div class="container">
+		<div class="row">
+			<div class="sixteen columns">
+				<h1 class="entry-title"><?php the_title(); ?></h1>
+			</div><!--/columns-->
+		</div><!--/row-->
+	</div><!--/container-->
+</section>
+
+<div class="breadcrumbbar">
+	<div class="row">
+		<div class="sixteen columns">
+			<?php the_breadcrumb(); ?>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<hr />
+</div><!--/container-->
 
 <div class="container fullcontentcon">
 	<div class="row">
@@ -28,24 +40,12 @@ get_header(); ?>
 						<?php the_post_thumbnail(); ?>
 					<?php endif; ?>
 
-					<h1 class="entry-title"><?php the_title(); ?></h1>
-
 					<div class="entry-meta">
 						<span class="nebulasocialcon"><?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?></span>
 					</div>
 
 					<div class="entry-content">
 						<?php the_content(); ?>
-
-						<?php if ( current_user_can('manage_options') ): ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<hr />
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr />
-								</div>
-							</div>
-						<?php endif; ?>
 					</div><!-- .entry-content -->
 				</article><!-- #post-## -->
 

@@ -16,14 +16,26 @@ if ( !nebula_is_option_enabled('authorbios') ){
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="row">
-	<div class="sixteen columns">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/columns-->
-</div><!--/row-->
+<section id="bigheadingcon">
+	<div class="container">
+		<div class="row">
+			<div class="sixteen columns">
+				<h1 class="articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
+			</div><!--/columns-->
+		</div><!--/row-->
+	</div><!--/container-->
+</section>
 
-<?php if ( have_posts() ) { the_post(); } //Queue the first post then reset it before the loop. ?>
+<div class="breadcrumbbar">
+	<div class="row">
+		<div class="sixteen columns">
+			<?php the_breadcrumb(); ?>
+		</div><!--/columns-->
+	</div><!--/row-->
+	<hr />
+</div><!--/container-->
+
+<?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">
 	<div class="row">
 	<?php if ( get_the_author_meta('headshot_url') ): ?>
@@ -37,7 +49,7 @@ get_header(); ?>
 		<div class="sixteen columns">
 	<?php endif; ?>
 
-			<h1 class="author-name">
+			<h2 class="author-name">
 				<?php if ( get_the_author_meta('user_url') ): ?>
 					<a href="<?php echo esc_url(get_the_author_meta('user_url')); ?>" target="_blank">
 				<?php endif; ?>
@@ -45,7 +57,7 @@ get_header(); ?>
 				<?php if ( get_the_author_meta('user_url') ): ?>
 					</a>
 				<?php endif; ?>
-			</h1>
+			</h2>
 			<?php if ( get_the_author_meta('userlocation') ): ?>
 				<span class="author-location"><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps?q=<?php echo urlencode(str_replace(',', '', get_the_author_meta('userlocation'))); ?>" target="_blank"><?php echo get_the_author_meta('userlocation'); ?></a></span>
 			<?php endif; ?>
@@ -121,14 +133,10 @@ get_header(); ?>
 <div class="container fullcontentcon">
 	<div class="row">
 		<div class="eleven columns">
-
-			<h2 class="articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h2>
-
 			<?php
 				rewind_posts();
 				get_template_part('loop', 'author');
 			?>
-
 		</div><!--/columns-->
 
 		<div class="four columns push_one">

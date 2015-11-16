@@ -19,6 +19,9 @@
 		<meta name="MobileOptimized" content="320" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta class="theme-color" name="theme-color" content="<?php echo nebula_sass_color('primary'); ?>">
+		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula_sass_color('primary'); ?>">
+		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula_sass_color('primary'); ?>">
 
 		<link rel="manifest" href="<?php echo get_template_directory_uri() . $GLOBALS['manifest_json']; ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />

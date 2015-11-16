@@ -33,16 +33,6 @@ get_header(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<div class="entry-content">
 						<?php the_content(); ?>
-
-						<?php if ( current_user_can('manage_options') ): ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<hr />
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr />
-								</div>
-							</div>
-						<?php endif; ?>
 					</div><!-- .entry-content -->
 				</article><!-- #post-## -->
 			<?php endwhile; ?>

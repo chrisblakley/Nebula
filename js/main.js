@@ -7,7 +7,7 @@ jQuery.noConflict();
 jQuery(document).on('ready', function(){
 	getQueryStrings();
 	if ( get('killall') || get('kill') || get('die') ){
-		throw new Error('(Manually terminated inject.js)');
+		throw new Error('(Manually terminated main.js)');
 	} else if ( get('layout') ){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
@@ -21,7 +21,7 @@ jQuery(document).on('ready', function(){
     }
 
 	//Detection
-	homescreenDetection();
+	//homescreenDetection();
 	iframeDetection();
 
 	//Social
@@ -40,7 +40,7 @@ jQuery(document).on('ready', function(){
 	initHeadroom();
 
 	//Search
-	jQuery('#post-0 #s, .headerdrawer #s').focus(); //Automatically focus on specific search inputs
+	wpSearchInput();
 	mobileSearchPlaceholder();
 	autocompleteSearch();
 	advancedSearchTriggers();
@@ -165,13 +165,15 @@ function iframeDetection(){
 }
 
 //Detect if loaded from the homescreen ("installed" as an app)
+/*
 function homescreenDetection(){
 	if ( navigator.standalone || get('hs') ){
-		//alert('loaded from hs'); @TODO "Nebula" 0: Query string is not working, so this detection method doesn't work.
+		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string is not working, so this detection method doesn't work.
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
 	}
 }
+*/
 
 //Create an object of the viewport dimensions
 function updateViewportDimensions(){
@@ -576,6 +578,11 @@ function gaEventTracking(){
 		if ( typeof fbq == 'function' ){ fbq('track', 'ViewContent'); }
 	});
 
+	thisPage.document.on('mousedown touch tap', ".notable a, a.notable", function(e){
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomMetrics['notableDownload'], 1);
+	});
+
 	//Contact Form Submissions
 	jQuery('.wpcf7-form *').on('click touch tap focus', function(){
 		nebulaTimer('wpcf7-form', 'start');
@@ -587,6 +594,13 @@ function gaEventTracking(){
 		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.');
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer('wpcf7-form', 'end')), 'Initial form focus until submit');
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
+	});
+
+	if ( jQuery('.notable-form').is('*') ){
+		ga('set', gaCustomMetrics['notableFormViews'], 1);
+	}
+	thisPage.document.on('mousedown touch tap', "input.notable-form, .notable-form input[type='submit'], .notable-form input[type='button'], .notable-form button", function(e){
+		ga('set', gaCustomMetrics['notableFormSubmissions'], 1); //Note: This metric can not account for form validation errors
 	});
 
 	//Generic Interal Search Tracking
@@ -710,7 +724,6 @@ function gaEventTracking(){
 			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('send', 'event', 'Print', 'Print');
-			console.log('old print intent...');
 		}
 	};
 	if ( window.matchMedia ){
@@ -725,6 +738,12 @@ function gaEventTracking(){
 	}
 	window.onafterprint = afterPrint;
 
+	//Detect clicks on pinned header
+	if ( headroom.classes.pinned && headroom.classes.notTop ){
+		jQuery(document).on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
+			ga('send', 'event', 'Pinned Header', 'Click', 'Used pinned header (after scrolling) to navigate');
+		});
+	}
 }
 
 //Detect scroll depth for engagement and more accurate bounce rate
@@ -789,6 +808,7 @@ function scrollDepth(){
 					} else if ( readTime < 60 ){
 						ga('set', gaCustomDimensions['scrollDepth'], 'Scanner');
 					} else {
+						ga('set', gaCustomMetrics['engagedReaders'], 1);
 						ga('set', gaCustomDimensions['scrollDepth'], 'Reader');
 					}
 				}
@@ -905,6 +925,7 @@ function autocompleteSearch(){
 							data: request,
 						},
 						success: function(data){
+							ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 							ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 							if ( data ){
 								jQuery.each(data, function(index, value){
@@ -936,6 +957,7 @@ function autocompleteSearch(){
 					event.preventDefault(); //Prevent input value from changing.
 				},
 				select: function(event, ui){
+					ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
 					ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
 		            ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From initial search until navigation');
@@ -1287,6 +1309,18 @@ function postSearch(posts){
 	return tempFilteringObject;
 }
 
+function wpSearchInput(){
+	jQuery('#post-0 #s, .headerdrawer #s, .search-results #s').focus(); //Automatically focus on specific search inputs
+
+	//Set search value as placeholder
+	var searchVal = get('s') || jQuery('#s').val();
+	if ( searchVal ){
+		jQuery('#s').attr('placeholder', searchVal);
+		jQuery('.nebula-search').attr('placeholder', searchVal);
+	}
+}
+
+
 //Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
 	if ( !thisPage.html.hasClass('lte-ie8') ){
@@ -1358,7 +1392,7 @@ function searchTermHighlighter(){
 
 //Emphasize the search Terms
 function emphasizeSearchTerms(){
-	var theSearchTerm = document.URL.split('?s=')[1];
+	var theSearchTerm = get('s');
 	if ( typeof theSearchTerm !== 'undefined' ){
 		var origBGColor = jQuery('.searchresultword').css('background-color');
 		jQuery('.searchresultword').each(function(i){
@@ -1379,7 +1413,7 @@ function emphasizeSearchTerms(){
 
 //Single search result redirection drawer
 function singleResultDrawer(){
-	var theSearchTerm = document.URL.split('?rs=')[1];
+	var theSearchTerm = get('rs');
 	if ( typeof theSearchTerm !== 'undefined' ){
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //@TODO "Nebula" 0: Combine into a single regex replace.
 		jQuery('#searchform input#s').val(theSearchTerm);
@@ -1409,6 +1443,7 @@ function pageSuggestion(){
 			thisPage.document.on('mousedown touch tap', 'a.suggestion', function(e){
 				eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 				ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+				ga('set', gaCustomMetrics['pageSuggestionsAccepted'], 1);
 				var suggestedPage = jQuery(this).text();
 				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage);
@@ -1431,6 +1466,7 @@ function trySearch(phrase){
 	jQuery.getJSON(API_URL, queryParams, function(response){
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		if ( response.items && response.items.length ){
+			ga('set', gaCustomMetrics['pageSuggestions'], 1);
 			ga('send', 'event', 'Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location, {'nonInteraction': 1});
 			showSuggestedPage(response.items[0].title, response.items[0].link);
 		} else {
@@ -2501,6 +2537,7 @@ function onPlayerReady(e){
 function onPlayerStateChange(e){
 	var videoTitle = e['target']['B']['videoData']['title'];
     if ( e.data == YT.PlayerState.PLAYING ){
+	    ga('set', gaCustomMetrics['videoStarts'], 1);
         ga('set', gaCustomDimensions['videoWatcher'], 'Started');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Play', videoTitle);
@@ -2508,13 +2545,15 @@ function onPlayerStateChange(e){
         pauseFlag = true;
     }
     if ( e.data == YT.PlayerState.ENDED ){
+        ga('set', gaCustomMetrics['videoCompletions'], 1);
+        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('youtube_' + videoTitle, 'end')));
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
         ga('send', 'timing', 'Youtube', 'Finished', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
     } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
+        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('youtube_' + videoTitle, 'end')));
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-        //@TODO "Nebula" 0: send metric gaCustomMetrics['videoPercentage'] here.
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Pause', videoTitle);
         ga('send', 'timing', 'Youtube', 'Paused', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
@@ -2551,6 +2590,7 @@ function vimeoControls(){
 
 	function onPlay(id){
 	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('set', gaCustomMetrics['videoStarts'], 1);
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 	    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
@@ -2560,6 +2600,7 @@ function vimeoControls(){
 	function onPause(id){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
+	    ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')));
 	    //@TODO "Nebula" 0: send metric gaCustomMetrics['videoPercentage'] here.
 	    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
@@ -2573,6 +2614,8 @@ function vimeoControls(){
 
 	function onFinish(id){
 		var videoTitle = id.replace(/-/g, ' ');
+		ga('set', gaCustomMetrics['videoCompletions'], 1);
+		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')));
 		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
@@ -2874,7 +2917,7 @@ function initHeadroom(){
 
 	window.headroom = new Headroom(fixedElement[0], {
 		offset: fixedElement.offset().top, //Vertical offset in px before element is first unpinned
-		tolerance: 2, //Scroll tolerance in px before state changes
+		tolerance: 3, //Scroll tolerance in px before state changes
 		classes: {
 			initial: "headroom", //When element is initialised
 			pinned: "headroom--pinned", //When scrolling up
