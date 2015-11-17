@@ -20,10 +20,6 @@ jQuery(document).on('ready', function(){
         body: jQuery('body')
     }
 
-	//Detection
-	//homescreenDetection();
-	iframeDetection();
-
 	//Social
 	facebookSDK();
 	facebookConnect();
@@ -62,6 +58,7 @@ jQuery(document).on('ready', function(){
 	nebulaScrollTo();
 
 	//Interaction
+	notableDetections();
 	gaEventTracking();
 	scrollDepth();
 	pageVisibility();
@@ -147,8 +144,9 @@ jQuery(window).on('resize', function(){
  Detection Functions
  ===========================*/
 
-//Detect if loaded in an iframe
-function iframeDetection(){
+//Detect notable aspects of the way the site was loaded.
+function notableDetections(){
+	//Detect if loaded in an iframe
 	if ( window != window.parent ){
 		thisPage.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
@@ -162,18 +160,14 @@ function iframeDetection(){
 			}
 		});
 	}
-}
 
-//Detect if loaded from the homescreen ("installed" as an app)
-/*
-function homescreenDetection(){
+	//Detect if loaded from the homescreen ("installed" as an app)
 	if ( navigator.standalone || get('hs') ){
 		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string is not working, so this detection method doesn't work.
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
 	}
 }
-*/
 
 //Create an object of the viewport dimensions
 function updateViewportDimensions(){
@@ -578,9 +572,17 @@ function gaEventTracking(){
 		if ( typeof fbq == 'function' ){ fbq('track', 'ViewContent'); }
 	});
 
+	//Notable Downloads
 	thisPage.document.on('mousedown touch tap', ".notable a, a.notable", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomMetrics['notableDownload'], 1);
+		var linkText = jQuery(this).text();
+		var fileName = jQuery(this).attr('href').substr(fileName.lastIndexOf("/")+1);
+		if ( linkText == '' || linkText == 'Download' ){
+			ga('send', 'event', 'Notable Download', 'File: ' + fileName);
+		} else {
+			ga('send', 'event', 'Notable Download', 'Text: ' + linkText);
+		}
 	});
 
 	//Contact Form Submissions
@@ -589,18 +591,15 @@ function gaEventTracking(){
 	});
 	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to use the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
 	thisPage.document.on('submit', '.wpcf7-form', function(){
+		if ( jQuery(this).hasClass('.notable-form') || jQuery(this).find('.notable-form').length ){
+			ga('set', gaCustomMetrics['notableFormSubmissions'], 1); //Note: This metric can not account for form validation errors
+		}
+
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.');
+		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.'); //This event is required for the notable form metric!
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer('wpcf7-form', 'end')), 'Initial form focus until submit');
 		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
-	});
-
-	if ( jQuery('.notable-form').is('*') ){
-		ga('set', gaCustomMetrics['notableFormViews'], 1);
-	}
-	thisPage.document.on('mousedown touch tap', "input.notable-form, .notable-form input[type='submit'], .notable-form input[type='button'], .notable-form button", function(e){
-		ga('set', gaCustomMetrics['notableFormSubmissions'], 1); //Note: This metric can not account for form validation errors
 	});
 
 	//Generic Interal Search Tracking

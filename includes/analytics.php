@@ -195,6 +195,10 @@
 			}
 		?>
 
+		if ( jQuery('.notable-form').is('*') ){
+			ga('set', gaCustomMetrics['notableFormViews'], 1);
+		}
+
 		ga('send', 'pageview'); //Sends pageview along with set dimensions.
 
 		//Get time as ISO string with timezone offset
@@ -209,6 +213,7 @@
 			return now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + 'T' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + dif + pad(tzo/60) + ':' + pad(tzo%60);
 		}
 	</script>
+	<noscript><img src="<?php echo ga_UTM_gif(); //Track users who disable JavaScript. ?>" width="1" height="1" style="display: none;" /></noscript>
 <?php endif; ?>
 
 

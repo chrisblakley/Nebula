@@ -40,8 +40,6 @@
 			<div id="header">
 				<div id="fb-root"></div>
 
-				<noscript><img src="<?php echo ga_UTM_gif(); //Track users who disable JavaScript. ?>" width="1" height="1" style="display: none;" /></noscript>
-
 				<?php do_action('nebula_body_open'); ?>
 
 				<div id="mobilebarcon">
