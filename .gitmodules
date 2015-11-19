@@ -1,0 +1,3 @@
+[submodule "examples/Nebula-Child"]
+	path = examples/Nebula-Child
+	url = git://github.com/chrisblakley/Nebula-Child.git
