@@ -236,6 +236,15 @@ if ( nebula_option('nebula_admin_notices') ){
 					echo '<div class="nebula-admin-notice error"><p>You do not have permissions to manually process all SCSS files.</p></div>';
 				}
 			}
+
+			//Check if the parent theme template is correctly referenced
+			if ( is_child_theme() ){
+				$active_theme = wp_get_theme();
+				if ( !file_exists(dirname(get_stylesheet_directory()) . '/' . $active_theme->get('Template')) ){
+					echo '<div class="nebula-admin-notice error"><p>A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em></p></div>';
+				}
+			}
+
 		}
 	}
 }
@@ -624,7 +633,13 @@ if ( nebula_option('nebula_dev_metabox') ){
 			$scss_last_processed = ( get_option('nebula_scss_last_processed') )? '<strong>' . date("F j, Y", get_option('nebula_scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", get_option('nebula_scss_last_processed')) . '</strong>' : '<strong>Never</strong>';
 			echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
 		echo '</ul>';
-		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory"><option value="theme">Theme</option><option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
+		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
+		if ( is_child_theme() ){
+			echo '<option value="parent">Parent Theme</option><option value="child">Child Theme</option>';
+		} else {
+			echo '<option value="theme">Theme</option>';
+		}
+		echo '<option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
 		echo '<div class="search_results"></div>';
 	}
 }
@@ -646,6 +661,10 @@ function search_theme_files(){
 
 	if ( $_POST['data'][0]['directory'] == 'theme' ){
 		$dirpath = get_template_directory();
+	} elseif ( $_POST['data'][0]['directory'] == 'parent' ){
+		$dirpath = get_template_directory();
+	} elseif ( $_POST['data'][0]['directory'] == 'child' ){
+		$dirpath = get_stylesheet_directory();
 	} elseif ( $_POST['data'][0]['directory'] == 'plugins' ){
 		$dirpath = WP_PLUGIN_DIR;
 	} elseif ( $_POST['data'][0]['directory'] == 'uploads' ){

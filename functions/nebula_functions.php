@@ -141,11 +141,13 @@ add_image_size('open_graph_large', 1200, 630, 1);
 add_image_size('open_graph_small', 600, 315, 1);
 
 //Determine if the author should be the Company Name or the specific author's name.
-function nebula_the_author($show_authors=1){
-	if ( !is_single() || $show_authors == 0 || !nebula_is_option_enabled('authorbios') ){
-		return get_option('nebula_site_owner', get_bloginfo('name'));
-	} else {
-		return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
+if ( !function_exists('nebula_the_author') ){
+	function nebula_the_author($show_authors=1){
+		if ( !is_single() || $show_authors == 0 || !nebula_is_option_enabled('authorbios') ){
+			return get_option('nebula_site_owner', get_bloginfo('name'));
+		} else {
+			return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
+		}
 	}
 }
 
@@ -360,99 +362,103 @@ function comment_author_cookie(){
 }
 
 //Print the PHG logo as text with or without hover animation.
-function pinckney_hugo_group($anim){ pinckneyhugogroup($anim); }
-function phg($anim){ pinckneyhugogroup($anim); }
-function pinckneyhugogroup($anim=false, $white=false){
-	if ( $anim ){
-		$anim = 'anim';
+if ( !function_exists('pinckneyhugogroup') ){
+	function pinckney_hugo_group($anim){ pinckneyhugogroup($anim); }
+	function phg($anim){ pinckneyhugogroup($anim); }
+	function pinckneyhugogroup($anim=false, $white=false){
+		if ( $anim ){
+			$anim = 'anim';
+		}
+		if ( $white ){
+			$white = 'anim';
+		}
+		echo '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
 	}
-	if ( $white ){
-		$white = 'anim';
-	}
-	echo '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
 }
 
 //Show different meta data information about the post. Typically used inside the loop.
 //Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
 //Example: nebula_meta('by');
-function nebula_meta($meta, $secondary=1){
-	if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
-		$the_day = '';
-		if ( $secondary ){ //Secondary here is if the day should be shown
-			$the_day = get_the_date('d') . '/';
-		}
-		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
-	} elseif ( $meta == 'author' || $meta == 'by' ){
-		if ( nebula_is_option_enabled('authorbios') ){
-			echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
-		}
-	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
-		if ( is_object_in_taxonomy(get_post_type(), 'category') ){
-			$post_categories = '<span class="posted-in post-categories"><i class="fa fa-bookmark"></i> ' . get_the_category_list(', ') . '</span>';
-		} else {
-			$post_categories = '';
-		}
-		echo $post_categories;
-	} elseif ( $meta == 'tags' || $meta == 'tag' ){
-		$tag_list = get_the_tag_list('', ', ');
-		if ( $tag_list ){
-			$tag_icon = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
-			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-' . $tag_icon . '"></i> ' . $tag_list . '</span>';
-		} else {
-			$post_tags = '';
-		}
-		echo $post_tags;
-	} elseif ( $meta == 'dimensions' || $meta == 'size' ){
-		if ( wp_attachment_is_image() ){
-			$metadata = wp_get_attachment_metadata();
-			echo '<span class="meta-dimensions"><i class="fa fa-expand"></i> <a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
-		}
-	} elseif ( $meta == 'exif' || $meta == 'camera' ){
-		$imgmeta = wp_get_attachment_metadata();
-	    if ( $imgmeta ){ //Check for Bad Data
-	        if ( $imgmeta['image_meta']['focal_length'] == 0 || $imgmeta['image_meta']['aperture'] == 0 || $imgmeta['image_meta']['shutter_speed'] == 0 || $imgmeta['image_meta']['iso'] == 0 ){
-	            $output = 'No valid EXIF data found';
-	        } else { //Convert the shutter speed retrieve from database to fraction
-	            if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
-	                if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ){
-	                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . " second";
-	                } else {
-	                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . " second";
-	                }
-	            } else {
-	                $pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
-	            }
-
-	            $output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']).'</span> <span class="day">'.date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
-	            $output .= $imgmeta['image_meta']['camera'] . ', ';
-	            $output .= $imgmeta['image_meta']['focal_length'] . 'mm' . ', ';
-	            $output .= '<span style="font-style:italic;font-family: Trebuchet MS,Candara,Georgia; text-transform:lowercase">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
-	            $output .= $pshutter . ', ';
-	            $output .= $imgmeta['image_meta']['iso'] .' ISO';
-	        }
-	    }else {
-	        $output = 'No EXIF data found';
-	    }
-		echo '<span class="meta-exif"><i class="fa fa-camera"></i> ' . $output . '</span>';
-	} elseif ( $meta == 'comments' || $meta == 'comment' ){
-		$comments_text = 'Comments';
-		if ( get_comments_number() == 0 ){
-			$comment_icon = 'fa-comment-o';
-			if ( $secondary ){ //Secondary here is if no comments should hide
-				$comment_show = '';
-			} else {
-				$comment_show = 'hidden';
+if ( !function_exists('nebula_meta') ){
+	function nebula_meta($meta, $secondary=1){
+		if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
+			$the_day = '';
+			if ( $secondary ){ //Secondary here is if the day should be shown
+				$the_day = get_the_date('d') . '/';
 			}
-		} elseif ( get_comments_number() == 1 ){
-			$comment_icon = 'fa-comment';
-			$comments_text = 'Comment';
-		} elseif ( get_comments_number() > 1 ){
-			$comment_icon = 'fa-comments';
+			echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		} elseif ( $meta == 'author' || $meta == 'by' ){
+			if ( nebula_is_option_enabled('authorbios') ){
+				echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
+			}
+		} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
+			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
+				$post_categories = '<span class="posted-in post-categories"><i class="fa fa-bookmark"></i> ' . get_the_category_list(', ') . '</span>';
+			} else {
+				$post_categories = '';
+			}
+			echo $post_categories;
+		} elseif ( $meta == 'tags' || $meta == 'tag' ){
+			$tag_list = get_the_tag_list('', ', ');
+			if ( $tag_list ){
+				$tag_icon = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
+				$post_tags = '<span class="posted-in post-tags"><i class="fa fa-' . $tag_icon . '"></i> ' . $tag_list . '</span>';
+			} else {
+				$post_tags = '';
+			}
+			echo $post_tags;
+		} elseif ( $meta == 'dimensions' || $meta == 'size' ){
+			if ( wp_attachment_is_image() ){
+				$metadata = wp_get_attachment_metadata();
+				echo '<span class="meta-dimensions"><i class="fa fa-expand"></i> <a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
+			}
+		} elseif ( $meta == 'exif' || $meta == 'camera' ){
+			$imgmeta = wp_get_attachment_metadata();
+		    if ( $imgmeta ){ //Check for Bad Data
+		        if ( $imgmeta['image_meta']['focal_length'] == 0 || $imgmeta['image_meta']['aperture'] == 0 || $imgmeta['image_meta']['shutter_speed'] == 0 || $imgmeta['image_meta']['iso'] == 0 ){
+		            $output = 'No valid EXIF data found';
+		        } else { //Convert the shutter speed retrieve from database to fraction
+		            if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
+		                if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ){
+		                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . " second";
+		                } else {
+		                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . " second";
+		                }
+		            } else {
+		                $pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
+		            }
+
+		            $output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']).'</span> <span class="day">'.date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
+		            $output .= $imgmeta['image_meta']['camera'] . ', ';
+		            $output .= $imgmeta['image_meta']['focal_length'] . 'mm' . ', ';
+		            $output .= '<span style="font-style:italic;font-family: Trebuchet MS,Candara,Georgia; text-transform:lowercase">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
+		            $output .= $pshutter . ', ';
+		            $output .= $imgmeta['image_meta']['iso'] .' ISO';
+		        }
+		    }else {
+		        $output = 'No EXIF data found';
+		    }
+			echo '<span class="meta-exif"><i class="fa fa-camera"></i> ' . $output . '</span>';
+		} elseif ( $meta == 'comments' || $meta == 'comment' ){
+			$comments_text = 'Comments';
+			if ( get_comments_number() == 0 ){
+				$comment_icon = 'fa-comment-o';
+				if ( $secondary ){ //Secondary here is if no comments should hide
+					$comment_show = '';
+				} else {
+					$comment_show = 'hidden';
+				}
+			} elseif ( get_comments_number() == 1 ){
+				$comment_icon = 'fa-comment';
+				$comments_text = 'Comment';
+			} elseif ( get_comments_number() > 1 ){
+				$comment_icon = 'fa-comments';
+			}
+			$postlink = ( is_single() )? '' : get_the_permalink();
+			echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
+		} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ){
+			nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
 		}
-		$postlink = ( is_single() )? '' : get_the_permalink();
-		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
-	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ){
-		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
 	}
 }
 
@@ -489,45 +495,47 @@ function get_exif($att){
 */
 
 //Display Social Buttons
-function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
-	if ( is_string($networks) ){ //if $networks is a string, create an array for the string.
-		$networks = array($networks);
-	} elseif ( is_int($networks) && ($networks == 1 || $networks == 0) ){ //If it is an integer of 1 or 0, then set it to $counts
-		$counts = $networks;
-		$networks = array('facebook', 'twitter', 'google+');
-	} elseif ( !is_array($networks) ){
-		$networks = array('facebook', 'twitter', 'google+');
+if ( !function_exists('nebula_social') ){
+	function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
+		if ( is_string($networks) ){ //if $networks is a string, create an array for the string.
+			$networks = array($networks);
+		} elseif ( is_int($networks) && ($networks == 1 || $networks == 0) ){ //If it is an integer of 1 or 0, then set it to $counts
+			$counts = $networks;
+			$networks = array('facebook', 'twitter', 'google+');
+		} elseif ( !is_array($networks) ){
+			$networks = array('facebook', 'twitter', 'google+');
+		}
+		$networks = array_map('strtolower', $networks); //Convert $networks to lower case for more flexible string matching later.
+
+		echo '<div class="sharing-links">';
+		foreach ( $networks as $network ){
+			//Facebook
+			if ( in_array($network, array('facebook', 'fb')) ){
+				nebula_facebook_share($counts);
+			}
+
+			//Twitter
+			if ( in_array($network, array('twitter')) ){
+				nebula_twitter_tweet($counts);
+			}
+
+			//Google+
+			if ( in_array($network, array('google_plus', 'google', 'googleplus', 'google+', 'g+', 'gplus', 'g_plus', 'google plus', 'google-plus', 'g-plus')) ){
+				nebula_google_plus($counts);
+			}
+
+			//LinkedIn
+			if ( in_array($network, array('linkedin', 'li', 'linked-in', 'linked_in')) ){
+				nebula_linkedin_share($counts);
+			}
+
+			//Pinterest
+			if ( in_array($network, array('pinterest', 'pin')) ){
+				nebula_pinterest_pin($counts);
+			}
+		}
+		echo '</div><!-- /sharing-links -->';
 	}
-	$networks = array_map('strtolower', $networks); //Convert $networks to lower case for more flexible string matching later.
-
-	echo '<div class="sharing-links">';
-	foreach ( $networks as $network ){
-		//Facebook
-		if ( in_array($network, array('facebook', 'fb')) ){
-			nebula_facebook_share($counts);
-		}
-
-		//Twitter
-		if ( in_array($network, array('twitter')) ){
-			nebula_twitter_tweet($counts);
-		}
-
-		//Google+
-		if ( in_array($network, array('google_plus', 'google', 'googleplus', 'google+', 'g+', 'gplus', 'g_plus', 'google plus', 'google-plus', 'g-plus')) ){
-			nebula_google_plus($counts);
-		}
-
-		//LinkedIn
-		if ( in_array($network, array('linkedin', 'li', 'linked-in', 'linked_in')) ){
-			nebula_linkedin_share($counts);
-		}
-
-		//Pinterest
-		if ( in_array($network, array('pinterest', 'pin')) ){
-			nebula_pinterest_pin($counts);
-		}
-	}
-	echo '</div><!-- /sharing-links -->';
 }
 
 /*
@@ -652,11 +660,12 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		set_transient('nebula_twitter_' . $username, $tweets, 60*5); //5 minute expiration
 	}
 
+	error_reporting(1); //Re-enable PHP error reporting
+
 	if ( $_POST['data'] ){
 		echo $tweets;
 		exit;
 	} else {
-		error_reporting(1); //Re-enable PHP error reporting
 		return $tweets;
 	}
 }
@@ -665,89 +674,95 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 //Several ways to implement this:
 	//Inside the loop (or outside the loop for current post/page): nebula_the_excerpt('Read more &raquo;', 20, 1);
 	//Outside the loop: nebula_the_excerpt(572, 'Read more &raquo;', 20, 1);
-function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ){
-	if ( $postID && is_int($postID) ){
-		$the_post = get_post($postID);
-	} else {
-		if ( $postID != 0 || is_string($postID) ){
-			if ( $length == 0 || $length == 1 ){
-				$hellip = $length;
-			} else {
-				$hellip = false;
+if ( !function_exists('nebula_the_excerpt') ){
+	function nebula_the_excerpt( $postID=0, $more=0, $length=55, $hellip=0 ){
+		if ( $postID && is_int($postID) ){
+			$the_post = get_post($postID);
+		} else {
+			if ( $postID != 0 || is_string($postID) ){
+				if ( $length == 0 || $length == 1 ){
+					$hellip = $length;
+				} else {
+					$hellip = false;
+				}
+
+				if ( is_int($more) ){
+					$length = $more;
+				} else {
+					$length = 55;
+				}
+
+				$more = $postID;
 			}
+			$postID = get_the_ID();
+			$the_post = get_post($postID);
+		}
 
-			if ( is_int($more) ){
-				$length = $more;
-			} else {
-				$length = 55;
+		if ( $the_post->post_excerpt ){
+			$string = strip_tags(strip_shortcodes($the_post->post_excerpt), '');
+		} else {
+			$string = strip_tags(strip_shortcodes($the_post->post_content), '');
+		}
+
+		if ( $length == -1 || $length == '' || $length === null ){
+	        $string = string_limit_words($string, strlen($string));
+	    } else {
+	        $string = string_limit_words($string, $length);
+	    }
+
+		if ( $hellip ){
+			if ( $string[1] == 1 ){
+				$string[0] .= '&hellip; ';
 			}
-
-			$more = $postID;
 		}
-		$postID = get_the_ID();
-		$the_post = get_post($postID);
-	}
 
-	if ( $the_post->post_excerpt ){
-		$string = strip_tags(strip_shortcodes($the_post->post_excerpt), '');
-	} else {
-		$string = strip_tags(strip_shortcodes($the_post->post_content), '');
-	}
-
-	if ( $length == -1 || $length == '' || $length === null ){
-        $string = string_limit_words($string, strlen($string));
-    } else {
-        $string = string_limit_words($string, $length);
-    }
-
-	if ( $hellip ){
-		if ( $string[1] == 1 ){
-			$string[0] .= '&hellip; ';
+		if ( isset($more) && $more != '' ){
+			$string[0] .= ' <a class="nebula_the_excerpt" href="' . get_permalink($postID) . '">' . $more . '</a>';
 		}
-	}
 
-	if ( isset($more) && $more != '' ){
-		$string[0] .= ' <a class="nebula_the_excerpt" href="' . get_permalink($postID) . '">' . $more . '</a>';
+		return $string[0];
 	}
-
-	return $string[0];
 }
 
 //Pass custom text to a Nebula-style excerpt
-function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=false, $more=false){
-	$string = strip_tags(strip_shortcodes($text), '');
+if ( !function_exists('nebula_custom_excerpt') ){
+	function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=false, $more=false){
+		$string = strip_tags(strip_shortcodes($text), '');
 
-	if ( $length == -1 || $length == '' || $length == 'all' || $length === null ){
-        $string = string_limit_words($string, strlen($string));
-    } else {
-        $string = string_limit_words($string, $length);
-    }
+		if ( $length == -1 || $length == '' || $length == 'all' || $length === null ){
+	        $string = string_limit_words($string, strlen($string));
+	    } else {
+	        $string = string_limit_words($string, $length);
+	    }
 
-	if ( $hellip ){
-		if ( $string[1] == 1 ){
-			$string[0] .= '&hellip; ';
+		if ( $hellip ){
+			if ( $string[1] == 1 ){
+				$string[0] .= '&hellip; ';
+			}
 		}
-	}
 
-	if ( isset($link) && isset($more) && $more != '' ){
-		$string[0] .= ' <a class="nebula_custom_excerpt" href="' . $link . '">' . $more . '</a>';
-	}
+		if ( isset($link) && isset($more) && $more != '' ){
+			$string[0] .= ' <a class="nebula_custom_excerpt" href="' . $link . '">' . $more . '</a>';
+		}
 
-	return $string[0];
+		return $string[0];
+	}
 }
 
 //Adds links to the WP admin and to edit the current post as well as shows when the post was edited last and by which author
 //Important! This function should be inside of a "if ( current_user_can('manage_options') )" condition so this information isn't shown to the public!
-function nebula_manage($data){
-	if ( $data == 'edit' || $data == 'admin' ){
-		echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="fa fa-wrench"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="fa fa-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
-	} elseif ( $data == 'modified' || $data == 'mod' ){
-		$manage_author = ( get_the_modified_author() )? get_the_modified_author() : get_the_author();
-		echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . $manage_author . '</strong></span>';
-	} elseif ( $data == 'info' ){
-		if ( wp_attachment_is_image() ){
-			$metadata = wp_get_attachment_metadata();
-			echo ''; //@TODO "Nebula" 0: In progress
+if ( !function_exists('nebula_manage') ){
+	function nebula_manage($data){
+		if ( $data == 'edit' || $data == 'admin' ){
+			echo '<span class="nebula-manage-edit"><span class="post-admin"><i class="fa fa-wrench"></i> <a href="' . get_admin_url() . '" target="_blank">Admin</a></span> <span class="post-edit"><i class="fa fa-pencil"></i> <a href="' . get_edit_post_link() . '">Edit</a></span></span>';
+		} elseif ( $data == 'modified' || $data == 'mod' ){
+			$manage_author = ( get_the_modified_author() )? get_the_modified_author() : get_the_author();
+			echo '<span class="post-modified">Last Modified: <strong>' . get_the_modified_date() . '</strong> by <strong>' . $manage_author . '</strong></span>';
+		} elseif ( $data == 'info' ){
+			if ( wp_attachment_is_image() ){
+				$metadata = wp_get_attachment_metadata();
+				echo ''; //@TODO "Nebula" 0: In progress
+			}
 		}
 	}
 }
@@ -774,116 +789,118 @@ function nebula_password_form_simplify(){
 }
 
 //Breadcrumbs (Original credit: Jef Collier)
-function the_breadcrumb(){
-	global $post;
-	$delimiter = '<span class="arrow">&rsaquo;</span>'; //Delimiter between crumbs
-	$home = '<i class="fa fa-home"></i>'; //Text for the 'Home' link
-	$showCurrent = 1; //1: Show current post/page title in breadcrumbs, 0: Don't show
-	$before = '<span class="current">'; //Tag before the current crumb
-	$after = '</span>'; //Tag after the current crumb
-	$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'in');
-	$homeLink = home_url('/');
+if ( !function_exists('the_breadcrumb') ){
+	function the_breadcrumb(){
+		global $post;
+		$delimiter = '<span class="arrow">&rsaquo;</span>'; //Delimiter between crumbs
+		$home = '<i class="fa fa-home"></i>'; //Text for the 'Home' link
+		$showCurrent = 1; //1: Show current post/page title in breadcrumbs, 0: Don't show
+		$before = '<span class="current">'; //Tag before the current crumb
+		$after = '</span>'; //Tag after the current crumb
+		$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'in');
+		$homeLink = home_url('/');
 
-	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
-		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
-	} elseif ( is_home() || is_front_page() ){
-		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav></div>';
-		return false;
-	} else {
-		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
-		if ( is_category() ){
-			$thisCat = get_category(get_query_var('cat'), false);
-			if ( $thisCat->parent != 0 ){
-				echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
-			}
-			echo $before . 'Category: ' . single_cat_title('', false) . $after;
-		} elseif ( is_search() ){
-			echo $before . 'Search results' . $after;
-		} elseif ( is_day() ){
-			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
-			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
-			echo $before . get_the_time('d') . $after;
-		} elseif ( is_month() ){
-			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
-			echo $before . get_the_time('F') . $after;
-		} elseif ( is_year() ){
-			echo $before . get_the_time('Y') . $after;
-		} elseif ( is_single() && !is_attachment() ){
-			if ( get_post_type() != 'post' ){
-				$post_type = get_post_type_object(get_post_type());
-				$slug = $post_type->rewrite;
-				echo '<a href="' . $homeLink . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
-				if ( $showCurrent == 1 ){
-					echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+		if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
+			echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
+		} elseif ( is_home() || is_front_page() ){
+			echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav></div>';
+			return false;
+		} else {
+			echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
+			if ( is_category() ){
+				$thisCat = get_category(get_query_var('cat'), false);
+				if ( $thisCat->parent != 0 ){
+					echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
 				}
-			} else {
-				$cat = get_the_category();
-				$cat = $cat[0];
-				$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
-				if ( $showCurrent == 0 ){
-					$cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
+				echo $before . 'Category: ' . single_cat_title('', false) . $after;
+			} elseif ( is_search() ){
+				echo $before . 'Search results' . $after;
+			} elseif ( is_day() ){
+				echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+				echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
+				echo $before . get_the_time('d') . $after;
+			} elseif ( is_month() ){
+				echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+				echo $before . get_the_time('F') . $after;
+			} elseif ( is_year() ){
+				echo $before . get_the_time('Y') . $after;
+			} elseif ( is_single() && !is_attachment() ){
+				if ( get_post_type() != 'post' ){
+					$post_type = get_post_type_object(get_post_type());
+					$slug = $post_type->rewrite;
+					echo '<a href="' . $homeLink . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
+					if ( $showCurrent == 1 ){
+						echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+					}
+				} else {
+					$cat = get_the_category();
+					$cat = $cat[0];
+					$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+					if ( $showCurrent == 0 ){
+						$cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
+					}
+					echo $cats;
+					if ( $showCurrent == 1 ){
+						echo $before . get_the_title() . $after;
+					}
 				}
-				echo $cats;
+			} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ){
+				if ( is_archive() ){ //@TODO "Nebula" 0: Might not be perfect... This may never else out.
+					$userdata = get_user_by('slug', get_query_var('author_name'));
+					echo $before . $userdata->first_name . ' ' . $userdata->last_name . $after;
+				} else { //What does this one do?
+					$post_type = get_post_type_object(get_post_type());
+					echo $before . $post_type->labels->singular_name . $after;
+				}
+			} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
+				if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
+					echo '<a href="' . get_permalink($post->post_parent) . '">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter . ' ' . get_the_title();
+				} else {
+					echo get_the_title();
+				}
+			} elseif ( is_page() && !$post->post_parent ){
 				if ( $showCurrent == 1 ){
 					echo $before . get_the_title() . $after;
 				}
+			} elseif ( is_page() && $post->post_parent ){
+				$parent_id = $post->post_parent;
+				$breadcrumbs = array();
+				while ( $parent_id ){
+					$page = get_page($parent_id);
+					$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
+					$parent_id  = $page->post_parent;
+				}
+				$breadcrumbs = array_reverse($breadcrumbs);
+				for ( $i = 0; $i < count($breadcrumbs); $i++ ){
+					echo $breadcrumbs[$i];
+					if ( $i != count($breadcrumbs)-1 ){
+						echo ' ' . $delimiter . ' ';
+					}
+				}
+				if ( $showCurrent == 1 ){
+					echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+				}
+			} elseif ( is_tag() ){
+				echo $before . 'Tag: ' . single_tag_title('', false) . $after;
+			} elseif ( is_author() ){
+				global $author;
+				$userdata = get_userdata($author);
+				echo $before . $userdata->display_name . $after;
+			} elseif ( is_404() ){
+				echo $before . 'Error 404' . $after;
 			}
-		} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ){
-			if ( is_archive() ){ //@TODO "Nebula" 0: Might not be perfect... This may never else out.
-				$userdata = get_user_by('slug', get_query_var('author_name'));
-				echo $before . $userdata->first_name . ' ' . $userdata->last_name . $after;
-			} else { //What does this one do?
-				$post_type = get_post_type_object(get_post_type());
-				echo $before . $post_type->labels->singular_name . $after;
-			}
-		} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
-			if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
-				echo '<a href="' . get_permalink($post->post_parent) . '">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter . ' ' . get_the_title();
-			} else {
-				echo get_the_title();
-			}
-		} elseif ( is_page() && !$post->post_parent ){
-			if ( $showCurrent == 1 ){
-				echo $before . get_the_title() . $after;
-			}
-		} elseif ( is_page() && $post->post_parent ){
-			$parent_id = $post->post_parent;
-			$breadcrumbs = array();
-			while ( $parent_id ){
-				$page = get_page($parent_id);
-				$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
-				$parent_id  = $page->post_parent;
-			}
-			$breadcrumbs = array_reverse($breadcrumbs);
-			for ( $i = 0; $i < count($breadcrumbs); $i++ ){
-				echo $breadcrumbs[$i];
-				if ( $i != count($breadcrumbs)-1 ){
-					echo ' ' . $delimiter . ' ';
+
+			if ( get_query_var('paged') ){
+				if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ){
+					echo ' (';
+				}
+				echo 'Page ' . get_query_var('paged');
+				if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ){
+					echo ')';
 				}
 			}
-			if ( $showCurrent == 1 ){
-				echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
-			}
-		} elseif ( is_tag() ){
-			echo $before . 'Tag: ' . single_tag_title('', false) . $after;
-		} elseif ( is_author() ){
-			global $author;
-			$userdata = get_userdata($author);
-			echo $before . $userdata->display_name . $after;
-		} elseif ( is_404() ){
-			echo $before . 'Error 404' . $after;
+			echo '</nav></div><!--/breadcrumbcon-->';
 		}
-
-		if ( get_query_var('paged') ){
-			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ){
-				echo ' (';
-			}
-			echo 'Page ' . get_query_var('paged');
-			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ){
-				echo ')';
-			}
-		}
-		echo '</nav></div><!--/breadcrumbcon-->';
 	}
 }
 
@@ -949,351 +966,357 @@ function redirect_single_post(){
 }
 
 //Easily create markup for a Hero area search input
-function nebula_hero_search($placeholder='What are you looking for?'){
-	echo '<div id="nebula-hero-formcon">
-		<form id="nebula-hero-search" class="nebula-search-iconable search" method="get" action="' . home_url('/') . '">
-			<input type="search" class="nebula-search open input search nofade" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
-		</form>
-	</div>';
+if ( !function_exists('nebula_hero_search') ){
+	function nebula_hero_search($placeholder='What are you looking for?'){
+		echo '<div id="nebula-hero-formcon">
+			<form id="nebula-hero-search" class="nebula-search-iconable search" method="get" action="' . home_url('/') . '">
+				<input type="search" class="nebula-search open input search nofade" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
+			</form>
+		</div>';
+	}
 }
 
 //Autocomplete Search AJAX.
-add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
-add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
-function nebula_autocomplete_search(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+if ( !function_exists('nebula_autocomplete_search') ){
+	add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
+	add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
+	function nebula_autocomplete_search(){
+		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 
-	ini_set('memory_limit', '256M');
-	$_POST['data']['term'] = trim($_POST['data']['term']);
-	if ( empty($_POST['data']['term']) ){
-		return false;
+		ini_set('memory_limit', '256M');
+		$_POST['data']['term'] = trim($_POST['data']['term']);
+		if ( empty($_POST['data']['term']) ){
+			return false;
+			exit;
+		}
+
+		//Test for close or exact matches. Use: $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+		function nebula_close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
+			if ( $rating > $exact_threshold ){
+				return ' exact-match';
+			} elseif ( $rating > $close_threshold ){
+				return ' close-match';
+			}
+			return '';
+		}
+
+		//Standard WP search (does not include custom fields)
+		$q1 = new WP_Query(array(
+		    'post_type' => array('any'),
+			'post_status' => 'publish',
+			'posts_per_page' => 4,
+			's' => $_POST['data']['term'],
+		));
+
+		//Search custom fields
+		$q2 = new WP_Query(array(
+		    'post_type' => array('any'),
+			'post_status' => 'publish',
+			'posts_per_page' => 4,
+			'meta_query' => array(
+				array(
+					'value' => $_POST['data']['term'],
+					'compare' => 'LIKE'
+				)
+			)
+		));
+
+		//Combine the above queries
+		$autocomplete_query = new WP_Query();
+		$autocomplete_query->posts = array_unique(array_merge($q1->posts, $q2->posts), SORT_REGULAR);
+		$autocomplete_query->post_count = count($autocomplete_query->posts);
+
+		//Loop through the posts
+		if ( $autocomplete_query->have_posts() ){
+			while ( $autocomplete_query->have_posts() ){
+				$autocomplete_query->the_post();
+				if ( !get_the_title() ){ //Ignore results without titles
+					continue;
+				}
+				$post = get_post();
+
+				$suggestion = array();
+				similar_text(strtolower($_POST['data']['term']), strtolower(get_the_title()), $suggestion['similarity']); //Determine how similar the query is to this post title
+				$suggestion['label'] = get_the_title();
+				$suggestion['link'] = get_permalink();
+
+				$suggestion['classes'] = 'type-' . get_post_type() . ' id-' . get_the_id() . ' slug-' . $post->post_name . ' similarity-' . str_replace('.', '_', number_format($suggestion['similarity'], 2));
+				if ( get_the_id() == get_option('page_on_front') ){
+					$suggestion['classes'] .= ' page-home';
+				} elseif ( is_sticky() ){ //@TODO "Nebula" 0: If sticky post. is_sticky() does not work here?
+					$suggestion['classes'] .= ' sticky-post';
+				}
+				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+				$suggestions[] = $suggestion;
+			}
+		}
+
+		//Find media library items
+		$attachments = get_posts(array('post_type' => 'attachment', 's' => $_POST['data']['term'], 'numberposts' => 10, 'post_status' => null));
+		if ( $attachments ){
+			$attachment_count = 0;
+			foreach ( $attachments as $attachment ){
+				if ( strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post.
+					continue;
+				}
+				$suggestion = array();
+				$attachment_meta = wp_get_attachment_metadata($attachment->ID);
+				$path_parts = pathinfo($attachment_meta['file']);
+				$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
+				similar_text(strtolower($_POST['data']['term']), strtolower($attachment_search_meta), $suggestion['similarity']);
+				if ( $suggestion['similarity'] >= 50 ){
+				    $suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
+					$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
+					$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+					if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
+						$suggestion['link'] = get_attachment_link($attachment->ID);
+					} else {
+						$suggestion['link'] = wp_get_attachment_url($attachment->ID);
+						$suggestion['external'] = true;
+						$suggestion['classes'] .= ' external-link';
+					}
+					$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
+					$suggestions[] = $suggestion;
+					$attachment_count++;
+				}
+				if ( $attachment_count >= 2 ){
+					break;
+				}
+			}
+		}
+
+		//Find menu items
+		$menus = get_transient('nebula_autocomplete_menus');
+		if ( empty($menus) || is_debug() ){
+			$menus = get_terms('nav_menu');
+			set_transient('nebula_autocomplete_menus', $menus, 60*60); //1 hour cache
+		}
+		foreach($menus as $menu){
+			$menu_items = wp_get_nav_menu_items($menu->term_id);
+			foreach ( $menu_items as $key => $menu_item ){
+			    $suggestion = array();
+			    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $menu_title_similarity);
+			    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->attr_title), $menu_attr_similarity);
+			    if ( $menu_title_similarity >= 65 || $menu_attr_similarity >= 65 ){
+					if ( $menu_title_similarity >= $menu_attr_similarity ){
+						$suggestion['similarity'] = $menu_title_similarity;
+						$suggestion['label'] = $menu_item->title;
+					} else {
+						$suggestion['similarity'] = $menu_attr_similarity;
+						$suggestion['label'] = $menu_item->attr_title;
+					}
+					$suggestion['link'] = $menu_item->url;
+					$path_parts = pathinfo($menu_item->url);
+					$suggestion['classes'] = 'type-menu-item';
+					if ( $path_parts['extension'] ){
+						$suggestion['classes'] .= ' file-' . $path_parts['extension'];
+						$suggestion['external'] = true;
+					} elseif ( !strpos($suggestion['link'], nebula_url_components('domain')) ){
+						$suggestion['classes'] .= ' external-link';
+						$suggestion['external'] = true;
+					}
+					$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+					$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
+					$suggestions[] = $suggestion;
+					break;
+			    }
+			}
+		}
+
+		//Find categories
+		$categories = get_transient('nebula_autocomplete_categories');
+		if ( empty($categories) || is_debug() ){
+			$categories = get_categories();
+			set_transient('nebula_autocomplete_categories', $categories, 60*60); //1 hour cache
+		}
+		foreach ( $categories as $category ){
+			$suggestion = array();
+			$cat_count = 0;
+			similar_text(strtolower($_POST['data']['term']), strtolower($category->name), $suggestion['similarity']);
+			if ( $suggestion['similarity'] >= 65 ){
+				$suggestion['label'] = $category->name;
+				$suggestion['link'] = get_category_link($category->term_id);
+				$suggestion['classes'] = 'type-category';
+				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+				$suggestions[] = $suggestion;
+				$cat_count++;
+			}
+			if ( $cat_count >= 2 ){
+				break;
+			}
+		}
+
+		//Find tags
+		$tags = get_transient('nebula_autocomplete_tags');
+		if ( empty($tags) || is_debug() ){
+			$tags = get_tags();
+			set_transient('nebula_autocomplete_tags', $tags, 60*60); //1 hour cache
+		}
+		foreach ( $tags as $tag ){
+			$suggestion = array();
+			$tag_count = 0;
+			similar_text(strtolower($_POST['data']['term']), strtolower($tag->name), $suggestion['similarity']);
+			if ( $suggestion['similarity'] >= 65 ){
+				$suggestion['label'] = $tag->name;
+				$suggestion['link'] = get_tag_link($tag->term_id);
+				$suggestion['classes'] = 'type-tag';
+				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+				$suggestions[] = $suggestion;
+				$tag_count++;
+			}
+			if ( $tag_count >= 2 ){
+				break;
+			}
+		}
+
+		//Find authors (if author bios are enabled)
+		if ( nebula_is_option_enabled('authorbios') ){
+			$authors = get_transient('nebula_autocomplete_authors');
+			if ( empty($authors) || is_debug() ){
+				$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
+				set_transient('nebula_autocomplete_authors', $authors, 60*60); //1 hour cache
+			}
+			foreach ( $authors as $author ){
+				$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
+				if ( strtolower($author_name) == strtolower($_POST['data']['term']) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
+					$suggestion = array();
+					$suggestion['label'] = $author_name;
+					$suggestion['link'] = 'http://google.com/';
+					$suggestion['classes'] = 'type-user';
+					$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+					$suggestion['similarity'] = ''; //todo: save similarity to array too
+					$suggestions[] = $suggestion;
+					break;
+				}
+			}
+		}
+
+		if ( sizeof($suggestions) >= 1 ){
+			//Order by match similarity to page title (DESC).
+			function autocomplete_similarity_compare($a, $b){
+			    return $b['similarity'] - $a['similarity'];
+			}
+			usort($suggestions, "autocomplete_similarity_compare");
+
+			//Remove any duplicate links (higher similarity = higher priority)
+			$outputArray = array(); //This array is where unique results will be stored
+			$keysArray = array(); //This array stores values to check duplicates against.
+			foreach ( $suggestions as $suggestion ){
+			    if ( !in_array($suggestion['link'], $keysArray) ){
+			        $keysArray[] = $suggestion['link'];
+			        $outputArray[] = $suggestion;
+			    }
+			}
+		}
+
+		//Link to search at the end of the list
+		//@TODO "Nebula" 0: The empty result is not working for some reason... (Press Enter... is never appearing)
+		$suggestion = array();
+		$suggestion['label'] = ( sizeof($suggestions) >= 1 )? '...more results for "' . $_POST['data']['term'] . '"' : 'Press enter to search for "' . $_POST['data']['term'] . '"';
+		$suggestion['link'] = home_url('/') . '?s=' . str_replace(' ', '%20', $_POST['data']['term']);
+		$suggestion['classes'] = ( sizeof($suggestions) >= 1 )? 'more-results search-link' : 'no-results search-link';
+		$outputArray[] = $suggestion;
+
+		echo json_encode($outputArray, JSON_PRETTY_PRINT);
 		exit;
 	}
-
-	//Test for close or exact matches. Use: $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-	function nebula_close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
-		if ( $rating > $exact_threshold ){
-			return ' exact-match';
-		} elseif ( $rating > $close_threshold ){
-			return ' close-match';
-		}
-		return '';
-	}
-
-	//Standard WP search (does not include custom fields)
-	$q1 = new WP_Query(array(
-	    'post_type' => array('any'),
-		'post_status' => 'publish',
-		'posts_per_page' => 4,
-		's' => $_POST['data']['term'],
-	));
-
-	//Search custom fields
-	$q2 = new WP_Query(array(
-	    'post_type' => array('any'),
-		'post_status' => 'publish',
-		'posts_per_page' => 4,
-		'meta_query' => array(
-			array(
-				'value' => $_POST['data']['term'],
-				'compare' => 'LIKE'
-			)
-		)
-	));
-
-	//Combine the above queries
-	$autocomplete_query = new WP_Query();
-	$autocomplete_query->posts = array_unique(array_merge($q1->posts, $q2->posts), SORT_REGULAR);
-	$autocomplete_query->post_count = count($autocomplete_query->posts);
-
-	//Loop through the posts
-	if ( $autocomplete_query->have_posts() ){
-		while ( $autocomplete_query->have_posts() ){
-			$autocomplete_query->the_post();
-			if ( !get_the_title() ){ //Ignore results without titles
-				continue;
-			}
-			$post = get_post();
-
-			$suggestion = array();
-			similar_text(strtolower($_POST['data']['term']), strtolower(get_the_title()), $suggestion['similarity']); //Determine how similar the query is to this post title
-			$suggestion['label'] = get_the_title();
-			$suggestion['link'] = get_permalink();
-
-			$suggestion['classes'] = 'type-' . get_post_type() . ' id-' . get_the_id() . ' slug-' . $post->post_name . ' similarity-' . str_replace('.', '_', number_format($suggestion['similarity'], 2));
-			if ( get_the_id() == get_option('page_on_front') ){
-				$suggestion['classes'] .= ' page-home';
-			} elseif ( is_sticky() ){ //@TODO "Nebula" 0: If sticky post. is_sticky() does not work here?
-				$suggestion['classes'] .= ' sticky-post';
-			}
-			$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-			$suggestions[] = $suggestion;
-		}
-	}
-
-	//Find media library items
-	$attachments = get_posts(array('post_type' => 'attachment', 's' => $_POST['data']['term'], 'numberposts' => 10, 'post_status' => null));
-	if ( $attachments ){
-		$attachment_count = 0;
-		foreach ( $attachments as $attachment ){
-			if ( strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post.
-				continue;
-			}
-			$suggestion = array();
-			$attachment_meta = wp_get_attachment_metadata($attachment->ID);
-			$path_parts = pathinfo($attachment_meta['file']);
-			$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
-			similar_text(strtolower($_POST['data']['term']), strtolower($attachment_search_meta), $suggestion['similarity']);
-			if ( $suggestion['similarity'] >= 50 ){
-			    $suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
-				$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
-				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-				if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
-					$suggestion['link'] = get_attachment_link($attachment->ID);
-				} else {
-					$suggestion['link'] = wp_get_attachment_url($attachment->ID);
-					$suggestion['external'] = true;
-					$suggestion['classes'] .= ' external-link';
-				}
-				$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
-				$suggestions[] = $suggestion;
-				$attachment_count++;
-			}
-			if ( $attachment_count >= 2 ){
-				break;
-			}
-		}
-	}
-
-	//Find menu items
-	$menus = get_transient('nebula_autocomplete_menus');
-	if ( empty($menus) || is_debug() ){
-		$menus = get_terms('nav_menu');
-		set_transient('nebula_autocomplete_menus', $menus, 60*60); //1 hour cache
-	}
-	foreach($menus as $menu){
-		$menu_items = wp_get_nav_menu_items($menu->term_id);
-		foreach ( $menu_items as $key => $menu_item ){
-		    $suggestion = array();
-		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $menu_title_similarity);
-		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->attr_title), $menu_attr_similarity);
-		    if ( $menu_title_similarity >= 65 || $menu_attr_similarity >= 65 ){
-				if ( $menu_title_similarity >= $menu_attr_similarity ){
-					$suggestion['similarity'] = $menu_title_similarity;
-					$suggestion['label'] = $menu_item->title;
-				} else {
-					$suggestion['similarity'] = $menu_attr_similarity;
-					$suggestion['label'] = $menu_item->attr_title;
-				}
-				$suggestion['link'] = $menu_item->url;
-				$path_parts = pathinfo($menu_item->url);
-				$suggestion['classes'] = 'type-menu-item';
-				if ( $path_parts['extension'] ){
-					$suggestion['classes'] .= ' file-' . $path_parts['extension'];
-					$suggestion['external'] = true;
-				} elseif ( !strpos($suggestion['link'], nebula_url_components('domain')) ){
-					$suggestion['classes'] .= ' external-link';
-					$suggestion['external'] = true;
-				}
-				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-				$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
-				$suggestions[] = $suggestion;
-				break;
-		    }
-		}
-	}
-
-	//Find categories
-	$categories = get_transient('nebula_autocomplete_categories');
-	if ( empty($categories) || is_debug() ){
-		$categories = get_categories();
-		set_transient('nebula_autocomplete_categories', $categories, 60*60); //1 hour cache
-	}
-	foreach ( $categories as $category ){
-		$suggestion = array();
-		$cat_count = 0;
-		similar_text(strtolower($_POST['data']['term']), strtolower($category->name), $suggestion['similarity']);
-		if ( $suggestion['similarity'] >= 65 ){
-			$suggestion['label'] = $category->name;
-			$suggestion['link'] = get_category_link($category->term_id);
-			$suggestion['classes'] = 'type-category';
-			$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-			$suggestions[] = $suggestion;
-			$cat_count++;
-		}
-		if ( $cat_count >= 2 ){
-			break;
-		}
-	}
-
-	//Find tags
-	$tags = get_transient('nebula_autocomplete_tags');
-	if ( empty($tags) || is_debug() ){
-		$tags = get_tags();
-		set_transient('nebula_autocomplete_tags', $tags, 60*60); //1 hour cache
-	}
-	foreach ( $tags as $tag ){
-		$suggestion = array();
-		$tag_count = 0;
-		similar_text(strtolower($_POST['data']['term']), strtolower($tag->name), $suggestion['similarity']);
-		if ( $suggestion['similarity'] >= 65 ){
-			$suggestion['label'] = $tag->name;
-			$suggestion['link'] = get_tag_link($tag->term_id);
-			$suggestion['classes'] = 'type-tag';
-			$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-			$suggestions[] = $suggestion;
-			$tag_count++;
-		}
-		if ( $tag_count >= 2 ){
-			break;
-		}
-	}
-
-	//Find authors (if author bios are enabled)
-	if ( nebula_is_option_enabled('authorbios') ){
-		$authors = get_transient('nebula_autocomplete_authors');
-		if ( empty($authors) || is_debug() ){
-			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
-			set_transient('nebula_autocomplete_authors', $authors, 60*60); //1 hour cache
-		}
-		foreach ( $authors as $author ){
-			$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
-			if ( strtolower($author_name) == strtolower($_POST['data']['term']) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
-				$suggestion = array();
-				$suggestion['label'] = $author_name;
-				$suggestion['link'] = 'http://google.com/';
-				$suggestion['classes'] = 'type-user';
-				$suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-				$suggestion['similarity'] = ''; //todo: save similarity to array too
-				$suggestions[] = $suggestion;
-				break;
-			}
-		}
-	}
-
-	if ( sizeof($suggestions) >= 1 ){
-		//Order by match similarity to page title (DESC).
-		function autocomplete_similarity_compare($a, $b){
-		    return $b['similarity'] - $a['similarity'];
-		}
-		usort($suggestions, "autocomplete_similarity_compare");
-
-		//Remove any duplicate links (higher similarity = higher priority)
-		$outputArray = array(); //This array is where unique results will be stored
-		$keysArray = array(); //This array stores values to check duplicates against.
-		foreach ( $suggestions as $suggestion ){
-		    if ( !in_array($suggestion['link'], $keysArray) ){
-		        $keysArray[] = $suggestion['link'];
-		        $outputArray[] = $suggestion;
-		    }
-		}
-	}
-
-	//Link to search at the end of the list
-	//@TODO "Nebula" 0: The empty result is not working for some reason... (Press Enter... is never appearing)
-	$suggestion = array();
-	$suggestion['label'] = ( sizeof($suggestions) >= 1 )? '...more results for "' . $_POST['data']['term'] . '"' : 'Press enter to search for "' . $_POST['data']['term'] . '"';
-	$suggestion['link'] = home_url('/') . '?s=' . str_replace(' ', '%20', $_POST['data']['term']);
-	$suggestion['classes'] = ( sizeof($suggestions) >= 1 )? 'more-results search-link' : 'no-results search-link';
-	$outputArray[] = $suggestion;
-
-	echo json_encode($outputArray, JSON_PRETTY_PRINT);
-	exit;
 }
 
 //Advanced Search
-add_action('wp_ajax_nebula_advanced_search', 'nebula_advanced_search');
-add_action('wp_ajax_nopriv_nebula_advanced_search', 'nebula_advanced_search');
-function nebula_advanced_search(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+if ( !function_exists('nebula_advanced_search') ){
+	add_action('wp_ajax_nebula_advanced_search', 'nebula_advanced_search');
+	add_action('wp_ajax_nopriv_nebula_advanced_search', 'nebula_advanced_search');
+	function nebula_advanced_search(){
+		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 
-	ini_set('memory_limit', '512M'); //Increase memory limit for this script.
+		ini_set('memory_limit', '512M'); //Increase memory limit for this script.
 
-	$everything_query = get_transient('nebula_everything_query');
-	if ( empty($venue_query) ){
-		$everything_query = new WP_Query(array(
-			'post_type' => array('any'),
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-			'nopaging' => true
-		));
-		set_transient('nebula_everything_query', $everything_query, 60*60); //1 hour cache
-	}
-	$posts = $everything_query->get_posts();
-
-	foreach ( $posts as $post ){
-		$author = null;
-		if ( nebula_is_option_enabled('authorbios') ){ //&& $post->post_type != 'page' ?
-			$author = array(
-				'id' => $post->post_author,
-				'name' => array(
-					'first' => get_the_author_meta('first_name', $post->post_author),
-					'last' => get_the_author_meta('last_name', $post->post_author),
-					'display' => get_the_author_meta('display_name', $post->post_author),
-				),
-				'url' => get_author_posts_url($post->post_author),
-			);
+		$everything_query = get_transient('nebula_everything_query');
+		if ( empty($venue_query) ){
+			$everything_query = new WP_Query(array(
+				'post_type' => array('any'),
+				'post_status' => 'publish',
+				'posts_per_page' => -1,
+				'nopaging' => true
+			));
+			set_transient('nebula_everything_query', $everything_query, 60*60); //1 hour cache
 		}
+		$posts = $everything_query->get_posts();
 
-		$these_categories = array();
-		$event_categories = get_the_category($post->ID);
-		foreach ( $event_categories as $event_category ){
-			$these_categories[] = $event_category->name;
-		}
-
-		$these_tags = array();
-		$event_tags = wp_get_post_tags($post->ID);
-		foreach ( $event_tags as $event_tag ){
-			$these_tags[] = $event_tag->name;
-		}
-
-		$custom_fields = array();
-		foreach ( $post->custom_fields as $custom_field => $custom_value ){
-			if ( substr($custom_field, 0, 1) == '_' ){
-				continue;
+		foreach ( $posts as $post ){
+			$author = null;
+			if ( nebula_is_option_enabled('authorbios') ){ //&& $post->post_type != 'page' ?
+				$author = array(
+					'id' => $post->post_author,
+					'name' => array(
+						'first' => get_the_author_meta('first_name', $post->post_author),
+						'last' => get_the_author_meta('last_name', $post->post_author),
+						'display' => get_the_author_meta('display_name', $post->post_author),
+					),
+					'url' => get_author_posts_url($post->post_author),
+				);
 			}
-			$custom_fields[$custom_field] = $custom_value[0];
-		}
 
-		$full_size = wp_get_attachment_image_src($post->_thumbnail_id, 'full');
-		$thumbnail = wp_get_attachment_image_src($post->_thumbnail_id, 'thumbnail');
+			$these_categories = array();
+			$event_categories = get_the_category($post->ID);
+			foreach ( $event_categories as $event_category ){
+				$these_categories[] = $event_category->name;
+			}
 
-		$output[] = array(
-			'type' => $post->post_type,
-			'id' => $post->ID,
-			'posted' => strtotime($post->post_date),
-			'modified' => strtotime($post->post_modified),
-			'author' => $author,
-			'title' => $post->post_title,
-			'description' => strip_tags($post->post_content), //@todo: not correct!
-			'url' => get_the_permalink($post->ID),
-			'categories' => $these_categories,
-			'tags' => $these_tags,
-			'image' => array(
-				'full' => $thumbnail[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
-				'thumbnail' => $full_size[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
-			),
-			'custom' => $custom_fields,
-		);
-	} //END $posts foreach
+			$these_tags = array();
+			$event_tags = wp_get_post_tags($post->ID);
+			foreach ( $event_tags as $event_tag ){
+				$these_tags[] = $event_tag->name;
+			}
+
+			$custom_fields = array();
+			foreach ( $post->custom_fields as $custom_field => $custom_value ){
+				if ( substr($custom_field, 0, 1) == '_' ){
+					continue;
+				}
+				$custom_fields[$custom_field] = $custom_value[0];
+			}
+
+			$full_size = wp_get_attachment_image_src($post->_thumbnail_id, 'full');
+			$thumbnail = wp_get_attachment_image_src($post->_thumbnail_id, 'thumbnail');
+
+			$output[] = array(
+				'type' => $post->post_type,
+				'id' => $post->ID,
+				'posted' => strtotime($post->post_date),
+				'modified' => strtotime($post->post_modified),
+				'author' => $author,
+				'title' => $post->post_title,
+				'description' => strip_tags($post->post_content), //@todo: not correct!
+				'url' => get_the_permalink($post->ID),
+				'categories' => $these_categories,
+				'tags' => $these_tags,
+				'image' => array(
+					'full' => $thumbnail[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
+					'thumbnail' => $full_size[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
+				),
+				'custom' => $custom_fields,
+			);
+		} //END $posts foreach
 
 
-	//@TODO: if going to sort by text:
-/*
-	usort($output, function($a, $b){
-		return strcmp($a['title'], $b['title']);
-	});
-*/
+		//@TODO: if going to sort by text:
+	/*
+		usort($output, function($a, $b){
+			return strcmp($a['title'], $b['title']);
+		});
+	*/
 
-	//@TODO: If going to sort by number:
-/*
-	usort($output, function($a, $b){
-		return $a['posted'] - $b['posted'];
-	});
-*/
+		//@TODO: If going to sort by number:
+	/*
+		usort($output, function($a, $b){
+			return $a['posted'] - $b['posted'];
+		});
+	*/
 
-	echo json_encode($output, JSON_PRETTY_PRINT);
-	exit;
+		echo json_encode($output, JSON_PRETTY_PRINT);
+		exit;
+	}
 }
 
 //Remove capital P core function
@@ -1341,92 +1364,94 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ){
 }
 
 //Add custom body classes
-add_filter('body_class', 'nebula_body_classes');
-function nebula_body_classes($classes){
-	$spaces_and_dots = array(' ', '.');
-	$underscores_and_hyphens = array('_', '-');
+if ( !function_exists('nebula_body_classes') ){
+	add_filter('body_class', 'nebula_body_classes');
+	function nebula_body_classes($classes){
+		$spaces_and_dots = array(' ', '.');
+		$underscores_and_hyphens = array('_', '-');
 
-	//Device
-	$classes[] = strtolower(nebula_get_device('full')); //Device make and model
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('full'))); //Operating System name with version
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('name'))); //Operating System name
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('full'))); //Browser name and version
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
+		//Device
+		$classes[] = strtolower(nebula_get_device('full')); //Device make and model
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('full'))); //Operating System name with version
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('name'))); //Operating System name
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('full'))); //Browser name and version
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
 
-	//User Information
-	$current_user = wp_get_current_user();
-	if ( is_user_logged_in() ){
-		$classes[] = 'user-' . $current_user->user_login;
-		$user_info = get_userdata(get_current_user_id());
-		$classes[] = 'user-role-' . $user_info->roles[0];
-	}
+		//User Information
+		$current_user = wp_get_current_user();
+		if ( is_user_logged_in() ){
+			$classes[] = 'user-' . $current_user->user_login;
+			$user_info = get_userdata(get_current_user_id());
+			$classes[] = 'user-role-' . $user_info->roles[0];
+		}
 
-	//Post Information
-	if ( !is_search() && !is_archive() && !is_front_page() ){
-		global $post;
-		$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-		$parents = get_post_ancestors($post->ID);
-		foreach ( $parents as $parent ){
-			if ( !empty($parent) ){
-				$classes[] = 'ancestor-id-' . $parent;
+		//Post Information
+		if ( !is_search() && !is_archive() && !is_front_page() ){
+			global $post;
+			$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+			$parents = get_post_ancestors($post->ID);
+			foreach ( $parents as $parent ){
+				if ( !empty($parent) ){
+					$classes[] = 'ancestor-id-' . $parent;
+				}
+			}
+			foreach ( $segments as $segment ){
+				if ( !empty($segment) ){
+					$classes[] = 'ancestor-of-' . $segment;
+				}
+			}
+			foreach ( get_the_category($post->ID) as $category ){
+				$classes[] = 'cat-' . $category->cat_ID . '-id';
 			}
 		}
-		foreach ( $segments as $segment ){
-			if ( !empty($segment) ){
-				$classes[] = 'ancestor-of-' . $segment;
-			}
-		}
-		foreach ( get_the_category($post->ID) as $category ){
-			$classes[] = 'cat-' . $category->cat_ID . '-id';
-		}
-	}
-	$nebula_theme_info = wp_get_theme();
-	$classes[] = 'nebula';
-	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
+		$nebula_theme_info = wp_get_theme();
+		$classes[] = 'nebula';
+		$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 
-	//Time of Day
-	$classes[] = ( business_open() )? 'business-open' : 'business-closed';
-	$relative_time = nebula_relative_time();
-	foreach( $relative_time as $relative_desc ){
-		$classes[] = 'time-' . $relative_desc;
-	}
-	if ( date('H') >= 12 ){
-		$classes[] = 'time-pm';
-	} else {
-		$classes[] = 'time-am';
-	}
-
-	if ( get_option('nebula_latitude') && get_option('nebula_longitude') ){
-		$lat = get_option('nebula_latitude');
-		$lng = get_option('nebula_longitude');
-		$gmt = intval(get_option('gmt_offset'));
-		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
-		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
-		$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
-		if ( time() >= $sunrise && time() <= $sunset ){
-			$classes[] = 'time-daylight';
+		//Time of Day
+		$classes[] = ( business_open() )? 'business-open' : 'business-closed';
+		$relative_time = nebula_relative_time();
+		foreach( $relative_time as $relative_desc ){
+			$classes[] = 'time-' . $relative_desc;
+		}
+		if ( date('H') >= 12 ){
+			$classes[] = 'time-pm';
 		} else {
-			$classes[] = 'time-darkness';
+			$classes[] = 'time-am';
 		}
 
-		if ( strtotime('now') >= $sunrise-60*45 && strtotime('now') <= $sunrise+60*45 ){ //45 minutes before and after true sunrise
-			$classes[] = 'time-sunrise';
+		if ( get_option('nebula_latitude') && get_option('nebula_longitude') ){
+			$lat = get_option('nebula_latitude');
+			$lng = get_option('nebula_longitude');
+			$gmt = intval(get_option('gmt_offset'));
+			$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
+			$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+			$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+			if ( time() >= $sunrise && time() <= $sunset ){
+				$classes[] = 'time-daylight';
+			} else {
+				$classes[] = 'time-darkness';
+			}
+
+			if ( strtotime('now') >= $sunrise-60*45 && strtotime('now') <= $sunrise+60*45 ){ //45 minutes before and after true sunrise
+				$classes[] = 'time-sunrise';
+			}
+			if ( strtotime('now') >= $sunset-60*45 && strtotime('now') <= $sunset+60*45 ){ //45 minutes before and after true sunset
+				$classes[] = 'time-sunset';
+			}
 		}
-		if ( strtotime('now') >= $sunset-60*45 && strtotime('now') <= $sunset+60*45 ){ //45 minutes before and after true sunset
-			$classes[] = 'time-sunset';
+
+		$classes[] = 'date-day-' . strtolower(date('l'));
+		$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
+		$classes[] = 'date-month-' . strtolower(date('F'));
+
+		if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
+			$classes[] = 'error' . $GLOBALS['http'];
 		}
+
+	    return $classes;
 	}
-
-	$classes[] = 'date-day-' . strtolower(date('l'));
-	$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
-	$classes[] = 'date-month-' . strtolower(date('F'));
-
-	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
-		$classes[] = 'error' . $GLOBALS['http'];
-	}
-
-    return $classes;
 }
 
 //Add additional classes to post wrappers @TODO "Nebula" 0: Finish implementing this!
@@ -1475,427 +1500,448 @@ function nebula_save_attachment_fields($attachment_id){
 }
 
 //Check if the passed time is within business hours.
-function is_business_open($date=null, $general=0){ return business_open($date, $general); }
-function is_business_closed($date=null, $general=0){ return !business_open($date, $general); }
-function business_open($date=null, $general=0){
-	if ( empty($date) || $date == 'now' ){
-		$date = time();
-	} elseif ( strtotime($date) ){
-		$date = strtotime($date . ' ' . date('g:ia', strtotime('now')));
-	}
-	$today = strtolower(date('l', $date));
+if ( !function_exists('business_open') ){
+	function is_business_open($date=null, $general=0){ return business_open($date, $general); }
+	function is_business_closed($date=null, $general=0){ return !business_open($date, $general); }
+	function business_open($date=null, $general=0){
+		if ( empty($date) || $date == 'now' ){
+			$date = time();
+		} elseif ( strtotime($date) ){
+			$date = strtotime($date . ' ' . date('g:ia', strtotime('now')));
+		}
+		$today = strtolower(date('l', $date));
 
-	$businessHours = array();
-	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
-		$businessHours[$weekday] = array(
-			'enabled' => get_option('nebula_business_hours_' . $weekday . '_enabled'),
-			'open' => get_option('nebula_business_hours_' . $weekday . '_open'),
-			'close' => get_option('nebula_business_hours_' . $weekday . '_close')
-		);
-	}
-
-	$days_off = explode(', ', get_option('nebula_business_hours_closed'));
-	foreach ( $days_off as $key => $day_off ){
-		$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
-
-		if ( date('N', $days_off[$key]) == 6 ){ //If the date is a Saturday
-			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
-		} elseif ( date('N', $days_off[$key]) == 7 ){ //If the date is a Sunday
-			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
+		$businessHours = array();
+		foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
+			$businessHours[$weekday] = array(
+				'enabled' => get_option('nebula_business_hours_' . $weekday . '_enabled'),
+				'open' => get_option('nebula_business_hours_' . $weekday . '_open'),
+				'close' => get_option('nebula_business_hours_' . $weekday . '_close')
+			);
 		}
 
-		if ( date('Ymd', $days_off[$key]) == date('Ymd', $date) ){
-			return false;
+		$days_off = explode(', ', get_option('nebula_business_hours_closed'));
+		foreach ( $days_off as $key => $day_off ){
+			$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
+
+			if ( date('N', $days_off[$key]) == 6 ){ //If the date is a Saturday
+				$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
+			} elseif ( date('N', $days_off[$key]) == 7 ){ //If the date is a Sunday
+				$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
+			}
+
+			if ( date('Ymd', $days_off[$key]) == date('Ymd', $date) ){
+				return false;
+			}
 		}
+
+		if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
+			if ( $general == 1 ){
+				return true;
+			}
+
+			$openToday = date('Gi', strtotime($businessHours[$today]['open']));
+			$closeToday = date('Gi', strtotime($businessHours[$today]['close']));
+			if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
+				return true;
+			}
+		}
+
+		return false;
 	}
-
-	if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
-		if ( $general == 1 ){
-			return true;
-		}
-
-		$openToday = date('Gi', strtotime($businessHours[$today]['open']));
-		$closeToday = date('Gi', strtotime($businessHours[$today]['close']));
-		if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
-			return true;
-		}
-	}
-
-	return false;
 }
 
 //Get the relative time of day
-function nebula_relative_time(){
-	if ( contains(date('H'), array('23', '00', '01')) ){
-		return array('early', 'night');
-	} elseif ( contains(date('H'), array('02', '03', '04')) ){
-		return array('late', 'night');
-	} elseif ( contains(date('H'), array('05', '06', '07')) ){
-		return array('early', 'morning');
-	} elseif ( contains(date('H'), array('08', '09', '10')) ){
-		return array('late', 'morning');
-	} elseif ( contains(date('H'), array('11', '12', '13')) ){
-		return array('early', 'midday');
-	} elseif ( contains(date('H'), array('14', '15', '16')) ){
-		return array('late', 'midday');
-	} elseif ( contains(date('H'), array('17', '18', '19')) ){
-		return array('early', 'evening');
-	} elseif ( contains(date('H'), array('20', '21', '22')) ){
-		return array('late', 'evening');
+if ( !function_exists('nebula_relative_time') ){
+	function nebula_relative_time(){
+		if ( contains(date('H'), array('23', '00', '01')) ){
+			return array('early', 'night');
+		} elseif ( contains(date('H'), array('02', '03', '04')) ){
+			return array('late', 'night');
+		} elseif ( contains(date('H'), array('05', '06', '07')) ){
+			return array('early', 'morning');
+		} elseif ( contains(date('H'), array('08', '09', '10')) ){
+			return array('late', 'morning');
+		} elseif ( contains(date('H'), array('11', '12', '13')) ){
+			return array('early', 'midday');
+		} elseif ( contains(date('H'), array('14', '15', '16')) ){
+			return array('late', 'midday');
+		} elseif ( contains(date('H'), array('17', '18', '19')) ){
+			return array('early', 'evening');
+		} elseif ( contains(date('H'), array('20', '21', '22')) ){
+			return array('late', 'evening');
+		}
 	}
 }
 
 //Detect weather for Zip Code (using Yahoo! Weather)
-function nebula_weather($zipcode=null, $data=''){
-	if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
-		$data = $zipcode;
-		$zipcode = get_option('nebula_postal_code', '13204');
-	} elseif ( empty($zipcode) ){
-		$zipcode = get_option('nebula_postal_code', '13204');
-	}
+if ( !function_exists('nebula_weather') ){
+	function nebula_weather($zipcode=null, $data=''){
+		if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
+			$data = $zipcode;
+			$zipcode = get_option('nebula_postal_code', '13204');
+		} elseif ( empty($zipcode) ){
+			$zipcode = get_option('nebula_postal_code', '13204');
+		}
 
-	$weather_json = get_transient('nebula_weather_' . $zipcode);
-	if ( empty($weather_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-		$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
-		$weather_json = file_get_contents('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json'); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
-		set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
-	}
-	$weather_json = json_decode($weather_json);
+		$weather_json = get_transient('nebula_weather_' . $zipcode);
+		if ( empty($weather_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+			$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
+			$weather_json = file_get_contents('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json'); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
+		}
+		$weather_json = json_decode($weather_json);
 
-	if ( !$weather_json || empty($weather_json) ){
-		trigger_error('A weather error occurred (Forecast for ' . $zipcode . ' may not exist).', E_USER_WARNING);
+		if ( !$weather_json || empty($weather_json) ){
+			trigger_error('A weather error occurred (Forecast for ' . $zipcode . ' may not exist).', E_USER_WARNING);
+			return false;
+		} elseif ( $data == '' ){
+			return true;
+		}
+
+		switch ( $data ){
+			case 'json':
+				return $weather_json;
+				break;
+			case 'reported':
+			case 'build':
+			case 'lastBuildDate':
+				return $weather_json->query->results->channel->lastBuildDate;
+				break;
+			case 'city':
+				return $weather_json->query->results->channel->location->city;
+				break;
+			case 'state':
+			case 'region':
+				return $weather_json->query->results->channel->location->region;
+				break;
+			case 'country':
+				return $weather_json->query->results->channel->location->country;
+				break;
+			case 'location':
+				return $weather_json->query->results->channel->location->city . ', ' . $weather_json->query->results->channel->location->region;
+				break;
+			case 'latitude':
+			case 'lat':
+				return $weather_json->query->results->channel->item->lat;
+				break;
+			case 'longitude':
+			case 'long':
+			case 'lng':
+				return $weather_json->query->results->channel->item->long;
+				break;
+			case 'geo':
+			case 'geolocation':
+			case 'coordinates':
+				return $weather_json->query->results->channel->item->lat . ',' . $weather_json->query->results->channel->item->lat;
+				break;
+			case 'windchill':
+			case 'wind chill':
+			case 'chill':
+				return $weather_json->query->results->channel->wind->chill;
+				break;
+			case 'windspeed':
+			case 'wind speed':
+				return $weather_json->query->results->channel->wind->speed;
+				break;
+			case 'sunrise':
+				return $weather_json->query->results->channel->astronomy->sunrise;
+				break;
+			case 'sunset':
+				return $weather_json->query->results->channel->astronomy->sunset;
+				break;
+			case 'temp':
+			case 'temperature':
+				return $weather_json->query->results->channel->item->condition->temp;
+				break;
+			case 'condition':
+			case 'conditions':
+			case 'current':
+			case 'currently':
+				return $weather_json->query->results->channel->item->condition->text;
+				break;
+			case 'forecast':
+				return $weather_json->query->results->channel->item->forecast;
+				break;
+			default:
+				break;
+		}
 		return false;
-	} elseif ( $data == '' ){
-		return true;
 	}
-
-	switch ( $data ){
-		case 'json':
-			return $weather_json;
-			break;
-		case 'reported':
-		case 'build':
-		case 'lastBuildDate':
-			return $weather_json->query->results->channel->lastBuildDate;
-			break;
-		case 'city':
-			return $weather_json->query->results->channel->location->city;
-			break;
-		case 'state':
-		case 'region':
-			return $weather_json->query->results->channel->location->region;
-			break;
-		case 'country':
-			return $weather_json->query->results->channel->location->country;
-			break;
-		case 'location':
-			return $weather_json->query->results->channel->location->city . ', ' . $weather_json->query->results->channel->location->region;
-			break;
-		case 'latitude':
-		case 'lat':
-			return $weather_json->query->results->channel->item->lat;
-			break;
-		case 'longitude':
-		case 'long':
-		case 'lng':
-			return $weather_json->query->results->channel->item->long;
-			break;
-		case 'geo':
-		case 'geolocation':
-		case 'coordinates':
-			return $weather_json->query->results->channel->item->lat . ',' . $weather_json->query->results->channel->item->lat;
-			break;
-		case 'windchill':
-		case 'wind chill':
-		case 'chill':
-			return $weather_json->query->results->channel->wind->chill;
-			break;
-		case 'windspeed':
-		case 'wind speed':
-			return $weather_json->query->results->channel->wind->speed;
-			break;
-		case 'sunrise':
-			return $weather_json->query->results->channel->astronomy->sunrise;
-			break;
-		case 'sunset':
-			return $weather_json->query->results->channel->astronomy->sunset;
-			break;
-		case 'temp':
-		case 'temperature':
-			return $weather_json->query->results->channel->item->condition->temp;
-			break;
-		case 'condition':
-		case 'conditions':
-		case 'current':
-		case 'currently':
-			return $weather_json->query->results->channel->item->condition->text;
-			break;
-		case 'forecast':
-			return $weather_json->query->results->channel->item->forecast;
-			break;
-		default:
-			break;
-	}
-	return false;
 }
 
-function vimeo_meta($videoID, $meta=''){
-	if ( $meta == 'id' ){
-		return $videoID;
-	}
+if ( !function_exists('vimeo_meta') ){
+	function vimeo_meta($videoID, $meta=''){
+		if ( $meta == 'id' ){
+			return $videoID;
+		}
 
-	$vimeo_json = get_transient('nebula_vimeo_' . $videoID);
-	if ( empty($vimeo_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-		$vimeo_json = file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".json"); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
-		set_transient('nebula_vimeo_' . $videoID, $vimeo_json, 60*60); //1 hour expiration
-	}
-	$vimeo_json = json_decode($vimeo_json);
+		$vimeo_json = get_transient('nebula_vimeo_' . $videoID);
+		if ( empty($vimeo_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+			$vimeo_json = file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".json"); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+			set_transient('nebula_vimeo_' . $videoID, $vimeo_json, 60*60); //1 hour expiration
+		}
+		$vimeo_json = json_decode($vimeo_json);
 
-	if ( !$vimeo_json ){
-		trigger_error('A Vimeo API error occurred (A video with ID ' . $videoID . ' may not exist).', E_USER_WARNING);
+		if ( !$vimeo_json ){
+			trigger_error('A Vimeo API error occurred (A video with ID ' . $videoID . ' may not exist).', E_USER_WARNING);
+			return false;
+		} elseif ( empty($vimeo_json[0]) ){
+			trigger_error('A Vimeo video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
+			return false;
+		} elseif ( $meta == '' ){
+			return true;
+		}
+
+		switch ( $meta ){
+			case 'json':
+				return $vimeo_json[0];
+				break;
+			case 'title':
+				return $vimeo_json[0]->title;
+				break;
+			case 'safetitle':
+			case 'safe-title':
+				return str_replace(" ", "-", $vimeo_json[0]->title);
+				break;
+			case 'description':
+			case 'content':
+				return $vimeo_json[0]->description;
+				break;
+			case 'thumbnail':
+				return $vimeo_json[0]->thumbnail_large;
+				break;
+			case 'author':
+			case 'channeltitle':
+			case 'channel':
+			case 'user':
+				return $vimeo_json[0]->user_name;
+				break;
+			case 'uploaded':
+			case 'published':
+			case 'date':
+			case 'upload_date':
+				return $vimeo_json[0]->upload_date;
+				break;
+			case 'href':
+			case 'link':
+			case 'url':
+				return $vimeo_json[0]->url;
+				break;
+			case 'seconds':
+			case 'duration':
+			    $duration_seconds = strval($vimeo_json[0]->duration);
+			    if ( $meta == 'seconds' ){
+				    return $duration_seconds;
+			    } else {
+				    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
+			    }
+				break;
+			default:
+				break;
+		}
 		return false;
-	} elseif ( empty($vimeo_json[0]) ){
-		trigger_error('A Vimeo video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
-		return false;
-	} elseif ( $meta == '' ){
-		return true;
 	}
-
-	switch ( $meta ){
-		case 'json':
-			return $vimeo_json[0];
-			break;
-		case 'title':
-			return $vimeo_json[0]->title;
-			break;
-		case 'safetitle':
-		case 'safe-title':
-			return str_replace(" ", "-", $vimeo_json[0]->title);
-			break;
-		case 'description':
-		case 'content':
-			return $vimeo_json[0]->description;
-			break;
-		case 'thumbnail':
-			return $vimeo_json[0]->thumbnail_large;
-			break;
-		case 'author':
-		case 'channeltitle':
-		case 'channel':
-		case 'user':
-			return $vimeo_json[0]->user_name;
-			break;
-		case 'uploaded':
-		case 'published':
-		case 'date':
-		case 'upload_date':
-			return $vimeo_json[0]->upload_date;
-			break;
-		case 'href':
-		case 'link':
-		case 'url':
-			return $vimeo_json[0]->url;
-			break;
-		case 'seconds':
-		case 'duration':
-		    $duration_seconds = strval($vimeo_json[0]->duration);
-		    if ( $meta == 'seconds' ){
-			    return $duration_seconds;
-		    } else {
-			    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
-		    }
-			break;
-		default:
-			break;
-	}
-	return false;
 }
 
 //Get Youtube Video metadata
-function youtube_meta($videoID, $meta=''){
-	switch ( $meta ){
-		case 'origin':
-			return nebula_url_components('basedomain');
-			break;
-		case 'id':
-			return $videoID;
-			break;
-		case 'href':
-		case 'link':
-		case 'url':
-			return 'https://www.youtube.com/watch?v=' . $videoID;
-			break;
-		default:
-			break;
-	}
-
-	$youtube_json = get_transient('nebula_youtube_' . $videoID);
-	if ( empty($youtube_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-		if ( get_option('nebula_google_server_api_key') == '' ){
-			if ( current_user_can('manage_options') || is_dev() ){
-				trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Options (in the WordPress Admin).", E_USER_WARNING);
-				return false;
-			} else {
-				trigger_error("Google API Server Key not found.", E_USER_WARNING);
-				return false;
-			}
+if ( !function_exists('youtube_meta') ){
+	function youtube_meta($videoID, $meta=''){
+		switch ( $meta ){
+			case 'origin':
+				return nebula_url_components('basedomain');
+				break;
+			case 'id':
+				return $videoID;
+				break;
+			case 'href':
+			case 'link':
+			case 'url':
+				return 'https://www.youtube.com/watch?v=' . $videoID;
+				break;
+			default:
+				break;
 		}
-		$youtube_json = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=" . $videoID . "&part=snippet,contentDetails,statistics&key=" . get_option('nebula_google_server_api_key')); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
-		set_transient('nebula_youtube_' . $videoID, $youtube_json, 60*60); //1 hour expiration
-	}
-	$youtube_json = json_decode($youtube_json);
 
-	if ( !$youtube_json ){
-		trigger_error('A Youtube Data API error occurred.', E_USER_WARNING);
-		return false;
-	} elseif ( empty($youtube_json->items) ){
-		trigger_error('A Youtube video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
-		return false;
-	} elseif ( $meta == '' ){
-		return true;
-	}
+		$youtube_json = get_transient('nebula_youtube_' . $videoID);
+		if ( empty($youtube_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+			if ( get_option('nebula_google_server_api_key') == '' ){
+				if ( current_user_can('manage_options') || is_dev() ){
+					trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Options (in the WordPress Admin).", E_USER_WARNING);
+					return false;
+				} else {
+					trigger_error("Google API Server Key not found.", E_USER_WARNING);
+					return false;
+				}
+			}
+			$youtube_json = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=" . $videoID . "&part=snippet,contentDetails,statistics&key=" . get_option('nebula_google_server_api_key')); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+			set_transient('nebula_youtube_' . $videoID, $youtube_json, 60*60); //1 hour expiration
+		}
+		$youtube_json = json_decode($youtube_json);
 
-	switch ( $meta ){
-		case 'json':
-			return $youtube_json->items[0];
-			break;
-		case 'title':
-			return $youtube_json->items[0]->snippet->title;
-			break;
-		case 'safetitle':
-		case 'safe-title':
-			return str_replace(" ", "-", $youtube_json->items[0]->snippet->title);
-			break;
-		case 'description':
-		case 'content':
-			return $youtube_json->items[0]->snippet->description;
-			break;
-		case 'thumbnail':
-			return $youtube_json->items[0]->snippet->thumbnails->high->url;
-			break;
-		case 'author':
-		case 'channeltitle':
-		case 'channel':
-		case 'user':
-			return $youtube_json->items[0]->snippet->channelTitle;
-			break;
-		case 'uploaded':
-		case 'published':
-		case 'date':
-		case 'upload_date':
-			return $youtube_json->items[0]->snippet->publishedAt;
-			break;
-		case 'seconds':
-		case 'duration':
-			$start = new DateTime('@0'); //Unix epoch
-		    $start->add(new DateInterval($youtube_json->items[0]->contentDetails->duration));
-		    $duration_seconds = intval($start->format('H'))*60*60 + intval($start->format('i'))*60 + intval($start->format('s'));
-		    if ( $meta == 'seconds' ){
-			    return $duration_seconds;
-		    } else {
-			    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
-		    }
-			break;
-		default:
-			break;
+		if ( !$youtube_json ){
+			trigger_error('A Youtube Data API error occurred.', E_USER_WARNING);
+			return false;
+		} elseif ( !empty($youtube_json->error) ){
+			trigger_error('Youtube API Error: ' . $youtube_json->error->message, E_USER_WARNING);
+			return false;
+		} elseif ( empty($youtube_json->items) ){
+			trigger_error('A Youtube video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
+			return false;
+		} elseif ( empty($meta) ){
+			return true;
+		}
+
+		switch ( $meta ){
+			case 'json':
+				return $youtube_json->items[0];
+				break;
+			case 'title':
+				return $youtube_json->items[0]->snippet->title;
+				break;
+			case 'safetitle':
+			case 'safe-title':
+				return str_replace(" ", "-", $youtube_json->items[0]->snippet->title);
+				break;
+			case 'description':
+			case 'content':
+				return $youtube_json->items[0]->snippet->description;
+				break;
+			case 'thumbnail':
+				return $youtube_json->items[0]->snippet->thumbnails->high->url;
+				break;
+			case 'author':
+			case 'channeltitle':
+			case 'channel':
+			case 'user':
+				return $youtube_json->items[0]->snippet->channelTitle;
+				break;
+			case 'uploaded':
+			case 'published':
+			case 'date':
+			case 'upload_date':
+				return $youtube_json->items[0]->snippet->publishedAt;
+				break;
+			case 'seconds':
+			case 'duration':
+				$start = new DateTime('@0'); //Unix epoch
+			    $start->add(new DateInterval($youtube_json->items[0]->contentDetails->duration));
+			    $duration_seconds = intval($start->format('H'))*60*60 + intval($start->format('i'))*60 + intval($start->format('s'));
+			    if ( $meta == 'seconds' ){
+				    return $duration_seconds;
+			    } else {
+				    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
+			    }
+				break;
+			default:
+				break;
+		}
+		return false;
 	}
-	return false;
 }
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
-function nebula_tel_link($phone, $postd=''){
-	if ( nebula_is_mobile() ){
-		if ( $postd ){
-			$search = array('#', 'p', 'w');
-			$replace   = array('%23', ',', ';');
-			$postd = str_replace($search, $replace, $postd);
-			if ( strpos($postd, ',') === false || strpos($postd, ';') === false ){
-				$postd = ',' . $postd;
+if ( !function_exists('nebula_tel_link') ){
+	function nebula_tel_link($phone, $postd=''){
+		if ( nebula_is_mobile() ){
+			if ( $postd ){
+				$search = array('#', 'p', 'w');
+				$replace   = array('%23', ',', ';');
+				$postd = str_replace($search, $replace, $postd);
+				if ( strpos($postd, ',') === false || strpos($postd, ';') === false ){
+					$postd = ',' . $postd;
+				}
 			}
+			return '<a class="nebula-tel-link" href="tel:' . nebula_phone_format($phone, 'tel') . $postd . '">' . nebula_phone_format($phone, 'human') . '</a>';
+		} else {
+			return nebula_phone_format($phone, 'human');
 		}
-		return '<a class="nebula-tel-link" href="tel:' . nebula_phone_format($phone, 'tel') . $postd . '">' . nebula_phone_format($phone, 'human') . '</a>';
-	} else {
-		return nebula_phone_format($phone, 'human');
 	}
 }
 
 //Create sms: link if on mobile, otherwise return unlinked, human-readable number
-function nebula_sms_link($phone, $message=''){
-	if ( nebula_is_mobile() ){
-		$sep = ( nebula_is_os('ios') )? '?' : ';';
-		//@TODO "Nebula" 0: Encode $message string here...?
-		return '<a class="nebula-sms-link" href="sms:' . nebula_phone_format($phone, 'tel') . $sep . 'body=' . $message . '">' . nebula_phone_format($phone, 'human') . '</a>';
-	} else {
-		return nebula_phone_format($phone, 'human');
+if ( !function_exists('nebula_sms_link') ){
+	function nebula_sms_link($phone, $message=''){
+		if ( nebula_is_mobile() ){
+			$sep = ( nebula_is_os('ios') )? '?' : ';';
+			//@TODO "Nebula" 0: Encode $message string here...?
+			return '<a class="nebula-sms-link" href="sms:' . nebula_phone_format($phone, 'tel') . $sep . 'body=' . $message . '">' . nebula_phone_format($phone, 'human') . '</a>';
+		} else {
+			return nebula_phone_format($phone, 'human');
+		}
 	}
 }
 
 //Convert phone numbers into ten digital dial-able or to human-readable
-function nebula_phone_format($number, $format=''){
+if ( !function_exists('nebula_phone_format') ){
+	function nebula_phone_format($number, $format=''){
 
-	if ( $format == 'human' && (strpos($number, ')') == 4 || strpos($number, ')') == 6) ){
-		//Format is already human-readable
-		return $number;
-	} elseif ( $format == 'tel' && (strpos($number, '+1') == 0 && strlen($number) == 12) ){
-		//Format is already dialable
-		return $number;
-	}
+		if ( $format == 'human' && (strpos($number, ')') == 4 || strpos($number, ')') == 6) ){
+			//Format is already human-readable
+			return $number;
+		} elseif ( $format == 'tel' && (strpos($number, '+1') == 0 && strlen($number) == 12) ){
+			//Format is already dialable
+			return $number;
+		}
 
-	if ( (strpos($number, '+1') == 0 && strlen($number) == 12) || (strpos($number, '1') == 0 && strlen($number) == 11) || strlen($number) == 10 && $format != 'tel' ){
-		//Convert from dialable to human
-		if ( strpos($number, '1') == 0 && strlen($number) == 11 ){
-			//13154786700
-			$number = '(' . substr($number, 1, 3) . ') ' . substr($number, 4, 3) . '-' . substr($number, 7);
-		} elseif ( strlen($number) == 10 ){
-			//3154786700
-			$number = '(' . substr($number, 0, 3) . ') ' . substr($number, 3, 3) . '-' . substr($number, 6);
-		} elseif ( strpos($number, '+1') == 0 && strlen($number) == 12 ){
-			//+13154786700
-			$number = '(' . substr($number, 2, 3) . ') ' . substr($number, 5, 3) . '-' . substr($number, 8);
+		if ( (strpos($number, '+1') == 0 && strlen($number) == 12) || (strpos($number, '1') == 0 && strlen($number) == 11) || strlen($number) == 10 && $format != 'tel' ){
+			//Convert from dialable to human
+			if ( strpos($number, '1') == 0 && strlen($number) == 11 ){
+				//13154786700
+				$number = '(' . substr($number, 1, 3) . ') ' . substr($number, 4, 3) . '-' . substr($number, 7);
+			} elseif ( strlen($number) == 10 ){
+				//3154786700
+				$number = '(' . substr($number, 0, 3) . ') ' . substr($number, 3, 3) . '-' . substr($number, 6);
+			} elseif ( strpos($number, '+1') == 0 && strlen($number) == 12 ){
+				//+13154786700
+				$number = '(' . substr($number, 2, 3) . ') ' . substr($number, 5, 3) . '-' . substr($number, 8);
+			} else {
+				return 'Error: Unknown format.';
+			}
+			//@TODO "Nebula" 0: Maybe any numbers after "," "p" ";" or "w" could be added to the human-readable in brackets, like: (315) 555-1346 [323]
+			//To do the above, set a remainder variable from above and add it to the return (if it exists). Maybe even add them to a span with a class so they can be hidden if undesired?
+			return $number;
 		} else {
-			return 'Error: Unknown format.';
-		}
-		//@TODO "Nebula" 0: Maybe any numbers after "," "p" ";" or "w" could be added to the human-readable in brackets, like: (315) 555-1346 [323]
-		//To do the above, set a remainder variable from above and add it to the return (if it exists). Maybe even add them to a span with a class so they can be hidden if undesired?
-		return $number;
-	} else {
-		if ( strlen($number) < 7 ){
-			return 'Error: Too few digits.';
-		} elseif ( strlen($number) < 10 ){
-			return 'Error: Too few digits (area code is required).';
-		}
-		//Convert from human to dialable
-		if ( strpos($number, '1') != '0' ){
-			$number = '1 ' . $number;
-		}
+			if ( strlen($number) < 7 ){
+				return 'Error: Too few digits.';
+			} elseif ( strlen($number) < 10 ){
+				return 'Error: Too few digits (area code is required).';
+			}
+			//Convert from human to dialable
+			if ( strpos($number, '1') != '0' ){
+				$number = '1 ' . $number;
+			}
 
-		if ( strpos($number,'x') !== false ){
-			$postd = ';p' . substr($number, strpos($number, "x") + 1);
-		} else {
-			$postd = '';
+			if ( strpos($number,'x') !== false ){
+				$postd = ';p' . substr($number, strpos($number, "x") + 1);
+			} else {
+				$postd = '';
+			}
+			$number = str_replace(array(' ', '-', '(', ')', '.', 'x'), '', $number);
+			$number = substr($number, 0, 11);
+			return '+' . $number . $postd;
 		}
-		$number = str_replace(array(' ', '-', '(', ')', '.', 'x'), '', $number);
-		$number = substr($number, 0, 11);
-		return '+' . $number . $postd;
 	}
 }
 
 //Footer Widget Counter
-function footerWidgetCounter(){
-	$footerWidgetCount = 0;
-	if ( is_active_sidebar('First Footer Widget Area') ){
-		$footerWidgetCount++;
+if ( !function_exists('footerWidgetCounter') ){
+	function footerWidgetCounter(){
+		$footerWidgetCount = 0;
+		if ( is_active_sidebar('First Footer Widget Area') ){
+			$footerWidgetCount++;
+		}
+		if ( is_active_sidebar('Second Footer Widget Area') ){
+			$footerWidgetCount++;
+		}
+		if ( is_active_sidebar('Third Footer Widget Area') ){
+			$footerWidgetCount++;
+		}
+		if ( is_active_sidebar('Fourth Footer Widget Area') ){
+			$footerWidgetCount++;
+		}
+		return $footerWidgetCount;
 	}
-	if ( is_active_sidebar('Second Footer Widget Area') ){
-		$footerWidgetCount++;
-	}
-	if ( is_active_sidebar('Third Footer Widget Area') ){
-		$footerWidgetCount++;
-	}
-	if ( is_active_sidebar('Fourth Footer Widget Area') ){
-		$footerWidgetCount++;
-	}
-	return $footerWidgetCount;
 }
 
 //Track PHP errors...

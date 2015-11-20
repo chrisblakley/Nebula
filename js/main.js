@@ -738,7 +738,7 @@ function gaEventTracking(){
 	window.onafterprint = afterPrint;
 
 	//Detect clicks on pinned header
-	if ( headroom.classes.pinned && headroom.classes.notTop ){
+	if ( typeof headroom !== 'undefined' && headroom.classes.pinned && headroom.classes.notTop ){
 		jQuery(document).on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
 			ga('send', 'event', 'Pinned Header', 'Click', 'Used pinned header (after scrolling) to navigate');
 		});
@@ -2141,7 +2141,8 @@ function powerFooterWidthDist(){
 }
 
 function nebulaScrollTo(){
-	var headerHtOffset = jQuery('#topbarcon').height(); //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+	var headerHtOffset = ( jQuery('.headroom').length )? jQuery('.headroom').outerHeight() : 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+
 	thisPage.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
@@ -2161,9 +2162,11 @@ function nebulaScrollTo(){
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scrollto');
-			jQuery('html, body').animate({
-				scrollTop: Math.floor(jQuery(scrollElement).offset().top-headerHtOffset+pOffset)
-			}, 500);
+			if ( scrollElement != '' ){
+				jQuery('html, body').animate({
+					scrollTop: Math.floor(jQuery(scrollElement).offset().top-headerHtOffset+pOffset)
+				}, 500);
+			}
 		}
 		return false;
 	});
@@ -2903,11 +2906,11 @@ function initHeadroom(){
 	}
 
 	if ( typeof headroom !== 'undefined' || !window.matchMedia("(min-width: 767px)").matches ){ //If headroom needs to be re-init or if tablet or mobile
-		headroom.destroy();
-
 		if ( !window.matchMedia("(min-width: 767px)").matches ){
 			return false;
 		}
+
+		headroom.destroy();
 	}
 
 	var clonedFixedElement = fixedElement.clone().addClass('headroom--not-top').css({position: "absolute", left: "-10000px"}).appendTo('body'); //See the future: Get final height of fixedElement with unknown CSS properties

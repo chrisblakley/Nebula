@@ -147,8 +147,31 @@ function my_theme_register_required_plugins(){
 	*/
 }
 
-//When Nebula has been activated
-add_action('after_switch_theme', 'nebula_activation_notice');
+//When child Nebula has been activated.
+if ( is_child_theme() ){
+	add_action('after_switch_theme', 'nebula_child_activation_notice');
+}
+function nebula_child_activation_notice(){
+	add_action('admin_notices', 'nebula_activation');
+}
+function nebula_child_activation(){
+	?>
+	<div id='nebula-activate-success' class='updated'>
+		<p>
+			<strong class="nebula-activated-title">Nebula child has been activated.</strong><br />
+			<span class="nebula-activated-description">
+				Initialization can only be run on the parent theme. If menus were created in the parent theme, they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>.<br />
+				<strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>
+			</span>
+		</p>
+	</div>
+	<?php
+}
+
+//When parent Nebula has been activated
+if ( !is_child_theme() ){
+	add_action('after_switch_theme', 'nebula_activation_notice');
+}
 function nebula_activation_notice(){
 	add_action('admin_notices', 'nebula_activation');
 }
@@ -192,7 +215,7 @@ function nebula_activation(){
 				<p>
 					<strong class="nebula-activated-title">Nebula has been activated!</strong><br />
 					<?php if ( current_user_can('manage_options') ): ?>
-						<span class="nebula-activated-description">To run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>.</span>
+						<span class="nebula-activated-description">To run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>. If planning on using a Nebula child theme, initialize <strong>before</strong> activating the child theme.</span>
 					<?php else: ?>
 						You have activated Nebula. Contact the site administrator to run the automated Nebula initialization processes.
 					<?php endif; ?>

@@ -3,9 +3,11 @@
  * Functions
  */
 
+
 /*==========================
  Include Nebula Utility Functions
  ===========================*/
+
 require_once('functions/nebula_options.php'); //Nebula Options
 require_once('functions/nebula_utilities.php'); //Nebula Utilities
 
@@ -13,12 +15,14 @@ require_once('functions/nebula_utilities.php'); //Nebula Utilities
 /*==========================
  Google Analytics Tracking ID
  ===========================*/
+
 $GLOBALS['ga'] = nebula_option('nebula_ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
 
 
 /*==========================
  Include Remaining Nebula Functions Groups
  ===========================*/
+
 require_once('functions/nebula_security.php'); //Nebula Security
 require_once('functions/nebula_automation.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
@@ -34,6 +38,7 @@ require_once('functions/nebula_wireframing.php'); //Nebula Wireframing (can be c
 /*==========================
  Register All Stylesheets
  ===========================*/
+
 add_action('wp_enqueue_scripts', 'register_nebula_styles');
 add_action('login_enqueue_scripts', 'register_nebula_styles');
 add_action('admin_enqueue_scripts', 'register_nebula_styles');
@@ -50,7 +55,7 @@ function register_nebula_styles(){
 	wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/css/jquery.dataTables.min.css', array(), '1.10.9', 'all');
 	wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css', array(), '1.4.2', 'all');
 	wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css', array(), '1.11.4', 'all');
-	wp_register_style('nebula-main', get_stylesheet_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null, 'all');
+	wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-normalize', 'nebula-gumby', 'nebula-mmenu'), null, 'all');
 	wp_register_style('nebula-login', get_template_directory_uri() . '/stylesheets/css/login.css', array(), null);
 	wp_register_style('nebula-admin', get_template_directory_uri() . '/stylesheets/css/admin.css', array(), null);
 	wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
@@ -60,6 +65,7 @@ function register_nebula_styles(){
 /*==========================
  Register All Scripts
  ===========================*/
+
 add_action('wp_enqueue_scripts', 'register_nebula_scripts');
 add_action('login_enqueue_scripts', 'register_nebula_scripts');
 add_action('admin_enqueue_scripts', 'register_nebula_scripts');
@@ -87,6 +93,7 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js', null, array(), '1.4.2', true);
 	nebula_register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.min.js', null, array(), '2.10.6', true);
 	nebula_register_script('nebula-maskedinput', 'https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js', null, array(), '1.4.1', true);
+	nebula_register_script('nebula-adblockcheck', get_template_directory_uri() . '/js/libs/show_ads.js', null, array(), null, false); //Must be loaded in the head.
 	nebula_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', 'defer', array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
 	nebula_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', null, array('jquery'), null, true);
 	nebula_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', null, array('nebula-main'), null, true);
@@ -97,7 +104,7 @@ function register_nebula_scripts(){
 	$localize_bloginfo = array(
 		'name' => get_bloginfo("name"),
 		'template_directory' => get_template_directory_uri(),
-		'stylesheet_url' => get_bloginfo("stylesheet_url"),
+		'stylesheet_directory' => get_stylesheet_directory_uri(),
 		'home_url' => home_url(),
 		//'admin_email' => base64_encode(get_option('admin_email')), //Removed until actually needed somewhere.
 		'ajax_url' => admin_url('admin-ajax.php'),
@@ -169,6 +176,7 @@ if ( is_debug() ){
 /*==========================
  Enqueue Styles & Scripts on the Front-End
  ===========================*/
+
 add_action('wp_enqueue_scripts', 'enqueue_nebula_frontend');
 function enqueue_nebula_frontend(){
 	global $upload_dir, $localize_bloginfo, $localize_postinfo, $localize_clientinfo, $localize_nebula_options;
@@ -218,6 +226,10 @@ function enqueue_nebula_frontend(){
 		//wp_enqueue_script('nebula-jquery_old'); //Uncomment the next jQuery lines if WordPress bundles jQuery 2.0+ (currently bundles jQuery 1.11.2)
 	}
 
+	if ( !empty($GLOBALS['ga']) && nebula_option('nebula_cd_adblocker') ){
+		wp_enqueue_script('nebula-adblockcheck'); //Detect if user is blocking ads. If the custom dimension is active- removing this line will cause false positives.
+	}
+
 	if ( is_page_template('tpl-search.php') || is_page(9999) ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in main.js.
 		wp_enqueue_style('nebula-chosen');
 		wp_enqueue_script('nebula-chosen');
@@ -242,6 +254,7 @@ function enqueue_nebula_frontend(){
 /*==========================
  Enqueue Styles & Scripts on the Login
  ===========================*/
+
 add_action('login_enqueue_scripts', 'enqueue_nebula_login');
 function enqueue_nebula_login(){
 	global $localize_bloginfo, $localize_clientinfo, $localize_nebula_options;
@@ -263,6 +276,7 @@ function enqueue_nebula_login(){
 /*==========================
  Enqueue Styles & Scripts on the Admin
  ===========================*/
+
 add_action('admin_enqueue_scripts', 'enqueue_nebula_admin');
 function enqueue_nebula_admin(){
 	global $upload_dir, $localize_bloginfo, $localize_clientinfo, $localize_nebula_options;
@@ -339,5 +353,7 @@ function nebula_ga_experiment_detection(){
 	<?php }
 
 } //END Google Analytics Experiments
+
+
 
 //Close functions.php. DO NOT add anything after this closing tag!! ?>

@@ -47,6 +47,7 @@
 			weather: '<?php echo nebula_option('nebula_cd_weather'); //Hit ?>',
 			temperature: '<?php echo nebula_option('nebula_cd_temperature'); //Hit ?>',
 			publishYear: '<?php echo nebula_option('nebula_cd_publishyear'); //Hit ?>',
+			adBlocker: '<?php echo nebula_option('nebula_adblocker'); //User ?>',
 		}
 
 		gaCustomMetrics = {
@@ -194,6 +195,14 @@
 				echo 'ga("set", gaCustomDimensions["temperature"], "' . $temp_range . '");';
 			}
 		?>
+
+		<?php if ( nebula_option('nebula_cd_adblocker') ): //Our local show_ads.js only assigns adsEnabled variable to true. Best synchronous method of ad block detection. ?>
+			var adBlockUser = 'Non-Blocker';
+			if ( window.adsEnabled === undefined ){
+				adBlockUser = 'Ad Blocker';
+			}
+			ga('set', gaCustomDimensions['adblocker'], adBlockUser);
+		<?php endif; ?>
 
 		if ( jQuery('.notable-form').is('*') ){
 			ga('set', gaCustomMetrics['notableFormViews'], 1);

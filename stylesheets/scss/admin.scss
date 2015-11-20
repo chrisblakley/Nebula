@@ -225,6 +225,8 @@ th#id {width: 50px;}
 .row-title, td.plugin-title strong, td.post-title strong, .row-actions, .plugin-version-author-uri {font-size: 12px !important;}
 
 //Wordpress SEO (Yoast)
+#wpseo-score .yst-traffic-light {height: 20px; padding-top: 4px;}
+
 .wpseo-admin-page #sidebar-container {display: none;}
 #wpseo-conf p.settings_error {display: none !important; visibility: hidden; height: 0; width: 0; opacity: 0; pointer-events: none;
 	a {display: none !important; visibility: hidden; height: 0; width: 0; opacity: 0; pointer-events: none;}

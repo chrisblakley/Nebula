@@ -585,6 +585,8 @@
 
  .row-title,td.plugin-title strong,td.post-title strong,.row-actions,.plugin-version-author-uri { font-size:12px !important; }
 
+ #wpseo-score .yst-traffic-light { height:20px; padding-top:4px; }
+
  .wpseo-admin-page #sidebar-container { display:none; }
 
  #wpseo-conf p.settings_error { display:none !important; visibility:hidden; height:0; width:0; opacity:0; pointer-events:none; }
@@ -638,4 +640,4 @@
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
 
-/* Processed on Sunday, November 15, 2015 at 9:14pm */
+/* Processed on Thursday, November 19, 2015 at 5:26pm */

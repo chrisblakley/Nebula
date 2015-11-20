@@ -310,7 +310,7 @@ function pre_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );
 
 	if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
-		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/stylesheets/css/pre.css" />';
+		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
 
@@ -346,7 +346,7 @@ function gist_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) );
 
 	if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
-		echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/stylesheets/css/pre.css" />';
+		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
 
@@ -380,7 +380,7 @@ function github_shortcode($atts, $content=''){
 		$file_contents = @file_get_contents($file);
 
 		if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
-			echo '<link rel="stylesheet" type="text/css" href="' . get_stylesheet_directory_uri() . '/stylesheets/css/pre.css" />';
+			echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 			$GLOBALS['pre'] = 1;
 		}
 

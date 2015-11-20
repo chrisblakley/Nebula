@@ -222,6 +222,7 @@ function register_nebula_options(){
 		'nebula_cd_weather' => '',
 		'nebula_cd_temperature' => '',
 		'nebula_cd_publishyear' => '',
+		'nebula_cd_adblocker' => '',
 		'nebula_cm_notableformviews' => '',
 		'nebula_cm_notableformsubmissions' => '',
 		'nebula_cm_notabledownloads' => '',
@@ -1086,12 +1087,21 @@ function nebula_options_page(){
 		        </tr>
 
 		        <tr class="short" valign="top">
+		        	<th scope="row">Ad Blocker&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_adblocker" value="<?php echo get_option('nebula_cd_adblocker'); ?>" />
+						<p class="helper"><small>Detects if the user is blocking ads. This can be used even if not intending to serve ads on this site. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
 		        	<th scope="row"><em>Notable Browser</em>&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_notablebrowser" value="<?php echo get_option('nebula_cd_notablebrowser'); ?>" />
 						<p class="helper"><small>Sends data when notable browser info is detected (such as notable bot traffic or JavaScript disabled). <strong>Scope: Session</strong><br /><em>&raquo; This dimension is currently experimental.</em></small></p>
 					</td>
 		        </tr>
+
 
 
 
@@ -1154,7 +1164,7 @@ function nebula_options_page(){
 		        	<th scope="row">Notable Form Views*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="metric" type="text" name="nebula_cm_notableformviews" value="<?php echo get_option('nebula_cm_notableformviews'); ?>" />
-						<p class="helper"><small>Tracks when a user views a page containing a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or the submit input/button. <strong>Scope: Hit, Format: Integer</strong></small></p>
+						<p class="helper"><small>Tracks when a user views a page containing a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or an element inside it. <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 
@@ -1162,7 +1172,7 @@ function nebula_options_page(){
 		        	<th scope="row">Notable Form Submissions*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="metric" type="text" name="nebula_cm_notableformsubmissions" value="<?php echo get_option('nebula_cm_notableformsubmissions'); ?>" />
-						<p class="helper"><small>Tracks when a user submits a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or the submit input/button. Also note that this metric can not account for validation errors. <strong>Scope: Hit, Format: Integer</strong></small></p>
+						<p class="helper"><small>Tracks when a user submits a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or an element inside it. Also note that this metric can not account for validation errors. <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 

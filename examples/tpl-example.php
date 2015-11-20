@@ -40,7 +40,7 @@ get_header(); ?>
 	include_once('includes/hero_video.php');
 } ?>
 
-<div class="container">
+<div id="example-container" class="container">
 	<div class="row">
 		<div class="eleven columns">
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
