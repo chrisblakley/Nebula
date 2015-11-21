@@ -554,7 +554,7 @@ function slider_shortcode($atts, $content=''){
 		});
 	</script>';
 
-	echo $return;
+	return $return;
 } //end slider_shortcode()
 
 

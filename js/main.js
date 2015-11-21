@@ -2897,11 +2897,11 @@ function initHeadroom(){
 	var headerElement = jQuery('#header');
 	var fixedElement = jQuery('#logonavcon');
 
-	if ( !fixedElement.is('*') ){
+	if ( typeof fixedElement == 'undefined' || !fixedElement.is('*') ){
 		return false;
 	}
 
-	if ( !headerElement.is('*') ){
+	if ( typeof headerElement == 'undefined' || !headerElement.is('*') ){
 		headerElement = thisPage.body; //@TODO: If this fallback happens, the padding would need to move to the top.
 	}
 

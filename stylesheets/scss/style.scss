@@ -430,7 +430,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	@include media(tablet){padding: 50px 0; overflow: hidden; background-size: cover;};
 }
 
-#bigheadingcon {background: $primary_color; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
+#bigheadingcon {@include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
 	h1, h2, h3, h4, h5, h6, p {color: #fff;}
 	a {color: #fff; text-decoration: underline; white-space: nowrap;
 		&:hover,

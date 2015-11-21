@@ -650,17 +650,39 @@ if ( !function_exists('contains') ){
 	}
 }
 
-//Check if a website is available
-function nebula_is_available($domain){
-	$curlInit = curl_init($domain);
-	curl_setopt($curlInit, CURLOPT_CONNECTTIMEOUT, 10);
-	curl_setopt($curlInit, CURLOPT_HEADER, true);
-	curl_setopt($curlInit, CURLOPT_NOBODY, true);
-	curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
-	$response = curl_exec($curlInit);
-	curl_close($curlInit);
+//Check if a website or resource is available
+function nebula_is_available($domain=null){
+	if ( empty($domain) || strpos($domain, 'http') != 0 ){
+		trigger_error('Error: Requested domain is either empty or missing acceptable protocol.', E_USER_ERROR);
+		return false;
+	}
 
-	if ( $response ){
+	$curl_init = curl_init($domain);
+	$curl_options = array(
+		CURLOPT_RETURNTRANSFER => true, //Return web page
+		CURLOPT_HEADER => true, //Return headers
+		CURLOPT_FOLLOWLOCATION => true, //Follow redirects
+		CURLOPT_CONNECTTIMEOUT => 10, //Timeout on connect
+		CURLOPT_NOBODY => true,
+		CURLOPT_MAXREDIRS => 10, //Stop after 10 redirects
+		CURLOPT_SSL_VERIFYPEER => false, //Disabled SSL cert checks
+	);
+	curl_setopt_array($curl_init, $curl_options);
+	$response = curl_exec($curl_init);
+	$header = curl_getinfo($curl_init);
+	$error = curl_errno($curl_init);
+	$error_message = curl_error($curl_init);
+	curl_close($curl_init);
+
+	if ( $error == 35 ){ //If SSL certificate error, check non SSL domain
+		$http_domain = str_replace('https://', 'http://', $domain);
+		return nebula_is_available($http_domain);
+	}
+
+	if ( !empty($response) && !empty($header) && empty($error) && empty($error_message) ){
+		if ( $header['http_code'] == 0 || $header['http_code'] >= 400 ){
+			return false;
+		}
 		return true;
 	}
 	return false;
@@ -695,12 +717,12 @@ if ( !function_exists('random_number_between_but_not') ){
 
 //Call a placeholder image from Unsplash.it
 if ( !function_exists('unsplash_it') ){
-	function unsplash_it($width=800, $height=600, $raw=false, $random=false){
+	function unsplash_it($width=800, $height=600, $raw=false, $specific=false){
 		$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-		if ( !is_int($random) ){
-			$randID = random_number_between_but_not(0, 800, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
+		if ( !is_int($specific) ){
+			$randID = random_number_between_but_not(0, 874, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
 		} else {
-			$randID = $random;
+			$randID = $specific;
 		}
 
 		//Check if unsplash.it is online
@@ -716,29 +738,31 @@ if ( !function_exists('unsplash_it') ){
 		$image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
 		$check_image = nebula_is_available($image_path); //Ignore errors (because that's what we're looking for)
 
-		$i++;
+		$i = 1;
+		$attempts = '';
 		while ( !$check_image ){
-			if ( !$random || $i >= 5 ){
+			$attempts = ' [Errors: ' . $i . ']';
+			if ( $specific || $i >= 5 ){
 				ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
 				if ( $raw ){
 					placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f');
 				} else {
-					return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f') . '" title="Unsplash image with ID ' . $randID . ' not found.';
+					return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f') . '" title="Unsplash image with ID ' . $randID . $attempts;
 				}
 			}
 
 		    $skip_list[] = $randID;
-		    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
+		    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')' . $attempts);
 		    $randID = random_number_between_but_not(0, 615, $skipList);
 		    $image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
-		    $check_image = nebula_is_available($image_path); //Ignore errors (because that's what we're looking for)
+		    $check_image = nebula_is_available($image_path);
 		    $i++;
 		}
 
 		if ( $raw ){
 			return $image_path;
 		} else {
-			return $image_path . '" title="Unsplash ID #' . $randID;
+			return $image_path . '" title="Unsplash ID #' . $randID . $attempts;
 		}
 	}
 }
