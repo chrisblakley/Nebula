@@ -1084,16 +1084,30 @@ if ( !function_exists('nebula_version') ){
 	SCSSPHP v0.5.1 - http://leafo.net/scssphp/docs/
  ===========================*/
 
-if ( nebula_option('nebula_scss') && !nebula_sass_manual_trigger() ){
+if ( nebula_option('nebula_scss') ){
 	if ( is_writable(get_template_directory()) ){
 		add_action('init', 'nebula_render_scss');
 		add_action('admin_init', 'nebula_render_scss');
 	}
 }
-function nebula_render_scss($specific_scss=null){
+function nebula_render_scss($specific_scss=null, $child=false){
+	if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || $_GET['settings-updated'] == 'true') && (is_dev() || is_client()) ){
+		$specific_scss = 'all';
+	}
+
+	$theme_directory = get_template_directory();
+	$theme_directory_uri = get_template_directory_uri();
+	if ( $child ){
+		$theme_directory = get_stylesheet_directory();
+		$theme_directory_uri = get_stylesheet_directory_uri();
+	}
+
+	$stylesheets_directory = $theme_directory . '/stylesheets';
+	$stylesheets_directory_uri = $theme_directory_uri . '/stylesheets';
+
 	require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
 	$scss = new \Leafo\ScssPhp\Compiler();
-	$scss->addImportPath(get_template_directory() . '/stylesheets/scss/partials/');
+	$scss->addImportPath($stylesheets_directory . '/scss/partials/');
 
 	if ( nebula_option('nebula_minify_css', 'enabled') && !is_debug() ){
 		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
@@ -1108,7 +1122,7 @@ function nebula_render_scss($specific_scss=null){
 	if ( empty($specific_scss) || $specific_scss == 'all' ){
 		//Partials
 		$latest_partial = 0;
-		foreach ( glob(get_template_directory() . '/stylesheets/scss/partials/*') as $partial_file ){
+		foreach ( glob($stylesheets_directory . '/scss/partials/*') as $partial_file ){
 			if ( filemtime($partial_file) > $latest_partial ){
 				$latest_partial = filemtime($partial_file);
 			}
@@ -1116,51 +1130,16 @@ function nebula_render_scss($specific_scss=null){
 
 		//Combine Developer Stylesheets
 		if ( nebula_option('nebula_dev_stylesheets') ){
-			$file_counter = 0;
-			$partials = array('variables', 'mixins', 'helpers');
-			$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
-			$dev_stylesheet_files = glob(get_template_directory() . '/stylesheets/scss/dev/*css');
-			$dev_scss_file = get_template_directory() . '/stylesheets/scss/dev.scss';
-
-			if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
-				file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
-			}
-			foreach ( $dev_stylesheet_files as $file ){
-				$file_path_info = pathinfo($file);
-				if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
-					$file_counter++;
-
-					//Include partials in dev.scss
-					if ( $file_counter == 1 ){
-						$import_partials = '';
-						foreach ( $partials as $partial ){
-							$import_partials .= "@import '" . $partial . "';\r\n";
-						}
-						file_put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
-					}
-
-					$this_scss_contents = file_get_contents($file); //Copy file contents
-					$empty_scss = ( $this_scss_contents == '' )? ' (empty)' : '';
-					$dev_scss_contents = file_get_contents(get_template_directory() . '/stylesheets/scss/dev.scss');
-					$dev_scss_contents .= "\r\n/* ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . get_template_directory_uri() . "/stylesheets/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
-					file_put_contents(get_template_directory() . '/stylesheets/scss/dev.scss', $dev_scss_contents);
-				}
-			}
-			if ( $file_counter > 0 ){
-				add_action('wp_enqueue_scripts', 'enqueue_dev_styles');
-				function enqueue_dev_styles(){
-					wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
-				}
-			}
+			nebula_combine_dev_stylesheets($stylesheets_directory, $stylesheets_directory_uri);
 		}
 
 		//Compile each SCSS file
-		foreach ( glob(get_template_directory() . '/stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+		foreach ( glob($stylesheets_directory . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 			$file_path_info = pathinfo($file);
 
 			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
 				$file_counter++;
-				$css_filepath = ( $file_path_info['filename'] == 'style' )? get_template_directory() . '/style.css': get_template_directory() . '/stylesheets/css/' . $file_path_info['filename'] . '.css';
+				$css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
 				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $specific_scss == 'all' ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
 					ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
 					$existing_css_contents = ( file_exists($css_filepath) )? file_get_contents($css_filepath) : '';
@@ -1172,6 +1151,10 @@ function nebula_render_scss($specific_scss=null){
 					}
 				}
 			}
+		}
+
+		if ( !$child && is_child_theme() ){ //If not in the second (child) pass, and is a child theme.
+			nebula_render_scss($specific_scss, true); //Re-run on child theme stylesheets
 		}
 	} else {
 		if ( file_exists($specific_scss) ){ //If $specific_scss is a filepath
@@ -1186,39 +1169,82 @@ function nebula_render_scss($specific_scss=null){
 	}
 }
 
+//Combine developer stylesheets
+function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
+	if ( empty($directory) ){
+		$directory = get_template_directory() . '/stylesheets';
+		$directory_uri = get_template_directory_uri() . "/stylesheets";
+	}
+
+	$file_counter = 0;
+	$partials = array('variables', 'mixins', 'helpers');
+	$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
+	$dev_stylesheet_files = glob($directory . '/scss/dev/*css');
+	$dev_scss_file = $directory . '/scss/dev.scss';
+
+	if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
+		file_put_contents($directory . '/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
+	}
+	foreach ( $dev_stylesheet_files as $file ){
+		$file_path_info = pathinfo($file);
+		if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
+			$file_counter++;
+
+			//Include partials in dev.scss
+			if ( $file_counter == 1 ){
+				$import_partials = '';
+				foreach ( $partials as $partial ){
+					$import_partials .= "@import '" . $partial . "';\r\n";
+				}
+				file_put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
+			}
+
+			$this_scss_contents = file_get_contents($file); //Copy file contents
+			$empty_scss = ( $this_scss_contents == '' )? ' (empty)' : '';
+			$dev_scss_contents = file_get_contents($directory . '/scss/dev.scss');
+			$dev_scss_contents .= "\r\n/* ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . $directory_uri . "/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
+			file_put_contents($directory . '/scss/dev.scss', $dev_scss_contents);
+		}
+	}
+	if ( $file_counter > 0 ){
+		add_action('wp_enqueue_scripts', 'enqueue_dev_styles');
+		function enqueue_dev_styles(){
+			wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
+		}
+	}
+}
+
 //Compile server-side variables into SCSS
 function nebula_scss_variables($scss){
 	$scss = preg_replace("(<%template_directory%>)", get_template_directory_uri(), $scss); //Template Directory
-	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path
+	$scss = preg_replace("(<%stylesheet_directory%>)", get_stylesheet_directory_uri(), $scss); //Stylesheet Directory (For child themes)
+	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
+	$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
 	$scss = preg_replace("<%__utm.gif%>", ga_UTM_gif(), $scss); //GA __utm.gif pixel with parameters for tracking via CSS
-
 	do_action('nebula_scss_variables');
-
 	$scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
 	update_option('nebula_scss_last_processed', time());
 	return $scss;
 }
 
-//If SASS should be manually re-generated
-function nebula_sass_manual_trigger(){
-	if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || $_GET['settings-updated'] == 'true') && (is_dev() || is_client()) ){
-		nebula_render_scss('all'); //Re-render all SCSS files.
-		return true;
-	} else {
-		return false;
-	}
-}
-
 //Pull certain colors from .../mixins/_variables.scss
-function nebula_sass_color($color='primary'){
-	$scss_variables = get_transient('nebula_scss_variables');
+function nebula_sass_color($color='primary', $theme='child'){
+	if ( is_child_theme() && $theme == 'child' ){
+		$stylesheets_directory = get_stylesheet_directory() . '/stylesheets';
+		$transient_name = 'nebula_scss_child_variables';
+	} else {
+		$stylesheets_directory = get_template_directory() . '/stylesheets';
+		$transient_name = 'nebula_scss_variables';
+	}
+
+	$scss_variables = get_transient($transient_name);
 	if ( empty($menus) || is_debug() ){
-		$variables_file = get_template_directory() . '/stylesheets/scss/partials/_variables.scss';
+		$variables_file = $stylesheets_directory . '/scss/partials/_variables.scss';
 		if ( !file_exists($variables_file) ){
 			return false;
 		}
 		$scss_variables = file_get_contents($variables_file);
-		set_transient('nebula_scss_variables', $scss_variables, 60*60); //1 hour cache
+		set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
 	}
 
 	switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){

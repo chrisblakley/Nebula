@@ -1,7 +1,11 @@
 <?php
 
 //Set server timezone to match Wordpress
-date_default_timezone_set(get_option('timezone_string')); //@TODO "Nebula" 0: date_default_timezone_set(): Timezone ID '' is invalid
+add_action('init', 'nebula_set_default_timezone', 1);
+add_action('admin_init', 'nebula_set_default_timezone', 1);
+function nebula_set_default_timezone(){
+	date_default_timezone_set(nebula_option('timezone_string', 'America/New_York'));
+}
 
 //Add the calling card to the browser console
 if ( nebula_option('nebula_console_css') ){

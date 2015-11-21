@@ -213,6 +213,23 @@ if ( nebula_option('nebula_admin_notices') ){
 				echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong>' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 			}
 
+			//Check for hard Debug Mode
+			if ( WP_DEBUG ){
+				$debug_messages = '';
+				$notice_level = 'notice notice-info';
+				if ( WP_DEBUG ){
+					$debug_messages .= '<strong>WP_DEBUG</strong> is enabled. ';
+				}
+				if ( WP_DEBUG_LOG ){
+					$debug_messages .= '<strong>Debug logging</strong> (WP_DEBUG_LOG) to /wp-content/debug.log is enabled. ';
+				}
+				if ( WP_DEBUG_DISPLAY ){
+					$notice_level = 'error';
+					$debug_messages .= 'Debug errors and warnings <strong>are</strong> being displayed on the front-end (WP_DEBUG_DISPLAY)! ';
+				}
+				echo '<div class="nebula-admin-notice ' . $notice_level . '"><p>' . $debug_messages . ' <small>(Generally defined in wp-config.php)</small></p></div>';
+			}
+
 			//Check for Google Analytics Tracking ID
 			if ( get_option('nebula_ga_tracking_id') == '' && $GLOBALS['ga'] == '' ){
 				echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
@@ -290,7 +307,13 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 
 		echo '<ul class="serverdetections">';
 			echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
+
 			echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small>(Committed: ' . nebula_version('date') . ')</small></li>';
+			if ( is_child_theme() ){
+				echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
+			}
+
+
 
 			foreach ( get_post_types() as $post_type ){
 			    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
@@ -375,65 +398,87 @@ if ( nebula_option('nebula_todo_metabox') ){
 		do_action('nebula_todo_manager');
 		echo '<p class="todoresults_title"><strong>Active @TODO Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p><div class="todo_results">';
 		$todo_last_filename = '';
-		$todo_dirpath = get_template_directory();
 		$todo_file_counter = 0;
 		$todo_instance_counter = 0;
-		foreach ( glob_r($todo_dirpath . '/*') as $todo_file ){
-			$todo_counted = 0;
-			if ( is_file($todo_file) ){
-			    if ( strpos(basename($todo_file), '@TODO') !== false ){
-				    echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
-				    $todo_file_counter++;
-				    $todo_counted = 1;
-			    }
 
-			    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', '/includes/libs');
-			    if ( !contains(basename($todo_file), skip_extensions()) && !contains(basename($todo_file), $todo_skipFilenames) ){
-				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
-				        if ( stripos($todo_line, '@TODO') !== false ){
-							$the_full_todo = substr($todo_line, strpos($todo_line, "@TODO"));
-							$the_todo_meta = current(explode(":", $the_full_todo));
-
-							//Get the priority
-							preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
-
-							//Get the category
-							$the_todo_quote_check = '';
-							$the_todo_category = '';
-							$the_todo_category_html = '';
-							preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
-							if ( !empty($the_todo_quote_check[0][0]) ){
-								$the_todo_category = substr($the_todo_quote_check[0][0], 1, -1);
-								$the_todo_category_html = '<span class="todocategory">' . $the_todo_category . '</span>';
-							}
-
-							//Get the message
-							$the_todo_message_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
-							$end_todo_message_strings = array('-->', '?>', '*/');
-							$the_todo_message = explode($end_todo_message_strings[0], str_replace($end_todo_message_strings, $end_todo_message_strings[0], $the_todo_message_full));
-
-							$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
-							if ( $todo_last_filename != $todo_this_filename ){
-								if ( !empty($todo_last_filename) ){
-									echo '</div><!--/todofilewrap-->';
-								}
-								echo '<div class="todofilewrap"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
-							}
-
-							echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_category)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_message[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
-
-							$todo_last_filename = $todo_this_filename;
-							$todo_instance_counter++;
-							if ( $todo_counted == 0 ){
-								$todo_file_counter++;
-								$todo_counted = 1;
-							}
-				        }
-				    }
-			    }
+		function nebula_todo_files($todo_dirpath=null, $child=false){
+			if ( is_child_theme() && !$child ){
+				nebula_todo_files(get_stylesheet_directory(), true);
 			}
+
+			if ( empty($todo_dirpath) ){
+				$todo_dirpath = get_template_directory();
+			}
+
+			foreach ( glob_r($todo_dirpath . '/*') as $todo_file ){
+				$todo_counted = 0;
+				if ( is_file($todo_file) ){
+				    if ( strpos(basename($todo_file), '@TODO') !== false ){
+					    echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
+					    $todo_file_counter++;
+					    $todo_counted = 1;
+				    }
+
+				    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', '/includes/libs');
+				    if ( !contains(basename($todo_file), skip_extensions()) && !contains(basename($todo_file), $todo_skipFilenames) ){
+					    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
+					        if ( stripos($todo_line, '@TODO') !== false ){
+								$theme = '';
+								if ( is_child_theme() ){
+									if ( $child ){
+										$theme = ' <small>(Child)</small>';
+									} else {
+										$theme = ' <small>(Parent)</small>';
+									}
+								}
+
+								$the_full_todo = substr($todo_line, strpos($todo_line, "@TODO"));
+								$the_todo_meta = current(explode(":", $the_full_todo));
+
+								//Get the priority
+								preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
+
+								//Get the category
+								$the_todo_quote_check = '';
+								$the_todo_category = '';
+								$the_todo_category_html = '';
+								preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
+								if ( !empty($the_todo_quote_check[0][0]) ){
+									$the_todo_category = substr($the_todo_quote_check[0][0], 1, -1);
+									$the_todo_category_html = '<span class="todocategory">' . $the_todo_category . '</span>';
+								}
+
+								//Get the message
+								$the_todo_message_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
+								$end_todo_message_strings = array('-->', '?>', '*/');
+								$the_todo_message = explode($end_todo_message_strings[0], str_replace($end_todo_message_strings, $end_todo_message_strings[0], $the_todo_message_full));
+
+								$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
+								if ( $todo_last_filename != $todo_this_filename ){
+									if ( !empty($todo_last_filename) ){
+										echo '</div><!--/todofilewrap-->';
+									}
+									echo '<div class="todofilewrap"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong>' . $theme . '</p>';
+								}
+
+								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_category)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_message[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
+
+								$todo_last_filename = $todo_this_filename;
+								$todo_instance_counter++;
+								if ( $todo_counted == 0 ){
+									$todo_file_counter++;
+									$todo_counted = 1;
+								}
+					        }
+					    }
+				    }
+				}
+			}
+			echo '</div><!--/todofilewrap-->';
 		}
-		echo '</div><!--/todofilewrap--></div><!--/todo_results-->';
+
+		nebula_todo_files();
+		echo '</div><!--/todo_results-->';
 	}
 }
 
@@ -451,152 +496,65 @@ if ( nebula_option('nebula_dev_metabox') ){
 	}
 	function dashboard_developer_info(){
 		do_action('nebula_developer_info');
-		$domain_exp_detected = whois_info('expiration');
 
-		$domain_exp_unix = strtotime(trim($domain_exp_detected));
-		$domain_exp = date("F j, Y", $domain_exp_unix);
-		$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') )? 'color: red; font-weight: bold;' : 'color: inherit;' ;
-		$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') )? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
+		echo '<ul class="serverdetections">';
 
-		$domain_registrar_url = whois_info('registrar_url');
-		$domain_registrar = whois_info('registrar');
-		$domain_reseller = whois_info('reseller');
+			//Domain
+			$domain_exp_detected = whois_info('expiration');
+			$domain_exp_unix = strtotime(trim($domain_exp_detected));
+			$domain_exp = date("F j, Y", $domain_exp_unix);
+			$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') )? 'color: red; font-weight: bold;' : 'color: inherit;' ;
+			$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') )? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
+			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
 
-		//Construct Registrar info to be echoed
-		if ( $domain_registrar_url && strlen($domain_registrar_url) < 70 ){
-			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong><a href="//' . trim($domain_registrar_url) . '" target="_blank">' . $domain_registrar . '</a></strong>': '';
-		} else {
-			$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . trim($domain_registrar) . '</strong>': '';
-		}
-		if ( trim($domain_registrar_html) != '' && $domain_reseller && strlen($domain_reseller) < 70 ){
-			$domain_registrar_html .= ' <small>(via ' . trim($domain_reseller) . ')</small></li>';
-		} else {
-			$domain_registrar_html .= '</li>';
-		}
+			//Registrar
+			$domain_registrar_url = whois_info('registrar_url');
+			$domain_registrar = whois_info('registrar');
+			$domain_reseller = whois_info('reseller');
 
-		if ( nebula_option('nebula_domain_exp', 'enabled') ){
-			if ( get_option('nebula_domain_expiration_last') == 'Never' || get_option('nebula_domain_expiration_last') < strtotime('-2 weeks') ){
-				if ( $domain_exp != 'December 31, 1969' && $domain_exp_unix > strtotime("3/27/1986")  ){
-					if ( $domain_exp_unix < strtotime('+1 week') ){ //If domain is expiring within a week, email all admin users.
-						$adminUsers = get_users(array('role' => 'Administrator'));
-						$exp_notice_to = '';
-						$i = 0;
-						$exp_notice_to = array();
-						foreach ( $adminUsers as $adminUser ){
-							array_push($exp_notice_to, $adminUsers[$i]->user_email);
-							$i++;
+			if ( $domain_registrar_url && strlen($domain_registrar_url) < 70 ){
+				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong><a href="//' . trim($domain_registrar_url) . '" target="_blank">' . $domain_registrar . '</a></strong>': '';
+			} else {
+				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . trim($domain_registrar) . '</strong>': '';
+			}
+			if ( trim($domain_registrar_html) != '' && $domain_reseller && strlen($domain_reseller) < 70 ){
+				$domain_registrar_html .= ' <small>(via ' . trim($domain_reseller) . ')</small></li>';
+			} else {
+				$domain_registrar_html .= '</li>';
+			}
+				if ( nebula_option('nebula_domain_exp', 'enabled') ){
+				if ( get_option('nebula_domain_expiration_last') == 'Never' || get_option('nebula_domain_expiration_last') < strtotime('-2 weeks') ){
+					if ( $domain_exp != 'December 31, 1969' && $domain_exp_unix > strtotime("3/27/1986")  ){
+						if ( $domain_exp_unix < strtotime('+1 week') ){ //If domain is expiring within a week, email all admin users.
+							$adminUsers = get_users(array('role' => 'Administrator'));
+							$exp_notice_to = '';
+							$i = 0;
+							$exp_notice_to = array();
+							foreach ( $adminUsers as $adminUser ){
+								array_push($exp_notice_to, $adminUsers[$i]->user_email);
+								$i++;
+							}
+							$exp_notice_subject = 'Domain expiration detection of ' . $domain_exp . ' for ' . nebula_url_components('domain') . ' (via ' . get_bloginfo('name') . ')!';
+							$exp_notice_message = "Your domain " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different). This notice was triggered because the expiration date is within 1 week. It has been sent to all administrators of " . get_bloginfo('name') . " (" . home_url('/') . "), and will only be sent once!";
+
+							wp_mail($exp_notice_to, $exp_notice_subject, $exp_notice_message);
+							update_option('nebula_domain_expiration_last', date('U'));
 						}
-						$exp_notice_subject = 'Domain expiration detection of ' . $domain_exp . ' for ' . nebula_url_components('domain') . ' (via ' . get_bloginfo('name') . ')!';
-						$exp_notice_message = "Your domain " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different). This notice was triggered because the expiration date is within 1 week. It has been sent to all administrators of " . get_bloginfo('name') . " (" . home_url('/') . "), and will only be sent once!";
-
-						wp_mail($exp_notice_to, $exp_notice_subject, $exp_notice_message);
-						update_option('nebula_domain_expiration_last', date('U'));
 					}
 				}
 			}
-		}
-
-		//Get last modified filename and date
-		$dir = glob_r( get_template_directory() . '/*');
-		$last_date = 0;
-		$skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json'); //Files or directories to skip. Be specific!
-
-		foreach ( $dir as $file ){
-			if ( is_file($file) ){
-				$mod_date = filemtime($file);
-				if ( $mod_date > $last_date && !contains($file, $skip_files) ){
-					$last_date = $mod_date;
-					$last_filename = basename($file);
-					$last_file_path = str_replace(get_template_directory(), '', dirname($file)) . '/' . $last_filename;
-				}
-			}
-		}
-		$nebula_size = foldersize(get_template_directory());
-		$upload_dir = wp_upload_dir();
-		$uploads_size = foldersize($upload_dir['basedir']);
-
-		$secureServer = '';
-		if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
-			$secureServer = '<small class="secured-connection"><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
-		}
-
-		function top_domain_name($url){
-			$alldomains = explode(".", $url);
-			return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
-		}
-
-		if ( function_exists('gethostname') ){
-			set_error_handler(function(){ /* ignore errors */ });
-			$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) )? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
-			restore_error_handler();
-		}
-
-		function initial_install_date(){
-			$nebula_initialized = get_option('nebula_initialized');
-			if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
-				$install_date = '<strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong> <small>(Nebula Init)</small>';
-			} else { //Use the last modified time of the admin page itself
-				$install_date = '<strong>' . date("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong> <small>(WP Detect)</small>';
-			}
-			return $install_date;
-		}
-
-		if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
-			$php_os_icon = 'fa-linux';
-		} else if ( strpos(strtolower(PHP_OS), 'windows') !== false ){
-			$php_os_icon = 'fa-windows';
-		} else {
-			$php_os_icon = 'fa-upload';
-		}
-
-		if ( function_exists('wp_max_upload_size') ){
-			$upload_max = '<small>(Max upload: <strong>' . strval(round((int) wp_max_upload_size()/(1024*1024))) . 'mb</strong>)</small>';
-		} else if ( ini_get('upload_max_filesize') ){
-			$upload_max = '<small>(Max upload: <strong>' . ini_get('upload_max_filesize') . '</strong>)</small>';
-		} else {
-			$upload_max = '';
-		}
-
-		if ( function_exists('mysqli_connect') ){
-			$mysqli_connect = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
-			$mysql_version = mysqli_get_server_info($mysqli_connect);
-		}
-
-		$safe_mode = ( ini_get('safe_mode') )? '<small><strong><em>Safe Mode</em></strong></small>': '';
-
-		echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
-		echo '<script id="testloadscript">
-				jQuery(window).on("load", function(){
-					jQuery(".loadtime").css("visibility", "visible");
-					beforeLoad = (new Date()).getTime();
-					var iframe = document.createElement("iframe");
-					iframe.style.width = "1200px";
-					iframe.style.height = "0px";
-					jQuery("#testloadcon").append(iframe);
-					iframe.src = "' . home_url('/') . '";
-					jQuery("#testloadcon iframe").on("load", function(){
-						stopTimer();
-					});
-				});
-
-				function stopTimer(){
-				    var afterLoad = (new Date()).getTime();
-				    var result = (afterLoad - beforeLoad)/1000;
-				    jQuery(".loadtime").html(result + " seconds");
-				    if ( result > 5 ){ jQuery(".slowicon").addClass("fa-warning"); }
-				    jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
-				}
-			</script>';
-
-		echo '<ul class="serverdetections">';
-/*
-			if ( is_debug() ){
-				echo '<li style="color: red;"><i class="fa fa-exclamation-triangle fa-fw"></i> <strong>Warning:</strong> WP_DEBUG is Enabled!</li>';
-			}
-*/
-			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
-
 			echo $domain_registrar_html;
+
+			//Host
+			function top_domain_name($url){
+				$alldomains = explode(".", $url);
+				return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
+			}
+			if ( function_exists('gethostname') ){
+				set_error_handler(function(){ /* ignore errors */ });
+				$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) )? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
+				restore_error_handler();
+			}
 			if ( function_exists('gethostname') ){
 				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Host: <strong>' . top_domain_name(gethostname()) . '</strong>';
 				if ( !empty($dnsrecord[0]['target']) ){
@@ -604,9 +562,25 @@ if ( nebula_option('nebula_dev_metabox') ){
 				}
 				echo '</li>';
 			}
+
+			//Server IP address (and connection security)
+			$secureServer = '';
+			if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
+				$secureServer = '<small class="secured-connection"><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
+			}
 			echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
+
+			//Server operating system
+			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
+				$php_os_icon = 'fa-linux';
+			} else if ( strpos(strtolower(PHP_OS), 'windows') !== false ){
+				$php_os_icon = 'fa-windows';
+			} else {
+				$php_os_icon = 'fa-upload';
+			}
 			echo '<li><i class="fa ' . $php_os_icon . ' fa-fw"></i> Server OS: <strong>' . PHP_OS . '</strong> <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
 
+			//PHP version
 			$php_version_color = 'inherit';
 			$php_version_info = '';
 			$php_version_cursor = 'normal';
@@ -620,19 +594,125 @@ if ( nebula_option('nebula_dev_metabox') ){
 				$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 				$php_version_cursor = 'help';
 			}
+			$safe_mode = ( ini_get('safe_mode') )? '<small><strong><em>Safe Mode</em></strong></small>' : '';
 			echo '<li><i class="fa fa-wrench fa-fw"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> ' . $safe_mode . '</li>';
 
+			//PHP memory limit
 			echo '<li><i class="fa fa-cogs fa-fw"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
-			echo ( !empty($mysql_version) )? '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . $mysql_version . '</strong></li>' : '';
-			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
-			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
-			echo '<li><i class="fa fa-clock-o fa-fw"></i> <span title="' . get_home_url() . '" style="cursor: help;">Homepage</span> load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
-			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
-			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $last_date) . '</strong> <small>@</small> <strong>' . date("g:ia", $last_date) . '</strong> <small title="' . $last_file_path . '" style="cursor: help;">(' . $last_filename . ')</small></li>';
 
+			//MySQL version
+			if ( function_exists('mysqli_connect') ){
+				$mysqli_connect = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
+				$mysql_version = mysqli_get_server_info($mysqli_connect);
+			}
+			echo ( !empty($mysql_version) )? '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . $mysql_version . '</strong></li>' : '';
+
+			//Theme directory size(s)
+			if ( is_child_theme() ){
+				$nebula_parent_size = foldersize(get_template_directory());
+				$nebula_child_size = foldersize(get_stylesheet_directory());
+				echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
+				echo '<li><i class="fa fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
+			} else {
+				$nebula_size = foldersize(get_stylesheet_directory());
+				echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
+			}
+
+			//Uploads directory size (and max upload size)
+			$upload_dir = wp_upload_dir();
+			$uploads_size = foldersize($upload_dir['basedir']);
+			if ( function_exists('wp_max_upload_size') ){
+				$upload_max = '<small>(Max upload: <strong>' . strval(round((int) wp_max_upload_size()/(1024*1024))) . 'mb</strong>)</small>';
+			} else if ( ini_get('upload_max_filesize') ){
+				$upload_max = '<small>(Max upload: <strong>' . ini_get('upload_max_filesize') . '</strong>)</small>';
+			} else {
+				$upload_max = '';
+			}
+			echo '<li><i class="fa fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
+
+			//Homepage load time
+			echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
+			echo '<script id="testloadscript">
+					jQuery(window).on("load", function(){
+						jQuery(".loadtime").css("visibility", "visible");
+						beforeLoad = (new Date()).getTime();
+						var iframe = document.createElement("iframe");
+						iframe.style.width = "1200px";
+						iframe.style.height = "0px";
+						jQuery("#testloadcon").append(iframe);
+						iframe.src = "' . home_url('/') . '";
+						jQuery("#testloadcon iframe").on("load", function(){
+							stopTimer();
+						});
+					});
+					function stopTimer(){
+					    var afterLoad = (new Date()).getTime();
+					    var result = (afterLoad - beforeLoad)/1000;
+					    jQuery(".loadtime").html(result + " seconds");
+					    if ( result > 5 ){ jQuery(".slowicon").addClass("fa-warning"); }
+					    jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
+					}
+				</script>';
+			echo '<li><i class="fa fa-clock-o fa-fw"></i> <span title="' . get_home_url() . '" style="cursor: help;">Homepage</span> load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
+
+			//Initial installation date
+			function initial_install_date(){
+				$nebula_initialized = get_option('nebula_initialized');
+				if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
+					$install_date = '<strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong> <small>(Nebula Init)</small>';
+				} else { //Use the last modified time of the admin page itself
+					$install_date = '<strong>' . date("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong> <small>(WP Detect)</small>';
+				}
+				return $install_date;
+			}
+			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
+
+			//Get last modified filename and date from a directory
+			function nebula_last_modified($directory=null, $last_date=0, $child=false){
+				if ( empty($directory) ){
+					$directory = get_template_directory();
+				}
+				$dir = glob_r($directory . '/*');
+				$skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json'); //Files or directories to skip. Be specific!
+
+				foreach ( $dir as $file ){
+					if ( is_file($file) ){
+						$mod_date = filemtime($file);
+						if ( $mod_date > $last_date && !contains($file, $skip_files) ){
+							$latest_file['date'] = $mod_date;
+							$latest_file['file'] = basename($file);
+
+							if ( is_child_theme() && $child ){
+								$latest_file['path'] = 'Child: ';
+							} elseif ( is_child_theme() && !$child ){
+								$latest_file['path'] = 'Parent: ';
+							}
+							$latest_file['path'] .= str_replace($directory, '', dirname($file)) . '/' . $latest_file['file'];
+
+							$last_date = $latest_file['date'];
+						}
+					}
+				}
+
+				if ( is_child_theme() && !$child ){
+					$latest_child_file = nebula_last_modified(get_stylesheet_directory(), $latest_file['date'], true);
+					if ( $latest_child_file['date'] > $latest_file['date'] ){
+						return $latest_child_file;
+					}
+				}
+
+				return $latest_file;
+			}
+			$latest_file = nebula_last_modified();
+			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
+
+			//SCSS last processed date
 			$scss_last_processed = ( get_option('nebula_scss_last_processed') )? '<strong>' . date("F j, Y", get_option('nebula_scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", get_option('nebula_scss_last_processed')) . '</strong>' : '<strong>Never</strong>';
 			echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
+
 		echo '</ul>';
+
+		//Directory search
 		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
 		if ( is_child_theme() ){
 			echo '<option value="parent">Parent Theme</option><option value="child">Child Theme</option>';
