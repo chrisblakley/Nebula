@@ -419,8 +419,8 @@ if ( nebula_option('nebula_todo_metabox') ){
 					    $todo_counted = 1;
 				    }
 
-				    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', '/includes/libs');
-				    if ( !contains(basename($todo_file), skip_extensions()) && !contains(basename($todo_file), $todo_skipFilenames) ){
+				    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs');
+				    if ( !contains(basename($todo_file), skip_extensions()) && !contains($todo_file, $todo_skipFilenames) ){
 					    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
 					        if ( stripos($todo_line, '@TODO') !== false ){
 								$theme = '';
@@ -554,8 +554,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 				set_error_handler(function(){ /* ignore errors */ });
 				$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) )? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
 				restore_error_handler();
-			}
-			if ( function_exists('gethostname') ){
+
 				echo '<li><i class="fa fa-hdd-o fa-fw"></i> Host: <strong>' . top_domain_name(gethostname()) . '</strong>';
 				if ( !empty($dnsrecord[0]['target']) ){
 					echo ' <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small>';

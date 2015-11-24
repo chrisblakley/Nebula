@@ -56,7 +56,7 @@ function nebula_dequeues(){
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
 
 		//Scripts
-		if ( !preg_match('/(?i)msie [2-8]/', $_SERVER['HTTP_USER_AGENT']) ){ //WP Core - Dequeue jQuery Migrate for browsers that don't need it.
+		if ( nebula_is_browser('ie', '8', '<=') ){ //WP Core - Dequeue jQuery Migrate for browsers that don't need it.
 			wp_deregister_script('jquery');
 			wp_register_script('jquery', false, array('jquery-core'), '1.11.0'); //Just have to make sure this version reflects the actual jQuery version bundled with WP (click the jquery.js link in the source)
 		}
@@ -130,6 +130,9 @@ if ( !nebula_is_option_enabled('adminbar') ){
 //Disable Emojis
 add_action('init', 'disable_wp_emojicons');
 function disable_wp_emojicons(){
+	$override = apply_filters('pre_disable_wp_emojicons', false);
+	if ( $override !== false ){return;}
+
 	remove_action('admin_print_styles', 'print_emoji_styles');
 	remove_action('wp_head', 'print_emoji_detection_script', 7);
 	remove_action('admin_print_scripts', 'print_emoji_detection_script');
@@ -138,7 +141,7 @@ function disable_wp_emojicons(){
 	remove_filter('the_content_feed', 'wp_staticize_emoji');
 	remove_filter('comment_text_rss', 'wp_staticize_emoji');
 
-	add_filter( 'tiny_mce_plugins', 'disable_emojicons_tinymce' ); //Remove TinyMCE Emojis too
+	add_filter('tiny_mce_plugins', 'disable_emojicons_tinymce'); //Remove TinyMCE Emojis too
 }
 function disable_emojicons_tinymce($plugins){
 	if ( is_array($plugins) ){

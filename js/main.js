@@ -539,12 +539,15 @@ function gaEventTracking(){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
+
+
 		var linkText = jQuery(this).text();
 		if ( linkText.trim() == '' ){
 			if ( jQuery(this).find('img').attr('alt') ){
 				linkText = jQuery(this).find('img').attr('alt');
 			} else if ( jQuery(this).find('img').is('*') ){
-				linkText = jQuery(this).find('img').attr('src').substr(fileName.lastIndexOf("/")+1);
+				var filePath = jQuery(this).attr('src');
+				linkText = jQuery(this).find('img').attr('src').substr(filePath.lastIndexOf("/")+1);
 			} else if ( jQuery(this).find('img').attr('title') ){
 				linkText = jQuery(this).find('img').attr('title');
 			} else {
@@ -562,26 +565,31 @@ function gaEventTracking(){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var linkText = jQuery(this).text();
-		var fileName = jQuery(this).attr('href').substr(fileName.lastIndexOf("/")+1);
+		var filePath = jQuery(this).attr('href');
+		var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		if ( linkText == '' || linkText == 'Download' ){
+		if ( linkText == '' || linkText.toLowerCase() == 'download' ){
 			ga('send', 'event', 'PDF View', 'File: ' + fileName);
 		} else {
 			ga('send', 'event', 'PDF View', 'Text: ' + linkText);
 		}
-		if ( typeof fbq == 'function' ){ fbq('track', 'ViewContent'); }
+		if ( typeof fbq == 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
 	});
 
 	//Notable Downloads
 	thisPage.document.on('mousedown touch tap', ".notable a, a.notable", function(e){
-		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomMetrics['notableDownload'], 1);
-		var linkText = jQuery(this).text();
-		var fileName = jQuery(this).attr('href').substr(fileName.lastIndexOf("/")+1);
-		if ( linkText == '' || linkText == 'Download' ){
-			ga('send', 'event', 'Notable Download', 'File: ' + fileName);
-		} else {
-			ga('send', 'event', 'Notable Download', 'Text: ' + linkText);
+		var filePath = jQuery(this).attr('href');
+		if ( filePath != '#' ){
+			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+			ga('set', gaCustomMetrics['notableDownload'], 1);
+			var linkText = jQuery(this).text();
+			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
+			if ( linkText == '' || linkText.toLowerCase() == 'download' ){
+				ga('send', 'event', 'Notable Download', 'File: ' + fileName);
+			} else {
+				ga('send', 'event', 'Notable Download', 'Text: ' + linkText);
+			}
+			if ( typeof fbq == 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
 		}
 	});
 
@@ -599,7 +607,7 @@ function gaEventTracking(){
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.'); //This event is required for the notable form metric!
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer('wpcf7-form', 'end')), 'Initial form focus until submit');
-		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
+		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Intent)',});}
 	});
 
 	//Generic Interal Search Tracking
@@ -607,7 +615,7 @@ function gaEventTracking(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
-		if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
+		if ( typeof fbq == 'function' ){fbq('track', 'Search', {search_string: searchQuery});}
 	});
 
 	//Mailto link tracking
@@ -618,7 +626,7 @@ function gaEventTracking(){
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
-		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
+		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
 	});
 
 	//Telephone link tracking
@@ -630,7 +638,7 @@ function gaEventTracking(){
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
-		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
+		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
 	});
 
 	//SMS link tracking
@@ -642,7 +650,7 @@ function gaEventTracking(){
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
-		if ( typeof fbq == 'function' ){ fbq('track', 'Lead'); }
+		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
 	});
 
 	//Non-Linked Click Attempts
@@ -752,6 +760,7 @@ function scrollDepth(){
 
 	//Flags
 	var timer = 0;
+	var maxScroll = -1;
 	var isScroller = false;
 	var isReader = false;
 	var endContent = false;
@@ -762,11 +771,18 @@ function scrollDepth(){
 	var beginning = startTime.getTime();
 	var totalTime = 0;
 
-	jQuery(window).on('scroll', function(){
+	thisPage.window.on('scroll', function(){
 		if ( !isScroller ){
 			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 			ga('send', 'event', 'Scroll Depth', 'Initial scroll', '(signifies non-bounced users)');
 			isScroller = true;
+		}
+
+		//Calculate max scroll percent
+		scrollPercent = Math.round((thisPage.window.scrollTop()/(thisPage.document.height()-thisPage.window.height()))*100);
+		if ( scrollPercent > maxScroll ){
+			maxScroll = scrollPercent;
+			ga('set', gaCustomDimensions['maxScroll'], maxScroll + '%'); //Don't send an event here- this is only needed when another event is triggered.
 		}
 
 		if ( timer ){
@@ -936,7 +952,7 @@ function autocompleteSearch(){
 							}
 							debounce(function(){
 								ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
-								if ( typeof fbq == 'function' ){ fbq('track', 'Search'); }
+								if ( typeof fbq == 'function' ){fbq('track', 'Search', {search_string: request.term});}
 							}, 500, 'autocomplete success buffer');
 							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'Initial search until server results');
 							response(data);

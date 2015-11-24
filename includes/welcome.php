@@ -53,7 +53,7 @@
 						<?php endif; ?>
 					</li>
 					<li>
-						<?php if ( is_at_phg() ): ?>
+						<?php if ( ip_matches('phg') ): ?>
 							<img src="<?php echo get_template_directory_uri(); ?>/images/phg/phg-symbol.png" alt="Pinckney Hugo Group" style="max-width: 14px;"/>
 						<?php else: ?>
 							<i class="fa fa-laptop fa-fw"></i>

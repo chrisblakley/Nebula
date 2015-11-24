@@ -1,10 +1,10 @@
 <?php
 
-$GLOBALS['ga_v'] = 1; //Version
-$GLOBALS['ga_cid'] = ga_parse_cookie(); //Anonymous Client ID
-
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
 function ga_parse_cookie(){
+	$override = apply_filters('pre_ga_parse_cookie', false);
+	if ( $override !== false ){return $override;}
+
 	if ( isset($_COOKIE['_ga']) ){
 		list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
 		$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
@@ -15,205 +15,221 @@ function ga_parse_cookie(){
 	return $cid;
 }
 
+$GLOBALS['ga_v'] = 1; //Version
+$GLOBALS['ga_cid'] = ga_parse_cookie(); //Anonymous Client ID
+
 //Generate UUID v4 function (needed to generate a CID when one isn't available)
-if ( !function_exists('ga_generate_UUID') ){
-	function ga_generate_UUID(){
-		return sprintf(
-			'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-			mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
-			mt_rand(0, 0xffff), //16 bits for "time_mid"
-			mt_rand(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
-			mt_rand(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
-			mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff) //48 bits for "node"
-		);
-	}
+function ga_generate_UUID(){
+	$override = apply_filters('pre_ga_generate_UUID', false);
+	if ( $override !== false ){return $override;}
+
+	return sprintf(
+		'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+		mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
+		mt_rand(0, 0xffff), //16 bits for "time_mid"
+		mt_rand(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
+		mt_rand(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
+		mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff) //48 bits for "node"
+	);
 }
 
 //Generate Domain Hash
-if ( !function_exists('ga_generate_domain_hash') ){
-	function ga_generate_domain_hash($domain){
-		if ( empty($domain) ){
-			$domain = nebula_url_components('domain');
-		}
+function ga_generate_domain_hash($domain){
+	$override = apply_filters('pre_ga_generate_domain_hash', false, $domain);
+	if ( $override !== false ){return $override;}
 
-		$a = 0;
-		for ( $i = strlen($domain)-1; $i >= 0; $i-- ){
-			$ascii = ord($domain[$i]);
-			$a = (($a<<6)&268435455)+$ascii+($ascii<<14);
-			$c = $a&266338304;
-			$a = ( $c != 0 )? $a^($c>>21) : $a;
-		}
-		return $a;
+	if ( empty($domain) ){
+		$domain = nebula_url_components('domain');
 	}
+
+	$a = 0;
+	for ( $i = strlen($domain)-1; $i >= 0; $i-- ){
+		$ascii = ord($domain[$i]);
+		$a = (($a<<6)&268435455)+$ascii+($ascii<<14);
+		$c = $a&266338304;
+		$a = ( $c != 0 )? $a^($c>>21) : $a;
+	}
+	return $a;
 }
 
 //Generate the full path of a Google Analytics __utm.gif with necessary parameters.
 //https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
-if ( !function_exists('ga_UTM_gif') ){
-	function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
-		//@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
+function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
+	$override = apply_filters('pre_ga_UTM_gif', false, $user_cookies, $user_parameters);
+	if ( $override !== false ){return $override;}
 
-		$cookies = array(
-			'utma' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . mt_rand(1000000000, 9999999999) . '.' . time() . '.' . time() . '.' . time() . '.1', //Domain Hash . Random ID . Time of First Visit . Time of Last Visit . Time of Current Visit . Session Counter ***Absolutely Required***
-			'utmz' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . time() . '.1.1.', //Campaign Data (Domain Hash . Time . Counter . Counter)
-			'utmcsr' => '-', //Campaign Source "google"
-			'utmccn' => '-', //Campaign Name "(organic)"
-			'utmcmd' => '-', //Campaign Medium "organic"
-			'utmctr' => '-', //Campaign Terms (for paid search)
-			'utmcct' => '-', //Campaign Content Description
-		);
-		$cookies = array_merge($cookies, $user_cookies);
+	//@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
 
-		$data = array(
-			'utmwv' => '5.3.8', //Tracking code version *** REQUIRED ***
-			'utmac' => $GLOBALS['ga'], //Account string, appears on all requests *** REQUIRED ***
-			'utmdt' => get_the_title(), //Page title, which is a URL-encoded string *** REQUIRED ***
-			'utmp' => nebula_url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
-			'utmcc' => '__utma=' . $cookies['utma'] . ';+', //Cookie values. This request parameter sends all the cookies requested from the page. *** REQUIRED ***
+	$cookies = array(
+		'utma' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . mt_rand(1000000000, 9999999999) . '.' . time() . '.' . time() . '.' . time() . '.1', //Domain Hash . Random ID . Time of First Visit . Time of Last Visit . Time of Current Visit . Session Counter ***Absolutely Required***
+		'utmz' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . time() . '.1.1.', //Campaign Data (Domain Hash . Time . Counter . Counter)
+		'utmcsr' => '-', //Campaign Source "google"
+		'utmccn' => '-', //Campaign Name "(organic)"
+		'utmcmd' => '-', //Campaign Medium "organic"
+		'utmctr' => '-', //Campaign Terms (for paid search)
+		'utmcct' => '-', //Campaign Content Description
+	);
+	$cookies = array_merge($cookies, $user_cookies);
 
-			'utmhn' => nebula_url_components('hostname'), //Host name, which is a URL-encoded string
-			'utmn' => rand(pow(10, 10-1), pow(10, 10)-1), //Unique ID generated for each GIF request to prevent caching of the GIF image
-			'utms' => '1', //Session requests. Updates every time a __utm.gif request is made. Stops incrementing at 500 (max number of GIF requests per session).
-			'utmul' => str_replace('-', '_', get_bloginfo('language')), //Language encoding for the browser. Some browsers don’t set this, in which case it is set to '-'
-			'utmje' => '0', //Indicates if browser is Java enabled. 1 is true.
-			'utmhid' => mt_rand(1000000000, 9999999999), //A random number used to link the GA GIF request with AdSense
-			'utmr' => $_SERVER['HTTP_REFERER'], //Referral, complete URL. If none, it is set to '-'
-			'utmu' => 'q~', //This is a new parameter that contains some internal state that helps improve ga.js
-		);
-		$data = array_merge($data, $user_parameters);
+	$data = array(
+		'utmwv' => '5.3.8', //Tracking code version *** REQUIRED ***
+		'utmac' => $GLOBALS['ga'], //Account string, appears on all requests *** REQUIRED ***
+		'utmdt' => get_the_title(), //Page title, which is a URL-encoded string *** REQUIRED ***
+		'utmp' => nebula_url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
+		'utmcc' => '__utma=' . $cookies['utma'] . ';+', //Cookie values. This request parameter sends all the cookies requested from the page. *** REQUIRED ***
 
-		//Append Campaign Data to the Cookie parameter
-		if ( !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) ){
-			$data['utmcc'] = '__utma=' . $cookies['utma'] . ';+__utmz=' . $cookies['utmz'] . 'utmcsr=' . $cookies['utmcsr'] . '|utmccn=' . $cookies['utmccn'] . '|utmcmd=' . $cookies['utmcmd'] . '|utmctr=' . $cookies['utmctr'] . '|utmcct=' . $cookies['utmcct'] . ';+';
-		}
+		'utmhn' => nebula_url_components('hostname'), //Host name, which is a URL-encoded string
+		'utmn' => rand(pow(10, 10-1), pow(10, 10)-1), //Unique ID generated for each GIF request to prevent caching of the GIF image
+		'utms' => '1', //Session requests. Updates every time a __utm.gif request is made. Stops incrementing at 500 (max number of GIF requests per session).
+		'utmul' => str_replace('-', '_', get_bloginfo('language')), //Language encoding for the browser. Some browsers don’t set this, in which case it is set to '-'
+		'utmje' => '0', //Indicates if browser is Java enabled. 1 is true.
+		'utmhid' => mt_rand(1000000000, 9999999999), //A random number used to link the GA GIF request with AdSense
+		'utmr' => $_SERVER['HTTP_REFERER'], //Referral, complete URL. If none, it is set to '-'
+		'utmu' => 'q~', //This is a new parameter that contains some internal state that helps improve ga.js
+	);
+	$data = array_merge($data, $user_parameters);
 
-		return 'https://ssl.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
+	//Append Campaign Data to the Cookie parameter
+	if ( !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) ){
+		$data['utmcc'] = '__utma=' . $cookies['utma'] . ';+__utmz=' . $cookies['utmz'] . 'utmcsr=' . $cookies['utmcsr'] . '|utmccn=' . $cookies['utmccn'] . '|utmcmd=' . $cookies['utmcmd'] . '|utmctr=' . $cookies['utmctr'] . '|utmcct=' . $cookies['utmcct'] . ';+';
 	}
+
+	return 'https://ssl.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
 }
 
 //Send Data to Google Analytics
 //https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-if ( !function_exists('ga_send_data') ){
-	function ga_send_data($data){
-		$getString = 'https://ssl.google-analytics.com/collect';
-		$getString .= '?payload_data&';
-		$getString .= http_build_query($data);
-		$result = wp_remote_get($getString);
-		return $result;
-	}
+function ga_send_data($data){
+	$override = apply_filters('pre_ga_send_data', false, $data);
+	if ( $override !== false ){return $override;}
+
+	$getString = 'https://ssl.google-analytics.com/collect';
+	$getString .= '?payload_data&';
+	$getString .= http_build_query($data);
+	$result = wp_remote_get($getString);
+	return $result;
 }
 
 //Send Pageview Function for Server-Side Google Analytics
-if ( !function_exists('ga_send_pageview') ){
-	function ga_send_pageview($hostname=null, $path=null, $title=null){
-		if ( empty($GLOBALS['ga_v']) ){
-			$GLOBALS['ga_v'] = 1;
-		}
+function ga_send_pageview($hostname=null, $path=null, $title=null){
+	$override = apply_filters('pre_ga_send_pageview', false, $hostname, $path, $title);
+	if ( $override !== false ){return $override;}
 
-		if ( empty($GLOBALS['ga_cid']) ){
-			$GLOBALS['ga_cid'] = ga_parse_cookie();
-		}
-
-		if ( empty($hostname) ){
-			$hostname = nebula_url_components('hostname');
-		}
-
-		if ( empty($path) ){
-			$path = nebula_url_components('path');
-		}
-
-		if ( empty($title) ){
-			$title = get_the_title();
-		}
-
-		//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-		//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
-		$data = array(
-			'v' => $GLOBALS['ga_v'],
-			'tid' => $GLOBALS['ga'],
-			'cid' => $GLOBALS['ga_cid'],
-			't' => 'pageview',
-			'dh' => $hostname, //Document Hostname "gearside.com"
-			'dp' => $path, //Path "/something"
-			'dt' => $title, //Title
-			'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
-		);
-		ga_send_data($data);
+	if ( empty($GLOBALS['ga_v']) ){
+		$GLOBALS['ga_v'] = 1;
 	}
+
+	if ( empty($GLOBALS['ga_cid']) ){
+		$GLOBALS['ga_cid'] = ga_parse_cookie();
+	}
+
+	if ( empty($hostname) ){
+		$hostname = nebula_url_components('hostname');
+	}
+
+	if ( empty($path) ){
+		$path = nebula_url_components('path');
+	}
+
+	if ( empty($title) ){
+		$title = get_the_title();
+	}
+
+	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
+	$data = array(
+		'v' => $GLOBALS['ga_v'],
+		'tid' => $GLOBALS['ga'],
+		'cid' => $GLOBALS['ga_cid'],
+		't' => 'pageview',
+		'dh' => $hostname, //Document Hostname "gearside.com"
+		'dp' => $path, //Path "/something"
+		'dt' => $title, //Title
+		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
+	);
+	ga_send_data($data);
 }
 
 //Send Event Function for Server-Side Google Analytics
 //@TODO "Nebula" 0: "WordPress" is still appearing in Google Analytics browser reports for these events!
-if ( !function_exists('ga_send_event') ){
-	function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
-		if ( empty($GLOBALS['ga_v']) ){
-			$GLOBALS['ga_v'] = 1;
-		}
+function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
+	$override = apply_filters('pre_ga_send_event', false, $category, $action, $label, $value, $ni, $array);
+	if ( $override !== false ){return $override;}
 
-		if ( empty($GLOBALS['ga_cid']) ){
-			$GLOBALS['ga_cid'] = ga_parse_cookie();
-		}
-
-		//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-		//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
-		$data = array(
-			'v' => $GLOBALS['ga_v'],
-			'tid' => $GLOBALS['ga'],
-			'cid' => $GLOBALS['ga_cid'],
-			't' => 'event',
-			'ec' => $category, //Category (Required)
-			'ea' => $action, //Action (Required)
-			'el' => $label, //Label
-			'ev' => $value, //Value
-			'ni' => $ni, //Non-Interaction
-			'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
-			'dp' => nebula_url_components('path'),
-			'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
-		);
-
-		$data = array_merge($data, $array);
-
-		ga_send_data($data);
+	if ( empty($GLOBALS['ga_v']) ){
+		$GLOBALS['ga_v'] = 1;
 	}
+
+	if ( empty($GLOBALS['ga_cid']) ){
+		$GLOBALS['ga_cid'] = ga_parse_cookie();
+	}
+
+	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
+	$data = array(
+		'v' => $GLOBALS['ga_v'],
+		'tid' => $GLOBALS['ga'],
+		'cid' => $GLOBALS['ga_cid'],
+		't' => 'event',
+		'ec' => $category, //Category (Required)
+		'ea' => $action, //Action (Required)
+		'el' => $label, //Label
+		'ev' => $value, //Value
+		'ni' => $ni, //Non-Interaction
+		'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
+		'dp' => nebula_url_components('path'),
+		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
+	);
+
+	$data = array_merge($data, $array);
+
+	ga_send_data($data);
 }
 
 //Send custom data to Google Analytics. Must pass an array of data to this function:
 //ga_send_custom(array('t' => 'event', 'ec' => 'Category Here', 'ea' => 'Action Here', 'el' => 'Label Here'));
 //https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-if ( !function_exists('ga_send_custom') ){
-	function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
-		//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-		//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
-		$defaults = array(
-			'v' => $GLOBALS['ga_v'],
-			'tid' => $GLOBALS['ga'],
-			'cid' => $GLOBALS['ga_cid'],
-			't' => '',
-			'ni' => 1,
-			'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
-			'dp' => nebula_url_components('path'),
-			'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
-		);
+function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
+	$override = apply_filters('pre_ga_send_custom', false, $array);
+	if ( $override !== false ){return $override;}
 
-		$data = array_merge($defaults, $array);
+	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
+	$defaults = array(
+		'v' => $GLOBALS['ga_v'],
+		'tid' => $GLOBALS['ga'],
+		'cid' => $GLOBALS['ga_cid'],
+		't' => '',
+		'ni' => 1,
+		'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
+		'dp' => nebula_url_components('path'),
+		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
+	);
 
-		if ( !empty($data['t']) ){
-			ga_send_data($data);
-		} else {
-			trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
-			return;
-		}
+	$data = array_merge($defaults, $array);
+
+	if ( !empty($data['t']) ){
+		ga_send_data($data);
+	} else {
+		trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
+		return;
 	}
 }
 
 //Check if a user has been online in the last 15 minutes
 function nebula_is_user_online($id){
+	$override = apply_filters('pre_nebula_is_user_online', false, $id);
+	if ( $override !== false ){return $override;}
+
 	$logged_in_users = get_transient('users_status');
 	return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-900; //15 Minutes
 }
 
 //Check when a user was last online.
 function nebula_user_last_online($id){
+	$override = apply_filters('pre_nebula_user_last_online', false, $id);
+	if ( $override !== false ){return $override;}
+
 	$logged_in_users = get_transient('users_status');
 	if ( isset($logged_in_users[$id]['last']) ){
 		return $logged_in_users[$id]['last'];
@@ -224,6 +240,9 @@ function nebula_user_last_online($id){
 
 //Get a count of online users, or an array of online user IDs.
 function nebula_online_users($return='count'){
+	$override = apply_filters('pre_nebula_online_users', false, $return);
+	if ( $override !== false ){return $override;}
+
 	$logged_in_users = get_transient('users_status');
 	if ( empty($logged_in_users) ){
 		return ( $return == 'count' )? 0 : false;
@@ -241,28 +260,13 @@ function nebula_online_users($return='count'){
 	return ( $return == 'count' )? $user_online_count : $online_users;
 }
 
-//Check if user is using the debug query string.
-//$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
-function is_debug($strict=false){
-	$very_strict = ( $strict > 1 )? $strict : false;
-	if ( array_key_exists('debug', $_GET) ){
-		if ( !empty($strict) ){
-			if ( is_dev($very_strict) || is_client($very_strict) ){
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-	return false;
-}
-
 //Check if the current IP address matches any of the dev IP address from Nebula Options
 //Passing $strict bypasses IP check, so user must be a dev and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_dev($strict=false){
+	$override = apply_filters('pre_is_dev', false, $strict);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($strict) ){
 		$devIPs = explode(',', get_option('nebula_dev_ip'));
 		foreach ( $devIPs as $devIP ){
@@ -290,6 +294,9 @@ function is_dev($strict=false){
 //Passing $strict bypasses IP check, so user must be a client and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
 function is_client($strict=false){
+	$override = apply_filters('pre_is_client', false, $strict);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($strict) ){
 		$clientIPs = explode(',', get_option('nebula_client_ip'));
 		foreach ( $clientIPs as $clientIP ){
@@ -313,10 +320,38 @@ function is_client($strict=false){
 	return false;
 }
 
-//Check if the current IP address matches Pinckney Hugo Group.
+//Check if user is using the debug query string.
+//$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
+function is_debug($strict=false){
+	$override = apply_filters('pre_is_debug', false, $strict);
+	if ( $override !== false ){return $override;}
+
+	$very_strict = ( $strict > 1 )? $strict : false;
+	if ( array_key_exists('debug', $_GET) ){
+		if ( !empty($strict) ){
+			if ( is_dev($very_strict) || is_client($very_strict) ){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+	return false;
+}
+
+//Check if the current IP address matches.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_at_phg(){
-	if ( $_SERVER['REMOTE_ADDR'] == '72.43.235.106' ){
+function ip_matches($ip='72.43.235.106'){
+	$override = apply_filters('pre_ip_matches', false, $ip);
+	if ( $override !== false ){return $override;}
+
+	if ( $ip == 'phg' ){
+		$ip = '72.43.235.106';
+	}
+
+	if ( $_SERVER['REMOTE_ADDR'] == $ip ){
 		return true;
 	} else {
 		return false;
@@ -326,6 +361,9 @@ function is_at_phg(){
 //Check if the current site is live to the public.
 //Note: This checks if the home URL matches any of the valid hostnames- so it will not work for subdomains or subdirectories!
 function is_site_live(){
+	$override = apply_filters('pre_is_site_live', false);
+	if ( $override !== false ){return $override;}
+
 	if ( strpos(get_option('nebula_hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
 		return true;
 	} else {
@@ -335,6 +373,9 @@ function is_site_live(){
 
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
+	$override = apply_filters('pre_nebula_requested_url', false, $host);
+	if ( $override !== false ){return $override;}
+
 	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 )? 'https' : 'http';
 	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
 	return $full_url;
@@ -342,6 +383,9 @@ function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an 
 
 //Separate a URL into it's components.
 function nebula_url_components($segment="all", $url=null){
+	$override = apply_filters('pre_nebula_url_components', false, $segment, $url);
+	if ( $override !== false ){return $override;}
+
 	if ( !$url ){
 		$url = nebula_requested_url();
 	}
@@ -523,6 +567,9 @@ function nebula_url_components($segment="all", $url=null){
 //Example: 'key' => 'dates_%_start_date',
 add_filter('posts_where' , 'nebula_fuzzy_posts_where');
 function nebula_fuzzy_posts_where($where){
+	$override = apply_filters('pre_nebula_fuzzy_posts_where', false, $where);
+	if ( $override !== false ){return $override;}
+
 	if ( strpos($where, '_%_') > -1 ){
 		$where = preg_replace("/meta_key = ([\'\"])(.+)_%_/", "meta_key LIKE $1$2_%_", $where);
 	}
@@ -533,6 +580,9 @@ function nebula_fuzzy_posts_where($where){
 //Use WordPress core browser detection
 //@TODO "Nebula" 0: Look into using this in addition to a more powerful library.
 function wp_browser_detect(){
+	$override = apply_filters('pre_wp_browser_detect', false);
+	if ( $override !== false ){return $override;}
+
 	//Browsers
 	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
 
@@ -559,99 +609,108 @@ function wp_browser_detect(){
 }
 
 //Text limiter by words
-if ( !function_exists('string_limit_words') ){
-	function string_limit_words($string, $word_limit){
-		$limited[0] = $string;
-		$limited[1] = 0;
-		$words = explode(' ', $string, ($word_limit + 1));
-		if(count($words) > $word_limit){
-			array_pop($words);
-			$limited[0] = implode(' ', $words);
-			$limited[1] = 1;
-		}
-		return $limited;
+function string_limit_words($string, $word_limit){
+	$override = apply_filters('pre_string_limit_words', false, $string, $word_limit);
+	if ( $override !== false ){return $override;}
+
+	$limited[0] = $string;
+	$limited[1] = 0;
+	$words = explode(' ', $string, ($word_limit + 1));
+	if(count($words) > $word_limit){
+		array_pop($words);
+		$limited[0] = implode(' ', $words);
+		$limited[1] = 1;
 	}
+	return $limited;
 }
 
 //Word limiter by characters
-if ( !function_exists('word_limit_chars') ){
-	function word_limit_chars($string, $charlimit, $continue=false){
-		// 1 = "Continue Reading", 2 = "Learn More"
-		if ( strlen(strip_tags($string, '<p><span><a>')) <= $charlimit ){
-			$newString = strip_tags($string, '<p><span><a>');
+function word_limit_chars($string, $charlimit, $continue=false){
+	$override = apply_filters('pre_word_limit_chars', false, $string, $charlimit, $continue);
+	if ( $override !== false ){return $override;}
+
+	//1 = "Continue Reading", 2 = "Learn More"
+	if ( strlen(strip_tags($string, '<p><span><a>')) <= $charlimit ){
+		$newString = strip_tags($string, '<p><span><a>');
+	} else {
+		$newString = preg_replace('/\s+?(\S+)?$/', '', substr(strip_tags($string, '<p><span><a>'), 0, ($charlimit + 1)));
+		if ( $continue == 1 ){
+			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Continue reading <span class="meta-nav">&rarr;</span></a>';
+		} elseif( $continue == 2 ){
+			$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Learn more &raquo;</a>';
 		} else {
-			$newString = preg_replace('/\s+?(\S+)?$/', '', substr(strip_tags($string, '<p><span><a>'), 0, ($charlimit + 1)));
-			if ( $continue == 1 ){
-				$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Continue reading <span class="meta-nav">&rarr;</span></a>';
-			} elseif( $continue == 2 ){
-				$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Learn more &raquo;</a>';
-			} else {
-				$newString = $newString . '&hellip;';
-			}
+			$newString = $newString . '&hellip;';
 		}
-		return $newString;
 	}
+	return $newString;
 }
 
 //Traverse multidimensional arrays
-if ( !function_exists('in_array_r') ){
-	function in_array_r($needle, $haystack, $strict = true){
-	    foreach ($haystack as $item){
-	        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))){
-	            return true;
-	        }
-	    }
-	    return false;
-	}
+function in_array_r($needle, $haystack, $strict = true){
+	$override = apply_filters('pre_in_array_r', false, $needle, $haystack, $strict);
+	if ( $override !== false ){return $override;}
+
+    foreach ($haystack as $item){
+        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))){
+            return true;
+        }
+    }
+    return false;
 }
 
 //Recursive Glob
-if ( !function_exists('glob_r') ){
-	function glob_r($pattern, $flags = 0){
-	    $files = glob($pattern, $flags);
-	    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir){
-	        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
-	    }
-	    return $files;
-	}
+function glob_r($pattern, $flags = 0){
+    $override = apply_filters('pre_glob_r', false, $pattern, $flags);
+	if ( $override !== false ){return $override;}
+
+    $files = glob($pattern, $flags);
+    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir){
+        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
+    }
+    return $files;
 }
 
 //Add up the filesizes of files in a directory (and it's sub-directories)
-if ( !function_exists('foldersize') ){
-	function foldersize($path){
-		$total_size = 0;
-		$files = scandir($path);
-		$cleanPath = rtrim($path, '/') . '/';
-		foreach ( $files as $t ){
-			if ( $t <> "." && $t <> ".."){
-				$currentFile = $cleanPath . $t;
-				if ( is_dir($currentFile) ){
-					$size = foldersize($currentFile);
-					$total_size += $size;
-				} else {
-					$size = filesize($currentFile);
-					$total_size += $size;
-				}
+function foldersize($path){
+	$override = apply_filters('pre_foldersize', false, $path);
+	if ( $override !== false ){return $override;}
+
+	$total_size = 0;
+	$files = scandir($path);
+	$cleanPath = rtrim($path, '/') . '/';
+	foreach ( $files as $t ){
+		if ( $t <> "." && $t <> ".."){
+			$currentFile = $cleanPath . $t;
+			if ( is_dir($currentFile) ){
+				$size = foldersize($currentFile);
+				$total_size += $size;
+			} else {
+				$size = filesize($currentFile);
+				$total_size += $size;
 			}
 		}
-		return $total_size;
 	}
+	return $total_size;
 }
 
 //Checks to see if an array contains a string.
-if ( !function_exists('contains') ){
-	function contains($str, array $arr){
-	    foreach ( $arr as $a ){
-	        if ( stripos($str, $a) !== false ){
-	        	return true;
-	        }
-	    }
-	    return false;
+function contains($str, array $arr){
+	$override = apply_filters('pre_contains', false, $str, $arr);
+	if ( $override !== false ){return $override;}
+
+	foreach ( $arr as $a ){
+		if ( stripos($str, $a) !== false ){
+			return true;
+		}
 	}
+	return false;
 }
 
 //Check if a website or resource is available
 function nebula_is_available($domain=null){
+	$override = apply_filters('pre_nebula_is_available', false, $domain);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($domain) || strpos($domain, 'http') != 0 ){
 		trigger_error('Error: Requested domain is either empty or missing acceptable protocol.', E_USER_ERROR);
 		return false;
@@ -690,118 +749,125 @@ function nebula_is_available($domain=null){
 
 //Generate a random integer between two numbers with an exclusion array
 //Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
-if ( !function_exists('random_number_between_but_not') ){
-	function random_number_between_but_not($min=null, $max=null, $butNot=null){
-	    if ( $min > $max ){ //If min is greater than max, swap variables
-			$tmp = $min;
-			$min = $max;
-			$max = $tmp;
-	    }
-	    if ( gettype($butNot) == 'array' ){
-	        foreach( $butNot as $key => $skip ){
-	            if( $skip > $max || $skip < $min ){
-	                unset($butNot[$key]);
-	            }
-	        }
-	        if ( count($butNot) == $max-$min+1 ){
-	            trigger_error('Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.', E_USER_ERROR);
-	            return false;
-	        }
-	        while ( in_array(($randnum = rand($min, $max)), $butNot));
-	    } else {
-	        while (($randnum = rand($min, $max)) == $butNot );
-	    }
-	    return $randnum;
+function random_number_between_but_not($min=null, $max=null, $butNot=null){
+	$override = apply_filters('pre_random_number_between_but_not', false, $min, $max, $butNot);
+	if ( $override !== false ){return $override;}
+
+	if ( $min > $max ){ //If min is greater than max, swap variables
+		$tmp = $min;
+		$min = $max;
+		$max = $tmp;
 	}
+	if ( gettype($butNot) == 'array' ){
+		foreach( $butNot as $key => $skip ){
+			if( $skip > $max || $skip < $min ){
+				unset($butNot[$key]);
+			}
+		}
+		if ( count($butNot) == $max-$min+1 ){
+			trigger_error('Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.', E_USER_ERROR);
+			return false;
+		}
+		while ( in_array(($randnum = rand($min, $max)), $butNot));
+	} else {
+		while (($randnum = rand($min, $max)) == $butNot );
+	}
+	return $randnum;
 }
 
 //Call a placeholder image from Unsplash.it
-if ( !function_exists('unsplash_it') ){
-	function unsplash_it($width=800, $height=600, $raw=false, $specific=false){
-		$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-		if ( !is_int($specific) ){
-			$randID = random_number_between_but_not(0, 874, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
-		} else {
-			$randID = $specific;
-		}
+function unsplash_it($width=800, $height=600, $raw=false, $specific=false){
+	$override = apply_filters('pre_unsplash_it', false, $width, $height, $raw, $specific);
+	if ( $override !== false ){return $override;}
 
-		//Check if unsplash.it is online
-		if ( !nebula_is_available('https://unsplash.it') ){
-			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Unsplash.it Not Available');
-			if ( $raw ){
-				return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838');
-			} else {
-				return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838') . '" title="Unsplash.it is not available.';
-			}
-		}
+	$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
+	if ( !is_int($specific) ){
+		$randID = random_number_between_but_not(0, 874, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
+	} else {
+		$randID = $specific;
+	}
 
-		$image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
-		$check_image = nebula_is_available($image_path); //Ignore errors (because that's what we're looking for)
-
-		$i = 1;
-		$attempts = '';
-		while ( !$check_image ){
-			$attempts = ' [Errors: ' . $i . ']';
-			if ( $specific || $i >= 5 ){
-				ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
-				if ( $raw ){
-					placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f');
-				} else {
-					return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f') . '" title="Unsplash image with ID ' . $randID . $attempts;
-				}
-			}
-
-		    $skip_list[] = $randID;
-		    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')' . $attempts);
-		    $randID = random_number_between_but_not(0, 615, $skipList);
-		    $image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
-		    $check_image = nebula_is_available($image_path);
-		    $i++;
-		}
-
+	//Check if unsplash.it is online
+	if ( !nebula_is_available('https://unsplash.it') ){
+		ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Unsplash.it Not Available');
 		if ( $raw ){
-			return $image_path;
+			return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838');
 		} else {
-			return $image_path . '" title="Unsplash ID #' . $randID . $attempts;
+			return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838') . '" title="Unsplash.it is not available.';
 		}
+	}
+
+	$image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+	$check_image = nebula_is_available($image_path); //Ignore errors (because that's what we're looking for)
+
+	$i = 1;
+	$attempts = '';
+	while ( !$check_image ){
+		$attempts = ' [Errors: ' . $i . ']';
+		if ( $specific || $i >= 5 ){
+			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
+			if ( $raw ){
+				placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f');
+			} else {
+				return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f') . '" title="Unsplash image with ID ' . $randID . $attempts;
+			}
+		}
+
+	    $skip_list[] = $randID;
+	    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')' . $attempts);
+	    $randID = random_number_between_but_not(0, 615, $skipList);
+	    $image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
+	    $check_image = nebula_is_available($image_path);
+	    $i++;
+	}
+
+	if ( $raw ){
+		return $image_path;
+	} else {
+		return $image_path . '" title="Unsplash ID #' . $randID . $attempts;
 	}
 }
 
 //Call a placeholder image from Placehold.it
-if ( !function_exists('placehold_it') ){
-	function placehold_it($width=800, $height=600, $text=false, $color=false){
-		if ( nebula_is_available('https://placehold.it') ){
-			$text = ( $text )? '?text=' . str_replace(' ', '+', $text) : '';
-			$color = ( $color )? str_replace('#', '', $color) . '/' : '';
-			return 'https://placehold.it/' . $width . 'x' . $height . '/' . $color . $text;
-		} else {
-			return get_template_directory_uri() . '/images/x.png'; //Placehold.it is not available.
-		}
+function placehold_it($width=800, $height=600, $text=false, $color=false){
+	$override = apply_filters('pre_placehold_it', false, $width, $height, $text, $color);
+	if ( $override !== false ){return $override;}
+
+	if ( nebula_is_available('https://placehold.it') ){
+		$text = ( $text )? '?text=' . str_replace(' ', '+', $text) : '';
+		$color = ( $color )? str_replace('#', '', $color) . '/' : '';
+		return 'https://placehold.it/' . $width . 'x' . $height . '/' . $color . $text;
+	} else {
+		return get_template_directory_uri() . '/images/x.png'; //Placehold.it is not available.
 	}
 }
 
 //Automatically convert HEX colors to RGB.
-if ( !function_exists('hex2rgb') ){
-	function hex2rgb($color){
-		if ( $color[0] == '#' ){
-			$color = substr($color, 1);
-		}
-		if ( strlen($color) == 6 ){
-			list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-		} elseif ( strlen($color) == 3 ){
-			list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
-		} else {
-			return false;
-		}
-		$r = hexdec($r);
-		$g = hexdec($g);
-		$b = hexdec($b);
-		return array('r' => $r, 'g' => $g, 'b' => $b);
+function hex2rgb($color){
+	$override = apply_filters('pre_hex2rgb', false, $color);
+	if ( $override !== false ){return $override;}
+
+	if ( $color[0] == '#' ){
+		$color = substr($color, 1);
 	}
+	if ( strlen($color) == 6 ){
+		list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+	} elseif ( strlen($color) == 3 ){
+		list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
+	} else {
+		return false;
+	}
+	$r = hexdec($r);
+	$g = hexdec($g);
+	$b = hexdec($b);
+	return array('r' => $r, 'g' => $g, 'b' => $b);
 }
 
 //Check the brightness of a color. 0=darkest, 255=lightest, 256=false
 function nebula_color_brightness($hex){
+	$override = apply_filters('pre_nebula_color_brightness', false, $hex);
+	if ( $override !== false ){return $override;}
+
 	//@TODO "Nebula" 0: If an rgb value is passed, (create then) run an rgb2hex() function
 	if ( strpos($hex, '#') !== false ){
 		preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
@@ -825,128 +891,133 @@ function nebula_color_brightness($hex){
 }
 
 //Attempt to get WHOIS information from domain
-if ( !function_exists('whois_info') ){
-	function whois_info($data, $domain=''){
-		if ( $domain == '' ){
-			$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
-		} else {
-			$whois = getwhois(nebula_url_components('sld', $domain), ltrim(nebula_url_components('tld', $domain), '.'));
-			$whois = preg_replace('!\s+!', ' ', $whois);
-		}
+function whois_info($data, $domain=''){
+	$override = apply_filters('pre_whois_info', false, $data, $domain);
+	if ( $override !== false ){return $override;}
 
-		switch ( $data ){
-			case 'expiration':
-			case 'expiration_date':
-			case 'domain_expiration':
-				if ( contains($whois, array('Registrar Registration Expiration Date: ')) ){
-					return trim(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ")+40, 10));
-				} elseif ( contains($whois, array('Registry Expiry Date: ')) ){
-					return trim(substr($whois, strpos($whois, "Registry Expiry Date: ")+22, 10));
-				} elseif ( contains($whois, array('Relevant dates: ')) ){
-					return trim(substr($whois, strpos($whois, "Expiry date:")+13, 11));
-				} elseif ( contains($whois, array('Expiry date: ')) ){
-					return trim(substr($whois, strpos($whois, "Expiry date:")+13, 10));
-				} elseif ( contains($whois, array('Domain expires: ')) ){
-					return trim(substr($whois, strpos($whois, "Domain expires: ")+16, 11));
+	if ( $domain == '' ){
+		$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
+	} else {
+		$whois = getwhois(nebula_url_components('sld', $domain), ltrim(nebula_url_components('tld', $domain), '.'));
+		$whois = preg_replace('!\s+!', ' ', $whois);
+	}
+
+	switch ( $data ){
+		case 'expiration':
+		case 'expiration_date':
+		case 'domain_expiration':
+			if ( contains($whois, array('Registrar Registration Expiration Date: ')) ){
+				return trim(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ")+40, 10));
+			} elseif ( contains($whois, array('Registry Expiry Date: ')) ){
+				return trim(substr($whois, strpos($whois, "Registry Expiry Date: ")+22, 10));
+			} elseif ( contains($whois, array('Relevant dates: ')) ){
+				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 11));
+			} elseif ( contains($whois, array('Expiry date: ')) ){
+				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 10));
+			} elseif ( contains($whois, array('Domain expires: ')) ){
+				return trim(substr($whois, strpos($whois, "Domain expires: ")+16, 11));
+			}
+			return false;
+			break;
+		case 'registrar':
+		case 'registrar_name':
+			$domain_registrar_start = '';
+			$domain_registrar_stop = '';
+			if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
+				$domain_registrar_start = strpos($whois, "Sponsoring Registrar:")+21;
+				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ){
+				$domain_registrar_start = strpos($whois, "Registrar:")+17;
+				$domain_registrar_stop = strpos($whois, "Number: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ){ //co.uk
+				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
+				$domain_registrar_stop = strpos($whois, "URL: ")-$domain_registrar_start;
+				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
+			}
+			return false;
+			break;
+		case 'registrar_url':
+			if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ){
+				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
+				$domain_registrar_url_stop = strpos($whois, "Updated Date: ")-$domain_registrar_url_start;
+				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
+			} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ){
+				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
+				$domain_registrar_url_stop = strpos($whois, "Update Date: ")-$domain_registrar_url_start;
+				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
+			} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ){ //co.uk
+				$domain_registrar_url_start = strpos($whois, "URL: ")+5;
+				$domain_registrar_url_stop = strpos($whois, "Relevant dates: ")-$domain_registrar_url_start;
+				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
+			}
+			return false;
+			break;
+		case 'reseller':
+		case 'reseller_name':
+			$domain_reseller = '';
+			if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ){
+				$reseller1 = strpos($whois, 'Reseller: ');
+				$reseller2 = strpos($whois, 'Reseller: ', $reseller1 + strlen('Reseller: '));
+				if ( $reseller2 ){
+					$domain_reseller_start = strpos($whois, "Reseller: ")+10;
+					$domain_reseller_stop = $reseller2-$domain_reseller_start;
+					return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
+				} else {
+					$domain_reseller_start = strpos($whois, "Reseller: ")+10;
+					$domain_reseller_stop = strpos($whois, "Domain Status: ")-$domain_reseller_start;
+					return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
 				}
-				return false;
-				break;
-			case 'registrar':
-			case 'registrar_name':
-				$domain_registrar_start = '';
-				$domain_registrar_stop = '';
-				if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
-					$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-					$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
-					return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-				} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
-					$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-					$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
-					return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-				} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
-					$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-					$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
-					return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-				} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
-					$domain_registrar_start = strpos($whois, "Sponsoring Registrar:")+21;
-					$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
-					return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-				} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ){
-					$domain_registrar_start = strpos($whois, "Registrar:")+17;
-					$domain_registrar_stop = strpos($whois, "Number: ")-$domain_registrar_start;
-					return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-				} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ){ //co.uk
-					$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-					$domain_registrar_stop = strpos($whois, "URL: ")-$domain_registrar_start;
-					return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-				}
-				return false;
-				break;
-			case 'registrar_url':
-				if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ){
-					$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
-					$domain_registrar_url_stop = strpos($whois, "Updated Date: ")-$domain_registrar_url_start;
-					return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-				} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ){
-					$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
-					$domain_registrar_url_stop = strpos($whois, "Update Date: ")-$domain_registrar_url_start;
-					return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-				} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ){ //co.uk
-					$domain_registrar_url_start = strpos($whois, "URL: ")+5;
-					$domain_registrar_url_stop = strpos($whois, "Relevant dates: ")-$domain_registrar_url_start;
-					return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-				}
-				return false;
-				break;
-			case 'reseller':
-			case 'reseller_name':
-				$domain_reseller = '';
-				if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ){
-					$reseller1 = strpos($whois, 'Reseller: ');
-					$reseller2 = strpos($whois, 'Reseller: ', $reseller1 + strlen('Reseller: '));
-					if ( $reseller2 ){
-						$domain_reseller_start = strpos($whois, "Reseller: ")+10;
-						$domain_reseller_stop = $reseller2-$domain_reseller_start;
-						return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
-					} else {
-						$domain_reseller_start = strpos($whois, "Reseller: ")+10;
-						$domain_reseller_stop = strpos($whois, "Domain Status: ")-$domain_reseller_start;
-						return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
-					}
-				}
-				return false;
-				break;
-		}
+			}
+			return false;
+			break;
 	}
 }
 
 //Returns WHOIS information from the passed domain.
-if ( !function_exists('getwhois') ){
-	function getwhois($domain, $tld){
-		if ( empty($domain) ){
-			$domain = nebula_url_components('sld'); //Default value is current domain
-		}
-		if ( empty($tld) ){
-			$tld = nebula_url_components('tld'); //Default value is current domain
-		}
+function getwhois($domain, $tld){
+	$override = apply_filters('pre_getwhois', false, $domain, $tld);
+	if ( $override !== false ){return $override;}
 
-		require_once(get_template_directory() . "/includes/libs/class-whois.php");
-		$whois = new Whois();
+	if ( empty($domain) ){
+		$domain = nebula_url_components('sld'); //Default value is current domain
+	}
+	if ( empty($tld) ){
+		$tld = nebula_url_components('tld'); //Default value is current domain
+	}
 
-		if( !$whois->ValidDomain($domain . '.' . $tld) ){
-			return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
-		}
+	require_once(get_template_directory() . "/includes/libs/class-whois.php");
+	$whois = new Whois();
 
-		if ( $whois->Lookup($domain . '.' . $tld) ){
-			return $whois->GetData(1);
-		} else {
-			return 'A WHOIS error occurred.';
-		}
+	if( !$whois->ValidDomain($domain . '.' . $tld) ){
+		return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
+	}
+
+	if ( $whois->Lookup($domain . '.' . $tld) ){
+		return $whois->GetData(1);
+	} else {
+		return 'A WHOIS error occurred.';
 	}
 }
 
 //Compare values using passed parameters
 function nebula_compare_operator($a=null, $b=null, $c='=='){
+	$override = apply_filters('pre_nebula_compare_operator', false, $a, $b, $c);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($a) || empty($b) ){
 		trigger_error('nebula_compare_operator requires values to compare.');
 		return false;
@@ -980,102 +1051,104 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
 }
 
 //Check the current (or passed) PHP version against the PHP support timeline.
-if ( !function_exists('nebula_php_version_support') ){
-	function nebula_php_version_support($php_version=PHP_VERSION){
-		$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
-		$php_timeline = get_transient('nebula_php_timeline');
-		if ( empty($php_timeline) || is_debug() ){
-			$php_timeline = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
-			if ( !empty($php_timeline) ){
-				if ( is_writable(get_template_directory()) ){
-					file_put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
-				}
-				set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
-			} else {
-				$php_timeline = file_get_contents($php_timeline_json_file);
-			}
-		}
-		$php_timeline = json_decode($php_timeline);
+function nebula_php_version_support($php_version=PHP_VERSION){
+	$override = apply_filters('pre_nebula_php_version_support', false, $php_version);
+	if ( $override !== false ){return $override;}
 
-		foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
-			if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
-				$output = array();
-				if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
-					$output['lifecycle'] = 'active';
-				} elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
-					$output['lifecycle'] = 'security';
-				} elseif ( time() >= strtotime($php_timeline_dates->end) ) {
-					$output['lifecycle'] = 'end';
-				} else {
-					$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
-				}
-				$output['security'] = strtotime($php_timeline_dates->security);
-				$output['end'] = strtotime($php_timeline_dates->end);
-				return $output;
-				break;
+	$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
+	$php_timeline = get_transient('nebula_php_timeline');
+	if ( empty($php_timeline) || is_debug() ){
+		$php_timeline = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
+		if ( !empty($php_timeline) ){
+			if ( is_writable(get_template_directory()) ){
+				file_put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
 			}
+			set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
+		} else {
+			$php_timeline = file_get_contents($php_timeline_json_file);
+		}
+	}
+	$php_timeline = json_decode($php_timeline);
+
+	foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
+		if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
+			$output = array();
+			if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
+				$output['lifecycle'] = 'active';
+			} elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
+				$output['lifecycle'] = 'security';
+			} elseif ( time() >= strtotime($php_timeline_dates->end) ) {
+				$output['lifecycle'] = 'end';
+			} else {
+				$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
+			}
+			$output['security'] = strtotime($php_timeline_dates->security);
+			$output['end'] = strtotime($php_timeline_dates->end);
+			return $output;
+			break;
 		}
 	}
 }
 
 //Get Nebula version information
-if ( !function_exists('nebula_version') ){
-	function nebula_version($return=false){
-		$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme();
+function nebula_version($return=false){
+	$override = apply_filters('pre_nebula_version', false, $return);
+	if ( $override !== false ){return $override;}
 
-		$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
-		$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
+	$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme();
 
-		/*
-			May 2016	4.0.x
-			June		4.1.x
-			July		4.2.x
-			August		4.3.x
-			Sept		4.4.x
-			Oct			4.5.x
-			Nov			4.6.x
-			Dec			4.7.x
-			Jan	2017	4.8.x
-			Feb			4.9.x
-			Mar			4.10.x
-			Apr			4.11.x
-			x represents the day of the month.
-		*/
+	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
+	$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
 
-		$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
-		$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June'); //Modify this array when 4.0 is released (May is first)
-		$nebula_version_month = $nebula_months[$nebula_version['medium']];
-		$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
-		$nebula_version_day_formated = ( empty($nebula_version['small']) )? ' ' : ' ' . $nebula_version['small'] . ', ';
+	/*
+		May 2016	4.0.x
+		June		4.1.x
+		July		4.2.x
+		August		4.3.x
+		Sept		4.4.x
+		Oct			4.5.x
+		Nov			4.6.x
+		Dec			4.7.x
+		Jan	2017	4.8.x
+		Feb			4.9.x
+		Mar			4.10.x
+		Apr			4.11.x
+		x represents the day of the month.
+	*/
 
-		$nebula_version_info = array(
-			'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2],
-			'large' => $nebula_version_split[0],
-			'medium' => $nebula_version_split[1],
-			'small' => $nebula_version_split[2],
-			'utc' => strtotime($nebula_version_month . $nebula_version_day_formated . $nebula_version_year),
-			'date' => $nebula_version_month . $nebula_version_day_formated . $nebula_version_year,
-			'year' => $nebula_version_year,
-			'month' => $nebula_version_month,
-			'day' => $nebula_version_day,
-		);
+	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
+	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June'); //Modify this array when 4.0 is released (May is first)
+	$nebula_version_month = $nebula_months[$nebula_version['medium']];
+	$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
+	$nebula_version_day_formated = ( empty($nebula_version['small']) )? ' ' : ' ' . $nebula_version['small'] . ', ';
 
-		switch ( str_replace(array(' ', '_', '-'), '', strtolower($return)) ){
-			case ('version'):
-			case ('full'):
-				return $nebula_version_info['full'];
-				break;
-			case ('date'):
-				return $nebula_version_info['date'];
-				break;
-			case ('time'):
-			case ('utc'):
-				return $nebula_version_info['utc'];
-				break;
-			default:
-				return $nebula_version_info;
-				break;
-		}
+	$nebula_version_info = array(
+		'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2],
+		'large' => $nebula_version_split[0],
+		'medium' => $nebula_version_split[1],
+		'small' => $nebula_version_split[2],
+		'utc' => strtotime($nebula_version_month . $nebula_version_day_formated . $nebula_version_year),
+		'date' => $nebula_version_month . $nebula_version_day_formated . $nebula_version_year,
+		'year' => $nebula_version_year,
+		'month' => $nebula_version_month,
+		'day' => $nebula_version_day,
+	);
+
+	switch ( str_replace(array(' ', '_', '-'), '', strtolower($return)) ){
+		case ('version'):
+		case ('full'):
+			return $nebula_version_info['full'];
+			break;
+		case ('date'):
+			return $nebula_version_info['date'];
+			break;
+		case ('time'):
+		case ('utc'):
+			return $nebula_version_info['utc'];
+			break;
+		default:
+			return $nebula_version_info;
+			break;
 	}
 }
 
@@ -1091,6 +1164,9 @@ if ( nebula_option('nebula_scss') ){
 	}
 }
 function nebula_render_scss($specific_scss=null, $child=false){
+	$override = apply_filters('pre_nebula_render_scss', false, $specific_scss, $child);
+	if ( $override !== false ){return $override;}
+
 	if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || $_GET['settings-updated'] == 'true') && (is_dev() || is_client()) ){
 		$specific_scss = 'all';
 	}
@@ -1171,6 +1247,9 @@ function nebula_render_scss($specific_scss=null, $child=false){
 
 //Combine developer stylesheets
 function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
+	$override = apply_filters('pre_nebula_combine_dev_stylesheets', false, $directory, $directory_uri);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($directory) ){
 		$directory = get_template_directory() . '/stylesheets';
 		$directory_uri = get_template_directory_uri() . "/stylesheets";
@@ -1216,6 +1295,9 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 
 //Compile server-side variables into SCSS
 function nebula_scss_variables($scss){
+	$override = apply_filters('pre_nebula_scss_variables', false, $scss);
+	if ( $override !== false ){return $override;}
+
 	$scss = preg_replace("(<%template_directory%>)", get_template_directory_uri(), $scss); //Template Directory
 	$scss = preg_replace("(<%stylesheet_directory%>)", get_stylesheet_directory_uri(), $scss); //Stylesheet Directory (For child themes)
 	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
@@ -1229,6 +1311,9 @@ function nebula_scss_variables($scss){
 
 //Pull certain colors from .../mixins/_variables.scss
 function nebula_sass_color($color='primary', $theme='child'){
+	$override = apply_filters('pre_nebula_sass_color', false, $color, $theme);
+	if ( $override !== false ){return $override;}
+
 	if ( is_child_theme() && $theme == 'child' ){
 		$stylesheets_directory = get_stylesheet_directory() . '/stylesheets';
 		$transient_name = 'nebula_scss_child_variables';
@@ -1280,6 +1365,9 @@ function nebula_sass_color($color='primary', $theme='child'){
 
 //Boolean return if the user's device is mobile.
 function nebula_is_mobile(){
+	$override = apply_filters('pre_nebula_is_mobile', false);
+	if ( $override !== false ){return $override;}
+
 	if ( $GLOBALS["device_detect"]->isMobile() ){
 		return true;
 	}
@@ -1288,6 +1376,9 @@ function nebula_is_mobile(){
 
 //Boolean return if the user's device is a tablet.
 function nebula_is_tablet(){
+	$override = apply_filters('pre_nebula_is_tablet', false);
+	if ( $override !== false ){return $override;}
+
 	if ( $GLOBALS["device_detect"]->isTablet() ){
 		return true;
 	}
@@ -1296,6 +1387,9 @@ function nebula_is_tablet(){
 
 //Boolean return if the user's device is a desktop.
 function nebula_is_desktop(){
+	$override = apply_filters('pre_nebula_is_desktop', false);
+	if ( $override !== false ){return $override;}
+
 	if ( $GLOBALS["device_detect"]->isDesktop() ){
 		return true;
 	}
@@ -1304,6 +1398,9 @@ function nebula_is_desktop(){
 
 //Returns the requested information of the operating system of the user's device.
 function nebula_get_os($info='full'){
+	$override = apply_filters('pre_nebula_get_os', false, $info);
+	if ( $override !== false ){return $override;}
+
 	$os = $GLOBALS["device_detect"]->getOs();
 	switch ( strtolower($info) ){
 		case 'full':
@@ -1323,6 +1420,9 @@ function nebula_get_os($info='full'){
 
 //Check to see how the operating system version of the user's device compares to a passed version number.
 function nebula_is_os($os=null, $version=null, $comparison='=='){
+	$override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($os) ){
 		trigger_error('nebula_is_os requires a parameter of requested operating system.');
 		return false;
@@ -1362,6 +1462,9 @@ function nebula_is_os($os=null, $version=null, $comparison='=='){
 
 //Returns the requested information of the model of the user's device.
 function nebula_get_device($info='model'){
+	$override = apply_filters('pre_nebula_get_device', false, $info);
+	if ( $override !== false ){return $override;}
+
 	$info = str_replace(' ', '', $info);
 	switch ( strtolower($info) ){
 		case 'full':
@@ -1397,6 +1500,9 @@ function nebula_get_device($info='model'){
 //Returns the requested information of the browser being used.
 function nebula_get_client($info){ return get_browser($info); }
 function nebula_get_browser($info='name'){
+	$override = apply_filters('pre_nebula_get_browser', false, $info);
+	if ( $override !== false ){return $override;}
+
 	$client = $GLOBALS["device_detect"]->getClient();
 	switch ( strtolower($info) ){
 		case 'full':
@@ -1424,6 +1530,9 @@ function nebula_get_browser($info='name'){
 
 //Check to see how the browser version compares to a passed version number.
 function nebula_is_browser($browser=null, $version=null, $comparison='=='){
+	$override = apply_filters('pre_nebula_is_browser', false, $browser, $version, $comparison);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($browser) ){
 		trigger_error('nebula_is_browser requires a parameter of requested browser.');
 		return false;
@@ -1480,6 +1589,9 @@ function nebula_is_browser($browser=null, $version=null, $comparison='=='){
 
 //Check to see if the rendering engine matches a passed parameter.
 function nebula_is_engine($engine=null){
+	$override = apply_filters('pre_nebula_is_engine', false, $engine);
+	if ( $override !== false ){return $override;}
+
 	if ( empty($engine) ){
 		trigger_error('nebula_is_engine requires a parameter of requested engine.');
 		return false;
@@ -1505,6 +1617,9 @@ function nebula_is_engine($engine=null){
 //Check for bot/crawler traffic
 //UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
 function nebula_is_bot(){
+	$override = apply_filters('pre_nebula_is_bot', false);
+	if ( $override !== false ){return $override;}
+
 	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
 	foreach( $bots as $bot ){
 		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){

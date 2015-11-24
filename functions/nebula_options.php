@@ -213,6 +213,7 @@ function register_nebula_options(){
 		'nebula_cd_notablebrowser' => '',
 		'nebula_cd_relativetime' => '',
 		'nebula_cd_scrolldepth' => '',
+		'nebula_cd_maxscroll' => '',
 		'nebula_cd_sessionid' => '',
 		'nebula_cd_timestamp' => '',
 		'nebula_cd_userid' => '',
@@ -222,6 +223,7 @@ function register_nebula_options(){
 		'nebula_cd_weather' => '',
 		'nebula_cd_temperature' => '',
 		'nebula_cd_publishyear' => '',
+		'nebula_cd_wordcount' => '',
 		'nebula_cd_adblocker' => '',
 		'nebula_cm_notableformviews' => '',
 		'nebula_cm_notableformsubmissions' => '',
@@ -234,6 +236,7 @@ function register_nebula_options(){
 		'nebula_cm_pagesuggestionsaccepted' => '',
 		'nebula_cm_autocompletesearches' => '',
 		'nebula_cm_autocompletesearchclicks' => '',
+		'nebula_cm_wordcount' => '',
 
 		//APIs Tab
 		'nebula_google_font_family' => '',
@@ -884,7 +887,7 @@ function nebula_options_page(){
 		        <tr class="short" valign="top">
 		        	<th scope="row">Enhanced Link Attribution (Link ID)&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select name="nebula_ga_displayfeatures">
+						<select name="nebula_ga_linkid">
 							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_ga_linkid')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_ga_linkid')); ?>>Disabled</option>
@@ -982,7 +985,13 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-
+				<tr class="short" valign="top">
+		        	<th scope="row">Max Scroll Percent&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_maxscroll" value="<?php echo get_option('nebula_cd_maxscroll'); ?>" />
+						<p class="helper"><small>Calculates the maximum scroll percent the user reached before triggering an event. <em>This dimension is tied to events, so pageviews will not have data (use the Top Event report).</em> <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
 
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
@@ -1217,6 +1226,14 @@ function nebula_options_page(){
 		        <tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
 						<h3>Miscellaneous</h3>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Word Count&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_wordcount" value="<?php echo get_option('nebula_cm_wordcount'); ?>" />
+						<p class="helper"><small>Sends word count for single posts. <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 

@@ -55,15 +55,30 @@ function nebula_prevent_bad_query_strings(){
 //Disable X-Pingback HTTP Header.
 add_filter('wp_headers', 'nebula_remove_x_pingback', 11, 2);
 function nebula_remove_x_pingback($headers){
+	$override = apply_filters('pre_nebula_remove_x_pingback', false, $headers);
+	if ( $override !== false ){return $override;}
+
 	if ( isset($headers['X-Pingback']) ){
 		unset($headers['X-Pingback']);
 	}
 	return $headers;
 }
 
+//Hijack pingback_url for get_bloginfo (<link rel="pingback" />).
+add_filter('bloginfo_url', 'nebula_hijack_pingback_url', 11, 2);
+function nebula_hijack_pingback_url($output, $property){
+	$override = apply_filters('pre_nebula_hijack_pingback_url', false, $output, $property);
+	if ( $override !== false ){return $override;}
+
+	return ( $property == 'pingback_url' )? null : $output;
+}
+
 //Disable XMLRPC by hijacking and blocking the option.
 add_filter('pre_option_enable_xmlrpc', 'nebula_disable_xmlrpc');
 function nebula_disable_xmlrpc($state){
+	$override = apply_filters('pre_nebula_disable_xmlrpc', false, $state);
+	if ( $override !== false ){return $override;}
+
 	return false; //To leave XMLRPC intact and drop just Pingback: return $state;
 }
 
@@ -72,13 +87,6 @@ add_action('wp', 'nebula_remove_rsd_link', 9);
 function nebula_remove_rsd_link(){
 	remove_action('wp_head', 'rsd_link');
 }
-
-//Hijack pingback_url for get_bloginfo (<link rel="pingback" />).
-add_filter('bloginfo_url', 'nebula_hijack_pingback_url', 11, 2);
-function nebula_hijack_pingback_url($output, $property){
-	return ( $property == 'pingback_url' )? null : $output;
-}
-
 
 
 /*
@@ -93,6 +101,9 @@ function nebula_hijack_pingback_url($output, $property){
 //Prevent login error messages from giving too much information
 add_filter('login_errors', 'nebula_login_errors');
 function nebula_login_errors($error){
+	$override = apply_filters('pre_nebula_login_errors', false, $error);
+	if ( $override !== false ){return $override;}
+
 	if ( !nebula_is_bot() ){
 		$incorrect_username = '';
 		if ( contains($error, array('The password you entered for the username')) ){
@@ -125,6 +136,9 @@ function complete_version_removal(){
 add_filter('style_loader_src', 'at_remove_wp_ver_css_js', 9999);
 add_filter('script_loader_src', 'at_remove_wp_ver_css_js', 9999);
 function at_remove_wp_ver_css_js($src){
+    $override = apply_filters('pre_at_remove_wp_ver_css_js', false, $src);
+	if ( $override !== false ){return $override;}
+
     if ( strpos($src, 'ver=') )
         $src = remove_query_arg('ver', $src);
     return $src;
@@ -141,6 +155,9 @@ function check_referrer(){
 //Track Notable Bots
 add_action('wp_footer', 'track_notable_bots');
 function track_notable_bots(){
+	$override = apply_filters('pre_track_notable_bots', false);
+	if ( $override !== false ){return;}
+
 	//Google Page Speed
 	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
 		if ( nebula_url_components('extension') != 'js' ){
