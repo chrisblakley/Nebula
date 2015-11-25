@@ -174,7 +174,7 @@ function nebula_widgets_init(){
 		'after_widget' => '</li>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
-	) );
+	));
 
 	//Sidebar 2
 	register_sidebar(array(
@@ -185,7 +185,7 @@ function nebula_widgets_init(){
 		'after_widget' => '</li>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
-	) );
+	));
 
 	//Footer 1
 	register_sidebar(array(
@@ -196,7 +196,7 @@ function nebula_widgets_init(){
 		'after_widget' => '</li>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
-	) );
+	));
 
 	//Footer 2
 	register_sidebar(array(
@@ -207,7 +207,7 @@ function nebula_widgets_init(){
 		'after_widget' => '</li>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
-	) );
+	));
 
 	//Footer 3
 	register_sidebar(array(
@@ -218,7 +218,7 @@ function nebula_widgets_init(){
 		'after_widget' => '</li>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
-	) );
+	));
 
 	//Footer 4
 	register_sidebar(array(
@@ -229,7 +229,7 @@ function nebula_widgets_init(){
 		'after_widget' => '</li>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
-	) );
+	));
 }
 
 //Register the Navigation Menus
@@ -238,14 +238,13 @@ function nav_menu_locations(){
 	$override = apply_filters('pre_nav_menu_locations', false);
 	if ( $override !== false ){return;}
 
-	register_nav_menus( array(
+	register_nav_menus(array(
 		'secondary' => 'Secondary Menu',
 		'primary' => 'Primary Menu',
 		'mobile' => 'Mobile Menu',
 		'sidebar' => 'Sidebar Menu',
 		'footer' => 'Footer Menu'
-		)
-	);
+	));
 }
 
 //Update user online status
@@ -405,10 +404,10 @@ function nebula_meta($meta, $secondary=1){
 		if ( $secondary ){ //Secondary here is if the day should be shown
 			$the_day = get_the_date('d') . '/';
 		}
-		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url() . '/' . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} elseif ( $meta == 'author' || $meta == 'by' ){
 		if ( nebula_is_option_enabled('authorbios') ){
-			echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author() . '</a></span></span>';
+			echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
 		}
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
 		if ( is_object_in_taxonomy(get_post_type(), 'category') ){
@@ -831,7 +830,7 @@ function nebula_password_form_simplify(){
     return $output;
 }
 
-//Breadcrumbs (Original credit: Jef Collier)
+//Breadcrumbs
 function the_breadcrumb(){
 	$override = apply_filters('pre_the_breadcrumb', false);
 	if ( $override !== false ){echo $override; return;}
@@ -1451,7 +1450,7 @@ function nebula_body_classes($classes){
 
 	//Time of Day
 	$classes[] = ( business_open() )? 'business-open' : 'business-closed';
-	$relative_time = nebula_relative_time();
+	$relative_time = nebula_relative_time('description');
 	foreach( $relative_time as $relative_desc ){
 		$classes[] = 'time-' . $relative_desc;
 	}
@@ -1592,26 +1591,72 @@ function business_open($date=null, $general=0){
 }
 
 //Get the relative time of day
-function nebula_relative_time(){
-	$override = apply_filters('pre_nebula_relative_time', false);
+function nebula_relative_time($format=null){
+	$override = apply_filters('pre_nebula_relative_time', false, $format);
 	if ( $override !== false ){return $override;}
 
-	if ( contains(date('H'), array('23', '00', '01')) ){
-		return array('early', 'night');
-	} elseif ( contains(date('H'), array('02', '03', '04')) ){
-		return array('late', 'night');
-	} elseif ( contains(date('H'), array('05', '06', '07')) ){
-		return array('early', 'morning');
-	} elseif ( contains(date('H'), array('08', '09', '10')) ){
-		return array('late', 'morning');
-	} elseif ( contains(date('H'), array('11', '12', '13')) ){
-		return array('early', 'midday');
-	} elseif ( contains(date('H'), array('14', '15', '16')) ){
-		return array('late', 'midday');
-	} elseif ( contains(date('H'), array('17', '18', '19')) ){
-		return array('early', 'evening');
-	} elseif ( contains(date('H'), array('20', '21', '22')) ){
-		return array('late', 'evening');
+	if ( contains(date('H'), array('00', '01', '02')) ){
+		$relative_time = array(
+			'description' => array('early', 'night'),
+			'standard' => array(0, 1, 2),
+			'military' => array(0, 1, 2),
+			'ampm' => 'am'
+		);
+	} elseif ( contains(date('H'), array('03', '04', '05')) ){
+		$relative_time = array(
+			'description' => array('late', 'night'),
+			'standard' => array(3, 4, 5),
+			'military' => array(3, 4, 5),
+			'ampm' => 'am'
+		);
+	} elseif ( contains(date('H'), array('06', '07', '08')) ){
+		$relative_time = array(
+			'description' => array('early', 'morning'),
+			'standard' => array(6, 7, 8),
+			'military' => array(6, 7, 8),
+			'ampm' => 'am'
+		);
+	} elseif ( contains(date('H'), array('09', '10', '11')) ){
+		$relative_time = array(
+			'description' => array('late', 'morning'),
+			'standard' => array(9, 10, 11),
+			'military' => array(9, 10, 11),
+			'ampm' => 'am'
+		);
+	} elseif ( contains(date('H'), array('12', '13', '14')) ){
+		$relative_time = array(
+			'description' => array('early', 'afternoon'),
+			'standard' => array(12, 1, 2),
+			'military' => array(12, 13, 14),
+			'ampm' => 'pm'
+		);
+	} elseif ( contains(date('H'), array('15', '16', '17')) ){
+		$relative_time = array(
+			'description' => array('late', 'afternoon'),
+			'standard' => array(3, 4, 5),
+			'military' => array(15, 16, 17),
+			'ampm' => 'pm'
+		);
+	} elseif ( contains(date('H'), array('18', '19', '20')) ){
+		$relative_time = array(
+			'description' => array('early', 'evening'),
+			'standard' => array(6, 7, 8),
+			'military' => array(18, 19, 20),
+			'ampm' => 'pm'
+		);
+	} elseif ( contains(date('H'), array('21', '22', '23')) ){
+		$relative_time = array(
+			'description' => array('late', 'evening'),
+			'standard' => array(9, 10, 11),
+			'military' => array(21, 22, 23),
+			'ampm' => 'pm'
+		);
+	}
+
+	if ( !empty($format) ){
+		return $relative_time[$format];
+	} else {
+		return $relative_time;
 	}
 }
 

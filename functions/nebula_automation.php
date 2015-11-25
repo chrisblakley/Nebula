@@ -147,31 +147,9 @@ function my_theme_register_required_plugins(){
 	*/
 }
 
-//When child Nebula has been activated.
-if ( is_child_theme() ){
-	add_action('after_switch_theme', 'nebula_child_activation_notice');
-}
-function nebula_child_activation_notice(){
-	add_action('admin_notices', 'nebula_activation');
-}
-function nebula_child_activation(){
-	?>
-	<div id='nebula-activate-success' class='updated'>
-		<p>
-			<strong class="nebula-activated-title">Nebula child has been activated.</strong><br />
-			<span class="nebula-activated-description">
-				Initialization can only be run on the parent theme. If menus were created in the parent theme, they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>.<br />
-				<strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>
-			</span>
-		</p>
-	</div>
-	<?php
-}
 
-//When parent Nebula has been activated
-if ( !is_child_theme() ){
-	add_action('after_switch_theme', 'nebula_activation_notice');
-}
+//When Nebula has been activated
+add_action('after_switch_theme', 'nebula_activation_notice');
 function nebula_activation_notice(){
 	add_action('admin_notices', 'nebula_activation');
 }
@@ -186,7 +164,17 @@ function nebula_activation(){
 		nebula_initialization(true);
 	}
 ?>
-	<?php if ( $is_standard_initialization && current_user_can('manage_options') ): ?>
+	<?php if ( is_child_theme() ): ?>
+		<div id='nebula-activate-success' class='updated'>
+			<p>
+				<strong class="nebula-activated-title">Nebula child theme has been activated.</strong><br />
+				<span class="nebula-activated-description">
+					Initialization can only be run on the parent theme. If menus were created in the parent theme, they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>.<br />
+					<strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>
+				</span>
+			</p>
+		</div>
+	<?php elseif ( $is_standard_initialization && current_user_can('manage_options') ): ?>
 		<div id='nebula-activate-success' class='updated'>
 			<p>
 				<strong class="nebula-activated-title">Nebula has been initialized!</strong><br />

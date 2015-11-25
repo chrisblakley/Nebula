@@ -134,8 +134,10 @@
 
 			//Relative time ("Late Morning", "Early Evening")
 			if ( nebula_option('nebula_cd_relativetime') ){
-				$relative_time = implode(' ', nebula_relative_time());
-				echo 'ga("set", gaCustomDimensions["relativeTime"], "' . ucwords($relative_time) . '");';
+				$relative_time = nebula_relative_time();
+				$time_description = implode(' ', $relative_time['description']);
+				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
+				echo 'ga("set", gaCustomDimensions["relativeTime"], "' . ucwords($time_description) . ' (' . $time_range . ')");';
 			}
 
 			//Session ID
@@ -169,22 +171,18 @@
 					$usertype = 'Client';
 				} elseif ( is_user_logged_in() ){
 					$user_info = get_userdata(get_current_user_id());
-					switch ($user_info->roles[0]){
+					switch ( $user_info->roles[0] ){
 					    case 'administrator':
 					    	$usertype = 'Administrator';
-					    	$skip = false;
 					    	break;
 					    case 'editor':
 					    	$usertype = 'Editor';
-					    	$skip = false;
 					    	break;
 					    case 'author':
 					    	$usertype = 'Author';
-					    	$skip = false;
 					    	break;
 					    case 'contributor':
 					    	$usertype = 'Contributor';
-					    	$skip = false;
 					    	break;
 					    case 'subscriber':
 					    	$usertype = 'Subscriber';
@@ -192,7 +190,6 @@
 					    	break;
 					    default:
 					    	$usertype = 'Logged-In';
-					    	$skip = false;
 					    	break;
 					}
 				}
