@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.4.25
+	Version: 3.4.30
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -81,7 +81,7 @@ form.nebula-search-iconable {position: relative; display: inline-block; margin: 
 		.lte-ie9 &,
 		.ie10 & {background: #eee url($template_directory + "/images/search.png") no-repeat 6px center;}
 	}
-	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 3px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit);}
 }
 
@@ -100,12 +100,13 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 
 div.nebula-button {margin-bottom: 10px;}
 
-.searchresultword {@include background-color(lighten($primary_color, 95%), 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; @include prefix((transition: none 0.25s));
-	&.transitionable {@include prefix((transition: all 0.25s));}
-	article:hover & {@include background-color(#ff0, 0.5);} //@TODO: Need !important
+//Highlight and emphasize search term in results
+.searchresultword {@include background-color($primary_color, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; @include prefix((transition: none 0.25s));
+	&.transitionable {@include prefix((transition: background 0.25s));}
+	article:hover & {@include background-color(#ff0 !important, 0.5);}
 }
 
-.search .highlight {@include background-color(lighten($primary_color, 95%), 0.2);}
+.search .highlight {@include background-color($primary_color, 0.2);}
 
 //Google Maps
 .googlemapcon {width: 100%; height: 250px;
@@ -173,20 +174,79 @@ body .video-override .video {padding-bottom: 0px !important; height: auto !impor
 i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
 .btn, .skiplink {@include prefix((transition: all 0.25s));}
 
+
+//Contact Form Styles
+
+input[type="submit"] {color: #fff;}
+form.search .submit.btn {width: 22% !important; height: auto !important; font-size: 12px; line-height: 24px !important;}
+
+.formcon {}
+
+h3.comment-reply-title {font-size: 12px;}
+
+.logged-in-as {margin: 0;}
+.contact-form-heading {display: block; margin: 0; font-size: 11px; font-weight: bold;}
+
+p.contact-form-name,
+p.comment-form-author {
+	input {font-size: 12px;}
+}
+
+p.contact-form-email,
+p.comment-form-email {
+	input {font-size: 12px;}
+}
+
+p.contact-form-message,
+p.comment-form-comment {margin: 0;
+	textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: 12px;}
+}
+	.no-js p.comment-form-comment textarea {min-height: 150px;}
+
+p.form-submit {}
+	p.contact-form-submit input,
+	#cform7-container .submit,
+	p.form-submit input {border: 0; background: $primary_color; padding: 4px 10px; @include prefix((transition: all 0.25s));
+		&:hover,
+		&.hover {background: $secondary_color;}
+		&.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
+	}
+	.screen-reader-response {display: none;}
+
 form fieldset {border: 1px solid #ccc;}
+.field {
+	.wpcf7-form-control-wrap {position: relative; display: inline-block; width: 100%;}
+	input, .input, textarea, .textarea {font-size: 14px; line-height: 22px; padding: 6px 10px; @include prefix((transition: all 0.25s);}
 
-.field .input {font-size: 14px; line-height: 22px;}
+	.wpcf7-not-valid {border-color: $danger_color; color: #000; background: lighten($danger_color, 40%);}
 
-.field.danger:after {font-family: "FontAwesome"; content: "\f00d"; color: $danger_color;}
-.field.danger input, .field.danger .input, .field.danger textarea, .field.danger .textarea, .field.danger .radio span, .field.danger .checkbox span, .field.danger .picker {border-color: $danger_color; color: #000; background: #f0c5c5;}
-
-.field.warning:after {font-family: "FontAwesome"; content: "\f071"; color: $warning_color;}
-.field.warning input, .field.warning .input, .field.warning textarea, .field.warning .textarea, .field.warning .radio span, .field.warning .checkbox span, .field.warning .picker {border-color: #d8d8d8; color: #000; background: #ffd;}
-
-.field.success:after {font-family: "FontAwesome"; content: "\f00c"; color: $success_color;}
-.field.success input, .field.success .input, .field.success textarea, .field.success .textarea, .field.success .radio span, .field.success .checkbox span, .field.success .picker {border-color: #d8d8d8; color: #000; background: #efe;}
-
+	&:after {content: ''; display: none;} //Override Gumby setting
+	&.danger {
+		.wpcf7-form-control-wrap {
+			&:after {content: "\f00d"; position: absolute; top: 7px; right: 7px; font-family: "FontAwesome"; color: $danger_color;}
+		}
+		input, .input, textarea, .textarea {border-color: $danger_color; color: #000; background: lighten($danger_color, 40%);}
+	}
+	&.warning {
+		.wpcf7-form-control-wrap {
+			&:after {content: "\f071"; position: absolute; top: 7px; right: 7px; font-family: "FontAwesome"; color: $warning_color;}
+		}
+		input, .input, textarea, .textarea {border-color: #d8d8d8; color: #000; background: lighten($warning_color, 35%);}
+	}
+	&.success {
+		.wpcf7-form-control-wrap {
+			&:after {content: "\f00c"; position: absolute; top: 7px; right: 7px; font-family: "FontAwesome"; color: $success_color;}
+		}
+		input, .input, textarea, .textarea {border-color: #d8d8d8; color: #000; background: lighten($success_color, 50%);;}
+	}
+}
 .picker:after {content: "\f0d7"; font-family: "FontAwesome";}
+
+.wpcf7-not-valid-tip {color: $danger_color;}
+.wpcf7-validation-errors {font-size: 14px; color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
+.wpcf7-mail-sent-ok {font-size: 14px; color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
+
+.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;} //Font size and line height needs !important
 
 //Fade placeholders on focus
 //Note: Can not use nested SCSS selectors on placeholder pseudos!
@@ -238,7 +298,6 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	&.no-results:before {content: '\00a0';}
 	@include media(mobile){width: 100% !important; top: 52px !important; left: 0px !important;};
 }
-
 
 //jQuery UI Autocomplete
 .ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); color: $text_color; border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
@@ -346,17 +405,18 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 //Logo and primary navigation row
 #logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 25px; box-shadow: none; z-index: 8000; @include prefix((transition: all .5s easing(easeInOutCubic)));
-	img {height: 90px; @include prefix((transition: all 0.5s));} //@TODO: "Nebula" 0: Animation is a little chunky- epecially on mobile.
+	img {@include prefix((transition: all 0.5s));}
 
 	//When below offset
-	&.headroom--not-top {position: fixed; top: 0; left: 0; width: 100%; padding-top: 0; @include background-color(#f6f6f6, 0.97); box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); z-index: 9999;
-		img {height: 65px;}
-		#primarynav ul {margin-top: 22px;
+	&.headroom--not-top {position: fixed; top: 0; left: 0; width: 100%; padding-top: 0; @include background-color(#f6f6f6, 0.97); box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); z-index: 9999; backface-visibility: hidden;
+		img {@include prefix((transform: scale(0.75), ms webkit);}
+		#primarynav ul {margin-top: 22px; // @include prefix((transform: scale(0.9), ms webkit);
 			li.menu-item {font-size: 12px;}
 		}
 	}
-	&.headroom--below {transform: translateY(-100%);} //When scrolled past the header (custom Nebula extension)
-	&.headroom--pinned {transform: translateY(0%);} //When scrolling up
+	&.headroom--below {@include prefix((transform: translateY(-100%), ms webkit);} //When scrolled past the header (custom Nebula extension)
+	&.headroom--pinned,
+	&.headroom--bottom {@include prefix((transform: translateY(0%), ms webkit);} //When scrolling up (or reached the bottom of the page)
 
 	.logocon {
 		img {@include media(tablet){width: 360px;};}
@@ -551,7 +611,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;
 		#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
 	.right-side .advanced-search-group {margin-bottom: 10px;}
 
-	#advanced-search-form .advanced-search-keyword {width: 100%; font-size: 24px; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
+	#advanced-search-form .advanced-search-keyword {width: 100%; font-size: 24px; line-height: 1.625em; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
 
 .advanced-search-result {border-bottom: 1px dotted #ccc; padding-bottom: 10px; margin-top: 5px;}
 	.post-date-time {margin-bottom: 5px;}
@@ -654,62 +714,6 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 }
 
 .xoxo form.search input[type="text"] {width: 77% !important; font-size: 12px; line-height: 24px; height: auto !important; vertical-align: top;} //Font size and line height needs !important
-
-input[type="submit"] {color: #fff;}
-form.search .submit.btn {width: 22% !important; height: auto !important; font-size: 12px; line-height: 24px !important;}
-
-.formcon {}
-
-h3.comment-reply-title {font-size: 12px;}
-
-.logged-in-as {margin: 0;}
-.contact-form-heading {display: block; margin: 0; font-size: 11px; font-weight: bold;}
-
-p.contact-form-name,
-p.comment-form-author {
-	input {font-size: 12px;}
-}
-
-p.contact-form-email,
-p.comment-form-email {
-	input {font-size: 12px;}
-}
-
-p.contact-form-message,
-p.comment-form-comment {margin: 0;
-	textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: 12px;}
-}
-	.no-js p.comment-form-comment textarea {min-height: 150px;}
-
-p.form-submit {}
-	p.contact-form-submit input,
-	#cform7-container .submit,
-	p.form-submit input {border: 0; background: $primary_color; padding: 4px 10px; @include prefix((transition: all 0.25s));
-		&:hover,
-		&.hover {background: $secondary_color;}
-		&.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
-	}
-		.browserinfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff, 0); color: rgba(255, 255, 255, 0);} //Font size and line height needs !important
-		.screen-reader-response {display: none;}
-
-#cform7-container {margin: 0;
-	.field {margin-bottom: 3px;}
-	input[type="text"],
-	input[type="email"] {width: 100% !important; font-size: 12px; line-height: 24px; height: auto !important;} //Font size and line height needs !important
-	.cform7-phone-area {width: 20%; font-size: 12px;}
-	.cform7-phone-prefix {width: 20%; font-size: 12px;}
-	.cform7-phone-line {width: 25%; font-size: 12px;}
-	.cform7-phone-ext {width: 22%; font-size: 12px;}
-	.cform7-message {font-size: 12px; line-height: 16px; padding-top: 7px; resize: vertical !important;} //Line height needs !important
-}
-
-.wpcf7-not-valid-tip {display: none !important;}
-
-.field.danger:after, .field.warning:after, .field.success:after {/* top: 45% !important; */}
-.xoxo .field.danger:after, .xoxo .field.warning:after, .xoxo .field.success:after {top: 45% !important;}
-
-div.wpcf7-validation-errors {font-size: 14px; color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
-div.wpcf7-mail-sent-ok {font-size: 14px; color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
 
 //Offcanvas Mmenu Modifications
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}

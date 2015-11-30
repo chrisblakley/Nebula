@@ -1492,7 +1492,7 @@ function nebula_body_classes($classes){
     return $classes;
 }
 
-//Add additional classes to post wrappers @TODO "Nebula" 0: Finish implementing this!
+//Add additional classes to post wrappers
 add_filter('post_class', 'nebula_post_classes');
 function nebula_post_classes($classes){
     global $wp_query;
@@ -1791,7 +1791,7 @@ function vimeo_meta($videoID, $meta=''){
 			break;
 		case 'safetitle':
 		case 'safe-title':
-			return str_replace(" ", "-", $vimeo_json[0]->title);
+			return str_replace(array(" ", "'", '"'), array("-", "", ""), $vimeo_json[0]->title);
 			break;
 		case 'description':
 		case 'content':
@@ -1891,7 +1891,7 @@ function youtube_meta($videoID, $meta=''){
 			break;
 		case 'safetitle':
 		case 'safe-title':
-			return str_replace(" ", "-", $youtube_json->items[0]->snippet->title);
+			return str_replace(array(" ", "'", '"'), array("-", "", ""), $youtube_json->items[0]->snippet->title);
 			break;
 		case 'description':
 		case 'content':

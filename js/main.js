@@ -12,13 +12,7 @@ jQuery(document).on('ready', function(){
 		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
 	}
 
-	//Cache common global selectors
-	thisPage = {
-        window: jQuery(window),
-        document: jQuery(document),
-        html: jQuery('html'),
-        body: jQuery('body')
-    }
+	globalVariables();
 
 	//Social
 	facebookSDK();
@@ -28,7 +22,7 @@ jQuery(document).on('ready', function(){
 
 	//Navigation
 	mmenus();
-	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo(); //@TODO: Either use mmenu or uncomment this line for mobile navigation.
+	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo(); //@TODO "Mobile": Either use mmenu or uncomment this line for mobile navigation.
 	dropdownWidthController();
 	overflowDetector();
 	menuSearchReplacement();
@@ -46,7 +40,8 @@ jQuery(document).on('ready', function(){
 	pageSuggestion();
 
 	//Forms
-	cFormLocalStorage();
+	cf7LiveValidator();
+	cf7LocalStorage();
 	prefillCommentAuthorCookieFields(cookieAuthorName, cookieAuthorEmail);
 	nebulaAddressAutocomplete('#address-autocomplete');
 
@@ -80,8 +75,7 @@ jQuery(document).on('ready', function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
-	checkCformLocalStorage();
-
+	//Focus on hero search field on load and hover.
 	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
 		if ( !jQuery('input:focus').is('*') ){
 			jQuery(this).focus();
@@ -89,7 +83,7 @@ jQuery(window).on('load', function(){
 	});
 
 	jQuery('a, li, tr').removeClass('hover');
-	jQuery('html').addClass('loaded');
+	thisPage.html.addClass('loaded');
 
 	if ( typeof performance !== 'undefined' ){
 		setTimeout(function(){
@@ -98,12 +92,12 @@ jQuery(window).on('load', function(){
 			ga('send', 'timing', 'Performance Timing', 'Perceived Load', Math.round(perceivedLoad), 'Navigation start to window load');
 			ga('send', 'timing', 'Performance Timing', 'Actual Load', Math.round(actualLoad), 'Server response until window load');
 
-			jQuery('html').addClass('lt-per_' + perceivedLoad + 'ms');
-			jQuery('html').addClass('lt-act_' + actualLoad + 'ms');
+			thisPage.html.addClass('lt-per_' + perceivedLoad + 'ms');
+			thisPage.html.addClass('lt-act_' + actualLoad + 'ms');
 			browserInfo();
 		}, 0);
 	} else {
-		jQuery('html').addClass('lt_unavailable');
+		thisPage.html.addClass('lt_unavailable');
 		browserInfo();
 	}
 
@@ -140,6 +134,31 @@ jQuery(window).on('resize', function(){
 }); //End Window Resize
 
 
+//Cache common selectors and set consistent regex patterns
+function globalVariables(){
+	//Selectors
+	window.thisPage = {
+		window: jQuery(window),
+		document: jQuery(document),
+		html: jQuery('html'),
+		body: jQuery('body')
+	};
+
+	//Regex Patterns
+	//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
+	window.regexPattern = {
+		email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, //From JS Lint: Expected ']' and instead saw '['.
+		phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/,
+		date: {
+			mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
+			ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
+		},
+		hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
+		ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+	};
+}
+
+
 /*==========================
  Detection Functions
  ===========================*/
@@ -163,7 +182,7 @@ function notableDetections(){
 
 	//Detect if loaded from the homescreen ("installed" as an app)
 	if ( navigator.standalone || get('hs') ){
-		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string is not working, so this detection method doesn't work.
+		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string (in manifest) is not working, so this detection method doesn't work.
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
 	}
@@ -171,8 +190,6 @@ function notableDetections(){
 
 //Create an object of the viewport dimensions
 function updateViewportDimensions(){
-	var w=window, d=document, e=d.documentElement, g=d.getElementsByTagName('body')[0];
-
 	if ( typeof viewport === 'undefined' ){
 		var viewportHistory = 0;
 		//console.log('creating viewport History: ' + viewportHistory);
@@ -183,8 +200,8 @@ function updateViewportDimensions(){
 		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
 	}
 
-	var x = w.innerWidth || e.clientWidth || g.clientWidth;
-	var y = w.innerHeight || e.clientHeight || g.clientHeight;
+	var x = thisPage.window.innerWidth || thisPage.document.documentElement.clientWidth || thisPage.body.clientWidth;
+	var y = thisPage.window.innerHeight || thisPage.document.documentElement.clientHeight || thisPage.body.clientHeight;
 
 	if ( viewportHistory == 0 ){
 		var viewportObject = {
@@ -235,7 +252,7 @@ function browserInfo(){
 		var fullDevice = ( clientinfo.device.full.trim().length )? ' (' + clientinfo.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
 		browserInfoVal += 'Device: ' + clientinfo.device.type + fullDevice + '\n';
 		browserInfoVal += 'Operating System: ' + clientinfo.os.full + '\n';
-		browserInfoVal += 'Browser: ' + clientinfo.browser.full + ' (' + clientinfo.browser.engine + ')\n\n';
+		browserInfoVal += 'Browser: ' + clientinfo.browser.full + ' (' + clientinfo.browser.engine + ')\n';
 	}
 
 	browserInfoVal += 'HTML Classes: ' + thisPage.html.attr('class').split(' ').sort().join(', ') + '\n\n';
@@ -251,14 +268,22 @@ function browserInfo(){
 		browserInfoVal += 'Referrer: ' + document.referrer + '\n';
 	} else {
 		browserInfoVal += 'Page load time not available.\n\n';
-		browserInfoVal += 'Referrer not available.\n';
+		browserInfoVal += 'Referrer not available.\n\n';
+	}
+
+	if ( typeof adBlockUser !== 'undefined' ){
+		browserInfoVal += 'Ads: ' + adBlockUser + '\n\n';
 	}
 
 	if ( typeof window.history !== 'undefined' ){
-		if ( gaCustomDimensions['sessionID'] ){
-			browserInfoVal += 'Session ID: ' + sessionID + '\n\n';
+		if ( typeof clientinfo.sessionid !== 'undefined' ){
+			browserInfoVal += 'Current Session ID: ' + clientinfo.sessionid + '\n';
 		}
-		browserInfoVal += 'History Depth: ' + window.history.length + '\n\n';
+		browserInfoVal += 'History Depth: ' + window.history.length + '\n';
+	}
+
+	if ( typeof clientinfo.businessopen !== 'undefined' ){
+		browserInfoVal += ( clientinfo.businessopen )? 'During Business Hours\n\n' : 'Non-Business Hours\n\n';
 	}
 
 	if ( typeof nebulaLocation !== 'undefined' ){
@@ -290,31 +315,19 @@ function pageVisibility(){
 			var pageTitle = thisPage.document.attr('title');
 			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
-
-			jQuery('iframe.youtubeplayer').each(function(){
-				if ( !jQuery(this).hasClass('ignore-visibility') ){ //Use this class to allow specific Youtube videos to continue playing regardless of page visibility
-					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
-				}
-			});
-
-			//@TODO "Nebula" 0: pause vimeo
+			pauseAllVideos(false);
 		}
 
 		if ( getPageVisibility() ){ //Page is hidden
-			jQuery(document).trigger('nebula_page_hidden');
-			jQuery('body').addClass('page-visibility-hidden');
+			thisPage.document.trigger('nebula_page_hidden');
+			thisPage.body.addClass('page-visibility-hidden');
 			nebulaTimer('pageVisibilityHidden', 'start');
-			jQuery('iframe.youtubeplayer').each(function(){
-				if ( !jQuery(this).hasClass('ignore-visibility') ){ //Use this class to allow specific Youtube videos to continue playing regardless of page visibility
-					jQuery(this)[0].contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); //Pause Youtube Videos
-				}
-			});
-			//@TODO "Nebula" 0: pause vimeo
+			pauseAllVideos(false);
 			visFirstHidden = true;
 		} else { //Page is visible
 			if ( visFirstHidden ){
-				jQuery(document).trigger('nebula_page_visible');
-				jQuery('body').removeClass('page-visibility-hidden');
+				thisPage.document.trigger('nebula_page_visible');
+				thisPage.body.removeClass('page-visibility-hidden');
 				ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'end')), 'Page in background tab for this time');
 			}
 		}
@@ -349,6 +362,7 @@ function facebookSDK(){
 
 //Facebook Connect functions
 function facebookConnect(){
+	window.fbConnectFlag = false;
 	if ( nebula_options['facebook_app_id'] ){
 		window.fbAsyncInit = function(){
 			FB.init({
@@ -384,7 +398,7 @@ function facebookConnect(){
 			});
 		};
 
-		jQuery(document).on('click touch tap', '.facebook-connect', function(){
+		thisPage.document.on('click touch tap', '.facebook-connect', function(){
 			facebookLoginLogout();
 			return false;
 		});
@@ -451,35 +465,39 @@ function checkFacebookStatus(){
 
 //Fill or clear form inputs with Facebook data
 function prefillFacebookFields(){
-	jQuery(document).on('fbConnected', function(){
-		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
+	thisPage.document.on('fbConnected', function(){
+		fbConnectFlag = true;
+
+		jQuery('.fb-name, .comment-form-author input, input.name').each(function(){
 			jQuery(this).val(nebulaFacebook.name.full).trigger('keyup');
 		});
-		jQuery('.fb-form-first-name, .cform7-first-name, input.first-name').each(function(){
+		jQuery('.fb-first-name, input.first-name').each(function(){
 			jQuery(this).val(nebulaFacebook.name.first).trigger('keyup');
 		});
-		jQuery('.fb-form-last-name, .cform7-last-name, input.last-name').each(function(){
+		jQuery('.fb-last-name, input.last-name').each(function(){
 			jQuery(this).val(nebulaFacebook.name.last).trigger('keyup');
 		});
-		jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
+		jQuery('.fb-email, .comment-form-email input, .wpcf7-email, input.email').each(function(){
 			jQuery(this).val(nebulaFacebook.email).trigger('keyup');
 		});
 		browserInfo();
 	});
 
-	jQuery(document).on('fbNotAuthorized fbDisconnected', function(){
-		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, .fb-form-email, .comment-form-email input, input[type="email"]').each(function(){
-			jQuery(this).val('').trigger('keyup');
-		});
+	thisPage.document.on('fbNotAuthorized fbDisconnected', function(){
+		if ( fbConnectFlag ){ //If FB was actually logged in at some point.
+			jQuery('.fb-form-name, .comment-form-author input, .cform7-name, .fb-form-email, .comment-form-email input, input[type="email"]').each(function(){
+				jQuery(this).val('').trigger('keyup');
+			});
+		}
 	});
 }
 
 function prefillCommentAuthorCookieFields(name, email){
 	if ( cookieAuthorName ){
-		jQuery('.fb-form-name, .comment-form-author input, .cform7-name, input.name').each(function(){
+		jQuery('.fb-name, .comment-form-author input, input.name').each(function(){
 			jQuery(this).val(name).trigger('keyup');
 		});
-		jQuery('.fb-form-email, .comment-form-email input, .cform7-email, input[type="email"]').each(function(){
+		jQuery('.fb-email, .comment-form-email input, .wpcf7-email, input.email').each(function(){
 			jQuery(this).val(email).trigger('keyup');
 		});
 	}
@@ -539,8 +557,6 @@ function gaEventTracking(){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
-
-
 		var linkText = jQuery(this).text();
 		if ( linkText.trim() == '' ){
 			if ( jQuery(this).find('img').attr('alt') ){
@@ -597,7 +613,7 @@ function gaEventTracking(){
 	jQuery('.wpcf7-form *').on('click touch tap focus', function(){
 		nebulaTimer('wpcf7-form', 'start');
 	});
-	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to use the cformSuccess() function on successful submission (In the Contact Form 7 Settings for each form).
+	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to use the cf7Success() function on successful submission (In the Contact Form 7 Settings for each form).
 	thisPage.document.on('submit', '.wpcf7-form', function(){
 		if ( jQuery(this).hasClass('.notable-form') || jQuery(this).find('.notable-form').length ){
 			ga('set', gaCustomMetrics['notableFormSubmissions'], 1); //Note: This metric can not account for form validation errors
@@ -684,14 +700,12 @@ function gaEventTracking(){
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 
 		//Track Email or Phone copies as contact intent.
-		var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; //From JS Lint: Expected ']' and instead saw '['.
-		var phonePattern = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;
 		emailPhone = jQuery.trim(words.join(' '));
-		if ( emailPattern.test(emailPhone) ){
+		if ( regexPattern.email.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone);
-		} else if ( phonePattern.test(emailPhone) ){
+		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone);
@@ -747,7 +761,7 @@ function gaEventTracking(){
 
 	//Detect clicks on pinned header
 	if ( typeof headroom !== 'undefined' && headroom.classes.pinned && headroom.classes.notTop ){
-		jQuery(document).on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
+		thisPage.document.on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
 			ga('send', 'event', 'Pinned Header', 'Click', 'Used pinned header (after scrolling) to navigate');
 		});
 	}
@@ -793,8 +807,8 @@ function scrollDepth(){
 
 	//Check the scroll location
 	function scrollLocation(){
-		viewportBottom = jQuery(window).height()+jQuery(window).scrollTop();
-		documentHeight = jQuery(document).height();
+		viewportBottom = thisPage.window.height()+thisPage.window.scrollTop();
+		documentHeight = thisPage.document.height();
 
 		//When the user scrolls past the header
 		var becomesReaderAt = ( entryContent.is('*') )? entryContent.offset().top : headerHeight;
@@ -1066,7 +1080,7 @@ function advancedSearchTriggers(){
 	//Reset form
 	jQuery('.resetfilters').on('click tap touch', function(){
 		advancedSearchForm[0].reset();
-		//@TODO: Chosen.js fields need to be reset manually... or something?
+		//@TODO "Nebula" 0: Chosen.js fields need to be reset manually... or something?
 		jQuery(this).removeClass('active');
 		advancedSearchPrep();
 		return false;
@@ -1099,7 +1113,7 @@ function advancedSearchTriggers(){
 	});
 
 	//Load Prev Events
-	//@todo: there is a bug here... i think?
+	//@TODO "Nebula" 0: there is a bug here... i think?
 	jQuery('#load-prev-events').on('click tap touch', function(){
 		if ( !jQuery(this).hasClass('no-prev-events') ){
 			jQuery('html, body').animate({
@@ -1131,8 +1145,8 @@ function advancedSearchPrep(startingAt, waitingText){
 			jQuery.ajax({
 				type: "POST",
 				url: bloginfo["ajax_url"],
-				//@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
 				data: {
+					nonce: bloginfo["ajax_nonce"],
 					action: 'nebula_advanced_search',
 				},
 				success: function(response){
@@ -1430,7 +1444,7 @@ function emphasizeSearchTerms(){
 function singleResultDrawer(){
 	var theSearchTerm = get('rs');
 	if ( typeof theSearchTerm !== 'undefined' ){
-		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, ''); //@TODO "Nebula" 0: Combine into a single regex replace.
+		theSearchTerm = theSearchTerm.replace(/\%20|\+/g, ' ').replace(/\%22|"|'/g, '');
 		jQuery('#searchform input#s').val(theSearchTerm);
 	}
 
@@ -1503,242 +1517,118 @@ function showSuggestedPage(title, url){
  Contact Form Functions
  ===========================*/
 
-function cFormLocalStorage(){
-	var cForm7Message = jQuery('.cform7-message');
-	if ( cForm7Message.length == 1 ){
-		cForm7Message.on('keyup', function(){
-	    	localStorage.setItem('global_cform_message', cForm7Message.val());
-			cForm7Message.val(localStorage.getItem('global_cform_message'));
-	    });
+//Enable localstorage on CF7 text inputs and textareas
+function cf7LocalStorage(){
+	jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
+		var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));
 
-	    thisPage.window.bind('storage',function(e){
-	    	cForm7Message.val(localStorage.getItem('global_cform_message'));
-	    });
+		//Fill textareas with localstorage data on load
+		if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal != 'undefined' && thisLocalStorageVal != '' ){
+			if ( jQuery(this).val() == '' ){ //Don't overwrite a field that already has text in it!
+				jQuery(this).val(thisLocalStorageVal);
+			}
+			jQuery(this).blur();
+		} else {
+			localStorage.removeItem('cf7_' + jQuery(this).attr('name')); //Remove localstorage if it is undefined or inelligible
+		}
 
-		jQuery('form.wpcf7-form').submit(function(){
-			localStorage.removeItem('global_cform_message');
+		//Update localstorage data
+		jQuery(this).on('keyup blur', function(){
+			if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') ){
+				localStorage.setItem('cf7_' + jQuery(this).attr('name'), jQuery(this).val());
+			}
 		});
-	}
+	});
+
+	//Update matching form fields on other windows/tabs
+	thisPage.window.on('storage', function(e){
+    	jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
+	    	if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') ){
+				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name')));
+			}
+	    });
+    });
 }
 
-function checkCformLocalStorage(){
-	var cForm7Message = jQuery('.cform7-message');
-	if ( typeof localStorage.getItem('global_cform_message') !== 'undefined' && typeof localStorage.getItem('global_cform_message') !== 'undefined' ){
-		if ( cForm7Message.val() != '' ){
-			localStorage.setItem('global_cform_message', cForm7Message.val());
-			cForm7Message.val(localStorage.getItem('global_cform_message'));
-		} else {
-			cForm7Message.val(localStorage.getItem('global_cform_message'));
-		}
-	} else {
-		localStorage.removeItem('global_cform_message');
+//CF7 live (soft) validator
+function cf7LiveValidator(){
+	if ( !jQuery('.wpcf7-form').length ){
+		return false;
 	}
-}
 
-//Contact form pre-validator
-//@TODO "Nebula" 0: This should be optimized or (better yet) use a 3rd party library. Must validate in real-time.
-function cFormPreValidator(){
-	jQuery('.cform7-text').keyup(function(){
-		if ( jQuery(this).val() == '' ){
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
-			jQuery(this).parent().parent().removeClass('success').addClass('danger');
+	//Standard text inputs
+	jQuery('.wpcf7-text').on('keyup blur', function(e){
+		if ( jQuery(this).val().trim() == '' ){
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success');
 		} else {
-			jQuery(this).parent().parent().removeClass('danger').addClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid');
-		}
-	});
-	jQuery('.cform7-name').keyup(function(){
-		if ( jQuery(this).val() == '' ){
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid').attr('placeholder', 'Your Name*');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
-			jQuery(this).parent().parent().removeClass('success').addClass('danger');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger').addClass('success');
-			jQuery(this).removeClass('wpcf7-not-valid');
-		}
-	});
-	jQuery('.cform7-email').keyup(function(){
-		if ( jQuery(this).val() == '' ){
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Email Address*');
-		} else if ( jQuery(this).val().trim().length === 0 || jQuery(this).val().indexOf(' ') > 0 ){
-			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');
-		} else if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ){
-			jQuery(this).parent().parent().removeClass('success').removeClass('danger').addClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Email Address*');
-		} else {
-				jQuery(this).parent().parent().addClass('success');
-				jQuery(this).parent().parent().removeClass('danger');
-				jQuery(this).removeClass('wpcf7-not-valid');
-				jQuery(this).parent().parent().removeClass('warning');
-				jQuery(this).attr('placeholder', 'Email Address*');
-		}
-	});
-	jQuery('.cform7-email').blur(function(){ //NOT WORKING YET - Want to remove spaces from the input on blur (the val doesnt have spaces, but the input does...?)
-		var removeSpace = jQuery(this).val();
-		//console.log('before trimming: ', removeSpace);
-		removeSpace = removeSpace.replace(/ /g, '_');
-		jQuery(this).val(removeSpace);
-		//console.log('after trimming: ', removeSpace);
-
-		if ( jQuery(this).val().length && jQuery(this).val().indexOf('@') != 1 && jQuery(this).val().indexOf('.') < 0 ){
-			jQuery(this).parent().parent().removeClass('success').removeClass('warning').addClass('danger');
+			jQuery(this).parents('.field').removeClass('danger warning').addClass('success');
 		}
 	});
 
-	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ){
-		jQuery('.cform7-phone').mask("(999) 999-9999? x99999");
-		jQuery('.cform7-phone').keyup(function(){
-			if ( jQuery(this).val().replace(/\D/g,'').length >= 10 ){
-				jQuery(this).parent().parent().addClass('success');
-			} else {
-				jQuery(this).parent().parent().removeClass('success');
-			}
-		});
-		jQuery.mask.definitions['m'] = "[0-1]";
-		jQuery.mask.definitions['d'] = "[0-3]";
-		jQuery.mask.definitions['y'] = "[1-2]";
-		jQuery('.cform7-bday').mask("m9/d9/y999");
-		currentYear = (new Date).getFullYear();
-		jQuery('.cform7-bday').keyup(function(){
-			if ( jQuery(this).val().replace(/\D/g,'').length === 8 ){
-				jQuery(this).parent().parent().addClass('success');
-			} else {
-				jQuery(this).parent().parent().removeClass('success');
-			}
-			var checkMonth = jQuery(this).val().substr(0, 2);
-			var checkDay = jQuery(this).val().substr(3, 2);
-			var checkYear = jQuery(this).val().substr(jQuery(this).val().length - 4);
-			if ( checkYear != '____' ){
-				if ( checkYear < 1900 || checkYear > currentYear){
-					jQuery(this).parent().parent().removeClass('success').addClass('badyear');
-				} else {
-					jQuery(this).parent().parent().removeClass('badyear');
-				}
-			}
-			if ( checkMonth != '__' ){
-				if ( checkMonth < 1 || checkMonth > 12){
-					jQuery(this).parent().parent().removeClass('success').addClass('badmonth');
-				} else {
-					jQuery(this).parent().parent().removeClass('badmonth');
-				}
-			}
-			if ( checkDay != '__' ){
-				if ( checkDay < 1 || checkDay > 31){
-					jQuery(this).parent().parent().removeClass('success').addClass('badday');
-				} else {
-					jQuery(this).parent().parent().removeClass('badday');
-				}
-				//We could add specific checks for each individual month using checkMonth vs. checkDay.
-			}
-			if ( checkYear == '____' && checkMonth == '__' && checkDay == '__' ){
-				jQuery(this).parent().parent().removeClass('success').removeClass('danger').removeClass('badyear').removeClass('badmonth').removeClass('badday');
-			}
-			if ( jQuery(this).parent().parent().hasClass('badmonth') ){
-				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else if ( jQuery(this).parent().parent().hasClass('badday') ){
-				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else if ( jQuery(this).parent().parent().hasClass('badyear') ){
-				jQuery(this).parent().parent().removeClass('success').addClass('danger');
-			} else {
-				jQuery(this).parent().parent().removeClass('danger');
-			}
-		});
-	} //Close of if phone or bday input exists
-	jQuery('.cform7-message').keyup(function(){
+	//Email address inputs
+	jQuery('.wpcf7-email').on('keyup blur', function(e){
 		if ( jQuery(this).val() == '' ){
-			jQuery(this).parent().parent().removeClass('danger');
-			jQuery(this).parent().parent().removeClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Enter your message here.*');
-		} else if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
-			jQuery(this).parent().parent().addClass('warning');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('success danger warning');
+		} else if ( regexPattern.email.test(jQuery(this).val()) ){
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
 		} else {
-			jQuery(this).parent().parent().removeClass('danger');
-			jQuery(this).parent().parent().removeClass('warning');
-			jQuery(this).removeClass('wpcf7-not-valid');
-			jQuery(this).attr('placeholder', 'Enter your message here.*');
+			var warnDanger = ( e.type == 'keyup' )? 'warning' : 'danger';
+			jQuery(this).parents('.field').removeClass('success warning danger').addClass(warnDanger);
 		}
 	});
-	jQuery('.cform7-message').blur(function(){
-		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
-			jQuery(this).parent().parent().removeClass('warning').addClass('danger');
-		} else if ( jQuery(this).val() == '' ){
-			jQuery(this).parent().parent().removeClass('danger').removeClass('success').removeClass('warning');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger').addClass('success');
-		}
-	});
-	jQuery('.cform7-message').focus(function(){
-		if ( jQuery(this).val().length && jQuery(this).val().trim().length === 0 ){
-			jQuery(this).parent().parent().removeClass('danger').addClass('warning');
-		} else {
-			jQuery(this).parent().parent().removeClass('danger').removeClass('warning').removeClass('success');
-		}
-	});
-	var reqFieldsEmpty = 0;
-	jQuery('.wpcf7-validates-as-required').each(function(){
+
+	//Phone number inputs
+	jQuery('.wpcf7-text.phone').on('keyup blur', function(e){
 		if ( jQuery(this).val() == '' ){
-			reqFieldsEmpty++;
-		}
-	});
-	if ( reqFieldsEmpty > 0 ){
-		jQuery('#cform7-container').parent().find('.wpcf7-submit').addClass('disallowed');
-	} else {
-		jQuery('#cform7-container').parent().find('.wpcf7-submit').removeClass('disallowed');
-	}
-	jQuery('#cform7-container').keyup(function(){
-		var obj = {};
-		var dangers = 0;
-		jQuery("#cform7-container li.danger").each(function(){
-		var cl = jQuery(this).attr("class");
-			if ( !obj[cl] ){
-				obj[cl] = {};
-				dangers++;
-				}
-			});
-		if ( dangers > 0 ){
-			jQuery(this).parent().find('.wpcf7-submit').addClass('disallowed').addClass('notallowed');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('success danger warning');
+		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
 		} else {
-			jQuery(this).parent().find('.wpcf7-submit').removeClass('disallowed').removeClass('notallowed');
+			jQuery(this).parents('.field').removeClass('success').addClass('warning');
 		}
 	});
+
+	//Date inputs
+	jQuery('.wpcf7-text.date').on('keyup blur', function(e){
+		if ( jQuery(this).val() == '' ){
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('success danger warning');
+		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+		} else {
+			jQuery(this).parents('.field').removeClass('success').addClass('warning');
+		}
+	});
+
+	//Message textarea
+	jQuery('.wpcf7-textarea').on('keyup blur', function(e){
+		if ( jQuery(this).val().trim() == '' ){
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success');
+		} else {
+			if ( e.type == 'blur' ){
+				jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning').addClass('success');
+			} else {
+				jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success'); //Remove green while typing
+			}
+		}
+	});
+
 	jQuery('.wpcf7-form').submit(function(){
-		var intervalID = setInterval(function(){
-			if ( jQuery('input').hasClass('wpcf7-not-valid') ){
-				clearInterval(intervalID);
-				jQuery('.wpcf7-not-valid').parent().parent().addClass('danger');
-				jQuery('#cform7-container').parent().find('.wpcf7-submit').addClass('notallowed');
-				if ( jQuery('.cform7-name.wpcf7-not-valid').val() == '' ){
-					jQuery('.cform7-name').attr('placeholder', 'Your name is required.');
-				}
-				if ( jQuery('.cform7-email.wpcf7-not-valid').val() == '' ){
-					jQuery('.cform7-email').attr('placeholder', 'Your email is required.');
-				}
-				if ( jQuery('.cform7-message.wpcf7-not-valid').val() == '' ){
-					jQuery('.cform7-message').attr('placeholder', 'Your message is required.');
-				}
-			} else {
-				jQuery('.wpcf7-not-valid').parent().parent().removeClass('danger');
-			}
-        }, 100);
+		jQuery('.wpcf7-textarea').each(function(){
+			localStorage.removeItem('cf7_' + jQuery(this).attr('name')); //Empty localstorage on form submission
+		});
 	});
-} //end cFormPreValidator()
+}
 
 
-//CForm7 submit success callback
-//Add on_sent_ok: "cFormSuccess('Form Name Here');" to Additional Settings
+//CF7 submit success callback
+//Add on_sent_ok: "cf7Success('Form Name Here');" to Additional Settings
 //First parameter should be the name of the form to send to Google Analytics (Default: "(not set)").
 //Second parameter should be either boolean (to use thanks.html) or string of another conversion page to use (Default: false).
-//This can be customized and duplicated as needed.
-function cFormSuccess(form, thanks){
-	//Enter Additional on_sent_ok functionality here since it can only be used once per contact form.
-
+function cf7Success(form, thanks){
 	ga('set', gaCustomDimensions['contactMethod'], 'Contact Form');
 	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 
@@ -1750,23 +1640,6 @@ function cFormSuccess(form, thanks){
 
     if ( thanks ){
     	conversionTracker(thanks); //Call conversion tracker if contact is a conversion goal.
-	}
-}
-
-//Allows only numerical input on specified inputs. Call this on keyUp? @TODO "Nebula" 0: Make the selector into oThis and pass that to the function from above.
-//The nice thing about this is that it shows the number being taken away so it is more user-friendly than a validation option.
-function onlyNumbers(){
-	jQuery(".leftcolumn input[type='text']").each(function(){
-		this.value = this.value.replace(/[^0-9\.]/g, '');
-	});
-}
-
-function checkCommentVal(oThis){
-	//@TODO "Nebula" 0: Count how many required fields there are. If any of them don't have value, then trigger disabled
-	if ( jQuery(oThis).val() != '' ){
-		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').removeClass('disabled');
-	} else {
-		jQuery(oThis).parents('form').find('input[type="submit"], button[type="submit"]').addClass('disabled');
 	}
 }
 
@@ -1788,18 +1661,6 @@ function conditionalJSLoading(){
 			ga('send', 'event', 'Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
 		});
 		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.css');
-	}
-
-	//Only load maskedinput.js library if phone or bday field exists.
-	if ( jQuery('.cform7-phone').is('*') || jQuery('.cform7-bday').is('*') ){
-		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.3.1/jquery.maskedinput.min.js').done(function(){
-			cFormPreValidator();
-		}).fail(function(){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-			ga('send', 'event', 'Error', 'JS Error', 'jquery.maskedinput.js could not be loaded.', {'nonInteraction': 1});
-		});
-	} else {
-		cFormPreValidator();
 	}
 
 	//Only load Chosen library if 'chosen-select' class exists.
@@ -1946,7 +1807,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 							addressComponents.zip.full = addressComponents.zip.code + '-' + addressComponents.zip.suffix;
 						}
 
-						jQuery(document).trigger('nebula_address_selected');
+						thisPage.document.trigger('nebula_address_selected');
 						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
 						ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 						ga('send', 'event', 'Contact', 'Autocomplete Address', addressComponents.city + ', ' + addressComponents.state.abbreviation + ' ' + addressComponents.zip.code);
@@ -1970,7 +1831,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 					});
 
 					if ( autocompleteInput == '#address-autocomplete' ){
-						jQuery(document).on('nebula_address_selected', function(){
+						thisPage.document.on('nebula_address_selected', function(){
 							//do any default stuff here.
 						});
 					}
@@ -2160,6 +2021,10 @@ function nebulaScrollTo(){
 	var headerHtOffset = ( jQuery('.headroom').length )? jQuery('.headroom').outerHeight() : 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 
 	thisPage.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
+		if ( jQuery(this).parents('.mm-menu').is('*') ){
+			return false;
+		}
+
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
 			var target = jQuery(this.hash);
@@ -2524,7 +2389,6 @@ function bxSlider(){
 //Check for Youtube Videos
 function checkForYoutubeVideos(){
 	if ( jQuery('.youtubeplayer').length ){
-		players = {};
 		var tag = document.createElement('script');
 		tag.src = "https://www.youtube.com/iframe_api";
 		var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -2532,9 +2396,15 @@ function checkForYoutubeVideos(){
 	}
 }
 function onYouTubeIframeAPIReady(e){
+	if ( typeof players === 'undefined' ){
+		players = {
+			youtube: {},
+			vimeo: {},
+		};
+	}
 	jQuery('iframe.youtubeplayer').each(function(i){
-		var youtubeiframeClass = jQuery(this).attr('id');
-		players[youtubeiframeClass] = new YT.Player(youtubeiframeClass, {
+		var youtubeiframeID = jQuery(this).attr('id');
+		players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, {
 			events: {
 				onReady: onPlayerReady,
 				onStateChange: onPlayerStateChange,
@@ -2550,100 +2420,206 @@ function onPlayerError(e){
 	ga('send', 'event', 'Error', 'Youtube API', videoTitle + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
 }
 function onPlayerReady(e){
-   //Do nothing
+	if ( typeof videoProgress === 'undefined' ){
+		videoProgress = {};
+	}
+
+	var id = e['target']['f']['id'];
+	videoData[id] = {
+		platform: 'youtube',
+		player: players.youtube[id],
+		duration: e['target']['B']['duration'],
+		current: e['target']['B']['currentTime'],
+		percent: e['target']['B']['currentTime']/e['target']['B']['duration'],
+		engaged: false,
+		watched: 0,
+		watchedPercent: 0,
+	};
 }
 function onPlayerStateChange(e){
 	var videoTitle = e['target']['B']['videoData']['title'];
+	var id = e['target']['f']['id'];
+
+	videoData[id].current = e['target']['B']['currentTime'];
+	videoData[id].percent = e['target']['B']['currentTime']/e['target']['B']['duration'];
+
     if ( e.data == YT.PlayerState.PLAYING ){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
         ga('set', gaCustomDimensions['videoWatcher'], 'Started');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Play', videoTitle);
-        nebulaTimer('youtube_' + videoTitle, 'start');
         pauseFlag = true;
+
+		youtubePlayProgress = setInterval(function(){
+			videoData[id].current = e['target']['B']['currentTime'];
+			videoData[id].percent = e['target']['B']['currentTime']/e['target']['B']['duration'];
+			videoData[id].watched = videoData[id].watched+.5; //Must match the interval in seconds!
+			videoData[id].watchedPercent = videoData[id].watched/e['target']['B']['duration'];
+
+			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
+				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+				ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': 1});
+				videoData[id].engaged = true;
+			}
+		}, 500);
     }
     if ( e.data == YT.PlayerState.ENDED ){
+        clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoCompletions'], 1);
-        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('youtube_' + videoTitle, 'end')));
+        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-        ga('send', 'timing', 'Youtube', 'Finished', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
+        ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].current), videoTitle);
     } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
-        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('youtube_' + videoTitle, 'end')));
+        clearTimeout(youtubePlayProgress);
+        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
+        ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Pause', videoTitle);
-        ga('send', 'timing', 'Youtube', 'Paused', Math.round(nebulaTimer('youtube_' + videoTitle, 'end')), videoTitle);
+        ga('send', 'timing', 'Videos', 'Paused', Math.round(videoData[id].current), videoTitle);
         pauseFlag = false;
     }
 }
 
-
 function vimeoControls(){
+	//Load the Vimeo API script (froogaloop) remotely (with local backup)
 	if ( jQuery('.vimeoplayer').is('*') ){
-        jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
+        jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			//do nothing
-		});
-	}
-
-	function createVimeoPlayers(){
-		//To trigger events on these videos, use the syntax: player[0].api("play");
-		player = new Array();
-	    jQuery('iframe.vimeoplayer').each(function(i){
-			var vimeoiframeClass = jQuery(this).attr('id');
-			player[i] = $f(vimeoiframeClass);
-			//@TODO "Nebula" 0: Add a named index to this array so it can be called by the video ID instead of the array index number
-			player[i].addEvent('ready', function(){
-			    player[i].addEvent('play', onPlay);
-			    player[i].addEvent('pause', onPause);
-			    player[i].addEvent('seek', onSeek);
-			    player[i].addEvent('finish', onFinish);
-			    player[i].addEvent('playProgress', onPlayProgress);
+			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': 1});
+			jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
+				createVimeoPlayers();
+			}).fail(function(){
+				ga('send', 'event', 'Error', 'JS Error', 'froogaloop (local) could not be loaded.', {'nonInteraction': 1});
 			});
 		});
 	}
 
-	function onPlay(id){
+	//To trigger events on these videos, use the syntax: players['PHG-Overview-Video'].api("play");
+	function createVimeoPlayers(){
+	    if ( typeof players === 'undefined' ){
+			players = {
+				youtube: {},
+				vimeo: {},
+			};
+			videoData = {};
+		}
+	    jQuery('iframe.vimeoplayer').each(function(i){
+			var vimeoiframeID = jQuery(this).attr('id');
+			players.vimeo[vimeoiframeID] = $f(vimeoiframeID);
+			players.vimeo[vimeoiframeID].addEvent('ready', function(id){
+			    players.vimeo[id].addEvent('play', vimeoPlay);
+			    players.vimeo[id].addEvent('pause', vimeoPause);
+			    players.vimeo[id].addEvent('seek', vimeoSeek);
+			    players.vimeo[id].addEvent('finish', vimeoFinish);
+			    players.vimeo[id].addEvent('playProgress', vimeoPlayProgress);
+			});
+		});
+
+		if ( typeof videoProgress === 'undefined' ){
+			videoProgress = {};
+		}
+	}
+
+	function vimeoPlay(id){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 	    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
-	    nebulaTimer('vimeo_' + videoTitle, 'start');
 	}
 
-	function onPause(id){
-	    var videoTitle = id.replace(/-/g, ' ');
-	    ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-	    ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')));
-	    //@TODO "Nebula" 0: send metric gaCustomMetrics['videoPercentage'] here.
-	    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-	    ga('send', 'event', 'Videos', 'Pause', videoTitle);
-	    ga('send', 'timing', 'Vimeo', 'Paused', Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')), videoTitle);
+	function vimeoPlayProgress(data, id){
+		var videoTitle = id.replace(/-/g, ' ');
+
+		if ( typeof videoData[id] === 'undefined' ){
+		    videoData[id] = {
+				platform: 'vimeo',
+				player: players.vimeo[id],
+				duration: data.duration,
+				current: data.seconds,
+				percent: data.percent,
+				engaged: false,
+				seeker: false,
+				seen: [],
+				watchedPercent: 0,
+			};
+	    } else {
+			videoData[id].duration = data.duration;
+			videoData[id].current = data.seconds;
+			videoData[id].percent = data.percent;
+
+			//Determine watched percent by adding current percents to an array, then count the array!
+			nowSeen = Math.ceil(data.percent*100);
+			if ( videoData[id].seen.indexOf(nowSeen) < 0 ){
+				videoData[id].seen.push(nowSeen);
+			}
+			videoData[id].watchedPercent = videoData[id].seen.length;
+	    }
+
+		if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
+			ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+			ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': 1});
+			videoData[id].engaged = true;
+		}
 	}
 
-	function onSeek(data, id){
+	function vimeoPause(id){
+		var videoTitle = id.replace(/-/g, ' ');
+		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
+		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
+		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('send', 'event', 'Videos', 'Pause', videoTitle);
+		ga('send', 'timing', 'Videos', 'Paused', Math.round(videoData[id].current), videoTitle);
+	}
+
+	function vimeoSeek(data, id){
 	    var videoTitle = id.replace(/-/g, ' ');
+	    ga('set', gaCustomDimensions['videoWatcher'], 'Seeker');
 	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
+	    videoData[id].seeker = true;
 	}
 
-	function onFinish(id){
+	function vimeoFinish(id){
 		var videoTitle = id.replace(/-/g, ' ');
 		ga('set', gaCustomMetrics['videoCompletions'], 1);
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')));
+		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
 		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-		ga('send', 'timing', 'Vimeo', 'Finished', Math.round(nebulaTimer('vimeo_' + videoTitle, 'end')), videoTitle);
-	}
-
-	function onPlayProgress(data, id){
-		//data.seconds played
+		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].current), videoTitle);
 	}
 }
+
+//Pause all videos
+//Use class "ignore-visibility" on iframes to allow specific videos to continue playing regardless of page visibility
+//Pass force as true to pause no matter what.
+function pauseAllVideos(force){
+	if ( typeof force === 'null' ){
+		force = false;
+	}
+
+	//Pause Youtube Videos
+	jQuery('iframe.youtubeplayer').each(function(){
+		youtubeiframeID = jQuery(this).attr('id');
+		if ( (force || !jQuery(this).hasClass('ignore-visibility')) && players.youtube[youtubeiframeID].getPlayerState() == 1 ){
+			players.youtube[youtubeiframeID].pauseVideo();
+		}
+	});
+
+	//Pause Vimeo Videos
+	jQuery('iframe.vimeoplayer').each(function(){
+		vimeoiframeID = jQuery(this).attr('id');
+		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
+			players.vimeo[vimeoiframeID].api('pause');
+		}
+	});
+}
+
 
 //Create desktop notifications
 function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
@@ -2776,7 +2752,7 @@ function eventFormNeedReset(){
 	});
 */
 
-	//@TODO: This is not disappearing when reset link itself is clicked.
+	//@TODO "Nebula" 0: This is not disappearing when reset link itself is clicked.
 	//Check all other inputs
 	jQuery('#advanced-search-form input').each(function(){
 		if ( (jQuery(this).attr('type') != 'checkbox' && jQuery(this).val() != '') || jQuery(this).prop("checked") ){
@@ -2798,29 +2774,28 @@ function mmenus(){
 
 		if ( mobileNav.is('*') ){
 			mobileNav.mmenu({
-			    //Options
-			    offCanvas: {
+				//Options
+				offCanvas: {
+				    position: "left", //"left" (default), "right", "top", "bottom"
 				    zposition: "back", //"back" (default), "front", "next"
-				    position: "left" //"left" (default), "right", "top", "bottom"
 			    },
-			    searchfield: { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
+				navbars: [{
+					position: "top",
+					content: ["searchfield"]
+				}, {
+					position: "bottom",
+					content: ["<span>" + bloginfo['name'] + "</span>"]
+				}],
+				searchfield: { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
 			    	add: true,
 			    	search: true,
 			    	placeholder: 'Search',
 			    	noResults: "No navigation items found.",
-			    	showLinksOnly: false //"true" searches only <a> links, "false" includes spans in search results. //@TODO "Nebula" 0: The option "searchfield.showLinksOnly" is deprecated as of version 5.0, use "!searchfield.showTextItems" instead.
+			    	showSubPanels: false,
+			    	showTextItems: false,
 			    },
 			    counters: true, //Display count of sub-menus
 			    iconPanels: false, //Layer panels on top of each other
-				navbar: {
-					title: "Menu"
-				},
-				navbars: [{
-					position: "bottom",
-					content: [
-						"<span>" + bloginfo['name'] + "</span>"
-					]
-				}],
 			    extensions: ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
 			}, {
 				//Configuration
@@ -2847,7 +2822,7 @@ function mmenus(){
 				});
 			}
 
-			jQuery(document).on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
+			thisPage.document.on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
 				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'end')), 'From opening mmenu until navigation');
 			});
 
@@ -2911,6 +2886,7 @@ function subnavExpanders(){
 //Affix the logo/navigation when scrolling passed it
 function initHeadroom(){
 	var headerElement = jQuery('#header');
+	var footerElement = jQuery('#footer');
 	var fixedElement = jQuery('#logonavcon');
 
 	if ( typeof fixedElement == 'undefined' || !fixedElement.is('*') ){
@@ -2960,13 +2936,24 @@ function initHeadroom(){
 	});
 	headroom.init();
 
-	//Custom Nebula extension for .headroom--below //@TODO "Nebula" 0: Could this be moved into onNotTop?
-	jQuery(window).on('scroll', function(){
-		var distance = thisPage.document.scrollTop();
-		if ( jQuery(document).scrollTop() > headerElement.offset().top+headerElement.outerHeight() ){
+	//Custom Nebula Headroom extensions
+	thisPage.window.on('scroll', function(){
+		var viewportBottom = thisPage.window.height()+thisPage.window.scrollTop();
+		var documentHeight = thisPage.document.height();
+		var scrollDistance = thisPage.document.scrollTop();
+
+		//Add .headroom--below //@TODO "Nebula" 0: Could this be moved into onNotTop?
+		if ( thisPage.document.scrollTop() > headerElement.offset().top+headerElement.outerHeight() ){
 			fixedElement.addClass('headroom--below');
 		} else if ( fixedElement.hasClass('headroom--below') ){
 			fixedElement.removeClass('headroom--below');
+		}
+
+		//Add .headroom-bottom
+		if ( viewportBottom >= documentHeight-(footerElement.outerHeight()/2) ){
+			fixedElement.addClass('headroom--bottom');
+		} else if ( fixedElement.hasClass('headroom--bottom') ){
+			fixedElement.removeClass('headroom--bottom');
 		}
 	});
 }
@@ -2980,5 +2967,5 @@ function initHeadroom(){
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
 jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
 
-//Parse dates (equivalent of PHP function). Source: https://github.com/kvz/phpjs/blob/1eaab15dc4e07c1bbded346e2cf187fbc8838562/functions/datetime/strtotime.js
+//Parse dates (equivalent of PHP function). Source: https://raw.githubusercontent.com/kvz/phpjs/master/functions/datetime/strtotime.js
 function strtotime(e,t){function a(e,t,a){var n,r=c[t];"undefined"!=typeof r&&(n=r-w.getDay(),0===n?n=7*a:n>0&&"last"===e?n-=7:0>n&&"next"===e&&(n+=7),w.setDate(w.getDate()+n))}function n(e){var t=e.split(" "),n=t[0],r=t[1].substring(0,3),s=/\d+/.test(n),u="ago"===t[2],i=("last"===n?-1:1)*(u?-1:1);if(s&&(i*=parseInt(n,10)),o.hasOwnProperty(r)&&!t[1].match(/^mon(day|\.)?$/i))return w["set"+o[r]](w["get"+o[r]]()+i);if("wee"===r)return w.setDate(w.getDate()+7*i);if("next"===n||"last"===n)a(n,r,i);else if(!s)return!1;return!0}var r,s,u,i,w,c,o,d,D,f,g,l=!1;if(!e)return l;if(e=e.replace(/^\s+|\s+$/g,"").replace(/\s{2,}/g," ").replace(/[\t\r\n]/g,"").toLowerCase(),s=e.match(/^(\d{1,4})([\-\.\/\:])(\d{1,2})([\-\.\/\:])(\d{1,4})(?:\s(\d{1,2}):(\d{2})?:?(\d{2})?)?(?:\s([A-Z]+)?)?$/),s&&s[2]===s[4])if(s[1]>1901)switch(s[2]){case"-":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return l;case"/":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else if(s[5]>1901)switch(s[2]){case"-":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case"/":return s[1]>12||s[3]>31?l:new Date(s[5],parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else switch(s[2]){case"-":return s[3]>12||s[5]>31||s[1]<70&&s[1]>38?l:(i=s[1]>=0&&s[1]<=38?+s[1]+2e3:s[1],new Date(i,parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case".":return s[5]>=70?s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3:s[5]<60&&!s[6]?s[1]>23||s[3]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0,s[9]||0)/1e3):l;case"/":return s[1]>12||s[3]>31||s[5]<70&&s[5]>38?l:(i=s[5]>=0&&s[5]<=38?+s[5]+2e3:s[5],new Date(i,parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case":":return s[1]>23||s[3]>59||s[5]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0)/1e3)}if("now"===e)return null===t||isNaN(t)?(new Date).getTime()/1e3|0:0|t;if(!isNaN(r=Date.parse(e)))return r/1e3|0;if(w=t?new Date(1e3*t):new Date,c={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6},o={yea:"FullYear",mon:"Month",day:"Date",hou:"Hours",min:"Minutes",sec:"Seconds"},D="(years?|months?|weeks?|days?|hours?|minutes?|min|seconds?|sec|sunday|sun\\.?|monday|mon\\.?|tuesday|tue\\.?|wednesday|wed\\.?|thursday|thu\\.?|friday|fri\\.?|saturday|sat\\.?)",f="([+-]?\\d+\\s"+D+"|(last|next)\\s"+D+")(\\sago)?",s=e.match(new RegExp(f,"gi")),!s)return l;for(g=0,d=s.length;d>g;g++)if(!n(s[g]))return l;return w.getTime()/1e3}

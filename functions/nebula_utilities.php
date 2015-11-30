@@ -1190,8 +1190,7 @@ function nebula_render_scss($specific_scss=null, $child=false){
 	} else {
 		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
 		if ( is_debug() ){
-			//$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging. //@TODO: "Nebula" 0: This is broken!! This line was working at one point and has not been changed since... However, it's just choking up on login.scss and tinymce.scss and style.scss for some reason- it compiles others before that...
-			//$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Using this one for testing...
+			$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
 		}
 	}
 

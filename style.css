@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 3.4.25
+ Version: 3.4.30
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -421,7 +421,7 @@
 
  .lte-ie9 form.nebula-search-iconable input.nebula-search,.ie10 form.nebula-search-iconable input.nebula-search { background:#eee url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.png") no-repeat 6px center; }
 
- .borderimage form.nebula-search-iconable:before { content:'\f002'; display:inline-block; position:absolute; top:4px; left:7px; width:15px; height:15px; pointer-events:none; font:normal normal normal 14px/1 FontAwesome; font-size:inherit; text-rendering:auto; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; transform:translate(0, 0); }
+ .borderimage form.nebula-search-iconable:before { content:'\f002'; display:inline-block; position:absolute; top:3px; left:7px; width:15px; height:15px; pointer-events:none; font:normal normal normal 14px/1 FontAwesome; font-size:inherit; text-rendering:auto; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; transform:translate(0, 0); }
 
  .borderimage form.nebula-search-iconable.searching:before { content:'\f110'; -webkit-animation:fa-spin 2s infinite linear; animation:fa-spin 2s infinite linear; }
 
@@ -441,13 +441,13 @@
 
  div.nebula-button { margin-bottom:10px; }
 
- .searchresultword { background:#fff; background:rgba(255, 255, 255, 0.2); padding:0 2px; border-radius:6px; font-size:inherit !important; -webkit-transition:none 0.25s; -moz-transition:none 0.25s; -ms-transition:none 0.25s; -o-transition:none 0.25s; transition:none 0.25s; }
+ .searchresultword { background:#0098d7; background:rgba(0, 152, 215, 0.2); padding:0 2px; border-radius:6px; font-size:inherit !important; -webkit-transition:none 0.25s; -moz-transition:none 0.25s; -ms-transition:none 0.25s; -o-transition:none 0.25s; transition:none 0.25s; }
 
- .searchresultword.transitionable { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ .searchresultword.transitionable { -webkit-transition:background 0.25s; -moz-transition:background 0.25s; -ms-transition:background 0.25s; -o-transition:background 0.25s; transition:background 0.25s; }
 
- article:hover .searchresultword { background:#ff0; background:rgba(255, 255, 0, 0.5); }
+ article:hover .searchresultword { background:#ff0 !important; background:rgba(0, 1, 0, ); }
 
- .search .highlight { background:#fff; background:rgba(255, 255, 255, 0.2); }
+ .search .highlight { background:#0098d7; background:rgba(0, 152, 215, 0.2); }
 
  .googlemapcon { width:100%; height:250px; }
 
@@ -501,23 +501,65 @@
 
  .btn,.skiplink { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
+ input[type="submit"] { color:#fff; }
+
+ form.search .submit.btn { width:22% !important; height:auto !important; font-size:12px; line-height:24px !important; }
+
+ h3.comment-reply-title { font-size:12px; }
+
+ .logged-in-as { margin:0; }
+
+ .contact-form-heading { display:block; margin:0; font-size:11px; font-weight:bold; }
+
+ p.contact-form-name input,p.comment-form-author input { font-size:12px; }
+
+ p.contact-form-email input,p.comment-form-email input { font-size:12px; }
+
+ p.contact-form-message,p.comment-form-comment { margin:0; }
+
+ p.contact-form-message textarea,p.comment-form-comment textarea { height:auto; min-height:42px; max-height:599px; width:100%; font-size:12px; }
+
+ .no-js p.comment-form-comment textarea { min-height:150px; }
+
+ p.contact-form-submit input,#cform7-container .submit,p.form-submit input { border:0; background:#0098d7; padding:4px 10px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+
+ p.contact-form-submit input:hover,#cform7-container .submit:hover,p.form-submit input:hover,p.contact-form-submit input.hover,#cform7-container .submit.hover,p.form-submit input.hover { background:#95d600; }
+
+ p.contact-form-submit input.disabled,#cform7-container .submit.disabled,p.form-submit input.disabled { background:#ccc !important; cursor:not-allowed; outline:none; }
+
+ .screen-reader-response { display:none; }
+
  form fieldset { border:1px solid #ccc; }
 
- .field .input { font-size:14px; line-height:22px; }
+ .field .wpcf7-form-control-wrap { position:relative; display:inline-block; width:100%; }
 
- .field.danger:after { font-family:"FontAwesome"; content:"\f00d"; color:#ca3838; }
+ .field input,.field .input,.field textarea,.field .textarea { font-size:14px; line-height:22px; padding:6px 10px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- .field.danger input,.field.danger .input,.field.danger textarea,.field.danger .textarea,.field.danger .radio span,.field.danger .checkbox span,.field.danger .picker { border-color:#ca3838; color:#000; background:#f0c5c5; }
+ .field .wpcf7-not-valid { border-color:#ca3838; color:#000; background:#f5d9d9; }
 
- .field.warning:after { font-family:"FontAwesome"; content:"\f071"; color:#f6b83f; }
+ .field:after { content:''; display:none; }
 
- .field.warning input,.field.warning .input,.field.warning textarea,.field.warning .textarea,.field.warning .radio span,.field.warning .checkbox span,.field.warning .picker { border-color:#d8d8d8; color:#000; background:#ffd; }
+ .field.danger .wpcf7-form-control-wrap:after { content:"\f00d"; position:absolute; top:7px; right:7px; font-family:"FontAwesome"; color:#ca3838; }
 
- .field.success:after { font-family:"FontAwesome"; content:"\f00c"; color:#58c026; }
+ .field.danger input,.field.danger .input,.field.danger textarea,.field.danger .textarea { border-color:#ca3838; color:#000; background:#f5d9d9; }
 
- .field.success input,.field.success .input,.field.success textarea,.field.success .textarea,.field.success .radio span,.field.success .checkbox span,.field.success .picker { border-color:#d8d8d8; color:#000; background:#efe; }
+ .field.warning .wpcf7-form-control-wrap:after { content:"\f071"; position:absolute; top:7px; right:7px; font-family:"FontAwesome"; color:#f6b83f; }
+
+ .field.warning input,.field.warning .input,.field.warning textarea,.field.warning .textarea { border-color:#d8d8d8; color:#000; background:#fef7ea; }
+
+ .field.success .wpcf7-form-control-wrap:after { content:"\f00c"; position:absolute; top:7px; right:7px; font-family:"FontAwesome"; color:#58c026; }
+
+ .field.success input,.field.success .input,.field.success textarea,.field.success .textarea { border-color:#d8d8d8; color:#000; background:#f0fbea; }
 
  .picker:after { content:"\f0d7"; font-family:"FontAwesome"; }
+
+ .wpcf7-not-valid-tip { color:#ca3838; }
+
+ .wpcf7-validation-errors { font-size:14px; color:#ca3838; width:100% !important; margin:0 !important; background:#f0c5c5; border:1px solid #ca3838 !important; border-radius:4px; }
+
+ .wpcf7-mail-sent-ok { font-size:14px; color:#58c026; width:100% !important; margin:0 !important; background:#efe; border:1px solid #58c026 !important; border-radius:4px; }
+
+ .browserinfo { display:none; opacity:0; height:0; visibility:hidden; padding:0; margin:0; font-size:0px; line-height:0px; background:#fff; background:rgba(255, 255, 255, 1); color:rgba(255, 255, 255, 0); pointer-events:none; }
 
  input::-webkit-input-placeholder { font-weight:300; color:rgba(153, 153, 153, 0.9); -webkit-transition:all 0.25s; transition:all 0.25s; }
 
@@ -731,19 +773,19 @@
 
  #logonavcon { display:block; position:relative; width:100%; background:#f6f6f6; background:rgba(246, 246, 246, 1); padding-top:25px; box-shadow:none; z-index:8000; -webkit-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); -moz-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); -ms-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); -o-transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); transition:all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000); }
 
- #logonavcon img { height:90px; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ #logonavcon img { -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- #logonavcon.headroom--not-top { position:fixed; top:0; left:0; width:100%; padding-top:0; background:#f6f6f6; background:rgba(246, 246, 246, 0.97); box-shadow:0px 0px 20px rgba(0, 0, 0, 0.1); z-index:9999; }
+ #logonavcon.headroom--not-top { position:fixed; top:0; left:0; width:100%; padding-top:0; background:#f6f6f6; background:rgba(246, 246, 246, 0.97); box-shadow:0px 0px 20px rgba(0, 0, 0, 0.1); z-index:9999; backface-visibility:hidden; }
 
- #logonavcon.headroom--not-top img { height:65px; }
+ #logonavcon.headroom--not-top img { -webkit-transform:scale(0.75); -moz-transform:scale(0.75); -ms-transform:scale(0.75); -o-transform:scale(0.75); transform:scale(0.75); }
 
  #logonavcon.headroom--not-top #primarynav ul { margin-top:22px; }
 
  #logonavcon.headroom--not-top #primarynav ul li.menu-item { font-size:12px; }
 
- #logonavcon.headroom--below { transform:translateY(-100%); }
+ #logonavcon.headroom--below { -webkit-transform:translateY(-100%); -moz-transform:translateY(-100%); -ms-transform:translateY(-100%); -o-transform:translateY(-100%); transform:translateY(-100%); }
 
- #logonavcon.headroom--pinned { transform:translateY(0%); }
+ #logonavcon.headroom--pinned,#logonavcon.headroom--bottom { -webkit-transform:translateY(0%); -moz-transform:translateY(0%); -ms-transform:translateY(0%); -o-transform:translateY(0%); transform:translateY(0%); }
 
  @media only screen and (max-width: 767px)  { #logonavcon .logocon img { width:360px; }
 
@@ -963,7 +1005,7 @@
 
  .right-side .advanced-search-group { margin-bottom:10px; }
 
- #advanced-search-form .advanced-search-keyword { width:100%; font-size:24px; font-weight:300; padding:0 10px; height:48px; outline:none; }
+ #advanced-search-form .advanced-search-keyword { width:100%; font-size:24px; line-height:1.625em; font-weight:300; padding:0 10px; height:48px; outline:none; }
 
  .advanced-search-result { border-bottom:1px dotted #ccc; padding-bottom:10px; margin-top:5px; }
 
@@ -1080,62 +1122,6 @@
  a.toplevelvert_expander.plus i { -webkit-transform:rotate(0deg); -moz-transform:rotate(0deg); -ms-transform:rotate(0deg); -o-transform:rotate(0deg); transform:rotate(0deg); }
 
  .xoxo form.search input[type="text"] { width:77% !important; font-size:12px; line-height:24px; height:auto !important; vertical-align:top; }
-
- input[type="submit"] { color:#fff; }
-
- form.search .submit.btn { width:22% !important; height:auto !important; font-size:12px; line-height:24px !important; }
-
- h3.comment-reply-title { font-size:12px; }
-
- .logged-in-as { margin:0; }
-
- .contact-form-heading { display:block; margin:0; font-size:11px; font-weight:bold; }
-
- p.contact-form-name input,p.comment-form-author input { font-size:12px; }
-
- p.contact-form-email input,p.comment-form-email input { font-size:12px; }
-
- p.contact-form-message,p.comment-form-comment { margin:0; }
-
- p.contact-form-message textarea,p.comment-form-comment textarea { height:auto; min-height:42px; max-height:599px; width:100%; font-size:12px; }
-
- .no-js p.comment-form-comment textarea { min-height:150px; }
-
- p.contact-form-submit input,#cform7-container .submit,p.form-submit input { border:0; background:#0098d7; padding:4px 10px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
-
- p.contact-form-submit input:hover,#cform7-container .submit:hover,p.form-submit input:hover,p.contact-form-submit input.hover,#cform7-container .submit.hover,p.form-submit input.hover { background:#95d600; }
-
- p.contact-form-submit input.disabled,#cform7-container .submit.disabled,p.form-submit input.disabled { background:#ccc !important; cursor:not-allowed; outline:none; }
-
- .browserinfo { display:none; opacity:0; height:0; visibility:hidden; padding:0; margin:0; font-size:0px; line-height:0px; background:#fff; background:rgba(255, 255, 255, 0); color:rgba(255, 255, 255, 0); }
-
- .screen-reader-response { display:none; }
-
- #cform7-container { margin:0; }
-
- #cform7-container .field { margin-bottom:3px; }
-
- #cform7-container input[type="text"],#cform7-container input[type="email"] { width:100% !important; font-size:12px; line-height:24px; height:auto !important; }
-
- #cform7-container .cform7-phone-area { width:20%; font-size:12px; }
-
- #cform7-container .cform7-phone-prefix { width:20%; font-size:12px; }
-
- #cform7-container .cform7-phone-line { width:25%; font-size:12px; }
-
- #cform7-container .cform7-phone-ext { width:22%; font-size:12px; }
-
- #cform7-container .cform7-message { font-size:12px; line-height:16px; padding-top:7px; resize:vertical !important; }
-
- .wpcf7-not-valid-tip { display:none !important; }
-
- .field.danger:after,.field.warning:after,.field.success:after { /* top: 45% !important; */ }
-
- .xoxo .field.danger:after,.xoxo .field.warning:after,.xoxo .field.success:after { top:45% !important; }
-
- div.wpcf7-validation-errors { font-size:14px; color:#ca3838; width:100% !important; margin:0 !important; background:#f0c5c5; border:1px solid #ca3838 !important; border-radius:4px; }
-
- div.wpcf7-mail-sent-ok { font-size:14px; color:#58c026; width:100% !important; margin:0 !important; background:#efe; border:1px solid #58c026 !important; border-radius:4px; }
 
  .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after { margin-left:0; }
 
@@ -1329,4 +1315,4 @@
  }
 
 
-/* Processed on Tuesday, November 24, 2015 at 11:29pm */
+/* Processed on Sunday, November 29, 2015 at 10:08pm */

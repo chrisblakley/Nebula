@@ -1012,7 +1012,8 @@ function change_admin_footer_left(){
 add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right(){
 	global $wp_version;
-    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula_version('date') . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong class="nebula">' . nebula_version('version') . '</strong></span>';
+	$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
+    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula_version('date') . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong class="nebula">' . nebula_version('version') . '</strong>' . $child . '</span>';
 }
 
 //Internal Search Keywords Metabox and Custom Field

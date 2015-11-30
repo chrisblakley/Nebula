@@ -23,7 +23,7 @@ jQuery(document).on('ready', function(){
 		});
 
 		var address = jQuery('.maptoggle').text();
-		jQuery('.maptoggle').on('click tap touch', function(e){ //@TODO "Nebula" 0: After click and hover out, the map still disappears...
+		jQuery('.maptoggle').on('click tap touch', function(e){
 			if ( jQuery('.maininfo').hasClass('no-map') ){
 				jQuery('.maininfo').removeClass('no-map');
 				jQuery('.welcome-photo-bg').addClass('hidden');
