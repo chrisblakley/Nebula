@@ -62,7 +62,7 @@
 				data: {
 					'username': 'Great_Blakes',
 					'listname': 'nebula',
-					'numberTweets': 5,
+					'numbertweets': 5,
 					'includeRetweets': 1,
 				},
 			},

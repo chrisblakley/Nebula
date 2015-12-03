@@ -787,8 +787,11 @@ function scrollDepth(){
 
 	thisPage.window.on('scroll', function(){
 		if ( !isScroller ){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Initial scroll', '(signifies non-bounced users)');
+			currentTime = new Date();
+			initialScroll = currentTime.getTime();
+			delayBeforeInitial = (initialScroll-beginning)/1000;
+
+			ga('send', 'timing', 'Scroll Depth', 'Initial scroll', Math.round(delayBeforeInitial*1000), 'Delay after pageload until initial scroll');
 			isScroller = true;
 		}
 
@@ -812,14 +815,18 @@ function scrollDepth(){
 
 		//When the user scrolls past the header
 		var becomesReaderAt = ( entryContent.is('*') )? entryContent.offset().top : headerHeight;
-		if ( viewportBottom > becomesReaderAt && !isReader ){
+		if ( viewportBottom >= becomesReaderAt && !isReader ){
 			currentTime = new Date();
 			readStartTime = currentTime.getTime();
-			timeToScroll = (readStartTime-beginning)/1000;
+			timeToScroll = (readStartTime-initialScroll)/1000;
 
 			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Began reading', Math.round(timeToScroll) + ' seconds (since pageload)');
-			ga('send', 'timing', 'Scroll Depth', 'Began reading', Math.round(timeToScroll*1000), 'Scrolled from top of page to top of entry-content');
+
+			//This next line (event) is the line that alters Bounce Rate.
+			//This line allows bounce rate to be calculated for individual page engagement.
+			//To use the more traditional definition of bounce rate as a "Page Depth" engagement metric remove this line (or add a non-interaction object).
+			ga('send', 'event', 'Scroll Depth', 'Began reading', Math.round(timeToScroll) + ' seconds (since initial scroll) [Signifies non-bounce visit]'); //This line alters bounce rate in Google Analytics.
+			ga('send', 'timing', 'Scroll Depth', 'Began reading', Math.round(timeToScroll*1000), 'Scrolled from top of page to top of entry-content'); //Unless there is a giant header, this timing will likely be 0 on most sites.
 			isReader = true;
 		}
 
@@ -2401,6 +2408,7 @@ function onYouTubeIframeAPIReady(e){
 			youtube: {},
 			vimeo: {},
 		};
+		videoData = {};
 	}
 	jQuery('iframe.youtubeplayer').each(function(i){
 		var youtubeiframeID = jQuery(this).attr('id');
@@ -2453,8 +2461,8 @@ function onPlayerStateChange(e){
 		youtubePlayProgress = setInterval(function(){
 			videoData[id].current = e['target']['B']['currentTime'];
 			videoData[id].percent = e['target']['B']['currentTime']/e['target']['B']['duration'];
-			videoData[id].watched = videoData[id].watched+.5; //Must match the interval in seconds!
-			videoData[id].watchedPercent = videoData[id].watched/e['target']['B']['duration'];
+			videoData[id].watched = videoData[id].watched+500; //Must match the interval in milliseconds!
+			videoData[id].watchedPercent = (videoData[id].watched/1000)/e['target']['B']['duration'];
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
@@ -2470,7 +2478,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-        ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].current), videoTitle);
+        ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched, videoTitle); //Note: Amount of time watched (can exceed video duration).
     } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
@@ -2478,7 +2486,8 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Pause', videoTitle);
-        ga('send', 'timing', 'Videos', 'Paused', Math.round(videoData[id].current), videoTitle);
+        ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched, videoTitle); //Note: Amount of time watched, not the timestamp of when paused!
+        ga('send', 'timing', 'Videos', 'Paused (Timestamp)', videoData[id].current*1000, videoTitle); //Note: Amount of time watched, not the timestamp of when paused!
         pauseFlag = false;
     }
 }
@@ -2546,6 +2555,7 @@ function vimeoControls(){
 				seeker: false,
 				seen: [],
 				watchedPercent: 0,
+				watched: 0,
 			};
 	    } else {
 			videoData[id].duration = data.duration;
@@ -2558,6 +2568,7 @@ function vimeoControls(){
 				videoData[id].seen.push(nowSeen);
 			}
 			videoData[id].watchedPercent = videoData[id].seen.length;
+			videoData[id].watched = (videoData[id].seen.length/100)*videoData[id].duration; //Roughly calculate time watched based on percent seen
 	    }
 
 		if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
@@ -2574,7 +2585,8 @@ function vimeoControls(){
 		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Videos', 'Pause', videoTitle);
-		ga('send', 'timing', 'Videos', 'Paused', Math.round(videoData[id].current), videoTitle);
+		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Note: Roughly amount of time watched, not the timestamp of when paused!
+		ga('send', 'timing', 'Videos', 'Paused (Timestamp)', Math.round(videoData[id].current*1000), videoTitle); //Note: The timestamp when paused.
 	}
 
 	function vimeoSeek(data, id){
@@ -2591,7 +2603,7 @@ function vimeoControls(){
 		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].current), videoTitle);
+		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Note: Roughly amount of time watched (Can not be over 100% for Vimeo)
 	}
 }
 
@@ -2599,6 +2611,10 @@ function vimeoControls(){
 //Use class "ignore-visibility" on iframes to allow specific videos to continue playing regardless of page visibility
 //Pass force as true to pause no matter what.
 function pauseAllVideos(force){
+	if ( typeof players === 'undefined' ){
+		return false; //If videos don't exist, then no need to pause
+	}
+
 	if ( typeof force === 'null' ){
 		force = false;
 	}

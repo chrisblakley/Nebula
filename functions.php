@@ -81,7 +81,7 @@ function register_nebula_scripts(){
 	//nebula_register_script('nebula-mmenu_debugger', get_template_directory_uri() . '/js/libs/jquery.mmenu.debugger.js', null, array('nebula-mmenu'), '5.3.1', true);
 	nebula_register_script('nebula-doubletaptogo', get_template_directory_uri() . '/js/libs/doubletaptogo.js', 'defer', array(), null, true);
 	//nebula_register_script('nebula-bxslider', 'https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js', 'defer', array(), '4.2.5', true); //bxSlider is conditionally loaded via main.js when needed.
-	nebula_register_script('nebula-froogaloop', get_template_directory_uri() . '/js/libs/froogaloop.min.js', null, array(), null, true);
+	nebula_register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, array(), null, true);
 	nebula_register_script('nebula-skrollr', 'https://cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.30/skrollr.min.js', 'gumby-debug', array(), '0.6.30', true);
 	nebula_register_script('nebula-headroom', 'https://cdnjs.cloudflare.com/ajax/libs/headroom/0.7.0/headroom.min.js', null, array(), '0.7.0', true);
 	nebula_register_script('nebula-performance_timing', get_template_directory_uri() . '/js/libs/performance-timing.js', 'async', array(), null, true);
