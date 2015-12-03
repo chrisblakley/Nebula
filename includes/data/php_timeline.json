@@ -1,4 +1,8 @@
 [{
+	"7.0": {
+		"security": "3 Dec 2017",
+		"end": "3 Dec 2018"
+	},
 	"5.6": {
 		"security": "28 Aug 2016",
 		"end": "28 Aug 2017"
