@@ -247,7 +247,7 @@ function browserInfo(){
 	if ( typeof nebulaTimings !== 'undefined' && typeof nebulaTimings[formID] !== 'undefined' ){
 		browserInfoVal += 'Field Timings:\n';
 		browserInfoVal += 'http://jsonprettyprint.com/\n';
-		browserInfoVal += JSON.stringify(nebulaTimings[formID], ['lap', 'name', 'duration', 'total']);
+		browserInfoVal += JSON.stringify(nebulaTimings[formID], ['lap', 'name', 'duration', 'cumulative', 'total']);
 		browserInfoVal += '\n\n';
 	}
 
@@ -622,11 +622,9 @@ function gaEventTracking(){
 	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(){
 		formID = jQuery(this).parents('div.wpcf7').attr('id');
 
-		if ( jQuery(this).parents('.wpcf7-form').hasClass('.notable-form') || jQuery(this).parents('.wpcf7-form').find('.notable-form').length ){
-			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
-				ga('set', gaCustomMetrics['notableFormStarts'], 1);
-				formStarted[formID] = true;
-			}
+		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
+			ga('set', gaCustomMetrics['formStarts'], 1);
+			formStarted[formID] = true;
 		}
 
 		nebulaTimer(formID, 'start', jQuery(this).attr('name'));
@@ -641,22 +639,47 @@ function gaEventTracking(){
 		browserInfo();
 	});
 
-
-	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to use the cf7Success() function on successful submission (In the Contact Form 7 Settings for each form).
-	thisPage.document.on('submit', '.wpcf7-form', function(){
-		formID = jQuery(this).parents('div.wpcf7').attr('id');
-
-		if ( jQuery(this).hasClass('.notable-form') || jQuery(this).find('.notable-form').length ){
-			ga('set', gaCustomMetrics['notableFormSubmissions'], 1); //Note: This metric can not account for form validation errors. This metric is technically "Attempts". Use the event for actual success rate.
-		}
-
-		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		ga('send', 'event', 'Contact', 'Submit (Attempt)', 'Form completion time: ' + nebulaTimer(formID, 'end')); //This event is required for the notable form metric!
-		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(formID, 'end')), 'Initial form focus until submit');
-		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
-
+	//CF7 Submit (CF7 AJAX response after any submit attempt)
+	thisPage.document.on('wpcf7:submit', function(e){
+		//@TODO "Nebula" 0: This is still called after data is already pulled (just like a regular 'submit' listener), so this browserInfo does not make it into the email... Until CF7 updates, this is how it will be.
+		nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-attempt');
 		browserInfo();
+
+		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Attempt)');
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('send', 'event', 'Contact', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
+		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
+	});
+
+	//CF7 Invalid (CF7 AJAX response after invalid form)
+	thisPage.document.on('wpcf7:invalid', function(e){
+		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Invalid)');
+		ga('send', 'event', 'Contact', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
+		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
+	});
+
+	//CF7 Spam (CF7 AJAX response after spam detection)
+	thisPage.document.on('wpcf7:spam', function(e){
+		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Spam)');
+		ga('send', 'event', 'Contact', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.target.id);
+	});
+
+	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
+	thisPage.document.on('wpcf7:mailfailed', function(e){
+		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Failed)');
+		ga('send', 'event', 'Contact', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.target.id);
+	});
+
+	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
+	thisPage.document.on('wpcf7:mailsent', function(e){
+		if ( !jQuery(e.target.id).hasClass('.ignore-form') && !jQuery(e.target.id).find('.ignore-form').length ){
+			ga('set', gaCustomMetrics['formSubmissions'], 1);
+		}
+		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Success)');
+		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
+		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + nebulaTimer(e.target.id, 'end') + 'ms)');
+		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
 	});
 
 	//Generic Interal Search Tracking
@@ -902,20 +925,6 @@ function scrollDepth(){
 		}
 	}
 }
-
-//Google AdWords conversion tracking for AJAX
-function conversionTracker(conversionpage){
-	if ( typeof conversionpage !== 'string' || conversionpage.indexOf('.') <= 0 ){
-		conversionpage = 'thanks.html';
-	}
-
-	var iframe = document.createElement('iframe');
-	iframe.style.width = '0px';
-	iframe.style.height = '0px';
-	document.body.appendChild(iframe);
-	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
-};
-
 
 /*==========================
  Search Functions
@@ -1656,6 +1665,16 @@ function cf7LiveValidator(){
 		}
 	});
 
+	//CAPTCHA
+	jQuery('.wpcf7-captchar').on('keyup blur', function(e){
+		jQuery(this).removeClass('wpcf7-not-valid');
+		if ( jQuery(this).val().length > 4 ){
+			jQuery(this).parents('.field').addClass('warning');
+		} else {
+			jQuery(this).parents('.field').removeClass('warning');
+		}
+	});
+
 	jQuery('.wpcf7-form').submit(function(){
 		jQuery('.wpcf7-textarea').each(function(){
 			localStorage.removeItem('cf7_' + jQuery(this).attr('name')); //Empty localstorage on form submission
@@ -1663,27 +1682,20 @@ function cf7LiveValidator(){
 	});
 }
 
-
-//CF7 submit success callback
-//Add on_sent_ok: "cf7Success('Form Name Here');" to Additional Settings
-//First parameter should be the name of the form to send to Google Analytics (Default: "(not set)").
-//Second parameter should be either boolean (to use thanks.html) or string of another conversion page to use (Default: false).
-function cf7Success(form, thanks){
-	ga('set', gaCustomDimensions['contactMethod'], 'Contact Form');
-	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-
-	if ( form ){
-		ga('send', 'event', 'Contact', 'Submit (Success)', form);
-	} else {
-		ga('send', 'event', 'Contact', 'Submit (Success)', '(not set)');
+//Google AdWords conversion tracking for AJAX forms
+//Contact Form 7 - Add on_sent_ok: "conversionTracker();" to Additional Settings
+//Parameter should be either boolean (to use thanks.html) or string of another conversion page to use (Default: false).
+function conversionTracker(conversionpage){
+	if ( typeof conversionpage !== 'string' || conversionpage.indexOf('.') <= 0 ){
+		conversionpage = 'thanks.html';
 	}
-	if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
 
-    if ( thanks ){
-    	conversionTracker(thanks); //Call conversion tracker if contact is a conversion goal.
-	}
-}
-
+	var iframe = document.createElement('iframe');
+	iframe.style.width = '0px';
+	iframe.style.height = '0px';
+	document.body.appendChild(iframe);
+	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
+};
 
 /*==========================
  Optimization Functions
@@ -2058,8 +2070,19 @@ function powerFooterWidthDist(){
 	}
 }
 
-function nebulaScrollTo(){
+function nebulaScrollTo(element, milliseconds){
 	var headerHtOffset = ( jQuery('.headroom').length )? jQuery('.headroom').outerHeight() : 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+
+	//Call this function with a selector to trigger scroll to an element (note: not a selector).
+	if ( element ){
+		if ( !milliseconds ){
+			var milliseconds = 1000;
+		}
+		jQuery('html, body').animate({
+			scrollTop: element.offset().top-headerHtOffset
+		}, milliseconds);
+		return false;
+	}
 
 	thisPage.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
 		if ( jQuery(this).parents('.mm-menu').is('*') ){
@@ -2217,6 +2240,7 @@ function nebulaTimer(uniqueID, action, name){
 	if ( action == 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
 		nebulaTimings[uniqueID] = {};
 		nebulaTimings[uniqueID].started = currentTime;
+		nebulaTimings[uniqueID].cumulative = 0;
 		nebulaTimings[uniqueID].total = 0;
 		nebulaTimings[uniqueID].lap = [];
 		nebulaTimings[uniqueID].laps = 0;
@@ -2240,6 +2264,7 @@ function nebulaTimer(uniqueID, action, name){
 		nebulaTimings[uniqueID].lap[lapNumber-1].stopped = currentTime;
 		nebulaTimings[uniqueID].lap[lapNumber-1].duration = currentTime-nebulaTimings[uniqueID].lap[lapNumber-1].started;
 		nebulaTimings[uniqueID].lap[lapNumber-1].progress = currentTime-nebulaTimings[uniqueID].started;
+		nebulaTimings[uniqueID].cumulative = currentTime-nebulaTimings[uniqueID].started;
 
 		//An "out" lap means the timing for this lap may not be associated directly with the action (Usually resetting for the next actual timed lap).
 		if ( action == 'start' ){

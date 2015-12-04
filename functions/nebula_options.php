@@ -230,9 +230,9 @@ function register_nebula_options(){
 		'nebula_cd_publishyear' => '',
 		'nebula_cd_wordcount' => '',
 		'nebula_cd_adblocker' => '',
-		'nebula_cm_notableformviews' => '',
-		'nebula_cm_notableformstarts' => '',
-		'nebula_cm_notableformsubmissions' => '',
+		'nebula_cm_formviews' => '',
+		'nebula_cm_formstarts' => '',
+		'nebula_cm_formsubmissions' => '',
 		'nebula_cm_notabledownloads' => '',
 		'nebula_cm_engagedreaders' => '',
 		'nebula_cm_videoplaytime' => '',
@@ -1188,26 +1188,26 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
-		        	<th scope="row">Notable Form Views*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Form Views*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="metric" type="text" name="nebula_cm_notableformviews" value="<?php echo get_option('nebula_cm_notableformviews'); ?>" />
-						<p class="helper"><small>Tracks when a user views a page containing a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or an element inside it. <strong>Scope: Hit, Format: Integer</strong></small></p>
+						<input class="metric" type="text" name="nebula_cm_formviews" value="<?php echo get_option('nebula_cm_formviews'); ?>" />
+						<p class="helper"><small>Tracks when a user views a page containing a form. <em>To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</em> <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 
 				<tr class="short" valign="top">
-		        	<th scope="row">Notable Form Starts*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Form Starts*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="metric" type="text" name="nebula_cm_notableformstarts" value="<?php echo get_option('nebula_cm_notableformstarts'); ?>" />
-						<p class="helper"><small>Tracks when a user begins entering notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or an element inside it. <strong>Scope: Hit, Format: Integer</strong></small></p>
+						<input class="metric" type="text" name="nebula_cm_formstarts" value="<?php echo get_option('nebula_cm_formstarts'); ?>" />
+						<p class="helper"><small>Tracks when a user begins entering a form. <em>To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</em> <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 
 		        <tr class="short" valign="top">
-		        	<th scope="row">Notable Form Submissions*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Form Submissions*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="metric" type="text" name="nebula_cm_notableformsubmissions" value="<?php echo get_option('nebula_cm_notableformsubmissions'); ?>" />
-						<p class="helper"><small>Tracks when a user submits a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or an element inside it. Also note that this metric can not account for validation errors. <strong>Scope: Hit, Format: Integer</strong></small></p>
+						<input class="metric" type="text" name="nebula_cm_formsubmissions" value="<?php echo get_option('nebula_cm_formsubmissions'); ?>" />
+						<p class="helper"><small>Tracks when a user submits a form. <em>To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</em> <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 

@@ -52,9 +52,9 @@
 		}
 
 		gaCustomMetrics = {
-			notableFormViews: '<?php echo nebula_option('nebula_cm_notableformviews'); //Hit, Integer ?>',
-			notableFormStarts: '<?php echo nebula_option('nebula_cm_notableformstarts'); //Hit, Integer ?>',
-			notableFormSubmissions: '<?php echo nebula_option('nebula_cm_notableformsubmissions'); //Hit, Integer ?>',
+			formViews: '<?php echo nebula_option('nebula_cm_formviews'); //Hit, Integer ?>',
+			formStarts: '<?php echo nebula_option('nebula_cm_formstarts'); //Hit, Integer ?>',
+			formSubmissions: '<?php echo nebula_option('nebula_cm_formsubmissions'); //Hit, Integer ?>',
 			notableDownloads: '<?php echo nebula_option('nebula_cm_notabledownloads'); //Hit, Integer ?>',
 			engagedReaders: '<?php echo nebula_option('nebula_cm_engagedReaders'); //Hit, Integer ?>',
 			videoStarts: '<?php echo nebula_option('nebula_cm_videostarts'); //Hit, Integer ?>',
@@ -237,22 +237,23 @@
 			}
 		?>
 
-		<?php //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true. Best synchronous method of ad block detection. ?>
-		adBlockUser = 'Non-Blocker';
-		clientinfo.adblock = false;
-		jQuery('html').removeClass('no-ads').addClass('ads');
-		if ( window.adsEnabled === undefined ){
-			clientinfo.adblock = true;
-			adBlockUser = 'Ad Blocker';
-			jQuery('html').removeClass('ads').addClass('no-ads');
-		}
-		<?php if ( nebula_option('nebula_cd_adblocker') ): ?>
-			ga('set', gaCustomDimensions['adblocker'], adBlockUser);
+		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true. Best current synchronous method of ad block detection. ?>
+			adBlockUser = 'Non-Blocker';
+			clientinfo.adblock = false;
+			jQuery('html').removeClass('no-ads').addClass('ads');
+			if ( window.adsEnabled === undefined ){
+				clientinfo.adblock = true;
+				adBlockUser = 'Ad Blocker';
+				jQuery('html').removeClass('ads').addClass('no-ads');
+			}
+			<?php if ( nebula_option('nebula_cd_adblocker') ): ?>
+				ga('set', gaCustomDimensions['adblocker'], adBlockUser);
+			<?php endif; ?>
 		<?php endif; ?>
 
-		<?php if ( nebula_option('nebula_cm_notableformviews') ): //Notable Form Views (to calculate against submissions) ?>
-			if ( jQuery('.notable-form').is('*') ){
-				ga('set', gaCustomMetrics['notableFormViews'], 1);
+		<?php if ( nebula_option('nebula_cm_formviews') ): //Notable Form Views (to calculate against submissions) ?>
+			if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length ){
+				ga('set', gaCustomMetrics['formViews'], 1);
 			}
 		<?php endif; ?>
 

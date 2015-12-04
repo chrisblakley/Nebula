@@ -118,6 +118,7 @@ function register_nebula_scripts(){
 		'year' => get_the_date('Y'),
 	);
 	$localize_clientinfo = array(
+		'bot' => nebula_is_bot(),
 		'remote_addr' => $_SERVER['REMOTE_ADDR'],
 		'device' => array(
 			'full' => nebula_get_device('full'),
@@ -235,8 +236,8 @@ if ( !function_exists('enqueue_nebula_frontend') ){
 			//wp_enqueue_script('nebula-jquery_old'); //Uncomment the next jQuery lines if WordPress bundles jQuery 2.0+ (currently bundles jQuery 1.11.2)
 		}
 
-		if ( !empty($GLOBALS['ga']) && nebula_option('nebula_cd_adblocker') ){
-			wp_enqueue_script('nebula-adblockcheck'); //Detect if user is blocking ads. If the custom dimension is active- removing this line will cause false positives.
+		if ( !nebula_is_bot() && !empty($GLOBALS['ga']) && nebula_option('nebula_cd_adblocker') ){
+			wp_enqueue_script('nebula-adblockcheck'); //Detect if user is blocking ads. If the custom dimension is active removing this line will cause false positives!
 		}
 
 		if ( is_page_template('tpl-search.php') || is_page(9999) ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in main.js.
