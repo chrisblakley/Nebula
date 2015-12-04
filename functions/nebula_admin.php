@@ -171,6 +171,34 @@ if ( nebula_option('nebula_plugin_update_warning') ){
 	}
 }
 
+//Automatic Theme Update Checker
+add_action('admin_init', 'nebula_theme_json');
+function nebula_theme_json(){
+	$override = apply_filters('pre_nebula_theme_json', false);
+	if ( $override !== false ){return;}
+
+	//Initialize the update checker.
+	require get_template_directory() . '/includes/libs/theme-update-checker.php';
+	$example_update_checker = new ThemeUpdateChecker(
+		'Nebula-master', //This should be the directory slug of the parent theme. @TODO "Nebula" 0: Possibly make it dynamic?
+		'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
+	);
+
+	//Create/Write a theme info file
+	if ( is_writable(get_template_directory()) ){
+		$nebula_theme_json_file = get_template_directory() . '/includes/data/nebula_theme.json';
+		if ( !file_exists($nebula_theme_json_file) || filemtime($nebula_theme_json_file) > (time()-(60*60*24)) || is_debug() ){
+			$nebula_theme_json = '{
+	"version": "' . nebula_version('full') . '",
+	"details_url": "https://github.com/chrisblakley/Nebula/commits/master",
+	"download_url": "https://github.com/chrisblakley/Nebula/archive/master.zip"
+}';
+
+			file_put_contents($nebula_theme_json_file, $nebula_theme_json);
+		}
+	}
+}
+
 //Control session time (for the "Remember Me" checkbox)
 add_filter('auth_cookie_expiration', 'nebula_session_expire');
 function nebula_session_expire($expirein){

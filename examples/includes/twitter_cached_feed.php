@@ -1,7 +1,7 @@
 <style>
 	.example1 {border: 1px solid #aaa; padding: 10px 15px;}
 	.example2 {border: 1px solid #aaa; padding: 10px 15px;}
-		.example2 li {margin-bottom: 15px;}
+		.example2 li {margin-bottom: 15px; list-style: none;}
 
 	.twitter-user-photo {float: left; margin: 6px 10px 0 0;}
 	.twitter-posted-on {font-size: smaller; color: #888; white-space: nowrap;}
@@ -49,7 +49,6 @@
 			},
 			timeout: 60000
 		});
-
 
 		//Example 2
 		//Generate the markup within a UL to display tweets. This method is good for showing multiple tweets.

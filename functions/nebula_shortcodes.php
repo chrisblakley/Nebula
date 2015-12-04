@@ -377,7 +377,9 @@ function github_shortcode($atts, $content=''){
 	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) );
 
 	if ( !empty($file) ){
-		$file_contents = @file_get_contents($file);
+		WP_Filesystem();
+		global $wp_filesystem;
+		$file_contents = $wp_filesystem->get_contents($file);
 
 		if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
 			echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';

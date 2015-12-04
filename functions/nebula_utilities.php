@@ -1058,14 +1058,16 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 	$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
 	$php_timeline = get_transient('nebula_php_timeline');
 	if ( empty($php_timeline) || is_debug() ){
-		$php_timeline = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$php_timeline = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
+
 		if ( !empty($php_timeline) ){
-			if ( is_writable(get_template_directory()) ){
-				file_put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
-			}
+			$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
 			set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
 		} else {
-			$php_timeline = file_get_contents($php_timeline_json_file);
+			$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file);
 		}
 	}
 	$php_timeline = json_decode($php_timeline);
@@ -1217,12 +1219,17 @@ function nebula_render_scss($specific_scss=null, $child=false){
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
 				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $specific_scss == 'all' ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
 					ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
-					$existing_css_contents = ( file_exists($css_filepath) )? file_get_contents($css_filepath) : '';
+					WP_Filesystem();
+					global $wp_filesystem;
+					$existing_css_contents = ( file_exists($css_filepath) )? $wp_filesystem->get_contents($css_filepath) : '';
+
 					if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
-						$this_scss_contents = file_get_contents($file); //Copy SCSS file contents
+						$this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
+
 						$compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
 						$enhanced_css = nebula_scss_variables($compiled_css); //Compile server-side variables into SCSS
-						file_put_contents($css_filepath, $enhanced_css); //Save the rendered CSS
+
+						$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 					}
 				}
 			}
@@ -1233,10 +1240,14 @@ function nebula_render_scss($specific_scss=null, $child=false){
 		}
 	} else {
 		if ( file_exists($specific_scss) ){ //If $specific_scss is a filepath
-			$scss_contents = file_get_contents($specific_scss); //Copy SCSS file contents
+			WP_Filesystem();
+			global $wp_filesystem;
+			$scss_contents = $wp_filesystem->get_contents($specific_scss);
+
 			$compiled_css = $scss->compile($scss_contents); //Compile the SCSS
 			$enhanced_css = nebula_scss_variables($compiled_css); //Compile server-side variables into SCSS
-			file_put_contents(str_replace('.scss', '.css', $specific_scss), $enhanced_css); //Save the rendered CSS in the same directory
+
+			$wp_filesystem->put_contents(str_replace('.scss', '.css', $specific_scss), $enhanced_css); //Save the rendered CSS in the same directory.
 		} else { //If $scss_file is raw SCSS string
 			$compiled_css = $scss->compile($specific_scss);
 			return nebula_scss_variables($compiled_css); //Return the rendered CSS
@@ -1254,6 +1265,9 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 		$directory_uri = get_template_directory_uri() . "/stylesheets";
 	}
 
+	WP_Filesystem();
+	global $wp_filesystem;
+
 	$file_counter = 0;
 	$partials = array('variables', 'mixins', 'helpers');
 	$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
@@ -1261,7 +1275,7 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 	$dev_scss_file = $directory . '/scss/dev.scss';
 
 	if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
-		file_put_contents($directory . '/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
+		$wp_filesystem->put_contents($directory . '/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
 	}
 	foreach ( $dev_stylesheet_files as $file ){
 		$file_path_info = pathinfo($file);
@@ -1274,14 +1288,17 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 				foreach ( $partials as $partial ){
 					$import_partials .= "@import '" . $partial . "';\r\n";
 				}
-				file_put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
+
+				$wp_filesystem->put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
 			}
 
-			$this_scss_contents = file_get_contents($file); //Copy file contents
+			$this_scss_contents = $wp_filesystem->get_contents($file); //Copy file contents
 			$empty_scss = ( $this_scss_contents == '' )? ' (empty)' : '';
-			$dev_scss_contents = file_get_contents($directory . '/scss/dev.scss');
+			$dev_scss_contents = $wp_filesystem->get_contents($directory . '/scss/dev.scss');
+
 			$dev_scss_contents .= "\r\n/* ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . $directory_uri . "/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
-			file_put_contents($directory . '/scss/dev.scss', $dev_scss_contents);
+
+			$wp_filesystem->put_contents($directory . '/scss/dev.scss', $dev_scss_contents);
 		}
 	}
 	if ( $file_counter > 0 ){
@@ -1327,7 +1344,10 @@ function nebula_sass_color($color='primary', $theme='child'){
 		if ( !file_exists($variables_file) ){
 			return false;
 		}
-		$scss_variables = file_get_contents($variables_file);
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$scss_variables = $wp_filesystem->get_contents($variables_file);
 		set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
 	}
 

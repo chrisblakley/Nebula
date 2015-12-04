@@ -243,6 +243,14 @@ function overflowDetector(){
 function browserInfo(){
 	var browserInfoVal = '';
 
+	formID = jQuery('div.wpcf7').attr('id');
+	if ( typeof nebulaTimings !== 'undefined' && typeof nebulaTimings[formID] !== 'undefined' ){
+		browserInfoVal += 'Field Timings:\n';
+		browserInfoVal += 'http://jsonprettyprint.com/\n';
+		browserInfoVal += JSON.stringify(nebulaTimings[formID], ['lap', 'name', 'duration', 'total']);
+		browserInfoVal += '\n\n';
+	}
+
 	if ( typeof navigator !== 'undefined' ){
 		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
 		browserInfoVal += 'http://udger.com/resources/online-parser\n\n';
@@ -328,7 +336,7 @@ function pageVisibility(){
 			if ( visFirstHidden ){
 				thisPage.document.trigger('nebula_page_visible');
 				thisPage.body.removeClass('page-visibility-hidden');
-				ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'end')), 'Page in background tab for this time');
+				//ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'lap')), 'Page in background tab for this time'); //Uncomment if this timing data is useful. GA limits timings, so disabled in favor of more important default timings.
 			}
 		}
 	}
@@ -610,20 +618,45 @@ function gaEventTracking(){
 	});
 
 	//Contact Form Submissions
-	jQuery('.wpcf7-form *').on('click touch tap focus', function(){
-		nebulaTimer('wpcf7-form', 'start');
+	formStarted = [];
+	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(){
+		formID = jQuery(this).parents('div.wpcf7').attr('id');
+
+		if ( jQuery(this).parents('.wpcf7-form').hasClass('.notable-form') || jQuery(this).parents('.wpcf7-form').find('.notable-form').length ){
+			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
+				ga('set', gaCustomMetrics['notableFormStarts'], 1);
+				formStarted[formID] = true;
+			}
+		}
+
+		nebulaTimer(formID, 'start', jQuery(this).attr('name'));
+
+		//Individual form field timings
+		if ( typeof nebulaTimings[formID].lap[nebulaTimings[formID].laps-1] !== 'undefined' ){
+			ga('send', 'timing', 'Contact', nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].name, Math.round(nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
+		}
 	});
+
+	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('blur', function(){
+		browserInfo();
+	});
+
+
 	//@TODO "Contact" 4: This event doesn't give the best information. It is advised to use the cf7Success() function on successful submission (In the Contact Form 7 Settings for each form).
 	thisPage.document.on('submit', '.wpcf7-form', function(){
+		formID = jQuery(this).parents('div.wpcf7').attr('id');
+
 		if ( jQuery(this).hasClass('.notable-form') || jQuery(this).find('.notable-form').length ){
-			ga('set', gaCustomMetrics['notableFormSubmissions'], 1); //Note: This metric can not account for form validation errors
+			ga('set', gaCustomMetrics['notableFormSubmissions'], 1); //Note: This metric can not account for form validation errors. This metric is technically "Attempts". Use the event for actual success rate.
 		}
 
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
-		ga('send', 'event', 'Contact', 'Submit Attempt', 'The submit button was clicked.'); //This event is required for the notable form metric!
-		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer('wpcf7-form', 'end')), 'Initial form focus until submit');
-		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Intent)',});}
+		ga('send', 'event', 'Contact', 'Submit (Attempt)', 'Form completion time: ' + nebulaTimer(formID, 'end')); //This event is required for the notable form metric!
+		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(formID, 'end')), 'Initial form focus until submit');
+		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
+
+		browserInfo();
 	});
 
 	//Generic Interal Search Tracking
@@ -975,7 +1008,7 @@ function autocompleteSearch(){
 								ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
 								if ( typeof fbq == 'function' ){fbq('track', 'Search', {search_string: request.term});}
 							}, 500, 'autocomplete success buffer');
-							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'Initial search until server results');
+							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'lap')), 'Each search until server results');
 							response(data);
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
 						},
@@ -996,7 +1029,7 @@ function autocompleteSearch(){
 					ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
 					ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
-		            ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From initial search until navigation');
+		            ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From first initial search until navigation');
 		            if ( typeof ui.item.external !== 'undefined' ){
 						window.open(ui.item.link, '_blank');
 		            } else {
@@ -1640,10 +1673,11 @@ function cf7Success(form, thanks){
 	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 
 	if ( form ){
-		ga('send', 'event', 'Contact', 'Submit Success', form);
+		ga('send', 'event', 'Contact', 'Submit (Success)', form);
 	} else {
-		ga('send', 'event', 'Contact', 'Submit Success', '(not set)');
+		ga('send', 'event', 'Contact', 'Submit (Success)', '(not set)');
 	}
+	if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
 
     if ( thanks ){
     	conversionTracker(thanks); //Call conversion tracker if contact is a conversion goal.
@@ -2146,45 +2180,97 @@ function eraseCookie(name){
 	createCookie(name, "", -1);
 }
 
-//Time specific events. Unique ID is required.
-function nebulaTimer(uniqueID, startStop){
-	if ( typeof nebulaTimings === 'undefined' ){
-		nebulaTimings = [];
+//Time specific events. Unique ID is required. Returns time in milliseconds.
+//Data can be accessed outside of this function via nebulaTimings array.
+function nebulaTimer(uniqueID, action, name){
+	if ( typeof window.nebulaTimings === 'undefined' ){
+		window.nebulaTimings = [];
 	}
 
-	if ( !uniqueID ){
+	//uniqueID is required
+	if ( !uniqueID || uniqueID == 'start' || uniqueID == 'lap' || uniqueID == 'end' ){
 		return false;
 	}
 
-	if ( !startStop ){
+	if ( !action ){
 		if ( typeof nebulaTimings[uniqueID] === 'undefined' ){
-			startStop = 'start';
+			action = 'start';
 		} else {
-			startStop = 'end';
+			action = 'lap';
 		}
 	}
 
-	if ( startStop == 'start' && typeof nebulaTimings[uniqueID] !== 'undefined' ){
-		return false; //This timer has already started.
+	//Can not lap or end a timing that has not started.
+	if ( action != 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
+		return false;
 	}
 
-	if ( startStop != 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
-		return false; //Can not end a timing that hasn't started.
+	//Can not modify a timer once it has ended.
+	if ( typeof nebulaTimings[uniqueID] !== 'undefined' && nebulaTimings[uniqueID].total > 0 ){
+		return nebulaTimings[uniqueID].total;
 	}
 
-	if ( startStop != 'start' && typeof nebulaTimings[uniqueID].duration !== 'undefined' ){
-		return nebulaTimings[uniqueID].duration; //This timer has already stopped, returning data.
-	}
+	//Update the timing data!
+	currentDate = new Date();
+	currentTime = currentDate.getTime();
 
-	currentTime = new Date();
-	if ( startStop == 'start' ){
+	if ( action == 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
 		nebulaTimings[uniqueID] = {};
-		nebulaTimings[uniqueID].started = currentTime.getTime();
-		nebulaTimings[uniqueID].duration = 0;
+		nebulaTimings[uniqueID].started = currentTime;
+		nebulaTimings[uniqueID].total = 0;
+		nebulaTimings[uniqueID].lap = [];
+		nebulaTimings[uniqueID].laps = 0;
+
+		thisLap = {
+			name: false,
+			started: currentTime,
+			stopped: 0,
+			duration: 0,
+			progress: 0,
+		};
+		nebulaTimings[uniqueID].lap.push(thisLap);
+
+		if ( typeof name !== 'undefined' ){
+			nebulaTimings[uniqueID].lap[0].name = name;
+		}
 	} else {
-		nebulaTimings[uniqueID].stopped = currentTime.getTime();
-		nebulaTimings[uniqueID].duration = (nebulaTimings[uniqueID].stopped-nebulaTimings[uniqueID].started);
-		return nebulaTimings[uniqueID].duration;
+		lapNumber = nebulaTimings[uniqueID].lap.length;
+
+		//Finalize the times for the previous lap
+		nebulaTimings[uniqueID].lap[lapNumber-1].stopped = currentTime;
+		nebulaTimings[uniqueID].lap[lapNumber-1].duration = currentTime-nebulaTimings[uniqueID].lap[lapNumber-1].started;
+		nebulaTimings[uniqueID].lap[lapNumber-1].progress = currentTime-nebulaTimings[uniqueID].started;
+
+		//An "out" lap means the timing for this lap may not be associated directly with the action (Usually resetting for the next actual timed lap).
+		if ( action == 'start' ){
+			nebulaTimings[uniqueID].lap[lapNumber-1].out = true;
+		} else {
+			nebulaTimings[uniqueID].lap[lapNumber-1].out = false;
+		}
+
+		//Prepare the current lap
+		if ( action != 'end' ){
+			nebulaTimings[uniqueID].laps++;
+			if ( lapNumber > 0 ){
+				nebulaTimings[uniqueID].lap[lapNumber] = {};
+				nebulaTimings[uniqueID].lap[lapNumber].started = nebulaTimings[uniqueID].lap[lapNumber-1].stopped;
+			}
+
+			if ( typeof name !== 'undefined' ){
+				nebulaTimings[uniqueID].lap[lapNumber].name = name;
+			}
+		}
+
+		//Return individual lap times unless 'end' is passed- then return total duration. Note: 'end' can not be updated more than once per uniqueID! Subsequent calls will return the total duration from first call.
+		if ( action == 'end' ){
+			nebulaTimings[uniqueID].stopped = currentTime;
+			nebulaTimings[uniqueID].total = currentTime-nebulaTimings[uniqueID].started;
+			return nebulaTimings[uniqueID].total;
+		} else {
+			if ( !nebulaTimings[uniqueID].lap[lapNumber-1].out ){
+				return nebulaTimings[uniqueID].lap[lapNumber-1].duration;
+			}
+		}
 	}
 }
 
@@ -2434,14 +2520,14 @@ function onPlayerReady(e){
 
 	var id = e['target']['f']['id'];
 	videoData[id] = {
-		platform: 'youtube',
-		player: players.youtube[id],
-		duration: e['target']['B']['duration'],
-		current: e['target']['B']['currentTime'],
-		percent: e['target']['B']['currentTime']/e['target']['B']['duration'],
-		engaged: false,
-		watched: 0,
-		watchedPercent: 0,
+		platform: 'youtube', //The platform the video is hosted using.
+		player: players.youtube[id], //The player ID of this video. Can access the API here.
+		duration: e['target']['B']['duration'], //The total duration of the video. Unit: Seconds
+		current: e['target']['B']['currentTime'], //The current position of the video. Units: Seconds
+		percent: e['target']['B']['currentTime']/e['target']['B']['duration'], //The percent of the current position. Multiply by 100 for actual percent.
+		engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
+		watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
+		watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 	};
 }
 function onPlayerStateChange(e){
@@ -2461,8 +2547,8 @@ function onPlayerStateChange(e){
 		youtubePlayProgress = setInterval(function(){
 			videoData[id].current = e['target']['B']['currentTime'];
 			videoData[id].percent = e['target']['B']['currentTime']/e['target']['B']['duration'];
-			videoData[id].watched = videoData[id].watched+500; //Must match the interval in milliseconds!
-			videoData[id].watchedPercent = (videoData[id].watched/1000)/e['target']['B']['duration'];
+			videoData[id].watched = videoData[id].watched+.5; //Must match the interval in seconds!
+			videoData[id].watchedPercent = (videoData[id].watched)/e['target']['B']['duration'];
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
@@ -2474,20 +2560,20 @@ function onPlayerStateChange(e){
     if ( e.data == YT.PlayerState.ENDED ){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoCompletions'], 1);
-        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
+        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-        ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched, videoTitle); //Note: Amount of time watched (can exceed video duration).
+        ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoTitle); //Amount of time watched (can exceed video duration).
     } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
         clearTimeout(youtubePlayProgress);
-        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
+        ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
         ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
         ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
         ga('send', 'event', 'Videos', 'Pause', videoTitle);
-        ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched, videoTitle); //Note: Amount of time watched, not the timestamp of when paused!
-        ga('send', 'timing', 'Videos', 'Paused (Timestamp)', videoData[id].current*1000, videoTitle); //Note: Amount of time watched, not the timestamp of when paused!
+        ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
+        ga('send', 'timing', 'Videos', 'Paused (Timestamp)', videoData[id].current*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
         pauseFlag = false;
     }
 }
@@ -2546,16 +2632,16 @@ function vimeoControls(){
 
 		if ( typeof videoData[id] === 'undefined' ){
 		    videoData[id] = {
-				platform: 'vimeo',
-				player: players.vimeo[id],
-				duration: data.duration,
-				current: data.seconds,
-				percent: data.percent,
-				engaged: false,
-				seeker: false,
-				seen: [],
-				watchedPercent: 0,
-				watched: 0,
+				platform: 'vimeo', //The platform the video is hosted using.
+				player: players.vimeo[id], //The player ID of this video. Can access the API here. Units: Seconds
+				duration: data.duration, //The total duration of the video. Units: Seconds
+				current: data.seconds, //The current position of the video. Units: Seconds
+				percent: data.percent, //The percent of the current position. Multiply by 100 for actual percent.
+				engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
+				seeker: false, //Whether the viewer has seeked through the video at least once.
+				seen: [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+				watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+				watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 			};
 	    } else {
 			videoData[id].duration = data.duration;
@@ -2581,12 +2667,12 @@ function vimeoControls(){
 	function vimeoPause(id){
 		var videoTitle = id.replace(/-/g, ' ');
 		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
+		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Videos', 'Pause', videoTitle);
-		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Note: Roughly amount of time watched, not the timestamp of when paused!
-		ga('send', 'timing', 'Videos', 'Paused (Timestamp)', Math.round(videoData[id].current*1000), videoTitle); //Note: The timestamp when paused.
+		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
+		ga('send', 'timing', 'Videos', 'Paused (Timestamp)', Math.round(videoData[id].current*1000), videoTitle); //The timestamp when paused.
 	}
 
 	function vimeoSeek(data, id){
@@ -2599,11 +2685,11 @@ function vimeoControls(){
 	function vimeoFinish(id){
 		var videoTitle = id.replace(/-/g, ' ');
 		ga('set', gaCustomMetrics['videoCompletions'], 1);
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].current));
+		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
 		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Note: Roughly amount of time watched (Can not be over 100% for Vimeo)
+		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 	}
 }
 
@@ -2832,14 +2918,14 @@ function mmenus(){
 				}).bind('closing', function(){
 					//When mmenu has started closing
 					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').parents('.mobilenavtrigger').removeClass('active');
-					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'end')), 'From opening mmenu until closing mmenu');
+					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until closing mmenu');
 				}).bind('closed', function(){
 					//After mmenu has finished closing
 				});
 			}
 
 			thisPage.document.on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
-				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'end')), 'From opening mmenu until navigation');
+				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until navigation');
 			});
 
 

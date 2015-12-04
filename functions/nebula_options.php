@@ -101,7 +101,11 @@ function nebula_google_font_option(){
 		$google_font_family = preg_replace('/ /', '+', get_option('nebula_google_font_family', 'Open Sans'));
 		$google_font_weights = preg_replace('/ /', '', get_option('nebula_google_font_weights', '400,800'));
 		$google_font = 'https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights;
-		$google_font_contents = @file_get_contents($google_font); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$google_font_contents = $wp_filesystem->get_contents($google_font); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about get_contents())
+
 		if ( $google_font_contents !== false ){
 			return $google_font;
 		}
@@ -226,6 +230,7 @@ function register_nebula_options(){
 		'nebula_cd_wordcount' => '',
 		'nebula_cd_adblocker' => '',
 		'nebula_cm_notableformviews' => '',
+		'nebula_cm_notableformstarts' => '',
 		'nebula_cm_notableformsubmissions' => '',
 		'nebula_cm_notabledownloads' => '',
 		'nebula_cm_engagedreaders' => '',
@@ -1174,6 +1179,14 @@ function nebula_options_page(){
 					<td>
 						<input class="metric" type="text" name="nebula_cm_notableformviews" value="<?php echo get_option('nebula_cm_notableformviews'); ?>" />
 						<p class="helper"><small>Tracks when a user views a page containing a notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or an element inside it. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Notable Form Starts*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_cm_notableformstarts" value="<?php echo get_option('nebula_cm_notableformstarts'); ?>" />
+						<p class="helper"><small>Tracks when a user begins entering notable form. Note: To use, add the class "notable-form" to either the &lt;form&gt; or an element inside it. <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 

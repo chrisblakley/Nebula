@@ -491,6 +491,11 @@ get_header(); ?>
 							include_once('includes/nebula_is_available.php');
 						} ?>
 
+						<?php if ( is_page(2128) ){ //Nebula Timer
+							include_once('includes/nebula_timer.php');
+						} ?>
+
+
 						<?php
 						/*==========================
 						 Utilities

@@ -183,18 +183,19 @@ function nebula_domain_prevention(){
 	$domain_blacklist_json_file = get_template_directory() . '/includes/data/domain_blacklist.txt';
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
 	if ( empty($domain_blacklist) || is_debug() ){
-		$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about file_get_contents())
+		WP_Filesystem();
+		global $wp_filesystem;
+		$domain_blacklist = $wp_filesystem->get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about get_contents())
+
 		if ( empty($domain_blacklist) ){
-			$domain_blacklist = @file_get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt'); //In case piwik is not available (or changes).
+			$domain_blacklist = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt'); //In case piwik is not available (or changes).
 		}
 
 		if ( !empty($domain_blacklist) ){
-			if ( is_writable(get_template_directory()) ){
-				file_put_contents($domain_blacklist_json_file, $domain_blacklist); //Store it locally.
-			}
+			$wp_filesystem->put_contents($domain_blacklist_json_file, $domain_blacklist);
 			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60); //1 hour cache
 		} else {
-			$domain_blacklist = file_get_contents($domain_blacklist_json_file);
+			$domain_blacklist = $wp_filesystem->get_contents($domain_blacklist_json_file);
 		}
 	}
 

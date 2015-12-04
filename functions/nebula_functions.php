@@ -67,7 +67,7 @@ function nebula_console_warnings($console_warnings=array()){
 //Create/Write a manifest JSON file
 if ( is_writable(get_template_directory()) ){
 	$GLOBALS['manifest_json'] = '/includes/manifest.json';
-	if ( filemtime(get_template_directory() . $GLOBALS['manifest_json']) > (time()-(60*60*24)) || is_debug() ){
+	if ( !file_exists(get_template_directory() . $GLOBALS['manifest_json']) || filemtime(get_template_directory() . $GLOBALS['manifest_json']) > (time()-(60*60*24)) || is_debug() ){
 		add_action('init', 'nebula_manifest_json');
 		add_action('admin_init', 'nebula_manifest_json');
 	}
@@ -662,9 +662,8 @@ function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are 
 add_action('wp_ajax_nebula_twitter_cache', 'nebula_twitter_cache');
 add_action('wp_ajax_nopriv_nebula_twitter_cache', 'nebula_twitter_cache');
 function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_tweets=5, $include_retweets=1){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
-
 	if ( $_POST['data'] ){
+		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 		$username = ( $_POST['data']['username'] )? $_POST['data']['username'] : 'Great_Blakes';
 		$listname = ( $_POST['data']['listname'] )? $_POST['data']['listname'] : null; //Only used for list feeds
 		$number_tweets = ( $_POST['data']['numbertweets'] )? $_POST['data']['numbertweets'] : 5;
@@ -683,13 +682,9 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 
 	$tweets = get_transient('nebula_twitter_' . $username);
 	if ( empty($tweets) || is_debug() ){
-		$context = stream_context_create(array(
-			'http' => array(
-				'method'=>'GET',
-				'header'=>"Authorization: Bearer " . $bearer
-			)
-		));
-		$tweets = file_get_contents($feed, false, $context);
+		$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
+		$response = wp_remote_get($feed, $args);
+		$tweets = $response['body'];
 
 		if ( !$tweets ){
 			echo false;
@@ -1675,7 +1670,11 @@ function nebula_weather($zipcode=null, $data=''){
 	$weather_json = get_transient('nebula_weather_' . $zipcode);
 	if ( empty($weather_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
-		$weather_json = file_get_contents('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json'); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$weather_json = $wp_filesystem->get_contents('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
+
 		set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
 	}
 	$weather_json = json_decode($weather_json);
@@ -1767,7 +1766,10 @@ function vimeo_meta($videoID, $meta=''){
 
 	$vimeo_json = get_transient('nebula_vimeo_' . $videoID);
 	if ( empty($vimeo_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-		$vimeo_json = file_get_contents("http://vimeo.com/api/v2/video/" . $videoID . ".json"); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+		WP_Filesystem();
+		global $wp_filesystem;
+		$vimeo_json = $wp_filesystem->get_contents('http://vimeo.com/api/v2/video/' . $videoID . '.json');
+
 		set_transient('nebula_vimeo_' . $videoID, $vimeo_json, 60*60); //1 hour expiration
 	}
 	$vimeo_json = json_decode($vimeo_json);
@@ -1864,7 +1866,11 @@ function youtube_meta($videoID, $meta=''){
 				return false;
 			}
 		}
-		$youtube_json = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=" . $videoID . "&part=snippet,contentDetails,statistics&key=" . get_option('nebula_google_server_api_key')); //@TODO "Nebula" 0: Use WP_Filesystem methods instead of file_get_contents
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$youtube_json = $wp_filesystem->get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $videoID . '&part=snippet,contentDetails,statistics&key=' . get_option('nebula_google_server_api_key'));
+
 		set_transient('nebula_youtube_' . $videoID, $youtube_json, 60*60); //1 hour expiration
 	}
 	$youtube_json = json_decode($youtube_json);

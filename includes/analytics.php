@@ -53,6 +53,7 @@
 
 		gaCustomMetrics = {
 			notableFormViews: '<?php echo nebula_option('nebula_cm_notableformviews'); //Hit, Integer ?>',
+			notableFormStarts: '<?php echo nebula_option('nebula_cm_notableformstarts'); //Hit, Integer ?>',
 			notableFormSubmissions: '<?php echo nebula_option('nebula_cm_notableformsubmissions'); //Hit, Integer ?>',
 			notableDownloads: '<?php echo nebula_option('nebula_cm_notabledownloads'); //Hit, Integer ?>',
 			engagedReaders: '<?php echo nebula_option('nebula_cm_engagedReaders'); //Hit, Integer ?>',
