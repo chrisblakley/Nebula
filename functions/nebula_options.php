@@ -185,6 +185,7 @@ function register_nebula_options(){
 		'nebula_admin_notices' => 'enabled',
 		'nebula_author_bios' => 'disabled',
 		'nebula_comments' => 'disabled',
+		'nebula_theme_update_notification' => 'enabled',
 		'nebula_wp_core_updates_notify' => 'disabled',
 		'nebula_plugin_update_warning' => 'enabled',
 		'nebula_welcome_panel' => 'enabled',
@@ -730,6 +731,18 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_notices')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Show Nebula-specific admin notices (Note: This does not toggle WordPress core, or plugin, admin notices). <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_theme_update_notification">
+							<option disabled>Default: Enabled</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_theme_update_notification')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_theme_update_notification')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Enable easy updates to the Nebula theme. <strong>Child theme must be activated to work!</strong> <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
