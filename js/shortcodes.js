@@ -25,6 +25,7 @@ jQuery(window).on('load', function(){
 					ed.selection.setContent('[accordion type="single"]<br />[accordion_item title="TITLE_HERE" default="open"]CONTENT_HERE[/accordion_item]<br />[/accordion]');
 				}
 			}),
+/*
 			ed.addButton('nebulabio', {
 				title: 'Insert Bio',
 				image: bloginfo['template_directory'] + '/images/admin/nebulabio.png',
@@ -34,6 +35,7 @@ jQuery(window).on('load', function(){
 					ed.selection.setContent('[bio]');
 				}
 			}),
+*/
 			ed.addButton('nebulabutton', {
 				title: 'Insert Button',
 				image: bloginfo['template_directory'] + '/images/admin/nebulabutton.png',

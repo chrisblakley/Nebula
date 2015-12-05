@@ -277,13 +277,15 @@ function is_dev($strict=false){
 	}
 
 	//Check if the current user's email domain matches any of the dev email domains from Nebula Options
-	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
+	if ( is_user_logged_in() ){
+		$current_user = wp_get_current_user();
+		list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
-	$devEmails = explode(',', get_option('nebula_dev_email_domain'));
-	foreach ( $devEmails as $devEmail ){
-		if ( trim($devEmail) == $current_user_domain ){
-			return true;
+		$devEmails = explode(',', get_option('nebula_dev_email_domain'));
+		foreach ( $devEmails as $devEmail ){
+			if ( trim($devEmail) == $current_user_domain ){
+				return true;
+			}
 		}
 	}
 
@@ -306,14 +308,16 @@ function is_client($strict=false){
 		}
 	}
 
-	//Check if the current user's email domain matches any of the dev email domains from Nebula Options
-	$current_user = wp_get_current_user();
-	list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
+	if ( is_user_logged_in() ){
+		$current_user = wp_get_current_user();
+		list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
-	$clientEmails = explode(',', get_option('nebula_client_email_domain'));
-	foreach ( $clientEmails as $clientEmail ){
-		if ( trim($clientEmail) == $current_user_domain ){
-			return true;
+		//Check if the current user's email domain matches any of the client email domains from Nebula Options
+		$clientEmails = explode(',', get_option('nebula_client_email_domain'));
+		foreach ( $clientEmails as $clientEmail ){
+			if ( trim($clientEmail) == $current_user_domain ){
+				return true;
+			}
 		}
 	}
 

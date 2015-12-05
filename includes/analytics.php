@@ -166,14 +166,13 @@
 				$session_info = ( is_debug() )? 'Dbg.' : '';
 				$session_info .= ( nebula_is_option_enabled('wireframing') )? 'Wr.' : '';
 				if ( is_client() ){
-					$session_info .= 'Cl.';
+					$session_info .= 'cli.';
 				} elseif ( is_dev() ){
-					$session_info .= 'Dv.';
+					$session_info .= 'dev.';
 				}
-				$session_info .= ( is_user_logged_in() )? 'Li.' : '';
-				$session_info .= ( nebula_is_bot() )? 'Bt.' : '';
-
-				echo 'clientinfo.sessionid = new Date().getTime() + ".' . $session_info . '" + Math.random().toString(36).substring(5);';
+				$session_info .= ( is_user_logged_in() )? 'uid' . get_current_user_id() . '.' : '';
+				$session_info .= ( nebula_is_bot() )? 'bot.' : '';
+				echo 'clientinfo.sessionid = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5);';
 				echo 'ga("set", gaCustomDimensions["sessionID"], clientinfo.sessionid);';
 			}
 
