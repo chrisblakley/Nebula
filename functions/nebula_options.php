@@ -222,7 +222,7 @@ function register_nebula_options(){
 		'nebula_cd_sessionid' => '',
 		'nebula_cd_timestamp' => '',
 		'nebula_cd_userid' => '',
-		'nebula_cd_staff' => '',
+		'nebula_cd_role' => '',
 		'nebula_cd_videowatcher' => '',
 		'nebula_cd_eventintent' => '',
 		'nebula_cd_weather' => '',
@@ -1058,10 +1058,10 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
-		        	<th scope="row">&raquo; Staff&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">&raquo; Role&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input class="dimension" type="text" name="nebula_cd_staff" value="<?php echo get_option('nebula_cd_staff'); ?>" />
-						<p class="helper"><small>Sends "Developer" or "Client" for associated users. <em>Note: Session ID does contain this information, but this is explicitly more human readable.</em> <strong>Scope: User</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+						<input class="dimension" type="text" name="nebula_cd_role" value="<?php echo get_option('nebula_cd_role'); ?>" />
+						<p class="helper"><small>Sends the current user's role (as well as staff affiliation if available) for associated users. <em>Note: Session ID does contain this information, but this is explicitly more human readable (and scoped to the user).</em> <strong>Scope: User</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 
@@ -1077,15 +1077,15 @@ function nebula_options_page(){
 		        	<th scope="row">User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_userid" value="<?php echo get_option('nebula_cd_userid'); ?>" />
-						<p class="helper"><small>If allowing visitors to create WordPress accounts, this will send user IDs to Google Analytics. <strong>Scope: User</strong></small></p>
+						<p class="helper"><small>If allowing visitors to sign up to create WordPress accounts, this will send user IDs to Google Analytics. <em>User IDs are also passed in the Session ID, but this scope is tied more specifically to the user (it can often capture data even when they are not currently logged in).</em> <strong>Scope: User</strong></small></p>
 					</td>
 		        </tr>
 
 				<tr class="short" valign="top">
-		        	<th scope="row">&raquo; Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">&raquo; Local Timestamp&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_timestamp" value="<?php echo get_option('nebula_cd_timestamp'); ?>" />
-						<p class="helper"><small>Adds an ISO timestamp (in the user's local time) with timezone offset <em>(Ex: "2015-10-27T17:25:27.466-04:00")</em>. <strong>Scope: Hit</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+						<p class="helper"><small>Adds a timestamp (in the user's local time) with timezone offset <em>(Ex: "1449332547 (2015/12/05 11:22:26.886 UTC-05:00)")</em>. <em>Can be compared to the server time stored in the Session ID.</em> <strong>Scope: Hit</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 

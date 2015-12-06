@@ -123,10 +123,10 @@ jQuery(window).on('resize', function(){
     	if ( !thisPage.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 	    	viewportResized = updateViewportDimensions();
 	    	if ( viewport.width > viewportResized.width ){
-	    		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+	    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	} else if ( viewport.width < viewportResized.width ){
-	    		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+	    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	}
 	    	viewport = updateViewportDimensions();
@@ -170,7 +170,7 @@ function notableDetections(){
 	if ( window != window.parent ){
 		thisPage.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 		}
 		//Break out of the iframe when link is clicked.
@@ -184,7 +184,7 @@ function notableDetections(){
 	//Detect if loaded from the homescreen ("installed" as an app)
 	if ( navigator.standalone || get('hs') ){
 		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string (in manifest) is not working, so this detection method doesn't work.
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
 	}
 }
@@ -322,7 +322,7 @@ function pageVisibility(){
 	function visibilityChangeActions(){
 		if ( document.visibilityState == 'prerender' ){ //Page was prerendered
 			var pageTitle = thisPage.document.attr('title');
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
 			pauseAllVideos(false);
 		}
@@ -383,25 +383,25 @@ function facebookConnect(){
 
 			checkFacebookStatus();
 			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Like');
 			});
 
 			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Unlike');
 			});
 
 			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Share');
 			});
 
 			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Comment');
 			});
@@ -457,7 +457,7 @@ function checkFacebookStatus(){
 					},
 					verified: response.verified,
 				}
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', 'event', 'Social', 'Facebook Connect', nebulaFacebook.id);
 				thisPage.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebulaFacebook.id);
 				thisPage.document.trigger('fbConnected');
@@ -522,13 +522,13 @@ function tweetLinks(tweet){
 
 function googlePlusCallback(jsonParam){
 	if ( jsonParam.state == 'on' ){
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Social', 'Google+ Like');
 	} else if ( jsonParam.state == 'off' ){
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Social', 'Google+ Unlike');
 	} else {
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]');
 	}
 }
@@ -557,7 +557,7 @@ function gaEventTracking(){
 	//thisPage.document.on('mousedown', '.selector', function(e){
 	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 	//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-	//	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+	//	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
@@ -581,7 +581,7 @@ function gaEventTracking(){
 		}
 
 		var destinationURL = jQuery(this).attr('href');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'External Link', linkText, destinationURL);
 	});
 
@@ -592,7 +592,7 @@ function gaEventTracking(){
 		var linkText = jQuery(this).text();
 		var filePath = jQuery(this).attr('href');
 		var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		if ( linkText == '' || linkText.toLowerCase() == 'download' ){
 			ga('send', 'event', 'PDF View', 'File: ' + fileName);
 		} else {
@@ -621,7 +621,7 @@ function gaEventTracking(){
 	//Generic Interal Search Tracking
 	thisPage.document.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
 		if ( typeof fbq == 'function' ){fbq('track', 'Search', {search_string: searchQuery});}
 	});
@@ -632,7 +632,7 @@ function gaEventTracking(){
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
 		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
 	});
@@ -644,7 +644,7 @@ function gaEventTracking(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
 	});
@@ -656,7 +656,7 @@ function gaEventTracking(){
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
 		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
 	});
@@ -664,7 +664,7 @@ function gaEventTracking(){
 	//Non-Linked Click Attempts
 	jQuery('img').on('click tap touch', function(){
 		if ( !jQuery(this).parents('a').length ){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
 		}
 	});
@@ -672,7 +672,7 @@ function gaEventTracking(){
 		if ( e.target != this ){
 			return; //Only continue if the button is clicked, but not the <a> link.
 		}
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		if ( jQuery(this).find('a').is('*') ){
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Button', jQuery(this).find('a').text());
 		} else {
@@ -689,7 +689,7 @@ function gaEventTracking(){
 		var selection = window.getSelection() + '';
 		words = selection.split(' ');
 		wordsLength = words.length;
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
 		//Track Email or Phone copies as contact intent.
 		emailPhone = jQuery.trim(words.join(' '));
@@ -724,7 +724,7 @@ function gaEventTracking(){
 
 	//AJAX Errors
 	thisPage.document.ajaxError(function(e, request, settings){
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
 		ga('send', 'exception', e.result, true);
 	});
@@ -734,7 +734,7 @@ function gaEventTracking(){
 	var afterPrint = function(){
 		if ( printed == 0 ){
 			printed = 1;
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('send', 'event', 'Print', 'Print');
 		}
@@ -812,7 +812,7 @@ function scrollDepth(){
 			readStartTime = currentTime.getTime();
 			timeToScroll = (readStartTime-initialScroll)/1000;
 
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
 			//This next line (event) is the line that alters Bounce Rate.
 			//This line allows bounce rate to be calculated for individual page engagement.
@@ -841,7 +841,7 @@ function scrollDepth(){
 					}
 				}
 
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', 'event', 'Scroll Depth', 'Finished reading', Math.round(readTime) + ' seconds (since reading began)');
 				ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), 'Scrolled from top of entry-content to bottom');
 				endContent = true;
@@ -854,7 +854,7 @@ function scrollDepth(){
 			endTime = currentTime.getTime();
 			totalTime = (endTime-readStartTime)/1000;
 
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime) + ' seconds (since pageload)');
 			ga('send', 'timing', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom');
 			endPage = true;
@@ -940,7 +940,7 @@ function autocompleteSearch(){
 						},
 						success: function(data){
 							ga('set', gaCustomMetrics['autocompleteSearches'], 1);
-							ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							if ( data ){
 								jQuery.each(data, function(index, value){
 									value.label = value.label.replace(/&#038;/g, "\&");
@@ -958,7 +958,7 @@ function autocompleteSearch(){
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
-							ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							debounce(function(){
 								ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
 							}, 500, 'autocomplete error buffer');
@@ -972,7 +972,7 @@ function autocompleteSearch(){
 				},
 				select: function(event, ui){
 					ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
-					ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
 		            ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From first initial search until navigation');
 		            if ( typeof ui.item.external !== 'undefined' ){
@@ -1024,7 +1024,7 @@ function advancedSearchTriggers(){
 		advancedSearchPrep('Typing...');
 		debounce(function(){
 			if ( jQuery('#s').val() ){
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
 			}
 		}, 1500);
@@ -1141,7 +1141,7 @@ function advancedSearchPrep(startingAt, waitingText){
 				error: function(MLHttpRequest, textStatus, errorThrown){
 					jQuery('#advanced-search-results').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
 					haveAllEvents = 0;
-					ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 					ga('send', 'event', 'Error', 'AJAX Error', 'Advanced Search AJAX');
 				},
 				timeout: 60000
@@ -1182,7 +1182,7 @@ function advancedSearch(start, eventObject){
 	} else {
 		advancedSearchIndicator.html('<i class="fa fa-fw fa-times-circle"></i> <strong>No pages found</strong> that match your filters.');
 		if ( jQuery('#s').val() ){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Internal Search', 'Advanced No Results', jQuery('#s').val());
 		}
 		moreEvents(0);
@@ -1459,7 +1459,7 @@ function pageSuggestion(){
 				ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 				ga('set', gaCustomMetrics['pageSuggestionsAccepted'], 1);
 				var suggestedPage = jQuery(this).text();
-				ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage);
 			});
 		}
@@ -1478,7 +1478,7 @@ function trySearch(phrase){
 
 	// Send the request to the custom search API
 	jQuery.getJSON(API_URL, queryParams, function(response){
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		if ( response.items && response.items.length ){
 			ga('set', gaCustomMetrics['pageSuggestions'], 1);
 			ga('send', 'event', 'Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location, {'nonInteraction': 1});
@@ -1535,7 +1535,7 @@ function cf7Functions(){
 		browserInfo();
 
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Attempt)');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Contact', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
 		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
 	});
@@ -1565,7 +1565,7 @@ function cf7Functions(){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
 		}
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Success)');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
 		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + nebulaTimer(e.target.id, 'end') + 'ms)');
 		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
@@ -1720,7 +1720,7 @@ function conditionalJSLoading(){
 		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js').done(function(){
 			bxSlider();
 		}).fail(function(){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
 		});
 		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.css');
@@ -1731,7 +1731,7 @@ function conditionalJSLoading(){
 		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
 			chosenSelectOptions();
 		}).fail(function(){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
 		});
 		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css');
@@ -1747,13 +1747,13 @@ function conditionalJSLoading(){
 			nebulaLoadCSS('https://cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css'); //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
 			dataTablesActions();
         }).fail(function(){
-            ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+            ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
         });
 
 		//Only load Highlight if dataTables table exists.
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
-            ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+            ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-5.closure.js could not be loaded.', {'nonInteraction': 1});
         });
     }
@@ -1774,7 +1774,7 @@ function nebulaLoadCSS(url){
 	    try {
 		    document.createStyleSheet(url);
 	    } catch(e){
-		    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
 	    }
 	} else {
@@ -1874,7 +1874,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 
 						thisPage.document.trigger('nebula_address_selected');
 						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
-						ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 						ga('send', 'event', 'Contact', 'Autocomplete Address', addressComponents.city + ', ' + addressComponents.state.abbreviation + ' ' + addressComponents.zip.code);
 					});
 
@@ -1903,7 +1903,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 		    	} //End Google Maps callback
 		    }); //End Google Maps load
 		}).fail(function(){
-			ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
 		});
 	}
@@ -1965,7 +1965,7 @@ function successCallback(position){
 	thisPage.body.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebulaLocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebulaLocation.accuracy.meters.toFixed(0).replace('.', ''));
 	browserInfo();
 	ga('set', gaCustomDimensions['geolocation'], nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4));
-	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters');
 }
 
@@ -1997,7 +1997,7 @@ function errorCallback(error){
     thisPage.body.addClass('geo-error');
 	browserInfo();
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
-    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
 
@@ -2547,7 +2547,7 @@ function onYouTubeIframeAPIReady(e){
 }
 function onPlayerError(e){
 	var videoTitle = e['target']['B']['videoData']['title'];
-	ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	ga('send', 'event', 'Error', 'Youtube API', videoTitle + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
 }
 function onPlayerReady(e){
@@ -2577,7 +2577,7 @@ function onPlayerStateChange(e){
     if ( e.data == YT.PlayerState.PLAYING ){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
         ga('set', gaCustomDimensions['videoWatcher'], 'Started');
-        ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+        ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Play', videoTitle);
         pauseFlag = true;
 
@@ -2599,7 +2599,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomMetrics['videoCompletions'], 1);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
-        ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+        ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
         ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoTitle); //Amount of time watched (can exceed video duration).
     } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
@@ -2607,7 +2607,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
         ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-        ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+        ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Pause', videoTitle);
         ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
         ga('send', 'timing', 'Videos', 'Paused (Timestamp)', videoData[id].current*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
@@ -2660,7 +2660,7 @@ function vimeoControls(){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
-	    ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+	    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
 	}
 
@@ -2706,7 +2706,7 @@ function vimeoControls(){
 		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Videos', 'Pause', videoTitle);
 		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
 		ga('send', 'timing', 'Videos', 'Paused (Timestamp)', Math.round(videoData[id].current*1000), videoTitle); //The timestamp when paused.
@@ -2724,7 +2724,7 @@ function vimeoControls(){
 		ga('set', gaCustomMetrics['videoCompletions'], 1);
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
-		ga('set', gaCustomDimensions['timestamp'], isoTimestamp());
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 	}

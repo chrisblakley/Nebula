@@ -39,7 +39,7 @@
 			scrollDepth: '<?php echo nebula_option('nebula_cd_scrolldepth'); //Hit ?>',
 			maxScroll: '<?php echo nebula_option('nebula_cd_maxscroll'); //Hit ?>',
 			sessionID: '<?php echo nebula_option('nebula_cd_sessionid'); //Session ?>',
-			staff: '<?php echo nebula_option('nebula_cd_staff'); //User ?>',
+			role: '<?php echo nebula_option('nebula_cd_role'); //User ?>',
 			timestamp: '<?php echo nebula_option('nebula_cd_timestamp'); //Hit ?>',
 			userID: '<?php echo nebula_option('nebula_cd_userid'); //User ?>',
 			videoWatcher: '<?php echo nebula_option('nebula_cd_videowatcher'); //Session ?>',
@@ -48,7 +48,7 @@
 			weather: '<?php echo nebula_option('nebula_cd_weather'); //Hit ?>',
 			temperature: '<?php echo nebula_option('nebula_cd_temperature'); //Hit ?>',
 			publishYear: '<?php echo nebula_option('nebula_cd_publishyear'); //Hit ?>',
-			adBlocker: '<?php echo nebula_option('nebula_adblocker'); //User ?>',
+			adBlocker: '<?php echo nebula_option('nebula_cd_adblocker'); //User ?>',
 		}
 
 		gaCustomMetrics = {
@@ -161,35 +161,9 @@
 				echo 'ga("set", gaCustomDimensions["relativeTime"], "' . ucwords($time_description) . ' (' . $time_range . ')");';
 			}
 
-			//Session ID
-			if ( nebula_option('nebula_cd_sessionid') ){
-				$session_info = ( is_debug() )? 'Dbg.' : '';
-				$session_info .= ( nebula_is_option_enabled('wireframing') )? 'Wr.' : '';
-				if ( is_client() ){
-					$session_info .= 'cli.';
-				} elseif ( is_dev() ){
-					$session_info .= 'dev.';
-				}
-				$session_info .= ( is_user_logged_in() )? 'uid' . get_current_user_id() . '.' : '';
-				$session_info .= ( nebula_is_bot() )? 'bot.' : '';
-				echo 'clientinfo.sessionid = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5);';
-				echo 'ga("set", gaCustomDimensions["sessionID"], clientinfo.sessionid);';
-			}
-
-			//WordPress User ID
-			$current_user = wp_get_current_user();
-			if ( $current_user && nebula_option('nebula_cd_userid') ){
-				echo 'ga("set", gaCustomDimensions["userID"], "' . $current_user->ID . '");';
-			}
-
-			//Staff
-			if ( nebula_option('nebula_cd_staff') ){
-				$skip = false;
-				if ( is_dev() ){
-					$usertype = 'Developer';
-				} elseif ( is_client() ){
-					$usertype = 'Client';
-				} elseif ( is_user_logged_in() ){
+			//Role
+			if ( nebula_option('nebula_cd_role') ){
+				if ( is_user_logged_in() ){
 					$user_info = get_userdata(get_current_user_id());
 					switch ( $user_info->roles[0] ){
 					    case 'administrator':
@@ -206,21 +180,54 @@
 					    	break;
 					    case 'subscriber':
 					    	$usertype = 'Subscriber';
-					    	$skip = true;
 					    	break;
 					    default:
-					    	$usertype = 'Logged-In';
+					    	$usertype = ucwords($user_info->roles[0]);
 					    	break;
 					}
 				}
-				if ( !$skip ){
-					echo 'ga("set", gaCustomDimensions["staff"], "' . $usertype . '");';
+
+				if ( is_dev() ){
+					$staff = ' (Developer)';
+				} elseif ( is_client() ){
+					$staff = ' (Client)';
+				}
+				echo 'ga("set", gaCustomDimensions["role"], "' . $usertype .  $staff . '");';
+			}
+
+			//Session ID
+			if ( nebula_option('nebula_cd_sessionid') ){
+				$session_info = ( is_debug() )? 'dbg.' : '';
+				$session_info .= ( nebula_is_option_enabled('wireframing') )? 'wrf.' : '';
+
+				if ( is_client() ){
+					$session_info .= 'cli.';
+				} elseif ( is_dev() ){
+					$session_info .= 'dev.';
+				}
+
+				if ( is_user_logged_in() ){
+					$user_info = get_userdata(get_current_user_id());
+					$role_abv = substr($user_info->roles[0], 0, 3);
+					$session_info .= 'u_' . get_current_user_id() . '.r_' . $role_abv . '.';
+				}
+
+				$session_info .= ( nebula_is_bot() )? 'bot.' : '';
+				echo 'clientinfo.sessionid = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5);';
+				echo 'ga("set", gaCustomDimensions["sessionID"], clientinfo.sessionid);';
+			}
+
+			//WordPress User ID
+			if ( is_user_logged_in() ){
+				$current_user = wp_get_current_user();
+				if ( $current_user && nebula_option('nebula_cd_userid') ){
+					echo 'ga("set", gaCustomDimensions["userID"], "' . $current_user->ID . '");';
 				}
 			}
 
 			//ISO Timestamp
 			if ( nebula_option('nebula_cd_timestamp') ){
-				echo 'ga("set", gaCustomDimensions["timestamp"], isoTimestamp());';
+				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
 			}
 
 			//Weather Conditions
@@ -258,8 +265,8 @@
 
 		ga('send', 'pageview'); //Sends pageview along with set dimensions.
 
-		//Get time as ISO string with timezone offset
-		function isoTimestamp(){
+		//Get local time string with timezone offset
+		function localTimestamp(){
 			var now = new Date();
 			var tzo = -now.getTimezoneOffset();
 			var dif = ( tzo >= 0 )? '+' : '-';
@@ -267,7 +274,7 @@
 				var norm = Math.abs(Math.floor(num));
 				return (( norm < 10 )? '0' : '') + norm;
 			};
-			return now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + 'T' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + dif + pad(tzo/60) + ':' + pad(tzo%60);
+			return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
 		}
 	</script>
 	<noscript><img src="<?php echo ga_UTM_gif(); //Track users who disable JavaScript. ?>" width="1" height="1" style="display: none;" /></noscript>
