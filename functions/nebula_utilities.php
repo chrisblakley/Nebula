@@ -363,15 +363,20 @@ function ip_matches($ip='72.43.235.106'){
 }
 
 //Check if the current site is live to the public.
-//Note: This checks if the home URL matches any of the valid hostnames- so it will not work for subdomains or subdirectories!
+//Note: This checks if the hostname of the home URL matches any of the valid hostnames.
+//If the Valid Hostnames option is empty, this will return true as it is unknown.
 function is_site_live(){
 	$override = apply_filters('pre_is_site_live', false);
 	if ( $override !== false ){return $override;}
 
-	if ( strpos(get_option('nebula_hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
-		return true;
+	if ( nebula_option('nebula_hostnames') ){
+		if ( strpos(get_option('nebula_hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
+			return true;
+		} else {
+			return false;
+		}
 	} else {
-		return false;
+		return true;
 	}
 }
 

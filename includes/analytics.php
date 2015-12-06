@@ -212,8 +212,12 @@
 					$session_info .= 'u_' . get_current_user_id() . '.r_' . $role_abv . '.';
 				}
 
+				if ( !is_site_live() ){
+					$site_live = '.n';
+				}
+
 				$session_info .= ( nebula_is_bot() )? 'bot.' : '';
-				echo 'clientinfo.sessionid = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5);';
+				echo 'clientinfo.sessionid = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5) + "' . $site_live . '";';
 				echo 'ga("set", gaCustomDimensions["sessionID"], clientinfo.sessionid);';
 			}
 
@@ -225,7 +229,7 @@
 				}
 			}
 
-			//ISO Timestamp
+			//User's local timestamp
 			if ( nebula_option('nebula_cd_timestamp') ){
 				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
 			}
