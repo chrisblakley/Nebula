@@ -1323,8 +1323,8 @@ function nebula_scss_variables($scss){
 	$override = apply_filters('pre_nebula_scss_variables', false, $scss);
 	if ( $override !== false ){return $override;}
 
-	$scss = preg_replace("(<%template_directory%>)", get_template_directory_uri(), $scss); //Template Directory
-	$scss = preg_replace("(<%stylesheet_directory%>)", get_stylesheet_directory_uri(), $scss); //Stylesheet Directory (For child themes)
+	$scss = preg_replace("(<%template_directory_uri%>)", get_template_directory_uri(), $scss); //Template Directory
+	$scss = preg_replace("(<%stylesheet_directory_uri%>)", get_stylesheet_directory_uri(), $scss); //Stylesheet Directory (For child themes)
 	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
 	$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
 	$scss = preg_replace("<%__utm.gif%>", ga_UTM_gif(), $scss); //GA __utm.gif pixel with parameters for tracking via CSS

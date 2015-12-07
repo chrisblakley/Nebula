@@ -184,22 +184,6 @@ function nebula_theme_json(){
 			'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
 		);
 	}
-
-	//Create/Write a theme info file
-	if ( is_writable(get_template_directory()) ){
-		$nebula_theme_json_file = get_template_directory() . '/includes/data/nebula_theme.json';
-		if ( !file_exists($nebula_theme_json_file) || filemtime($nebula_theme_json_file) > (time()-(60*60*24)) || is_debug() ){
-			$nebula_theme_json = '{
-"version": "' . nebula_version('full') . '",
-"details_url": "https://github.com/chrisblakley/Nebula/commits/master",
-"download_url": "https://github.com/chrisblakley/Nebula/archive/master.zip"
-}';
-
-			WP_Filesystem();
-			global $wp_filesystem;
-			$wp_filesystem->put_contents($nebula_theme_json_file, $nebula_theme_json);
-		}
-	}
 }
 
 //Control session time (for the "Remember Me" checkbox)

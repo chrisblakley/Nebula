@@ -1,0 +1,20 @@
+// ===========================
+// Child theme variables
+// ===========================
+
+$primary_color: #0098d7 !default;
+$secondary_color: #95d600 !default;
+$text_color: #444 !default;
+$font_stack: 'Open Sans', sans-serif !default;
+$background_color: #f6f6f6 !default;
+
+$dark_primary_color: darken(desaturate($primary_color, 95%), 20%);
+$dark_secondary_color: darken(desaturate($secondary_color, 95%), 20%);
+
+$danger_color: #ca3838 !default;
+$warning_color: #f6b83f !default;
+$info_color: #00a0d2 !default;
+$success_color: #58c026 !default;
+
+$template_directory: "<%template_directory_uri%>"; //This variable is modified using PHP when compiled. Do not change!
+$stylesheet_directory: "<%stylesheet_directory_uri%>"; //This variable is modified using PHP when compiled. Do not change!

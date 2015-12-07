@@ -209,7 +209,7 @@
 				if ( is_user_logged_in() ){
 					$user_info = get_userdata(get_current_user_id());
 					$role_abv = substr($user_info->roles[0], 0, 3);
-					$session_info .= 'u_' . get_current_user_id() . '.r_' . $role_abv . '.';
+					$session_info .= 'u' . get_current_user_id() . '.r:' . $role_abv . '.';
 				}
 
 				if ( !is_site_live() ){
