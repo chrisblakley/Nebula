@@ -257,7 +257,8 @@
 				jQuery('html').removeClass('ads').addClass('no-ads');
 			}
 			<?php if ( nebula_option('nebula_cd_adblocker') ): ?>
-				ga('set', gaCustomDimensions['adblocker'], adBlockUser);
+
+				ga('set', gaCustomDimensions['adBlocker'], adBlockUser);
 			<?php endif; ?>
 		<?php endif; ?>
 
