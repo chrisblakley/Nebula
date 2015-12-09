@@ -1311,10 +1311,9 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 		}
 	}
 	if ( $file_counter > 0 ){
-		add_action('wp_enqueue_scripts', 'enqueue_dev_styles');
-		function enqueue_dev_styles(){
+		add_action('wp_enqueue_scripts', function(){
 			wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
-		}
+		});
 	}
 }
 

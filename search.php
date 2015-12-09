@@ -34,6 +34,7 @@ get_header(); ?>
 					<h1>No Results Found</h1>
 					<p>Your search for "<?php echo get_search_query(); ?>" returned 0 results.</p>
 					<script>
+						ga('set', gaCustomDimensions['sessionNotes'], sessionNote('No Search Results'));
 						ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': 1});
 					</script>
 				<?php endif; ?>

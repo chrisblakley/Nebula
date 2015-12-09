@@ -54,7 +54,7 @@ jQuery(document).on('ready', function(){
 	nebulaScrollTo();
 
 	//Interaction
-	notableDetections();
+	windowTypeDetection();
 	gaEventTracking();
 	scrollDepth();
 	pageVisibility();
@@ -165,7 +165,7 @@ function globalVariables(){
  ===========================*/
 
 //Detect notable aspects of the way the site was loaded.
-function notableDetections(){
+function windowTypeDetection(){
 	//Detect if loaded in an iframe
 	if ( window != window.parent ){
 		thisPage.html.addClass('in-iframe');
@@ -606,7 +606,7 @@ function gaEventTracking(){
 		var filePath = jQuery(this).attr('href');
 		if ( filePath != '#' ){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-			ga('set', gaCustomMetrics['notableDownload'], 1);
+			ga('set', gaCustomMetrics['notableDownloads'], 1);
 			var linkText = jQuery(this).text();
 			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 			if ( linkText == '' || linkText.toLowerCase() == 'download' ){
@@ -716,15 +716,38 @@ function gaEventTracking(){
 			}
 		} else {
 			if ( copyOver == 0 ){
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Many Copies'));
 				ga('send', 'event', 'Copied Text', '[Copy limit reached]');
 			}
 			copyOver = 1;
 		}
 	});
 
+	//High amount of clicks
+	var clickCount = 0;
+	jQuery(document).on('click', function(e){
+		if ( clickCount == 15 ){
+			var elementID = e.target.id;
+			var elementClasses = e.target.className.replace(/ /g, '.');
+			var elementTag = e.target.tagName.toLowerCase();
+			if ( elementID ){
+				var selector = elementTag + '#' + elementID;
+			} else if ( elementClasses ){
+				var selector = elementTag + '.' + elementClasses;
+			} else {
+				var selector = elementTag;
+			}
+
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('High Clicks'));
+			ga('send', 'event', 'High Click Count', 'Clicked 15 (or more) times.', selector);
+		}
+		clickCount++;
+	});
+
 	//AJAX Errors
 	thisPage.document.ajaxError(function(e, request, settings){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('General AJAX Error'));
 		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
 		ga('send', 'exception', e.result, true);
 	});
@@ -736,6 +759,7 @@ function gaEventTracking(){
 			printed = 1;
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Printed'));
 			ga('send', 'event', 'Print', 'Print');
 		}
 	};
@@ -960,6 +984,7 @@ function autocompleteSearch(){
 						error: function(MLHttpRequest, textStatus, errorThrown){
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							debounce(function(){
+								ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Autocomplete Search Error'));
 								ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
 							}, 500, 'autocomplete error buffer');
 							thisSearchInput.parents('form').removeClass('searching');
@@ -1142,6 +1167,7 @@ function advancedSearchPrep(startingAt, waitingText){
 					jQuery('#advanced-search-results').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
 					haveAllEvents = 0;
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Advanced Search AJAX Error'));
 					ga('send', 'event', 'Error', 'AJAX Error', 'Advanced Search AJAX');
 				},
 				timeout: 60000
@@ -1721,6 +1747,7 @@ function conditionalJSLoading(){
 			bxSlider();
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
 		});
 		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.css');
@@ -1732,6 +1759,7 @@ function conditionalJSLoading(){
 			chosenSelectOptions();
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
 		});
 		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css');
@@ -1748,12 +1776,14 @@ function conditionalJSLoading(){
 			dataTablesActions();
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+            ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
             ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
         });
 
 		//Only load Highlight if dataTables table exists.
         jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+            ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
             ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-5.closure.js could not be loaded.', {'nonInteraction': 1});
         });
     }
@@ -1775,6 +1805,7 @@ function nebulaLoadCSS(url){
 		    document.createStyleSheet(url);
 	    } catch(e){
 		    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		    ga('set', gaCustomDimensions['sessionNotes'], sessionNote('CSS Resource Load Error'));
 		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
 	    }
 	} else {
@@ -1904,6 +1935,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 		    }); //End Google Maps load
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
 		});
 	}
@@ -1998,6 +2030,7 @@ function errorCallback(error){
 	browserInfo();
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
     ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+    ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Geolocation Error'));
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
 
@@ -2040,9 +2073,11 @@ function errorMitigation(){
 			jQuery.get(fallbackPNG).done(function(){
 				thisImage.prop('src', fallbackPNG);
 			}).fail(function() {
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('SVG Migitation Error'));
 				ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
 			});
 		} else {
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Broken Image'));
 			ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
 		}
 	});
@@ -2548,6 +2583,7 @@ function onYouTubeIframeAPIReady(e){
 function onPlayerError(e){
 	var videoTitle = e['target']['B']['videoData']['title'];
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Youtube Error'));
 	ga('send', 'event', 'Error', 'Youtube API', videoTitle + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
 }
 function onPlayerReady(e){
@@ -2610,7 +2646,6 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Pause', videoTitle);
         ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
-        ga('send', 'timing', 'Videos', 'Paused (Timestamp)', videoData[id].current*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
         pauseFlag = false;
     }
 }
@@ -2621,10 +2656,12 @@ function vimeoControls(){
         jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': 1});
 			jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
 				createVimeoPlayers();
 			}).fail(function(){
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 				ga('send', 'event', 'Error', 'JS Error', 'froogaloop (local) could not be loaded.', {'nonInteraction': 1});
 			});
 		});
@@ -2709,7 +2746,6 @@ function vimeoControls(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Videos', 'Pause', videoTitle);
 		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
-		ga('send', 'timing', 'Videos', 'Paused (Timestamp)', Math.round(videoData[id].current*1000), videoTitle); //The timestamp when paused.
 	}
 
 	function vimeoSeek(data, id){

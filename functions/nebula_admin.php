@@ -276,7 +276,26 @@ if ( nebula_option('nebula_admin_notices') ){
 					echo '<div class="nebula-admin-notice error"><p>A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em></p></div>';
 				}
 			}
+		}
 
+		//Check page slug against categories and tags. //@TODO "Nebula" 0: Consider adding other taxonomies here too
+		global $pagenow;
+		if ( $pagenow == 'post.php' || $pagenow == 'edit.php' ){
+			global $post;
+
+			foreach ( get_categories() as $category ){
+			    if ( $category->slug == $post->post_name ){
+			        echo '<div class="nebula-admin-notice error"><p>Page and category slug conflict: <strong>' . $category->slug . '</strong> - Consider changing this page slug.</p></div>';
+			        return false;
+			    }
+			}
+
+			foreach ( get_tags() as $tag ){
+			    if ( $tag->slug == $post->post_name ){
+			        echo '<div class="nebula-admin-notice error"><p>Page and tag slug conflict: <strong>' . $tag->slug . '</strong> - Consider changing this page slug.</p></div>';
+			        return false;
+			    }
+			}
 		}
 	}
 }

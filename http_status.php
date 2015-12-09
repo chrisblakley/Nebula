@@ -199,6 +199,7 @@ get_header(); ?>
 </div><!--/container-->
 
 <script>
+	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP <?php echo $GLOBALS['http']; ?> Page'));
 	if ( document.referrer.length ){
 		ga('send', 'event', 'HTTP Status Page', '<?php echo $http_type . ' ' . $GLOBALS['http'] . ' (' . $http_name . ')'; ?>', 'Referrer: ' + document.referrer, {'nonInteraction': 1});
 	} else {

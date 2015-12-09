@@ -34,11 +34,11 @@
 			geolocation: '<?php echo nebula_option('nebula_cd_geolocation'); //Session ?>',
 			geoAccuracy: '<?php echo nebula_option('nebula_cd_geoaccuracy'); //Session ?>',
 			geoName: '<?php echo nebula_option('nebula_cd_geoname'); //Session ?>',
-			notablebrowser: '<?php echo nebula_option('nebula_cd_notablebrowser'); //Session ?>',
 			relativeTime: '<?php echo nebula_option('nebula_cd_relativetime'); //Hit ?>',
 			scrollDepth: '<?php echo nebula_option('nebula_cd_scrolldepth'); //Hit ?>',
 			maxScroll: '<?php echo nebula_option('nebula_cd_maxscroll'); //Hit ?>',
 			sessionID: '<?php echo nebula_option('nebula_cd_sessionid'); //Session ?>',
+			sessionNotes: '<?php echo nebula_option('nebula_cd_sessionnotes'); //Session ?>',
 			role: '<?php echo nebula_option('nebula_cd_role'); //User ?>',
 			timestamp: '<?php echo nebula_option('nebula_cd_timestamp'); //Hit ?>',
 			userID: '<?php echo nebula_option('nebula_cd_userid'); //User ?>',
@@ -70,6 +70,10 @@
 		<?php do_action('nebula_ga_before_send_pageview'); ?>
 
 		<?php
+			if ( is_404() ){
+				echo 'ga("set", gaCustomDimensions["sessionNotes"], sessionNote("HTTP 404 Page"));';
+			}
+
 			if ( is_single() || is_page() ){
 				global $post;
 
@@ -280,6 +284,43 @@
 				return (( norm < 10 )? '0' : '') + norm;
 			};
 			return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
+		}
+
+		//Add or remove session notes
+		function sessionNote(action, item){
+			if ( typeof sessionStorage['sessionNotes'] == 'undefined' ){
+				sessionNotes = [];
+			} else {
+				var sessionNotes = sessionStorage['sessionNotes'].split(',');
+			}
+
+			if ( action != 'add' && action != 'remove' ){
+				item = action;
+				action = 'add';
+			}
+
+			if ( !item ){
+				return sessionNotes.join(', ');
+			}
+
+			itemIndex = sessionNotes.indexOf(item);
+
+			if ( action == 'add' ){
+				if ( itemIndex < 0 ){
+					sessionNotes.push(item);
+				} else {
+					return sessionNotes.join(', ');
+				}
+			} else {
+				if ( itemIndex >= 0 ){
+					sessionNotes.splice(itemIndex, 1);
+				} else {
+					return sessionNotes.join(', ');
+				}
+			}
+
+			sessionStorage['sessionNotes'] = sessionNotes;
+			return sessionNotes.join(', ');
 		}
 	</script>
 	<noscript><img src="<?php echo ga_UTM_gif(); //Track users who disable JavaScript. ?>" width="1" height="1" style="display: none;" /></noscript>

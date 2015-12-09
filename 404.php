@@ -38,6 +38,7 @@ get_header(); ?>
 </div><!--/container-->
 
 <script>
+	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP 404 Page'));
 	if ( document.referrer.length ) {
 		ga('send', 'event', '404 Not Found', 'Referrer: ' + document.referrer, {'nonInteraction': 1});
 	} else {
