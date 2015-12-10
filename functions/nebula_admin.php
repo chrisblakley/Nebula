@@ -10,10 +10,11 @@ function nebula_clear_transients(){
 	delete_transient('nebula_everything_query');
 }
 
-//Disable auto curly quotes
+//Disable auto curly quotes (smart quotes)
 remove_filter('the_content', 'wptexturize');
 remove_filter('the_excerpt', 'wptexturize');
 remove_filter('comment_text', 'wptexturize');
+add_filter('run_wptexturize', '__return_false');
 
 
 //Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
@@ -34,7 +35,7 @@ function nebula_admin_body_classes($classes){
 }
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-if ( !nebula_is_option_enabled('adminbar') ){
+if ( nebula_option('nebula_admin_bar', 'disabled') ){
 	add_action('wp_print_scripts', 'dequeue_admin_bar', 9999);
 	add_action('wp_print_styles', 'dequeue_admin_bar', 9999);
 	function dequeue_admin_bar(){

@@ -171,6 +171,7 @@ function windowTypeDetection(){
 		thisPage.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Iframe'));
 			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
 		}
 		//Break out of the iframe when link is clicked.
@@ -185,6 +186,7 @@ function windowTypeDetection(){
 	if ( navigator.standalone || get('hs') ){
 		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string (in manifest) is not working, so this detection method doesn't work.
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Homescreen App'));
 		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
 	}
 }
@@ -320,9 +322,11 @@ function pageVisibility(){
 	});
 
 	function visibilityChangeActions(){
+		var pageTitle = thisPage.document.attr('title');
+
 		if ( document.visibilityState == 'prerender' ){ //Page was prerendered
-			var pageTitle = thisPage.document.attr('title');
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Prerendered'));
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
 			pauseAllVideos(false);
 		}
@@ -331,6 +335,8 @@ function pageVisibility(){
 			thisPage.document.trigger('nebula_page_hidden');
 			thisPage.body.addClass('page-visibility-hidden');
 			nebulaTimer('pageVisibilityHidden', 'start');
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Visibility'));
+			ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1});
 			pauseAllVideos(false);
 			visFirstHidden = true;
 		} else { //Page is visible
@@ -338,6 +344,7 @@ function pageVisibility(){
 				thisPage.document.trigger('nebula_page_visible');
 				thisPage.body.removeClass('page-visibility-hidden');
 				//ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'lap')), 'Page in background tab for this time'); //Uncomment if this timing data is useful. GA limits timings, so disabled in favor of more important default timings.
+				ga('send', 'event', 'Page Visibility', 'Visibile', pageTitle, {'nonInteraction': 1});
 			}
 		}
 	}
@@ -384,24 +391,28 @@ function facebookConnect(){
 			checkFacebookStatus();
 			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Liked'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Like');
 			});
 
 			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Unliked'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Unlike');
 			});
 
 			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Share'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Share');
 			});
 
 			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Comment'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': thisPage.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Comment');
 			});
@@ -458,6 +469,7 @@ function checkFacebookStatus(){
 					verified: response.verified,
 				}
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Connect'));
 				ga('send', 'event', 'Social', 'Facebook Connect', nebulaFacebook.id);
 				thisPage.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebulaFacebook.id);
 				thisPage.document.trigger('fbConnected');
@@ -523,9 +535,11 @@ function tweetLinks(tweet){
 function googlePlusCallback(jsonParam){
 	if ( jsonParam.state == 'on' ){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('G+ Liked'));
 		ga('send', 'event', 'Social', 'Google+ Like');
 	} else if ( jsonParam.state == 'off' ){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('G+ Unliked'));
 		ga('send', 'event', 'Social', 'Google+ Unlike');
 	} else {
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -622,6 +636,7 @@ function gaEventTracking(){
 	thisPage.document.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
 		if ( typeof fbq == 'function' ){fbq('track', 'Search', {search_string: searchQuery});}
 	});
@@ -891,9 +906,12 @@ function scrollDepth(){
  ===========================*/
 
 //Search Keywords
-function keywordSearch(container, parent, value){
-	jQuery(container).find("*:not(:Contains(" + value + "))").parents(parent).addClass('filtereditem');
-	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass('filtereditem');
+function keywordSearch(container, parent, value, filteredClass){
+	if ( !filteredClass ){
+		var filteredClass = 'filtereditem';
+	}
+	jQuery(container).find("*:not(:Contains(" + value + "))").parents(parent).addClass(filteredClass);
+	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass(filteredClass);
 }
 
 //Menu Search Replacement
@@ -965,6 +983,7 @@ function autocompleteSearch(){
 						success: function(data){
 							ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 							if ( data ){
 								jQuery.each(data, function(index, value){
 									value.label = value.label.replace(/&#038;/g, "\&");
@@ -972,6 +991,7 @@ function autocompleteSearch(){
 								noSearchResults = '';
 							} else {
 								noSearchResults = ' (No Results)';
+								ga('set', gaCustomDimensions['sessionNotes'], sessionNote('No Search Results'));
 							}
 							debounce(function(){
 								ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
@@ -1050,6 +1070,7 @@ function advancedSearchTriggers(){
 		debounce(function(){
 			if ( jQuery('#s').val() ){
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 				ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
 			}
 		}, 1500);
@@ -1209,6 +1230,7 @@ function advancedSearch(start, eventObject){
 		advancedSearchIndicator.html('<i class="fa fa-fw fa-times-circle"></i> <strong>No pages found</strong> that match your filters.');
 		if ( jQuery('#s').val() ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('No Search Results'));
 			ga('send', 'event', 'Internal Search', 'Advanced No Results', jQuery('#s').val());
 		}
 		moreEvents(0);
@@ -1482,10 +1504,12 @@ function pageSuggestion(){
 
 			thisPage.document.on('mousedown touch tap', 'a.suggestion', function(e){
 				eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+				var suggestedPage = jQuery(this).text();
+
 				ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 				ga('set', gaCustomMetrics['pageSuggestionsAccepted'], 1);
-				var suggestedPage = jQuery(this).text();
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Suggestion Accepted'));
 				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage);
 			});
 		}
@@ -2006,15 +2030,19 @@ function errorCallback(error){
     switch (error.code){
         case error.PERMISSION_DENIED:
             geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
+            var geoErrorNote = 'Denied';
             break;
         case error.POSITION_UNAVAILABLE:
             geolocationErrorMessage = "Data from location services is currently unavailable.";
+            var geoErrorNote = 'Unavailable';
             break;
         case error.TIMEOUT:
             geolocationErrorMessage = "Location could not be determined within a specified timeout period.";
+            var geoErrorNote = 'Timeout';
             break;
         default:
         	geolocationErrorMessage = "An unknown error has occurred.";
+        	var geoErrorNote = 'Error';
             break;
     }
 
@@ -2030,7 +2058,7 @@ function errorCallback(error){
 	browserInfo();
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
     ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-    ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Geolocation Error'));
+    ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Geolocation Error (' + geoErrorNote + ')'));
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
 

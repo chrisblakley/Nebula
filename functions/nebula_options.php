@@ -54,46 +54,6 @@ function nebula_full_address($encoded=false){
 	return $full_address;
 }
 
-//Check if specific Nebula options are enabled
-function nebula_is_option_enabled($option=false){
-	$option = str_replace(array(' ', '_'), '', $option);
-
-	switch ($option){
-		case ('adminbar'):
-			return nebula_option('nebula_admin_bar', 'enabled');
-			break;
-
-		case ('authors'):
-		case ('author'):
-		case ('authorbios'):
-			return !nebula_option('nebula_author_bios', 'disabled');
-			break;
-
-		case ('displayfeatures'):
-		case ('display'):
-			return !nebula_option('nebula_ga_displayfeatures', 'disabled');
-			break;
-
-		case ('linkid'):
-		case ('enhancedlinkattribution'):
-			return !nebula_option('nebula_ga_displayfeatures', 'disabled');
-			break;
-
-		case ('comments'):
-			return !nebula_option('nebula_comments', 'disabled');
-			break;
-
-		case ('wireframing'):
-			return !nebula_option('nebula_wireframing', 'disabled');
-			break;
-
-		default:
-			return false;
-			break;
-	}
-	return false;
-}
-
 function nebula_google_font_option(){
 	if ( get_option('nebula_google_font_url') ){
 		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', get_option('nebula_google_font_url'));
@@ -127,8 +87,8 @@ function nebula_sub_menu(){
 
 //Register each option
 function register_nebula_options(){
+	//Note: 'nebula_initialized' is not registerred here to avoid it being reset. It is created and updated (only once) in /functions/nebula_automation.php
 	$GLOBALS['nebula_options_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
-		'nebula_initialized' => '',
 		'nebula_edited_yet' => 'false',
 		'nebula_domain_expiration_last' => 'Never',
 		'nebula_scss_last_processed' => '0',
@@ -186,14 +146,14 @@ function register_nebula_options(){
 		'nebula_author_bios' => 'disabled',
 		'nebula_comments' => 'disabled',
 		'nebula_theme_update_notification' => 'enabled',
-		'nebula_wp_core_updates_notify' => 'disabled',
+		'nebula_wp_core_updates_notify' => 'enabled',
 		'nebula_plugin_update_warning' => 'enabled',
 		'nebula_welcome_panel' => 'enabled',
 		'nebula_unnecessary_metaboxes' => 'enabled',
 		'nebula_ataglance_metabox' => 'enabled',
 		'nebula_dev_metabox' => 'enabled',
 		'nebula_todo_metabox' => 'enabled',
-		'nebula_domain_exp' => 'enabled',
+		'nebula_domain_exp' => 'disabled',
 		'nebula_scss' => 'enabled',
 		'nebula_minify_css' => 'disabled',
 		'nebula_dev_stylesheets' => 'enabled',
@@ -202,8 +162,9 @@ function register_nebula_options(){
 
 		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
+		'nebula_ga_wpuserid' => 'disabled',
 		'nebula_ga_displayfeatures' => 'disabled',
-		'nebula_ga_linkid' => 'disabled',
+		'nebula_ga_linkid' => 'enabled',
 		'nebula_hostnames' => '',
 		'nebula_google_webmaster_tools_verification' => '',
 		'nebula_facebook_custom_audience_pixel_id' => '',
@@ -288,8 +249,7 @@ function nebula_options_page(){
 	<script>
 		jQuery(document).ready(function(){
 			jQuery('a.help').on('click', function(){
-				jQuery(this).toggleClass('active');
-				jQuery(this).parents('tr').find('p.helper').animate({
+				jQuery(this).toggleClass('active').parents('tr').find('p.helper').animate({
 		        	height: 'toggle',
 					opacity: 'toggle'
 		        }, 250);
@@ -395,21 +355,26 @@ function nebula_options_page(){
 			?>
 
 			<table class="form-table global">
-		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        <tr class="hidden" valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Diagnostics</h3>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Initialized?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" value="<?php echo date('F j, Y @ g:ia', get_option('nebula_initialized')); ?>" disabled/>
-						<p class="helper"><small>Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty. If you are viewing this page, it should probably always be set.</small></p>
+						<p class="helper"><small>Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty. Note: This field is only reading from the DB; it can not be updated from this page!</small></p>
 					</td>
 		        </tr>
-		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Edited Yet?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" name="nebula_edited_yet" value="true" disabled/>
-						<p class="helper"><small>Has any user saved the Nebula Options on this DB yet (Basically, has the save button on this page been clicked)? This will always be "true" on this page (even if it is not saved yet)! Note: This is a string, not a boolean!</small></p>
+						<p class="helper"><small>This is pre-set to "true" so that when the user clicks "Save Changes" it becomes stored in the DB. Therefore, this will always say "true" even if it hasn't actually been saved yet!</small></p>
 					</td>
 		        </tr>
-		        <tr class="hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Last Domain Expiration Alert&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_last')) )? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_last')) : get_option('nebula_domain_expiration_last'); ?>" disabled/>
@@ -891,6 +856,18 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
+		        	<th scope="row">Use WordPress User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_ga_wpuserid">
+							<option disabled>Default: Disabled</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_ga_wpuserid')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_ga_wpuserid')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Use the WordPress User ID as the Google Analytics User ID. This allows more accurate user reporting. <strong>Note:</strong> Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public. <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
 		        	<th scope="row">Display Features&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_ga_displayfeatures">
@@ -898,7 +875,7 @@ function nebula_options_page(){
 							<option value="enabled" <?php selected('enabled', get_option('nebula_ga_displayfeatures')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_ga_displayfeatures')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to enable remarketing integration with Google Analytics. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to enable Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -906,11 +883,11 @@ function nebula_options_page(){
 		        	<th scope="row">Enhanced Link Attribution (Link ID)&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_ga_linkid">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: Enabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_ga_linkid')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_ga_linkid')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Toggle the <a href="https://support.google.com/analytics/answer/2558867?hl=en" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin to enable more accurate In-Page Analytics. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin to improve the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 

@@ -377,10 +377,8 @@ function nebula_initialization_deactivate_widgets(){
 
 function nebula_is_initialized_before(){
 	$nebula_initialized_option = get_option('nebula_initialized');
-	$nebula_initialized_date = date_parse($nebula_initialized_option);
 
-	//If the nebula_initialized option is empty -or- the parsed string error count is greater than 2 (known "errors" are accounted for) -or- the option has a PHP warning or error in it.
-	if ( empty($nebula_initialized_option) || $nebula_initialized_date["error_count"] > 2 || contains(strtolower($nebula_initialized_option), array('fatal', 'warning', 'error', 'on line')) ){
+	if ( empty($nebula_initialized_option) ){
 		return false;
 	}
 

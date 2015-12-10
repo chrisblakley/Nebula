@@ -14,13 +14,13 @@
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 		})(window,document,'script','//www.google-analytics.com/<?php echo ( is_debug(1) )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
 
-		ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'); <?php //Change Tracking ID in Nebula Options or functions.php! ?>
+		ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'<?php echo ( nebula_option('nebula_ga_wpuserid', 'enabled') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>); <?php //Change Tracking ID in Nebula Options or functions.php! ?>
 
-		<?php if ( nebula_is_option_enabled('nebula_ga_displayfeatures') ): ?>
+		<?php if ( nebula_option('nebula_ga_displayfeatures', 'enabled') ): ?>
 			ga('require', 'displayfeatures');
 		<?php endif; ?>
 
-		<?php if ( nebula_is_option_enabled('nebula_ga_linkid') ): ?>
+		<?php if ( nebula_option('nebula_ga_linkid', 'enabled') ): ?>
 			ga('require', 'linkid');
 		<?php endif; ?>
 
@@ -79,7 +79,7 @@
 
 				if ( is_single() ){
 					//Article author
-					if ( nebula_is_option_enabled('authorbios') && nebula_option('nebula_cd_author') ){
+					if ( nebula_option('nebula_author_bios', 'enabled') && nebula_option('nebula_cd_author') ){
 						echo 'ga("set", gaCustomDimensions["author"], "' . get_the_author() . '");';
 					}
 
@@ -202,7 +202,7 @@
 			//Session ID
 			if ( nebula_option('nebula_cd_sessionid') ){
 				$session_info = ( is_debug() )? 'dbg.' : '';
-				$session_info .= ( nebula_is_option_enabled('wireframing') )? 'wrf.' : '';
+				$session_info .= ( nebula_option('nebula_wireframing', 'enabled') )? 'wrf.' : '';
 
 				if ( is_client() ){
 					$session_info .= 'cli.';

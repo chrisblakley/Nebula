@@ -29,12 +29,12 @@ function nebula_console_warnings($console_warnings=array()){
 		if ( get_option('blog_public') == 0 ){
 			if ( is_site_live() ){
 				$console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
-			} elseif ( !nebula_is_option_enabled('wireframing') ){
+			} elseif ( nebula_option('nebula_wireframing', 'disabled') ){
 				$console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
 			}
 		}
 
-		if ( is_site_live() && nebula_is_option_enabled('wireframing') ){
+		if ( is_site_live() && nebula_option('nebula_wireframing', 'enabled') ){
 			$console_warnings[] = array('error', 'Wireframing mode is still enabled!');
 		}
 
@@ -152,7 +152,7 @@ function nebula_the_author($show_authors=1){
 	$override = apply_filters('pre_nebula_the_author', false, $show_authors);
 	if ( $override !== false ){return $override;}
 
-	if ( !is_single() || $show_authors == 0 || !nebula_is_option_enabled('authorbios') ){
+	if ( !is_single() || $show_authors == 0 || nebula_option('nebula_author_bios', 'disabled') ){
 		return get_option('nebula_site_owner', get_bloginfo('name'));
 	} else {
 		return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
@@ -300,7 +300,7 @@ if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_s
 	}
 
 	//Remove comments menu from Admin Bar
-	if ( nebula_is_option_enabled('adminbar') ){
+	if ( nebula_option('nebula_admin_bar', 'enabled') ){
 		add_action('admin_bar_menu', 'nebula_admin_bar_remove_comments', 900);
 		function nebula_admin_bar_remove_comments($wp_admin_bar){
 			$wp_admin_bar->remove_menu('comments');
@@ -406,7 +406,7 @@ function nebula_meta($meta, $secondary=1){
 		}
 		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} elseif ( $meta == 'author' || $meta == 'by' ){
-		if ( nebula_is_option_enabled('authorbios') ){
+		if ( nebula_option('nebula_author_bios', 'enabled') ){
 			echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
 		}
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
@@ -1208,7 +1208,7 @@ function nebula_autocomplete_search(){
 	}
 
 	//Find authors (if author bios are enabled)
-	if ( nebula_is_option_enabled('authorbios') ){
+	if ( nebula_option('nebula_author_bios', 'enabled') ){
 		$authors = get_transient('nebula_autocomplete_authors');
 		if ( empty($authors) || is_debug() ){
 			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
@@ -1281,7 +1281,7 @@ function nebula_advanced_search(){
 
 	foreach ( $posts as $post ){
 		$author = null;
-		if ( nebula_is_option_enabled('authorbios') ){ //&& $post->post_type != 'page' ?
+		if ( nebula_option('nebula_author_bios', 'enabled') ){ //&& $post->post_type != 'page' ?
 			$author = array(
 				'id' => $post->post_author,
 				'name' => array(

@@ -95,7 +95,7 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 		//Frontend
 		//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
 
-		if ( !nebula_is_option_enabled('adminbar') ){
+		if ( nebula_option('nebula_admin_bar', 'disabled') ){
 			remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
 		}
 
@@ -116,7 +116,7 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 }
 
 //Remove the Admin Bar entirely
-if ( !nebula_is_option_enabled('adminbar') ){
+if ( nebula_option('nebula_admin_bar', 'disabled') ){
 	show_admin_bar(false);
 } else {
 	//Remove admin bar logo
