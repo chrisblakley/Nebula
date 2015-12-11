@@ -92,6 +92,8 @@ function register_nebula_options(){
 		'nebula_edited_yet' => 'false',
 		'nebula_domain_expiration_last' => 'Never',
 		'nebula_scss_last_processed' => '0',
+		'nebula_last_version_number' => nebula_version('full'),
+		'nebula_last_version_date' => nebula_version('date'),
 
 		//Metadata Tab
 		'nebula_site_owner' => '',
@@ -363,21 +365,35 @@ function nebula_options_page(){
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Initialized?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo date('F j, Y @ g:ia', get_option('nebula_initialized')); ?>" disabled/>
+						<input type="text" value="<?php echo date('F j, Y @ g:ia', get_option('nebula_initialized')); ?>" />
 						<p class="helper"><small>Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty. Note: This field is only reading from the DB; it can not be updated from this page!</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Edited Yet?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_edited_yet" value="true" disabled/>
+						<input type="text" name="nebula_edited_yet" value="true" />
 						<p class="helper"><small>This is pre-set to "true" so that when the user clicks "Save Changes" it becomes stored in the DB. Therefore, this will always say "true" even if it hasn't actually been saved yet!</small></p>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Last Version Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" name="nebula_last_version_number" value="<?php echo nebula_version('full'); ?>" />
+						<p class="helper"><small>This is the Nebula version number when it was last saved.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Last Version Date&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" name="nebula_last_version_date" value="<?php echo nebula_version('date'); ?>" />
+						<p class="helper"><small>This is the Nebula version date when it was last saved.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Last Domain Expiration Alert&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_last')) )? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_last')) : get_option('nebula_domain_expiration_last'); ?>" disabled/>
+						<input type="text" value="<?php echo ( strtotime(get_option('nebula_domain_expiration_last')) )? date('F j, Y @ g:ia', get_option('nebula_domain_expiration_last')) : get_option('nebula_domain_expiration_last'); ?>" />
 						<p class="helper"><small>Shows the date of the last domain expiration alert that was sent.</small></p>
 					</td>
 		        </tr>

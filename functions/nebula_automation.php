@@ -287,13 +287,10 @@ function nebula_initialization_email_prev_settings(){
 	}
 	$message .= '</table>';
 
-	//Set the content type to text/html for the email. Don't forget to reset after wp_mail()!
-	add_filter('wp_mail_content_type', 'set_html_content_type');
-	function set_html_content_type(){
+	add_filter('wp_mail_content_type', function($content_type){
 		return 'text/html';
-	}
+	});
 	wp_mail($to, $subject, $message, $headers);
-	remove_filter('wp_mail_content_type', 'set_html_content_type'); //This resets the content type for the email.
 
 	set_transient('nebula_email_admin_timeout', 'true', 60*15); //15 minute expiration
 }

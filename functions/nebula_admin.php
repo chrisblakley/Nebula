@@ -187,6 +187,38 @@ function nebula_theme_json(){
 	}
 }
 
+//Send an email to the current user and site admin that Nebula has been updated.
+add_action('upgrader_process_complete', 'nebula_theme_update_email'); //@TODO "Nebula" 0: Is this the correct action?
+function nebula_theme_update_email(){
+	$theme_email_admin_timeout = get_transient('nebula_theme_email_admin_timeout');
+	if ( !empty($theme_email_admin_timeout) ){
+		return;
+	}
+
+	global $wpdb;
+	$current_user = wp_get_current_user();
+	$to = $current_user->user_email;
+	$headers[] = 'From: ' . get_bloginfo('name');
+
+	//Carbon copy the admin if update was done by another user.
+	$admin_user_email = get_option('nebula_contact_email', get_option('admin_email'));
+	if ( $admin_user_email != $current_user->user_email ){
+		$headers[] = 'Cc: ' . $admin_user_email;
+	}
+
+	$subject = 'Nebula parent theme updated to ' . nebula_version('full') . ' for ' . get_bloginfo('name') . '.';
+	$message = '<p>The parent Nebula theme has been updated from version <strong>' . nebula_option('nebula_last_version_number') . ' (Committed on ' . nebula_option('nebula_last_version_date') . ')</strong> to <strong>' . nebula_version('full') . ' (Committed on ' . nebula_version('date') . ')</strong> for ' . get_bloginfo('name') . ' by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+
+	//Set the content type to text/html for the email. Don't forget to reset after wp_mail()!
+	add_filter('wp_mail_content_type', function($content_type){
+		return 'text/html';
+	});
+
+	wp_mail($to, $subject, $message, $headers);
+	set_transient('nebula_theme_email_admin_timeout', 'true', 60*15); //15 minute expiration
+}
+
+
 //Control session time (for the "Remember Me" checkbox)
 add_filter('auth_cookie_expiration', 'nebula_session_expire');
 function nebula_session_expire($expirein){
