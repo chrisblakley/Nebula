@@ -225,6 +225,9 @@ function nebula_initialization($standard=null){
 		nebula_initialization_set_install_date();
 		nebula_render_scss('all'); //Re-render all SCSS files.
 
+		update_option('nebula_last_version_number', nebula_version('full'));
+		update_option('nebula_last_version_date', nebula_version('date'));
+
 		if ( empty($standard) ){ //If AJAX initialization
 			echo '1';
 			exit;
@@ -245,7 +248,7 @@ function nebula_initialization_email_prev_settings(){
 	$headers[] = 'From: ' . get_bloginfo('name');
 
 	//Carbon copy the admin if reset was done by another user.
-	$admin_user_email = get_option('nebula_contact_email', get_option('admin_email'));
+	$admin_user_email = nebula_option('nebula_contact_email', nebula_option('admin_email'));
 	if ( $admin_user_email != $current_user->user_email ){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}

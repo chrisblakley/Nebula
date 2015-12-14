@@ -10,18 +10,6 @@
 
 
 
-
-//@TODO "Nebula" 0: Prevent Wordpress SEO (Yoast) from altering the title on the homepage.
-//This would be moved to header.php once it works...
-if ( !file_exists(WP_PLUGIN_DIR . '/wordpress-seo') || is_front_page() ){
-	//echo '<title>' wp_title('-', true, 'right') . '</title>';
-} else {
-	//echo '<title>' . wp_title('-', true, 'right') . '</title>';
-}
-
-
-
-
 //Display WordPress debug messages for Devs who are admins with ?debug query string is used.
 //It appears WP_DEBUG can only be defined true in wp-config.php
 //When it's true, it can be tested with: if ( WP_DEBUG ) ...

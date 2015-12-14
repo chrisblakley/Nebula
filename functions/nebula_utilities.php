@@ -60,9 +60,10 @@ function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
 
 	//@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
 
+	$domain = nebula_url_components('domain');
 	$cookies = array(
-		'utma' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . mt_rand(1000000000, 9999999999) . '.' . time() . '.' . time() . '.' . time() . '.1', //Domain Hash . Random ID . Time of First Visit . Time of Last Visit . Time of Current Visit . Session Counter ***Absolutely Required***
-		'utmz' => ga_generate_domain_hash(nebula_url_components('domain')) . '.' . time() . '.1.1.', //Campaign Data (Domain Hash . Time . Counter . Counter)
+		'utma' => ga_generate_domain_hash($domain) . '.' . mt_rand(1000000000, 9999999999) . '.' . time() . '.' . time() . '.' . time() . '.1', //Domain Hash . Random ID . Time of First Visit . Time of Last Visit . Time of Current Visit . Session Counter ***Absolutely Required***
+		'utmz' => ga_generate_domain_hash($domain) . '.' . time() . '.1.1.', //Campaign Data (Domain Hash . Time . Counter . Counter)
 		'utmcsr' => '-', //Campaign Source "google"
 		'utmccn' => '-', //Campaign Name "(organic)"
 		'utmcmd' => '-', //Campaign Medium "organic"
@@ -385,7 +386,7 @@ function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an 
 	$override = apply_filters('pre_nebula_requested_url', false, $host);
 	if ( $override !== false ){return $override;}
 
-	$protocol = ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 )? 'https' : 'http';
+	$protocol = ( is_ssl() )? 'https' : 'http';
 	$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
 	return $full_url;
 }

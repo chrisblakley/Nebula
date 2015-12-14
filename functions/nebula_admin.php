@@ -188,10 +188,12 @@ function nebula_theme_json(){
 }
 
 //Send an email to the current user and site admin that Nebula has been updated.
-add_action('upgrader_process_complete', 'nebula_theme_update_email'); //@TODO "Nebula" 0: Is this the correct action?
+add_action('upgrader_process_complete', 'nebula_theme_update_email');
 function nebula_theme_update_email(){
-	$theme_email_admin_timeout = get_transient('nebula_theme_email_admin_timeout');
-	if ( !empty($theme_email_admin_timeout) ){
+	$override = apply_filters('pre_nebula_theme_update_email', false);
+	if ( $override !== false ){return;}
+
+	if ( nebula_option('nebula_last_version_number') == nebula_version('full') ){ //Check if Nebula theme was updated.
 		return;
 	}
 
@@ -201,21 +203,23 @@ function nebula_theme_update_email(){
 	$headers[] = 'From: ' . get_bloginfo('name');
 
 	//Carbon copy the admin if update was done by another user.
-	$admin_user_email = get_option('nebula_contact_email', get_option('admin_email'));
-	if ( $admin_user_email != $current_user->user_email ){
+	$admin_user_email = nebula_option('nebula_contact_email', nebula_option('admin_email'));
+	if ( $admin_user_email && $admin_user_email != $current_user->user_email ){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}
 
 	$subject = 'Nebula parent theme updated to ' . nebula_version('full') . ' for ' . get_bloginfo('name') . '.';
 	$message = '<p>The parent Nebula theme has been updated from version <strong>' . nebula_option('nebula_last_version_number') . ' (Committed on ' . nebula_option('nebula_last_version_date') . ')</strong> to <strong>' . nebula_version('full') . ' (Committed on ' . nebula_version('date') . ')</strong> for ' . get_bloginfo('name') . ' by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
 
-	//Set the content type to text/html for the email. Don't forget to reset after wp_mail()!
+	//Set the content type to text/html for the email.
 	add_filter('wp_mail_content_type', function($content_type){
 		return 'text/html';
 	});
 
 	wp_mail($to, $subject, $message, $headers);
-	set_transient('nebula_theme_email_admin_timeout', 'true', 60*15); //15 minute expiration
+
+	update_option('nebula_last_version_number', nebula_version('full'));
+	update_option('nebula_last_version_date', nebula_version('date'));
 }
 
 
@@ -256,9 +260,9 @@ if ( nebula_option('nebula_admin_notices') ){
 			//Check PHP version
 			$php_version_lifecycle = nebula_php_version_support();
 			if ( $php_version_lifecycle['lifecycle'] == 'security' ){
-				echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong>' . date('F j, Y', $php_version_lifecycle['security']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+				echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong title="In ' . human_time_diff($php_version_lifecycle['security']) . '">' . date('F j, Y', $php_version_lifecycle['security']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 			} elseif ( $php_version_lifecycle['lifecycle'] == 'end' ){
-				echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong>' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+				echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong title="' . human_time_diff($php_version_lifecycle['end']) . ' ago">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 			}
 
 			//Check for hard Debug Mode
@@ -375,7 +379,7 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 		echo '<ul class="serverdetections">';
 			echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
-			echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small>(Committed: ' . nebula_version('date') . ')</small></li>';
+			echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
 			if ( is_child_theme() ){
 				echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
 			}
@@ -571,7 +575,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 			$domain_exp_unix = strtotime(trim($domain_exp_detected));
 			$domain_exp = date("F j, Y", $domain_exp_unix);
 			$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') )? 'color: red; font-weight: bold;' : 'color: inherit;' ;
-			$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') )? ' <small style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
+			$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') )? ' <small title="' . human_time_diff($domain_exp_unix) . '" style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
 			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
 
 			//Registrar
@@ -725,9 +729,9 @@ if ( nebula_option('nebula_dev_metabox') ){
 			function initial_install_date(){
 				$nebula_initialized = get_option('nebula_initialized');
 				if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
-					$install_date = '<strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong> <small>(Nebula Init)</small>';
+					$install_date = '<span title="' . human_time_diff($nebula_initialized) . ' ago"><strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong></span> <small>(Nebula Init)</small>';
 				} else { //Use the last modified time of the admin page itself
-					$install_date = '<strong>' . date("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong> <small>(WP Detect)</small>';
+					$install_date = '<span title="' . human_time_diff(getlastmod()) . ' ago"><strong>' . date("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong></span> <small>(WP Detect)</small>';
 				}
 				return $install_date;
 			}
@@ -770,10 +774,10 @@ if ( nebula_option('nebula_dev_metabox') ){
 				return $latest_file;
 			}
 			$latest_file = nebula_last_modified();
-			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong>' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
+			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong title="' . human_time_diff($latest_file['date']) . ' ago">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
 
 			//SCSS last processed date
-			$scss_last_processed = ( get_option('nebula_scss_last_processed') )? '<strong>' . date("F j, Y", get_option('nebula_scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", get_option('nebula_scss_last_processed')) . '</strong>' : '<strong>Never</strong>';
+			$scss_last_processed = ( get_option('nebula_scss_last_processed') )? '<span title="' . human_time_diff(get_option('nebula_scss_last_processed')) . ' ago"><strong>' . date("F j, Y", get_option('nebula_scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", get_option('nebula_scss_last_processed')) . '</strong></span>' : '<strong>Never</strong>';
 			echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
 
 		echo '</ul>';
