@@ -6,8 +6,9 @@
 			jQuery('.basicvibrate').parents('div').removeClass('primary').addClass('danger');
 		}
 
-		jQuery('.basicvibrate').on('click', function(){
+		jQuery('.basicvibrate').on('click tap touch', function(){
 			nebulaVibrate([150, 150, 150, 150, 75, 75, 150, 150, 150, 150, 450]);
+			nebulaConversion('vibration', 'pattern tested');
 			return false;
 		});
 
@@ -16,6 +17,7 @@
 			thePattern = thePattern.replace(/\s+/g, '');
 			var patternObj = thePattern.split(',');
 			nebulaVibrate(patternObj);
+			nebulaConversion('vibration', 'pattern tested');
 			return false;
 		});
 	});

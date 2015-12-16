@@ -44,6 +44,7 @@ get_header(); ?>
 	} else {
 		ga('send', 'event', '404 Not Found', 'No Referrer (or Unknown)', {'nonInteraction': 1});
 	}
+	nebulaConversion('404', true);
 </script>
 
 <?php get_footer(); ?>

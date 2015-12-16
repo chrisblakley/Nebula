@@ -11,10 +11,11 @@
 			supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.';
 		}
 
-		jQuery('#speakit').on('click', function(){
+		jQuery('#speakit').on('click tap touch', function(){
 			var textToSay = jQuery('#speaktext').val();
 			speak(textToSay);
 			//console.log('sending to speak');
+			nebulaConversion('speech_synthesis', textToSay);
 			return false;
 		});
 

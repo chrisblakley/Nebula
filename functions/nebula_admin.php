@@ -57,9 +57,11 @@ if ( nebula_option('nebula_admin_bar', 'disabled') ){
 		}
 	}
 } else {
-	//Add the current page ID to the Admin Bar
+	//Create custom menus within the WordPress Admin Bar
 	add_action('admin_bar_menu', 'nebula_admin_bar_menus', 800);
 	function nebula_admin_bar_menus($wp_admin_bar){
+		wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
+
 		$node_id = ( is_admin() )? 'view' : 'edit';
 		$new_content_node = $wp_admin_bar->get_node($node_id);
 		if ( $new_content_node ){
@@ -260,7 +262,9 @@ if ( nebula_option('nebula_admin_notices') ){
 			//Check PHP version
 			$php_version_lifecycle = nebula_php_version_support();
 			if ( $php_version_lifecycle['lifecycle'] == 'security' ){
-				echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong title="In ' . human_time_diff($php_version_lifecycle['security']) . '">' . date('F j, Y', $php_version_lifecycle['security']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+				if ( $php_version_lifecycle['end']-time() < 2592000 ){ //1 month
+					echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong title="In ' . human_time_diff($php_version_lifecycle['end']) . '">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+				}
 			} elseif ( $php_version_lifecycle['lifecycle'] == 'end' ){
 				echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong title="' . human_time_diff($php_version_lifecycle['end']) . ' ago">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 			}

@@ -5,14 +5,15 @@
 <script>
 	jQuery(document).on('submit', '#customhostnameregex', function(e){
 		jQuery('i.fa-spinner').removeClass('hidden');
+		nebulaConversion('form', 'Example Regex Generator');
 
 		var hostnameData = [{
 			'hostnames': jQuery('#validhostnames').val().trim(),
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["ajax_url"],
-			//@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
+			url: nebula.site.ajax.url,
+			//@TODO "Nebula" 0: Add nebula.site.ajax.nonce here!
 			data: {
 				action: 'nebula_domain_regex_generator',
 				data: hostnameData,

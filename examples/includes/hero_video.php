@@ -35,6 +35,8 @@
 			jQuery('#herocontent').fadeOut(1000);
 			jQuery('.heroshading').fadeOut(1000);
 			player[0].api("play");
+
+			nebulaConversion('hero_video', 'played');
 			return false;
 		});
 	});

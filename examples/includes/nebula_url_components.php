@@ -41,15 +41,16 @@
 			}];
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["ajax_url"],
+				url: nebula.site.ajax.url,
 				data: {
-					nonce: bloginfo["ajax_nonce"],
+					nonce: nebula.site.ajax.nonce,
 					action: 'nebula_url_components_tester',
 					data: urlData,
 				},
 				success: function(response){
 					jQuery('#testerresults').html(response);
 					jQuery('i.fa-spinner').addClass('hidden');
+					nebulaConversion('nebula_url_components', 'Tested');
 				},
 				error: function(MLHttpRequest, textStatus, errorThrown){
 					jQuery('#testerresults').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);

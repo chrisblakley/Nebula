@@ -17,6 +17,8 @@
 			}
 
 			jQuery('#nested-array').val(converted);
+
+			nebulaConversion('example_polygon_array', 'Generated');
 			return false;
 		});
 

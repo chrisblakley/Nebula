@@ -15,9 +15,9 @@
 		//Fill pre-existing HTML with tweet data. This is good for displaying a single, latest tweet.
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["ajax_url"],
+			url: nebula.site.ajax.url,
 			data: {
-				nonce: bloginfo["ajax_nonce"],
+				nonce: nebula.site.ajax.nonce,
 				action: 'nebula_twitter_cache',
 				data: {
 					'username': 'Great_Blakes',
@@ -35,7 +35,7 @@
 					jQuery('#tweet_user_photo1').attr('href', 'https://twitter.com/' + response[0].user.screen_name).append('<img src="' + response[0].user.profile_image_url_https + '" title="' + response[0].user.description + '" />');
 					jQuery('#tweet_user1').attr('href', 'https://twitter.com/' + response[0].user.screen_name).text('@' + response[0].user.screen_name);
 
-					if ( clientinfo['browser']['name'] == 'Safari' ){
+					if ( nebula.client.browser.name == 'Safari' ){
 						var tweetTime = new Date(response[0].created_at);
 					} else {
 						var tweetTime = new Date(Date.parse(response[0].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
@@ -54,9 +54,9 @@
 		//Generate the markup within a UL to display tweets. This method is good for showing multiple tweets.
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["ajax_url"],
+			url: nebula.site.ajax.url,
 			data: {
-				nonce: bloginfo["ajax_nonce"],
+				nonce: nebula.site.ajax.nonce,
 				action: 'nebula_twitter_cache',
 				data: {
 					'username': 'Great_Blakes',
@@ -73,7 +73,7 @@
 					jQuery.each(response, function(i){
 						//console.debug(response[i]); //Just to show all the data that is available.
 
-						if ( clientinfo['browser']['name'] == 'Safari' ){
+						if ( nebula.site.browser.name == 'Safari' ){
 							var tweetTime = new Date(response[i].created_at);
 						} else {
 							var tweetTime = new Date(Date.parse(response[i].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8

@@ -72,6 +72,7 @@
 		<?php
 			if ( is_404() ){
 				echo 'ga("set", gaCustomDimensions["sessionNotes"], sessionNote("HTTP 404 Page"));';
+				echo 'nebulaConversion("404", true);';
 			}
 
 			if ( is_single() || is_page() ){
@@ -100,7 +101,7 @@
 				} else {
 					$cat_list = 'No Categories';
 				}
-				echo 'clientinfo.categories = "' . $cat_list . '";';
+				echo 'nebula.post.categories = "' . $cat_list . '";';
 				if ( nebula_option('nebula_cd_categories') ){
 					echo 'ga("set", gaCustomDimensions["categories"], "' . $cat_list . '");';
 				}
@@ -116,7 +117,7 @@
 				} else {
 					$tag_list = 'No Tags';
 				}
-				echo 'clientinfo.tags = "' . $tag_list . '";';
+				echo 'nebula.post.tags = "' . $tag_list . '";';
 				if ( nebula_option('nebula_cd_tags') ){
 					echo 'ga("set", gaCustomDimensions["tags"], "' . $tag_list . '");';
 				}
@@ -127,7 +128,7 @@
 					if ( nebula_option('nebula_cm_wordcount') ){
 						echo 'ga("set", gaCustomMetrics["wordCount"], ' . $word_count . ');';
 					}
-					echo 'postinfo.wordcount = ' . $word_count . ';';
+					echo 'nebula.post.wordcount = ' . $word_count . ';';
 					if ( $word_count < 500 ){
 						$word_count_range = '<500 words';
 					} elseif ( $word_count < 1000 ){
@@ -148,10 +149,10 @@
 			//Business Open/Closed
 			if ( business_open() ){
 				$business_open = 'During Business Hours';
-				echo 'clientinfo.businessopen = true;';
+				echo 'nebula.client.businessopen = true;';
 			} else {
 				$business_open = 'Non-Business Hours';
-				echo 'clientinfo.businessopen = false;';
+				echo 'nebula.client.businessopen = false;';
 			}
 			if ( nebula_option('nebula_cd_businesshours') ){
 				echo 'ga("set", gaCustomDimensions["businessHours"], "' . $business_open . '");';
@@ -221,8 +222,8 @@
 				}
 
 				$session_info .= ( nebula_is_bot() )? 'bot.' : '';
-				echo 'clientinfo.sessionid = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5) + "' . $site_live . '";';
-				echo 'ga("set", gaCustomDimensions["sessionID"], clientinfo.sessionid);';
+				echo 'nebula.session.id = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5) + "' . $site_live . '";';
+				echo 'ga("set", gaCustomDimensions["sessionID"], nebula.session.id);';
 			}
 
 			//WordPress User ID
@@ -253,10 +254,10 @@
 
 		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true. Best current synchronous method of ad block detection. ?>
 			adBlockUser = 'Non-Blocker';
-			clientinfo.adblock = false;
+			nebula.client.capabilities.adblock = false;
 			jQuery('html').removeClass('no-ads').addClass('ads');
 			if ( window.adsEnabled === undefined ){
-				clientinfo.adblock = true;
+				nebula.client.capabilities.adblock = true;
 				adBlockUser = 'Ad Blocker';
 				jQuery('html').removeClass('ads').addClass('no-ads');
 			}
@@ -289,38 +290,40 @@
 		//Add or remove session notes
 		function sessionNote(action, item){
 			if ( typeof sessionStorage['sessionNotes'] == 'undefined' ){
-				sessionNotes = [];
+				nebula.session.notes = [];
 			} else {
-				var sessionNotes = sessionStorage['sessionNotes'].split(',');
+				nebula.session.notes = sessionStorage['sessionNotes'].split(',');
 			}
 
-			if ( action != 'add' && action != 'remove' ){
+			if ( action == 'return' ){
+				return nebula.session.notes.join(', ');
+			} else if ( action != 'add' && action != 'remove' ){
 				item = action;
 				action = 'add';
 			}
 
 			if ( !item ){
-				return sessionNotes.join(', ');
+				return nebula.session.notes.join(', ');
 			}
 
-			itemIndex = sessionNotes.indexOf(item);
+			itemIndex = nebula.session.notes.indexOf(item);
 
 			if ( action == 'add' ){
 				if ( itemIndex < 0 ){
-					sessionNotes.push(item);
+					nebula.session.notes.push(item);
 				} else {
-					return sessionNotes.join(', ');
+					return nebula.session.notes.join(', ');
 				}
 			} else {
 				if ( itemIndex >= 0 ){
-					sessionNotes.splice(itemIndex, 1);
+					nebula.session.notes.splice(itemIndex, 1);
 				} else {
-					return sessionNotes.join(', ');
+					return nebula.session.notes.join(', ');
 				}
 			}
 
-			sessionStorage['sessionNotes'] = sessionNotes;
-			return sessionNotes.join(', ');
+			sessionStorage['sessionNotes'] = nebula.session.notes;
+			return nebula.session.notes.join(', ');
 		}
 	</script>
 	<noscript><img src="<?php echo ga_UTM_gif(); //Track users who disable JavaScript. ?>" width="1" height="1" style="display: none;" /></noscript>

@@ -1,15 +1,15 @@
 <script>
 	jQuery(document).ready(function() {
 
-		var connection = window.navigator.connection || window.navigator.mozConnection || null;
+		var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || false;
 
 		console.debug(connection);
+		jQuery('.networkdebug').html(JSON.stringify(connection));
 
-		if ( connection !== null ) {
-			jQuery('.connectiontype').html(connection.type); //Get the connection type
-
-			var speed = connection.downlinkMax || connection.bandwidth; //Get the connection speed in megabits per second (Mbps)
-			jQuery('.connectionspeed').html(type);
+		if ( connection ) {
+			jQuery('.connectiontype').html(connection.type); //Get the connection type (unknown, ethernet, 2G, 3G, 4G, wifi, none)
+			jQuery('.connectionmetered').html(connection.metered);
+			jQuery('.connectionbandwidth').html(connection.bandwidth);
 		} else {
 			jQuery('.networkinfo').html('Your browser does not support the Network Information API.');
 		}
@@ -24,8 +24,10 @@
 		<h2>Network Information</h2>
 		<p class="networkinfo">
 			<strong>Connection Type:</strong> <span class="connectiontype"></span><br />
-			<strong>Connection Speed:</strong> <span class="connectionspeed"></span><br />
+			<strong>Metered?</strong> <span class="connectionmetered"></span><br />
+			<strong>Bandwidth:</strong> <span class="connectionbandwidth"></span><br />
 		</p>
 
+		<p><strong>Debug:</strong> <span class="networkdebug"></span></p>
 	</div><!--/columns-->
 </div><!--/row-->

@@ -8,8 +8,8 @@
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["ajax_url"],
-			//@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
+			url: nebula.site.ajax.url,
+			//@TODO "Nebula" 0: Add nebula.site.ajax.nonce here!
 			data: {
 				action: 'nebula_twitter_bearer_token_generator',
 				data: consumerData,
@@ -21,6 +21,8 @@
 				} else {
 					jQuery('#generatorresults textarea').text(response);
 				}
+
+				nebulaConversion('twitter', 'bearer token');
 
 				jQuery('#generatorresults').removeClass('hidden');
 				jQuery('i.fa-spinner').addClass('hidden');

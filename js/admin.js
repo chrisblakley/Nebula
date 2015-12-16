@@ -6,7 +6,7 @@ jQuery(document).on('ready', function(){
 		throw ' (Manually terminated admin.js)';
 	}
 
-	if ( clientinfo['remote_addr'] == '72.43.235.106' ){
+	if ( nebula.client.remote_addr == '72.43.235.106' ){
 		jQuery('html').addClass('phg');
 	}
 
@@ -101,9 +101,9 @@ jQuery(document).on('ready', function(){
 
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo['ajax_url'],
+				url: nebula.site.ajax.url,
 				data: {
-					nonce: bloginfo["ajax_nonce"],
+					nonce: nebula.site.ajax.nonce,
 					action: "search_theme_files",
 					data: [{
 						"directory": jQuery("select.searchdirectory").val(),
@@ -133,7 +133,7 @@ jQuery(document).on('ready', function(){
 
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/libs/flags.css');
+		nebulaLoadCSS(nebula.site.template_directory + '/stylesheets/libs/flags.css');
 	}
 
 	//Hide TODO files with only hidden items
@@ -186,9 +186,9 @@ jQuery(document).on('ready', function(){
 
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["ajax_url"],
+				url: nebula.site.ajax.url,
 				data: {
-					nonce: bloginfo["ajax_nonce"],
+					nonce: nebula.site.ajax.nonce,
 					action: 'nebula_initialization'
 				},
 				success: function(data){

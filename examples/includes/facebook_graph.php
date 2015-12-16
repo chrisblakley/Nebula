@@ -13,6 +13,7 @@
 		jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
 		jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + nebulaFacebook.name.first + '.');
 		jQuery('.fbpicture').attr('src', nebulaFacebook.image.thumbnail).show();
+		nebulaConversion('facebook', 'connect');
 	});
 
 	jQuery(document).on('fbNotAuthorized', function(){

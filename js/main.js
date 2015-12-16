@@ -13,6 +13,7 @@ jQuery(document).on('ready', function(){
 	}
 
 	globalVariables();
+	initSessionInfo();
 
 	//Social
 	facebookSDK();
@@ -65,7 +66,7 @@ jQuery(document).on('ready', function(){
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
-	if ( !thisPage.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+	if ( !nebula.dom.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 		viewport = updateViewportDimensions();
 	}
 }); //End Document Ready
@@ -84,7 +85,7 @@ jQuery(window).on('load', function(){
 	});
 
 	jQuery('a, li, tr').removeClass('hover');
-	thisPage.html.addClass('loaded');
+	nebula.dom.html.addClass('loaded');
 
 	if ( typeof performance !== 'undefined' ){
 		setTimeout(function(){
@@ -93,13 +94,13 @@ jQuery(window).on('load', function(){
 			ga('send', 'timing', 'Performance Timing', 'Perceived Load', Math.round(perceivedLoad), 'Navigation start to window load');
 			ga('send', 'timing', 'Performance Timing', 'Actual Load', Math.round(actualLoad), 'Server response until window load');
 
-			thisPage.html.addClass('lt-per_' + perceivedLoad + 'ms');
-			thisPage.html.addClass('lt-act_' + actualLoad + 'ms');
-			browserInfo();
+			nebula.dom.html.addClass('lt-per_' + perceivedLoad + 'ms');
+			nebula.dom.html.addClass('lt-act_' + actualLoad + 'ms');
+			debugInfo();
 		}, 0);
 	} else {
-		thisPage.html.addClass('lt_unavailable');
-		browserInfo();
+		nebula.dom.html.addClass('lt_unavailable');
+		debugInfo();
 	}
 
 	setTimeout(function(){
@@ -120,13 +121,15 @@ jQuery(window).on('resize', function(){
 		mobileSearchPlaceholder();
 
     	//Track size change
-    	if ( !thisPage.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
+    	if ( !nebula.dom.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
 	    	viewportResized = updateViewportDimensions();
 	    	if ( viewport.width > viewportResized.width ){
 	    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+	    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
 	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	} else if ( viewport.width < viewportResized.width ){
 	    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+	    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
 	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
 	    	}
 	    	viewport = updateViewportDimensions();
@@ -138,7 +141,7 @@ jQuery(window).on('resize', function(){
 //Cache common selectors and set consistent regex patterns
 function globalVariables(){
 	//Selectors
-	window.thisPage = {
+	nebula.dom = {
 		window: jQuery(window),
 		document: jQuery(document),
 		html: jQuery('html'),
@@ -168,7 +171,7 @@ function globalVariables(){
 function windowTypeDetection(){
 	//Detect if loaded in an iframe
 	if ( window != window.parent ){
-		thisPage.html.addClass('in-iframe');
+		nebula.dom.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') == -1 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Iframe'));
@@ -203,8 +206,8 @@ function updateViewportDimensions(){
 		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
 	}
 
-	var x = thisPage.window.innerWidth || thisPage.document.documentElement.clientWidth || thisPage.body.clientWidth;
-	var y = thisPage.window.innerHeight || thisPage.document.documentElement.clientHeight || thisPage.body.clientHeight;
+	var x = nebula.dom.window.innerWidth || nebula.dom.document.documentElement.clientWidth || nebula.dom.body.clientWidth;
+	var y = nebula.dom.window.innerHeight || nebula.dom.document.documentElement.clientHeight || nebula.dom.body.clientHeight;
 
 	if ( viewportHistory == 0 ){
 		var viewportObject = {
@@ -226,103 +229,134 @@ function updateViewportDimensions(){
 	return viewportObject;
 }
 
-//Sub-menu viewport overflow detector
-function overflowDetector(){
-    jQuery('#primarynav .menu > .menu-item').hover(function(){
-    	var viewportWidth = thisPage.window.width();
-    	var submenuLeft = jQuery(this).offset().left;
-    	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-    	if ( submenuRight > viewportWidth ){
-			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
-    	} else {
-			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
-    	}
-    }, function(){
-	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
-    });
+//Detect user flow around website.
+function initSessionInfo(){
+	if ( typeof sessionStorage['nebulaSession'] === 'undefined' ){
+		nebula.session.referrer = document.referrer;
+		nebula.session.history = [window.location.href];
+	} else {
+		nebula.session = JSON.parse(sessionStorage['nebulaSession']);
+		if ( document.referrer && document.referrer.indexOf(nebula.site.domain) < 0 ){ //If user navigated away and came back.
+			nebula.session.history.push('---Returned from: ' + document.referrer);
+		}
+
+		if ( window.location.href != nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
+			nebula.session.history.push(window.location.href);
+		}
+	}
+	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 }
 
-//Fill browserinfo field with browser information (to send with forms).
-function browserInfo(){
-	var browserInfoVal = '';
+//Fill debugInfo field with browser information (to send with forms).
+function debugInfo(){
+	var debugInfoVal = '';
 
 	formID = jQuery('div.wpcf7').attr('id');
 	if ( typeof nebulaTimings !== 'undefined' && typeof nebulaTimings[formID] !== 'undefined' ){
-		browserInfoVal += 'Field Timings:\n';
-		browserInfoVal += 'http://jsonprettyprint.com/\n';
-		browserInfoVal += JSON.stringify(nebulaTimings[formID], ['lap', 'name', 'duration', 'cumulative', 'total']);
-		browserInfoVal += '\n\n';
+		debugInfoVal += 'Field Timings:\n';
+		debugInfoVal += 'http://jsonprettyprint.com/\n';
+		debugInfoVal += JSON.stringify(nebulaTimings[formID], ['lap', 'name', 'duration', 'cumulative', 'total']);
+		debugInfoVal += '\n\n';
 	}
 
 	if ( typeof navigator !== 'undefined' ){
-		browserInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
-		browserInfoVal += 'http://udger.com/resources/online-parser\n\n';
-	}
-
-	if ( typeof clientinfo !== 'undefined' ){
-		var fullDevice = ( clientinfo.device.full.trim().length )? ' (' + clientinfo.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
-		browserInfoVal += 'Device: ' + clientinfo.device.type + fullDevice + '\n';
-		browserInfoVal += 'Operating System: ' + clientinfo.os.full + '\n';
-		browserInfoVal += 'Browser: ' + clientinfo.browser.full + ' (' + clientinfo.browser.engine + ')\n';
-	}
-
-	browserInfoVal += 'HTML Classes: ' + thisPage.html.attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Body Classes: ' + thisPage.body.attr('class').split(' ').sort().join(', ') + '\n\n';
-	browserInfoVal += 'Viewport Size: ' + thisPage.window.width() + 'px x ' + thisPage.window.height() + 'px ' + '\n\n';
-
-	if ( typeof performance !== 'undefined' ){
-		browserInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
-		var perceivedLoadTime = (performance.timing.loadEventEnd-performance.timing.navigationStart)/1000;
-		var actualLoadTime = (performance.timing.loadEventEnd-performance.timing.responseEnd)/1000;
-		browserInfoVal += 'Perceived Load Time: ' + perceivedLoadTime + 's' + '\n';
-		browserInfoVal += 'Actual Page Load Time: ' + actualLoadTime + 's' + '\n\n';
-		browserInfoVal += 'Referrer: ' + document.referrer + '\n';
+		debugInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
+		debugInfoVal += 'http://udger.com/resources/online-parser\n\n';
 	} else {
-		browserInfoVal += 'Page load time not available.\n\n';
-		browserInfoVal += 'Referrer not available.\n\n';
+		debugInfoVal += 'User Agent: ' + nebula.client.userAgent + '\n';
+		debugInfoVal += 'http://udger.com/resources/online-parser\n\n';
 	}
 
-	if ( typeof adBlockUser !== 'undefined' ){
-		browserInfoVal += 'Ads: ' + adBlockUser + '\n\n';
+	if ( typeof nebula.client !== 'undefined' ){
+		var fullDevice = ( nebula.client.device.full.trim().length )? ' (' + nebula.client.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
+		debugInfoVal += 'Device: ' + nebula.client.device.type + fullDevice + '\n';
+		debugInfoVal += 'Operating System: ' + nebula.client.os.full + '\n';
+		debugInfoVal += 'Browser: ' + nebula.client.browser.full + ' (' + nebula.client.browser.engine + ')\n';
 	}
 
-	if ( typeof window.history !== 'undefined' ){
-		if ( typeof clientinfo.sessionid !== 'undefined' ){
-			browserInfoVal += 'Current Session ID: ' + clientinfo.sessionid + '\n';
-		}
-		browserInfoVal += 'History Depth: ' + window.history.length + '\n';
-	}
+	debugInfoVal += 'HTML Classes: ' + nebula.dom.html.attr('class').split(' ').sort().join(', ') + '\n\n';
+	debugInfoVal += 'Body Classes: ' + nebula.dom.body.attr('class').split(' ').sort().join(', ') + '\n\n';
+	debugInfoVal += 'Viewport Size: ' + nebula.dom.window.width() + 'px x ' + nebula.dom.window.height() + 'px ' + '\n\n';
 
-	if ( typeof clientinfo.businessopen !== 'undefined' ){
-		browserInfoVal += ( clientinfo.businessopen )? 'During Business Hours\n\n' : 'Non-Business Hours\n\n';
-	}
-
-	if ( typeof nebulaLocation !== 'undefined' ){
-		if ( !nebulaLocation.error ){
-			browserInfoVal += 'Geolocation: ' + nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude + '\n';
-			browserInfoVal += 'Accuracy: ' + nebulaLocation.accuracy.meters + ' meters (' + nebulaLocation.accuracy.miles + ' miles)\n';
-			browserInfoVal += 'https://www.google.com/maps/place/' + nebulaLocation.coordinates.latitude + ',' + nebulaLocation.coordinates.longitude + '\n\n';
+	if ( 1==1 ){ //@TODO "Nebula" 0: Only need to run this group once per page.
+		if ( typeof performance !== 'undefined' ){
+			debugInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
+			var perceivedLoadTime = (performance.timing.loadEventEnd-performance.timing.navigationStart)/1000;
+			var actualLoadTime = (performance.timing.loadEventEnd-performance.timing.responseEnd)/1000;
+			debugInfoVal += 'Perceived Load Time: ' + perceivedLoadTime + 's' + '\n';
+			debugInfoVal += 'Actual Page Load Time: ' + actualLoadTime + 's' + '\n\n';
 		} else {
-			browserInfoVal += 'Geolocation Error: ' + nebulaLocation.error.description + '\n\n';
+			debugInfoVal += 'Page load time not available.\n\n';
+		}
+
+		if ( nebula.session.id ){
+			debugInfoVal += 'Current Session ID: ' + nebula.session.id + '\n';
+		}
+		if ( nebula.session.referrer.length ){
+			debugInfoVal += 'Original Referrer: ' + nebula.session.referrer + '\n';
+		} else {
+			debugInfoVal += 'Original Referrer: (Direct or Unknown)\n';
+		}
+
+		if ( typeof window.history !== 'undefined' ){
+			debugInfoVal += 'History Depth: ' + window.history.length + '\n';
+		}
+
+		jQuery.each(nebula.session.history, function(i){
+			if ( nebula.session.history.length > 10 && i < 10 ){
+				return true;
+			}
+			debugInfoVal += (i+1) + '.) ' + nebula.session.history[i] + '\n';
+		});
+		debugInfoVal += '\n';
+
+		if ( typeof sessionStorage['sessionNotes'] !== 'undefined' && sessionStorage['sessionNotes'].length ){
+			debugInfoVal += 'Session Notes: ' + sessionNote('return') + '\n';
+		}
+
+		if ( typeof adBlockUser !== 'undefined' ){
+			debugInfoVal += 'Ads: ' + adBlockUser + '\n';
+		}
+
+		if ( typeof nebula.client.businessopen !== 'undefined' ){
+			debugInfoVal += ( nebula.client.businessopen )? 'During Business Hours\n\n' : 'Non-Business Hours\n\n';
+		}
+
+		debugInfoOnceFlag = true;
+	}
+
+	if ( typeof nebula.user !== 'undefined' ){
+		debugInfoVal += 'User: ';
+		debugInfoVal += JSON.stringify(nebula.user);
+		debugInfoVal += '\n\n';
+	}
+
+	if ( nebula.session.geolocation != '' ){
+		if ( !nebula.session.geolocation.error ){
+			debugInfoVal += 'Geolocation: ' + nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude + '\n';
+			debugInfoVal += 'Accuracy: ' + nebula.session.geolocation.accuracy.meters + ' meters (' + nebula.session.geolocation.accuracy.miles + ' miles)\n';
+			debugInfoVal += 'https://www.google.com/maps/place/' + nebula.session.geolocation.coordinates.latitude + ',' + nebula.session.geolocation.coordinates.longitude + '\n\n';
+		} else {
+			debugInfoVal += 'Geolocation Error: ' + nebula.session.geolocation.error.description + '\n\n';
 		}
 	}
 
-	browserInfoVal += 'IP Address: ' + clientinfo['remote_addr'] + '\n';
-	browserInfoVal += 'http://whatismyipaddress.com/ip/' + clientinfo['remote_addr'];
+	debugInfoVal += 'IP Address: ' + nebula.client.remote_addr + '\n';
+	debugInfoVal += 'http://whatismyipaddress.com/ip/' + nebula.client.remote_addr + '\n\n';
 
-	jQuery('textarea.browserinfo').addClass('hidden').css('display', 'none').val(browserInfoVal);
+	jQuery('textarea.debuginfo').addClass('hidden').css('display', 'none').val(debugInfoVal); //Store the data into the debug textarea
 }
 
 //Page Visibility
 function pageVisibility(){
 	visFirstHidden = false;
 	visibilityChangeActions();
-	thisPage.document.on('visibilitychange', function(){
+	nebula.dom.document.on('visibilitychange', function(){
 		visibilityChangeActions();
 	});
 
 	function visibilityChangeActions(){
-		var pageTitle = thisPage.document.attr('title');
+		var pageTitle = nebula.dom.document.attr('title');
 
 		if ( document.visibilityState == 'prerender' ){ //Page was prerendered
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -332,8 +366,8 @@ function pageVisibility(){
 		}
 
 		if ( getPageVisibility() ){ //Page is hidden
-			thisPage.document.trigger('nebula_page_hidden');
-			thisPage.body.addClass('page-visibility-hidden');
+			nebula.dom.document.trigger('nebula_page_hidden');
+			nebula.dom.body.addClass('page-visibility-hidden');
 			nebulaTimer('pageVisibilityHidden', 'start');
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Visibility'));
 			ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1});
@@ -341,8 +375,8 @@ function pageVisibility(){
 			visFirstHidden = true;
 		} else { //Page is visible
 			if ( visFirstHidden ){
-				thisPage.document.trigger('nebula_page_visible');
-				thisPage.body.removeClass('page-visibility-hidden');
+				nebula.dom.document.trigger('nebula_page_visible');
+				nebula.dom.body.removeClass('page-visibility-hidden');
 				//ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'lap')), 'Page in background tab for this time'); //Uncomment if this timing data is useful. GA limits timings, so disabled in favor of more important default timings.
 				ga('send', 'event', 'Page Visibility', 'Visibile', pageTitle, {'nonInteraction': 1});
 			}
@@ -358,7 +392,21 @@ function pageVisibility(){
 	}
 }
 
-
+//Sub-menu viewport overflow detector
+function overflowDetector(){
+    jQuery('#primarynav .menu > .menu-item').hover(function(){
+    	var viewportWidth = nebula.dom.window.width();
+    	var submenuLeft = jQuery(this).offset().left;
+    	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
+    	if ( submenuRight > viewportWidth ){
+			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
+    	} else {
+			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
+    	}
+    }, function(){
+	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
+    });
+}
 
 
 /*==========================
@@ -379,11 +427,11 @@ function facebookSDK(){
 //Facebook Connect functions
 function facebookConnect(){
 	window.fbConnectFlag = false;
-	if ( nebula_options['facebook_app_id'] ){
+	if ( nebula.site.options.facebook_app_id ){
 		window.fbAsyncInit = function(){
 			FB.init({
-				appId: nebula_options['facebook_app_id'],
-				channelUrl: bloginfo['template_directory'] + '/includes/channel.php',
+				appId: nebula.site.options.facebook_app_id,
+				channelUrl: nebula.site.template_directory + '/includes/channel.php',
 				status: true,
 				xfbml: true
 			});
@@ -392,33 +440,37 @@ function facebookConnect(){
 			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Liked'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': thisPage.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Like');
+				nebulaConversion('facebook', 'like');
 			});
 
 			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Unliked'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': thisPage.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Unlike');
+				nebulaConversion('facebook', 'like', 'remove');
 			});
 
 			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Share'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': thisPage.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Share');
+				nebulaConversion('facebook', 'share');
 			});
 
 			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Comment'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': thisPage.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Comment');
+				nebulaConversion('facebook', 'comment');
 			});
 		};
 
-		thisPage.document.on('click touch tap', '.facebook-connect', function(){
+		nebula.dom.document.on('click touch tap', '.facebook-connect', function(){
 			facebookLoginLogout();
 			return false;
 		});
@@ -429,7 +481,7 @@ function facebookConnect(){
 
 //Connect to Facebook without using Facebook Login button
 function facebookLoginLogout(){
-	if ( !nebulaFacebook.status ){
+	if ( !nebula.user.facebook.status ){
 		FB.login(function(response){
 			checkFacebookStatus();
 		}, {scope:'public_profile,email'});
@@ -444,10 +496,11 @@ function facebookLoginLogout(){
 //Fetch Facebook user information
 function checkFacebookStatus(){
 	FB.getLoginStatus(function(response){
-		nebulaFacebook = {'status': response.status}
-		if ( nebulaFacebook.status == 'connected' ){ //User is logged into Facebook and is connected to this app.
+		nebula.user.facebook = {'status': response.status}
+		if ( nebula.user.facebook.status == 'connected' ){ //User is logged into Facebook and is connected to this app.
 			FB.api('/me', function(response){
-				nebulaFacebook = {
+				//Update the Nebula User Facebook Object
+				nebula.user.facebook = {
 					id: response.id,
 					name: {
 						first: response.first_name,
@@ -468,43 +521,60 @@ function checkFacebookStatus(){
 					},
 					verified: response.verified,
 				}
+				nebulaConversion('facebook', 'connect');
+
+				//Update Nebula User Object
+				nebula.user.name = {
+					first: response.first_name,
+					last: response.last_name,
+					full: response.name,
+				};
+				nebula.user.gender = response.gender;
+				nebula.user.email = response.email;
+				nebula.user.location = {
+					locale: response.locale,
+					timezone: response.timezone,
+				}
+
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Connect'));
-				ga('send', 'event', 'Social', 'Facebook Connect', nebulaFacebook.id);
-				thisPage.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebulaFacebook.id);
-				thisPage.document.trigger('fbConnected');
+				ga('send', 'event', 'Social', 'Facebook Connect', nebula.user.facebook.id);
+				nebula.dom.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebula.user.facebook.id);
+				nebula.dom.document.trigger('fbConnected');
 			});
-		} else if ( nebulaFacebook.status == 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
-			thisPage.body.removeClass('fb-connected').addClass('fb-not_authorized');
-			thisPage.document.trigger('fbNotAuthorized');
+		} else if ( nebula.user.facebook.status == 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
+			nebulaConversion('facebook', 'connect', 'remove');
+			nebula.dom.body.removeClass('fb-connected').addClass('fb-not_authorized');
+			nebula.dom.document.trigger('fbNotAuthorized');
 		} else { //User is not logged into Facebook.
-			thisPage.body.removeClass('fb-connected').addClass('fb-disconnected');
-			thisPage.document.trigger('fbDisconnected');
+			nebulaConversion('facebook', 'connect', 'remove');
+			nebula.dom.body.removeClass('fb-connected').addClass('fb-disconnected');
+			nebula.dom.document.trigger('fbDisconnected');
 		}
 	});
 }
 
 //Fill or clear form inputs with Facebook data
 function prefillFacebookFields(){
-	thisPage.document.on('fbConnected', function(){
+	nebula.dom.document.on('fbConnected', function(){
 		fbConnectFlag = true;
 
 		jQuery('.fb-name, .comment-form-author input, input.name').each(function(){
-			jQuery(this).val(nebulaFacebook.name.full).trigger('keyup');
+			jQuery(this).val(nebula.user.facebook.name.full).trigger('keyup');
 		});
 		jQuery('.fb-first-name, input.first-name').each(function(){
-			jQuery(this).val(nebulaFacebook.name.first).trigger('keyup');
+			jQuery(this).val(nebula.user.facebook.name.first).trigger('keyup');
 		});
 		jQuery('.fb-last-name, input.last-name').each(function(){
-			jQuery(this).val(nebulaFacebook.name.last).trigger('keyup');
+			jQuery(this).val(nebula.user.facebook.name.last).trigger('keyup');
 		});
 		jQuery('.fb-email, .comment-form-email input, .wpcf7-email, input.email').each(function(){
-			jQuery(this).val(nebulaFacebook.email).trigger('keyup');
+			jQuery(this).val(nebula.user.facebook.email).trigger('keyup');
 		});
-		browserInfo();
+		debugInfo();
 	});
 
-	thisPage.document.on('fbNotAuthorized fbDisconnected', function(){
+	nebula.dom.document.on('fbNotAuthorized fbDisconnected', function(){
 		if ( fbConnectFlag ){ //If FB was actually logged in at some point.
 			jQuery('.fb-form-name, .comment-form-author input, .cform7-name, .fb-form-email, .comment-form-email input, input[type="email"]').each(function(){
 				jQuery(this).val('').trigger('keyup');
@@ -534,10 +604,12 @@ function tweetLinks(tweet){
 
 function googlePlusCallback(jsonParam){
 	if ( jsonParam.state == 'on' ){
+		nebulaConversion('google_plus', 'like');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('G+ Liked'));
 		ga('send', 'event', 'Social', 'Google+ Like');
 	} else if ( jsonParam.state == 'off' ){
+		nebulaConversion('google_plus', 'like', 'remove');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('G+ Unliked'));
 		ga('send', 'event', 'Social', 'Google+ Unlike');
@@ -550,7 +622,7 @@ function googlePlusCallback(jsonParam){
 //Social sharing buttons
 function socialSharing(){
     var loc = window.location;
-    var title = thisPage.document.attr('title');
+    var title = nebula.dom.document.attr('title');
     var encloc = encodeURI(loc);
     var enctitle = encodeURI(title);
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank');
@@ -565,10 +637,46 @@ function socialSharing(){
  Analytics Functions
  ===========================*/
 
+//Add data to dynamic conversion object
+function nebulaConversion(category, data, action){
+	if ( !action ){
+		var action = 'add';
+	}
+
+	if ( action == 'remove' ){
+		if ( typeof nebula.user.conversions[category] !== 'undefined' ){
+			jQuery.each(nebula.user.conversions[category], function(i){
+				if ( nebula.user.conversions[category][i] == data ){
+					nebula.user.conversions[category].splice(i, 1);
+				}
+
+				if ( nebula.user.conversions[category].length <= 0 ){
+					delete nebula.user.conversions[category];
+				}
+			});
+		}
+		createCookie('nebulaUser', JSON.stringify(nebula.user));
+	} else {
+		if ( !data ){
+			var data = 'true';
+		}
+
+		nebula.user.conversions = nebula.user.conversions || {};
+		nebula.user.conversions[category] = nebula.user.conversions[category] || [];
+
+		if ( nebula.user.conversions[category].indexOf(data) < 0 ){ //If not already in the array
+			nebula.user.conversions[category].push(data);
+			createCookie('nebulaUser', JSON.stringify(nebula.user));
+		}
+	}
+
+	debugInfo();
+}
+
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
-	//thisPage.document.on('mousedown', '.selector', function(e){
+	//nebula.dom.document.on('mousedown', '.selector', function(e){
 	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 	//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 	//	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -576,7 +684,7 @@ function gaEventTracking(){
 	//});
 
 	//External links
-	thisPage.document.on('mousedown touch tap', "a[rel*='external']", function(e){
+	nebula.dom.document.on('mousedown touch tap', "a[rel*='external']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
@@ -596,31 +704,35 @@ function gaEventTracking(){
 
 		var destinationURL = jQuery(this).attr('href');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('External Link'));
 		ga('send', 'event', 'External Link', linkText, destinationURL);
 	});
 
 	//PDF View/Download
-	thisPage.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
+	nebula.dom.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var linkText = jQuery(this).text();
 		var filePath = jQuery(this).attr('href');
 		var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('PDF View'));
 		if ( linkText == '' || linkText.toLowerCase() == 'download' ){
 			ga('send', 'event', 'PDF View', 'File: ' + fileName);
 		} else {
 			ga('send', 'event', 'PDF View', 'Text: ' + linkText);
 		}
 		if ( typeof fbq == 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
+		nebulaConversion('pdf', fileName);
 	});
 
 	//Notable Downloads
-	thisPage.document.on('mousedown touch tap', ".notable a, a.notable", function(e){
+	nebula.dom.document.on('mousedown touch tap', ".notable a, a.notable", function(e){
 		var filePath = jQuery(this).attr('href');
 		if ( filePath != '#' ){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', gaCustomMetrics['notableDownloads'], 1);
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Notable Download'));
 			var linkText = jQuery(this).text();
 			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 			if ( linkText == '' || linkText.toLowerCase() == 'download' ){
@@ -629,57 +741,66 @@ function gaEventTracking(){
 				ga('send', 'event', 'Notable Download', 'Text: ' + linkText);
 			}
 			if ( typeof fbq == 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
+			nebulaConversion('download', fileName);
 		}
 	});
 
 	//Generic Interal Search Tracking
-	thisPage.document.on('submit', '.search', function(){
+	nebula.dom.document.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
 		if ( typeof fbq == 'function' ){fbq('track', 'Search', {search_string: searchQuery});}
+		nebulaConversion('keywords', searchQuery);
 	});
 
 	//Mailto link tracking
-	thisPage.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
+	nebula.dom.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Mailto'));
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
 		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
+		nebulaConversion('contact', 'Email: ' + emailAddress);
 	});
 
 	//Telephone link tracking
-	thisPage.document.on('mousedown touch tap', 'a[href^="tel"]', function(e){
+	nebula.dom.document.on('mousedown touch tap', 'a[href^="tel"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('tel:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Click-to-Call'));
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
+		nebulaConversion('contact', 'Phone: ' + phoneNumber);
 	});
 
 	//SMS link tracking
-	thisPage.document.on('mousedown touch tap', 'a[href^="sms"]', function(e){
+	nebula.dom.document.on('mousedown touch tap', 'a[href^="sms"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var phoneNumber = jQuery(this).attr('href');
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('SMS'));
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
 		if ( typeof fbq == 'function' ){if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
+		nebulaConversion('contact', 'SMS: ' + phoneNumber);
 	});
 
 	//Non-Linked Click Attempts
 	jQuery('img').on('click tap touch', function(){
 		if ( !jQuery(this).parents('a').length ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Non-Linked Click Attempt'));
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
 		}
 	});
@@ -688,6 +809,7 @@ function gaEventTracking(){
 			return; //Only continue if the button is clicked, but not the <a> link.
 		}
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Non-Linked Click Attempt'));
 		if ( jQuery(this).find('a').is('*') ){
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Button', jQuery(this).find('a').text());
 		} else {
@@ -698,7 +820,7 @@ function gaEventTracking(){
 	//Word copy tracking
 	var copyCount = 0;
 	var copyOver = 0;
-	thisPage.document.on('cut copy', function(){
+	nebula.dom.document.on('cut copy', function(){
 		copyCount++;
 		var words = [];
 		var selection = window.getSelection() + '';
@@ -711,11 +833,15 @@ function gaEventTracking(){
 		if ( regexPattern.email.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Mailto'));
 			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone);
+			nebulaConversion('contact', 'Email (copied): ' + emailPhone);
 		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Click-to-Call'));
 			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone);
+			nebulaConversion('contact', 'Phone (copied): ' + emailPhone);
 		}
 
 		if ( copyCount < 13 ){
@@ -727,6 +853,7 @@ function gaEventTracking(){
 					ga('send', 'event', 'Copied Text', '[0 words]');
 				} else {
 					ga('send', 'event', 'Copied Text', selection);
+					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Copied Text'));
 				}
 			}
 		} else {
@@ -760,7 +887,7 @@ function gaEventTracking(){
 	});
 
 	//AJAX Errors
-	thisPage.document.ajaxError(function(e, request, settings){
+	nebula.dom.document.ajaxError(function(e, request, settings){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('General AJAX Error'));
 		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
@@ -776,6 +903,7 @@ function gaEventTracking(){
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Printed'));
 			ga('send', 'event', 'Print', 'Print');
+			nebulaConversion('print', true);
 		}
 	};
 	if ( window.matchMedia ){
@@ -792,7 +920,7 @@ function gaEventTracking(){
 
 	//Detect clicks on pinned header
 	if ( typeof headroom !== 'undefined' && headroom.classes.pinned && headroom.classes.notTop ){
-		thisPage.document.on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
+		nebula.dom.document.on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
 			ga('send', 'event', 'Pinned Header', 'Click', 'Used pinned header (after scrolling) to navigate');
 		});
 	}
@@ -816,7 +944,7 @@ function scrollDepth(){
 	var beginning = startTime.getTime();
 	var totalTime = 0;
 
-	thisPage.window.on('scroll', function(){
+	nebula.dom.window.on('scroll', function(){
 		if ( !isScroller ){
 			currentTime = new Date();
 			initialScroll = currentTime.getTime();
@@ -827,7 +955,7 @@ function scrollDepth(){
 		}
 
 		//Calculate max scroll percent
-		scrollPercent = Math.round((thisPage.window.scrollTop()/(thisPage.document.height()-thisPage.window.height()))*100);
+		scrollPercent = Math.round((nebula.dom.window.scrollTop()/(nebula.dom.document.height()-nebula.dom.window.height()))*100);
 		if ( scrollPercent > maxScroll ){
 			maxScroll = scrollPercent;
 			ga('set', gaCustomDimensions['maxScroll'], maxScroll + '%'); //Don't send an event here- this is only needed when another event is triggered.
@@ -841,8 +969,8 @@ function scrollDepth(){
 
 	//Check the scroll location
 	function scrollLocation(){
-		viewportBottom = thisPage.window.height()+thisPage.window.scrollTop();
-		documentHeight = thisPage.document.height();
+		viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
+		documentHeight = nebula.dom.document.height();
 
 		//When the user scrolls past the header
 		var becomesReaderAt = ( entryContent.is('*') )? entryContent.offset().top : headerHeight;
@@ -877,6 +1005,7 @@ function scrollDepth(){
 					} else {
 						ga('set', gaCustomMetrics['engagedReaders'], 1);
 						ga('set', gaCustomDimensions['scrollDepth'], 'Reader');
+						nebulaConversion('engaged', nebula.post.title);
 					}
 				}
 
@@ -916,7 +1045,7 @@ function keywordSearch(container, parent, value, filteredClass){
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + bloginfo['home_url'] + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
+	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + nebula.site.home_url + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
 	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
 		jQuery(this).addClass('focus active');
 	});
@@ -946,7 +1075,7 @@ function searchTriggerOnlyChars(e){
 
 //Search autocomplete
 function autocompleteSearch(){
-	thisPage.document.on('blur', ".nebula-search-iconable input", function(){
+	nebula.dom.document.on('blur', ".nebula-search-iconable input", function(){
 		jQuery('.nebula-search-iconable').removeClass('searching').removeClass('autocompleted');
 	});
 
@@ -954,7 +1083,7 @@ function autocompleteSearch(){
 		thisSearchInput = jQuery(this);
 		nebulaTimer('autocompleteSearch', 'start');
 		nebulaTimer('autocompleteResponse', 'start');
-		if ( !thisSearchInput.hasClass('no-autocomplete') && !thisPage.html.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
+		if ( !thisSearchInput.hasClass('no-autocomplete') && !nebula.dom.html.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
 			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && thisSearchInput.val().trim().length >= 2 && searchTriggerOnlyChars(e) ){
 				thisSearchInput.parents('form').addClass('searching');
 				setTimeout(function(){
@@ -974,9 +1103,9 @@ function autocompleteSearch(){
 					jQuery.ajax({
 						dataType: 'json',
 						type: "POST",
-						url: bloginfo["ajax_url"],
+						url: nebula.site.ajax.url,
 						data: {
-							nonce: bloginfo["ajax_nonce"],
+							nonce: nebula.site.ajax.nonce,
 							action: 'nebula_autocomplete_search',
 							data: request,
 						},
@@ -996,6 +1125,7 @@ function autocompleteSearch(){
 							debounce(function(){
 								ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
 								if ( typeof fbq == 'function' ){fbq('track', 'Search', {search_string: request.term});}
+								nebulaConversion('keywords', request.term);
 							}, 500, 'autocomplete success buffer');
 							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'lap')), 'Each search until server results');
 							response(data);
@@ -1072,11 +1202,12 @@ function advancedSearchTriggers(){
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 				ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
+				nebulaConversion('keywords', jQuery('#s').val());
 			}
 		}, 1500);
 	});
 
-	thisPage.document.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
+	nebula.dom.document.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
 		advancedSearchPrep();
 		if ( jQuery('#advanced-search-date-start') ){
 			jQuery('#date-end-con').removeClass('hidden');
@@ -1175,9 +1306,9 @@ function advancedSearchPrep(startingAt, waitingText){
 			advancedSearchIndicator.html('<i class="fa fa-fw fa-spin fa-spinner"></i> Loading posts...');
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["ajax_url"],
+				url: nebula.site.ajax.url,
 				data: {
-					nonce: bloginfo["ajax_nonce"],
+					nonce: nebula.site.ajax.nonce,
 					action: 'nebula_advanced_search',
 				},
 				success: function(response){
@@ -1385,7 +1516,7 @@ function wpSearchInput(){
 
 //Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
-	if ( !thisPage.html.hasClass('lte-ie8') ){
+	if ( !nebula.dom.html.hasClass('lte-ie8') ){
 		var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
 		viewport = updateViewportDimensions();
 		if ( viewport.width <= 410 ){
@@ -1399,7 +1530,7 @@ function mobileSearchPlaceholder(){
 
 //Search Validator
 function searchValidator(){
-	if ( !thisPage.html.hasClass('lte-ie8') ){
+	if ( !nebula.dom.html.hasClass('lte-ie8') ){
 		jQuery('.lt-ie9 form.search .btn.submit').val('Search');
 		jQuery('.input.search').each(function(){
 			if ( jQuery(this).val() == '' || jQuery(this).val().trim().length === 0 ){
@@ -1481,7 +1612,7 @@ function singleResultDrawer(){
 		jQuery('#searchform input#s').val(theSearchTerm);
 	}
 
-	thisPage.document.on('click touch tap', '.headerdrawer .close', function(){
+	nebula.dom.document.on('click touch tap', '.headerdrawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
 		jQuery('.headerdrawercon').slideUp();
@@ -1491,8 +1622,8 @@ function singleResultDrawer(){
 
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 function pageSuggestion(){
-	if ( thisPage.body.hasClass('search-no-results') || thisPage.body.hasClass('error404') ){
-		if ( nebula_options["nebula_cse_id"] != '' && nebula_options["nebula_google_browser_api_key"] != '' ){
+	if ( nebula.dom.body.hasClass('search-no-results') || nebula.dom.body.hasClass('error404') ){
+		if ( nebula.site.options.nebula_cse_id != '' && nebula.site.options.nebula_google_browser_api_key != '' ){
 			if ( get().length ){
 				var queryStrings = get();
 			} else {
@@ -1502,7 +1633,7 @@ function pageSuggestion(){
 			var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
 			trySearch(phrase);
 
-			thisPage.document.on('mousedown touch tap', 'a.suggestion', function(e){
+			nebula.dom.document.on('mousedown touch tap', 'a.suggestion', function(e){
 				eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 				var suggestedPage = jQuery(this).text();
 
@@ -1518,8 +1649,8 @@ function pageSuggestion(){
 
 function trySearch(phrase){
 	var queryParams = {
-		cx: nebula_options["nebula_cse_id"],
-		key: nebula_options["nebula_google_browser_api_key"],
+		cx: nebula.site.options.nebula_cse_id,
+		key: nebula.site.options.nebula_google_browser_api_key,
 		num: 10,
 		q: phrase,
 		alt: 'JSON'
@@ -1567,6 +1698,7 @@ function cf7Functions(){
 		}
 
 		nebulaTimer(formID, 'start', jQuery(this).attr('name'));
+		nebulaConversion('abandoned_form', 'Form ID: ' + formID);
 
 		//Individual form field timings
 		if ( typeof nebulaTimings[formID].lap[nebulaTimings[formID].laps-1] !== 'undefined' ){
@@ -1575,14 +1707,14 @@ function cf7Functions(){
 	});
 
 	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('blur', function(){
-		browserInfo();
+		debugInfo();
 	});
 
 	//CF7 Submit (CF7 AJAX response after any submit attempt)
-	thisPage.document.on('wpcf7:submit', function(e){
-		//@TODO "Nebula" 0: This is still called after data is already pulled (just like a regular 'submit' listener), so this browserInfo does not make it into the email... Until CF7 updates, this is how it will be.
+	nebula.dom.document.on('wpcf7:submit', function(e){
+		//@TODO "Nebula" 0: This is still called after data is already pulled (just like a regular 'submit' listener), so this debugInfo does not make it into the email... Until CF7 updates, this is how it will be.
 		nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-attempt');
-		browserInfo();
+		debugInfo();
 
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Attempt)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -1591,26 +1723,26 @@ function cf7Functions(){
 	});
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
-	thisPage.document.on('wpcf7:invalid', function(e){
+	nebula.dom.document.on('wpcf7:invalid', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Invalid)');
 		ga('send', 'event', 'Contact', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 	});
 
 	//CF7 Spam (CF7 AJAX response after spam detection)
-	thisPage.document.on('wpcf7:spam', function(e){
+	nebula.dom.document.on('wpcf7:spam', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Spam)');
 		ga('send', 'event', 'Contact', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.target.id);
 	});
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
-	thisPage.document.on('wpcf7:mailfailed', function(e){
+	nebula.dom.document.on('wpcf7:mailfailed', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Failed)');
 		ga('send', 'event', 'Contact', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.target.id);
 	});
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
-	thisPage.document.on('wpcf7:mailsent', function(e){
+	nebula.dom.document.on('wpcf7:mailsent', function(e){
 		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
 		}
@@ -1619,6 +1751,9 @@ function cf7Functions(){
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
 		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + nebulaTimer(e.target.id, 'end') + 'ms)');
 		if ( typeof fbq == 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
+		nebulaConversion('contact', 'Form ID: ' + e.target.id);
+		nebulaConversion('abandoned_form', 'Form ID: ' + e.target.id, 'remove');
+
 
 		//Clear localstorage on submit success
 		jQuery('#' + e.target.id + ' .wpcf7-textarea, #' + e.target.id + ' .wpcf7-text').each(function(){
@@ -1655,7 +1790,7 @@ function cf7LocalStorage(){
 	});
 
 	//Update matching form fields on other windows/tabs
-	thisPage.window.on('storage', function(e){
+	nebula.dom.window.on('storage', function(e){
     	jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
 	    	if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name')));
@@ -1753,7 +1888,7 @@ function conversionTracker(conversionpage){
 	iframe.style.width = '0px';
 	iframe.style.height = '0px';
 	document.body.appendChild(iframe);
-	iframe.src = bloginfo['template_directory'] + '/includes/conversion/' + conversionpage;
+	iframe.src = nebula.site.template_directory + '/includes/conversion/' + conversionpage;
 };
 
 
@@ -1805,7 +1940,7 @@ function conditionalJSLoading(){
         });
 
 		//Only load Highlight if dataTables table exists.
-        jQuery.getScript(bloginfo['template_directory'] + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
+        jQuery.getScript(nebula.site.template_directory + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
             ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-5.closure.js could not be loaded.', {'nonInteraction': 1});
@@ -1813,12 +1948,12 @@ function conditionalJSLoading(){
     }
 
 	if ( jQuery('pre.nebula-code').is('*') || jQuery('pre.nebula-pre').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/css/pre.css');
+		nebulaLoadCSS(nebula.site.template_directory + '/stylesheets/css/pre.css');
 		nebula_pre();
 	}
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/css/flags.css');
+		nebulaLoadCSS(nebula.site.template_directory + '/stylesheets/css/flags.css');
 	}
 }
 
@@ -1863,8 +1998,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 					google.maps.event.addListener(addressAutocomplete, 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
 						place = addressAutocomplete.getPlace(); //Get the place details from the addressAutocomplete object.
 
-						//Come up with a way so that everything doesn't need to be defined before detecting if it exists. Like "pushing" to the object.
-						addressComponents = {
+						nebula.user.address = {
 							street: {
 								number: null,
 								name: null,
@@ -1891,46 +2025,48 @@ function nebulaAddressAutocomplete(autocompleteInput){
 							//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
 							switch ( place.address_components[i].types[0] ){
 								case "street_number":
-									addressComponents.street.number = place.address_components[i].short_name; //123
+									nebula.user.address.street.number = place.address_components[i].short_name; //123
 									break;
 								case "route":
-									addressComponents.street.name = place.address_components[i].long_name; //Street Name Rd.
+									nebula.user.address.street.name = place.address_components[i].long_name; //Street Name Rd.
 									break;
 								case "locality":
-									addressComponents.city = place.address_components[i].long_name; //Liverpool
+									nebula.user.address.city = place.address_components[i].long_name; //Liverpool
 									break;
 								case "administrative_area_level_2":
-									addressComponents.county = place.address_components[i].long_name; //Onondaga County
+									nebula.user.address.county = place.address_components[i].long_name; //Onondaga County
 									break;
 								case "administrative_area_level_1":
-									addressComponents.state.name = place.address_components[i].long_name; //New York
-									addressComponents.state.abbreviation = place.address_components[i].short_name; //NY
+									nebula.user.address.state.name = place.address_components[i].long_name; //New York
+									nebula.user.address.state.abbreviation = place.address_components[i].short_name; //NY
 									break;
 								case "country":
-									addressComponents.country.name = place.address_components[i].long_name; //United States
-									addressComponents.country.abbreviation = place.address_components[i].short_name; //US
+									nebula.user.address.country.name = place.address_components[i].long_name; //United States
+									nebula.user.address.country.abbreviation = place.address_components[i].short_name; //US
 									break;
 								case "postal_code":
-									addressComponents.zip.code = place.address_components[i].short_name; //13088
+									nebula.user.address.zip.code = place.address_components[i].short_name; //13088
 									break;
 								case "postal_code_suffix":
-									addressComponents.zip.suffix = place.address_components[i].short_name; //4725
+									nebula.user.address.zip.suffix = place.address_components[i].short_name; //4725
 									break;
 								default:
 									//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
 							}
 						}
-						if ( addressComponents.street.number && addressComponents.street.name ){
-							addressComponents.street.full = addressComponents.street.number + ' ' + addressComponents.street.name;
+						if ( nebula.user.address.street.number && nebula.user.address.street.name ){
+							nebula.user.address.street.full = nebula.user.address.street.number + ' ' + nebula.user.address.street.name;
 						}
-						if ( addressComponents.zip.code && addressComponents.zip.suffix ){
-							addressComponents.zip.full = addressComponents.zip.code + '-' + addressComponents.zip.suffix;
+						if ( nebula.user.address.zip.code && nebula.user.address.zip.suffix ){
+							nebula.user.address.zip.full = nebula.user.address.zip.code + '-' + nebula.user.address.zip.suffix;
 						}
 
-						thisPage.document.trigger('nebula_address_selected');
+						nebula.dom.document.trigger('nebula_address_selected');
 						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
 						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-						ga('send', 'event', 'Contact', 'Autocomplete Address', addressComponents.city + ', ' + addressComponents.state.abbreviation + ' ' + addressComponents.zip.code);
+						ga('send', 'event', 'Contact', 'Autocomplete Address', nebula.user.address.city + ', ' + nebula.user.address.state.abbreviation + ' ' + nebula.user.address.zip.code);
+
+						console.debug(nebula.user);
 					});
 
 					jQuery(autocompleteInput).on('focus', function(){
@@ -1951,7 +2087,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 					});
 
 					if ( autocompleteInput == '#address-autocomplete' ){
-						thisPage.document.on('nebula_address_selected', function(){
+						nebula.dom.document.on('nebula_address_selected', function(){
 							//do any default stuff here.
 						});
 					}
@@ -1974,13 +2110,13 @@ function requestPosition(){
     var geoloc = nav.geolocation;
     if (geoloc != null){
         geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //One-time location poll
-        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebulaLocation object regularly, but be careful sending events to GA- may result in TONS of events)
+        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
     }
 }
 
 //Geolocation Success
 function successCallback(position){
-	nebulaLocation = {
+	nebula.session.geolocation = {
         error: false,
         coordinates: { //A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
             latitude: position.coords.latitude,
@@ -2003,26 +2139,26 @@ function successCallback(position){
         heading: position.coords.heading, //Degrees clockwise from North
     }
 
-	if ( nebulaLocation.accuracy.meters < 50 ){
-		nebulaLocation.accuracy.color = '#00bb00';
+	if ( nebula.session.geolocation.accuracy.meters < 50 ){
+		nebula.session.geolocation.accuracy.color = '#00bb00';
         ga('set', gaCustomDimensions['geoAccuracy'], 'Excellent (<50m)');
-    } else if ( nebulaLocation.accuracy.meters > 50 && nebulaLocation.accuracy.meters < 300 ){
-        nebulaLocation.accuracy.color = '#a4ed00';
+    } else if ( nebula.session.geolocation.accuracy.meters > 50 && nebula.session.geolocation.accuracy.meters < 300 ){
+        nebula.session.geolocation.accuracy.color = '#a4ed00';
         ga('set', gaCustomDimensions['geoAccuracy'], 'Good (50m - 300m)');
-    } else if ( nebulaLocation.accuracy.meters > 300 && nebulaLocation.accuracy.meters < 1500 ){
-        nebulaLocation.accuracy.color = '#ffc600';
+    } else if ( nebula.session.geolocation.accuracy.meters > 300 && nebula.session.geolocation.accuracy.meters < 1500 ){
+        nebula.session.geolocation.accuracy.color = '#ffc600';
         ga('set', gaCustomDimensions['geoAccuracy'], 'Poor (300m - 1500m)');
     } else {
-        nebulaLocation.accuracy.color = '#ff1900';
+        nebula.session.geolocation.accuracy.color = '#ff1900';
         ga('set', gaCustomDimensions['geoAccuracy'], 'Very Poor (>1500m)');
     }
 
-	thisPage.document.trigger('geolocationSuccess');
-	thisPage.body.addClass('geo-latlng-' + nebulaLocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebulaLocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebulaLocation.accuracy.meters.toFixed(0).replace('.', ''));
-	browserInfo();
-	ga('set', gaCustomDimensions['geolocation'], nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4));
+	nebula.dom.document.trigger('geolocationSuccess');
+	nebula.dom.body.addClass('geo-latlng-' + nebula.session.geolocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebula.session.geolocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebula.session.geolocation.accuracy.meters.toFixed(0).replace('.', ''));
+	debugInfo();
+	ga('set', gaCustomDimensions['geolocation'], nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4));
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	ga('send', 'event', 'Geolocation', nebulaLocation.coordinates.latitude.toFixed(4) + ', ' + nebulaLocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters');
+	ga('send', 'event', 'Geolocation', nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebula.session.geolocation.accuracy.meters.toFixed(2) + ' meters');
 }
 
 //Geolocation Error
@@ -2046,16 +2182,16 @@ function errorCallback(error){
             break;
     }
 
-    nebulaLocation = {
+    nebula.session.geolocation = {
 	    'error': {
 		    'code': error.code,
 			'description': geolocationErrorMessage
 	    }
     }
 
-    thisPage.document.trigger('geolocationError');
-    thisPage.body.addClass('geo-error');
-	browserInfo();
+    nebula.dom.document.trigger('geolocationError');
+    nebula.dom.body.addClass('geo-error');
+	debugInfo();
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
     ga('set', gaCustomDimensions['timestamp'], localTimestamp());
     ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Geolocation Error (' + geoErrorNote + ')'));
@@ -2158,7 +2294,7 @@ function nebulaScrollTo(element, milliseconds){
 		return false;
 	}
 
-	thisPage.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
+	nebula.dom.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
 		if ( jQuery(this).parents('.mm-menu').is('*') ){
 			return false;
 		}
@@ -2177,7 +2313,7 @@ function nebulaScrollTo(element, milliseconds){
 		}
 	});
 
-	thisPage.document.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
+	nebula.dom.document.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scrollto');
@@ -2248,8 +2384,13 @@ function debounce(callback, wait, uniqueId, immediate){
 	}
 };
 
+
 //Cookie Management
 function createCookie(name, value, days){
+	if ( !days ){
+		var days = 3650; //10 years
+	}
+
 	if ( days ){
 		var date = new Date();
 		date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -2427,7 +2568,7 @@ function nebula_pre(){
 		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>');
 	});
 
-	thisPage.document.on('click touch tap', '.nebula-selectcopy-code', function(){
+	nebula.dom.document.on('click touch tap', '.nebula-selectcopy-code', function(){
 	    oThis = jQuery(this);
 
 	    if ( jQuery(this).text() == 'Copy to clipboard' ){
@@ -2538,7 +2679,7 @@ function chosenSelectOptions(){
 }
 
 function dataTablesActions(){
-	thisPage.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
+	nebula.dom.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
 	    //console.log('keyup: ' + jQuery(this).val());
 	    //jQuery('.dataTables_wrapper').removeHighlight();
 	    //jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
@@ -2642,6 +2783,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['videoWatcher'], 'Started');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Play', videoTitle);
+        nebulaConversion('videos', 'Youtube Played: ' + videoTitle);
         pauseFlag = true;
 
 		youtubePlayProgress = setInterval(function(){
@@ -2653,6 +2795,7 @@ function onPlayerStateChange(e){
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
 				ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': 1});
+				nebulaConversion('videos', 'Youtube Engaged: ' + videoTitle);
 				videoData[id].engaged = true;
 			}
 		}, 500);
@@ -2665,6 +2808,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
         ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoTitle); //Amount of time watched (can exceed video duration).
+        nebulaConversion('videos', 'Youtube Finished: ' + videoTitle);
     } else if ( e.data == YT.PlayerState.PAUSED && pauseFlag ){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
@@ -2673,6 +2817,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Pause', videoTitle);
         ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
+        nebulaConversion('videos', 'Youtube Paused: ' + videoTitle);
         pauseFlag = false;
     }
 }
@@ -2685,7 +2830,7 @@ function vimeoControls(){
 		}).fail(function(){
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': 1});
-			jQuery.getScript(bloginfo['template_directory'] + '/js/libs/froogaloop.min.js').done(function(){
+			jQuery.getScript(nebula.site.template_directory + '/js/libs/froogaloop.min.js').done(function(){
 				createVimeoPlayers();
 			}).fail(function(){
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
@@ -2726,6 +2871,7 @@ function vimeoControls(){
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 	    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
+	    nebulaConversion('videos', 'Vimeo Played: ' + videoTitle);
 	}
 
 	function vimeoPlayProgress(data, id){
@@ -2761,6 +2907,7 @@ function vimeoControls(){
 		if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
 			ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
 			ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': 1});
+			nebulaConversion('videos', 'Vimeo Engaged: ' + videoTitle);
 			videoData[id].engaged = true;
 		}
 	}
@@ -2773,12 +2920,14 @@ function vimeoControls(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Videos', 'Pause', videoTitle);
 		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
+		nebulaConversion('videos', 'Vimeo Paused: ' + videoTitle);
 	}
 
 	function vimeoSeek(data, id){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Seeker');
 	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
+	    nebulaConversion('videos', 'Vimeo Seeked: ' + videoTitle);
 	    videoData[id].seeker = true;
 	}
 
@@ -2790,6 +2939,7 @@ function vimeoControls(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
+		nebulaConversion('videos', 'Vimeo Finished: ' + videoTitle);
 	}
 }
 
@@ -2832,7 +2982,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			lang: "en-US", //Language (optional)
 			body: "", //Body message (optional)
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-			icon: bloginfo['template_directory'] + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
+			icon: nebula.site.template_directory + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
 		}
 
 		if ( typeof message === "undefined" ){
@@ -2986,7 +3136,7 @@ function mmenus(){
 					content: ["searchfield"]
 				}, {
 					position: "bottom",
-					content: ["<span>" + bloginfo['name'] + "</span>"]
+					content: ["<span>" + nebula.site.name + "</span>"]
 				}],
 				searchfield: { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
 			    	add: true,
@@ -3024,13 +3174,13 @@ function mmenus(){
 				});
 			}
 
-			thisPage.document.on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
+			nebula.dom.document.on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
 				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until navigation');
 			});
 
 
 			var mmenuSearchInput = jQuery('.mm-search input');
-			mmenuSearchInput.wrap('<form method="get" action="' + bloginfo['home_url'] + '"></form>').attr('name', 's');
+			mmenuSearchInput.wrap('<form method="get" action="' + nebula.site.home_url + '"></form>').attr('name', 's');
 			mmenuSearchInput.on('keyup', function(){
 				if ( jQuery(this).val().length > 0 ){
 					jQuery('.clearsearch').removeClass('hidden');
@@ -3039,7 +3189,7 @@ function mmenus(){
 				}
 			});
 			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br /><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-			thisPage.document.on('click touch tap', '.clearsearch a', function(){
+			nebula.dom.document.on('click touch tap', '.clearsearch a', function(){
 				mmenuSearchInput.val('').keyup();
 				jQuery('.clearsearch').addClass('hidden');
 				return false;
@@ -3076,7 +3226,7 @@ function dropdownWidthController(){
 function subnavExpanders(){
     jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    thisPage.document.on('click touch tap', '.toplevelvert_expander', function(){
+    nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
         jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
         return false;
     });
@@ -3096,7 +3246,7 @@ function initHeadroom(){
 	}
 
 	if ( typeof headerElement == 'undefined' || !headerElement.is('*') ){
-		headerElement = thisPage.body; //@TODO: If this fallback happens, the padding would need to move to the top.
+		headerElement = nebula.dom.body; //@TODO: If this fallback happens, the padding would need to move to the top.
 	}
 
 	if ( typeof headroom !== 'undefined' || !window.matchMedia("(min-width: 767px)").matches ){ //If headroom needs to be re-init or if tablet or mobile
@@ -3122,30 +3272,30 @@ function initHeadroom(){
 			notTop: "headroom--not-top" //When below offset
 		},
 		onPin: function(){ //Callback when pinned, 'this' is headroom object
-			thisPage.document.removeClass('headroom--unpinned').addClass('headroom--pinned');
+			nebula.dom.document.removeClass('headroom--unpinned').addClass('headroom--pinned');
 		},
 		onUnpin: function(){ //Callback when unpinned, 'this' is headroom object
-			thisPage.document.removeClass('headroom--pinned').addClass('headroom--unpinned');
+			nebula.dom.document.removeClass('headroom--pinned').addClass('headroom--unpinned');
 		},
 		onTop: function(){ //Callback when above offset, 'this' is headroom object
-			thisPage.document.removeClass('headroom--not-top').addClass('headroom--top');
+			nebula.dom.document.removeClass('headroom--not-top').addClass('headroom--top');
 			headerElement.css('padding-bottom', '0');
 		},
 		onNotTop: function(){ //Callback when below offset, 'this' is headroom object
-			thisPage.document.removeClass('headroom--top').addClass('headroom--not-top');
+			nebula.dom.document.removeClass('headroom--top').addClass('headroom--not-top');
 			headerElement.css('padding-bottom', fixedElement.outerHeight()).stop().animate({paddingBottom: finalBufferSize}, 400, "linear"); //Add padding buffer to header and animate (slightly faster than CSS) to finalBufferSize
 		},
 	});
 	headroom.init();
 
 	//Custom Nebula Headroom extensions
-	thisPage.window.on('scroll', function(){
-		var viewportBottom = thisPage.window.height()+thisPage.window.scrollTop();
-		var documentHeight = thisPage.document.height();
-		var scrollDistance = thisPage.document.scrollTop();
+	nebula.dom.window.on('scroll', function(){
+		var viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
+		var documentHeight = nebula.dom.document.height();
+		var scrollDistance = nebula.dom.document.scrollTop();
 
 		//Add .headroom--below //@TODO "Nebula" 0: Could this be moved into onNotTop?
-		if ( thisPage.document.scrollTop() > headerElement.offset().top+headerElement.outerHeight() ){
+		if ( nebula.dom.document.scrollTop() > headerElement.offset().top+headerElement.outerHeight() ){
 			fixedElement.addClass('headroom--below');
 		} else if ( fixedElement.hasClass('headroom--below') ){
 			fixedElement.removeClass('headroom--below');
@@ -3159,6 +3309,7 @@ function initHeadroom(){
 		}
 	});
 }
+
 
 
 /*==========================

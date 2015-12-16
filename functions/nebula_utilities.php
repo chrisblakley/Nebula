@@ -217,6 +217,50 @@ function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional para
 	}
 }
 
+//Retarget users based on prior conversions/leads
+function nebula_retarget($category=false, $data=null, $strict=true, $return=false){
+	global $nebula;
+
+	if ( empty($category) ){ //$category is required
+		return false;
+	}
+
+	if ( is_bool($data) ){ //If data is boolean, then $strict is irrelevant, $data should be empty, and $return was meant to be boolean
+		$return = $data;
+		$data = null;
+	}
+
+	if ( !empty($nebula['user']['conversions']) ){ //If there are any conversions
+		if ( !empty($data) ){ //If specific data is being requested
+			if ( !empty($nebula['user']['conversions'][$category]) ){ //If the requested category exists
+				if ( !$return ){ //If returning boolean
+					if ( $strict ){ //If checking for exact match
+						return in_array_r($data, $nebula['user']['conversions'][$category]);
+					} else { //Else search for string position
+						$data_string = implode(' ', $nebula['user']['conversions'][$category]);
+						if ( strpos(strtolower($data_string), strtolower($data)) ){
+							return true;
+						}
+					}
+				} else { //Else returning the value
+					if ( in_array_r($data, $nebula['user']['conversions'][$category]) ){
+						return $nebula['user']['conversions'][$category][$data];
+					}
+				}
+			}
+		} else { //If no specific data is requested (check if the category itself exists)
+			if ( !$return ){ //If returning boolean
+				return array_key_exists($category, $nebula['user']['conversions']);
+			} else { //Else returning the value
+				if ( array_key_exists($category, $nebula['user']['conversions']) ){
+					return $nebula['user']['conversions'][$category];
+				}
+			}
+		}
+	}
+	return false;
+}
+
 //Check if a user has been online in the last 15 minutes
 function nebula_is_user_online($id){
 	$override = apply_filters('pre_nebula_is_user_online', false, $id);

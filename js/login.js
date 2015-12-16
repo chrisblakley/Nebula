@@ -7,7 +7,7 @@ jQuery(document).on('ready', function(){
 	}
 
 	jQuery('.forgetmenot, .submit').addClass('clearfix');
-	jQuery('#loginform').append('<div class="centertext ipcon"><p>Your IP Address: <span class="theIP">' + clientinfo['remote_addr'] + '</span></p></div>');
+	jQuery('#loginform').append('<div class="centertext ipcon"><p>Your IP Address: <span class="theIP">' + nebula.client.remote_addr + '</span></p></div>');
 
 	jQuery('#lostpasswordform').submit(function(){
 		var resetUser = jQuery('#user_login').val();
@@ -15,7 +15,7 @@ jQuery(document).on('ready', function(){
 	});
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(bloginfo['template_directory'] + '/stylesheets/libs/flags.css');
+		nebulaLoadCSS(nebula.site.template_directory + '/stylesheets/libs/flags.css');
 	}
 
 }); //End Document Ready

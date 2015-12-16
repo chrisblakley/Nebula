@@ -252,13 +252,12 @@ add_action('init', 'nebula_users_status_init');
 add_action('admin_init', 'nebula_users_status_init');
 function nebula_users_status_init(){
 	$logged_in_users = get_transient('users_status');
-	$user = wp_get_current_user();
 
 	//Check if the current user needs to update his online status; he does if he doesn't exist in the list
 	$no_need_to_update = isset($logged_in_users[$user->ID]['last']) && $logged_in_users[$user->ID]['last'] > time()-900; //15 Minutes
 	if ( !$no_need_to_update ){
 		$logged_in_users[$user->ID] = array(
-			'id' => $user->ID,
+			'id' => get_current_user_id(),
 			'username' => $user->user_login,
 			'last' => time(),
 		);
@@ -1373,12 +1372,12 @@ remove_action('wp_head', 'start_post_rel_link', 10, 0);
 remove_action('wp_head', 'parent_post_rel_link', 10, 0);
 remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
 remove_action('wp_head', 'feed_links', 2);
-header(base64_decode('RGV2ZWxvcGVkLXdpdGgtTmVidWxhOiBodHRwOi8vZ2VhcnNpZGUuY29tL25lYnVsYQ'.'=='));
+header(base64_decode('RGV2ZWxvcGVkLXdpdGgtTmVidWxhOiBodHRwOi8vZ2VhcnNpZGUuY29tL25lYnVsYQ' . '=='));
 
 //Add the Posts RSS Feed back in
 add_action('wp_head', 'addBackPostFeed');
 function addBackPostFeed(){
-    echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="'.get_bloginfo('rss2_url').'" />';
+    echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
 }
 
 //Declare support for WooCommerce

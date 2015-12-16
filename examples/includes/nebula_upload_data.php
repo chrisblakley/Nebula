@@ -21,7 +21,6 @@
 			}
 
 			nebula_upload_data(jQuery('#datatostore').val(), 'testing', 'txt', 'Nebula Upload Data Example', 'Upload', function(response){
-
 				if ( response != '' ) {
 					jQuery('#debugresponse').val(response).slideDown();
 				} else {
@@ -32,6 +31,8 @@
 					jQuery('#datauploadcon').remove();
 				});
 			});
+
+			nebulaConversion('nebula_upload', 'Example Upload');
 			return false;
 		});
 
@@ -65,8 +66,8 @@
 		console.log('attempting ajax...');
 		jQuery.ajax({
 		    type: "POST",
-		    url: bloginfo["ajax_url"],
-		    //@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
+		    url: nebula.site.ajax.url,
+		    //@TODO "Nebula" 0: Add nebula.site.ajax.nonce here!
 		    data: {
 		        action: 'nebula_upload_data',
 		        data: {

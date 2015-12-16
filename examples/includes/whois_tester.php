@@ -158,9 +158,9 @@
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["ajax_url"],
+			url: nebula.site.ajax.url,
 			data: {
-				nonce: bloginfo["ajax_nonce"],
+				nonce: nebula.site.ajax.nonce,
 				action: 'nebula_whois_tester',
 				data: domainData,
 			},
@@ -175,6 +175,8 @@
 			},
 			timeout: 60000
 		});
+
+		nebulaConversion('whois', 'tested: ' + domainLookup);
 
 		e.preventDefault();
 		return false;

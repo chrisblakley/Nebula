@@ -24,6 +24,7 @@
 		jQuery('.basicnotify').on('click', function(){
 			desktopNotification("Basic Notification", "This is the message");
 			ga('send', 'event', 'Notification Activated', 'Basic Notification');
+			nebulaConversion('notification_api', true);
 			return false;
 		});
 
@@ -32,10 +33,11 @@
 				dir: "ltr",
 				lang: "en-US",
 				body: "This is a fully customized notification with callback functions!",
-				icon: bloginfo['template_directory'] + "/images/meta/favicon-192x192.png"
+				icon: nebula.site.template_directory + "/images/meta/favicon-192x192.png"
 			}
 			desktopNotification("Fully Customized Notification", message, clickNotify, closeNotify, showNotify, errorNotify);
 			ga('send', 'event', 'Notification Activated', 'Fully Customized');
+			nebulaConversion('notification_api', true);
 
 			function clickNotify() {
 				jQuery('.fullnotify').parents('div').removeClass('primary danger success info warning').addClass('success');

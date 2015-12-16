@@ -31,8 +31,8 @@
 
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["ajax_url"],
-			//@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
+			url: nebula.site.ajax.url,
+			//@TODO "Nebula" 0: Add nebula.site.ajax.nonce here!
 			data: {
 				action: 'nebula_environment_data',
 				data: {
@@ -322,8 +322,8 @@
 
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["ajax_url"],
-				//@TODO "Nebula" 0: Add bloginfo["ajax_nonce"] here!
+				url: nebula.site.ajax.url,
+				//@TODO "Nebula" 0: Add nebula.site.ajax.nonce here!
 				data: {
 					action: 'nebula_environment_data',
 					data: {

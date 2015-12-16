@@ -19,6 +19,8 @@
 		history.replaceState(null, "Changing the Title Too", "https://gearside.com/new-url");
 		console.log('URL modified.');
 
+		nebulaConversion('history_api', true);
+
 		jQuery('div.btn a').fadeOut();
 
 		setTimeout(function(){

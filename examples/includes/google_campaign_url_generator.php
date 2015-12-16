@@ -51,6 +51,7 @@
 
 			debounce(function(){
 		    	generateCampaignURL();
+		    	nebulaConversion('campaign_url', true);
 			}, 1000, "campaignurlgenerator");
 		});
 

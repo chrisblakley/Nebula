@@ -105,12 +105,12 @@
 				jQuery('#start_button_icon').removeClass().addClass('fa fa-comment');
 			};
 
-			recognition.onaudiostart = function(event) { console.log('onaudiostart'); } //When audio is being listened for...?
-			recognition.onsoundstart = function(event) { console.log('onsoundstart'); } //When a sound is detected
-			recognition.onspeechstart = function(event) { console.log('onspeechstart'); } //When human speech is detected
+			recognition.onaudiostart = function(event){ console.log('onaudiostart'); } //When audio is being listened for...?
+			recognition.onsoundstart = function(event){ console.log('onsoundstart'); } //When a sound is detected
+			recognition.onspeechstart = function(event){ console.log('onspeechstart'); } //When human speech is detected
 
-			recognition.onerror = function(event) {
-				if ( event.error == 'no-speech' ) {
+			recognition.onerror = function(event){
+				if ( event.error == 'no-speech' ){
 					//start_img.src = 'mic.gif';
 					jQuery('#speech-help').text('No speech was detected. You may need to adjust your microphone settings.');
 					jQuery('#start_button').removeClass();
@@ -131,7 +131,7 @@
 				}
 
 				if ( event.error == 'not-allowed' ) {
-					if (event.timeStamp - start_timestamp < 100) {
+					if ( event.timeStamp - start_timestamp < 100 ){
 						jQuery('#speech-help').text('Permission to use microphone is blocked. To change, go to chrome://settings/contentExceptions#media-stream');
 						jQuery('#start_button').removeClass();
 						jQuery('#start_button_text').text(' Blocked');
@@ -148,15 +148,15 @@
 				}
 			};
 
-			recognition.onspeechend = function(event) { console.log('onspeechend'); } //When human speech has stopped
-			recognition.onsoundend = function(event) { console.log('onsoundend'); } //When sound has stopped
-			recognition.onaudioend = function(event) { console.log('onaudioend'); } //When audio is no longer being listened for...?
-			recognition.onnomatch = function(event) { console.log('onnomatch'); } // No idea...
+			recognition.onspeechend = function(event){ console.log('onspeechend'); } //When human speech has stopped
+			recognition.onsoundend = function(event){ console.log('onsoundend'); } //When sound has stopped
+			recognition.onaudioend = function(event){ console.log('onaudioend'); } //When audio is no longer being listened for...?
+			recognition.onnomatch = function(event){ console.log('onnomatch'); } // No idea...
 
-			recognition.onresult = function(event) {
+			recognition.onresult = function(event){
 				var interim_transcript = '';
 				for ( var i = event.resultIndex; i < event.results.length; ++i ) {
-					if ( event.results[i].isFinal ) {
+					if ( event.results[i].isFinal ){
 						final_transcript += event.results[i][0].transcript;
 						jQuery('.speechconfidence').html('I am <strong>' + (event.results[i][0].confidence*100).toFixed(2) + '%</strong> sure you said:');
 						keyPhrases(final_transcript);
@@ -180,6 +180,7 @@
 					} else {
 						ga('send', 'event', 'Speech Recognition', 'Transcript', '"' + final_transcript + '"');
 					}
+					nebulaConversion('speech_recognition', final_transcript);
 				}
 
 				if ( ignore_onend ) {
@@ -237,7 +238,7 @@
 				speakerName = speakerName.substr( 0, speakerName.indexOf(' ') );
 				speakerName = speakerName.charAt(0).toUpperCase() + speakerName.slice(1);
 
-				if ( (speakerName == 'Jeff' || speakerName == 'Geoff') && clientinfo["remote_addr"] == '72.43.235.106' ) {
+				if ( (speakerName == 'Jeff' || speakerName == 'Geoff') && nebula.client.remote_addr == '72.43.235.106' ) {
 					speakerName = 'Jef';
 				}
 			}
@@ -266,7 +267,7 @@
 						recognition.stop();
 						ga('send', 'event', 'Speech Recognition', 'Search for: ' + searchQuery);
 						searchQuery = searchQuery.replace(' ', '+');
-						window.location.href = bloginfo['home_url'] + '?s=' + searchQuery;
+						window.location.href = nebula.site.home_url + '?s=' + searchQuery;
 					}
 				}, 3000);
 			}

@@ -228,6 +228,8 @@
 				jQuery('#location-results .specific-location').html('You are <strong style="color: maroon;">not</strong> at Pinckney Hugo Group.');
 			}
 
+			nebulaConversion('example_map', 'Example Contains Location');
+
 		    jQuery('#location-results .accuracy').html('<strong style="color: ' + nebulaLocation.accuracy.color + ';">' + accText + '</strong> location accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters (' + nebulaLocation.accuracy.miles + ' miles). Altitude: ' + nebulaLocation.altitude.meters);
 
 		} else {

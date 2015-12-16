@@ -59,6 +59,7 @@
 			jQuery('#snap').on('click tap touch', function(){
 				if ( snapshotCount <= 3 ) {
 					snapshotExample(context);
+					nebulaConversion('getusermedia', true);
 				} else {
 					jQuery('#snapcon').fadeOut();
 					ga('send', 'event', 'Get User Media API Example', 'Snap Limit Reached', 'Snapshot Count: ' + snapshotCount);
@@ -107,9 +108,9 @@
 			lastCanvas = jQuery('#canvas')[0].toDataURL("image/png");
 			jQuery.ajax({
 				type: "POST",
-				url: bloginfo["ajax_url"],
+				url: nebula.site.ajax.url,
 				data: {
-					nonce: bloginfo["ajax_nonce"],
+					nonce: nebula.site.ajax.nonce,
 					action: 'nebula_getusermedia_api',
 					data: {
 						'userimage': image.src,

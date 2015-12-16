@@ -18,14 +18,15 @@
 		}];
 		jQuery.ajax({
 			type: "POST",
-			url: bloginfo["ajax_url"],
+			url: nebula.site.ajax.url,
 			data: {
-				nonce: bloginfo["ajax_nonce"],
+				nonce: nebula.site.ajax.nonce,
 				action: 'nebula_example_ajax',
 				data: messageData,
 			},
 			success: function(response){
 				jQuery('.example-response').css('border', '1px solid green').text(response);
+				nebulaConversion('contact', 'Example AJAX Form');
 			},
 			error: function(MLHttpRequest, textStatus, errorThrown){
 				jQuery('.example-response').css('border', '1px solid red').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);

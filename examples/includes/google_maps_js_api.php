@@ -58,6 +58,8 @@
 				jQuery(this).removeClass('active success failure').text('Detect Location').addClass('inactive').attr('title', 'Detect current location').css('color', '');
 				renderMap(mapInfo);
 			}
+
+			nebulaConversion('example_geolocation', 'Example Google Map Location');
 			return false;
 		});
 

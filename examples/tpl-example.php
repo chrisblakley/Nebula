@@ -495,6 +495,10 @@ get_header(); ?>
 							include_once('includes/nebula_timer.php');
 						} ?>
 
+						<?php if ( is_page(2229) ){ //Nebula Retargeting
+							include_once('includes/nebula_retargeting.php');
+						} ?>
+
 
 						<?php
 						/*==========================
