@@ -12,7 +12,7 @@
 			    ));
 			    set_transient('example_cached_query', $cached_query, 60*60); //1 hour cache
 			}
-			while ( $cached_query->have_posts() ) : $cached_query->the_post();
+			while ( $cached_query->have_posts() ): $cached_query->the_post();
 		?>
 
 		    <div class="home-feed-item event-feed-item">

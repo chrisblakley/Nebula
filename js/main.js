@@ -245,6 +245,7 @@ function initSessionInfo(){
 		}
 	}
 	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
+	createCookie('nebulaSession', JSON.stringify(nebula.session));
 }
 
 //Fill debugInfo field with browser information (to send with forms).
@@ -331,7 +332,7 @@ function debugInfo(){
 		debugInfoVal += '\n\n';
 	}
 
-	if ( nebula.session.geolocation != '' ){
+	if ( typeof nebula.session.geolocation !== 'undefined' && nebula.session.geolocation != '' ){
 		if ( !nebula.session.geolocation.error ){
 			debugInfoVal += 'Geolocation: ' + nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude + '\n';
 			debugInfoVal += 'Accuracy: ' + nebula.session.geolocation.accuracy.meters + ' meters (' + nebula.session.geolocation.accuracy.miles + ' miles)\n';
@@ -3224,10 +3225,10 @@ function dropdownWidthController(){
 
 //Vertical subnav expanders
 function subnavExpanders(){
-    jQuery('.xoxo .menu li.menu-item:has(ul)').append('<a class="toplevelvert_expander plus" href="#"><i class="fa fa-caret-left"></i></a>');
+    jQuery('.xoxo .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
     jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
     nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
-        jQuery(this).toggleClass('plus').parent().children('.sub-menu').slideToggle();
+        jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
         return false;
     });
     //Automatically expand subnav to show current page

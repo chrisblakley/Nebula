@@ -1119,7 +1119,7 @@
 
  a.toplevelvert_expander i { font-size:18px; display:block; width:100%; -webkit-transform:rotate(-90deg); -moz-transform:rotate(-90deg); -ms-transform:rotate(-90deg); -o-transform:rotate(-90deg); transform:rotate(-90deg); -webkit-transition:transform 0.25s; -moz-transition:transform 0.25s; -ms-transition:transform 0.25s; -o-transition:transform 0.25s; transition:transform 0.25s; }
 
- a.toplevelvert_expander.plus i { -webkit-transform:rotate(0deg); -moz-transform:rotate(0deg); -ms-transform:rotate(0deg); -o-transform:rotate(0deg); transform:rotate(0deg); }
+ a.toplevelvert_expander.closed i { -webkit-transform:rotate(0deg); -moz-transform:rotate(0deg); -ms-transform:rotate(0deg); -o-transform:rotate(0deg); transform:rotate(0deg); }
 
  .xoxo form.search input[type="text"] { width:77% !important; font-size:12px; line-height:24px; height:auto !important; vertical-align:top; }
 
@@ -1315,4 +1315,4 @@
  }
 
 
-/* Processed on Tuesday, December 15, 2015 at 5:54pm */
+/* Processed on Wednesday, December 16, 2015 at 3:32pm */
