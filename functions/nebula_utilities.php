@@ -305,6 +305,18 @@ function nebula_online_users($return='count'){
 	return ( $return == 'count' )? $user_online_count : $online_users;
 }
 
+function nebula_user_single_concurrent($id){
+	$override = apply_filters('pre_nebula_user_single_concurrent', false, $id);
+	if ( $override !== false ){return $override;}
+
+	$logged_in_users = get_transient('users_status');
+	if ( isset($logged_in_users[$id]['unique']) ){
+		return count($logged_in_users[$id]['unique']);
+	} else {
+		return 'unknown test';
+	}
+}
+
 //Check if the current IP address matches any of the dev IP address from Nebula Options
 //Passing $strict bypasses IP check, so user must be a dev and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.

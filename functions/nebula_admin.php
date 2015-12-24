@@ -174,11 +174,18 @@ if ( nebula_option('nebula_plugin_update_warning') ){
 	}
 }
 
+
 //Nebula Theme Update Checker
 add_action('admin_init', 'nebula_theme_json');
 function nebula_theme_json(){
 	$override = apply_filters('pre_nebula_theme_json', false);
 	if ( $override !== false ){return;}
+
+	//Make sure the version stored in the DB always matches the actual version
+	if ( nebula_option('nebula_last_version_number') != nebula_version('full') ){
+		update_option('nebula_last_version_number', nebula_version('full'));
+		update_option('nebula_last_version_date', nebula_version('date'));
+	}
 
 	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('nebula_wp_core_updates_notify', 'enabled') ){
 		require get_template_directory() . '/includes/libs/theme-update-checker.php'; //Initialize the update checker.
@@ -211,7 +218,7 @@ function nebula_theme_update_email(){
 	}
 
 	$subject = 'Nebula parent theme updated to ' . nebula_version('full') . ' for ' . get_bloginfo('name') . '.';
-	$message = '<p>The parent Nebula theme has been updated from version <strong>' . nebula_option('nebula_last_version_number') . ' (Committed on ' . nebula_option('nebula_last_version_date') . ')</strong> to <strong>' . nebula_version('full') . ' (Committed on ' . nebula_version('date') . ')</strong> for ' . get_bloginfo('name') . ' by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+	$message = '<p>The parent Nebula theme has been updated from version <strong>' . nebula_option('nebula_last_version_number') . ' (Committed on ' . nebula_option('nebula_last_version_date') . ')</strong> to <strong>' . nebula_version('full') . ' (Committed on ' . nebula_version('date') . ')</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
 
 	//Set the content type to text/html for the email.
 	add_filter('wp_mail_content_type', function($content_type){
@@ -341,6 +348,19 @@ if ( nebula_option('nebula_admin_notices') ){
 	}
 }
 
+//Check if a post slug has a number appended to it (indicating a duplicate post).
+add_filter('wp_unique_post_slug', 'nebula_unique_slug_warning_ajax', 10, 4);
+function nebula_unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
+	if ( headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' ){ //Should work with AJAX and without (as long as headers have been sent)
+		echo '<script>
+			if ( typeof nebulaUniqueSlugChecker == "function" ){
+				nebulaUniqueSlugChecker("' . $post_type . '");
+			}
+		</script>';
+	}
+	return $slug;
+}
+
 //Welcome Panel
 if ( nebula_option('nebula_welcome_panel') ){
 	remove_action('welcome_panel','wp_welcome_panel');
@@ -388,8 +408,6 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 				echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
 			}
 
-
-
 			foreach ( get_post_types() as $post_type ){
 			    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
 				    continue;
@@ -434,6 +452,11 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 				$users_icon = 'user';
 			}
 			echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula_online_users('count') . ' currently active)</small></li>';
+
+			$current_user = wp_get_current_user();
+			if ( nebula_user_single_concurrent($current_user->ID) > 1 ){
+				echo '<li><i class="fa fa-users fa-fw"></i> This user is active in <strong>' . nebula_user_single_concurrent($current_user->ID) . ' locations</strong>.</li>';
+			}
 
 			if ( nebula_option('nebula_comments', 'enabled') && get_option('nebula_disqus_shortname') == '' ){
 				$comments_count = wp_count_comments();
@@ -894,7 +917,11 @@ function nebula_user_columns_content($value='', $column_name, $id){
 	}
     if ( $column_name == 'status' ){
 		if ( nebula_is_user_online($id) ){
-			return '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
+			$online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
+			if ( nebula_user_single_concurrent($id) > 1 ){
+				$online_now .= ' <small>(<strong>' . nebula_user_single_concurrent($id) . '</strong> locations)</small>';
+			}
+			return $online_now;
 		} else {
 			return ( nebula_user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula_user_last_online($id)) . '</em></small>' : '';
 		}

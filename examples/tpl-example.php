@@ -335,10 +335,6 @@ get_header(); ?>
 							include_once('includes/css_feature_queries.php');
 						} ?>
 
-						<?php if ( is_page(1011) ){ //Clipboard API
-							include_once('includes/clipboard_api.php');
-						} ?>
-
 						<?php if ( is_page(9999) ){ //CSS Masks
 							//@TODO "Nebula" 0: Coming Soon
 						} ?>

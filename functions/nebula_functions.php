@@ -131,17 +131,12 @@ function nebula_favicon_cache(){
 //Allow pages to have excerpts too
 add_post_type_support('page', 'excerpt');
 
-
-//Add Theme Support
-if ( function_exists('add_theme_support') ){
-	add_theme_support('post-thumbnails');
-}
-
-//Remove Theme Support
-if ( function_exists('remove_theme_support') ){
-	remove_theme_support('custom-background');
-	remove_theme_support('custom-header');
-}
+//Add/Remove Theme Support
+add_theme_support('post-thumbnails');
+add_theme_support('title-tag'); //Title tag support allows WordPress core to create the <title> tag.
+add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
+remove_theme_support('custom-background');
+remove_theme_support('custom-header');
 
 //Add new image sizes
 add_image_size('open_graph_large', 1200, 630, 1);
@@ -252,16 +247,24 @@ add_action('init', 'nebula_users_status_init');
 add_action('admin_init', 'nebula_users_status_init');
 function nebula_users_status_init(){
 	$logged_in_users = get_transient('users_status');
+	$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9]+/", "", $_SERVER['HTTP_USER_AGENT']);
+	$current_user = wp_get_current_user();
 
-	//Check if the current user needs to update his online status; he does if he doesn't exist in the list
-	$no_need_to_update = isset($logged_in_users[$user->ID]['last']) && $logged_in_users[$user->ID]['last'] > time()-900; //15 Minutes
-	if ( !$no_need_to_update ){
-		$logged_in_users[$user->ID] = array(
-			'id' => get_current_user_id(),
-			'username' => $user->user_login,
+	//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
+
+	if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-900 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 15 minutes, update.
+		$logged_in_users[$current_user->ID] = array(
+			'id' => $current_user->ID,
+			'username' => $current_user->user_login,
 			'last' => time(),
+			'unique' => array($unique_id),
 		);
 		set_transient('users_status', $logged_in_users, 1800); //30 minutes
+	} else {
+		if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
+			array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
+			set_transient('users_status', $logged_in_users, 1800); //30 minutes
+		}
 	}
 }
 

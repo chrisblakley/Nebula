@@ -73,13 +73,13 @@ function nebula_hijack_pingback_url($output, $property){
 	return ( $property == 'pingback_url' )? null : $output;
 }
 
-//Disable XMLRPC by hijacking and blocking the option.
+//Disable XMLRPC
+add_filter('xmlrpc_enabled', '__return_false');
+remove_action('wp_head', 'rsd_link');
+remove_action('wp_head', 'wlwmanifest_link');
 add_filter('pre_option_enable_xmlrpc', 'nebula_disable_xmlrpc');
 function nebula_disable_xmlrpc($state){
-	$override = apply_filters('pre_nebula_disable_xmlrpc', false, $state);
-	if ( $override !== false ){return $override;}
-
-	return false; //To leave XMLRPC intact and drop just Pingback: return $state;
+	return false;
 }
 
 //Remove rsd_link from filters (<link rel="EditURI" />).

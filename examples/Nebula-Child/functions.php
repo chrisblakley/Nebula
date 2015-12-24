@@ -37,11 +37,13 @@ add_action('wp_enqueue_scripts', 'deregister_nebula_parent_scripts', 327);
 add_action('login_enqueue_scripts', 'deregister_nebula_parent_scripts', 327);
 add_action('admin_enqueue_scripts', 'deregister_nebula_parent_scripts', 327);
 function deregister_nebula_parent_scripts(){
+	//Uncomment below to disable parent style.css
+	//wp_deregister_style('nebula-main');
+	//wp_dequeue_style('nebula-main');
 
-	//Uncomment below to disable main.js (Be sure to copy over to child.js first)
+	//Uncomment below to disable parent main.js (Be sure to copy over to child.js first)
 	//wp_deregister_script('nebula-main');
 	//wp_dequeue_script('nebula-main');
-
 }
 
 

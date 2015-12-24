@@ -238,7 +238,7 @@
 				speakerName = speakerName.substr( 0, speakerName.indexOf(' ') );
 				speakerName = speakerName.charAt(0).toUpperCase() + speakerName.slice(1);
 
-				if ( (speakerName == 'Jeff' || speakerName == 'Geoff') && nebula.client.remote_addr == '72.43.235.106' ) {
+				if ( (speakerName == 'Jeff' || speakerName == 'Geoff') && nebula.user.client.remote_addr == '72.43.235.106' ) {
 					speakerName = 'Jef';
 				}
 			}

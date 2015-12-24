@@ -1,12 +1,11 @@
 jQuery.noConflict();
 jQuery(document).on('ready', function(){
-
 	getQueryStrings();
 	if ( get('killall') || get('kill') || get('die') ){
 		throw ' (Manually terminated admin.js)';
 	}
 
-	if ( nebula.client.remote_addr == '72.43.235.106' ){
+	if ( nebula.user.client.remote_addr == '72.43.235.106' ){
 		jQuery('html').addClass('phg');
 	}
 
@@ -37,6 +36,10 @@ jQuery(document).on('ready', function(){
 			}
 			return false;
 		});
+	}
+
+	if ( jQuery('#edit-slug-box').length ){
+		nebulaUniqueSlugChecker();
 	}
 
 	jQuery(function(){
@@ -238,6 +241,20 @@ jQuery(window).on('load', function(){
 	}, 350);
 
 }); //End Window Load
+
+
+
+//Notify for possible duplicate post slug
+function nebulaUniqueSlugChecker(postType){
+	if ( !postType ){
+		var postType = 'post/page';
+	}
+
+	if ( jQuery("#sample-permalink a").text().match(/(-\d+)\/?$/) ){
+    	jQuery('#edit-slug-box strong').html('<span title="This likely indicates a duplicate ' + postType + ', but will not prevent saving or publishing." style="cursor: help;">Possible duplicate ' + postType + '! Updated permalink:</span>');
+		jQuery('#sample-permalink a').css('color', 'red');
+	}
+}
 
 
 //Get query string parameters

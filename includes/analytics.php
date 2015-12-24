@@ -149,10 +149,10 @@
 			//Business Open/Closed
 			if ( business_open() ){
 				$business_open = 'During Business Hours';
-				echo 'nebula.client.businessopen = true;';
+				echo 'nebula.user.client.businessopen = true;';
 			} else {
 				$business_open = 'Non-Business Hours';
-				echo 'nebula.client.businessopen = false;';
+				echo 'nebula.user.client.businessopen = false;';
 			}
 			if ( nebula_option('nebula_cd_businesshours') ){
 				echo 'ga("set", gaCustomDimensions["businessHours"], "' . $business_open . '");';
@@ -254,15 +254,14 @@
 
 		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true. Best current synchronous method of ad block detection. ?>
 			adBlockUser = 'Non-Blocker';
-			nebula.client.capabilities.adblock = false;
+			nebula.user.client.capabilities.adblock = false;
 			jQuery('html').removeClass('no-ads').addClass('ads');
 			if ( window.adsEnabled === undefined ){
-				nebula.client.capabilities.adblock = true;
+				nebula.user.client.capabilities.adblock = true;
 				adBlockUser = 'Ad Blocker';
 				jQuery('html').removeClass('ads').addClass('no-ads');
 			}
 			<?php if ( nebula_option('nebula_cd_adblocker') ): ?>
-
 				ga('set', gaCustomDimensions['adBlocker'], adBlockUser);
 			<?php endif; ?>
 		<?php endif; ?>

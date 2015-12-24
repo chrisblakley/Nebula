@@ -104,7 +104,7 @@ function register_nebula_scripts(){
 
 	$nebula = array(
 		'site' => array(
-			'name' => get_bloginfo("name"),
+			'name' => urlencode(get_bloginfo("name")),
 			'template_directory' => get_template_directory_uri(),
 			'stylesheet_directory' => get_stylesheet_directory_uri(),
 			'home_url' => home_url(),
@@ -132,41 +132,12 @@ function register_nebula_scripts(){
 		),
 		'post' => array(
 			'id' => get_the_id(),
-			'title' => get_the_title(),
-			'author' => get_the_author(),
+			'title' => urlencode(get_the_title()),
+			'author' => urlencode(get_the_author()),
 			'year' => get_the_date('Y'),
 		),
 		'dom' => false,
-		'client' => array(
-			'bot' => nebula_is_bot(),
-			'remote_addr' => $_SERVER['REMOTE_ADDR'],
-			'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-			'device' => array(
-				'full' => nebula_get_device('full'),
-				'formfactor' => nebula_get_device('formfactor'),
-				'brand' => nebula_get_device('brand'),
-				'model' => nebula_get_device('model'),
-				'type' => nebula_get_device('type'),
-			),
-			'os' => array(
-				'full' => nebula_get_os('full'),
-				'name' => nebula_get_os('name'),
-				'version' => nebula_get_os('version'),
-			),
-			'browser' => array(
-				'full' => nebula_get_browser('full'),
-				'name' => nebula_get_browser('name'),
-				'version' => nebula_get_browser('version'),
-				'engine' => nebula_get_browser('engine'),
-				'type' => nebula_get_browser('type'),
-			),
-			'capabilities' => array(
-				'speech' => false,
-				'battery' => false,
-				'network' => false,
-				'adblock' => false,
-			),
-		),
+
 	);
 
 	if ( $_COOKIE['nebulaSession'] ){ //If cookie exists
@@ -194,6 +165,41 @@ function register_nebula_scripts(){
 			'role' => $user_info->roles[0],
 			'last' => time(),
 			'conversions' => false,
+			'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
+				'bot' => nebula_is_bot(),
+				'remote_addr' => $_SERVER['REMOTE_ADDR'],
+				//'user_agent' => urlencode($_SERVER['HTTP_USER_AGENT']), //@TODO "Nebula" 0: This is causing some serious issues. Only half of it shows up causing the json_decode() above to be null. Try var dumping the user agent to see if a certain character is messing it up.
+				'device' => array(
+					'full' => nebula_get_device('full'),
+					'formfactor' => nebula_get_device('formfactor'),
+					'brand' => nebula_get_device('brand'),
+					'model' => nebula_get_device('model'),
+					'type' => nebula_get_device('type'),
+				),
+				'os' => array(
+					'full' => nebula_get_os('full'),
+					'name' => nebula_get_os('name'),
+					'version' => nebula_get_os('version'),
+				),
+				'browser' => array(
+					'full' => nebula_get_browser('full'),
+					'name' => nebula_get_browser('name'),
+					'version' => nebula_get_browser('version'),
+					'engine' => nebula_get_browser('engine'),
+					'type' => nebula_get_browser('type'),
+				),
+				'capabilities' => array( //@TODO "Nebula" 0: Is this needed if we can just check against Modernizr?
+					'speech' => 'unknown',
+					'battery' => 'unknown',
+					'network' => 'unknown',
+					'adblock' => false,
+					'select_text' => 'unknown',
+					'clipboard' => array(
+						'copy' => 'unknown',
+						'paste' => 'unknown',
+					),
+				),
+			),
 		);
 	}
 }
@@ -376,11 +382,9 @@ if ( !function_exists('nebula_set_content_width') ){
 //Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.
 //add_image_size('example', 32, 32, 1);
 
-//Title tag support allows WordPress core to create the <title> tag.
-add_theme_support('title-tag');
 
 //Add/remove post formats as needed - http://codex.wordpress.org/Post_Formats
-//add_theme_support('post-formats', array('aside', 'chat', 'status', 'gallery', 'link', 'image', 'quote', 'video', 'audio')); //Add to below as they are used.
+//add_theme_support('post-formats', array('aside', 'chat', 'status', 'gallery', 'link', 'image', 'quote', 'video', 'audio'));
 
 
 

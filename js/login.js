@@ -7,7 +7,7 @@ jQuery(document).on('ready', function(){
 	}
 
 	jQuery('.forgetmenot, .submit').addClass('clearfix');
-	jQuery('#loginform').append('<div class="centertext ipcon"><p>Your IP Address: <span class="theIP">' + nebula.client.remote_addr + '</span></p></div>');
+	jQuery('#loginform').append('<div class="centertext ipcon"><p>Your IP Address: <span class="theIP">' + nebula.user.client.remote_addr + '</span></p></div>');
 
 	jQuery('#lostpasswordform').submit(function(){
 		var resetUser = jQuery('#user_login').val();

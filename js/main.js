@@ -264,15 +264,15 @@ function debugInfo(){
 		debugInfoVal += 'User Agent: ' + navigator.userAgent + '\n';
 		debugInfoVal += 'http://udger.com/resources/online-parser\n\n';
 	} else {
-		debugInfoVal += 'User Agent: ' + nebula.client.userAgent + '\n';
+		debugInfoVal += 'User Agent: ' + nebula.user.client.userAgent + '\n';
 		debugInfoVal += 'http://udger.com/resources/online-parser\n\n';
 	}
 
-	if ( typeof nebula.client !== 'undefined' ){
-		var fullDevice = ( nebula.client.device.full.trim().length )? ' (' + nebula.client.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
-		debugInfoVal += 'Device: ' + nebula.client.device.type + fullDevice + '\n';
-		debugInfoVal += 'Operating System: ' + nebula.client.os.full + '\n';
-		debugInfoVal += 'Browser: ' + nebula.client.browser.full + ' (' + nebula.client.browser.engine + ')\n';
+	if ( typeof nebula.user.client !== 'undefined' ){
+		var fullDevice = ( nebula.user.client.device.full.trim().length )? ' (' + nebula.user.client.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
+		debugInfoVal += 'Device: ' + nebula.user.client.device.type + fullDevice + '\n';
+		debugInfoVal += 'Operating System: ' + nebula.user.client.os.full + '\n';
+		debugInfoVal += 'Browser: ' + nebula.user.client.browser.full + ' (' + nebula.user.client.browser.engine + ')\n';
 	}
 
 	debugInfoVal += 'HTML Classes: ' + nebula.dom.html.attr('class').split(' ').sort().join(', ') + '\n\n';
@@ -319,8 +319,8 @@ function debugInfo(){
 			debugInfoVal += 'Ads: ' + adBlockUser + '\n';
 		}
 
-		if ( typeof nebula.client.businessopen !== 'undefined' ){
-			debugInfoVal += ( nebula.client.businessopen )? 'During Business Hours\n\n' : 'Non-Business Hours\n\n';
+		if ( typeof nebula.user.client.businessopen !== 'undefined' ){
+			debugInfoVal += ( nebula.user.client.businessopen )? 'During Business Hours\n\n' : 'Non-Business Hours\n\n';
 		}
 
 		debugInfoOnceFlag = true;
@@ -342,8 +342,8 @@ function debugInfo(){
 		}
 	}
 
-	debugInfoVal += 'IP Address: ' + nebula.client.remote_addr + '\n';
-	debugInfoVal += 'http://whatismyipaddress.com/ip/' + nebula.client.remote_addr + '\n\n';
+	debugInfoVal += 'IP Address: ' + nebula.user.client.remote_addr + '\n';
+	debugInfoVal += 'http://whatismyipaddress.com/ip/' + nebula.user.client.remote_addr + '\n\n';
 
 	jQuery('textarea.debuginfo').addClass('hidden').css('display', 'none').val(debugInfoVal); //Store the data into the debug textarea
 }
@@ -2304,7 +2304,7 @@ function nebulaScrollTo(element, milliseconds){
 		if ( location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname ){
 			var target = jQuery(this.hash);
 			target = ( target.length )? target : jQuery('[name=' + this.hash.slice(1) +']');
-			if ( target.length ){
+			if ( target.length ){ //If target exists
 				var nOffset = Math.floor(target.offset().top-headerHtOffset+pOffset);
 				jQuery('html, body').animate({
 					scrollTop: nOffset
@@ -2540,18 +2540,36 @@ function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-time
 
 //Functionality for selecting and copying text using Nebula Pre tags.
 function nebula_pre(){
-	try {
+	if ( Modernizr.awesomeNewFeature ){
+		//do something
+	}
+
+	try { //@TODO "Nebula" 0: Use Modernizr check here instead.
 		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
 			var selectCopyText = 'Copy to clipboard';
+			nebula.user.client.capabilities.clipboard.copy = true;
+			nebula.user.client.capabilities.select_text = true;
 		} else if ( document.body.createTextRange || window.getSelection ){
 			var selectCopyText = 'Select All';
+			nebula.user.client.capabilities.clipboard.copy = false;
+			nebula.user.client.capabilities.clipboard.paste = false;
+			nebula.user.client.capabilities.select_text = true;
 		} else {
+			nebula.user.client.capabilities.clipboard.copy = false;
+			nebula.user.client.capabilities.clipboard.paste = false;
+			nebula.user.client.capabilities.select_text = false;
 			return false;
 		}
 	} catch(err){
 		if ( document.body.createTextRange || window.getSelection ){
 			var selectCopyText = 'Select All';
+			nebula.user.client.capabilities.clipboard.copy = false;
+			nebula.user.client.capabilities.clipboard.paste = false;
+			nebula.user.client.capabilities.select_text = true;
 		} else {
+			nebula.user.client.capabilities.clipboard.copy = false;
+			nebula.user.client.capabilities.clipboard.paste = false;
+			nebula.user.client.capabilities.select_text = false;
 			return false;
 		}
 	}

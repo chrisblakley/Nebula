@@ -24,8 +24,10 @@
 		//This tests to see if selecting text is possible.
 		if ( document.body.createTextRange || window.getSelection ) {
 			jQuery('.example-select-supported').addClass('yep').html('Selecting text is supported in your browser');
+			nebula.user.client.capabilities.select_text = true;
 		} else {
 			jQuery('.example-select-supported').addClass('nope').html('Selecting text is NOT supported in your browser');
+			nebula.user.client.capabilities.select_text = false;
 		}
 
 
@@ -41,11 +43,13 @@
 		try {
 			if ( document.queryCommandEnabled("copy") ) {
 				jQuery('.example-copy-supported').addClass('yep').html('Copying text is supported in your browser');
+				nebula.user.client.capabilities.clipboard.copy = true;
 			} else {
 				jQuery('.example-copy-supported').addClass('maybe').html('Copying text might not be supported in your browser... <strong>But try it anyway</strong>- sometimes it still works!');
 			}
 		} catch(err){
 			jQuery('.example-copy-supported').addClass('nope').html('Copying text is NOT supported in your browser.');
+			nebula.user.client.capabilities.clipboard.copy = false;
 		}
 
 
@@ -54,6 +58,7 @@
 		    selectText('.example-copy', 'copy', function(success){
 			    if ( success ) {
 				    jQuery('.example-copy-supported').removeClass('maybe').addClass('yep').html('Copying text is supported in your browser');
+				    nebula.user.client.capabilities.clipboard.copy = true;
 				    jQuery('.example-copy-trigger').text('Copied!');
 				    setTimeout(function(){
 					    jQuery('.example-copy-trigger').text('Click here to copy the above text.');
@@ -62,6 +67,7 @@
 				} else {
 					jQuery('.example-copy-trigger').text('Unable to copy text!');
 					jQuery('.example-copy-supported').removeClass('maybe').addClass('nope').html('Copying text is NOT supported in your browser.');
+					nebula.user.client.capabilities.clipboard.copy = false;
 				}
 		    });
 			return false;
@@ -72,10 +78,18 @@
 			jQuery(this).val('');
 			try {
 				var successfulPaste = document.execCommand('paste');
-				var msg = successfulPaste ? 'Automatic paste command was successful!' : 'Automatic paste command was unsuccessful. Please paste manually.';
+				if ( successfulPaste ){
+					var msg = 'Automatic paste command was successful!';
+					nebula.user.client.capabilities.clipboard.paste = true;
+				} else {
+					var msg = 'Automatic paste command was unsuccessful. Please paste manually.';
+					nebula.user.client.capabilities.clipboard.paste = false;
+				}
+
 				jQuery(this).attr('placeholder', msg);
 			} catch(err){
 				jQuery(this).attr('placeholder', 'Automatic paste command was unsuccessful. Please paste manually.');
+				nebula.user.client.capabilities.clipboard.paste = false;
 			}
 		}).on('blur', function(){
 			jQuery(this).attr('placeholder', 'Click the copy link and then try pasting here to see if it worked...');
