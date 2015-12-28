@@ -305,6 +305,8 @@
 				return nebula.session.notes.join(', ');
 			}
 
+			item = item.replace(/"|%22/g, '');
+
 			itemIndex = nebula.session.notes.indexOf(item);
 
 			if ( action == 'add' ){
