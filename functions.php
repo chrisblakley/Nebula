@@ -130,18 +130,17 @@ function register_nebula_scripts(){
 				'debug' => is_debug(),
 			),
 		),
-		'post' => array(
+		'post' => ( is_search() )? null : array( //Conditional prevents wrong ID being used on search results
 			'id' => get_the_id(),
 			'title' => urlencode(get_the_title()),
 			'author' => urlencode(get_the_author()),
 			'year' => get_the_date('Y'),
 		),
-		'dom' => false,
-
+		'dom' => null,
 	);
 
-	if ( $_COOKIE['nebulaSession'] ){ //If cookie exists
-		$nebula['session'] = json_decode(str_replace('\\', '', $_COOKIE['nebulaSession']), true); //Replace nebula.session with cookie data
+	if ( $_COOKIE['nebulaSession'] && json_decode($_COOKIE['nebulaSession'], true) ){ //If cookie exists and is valid JSON
+		$nebula['session'] = json_decode($_COOKIE['nebulaSession'], true); //Replace nebula.session with cookie data
 	} else {
 		$nebula['session'] = array(
 			'ip' => $_SERVER['REMOTE_ADDR'],
@@ -156,8 +155,8 @@ function register_nebula_scripts(){
 	$user_info = get_userdata(get_current_user_id());
 
 	//Check for user cookie here.
-	if ( $_COOKIE['nebulaUser'] ){ //If cookie exists
-		$nebula['user'] = json_decode(str_replace('\\', '', $_COOKIE['nebulaUser']), true); //Replace nebula.user with cookie data
+	if ( $_COOKIE['nebulaUser'] && json_decode($_COOKIE['nebulaUser'], true) ){ //If cookie exists and is valid JSON
+		$nebula['user'] = json_decode($_COOKIE['nebulaUser'], true); //Replace nebula.user with cookie data
 	} else {
 		$nebula['user'] = array(
 			'ip' => $_SERVER['REMOTE_ADDR'],

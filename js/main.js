@@ -4,7 +4,7 @@ jQuery.noConflict();
  DOM Ready
  ===========================*/
 
-jQuery(document).on('ready', function(){
+jQuery(document).ready(function(){
 	getQueryStrings();
 	if ( get('killall') || get('kill') || get('die') ){
 		throw new Error('(Manually terminated main.js)');
@@ -244,7 +244,6 @@ function initSessionInfo(){
 			nebula.session.history.push(window.location.href);
 		}
 	}
-	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 	createCookie('nebulaSession', JSON.stringify(nebula.session));
 }
 
@@ -638,42 +637,6 @@ function socialSharing(){
  Analytics Functions
  ===========================*/
 
-//Add data to dynamic conversion object
-function nebulaConversion(category, data, action){
-	if ( !action ){
-		var action = 'add';
-	}
-
-	if ( action == 'remove' ){
-		if ( typeof nebula.user.conversions[category] !== 'undefined' ){
-			jQuery.each(nebula.user.conversions[category], function(i){
-				if ( nebula.user.conversions[category][i] == data ){
-					nebula.user.conversions[category].splice(i, 1);
-				}
-
-				if ( nebula.user.conversions[category].length <= 0 ){
-					delete nebula.user.conversions[category];
-				}
-			});
-		}
-		createCookie('nebulaUser', JSON.stringify(nebula.user));
-	} else {
-		if ( !data ){
-			var data = 'true';
-		}
-
-		nebula.user.conversions = nebula.user.conversions || {};
-		nebula.user.conversions[category] = nebula.user.conversions[category] || [];
-
-		if ( nebula.user.conversions[category].indexOf(data) < 0 ){ //If not already in the array
-			nebula.user.conversions[category].push(data);
-			createCookie('nebulaUser', JSON.stringify(nebula.user));
-		}
-	}
-
-	debugInfo();
-}
-
 //Google Analytics Universal Analytics Event Trackers
 function gaEventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
@@ -747,6 +710,10 @@ function gaEventTracking(){
 	});
 
 	//Generic Interal Search Tracking
+	if ( get('s') || get('rs') ){
+		var searchQuery = get('s') || get('rs');
+		nebulaConversion('keywords', searchQuery);
+	}
 	nebula.dom.document.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -2066,8 +2033,6 @@ function nebulaAddressAutocomplete(autocompleteInput){
 						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
 						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 						ga('send', 'event', 'Contact', 'Autocomplete Address', nebula.user.address.city + ', ' + nebula.user.address.state.abbreviation + ' ' + nebula.user.address.zip.code);
-
-						console.debug(nebula.user);
 					});
 
 					jQuery(autocompleteInput).on('focus', function(){
@@ -2417,6 +2382,44 @@ function readCookie(name){
 }
 function eraseCookie(name){
 	createCookie(name, "", -1);
+}
+
+//Add data to dynamic conversion object
+function nebulaConversion(category, data, action){
+	if ( !action ){
+		var action = 'add';
+	}
+
+	if ( action == 'remove' ){
+		if ( typeof nebula.user.conversions[category] !== 'undefined' ){
+			jQuery.each(nebula.user.conversions[category], function(i){
+				if ( nebula.user.conversions[category][i] == data ){
+					nebula.user.conversions[category].splice(i, 1);
+				}
+
+				if ( nebula.user.conversions[category].length <= 0 ){
+					delete nebula.user.conversions[category];
+				}
+			});
+		}
+		createCookie('nebulaUser', JSON.stringify(nebula.user));
+	} else {
+		if ( !data ){
+			var data = 'true';
+		}
+
+		nebula.user.conversions = nebula.user.conversions || {};
+		nebula.user.conversions[category] = nebula.user.conversions[category] || [];
+
+		if ( nebula.user.conversions[category].indexOf(data.replace(/"|%22/g, '')) < 0 ){ //If not already in the array
+			nebula.user.conversions[category].push(data.replace(/"|%22/g, ''));
+			createCookie('nebulaUser', JSON.stringify(nebula.user));
+		}
+	}
+
+	if ( typeof debugInfo == 'function' ){
+		debugInfo();
+	}
 }
 
 //Time specific events. Unique ID is required. Returns time in milliseconds.
