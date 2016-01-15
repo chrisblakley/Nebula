@@ -625,11 +625,26 @@ function socialSharing(){
     var title = nebula.dom.document.attr('title');
     var encloc = encodeURI(loc);
     var enctitle = encodeURI(title);
-    jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank');
-    jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr('target', '_blank');
-    jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr('target', '_blank');
-    jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank');
-    jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank');
+    jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
+	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+	    ga('send', 'event', 'Social', 'Share', 'Facebook');
+    });
+    jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
+	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+	    ga('send', 'event', 'Social', 'Share', 'Twitter');
+    });
+    jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
+	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+	    ga('send', 'event', 'Social', 'Share', 'Google+');
+    });
+    jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
+	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+	    ga('send', 'event', 'Social', 'Share', 'LinkedIn');
+    });
+    jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank').on('click tap touch', function(){
+	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+	    ga('send', 'event', 'Social', 'Share', 'Email');
+    });
 }
 
 
@@ -1894,12 +1909,8 @@ function conditionalJSLoading(){
 
 	//Only load dataTables library if dataTables table exists.
     if ( jQuery('.dataTables_wrapper').is('*') ){
-        jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/js/jquery.dataTables.min.js').done(function(){
-            jQuery.getScript('https://cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js').fail(function(){ //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
-                ga('send', 'event', 'Error', 'JS Error', 'dataTables.responsive.js could not be loaded', {'nonInteraction': 1});
-            });
-            nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.7/css/jquery.dataTables.min.css');
-			nebulaLoadCSS('https://cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css'); //@TODO "Nebula" 0: Keep watching cdnjs for DataTables responsive support...
+        jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/js/jquery.dataTables.min.js').done(function(){
+            nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/css/jquery.dataTables.min.css');
 			dataTablesActions();
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());

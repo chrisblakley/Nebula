@@ -495,6 +495,10 @@ get_header(); ?>
 							include_once('includes/nebula_retargeting.php');
 						} ?>
 
+						<?php if ( is_page(2400) ){ //Push Notifications using Service Workers
+							include_once('includes/push_notifications-serviceworkers.php');
+						} ?>
+
 
 						<?php
 						/*==========================

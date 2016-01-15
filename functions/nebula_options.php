@@ -211,6 +211,7 @@ function register_nebula_options(){
 		'nebula_google_font_family' => '',
 		'nebula_google_font_weights' => '',
 		'nebula_google_font_url' => '',
+		'nebula_gcm_sender_id' => '',
 		'nebula_google_server_api_key' => '',
 		'nebula_google_browser_api_key' => '',
 		'nebula_cse_id' => '',
@@ -271,21 +272,6 @@ function nebula_options_page(){
 				});
 				return false;
 			});
-
-			businessHoursCheck();
-			jQuery('.businessday input[type="checkbox"]').on('click', function(){
-				businessHoursCheck();
-			});
-
-			function businessHoursCheck(){
-				jQuery('.businessday input[type="checkbox"]').each(function(){
-					if ( jQuery(this).prop('checked') ){
-						jQuery(this).parents('.businessday').removeClass('closed');
-					} else {
-						jQuery(this).parents('.businessday').addClass('closed');
-					}
-				});
-			}
 
 			//Pull content from full meta tag HTML (Google Webmaster Tools)
 			jQuery('#nebula_google_webmaster_tools_verification').on('paste change blur', function(){
@@ -485,42 +471,21 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
+				<?php $weekdays = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'); ?>
+
 		        <tr class="short" valign="top">
 		        	<th scope="row">Business Hours&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<div class="businessday">
-							<input type="checkbox" name="nebula_business_hours_sunday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_sunday_enabled')); ?> /> <span style="display: inline-block; width: 90px;">Sunday:</span> <input class="business-hour" type="text" name="nebula_business_hours_sunday_open" value="<?php echo get_option('nebula_business_hours_sunday_open'); ?>" style="width: 75px;" /> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_sunday_close" value="<?php echo get_option('nebula_business_hours_sunday_close'); ?>" style="width: 75px;"  />
-						</div>
-
-						<div class="businessday">
-							<input type="checkbox" name="nebula_business_hours_monday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_monday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Monday:</span> <input class="business-hour" type="text" name="nebula_business_hours_monday_open" value="<?php echo get_option('nebula_business_hours_monday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_monday_close" value="<?php echo get_option('nebula_business_hours_monday_close'); ?>" style="width: 75px;"/>
-						</div>
-
-						<div class="businessday">
-							<input type="checkbox" name="nebula_business_hours_tuesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_tuesday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Tuesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_tuesday_open" value="<?php echo get_option('nebula_business_hours_tuesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_tuesday_close" value="<?php echo get_option('nebula_business_hours_tuesday_close'); ?>" style="width: 75px;"/>
-						</div>
-
-						<div class="businessday">
-							<input type="checkbox" name="nebula_business_hours_wednesday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_wednesday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Wednesday:</span> <input class="business-hour" type="text" name="nebula_business_hours_wednesday_open" value="<?php echo get_option('nebula_business_hours_wednesday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_wednesday_close" value="<?php echo get_option('nebula_business_hours_wednesday_close'); ?>" style="width: 75px;"/>
-						</div>
-
-						<div class="businessday">
-							<input type="checkbox" name="nebula_business_hours_thursday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_thursday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Thursday:</span> <input class="business-hour" type="text" name="nebula_business_hours_thursday_open" value="<?php echo get_option('nebula_business_hours_thursday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_thursday_close" value="<?php echo get_option('nebula_business_hours_thursday_close'); ?>" style="width: 75px;"/>
-						</div>
-
-						<div class="businessday">
-							<input type="checkbox" name="nebula_business_hours_friday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_friday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Friday:</span> <input class="business-hour" type="text" name="nebula_business_hours_friday_open" value="<?php echo get_option('nebula_business_hours_friday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_friday_close" value="<?php echo get_option('nebula_business_hours_friday_close'); ?>" style="width: 75px;"/>
-						</div>
-
-						<div class="businessday">
-							<input type="checkbox" name="nebula_business_hours_saturday_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_saturday_enabled')); ?>/> <span style="display: inline-block; width: 90px;">Saturday:</span> <input class="business-hour" type="text" name="nebula_business_hours_saturday_open" value="<?php echo get_option('nebula_business_hours_saturday_open'); ?>" style="width: 75px;"/> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_saturday_close" value="<?php echo get_option('nebula_business_hours_saturday_close'); ?>" style="width: 75px;"/>
-						</div>
-
+						<?php foreach ( $weekdays as $weekday ): ?>
+							<div class="businessday">
+								<input type="checkbox" name="nebula_business_hours_<?php echo $weekday; ?>_enabled" value="1" <?php checked('1', get_option('nebula_business_hours_' . $weekday . '_enabled')); ?> /> <span style="display: inline-block; width: 85px;"><?php echo ucfirst($weekday); ?>:</span> <input class="business-hour" type="text" name="nebula_business_hours_<?php echo $weekday; ?>_open" value="<?php echo get_option('nebula_business_hours_' . $weekday . '_open'); ?>" style="width: 60px;" /> &ndash; <input class="business-hour" type="text" name="nebula_business_hours_<?php echo $weekday; ?>_close" value="<?php echo get_option('nebula_business_hours_' . $weekday . '_close'); ?>" style="width: 60px;"  />
+							</div>
+						<?php endforeach; ?>
 						<p class="helper"><small>Open/Close times. Times should be in the format "5:30 pm" or "17:30". Uncheck all to disable this meta.</small></p>
 					</td>
 		        </tr>
 
-				<tr class="short" valign="top">
+				<tr id="daysoff" class="short" valign="top">
 		        	<th scope="row">Days Off&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<textarea name="nebula_business_hours_closed"><?php echo get_option('nebula_business_hours_closed'); ?></textarea>
@@ -1302,6 +1267,14 @@ function nebula_options_page(){
 						<input id="nebula_google_font_family" type="text" name="nebula_google_font_family" value="<?php echo get_option('nebula_google_font_family'); ?>" placeholder="Open Sans" /><input id="nebula_google_font_weights" type="text" name="nebula_google_font_weights" value="<?php echo get_option('nebula_google_font_weights'); ?>" placeholder="400,800" style="width: 150px;" /><br />
 						or: <input id="nebula_google_font_url" type="text" name="nebula_google_font_url" value="<?php echo get_option('nebula_google_font_url'); ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" style="width: 400px;" />
 						<p class="helper"><small>Choose which <a href="https://www.google.com/fonts" target="_blank">Google Font</a> is used by default for this site (weights should be comma-separated). Or, paste the entire font URL. Defaults: Open Sans 400,800</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">Google Cloud Messaging Sender ID*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="nebula_gcm_sender_id" type="text" name="nebula_gcm_sender_id" value="<?php echo get_option('nebula_gcm_sender_id'); ?>" placeholder="000000000000" style="width: 392px;" />
+						<p class="helper"><small>The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a>. This is the "Project number" within the project box on the Dashboard. Do not include parenthesis or the "#" symbol. This is used for push notifications. <strong>*Note: This feature is still in development and not currently active!</strong></small></p>
 					</td>
 		        </tr>
 

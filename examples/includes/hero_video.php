@@ -1,6 +1,7 @@
 <style>
 	#herovideo {margin-top: -30px;} /* Do not copy over this line - it is for this example page only! */
 
+
 	#herovideo {position: relative; overflow: hidden; min-height: 492px;}
 
 	#video-background,
@@ -40,13 +41,7 @@
 			return false;
 		});
 	});
-
-	jQuery(window).on('load', function() {
-
-	});
 </script>
-
-
 
 
 <div class="container">
@@ -56,16 +51,6 @@
 		        <source src="https://clips.vorwaerts-gmbh.de/big_buck_bunny.webm" type="video/webm" />
 		        <source src="https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" type="video/mp4" />
 		        <source src="https://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv" type="video/ogg" />
-
-	<!--
-		        <object  id="video-background" type="application/x-shockwave-flash" data="<?php echo get_template_directory_uri(); ?>/videos/NAM_Farm_Loop_01c.swf" style="width: 100%; height: 360px; z-index: 0;">
-		            <param name="movie" value="<?php echo get_template_directory_uri(); ?>/videos/NAM_Farm_Loop_01c.swf" />
-		            <param name="wmode" value="transparent">
-		            <param name="scale" value="exactFit" />
-		            <param name="flashvars" value="autostart=true&amp;controlbar=none&amp;image=<?php echo get_template_directory_uri(); ?>/videos/videobg.png&amp;file=<?php echo get_template_directory_uri(); ?>/videos/NAM_Farm_Loop_01c.mp4" />
-		            <img src="<?php echo get_template_directory_uri(); ?>/videos/videobg.png" width="640" height="360" alt="BOU Video" title="No video playback capabilities, please download the video below" />
-		        </object>
-	-->
 		    </video>
 		<?php endif; ?>
 		<img class="mobile-video-background" src="https://placehold.it/872x492"/>

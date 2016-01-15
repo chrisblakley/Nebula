@@ -107,25 +107,19 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 
 	input.dimension.error {border: 1px solid $danger_color; @include background-color($danger_color, 0.1);}
 
-	.businessday {
-		span {@include prefix((transition: all 0.25s));
-			@include media(custom, map_get($admin_media_queries, mobile)){font-size: 12px; width: 80px !important;};
-		}
-		input {@include prefix((transition: all 0.25s));
-			&.business-hour {@include media(custom, map_get($admin_media_queries, mobile)){width: 23% !important; display: inline-block !important; font-size: 12px !important;};}
-		}
-		&.closed span,
-		&.closed input {opacity: 0.4; pointer-events: none;}
-
-		input[type="checkbox"] {opacity: 1 !important; pointer-events: all;}
-
-	}
-
 	.mobiletitle {display: none;
 		@include media(custom, map_get($admin_media_queries, mobile)){display: block;};
 	}
 
 	.nav-tab-wrapper {@include media(custom, map_get($admin_media_queries, mobile)){display: none;};}
+}
+
+.businessday {
+	span {@include prefix((transition: all 0.25s));}
+	input {@include prefix((transition: all 0.25s));}
+	&.closed span,
+	&.closed input {opacity: 0.4; pointer-events: none;}
+	input[type="checkbox"] {opacity: 1 !important; pointer-events: all;}
 }
 
 

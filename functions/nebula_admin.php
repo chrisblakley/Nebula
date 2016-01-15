@@ -962,66 +962,60 @@ function remove_yoast_columns($columns){
 }
 
 //Duplicate post
-add_action( 'admin_action_duplicate_post_as_draft', 'duplicate_post_as_draft' );
+add_action('admin_action_duplicate_post_as_draft', 'duplicate_post_as_draft');
 function duplicate_post_as_draft(){
 	global $wpdb;
 	if ( !(isset($_GET['post']) || isset($_POST['post'])  || (isset($_REQUEST['action']) && 'duplicate_post_as_draft' == $_REQUEST['action'])) ){
 		wp_die('No post to duplicate has been supplied!');
 	}
 
-	//Get the original post id
-	$post_id = ( isset($_GET['post'] )? $_GET['post'] : $_POST['post']);
-	//Get all the original post data
-	$post = get_post( $post_id );
+	$post_id = ( isset($_GET['post'] )? $_GET['post'] : $_POST['post']); //Get the original post id
+	$post = get_post( $post_id ); //Get all the original post data
 
-	//Set post author (default by current user). For original author change to: $new_post_author = $post->post_author;
 	$current_user = wp_get_current_user();
-	$new_post_author = $current_user->ID;
+	$new_post_author = $current_user->ID; //Set post author (default by current user). For original author change to: $new_post_author = $post->post_author;
 
 	//If post data exists, create the post duplicate
 	if ( isset($post) && $post != null ){
-		//New post data array
-		$args = array(
-			'comment_status' => $post->comment_status,
-			'ping_status'    => $post->ping_status,
-			'post_author'    => $new_post_author,
-			'post_content'   => $post->post_content,
-			'post_excerpt'   => $post->post_excerpt,
-			'post_name'      => $post->post_name,
-			'post_parent'    => $post->post_parent,
-			'post_password'  => $post->post_password,
-			'post_status'    => 'draft',
-			'post_title'     => $post->post_title . ' copy',
-			'post_type'      => $post->post_type,
-			'to_ping'        => $post->to_ping,
-			'menu_order'     => $post->menu_order
-		);
 
 		//Insert the post by wp_insert_post() function
-		$new_post_id = wp_insert_post( $args );
+		$new_post_id = wp_insert_post(array(
+			'comment_status' => $post->comment_status,
+			'ping_status' => $post->ping_status,
+			'post_author' => $new_post_author,
+			'post_content' => $post->post_content,
+			'post_excerpt' => $post->post_excerpt,
+			'post_name' => $post->post_name,
+			'post_parent' => $post->post_parent,
+			'post_password' => $post->post_password,
+			'post_status' => 'draft',
+			'post_title' => $post->post_title . ' copy',
+			'post_type' => $post->post_type,
+			'to_ping' => $post->to_ping,
+			'menu_order' => $post->menu_order
+		));
 
 		//Get all current post terms ad set them to the new post draft
-		$taxonomies = get_object_taxonomies($post->post_type); // returns array of taxonomy names for post type, ex array("category", "post_tag");
-		foreach ($taxonomies as $taxonomy){
+		$taxonomies = get_object_taxonomies($post->post_type); //returns array of taxonomy names for post type, ex array("category", "post_tag");
+		foreach ( $taxonomies as $taxonomy ){
 			$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
 			wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
 		}
 
 		//Duplicate all post meta
 		$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
-		if ( count($post_meta_infos)!=0 ){
+		if ( count($post_meta_infos) != 0 ){
 			$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-			foreach ($post_meta_infos as $meta_info){
+			foreach ( $post_meta_infos as $meta_info ){
 				$meta_key = $meta_info->meta_key;
 				$meta_value = addslashes($meta_info->meta_value);
-				$sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
+				$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
 			}
-			$sql_query.= implode(" UNION ALL ", $sql_query_sel);
+			$sql_query .= implode(" UNION ALL ", $sql_query_sel);
 			$wpdb->query($sql_query);
 		}
 
-		//Redirect to the edit post screen for the new draft
-		wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
+		wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id)); //Redirect to the edit post screen for the new draft
 		exit;
 	} else {
 		wp_die('Post creation failed, could not find original post: ' . $post_id);
@@ -1030,7 +1024,7 @@ function duplicate_post_as_draft(){
 
 //Add the duplicate link to action list for post_row_actions (This works for custom post types too).
 //Additional post types with the following: add_filter('{post type name}_row_actions', 'rd_duplicate_post_link', 10, 2);
-add_filter( 'post_row_actions', 'rd_duplicate_post_link', 10, 2 );
+add_filter('post_row_actions', 'rd_duplicate_post_link', 10, 2);
 add_filter('page_row_actions', 'rd_duplicate_post_link', 10, 2);
 function rd_duplicate_post_link($actions, $post){
 	if ( current_user_can('edit_posts') ){
@@ -1049,7 +1043,6 @@ add_action('manage_media_custom_column', 'muc_value', 10, 2);
 function muc_value( $column_name, $id ){
 	if ( $column_name == "media_url" ){
 		echo '<input type="text" width="100%" value="' . wp_get_attachment_url($id) . '" readonly />';
-		//echo '<input type="text" width="100%" onclick="jQuery(this).select();" value="'. wp_get_attachment_url( $id ). '" readonly />'; //This selects the text on click
 	}
 }
 
@@ -1060,7 +1053,6 @@ add_editor_style('stylesheets/css/tinymce.css');
 if ( is_dev() && !is_client() ){
 	add_action('admin_menu', 'all_settings_link');
 	function all_settings_link(){
-	    //add_options_page('All Settings', 'All Settings', 'administrator', 'options.php');
 	    add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php');
 	}
 }
@@ -1075,34 +1067,6 @@ function clear_all_w3_caches(){
 		}
 	}
 }
-
-//Nebula Help Tab
-add_action('in_admin_header', 'nebula_help_tabs');
-function nebula_help_tabs(){
-	if ( $screen = get_current_screen() ){
-		$help_tabs = $screen->get_help_tabs();
-		$screen->remove_help_tabs();
-
-		$youarehere = '<i class="fa fa-arrow-circle-right" title="You are here."></i> '; //@TODO "Nebula" 0: Detect current page and place this variable accordingly.
-
-		$screen->add_help_tab(array(
-			'id' => 'nebula_help',
-			'title' => 'Nebula',
-			'content' => '
-				<h2>Nebula Overview</h2>
-				<p>' . $youarehere . '<strong><a class="nebula_help_link" href="' . get_admin_url() . '">Dashboard</a></strong> - Nebula help content coming soon.</p>
-				<p><strong><a class="nebula_help_link" href="' . get_admin_url() . 'themes.php?page=nebula_options">Options</a></strong> - Nebula help content coming soon.</p>
-				<p><strong>Shortcodes</strong> - Nebula help content coming soon.</p>
-			',
-		));
-
-		if ( count($help_tabs) ){
-			foreach ( $help_tabs as $help_tab ){
-				$screen->add_help_tab($help_tab);
-			}
-		}
-	}
-}//nebula_help_tabs
 
 //Admin Footer Enhancements
 //Left Side
@@ -1125,7 +1089,7 @@ function nebula_add_post_meta_boxes(){
 	$builtin_types = array('post', 'page', 'attachment');
 	$custom_types = get_post_types(array('_builtin' => false));
 
-	foreach( $builtin_types as $builtin_type ){
+	foreach ( $builtin_types as $builtin_type ){
 		add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', 'nebula_internal_search_keywords_meta_box', $builtin_type, 'side', 'default');
 	}
 

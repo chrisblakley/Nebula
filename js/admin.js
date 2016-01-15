@@ -230,6 +230,10 @@ jQuery(document).on('ready', function(){
 		history.replaceState(null, document.title, cleanURL[0]);
 	}
 
+	businessHoursCheck();
+	jQuery('.businessday input[type="checkbox"]').on('click tap touch', function(){
+		businessHoursCheck();
+	});
 
 }); //End Document Ready
 
@@ -243,6 +247,16 @@ jQuery(window).on('load', function(){
 }); //End Window Load
 
 
+//Check business hours for open checkbox
+function businessHoursCheck(){
+	jQuery('.businessday input[type="checkbox"]').each(function(){
+		if ( jQuery(this).prop('checked') ){
+			jQuery(this).parents('.businessday').removeClass('closed');
+		} else {
+			jQuery(this).parents('.businessday').addClass('closed');
+		}
+	});
+}
 
 //Notify for possible duplicate post slug
 function nebulaUniqueSlugChecker(postType){

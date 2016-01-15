@@ -17,7 +17,6 @@ while ( list($key, $val) = each($process) ){
 }
 unset($process);
 
-
 //Add IE compatibility header
 header("X-UA-Compatible: IE=edge");
 
@@ -70,14 +69,7 @@ add_action('wp_print_styles', 'nebula_dequeues', 9999);
 function nebula_dequeues(){
 	if ( !is_admin() ){
 		//Styles
-		wp_deregister_style('cff-font-awesome'); //Custom Facebook Feed - We enqueue the latest version of Font Awesome ourselves
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
-
-		//Scripts
-		if ( nebula_is_browser('ie', '8', '<=') ){ //WP Core - Dequeue jQuery Migrate for browsers that don't need it.
-			wp_deregister_script('jquery');
-			wp_register_script('jquery', false, array('jquery-core'), '1.11.0'); //Just have to make sure this version reflects the actual jQuery version bundled with WP (click the jquery.js link in the source)
-		}
 
 		//Page specific dequeues
 		if ( is_front_page() ){
@@ -128,8 +120,6 @@ function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [de
 
 		//global $WPSEO_Admin_Init; //@TODO "Nebula" 0: Test this next time the box appears after an update.
 		//remove_action('admin_init', array($WPSEO_Admin_Init, 'after_update_notice'), 15); //@TODO "Nebula" 0: Test this next time the box appears after an update... didnt work
-
-
 	}
 }
 
@@ -158,9 +148,8 @@ function disable_wp_emojicons(){
 	remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
 	remove_filter('the_content_feed', 'wp_staticize_emoji');
 	remove_filter('comment_text_rss', 'wp_staticize_emoji');
-
-	add_filter('tiny_mce_plugins', 'disable_emojicons_tinymce'); //Remove TinyMCE Emojis too
 }
+add_filter('tiny_mce_plugins', 'disable_emojicons_tinymce'); //Remove TinyMCE Emojis too
 function disable_emojicons_tinymce($plugins){
 	if ( is_array($plugins) ){
 		return array_diff($plugins, array('wpemoji'));

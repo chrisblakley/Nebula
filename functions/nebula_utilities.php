@@ -85,7 +85,7 @@ function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
 		'utmul' => str_replace('-', '_', get_bloginfo('language')), //Language encoding for the browser. Some browsers don’t set this, in which case it is set to '-'
 		'utmje' => '0', //Indicates if browser is Java enabled. 1 is true.
 		'utmhid' => mt_rand(1000000000, 9999999999), //A random number used to link the GA GIF request with AdSense
-		'utmr' => $_SERVER['HTTP_REFERER'], //Referral, complete URL. If none, it is set to '-'
+		'utmr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '-', //Referral, complete URL. If none, it is set to '-'
 		'utmu' => 'q~', //This is a new parameter that contains some internal state that helps improve ga.js
 	);
 	$data = array_merge($data, $user_parameters);
@@ -313,7 +313,7 @@ function nebula_user_single_concurrent($id){
 	if ( isset($logged_in_users[$id]['unique']) ){
 		return count($logged_in_users[$id]['unique']);
 	} else {
-		return 'unknown test';
+		return 0;
 	}
 }
 
@@ -400,23 +400,6 @@ function is_debug($strict=false){
 		}
 	}
 	return false;
-}
-
-//Check if the current IP address matches.
-//Note: This should not be used for security purposes since IP addresses can be spoofed.
-function ip_matches($ip='72.43.235.106'){
-	$override = apply_filters('pre_ip_matches', false, $ip);
-	if ( $override !== false ){return $override;}
-
-	if ( $ip == 'phg' ){
-		$ip = '72.43.235.106';
-	}
-
-	if ( $_SERVER['REMOTE_ADDR'] == $ip ){
-		return true;
-	} else {
-		return false;
-	}
 }
 
 //Check if the current site is live to the public.
@@ -717,7 +700,7 @@ function in_array_r($needle, $haystack, $strict = true){
 	if ( $override !== false ){return $override;}
 
     foreach ($haystack as $item){
-        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict))){
+        if ( ($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict)) ){
             return true;
         }
     }
@@ -730,7 +713,7 @@ function glob_r($pattern, $flags = 0){
 	if ( $override !== false ){return $override;}
 
     $files = glob($pattern, $flags);
-    foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir){
+    foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir ){
         $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
     }
     return $files;
@@ -846,9 +829,10 @@ function unsplash_it($width=800, $height=600, $raw=false, $specific=false){
 	$override = apply_filters('pre_unsplash_it', false, $width, $height, $raw, $specific);
 	if ( $override !== false ){return $override;}
 
+	$unsplash_total = 920;
 	$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
 	if ( !is_int($specific) ){
-		$randID = random_number_between_but_not(0, 874, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
+		$randID = random_number_between_but_not(0, $unsplash_total, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
 	} else {
 		$randID = $specific;
 	}
@@ -870,18 +854,25 @@ function unsplash_it($width=800, $height=600, $raw=false, $specific=false){
 	$attempts = '';
 	while ( !$check_image ){
 		$attempts = ' [Errors: ' . $i . ']';
-		if ( $specific || $i >= 5 ){
+		if ( $specific ){
 			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
 			if ( $raw ){
-				placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f');
+				return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f');
 			} else {
 				return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f') . '" title="Unsplash image with ID ' . $randID . $attempts;
+			}
+		} elseif ( $i >= 5 ){
+			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Multiple Images Not Found');
+			if ( $raw ){
+				return placehold_it($width, $height, 'Unsplash.it Images Unavailable', 'f6773f');
+			} else {
+				return placehold_it($width, $height, 'Unsplash.it Images Unavailable', 'f6773f') . '" title="Unsplash.it Images Unavailable ' . $attempts;
 			}
 		}
 
 	    $skip_list[] = $randID;
 	    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')' . $attempts);
-	    $randID = random_number_between_but_not(0, 615, $skipList);
+	    $randID = random_number_between_but_not(0, $unsplash_total, $skip_list);
 	    $image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
 	    $check_image = nebula_is_available($image_path);
 	    $i++;
@@ -1222,7 +1213,6 @@ function nebula_version($return=false){
 
 /*==========================
 	SCSS Compiling
-	SCSSPHP v0.5.1 - http://leafo.net/scssphp/docs/
  ===========================*/
 
 if ( nebula_option('nebula_scss') ){
@@ -1235,7 +1225,7 @@ function nebula_render_scss($specific_scss=null, $child=false){
 	$override = apply_filters('pre_nebula_render_scss', false, $specific_scss, $child);
 	if ( $override !== false ){return $override;}
 
-	if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || $_GET['settings-updated'] == 'true') && (is_dev() || is_client()) ){
+	if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && (is_dev() || is_client()) ){
 		$specific_scss = 'all';
 	}
 
@@ -1281,7 +1271,6 @@ function nebula_render_scss($specific_scss=null, $child=false){
 			$file_path_info = pathinfo($file);
 
 			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
-				$file_counter++;
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
 				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $specific_scss == 'all' ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
 					ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?

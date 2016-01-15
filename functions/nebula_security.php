@@ -13,7 +13,7 @@ function nebula_log_direct_access_attempts(){
 //Detect HTTP status error codes and redirect to the appropriate page.
 //List of HTTP status codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 add_action('nebula_preheaders', 'nebula_http_status');
-function nebula_http_status($status=200, $redirect=0){
+function nebula_http_status($status=200, $redirect=false){
 	if ( isset($_GET['http']) ){
 		$status = $_GET['http'];
 	}
@@ -24,18 +24,10 @@ function nebula_http_status($status=200, $redirect=0){
 			global $wp_query;
 			$wp_query->set_404();
 			status_header(404);
-			if ( $redirect == 1 || 1==2 ){
-				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
-			} else {
-				get_template_part('404');
-			}
+			get_template_part('404');
 		} else {
 			status_header(403);
-			if ( $redirect == 1 || 1==2 ){
-				header('Location: '); //@TODO "Nebula" 0: Redirect to a generic error page w/ the error query.
-			} else {
-				get_template_part('http_status');
-			}
+			get_template_part('http_status');
 		}
 		die();
 	}
@@ -90,13 +82,13 @@ function nebula_remove_rsd_link(){
 
 
 /*
-	@TODO "Security" 4: It is advised to create a Custom Alert in Google Analytics with the following settings:
+	@TODO "Security" 4: It is advised to create an Intelligence Alert in Google Analytics with the following settings:
 	Name: Possible Brute Force Attack
 	Check both send an email and send a text if possible.
 	Period: Day
 	Alert Conditions:
 		This applies to: Event Action, Contains, Attempted User
-		Alert me when: Total Events, Is greater than, 5 //May need to adjust this number to account for more actual users (depending on how many true logins are expected per day).
+		Alert me when: Total Events, Is greater than, 20 //May need to adjust this number to account for more actual users (depending on how many true logins are expected per day).
 */
 //Prevent login error messages from giving too much information
 add_filter('login_errors', 'nebula_login_errors');
@@ -107,8 +99,8 @@ function nebula_login_errors($error){
 	if ( !nebula_is_bot() ){
 		$incorrect_username = '';
 		if ( contains($error, array('The password you entered for the username')) ){
-			$incorrect_username_start = strpos($error, "for the username ")+17;
-			$incorrect_username_stop = strpos($error, " is incorrect")-$incorrect_username_start;
+			$incorrect_username_start = strpos($error, 'for the username ')+17;
+			$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
 			$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
 		}
 
@@ -139,8 +131,10 @@ function at_remove_wp_ver_css_js($src){
     $override = apply_filters('pre_at_remove_wp_ver_css_js', false, $src);
 	if ( $override !== false ){return $override;}
 
-    if ( strpos($src, 'ver=') )
+    if ( strpos($src, 'ver=') ){
         $src = remove_query_arg('ver', $src);
+    }
+
     return $src;
 }
 
@@ -188,7 +182,7 @@ function nebula_domain_prevention(){
 		$domain_blacklist = $wp_filesystem->get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about get_contents())
 
 		if ( empty($domain_blacklist) ){
-			$domain_blacklist = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt'); //In case piwik is not available (or changes).
+			$domain_blacklist = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt'); //In case piwik is not available (or changes locations).
 		}
 
 		if ( !empty($domain_blacklist) ){

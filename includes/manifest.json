@@ -1,6 +1,7 @@
 {
 	"short_name": "Nebula",
 	"name": "Nebula: Advanced Starter WordPress Theme for Developers",
+	"gcm_sender_id": "711698667586",
 	"icons": [{
 		"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/images/meta/apple-touch-icon-36x36.png",
 		"sizes": "36x36",

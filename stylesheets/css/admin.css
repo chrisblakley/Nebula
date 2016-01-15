@@ -467,22 +467,6 @@
 
  .appearance_page_nebula_options input.dimension.error { border:1px solid #ca3838; background:#ca3838; background:rgba(202, 56, 56, 0.1); }
 
- .appearance_page_nebula_options .businessday span { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
-
- @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .businessday span { font-size:12px; width:80px !important; }
-
- }
-
- .appearance_page_nebula_options .businessday input { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
-
- @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .businessday input.business-hour { width:23% !important; display:inline-block !important; font-size:12px !important; }
-
- }
-
- .appearance_page_nebula_options .businessday.closed span,.appearance_page_nebula_options .businessday.closed input { opacity:0.4; pointer-events:none; }
-
- .appearance_page_nebula_options .businessday input[type="checkbox"] { opacity:1 !important; pointer-events:all; }
-
  .appearance_page_nebula_options .mobiletitle { display:none; }
 
  @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .mobiletitle { display:block; }
@@ -492,6 +476,14 @@
  @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .nav-tab-wrapper { display:none; }
 
  }
+
+ .businessday span { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+
+ .businessday input { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+
+ .businessday.closed span,.businessday.closed input { opacity:0.4; pointer-events:none; }
+
+ .businessday input[type="checkbox"] { opacity:1 !important; pointer-events:all; }
 
  .admin-user-info { text-transform:capitalize; }
 
@@ -640,4 +632,4 @@
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
 
-/* Processed on Monday, December 28, 2015 at 9:20am */
+/* Processed on Friday, January 15, 2016 at 8:25am */

@@ -13,7 +13,7 @@ if ( nebula_option('nebula_console_css') ){
 	function nebula_calling_card(){
 		$console_log = "<script>";
 		if ( nebula_is_desktop() && !nebula_is_browser('ie') && !nebula_is_browser('edge') ){
-			$console_log .= "console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');";
+			//$console_log .= "console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');"; //@TODO "Nebula" 0: This isn't working on many browsers...
 			$console_log .= "console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');";
 		}
 		$console_log .= "</script>";
@@ -79,6 +79,7 @@ function nebula_manifest_json(){
 	$manifest_json = '{
 	"short_name": "' . get_bloginfo('name') . '",
 	"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
+	"gcm_sender_id": "' . nebula_option('nebula_gcm_sender_id') . '",
 	"icons": [{
 		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-36x36.png",
 		"sizes": "36x36",
@@ -117,7 +118,9 @@ function nebula_manifest_json(){
 
 	//@TODO "Nebula" 0: "start_url" with a query string is not working. Manifest is confirmed working, just not the query string.
 
-	file_put_contents(get_template_directory() . $GLOBALS['manifest_json'], $manifest_json);
+	WP_Filesystem();
+	global $wp_filesystem;
+	$wp_filesystem->put_contents(get_template_directory() . $GLOBALS['manifest_json'], $manifest_json);
 }
 
 //Redirect to favicon to force-clear the cached version when ?favicon is added.
@@ -395,123 +398,165 @@ if ( !function_exists('pinckneyhugogroup') ){
 }
 
 //Show different meta data information about the post. Typically used inside the loop.
-//Example: nebula_meta('on', 0); //The 0 in the second parameter here makes the day link to the month archive.
 //Example: nebula_meta('by');
-function nebula_meta($meta, $secondary=1){
+function nebula_meta($meta){
 	$override = apply_filters('pre_nebula_meta', false, $meta, $secondary);
 	if ( $override !== false ){echo $override; return;}
 
 	if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
-		$the_day = '';
-		if ( $secondary ){ //Secondary here is if the day should be shown
-			$the_day = get_the_date('d') . '/';
-		}
-		echo '<span class="posted-on"><i class="fa fa-calendar"></i> <span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		echo nebula_post_date();
 	} elseif ( $meta == 'author' || $meta == 'by' ){
-		if ( nebula_option('nebula_author_bios', 'enabled') ){
-			echo '<span class="posted-by"><i class="fa fa-user"></i> <span class="entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
-		}
+		echo nebula_post_author();
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
-		if ( is_object_in_taxonomy(get_post_type(), 'category') ){
-			$post_categories = '<span class="posted-in post-categories"><i class="fa fa-bookmark"></i> ' . get_the_category_list(', ') . '</span>';
-		} else {
-			$post_categories = '';
-		}
-		echo $post_categories;
+		echo nebula_post_categories();
 	} elseif ( $meta == 'tags' || $meta == 'tag' ){
-		$tag_list = get_the_tag_list('', ', ');
-		if ( $tag_list ){
-			$tag_icon = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
-			$post_tags = '<span class="posted-in post-tags"><i class="fa fa-' . $tag_icon . '"></i> ' . $tag_list . '</span>';
-		} else {
-			$post_tags = '';
-		}
-		echo $post_tags;
+		echo nebula_post_tags();
 	} elseif ( $meta == 'dimensions' || $meta == 'size' ){
-		if ( wp_attachment_is_image() ){
-			$metadata = wp_get_attachment_metadata();
-			echo '<span class="meta-dimensions"><i class="fa fa-expand"></i> <a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
-		}
+		echo nebula_post_dimensions();
 	} elseif ( $meta == 'exif' || $meta == 'camera' ){
-		$imgmeta = wp_get_attachment_metadata();
-	    if ( $imgmeta ){ //Check for Bad Data
-	        if ( $imgmeta['image_meta']['focal_length'] == 0 || $imgmeta['image_meta']['aperture'] == 0 || $imgmeta['image_meta']['shutter_speed'] == 0 || $imgmeta['image_meta']['iso'] == 0 ){
-	            $output = 'No valid EXIF data found';
-	        } else { //Convert the shutter speed retrieve from database to fraction
-	            if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
-	                if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ){
-	                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . " second";
-	                } else {
-	                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . " second";
-	                }
-	            } else {
-	                $pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
-	            }
-
-	            $output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']).'</span> <span class="day">'.date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
-	            $output .= $imgmeta['image_meta']['camera'] . ', ';
-	            $output .= $imgmeta['image_meta']['focal_length'] . 'mm' . ', ';
-	            $output .= '<span style="font-style:italic;font-family: Trebuchet MS,Candara,Georgia; text-transform:lowercase">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
-	            $output .= $pshutter . ', ';
-	            $output .= $imgmeta['image_meta']['iso'] .' ISO';
-	        }
-	    }else {
-	        $output = 'No EXIF data found';
-	    }
-		echo '<span class="meta-exif"><i class="fa fa-camera"></i> ' . $output . '</span>';
+		echo nebula_post_exif();
 	} elseif ( $meta == 'comments' || $meta == 'comment' ){
-		$comments_text = 'Comments';
-		if ( get_comments_number() == 0 ){
-			$comment_icon = 'fa-comment-o';
-			if ( $secondary ){ //Secondary here is if no comments should hide
-				$comment_show = '';
-			} else {
-				$comment_show = 'hidden';
-			}
-		} elseif ( get_comments_number() == 1 ){
-			$comment_icon = 'fa-comment';
-			$comments_text = 'Comment';
-		} elseif ( get_comments_number() > 1 ){
-			$comment_icon = 'fa-comments';
-		}
-		$postlink = ( is_single() )? '' : get_the_permalink();
-		echo '<span class="posted-comments ' . $comment_show . '"><i class="fa ' . $comment_icon . '"></i> <a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
+		echo nebula_post_comments();
 	} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ){
 		nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
 	}
 }
 
-/*
-//Displays camera exif information for an attachment
-function get_exif($att){
-    $imgmeta = wp_get_attachment_metadata($att);
+//Date post meta
+function nebula_post_date($icon=true, $linked=true, $day=true){
+	if ( $icon ){
+		$the_icon = '<i class="fa fa-calendar"></i> ';
+	}
+
+	$the_day = '';
+	if ( $day ){ //If the day should be shown (otherwise, just month and year).
+		$the_day = get_the_date('d') . '/';
+	}
+
+	if ( $linked ){
+		return '<span class="posted-on">' . $the_icon . '<span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+	} else {
+		return '<span class="posted-on">' . $the_icon . '<span class="entry-date">' . get_the_date('F') . ' ' . get_the_date('j') . ', ' . get_the_date('Y') . '</span></span>';
+	}
+}
+
+//Author post meta
+function nebula_post_author($icon=true, $linked=true, $force=false){
+	if ( $icon ){
+		$the_icon = '<i class="fa fa-user"></i> ';
+	}
+
+	if ( nebula_option('nebula_author_bios', 'enabled') || $force ){
+		if ( $linked && !$force ){
+			return '<span class="posted-by">' . $the_icon . '<span class="entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
+		} else {
+			return '<span class="posted-by">' . $the_icon . '<span class="entry-author">' . get_the_author() . '</span></span>';
+		}
+	}
+}
+
+//Categories post meta
+function nebula_post_categories($icon=true){
+	if ( $icon ){
+		$the_icon = '<i class="fa fa-bookmark"></i> ';
+	}
+
+	if ( is_object_in_taxonomy(get_post_type(), 'category') ){
+		return '<span class="posted-in post-categories">' . $the_icon . get_the_category_list(', ') . '</span>';
+	}
+	return '';
+}
+
+//Tags post meta
+function nebula_post_tags($icon=true){
+	$tag_list = get_the_tag_list('', ', ');
+	if ( $tag_list ){
+		if ( $icon ){
+			$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
+			$the_icon = '<i class="fa fa-' . $tag_plural . '"></i> ';
+		}
+		return '<span class="posted-in post-tags">' . $the_icon . $tag_list . '</span>';
+	}
+	return '';
+}
+
+//Image dimensions post meta
+function nebula_post_dimensions($icon=true, $linked=true){
+	if ( wp_attachment_is_image() ){
+		if ( $icon ){
+			$the_icon = '<i class="fa fa-expand"></i> ';
+		}
+
+		$metadata = wp_get_attachment_metadata();
+		if ( $linked ){
+			echo '<span class="meta-dimensions">' . $the_icon . '<a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
+		} else {
+			echo '<span class="meta-dimensions">' . $the_icon . $metadata['width'] . ' &times; ' . $metadata['height'] . '</span>';
+		}
+	}
+}
+
+//Image EXIF post meta
+function nebula_post_exif($icon=true){
+	if ( $icon ){
+		$the_icon = '<i class="fa fa-camera"></i> ';
+	}
+
+	$imgmeta = wp_get_attachment_metadata();
     if ( $imgmeta ){ //Check for Bad Data
         if ( $imgmeta['image_meta']['focal_length'] == 0 || $imgmeta['image_meta']['aperture'] == 0 || $imgmeta['image_meta']['shutter_speed'] == 0 || $imgmeta['image_meta']['iso'] == 0 ){
-            $output = '';
+            $output = 'No valid EXIF data found';
         } else { //Convert the shutter speed retrieve from database to fraction
             if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
                 if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ){
-                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . " second";
+                    $pshutter = '1/' . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . ' second';
                 } else {
-                    $pshutter = "1/" . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . " second";
+                    $pshutter = '1/' . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . ' second';
                 }
             } else {
                 $pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
             }
 
-            $output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']).'</span> <span class="day">'.date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
+            $output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="day">' . date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
             $output .= $imgmeta['image_meta']['camera'] . ', ';
             $output .= $imgmeta['image_meta']['focal_length'] . 'mm' . ', ';
-            $output .= '<span style="font-style:italic;font-family: Trebuchet MS,Candara,Georgia; text-transform:lowercase">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
+            $output .= '<span style="font-style: italic; font-family: Trebuchet MS, Candara, Georgia; text-transform: lowercase;">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
             $output .= $pshutter . ', ';
             $output .= $imgmeta['image_meta']['iso'] .' ISO';
         }
-    } else { //No Data Found
-        $output = 'No data found';
+    } else {
+        $output = 'No EXIF data found';
     }
-    return $output;
+
+	return '<span class="meta-exif">' . $the_icon . $output . '</span>';
 }
-*/
+
+//Comments post meta
+function nebula_post_comments($icon=true, $linked=true, $empty=true){
+	$comments_text = 'Comments';
+	if ( get_comments_number() == 0 ){
+		$comment_icon = 'fa-comment-o';
+		$comment_show = ( $empty )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
+	} elseif ( get_comments_number() == 1 ){
+		$comment_icon = 'fa-comment';
+		$comments_text = 'Comment';
+	} elseif ( get_comments_number() > 1 ){
+		$comment_icon = 'fa-comments';
+	}
+
+	if ( $icon ){
+		$the_icon = '<i class="fa ' . $comment_icon . '"></i> ';
+	} else {
+		$the_icon = '';
+	}
+
+	if ( $linked ){
+		$postlink = ( is_single() )? '' : get_the_permalink();
+		return '<span class="posted-comments ' . $comment_show . '">' . $the_icon . '<a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
+	} else {
+		return '<span class="posted-comments ' . $comment_show . '">' . $the_icon . get_comments_number() . ' ' . $comments_text . '</span>';
+	}
+}
 
 //Display Social Buttons
 function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
@@ -1414,6 +1459,13 @@ function nebula_body_classes($classes){
 	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
 	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
 
+	//IE versions outside conditional comments
+	if ( nebula_is_browser('ie', '10') ){
+		$classes[] = 'lte-ie10';
+	} elseif ( nebula_is_browser('ie', '11') ){
+		$classes[] = 'lte-ie11';
+	}
+
 	//User Information
 	$current_user = wp_get_current_user();
 	if ( is_user_logged_in() ){
@@ -1446,7 +1498,10 @@ function nebula_body_classes($classes){
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
 
 	//Time of Day
-	$classes[] = ( business_open() )? 'business-open' : 'business-closed';
+	if ( has_business_hours() ){
+		$classes[] = ( business_open() )? 'business-open' : 'business-closed';
+	}
+
 	$relative_time = nebula_relative_time('description');
 	foreach( $relative_time as $relative_desc ){
 		$classes[] = 'time-' . $relative_desc;
@@ -1508,7 +1563,7 @@ function wp_get_attachment_url_example($url){
     $http = site_url(false, 'http');
     $https = site_url(false, 'https');
 
-    if ( $_SERVER['HTTPS'] == 'on' ){
+    if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ){
         return str_replace($http, $https, $url);
     } else {
         return $url;
@@ -1535,6 +1590,15 @@ function nebula_save_attachment_fields($attachment_id){
 }
 
 //Check if the passed time is within business hours.
+function has_business_hours(){
+	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
+		if ( nebula_option('nebula_business_hours_' . $weekday . '_enabled') || nebula_option('nebula_business_hours_' . $weekday . '_open') || nebula_option('nebula_business_hours_' . $weekday . '_close') ){
+			return true;
+		}
+	}
+	return false;
+}
+
 function is_business_open($date=null, $general=0){ return business_open($date, $general); }
 function is_business_closed($date=null, $general=0){ return !business_open($date, $general); }
 function business_open($date=null, $general=0){

@@ -252,7 +252,7 @@
 			}
 		?>
 
-		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true. Best current synchronous method of ad block detection. ?>
+		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true; best current synchronous method of ad block detection. ?>
 			adBlockUser = 'Non-Blocker';
 			nebula.user.client.capabilities.adblock = false;
 			jQuery('html').removeClass('no-ads').addClass('ads');
