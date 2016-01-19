@@ -188,7 +188,7 @@ function nebula_theme_json(){
 	}
 
 	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('nebula_wp_core_updates_notify', 'enabled') ){
-		require get_template_directory() . '/includes/libs/theme-update-checker.php'; //Initialize the update checker.
+		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker.
 		$example_update_checker = new ThemeUpdateChecker(
 			'Nebula-master', //This should be the directory slug of the parent theme.
 			'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
@@ -366,7 +366,7 @@ if ( nebula_option('nebula_welcome_panel') ){
 	remove_action('welcome_panel','wp_welcome_panel');
 	add_action('welcome_panel','nebula_welcome_panel');
 	function nebula_welcome_panel(){
-		include(TEMPLATEPATH . '/includes/welcome.php');
+		include(get_template_directory() . '/includes/welcome.php');
 	}
 } else {
 	remove_action('welcome_panel','wp_welcome_panel');
@@ -932,9 +932,9 @@ function nebula_user_columns_content($value='', $column_name, $id){
 }
 
 //Add ID column on post/page listings
-add_filter('manage_posts_columns', 'nebual_id_columns_head');
-add_filter('manage_pages_columns', 'nebual_id_columns_head');
-function nebual_id_columns_head($defaults){
+add_filter('manage_posts_columns', 'nebula_id_columns_head');
+add_filter('manage_pages_columns', 'nebula_id_columns_head');
+function nebula_id_columns_head($defaults){
     $defaults['id'] = 'ID';
     return $defaults;
 }

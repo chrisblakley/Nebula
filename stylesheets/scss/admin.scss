@@ -19,12 +19,12 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 .index-php {
 	.welcome-panel {display: block; padding: 8px 12px; overflow: hidden;
 		.about-description {font-size: 13px;}
-		h4 {/* margin-top: 8px; */}
 		li {color: #444; font-size: 13px; padding-bottom: 0;
 			strong {color: #000;}
 		}
 		#phg-welcome {margin: 0;
 			#welcome-content {width: 50%;
+				h3 {margin-top: 0;}
 				.welcome-panel-column {min-width: 100px;
 					&:first-child {width: 33% !important;}
 					li {@include media(custom, map_get($admin_media_queries, tablet)){display: block;};}
@@ -34,7 +34,7 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 				}
 				.logocon {float: left; max-width: 22%; /* max-height: 56px; */ margin-right: 15px;
 					a {display: inline-block;
-						img {max-height: 75px; width: auto;}
+						img {max-height: 48px; width: auto;}
 					}
 					@include media(custom, map_get($admin_media_queries, mobile)){display: none;};
 				}

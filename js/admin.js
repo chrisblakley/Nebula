@@ -5,7 +5,7 @@ jQuery(document).on('ready', function(){
 		throw ' (Manually terminated admin.js)';
 	}
 
-	if ( nebula.user.client.remote_addr == '72.43.235.106' ){
+	if ( nebula.user.client.remote_addr === '72.43.235.106' ){
 		jQuery('html').addClass('phg');
 	}
 
@@ -82,7 +82,7 @@ jQuery(document).on('ready', function(){
 		});
 	}
 
-	if ( !jQuery('li#menu-comments').is(':visible') ) {
+	if ( !jQuery('li#menu-comments').is(':visible') ){
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small>.');
 	}
 
@@ -99,7 +99,7 @@ jQuery(document).on('ready', function(){
 	});
 
 	jQuery(document).on("submit", ".searchfiles", function(e){
-		if ( jQuery("input.findterm").val().trim().length >= 3 ) {
+		if ( jQuery("input.findterm").val().trim().length >= 3 ){
 			jQuery("#searchprogress").removeClass().addClass("fa fa-spinner fa-fw fa-spin");
 
 			jQuery.ajax({
@@ -141,7 +141,7 @@ jQuery(document).on('ready', function(){
 
 	//Hide TODO files with only hidden items
 	jQuery('.todofilewrap').each(function(){
-		if ( jQuery(this).find('.linewrap').length == jQuery(this).find('.todo-priority-0').length ) {
+		if ( jQuery(this).find('.linewrap').length === jQuery(this).find('.todo-priority-0').length ){
 			jQuery(this).addClass('hidden');
 		}
 	});
@@ -156,7 +156,7 @@ jQuery(document).on('ready', function(){
 	});
 	jQuery(document).on('keydown change focus blur paste', '#wp-link-url', function(){ //@TODO "Nebula" 0: This does not trigger when user does NOT type a protocol and pushes tab (WP adds the protocol automatically). Blur is not triggering...
 		currentVal = jQuery(this).val();
-		if ( linkTargetUsered == 0 ){
+		if ( linkTargetUsered === 0 ){
 			if ( /(h|ht+|https?)(:|:\/+)?$/.test(currentVal) ){
 				jQuery('#wp-link-target').prop('checked', false);
 			} else if ( (currentVal.indexOf('http') >= 0 || currentVal.indexOf('www') >= 0) && currentVal.indexOf(location.host) < 0 ){ //If (has "http" or www) && NOT our domain
@@ -171,7 +171,7 @@ jQuery(document).on('ready', function(){
 		}
 	});
 	jQuery(document).on('click tap touch', '#most-recent-results *, #search-results *', function(){
-		if ( linkTargetUsered == 0 ) {
+		if ( linkTargetUsered === 0 ){
 			jQuery('#wp-link-target').prop('checked', false);
 		}
 	});
@@ -195,7 +195,7 @@ jQuery(document).on('ready', function(){
 					action: 'nebula_initialization'
 				},
 				success: function(data){
-					if ( data == '1' ){
+					if ( data === '1' ){
 						jQuery('.nebula-activated-title').html('<i class="fa fa-check" style="color: green;"></i> Nebula has been initialized!');
 						jQuery('.nebula-activated-description').html('Settings have been updated. The home page has been updated and has been set as the static front page in <a href="options-reading.php">Settings > Reading</a>.<br /><strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>');
 						return false;
@@ -322,11 +322,11 @@ function nebulaLoadCSS(url){
     function pasteIntoInput(el, text){
         el.focus();
         var val = el.value;
-        if (typeof el.selectionStart == "number") {
+        if ( typeof el.selectionStart === "number" ){
             var selStart = el.selectionStart;
             el.value = val.slice(0, selStart) + text + val.slice(el.selectionEnd);
             el.selectionEnd = el.selectionStart = selStart + text.length;
-        } else if (typeof document.selection != "undefined") {
+        } else if ( typeof document.selection != "undefined" ){
             var textRange = document.selection.createRange();
             textRange.text = text;
             textRange.collapse(false);
@@ -336,7 +336,7 @@ function nebulaLoadCSS(url){
 
     function allowTabChar(el){
         jQuery(el).keydown(function(e){
-            if (e.which == 9) {
+            if ( e.which === 9 ){
                 pasteIntoInput(this, "\t");
                 return false;
             }
@@ -344,7 +344,7 @@ function nebulaLoadCSS(url){
 
         // For Opera, which only allows suppression of keypress events, not keydown
         jQuery(el).keypress(function(e){
-            if (e.which == 9) {
+            if ( e.which === 9 ){
                 return false;
             }
         });
@@ -353,9 +353,9 @@ function nebulaLoadCSS(url){
     $.fn.allowTabChar = function(){
         if (this.jquery){
             this.each(function(){
-                if (this.nodeType == 1) {
+                if ( this.nodeType === 1 ){
                     var nodeName = this.nodeName.toLowerCase();
-                    if (nodeName == "textarea" || (nodeName == "input" && this.type == "text")){
+                    if ( nodeName === "textarea" || (nodeName === "input" && this.type === "text") ){
                         allowTabChar(this);
                     }
                 }

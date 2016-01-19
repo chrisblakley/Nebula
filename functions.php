@@ -355,15 +355,16 @@ if ( !isset($content_width) ){
 }
 
 //Adjust the content width when the full width page template is being used
-if ( !function_exists('nebula_set_content_width') ){
-	add_action('template_redirect', 'nebula_set_content_width');
-	function nebula_set_content_width(){
-	    global $content_width;
+add_action('template_redirect', 'nebula_set_content_width');
+function nebula_set_content_width(){
+    $override = apply_filters('pre_nebula_set_content_width', false);
+	if ( $override !== false ){return $override;}
 
-	    if ( is_page_template('tpl-fullwidth.php') ){
-	        $content_width = 1040;
-	    }
-	}
+    global $content_width;
+
+    if ( is_page_template('tpl-fullwidth.php') ){
+        $content_width = 1040;
+    }
 }
 
 //Add new image sizes
@@ -386,17 +387,18 @@ if ( !function_exists('nebula_set_content_width') ){
 //Google Analytics Experiments (Split Tests)
 //Documentation: http://gearside.com/nebula/documentation/custom-functionality/split-tests-using-google-analytics-experiments-with-nebula/
 //Add a new condition for each experiment group. There can be as many concurrent experiments as needed (just make sure there is no overlap!)
-if ( !function_exists('nebula_ga_experiment_detection') ){
-	add_action('nebula_head_open', 'nebula_ga_experiment_detection');
-	function nebula_ga_experiment_detection(){
+add_action('nebula_head_open', 'nebula_ga_experiment_detection');
+function nebula_ga_experiment_detection(){
+	$override = apply_filters('pre_nebula_ga_experiment_detection', false);
+	if ( $override !== false ){return $override;}
 
-		//Example Experiment
-		if ( is_page(9999) ){ //Use is_post(9999) for single posts. Change the ID to match the desired page/post! ?>
-			<!-- Paste Google Analytics Experiment generated script here -->
-		<?php }
+	//Example Experiment
+	if ( is_page(9999) ){ //Use is_post(9999) for single posts. Change the ID to match the desired page/post! ?>
+		<!-- Paste Google Analytics Experiment generated script here -->
+	<?php }
 
-	}
 }
+
 
 
 //Close functions.php. DO NOT add anything after this closing tag!! ?>

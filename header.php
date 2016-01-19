@@ -26,13 +26,13 @@
 		<link rel="manifest" href="<?php echo get_template_directory_uri() . $GLOBALS['manifest_json']; ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 
-		<?php include_once('includes/metadata.php'); //All text components of metadata. ?>
-		<?php include_once('includes/metagraphics.php'); //All graphic components of metadata. ?>
+		<?php include_once(get_template_directory() . '/includes/metadata.php'); //All text components of metadata. ?>
+		<?php include_once(get_template_directory() . '/includes/metagraphics.php'); //All graphic components of metadata. ?>
 
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
 		<?php wp_head(); ?>
 
-		<?php include_once('includes/analytics.php'); //Google Analytics and other analytics trackers. ?>
+		<?php include_once(get_template_directory() . '/includes/analytics.php'); //Google Analytics and other analytics trackers. ?>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">

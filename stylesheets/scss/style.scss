@@ -29,7 +29,7 @@ button, input, select, textarea {color: $text_color; font-size: 14px;}
 img {vertical-align: middle;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
-ul {
+ul {list-style-position: inside;
 	ul {margin: 4px 0 0 0;}
 	&.menu {padding: 0;}
 }
@@ -142,6 +142,7 @@ div.nebula-button {margin-bottom: 10px;}
 
 /* Gumby overrides */
 .row {max-width: 1080px;} //Default Gumby Row max-width is 980px. Be sure to update $content_width in functions.php to reflect this change!
+table tr td:first-child {font-weight: normal;}
 
 //Default font override
 h1, h2, h3, h4, h5, h6,
@@ -543,7 +544,7 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 }
 
 .entry-content {margin-top: 10px; font-size: 14px;
-	ul {padding-left: 20px; list-style: disc;}
+	ul {list-style-position: inside; overflow: hidden; padding-left: 20px; list-style: disc;}
 	ol {margin: 0; padding-left: 20px;}
 }
 

@@ -856,8 +856,7 @@ add_action('wp_ajax_navigator', 'nebula_ajax_navigator');
 add_action('wp_ajax_nopriv_navigator', 'nebula_ajax_navigator');
 function nebula_ajax_navigator(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
-	include('includes/navigator.php');
-	//include('includes/navigat-holder.php');
+	include(get_template_directory() . '/includes/navigator.php');
 	exit();
 }
 
@@ -1622,17 +1621,19 @@ function business_open($date=null, $general=0){
 	}
 
 	$days_off = explode(', ', get_option('nebula_business_hours_closed'));
-	foreach ( $days_off as $key => $day_off ){
-		$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
+	if ( !empty(array_filter($days_off)) ){
+		foreach ( $days_off as $key => $day_off ){
+			$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
 
-		if ( date('N', $days_off[$key]) == 6 ){ //If the date is a Saturday
-			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
-		} elseif ( date('N', $days_off[$key]) == 7 ){ //If the date is a Sunday
-			$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
-		}
+			if ( date('N', $days_off[$key]) == 6 ){ //If the date is a Saturday
+				$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
+			} elseif ( date('N', $days_off[$key]) == 7 ){ //If the date is a Sunday
+				$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
+			}
 
-		if ( date('Ymd', $days_off[$key]) == date('Ymd', $date) ){
-			return false;
+			if ( date('Ymd', $days_off[$key]) == date('Ymd', $date) ){
+				return false;
+			}
 		}
 	}
 

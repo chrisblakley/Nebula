@@ -351,6 +351,8 @@
 
  textarea { resize:vertical; }
 
+ ul { list-style-position:inside; }
+
  ul ul { margin:4px 0 0 0; }
 
  ul.menu { padding:0; }
@@ -474,6 +476,8 @@
  .facebook-connect-con i:hover,.facebook-connect-con a:hover,.facebook-connect-con i.hover,.facebook-connect-con a.hover { color:#263961; }
 
  /* Gumby overrides */ .row { max-width:1080px; }
+
+ table tr td:first-child { font-weight:normal; }
 
  h1,h2,h3,h4,h5,h6,body,p,.btn,.skiplink,.field input,.field input[type="*"],.field textarea,.prepend .adjoined,.append .adjoined,.picker,.alert,.tab-nav > li > li > a,.tab-nav > li > a { font-family:'Open Sans', sans-serif; }
 
@@ -947,7 +951,7 @@
 
  .entry-content { margin-top:10px; font-size:14px; }
 
- .entry-content ul { padding-left:20px; list-style:disc; }
+ .entry-content ul { list-style-position:inside; overflow:hidden; padding-left:20px; list-style:disc; }
 
  .entry-content ol { margin:0; padding-left:20px; }
 
@@ -1315,4 +1319,4 @@
  }
 
 
-/* Processed on Friday, January 15, 2016 at 8:25am */
+/* Processed on Friday, January 15, 2016 at 11:50am */
