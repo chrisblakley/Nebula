@@ -24,7 +24,7 @@
 	});
 
 	function nebula_checkSpecificLocation(){
-	    var latlng = new google.maps.LatLng(nebulaLocation.coordinates.latitude, nebulaLocation.coordinates.longitude);
+	    var latlng = new google.maps.LatLng(nebula.session.geolocation.coordinates.latitude, nebula.session.geolocation.coordinates.longitude);
 
 
 
@@ -78,14 +78,14 @@
 			]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, adminUpstairsPolygon) ){
-	        if ( nebulaLocation.altitude ){
-		        if ( nebulaLocation.altitude > 121 ){
-			        nebulaLocation.phg = 'Upstairs';
+	        if ( nebula.session.geolocation.altitude ){
+		        if ( nebula.session.geolocation.altitude > 121 ){
+			        nebula.session.geolocation.phg = 'Upstairs';
 		        } else {
-			        nebulaLocation.phg = 'Administrative';
+			        nebula.session.geolocation.phg = 'Administrative';
 		        }
 	        } else {
-		        nebulaLocation.phg = 'Administrative or Upstairs';
+		        nebula.session.geolocation.phg = 'Administrative or Upstairs';
 	        }
 
 	        return true;
@@ -101,7 +101,7 @@
 			]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, interactivePolygon) ){
-	        nebulaLocation.phg = 'Interactive';
+	        nebula.session.geolocation.phg = 'Interactive';
 	        return true;
 	    }
 
@@ -115,7 +115,7 @@
 			]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, courtyardPolygon) ){
-	        nebulaLocation.phg = 'Courtyard';
+	        nebula.session.geolocation.phg = 'Courtyard';
 	        return true;
 	    }
 
@@ -129,7 +129,7 @@
 			]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, mainOfficesPolygon) ){
-	        nebulaLocation.phg = 'Main Office Area';
+	        nebula.session.geolocation.phg = 'Main Office Area';
 	        return true;
 	    }
 
@@ -143,7 +143,7 @@
 			]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, conferenceRoomPolygon) ){
-	        nebulaLocation.phg = 'Conference Room';
+	        nebula.session.geolocation.phg = 'Conference Room';
 	        return true;
 	    }
 
@@ -157,7 +157,7 @@
 			]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, prPolygon) ){
-	        nebulaLocation.phg = 'PR';
+	        nebula.session.geolocation.phg = 'PR';
 	        return true;
 	    }
 
@@ -172,7 +172,7 @@
 			]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, backParkingPolygon) ){
-	        nebulaLocation.phg = 'Back Parking Area';
+	        nebula.session.geolocation.phg = 'Back Parking Area';
 	        return true;
 	    }
 
@@ -190,23 +190,23 @@
 	        ]
 	    });
 	    if ( google.maps.geometry.poly.containsLocation(latlng, phgPolygon) ){
-	        nebulaLocation.phg = true;
+	        nebula.session.geolocation.phg = true;
 	    } else {
-		    nebulaLocation.phg = false;
+		    nebula.session.geolocation.phg = false;
 	    }
 	}
 
 	function nebula_containsLocation_info(){
-		if ( !nebulaLocation.error ){
-			jQuery('#location-results .latlng').html(nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
+		if ( !nebula.session.geolocation.error ){
+			jQuery('#location-results .latlng').html(nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude);
 
-			if ( nebulaLocation.accuracy.meters < 50 ){
+			if ( nebula.session.geolocation.accuracy.meters < 50 ){
 		        var accText = 'Excellent';
 		        ga('set', gaCustomDimensions['geoAccuracy'], 'Excellent (<50m)');
-		    } else if ( nebulaLocation.accuracy.meters > 50 && nebulaLocation.accuracy.meters < 300 ){
+		    } else if ( nebula.session.geolocation.accuracy.meters > 50 && nebula.session.geolocation.accuracy.meters < 300 ){
 		        var accText = 'Good';
 		        ga('set', gaCustomDimensions['geoAccuracy'], 'Good (50m - 300m)');
-		    } else if ( nebulaLocation.accuracy.meters > 300 && nebulaLocation.accuracy.meters < 1500 ){
+		    } else if ( nebula.session.geolocation.accuracy.meters > 300 && nebula.session.geolocation.accuracy.meters < 1500 ){
 		        var accText = 'Poor';
 		        ga('set', gaCustomDimensions['geoAccuracy'], 'Poor (300m - 1500m)');
 		    } else {
@@ -214,15 +214,15 @@
 		        ga('set', gaCustomDimensions['geoAccuracy'], 'Very Poor (>1500m)');
 		    }
 
-			if ( nebulaLocation.phg ){
-				if ( typeof nebulaLocation.phg === 'string' ){
-					ga('set', gaCustomDimensions['geoName'], 'At PHG in ' + nebulaLocation.phg);
-					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group in <strong>' + nebulaLocation.phg + '</strong>.');
+			if ( nebula.session.geolocation.phg ){
+				if ( typeof nebula.session.geolocation.phg === 'string' ){
+					ga('set', gaCustomDimensions['geoName'], 'At PHG in ' + nebula.session.geolocation.phg);
+					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group in <strong>' + nebula.session.geolocation.phg + '</strong>.');
 				} else {
 					ga('set', gaCustomDimensions['geoName'], 'At Pinckney Hugo Group');
 					jQuery('#location-results .specific-location').html('You <strong style="color: green;">are</strong> at Pinckney Hugo Group.');
 				}
-				ga('send', 'event', 'PHG Location', nebulaLocation.coordinates.latitude + ', ' + nebulaLocation.coordinates.longitude);
+				ga('send', 'event', 'PHG Location', nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude);
 			} else {
 				ga('set', gaCustomDimensions['geoName'], 'Not at Pinckney Hugo Group');
 				jQuery('#location-results .specific-location').html('You are <strong style="color: maroon;">not</strong> at Pinckney Hugo Group.');
@@ -230,10 +230,10 @@
 
 			nebulaConversion('example_map', 'Example Contains Location');
 
-		    jQuery('#location-results .accuracy').html('<strong style="color: ' + nebulaLocation.accuracy.color + ';">' + accText + '</strong> location accuracy: ' + nebulaLocation.accuracy.meters.toFixed(2) + ' meters (' + nebulaLocation.accuracy.miles + ' miles). Altitude: ' + nebulaLocation.altitude.meters);
+		    jQuery('#location-results .accuracy').html('<strong style="color: ' + nebula.session.geolocation.accuracy.color + ';">' + accText + '</strong> location accuracy: ' + nebula.session.geolocation.accuracy.meters.toFixed(2) + ' meters (' + nebula.session.geolocation.accuracy.miles + ' miles). Altitude: ' + nebula.session.geolocation.altitude.meters);
 
 		} else {
-			jQuery('#location-results .latlng').html('<strong>Error:</strong> ' + nebulaLocation.error.description);
+			jQuery('#location-results .latlng').html('<strong>Error:</strong> ' + nebula.session.geolocation.error.description);
 		}
 	}
 
@@ -271,8 +271,8 @@
 			bounds.extend(phgLoc);
 
 			//Detected Location Marker
-			if ( nebulaLocation.coordinates.latitude != 0 ) { //Detected location is set
-				var detectLoc = new google.maps.LatLng(nebulaLocation.coordinates.latitude, nebulaLocation.coordinates.longitude);
+			if ( nebula.session.geolocation.coordinates.latitude != 0 ) { //Detected location is set
+				var detectLoc = new google.maps.LatLng(nebula.session.geolocation.coordinates.latitude, nebula.session.geolocation.coordinates.longitude);
 				marker = new google.maps.Marker({
 			        position: detectLoc,
 			        icon: 'https://mt.google.com/vt/icon?psize=10&font=fonts/Roboto-Bold.ttf&color=ff135C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=50&text=%E2%80%A2&scale=1',
@@ -281,13 +281,13 @@
 			        map: map
 			    });
 			    var circle = new google.maps.Circle({
-					strokeColor: nebulaLocation.accuracy.color,
+					strokeColor: nebula.session.geolocation.accuracy.color,
 					strokeOpacity: 0.7,
 					strokeWeight: 1,
-					fillColor: nebulaLocation.accuracy.color,
+					fillColor: nebula.session.geolocation.accuracy.color,
 					fillOpacity: 0.15,
 					map: map,
-					radius: nebulaLocation.accuracy.meters
+					radius: nebula.session.geolocation.accuracy.meters
 				});
 				circle.bindTo('center', marker, 'position');
 

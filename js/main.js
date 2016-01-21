@@ -2160,9 +2160,9 @@ function errorCallback(error){
     }
 
     nebula.session.geolocation = {
-	    'error': {
-		    'code': error.code,
-			'description': geolocationErrorMessage
+	    error: {
+		    code: error.code,
+			description: geolocationErrorMessage
 	    }
     }
 

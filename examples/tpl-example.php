@@ -399,6 +399,10 @@ get_header(); ?>
 							include_once('includes/flash_banner_analytics.php');
 						} ?>
 
+						<?php if ( is_page(2407) ){ //HTML5 Banner Analytics
+							include_once('includes/html5_banner_analytics.php');
+						} ?>
+
 						<?php if ( is_page(1113) ){ //Websockets API
 							include_once('includes/websockets_api.php');
 						} ?>
@@ -505,6 +509,10 @@ get_header(); ?>
 						 Utilities
 						 ===========================*/
 						?>
+
+						<?php if ( is_page(2404) ){ //Nebula Playground
+							include_once('includes/playground.php');
+						} ?>
 
 						<?php if ( is_page(1139) ){ //WHOIS Tester
 							include_once('includes/whois_tester.php');

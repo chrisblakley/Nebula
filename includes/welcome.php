@@ -47,7 +47,7 @@
 						}
 					?>
 					<li>
-						<i class="fa <?php echo $fa_role; ?> fa-fw"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo $user_info->roles[0]; ?></strong>
+						<i class="fa <?php echo $fa_role; ?> fa-fw"></i> Role: <strong class="admin-user-info admin-user-role"><?php echo ( is_multisite() && is_super_admin() )? 'Super Admin' : $user_info->roles[0]; ?></strong>
 						<?php if ( is_dev() ): ?>
 							<small>(Dev)</small>
 						<?php endif; ?>

@@ -86,6 +86,11 @@ if ( is_dev() || current_user_can('manage_options') ){
 	            'required'  => true,
 	        ),
 	        array(
+	            'name'      => 'Transients Manager',
+	            'slug'      => 'transients-manager',
+	            'required'  => true,
+	        ),
+	        array(
 	            'name'      => 'UpdraftPlus Backup and Restoration',
 	            'slug'      => 'updraftplus',
 	            'required'  => false,

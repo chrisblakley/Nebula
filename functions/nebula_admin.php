@@ -197,15 +197,23 @@ function nebula_theme_json(){
 }
 
 //Send an email to the current user and site admin that Nebula has been updated.
-add_action('upgrader_process_complete', 'nebula_theme_update_email');
-function nebula_theme_update_email(){
-	$override = apply_filters('pre_nebula_theme_update_email', false);
+add_action('upgrader_process_complete', 'nebula_theme_update_automation');
+function nebula_theme_update_automation(){
+	$override = apply_filters('pre_nebula_theme_update_automation', false);
 	if ( $override !== false ){return;}
 
 	if ( nebula_option('nebula_last_version_number') == nebula_version('full') ){ //Check if Nebula theme was updated.
 		return;
 	}
 
+	nebula_theme_update_email(); //Send email with update information
+	delete_transient('users_status'); //Reset logged in user count
+
+	update_option('nebula_last_version_number', nebula_version('full'));
+	update_option('nebula_last_version_date', nebula_version('date'));
+}
+
+function nebula_theme_update_email(){
 	global $wpdb;
 	$current_user = wp_get_current_user();
 	$to = $current_user->user_email;
@@ -226,11 +234,7 @@ function nebula_theme_update_email(){
 	});
 
 	wp_mail($to, $subject, $message, $headers);
-
-	update_option('nebula_last_version_number', nebula_version('full'));
-	update_option('nebula_last_version_date', nebula_version('date'));
 }
-
 
 //Control session time (for the "Remember Me" checkbox)
 add_filter('auth_cookie_expiration', 'nebula_session_expire');
@@ -517,7 +521,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 					    $todo_counted = 1;
 				    }
 
-				    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs');
+				    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs', 'examples/');
 				    if ( !contains(basename($todo_file), skip_extensions()) && !contains($todo_file, $todo_skipFilenames) ){
 					    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
 					        if ( stripos($todo_line, '@TODO') !== false ){

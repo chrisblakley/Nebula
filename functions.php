@@ -299,7 +299,7 @@ function enqueue_nebula_frontend(){
 
 add_action('login_enqueue_scripts', 'enqueue_nebula_login');
 function enqueue_nebula_login(){
-	global $nebula, $localize_bloginfo, $localize_clientinfo, $localize_nebula_options;
+	global $nebula;
 
 	//Stylesheets
 	wp_enqueue_style('nebula-login');
