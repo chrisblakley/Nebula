@@ -302,13 +302,15 @@ function debugInfo(){
 			debugInfoVal += 'History Depth: ' + window.history.length + '\n';
 		}
 
-		jQuery.each(nebula.session.history, function(i){
-			if ( nebula.session.history.length > 10 && i < 10 ){
-				return true;
-			}
-			debugInfoVal += (i+1) + '.) ' + nebula.session.history[i] + '\n';
-		});
-		debugInfoVal += '\n';
+		if ( nebula.session.history ){
+			jQuery.each(nebula.session.history, function(i){
+				if ( nebula.session.history.length > 10 && i < 10 ){
+					return true;
+				}
+				debugInfoVal += (i+1) + '.) ' + nebula.session.history[i] + '\n';
+			});
+			debugInfoVal += '\n';
+		}
 
 		if ( typeof sessionStorage['sessionNotes'] !== 'undefined' && sessionStorage['sessionNotes'].length ){
 			debugInfoVal += 'Session Notes: ' + sessionNote('return') + '\n';

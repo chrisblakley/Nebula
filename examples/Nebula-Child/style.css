@@ -337,6 +337,18 @@
 
  .background-purple,.bg-purple,.background-violet,.bg-violet { background:purple; }
 
+ @-webkit-keyframes fadeinout { 0% { opacity:1; }
+
+ 100% { opacity:0; }
+
+ }
+
+ @keyframes fadeinout { 0% { opacity:1; }
+
+ 100% { opacity:0; }
+
+ }
+
  h1,h2,h3,h4,h5,h6 { color:#444; }
 
  h1 a,h2 a,h3 a,h4 a,h5 a,h6 a { color:#0098d7; }
@@ -346,4 +358,4 @@
  a:hover,a.hover { color:#95d600; }
 
 
-/* Processed on Thursday, January 21, 2016 at 2:29pm */
+/* Processed on Tuesday, January 26, 2016 at 3:39pm */

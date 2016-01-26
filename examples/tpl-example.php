@@ -503,6 +503,10 @@ get_header(); ?>
 							include_once('includes/push_notifications-serviceworkers.php');
 						} ?>
 
+						<?php if ( is_page(2467) ){ //Infinite load via AJAX
+							include_once('includes/infinite_load.php');
+						} ?>
+
 
 						<?php
 						/*==========================
@@ -545,15 +549,6 @@ get_header(); ?>
 						<?php if ( is_page(2150) ){ //Generate a custom Google Analytics utm.gif paramters
 							include_once('includes/google_analytics_utm_gif.php');
 						} ?>
-
-						<div class="container entry-manage">
-							<div class="row">
-								<div class="sixteen columns">
-									<hr />
-									<?php nebula_manage('modified'); ?>
-								</div><!--/columns-->
-							</div>
-						</div>
 
 					</div><!--/entry-content-->
 

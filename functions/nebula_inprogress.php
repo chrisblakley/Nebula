@@ -145,6 +145,29 @@ function nebula_upload_data(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Only allow admins to modify Contact Forms //@TODO "Nebula" 0: Currently does not work because these constants are already defined!
 //define('WPCF7_ADMIN_READ_CAPABILITY', 'manage_options');
 //define('WPCF7_ADMIN_READ_WRITE_CAPABILITY', 'manage_options');

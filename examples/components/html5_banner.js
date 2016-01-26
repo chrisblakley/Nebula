@@ -2,7 +2,7 @@
 (function(){
 	window.onload = function(){
 		var gaTrackingID = 'UA-36461517-2'; //Ex: 'UA-00000000-2'
-		var bannerID = 'Nebula "Example" Medium Rectangle (300x250)'; //Ex: 'Gearside "Click Here" Leaderboard (728x90)'
+		var bannerID = 'Nebula "Example" Medium Rectangle (300x250)'; //Ex: 'Gearside "Click Here" Leaderboard (728x90)' //Project, Campaign/Version, Size (Dimensions)
 
 		var bannerCanvas = document.getElementById('canvas');
 		var viewFlag = false;
@@ -10,7 +10,7 @@
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
 		ga('create', gaTrackingID, 'auto', {'name': 'banner'});
 
