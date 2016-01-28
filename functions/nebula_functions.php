@@ -1518,16 +1518,22 @@ function nebula_body_classes($classes){
 		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
 		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
 		$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+
 		if ( time() >= $sunrise && time() <= $sunset ){
 			$classes[] = 'time-daylight';
+			$classes[] = ( strtotime('now') < $sunrise+(($sunset-$sunrise)/2) )? 'time-light-wax' : 'time-light-wane'; //Before or after solar noon
 		} else {
 			$classes[] = 'time-darkness';
+			$previous_sunset_modifier = ( date('H') < 12 )? 86400 : 0;
+			$wane_time = (($sunset-$previous_sunset_modifier)+((86400-($sunset-$sunrise))/2)); //if it is after midnight, then we need to get the previous sunset (not the next- else we're always before tomorrow's wane time)
+			$classes[] = ( strtotime('now') < $wane_time )? 'time-dark-wax' : 'time-dark-wane'; //Before or after solar midnight
 		}
 
-		if ( strtotime('now') >= $sunrise-60*45 && strtotime('now') <= $sunrise+60*45 ){ //45 minutes before and after true sunrise
+		$sunrise_sunset_length = 45; //Length of sunrise/sunset in minutes. Default: 45
+		if ( strtotime('now') >= $sunrise-60*$sunrise_sunset_length && strtotime('now') <= $sunrise+60*$sunrise_sunset_length ){ //X minutes before and after true sunrise
 			$classes[] = 'time-sunrise';
 		}
-		if ( strtotime('now') >= $sunset-60*45 && strtotime('now') <= $sunset+60*45 ){ //45 minutes before and after true sunset
+		if ( strtotime('now') >= $sunset-60*$sunrise_sunset_length && strtotime('now') <= $sunset+60*$sunrise_sunset_length ){ //X minutes before and after true sunset
 			$classes[] = 'time-sunset';
 		}
 	}
@@ -1620,8 +1626,8 @@ function business_open($date=null, $general=0){
 		);
 	}
 
-	$days_off = explode(', ', get_option('nebula_business_hours_closed'));
-	if ( !empty(array_filter($days_off)) ){
+	$days_off = array_filter(explode(', ', get_option('nebula_business_hours_closed')));
+    if ( !empty($days_off) ){
 		foreach ( $days_off as $key => $day_off ){
 			$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
 
