@@ -94,6 +94,7 @@ function register_nebula_options(){
 		'nebula_scss_last_processed' => '0',
 		'nebula_last_version_number' => nebula_version('full'),
 		'nebula_last_version_date' => nebula_version('date'),
+		'nebula_version_legacy' => 'false',
 
 		//Metadata Tab
 		'nebula_site_owner' => '',
@@ -215,7 +216,6 @@ function register_nebula_options(){
 		'nebula_google_server_api_key' => '',
 		'nebula_google_browser_api_key' => '',
 		'nebula_cse_id' => '',
-		'nebula_google_maps_api' => '',
 		'nebula_disqus_shortname' => '',
 		'nebula_facebook_app_id' => '',
 		'nebula_twitter_consumer_key' => '',
@@ -374,6 +374,13 @@ function nebula_options_page(){
 		        	<td>
 						<input type="text" name="nebula_last_version_date" value="<?php echo nebula_version('date'); ?>" />
 						<p class="helper"><small>This is the Nebula version date when it was last saved.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Legacy Version?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" name="nebula_version_legacy" value="<?php echo get_option('nebula_version_legacy'); ?>" />
+						<p class="helper"><small>If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
@@ -680,17 +687,27 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="short" valign="top">
-		        	<th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_theme_update_notification">
-							<option disabled>Default: Enabled</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_theme_update_notification')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_theme_update_notification')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Enable easy updates to the Nebula theme. <strong>Child theme must be activated to work!</strong> <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
+				<?php if ( get_option('nebula_version_legacy') == 'false' || !get_option('nebula_version_legacy') ): ?>
+					<tr class="short" valign="top">
+			        	<th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<select name="nebula_theme_update_notification">
+								<option disabled>Default: Enabled</option>
+								<option value="enabled" <?php selected('enabled', get_option('nebula_theme_update_notification')); ?>>Enabled</option>
+								<option value="disabled" <?php selected('disabled', get_option('nebula_theme_update_notification')); ?>>Disabled</option>
+							</select>
+							<p class="helper"><small>Enable easy updates to the Nebula theme. <strong>Child theme must be activated to work!</strong> <em>(Default: Enabled)</em></small></p>
+						</td>
+			        </tr>
+			    <?php else: ?>
+			    	<tr class="short" valign="top">
+			        	<th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+						<td>
+							<input type="text" value="Future updates have been deemed incompatible." readonly />
+							<p class="helper"><small>A future version of Nebula was deemed incompatible for automated updates. Nebula would need to be manually updated.</small></p>
+						</td>
+			        </tr>
+		        <?php endif; ?>
 
 		        <tr class="short" valign="top">
 		        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
@@ -1271,14 +1288,6 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr valign="top">
-		        	<th scope="row">Google Cloud Messaging Sender ID*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input id="nebula_gcm_sender_id" type="text" name="nebula_gcm_sender_id" value="<?php echo get_option('nebula_gcm_sender_id'); ?>" placeholder="000000000000" style="width: 392px;" />
-						<p class="helper"><small>The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a>. This is the "Project number" within the project box on the Dashboard. Do not include parenthesis or the "#" symbol. This is used for push notifications. <strong>*Note: This feature is still in development and not currently active!</strong></small></p>
-					</td>
-		        </tr>
-
-				<tr valign="top">
 		        	<th scope="row">Google Public API&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						Browser Key: <input type="text" name="nebula_google_browser_api_key" value="<?php echo get_option('nebula_google_browser_api_key'); ?>" style="width: 392px;" /><br />
@@ -1295,11 +1304,11 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-		        <tr valign="top">
-		        	<th scope="row">Google Maps&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+				<tr valign="top">
+		        	<th scope="row">Google Cloud Messaging Sender ID*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input id="nebula_google_maps_api" type="text" name="nebula_google_maps_api" value="<?php echo get_option('nebula_google_maps_api'); ?>" placeholder="AAAAAA..." style="width: 392px;" />
-						<p class="helper"><small>The Google Maps API key from the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a>. This is needed for any Google Maps integration.</small></p>
+						<input id="nebula_gcm_sender_id" type="text" name="nebula_gcm_sender_id" value="<?php echo get_option('nebula_gcm_sender_id'); ?>" placeholder="000000000000" style="width: 392px;" />
+						<p class="helper"><small>The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a>. This is the "Project number" within the project box on the Dashboard. Do not include parenthesis or the "#" symbol. This is used for push notifications. <strong>*Note: This feature is still in development and not currently active!</strong></small></p>
 					</td>
 		        </tr>
 

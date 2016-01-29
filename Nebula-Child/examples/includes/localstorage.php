@@ -4,7 +4,7 @@
 
 <script>
 	jQuery(document).ready(function() {
-		if ( jQuery('.cform7-message').length == 1 ){
+		if ( jQuery('.cform7-message').length ){
 			jQuery('.cform7-message').on('keyup', function(){
 		    	localStorage.setItem('global_message', jQuery('.cform7-message').val());
 				jQuery('.cform7-message').val(localStorage.getItem('global_message'));

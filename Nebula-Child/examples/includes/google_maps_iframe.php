@@ -1,3 +1,5 @@
+<?php //https://developers.google.com/maps/documentation/embed/start ?>
+
 <div class="row">
 	<div class="sixteen columns">
 		<iframe class="googlemap nebulaborder"
@@ -5,7 +7,7 @@
 			height="250"
 			frameborder="0"
 			src="https://www.google.com/maps/embed/v1/place
-			?key=<?php echo get_option('nebula_google_maps_api'); ?>
+			?key=<?php echo nebula_option('nebula_google_browser_api_key'); ?>
 			&q=Pinckney+Hugo+Group
 			&zoom=14
 			&maptype=roadmap">

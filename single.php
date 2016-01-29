@@ -25,7 +25,6 @@ get_header(); ?>
 
 <div class="container fullcontentcon">
 	<div class="row">
-
 		<div class="eleven columns">
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -45,14 +44,14 @@ get_header(); ?>
 
 						<div class="row prevnextcon">
 							<?php if ( get_previous_post_link() ): ?>
-								<div class="<?php echo ( get_next_post_link() )? 'eight': 'sixteen'; ?> columns prev-link-con">
+								<div class="<?php echo ( get_next_post_link() )? 'eight' : 'sixteen'; ?> columns prev-link-con">
 									<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
 		                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
 								</div><!--/columns-->
 							<?php endif; ?>
 
 							<?php if ( get_next_post_link() ): ?>
-								<div class="<?php echo ( get_previous_post_link() )? 'eight': 'sixteen'; ?> columns next-link-con">
+								<div class="<?php echo ( get_previous_post_link() )? 'eight' : 'sixteen'; ?> columns next-link-con">
 									<p class="prevnext-post-heading next-post-heading">Next Post</p>
 		                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
 								</div><!--/columns-->
@@ -62,14 +61,11 @@ get_header(); ?>
 				</article><!-- #post-## -->
 
 				<?php comments_template(); ?>
-
 			<?php endwhile; ?>
 		</div><!--/columns-->
-
 		<div class="four columns push_one">
 			<?php get_sidebar(); ?>
 		</div><!--/columns-->
-
 	</div><!--/row-->
 </div><!--/container-->
 

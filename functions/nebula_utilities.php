@@ -1156,8 +1156,13 @@ function nebula_version($return=false){
 
 	$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme();
 
-	$nebula_version_split = explode('.', $nebula_theme_info->get('Version'));
-	$nebula_version = array('large' => $nebula_version_split[0], 'medium' => $nebula_version_split[1], 'small' => $nebula_version_split[2], 'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]);
+	$nebula_version_split = explode('.', preg_replace('/[a-zA-Z]/', '', $nebula_theme_info->get('Version')));
+	$nebula_version = array(
+		'large' => $nebula_version_split[0],
+		'medium' => $nebula_version_split[1],
+		'small' => $nebula_version_split[2],
+		'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]
+	);
 
 	/*
 		May 2016	4.0.x

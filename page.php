@@ -32,9 +32,8 @@ get_header(); ?>
 
 <div class="container fullcontentcon">
 	<div class="row">
-
 		<div class="eleven columns">
-			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+			<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<?php if ( has_post_thumbnail() ): ?>
 						<?php the_post_thumbnail(); ?>
@@ -52,11 +51,9 @@ get_header(); ?>
 				<?php comments_template(); ?>
 			<?php endwhile; ?>
 		</div><!--/columns-->
-
 		<div class="four columns push_one">
 			<?php get_sidebar(); ?>
 		</div><!--/columns-->
-
 	</div><!--/row-->
 </div><!--/container-->
 

@@ -181,13 +181,20 @@ function nebula_theme_json(){
 	$override = apply_filters('pre_nebula_theme_json', false);
 	if ( $override !== false ){return;}
 
+	//If newer version of Nebula has a "u" at the end of the version number, disable automated updates.
+	$remote_version_info = get_option('external_theme_updates-Nebula-master');
+	if ( (!nebula_option('nebula_version_legacy') || nebula_option('nebula_version_legacy', 'false')) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full')) ){
+		update_option('nebula_version_legacy', 'true');
+		return;
+	}
+
 	//Make sure the version stored in the DB always matches the actual version
 	if ( nebula_option('nebula_last_version_number') != nebula_version('full') ){
 		update_option('nebula_last_version_number', nebula_version('full'));
 		update_option('nebula_last_version_date', nebula_version('date'));
 	}
 
-	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('nebula_wp_core_updates_notify', 'enabled') ){
+	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('nebula_theme_update_notification', 'enabled') && nebula_option('nebula_version_legacy', 'false') ){
 		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker.
 		$example_update_checker = new ThemeUpdateChecker(
 			'Nebula-master', //This should be the directory slug of the parent theme.
@@ -211,6 +218,7 @@ function nebula_theme_update_automation(){
 
 	update_option('nebula_last_version_number', nebula_version('full'));
 	update_option('nebula_last_version_date', nebula_version('date'));
+	update_option('nebula_version_legacy', 'false');
 }
 
 function nebula_theme_update_email(){
@@ -1054,7 +1062,7 @@ function muc_value( $column_name, $id ){
 add_editor_style('stylesheets/css/tinymce.css');
 
 //Enable All Settings page for only Developers who are Admins
-if ( is_dev() && !is_client() ){
+if ( is_dev(true) ){
 	add_action('admin_menu', 'all_settings_link');
 	function all_settings_link(){
 	    add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php');
