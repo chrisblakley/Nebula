@@ -89,7 +89,6 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js', null, array(), '1.4.2', true);
 	nebula_register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment-with-locales.min.js', null, array(), '2.11.1', true);
 	nebula_register_script('nebula-adblockcheck', get_template_directory_uri() . '/js/libs/show_ads.js', null, array(), null, false); //Must be loaded in the head.
-	//nebula_register_script('nebula-utilities', get_template_directory_uri() . '/js/utilities.js', 'defer', array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true); //In progress
 	nebula_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', 'defer', array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
 	nebula_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', null, array('jquery'), null, true);
 	nebula_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', null, array('nebula-main'), null, true);

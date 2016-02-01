@@ -26,7 +26,14 @@ jQuery(window).on('load', function(){
  ===========================*/
 
 jQuery(window).on('resize', function(){
-	//debounce(function(){
+	debounce(function(){
 
-	//}, 500);
+	}, 500);
 }); //End Window Resize
+
+
+
+/*==========================
+ Child Functions
+ To override a parent function, simply redefine it here.
+ ===========================*/
