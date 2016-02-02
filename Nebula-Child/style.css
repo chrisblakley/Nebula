@@ -313,6 +313,22 @@
 
  a.soundcloud:hover,a.soundcloud.hover { color:#f30; }
 
+ @-webkit-keyframes fadepulse { 0% { opacity:0; }
+
+ 50% { opacity:1; }
+
+ 95% { opacity:0; }
+
+ }
+
+ @keyframes fadepulse { 0% { opacity:0; }
+
+ 50% { opacity:1; }
+
+ 95% { opacity:0; }
+
+ }
+
  .border-red,.outline-red { outline:1px solid red; }
 
  .border-orange,.outline-orange { outline:1px solid orange; }
@@ -358,4 +374,4 @@
  a:hover,a.hover { color:#95d600; }
 
 
-/* Processed on Friday, January 29, 2016 at 4:24pm */
+/* Processed on Tuesday, February 2, 2016 at 2:36pm */

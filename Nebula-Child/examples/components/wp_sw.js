@@ -1,4 +1,4 @@
-console.log('inside theme wp_sw.js file!');
+//console.log('inside theme wp_sw.js file!');
 
 self.addEventListener('push', function(event) {
     console.log('Received a push message', event);

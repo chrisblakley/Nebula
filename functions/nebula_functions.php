@@ -1400,6 +1400,98 @@ function nebula_advanced_search(){
 	exit;
 }
 
+//Infinite Load
+function nebula_infinite_load_query($args=array('showposts' => 4, 'paged' => 1), $loop=false){
+	$override = apply_filters('pre_nebula_infinite_load_query', false);
+	if ( $override !== false ){return;}
+
+	query_posts($args);
+	global $wp_query;
+	?>
+
+	<div id="infinite-posts-list" data-max-pages="<?php echo $wp_query->max_num_pages; ?>">
+	    <?php
+		    if ( !$loop ){
+	    		get_template_part('loop');
+			} else {
+	    		call_user_func($loop);
+			}
+		?>
+	</div>
+	<div class="loadmorecon">
+		<a class="infinite-load-more" href="#">Load More Posts</a>
+	</div>
+
+	<script><?php //Must be in PHP so $args can be encoded. ?>
+		jQuery(document).on('ready', function(){
+			var pageNumber = 2;
+			jQuery('.infinite-load-more').on('click touch tap', function(){
+				var maxPages = jQuery('#infinite-posts-list').attr('data-max-pages');
+				if ( pageNumber <= maxPages ){
+					jQuery('.loadmorecon').addClass('loading');
+			        jQuery.ajax({
+						type: "POST",
+						url: nebula.site.ajax.url,
+						data: {
+							nonce: nebula.site.ajax.nonce,
+							action: 'nebula_infinite_load',
+							page: pageNumber,
+							args: <?php echo json_encode($args); ?>,
+							loop: <?php echo json_encode($loop); ?>,
+						},
+						success: function(response){
+							jQuery("#infinite-posts-list").append('<div class="clearfix infinite-page infinite-page-' + (pageNumber-1) + '" style="display: none;">' + response + '</div>');
+							jQuery('.infinite-page-' + (pageNumber-1)).slideDown({
+			                    duration: 750,
+			                    easing: 'easeInOutQuad',
+			                    complete: function(){
+				                    jQuery('.loadmorecon').removeClass('loading');
+			                    }
+			                });
+							var maxPages = jQuery('#infinite-posts-list').attr('data-max-pages');
+							if ( pageNumber > maxPages ){
+								jQuery('.loadmorecon').addClass('disabled').find('a').text('No more posts.');
+							}
+							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load'));
+						},
+						error: function(MLHttpRequest, textStatus, errorThrown){
+							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load AJAX Error'));
+							ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Load AJAX');
+						},
+						timeout: 60000
+					});
+			        pageNumber++;
+				}
+				return false;
+			});
+		});
+	</script>
+	<?php
+}
+
+//Infinite Load AJAX Call
+add_action('wp_ajax_nebula_infinite_load', 'nebula_infinite_load');
+add_action('wp_ajax_nopriv_nebula_infinite_load', 'nebula_infinite_load');
+function nebula_infinite_load(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	$page_number = $_POST['page'];
+	$args = $_POST['args'];
+	$args['paged'] = $page_number;
+	$loop = $_POST['loop'];
+
+	query_posts($args);
+
+	if ( $loop == 'false' ){
+    	get_template_part('loop');
+    } else {
+    	call_user_func($loop); //Custom loop function must be defined in a functions file for this to work.
+    }
+
+    exit;
+}
+
 //Remove capital P core function
 remove_filter('the_title', 'capital_P_dangit', 11);
 remove_filter('the_content', 'capital_P_dangit', 11);

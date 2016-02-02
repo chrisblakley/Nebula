@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.7.1
+	Version: 3.7.2
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -135,6 +135,22 @@ div.nebula-button {margin-bottom: 10px;}
 	a {@include link-colors(brand(facebook), darken(brand(facebook), 15%)); color: brand(facebook);}
 }
 
+//Infinite Load
+.loadmorecon {position: relative; text-align: center; margin: 50px 0;
+	&:before {content: '\f141'; font-family: "FontAwesome"; position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
+	&.loading:before {animation: fadepulse 2s infinite linear;}
+	&.disabled a {color: #444; opacity: 0.3; pointer-events: none;
+		&:after {content: ''; opacity: 0; pointer-events: none;}
+	}
+
+	.infinite-load-more {position: relative; font-size: 18px; padding: 10px;
+		&:after {content: '\f078'; font-family: "FontAwesome"; position: absolute; bottom: -10px; left: 0; width: 100%; display: block; text-align: center; transition: bottom 0.25s ease;}
+		&:hover:after,
+		&.hover:after {bottom: -13px;}
+	}
+
+	&.loading .infinite-load-more {opacity: 0; pointer-events: none;}
+}
 
 // ===========================
 // Specific library feature modifications

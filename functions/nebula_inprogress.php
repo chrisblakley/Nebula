@@ -34,6 +34,34 @@ function nebula_upload_to_media_library($filepath){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Upload data from JS via nebula_upload_data();
 add_action('wp_ajax_nebula_upload_data', 'nebula_upload_data');
 add_action('wp_ajax_nopriv_nebula_upload_data', 'nebula_upload_data');

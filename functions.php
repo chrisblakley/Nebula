@@ -97,6 +97,7 @@ function register_nebula_scripts(){
 	global $upload_dir, $nebula;
 	$upload_dir = wp_upload_dir();
 
+	//Be careful changing the following array as many JS functions use this data!
 	$nebula = array(
 		'site' => array(
 			'name' => urlencode(get_bloginfo("name")),
@@ -374,17 +375,6 @@ function nebula_set_content_width(){
 
 //Add/remove post formats as needed - http://codex.wordpress.org/Post_Formats
 //add_theme_support('post-formats', array('aside', 'chat', 'status', 'gallery', 'link', 'image', 'quote', 'video', 'audio'));
-
-
-
-
-
-
-
-
-
-
-
 
 
 

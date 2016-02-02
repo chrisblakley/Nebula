@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 3.7.1
+ Version: 3.7.2
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -311,6 +311,22 @@
 
  a.soundcloud:hover,a.soundcloud.hover { color:#f30; }
 
+ @-webkit-keyframes fadepulse { 0% { opacity:0; }
+
+ 50% { opacity:1; }
+
+ 95% { opacity:0; }
+
+ }
+
+ @keyframes fadepulse { 0% { opacity:0; }
+
+ 50% { opacity:1; }
+
+ 95% { opacity:0; }
+
+ }
+
  .border-red,.outline-red { outline:1px solid red; }
 
  .border-orange,.outline-orange { outline:1px solid orange; }
@@ -474,6 +490,24 @@
  .facebook-connect-con i,.facebook-connect-con a { color:#3b5998; color:#3b5998; }
 
  .facebook-connect-con i:hover,.facebook-connect-con a:hover,.facebook-connect-con i.hover,.facebook-connect-con a.hover { color:#263961; }
+
+ .loadmorecon { position:relative; text-align:center; margin:50px 0; }
+
+ .loadmorecon:before { content:'\f141'; font-family:"FontAwesome"; position:absolute; top:10px; left:0; width:100%; display:block; text-align:center; opacity:0; pointer-events:none; }
+
+ .loadmorecon.loading:before { animation:fadepulse 2s infinite linear; }
+
+ .loadmorecon.disabled a { color:#444; opacity:0.3; pointer-events:none; }
+
+ .loadmorecon.disabled a:after { content:''; opacity:0; pointer-events:none; }
+
+ .loadmorecon .infinite-load-more { position:relative; font-size:18px; padding:10px; }
+
+ .loadmorecon .infinite-load-more:after { content:'\f078'; font-family:"FontAwesome"; position:absolute; bottom:-10px; left:0; width:100%; display:block; text-align:center; transition:bottom 0.25s ease; }
+
+ .loadmorecon .infinite-load-more:hover:after,.loadmorecon .infinite-load-more.hover:after { bottom:-13px; }
+
+ .loadmorecon.loading .infinite-load-more { opacity:0; pointer-events:none; }
 
  /* Gumby overrides */ .row { max-width:1080px; }
 
@@ -1327,4 +1361,4 @@
  }
 
 
-/* Processed on Monday, February 1, 2016 at 9:43am */
+/* Processed on Tuesday, February 2, 2016 at 2:32pm */

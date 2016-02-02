@@ -301,6 +301,22 @@
 
  a.soundcloud:hover,a.soundcloud.hover { color:#f30; }
 
+ @-webkit-keyframes fadepulse { 0% { opacity:0; }
+
+ 50% { opacity:1; }
+
+ 95% { opacity:0; }
+
+ }
+
+ @keyframes fadepulse { 0% { opacity:0; }
+
+ 50% { opacity:1; }
+
+ 95% { opacity:0; }
+
+ }
+
  .border-red,.outline-red { outline:1px solid red; }
 
  .border-orange,.outline-orange { outline:1px solid orange; }
@@ -356,4 +372,4 @@
  .ipcon p { font-size:12px; margin:0; padding:0; color:#888; }
 
 
-/* Processed on Monday, February 1, 2016 at 9:43am */
+/* Processed on Tuesday, February 2, 2016 at 2:32pm */

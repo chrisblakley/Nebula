@@ -203,6 +203,20 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory
 @include brand_link(soundcloud);
 
 
+
+// ===========================
+// Basic Animation Keyframes
+// ===========================
+
+@include keyframes(fadepulse){
+	0% {opacity: 0;}
+	50% {opacity: 1;}
+	95% {opacity: 0;}
+}
+
+
+
+
 // ===========================
 // Nebula Debug
 // ===========================

@@ -73,7 +73,7 @@
 					jQuery.each(response, function(i){
 						//console.debug(response[i]); //Just to show all the data that is available.
 
-						if ( nebula.site.browser.name == 'Safari' ){
+						if ( nebula.user.client.browser.name == 'Safari' ){
 							var tweetTime = new Date(response[i].created_at);
 						} else {
 							var tweetTime = new Date(Date.parse(response[i].created_at.replace(/( \+)/, ' UTC$1'))); //UTC for IE8
