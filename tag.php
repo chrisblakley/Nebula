@@ -20,16 +20,14 @@ get_header(); ?>
 
 <div class="container fullcontentcon">
 	<div class="row">
-
 		<div class="eleven columns">
-			<h1><i class="archiveicon fa fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
+			<h1 class="page-title"><i class="archiveicon fa fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
 			<?php get_template_part('loop', 'tag'); ?>
+			<?php wp_pagenavi(); ?>
 		</div><!--/columns-->
-
 		<div class="four columns push_one">
 			<?php get_sidebar(); ?>
 		</div><!--/columns-->
-
 	</div><!--/row-->
 </div><!--/container-->
 

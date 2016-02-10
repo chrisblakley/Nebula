@@ -29,6 +29,7 @@ jQuery(document).ready(function(){
 	menuSearchReplacement();
 	subnavExpanders();
 	initHeadroom();
+	nebulaPrerenderListeners();
 
 	//Search
 	wpSearchInput();
@@ -101,6 +102,21 @@ jQuery(window).on('load', function(){
 	} else {
 		nebula.dom.html.addClass('lt_unavailable');
 		debugInfo();
+	}
+
+	//Detect GA blocking
+	if ( !window.ga || !ga.create ){
+	    jQuery.ajax({
+			type: "POST",
+			url: nebula.site.ajax.url,
+			data: {
+				nonce: nebula.site.ajax.nonce,
+				action: 'nebula_ga_blocked',
+				data: [{
+					id: nebula.post.id,
+				}],
+			}
+		});
 	}
 
 	setTimeout(function(){
@@ -360,7 +376,7 @@ function pageVisibility(){
 	function visibilityChangeActions(){
 		var pageTitle = nebula.dom.document.attr('title');
 
-		if ( document.visibilityState === 'prerender' ){ //Page was prerendered
+		if ( document.visibilityState === 'prerender' ){ //Page was prerendered/prefetched
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Prerendered'));
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
@@ -433,7 +449,7 @@ function facebookConnect(){
 		window.fbAsyncInit = function(){
 			FB.init({
 				appId: nebula.site.options.facebook_app_id,
-				channelUrl: nebula.site.template_directory + '/includes/channel.php',
+				channelUrl: nebula.site.directory.template.uri + '/includes/channel.php',
 				status: true,
 				xfbml: true
 			});
@@ -1100,6 +1116,7 @@ function autocompleteSearch(){
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 							if ( data ){
 								jQuery.each(data, function(index, value){
+									//@TODO "Nebula" 0: Add nebulaPrerender(url) here to prerender the first result
 									value.label = value.label.replace(/&#038;/g, "\&");
 								});
 								noSearchResults = '';
@@ -1660,9 +1677,57 @@ function showSuggestedPage(title, url){
 	if ( hostname.test(url) ){
 		jQuery('.suggestion').attr('href', url).text(title);
 		jQuery('#suggestedpage').slideDown();
+		nebulaPrerender(url);
 	}
 }
 
+//Detections for events specific to predicting the next pageview.
+function nebulaPrerenderListeners(){
+	//Any post listing page
+	if ( jQuery('.first-post').is('*') ){
+		nebulaPrerender(jQuery('.first-post').find('.entry-title a').attr('href'));
+	}
+
+	//Internal link hovers
+	jQuery('a').hover(function(){
+		var oThis = jQuery(this);
+		if ( oThis.attr('href') != jQuery('link#prerender').attr('href') && oThis.attr('target') != '_blank' ){
+			var hoverLength = 500;
+			if ( jQuery('link#prerender').is('*') ){ //If prerender already exists, extend the hover time needed to update
+				hoverLength = 1000;
+			}
+
+			hoverTimer = setTimeout(function(){
+				if ( oThis.is(":hover") ){
+					nebulaPrerender(oThis.attr('href'));
+				}
+			}, hoverLength);
+		}
+	}, function(){
+		if ( typeof hoverTimer !== 'undefined' ){
+			clearTimeout(hoverTimer);
+		}
+	});
+
+	/*
+		@TODO "Nebula" 0: When a link is clicked (non-external, not the same page, not "#"), check against the URL stored in #prerender and see if correct and store data in Google Analytics (non-interaction).
+			- Make sure prerendering is enabled before sending data.
+			- Event: "Prerender Predictions", "Correct", "[URL]"
+			- Event: "Prerender Predictions", "Incorrect", "Prerendered: [URL], Actual: [URL]" //Better way to do this label? I wish there was one more deep... Maybe custom dimension?
+				-
+	*/
+}
+
+//Actually prerender a URL
+function nebulaPrerender(url){
+	if ( url ){
+		if ( jQuery('link#prerender').is('*') ){
+			jQuery('link#prerender').attr('href', url); //Update prerender link
+		} else {
+			jQuery('head').append('<link id="prerender" rel="prerender prefetch" href="' + url + '>'); //Create new prerender link
+		}
+	}
+}
 
 /*==========================
  Contact Form Functions
@@ -1873,7 +1938,7 @@ function conversionTracker(conversionpage){
 	iframe.style.width = '0px';
 	iframe.style.height = '0px';
 	document.body.appendChild(iframe);
-	iframe.src = nebula.site.template_directory + '/includes/conversion/' + conversionpage;
+	iframe.src = nebula.site.directory.template.uri + '/includes/conversion/' + conversionpage;
 };
 
 
@@ -1921,7 +1986,7 @@ function conditionalJSLoading(){
         });
 
 		//Only load Highlight if dataTables table exists.
-        jQuery.getScript(nebula.site.template_directory + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
+        jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
             ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-5.closure.js could not be loaded.', {'nonInteraction': 1});
@@ -1929,12 +1994,12 @@ function conditionalJSLoading(){
     }
 
 	if ( jQuery('pre.nebula-code').is('*') || jQuery('pre.nebula-pre').is('*') ){
-		nebulaLoadCSS(nebula.site.template_directory + '/stylesheets/css/pre.css');
+		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/css/pre.css');
 		nebula_pre();
 	}
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(nebula.site.template_directory + '/stylesheets/css/flags.css');
+		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/css/flags.css');
 	}
 }
 
@@ -2865,7 +2930,7 @@ function vimeoControls(){
 		}).fail(function(){
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': 1});
-			jQuery.getScript(nebula.site.template_directory + '/js/libs/froogaloop.min.js').done(function(){
+			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/froogaloop.min.js').done(function(){
 				createVimeoPlayers();
 			}).fail(function(){
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
@@ -3017,7 +3082,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			lang: "en-US", //Language (optional)
 			body: "", //Body message (optional)
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-			icon: nebula.site.template_directory + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
+			icon: nebula.site.directory.template.uri + "/images/meta/favicon-160x160.png" //Thumbnail Icon (optional)
 		}
 
 		if ( typeof message === "undefined" ){

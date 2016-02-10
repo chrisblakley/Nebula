@@ -16,7 +16,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="sixteen columns">
 				<?php if ( have_posts() ): ?>
-					<h1 class="entry-title">Search Results</h1>
+					<h1 class="page-title">Search Results</h1>
 					<p>
 						Your search for "<?php echo get_search_query(); ?>" returned
 						<?php
@@ -31,7 +31,7 @@ get_header(); ?>
 						results.
 					</p>
 				<?php else: ?>
-					<h1>No Results Found</h1>
+					<h1 class="page title">No Results Found</h1>
 					<p>Your search for "<?php echo get_search_query(); ?>" returned 0 results.</p>
 					<script>
 						ga('set', gaCustomDimensions['sessionNotes'], sessionNote('No Search Results'));
@@ -59,6 +59,7 @@ get_header(); ?>
 		<?php if ( have_posts() ): ?>
 			<div id="searchresults">
 				<?php get_template_part('loop', 'search'); ?>
+				<?php wp_pagenavi(); ?>
 			</div><!--/#searchresults-->
 		<?php endif; ?>
 	</div><!--/columns-->

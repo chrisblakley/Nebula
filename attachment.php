@@ -32,7 +32,9 @@ get_header(); ?>
 
 					<div class="entry-meta">
 						<?php nebula_meta('on'); ?> <?php nebula_meta('dimensions'); ?> <?php nebula_meta('exif'); ?>
+					</div>
 
+					<div class="entry-social">
 						<span class="nebulasocialcon">
 			        		<?php
 				        		if ( is_dev() ) {
@@ -42,7 +44,7 @@ get_header(); ?>
 				        		}
 				        	?>
 			        	</span>
-					</div><!-- .entry-meta -->
+					</div>
 
 					<div class="entry-content">
 						<div class="entry-attachment">

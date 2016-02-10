@@ -20,7 +20,7 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="sixteen columns">
-				<h1 class="articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
+				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
 			</div><!--/columns-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -136,6 +136,7 @@ get_header(); ?>
 			<?php
 				rewind_posts();
 				get_template_part('loop', 'author');
+				wp_pagenavi();
 			?>
 		</div><!--/columns-->
 

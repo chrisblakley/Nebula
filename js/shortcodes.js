@@ -18,7 +18,7 @@ jQuery(window).on('load', function(){
 		init : function(ed, url){
 			ed.addButton('nebulaaccordion', {
 				title: 'Insert Accordion',
-				image: nebula.site.template_directory + '/images/admin/nebulaaccordion.png',
+				image: nebula.site.directory.template.uri + '/images/admin/nebulaaccordion.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
@@ -28,7 +28,7 @@ jQuery(window).on('load', function(){
 /*
 			ed.addButton('nebulabio', {
 				title: 'Insert Bio',
-				image: nebula.site.template_directory + '/images/admin/nebulabio.png',
+				image: nebula.site.directory.template.uri + '/images/admin/nebulabio.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
@@ -38,7 +38,7 @@ jQuery(window).on('load', function(){
 */
 			ed.addButton('nebulabutton', {
 				title: 'Insert Button',
-				image: nebula.site.template_directory + '/images/admin/nebulabutton.png',
+				image: nebula.site.directory.template.uri + '/images/admin/nebulabutton.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
@@ -47,7 +47,7 @@ jQuery(window).on('load', function(){
 			}),
 			ed.addButton('nebulaclear', {
 				title : 'Insert Clear',
-				image : nebula.site.template_directory + '/images/admin/nebulaclear.png',
+				image : nebula.site.directory.template.uri + '/images/admin/nebulaclear.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
@@ -99,7 +99,7 @@ jQuery(window).on('load', function(){
 			}),
 			ed.addButton('nebuladiv', {
 				title : 'Insert Div',
-				image : nebula.site.template_directory + '/images/admin/nebuladiv.png',
+				image : nebula.site.directory.template.uri + '/images/admin/nebuladiv.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					if ( win.getSelection ){
@@ -205,7 +205,7 @@ jQuery(window).on('load', function(){
 			}),
 			ed.addButton('nebulaline', {
 				title : 'Insert Line',
-				image : nebula.site.template_directory + '/images/admin/nebulaline.png',
+				image : nebula.site.directory.template.uri + '/images/admin/nebulaline.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
@@ -249,7 +249,7 @@ jQuery(window).on('load', function(){
 			}),
 			ed.addButton('nebulaslider', {
 				title : 'Insert Slider',
-				image : nebula.site.template_directory + '/images/admin/nebulaslider.png',
+				image : nebula.site.directory.template.uri + '/images/admin/nebulaslider.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
@@ -258,7 +258,7 @@ jQuery(window).on('load', function(){
 			}),
 			ed.addButton('nebulaspace', {
 				title : 'Insert Vertical Space',
-				image : nebula.site.template_directory + '/images/admin/nebulaspace.png',
+				image : nebula.site.directory.template.uri + '/images/admin/nebulaspace.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
@@ -267,7 +267,7 @@ jQuery(window).on('load', function(){
 			}),
 			ed.addButton('nebulatooltip', {
 				title: 'Insert Tooltip',
-				image: nebula.site.template_directory + '/images/admin/nebulatooltip.png',
+				image: nebula.site.directory.template.uri + '/images/admin/nebulatooltip.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					if ( win.getSelection ){

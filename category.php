@@ -15,9 +15,9 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="sixteen columns">
-				<h1><i class="fa fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
+				<h1 class="page-title"><i class="fa fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 				<?php if ( 1==2 ): //@TODO "Nebula" 0: pull the category description if it exists ?>
-				<p>Category description from WordPress here...</p>
+					<p>Category description from WordPress here...</p>
 				<?php endif; ?>
 			</div><!--/columns-->
 		</div><!--/row-->
@@ -35,7 +35,6 @@ get_header(); ?>
 
 <div class="container fullcontentcon">
 	<div class="row">
-
 		<div class="eleven columns">
 			<?php
 				$category_description = category_description();
@@ -43,13 +42,12 @@ get_header(); ?>
 					echo $category_description . '';
 				}
 				get_template_part('loop', 'category');
+				wp_pagenavi();
 			?>
 		</div><!--/columns-->
-
 		<div class="four columns push_one">
 			<?php get_sidebar(); ?>
 		</div><!--/columns-->
-
 	</div><!--/row-->
 </div><!--/container-->
 

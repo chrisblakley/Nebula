@@ -1,5 +1,30 @@
 <?php
 
+//Send event to Google Analytics if JavaScript is disabled
+//@TODO "Nebula" 0: Consider checking a nonce here...?
+add_action('init', 'nebula_no_js_event');
+function nebula_no_js_event(){
+	if ( isset($_GET['js']) && $_GET['js'] == 'false' && strpos(nebula_url_components('path'), 'no-js') > 0 ){
+		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
+		ga_send_event('JavaScript Disabled', $_SERVER['HTTP_USER_AGENT'], $title);
+		header('Location: ' . get_template_directory_uri() . '/images/no-js.gif?id=' . $_GET['id']); //Parameters here do nothing (deter false data).
+		die; //Die to prevent iframe pageview data from sending to GA.
+	} elseif ( isset($_GET['js']) && $_GET['js'] == 'false' || strpos(nebula_url_components('path'), 'no-js') > 0 ){
+		header('Location: ' . get_template_directory_uri() . '/images/no-js.gif');
+	}
+}
+
+//Send analytics data if GA is blocked by JavaScript
+add_action('wp_ajax_nebula_ga_blocked', 'nebula_ga_blocked');
+add_action('wp_ajax_nopriv_nebula_ga_blocked', 'nebula_ga_blocked');
+function nebula_ga_blocked(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	$post_id = $_POST['data'][0]['id'];
+	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id));
+	ga_send_event('Google Analytics Blocked', 'via JavaScript', get_the_title($post_id));
+}
+
+
 //Set server timezone to match Wordpress
 add_action('init', 'nebula_set_default_timezone', 1);
 add_action('admin_init', 'nebula_set_default_timezone', 1);
@@ -128,6 +153,24 @@ add_action('wp_loaded', 'nebula_favicon_cache');
 function nebula_favicon_cache(){
 	if ( array_key_exists('favicon', $_GET) ){
 		header('Location: ' . get_template_directory_uri() . '/images/meta/favicon.ico');
+	}
+}
+
+//Determing if a page should be prepped using prerender/prefetch (Can be updated w/ JS).
+//If an eligible page is determined after load, use the JavaScript nebulaPrerender(url) function.
+//Use the Audience > User Flow report in Google Analytics for better predictions.
+function nebula_prerender(){
+	$prerender_url = false;
+	if ( is_404() ){
+		$prerender_url = home_url();
+	} elseif ( is_front_page() ){
+		$prerender_url = ''; //@TODO "Nebula" 0: Contact page or something?
+	} elseif ( !is_front_page() ){
+		$prerender_url = home_url();
+	}
+
+	if ( !empty($prerender_url) ){
+		echo '<link id="prerender" rel="prerender prefetch" href="' . $prerender_url . '">';
 	}
 }
 
@@ -425,7 +468,7 @@ function nebula_meta($meta){
 //Date post meta
 function nebula_post_date($icon=true, $linked=true, $day=true){
 	if ( $icon ){
-		$the_icon = '<i class="fa fa-calendar"></i> ';
+		$the_icon = '<i class="fa fa-calendar-o"></i> ';
 	}
 
 	$the_day = '';
@@ -434,9 +477,9 @@ function nebula_post_date($icon=true, $linked=true, $day=true){
 	}
 
 	if ( $linked ){
-		return '<span class="posted-on">' . $the_icon . '<span class="entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} else {
-		return '<span class="posted-on">' . $the_icon . '<span class="entry-date">' . get_the_date('F') . ' ' . get_the_date('j') . ', ' . get_the_date('Y') . '</span></span>';
+		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . get_the_date('F') . ' ' . get_the_date('j') . ', ' . get_the_date('Y') . '</span></span>';
 	}
 }
 
@@ -448,9 +491,9 @@ function nebula_post_author($icon=true, $linked=true, $force=false){
 
 	if ( nebula_option('nebula_author_bios', 'enabled') || $force ){
 		if ( $linked && !$force ){
-			return '<span class="posted-by">' . $the_icon . '<span class="entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
+			return '<span class="posted-by">' . $the_icon . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
 		} else {
-			return '<span class="posted-by">' . $the_icon . '<span class="entry-author">' . get_the_author() . '</span></span>';
+			return '<span class="posted-by">' . $the_icon . '<span class="meta-item entry-author">' . get_the_author() . '</span></span>';
 		}
 	}
 }
@@ -462,7 +505,7 @@ function nebula_post_categories($icon=true){
 	}
 
 	if ( is_object_in_taxonomy(get_post_type(), 'category') ){
-		return '<span class="posted-in post-categories">' . $the_icon . get_the_category_list(', ') . '</span>';
+		return '<span class="posted-in meta-item post-categories">' . $the_icon . get_the_category_list(', ') . '</span>';
 	}
 	return '';
 }
@@ -475,7 +518,7 @@ function nebula_post_tags($icon=true){
 			$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
 			$the_icon = '<i class="fa fa-' . $tag_plural . '"></i> ';
 		}
-		return '<span class="posted-in post-tags">' . $the_icon . $tag_list . '</span>';
+		return '<span class="posted-in meta-item post-tags">' . $the_icon . $tag_list . '</span>';
 	}
 	return '';
 }
@@ -489,9 +532,9 @@ function nebula_post_dimensions($icon=true, $linked=true){
 
 		$metadata = wp_get_attachment_metadata();
 		if ( $linked ){
-			echo '<span class="meta-dimensions">' . $the_icon . '<a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
+			echo '<span class="meta-item meta-dimensions">' . $the_icon . '<a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
 		} else {
-			echo '<span class="meta-dimensions">' . $the_icon . $metadata['width'] . ' &times; ' . $metadata['height'] . '</span>';
+			echo '<span class="meta-item meta-dimensions">' . $the_icon . $metadata['width'] . ' &times; ' . $metadata['height'] . '</span>';
 		}
 	}
 }
@@ -528,7 +571,7 @@ function nebula_post_exif($icon=true){
         $output = 'No EXIF data found';
     }
 
-	return '<span class="meta-exif">' . $the_icon . $output . '</span>';
+	return '<span class="meta-item meta-exif">' . $the_icon . $output . '</span>';
 }
 
 //Comments post meta
@@ -552,9 +595,9 @@ function nebula_post_comments($icon=true, $linked=true, $empty=true){
 
 	if ( $linked ){
 		$postlink = ( is_single() )? '' : get_the_permalink();
-		return '<span class="posted-comments ' . $comment_show . '">' . $the_icon . '<a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
+		return '<span class="meta-item posted-comments ' . $comment_show . '">' . $the_icon . '<a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
 	} else {
-		return '<span class="posted-comments ' . $comment_show . '">' . $the_icon . get_comments_number() . ' ' . $comments_text . '</span>';
+		return '<span class="meta-item posted-comments ' . $comment_show . '">' . $the_icon . get_comments_number() . ' ' . $comments_text . '</span>';
 	}
 }
 
@@ -919,14 +962,16 @@ function the_breadcrumb(){
 				}
 			} else {
 				$cat = get_the_category();
-				$cat = $cat[0];
-				$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
-				if ( $showCurrent == 0 ){
-					$cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
-				}
-				echo $cats;
-				if ( $showCurrent == 1 ){
-					echo $before . get_the_title() . $after;
+				if ( is_string($cat[0]) ){
+					$cat = $cat[0];
+					$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+					if ( $showCurrent == 0 ){
+						$cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
+					}
+					echo $cats;
+					if ( $showCurrent == 1 ){
+						echo $before . get_the_title() . $after;
+					}
 				}
 			}
 		} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ){
@@ -1486,7 +1531,7 @@ function nebula_infinite_load(){
 	if ( $loop == 'false' ){
     	get_template_part('loop');
     } else {
-    	call_user_func($loop); //Custom loop function must be defined in a functions file for this to work.
+    	call_user_func($loop); //Custom loop callback function must be defined in a functions file (not a template file) for this to work.
     }
 
     exit;
@@ -1581,12 +1626,17 @@ function nebula_body_classes($classes){
 			}
 		}
 		foreach ( get_the_category($post->ID) as $category ){
-			$classes[] = 'cat-' . $category->cat_ID . '-id';
+			$classes[] = 'cat-id-' . $category->cat_ID;
 		}
 	}
 	$nebula_theme_info = wp_get_theme();
 	$classes[] = 'nebula';
 	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
+
+	$classes[] = 'lang-' . get_bloginfo('language');
+	if ( is_rtl() ){
+		$classes[] = 'lang-dir-rtl';
+	}
 
 	//Time of Day
 	if ( has_business_hours() ){
@@ -1651,6 +1701,20 @@ function nebula_post_classes($classes){
     if ( is_sticky() ){
 	    $classes[] = 'sticky';
     }
+    $classes[] = 'nebula-entry';
+
+    if ( !is_page() ){
+    	$classes[] = 'date-day-' . strtolower(get_the_date('l'));
+		$classes[] = 'date-ymd-' . strtolower(get_the_date('Y-m-d'));
+		$classes[] = 'date-month-' . strtolower(get_the_date('F'));
+    }
+
+	foreach ( get_the_category($post->ID) as $category ){
+		$classes[] = 'cat-id-' . $category->cat_ID;
+	}
+
+	$classes[] = 'author-id-' . get_the_author_id();
+
     return $classes;
 }
 

@@ -45,15 +45,13 @@ get_header(); ?>
 
 <div class="container fullcontentcon">
 	<div class="row">
-
 		<div class="eleven columns">
 			<?php get_template_part('loop', 'archive'); ?>
+			<?php wp_pagenavi(); ?>
 		</div><!--/columns-->
-
 		<div class="four columns push_one">
 			<?php get_sidebar(); ?>
 		</div><!--/columns-->
-
 	</div><!--/row-->
 </div><!--/container-->
 

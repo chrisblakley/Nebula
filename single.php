@@ -26,7 +26,7 @@ get_header(); ?>
 <div class="container fullcontentcon">
 	<div class="row">
 		<div class="eleven columns">
-			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+			<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<?php if ( has_post_thumbnail() ): ?>
 						<?php the_post_thumbnail(); ?>
@@ -36,7 +36,10 @@ get_header(); ?>
 
 					<div class="entry-meta">
 						<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
-						<span class="nebulasocialcon"><?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?></span>
+					</div>
+
+					<div class="entry-social">
+						<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
 					</div>
 
 					<div class="entry-content">

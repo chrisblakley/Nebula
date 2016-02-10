@@ -101,11 +101,19 @@ function register_nebula_scripts(){
 	$nebula = array(
 		'site' => array(
 			'name' => urlencode(get_bloginfo("name")),
-			'template_directory' => get_template_directory_uri(),
-			'stylesheet_directory' => get_stylesheet_directory_uri(),
+			'directory' => array(
+				'template' => array(
+					'path' => get_template_directory(),
+					'uri' => get_template_directory_uri(),
+				),
+				'stylesheet' => array(
+					'path' => get_stylesheet_directory(),
+					'uri' => get_stylesheet_directory_uri(),
+				),
+			),
 			'home_url' => home_url(),
 			'domain' => nebula_url_components('domain'),
-			//'admin_email' => base64_encode(get_option('admin_email')), //Removed until actually needed somewhere.
+			'language' => get_bloginfo('language'),
 			'ajax' => array(
 				'url' => admin_url('admin-ajax.php'),
 				'nonce' => wp_create_nonce('nebula_ajax_nonce'),

@@ -6,7 +6,7 @@
 			<hr class="zero" style="margin-top: 30px;"/>
 
 			<div id="footer">
-				<?php include_once(get_template_directory() . '/includes/footer_widgets.php'); //Footer widget logic. ?>
+				<?php get_template_part('includes/footer_widgets'); //Footer widget logic. ?>
 
 				<?php if ( has_nav_menu('footer') ): ?>
 					<div class="container footerlinks">

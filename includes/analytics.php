@@ -214,7 +214,7 @@
 				if ( is_user_logged_in() ){
 					$user_info = get_userdata(get_current_user_id());
 					$role_abv = substr($user_info->roles[0], 0, 3);
-					$session_info .= 'u' . get_current_user_id() . '.r:' . $role_abv . '.';
+					$session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
 				}
 
 				if ( !is_site_live() ){
@@ -327,7 +327,10 @@
 			return nebula.session.notes.join(', ');
 		}
 	</script>
-	<noscript><img src="<?php echo ga_UTM_gif(); //Track users who disable JavaScript. ?>" width="1" height="1" style="display: none;" /></noscript>
+	<noscript>
+		<img src="<?php echo ga_UTM_gif(); ?>" width="1" height="1" style="display: none;" /><?php //Track pageviews of users who disable JavaScript. ?>
+		<iframe class="hidden" src="<?php echo home_url(); ?>/no-js?js=false&id=<?php echo $post->ID; ?>" width="0" height="0" style="display: none; position: absolute;"></iframe><?php //Send "JavaScript Disabled" event. ?>
+	</noscript>
 <?php endif; ?>
 
 

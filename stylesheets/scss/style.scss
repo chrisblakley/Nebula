@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.7.2
+	Version: 3.7.10
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -34,6 +34,8 @@ ul {list-style-position: inside;
 	&.menu {padding: 0;}
 }
 
+//Typography
+
 h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.15538em;
 	a {color: $primary_color;}
 }
@@ -50,6 +52,8 @@ span {font-size: inherit;}
 a {@include link-colors($primary_color, $secondary_color); @include prefix((transition: all 0.25s));
 	.btn > &:hover {color: #fff;}
 }
+
+//Forms
 
 #form-messages {
 	.sending {color: $warning_color;}
@@ -120,9 +124,7 @@ div.nebula-button {margin-bottom: 10px;}
 	.maprefresh {overflow: hidden; white-space: nowrap;
 		&.timeout {color: #aaa; cursor: default;}
 	}
-
 	.maprefresh-icon.success {color: $success_color;}
-
 	.mapweather-icon.inactive,
 	.maptraffic-icon.inactive,
 	.maprefresh-icon.inactive,
@@ -405,7 +407,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
 				&:last-child,
 				&.last-child {margin-right: 0;}
-				a {display: block; @include link-colors(#fff, #ccc);  font-size: 11px;}
+				a {display: block; @include link-colors(#fff, #ccc); font-size: 11px;}
 				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); @include prefix((transition: opacity 0.25s));
 					li.menu-item {display: block; margin-right: auto; padding: 0;
 						a {display: block; @include link-colors($text_color, $primary_color);  font-size: 11px;}
@@ -504,7 +506,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	@include media(tablet){padding: 50px 0; overflow: hidden; background-size: cover;};
 }
 
-#bigheadingcon {@include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
+#bigheadingcon {padding-top: 25px; padding-bottom: 15px; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
 	h1, h2, h3, h4, h5, h6, p {color: #fff;}
 	a {color: #fff; text-decoration: underline; white-space: nowrap;
 		&:hover,
@@ -531,30 +533,25 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 .sticky-title i {font-size: 20px;}
 
-h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
+.page-title,
+.entry-title {padding-top: 0; margin-top: 0;}
 
-.entry-meta {font-size: 12px;
-	i {margin-right: 2px;}
-	.posted-on,
-	.posted-in,
-	.posted-by {display: inline-block; margin-right: 10px; text-transform: uppercase; font-weight: bold;}
-	.meta-dimensions {display: inline-block; margin-right: 10px;}
-	.meta-exif {display: inline-block; margin-right: 10px;}
-	.nebulasocialcon {} /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */
-		.sharing-links {display: block; margin-top: 10px;
-			&.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
+.entry-meta {font-size: 12px; margin-bottom: 3px;
+	i {margin-right: 2px; color: #aaa;}
+	.meta-item {display: inline-block; margin-right: 10px;
+		a {color: #444;
+			&:hover,
+			&.hover {color: $primary_color;}
 		}
-			.nebula-social-button {display: inline-block; margin-right: 10px;
-				&.facebook-share .fb_iframe_widget span {vertical-align: inherit !important;}
-			}
+	}
+	.post-tags {font-style: italic;}
 }
 
 .entry-social {
-	ul {
-		li {display: inline;
-			&.facebook-like {}
-			&.facebook-share {}
-			&.twitter {}
+	.sharing-links {display: block;
+		&.inactive {display: none;} /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */
+		.nebula-social-button {display: inline-block; margin-right: 10px;
+			span {vertical-align: inherit !important;}
 		}
 	}
 }
@@ -562,14 +559,11 @@ h1.entry-title {margin: 20px 0 10px 0; padding-top: 0;}
 .entry-content {margin-top: 10px; font-size: 14px;
 	ul {list-style-position: inside; overflow: hidden; padding-left: 20px; list-style: disc;}
 	ol {margin: 0; padding-left: 20px;}
-
 	img {margin: 0 24px 12px 24px;
 		&.alignleft {display: inline; margin-left: 0; margin-right: 24px;}
 		&.alignright {display: inline; margin-left: 24px; margin-right: 0;}
 		&.aligncenter {clear: both; display: block; margin-left: auto; margin-right: auto;}
 	}
-
-
 }
 
 .entry-caption {font-style: italic; color: $text_color; margin-top: 15px;}

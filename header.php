@@ -25,14 +25,15 @@
 
 		<link rel="manifest" href="<?php echo get_template_directory_uri() . $GLOBALS['manifest_json']; ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
+		<?php nebula_prerender(); ?>
 
-		<?php include_once(get_template_directory() . '/includes/metadata.php'); //All text components of metadata. ?>
-		<?php include_once(get_template_directory() . '/includes/metagraphics.php'); //All graphic components of metadata. ?>
+		<?php get_template_part('includes/metadata'); //All text components of metadata. ?>
+		<?php get_template_part('includes/metagraphics'); //All graphic components of metadata. ?>
 
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
 		<?php wp_head(); ?>
 
-		<?php include_once(get_template_directory() . '/includes/analytics.php'); //Google Analytics and other analytics trackers. ?>
+		<?php get_template_part('includes/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="fullbodywrapper">
@@ -58,10 +59,8 @@
 
 							<form id="mobileheadersearch" class="nebula-search-iconable search" method="get" action="<?php echo home_url('/'); ?>">
 								<?php
-									if ( !empty($_GET['s']) ) {
-										$current_search = $_GET['s'];
-									} elseif ( !empty($_GET['rs']) ) {
-										$current_search = $_GET['rs'];
+									if ( !empty($_GET['s']) || !empty($_GET['rs']) ) {
+										$current_search = ( !empty($_GET['s']) )? $_GET['s'] : $_GET['rs'];
 									}
 									$header_search_placeholder = ( isset($current_search) )? $current_search : 'What are you looking for?' ;
 								?>

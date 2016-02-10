@@ -6,7 +6,7 @@ Wordpress developers will find all source code not obfuscated, so everything may
 ##Installation
 - [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Extract and upload to the /themes directory via FTP.
 - Activate the Nebula theme and run the automated initialization.
-- *(Optional)* To use the prepared child theme, move the Nebula-Child directory from /examples/ to the themes directory
+- *(Optional)* To use the prepared child theme, move the Nebula-Child directory to the /themes/ directory.
 - *(Optional)* Activate the Nebula Child theme.
 
 ##Using Child Themes in WordPress
@@ -14,7 +14,7 @@ Child themes allow customization without crippling the original theme. This mean
 
 **Important Notes:**
 - If renaming either theme, be sure to update the directories to match. The themes can be named however, but it is strongly recommended that the child theme directory match the parent with "-child" added to the end.
-- Make sure the "Template:" setting at the top of the child theme's style.css (or stylesheets/scss/style.scss if using Nebula Child) matches the template directory of the parent theme!
+- Make sure the "Template:" setting at the top of the child theme's style.css (or stylesheets/scss/style.scss if using SASS) matches the template directory of the parent theme!
 
 ##Additional Guides
 - *[Setup Guide](https://gearside.com/nebula/documentation/get-started/)*

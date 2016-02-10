@@ -15,7 +15,7 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="sixteen columns">
-				<h1 class="entry-title"><?php the_title(); ?></h1>
+				<h1 class="page-title"><?php the_title(); ?></h1>
 			</div><!--/columns-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -39,8 +39,8 @@ get_header(); ?>
 						<?php the_post_thumbnail(); ?>
 					<?php endif; ?>
 
-					<div class="entry-meta">
-						<span class="nebulasocialcon"><?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?></span>
+					<div class="entry-social">
+						<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
 					</div>
 
 					<div class="entry-content">

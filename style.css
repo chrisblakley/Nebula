@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 3.7.2
+ Version: 3.7.10
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -937,7 +937,7 @@
 
  }
 
- #bigheadingcon { background:#0098d7; background:linear-gradient(to bottom, #0098d7, #0086be); }
+ #bigheadingcon { padding-top:25px; padding-bottom:15px; background:#0098d7; background:linear-gradient(to bottom, #0098d7, #0086be); }
 
  #bigheadingcon h1,#bigheadingcon h2,#bigheadingcon h3,#bigheadingcon h4,#bigheadingcon h5,#bigheadingcon h6,#bigheadingcon p { color:#fff; }
 
@@ -961,27 +961,27 @@
 
  .sticky-title i { font-size:20px; }
 
- h1.entry-title { margin:20px 0 10px 0; padding-top:0; }
+ .page-title,.entry-title { padding-top:0; margin-top:0; }
 
- .entry-meta { font-size:12px; /* float: right; if this should appear to the right of the post metadata. If so, .sharing-links should have a margin-top of 2px; and be display: inline-block; Also .share-button should be changed to margin-left: 5px; */ }
+ .entry-meta { font-size:12px; margin-bottom:3px; }
 
- .entry-meta i { margin-right:2px; }
+ .entry-meta i { margin-right:2px; color:#aaa; }
 
- .entry-meta .posted-on,.entry-meta .posted-in,.entry-meta .posted-by { display:inline-block; margin-right:10px; text-transform:uppercase; font-weight:bold; }
+ .entry-meta .meta-item { display:inline-block; margin-right:10px; }
 
- .entry-meta .meta-dimensions { display:inline-block; margin-right:10px; }
+ .entry-meta .meta-item a { color:#444; }
 
- .entry-meta .meta-exif { display:inline-block; margin-right:10px; }
+ .entry-meta .meta-item a:hover,.entry-meta .meta-item a.hover { color:#0098d7; }
 
- .entry-meta .sharing-links { display:block; margin-top:10px; /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */ }
+ .entry-meta .post-tags { font-style:italic; }
 
- .entry-meta .sharing-links.inactive { display:none; }
+ .entry-social .sharing-links { display:block; /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */ }
 
- .entry-meta .nebula-social-button { display:inline-block; margin-right:10px; }
+ .entry-social .sharing-links.inactive { display:none; }
 
- .entry-meta .nebula-social-button.facebook-share .fb_iframe_widget span { vertical-align:inherit !important; }
+ .entry-social .sharing-links .nebula-social-button { display:inline-block; margin-right:10px; }
 
- .entry-social ul li { display:inline; }
+ .entry-social .sharing-links .nebula-social-button span { vertical-align:inherit !important; }
 
  .entry-content { margin-top:10px; font-size:14px; }
 
@@ -1361,4 +1361,4 @@
  }
 
 
-/* Processed on Tuesday, February 2, 2016 at 2:32pm */
+/* Processed on Wednesday, February 10, 2016 at 9:01am */
