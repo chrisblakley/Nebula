@@ -4,12 +4,12 @@
 //@TODO "Nebula" 0: Consider checking a nonce here...?
 add_action('init', 'nebula_no_js_event');
 function nebula_no_js_event(){
-	if ( isset($_GET['js']) && $_GET['js'] == 'false' && strpos(nebula_url_components('path'), 'no-js') > 0 ){
+	if ( !nebula_is_bot() && isset($_GET['js']) && $_GET['js'] == 'false' && strpos(nebula_url_components('path'), 'no-js') > 0 ){
 		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
 		ga_send_event('JavaScript Disabled', $_SERVER['HTTP_USER_AGENT'], $title);
 		header('Location: ' . get_template_directory_uri() . '/images/no-js.gif?id=' . $_GET['id']); //Parameters here do nothing (deter false data).
 		die; //Die to prevent iframe pageview data from sending to GA.
-	} elseif ( isset($_GET['js']) && $_GET['js'] == 'false' || strpos(nebula_url_components('path'), 'no-js') > 0 ){
+	} elseif ( !nebula_is_bot() && (isset($_GET['js']) && $_GET['js'] == 'false' || strpos(nebula_url_components('path'), 'no-js') > 0) ){
 		header('Location: ' . get_template_directory_uri() . '/images/no-js.gif');
 	}
 }
@@ -21,7 +21,7 @@ function nebula_ga_blocked(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 	$post_id = $_POST['data'][0]['id'];
 	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id));
-	ga_send_event('Google Analytics Blocked', 'via JavaScript', get_the_title($post_id));
+	ga_send_event('Google Analytics Blocked', $_SERVER['HTTP_USER_AGENT'], get_the_title($post_id));
 }
 
 
@@ -162,11 +162,11 @@ function nebula_favicon_cache(){
 function nebula_prerender(){
 	$prerender_url = false;
 	if ( is_404() ){
-		$prerender_url = home_url();
+		$prerender_url = home_url('/');
 	} elseif ( is_front_page() ){
 		$prerender_url = ''; //@TODO "Nebula" 0: Contact page or something?
 	} elseif ( !is_front_page() ){
-		$prerender_url = home_url();
+		$prerender_url = home_url('/');
 	}
 
 	if ( !empty($prerender_url) ){

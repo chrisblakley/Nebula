@@ -67,9 +67,7 @@ jQuery(document).ready(function(){
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
-	if ( !nebula.dom.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
-		viewport = updateViewportDimensions();
-	}
+	lastWindowWidth = nebula.dom.window.width();
 }); //End Document Ready
 
 
@@ -137,20 +135,17 @@ jQuery(window).on('resize', function(){
 		mobileSearchPlaceholder();
 
     	//Track size change
-    	if ( !nebula.dom.html.hasClass('lte-ie8') ){ //@TODO "Nebula" 0: This breaks in IE8. This conditional should only be a temporary fix.
-	    	viewportResized = updateViewportDimensions();
-	    	if ( viewport.width > viewportResized.width ){
-	    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
-	    		ga('send', 'event', 'Window Resize', 'Smaller', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    	} else if ( viewport.width < viewportResized.width ){
-	    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
-	    		ga('send', 'event', 'Window Resize', 'Bigger', viewport.width + 'px to ' + viewportResized.width + 'px');
-	    	}
-	    	viewport = updateViewportDimensions();
+    	if ( lastWindowWidth > nebula.dom.window.width() ){
+    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
+    		ga('send', 'event', 'Window Resize', 'Smaller', lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
+    	} else if ( lastWindowWidth < nebula.dom.window.width() ){
+    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
+    		ga('send', 'event', 'Window Resize', 'Bigger', lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
     	}
-	}, 500);
+    	lastWindowWidth = nebula.dom.window.width();
+	}, 500, 'window resize');
 }); //End Window Resize
 
 
@@ -1518,14 +1513,11 @@ function wpSearchInput(){
 
 //Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
-	if ( !nebula.dom.html.hasClass('lte-ie8') ){
-		var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
-		viewport = updateViewportDimensions();
-		if ( viewport.width <= 410 ){
-			mobileHeaderSearchInput.attr('placeholder', 'I\'m looking for...');
-		} else {
-			mobileHeaderSearchInput.attr('placeholder', 'What are you looking for?');
-		}
+	var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
+	if ( nebula.dom.window.width() <= 410 ){
+		mobileHeaderSearchInput.attr('placeholder', 'Search');
+	} else {
+		mobileHeaderSearchInput.attr('placeholder', 'What are you looking for?');
 	}
 }
 
