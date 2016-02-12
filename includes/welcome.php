@@ -8,7 +8,7 @@
 <div id="phg-welcome" class="welcome-panel-content gearside-welcome">
 	<div id="welcome-content">
 		<div class="logocon">
-			<a href="<?php echo home_url('/'); ?>" target="_blank"><img class="welcome-logo" src="<?php echo get_template_directory_uri();?>/images/meta/favicon-96x96.png" alt="<?php bloginfo('name'); ?>"/></a>
+			<a href="<?php echo home_url('/'); ?>" target="_blank"><img class="welcome-logo" src="<?php echo nebula_prefer_child_directory('/images/meta');?>/favicon-96x96.png" alt="<?php bloginfo('name'); ?>"/></a>
 		</div>
 
 		<h3><a href="<?php echo home_url('/'); ?>" target="_blank"><?php bloginfo('name'); ?></a></h3>

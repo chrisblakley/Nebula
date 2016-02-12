@@ -100,7 +100,7 @@ function register_nebula_scripts(){
 	//Be careful changing the following array as many JS functions use this data!
 	$nebula = array(
 		'site' => array(
-			'name' => urlencode(get_bloginfo("name")),
+			'name' => get_bloginfo('name'),
 			'directory' => array(
 				'template' => array(
 					'path' => get_template_directory(),
@@ -196,6 +196,7 @@ function register_nebula_scripts(){
 					'battery' => 'unknown',
 					'network' => 'unknown',
 					'adblock' => false,
+					'gablock' => false,
 					'select_text' => 'unknown',
 					'clipboard' => array(
 						'copy' => 'unknown',

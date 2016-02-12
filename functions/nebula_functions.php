@@ -6,7 +6,15 @@ add_action('init', 'nebula_no_js_event');
 function nebula_no_js_event(){
 	if ( !nebula_is_bot() && isset($_GET['js']) && $_GET['js'] == 'false' && strpos(nebula_url_components('path'), 'no-js') > 0 ){
 		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
-		ga_send_event('JavaScript Disabled', $_SERVER['HTTP_USER_AGENT'], $title);
+
+		$dimension_array = array();
+		if ( nebula_option('nebula_cd_sessionnotes') ){
+			$dimension_index = nebula_option('nebula_cd_sessionnotes');
+			$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
+			$dimension_array = array('cd' . $cd_number => 'JS Disabled');
+		}
+
+		ga_send_event('JavaScript Disabled', $_SERVER['HTTP_USER_AGENT'], $title, null, 1, $dimension_array);
 		header('Location: ' . get_template_directory_uri() . '/images/no-js.gif?id=' . $_GET['id']); //Parameters here do nothing (deter false data).
 		die; //Die to prevent iframe pageview data from sending to GA.
 	} elseif ( !nebula_is_bot() && (isset($_GET['js']) && $_GET['js'] == 'false' || strpos(nebula_url_components('path'), 'no-js') > 0) ){
@@ -20,7 +28,21 @@ add_action('wp_ajax_nopriv_nebula_ga_blocked', 'nebula_ga_blocked');
 function nebula_ga_blocked(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
 	$post_id = $_POST['data'][0]['id'];
-	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id));
+	$dimension_array = array();
+
+	if ( nebula_option('nebula_cd_sessionid') ){
+		$dimension_index = nebula_option('nebula_cd_sessionid');
+		$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
+		$dimension_array['cd' . $cd_number] = nebula_session_id();
+	}
+
+	if ( nebula_option('nebula_cd_sessionnotes') ){
+		$dimension_index = nebula_option('nebula_cd_sessionnotes');
+		$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
+		$dimension_array['cd' . $cd_number] = 'GA Blocked';
+	}
+
+	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id), $dimension_array);
 	ga_send_event('Google Analytics Blocked', $_SERVER['HTTP_USER_AGENT'], get_the_title($post_id));
 }
 

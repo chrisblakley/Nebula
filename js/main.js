@@ -26,7 +26,6 @@ jQuery(document).ready(function(){
 	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo(); //@TODO "Mobile": Either use mmenu or uncomment this line for mobile navigation.
 	dropdownWidthController();
 	overflowDetector();
-	menuSearchReplacement();
 	subnavExpanders();
 	initHeadroom();
 	nebulaPrerenderListeners();
@@ -102,20 +101,7 @@ jQuery(window).on('load', function(){
 		debugInfo();
 	}
 
-	//Detect GA blocking
-	if ( !window.ga || !ga.create ){
-	    jQuery.ajax({
-			type: "POST",
-			url: nebula.site.ajax.url,
-			data: {
-				nonce: nebula.site.ajax.nonce,
-				action: 'nebula_ga_blocked',
-				data: [{
-					id: nebula.post.id,
-				}],
-			}
-		});
-	}
+	gaBlockDetect();
 
 	setTimeout(function(){
 		emphasizeSearchTerms();
@@ -419,6 +405,51 @@ function overflowDetector(){
     }, function(){
 	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
     });
+}
+
+//Detect GA blocking
+function gaBlockDetect(){
+	if ( !window.ga || !ga.create ){
+		nebula.user.client.capabilities.gablock = true;
+		jQuery('html').addClass('no-gajs');
+		jQuery.ajax({
+			type: "POST",
+			url: nebula.site.ajax.url,
+			data: {
+				nonce: nebula.site.ajax.nonce,
+				action: 'nebula_ga_blocked',
+				data: [{
+					id: ( nebula.post )? nebula.post.id : false,
+				}],
+			}
+		});
+
+		function ga(send, event, category, action, label, value, misc){
+			if ( send === 'send' && event === 'event' ){
+				var ni = 0;
+				if ( misc && misc.nonInteraction === 1 ){
+					ni = 1;
+				}
+
+				jQuery.ajax({ //test success
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ga_event_ajax',
+						data: [{
+							id: ( nebula.post )? nebula.post.id : false,
+							category: category,
+							action: action,
+							label: label,
+							value: value,
+							ni: ni,
+						}],
+					}
+				});
+			}
+		}
+	}
 }
 
 
@@ -1037,21 +1068,6 @@ function keywordSearch(container, parent, value, filteredClass){
 	}
 	jQuery(container).find("*:not(:Contains(" + value + "))").parents(parent).addClass(filteredClass);
 	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass(filteredClass);
-}
-
-//Menu Search Replacement
-function menuSearchReplacement(){
-	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + nebula.site.home_url + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
-	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
-		jQuery(this).addClass('focus active');
-	});
-	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
-		if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
-			jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
-		} else {
-			jQuery(this).removeClass('active');
-		}
-	});
 }
 
 //Only allow alphanumeric (and some special keys) to return true
@@ -3230,13 +3246,14 @@ function mmenus(){
 					position: "bottom",
 					content: ["<span>" + nebula.site.name + "</span>"]
 				}],
-				searchfield: { //This is for searching through the menu itself (NOT for site search, but Nebula enables site search capabilities for this input)
+				searchfield: {
 			    	add: true,
 			    	search: true,
 			    	placeholder: 'Search',
 			    	noResults: "No navigation items found.",
 			    	showSubPanels: false,
 			    	showTextItems: false,
+			    	resultsPanel: true,
 			    },
 			    counters: true, //Display count of sub-menus
 			    iconPanels: false, //Layer panels on top of each other
@@ -3245,6 +3262,16 @@ function mmenus(){
 				//Configuration
 				classNames: {
 					selected: "current-menu-item"
+				},
+				searchfield: {
+					clear: true,
+					form: {
+						method: "get",
+						action: nebula.site.home_url,
+					},
+					input: {
+						name: "s",
+					}
 				}
 			});
 
@@ -3268,23 +3295,6 @@ function mmenus(){
 
 			nebula.dom.document.on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
 				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until navigation');
-			});
-
-
-			var mmenuSearchInput = jQuery('.mm-search input');
-			mmenuSearchInput.wrap('<form method="get" action="' + nebula.site.home_url + '"></form>').attr('name', 's');
-			mmenuSearchInput.on('keyup', function(){
-				if ( jQuery(this).val().length > 0 ){
-					jQuery('.clearsearch').removeClass('hidden');
-				} else {
-					jQuery('.clearsearch').addClass('hidden');
-				}
-			});
-			jQuery('.mm-panel').append('<div class="clearsearch hidden"><strong class="doasitesearch">Press enter to search the site!</strong><br /><a href="#"><i class="fa fa-times-circle"></i>Reset Search</a></div>');
-			nebula.dom.document.on('click touch tap', '.clearsearch a', function(){
-				mmenuSearchInput.val('').keyup();
-				jQuery('.clearsearch').addClass('hidden');
-				return false;
 			});
 
 			//Close mmenu on back button click

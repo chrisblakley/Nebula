@@ -202,27 +202,7 @@
 
 			//Session ID
 			if ( nebula_option('nebula_cd_sessionid') ){
-				$session_info = ( is_debug() )? 'dbg.' : '';
-				$session_info .= ( nebula_option('nebula_wireframing', 'enabled') )? 'wrf.' : '';
-
-				if ( is_client() ){
-					$session_info .= 'cli.';
-				} elseif ( is_dev() ){
-					$session_info .= 'dev.';
-				}
-
-				if ( is_user_logged_in() ){
-					$user_info = get_userdata(get_current_user_id());
-					$role_abv = substr($user_info->roles[0], 0, 3);
-					$session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
-				}
-
-				if ( !is_site_live() ){
-					$site_live = '.n';
-				}
-
-				$session_info .= ( nebula_is_bot() )? 'bot.' : '';
-				echo 'nebula.session.id = "' . time() . '.' . $session_info . '" + Math.random().toString(36).substring(5) + "' . $site_live . '";';
+				echo 'nebula.session.id = "' . nebula_session_id() . '";';
 				echo 'ga("set", gaCustomDimensions["sessionID"], nebula.session.id);';
 			}
 

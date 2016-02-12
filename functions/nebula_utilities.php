@@ -1,5 +1,31 @@
 <?php
 
+//Generate Session ID
+function nebula_session_id(){
+	$session_info = ( is_debug() )? 'dbg.' : '';
+	$session_info .= ( nebula_option('nebula_wireframing', 'enabled') )? 'wrf.' : '';
+
+	if ( is_client() ){
+		$session_info .= 'cli.';
+	} elseif ( is_dev() ){
+		$session_info .= 'dev.';
+	}
+
+	if ( is_user_logged_in() ){
+		$user_info = get_userdata(get_current_user_id());
+		$role_abv = substr($user_info->roles[0], 0, 3);
+		$session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
+	}
+
+	if ( !is_site_live() ){
+		$site_live = '.n';
+	}
+
+	$session_info .= ( nebula_is_bot() )? 'bot.' : '';
+
+	return time() . '.' . $session_info . uniqid() . $site_live;
+}
+
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
 function ga_parse_cookie(){
 	$override = apply_filters('pre_ga_parse_cookie', false);
@@ -112,8 +138,8 @@ function ga_send_data($data){
 }
 
 //Send Pageview Function for Server-Side Google Analytics
-function ga_send_pageview($hostname=null, $path=null, $title=null){
-	$override = apply_filters('pre_ga_send_pageview', false, $hostname, $path, $title);
+function ga_send_pageview($hostname=null, $path=null, $title=null, $array=array()){
+	$override = apply_filters('pre_ga_send_pageview', false, $hostname, $path, $title, $array);
 	if ( $override !== false ){return $override;}
 
 	if ( empty($GLOBALS['ga_v']) ){
@@ -148,6 +174,8 @@ function ga_send_pageview($hostname=null, $path=null, $title=null){
 		'dt' => $title, //Title
 		'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 	);
+
+	$data = array_merge($data, $array);
 	ga_send_data($data);
 }
 
@@ -183,7 +211,6 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 	);
 
 	$data = array_merge($data, $array);
-
 	ga_send_data($data);
 }
 
@@ -215,6 +242,15 @@ function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional para
 		trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
 		return;
 	}
+}
+
+//Sends events to Google Analytics via AJAX (used if GA is blocked via JavaScript)
+add_action('wp_ajax_nebula_ga_event_ajax', 'nebula_ga_event_ajax');
+add_action('wp_ajax_nopriv_nebula_ga_event_ajax', 'nebula_ga_event_ajax');
+function nebula_ga_event_ajax(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	ga_send_event($_POST['data'][0]['category'], $_POST['data'][0]['action'], $_POST['data'][0]['label'], $_POST['data'][0]['value'], $_POST['data'][0]['ni']);
+	exit;
 }
 
 //Retarget users based on prior conversions/leads
@@ -1148,6 +1184,28 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 		}
 	}
 }
+
+//Prefer a child theme directory or file. Not declaring a directory will return the theme directory.
+function nebula_prefer_child_directory($directory='', $uri=true){
+	if ( $directory[0] != '/' ){
+		$directory = '/' . $directory;
+	}
+
+	if ( file_exists(get_stylesheet_directory() . $directory) ){
+		if ( $uri ){
+			return get_stylesheet_directory_uri() . $directory;
+		} else {
+			return get_stylesheet_directory() . $directory;
+		}
+	} else {
+		if ( $uri ){
+			return get_template_directory_uri() . $directory;
+		} else {
+			return get_template_directory() . $directory;
+		}
+	}
+}
+
 
 //Get Nebula version information
 function nebula_version($return=false){
