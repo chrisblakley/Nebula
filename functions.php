@@ -142,12 +142,13 @@ function register_nebula_scripts(){
 		'dom' => null,
 	);
 
-	if ( $_COOKIE['nebulaSession'] && json_decode($_COOKIE['nebulaSession'], true) ){ //If cookie exists and is valid JSON
-		$nebula['session'] = json_decode($_COOKIE['nebulaSession'], true); //Replace nebula.session with cookie data
+	//Check for session data
+	if ( $_SESSION['nebulaSession'] && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
+		$nebula['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
 	} else {
 		$nebula['session'] = array(
 			'ip' => $_SERVER['REMOTE_ADDR'],
-			'id' => false,
+			'id' => session_id(),
 			'referrer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : false,
 			'history' => false,
 			'notes' => false,
@@ -208,6 +209,14 @@ function register_nebula_scripts(){
 	}
 }
 
+//Start a session
+add_action('init', 'nebula_session_start');
+function nebula_session_start(){
+    if ( !session_id() ){
+        session_start();
+    }
+}
+
 //Force clear cache for debugging and load debug scripts
 if ( is_debug() ){
 	header("Expires: Fri, 28 Mar 1986 02:40:00 GMT");
@@ -216,18 +225,14 @@ if ( is_debug() ){
 	header("Cache-Control: post-check=0, pre-check=0", false);
 	header("Pragma: no-cache");
 
-	if ( !function_exists('enqueue_nebula_debug_scripts') ){
-		add_action('wp_enqueue_scripts', 'enqueue_nebula_debug_scripts');
-		function enqueue_nebula_debug_scripts(){
-			wp_enqueue_script('performance-timing');
-		}
+	add_action('wp_enqueue_scripts', 'enqueue_nebula_debug_scripts');
+	function enqueue_nebula_debug_scripts(){
+		wp_enqueue_script('performance-timing');
 	}
 
-	if ( !function_exists('nebula_echo_db_queries') ){
-		add_action('shutdown', 'nebula_echo_db_queries');
-		function nebula_echo_db_queries(){
-			echo "<script>console.log('DB Queries: " . get_num_queries() . "');</script>";
-		}
+	add_action('shutdown', 'nebula_echo_db_queries');
+	function nebula_echo_db_queries(){
+		echo "<script>console.log('DB Queries: " . get_num_queries() . "');</script>";
 	}
 }
 

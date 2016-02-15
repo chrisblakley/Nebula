@@ -183,6 +183,7 @@ function register_nebula_options(){
 		'nebula_cd_relativetime' => '',
 		'nebula_cd_scrolldepth' => '',
 		'nebula_cd_maxscroll' => '',
+		'nebula_cd_prerenderedlink' => '',
 		'nebula_cd_sessionid' => '',
 		'nebula_cd_timestamp' => '',
 		'nebula_cd_userid' => '',
@@ -304,14 +305,30 @@ function nebula_options_page(){
 
 			//Validate custom dimension IDs
 			jQuery('input.dimension').on('blur keyup paste change', function(){
-				if ( jQuery(this).val().match(/^dimension([0-9]{1,3})$/i) || jQuery(this).val() == '' ){
+				var usedDimensions = new Array();
+				jQuery('input.dimension').not(this).each(function(){
+					if ( jQuery(this).val().match(/^dimension([0-9]{1,3})$/i) && jQuery(this).val() != '' ){
+						usedDimensions.push(jQuery(this).val());
+					}
+				});
+
+				if ( (jQuery(this).val().match(/^dimension([0-9]{1,3})$/i) && usedDimensions.indexOf(jQuery(this).val()) < 0) || jQuery(this).val() == '' ){
 					jQuery(this).removeClass('error');
 				} else {
 					jQuery(this).addClass('error');
 				}
 			});
+
+			//Validate custom metric IDs
 			jQuery('input.metric').on('blur keyup paste change', function(){
-				if ( jQuery(this).val().match(/^metric([0-9]{1,3})$/i) || jQuery(this).val() == '' ){
+				var usedMetrics = new Array();
+				jQuery('input.metric').not(this).each(function(){
+					if ( jQuery(this).val().match(/^metric([0-9]{1,3})$/i) && jQuery(this).val() != '' ){
+						usedMetrics.push(jQuery(this).val());
+					}
+				});
+
+				if ( (jQuery(this).val().match(/^metric([0-9]{1,3})$/i) && usedMetrics.indexOf(jQuery(this).val()) < 0) || jQuery(this).val() == '' ){
 					jQuery(this).removeClass('error');
 				} else {
 					jQuery(this).addClass('error');
@@ -983,6 +1000,14 @@ function nebula_options_page(){
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_maxscroll" value="<?php echo get_option('nebula_cd_maxscroll'); ?>" />
 						<p class="helper"><small>Calculates the maximum scroll percent the user reached before triggering an event. <em>This dimension is tied to events, so pageviews will not have data (use the Top Event report).</em> <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Prerendered Link&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_prerenderedlink" value="<?php echo get_option('nebula_cd_prerenderedlink'); ?>" />
+						<p class="helper"><small>Stores the prerendered URL to compare correct/incorrect predictions. <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 

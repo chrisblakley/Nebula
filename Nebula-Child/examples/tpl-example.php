@@ -47,7 +47,7 @@ get_header(); ?>
 
 				<?php if ( get_field('example_filename') ): ?>
 					<div class="example-filename">
-						<i class="fa fa-github"></i> Example Location: <a href="https://github.com/chrisblakley/Nebula/blob/master/examples/includes/<?php echo get_field('example_filename'); ?>" target="_blank" title="View the exact code snippet rendering this example.">/examples/includes/<?php echo get_field('example_filename'); ?></a><br />
+						<i class="fa fa-github"></i> Example Location: <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/examples/includes/<?php echo get_field('example_filename'); ?>" target="_blank" title="View the exact code snippet rendering this example.">/examples/includes/<?php echo get_field('example_filename'); ?></a><br />
 						<i class="fa fa-code"></i> Example Include: <code class="nebula-code" title="Copy/Paste this snippet to see this example on the Nebula implementation on your server.">&lt;?php include('examples/includes/<?php echo get_field('example_filename'); ?>'); ?&gt;</code>
 					</div>
 					<div class="nebulashadow anchored-left" style="opacity: 0.15;"></div>
@@ -562,14 +562,16 @@ get_header(); ?>
 			</article>
 		</div><!--/columns-->
 		<div class="four columns push_one">
-			<ul class="xoxo">
-				<li class="widget-container">
-					<?php if ( has_nav_menu('sidebar') ): ?>
-						<h3>Documentation</h3>
-						<?php wp_nav_menu(array('theme_location' => 'sidebar')); ?>
-					<?php endif; ?>
-				</li>
-			</ul>
+			<div id="sidebar">
+				<ul class="xoxo">
+					<li class="widget-container">
+						<?php if ( has_nav_menu('sidebar') ): ?>
+							<h3>Documentation</h3>
+							<?php wp_nav_menu(array('theme_location' => 'sidebar')); ?>
+						<?php endif; ?>
+					</li>
+				</ul>
+			</div>
 		</div><!--/columns-->
 	</div><!--/row-->
 </div><!--/container-->

@@ -23,7 +23,9 @@ function nebula_session_id(){
 
 	$session_info .= ( nebula_is_bot() )? 'bot.' : '';
 
-	return time() . '.' . $session_info . uniqid() . $site_live;
+	$wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
+
+	return time() . '.' . $session_info . $wp_session_id . $site_live;
 }
 
 //Handle the parsing of the _ga cookie or setting it to a unique identifier
@@ -249,7 +251,9 @@ add_action('wp_ajax_nebula_ga_event_ajax', 'nebula_ga_event_ajax');
 add_action('wp_ajax_nopriv_nebula_ga_event_ajax', 'nebula_ga_event_ajax');
 function nebula_ga_event_ajax(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
-	ga_send_event($_POST['data'][0]['category'], $_POST['data'][0]['action'], $_POST['data'][0]['label'], $_POST['data'][0]['value'], $_POST['data'][0]['ni']);
+	if ( !nebula_is_bot() ){
+		ga_send_event($_POST['data'][0]['category'], $_POST['data'][0]['action'], $_POST['data'][0]['label'], $_POST['data'][0]['value'], $_POST['data'][0]['ni']);
+	}
 	exit;
 }
 

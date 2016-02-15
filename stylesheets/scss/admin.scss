@@ -105,7 +105,8 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 		td {padding-top: 5px; padding-bottom: 5px;}
 	}
 
-	input.dimension.error {border: 1px solid $danger_color; @include background-color($danger_color, 0.1);}
+	input.dimension.error,
+	input.metric.error {border: 1px solid $danger_color; @include background-color($danger_color, 0.1);}
 
 	.mobiletitle {display: none;
 		@include media(custom, map_get($admin_media_queries, mobile)){display: block;};
@@ -269,13 +270,6 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 		&:hover {color: brand(phg, 2);}
 	}
 }
-
-.update-nag a,
-.update-core-php input#upgrade,
-.update-core-php input#upgrade-plugins,
-.update-core-php input#upgrade-plugins-2,
-.plugins-php .update-message a,
-.plugins-php .deactivate a {cursor: not-allowed;}
 
 .myhidden {display: none; visibility: hidden; opacity: 0;}
 .noheight {height: 0 !important; overflow: hidden; opacity: 0 !important;}

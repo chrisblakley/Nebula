@@ -37,6 +37,7 @@
 			relativeTime: '<?php echo nebula_option('nebula_cd_relativetime'); //Hit ?>',
 			scrollDepth: '<?php echo nebula_option('nebula_cd_scrolldepth'); //Hit ?>',
 			maxScroll: '<?php echo nebula_option('nebula_cd_maxscroll'); //Hit ?>',
+			prerenderedLink: '<?php echo nebula_option('nebula_cd_prerenderedlink'); //Hit ?>',
 			sessionID: '<?php echo nebula_option('nebula_cd_sessionid'); //Session ?>',
 			sessionNotes: '<?php echo nebula_option('nebula_cd_sessionnotes'); //Session ?>',
 			role: '<?php echo nebula_option('nebula_cd_role'); //User ?>',

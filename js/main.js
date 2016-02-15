@@ -409,44 +409,47 @@ function overflowDetector(){
 
 //Detect GA blocking
 function gaBlockDetect(){
-	if ( !window.ga || !ga.create ){
-		nebula.user.client.capabilities.gablock = true;
-		jQuery('html').addClass('no-gajs');
-		jQuery.ajax({
-			type: "POST",
-			url: nebula.site.ajax.url,
-			data: {
-				nonce: nebula.site.ajax.nonce,
-				action: 'nebula_ga_blocked',
-				data: [{
-					id: ( nebula.post )? nebula.post.id : false,
-				}],
-			}
-		});
-
-		function ga(send, event, category, action, label, value, misc){
-			if ( send === 'send' && event === 'event' ){
-				var ni = 0;
-				if ( misc && misc.nonInteraction === 1 ){
-					ni = 1;
+	console.debug(nebula.user.client.bot);
+	if ( !nebula.user.client.bot ){
+		if ( !window.ga || !ga.create ){
+			nebula.user.client.capabilities.gablock = true;
+			jQuery('html').addClass('no-gajs');
+			jQuery.ajax({
+				type: "POST",
+				url: nebula.site.ajax.url,
+				data: {
+					nonce: nebula.site.ajax.nonce,
+					action: 'nebula_ga_blocked',
+					data: [{
+						id: ( nebula.post )? nebula.post.id : false,
+					}],
 				}
+			});
 
-				jQuery.ajax({ //test success
-					type: "POST",
-					url: nebula.site.ajax.url,
-					data: {
-						nonce: nebula.site.ajax.nonce,
-						action: 'nebula_ga_event_ajax',
-						data: [{
-							id: ( nebula.post )? nebula.post.id : false,
-							category: category,
-							action: action,
-							label: label,
-							value: value,
-							ni: ni,
-						}],
+			function ga(send, event, category, action, label, value, misc){
+				if ( send === 'send' && event === 'event' ){
+					var ni = 0;
+					if ( misc && misc.nonInteraction === 1 ){
+						ni = 1;
 					}
-				});
+
+					jQuery.ajax({ //test success
+						type: "POST",
+						url: nebula.site.ajax.url,
+						data: {
+							nonce: nebula.site.ajax.nonce,
+							action: 'nebula_ga_event_ajax',
+							data: [{
+								id: ( nebula.post )? nebula.post.id : false,
+								category: category,
+								action: action,
+								label: label,
+								value: value,
+								ni: ni,
+							}],
+						}
+					});
+				}
 			}
 		}
 	}
@@ -1126,8 +1129,8 @@ function autocompleteSearch(){
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 							if ( data ){
+								nebulaPrerender(data[0].link);
 								jQuery.each(data, function(index, value){
-									//@TODO "Nebula" 0: Add nebulaPrerender(url) here to prerender the first result
 									value.label = value.label.replace(/&#038;/g, "\&");
 								});
 								noSearchResults = '';
@@ -1717,13 +1720,31 @@ function nebulaPrerenderListeners(){
 		}
 	});
 
+	//Store correct/inccorect predictions in Google Analytics.
+	//This Nebula option must be used for data to be reported.
 	/*
-		@TODO "Nebula" 0: When a link is clicked (non-external, not the same page, not "#"), check against the URL stored in #prerender and see if correct and store data in Google Analytics (non-interaction).
-			- Make sure prerendering is enabled before sending data.
-			- Event: "Prerender Predictions", "Correct", "[URL]"
-			- Event: "Prerender Predictions", "Incorrect", "Prerendered: [URL], Actual: [URL]" //Better way to do this label? I wish there was one more deep... Maybe custom dimension?
-				-
+		Use Top Events report to find data, then secondary dimensions for comparisons.
+		Page = the current page
+		Prerender Link = the predicted page that was prerendered
+		Event label = the URL that was actually clicked by the user.
 	*/
+	if ( gaCustomDimensions['prerenderedLink'] && jQuery('link#prerender').is('*') ){ //If custom dimension is enabled, and prerender exists
+		jQuery(document).on('click touch tap', 'a', function(){
+			if ( jQuery(this).attr('target') != '_blank' && jQuery(this).attr('href') != '#' && jQuery(this).attr('href') != window.location.href ){ //If link is eligible to have been prerendered
+				var clickedLink =  jQuery(this).attr('href');
+				var prerenderedLink = jQuery('link#prerender').attr('href');
+
+				ga('set', gaCustomDimensions['prerenderedLink'], prerenderedLink);
+
+				if ( prerenderedLink.indexOf('//') === 0 ){
+					clickedLink = clickedLink.replace(/https?:/g, '');
+				}
+
+				var predictionResult = ( clickedLink == prerenderedLink )? 'Correct' : 'Incorrect';
+				ga('send', 'event', 'Prerender Prediction', predictionResult, clickedLink, {'nonInteraction': 1});
+			}
+		});
+	}
 }
 
 //Actually prerender a URL

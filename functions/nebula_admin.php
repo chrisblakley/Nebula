@@ -162,15 +162,10 @@ if ( nebula_option('nebula_wp_core_updates_notify', 'disabled') ){
 //Show update warning on Wordpress Core/Plugin update admin pages
 if ( nebula_option('nebula_plugin_update_warning') ){
 	if ( $pagenow == 'plugins.php' || $pagenow == 'update-core.php' ){
-		add_action('admin_notices', 'plugin_warning');
-		function plugin_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com/'>Pinckney Hugo Group</a> if a plugin needs to be updated: " . nebula_tel_link('13154786700') . "</p></div>";
+		add_action('admin_notices', 'nebula_update_warning');
+		function nebula_update_warning(){
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com/'>Pinckney Hugo Group</a> if there are questions about updates: " . nebula_tel_link('13154786700') . "</p></div>";
 		}
-	}
-} else {
-	add_action('admin_head', 'warning_style_unset');
-	function warning_style_unset(){
-		echo '<style>.update-nag a, .update-core-php input#upgrade, .update-core-php input#upgrade-plugins, .update-core-php input#upgrade-plugins-2, .plugins-php .update-message a, .plugins-php .deactivate a {cursor: pointer !important;}</style>';
 	}
 }
 

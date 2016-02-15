@@ -481,7 +481,7 @@
 
  .appearance_page_nebula_options tr.short th,.appearance_page_nebula_options tr.short td { padding-top:5px; padding-bottom:5px; }
 
- .appearance_page_nebula_options input.dimension.error { border:1px solid #ca3838; background:#ca3838; background:rgba(202, 56, 56, 0.1); }
+ .appearance_page_nebula_options input.dimension.error,.appearance_page_nebula_options input.metric.error { border:1px solid #ca3838; background:#ca3838; background:rgba(202, 56, 56, 0.1); }
 
  .appearance_page_nebula_options .mobiletitle { display:none; }
 
@@ -641,11 +641,9 @@
 
  .nebula_admin_notice a:hover { color:#95d600; }
 
- .update-nag a,.update-core-php input#upgrade,.update-core-php input#upgrade-plugins,.update-core-php input#upgrade-plugins-2,.plugins-php .update-message a,.plugins-php .deactivate a { cursor:not-allowed; }
-
  .myhidden { display:none; visibility:hidden; opacity:0; }
 
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
 
-/* Processed on Friday, February 12, 2016 at 10:12am */
+/* Processed on Monday, February 15, 2016 at 4:01pm */
