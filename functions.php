@@ -3,7 +3,6 @@
  * Functions
  */
 
-
 /*==========================
  Include Nebula Utility Functions
  ===========================*/
@@ -143,7 +142,7 @@ function register_nebula_scripts(){
 	);
 
 	//Check for session data
-	if ( $_SESSION['nebulaSession'] && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
+	if ( isset($_SESSION['nebulaSession']) && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
 		$nebula['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
 	} else {
 		$nebula['session'] = array(
@@ -161,13 +160,29 @@ function register_nebula_scripts(){
 	//Check for user cookie here.
 	if ( $_COOKIE['nebulaUser'] && json_decode($_COOKIE['nebulaUser'], true) ){ //If cookie exists and is valid JSON
 		$nebula['user'] = json_decode($_COOKIE['nebulaUser'], true); //Replace nebula.user with cookie data
-		$nebula['user']['first'] = false;
+
+		if ( session_id() == '' || !isset($_SESSION) ){ //If it is an existing session
+			$nebula['user']['sessions'] = array(
+				'first' => $nebula['user']['sessions']['first'],
+				'last' => $nebula['user']['sessions']['current'],
+				'current' => time(),
+				'count' => $nebula['user']['sessions']['count']++,
+			);
+		} else { //Else it is a new session
+			$nebula['user']['sessions']['current'] = time();
+		}
 	} else {
 		$nebula['user'] = array(
 			'ip' => $_SERVER['REMOTE_ADDR'],
 			'id' => get_current_user_id(),
 			'role' => $user_info->roles[0],
-			'first' => true,
+			'sessions' => array(
+				'first' => time(),
+				'last' => false,
+				'current' => time(),
+				'count' => 1
+			),
+			'cid' => ga_parse_cookie(),
 			'conversions' => false,
 			'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 				'bot' => nebula_is_bot(),
@@ -210,11 +225,9 @@ function register_nebula_scripts(){
 }
 
 //Start a session
-add_action('init', 'nebula_session_start');
+add_action('init', 'nebula_session_start', 1);
 function nebula_session_start(){
-    if ( !session_id() ){
-        session_start();
-    }
+	session_start();
 }
 
 //Force clear cache for debugging and load debug scripts

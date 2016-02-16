@@ -13,6 +13,7 @@ jQuery(document).ready(function(){
 	}
 
 	globalVariables();
+	gaBlockDetect();
 	initSessionInfo();
 
 	//Social
@@ -29,6 +30,7 @@ jQuery(document).ready(function(){
 	subnavExpanders();
 	initHeadroom();
 	nebulaPrerenderListeners();
+	menuSearchReplacement();
 
 	//Search
 	wpSearchInput();
@@ -100,8 +102,6 @@ jQuery(window).on('load', function(){
 		nebula.dom.html.addClass('lt_unavailable');
 		debugInfo();
 	}
-
-	gaBlockDetect();
 
 	setTimeout(function(){
 		emphasizeSearchTerms();
@@ -409,49 +409,55 @@ function overflowDetector(){
 
 //Detect GA blocking
 function gaBlockDetect(){
-	console.debug(nebula.user.client.bot);
 	if ( !nebula.user.client.bot ){
-		if ( !window.ga || !ga.create ){
-			nebula.user.client.capabilities.gablock = true;
-			jQuery('html').addClass('no-gajs');
-			jQuery.ajax({
-				type: "POST",
-				url: nebula.site.ajax.url,
-				data: {
-					nonce: nebula.site.ajax.nonce,
-					action: 'nebula_ga_blocked',
-					data: [{
-						id: ( nebula.post )? nebula.post.id : false,
-					}],
-				}
-			});
+		gablocked = true;
+		ga(function(){
+			gablocked = false;
+		});
 
-			function ga(send, event, category, action, label, value, misc){
-				if ( send === 'send' && event === 'event' ){
-					var ni = 0;
-					if ( misc && misc.nonInteraction === 1 ){
-						ni = 1;
+		setTimeout(function(){
+			if ( gablocked ){
+				nebula.user.client.capabilities.gablock = true;
+				jQuery('html').addClass('no-gajs');
+				jQuery.ajax({
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ga_blocked',
+						data: [{
+							id: ( nebula.post )? nebula.post.id : false,
+						}],
 					}
+				});
 
-					jQuery.ajax({ //test success
-						type: "POST",
-						url: nebula.site.ajax.url,
-						data: {
-							nonce: nebula.site.ajax.nonce,
-							action: 'nebula_ga_event_ajax',
-							data: [{
-								id: ( nebula.post )? nebula.post.id : false,
-								category: category,
-								action: action,
-								label: label,
-								value: value,
-								ni: ni,
-							}],
+				function ga(send, event, category, action, label, value, misc){
+					if ( send === 'send' && event === 'event' ){
+						var ni = 0;
+						if ( misc && misc.nonInteraction === 1 ){
+							ni = 1;
 						}
-					});
+
+						jQuery.ajax({ //test success
+							type: "POST",
+							url: nebula.site.ajax.url,
+							data: {
+								nonce: nebula.site.ajax.nonce,
+								action: 'nebula_ga_event_ajax',
+								data: [{
+									id: ( nebula.post )? nebula.post.id : false,
+									category: category,
+									action: action,
+									label: label,
+									value: value,
+									ni: ni,
+								}],
+							}
+						});
+					}
 				}
 			}
-		}
+		}, 1000);
 	}
 }
 
@@ -1071,6 +1077,21 @@ function keywordSearch(container, parent, value, filteredClass){
 	}
 	jQuery(container).find("*:not(:Contains(" + value + "))").parents(parent).addClass(filteredClass);
 	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass(filteredClass);
+}
+
+//Menu Search Replacement
+function menuSearchReplacement(){
+	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + nebula.site.home_url + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
+	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
+		jQuery(this).addClass('focus active');
+	});
+	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
+		if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
+			jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
+		} else {
+			jQuery(this).removeClass('active');
+		}
+	});
 }
 
 //Only allow alphanumeric (and some special keys) to return true

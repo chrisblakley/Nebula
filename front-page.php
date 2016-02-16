@@ -29,6 +29,10 @@ get_header(); ?>
 <div class="container fullcontentcon">
 	<div class="row">
 		<div class="eleven columns">
+			<?php if ( !empty($nebula['user']['sessions']['last']) ): ?>
+				<h2>Welcome back!</h2>
+			<?php endif; ?>
+
 			<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<div class="entry-content">
