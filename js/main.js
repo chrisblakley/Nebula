@@ -68,7 +68,8 @@ jQuery(document).ready(function(){
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
-	lastWindowWidth = nebula.dom.window.width();
+	window.lastWindowWidth = nebula.dom.window.width();
+	createCookie('nebulaUser', JSON.stringify(nebula.user));
 }); //End Document Ready
 
 
@@ -121,16 +122,16 @@ jQuery(window).on('resize', function(){
 		mobileSearchPlaceholder();
 
     	//Track size change
-    	if ( lastWindowWidth > nebula.dom.window.width() ){
+    	if ( window.lastWindowWidth > nebula.dom.window.width() ){
     		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
     		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
-    		ga('send', 'event', 'Window Resize', 'Smaller', lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
-    	} else if ( lastWindowWidth < nebula.dom.window.width() ){
+    		ga('send', 'event', 'Window Resize', 'Smaller', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
+    	} else if ( window.lastWindowWidth < nebula.dom.window.width() ){
     		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
     		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
-    		ga('send', 'event', 'Window Resize', 'Bigger', lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
+    		ga('send', 'event', 'Window Resize', 'Bigger', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
     	}
-    	lastWindowWidth = nebula.dom.window.width();
+    	window.lastWindowWidth = nebula.dom.window.width();
 	}, 500, 'window resize');
 }); //End Window Resize
 
@@ -250,10 +251,8 @@ function debugInfo(){
 
 	formID = jQuery('div.wpcf7').attr('id');
 	if ( typeof nebulaTimings !== 'undefined' && typeof nebulaTimings[formID] !== 'undefined' ){
-		debugInfoVal += 'Field Timings:\n';
-		debugInfoVal += 'http://jsonprettyprint.com/\n';
-		debugInfoVal += JSON.stringify(nebulaTimings[formID], ['lap', 'name', 'duration', 'cumulative', 'total']);
-		debugInfoVal += '\n\n';
+		debugInfoVal += 'Field Timings:\nhttp://jsonprettyprint.com/\n';
+		debugInfoVal += JSON.stringify(nebulaTimings[formID], ['lap', 'name', 'duration', 'cumulative', 'total']) + '\n\n';
 	}
 
 	if ( typeof navigator !== 'undefined' ){
@@ -265,7 +264,10 @@ function debugInfo(){
 	}
 
 	if ( typeof nebula.user.client !== 'undefined' ){
-		var fullDevice = ( nebula.user.client.device.full.trim().length )? ' (' + nebula.user.client.device.full + ')' : ''; //@TODO "Nebula" 0: Verify this conditional is good for IE8
+		var fullDevice = '';
+		if ( nebula.user.client.device.full.trim().length ){
+			var fullDevice = ' (' + nebula.user.client.device.full + ')';
+		}
 		debugInfoVal += 'Device: ' + nebula.user.client.device.type + fullDevice + '\n';
 		debugInfoVal += 'Operating System: ' + nebula.user.client.os.full + '\n';
 		debugInfoVal += 'Browser: ' + nebula.user.client.browser.full + ' (' + nebula.user.client.browser.engine + ')\n';
@@ -275,7 +277,7 @@ function debugInfo(){
 	debugInfoVal += 'Body Classes: ' + nebula.dom.body.attr('class').split(' ').sort().join(', ') + '\n\n';
 	debugInfoVal += 'Viewport Size: ' + nebula.dom.window.width() + 'px x ' + nebula.dom.window.height() + 'px ' + '\n\n';
 
-	if ( 1===1 ){ //@TODO "Nebula" 0: Only need to run this group once per page.
+	if ( once('debug info') ){
 		if ( typeof performance !== 'undefined' ){
 			debugInfoVal += 'Redirects: ' + performance.navigation.redirectCount + '\n';
 			var perceivedLoadTime = (performance.timing.loadEventEnd-performance.timing.navigationStart)/1000;
@@ -320,12 +322,10 @@ function debugInfo(){
 		if ( typeof nebula.user.client.businessopen !== 'undefined' ){
 			debugInfoVal += ( nebula.user.client.businessopen )? 'During Business Hours\n\n' : 'Non-Business Hours\n\n';
 		}
-
-		debugInfoOnceFlag = true;
 	}
 
 	if ( typeof nebula.user !== 'undefined' ){
-		debugInfoVal += 'User: ';
+		debugInfoVal += 'User:\n';
 		debugInfoVal += JSON.stringify(nebula.user);
 		debugInfoVal += '\n\n';
 	}
@@ -418,6 +418,7 @@ function gaBlockDetect(){
 		setTimeout(function(){
 			if ( gablocked ){
 				nebula.user.client.capabilities.gablock = true;
+				createCookie('nebulaUser', JSON.stringify(nebula.user));
 				jQuery('html').addClass('no-gajs');
 				jQuery.ajax({
 					type: "POST",
@@ -604,6 +605,7 @@ function checkFacebookStatus(){
 			nebula.dom.body.removeClass('fb-connected').addClass('fb-disconnected');
 			nebula.dom.document.trigger('fbDisconnected');
 		}
+		createCookie('nebulaUser', JSON.stringify(nebula.user));
 	});
 }
 
@@ -1849,11 +1851,10 @@ function cf7Functions(){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Success)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
-		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + nebulaTimer(e.target.id, 'end') + 'ms)');
+		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + millisecondsToString(nebulaTimer(e.target.id, 'end')));
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
 		nebulaConversion('contact', 'Form ID: ' + e.target.id);
 		nebulaConversion('abandoned_form', 'Form ID: ' + e.target.id, 'remove');
-
 
 		//Clear localstorage on submit success
 		jQuery('#' + e.target.id + ' .wpcf7-textarea, #' + e.target.id + ' .wpcf7-text').each(function(){
@@ -2161,6 +2162,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
 						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 						ga('send', 'event', 'Contact', 'Autocomplete Address', nebula.user.address.city + ', ' + nebula.user.address.state.abbreviation + ' ' + nebula.user.address.zip.code);
+						createCookie('nebulaUser', JSON.stringify(nebula.user));
 					});
 
 					jQuery(autocompleteInput).on('focus', function(){
@@ -2454,6 +2456,37 @@ function get(query){
 	return false;
 }
 
+//Allows something to be called once per pageload.
+//Call without self-executing parenthesis in the parameter! Ex: once(customFunction, 'test example');
+//To add parameters, use an array as the 2nd parameter. Ex: once(customFunction, ['parameter1', 'parameter2'], 'test example');
+//Can be used for boolean. Ex: once('boolean test');
+function once(fn, args, unique){
+	if ( typeof onces === 'undefined' ){
+		onces = {};
+	}
+
+	if ( typeof fn === 'function' ){ //If the first parameter is a function
+		if ( typeof args === 'string' ){ //If no parameters
+			args = [];
+			unique = args;
+		}
+
+		if ( typeof onces[unique] === 'undefined' || !onces[unique] ){
+			onces[unique] = true;
+			return fn.apply(this, args);
+		}
+	} else { //Else return boolean
+		unique = fn; //If only one parameter is passed
+		if ( typeof onces[unique] === 'undefined' || !onces[unique] ){
+			onces[unique] = true;
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
+
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
 var debounceTimers = {};
@@ -2477,7 +2510,6 @@ function debounce(callback, wait, uniqueId, immediate){
 	    callback.apply(context, args);
 	}
 };
-
 
 //Cookie Management
 function createCookie(name, value, days){
@@ -2646,6 +2678,32 @@ function nebulaTimer(uniqueID, action, name){
 	}
 }
 
+//Convert milliseconds into separate hours, minutes, and seconds string (Ex: "3h 14m 35.2s").
+function millisecondsToString(ms){
+	var milliseconds = parseInt((ms%1000)/100);
+	var seconds = parseInt((ms/1000)%60);
+	var minutes = parseInt((ms/(1000*60))%60);
+	var hours = parseInt((ms/(1000*60*60))%24);
+
+	var timeString = '';
+	if ( hours > 0 ){
+		timeString += hours + 'h ';
+	}
+	if ( minutes > 0 ){
+		timeString += minutes + 'm ';
+	}
+	if ( seconds > 0 || milliseconds > 0 ){
+		timeString += seconds;
+
+		if ( milliseconds > 0 ){
+			timeString += '.' + milliseconds;
+		}
+
+		timeString += 's';
+	}
+	return timeString;
+}
+
 //Convert time to relative.
 function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
 	var system_date = new Date(time);
@@ -2671,10 +2729,6 @@ function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-time
 
 //Functionality for selecting and copying text using Nebula Pre tags.
 function nebula_pre(){
-	if ( Modernizr.awesomeNewFeature ){
-		//do something
-	}
-
 	try { //@TODO "Nebula" 0: Use Modernizr check here instead.
 		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
 			var selectCopyText = 'Copy to clipboard';
@@ -2704,6 +2758,7 @@ function nebula_pre(){
 			return false;
 		}
 	}
+	createCookie('nebulaUser', JSON.stringify(nebula.user));
 
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){
@@ -2899,7 +2954,7 @@ function onYouTubeIframeAPIReady(e){
 	pauseFlag = false;
 }
 function onPlayerError(e){
-	var videoTitle = e['target']['B']['videoData']['title'];
+	var videoTitle = e.target.H.videoData.title;
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Youtube Error'));
 	ga('send', 'event', 'Error', 'Youtube API', videoTitle + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
@@ -2909,24 +2964,24 @@ function onPlayerReady(e){
 		videoProgress = {};
 	}
 
-	var id = e['target']['f']['id'];
+	var id = e.target.f.id;
 	videoData[id] = {
 		platform: 'youtube', //The platform the video is hosted using.
 		player: players.youtube[id], //The player ID of this video. Can access the API here.
-		duration: e['target']['B']['duration'], //The total duration of the video. Unit: Seconds
-		current: e['target']['B']['currentTime'], //The current position of the video. Units: Seconds
-		percent: e['target']['B']['currentTime']/e['target']['B']['duration'], //The percent of the current position. Multiply by 100 for actual percent.
+		duration: e.target.H.duration, //The total duration of the video. Unit: Seconds
+		current: e.target.H.currentTime, //The current position of the video. Units: Seconds
+		percent: e.target.H.currentTime/e.target.H.duration, //The percent of the current position. Multiply by 100 for actual percent.
 		engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
 		watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
 		watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 	};
 }
 function onPlayerStateChange(e){
-	var videoTitle = e['target']['B']['videoData']['title'];
-	var id = e['target']['f']['id'];
+	var videoTitle = e.target.H.videoData.title;
+	var id = e.target.f.id;
 
-	videoData[id].current = e['target']['B']['currentTime'];
-	videoData[id].percent = e['target']['B']['currentTime']/e['target']['B']['duration'];
+	videoData[id].current = e.target.H.currentTime;
+	videoData[id].percent = e.target.H.currentTime/e.target.H.duration;
 
     if ( e.data === YT.PlayerState.PLAYING ){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
@@ -2935,12 +2990,13 @@ function onPlayerStateChange(e){
         ga('send', 'event', 'Videos', 'Play', videoTitle);
         nebulaConversion('videos', 'Youtube Played: ' + videoTitle);
         pauseFlag = true;
+		updateInterval = 500;
 
 		youtubePlayProgress = setInterval(function(){
-			videoData[id].current = e['target']['B']['currentTime'];
-			videoData[id].percent = e['target']['B']['currentTime']/e['target']['B']['duration'];
-			videoData[id].watched = videoData[id].watched+.5; //Must match the interval in seconds!
-			videoData[id].watchedPercent = (videoData[id].watched)/e['target']['B']['duration'];
+			videoData[id].current = e.target.H.currentTime;
+			videoData[id].percent = e.target.H.currentTime/e.target.H.duration;
+			videoData[id].watched = videoData[id].watched+(updateInterval/1000);
+			videoData[id].watchedPercent = (videoData[id].watched)/e.target.H.duration;
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
@@ -2948,7 +3004,7 @@ function onPlayerStateChange(e){
 				nebulaConversion('videos', 'Youtube Engaged: ' + videoTitle);
 				videoData[id].engaged = true;
 			}
-		}, 500);
+		}, updateInterval);
     }
     if ( e.data === YT.PlayerState.ENDED ){
         clearTimeout(youtubePlayProgress);

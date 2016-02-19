@@ -507,6 +507,10 @@ get_header(); ?>
 							include_once('includes/infinite_load.php');
 						} ?>
 
+						<?php if ( is_page(2537) ){ //EU Cookie Law
+							include_once('includes/eu_cookie_law.php');
+						} ?>
+
 
 						<?php
 						/*==========================

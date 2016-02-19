@@ -9,9 +9,11 @@
 	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 	<meta name="keywords" content="<?php echo get_option('nebula_keywords'); ?>" />
 	<?php if ( function_exists('get_field') && get_field('news_keywords') ): //News keywords are <=10 comma separated keywords. ?>
-		<meta name="news_keywords" content="<?php echo get_field('news_keywords'); ?>" /><?php //@TODO "Nebula" 0: W3 Validator Invalid: "Keyword news_keywords is not registered." ?>
+		<meta name="news_keywords" content="<?php echo get_field('news_keywords'); ?>" />
 	<?php endif; ?>
-	<meta name="author" content="<?php echo nebula_the_author(); ?>" />
+	<?php if ( nebula_option('nebula_author_bios', 'enabled') ): ?>
+		<meta name="author" content="<?php echo nebula_the_author(); ?>" />
+	<?php endif; ?>
 <?php endif; ?>
 
 

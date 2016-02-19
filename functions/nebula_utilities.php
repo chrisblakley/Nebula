@@ -17,15 +17,16 @@ function nebula_session_id(){
 		$session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
 	}
 
+	$session_info .= ( nebula_is_bot() )? 'bot.' : '';
+
+	$wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
+	$ga_cid = ( isset($nebula['user']['cid']) )? $nebula['user']['cid'] : ga_parse_cookie();
+
 	if ( !is_site_live() ){
 		$site_live = '.n';
 	}
 
-	$session_info .= ( nebula_is_bot() )? 'bot.' : '';
-
-	$wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
-
-	return time() . '.' . $session_info . $wp_session_id . $site_live;
+	return time() . '.' . $session_info . 's:' . $wp_session_id . '.c:' . $ga_cid . $site_live;
 }
 
 //Handle the parsing of the _ga cookie or setting it to a unique identifier

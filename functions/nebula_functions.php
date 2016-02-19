@@ -472,6 +472,8 @@ function nebula_meta($meta){
 		echo nebula_post_date();
 	} elseif ( $meta == 'author' || $meta == 'by' ){
 		echo nebula_post_author();
+	} elseif ( $meta == 'type' || $meta == 'cpt' || $meta == 'post_type' ){
+		echo nebula_post_type();
 	} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
 		echo nebula_post_categories();
 	} elseif ( $meta == 'tags' || $meta == 'tag' ){
@@ -518,6 +520,33 @@ function nebula_post_author($icon=true, $linked=true, $force=false){
 			return '<span class="posted-by">' . $the_icon . '<span class="meta-item entry-author">' . get_the_author() . '</span></span>';
 		}
 	}
+}
+
+//Post type meta
+function nebula_post_type($icon=true, $linked=true){
+	if ( $icon ){
+		global $wp_post_types;
+		$post_type = get_post_type();
+
+		if ( $post_type == 'post' ){
+			$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+		} elseif ( $post_type == 'page' ){
+			$post_icon_img = '<i class="fa fa-file-text"></i>';
+		} else { //@TODO "Nebula" 0: Test that this works with CPTs:
+			$post_icon = $wp_post_types[$post_type]->menu_icon;
+			if ( !empty($post_icon) ){
+				if ( strpos('dashicons-', $post_icon) >= 0 ){
+					$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
+				} else {
+					$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
+				}
+			} else {
+				$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+			}
+		}
+	}
+
+	return '<span class="meta-item post-type">' . $post_icon_img . ucwords(get_post_type()) . '</span>';
 }
 
 //Categories post meta
@@ -984,7 +1013,7 @@ function the_breadcrumb(){
 				}
 			} else {
 				$cat = get_the_category();
-				if ( is_string($cat[0]) ){
+				if ( !empty($cat) ){
 					$cat = $cat[0];
 					$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
 					if ( $showCurrent == 0 ){

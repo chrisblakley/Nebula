@@ -17,11 +17,15 @@
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<h3 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
 
-			<?php if ( !in_array("page", get_post_class()) ): //Do not display entry meta for pages ?>
-				<div class="entry-meta">
+			<div class="entry-meta">
+				<?php if ( is_search() ): ?>
+					<?php //nebula_meta('type') . ' '; //Enable this to show post types in search results. ?>
+				<?php endif; ?>
+
+				<?php if ( !in_array("page", get_post_class()) ): ?>
 					<?php nebula_meta('on'); ?> <?php if ( nebula_option('nebula_author_bios', 'enabled') && !is_author() ){ nebula_meta('by'); } ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
-				</div>
-			<?php endif; ?>
+				<?php endif; ?>
+			</div>
 
 			<?php if ( is_search() && file_exists(WP_PLUGIN_DIR . '/relevanssi') && $post->relevance_score ): ?>
 				<div class="entry-summary score-<?php echo str_replace('.', '_', $post->relevance_score); ?>">
