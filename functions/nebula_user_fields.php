@@ -57,14 +57,7 @@ function extra_profile_fields($user){ ?>
 			<th>
 				<label for="headshot_button"><span class="description">Headshot</span></label>
 			</th>
-			<?php
-				$buttontext = "";
-				if( get_the_author_meta('headshot_url', $user->ID) ){
-					$buttontext = "Change headshot";
-				} else {
-					$buttontext = "Upload new headshot";
-				}
-			?>
+			<?php $buttontext = ( get_the_author_meta('headshot_url', $user->ID) )? 'Change headshot' : 'Upload new headshot'; ?>
 			<td>
 				<input id="headshot_button" type="button" class="button" value="<?php echo $buttontext; ?>" />
 				<?php if ( get_the_author_meta('headshot_url', $user->ID) ): ?>
@@ -78,12 +71,12 @@ function extra_profile_fields($user){ ?>
 				<label for="headshot_preview"><span class="description">Preview</span></label>
 			</th>
 			<td>
-				<?php if ( get_the_author_meta('headshot_url', $user->ID) ) : ?>
+				<?php if ( get_the_author_meta('headshot_url', $user->ID) ): ?>
 					<div id="headshot_preview" style="min-height: 100px; max-width: 150px;">
 						<img style="max-width:100%; border-radius: 100px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2);" src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
 					</div>
-				<?php else : ?>
-					<div id="headshot_preview" style="height: 100px; width:100px; line-height:100px; border:2px solid #CCC; text-align:center; font-size:5em;">?</div>
+				<?php else: ?>
+					<div id="headshot_preview" style="height: 100px; width: 100px; line-height: 100px; border: 2px solid #CCC; text-align: center; font-size: 5em;">?</div>
 				<?php endif; ?>
 				<span id="upload_success" style="display:block;"></span>
 

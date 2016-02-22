@@ -162,6 +162,7 @@ function register_nebula_options(){
 		'nebula_dev_stylesheets' => 'enabled',
 		'nebula_appcache_manifest' => 'disabled',
 		'nebula_console_css' => 'enabled',
+		'nebula_examples_directory' => 'enabled',
 
 		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
@@ -842,6 +843,19 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_todo_metabox')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Finds TODO messages in theme files to track open issues. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Nebula Examples Directory&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_examples_directory">
+							<option disabled>Default: Enabled</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_examples_directory')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_examples_directory')); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Controls whether the example directory is included (Examples directories are found in <strong><?php echo get_stylesheet_directory_uri(); ?>/examples</strong> and <strong><?php echo get_template_directory_uri(); ?>/Nebula-Child/examples</strong>).<br/>
+						Note: If re-enabled, the directory will not re-appear until Nebula-master is updated or the <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/examples" target="_blank">/examples</a> directory is manually uploaded. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
