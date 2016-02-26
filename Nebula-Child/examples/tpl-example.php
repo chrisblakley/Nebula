@@ -511,6 +511,10 @@ get_header(); ?>
 							include_once('includes/eu_cookie_law.php');
 						} ?>
 
+						<?php if ( is_page(2559) ){ //SVG <img> replacement
+							include_once('includes/svg_img_replacement.php');
+						} ?>
+
 
 						<?php
 						/*==========================

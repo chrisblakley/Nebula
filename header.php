@@ -86,7 +86,7 @@
 					<div class="row">
 						<div class="six columns">
 							<a class="logocon" href="<?php echo home_url(); ?>">
-								<img src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
+								<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
 							</a>
 						</div><!--/columns-->
 						<div class="ten columns">

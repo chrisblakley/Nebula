@@ -1,21 +1,9 @@
-jQuery.noConflict();
-jQuery(window).on('load', function(){
-
-	iframe = document.getElementById("content_ifr");
-	if ( typeof iframe !== 'undefined' ){
-		win = iframe.contentWindow;
-		doc = win.document;
-	}
-
-}); //End Window Load
-
-
 /*==========================
  Nebula TinyMCE Toolbar
  ===========================*/
 (function(){
-	tinymce.create('tinymce.plugins.nebulatoolbar', {
-		init : function(ed, url){
+	tinyMCE.create('tinymce.plugins.nebulatoolbar', {
+		init: function(ed, url){
 			ed.addButton('nebulaaccordion', {
 				title: 'Insert Accordion',
 				image: nebula.site.directory.template.uri + '/images/admin/nebulaaccordion.png',
@@ -62,32 +50,16 @@ jQuery(window).on('load', function(){
 				menu: [{
 					text: 'Tag',
 					onclick : function(){
-						if ( win.getSelection ){
-							var selectedText = win.getSelection().toString();
-						} else if (doc.selection && doc.selection.createRange) {
-							var selectedText = doc.selection.createRange().text;
-						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ){
-							ed.selection.setContent('[code]' + selectedText + '[/code]');
-						} else {
-							ed.selection.setContent('[code]CONTENT_HERE[/code]');
-						}
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						ed.selection.setContent('[code]' + shortcodeContent + '[/code]');
 					}
 				}, {
 					text: 'Pre',
 					onclick : function(){
-						if ( win.getSelection ){
-							var selectedText = win.getSelection().toString();
-						} else if (doc.selection && doc.selection.createRange){
-							var selectedText = doc.selection.createRange().text;
-						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ){
-							ed.selection.setContent('[pre lang=LANGUAGE]' + selectedText + '[/pre]');
-						} else {
-							ed.selection.setContent('[pre lang=LANGUAGE]CONTENT_HERE[/pre]');
-						}
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						ed.selection.setContent('[pre lang=LANGUAGE]' + shortcodeContent + '[/pre]');
 					}
 				}, {
 					text: 'Gist',
@@ -102,17 +74,10 @@ jQuery(window).on('load', function(){
 				image : nebula.site.directory.template.uri + '/images/admin/nebuladiv.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
-					if ( win.getSelection ){
-						var selectedText = win.getSelection().toString();
-					} else if ( doc.selection && doc.selection.createRange ){
-						var selectedText = doc.selection.createRange().text;
-					}
 					ed.focus();
-					if ( typeof selectedText != undefined && selectedText != '' ){
-						ed.selection.setContent('[div class="CLASSES" style=STYLES]' + selectedText + '[/div]');
-					} else {
-						ed.selection.setContent('[div class="CLASSES" style="STYLES"]CONTENT_HERE[/div]');
-					}
+
+					var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+					ed.selection.setContent('[div class="CLASSES" style=STYLES]' + shortcodeContent + '[/div]');
 				}
 			}),
 			ed.addButton('nebulacolgrid', {
@@ -123,62 +88,30 @@ jQuery(window).on('load', function(){
 				menu: [{
 					text: 'Colgrid',
 					onclick : function(){
-						if ( win.getSelection ){
-							var selectedText = win.getSelection().toString();
-						} else if (doc.selection && doc.selection.createRange) {
-							var selectedText = doc.selection.createRange().text;
-						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ){
-							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + selectedText + '[/colspan]');
-						} else {
-							ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]CONTENT_HERE[/colspan]');
-						}
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + shortcodeContent + '[/colspan]');
 					}
 				}, {
 					text: 'Container',
 					onclick : function() {
-						if ( win.getSelection ){
-							var selectedText = win.getSelection().toString();
-						} else if (doc.selection && doc.selection.createRange) {
-							var selectedText = doc.selection.createRange().text;
-						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ){
-							ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + selectedText + '[/container]');
-						} else {
-							ed.selection.setContent('[container class="CLASSES" style="STYLES"]CONTENT_HERE[/container]');
-						}
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + shortcodeContent + '[/container]');
 					}
 				}, {
 					text: 'Row',
 					onclick : function() {
-						if ( win.getSelection ){
-							var selectedText = win.getSelection().toString();
-						} else if (doc.selection && doc.selection.createRange) {
-							var selectedText = doc.selection.createRange().text;
-						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ){
-							ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + selectedText + '[/row]');
-						} else {
-							ed.selection.setContent('[row class="CLASSES" style="STYLES"]CONTENT_HERE[/row]');
-						}
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + shortcodeContent + '[/row]');
 					}
 				}, {
 					text: 'Column',
 					onclick : function(){
-						if ( win.getSelection ){
-							var selectedText = win.getSelection().toString();
-						} else if ( doc.selection && doc.selection.createRange ){
-							var selectedText = doc.selection.createRange().text;
-						}
 						ed.focus();
-						if ( typeof selectedText != undefined && selectedText != '' ){
-							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + selectedText + '[/columns]');
-						} else {
-							ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]CONTENT_HERE[/columns]');
-						}
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + shortcodeContent + '[/columns]');
 					}
 				}]
 			}),
@@ -194,12 +127,12 @@ jQuery(window).on('load', function(){
 				menu: [{
 					text: 'View all Entypo icons »',
 					onclick: function(){
-						window.open('http://gumbyframework.com/docs/ui-kit/#!/icons','_blank');
+						window.open('http://gumbyframework.com/docs/ui-kit/#!/icons', '_blank');
 					}
 				}, {
 					text: 'View all Font Awesome icons »',
 					onclick: function(){
-						window.open('http://fortawesome.github.io/Font-Awesome/icons/','_blank');
+						window.open('http://fortawesome.github.io/Font-Awesome/icons/', '_blank');
 					}
 				}]
 			}),
@@ -270,17 +203,9 @@ jQuery(window).on('load', function(){
 				image: nebula.site.directory.template.uri + '/images/admin/nebulatooltip.png',
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
-					if ( win.getSelection ){
-						var selectedText = win.getSelection().toString();
-					} else if ( doc.selection && doc.selection.createRange ){
-						var selectedText = doc.selection.createRange().text;
-					}
 					ed.focus();
-					if ( typeof selectedText != undefined && selectedText != '' ){
-						ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]' + selectedText + '[/tooltip]');
-					} else {
-						ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]CONTENT[/tooltip]');
-					}
+					var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+					ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]' + shortcodeContent + '[/tooltip]');
 				}
 			}),
 			ed.addButton('nebulavideo', {

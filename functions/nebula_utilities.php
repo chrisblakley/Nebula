@@ -368,7 +368,13 @@ function is_dev($strict=false){
 	if ( empty($strict) ){
 		$devIPs = explode(',', get_option('nebula_dev_ip'));
 		foreach ( $devIPs as $devIP ){
-			if ( trim($devIP) == $_SERVER['REMOTE_ADDR'] ){
+			$devIP = trim($devIP);
+
+			if ( $devIP[0] != '/' && $devIp == $_SERVER['REMOTE_ADDR'] ){
+				return true;
+			}
+
+			if ( $devIP[0] === '/' && preg_match($devIP, $_SERVER['REMOTE_ADDR']) ){
 				return true;
 			}
 		}
@@ -400,7 +406,13 @@ function is_client($strict=false){
 	if ( empty($strict) ){
 		$clientIPs = explode(',', get_option('nebula_client_ip'));
 		foreach ( $clientIPs as $clientIP ){
-			if ( trim($clientIP) == $_SERVER['REMOTE_ADDR'] ){
+			$clientIP = trim($clientIP);
+
+			if ( $clientIP[0] != '/' && $clientIP == $_SERVER['REMOTE_ADDR'] ){
+				return true;
+			}
+
+			if ( $clientIP[0] === '/' && preg_match($clientIP, $_SERVER['REMOTE_ADDR']) ){
 				return true;
 			}
 		}
@@ -1776,7 +1788,7 @@ function nebula_is_bot(){
 	return false;
 }
 
-//Device Detection v3.3 - https://github.com/piwik/device-detector
+//Device Detection - https://github.com/piwik/device-detector
 //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
 require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
 use DeviceDetector\DeviceDetector;

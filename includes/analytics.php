@@ -310,7 +310,7 @@
 	</script>
 	<noscript>
 		<img src="<?php echo ga_UTM_gif(); ?>" width="1" height="1" style="display: none;" /><?php //Track pageviews of users who disable JavaScript. ?>
-		<iframe class="hidden" src="<?php echo home_url(); ?>/no-js?js=false&id=<?php echo $post->ID; ?>" width="0" height="0" style="display: none; position: absolute;"></iframe><?php //Send "JavaScript Disabled" event. ?>
+		<iframe class="hidden" src="<?php echo home_url(); ?>/?nonce=<?php global $nebula; echo $nebula['site']['ajax']['nonce']; ?>&js=false&id=<?php echo $post->ID; ?>" width="0" height="0" style="display: none; position: absolute;"></iframe><?php //Send "JavaScript Disabled" event. ?>
 	</noscript>
 <?php endif; ?>
 

@@ -1,8 +1,14 @@
 <style>
-	#eu-cookie-notification {position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 20px; text-align: center; background: #4a4d50; color: #fff; box-shadow: 0 4px 12px 4px rgba(0, 0, 0, 0.5); z-index: 99999;}
-		#eu-cookie-notification p {margin: 0; height: 34px; line-height: 34px;}
-		#eu-cookie-notification .btn.default:hover {background: #aaa;}
-			#eu-cookie-notification .btn > a:hover {color: #444;}
+	#eu-cookie-notification {position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 20px; text-align: left; background: #0098d7; color: #fff; box-shadow: 0 4px 12px 4px rgba(0, 0, 0, 0.5); z-index: 99999;}
+		#eu-cookie-notification h4 {color: #fff;}
+		#eu-cookie-notification p {margin: 0; font-size: 14px; line-height: 18px;}
+		#eu-cookie-notification .btncon {text-align: right;}
+
+	@media only screen and (max-width: 767px){
+		#eu-cookie-notification h4 {text-align: center;}
+		#eu-cookie-notification p {text-align: center; margin-bottom: 12px;}
+		#eu-cookie-notification .btncon {text-align: center;}
+	}
 </style>
 
 
@@ -46,10 +52,11 @@
 	<div id="eu-cookie-notification" class="container">
 		<div class="row">
 			<div class="twelve columns">
-				<p><strong>This site uses cookies.</strong> By continuing to use this website you agree to the terms of service.</p>
+				<h4><strong>This site uses cookies.</strong></h4>
+				<p>By continuing to use this website you agree to the terms of service.</p>
 			</div><!--/columns-->
-			<div class="four columns">
-				<div class="btn medium default">
+			<div class="four columns btncon">
+				<div class="btn medium info">
 					<a href="#">Continue</a>
 				</div>
 			</div><!--/columns-->

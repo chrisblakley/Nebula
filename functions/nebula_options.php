@@ -1412,6 +1412,12 @@ function nebula_options_page(){
 		        <tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
 						<h3>Staff</h3>
+
+						<?php
+			        		$current_user = wp_get_current_user();
+							list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+						?>
+						<p><small>Your current public IP address is <code><?php echo $_SERVER['REMOTE_ADDR']; ?></code> and your current email domain is <code><?php echo $current_user_domain; ?></code></small></p>
 					</td>
 		        </tr>
 
@@ -1419,26 +1425,21 @@ function nebula_options_page(){
 		        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_dev_ip" value="<?php echo get_option('nebula_dev_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
-						<p class="helper"><small>Comma-separated IP addresses of the developer to enable specific console logs and other dev info. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
+						<p class="helper"><small>Comma-separated IP addresses of the developer to enable specific console logs and other dev info. RegEx may also be used here. Ex: <code>/192\.168\./i</code><br />Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
-		        	<?php
-		        		$current_user = wp_get_current_user();
-						list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
-					?>
-
 		        	<th scope="row">Developer Email Domains&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_dev_email_domain" value="<?php echo get_option('nebula_dev_email_domain'); ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
-						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable specific console logs and other dev info. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
+						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable specific console logs and other dev info. RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code><br />Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Client IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_client_ip" value="<?php echo get_option('nebula_client_ip'); ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
-						<p class="helper"><small>Comma-separated IP addresses of the client to enable certain features. Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
+						<p class="helper"><small>Comma-separated IP addresses of the client to enable certain features. RegEx may also be used here. Ex: <code>/192\.168\./i</code><br />Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
@@ -1450,7 +1451,7 @@ function nebula_options_page(){
 		        	<th scope="row">Client Email Domains&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_client_email_domain" value="<?php echo get_option('nebula_client_email_domain'); ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
-						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable certain features. Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
+						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable certain features. RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code><br />Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
 

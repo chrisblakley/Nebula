@@ -1,10 +1,11 @@
 <?php
 
 //Send event to Google Analytics if JavaScript is disabled
-//@TODO "Nebula" 0: Consider checking a nonce here...?
 add_action('init', 'nebula_no_js_event');
 function nebula_no_js_event(){
-	if ( !nebula_is_bot() && isset($_GET['js']) && $_GET['js'] == 'false' && strpos(nebula_url_components('path'), 'no-js') > 0 ){
+	if ( !nebula_is_bot() && isset($_GET['nonce']) && isset($_GET['js']) && $_GET['js'] == 'false' ){
+		if ( !wp_verify_nonce($_GET['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
 		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
 
 		$dimension_array = array();
@@ -15,10 +16,8 @@ function nebula_no_js_event(){
 		}
 
 		ga_send_event('JavaScript Disabled', $_SERVER['HTTP_USER_AGENT'], $title, null, 1, $dimension_array);
-		header('Location: ' . get_template_directory_uri() . '/images/no-js.gif?id=' . $_GET['id']); //Parameters here do nothing (deter false data).
-		die; //Die to prevent iframe pageview data from sending to GA.
-	} elseif ( !nebula_is_bot() && (isset($_GET['js']) && $_GET['js'] == 'false' || strpos(nebula_url_components('path'), 'no-js') > 0) ){
-		header('Location: ' . get_template_directory_uri() . '/images/no-js.gif');
+		header('Location: ' . nebula_prefer_child_directory('/images/no-js.gif') . '?id=' . $_GET['id']); //Redirect and parameters here do nothing (deter false data).
+		die; //Die as a precaution.
 	}
 }
 
@@ -1639,6 +1638,7 @@ function nebula_body_classes($classes){
 	$underscores_and_hyphens = array('_', '-');
 
 	//Device
+	$classes[] = strtolower(nebula_get_device('formfactor')); //Form factor (desktop, tablet, mobile)
 	$classes[] = strtolower(nebula_get_device('full')); //Device make and model
 	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('full'))); //Operating System name with version
 	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('name'))); //Operating System name
@@ -1682,7 +1682,7 @@ function nebula_body_classes($classes){
 	}
 	$nebula_theme_info = wp_get_theme();
 	$classes[] = 'nebula';
-	$classes[] = 'nebula_' . str_replace('.', '-', $nebula_theme_info->get('Version'));
+	$classes[] = 'nebula_' . str_replace('.', '-', nebula_version('full'));
 
 	$classes[] = 'lang-' . get_bloginfo('language');
 	if ( is_rtl() ){

@@ -25,7 +25,17 @@
 //Child theme partials.
 @import 'variables';
 
-.testpulse {@include keyframes(fadeinout){0% {opacity: 1;} 100% {opacity: 0;}}}
+//Default font override
+h1, h2, h3, h4, h5, h6,
+body,
+p,
+.btn, .skiplink,
+.field input, .field input[type="*"], .field textarea,
+.prepend .adjoined, .append .adjoined,
+.picker,
+.alert,
+.tab-nav > li > li > a,
+.tab-nav > li > a {font-family: $font_stack;}
 
 h1, h2, h3, h4, h5, h6 {color: $text_color;
 	a {color: $primary_color;}

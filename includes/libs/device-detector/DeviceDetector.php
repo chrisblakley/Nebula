@@ -8,6 +8,8 @@
 
 /***********
 	Important! This file has been edited to work without Composer. If updating this file, require_once functions must be added!
+	BEGIN Nebula fix for required files.
+	//@TODO "Nebula" 0: Can not update to 3.5+ due to error... Need to fix and make it work easier for future versions as well. Can I require these files in a different file so this entire file can be replaced?
 ***********/
 
 namespace DeviceDetector;
@@ -22,6 +24,10 @@ require_once(dirname(__FILE__) . '/Parser/VendorFragment.php'); //This line has 
 require_once(dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php'); //This line has been modified for Nebula
 require_once(dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php'); //This line has been modified for Nebula
 require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine.php'); //This line has been modified for Nebula
+
+/***********
+	END Nebula fix for required files.
+***********/
 
 use DeviceDetector\Cache\StaticCache;
 use DeviceDetector\Cache\Cache;

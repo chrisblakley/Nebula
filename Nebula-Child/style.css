@@ -353,17 +353,7 @@
 
  .background-purple,.bg-purple,.background-violet,.bg-violet { background:purple; }
 
- @-webkit-keyframes fadeinout { 0% { opacity:1; }
-
- 100% { opacity:0; }
-
- }
-
- @keyframes fadeinout { 0% { opacity:1; }
-
- 100% { opacity:0; }
-
- }
+ h1,h2,h3,h4,h5,h6,body,p,.btn,.skiplink,.field input,.field input[type="*"],.field textarea,.prepend .adjoined,.append .adjoined,.picker,.alert,.tab-nav > li > li > a,.tab-nav > li > a { font-family:'Open Sans', sans-serif; }
 
  h1,h2,h3,h4,h5,h6 { color:#444; }
 
@@ -374,4 +364,4 @@
  a:hover,a.hover { color:#95d600; }
 
 
-/* Processed on Sunday, February 21, 2016 at 2:47pm */
+/* Processed on Friday, February 26, 2016 at 12:07am */

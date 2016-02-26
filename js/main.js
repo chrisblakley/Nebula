@@ -28,7 +28,6 @@ jQuery(document).ready(function(){
 	dropdownWidthController();
 	overflowDetector();
 	subnavExpanders();
-	initHeadroom();
 	nebulaPrerenderListeners();
 	menuSearchReplacement();
 
@@ -55,6 +54,7 @@ jQuery(document).ready(function(){
 	powerFooterWidthDist();
 	nebulaEqualize();
 	nebulaScrollTo();
+	svgImgs();
 
 	//Interaction
 	windowTypeDetection();
@@ -65,6 +65,12 @@ jQuery(document).ready(function(){
 	vimeoControls();
 
 	conditionalJSLoading();
+
+	if ( jQuery('.home.page').is('*') ){
+		initHeadroom(jQuery('#heroslidercon'));
+	} else {
+		initHeadroom();
+	}
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
@@ -116,10 +122,15 @@ jQuery(window).on('load', function(){
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
-		initHeadroom();
     	powerFooterWidthDist();
 		nebulaEqualize();
 		mobileSearchPlaceholder();
+
+		if ( jQuery('.home.page').is('*') ){
+			initHeadroom(jQuery('#heroslidercon'));
+		} else {
+			initHeadroom();
+		}
 
     	//Track size change
     	if ( window.lastWindowWidth > nebula.dom.window.width() ){
@@ -2332,6 +2343,7 @@ function errorMitigation(){
 			fallbackPNG = imagePath.replace('.svg', '.png');
 			jQuery.get(fallbackPNG).done(function(){
 				thisImage.prop('src', fallbackPNG);
+				thisImage.removeClass('svg');
 			}).fail(function() {
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('SVG Migitation Error'));
 				ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
@@ -2341,6 +2353,23 @@ function errorMitigation(){
 			ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
 		}
 	});
+}
+
+//Convert img tags with class .svg to raw SVG elements
+function svgImgs(){
+	jQuery('img.svg').each(function(){
+        var oThis = jQuery(this);
+
+		if ( oThis.attr('src').indexOf('.svg') >= 1 ){
+	        jQuery.get(oThis.attr('src'), function(data){
+	            var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
+	            theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
+	            theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+	            theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
+	            oThis.replaceWith(theSVG); //Replace image with new SVG
+	        }, 'xml');
+        }
+    });
 }
 
 //Column height equalizer
@@ -3436,10 +3465,22 @@ function subnavExpanders(){
 } //end subnavExpanders()
 
 //Affix the logo/navigation when scrolling passed it
-function initHeadroom(){
-	var headerElement = jQuery('#header');
-	var footerElement = jQuery('#footer');
-	var fixedElement = jQuery('#logonavcon');
+function initHeadroom(headerElement, footerElement, fixedElement){
+	if ( !headerElement ){
+		var headerElement = jQuery('#header');
+	}
+
+	if ( !footerElement ){
+		var footerElement = jQuery('#footer');
+	}
+
+	if ( !fixedElement ){
+		var fixedElement = jQuery('#logonavcon');
+	}
+
+	if ( once('headroom padding') ){
+		needHeadroomPadding = ( fixedElement.css('position') === 'relative' )? true : false; //If positioned relative, then padding is needed.
+	}
 
 	if ( typeof fixedElement === 'undefined' || !fixedElement.is('*') ){
 		return false;
@@ -3479,11 +3520,15 @@ function initHeadroom(){
 		},
 		onTop: function(){ //Callback when above offset, 'this' is headroom object
 			nebula.dom.document.removeClass('headroom--not-top').addClass('headroom--top');
-			headerElement.css('padding-bottom', '0');
+			if ( needHeadroomPadding ){
+				headerElement.css('padding-bottom', '0');
+			}
 		},
 		onNotTop: function(){ //Callback when below offset, 'this' is headroom object
 			nebula.dom.document.removeClass('headroom--top').addClass('headroom--not-top');
-			headerElement.css('padding-bottom', fixedElement.outerHeight()).stop().animate({paddingBottom: finalBufferSize}, 400, "linear"); //Add padding buffer to header and animate (slightly faster than CSS) to finalBufferSize
+			if ( needHeadroomPadding ){
+				headerElement.css('padding-bottom', fixedElement.outerHeight()).stop().animate({paddingBottom: finalBufferSize}, 400, "linear"); //Add padding buffer to header and animate (slightly faster than CSS) to finalBufferSize
+			}
 		},
 	});
 	headroom.init();
