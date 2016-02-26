@@ -165,7 +165,7 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory
 		span.group {color: brand(phg, 3);}
 	}
 
-	&.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url($template_directory + "/images/phg/phg-symbol.svg") -15px 6px no-repeat; @include prefix((transition: all 0.25s));
+	&.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url($template_directory + "/images/phg/phg-symbol.svg") -15px 6px no-repeat; background-size: 13px 8px; @include prefix((transition: all 0.25s));
 		span {margin-right: 3px; @include prefix((transition: all 0.25s));
 			&:last-child {margin-right: 0;}
 			&.pinckney {color: inherit;}
