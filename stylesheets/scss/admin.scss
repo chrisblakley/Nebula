@@ -1,6 +1,7 @@
 @import 'variables';
 @import 'mixins';
 @import 'helpers';
+@import 'animations';
 
 $admin_media_queries: (
 	widescreen: "(max-width: 1800px) and (min-width: 1500px)",
@@ -165,7 +166,10 @@ th#id {width: 50px;}
 	}
 	.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 350px; resize: vertical;
 		.todofilewrap {margin-bottom: 10px;
+			&.todo-theme-parent {display: none;}
+
 			.todofilename {font-size: 12px; margin: 0;}
+			.themenote {display: none;}
 			.linewrap {
 				.todocategory {background: #ccc; color: #fff; padding: 0 5px; text-align: center; border-radius: 10px; text-transform: uppercase; font-size: 8px;
 					i {color: #ccc;}
@@ -217,7 +221,8 @@ th#id {width: 50px;}
 .fixed .column-author, .fixed .column-date, .fixed .column-format, .fixed .column-links, .fixed .column-parent, .fixed .column-posts {width: 10%;}
 .fixed .column-comments {width: 3%;}
 .widefat .column-id {padding-left: 0 !important; padding-right: 0 !important; font-size: 10px !important;}
-.row-title, td.plugin-title strong, td.post-title strong, .row-actions, .plugin-version-author-uri {font-size: 12px !important;}
+.row-title, td.plugin-title strong, td.post-title strong, .row-actions, .plugin-version-author-uri,
+td.column-title strong, td.plugin-title strong {font-size: 12px !important;}
 
 //Wordpress SEO (Yoast)
 #wpseo-score .yst-traffic-light {height: 20px; padding-top: 4px;}

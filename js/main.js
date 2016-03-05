@@ -63,6 +63,7 @@ jQuery(document).ready(function(){
 	pageVisibility();
 	checkForYoutubeVideos();
 	vimeoControls();
+	animationTriggers();
 
 	conditionalJSLoading();
 
@@ -145,7 +146,6 @@ jQuery(window).on('resize', function(){
     	window.lastWindowWidth = nebula.dom.window.width();
 	}, 500, 'window resize');
 }); //End Window Resize
-
 
 //Cache common selectors and set consistent regex patterns
 function globalVariables(){
@@ -245,6 +245,7 @@ function initSessionInfo(){
 		nebula.session.history = [window.location.href.replace(/"|%22/g, '')];
 	} else {
 		nebula.session = JSON.parse(sessionStorage['nebulaSession']);
+
 		if ( document.referrer && document.referrer.indexOf(nebula.site.domain) < 0 ){ //If user navigated away and came back.
 			nebula.session.history.push('---Returned from: ' + document.referrer.replace(/"|%22/g, ''));
 		}
@@ -253,7 +254,8 @@ function initSessionInfo(){
 			nebula.session.history.push(window.location.href.replace(/"|%22/g, ''));
 		}
 	}
-	createCookie('nebulaSession', JSON.stringify(nebula.session));
+
+	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 }
 
 //Fill debugInfo field with browser information (to send with forms).
@@ -322,7 +324,7 @@ function debugInfo(){
 			debugInfoVal += '\n';
 		}
 
-		if ( typeof sessionStorage['sessionNotes'] !== 'undefined' && sessionStorage['sessionNotes'].length ){
+		if ( typeof sessionStorage['nebulaSession'] !== 'undefined' && sessionStorage['nebulaSession'].length ){
 			debugInfoVal += 'Session Notes: ' + sessionNote('return') + '\n';
 		}
 
@@ -605,6 +607,7 @@ function checkFacebookStatus(){
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Connect'));
 				ga('send', 'event', 'Social', 'Facebook Connect', nebula.user.facebook.id);
 				nebula.dom.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebula.user.facebook.id);
+				createCookie('nebulaUser', JSON.stringify(nebula.user));
 				nebula.dom.document.trigger('fbConnected');
 			});
 		} else if ( nebula.user.facebook.status === 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
@@ -616,7 +619,6 @@ function checkFacebookStatus(){
 			nebula.dom.body.removeClass('fb-connected').addClass('fb-disconnected');
 			nebula.dom.document.trigger('fbDisconnected');
 		}
-		createCookie('nebulaUser', JSON.stringify(nebula.user));
 	});
 }
 
@@ -2210,15 +2212,24 @@ function nebulaAddressAutocomplete(autocompleteInput){
 
 //Request Geolocation
 function requestPosition(){
-    var nav = null;
-    if (nav === null){
-        nav = window.navigator;
-    }
-    var geoloc = nav.geolocation;
-    if ( geoloc != null ){
-        geoloc.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //One-time location poll
-        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
-    }
+    jQuery.getScript('https://www.google.com/jsapi', function(){
+	    google.load('maps', '3', {
+		    other_params: 'libraries=places',
+		    callback: function(){
+		        var nav = null;
+			    if (nav === null){
+			        nav = window.navigator;
+			    }
+			    var geolocation = nav.geolocation;
+			    if ( geolocation != null ){
+			        geolocation.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //One-time location poll
+			        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
+			    }
+			} //End Google Maps callback
+	    }); //End Google Maps load
+	}).fail(function(){
+		ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
+	});
 }
 
 //Geolocation Success
@@ -2244,6 +2255,7 @@ function successCallback(position){
 	        mph: (position.coords.speed*2.23694).toFixed(2),
         },
         heading: position.coords.heading, //Degrees clockwise from North
+        address: false
     }
 
 	if ( nebula.session.geolocation.accuracy.meters < 50 ){
@@ -2260,6 +2272,9 @@ function successCallback(position){
         ga('set', gaCustomDimensions['geoAccuracy'], 'Very Poor (>1500m)');
     }
 
+	addressLookup(position.coords.latitude, position.coords.longitude);
+
+	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 	nebula.dom.document.trigger('geolocationSuccess');
 	nebula.dom.body.addClass('geo-latlng-' + nebula.session.geolocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebula.session.geolocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebula.session.geolocation.accuracy.meters.toFixed(0).replace('.', ''));
 	debugInfo();
@@ -2305,6 +2320,67 @@ function errorCallback(error){
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
 
+//Rough address Lookup
+//If needing to look up an address that isn't the user's geolocation based on lat/long, consider a different function. This one stores user data.
+function addressLookup(lat, lng){
+	geocoder = new google.maps.Geocoder();
+	latlng = new google.maps.LatLng(lat, lng); //lat, lng
+	geocoder.geocode({'latLng': latlng}, function(results, status){
+		if ( status == google.maps.GeocoderStatus.OK ){
+			if ( results ){
+				nebula.session.geolocation.address = {
+					number: results[0].address_components[0].long_name,
+					street: results[0].address_components[1].long_name,
+					city: results[0].address_components[2].long_name,
+					town: results[0].address_components[3].long_name,
+					county: results[0].address_components[4].long_name,
+					state: results[0].address_components[5].long_name,
+					country: results[0].address_components[6].long_name,
+					zip: results[0].address_components[7].long_name,
+					formatted: results[0].formatted_address,
+					place: {
+						id: results[0].place_id,
+					},
+				};
+
+				sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
+				nebula.dom.document.trigger('addressSuccess');
+				if ( nebula.session.geolocation.accuracy.meters < 100 ){
+					placeLookup(results[0].place_id);
+				}
+			}
+		}
+	});
+}
+
+//Lookup place information
+function placeLookup(placeID){
+	var service = new google.maps.places.PlacesService(jQuery('<div></div>').get(0));
+	service.getDetails({
+		placeId: placeID
+	}, function(place, status){
+		if ( status === google.maps.places.PlacesServiceStatus.OK ){
+			if ( typeof place.name !== 'undefined' ){
+				nebula.session.geolocation.address.place = {
+					id: placeID,
+					name: place.name,
+					url: place.url,
+					website: place.website,
+					phone: place.formatted_phone_number,
+					ratings: {
+						rating: place.rating,
+						total: place.user_ratings_total,
+						reviews: place.reviews.length
+					},
+					utc_offset: place.utc_offset,
+				}
+
+				sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
+				nebula.dom.document.trigger('placeSuccess');
+			}
+		}
+	});
+}
 
 /*==========================
  Helper Functions
@@ -2386,6 +2462,10 @@ function nebulaEqualize(){
 			}
 		});
 		oThis.find('.columns').css('min-height', tallestColumn);
+	});
+
+	nebula.dom.document.on('nebula_infinite_finish', function(){
+		nebulaEqualize();
 	});
 }
 
@@ -2483,6 +2563,20 @@ function get(query){
 		return queries[query];
 	}
 	return false;
+}
+
+//Trigger a reflow on an element.
+//This is useful for repeating animations.
+function reflow(selector){
+	if ( typeof selector === 'string' ){
+		var element = jQuery(selector);
+	} else if ( typeof selector === 'object' ) {
+		var element = selector;
+	} else {
+		return false;
+	}
+
+	jQuery(selector).width();
 }
 
 //Allows something to be called once per pageload.
@@ -3207,6 +3301,14 @@ function pauseAllVideos(force){
 	});
 }
 
+//Helpful animation event listeners
+function animationTriggers(){
+	nebula.dom.document.on('click tap touch', '.nebula-push.click', function(){
+		jQuery(this).removeClass('active');
+		reflow(this);
+		jQuery(this).addClass('active');
+	});
+}
 
 //Create desktop notifications
 function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
@@ -3296,9 +3398,7 @@ function checkNotificationPermission(){
 }
 
 function nebulaVibrate(pattern){
-	if ( typeof pattern === 'undefined' ){
-		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
-	} else if ( typeof pattern !== 'object' ){
+	if ( typeof pattern !== 'object' ){
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	}
 	if ( checkVibration() ){

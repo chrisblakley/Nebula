@@ -515,6 +515,10 @@ get_header(); ?>
 							include_once('includes/svg_img_replacement.php');
 						} ?>
 
+						<?php if ( is_page(2571) ){ //Animations
+							include_once('includes/animations.php');
+						} ?>
+
 
 						<?php
 						/*==========================
@@ -531,7 +535,7 @@ get_header(); ?>
 						} ?>
 
 						<?php if ( is_page(1186) ){ //Environment and Feature Detection
-							include_once('includes/environment_feature_detection.php');
+							include_once('includes/environment_feature_detection_new.php');
 						} ?>
 
 						<?php if ( is_page(1259) ){ //Google Campaign URL Builder

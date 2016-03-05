@@ -147,7 +147,7 @@ function register_nebula_scripts(){
 	} else {
 		$nebula['session'] = array(
 			'ip' => $_SERVER['REMOTE_ADDR'],
-			'id' => session_id(),
+			'id' => nebula_session_id(),
 			'referrer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : false,
 			'history' => false,
 			'notes' => false,
@@ -158,24 +158,24 @@ function register_nebula_scripts(){
 	$user_info = get_userdata(get_current_user_id());
 
 	//Check for user cookie here.
-	if ( $_COOKIE['nebulaUser'] && json_decode($_COOKIE['nebulaUser'], true) ){ //If cookie exists and is valid JSON
+	if ( $_COOKIE['nebulaUser'] && json_decode($_COOKIE['nebulaUser'], true) ){ //If user cookie exists and is valid JSON
 		$nebula['user'] = json_decode($_COOKIE['nebulaUser'], true); //Replace nebula.user with cookie data
 
-		if ( session_id() == '' || !isset($_SESSION) ){ //If it is an existing session
+		if ( session_id() == '' || !isset($_SESSION) ){ //If it is a new session?
 			$nebula['user']['sessions'] = array(
-				'first' => $nebula['user']['sessions']['first'],
+				'first' => $nebula['user']['sessions']['first'], //is this right? not time()?
 				'last' => $nebula['user']['sessions']['current'],
 				'current' => time(),
 				'count' => $nebula['user']['sessions']['count']++,
 			);
-		} else { //Else it is a new session
+		} else { //Else it is an existing session?
 			$nebula['user']['sessions']['current'] = time();
 		}
 	} else {
 		$nebula['user'] = array(
 			'ip' => $_SERVER['REMOTE_ADDR'],
-			'id' => get_current_user_id(),
-			'role' => $user_info->roles[0],
+			'id' => get_current_user_id(), //Never use this for security checks!
+			'role' => $user_info->roles[0], //Never use this for security checks!
 			'sessions' => array(
 				'first' => time(),
 				'last' => false,

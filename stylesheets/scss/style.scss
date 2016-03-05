@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.7.26
+	Version: 3.8.4
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -14,7 +14,9 @@
 
 @import 'variables';
 @import 'mixins';
+@import 'animations';
 @import 'helpers';
+
 
 // ===========================
 // PHG Custom Styles
@@ -141,7 +143,15 @@ div.nebula-button {margin-bottom: 10px;}
 //Infinite Load
 .loadmorecon {position: relative; text-align: center; margin: 50px 0;
 	&:before {content: '\f141'; font-family: "FontAwesome"; position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
-	&.loading:before {animation: fadepulse 2s infinite linear;}
+
+	.infinite-loading {display: none; position: absolute; top: 0; left: 0; width: 100%;
+		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; @include prefix((animation: nebula-zoom 1s infinite easing(easeInOutQuad)), webkit);
+			&.b {animation-delay: .2s;}
+			&.c {animation-delay: .4s;}
+		}
+	}
+	&.loading .infinite-loading {display: block;}
+
 	&.disabled a {color: #444; opacity: 0.3; pointer-events: none;
 		&:after {content: ''; opacity: 0; pointer-events: none;}
 	}

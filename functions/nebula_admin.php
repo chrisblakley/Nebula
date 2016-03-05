@@ -552,17 +552,20 @@ if ( nebula_option('nebula_todo_metabox') ){
 				    if ( !contains(basename($todo_file), skip_extensions()) && !contains($todo_file, $todo_skipFilenames) ){
 					    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
 					        if ( stripos($todo_line, '@TODO') !== false ){
+
 								$theme = '';
 								if ( is_child_theme() ){
 									if ( $child ){
-										$theme = ' <small>(Child)</small>';
+										$theme = 'child';
+										$theme_note = ' <small>(Child)</small>';
 									} else {
-										$theme = ' <small>(Parent)</small>';
+										$theme = 'parent';
+										$theme_note = ' <small>(Parent)</small>';
 									}
 								}
 
-								$the_full_todo = substr($todo_line, strpos($todo_line, "@TODO"));
-								$the_todo_meta = current(explode(":", $the_full_todo));
+								$the_full_todo = substr($todo_line, strpos($todo_line, '@TODO'));
+								$the_todo_meta = current(explode(':', $the_full_todo));
 
 								//Get the priority
 								preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
@@ -587,7 +590,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 									if ( !empty($todo_last_filename) ){
 										echo '</div><!--/todofilewrap-->';
 									}
-									echo '<div class="todofilewrap"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong>' . $theme . '</p>';
+									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
 								}
 
 								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_category)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_message[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';

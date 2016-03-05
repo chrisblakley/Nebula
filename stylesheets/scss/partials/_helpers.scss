@@ -89,23 +89,6 @@ body:not(.wp-admin) {
 }
 
 // ===========================
-// Basic Animation
-// For more options, consider enabling animate.css from functions.php
-// ===========================
-
-.nebula-spin {@include prefix((animation: nebula-spin 2s infinite linear), webkit);}
-@include keyframes(nebula-spin){
-	0% {@include prefix((transform: rotate(0deg)), webkit);}
-	100% {@include prefix((transform: rotate(359deg)), webkit);}
-}
-
-.nebula-flash {@include prefix((animation: nebula-fade 4s infinite linear), webkit);}
-@include keyframes(nebula-fade){
-	0%, 100% {opacity: 1;}
-	50% {opacity: 0;}
-}
-
-// ===========================
 // Special File Type Indicators
 // ===========================
 
@@ -201,18 +184,6 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory
 @include brand_link(youtube);
 @include brand_link(instagram);
 @include brand_link(soundcloud);
-
-
-
-// ===========================
-// Basic Animation Keyframes
-// ===========================
-
-@include keyframes(fadepulse){
-	0% {opacity: 0;}
-	50% {opacity: 1;}
-	95% {opacity: 0;}
-}
 
 
 

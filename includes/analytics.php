@@ -68,8 +68,6 @@
 			wordCount: '<?php echo nebula_option('nebula_cm_wordcount'); //Hit, Integer ?>',
 		}
 
-		<?php do_action('nebula_ga_before_send_pageview'); ?>
-
 		<?php
 			if ( is_404() ){
 				echo 'ga("set", gaCustomDimensions["sessionNotes"], sessionNote("HTTP 404 Page"));';
@@ -233,17 +231,19 @@
 			}
 		?>
 
-		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true; best current synchronous method of ad block detection. ?>
-			adBlockUser = 'Non-Blocker';
-			nebula.user.client.capabilities.adblock = false;
-			jQuery('html').removeClass('no-ads').addClass('ads');
-			if ( window.adsEnabled === undefined ){
-				nebula.user.client.capabilities.adblock = true;
-				adBlockUser = 'Ad Blocker';
-				jQuery('html').removeClass('ads').addClass('no-ads');
-			}
-			<?php if ( nebula_option('nebula_cd_adblocker') ): ?>
-				ga('set', gaCustomDimensions['adBlocker'], adBlockUser);
+		<?php if ( 1==2 ): //@TODO "Nebula" 0: Until this is more reliable it needs to be disabled. ?>
+			<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true; best current synchronous method of ad block detection. ?>
+				adBlockUser = 'Non-Blocker';
+				nebula.user.client.capabilities.adblock = false;
+				jQuery('html').removeClass('no-ads').addClass('ads');
+				if ( window.adsEnabled === undefined ){
+					nebula.user.client.capabilities.adblock = true;
+					adBlockUser = 'Ad Blocker';
+					jQuery('html').removeClass('ads').addClass('no-ads');
+				}
+				<?php if ( nebula_option('nebula_cd_adblocker') ): ?>
+					ga('set', gaCustomDimensions['adBlocker'], adBlockUser);
+				<?php endif; ?>
 			<?php endif; ?>
 		<?php endif; ?>
 
@@ -252,6 +252,8 @@
 				ga('set', gaCustomMetrics['formViews'], 1);
 			}
 		<?php endif; ?>
+
+		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
 		ga('send', 'pageview'); //Sends pageview along with set dimensions.
 
@@ -269,10 +271,10 @@
 
 		//Add or remove session notes
 		function sessionNote(action, item){
-			if ( typeof sessionStorage['sessionNotes'] == 'undefined' ){
+			if ( typeof sessionStorage['nebulaSession'] === 'undefined' || !nebula.session.notes ){
 				nebula.session.notes = [];
 			} else {
-				nebula.session.notes = sessionStorage['sessionNotes'].split(',');
+				nebula.session = JSON.parse(sessionStorage['nebulaSession']);
 			}
 
 			if ( action == 'return' ){
@@ -304,7 +306,7 @@
 				}
 			}
 
-			sessionStorage['sessionNotes'] = nebula.session.notes;
+			sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 			return nebula.session.notes.join(', ');
 		}
 	</script>

@@ -1,6 +1,7 @@
 @import 'variables';
 @import 'mixins';
 @import 'helpers';
+@import 'animations';
 
 a {color: $primary_color !important; @include prefix((transition: all 0.25s)); text-decoration: none;
 	&:hover {color: $secondary_color !important; text-decoration: underline;}

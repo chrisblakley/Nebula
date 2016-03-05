@@ -1,0 +1,236 @@
+// ===========================
+// Animations
+// Either use the provided class, or customize/call by copying and pasting the prefix() parameters to your own selector.
+// Elements must be display block or inline-block to be animated.
+// ===========================
+
+
+// ===========================
+// Modifiers
+// These helper classes make it easy to adjust animations without needing to copy/customize the entire animation property.
+// ===========================
+
+.fastest {animation-duration: .25s !important;}
+.faster {animation-duration: .5s !important;}
+.fast {animation-duration: .75s !important;}
+.slow {animation-duration: 1s !important;}
+.slower {animation-duration: 1.5s !important;}
+.slowest {animation-duration: 2s !important;}
+
+
+// ===========================
+// Continuous
+// These animations are intended to be infinitely repeated
+// ===========================
+
+//Rotate 360 degrees
+.nebula-spin {@include prefix((animation: nebula-spin 2s infinite linear), webkit);}
+@include keyframes(nebula-spin){
+	0% {@include prefix((transform: rotate(0deg)), webkit);}
+	100% {@include prefix((transform: rotate(359deg)), webkit);}
+}
+
+//Fade out and in
+.nebula-fade {@include prefix((animation: nebula-fade 4s infinite linear), webkit);}
+@include keyframes(nebula-fade){
+	0% {opacity: 1;}
+	50% {opacity: 0;}
+}
+
+//Zoom out and in
+.nebula-zoom {@include prefix((animation: nebula-zoom 3s infinite easing(easeInOutQuad)), webkit);}
+@include keyframes(nebula-zoom){
+	0% {transform: scale3d(1, 1, 1); opacity: 1;}
+	50% {transform: scale3d(0, 0, 0); opacity: 0;}
+	100% {transform: scale3d(1, 1, 1); opacity: 1;}
+}
+
+//Wave X
+.nebula-wave-x {@include prefix((animation: nebula-wave-x 3s infinite easing(easeInOutQuad)), webkit);}
+@include keyframes(nebula-wave-x){
+	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
+	25% {transform: translate3d(20px, 0, 0); animation-timing-function: easing(easeOutQuad);}
+	75% {transform: translate3d(-20px, 0, 0); animation-timing-function: linear;}
+	0% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
+}
+
+//Wave Y
+.nebula-wave-y {@include prefix((animation: nebula-wave-y 3s infinite linear), webkit);}
+@include keyframes(nebula-wave-y){
+	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
+	25% {transform: translate3d(0, 50%, 0); animation-timing-function: easing(easeOutQuad);}
+	75% {transform: translate3d(0, -50%, 0); animation-timing-function: linear;}
+	0% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
+}
+
+
+// ===========================
+// One-Time
+// These animations happen once.
+// If using the provided class, these are triggered by adding an .active class.
+// ===========================
+
+//Fade out
+.nebula-fade-out {@include prefix((animation: nebula-fade-out 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-out){
+	0% {opacity: 1;}
+	100% {opacity: 0;}
+}
+
+//Fade Out Up
+.nebula-fade-out-up {@include prefix((animation: nebula-fade-out-up 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-out-up){
+	0% {opacity: 1; transform: translate3d(0, 0, 0);}
+	100% {opacity: 0; transform: translate3d(0, -40px, 0);}
+}
+
+//Fade Out Down
+.nebula-fade-out-down {@include prefix((animation: nebula-fade-out-down 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-out-down){
+	0% {opacity: 1; transform: translate3d(0, 0, 0);}
+	100% {opacity: 0; transform: translate3d(0, 40px, 0);}
+}
+
+//Fade Out Left
+.nebula-fade-out-left {@include prefix((animation: nebula-fade-out-left 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-out-left){
+	0% {opacity: 1; transform: translate3d(0, 0, 0);}
+	100% {opacity: 0; transform: translate3d(-40px, 0, 0);}
+}
+
+//Fade Out Right
+.nebula-fade-out-right {@include prefix((animation: nebula-fade-out-right 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-out-right){
+	0% {opacity: 1; transform: translate3d(0, 0, 0);}
+	100% {opacity: 0; transform: translate3d(40px, 0, 0);}
+}
+
+
+
+//Fade in
+.nebula-fade-in {@include prefix((animation: nebula-fade-in 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-in){
+	0% {display: block; opacity: 0;} //display: block here in case element is hidden with a display: none on render.
+	100% {opacity: 1;}
+}
+
+//Fade In Up
+.nebula-fade-in-up {@include prefix((animation: nebula-fade-in-up 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-in-up){
+	0% {display: block; opacity: 0; transform: translate3d(0, 40px, 0);} //display: block here in case element is hidden with a display: none on render.
+	100% {opacity: 1; transform: translate3d(0, 0, 0);}
+}
+
+//Fade In Down
+.nebula-fade-in-down {@include prefix((animation: nebula-fade-in-down 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-in-down){
+	0% {display: block; opacity: 0; transform: translate3d(0, -40px, 0);} //display: block here in case element is hidden with a display: none on render.
+	100% {opacity: 1; transform: translate3d(0, 0, 0);}
+}
+
+//Fade In Left
+.nebula-fade-in-left {@include prefix((animation: nebula-fade-in-left 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-in-left){
+	0% {display: block; opacity: 0; transform: translate3d(-40px, 0, 0);} //display: block here in case element is hidden with a display: none on render.
+	100% {opacity: 1; transform: translate3d(0, 0, 0);}
+}
+
+//Fade In Right
+.nebula-fade-in-right {@include prefix((animation: nebula-fade-in-right 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-fade-in-right){
+	0% {display: block; opacity: 0; transform: translate3d(40px, 0, 0);} //display: block here in case element is hidden with a display: none on render.
+	100% {opacity: 1; transform: translate3d(0, 0, 0);}
+}
+
+
+//Shrink and fade out
+.nebula-zoom-out {@include prefix((animation: nebula-zoom-out .5s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-zoom-out){
+    0% {transform: scale3d(1, 1, 1); opacity: 1;}
+    50% {opacity: 1;}
+    100% {transform: scale3d(0, 0, 0); opacity: 0;}
+}
+
+//Grow and fade in
+.nebula-zoom-in {@include prefix((animation: nebula-zoom-in 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-zoom-in){
+  0% {display: block; opacity: 0; transform: scale3d(0, 0, 0);}
+  50% {opacity: 1; transform: scale3d(1.03, 1.03, 1.03);}
+  70% {transform: scale3d(0.95, 0.95, 0.95);}
+  100% {transform: scale3d(1, 1, 1);}
+}
+
+//Increase width from the center
+.nebula-stretch-in {@include prefix((animation: nebula-stretch-in .5s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-stretch-in){
+    0% {display: block; transform: scale3d(0, 1, 1);}
+    100% {transform: scale3d(1, 1, 1);}
+}
+
+//Decrease width from the center
+.nebula-stretch-out {@include prefix((animation: nebula-stretch-out .5s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@include keyframes(nebula-stretch-out){
+    0% {transform: scale3d(1, 1, 1);}
+    66% {opacity: 1;}
+    100% {transform: scale3d(0, 1, 1); opacity: 0;}
+}
+
+//Rotate in along the x-axis (vertical flip)
+.nebula-flip-in-x {@include prefix((animation: nebula-flip-in-x 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@keyframes nebula-flip-in-x {
+	0% {transform: perspective(400px) rotate3d(1, 0, 0, 90deg); opacity: 0;}
+	40% {transform: perspective(400px) rotate3d(1, 0, 0, -5deg);}
+	60% {transform: perspective(400px) rotate3d(1, 0, 0, 2deg); opacity: 1;}
+	80% {transform: perspective(400px) rotate3d(1, 0, 0, -1deg);}
+	100% {transform: perspective(400px);}
+}
+
+//Rotate in along the y-axis (horizontal flip)
+.nebula-flip-in-y {@include prefix((animation: nebula-flip-in-y 1s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@keyframes nebula-flip-in-y {
+	0% {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); opacity: 0;}
+	40% {transform: perspective(400px) rotate3d(0, 1, 0, -5deg);}
+	60% {transform: perspective(400px) rotate3d(0, 1, 0, 2deg); opacity: 1;}
+	80% {transform: perspective(400px) rotate3d(0, 1, 0, -1deg);}
+	100% {transform: perspective(400px);}
+}
+
+//Rotate out along the x-axis (vertical flip)
+.nebula-flip-out-x {@include prefix((animation: nebula-flip-out-x .8s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@keyframes nebula-flip-out-x {
+	0% {transform: perspective(400px);}
+	30% {transform: perspective(400px) rotate3d(1, 0, 0, -2deg); opacity: 1;}
+	100% {transform: perspective(400px) rotate3d(1, 0, 0, 90deg); opacity: 0;}
+}
+
+//Rotate out along the y-axis (vertical flip)
+.nebula-flip-out-y {@include prefix((animation: nebula-flip-out-y .8s easing(easeInOutQuad)), webkit); @include prefix((animation-fill-mode: forwards), webkit);}
+@keyframes nebula-flip-out-y {
+	0% {transform: perspective(400px);}
+	30% {transform: perspective(400px) rotate3d(0, 1, 0, -2deg); opacity: 1;}
+	100% {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); opacity: 0;}
+}
+
+//Depress and return
+//Built-in animation trigger on click by adding class "click".
+.nebula-push.active {@include prefix((animation: nebula-push .4s easing(easeOutBack)), webkit);}
+@include keyframes(nebula-push){
+    0% {transform: scale3d(1, 1, 1);}
+    50% {transform: scale3d(0.95, 0.95, 0.95);}
+}
+
+//Shake left and right
+.nebula-shake.active {@include prefix((animation: nebula-shake .5s linear), webkit);}
+@include keyframes(nebula-shake){
+	0% {transform: translate3d(0, 0, 0);}
+	20%, 60% {transform: translate3d(-10px, 0, 0);}
+	40%, 80% {transform: translate3d(10px, 0, 0);}
+}
+
+//Shake left and right.
+.nebula-nod.active {@include prefix((animation: nebula-nod .5s linear), webkit);}
+@include keyframes(nebula-nod){
+	0% {transform: translate3d(0, 0, 0);}
+	20%, 60% {transform: translate3d(0, -10px, 0);}
+	40%, 80% {transform: translate3d(0, 10px, 0);}
+}

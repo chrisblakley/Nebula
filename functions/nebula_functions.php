@@ -1515,6 +1515,9 @@ function nebula_infinite_load_query($args=array('showposts' => 4, 'paged' => 1),
 	</div>
 	<div class="loadmorecon">
 		<a class="infinite-load-more" href="#">Load More Posts</a>
+		<div class="infinite-loading">
+			<div class="a"></div> <div class="b"></div> <div class="c"></div>
+		</div>
 	</div>
 
 	<script><?php //Must be in PHP so $args can be encoded. ?>
@@ -1547,10 +1550,12 @@ function nebula_infinite_load_query($args=array('showposts' => 4, 'paged' => 1),
 							if ( pageNumber > maxPages ){
 								jQuery('.loadmorecon').addClass('disabled').find('a').text('No more posts.');
 							}
+							jQuery(document).trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load'));
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
+							jQuery(document).trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load AJAX Error'));
 							ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Load AJAX');
@@ -1709,6 +1714,7 @@ function nebula_body_classes($classes){
 		$lng = get_option('nebula_longitude');
 		$gmt = intval(get_option('gmt_offset'));
 		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
+		global $sunrise, $sunset;
 		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
 		$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
 

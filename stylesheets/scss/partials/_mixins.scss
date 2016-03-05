@@ -15,12 +15,6 @@
 	}
 }
 
-//@include keyframes(slide-down){0% {opacity: 1;} 90% {opacity: 0;}}
-@mixin keyframes($animation-name){
-	@-webkit-keyframes $animation-name {@content;}
-	@keyframes $animation-name {@content;}
-}
-
 //.element a {@include link-colors(red, orange, yellow, green, blue);}
 @mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
 	color: $normal;
@@ -78,6 +72,23 @@ $all_media_queries: map-merge($media_queries, $additional_queries); //Combine $m
 	@include prefix((transform-origin: $origin));
 	.ie8 & {zoom: $zoom;}
 }
+
+//@include keyframes(slide-down){0% {opacity: 1;} 90% {opacity: 0;}}
+@mixin keyframes($animation-name){
+	@-webkit-keyframes $animation-name {@content;}
+	@keyframes $animation-name {@content;}
+}
+
+//Prepend an icon to a link that slides in on hover.
+//a.element {@include iconpeek("\f054");} //Optionally pass a FontAwesome icon from http://fortawesome.github.io/Font-Awesome/icons/ using the provided unicode.
+@mixin iconpeek($icon: "\f061"){
+    display: inline-block; position: relative; overflow: hidden; transition: padding 0.4s easing(easeOutBack);
+    &:before {content: $icon; font-family: "FontAwesome"; position: absolute; left: -25px; transition: left 0.4s easing(easeOutBack);}
+    &:hover {padding-left: 25px;
+        &:before {left: 0;}
+    }
+}
+.nebula-peek, .nebula-iconpeek {@include iconpeek();}
 
 //.element-solid {@include arrow('top','left', 10px, #4fade3);}
 //.element-border {@include arrow('top','left', 10px, #eee, #4fade3, 6px);}
@@ -239,6 +250,7 @@ $easings: (
 	easeOutExpo: 	"0.190, 1.000, 0.220, 1.000",
 	easeOutCirc: 	"0.075, 0.820, 0.165, 1.000",
 	easeOutBack: 	"0.175, 0.885, 0.320, 1.275",
+	swing: 			"0.455, 0.030, 0.515, 0.955",
 	easeInOutQuad: 	"0.455, 0.030, 0.515, 0.955",
 	easeInOutCubic: "0.645, 0.045, 0.355, 1.000",
 	easeInOutQuart: "0.770, 0.000, 0.175, 1.000",

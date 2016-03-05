@@ -2,7 +2,7 @@
 	<div class="sixteen columns">
 		<div id="facebook-connect" style="margin-top: 15px;">
 			<p><strong>The Facebook SDK has not loaded yet.</strong></p>
-			<img class="fbpicture" /><br /><br />
+			<img class="fbpicture" style="margin: 0; max-width: 360px;" /><br /><br />
 			<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" scope="public_profile,email" onlogin="checkFacebookStatus();"></div>
 		</div>
 	</div><!--/columns-->
@@ -11,8 +11,8 @@
 <script>
 	jQuery(document).on('fbConnected', function(){
 		jQuery('.facebook-connect-con a').text('Logout').removeClass('disconnected').addClass('connected');
-		jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + nebulaFacebook.name.first + '.');
-		jQuery('.fbpicture').attr('src', nebulaFacebook.image.thumbnail).show();
+		jQuery('#facebook-connect p strong').text('You have been connected to Facebook, ' + nebula.user.facebook.name.first + '.');
+		jQuery('.fbpicture').attr('src', nebula.user.facebook.image.large).show();
 		nebulaConversion('facebook', 'connect');
 	});
 
