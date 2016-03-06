@@ -134,6 +134,7 @@ function register_nebula_scripts(){
 		),
 		'post' => ( is_search() )? null : array( //Conditional prevents wrong ID being used on search results
 			'id' => get_the_id(),
+			'permalink' => get_the_permalink(),
 			'title' => urlencode(get_the_title()),
 			'author' => urlencode(get_the_author()),
 			'year' => get_the_date('Y'),

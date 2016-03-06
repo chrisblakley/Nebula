@@ -246,11 +246,11 @@ function initSessionInfo(){
 	} else {
 		nebula.session = JSON.parse(sessionStorage['nebulaSession']);
 
-		if ( document.referrer && document.referrer.indexOf(nebula.site.domain) < 0 ){ //If user navigated away and came back.
+		if ( nebula.session.history && document.referrer && document.referrer.indexOf(nebula.site.domain) < 0 ){ //If user navigated away and came back.
 			nebula.session.history.push('---Returned from: ' + document.referrer.replace(/"|%22/g, ''));
 		}
 
-		if ( window.location.href != nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
+		if ( nebula.session.history && window.location.href != nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
 			nebula.session.history.push(window.location.href.replace(/"|%22/g, ''));
 		}
 	}

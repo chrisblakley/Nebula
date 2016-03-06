@@ -1496,15 +1496,26 @@ function nebula_advanced_search(){
 }
 
 //Infinite Load
-function nebula_infinite_load_query($args=array('showposts' => 4, 'paged' => 1), $loop=false){
+function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
 	$override = apply_filters('pre_nebula_infinite_load_query', false);
 	if ( $override !== false ){return;}
 
+	if ( empty($args['paged']) ){
+		$args['paged'] = 1;
+	}
+
 	query_posts($args);
 	global $wp_query;
+
+	if ( empty($args['post_type']) ){
+		$post_type_label = 'posts';
+	} else {
+		$post_type_obj = get_post_type_object($args['post_type']);
+		$post_type_label = lcfirst($post_type_obj->label);
+	}
 	?>
 
-	<div id="infinite-posts-list" data-max-pages="<?php echo $wp_query->max_num_pages; ?>">
+	<div id="infinite-posts-list" data-max-pages="<?php echo $wp_query->max_num_pages; ?>" data-max-posts="<?php echo $wp_query->found_posts; ?>">
 	    <?php
 		    if ( !$loop ){
 	    		get_template_part('loop');
@@ -1513,8 +1524,11 @@ function nebula_infinite_load_query($args=array('showposts' => 4, 'paged' => 1),
 			}
 		?>
 	</div>
-	<div class="loadmorecon">
-		<a class="infinite-load-more" href="#">Load More Posts</a>
+
+	<?php do_action('nebula_infinite_before_load_more'); ?>
+
+	<div class="loadmorecon <?php echo ( $args['paged'] >= $wp_query->max_num_pages )? 'disabled' : ''; ?>">
+		<a class="infinite-load-more" href="#"><?php echo ( $args['paged'] >= $wp_query->max_num_pages )? 'No more ' . $post_type_label . '.' : 'Load More'; ?></a>
 		<div class="infinite-loading">
 			<div class="a"></div> <div class="b"></div> <div class="c"></div>
 		</div>
@@ -1522,9 +1536,12 @@ function nebula_infinite_load_query($args=array('showposts' => 4, 'paged' => 1),
 
 	<script><?php //Must be in PHP so $args can be encoded. ?>
 		jQuery(document).on('ready', function(){
-			var pageNumber = 2;
+			var pageNumber = <?php echo $args['paged']; ?>+1;
+
 			jQuery('.infinite-load-more').on('click touch tap', function(){
 				var maxPages = jQuery('#infinite-posts-list').attr('data-max-pages');
+				var maxPosts = jQuery('#infinite-posts-list').attr('data-max-posts');
+
 				if ( pageNumber <= maxPages ){
 					jQuery('.loadmorecon').addClass('loading');
 			        jQuery.ajax({
@@ -1546,10 +1563,12 @@ function nebula_infinite_load_query($args=array('showposts' => 4, 'paged' => 1),
 				                    jQuery('.loadmorecon').removeClass('loading');
 			                    }
 			                });
-							var maxPages = jQuery('#infinite-posts-list').attr('data-max-pages');
-							if ( pageNumber > maxPages ){
-								jQuery('.loadmorecon').addClass('disabled').find('a').text('No more posts.');
+
+							if ( pageNumber >= maxPages ){
+								jQuery('.loadmorecon').addClass('disabled').find('a').text('No more <?php echo $post_type_label; ?>.');
 							}
+
+							history.replaceState(null, document.title, nebula.post.permalink + 'page/' + (pageNumber-1));
 							jQuery(document).trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load'));
@@ -1661,9 +1680,12 @@ function nebula_body_classes($classes){
 	//User Information
 	$current_user = wp_get_current_user();
 	if ( is_user_logged_in() ){
+		$classes[] = 'user-logged-in';
 		$classes[] = 'user-' . $current_user->user_login;
 		$user_info = get_userdata(get_current_user_id());
 		$classes[] = 'user-role-' . $user_info->roles[0];
+	} else {
+		$classes[] = 'user-not-logged-in';
 	}
 
 	//Post Information
