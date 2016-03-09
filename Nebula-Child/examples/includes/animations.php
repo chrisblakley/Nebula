@@ -7,7 +7,7 @@
 
 		#playanimation, #resetanimation {transition: opacity 0.25s;}
 			#playanimation.inactive, #resetanimation.inactive {opacity: 0.4; pointer-events: none;}
-			#playanimation.active, #resetanimation.active {opacity: 1;}
+			#playanimation.animate, #resetanimation.animate {opacity: 1;}
 
 		@media only screen and (max-width: 767px) {
 			.animationselectcon,
@@ -21,11 +21,11 @@
 
 		jQuery('#animationselect').on('change', function(){
 			if ( jQuery('#animationselect').val() != '' ){
-				jQuery('#playanimation').removeClass('inactive').addClass('active');
-				jQuery('#resetanimation').removeClass('inactive').addClass('active');
+				jQuery('#playanimation').removeClass('inactive').addClass('animate');
+				jQuery('#resetanimation').removeClass('inactive').addClass('animate');
 			} else {
-				jQuery('#playanimation').removeClass('active').addClass('inactive');
-				jQuery('#resetanimation').removeClass('active').addClass('inactive');
+				jQuery('#playanimation').removeClass('animate').addClass('inactive');
+				jQuery('#resetanimation').removeClass('animate').addClass('inactive');
 			}
 		});
 
@@ -43,8 +43,8 @@
 		jQuery('#resetanimation a').on('click tap touch', function(){
 			jQuery('#animatethis').removeClass();
 			//jQuery('#animationselect').prop('selectedIndex', 0);
-			//jQuery('#playanimation').removeClass('active').addClass('inactive');
-			//jQuery('#resetanimation').removeClass('active').addClass('inactive');
+			//jQuery('#playanimation').removeClass('animate').addClass('inactive');
+			//jQuery('#resetanimation').removeClass('animate').addClass('inactive');
 			return false;
 		});
 

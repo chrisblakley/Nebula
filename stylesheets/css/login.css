@@ -667,7 +667,7 @@
 
  }
 
- .nebula-push.active { -webkit-animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); }
+ .nebula-push.animate { -webkit-animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); }
 
  @-webkit-keyframes nebula-push { 0% { transform:scale3d(1, 1, 1); }
 
@@ -681,7 +681,7 @@
 
  }
 
- .nebula-shake.active { -webkit-animation:nebula-shake 0.5s linear; animation:nebula-shake 0.5s linear; }
+ .nebula-shake.animate { -webkit-animation:nebula-shake 0.5s linear; animation:nebula-shake 0.5s linear; }
 
  @-webkit-keyframes nebula-shake { 0% { transform:translate3d(0, 0, 0); }
 
@@ -699,7 +699,7 @@
 
  }
 
- .nebula-nod.active { -webkit-animation:nebula-nod 0.5s linear; animation:nebula-nod 0.5s linear; }
+ .nebula-nod.animate { -webkit-animation:nebula-nod 0.5s linear; animation:nebula-nod 0.5s linear; }
 
  @-webkit-keyframes nebula-nod { 0% { transform:translate3d(0, 0, 0); }
 
@@ -748,4 +748,4 @@
  .ipcon p { font-size:12px; margin:0; padding:0; color:#888; }
 
 
-/* Processed on Sunday, March 6, 2016 at 1:06pm */
+/* Processed on Wednesday, March 9, 2016 at 8:46am */

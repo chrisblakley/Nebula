@@ -1504,7 +1504,8 @@ function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
 		$args['paged'] = 1;
 	}
 
-	query_posts($args);
+	query_posts($args); //@TODO "Nebula" 0: Change to WP_Query? How do we still use loop.php? Need to modify global loop ($wp_query).
+	//Maybe: $GLOBALS['wp_query'] = new WP_Query($args); (untested)?
 	global $wp_query;
 
 	if ( empty($args['post_type']) ){
@@ -1568,7 +1569,7 @@ function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
 								jQuery('.loadmorecon').addClass('disabled').find('a').text('No more <?php echo $post_type_label; ?>.');
 							}
 
-							history.replaceState(null, document.title, nebula.post.permalink + 'page/' + (pageNumber-1));
+							//history.replaceState(null, document.title, nebula.post.permalink + 'page/' + (pageNumber-1)); //@TODO "Nebula" 0: Needs to preserve query strings!
 							jQuery(document).trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load'));

@@ -1000,129 +1000,6 @@ function nebula_color_brightness($hex){
 	}
 }
 
-//Attempt to get WHOIS information from domain
-function whois_info($data, $domain=''){
-	$override = apply_filters('pre_whois_info', false, $data, $domain);
-	if ( $override !== false ){return $override;}
-
-	if ( $domain == '' ){
-		$whois = getwhois(nebula_url_components('sld'), ltrim(nebula_url_components('tld'), '.'));
-	} else {
-		$whois = getwhois(nebula_url_components('sld', $domain), ltrim(nebula_url_components('tld', $domain), '.'));
-		$whois = preg_replace('!\s+!', ' ', $whois);
-	}
-
-	switch ( $data ){
-		case 'expiration':
-		case 'expiration_date':
-		case 'domain_expiration':
-			if ( contains($whois, array('Registrar Registration Expiration Date: ')) ){
-				return trim(substr($whois, strpos($whois, "Registrar Registration Expiration Date: ")+40, 10));
-			} elseif ( contains($whois, array('Registry Expiry Date: ')) ){
-				return trim(substr($whois, strpos($whois, "Registry Expiry Date: ")+22, 10));
-			} elseif ( contains($whois, array('Relevant dates: ')) ){
-				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 11));
-			} elseif ( contains($whois, array('Expiry date: ')) ){
-				return trim(substr($whois, strpos($whois, "Expiry date:")+13, 10));
-			} elseif ( contains($whois, array('Domain expires: ')) ){
-				return trim(substr($whois, strpos($whois, "Domain expires: ")+16, 11));
-			}
-			return false;
-			break;
-		case 'registrar':
-		case 'registrar_name':
-			$domain_registrar_start = '';
-			$domain_registrar_stop = '';
-			if ( contains($whois, array('Registrar: ')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
-				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
-				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
-				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
-				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar: ')) && contains($whois, array('Registrar IANA ID: ')) ){
-				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-				$domain_registrar_stop = strpos($whois, "Registrar IANA ID: ")-$domain_registrar_start;
-				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Sponsoring Registrar:')) && contains($whois, array('Sponsoring Registrar IANA ID:')) ){
-				$domain_registrar_start = strpos($whois, "Sponsoring Registrar:")+21;
-				$domain_registrar_stop = strpos($whois, "Sponsoring Registrar IANA ID:")-$domain_registrar_start;
-				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('Number: ')) ){
-				$domain_registrar_start = strpos($whois, "Registrar:")+17;
-				$domain_registrar_stop = strpos($whois, "Number: ")-$domain_registrar_start;
-				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			} elseif ( contains($whois, array('Registrar:')) && contains($whois, array('URL:')) ){ //co.uk
-				$domain_registrar_start = strpos($whois, "Registrar: ")+11;
-				$domain_registrar_stop = strpos($whois, "URL: ")-$domain_registrar_start;
-				return trim(substr($whois, $domain_registrar_start, $domain_registrar_stop));
-			}
-			return false;
-			break;
-		case 'registrar_url':
-			if ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Updated Date: ')) ){
-				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
-				$domain_registrar_url_stop = strpos($whois, "Updated Date: ")-$domain_registrar_url_start;
-				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-			} elseif ( contains($whois, array('Registrar URL: ')) && contains($whois, array('Update Date: ')) ){
-				$domain_registrar_url_start = strpos($whois, "Registrar URL: ")+15;
-				$domain_registrar_url_stop = strpos($whois, "Update Date: ")-$domain_registrar_url_start;
-				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-			} elseif ( contains($whois, array('URL: ')) && contains($whois, array('Relevant dates:')) ){ //co.uk
-				$domain_registrar_url_start = strpos($whois, "URL: ")+5;
-				$domain_registrar_url_stop = strpos($whois, "Relevant dates: ")-$domain_registrar_url_start;
-				return trim(substr($whois, $domain_registrar_url_start, $domain_registrar_url_stop));
-			}
-			return false;
-			break;
-		case 'reseller':
-		case 'reseller_name':
-			$domain_reseller = '';
-			if ( contains($whois, array('Reseller: ')) && contains($whois, array('Domain Status: ')) ){
-				$reseller1 = strpos($whois, 'Reseller: ');
-				$reseller2 = strpos($whois, 'Reseller: ', $reseller1 + strlen('Reseller: '));
-				if ( $reseller2 ){
-					$domain_reseller_start = strpos($whois, "Reseller: ")+10;
-					$domain_reseller_stop = $reseller2-$domain_reseller_start;
-					return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
-				} else {
-					$domain_reseller_start = strpos($whois, "Reseller: ")+10;
-					$domain_reseller_stop = strpos($whois, "Domain Status: ")-$domain_reseller_start;
-					return trim(substr($whois, $domain_reseller_start, $domain_reseller_stop));
-				}
-			}
-			return false;
-			break;
-	}
-}
-
-//Returns WHOIS information from the passed domain.
-function getwhois($domain, $tld){
-	$override = apply_filters('pre_getwhois', false, $domain, $tld);
-	if ( $override !== false ){return $override;}
-
-	if ( empty($domain) ){
-		$domain = nebula_url_components('sld'); //Default value is current domain
-	}
-	if ( empty($tld) ){
-		$tld = nebula_url_components('tld'); //Default value is current domain
-	}
-
-	require_once(get_template_directory() . "/includes/libs/class-whois.php");
-	$whois = new Whois();
-
-	if( !$whois->ValidDomain($domain . '.' . $tld) ){
-		return 'Sorry, "' . $domain . '.' . $tld . '" is not valid or not supported.';
-	}
-
-	if ( $whois->Lookup($domain . '.' . $tld) ){
-		return $whois->GetData(1);
-	} else {
-		return 'A WHOIS error occurred.';
-	}
-}
-
 //Compare values using passed parameters
 function nebula_compare_operator($a=null, $b=null, $c='=='){
 	$override = apply_filters('pre_nebula_compare_operator', false, $a, $b, $c);
@@ -1348,7 +1225,18 @@ function nebula_render_scss($specific_scss=null, $child=false){
 
 		//Compile each SCSS file
 		foreach ( glob($stylesheets_directory . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+			//$nebula_debug_start_time = microtime(true); //Debug timing start ******************************
+
 			$file_path_info = pathinfo($file);
+			if ( $file_path_info['filename'] == 'wireframing' && nebula_option('nebula_wireframing', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
+				continue;
+			}
+			if ( $file_path_info['filename'] == 'dev' && nebula_option('nebula_dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
+				continue;
+			}
+			if ( !is_admin() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
+				continue;
+			}
 
 			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
@@ -1368,6 +1256,7 @@ function nebula_render_scss($specific_scss=null, $child=false){
 					}
 				}
 			}
+			//echo "Elapsed Nebula Debug time for <strong>" . $file_path_info['filename'] . "</strong> was: " . number_format((microtime(true)-$nebula_debug_start_time), 6, '.', '') . " seconds.<br/>"; //Debug timing end ************************
 		}
 
 		if ( !$child && is_child_theme() ){ //If not in the second (child) pass, and is a child theme.
@@ -1788,8 +1677,10 @@ function nebula_is_bot(){
 	return false;
 }
 
+
 //Device Detection - https://github.com/piwik/device-detector
 //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
+//@TODO "Nebula" 0: Store cookie on user device to prevent re-checking this every time?
 require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
 use DeviceDetector\DeviceDetector;
 $GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);

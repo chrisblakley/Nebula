@@ -916,27 +916,6 @@ function gaEventTracking(){
 		}
 	});
 
-	//High amount of clicks
-	var clickCount = 0;
-	jQuery(document).on('click', function(e){
-		if ( clickCount === 15 ){
-			var elementID = e.target.id;
-			var elementClasses = e.target.className.replace(/ /g, '.');
-			var elementTag = e.target.tagName.toLowerCase();
-			if ( elementID ){
-				var selector = elementTag + '#' + elementID;
-			} else if ( elementClasses ){
-				var selector = elementTag + '.' + elementClasses;
-			} else {
-				var selector = elementTag;
-			}
-
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('High Clicks'));
-			ga('send', 'event', 'High Click Count', 'Clicked 15 (or more) times.', selector);
-		}
-		clickCount++;
-	});
-
 	//AJAX Errors
 	nebula.dom.document.ajaxError(function(e, request, settings){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -2576,7 +2555,22 @@ function reflow(selector){
 		return false;
 	}
 
-	jQuery(selector).width();
+	element.width();
+}
+
+//Handle repeated animations in a single function.
+function nebulaAnimate(selector){
+	if ( typeof selector === 'string' ){
+		var element = jQuery(selector);
+	} else if ( typeof selector === 'object' ) {
+		var element = selector;
+	} else {
+		return false;
+	}
+
+	element.removeClass('animate');
+	reflow(element);
+	element.addClass('animate');
 }
 
 //Allows something to be called once per pageload.
@@ -3077,7 +3071,7 @@ function onYouTubeIframeAPIReady(e){
 	pauseFlag = false;
 }
 function onPlayerError(e){
-	var videoTitle = e.target.H.videoData.title;
+	var videoTitle = e.target.F.videoData.title;
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Youtube Error'));
 	ga('send', 'event', 'Error', 'Youtube API', videoTitle + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
@@ -3087,24 +3081,26 @@ function onPlayerReady(e){
 		videoProgress = {};
 	}
 
-	var id = e.target.f.id;
+	var videoInfo = e.target.F;
+	var id = videoInfo.video_id;
 	videoData[id] = {
 		platform: 'youtube', //The platform the video is hosted using.
 		player: players.youtube[id], //The player ID of this video. Can access the API here.
-		duration: e.target.H.duration, //The total duration of the video. Unit: Seconds
-		current: e.target.H.currentTime, //The current position of the video. Units: Seconds
-		percent: e.target.H.currentTime/e.target.H.duration, //The percent of the current position. Multiply by 100 for actual percent.
+		duration: videoInfo.duration, //The total duration of the video. Unit: Seconds
+		current: videoInfo.currentTime, //The current position of the video. Units: Seconds
+		percent: videoInfo.currentTime/videoInfo.duration, //The percent of the current position. Multiply by 100 for actual percent.
 		engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
 		watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
 		watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 	};
 }
 function onPlayerStateChange(e){
-	var videoTitle = e.target.H.videoData.title;
-	var id = e.target.f.id;
+	var videoInfo = e.target.F;
+	var videoTitle = videoInfo.videoData.title;
+	var id = videoInfo.video_id;
 
-	videoData[id].current = e.target.H.currentTime;
-	videoData[id].percent = e.target.H.currentTime/e.target.H.duration;
+	videoData[id].current = videoInfo.currentTime;
+	videoData[id].percent = videoInfo.currentTime/videoInfo.duration;
 
     if ( e.data === YT.PlayerState.PLAYING ){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
@@ -3116,10 +3112,10 @@ function onPlayerStateChange(e){
 		updateInterval = 500;
 
 		youtubePlayProgress = setInterval(function(){
-			videoData[id].current = e.target.H.currentTime;
-			videoData[id].percent = e.target.H.currentTime/e.target.H.duration;
+			videoData[id].current = videoInfo.currentTime;
+			videoData[id].percent = videoInfo.currentTime/videoInfo.duration;
 			videoData[id].watched = videoData[id].watched+(updateInterval/1000);
-			videoData[id].watchedPercent = (videoData[id].watched)/e.target.H.duration;
+			videoData[id].watchedPercent = (videoData[id].watched)/videoInfo.duration;
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
@@ -3304,9 +3300,7 @@ function pauseAllVideos(force){
 //Helpful animation event listeners
 function animationTriggers(){
 	nebula.dom.document.on('click tap touch', '.nebula-push.click', function(){
-		jQuery(this).removeClass('active');
-		reflow(this);
-		jQuery(this).addClass('active');
+		nebulaAnimate(jQuery(this));
 	});
 }
 

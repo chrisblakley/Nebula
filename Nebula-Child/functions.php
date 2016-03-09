@@ -57,6 +57,7 @@ add_action('login_enqueue_scripts', 'register_nebula_child_styles');
 add_action('admin_enqueue_scripts', 'register_nebula_child_styles');
 function register_nebula_child_styles(){
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
+	wp_register_style('nebula-gumby_cdn', 'https://cdnjs.cloudflare.com/ajax/libs/gumby/2.6.0/css/gumby.min.css', array(), '2.6.0', 'all');
 	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), null, 'all');
 }
 
@@ -79,7 +80,7 @@ function register_nebula_child_scripts(){
  Enqueue Child Styles & Scripts on the Front-End
  ===========================*/
 
-add_action('wp_enqueue_scripts', 'enqueue_nebula_child_frontend');
+add_action('wp_enqueue_scripts', 'enqueue_nebula_child_frontend', 327);
 function enqueue_nebula_child_frontend(){
 	//Stylesheets
 	wp_enqueue_style('nebula-child');
@@ -93,7 +94,7 @@ function enqueue_nebula_child_frontend(){
  Enqueue Child Styles & Scripts on the Login
  ===========================*/
 
-add_action('login_enqueue_scripts', 'enqueue_nebula_child_login');
+add_action('login_enqueue_scripts', 'enqueue_nebula_child_login', 327);
 function enqueue_nebula_child_login(){
 	//Login styles and scripts here
 }
@@ -103,7 +104,7 @@ function enqueue_nebula_child_login(){
  Enqueue Child Styles & Scripts on the Admin
  ===========================*/
 
-add_action('admin_enqueue_scripts', 'enqueue_nebula_child_admin');
+add_action('admin_enqueue_scripts', 'enqueue_nebula_child_admin', 327);
 function enqueue_nebula_child_admin(){
 	//Admin styles and scripts here
 }

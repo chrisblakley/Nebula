@@ -67,7 +67,7 @@
 // ===========================
 // One-Time
 // These animations happen once.
-// If using the provided class, these are triggered by adding an .active class.
+// If using the provided class, these are triggered by adding an .animate class.
 // ===========================
 
 //Fade out
@@ -213,14 +213,14 @@
 
 //Depress and return
 //Built-in animation trigger on click by adding class "click".
-.nebula-push.active {@include prefix((animation: nebula-push .4s easing(easeOutBack)), webkit);}
+.nebula-push.animate {@include prefix((animation: nebula-push .4s easing(easeOutBack)), webkit);}
 @include keyframes(nebula-push){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(0.95, 0.95, 0.95);}
 }
 
 //Shake left and right
-.nebula-shake.active {@include prefix((animation: nebula-shake .5s linear), webkit);}
+.nebula-shake.animate {@include prefix((animation: nebula-shake .5s linear), webkit);}
 @include keyframes(nebula-shake){
 	0% {transform: translate3d(0, 0, 0);}
 	20%, 60% {transform: translate3d(-10px, 0, 0);}
@@ -228,7 +228,7 @@
 }
 
 //Shake left and right.
-.nebula-nod.active {@include prefix((animation: nebula-nod .5s linear), webkit);}
+.nebula-nod.animate {@include prefix((animation: nebula-nod .5s linear), webkit);}
 @include keyframes(nebula-nod){
 	0% {transform: translate3d(0, 0, 0);}
 	20%, 60% {transform: translate3d(0, -10px, 0);}

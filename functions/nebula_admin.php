@@ -215,8 +215,7 @@ function nebula_theme_update_automation(){
 	update_option('nebula_last_version_date', nebula_version('date'));
 	update_option('nebula_version_legacy', 'false');
 }
-
-function nebula_theme_update_email(){
+function nebula_theme_update_email(){ //@TODO "Nebula" 0: Is this still working?
 	global $wpdb;
 	$current_user = wp_get_current_user();
 	$to = $current_user->user_email;
@@ -280,13 +279,13 @@ function custom_login_css(){
 	}
 }
 
-//Change link of logo to live site
+//Change link of login logo to live site
 add_filter('login_headerurl', 'custom_login_header_url');
 function custom_login_header_url(){
     return home_url('/');
 }
 
-//Change alt of image
+//Change alt of login image
 add_filter('login_headertitle', 'new_wp_login_title');
 function new_wp_login_title(){
     return get_option('blogname');
@@ -380,9 +379,9 @@ if ( nebula_option('nebula_admin_notices') ){
 }
 
 //Check if a post slug has a number appended to it (indicating a duplicate post).
-add_filter('wp_unique_post_slug', 'nebula_unique_slug_warning_ajax', 10, 4);
+//add_filter('wp_unique_post_slug', 'nebula_unique_slug_warning_ajax', 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! is_admin() does not prevent that...
 function nebula_unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
-	if ( headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' ){ //Should work with AJAX and without (as long as headers have been sent)
+	if ( current_user_can('publish_posts') && is_admin() && (headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ){ //Should work with AJAX and without (as long as headers have been sent)
 		echo '<script>
 			if ( typeof nebulaUniqueSlugChecker == "function" ){
 				nebulaUniqueSlugChecker("' . $post_type . '");
@@ -628,54 +627,10 @@ if ( nebula_option('nebula_dev_metabox') ){
 	}
 	function dashboard_developer_info(){
 		do_action('nebula_developer_info');
-
 		echo '<ul class="serverdetections">';
 
 			//Domain
-			$domain_exp_detected = whois_info('expiration');
-			$domain_exp_unix = strtotime(trim($domain_exp_detected));
-			$domain_exp = date("F j, Y", $domain_exp_unix);
-			$domain_exp_style = ( $domain_exp_unix < strtotime('+1 month') )? 'color: red; font-weight: bold;' : 'color: inherit;' ;
-			$domain_exp_html = ( $domain_exp_unix > strtotime('March 27, 1986') )? ' <small title="' . human_time_diff($domain_exp_unix) . '" style="' . $domain_exp_style . '">(Expires: ' . $domain_exp . ')</small>' : '';
-			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong>' . $domain_exp_html . '</li>';
-
-			//Registrar
-			$domain_registrar_url = whois_info('registrar_url');
-			$domain_registrar = whois_info('registrar');
-			$domain_reseller = whois_info('reseller');
-
-			if ( $domain_registrar_url && strlen($domain_registrar_url) < 70 ){
-				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong><a href="//' . trim($domain_registrar_url) . '" target="_blank">' . $domain_registrar . '</a></strong>': '';
-			} else {
-				$domain_registrar_html = ( $domain_registrar && strlen($domain_registrar) < 70 )? '<li><i class="fa fa-info-circle fa-fw"></i> Registrar: <strong>' . trim($domain_registrar) . '</strong>': '';
-			}
-			if ( trim($domain_registrar_html) != '' && $domain_reseller && strlen($domain_reseller) < 70 ){
-				$domain_registrar_html .= ' <small>(via ' . trim($domain_reseller) . ')</small></li>';
-			} else {
-				$domain_registrar_html .= '</li>';
-			}
-				if ( nebula_option('nebula_domain_exp', 'enabled') ){
-				if ( get_option('nebula_domain_expiration_last') == 'Never' || get_option('nebula_domain_expiration_last') < strtotime('-2 weeks') ){
-					if ( $domain_exp != 'December 31, 1969' && $domain_exp_unix > strtotime("3/27/1986")  ){
-						if ( $domain_exp_unix < strtotime('+1 week') ){ //If domain is expiring within a week, email all admin users.
-							$adminUsers = get_users(array('role' => 'Administrator'));
-							$exp_notice_to = '';
-							$i = 0;
-							$exp_notice_to = array();
-							foreach ( $adminUsers as $adminUser ){
-								array_push($exp_notice_to, $adminUsers[$i]->user_email);
-								$i++;
-							}
-							$exp_notice_subject = 'Domain expiration detection of ' . $domain_exp . ' for ' . nebula_url_components('domain') . ' (via ' . get_bloginfo('name') . ')!';
-							$exp_notice_message = "Your domain " . nebula_url_components('domain') . " expires on " . $domain_exp . "! The detected registrar is: " . $domain_registrar . "(" . $domain_registrar_url . ") (However, the actual reseller may be different). This notice was triggered because the expiration date is within 1 week. It has been sent to all administrators of " . get_bloginfo('name') . " (" . home_url('/') . "), and will only be sent once!";
-
-							wp_mail($exp_notice_to, $exp_notice_subject, $exp_notice_message);
-							update_option('nebula_domain_expiration_last', date('U'));
-						}
-					}
-				}
-			}
-			echo $domain_registrar_html;
+			echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong></li>';
 
 			//Host
 			function top_domain_name($url){
@@ -732,11 +687,10 @@ if ( nebula_option('nebula_dev_metabox') ){
 			echo '<li><i class="fa fa-cogs fa-fw"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
 
 			//MySQL version
-			if ( function_exists('mysqli_connect') ){
-				$mysqli_connect = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
-				$mysql_version = mysqli_get_server_info($mysqli_connect);
+			if ( function_exists('mysqli_get_client_version') ){
+				$mysql_version = mysqli_get_client_version();
+				echo '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>';
 			}
-			echo ( !empty($mysql_version) )? '<li><i class="fa fa-database fa-fw"></i> MySQL Version: <strong>' . $mysql_version . '</strong></li>' : '';
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
@@ -852,6 +806,12 @@ if ( nebula_option('nebula_dev_metabox') ){
 		}
 		echo '<option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
 		echo '<div class="search_results"></div>';
+
+
+
+
+
+
 	}
 }
 
