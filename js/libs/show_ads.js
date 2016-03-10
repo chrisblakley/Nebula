@@ -1,1 +1,1 @@
-adsEnabled = true;
+//This script is empty.

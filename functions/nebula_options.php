@@ -1123,7 +1123,7 @@ function nebula_options_page(){
 		        	<th scope="row">Ad Blocker&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_adblocker" value="<?php echo get_option('nebula_cd_adblocker'); ?>" />
-						<p class="helper"><small>Detects if the user is blocking ads. This can be used even if not intending to serve ads on this site. <strong>Scope: Hit</strong></small></p>
+						<p class="helper"><small>Detects if the user is blocking ads. This can be used even if not intending to serve ads on this site. <em>It is important that this dimension is <strong>not</strong> set to the "hit" scope.</em> <strong>Scope: Session</strong></small></p>
 					</td>
 		        </tr>
 

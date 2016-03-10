@@ -74,10 +74,10 @@
 				echo 'nebulaConversion("404", true);';
 			}
 
-			if ( is_single() || is_page() ){
+			if ( is_singular() || is_page() ){
 				global $post;
 
-				if ( is_single() ){
+				if ( is_singular() ){
 					//Article author
 					if ( nebula_option('nebula_author_bios', 'enabled') && nebula_option('nebula_cd_author') ){
 						echo 'ga("set", gaCustomDimensions["author"], "' . get_the_author() . '");';
@@ -231,26 +231,23 @@
 			}
 		?>
 
-		<?php if ( 1==2 ): //@TODO "Nebula" 0: Until this is more reliable it needs to be disabled. ?>
-			<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. Our local show_ads.js only assigns adsEnabled variable to true; best current synchronous method of ad block detection. ?>
-				adBlockUser = 'Non-Blocker';
-				nebula.user.client.capabilities.adblock = false;
-				jQuery('html').removeClass('no-ads').addClass('ads');
-				if ( window.adsEnabled === undefined ){
-					nebula.user.client.capabilities.adblock = true;
-					adBlockUser = 'Ad Blocker';
-					jQuery('html').removeClass('ads').addClass('no-ads');
-				}
-				<?php if ( nebula_option('nebula_cd_adblocker') ): ?>
-					ga('set', gaCustomDimensions['adBlocker'], adBlockUser);
-				<?php endif; ?>
-			<?php endif; ?>
-		<?php endif; ?>
-
 		<?php if ( nebula_option('nebula_cm_formviews') ): //Notable Form Views (to calculate against submissions) ?>
 			if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length ){
 				ga('set', gaCustomMetrics['formViews'], 1);
 			}
+		<?php endif; ?>
+
+		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. ?>
+			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/show_ads.js').done(function(){
+				adBlockUser = 'No Ad Blocker';
+			}).fail(function(){ //Ad blocker detected
+				jQuery('html').addClass('ad-blocker');
+				adBlockUser = 'Ad Blocker Detected';
+				<?php if ( nebula_option('nebula_cd_adblocker') ): //Scope: Session ?>
+					ga('set', gaCustomDimensions['adBlocker'], adBlockUser); //Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below.
+				<?php endif; ?>
+				ga('send', 'event', adBlockUser, 'This user is using ad blocking software.');
+			});
 		<?php endif; ?>
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>

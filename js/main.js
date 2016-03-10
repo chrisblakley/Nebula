@@ -430,8 +430,6 @@ function gaBlockDetect(){
 
 		setTimeout(function(){
 			if ( gablocked ){
-				nebula.user.client.capabilities.gablock = true;
-				createCookie('nebulaUser', JSON.stringify(nebula.user));
 				jQuery('html').addClass('no-gajs');
 				jQuery.ajax({
 					type: "POST",
@@ -953,6 +951,11 @@ function gaEventTracking(){
 		nebula.dom.document.on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
 			ga('send', 'event', 'Pinned Header', 'Click', 'Used pinned header (after scrolling) to navigate');
 		});
+	}
+
+	//404 Pages
+	if ( nebula.dom.body.hasClass('error404') ){
+		nebulaConversion('404', true);
 	}
 }
 
@@ -2849,33 +2852,18 @@ function nebula_pre(){
 	try { //@TODO "Nebula" 0: Use Modernizr check here instead.
 		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
 			var selectCopyText = 'Copy to clipboard';
-			nebula.user.client.capabilities.clipboard.copy = true;
-			nebula.user.client.capabilities.select_text = true;
 		} else if ( document.body.createTextRange || window.getSelection ){
 			var selectCopyText = 'Select All';
-			nebula.user.client.capabilities.clipboard.copy = false;
-			nebula.user.client.capabilities.clipboard.paste = false;
-			nebula.user.client.capabilities.select_text = true;
 		} else {
-			nebula.user.client.capabilities.clipboard.copy = false;
-			nebula.user.client.capabilities.clipboard.paste = false;
-			nebula.user.client.capabilities.select_text = false;
 			return false;
 		}
 	} catch(err){
 		if ( document.body.createTextRange || window.getSelection ){
 			var selectCopyText = 'Select All';
-			nebula.user.client.capabilities.clipboard.copy = false;
-			nebula.user.client.capabilities.clipboard.paste = false;
-			nebula.user.client.capabilities.select_text = true;
 		} else {
-			nebula.user.client.capabilities.clipboard.copy = false;
-			nebula.user.client.capabilities.clipboard.paste = false;
-			nebula.user.client.capabilities.select_text = false;
 			return false;
 		}
 	}
-	createCookie('nebulaUser', JSON.stringify(nebula.user));
 
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){

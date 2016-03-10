@@ -86,7 +86,6 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/js/jquery.dataTables.min.js', null, array(), '1.10.10', true);
 	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js', null, array(), '1.4.2', true);
 	nebula_register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js', null, array(), '2.11.2', true);
-	nebula_register_script('nebula-adblockcheck', get_template_directory_uri() . '/js/libs/show_ads.js', null, array(), null, false); //Must be loaded in the head.
 	nebula_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', 'defer', array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
 	nebula_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', null, array('jquery'), null, true);
 	nebula_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', null, array('nebula-main'), null, true);
@@ -207,18 +206,6 @@ function register_nebula_scripts(){
 					'engine' => nebula_get_browser('engine'),
 					'type' => nebula_get_browser('type'),
 				),
-				'capabilities' => array( //@TODO "Nebula" 0: Is this needed if we can just check against Modernizr?
-					'speech' => 'unknown',
-					'battery' => 'unknown',
-					'network' => 'unknown',
-					'adblock' => false,
-					'gablock' => false,
-					'select_text' => 'unknown',
-					'clipboard' => array(
-						'copy' => 'unknown',
-						'paste' => 'unknown',
-					),
-				),
 			),
 		);
 	}
@@ -294,10 +281,6 @@ function enqueue_nebula_frontend(){
 	if ( nebula_is_browser('ie', '9', '<=') ){ //Old IE. Eventually remove this entirely.
 		wp_enqueue_script('nebula-respond');
 		wp_enqueue_script('nebula-html5shiv');
-	}
-
-	if ( !nebula_is_bot() && !empty($GLOBALS['ga']) && nebula_option('nebula_cd_adblocker') ){
-		wp_enqueue_script('nebula-adblockcheck'); //Detect if user is blocking ads. If the custom dimension is active removing this line will cause false positives!
 	}
 
 	if ( is_page_template('tpl-search.php') || is_page(9999) ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in main.js.
