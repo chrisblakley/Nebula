@@ -1,5 +1,4 @@
-#Nebula
-[![Build Status](https://travis-ci.org/chrisblakley/Nebula.svg?branch=master)](https://travis-ci.org/chrisblakley/Nebula)
+#Nebula [![Build Status](https://travis-ci.org/chrisblakley/Nebula.svg?branch=master)](https://travis-ci.org/chrisblakley/Nebula)
 
 Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes it is not meant for the end-user.
 
