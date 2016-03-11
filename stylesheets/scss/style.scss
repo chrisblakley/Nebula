@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.8.10
+	Version: 3.8.11
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -292,13 +292,13 @@ input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @inclu
 	input:not(.nofade):focus:-ms-input-placeholder {color: $placeholder_color_focus;}
 
 //jQuery UI Autocomplete Hero Search
-div#nebula-hero-formcon {@include media(tablet){display: none !important;};}
+div#nebula-hero-formcon {@include tablet(){display: none !important;};}
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
 	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: 16px; line-height: 16px;}
 	input {display: block; width: 100%; max-width: 558px; font-size: 18px; line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
 		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
-		@include media(tablet){width: 92%; max-width: 650px;};
-		@include media(mobile){width: 90%; max-width: 300px;};
+		@include tablet(){width: 92%; max-width: 650px;};
+		@include mobile(){width: 90%; max-width: 300px;};
 	}
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
 }
@@ -326,7 +326,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	}
 	&.more-results:before {content: '\f002';}
 	&.no-results:before {content: '\00a0';}
-	@include media(mobile){width: 100% !important; top: 52px !important; left: 0px !important;};
+	@include mobile(){width: 100% !important; top: 52px !important; left: 0px !important;};
 }
 
 //jQuery UI Autocomplete
@@ -342,7 +342,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	.ui-state-hover a,
 	li.ui-state-focus a {@include link-colors(#fff, #fff, #fff, #fff, #fff);}
 	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; /* width: 90%; */ @include prefix((transition: none 0.25s));}
-	@include media(tablet){@include background-color(#fff, 0.95);};
+	@include tablet(){@include background-color(#fff, 0.95);};
 }
 
 div.bx-wrapper {
@@ -380,7 +380,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	.borderimage.mm-opening &:before {@include background-color(#000, 0.7);}
 }
 
-.fixedbar {@include media(tablet){display: none;};}
+.fixedbar {@include tablet(){display: none;};}
 
 //Top row that appears at mobile sizes.
 #mobilebarcon {position: relative; background: $primary_color; width: 100%; height: 0; overflow: hidden; @include prefix((transition: all 0.5s));
@@ -394,14 +394,14 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			.borderimage &:before {color: #fff; font-size: 19px; width: 19px; height: 19px; top: 12px; left: 0;}
 		}
-		@include media(tablet){display: block;};
+		@include tablet(){display: block;};
 	}
 	a.mobilenavtrigger {position: relative; font-size: 24px; padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; @include background-color(#fff, 0.25); z-index: 99999;
 		&:hover,
 		&.hover {color: #fff; @include background-color(#fff, 0.4);}
 		&.active {@include background-color(#fff, 0);}
 	}
-	@include media(tablet){height: 42px;};
+	@include tablet(){height: 42px;};
 }
 #mobilenav {visibility: hidden; height: 0;
 	&.mm-menu {visibility: visible; height: 100%;}
@@ -426,7 +426,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			}
 		}
 	}
-	@include media(tablet){max-height: 0; opacity: 0; overflow: hidden;};
+	@include tablet(){max-height: 0; opacity: 0; overflow: hidden;};
 }
 
 //Logo and primary navigation row
@@ -449,8 +449,8 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	&.headroom--bottom {@include prefix((transform: translateY(0%), ms webkit);} //When scrolling up (or reached the bottom of the page)
 
 	.logocon {
-		img {@include media(tablet){width: 360px;};}
-		@include media(tablet){display: inline-block;};
+		img {@include tablet(){width: 360px;};}
+		@include tablet(){display: inline-block;};
 	}
 	#primarynav {position: relative; z-index: 1000;
 		ul {margin-top: 28px; @include prefix((transition: all 0.5s));
@@ -461,7 +461,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 				&.last-child {margin-right: 0;}
 				.ie7 & {float: left; font-size: 14px;}
 				a {display: block; padding-bottom: 8px;
-					@include media(tablet){min-height: 44px; line-height: 44px;};
+					@include tablet(){min-height: 44px; line-height: 44px;};
 				}
 				ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; @include prefix((transition: top 0.25s, opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
 					.no-js & {width: 400px;}
@@ -469,28 +469,28 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 						a {display: block; padding: 5px;
 							&:hover,
 							&.hover {background: $primary_color; color: #fff;
-								@include media(tablet){background: grey;};
+								@include tablet(){background: grey;};
 							}
-							@include media(tablet){padding: 0;};
+							@include tablet(){padding: 0;};
 						}
 						ul.sub-menu {display: none;
-							@include media(tablet){display: none;};
+							@include tablet(){display: none;};
 						}
 					}
-					@include media(tablet){position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;};
+					@include tablet(){position: relative; top: 0; left: auto; max-width: none; opacity: 1; display: none;};
 				}
 				&:hover,
 				&.hover {
 					& ul.sub-menu {left: 10px; top: 25px; opacity: 1;}
-					@include media(tablet){left: auto; top: 0; display: block; width: 100% !important;};
+					@include tablet(){left: auto; top: 0; display: block; width: 100% !important;};
 				}
 				.no-js &:last-child:hover ul.sub-menu {left: auto; right: 0;}
-				@include media(tablet){display: block; width: 100%; text-align: center;};
+				@include tablet(){display: block; width: 100%; text-align: center;};
 			}
 		}
-		@include media(tablet){display: none;};
+		@include tablet(){display: none;};
 	}
-	@include media(tablet){padding-top: 0; text-align: center;};
+	@include tablet(){padding-top: 0; text-align: center;};
 }
 
 //Row that contains event specific help: "Did you mean?", "Single result redirection", etc.
@@ -507,14 +507,14 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 #heroslidercon {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url($template_directory + "/images/phg/phg-nebula.jpg") fixed center center; background-size: cover; @include prefix((transition: all 0.5s));
 	.herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color($primary_color, 0.8); z-index: 0;}
 	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 90px; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
-		@include media(tablet){font-size: 60px;};
-		@include media(mobile){font-size: 48px;};
+		@include tablet(){font-size: 60px;};
+		@include mobile(){font-size: 48px;};
 	}
 	h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 32px; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
-		@include media(tablet){font-size: 24px;};
-		@include media(mobile){font-size: 18px;};
+		@include tablet(){font-size: 24px;};
+		@include mobile(){font-size: 18px;};
 	}
-	@include media(tablet){padding: 50px 0; overflow: hidden; background-size: cover;};
+	@include tablet(){padding: 50px 0; overflow: hidden; background-size: cover;};
 }
 
 #bigheadingcon {padding-top: 25px; padding-bottom: 15px; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
@@ -537,7 +537,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 
 .fullcontentcon {position: relative; margin-top: 30px;
-	@include media(mobile){margin-top: 15px;};
+	@include mobile(){margin-top: 15px;};
 }
 
 .row.multi-column-query {margin-bottom: 30px;}
@@ -591,12 +591,12 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 .entry-manage {font-size: 12px; margin-top: 15px; margin-bottom: 30px;}
 	.nebula-manage-edit {
-		@include media(mobile_landscape){display: block; text-align: center;};
+		@include mobile_landscape(){display: block; text-align: center;};
 	}
 	.post-edit,
 	.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;
-		@include media(mobile_landscape){float: none; display: block; text-align: center;};
+		@include mobile_landscape(){float: none; display: block; text-align: center;};
 	}
 
 #searchresults article,
@@ -666,25 +666,25 @@ a.resetfilters {font-size: 12px; color: $danger_color; opacity: 0;
 #about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;
 	.author-headshot {min-height: 100px; margin-bottom: 20px;
 		img {width: 100%; max-width: 200px; /* border-radius: 500px; */ @include prefix((transition: all 0.75s));}
-		@include media(tablet){text-align: center;};
+		@include tablet(){text-align: center;};
 	}
 	.author-name {display: inline-block; padding: 0;
-		@include media(mobile){display: block; padding-bottom: 15px;};
+		@include mobile(){display: block; padding-bottom: 15px;};
 	}
 	.author-location {white-space: nowrap;}
 	.author-social {float: right; margin-top: 17px;
-		@include media(mobile){margin-top: 0;};
+		@include mobile(){margin-top: 0;};
 	}
 	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: 12px;
 		i {margin-right: 2px;}
 	}
 	.author-jobtitle {
-		@include media(mobile_landscape){display: block;};
+		@include mobile_landscape(){display: block;};
 	}
 	.author-contact {float: right;
 		.author-email {white-space: nowrap; margin-right: 10px;}
 		.author-phonenumber {white-space: nowrap;}
-		@include media(mobile_landscape){float: none; display: block;};
+		@include mobile_landscape(){float: none; display: block;};
 	}
 }
 
@@ -693,7 +693,7 @@ h2.articles-by {padding-top: 0;}
 
 //Comments
 li.comment div.comment-meta {
-	@include media(mobile_landscape){display: block;};
+	@include mobile_landscape(){display: block;};
 }
 #nebulacommentswrapper {}
 	#disqus_thread {margin-top: 20px;}
@@ -735,7 +735,7 @@ li.comment div.comment-meta {
 		&.hover {@include background-color($primary_color, 0.25); color: $primary_color;}
 	}
 
-	.xoxo .sidebar-search {@include media(tablet){display: none;};}
+	.xoxo .sidebar-search {@include tablet(){display: none;};}
 
 //Nebula expandable sidebar subnav style defaults
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;
@@ -774,7 +774,7 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 // ===========================
 
 #footer {@include linear-gradient(to bottom, $primary_color, darken($primary_color, 15%));
-	@include media(tablet){padding-top: 0;};
+	@include tablet(){padding-top: 0;};
 }
 
 .twitterago {font-size: 12px; text-decoration: underline;}
@@ -789,7 +789,7 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 }
 
 .row.powerfootercon {padding-top: 20px; margin-bottom: 30px;
-	@include media(tablet){display: none;};
+	@include tablet(){display: none;};
 }
 	#powerfooter {position: relative; z-index: 1000;
 		ul {
@@ -799,24 +799,24 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 				&:last-child,
 				&.last-child {margin-right: 0; padding-right: 0;}
 				a {display: block; @include link-colors(#fff, #aaa); font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px dotted #fff;
-					@include media(tablet){border-bottom: none;};
+					@include tablet(){border-bottom: none;};
 				}
 				ul.sub-menu {margin: 0; padding: 5px 0;
 					li {display: block; margin: 0; padding: 0;
 						a {display: block; @include link-colors(#fff, #aaa); font-size: 12px; font-weight: normal; text-transform: none; margin-bottom: 0; border-bottom: none;}
 						ul.sub-menu {display: none;}
-						@include media(tablet){padding: 0 0 0 10px; border-left: 1px solid $secondary_color;};
+						@include tablet(){padding: 0 0 0 10px; border-left: 1px solid $secondary_color;};
 					}
-					@include media(tablet){padding: 5px 0 5px 35px;};
+					@include tablet(){padding: 5px 0 5px 35px;};
 				}
-				@include media(tablet){display: block; margin: 0; padding: 0; width: 100% !important;};
+				@include tablet(){display: block; margin: 0; padding: 0; width: 100% !important;};
 			}
 		}
 	}
 
 div.copyright {padding-top: 15px; @include background-color($dark_primary_color);
 	p {font-size: 12px; color: #fff;
-		@include media(tablet){font-size: 11px;};
+		@include tablet(){font-size: 11px;};
 	}
 	a {@include link-colors(#fff, #ccc);}
 }
@@ -824,7 +824,7 @@ div.copyright {padding-top: 15px; @include background-color($dark_primary_color)
 a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 
 .footer-search {float: right;
-	@include media(tablet){display: none;};
+	@include tablet(){display: none;};
 }
 
 /* Nebula Desktop Helper Styles */
@@ -887,7 +887,7 @@ body * {-webkit-animation-duration: 0.1s; -webkit-animation-name: fontfix; -webk
 @-ms-viewport {width: device-width;}
 
 //Print styles
-@media print {
+@include print(){
 	* {/* background: transparent !important;  */ color: #000 !important; box-shadow: none !important; text-shadow: none !important;}
 	a, a:visited {text-decoration: underline;}
 	/* .entry-content a[href]:after {content: " (" attr(href) ")";} */
@@ -899,4 +899,4 @@ body * {-webkit-animation-duration: 0.1s; -webkit-animation-name: fontfix; -webk
 	@page {margin: 0.5cm;}
 	p, h2, h3 {orphans: 3; widows: 3;}
 	h2, h3 {page-break-after: avoid;}
-}
+};

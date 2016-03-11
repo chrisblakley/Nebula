@@ -741,19 +741,19 @@
 
  .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column:first-child { width:33% !important; }
 
- @media only screen and  (max-width: 900px) and (min-width: 501px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column li { display:block; }
+ @media (max-width: 900px) and (min-width: 501px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column li { display:block; }
 
  }
 
- @media only screen and  (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:31% !important; }
+ @media (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:31% !important; }
 
  }
 
- @media only screen and  (max-width: 900px) and (min-width: 501px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:33% !important; float:left !important; }
+ @media (max-width: 900px) and (min-width: 501px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:33% !important; float:left !important; }
 
  }
 
- @media only screen and  (max-width: 500px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:100% !important; }
+ @media (max-width: 500px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:100% !important; }
 
  }
 
@@ -763,21 +763,21 @@
 
  .index-php .welcome-panel #phg-welcome #welcome-content .logocon a img { max-height:48px; width:auto; }
 
- @media only screen and  (max-width: 500px) { .index-php .welcome-panel #phg-welcome #welcome-content .logocon { display:none; }
+ @media (max-width: 500px) { .index-php .welcome-panel #phg-welcome #welcome-content .logocon { display:none; }
 
  }
 
  .index-php .welcome-panel #phg-welcome #welcome-content hr { margin:10px 0 0 -12px; border-bottom:none; border-top:1px solid #eee; width:5000px; }
 
- @media only screen and  (max-width: 1800px) and (min-width: 1500px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:67%; }
+ @media (max-width: 1800px) and (min-width: 1500px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:67%; }
 
  }
 
- @media only screen and  (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:50%; }
+ @media (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:50%; }
 
  }
 
- @media only screen and  (max-width: 1110px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:100%; }
+ @media (max-width: 1110px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:100%; }
 
  }
 
@@ -809,15 +809,15 @@
 
  .index-php .welcome-panel #phg-welcome #welcome-photo .js .jsinfo { bottom:-50px; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- @media only screen and  (max-width: 1800px) and (min-width: 1500px) { .index-php .welcome-panel #phg-welcome #welcome-photo { width:30%; }
+ @media (max-width: 1800px) and (min-width: 1500px) { .index-php .welcome-panel #phg-welcome #welcome-photo { width:30%; }
 
  }
 
- @media only screen and  (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-photo { width:45%; }
+ @media (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-photo { width:45%; }
 
  }
 
- @media only screen and  (max-width: 1110px) { .index-php .welcome-panel #phg-welcome #welcome-photo { display:none; }
+ @media (max-width: 1110px) { .index-php .welcome-panel #phg-welcome #welcome-photo { display:none; }
 
  }
 
@@ -825,7 +825,7 @@
 
  .appearance_page_nebula_options h2 .nav-tab.nav-tab-inactive { font-weight:400; }
 
- @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .form-table.dependent { display:block !important; }
+ @media (max-width: 500px) { .appearance_page_nebula_options .form-table.dependent { display:block !important; }
 
  }
 
@@ -833,7 +833,7 @@
 
  .appearance_page_nebula_options .form-table th { width:250px; }
 
- @media only screen and  (max-width: 900px) and (min-width: 501px) { .appearance_page_nebula_options .form-table th { width:100%; }
+ @media (max-width: 900px) and (min-width: 501px) { .appearance_page_nebula_options .form-table th { width:100%; }
 
  }
 
@@ -851,7 +851,7 @@
 
  .appearance_page_nebula_options input[type="text"],.appearance_page_nebula_options input[type="password"] { width:206px; font-size:12px; }
 
- @media only screen and  (max-width: 900px) and (min-width: 501px) { .appearance_page_nebula_options input[type="text"],.appearance_page_nebula_options input[type="password"] { width:100% !important; }
+ @media (max-width: 900px) and (min-width: 501px) { .appearance_page_nebula_options input[type="text"],.appearance_page_nebula_options input[type="password"] { width:100% !important; }
 
  }
 
@@ -861,11 +861,11 @@
 
  .appearance_page_nebula_options .mobiletitle { display:none; }
 
- @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .mobiletitle { display:block; }
+ @media (max-width: 500px) { .appearance_page_nebula_options .mobiletitle { display:block; }
 
  }
 
- @media only screen and  (max-width: 500px) { .appearance_page_nebula_options .nav-tab-wrapper { display:none; }
+ @media (max-width: 500px) { .appearance_page_nebula_options .nav-tab-wrapper { display:none; }
 
  }
 
@@ -1026,4 +1026,4 @@
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
 
-/* Processed on Wednesday, March 9, 2016 at 8:46am */
+/* Processed on Thursday, March 10, 2016 at 4:56pm */

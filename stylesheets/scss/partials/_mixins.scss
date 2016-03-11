@@ -44,12 +44,53 @@
 	background: nth(nth($colors, 1), 1); background: linear-gradient($direction, $colors);
 }
 
-//.element {color: red; @include media(tablet){color: orange;}; @include media(mobile){color: yellow;}; @include media(custom, "(max-width: 320px)"){color: green;};}
+//.element {@include widescreen(){background: red;};}
+@mixin widescreen(){
+	@media only screen and (min-width: 1400px){& {@content}}
+}
+//.element {@include tablet_landscape(){background: red;};}
+@mixin tablet_landscape(){
+	@media only screen and (max-width: 1023px){& {@content}}
+}
+//.element {@include tablet(){background: red;};}
+@mixin tablet(){
+	@media only screen and (max-width: 767px){& {@content}}
+}
+//.element {@include mobile_landscape(){background: red;};}
+@mixin mobile_landscape(){
+	@media only screen and (max-width: 668px){& {@content}}
+}
+//.element {@include mobile(){background: red;};}
+@mixin mobile(){
+	@media only screen and (max-width: 376px){& {@content}}
+}
+//.element {@include print(){background: red;};}
+@mixin print(){
+	@media only print {& {@content}}
+}
+//.element {@include media(mobile) {background: red;};}
+//.element {@include media(custom, "only screen and (max-width: 550px)") {background: red;};}
 @mixin media($group, $custom: ""){
-	@each $name, $rule in $media_queries {
-		@if $group == $name {
-			@media #{$rule} #{$custom} {& {@content}}
-		}
+	@if $group == "widescreen" {
+		@include widescreen(){& {@content}}
+	}
+	@if $group == "tablet_landscape" {
+		@include tablet_landscape(){& {@content}}
+	}
+	@if $group == "tablet" {
+		@include tablet(){& {@content}}
+	}
+	@if $group == "mobile_landscape" {
+		@include mobile_landscape(){& {@content}}
+	}
+	@if $group == "mobile" {
+		@include mobile(){& {@content}}
+	}
+	@if $group == "print" {
+		@include print(){& {@content}}
+	}
+	@if $group == "custom" {
+		@media #{$custom} {& {@content}}
 	}
 }
 
@@ -164,23 +205,6 @@
 @mixin nope($features...) { //modernizr alias
 	@include modernizr($features, $supports: false){@content;}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

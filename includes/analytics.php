@@ -268,10 +268,13 @@
 
 		//Add or remove session notes
 		function sessionNote(action, item){
-			if ( typeof sessionStorage['nebulaSession'] === 'undefined' || !nebula.session.notes ){
+			if ( typeof sessionStorage['nebulaSession'] === 'undefined' ){
 				nebula.session.notes = [];
 			} else {
 				nebula.session = JSON.parse(sessionStorage['nebulaSession']);
+				if ( !nebula.session.notes ){
+					nebula.session.notes = [];
+				}
 			}
 
 			if ( action == 'return' ){
@@ -285,9 +288,7 @@
 				return nebula.session.notes.join(', ');
 			}
 
-			item = item.replace(/"|%22/g, '');
-
-			itemIndex = nebula.session.notes.indexOf(item);
+			itemIndex = nebula.session.notes.indexOf(item.replace(/"|%22/g, ''));
 
 			if ( action == 'add' ){
 				if ( itemIndex < 0 ){
@@ -311,6 +312,14 @@
 		<img src="<?php echo ga_UTM_gif(); ?>" width="1" height="1" style="display: none;" /><?php //Track pageviews of users who disable JavaScript. ?>
 		<iframe class="hidden" src="<?php echo home_url(); ?>/?nonce=<?php global $nebula; echo $nebula['site']['ajax']['nonce']; ?>&js=false&id=<?php echo $post->ID; ?>" width="0" height="0" style="display: none; position: absolute;"></iframe><?php //Send "JavaScript Disabled" event. ?>
 	</noscript>
+<?php else: //If Tracking ID is empty: ?>
+	<script>
+		function ga(){return false;}
+		function gaCustomDimensions(){return false;}
+		function gaCustomMetrics(){return false;}
+		function localTimestamp(){return false;}
+		function sessionNote(){return false;}
+	</script>
 <?php endif; ?>
 
 

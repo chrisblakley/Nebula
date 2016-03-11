@@ -335,16 +335,6 @@ function nebula_users_status_init(){
 	}
 }
 
-//Set email content type to be HTML by default
-add_filter('wp_mail_content_type', 'nebula_email_content_type');
-function nebula_email_content_type(){
-    $override = apply_filters('pre_nebula_email_content_type', false);
-	if ( $override !== false ){return $override;}
-
-    return "text/html";
-}
-
-
 if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
 	//Remove the Activity metabox
 	add_action('wp_dashboard_setup', 'remove_activity_metabox');
