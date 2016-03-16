@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.8.11
+	Version: 3.8.16
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -591,12 +591,12 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 .entry-manage {font-size: 12px; margin-top: 15px; margin-bottom: 30px;}
 	.nebula-manage-edit {
-		@include mobile_landscape(){display: block; text-align: center;};
+		@include mobile(landscape){display: block; text-align: center;};
 	}
 	.post-edit,
 	.post-admin {display: inline-block; margin-right: 10px;}
 	.post-modified {float: right;
-		@include mobile_landscape(){float: none; display: block; text-align: center;};
+		@include mobile(landscape){float: none; display: block; text-align: center;};
 	}
 
 #searchresults article,
@@ -679,12 +679,12 @@ a.resetfilters {font-size: 12px; color: $danger_color; opacity: 0;
 		i {margin-right: 2px;}
 	}
 	.author-jobtitle {
-		@include mobile_landscape(){display: block;};
+		@include mobile(landscape){display: block;};
 	}
 	.author-contact {float: right;
 		.author-email {white-space: nowrap; margin-right: 10px;}
 		.author-phonenumber {white-space: nowrap;}
-		@include mobile_landscape(){float: none; display: block;};
+		@include mobile(landscape){float: none; display: block;};
 	}
 }
 
@@ -693,7 +693,7 @@ h2.articles-by {padding-top: 0;}
 
 //Comments
 li.comment div.comment-meta {
-	@include mobile_landscape(){display: block;};
+	@include mobile(landscape){display: block;};
 }
 #nebulacommentswrapper {}
 	#disqus_thread {margin-top: 20px;}

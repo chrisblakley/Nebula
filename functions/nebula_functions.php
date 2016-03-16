@@ -490,9 +490,9 @@ function nebula_post_date($icon=true, $linked=true, $day=true){
 	}
 
 	if ( $linked ){
-		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} else {
-		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . get_the_date('F') . ' ' . get_the_date('j') . ', ' . get_the_date('Y') . '</span></span>';
+		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . get_the_date('F j, Y') . '</span></span>';
 	}
 }
 

@@ -19,7 +19,7 @@
 <script>
 	jQuery(document).on('ready', function(){
 
-		jQuery('#animationselect').on('change', function(){
+		jQuery('#animationselect').on('change', function(){ //Enable/Disable the buttons to animate or reset
 			if ( jQuery('#animationselect').val() != '' ){
 				jQuery('#playanimation').removeClass('inactive').addClass('animate');
 				jQuery('#resetanimation').removeClass('inactive').addClass('animate');
@@ -33,7 +33,7 @@
 			if ( jQuery('#animationselect').val() != '' ){
 				jQuery('#animatethis').removeClass();
 				reflow(jQuery('#animatethis')); //Trigger a reflow so that animation can be repeated.
-				jQuery('#animatethis').addClass(jQuery('#animationselect').val());
+				jQuery('#animatethis').addClass(jQuery('#animationselect').val() + ' animate');
 			} else {
 				jQuery('#playanimation').addClass('nebula-shake active');
 			}

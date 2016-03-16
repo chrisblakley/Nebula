@@ -22,7 +22,7 @@ jQuery(document).on('ready', function(){
 		});
 
 		var address = jQuery('.maptoggle').text();
-		jQuery('.maptoggle').on('click tap touch', function(e){
+		jQuery('.maptoggle').on('click tap touch', function(){
 			if ( jQuery('.maininfo').hasClass('no-map') ){
 				jQuery('.maininfo').removeClass('no-map');
 				jQuery('.welcome-photo-bg').addClass('hidden');
@@ -326,7 +326,7 @@ function nebulaLoadCSS(url){
             var selStart = el.selectionStart;
             el.value = val.slice(0, selStart) + text + val.slice(el.selectionEnd);
             el.selectionEnd = el.selectionStart = selStart + text.length;
-        } else if ( typeof document.selection != "undefined" ){
+        } else if ( typeof document.selection !== "undefined" ){
             var textRange = document.selection.createRange();
             textRange.text = text;
             textRange.collapse(false);

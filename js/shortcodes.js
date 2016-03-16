@@ -51,7 +51,7 @@
 					text: 'Tag',
 					onclick : function(){
 						ed.focus();
-						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[code]' + shortcodeContent + '[/code]');
 					}
 				}, {

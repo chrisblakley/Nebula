@@ -179,7 +179,7 @@ function globalVariables(){
 //Detect notable aspects of the way the site was loaded.
 function windowTypeDetection(){
 	//Detect if loaded in an iframe
-	if ( window != window.parent ){
+	if ( window !== window.parent ){
 		nebula.dom.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') === -1 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -188,7 +188,7 @@ function windowTypeDetection(){
 		}
 		//Break out of the iframe when link is clicked.
 		jQuery('a').each(function(){
-			if ( jQuery(this).attr('href') != '#' ){
+			if ( jQuery(this).attr('href') !== '#' ){
 				jQuery(this).attr('target', '_parent');
 			}
 		});
@@ -250,7 +250,7 @@ function initSessionInfo(){
 			nebula.session.history.push('---Returned from: ' + document.referrer.replace(/"|%22/g, ''));
 		}
 
-		if ( nebula.session.history && window.location.href != nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
+		if ( nebula.session.history && window.location.href !== nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
 			nebula.session.history.push(window.location.href.replace(/"|%22/g, ''));
 		}
 	}
@@ -343,7 +343,7 @@ function debugInfo(){
 		debugInfoVal += '\n\n';
 	}
 
-	if ( typeof nebula.session.geolocation !== 'undefined' && nebula.session.geolocation != '' ){
+	if ( typeof nebula.session.geolocation !== 'undefined' && nebula.session.geolocation !== '' ){
 		if ( !nebula.session.geolocation.error ){
 			debugInfoVal += 'Geolocation: ' + nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude + '\n';
 			debugInfoVal += 'Accuracy: ' + nebula.session.geolocation.accuracy.meters + ' meters (' + nebula.session.geolocation.accuracy.miles + ' miles)\n';
@@ -774,7 +774,7 @@ function gaEventTracking(){
 	//Notable Downloads
 	nebula.dom.document.on('mousedown touch tap', ".notable a, a.notable", function(e){
 		var filePath = jQuery(this).attr('href');
-		if ( filePath != '#' ){
+		if ( filePath !== '#' ){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', gaCustomMetrics['notableDownloads'], 1);
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Notable Download'));
@@ -854,7 +854,7 @@ function gaEventTracking(){
 		}
 	});
 	jQuery('.btn:not(input)').on('click tap touch', function(e){
-		if ( e.target != this ){
+		if ( e.target !== this ){
 			return; //Only continue if the button is clicked, but not the <a> link.
 		}
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -1376,7 +1376,7 @@ function advancedSearch(start, eventObject){
 
 	jQuery('#advanced-search-results').html('');
 	i = ( start )? parseFloat(start) : 0;
-	if ( start != 0 ){
+	if ( start !== 0 ){
 		jQuery('#load-prev-events').removeClass('no-prev-events');
 	} else {
 		jQuery('#load-prev-events').addClass('no-prev-events');
@@ -1474,7 +1474,7 @@ function postSearch(posts){
 					return;
 				}
 			} else {
-				if ( postDateStamp != searchDateStartStamp ){
+				if ( postDateStamp !== searchDateStartStamp ){
 					delete tempFilteringObject[i]; //Date does not match exactly
 					return;
 				}
@@ -1513,15 +1513,15 @@ function postSearch(posts){
 		}
 
 		//Search Author
-		if ( jQuery('#advanced-search-author').val() != '' ){
-			if ( thisPost.author.id != jQuery('#advanced-search-author').val() ){
+		if ( jQuery('#advanced-search-author').val() !== '' ){
+			if ( thisPost.author.id !== jQuery('#advanced-search-author').val() ){
 				delete tempFilteringObject[i]; //Author ID does not match
 				return;
 			}
 		}
 
 		//Keyword Filter
-		if ( jQuery('#s').val() != '' ){
+		if ( jQuery('#s').val() !== '' ){
 			thisEventString = JSON.stringify(thisPost).toLowerCase();
 			thisEventString += '';
 			if ( thisEventString.indexOf(jQuery('#s').val().toLowerCase()) < 0 ){
@@ -1654,7 +1654,7 @@ function singleResultDrawer(){
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 function pageSuggestion(){
 	if ( nebula.dom.body.hasClass('search-no-results') || nebula.dom.body.hasClass('error404') ){
-		if ( nebula.site.options.nebula_cse_id != '' && nebula.site.options.nebula_google_browser_api_key != '' ){
+		if ( nebula.site.options.nebula_cse_id !== '' && nebula.site.options.nebula_google_browser_api_key !== '' ){
 			if ( get().length ){
 				var queryStrings = get();
 			} else {
@@ -1720,7 +1720,7 @@ function nebulaPrerenderListeners(){
 	//Internal link hovers
 	jQuery('a').hover(function(){
 		var oThis = jQuery(this);
-		if ( oThis.attr('href') != jQuery('link#prerender').attr('href') && oThis.attr('target') != '_blank' ){
+		if ( oThis.attr('href') !== jQuery('link#prerender').attr('href') && oThis.attr('target') !== '_blank' ){
 			var hoverLength = 500;
 			if ( jQuery('link#prerender').is('*') ){ //If prerender already exists, extend the hover time needed to update
 				hoverLength = 1000;
@@ -1748,7 +1748,7 @@ function nebulaPrerenderListeners(){
 	*/
 	if ( gaCustomDimensions['prerenderedLink'] && jQuery('link#prerender').is('*') ){ //If custom dimension is enabled, and prerender exists
 		jQuery(document).on('click touch tap', 'a', function(){
-			if ( jQuery(this).attr('target') != '_blank' && jQuery(this).attr('href') != '#' && jQuery(this).attr('href') != window.location.href ){ //If link is eligible to have been prerendered
+			if ( jQuery(this).attr('target') !== '_blank' && jQuery(this).attr('href') !== '#' && jQuery(this).attr('href') !== window.location.href ){ //If link is eligible to have been prerendered
 				var clickedLink =  jQuery(this).attr('href');
 				var prerenderedLink = jQuery('link#prerender').attr('href');
 
@@ -1758,7 +1758,7 @@ function nebulaPrerenderListeners(){
 					clickedLink = clickedLink.replace(/https?:/g, '');
 				}
 
-				var predictionResult = ( clickedLink == prerenderedLink )? 'Correct' : 'Incorrect';
+				var predictionResult = ( clickedLink === prerenderedLink )? 'Correct' : 'Incorrect';
 				ga('send', 'event', 'Prerender Prediction', predictionResult, clickedLink, {'nonInteraction': 1});
 			}
 		});
@@ -1868,7 +1868,7 @@ function cf7LocalStorage(){
 		var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));
 
 		//Fill textareas with localstorage data on load
-		if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal != 'undefined' && thisLocalStorageVal != '' ){
+		if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal !== 'undefined' && thisLocalStorageVal !== '' ){
 			if ( jQuery(this).val() === '' ){ //Don't overwrite a field that already has text in it!
 				jQuery(this).val(thisLocalStorageVal);
 			}
@@ -2308,7 +2308,7 @@ function addressLookup(lat, lng){
 	geocoder = new google.maps.Geocoder();
 	latlng = new google.maps.LatLng(lat, lng); //lat, lng
 	geocoder.geocode({'latLng': latlng}, function(results, status){
-		if ( status == google.maps.GeocoderStatus.OK ){
+		if ( status === google.maps.GeocoderStatus.OK ){
 			if ( results ){
 				nebula.session.geolocation.address = {
 					number: results[0].address_components[0].long_name,
@@ -2504,7 +2504,7 @@ function nebulaScrollTo(element, milliseconds){
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scrollto');
-			if ( scrollElement != '' ){
+			if ( scrollElement !== '' ){
 				jQuery('html, body').animate({
 					scrollTop: Math.floor(jQuery(scrollElement).offset().top-headerHtOffset+pOffset)
 				}, 500);
@@ -2562,7 +2562,7 @@ function reflow(selector){
 }
 
 //Handle repeated animations in a single function.
-function nebulaAnimate(selector){
+function nebulaAnimate(selector, animationClass){
 	if ( typeof selector === 'string' ){
 		var element = jQuery(selector);
 	} else if ( typeof selector === 'object' ) {
@@ -2571,9 +2571,13 @@ function nebulaAnimate(selector){
 		return false;
 	}
 
-	element.removeClass('animate');
+	if ( typeof animationClass === 'undefined' ){
+		animationClass = 'animate';
+	}
+
+	element.removeClass(animationClass);
 	reflow(element);
-	element.addClass('animate');
+	element.addClass(animationClass);
 }
 
 //Allows something to be called once per pageload.
@@ -2723,7 +2727,7 @@ function nebulaTimer(uniqueID, action, name){
 	}
 
 	//Can not lap or end a timing that has not started.
-	if ( action != 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
+	if ( action !== 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
 		return false;
 	}
 
@@ -2773,7 +2777,7 @@ function nebulaTimer(uniqueID, action, name){
 		}
 
 		//Prepare the current lap
-		if ( action != 'end' ){
+		if ( action !== 'end' ){
 			nebulaTimings[uniqueID].laps++;
 			if ( lapNumber > 0 ){
 				nebulaTimings[uniqueID].lap[lapNumber] = {};
@@ -3290,6 +3294,20 @@ function animationTriggers(){
 	nebula.dom.document.on('click tap touch', '.nebula-push.click', function(){
 		nebulaAnimate(jQuery(this));
 	});
+
+	nebula.dom.window.on('load', function(){
+		jQuery('.load').each(function(){
+			var oThis = jQuery(this);
+			animationDelay = oThis.attr('data-delay');
+			if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
+				nebulaAnimate(oThis, 'load-animate');
+			} else {
+				setTimeout(function(){
+					nebulaAnimate(oThis, 'load-animate');
+				}, animationDelay);
+			}
+		});
+	});
 }
 
 //Create desktop notifications
@@ -3424,7 +3442,7 @@ function eventFormNeedReset(){
 	//@TODO "Nebula" 0: This is not disappearing when reset link itself is clicked.
 	//Check all other inputs
 	jQuery('#advanced-search-form input').each(function(){
-		if ( (jQuery(this).attr('type') != 'checkbox' && jQuery(this).val() != '') || jQuery(this).prop("checked") ){
+		if ( (jQuery(this).attr('type') !== 'checkbox' && jQuery(this).val() !== '') || jQuery(this).prop("checked") ){
 			jQuery('.resetfilters').addClass('active');
 			hasValue = true;
 			return false;

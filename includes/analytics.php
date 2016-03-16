@@ -31,6 +31,7 @@
 			categories: '<?php echo nebula_option('nebula_cd_categories'); //Hit ?>',
 			tags: '<?php echo nebula_option('nebula_cd_tags'); //Hit ?>',
 			contactMethod: '<?php echo nebula_option('nebula_cd_contactmethod'); //Session ?>',
+			firstInteraction: '<?php echo nebula_option('nebula_cd_firstinteraction'); //User ?>',
 			geolocation: '<?php echo nebula_option('nebula_cd_geolocation'); //Session ?>',
 			geoAccuracy: '<?php echo nebula_option('nebula_cd_geoaccuracy'); //Session ?>',
 			geoName: '<?php echo nebula_option('nebula_cd_geoname'); //Session ?>',
@@ -49,7 +50,7 @@
 			weather: '<?php echo nebula_option('nebula_cd_weather'); //Hit ?>',
 			temperature: '<?php echo nebula_option('nebula_cd_temperature'); //Hit ?>',
 			publishYear: '<?php echo nebula_option('nebula_cd_publishyear'); //Hit ?>',
-			adBlocker: '<?php echo nebula_option('nebula_cd_adblocker'); //User ?>',
+			adBlocker: '<?php echo nebula_option('nebula_cd_adblocker'); //Session ?>',
 		}
 
 		gaCustomMetrics = {
@@ -218,6 +219,11 @@
 				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
 			}
 
+			//First visit timestamp
+			if ( nebula_option('nebula_cd_firstinteraction') && !empty($nebula['user']['sessions']['initial']) ){
+				echo 'ga("set", gaCustomDimensions["firstInteraction"], "' . time() . '");';
+			}
+
 			//Weather Conditions
 			if ( nebula_option('nebula_cd_weather') ){
 				echo 'ga("set", gaCustomDimensions["weather"], "' . nebula_weather('conditions') . '");';
@@ -252,7 +258,9 @@
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
-		ga('send', 'pageview'); //Sends pageview along with set dimensions.
+		<?php if ( nebula_option('nebula_ga_pageview') ): //Send pageview along with set dimensions. ?>
+			ga('send', 'pageview');
+		<?php endif; ?>
 
 		//Get local time string with timezone offset
 		function localTimestamp(){

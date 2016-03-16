@@ -396,7 +396,7 @@ if ( nebula_option('nebula_welcome_panel') ){
 	remove_action('welcome_panel','wp_welcome_panel');
 	add_action('welcome_panel','nebula_welcome_panel');
 	function nebula_welcome_panel(){
-		include(get_template_directory() . '/includes/welcome.php');
+		include(nebula_prefer_child_directory('/includes/welcome.php', false));
 	}
 } else {
 	remove_action('welcome_panel','wp_welcome_panel');

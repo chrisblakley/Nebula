@@ -165,6 +165,7 @@ function register_nebula_options(){
 
 		//Analytics Tab
 		'nebula_ga_tracking_id' => '',
+		'nebula_ga_pageview' => '1',
 		'nebula_ga_wpuserid' => 'disabled',
 		'nebula_ga_displayfeatures' => 'disabled',
 		'nebula_ga_linkid' => 'enabled',
@@ -176,6 +177,7 @@ function register_nebula_options(){
 		'nebula_cd_categories' => '',
 		'nebula_cd_tags' => '',
 		'nebula_cd_contactmethod' => '',
+		'nebula_cd_firstinteraction' => '',
 		'nebula_cd_geolocation' => '',
 		'nebula_cd_geoname' => '',
 		'nebula_cd_geoaccuracy' => '',
@@ -872,7 +874,9 @@ function nebula_options_page(){
 			        </th>
 					<td>
 						<input type="text" name="nebula_ga_tracking_id" value="<?php echo get_option('nebula_ga_tracking_id'); ?>" placeholder="UA-00000000-1" />
-						<p class="helper"><small>This will add the tracking number to the appropriate locations. If left empty, the tracking ID will need to be entered in <strong>functions.php</strong>.</small></p>
+						<br/>
+						<input type="checkbox" name="nebula_ga_pageview" value="1" <?php echo checked(1, get_option('nebula_ga_pageview'), false); ?> /> <label for="nebula_ga_pageview">Enable Pageview Send</label>
+						<p class="helper"><small>This will add the tracking number to the appropriate locations. If left empty, the tracking ID will need to be entered in <strong>functions.php</strong>.<br/>Unchecking the Pageview Send will disable the pageview, but still send event data.</small></p>
 					</td>
 		        </tr>
 
@@ -1092,6 +1096,14 @@ function nebula_options_page(){
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_timestamp" value="<?php echo get_option('nebula_cd_timestamp'); ?>" />
 						<p class="helper"><small>Adds a timestamp (in the user's local time) with timezone offset <em>(Ex: "1449332547 (2015/12/05 11:22:26.886 UTC-05:00)")</em>. <em>Can be compared to the server time stored in the Session ID.</em> <strong>Scope: Hit</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">First Interaction&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_firstinteraction" value="<?php echo get_option('nebula_cd_firstinteraction'); ?>" />
+						<p class="helper"><small>Stores a timestamp for the first time the user visited the site.</em> <strong>Scope: User</strong></small></p>
 					</td>
 		        </tr>
 

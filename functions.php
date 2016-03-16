@@ -160,8 +160,9 @@ function register_nebula_scripts(){
 	if ( $_COOKIE['nebulaUser'] && json_decode($_COOKIE['nebulaUser'], true) ){ //If user cookie exists and is valid JSON
 		$nebula['user'] = json_decode($_COOKIE['nebulaUser'], true); //Replace nebula.user with cookie data
 
-		if ( session_id() == '' || !isset($_SESSION) ){ //If it is a new session?
+		if ( session_id() == '' || !isset($_SESSION) ){ //If it is a new session
 			$nebula['user']['sessions'] = array(
+				'initial' => true,
 				'first' => $nebula['user']['sessions']['first'], //is this right? not time()?
 				'last' => $nebula['user']['sessions']['current'],
 				'current' => time(),
@@ -169,6 +170,7 @@ function register_nebula_scripts(){
 			);
 		} else { //Else it is an existing session?
 			$nebula['user']['sessions']['current'] = time();
+			$nebula['user']['sessions']['initial'] = false;
 		}
 	} else {
 		$nebula['user'] = array(
@@ -176,6 +178,7 @@ function register_nebula_scripts(){
 			'id' => get_current_user_id(), //Never use this for security checks!
 			'role' => $user_info->roles[0], //Never use this for security checks!
 			'sessions' => array(
+				'initial' => true,
 				'first' => time(),
 				'last' => false,
 				'current' => time(),

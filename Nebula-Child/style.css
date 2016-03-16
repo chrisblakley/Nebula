@@ -47,7 +47,7 @@
 
  .lte-ie9 .nebulashadow.inner-bottom,.lte-ie9 .nebulashadow.above { transform:none; filter:-; -ms-filter:-; display:none; }
 
- .no-js..lte-ie9 .nebulashadow.inner-bottom,.no-js..lte-ie9 .nebulashadow.above { display:none; visibility:hidden; opacity:0; }
+ .no-js .lte-ie9 .nebulashadow.inner-bottom,.no-js .lte-ie9 .nebulashadow.above { display:none; visibility:hidden; opacity:0; }
 
  .nebulaframe { position:relative; padding:5px; background:#fff; border:1px solid #aaa; /* &.animate:hover:after {background-position-y: -24px;} */ }
 
@@ -55,7 +55,7 @@
 
  .nebulaframe.bulging:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.buldging:after { content:'You spelled "bulging" wrong.'; display:block; background:red; color:#fff; text-align:center; width:100%; background:none; }
+ .nebulaframe.buldging:after { content:'You spelled "bulging" wrong.'; display:block; color:#fff; text-align:center; width:100%; background:none; }
 
  .nebulaframe.curling:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
@@ -419,77 +419,79 @@
 
  }
 
- .nebula-fade-out { -webkit-animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-out.animate { -webkit-animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out { 0% { opacity:1; }
 
- 100% { opacity:0; }
+ 100% { opacity:0; pointer-events:none; }
 
  }
 
  @keyframes nebula-fade-out { 0% { opacity:1; }
 
- 100% { opacity:0; }
+ 100% { opacity:0; pointer-events:none; }
 
  }
 
- .nebula-fade-out-up { -webkit-animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-out-up.animate { -webkit-animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-up { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(0, -40px, 0); }
+ 100% { opacity:0; transform:translate3d(0, -40px, 0); pointer-events:none; }
 
  }
 
  @keyframes nebula-fade-out-up { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(0, -40px, 0); }
+ 100% { opacity:0; transform:translate3d(0, -40px, 0); pointer-events:none; }
 
  }
 
- .nebula-fade-out-down { -webkit-animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-out-down.animate { -webkit-animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-down { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(0, 40px, 0); }
+ 100% { opacity:0; transform:translate3d(0, 40px, 0); pointer-events:none; }
 
  }
 
  @keyframes nebula-fade-out-down { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(0, 40px, 0); }
+ 100% { opacity:0; transform:translate3d(0, 40px, 0); pointer-events:none; }
 
  }
 
- .nebula-fade-out-left { -webkit-animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-out-left.animate { -webkit-animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-left { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(-40px, 0, 0); }
+ 100% { opacity:0; transform:translate3d(-40px, 0, 0); pointer-events:none; }
 
  }
 
  @keyframes nebula-fade-out-left { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(-40px, 0, 0); }
+ 100% { opacity:0; transform:translate3d(-40px, 0, 0); pointer-events:none; }
 
  }
 
- .nebula-fade-out-right { -webkit-animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-out-right.animate { -webkit-animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-right { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(40px, 0, 0); }
+ 100% { opacity:0; transform:translate3d(40px, 0, 0); pointer-events:none; }
 
  }
 
  @keyframes nebula-fade-out-right { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
- 100% { opacity:0; transform:translate3d(40px, 0, 0); }
+ 100% { opacity:0; transform:translate3d(40px, 0, 0); pointer-events:none; }
 
  }
 
- .nebula-fade-in { -webkit-animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-in { opacity:0; pointer-events:none; }
+
+ .nebula-fade-in.animate,.nebula-fade-in.load-animate { -webkit-animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in { 0% { display:block; opacity:0; }
 
@@ -503,7 +505,9 @@
 
  }
 
- .nebula-fade-in-up { -webkit-animation:nebula-fade-in-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-in-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-in-up { opacity:0; pointer-events:none; }
+
+ .nebula-fade-in-up.animate,.nebula-fade-in-up.load-animate { -webkit-animation:nebula-fade-in-up 1.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; animation:nebula-fade-in-up 1.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-up { 0% { display:block; opacity:0; transform:translate3d(0, 40px, 0); }
 
@@ -517,7 +521,9 @@
 
  }
 
- .nebula-fade-in-down { -webkit-animation:nebula-fade-in-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-in-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-in-down { opacity:0; pointer-events:none; }
+
+ .nebula-fade-in-down.animate,.nebula-fade-in-down.load-animate { -webkit-animation:nebula-fade-in-down 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-down 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-down { 0% { display:block; opacity:0; transform:translate3d(0, -40px, 0); }
 
@@ -531,7 +537,9 @@
 
  }
 
- .nebula-fade-in-left { -webkit-animation:nebula-fade-in-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-in-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-in-left { opacity:0; pointer-events:none; }
+
+ .nebula-fade-in-left.animate,.nebula-fade-in-left.load-animate { -webkit-animation:nebula-fade-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-left { 0% { display:block; opacity:0; transform:translate3d(-40px, 0, 0); }
 
@@ -545,7 +553,9 @@
 
  }
 
- .nebula-fade-in-right { -webkit-animation:nebula-fade-in-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-fade-in-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-fade-in-right { opacity:0; pointer-events:none; }
+
+ .nebula-fade-in-right.animate,.nebula-fade-in-right.load-animate { -webkit-animation:nebula-fade-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-right { 0% { display:block; opacity:0; transform:translate3d(40px, 0, 0); }
 
@@ -559,13 +569,13 @@
 
  }
 
- .nebula-zoom-out { -webkit-animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-zoom-out.animate { -webkit-animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-zoom-out { 0% { transform:scale3d(1, 1, 1); opacity:1; }
 
  50% { opacity:1; }
 
- 100% { transform:scale3d(0, 0, 0); opacity:0; }
+ 100% { transform:scale3d(0, 0, 0); opacity:0; pointer-events:none; }
 
  }
 
@@ -573,11 +583,13 @@
 
  50% { opacity:1; }
 
- 100% { transform:scale3d(0, 0, 0); opacity:0; }
+ 100% { transform:scale3d(0, 0, 0); opacity:0; pointer-events:none; }
 
  }
 
- .nebula-zoom-in { -webkit-animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-zoom-in { opacity:0; pointer-events:none; }
+
+ .nebula-zoom-in.animate,.nebula-zoom-in.load-animate { -webkit-animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-zoom-in { 0% { display:block; opacity:0; transform:scale3d(0, 0, 0); }
 
@@ -599,27 +611,33 @@
 
  }
 
- .nebula-stretch-in { -webkit-animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-stretch-in { opacity:0; pointer-events:none; }
 
- @-webkit-keyframes nebula-stretch-in { 0% { display:block; transform:scale3d(0, 1, 1); }
+ .nebula-stretch-in.animate,.nebula-stretch-in.load-animate { -webkit-animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
- 100% { transform:scale3d(1, 1, 1); }
+ @-webkit-keyframes nebula-stretch-in { 0% { display:block; transform:scale3d(0, 1, 1); opacity:0; }
 
- }
-
- @keyframes nebula-stretch-in { 0% { display:block; transform:scale3d(0, 1, 1); }
+ 25% { opacity:1; }
 
  100% { transform:scale3d(1, 1, 1); }
 
  }
 
- .nebula-stretch-out { -webkit-animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ @keyframes nebula-stretch-in { 0% { display:block; transform:scale3d(0, 1, 1); opacity:0; }
+
+ 25% { opacity:1; }
+
+ 100% { transform:scale3d(1, 1, 1); }
+
+ }
+
+ .nebula-stretch-out.animate { -webkit-animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-stretch-out { 0% { transform:scale3d(1, 1, 1); }
 
  66% { opacity:1; }
 
- 100% { transform:scale3d(0, 1, 1); opacity:0; }
+ 100% { transform:scale3d(0, 1, 1); opacity:0; pointer-events:none; }
 
  }
 
@@ -627,11 +645,13 @@
 
  66% { opacity:1; }
 
- 100% { transform:scale3d(0, 1, 1); opacity:0; }
+ 100% { transform:scale3d(0, 1, 1); opacity:0; pointer-events:none; }
 
  }
 
- .nebula-flip-in-x { -webkit-animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-flip-in-x { opacity:0; pointer-events:none; }
+
+ .nebula-flip-in-x.animate,.nebula-flip-in-x.load-animate { -webkit-animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @keyframes nebula-flip-in-x { 0% { transform:perspective(400px) rotate3d(1, 0, 0, 90deg); opacity:0; }
 
@@ -645,7 +665,9 @@
 
  }
 
- .nebula-flip-in-y { -webkit-animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-flip-in-y { opacity:0; pointer-events:none; }
+
+ .nebula-flip-in-y.animate,.nebula-flip-in-y.load-animate { -webkit-animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @keyframes nebula-flip-in-y { 0% { transform:perspective(400px) rotate3d(0, 1, 0, 90deg); opacity:0; }
 
@@ -659,23 +681,23 @@
 
  }
 
- .nebula-flip-out-x { -webkit-animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-flip-out-x.animate { -webkit-animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @keyframes nebula-flip-out-x { 0% { transform:perspective(400px); }
 
  30% { transform:perspective(400px) rotate3d(1, 0, 0, -2deg); opacity:1; }
 
- 100% { transform:perspective(400px) rotate3d(1, 0, 0, 90deg); opacity:0; }
+ 100% { transform:perspective(400px) rotate3d(1, 0, 0, 90deg); opacity:0; pointer-events:none; }
 
  }
 
- .nebula-flip-out-y { -webkit-animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955); -webkit-animation-fill-mode:forwards; animation-fill-mode:forwards; }
+ .nebula-flip-out-y.animate { -webkit-animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @keyframes nebula-flip-out-y { 0% { transform:perspective(400px); }
 
  30% { transform:perspective(400px) rotate3d(0, 1, 0, -2deg); opacity:1; }
 
- 100% { transform:perspective(400px) rotate3d(0, 1, 0, 90deg); opacity:0; }
+ 100% { transform:perspective(400px) rotate3d(0, 1, 0, 90deg); opacity:0; pointer-events:none; }
 
  }
 
@@ -729,6 +751,10 @@
 
  }
 
+ .nebula-grow { -webkit-transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); -moz-transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); -ms-transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); -o-transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); }
+
+ .nebula-grow:hover { transform:scale3d(1.2, 1.2, 1.2); }
+
  h1,h2,h3,h4,h5,h6,body,p,.btn,.skiplink,.field input,.field input[type="*"],.field textarea,.prepend .adjoined,.append .adjoined,.picker,.alert,.tab-nav > li > li > a,.tab-nav > li > a { font-family:'Open Sans', sans-serif; }
 
  h1,h2,h3,h4,h5,h6 { color:#444; }
@@ -740,4 +766,4 @@
  a:hover,a.hover { color:#95d600; }
 
 
-/* Processed on Friday, March 11, 2016 at 9:29am */
+/* Processed on Wednesday, March 16, 2016 at 4:11pm */
