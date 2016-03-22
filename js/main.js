@@ -343,7 +343,7 @@ function debugInfo(){
 		debugInfoVal += '\n\n';
 	}
 
-	if ( typeof nebula.session.geolocation !== 'undefined' && nebula.session.geolocation !== '' ){
+	if ( typeof nebula.session.geolocation !== 'undefined' && typeof nebula.session.geolocation.coordinates !== 'undefined' && nebula.session.geolocation !== '' ){
 		if ( !nebula.session.geolocation.error ){
 			debugInfoVal += 'Geolocation: ' + nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude + '\n';
 			debugInfoVal += 'Accuracy: ' + nebula.session.geolocation.accuracy.meters + ' meters (' + nebula.session.geolocation.accuracy.miles + ' miles)\n';

@@ -47,6 +47,7 @@ $easings: (
 	easeOutExpo: 	"0.190, 1.000, 0.220, 1.000",
 	easeOutCirc: 	"0.075, 0.820, 0.165, 1.000",
 	easeOutBack: 	"0.175, 0.885, 0.320, 1.275",
+	easeOutBackBig:	"0.175, 0.885, 0.220, 2.000", //Useful for accentuating small values.
 
 	swing: 			"0.455, 0.005, 0.550, 0.950",
 	easeInOutQuad: 	"0.455, 0.030, 0.515, 0.955",

@@ -2138,6 +2138,11 @@ function youtube_meta($videoID, $meta=''){
 	$override = apply_filters('pre_youtube_meta', false, $videoID, $meta);
 	if ( $override !== false ){return $override;}
 
+	if ( !nebula_option('nebula_google_server_api_key') ){
+		trigger_error('A Google server API key is required to use the youtube_meta function.', E_USER_WARNING);
+		return false;
+	}
+
 	switch ( $meta ){
 		case 'origin':
 			return nebula_url_components('basedomain');

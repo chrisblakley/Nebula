@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.8.16
+	Version: 3.8.22
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -64,14 +64,14 @@ a {@include link-colors($primary_color, $secondary_color); @include prefix((tran
 	.success {color: $success_color;}
 }
 
-input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font-size: 12px; background: #eee url($template_directory + "/images/search.png") no-repeat 6px center; border: solid 1px #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+input.nebula-search {max-width: 30px; padding: 0 6px; color: transparent; font-size: 12px; background: #eee url($template_directory + "/images/search.png") no-repeat 6px center; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
 	&:hover,
 	&.hover {background-color: #fff;}
 	&:focus,
 	&.focus {max-width: 210px; padding-left: 25px; background-color: #fff; color: $text_color; cursor: auto;}
 	&.open {max-width: 100%; padding-left: 25px; background-color: #fff; color: $text_color; cursor: auto;}
 	&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), .5);}
-	.svg & {background: #eee url($template_directory + "/images/search.svg") no-repeat 6px center;}
+	.svg & {background: #eee url($template_directory + "/images/search.svg") no-repeat 6px center; background-size: auto 80%;}
 }
 	//Note: Can not use nested SCSS selectors on placeholder pseudos!
 	input.nebula-search::-webkit-search-decoration,
@@ -83,12 +83,13 @@ input.nebula-search {max-width: 15px; padding: 1px 6px; color: transparent; font
 	input.nebula-search.focus:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
 	input.nebula-search.focus::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
 
+//@TODO "Nebula" 0: Consider making this the default for .nebula-search
 form.nebula-search-iconable {position: relative; display: inline-block; margin: 0;
 	input.nebula-search {background: #eee;
 		.lte-ie9 &,
 		.ie10 & {background: #eee url($template_directory + "/images/search.png") no-repeat 6px center;}
 	}
-	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 3px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: 14px; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: 14px; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit);}
 }
 
@@ -295,7 +296,7 @@ input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @inclu
 div#nebula-hero-formcon {@include tablet(){display: none !important;};}
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
 	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: 16px; line-height: 16px;}
-	input {display: block; width: 100%; max-width: 558px; font-size: 18px; line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
+	input {display: block; width: 100%; font-size: 18px; line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
 		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 		@include tablet(){width: 92%; max-width: 650px;};
 		@include mobile(){width: 90%; max-width: 300px;};
@@ -408,21 +409,21 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Top row that appears at desktop sizes.
-#secondarynavcon {position: relative; @include background-color($dark_primary_color); z-index: 6000; @include prefix((transition: all 0.5s));
+#secondarynavcon {position: relative; min-height: 30px; @include background-color($dark_primary_color); z-index: 6000; @include prefix((transition: all 0.5s));
 	#secondarynav {position: relative; z-index: 2000;
 		ul {float: right; margin: 0;
 			li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
 				&:last-child,
 				&.last-child {margin-right: 0;}
-				a {display: block; @include link-colors(#fff, #ccc); font-size: 11px;}
-				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0,0,0,0.05); @include prefix((transition: opacity 0.25s));
+				a {display: block; @include link-colors(#fff, #ccc); font-size: 11px; line-height: 30px;}
+				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05); @include prefix((transition: opacity 0.25s));
 					li.menu-item {display: block; margin-right: auto; padding: 0;
 						a {display: block; @include link-colors($text_color, $primary_color);  font-size: 11px;}
 					}
 				}
 				&:hover ul.sub-menu,
 				&.hover ul.sub-menu {left: 5px; opacity: 1;}
-				input.nebula-search {font-size: 11px; @include background-color(#fff, 0.8);}
+				input.nebula-search {height: 22px; font-size: 11px; line-height: 22px; @include background-color(#fff, 0.8);}
 			}
 		}
 	}
@@ -463,7 +464,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 				a {display: block; padding-bottom: 8px;
 					@include tablet(){min-height: 44px; line-height: 44px;};
 				}
-				ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; @include prefix((transition: top 0.25s, opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
+				ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; @include prefix((transition: top 0.35s easing(easeOutBackBig), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
 					.no-js & {width: 400px;}
 					li {display: block; margin: 0;
 						a {display: block; padding: 5px;
