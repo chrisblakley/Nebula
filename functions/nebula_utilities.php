@@ -277,26 +277,27 @@ function nebula_retarget($category=false, $data=null, $strict=true, $return=fals
 				if ( !$return ){ //If returning boolean
 					if ( $strict ){ //If checking for exact match
 						return in_array_r($data, $nebula['user']['conversions'][$category]);
-					} else { //Else search for string position
-						$data_string = implode(' ', $nebula['user']['conversions'][$category]);
-						if ( strpos(strtolower($data_string), strtolower($data)) ){
-							return true;
-						}
 					}
-				} else { //Else returning the value
-					if ( in_array_r($data, $nebula['user']['conversions'][$category]) ){
-						return $nebula['user']['conversions'][$category][$data];
+
+					//Else search for string position
+					$data_string = implode(' ', $nebula['user']['conversions'][$category]);
+					if ( strpos(strtolower($data_string), strtolower($data)) ){
+						return true;
 					}
 				}
-			}
-		} else { //If no specific data is requested (check if the category itself exists)
-			if ( !$return ){ //If returning boolean
-				return array_key_exists($category, $nebula['user']['conversions']);
-			} else { //Else returning the value
-				if ( array_key_exists($category, $nebula['user']['conversions']) ){
-					return $nebula['user']['conversions'][$category];
+				//Else returning the value
+				if ( in_array_r($data, $nebula['user']['conversions'][$category]) ){
+					return $nebula['user']['conversions'][$category][$data];
 				}
 			}
+		}
+		//If no specific data is requested (check if the category itself exists)
+		if ( !$return ){ //If returning boolean
+			return array_key_exists($category, $nebula['user']['conversions']);
+		}
+		//Else returning the value
+		if ( array_key_exists($category, $nebula['user']['conversions']) ){
+			return $nebula['user']['conversions'][$category];
 		}
 	}
 	return false;
@@ -319,9 +320,8 @@ function nebula_user_last_online($id){
 	$logged_in_users = get_transient('users_status');
 	if ( isset($logged_in_users[$id]['last']) ){
 		return $logged_in_users[$id]['last'];
-	} else {
-		return false;
 	}
+	return false;
 }
 
 //Get a count of online users, or an array of online user IDs.
@@ -353,9 +353,8 @@ function nebula_user_single_concurrent($id){
 	$logged_in_users = get_transient('users_status');
 	if ( isset($logged_in_users[$id]['unique']) ){
 		return count($logged_in_users[$id]['unique']);
-	} else {
-		return 0;
 	}
+	return 0;
 }
 
 //Check if the current IP address matches any of the dev IP address from Nebula Options
@@ -445,12 +444,10 @@ function is_debug($strict=false){
 		if ( !empty($strict) ){
 			if ( is_dev($very_strict) || is_client($very_strict) ){
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return true;
+			return false;
 		}
+		return true;
 	}
 	return false;
 }
@@ -465,12 +462,10 @@ function is_site_live(){
 	if ( nebula_option('nebula_hostnames') ){
 		if ( strpos(get_option('nebula_hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
 			return true;
-		} else {
-			return false;
 		}
-	} else {
-		return true;
+		return false;
 	}
+	return true;
 }
 
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
@@ -705,9 +700,8 @@ function wp_browser_detect(){
     	return 'Chrome';
     } elseif ( $is_IE ){
     	return 'IE';
-    } else {
-    	return 'Unknown Browser';
     }
+    return 'Unknown Browser';
 }
 
 //Text limiter by words
@@ -718,7 +712,7 @@ function string_limit_words($string, $word_limit){
 	$limited[0] = $string;
 	$limited[1] = 0;
 	$words = explode(' ', $string, ($word_limit + 1));
-	if(count($words) > $word_limit){
+	if ( count($words) > $word_limit ){
 		array_pop($words);
 		$limited[0] = implode(' ', $words);
 		$limited[1] = 1;
@@ -947,9 +941,8 @@ function placehold_it($width=800, $height=600, $text=false, $color=false){
 		$text = ( $text )? '?text=' . str_replace(' ', '+', $text) : '';
 		$color = ( $color )? str_replace('#', '', $color) . '/' : '';
 		return 'https://placehold.it/' . $width . 'x' . $height . '/' . $color . $text;
-	} else {
-		return get_template_directory_uri() . '/images/x.png'; //Placehold.it is not available.
 	}
+	return get_template_directory_uri() . '/images/x.png'; //Placehold.it is not available.
 }
 
 //Automatically convert HEX colors to RGB.
@@ -995,9 +988,8 @@ function nebula_color_brightness($hex){
 		$hex_b = hexdec(substr($hex, 4, 2));
 
 		return (($hex_r*299)+($hex_g*587)+($hex_b*114))/1000;
-	} else {
-		return 256;
 	}
+	return 256;
 }
 
 //Compare values using passed parameters
@@ -1088,16 +1080,14 @@ function nebula_prefer_child_directory($directory='', $uri=true){
 	if ( file_exists(get_stylesheet_directory() . $directory) ){
 		if ( $uri ){
 			return get_stylesheet_directory_uri() . $directory;
-		} else {
-			return get_stylesheet_directory() . $directory;
 		}
-	} else {
-		if ( $uri ){
-			return get_template_directory_uri() . $directory;
-		} else {
-			return get_template_directory() . $directory;
-		}
+		return get_stylesheet_directory() . $directory;
 	}
+
+	if ( $uri ){
+		return get_template_directory_uri() . $directory;
+	}
+	return get_template_directory() . $directory;
 }
 
 

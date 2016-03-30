@@ -1170,7 +1170,7 @@ function nebula_autocomplete_search(){
 	}
 
 	//Standard WP search (does not include custom fields)
-	$q1 = new WP_Query(array(
+	$query1 = new WP_Query(array(
 	    'post_type' => array('any'),
 		'post_status' => 'publish',
 		'posts_per_page' => 4,
@@ -1178,7 +1178,7 @@ function nebula_autocomplete_search(){
 	));
 
 	//Search custom fields
-	$q2 = new WP_Query(array(
+	$query2 = new WP_Query(array(
 	    'post_type' => array('any'),
 		'post_status' => 'publish',
 		'posts_per_page' => 4,
@@ -1192,7 +1192,7 @@ function nebula_autocomplete_search(){
 
 	//Combine the above queries
 	$autocomplete_query = new WP_Query();
-	$autocomplete_query->posts = array_unique(array_merge($q1->posts, $q2->posts), SORT_REGULAR);
+	$autocomplete_query->posts = array_unique(array_merge($query1->posts, $query2->posts), SORT_REGULAR);
 	$autocomplete_query->post_count = count($autocomplete_query->posts);
 
 	//Loop through the posts
@@ -1465,7 +1465,6 @@ function nebula_advanced_search(){
 			'custom' => $custom_fields,
 		);
 	} //END $posts foreach
-
 
 	//@TODO: if going to sort by text:
 /*

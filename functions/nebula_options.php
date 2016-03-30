@@ -15,25 +15,21 @@ function nebula_option($option, $operand=false){
 	if ( empty($data) ){
 		if ( $requested_dropdown ){
 			return false;
-		} else {
-			return $operand;
 		}
+		return $operand;
 	} else {
 		if ( $requested_dropdown ){ //If $operand suggests a dropdown option, match $data against it.
 			if ( strtolower($data) == strtolower($operand) ){
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} elseif ( $data_dropdown ){ //If $operand is a default fallback, but $data suggests a dropdown option.
 			if ( strtolower($data) == 'enabled' ){
 				return true;
-			} else {
-				return $operand;
 			}
-		} else {
-			return $data;
+			return $operand;
 		}
+		return $data;
 	}
 }
 
@@ -69,9 +65,8 @@ function nebula_google_font_option(){
 		if ( $google_font_contents !== false ){
 			return $google_font;
 		}
-	} else {
-		return 'https://fonts.googleapis.com/css?family=Open+Sans:400,800';
 	}
+	return 'https://fonts.googleapis.com/css?family=Open+Sans:400,800';
 }
 
 //Initialize the Nebula Submenu
@@ -143,6 +138,8 @@ function register_nebula_options(){
 
 		//Functions Tab
 		'nebula_wireframing' => 'disabled',
+		'nebula_wireframe_theme' => '',
+		'nebula_production_theme' => '',
 		'nebula_admin_bar' => 'enabled',
 		'nebula_admin_notices' => 'enabled',
 		'nebula_author_bios' => 'disabled',
@@ -262,7 +259,7 @@ function nebula_options_page(){
 				return false;
 			});
 
-			jQuery('.nav-tab').on('click', function(){
+			jQuery('.nav-tab').on('click tap touch', function(){
 				var tabID = jQuery(this).attr('id');
 				jQuery('.nav-tab-active').removeClass('nav-tab-active').addClass('nav-tab-inactive');
 				jQuery('#' + tabID).removeClass('nav-tab-inactive').addClass('nav-tab-active');
@@ -275,6 +272,18 @@ function nebula_options_page(){
 				});
 				return false;
 			});
+
+			wireframeModeToggle();
+			jQuery('#wireframingmodeselect').on('change', function(){
+				wireframeModeToggle();
+			});
+			function wireframeModeToggle(){
+				if ( jQuery('#wireframingmodeselect').val() === 'enabled' ){
+					jQuery('.wireframerequired').css('opacity', '1').find('input').css('pointer-events', 'all');
+				} else {
+					jQuery('.wireframerequired').css('opacity', '0.5').find('input').css('pointer-events', 'none');
+				}
+			}
 
 			//Pull content from full meta tag HTML (Google Webmaster Tools)
 			jQuery('#nebula_google_webmaster_tools_verification').on('paste change blur', function(){
@@ -572,22 +581,41 @@ function nebula_options_page(){
 			<table class="form-table dependent functions" style="display: none;">
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
-						<h3>Front-End</h3>
+						<h3>Wireframing</h3>
 					</td>
 		        </tr>
-
-		        <tr class="short" valign="top">
+				<tr class="short" valign="top">
 		        	<th scope="row">Wireframe Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select name="nebula_wireframing">
+						<select id="wireframingmodeselect" name="nebula_wireframing">
 							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', get_option('nebula_wireframing')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_wireframing')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>When prototyping, enable this setting to use the greyscale stylesheet. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>When prototyping, enable this setting to use the greyscale stylesheet. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+		        <tr class="short wireframerequired" valign="top">
+		        	<th scope="row">Wireframe Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="wireframetheme" type="text" name="nebula_wireframe_theme" value="<?php echo get_option('nebula_wireframe_theme'); ?>" />
+						<p class="helper"><small>The directory name of the wireframe theme.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short wireframerequired" valign="top">
+		        	<th scope="row">Production Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input id="productiontheme" type="text" name="nebula_production_theme" value="<?php echo get_option('nebula_production_theme'); ?>" />
+						<p class="helper"><small>The directory name of the production theme. This theme will become the live site.</small></p>
 					</td>
 		        </tr>
 
+
+				<tr valign="top">
+					<td colspan="2" style="padding-left: 0; padding-right: 0;">
+						<h3>Front-End</h3>
+					</td>
+		        </tr>
 				<tr class="short" valign="top">
 		        	<th scope="row">Author Bios&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>

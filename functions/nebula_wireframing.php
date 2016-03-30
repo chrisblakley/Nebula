@@ -8,11 +8,39 @@
 	<?php fpo_component_end(); ?>
 */
 
+
+
 if ( nebula_option('nebula_wireframing', 'enabled') ){
+	add_action('wp_enqueue_scripts', 'enqueue_nebula_wireframing');
+	function enqueue_nebula_wireframing(){
+		wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
+		nebula_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', null, array('nebula-main'), null, true);
+
+		wp_enqueue_style('nebula-wireframing');
+		wp_enqueue_script('nebula-wireframing');
+	}
+
+	//Set up wireframe redirect based on ?wireframe query string.
+	if ( is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+		$mt_settings = get_option('jr_mt_settings');
+		if ( !isset($mt_settings['query']['wireframe']) ){ //If wireframe setting has not been set yet, set it.
+			$mt_settings['query'] = array(
+				'wireframe' => array(
+					'true' => get_option('nebula_wireframe_theme'), //Wireframe
+					'false' => get_option('nebula_production_theme') //Production
+				),
+			);
+			$mt_settings['remember'] = array('query' => array('wireframe' => array('true' => true)));
+			$mt_settings['override'] = array('query' => array('wireframe' => array('false' => true)));
+			update_option('jr_mt_settings', $mt_settings);
+		}
+	}
+
 	//Add wireframing body class
 	add_filter('body_class', 'nebula_wireframing_body_classes');
 	function nebula_wireframing_body_classes($classes){
 	    $classes[] = 'nebula-wireframing';
+		$classes[] = ( nebula_is_viewing_wireframe() )? 'nebula-wireframing-wireframe' : 'nebula-wireframing-production';
 		return $classes;
 	}
 
@@ -21,8 +49,24 @@ if ( nebula_option('nebula_wireframing', 'enabled') ){
 	function nebula_admin_bar_nebula_wireframing($wp_admin_bar){
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula-wireframing',
-			'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240,245,250,.6); margin-right: 5px;"></i> Wireframing Enabled',
+			'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Wireframing',
 			'href' => get_admin_url() . 'themes.php?page=nebula_options'
+		));
+
+		if ( nebula_is_viewing_wireframe() ){
+			$wireframe_title = 'Production Site';
+			$wireframe_toggle_bool = 'false';
+		} else {
+			$wireframe_title = 'Wireframe';
+			$wireframe_toggle_bool = 'true';
+		}
+
+		$wp_admin_bar->add_node(array(
+			'parent' => 'nebula-wireframing',
+			'id' => 'nebula-wireframing-toggle',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-map-signs" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View ' . $wireframe_title . ' &raquo;',
+			'href' => get_permalink() . '?wireframe=' . $wireframe_toggle_bool,
+			//'meta' => array('target' => '_blank')
 		));
 
 		$wp_admin_bar->add_node(array(
@@ -35,6 +79,15 @@ if ( nebula_option('nebula_wireframing', 'enabled') ){
 
 		$wp_admin_bar->remove_menu('wpseo-menu'); //SEO menu not important during wireframing
 	}
+}
+
+//Check if viewing wireframe (true) or production site (false).
+function nebula_is_viewing_wireframe(){
+	if ( is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') && isset($_GET['wireframe']) && $_GET['wireframe'] == 'true' ){
+		return true;
+	}
+
+	return false;
 }
 
 //Top header for each component

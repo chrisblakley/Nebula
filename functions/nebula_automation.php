@@ -65,6 +65,11 @@ if ( is_dev(true) || current_user_can('manage_options') ){
 	            'required'  => true,
 	        ),
 	        array(
+	            'name'      => 'Multiple Themes',
+	            'slug'      => 'jonradio-multiple-themes',
+	            'required'  => false,
+	        ),
+	        array(
 	            'name'      => 'Custom Facebook Feed',
 	            'slug'      => 'custom-facebook-feed',
 	            'required'  => false,
@@ -244,11 +249,10 @@ function nebula_initialization_email_prev_settings(){
 	foreach ( $options as $option ){
 		if ( $option->option_name != '' ){
 			if ( is_serialized($option->option_value) ){
+				$value = 'SERIALIZED DATA';
 				if ( is_serialized_string($option->option_value) ){
 					$value = maybe_unserialize($option->option_value);
 					$options_to_update[] = $option->option_name;
-				} else {
-					$value = 'SERIALIZED DATA';
 				}
 			} else {
 				$value = $option->option_value;

@@ -191,7 +191,7 @@ function nebula_theme_json(){
 
 	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('nebula_theme_update_notification', 'enabled') && nebula_option('nebula_version_legacy', 'false') ){
 		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker.
-		$example_update_checker = new ThemeUpdateChecker(
+		$theme_update_checker = new ThemeUpdateChecker(
 			'Nebula-master', //This should be the directory slug of the parent theme.
 			'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
 		);
@@ -571,18 +571,18 @@ if ( nebula_option('nebula_todo_metabox') ){
 
 								//Get the category
 								$the_todo_quote_check = '';
-								$the_todo_category = '';
-								$the_todo_category_html = '';
+								$the_todo_cat = '';
+								$the_todo_cat_html = '';
 								preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
 								if ( !empty($the_todo_quote_check[0][0]) ){
-									$the_todo_category = substr($the_todo_quote_check[0][0], 1, -1);
-									$the_todo_category_html = '<span class="todocategory">' . $the_todo_category . '</span>';
+									$the_todo_cat = substr($the_todo_quote_check[0][0], 1, -1);
+									$the_todo_cat_html = '<span class="todocategory">' . $the_todo_cat . '</span>';
 								}
 
 								//Get the message
-								$the_todo_message_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
-								$end_todo_message_strings = array('-->', '?>', '*/');
-								$the_todo_message = explode($end_todo_message_strings[0], str_replace($end_todo_message_strings, $end_todo_message_strings[0], $the_todo_message_full));
+								$the_todo_text_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
+								$end_todo_text_strings = array('-->', '?>', '*/');
+								$the_todo_text = explode($end_todo_text_strings[0], str_replace($end_todo_text_strings, $end_todo_text_strings[0], $the_todo_text_full));
 
 								$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
 								if ( $todo_last_filename != $todo_this_filename ){
@@ -592,7 +592,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
 								}
 
-								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_category)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_message[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
+								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_cat)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_cat_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_text[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
 
 								$todo_last_filename = $todo_this_filename;
 								$todo_instance_counter++;

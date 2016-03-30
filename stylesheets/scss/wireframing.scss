@@ -4,9 +4,7 @@
 //@TODO "Nebula" 0: Adding div to this list gets a white page. This also crashes most browsers
 //div, h1, h2, h3, h4, h5, h6, p, span, a, a:hover, a.hover, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button, .active {@include prefix((filter: grayscale(100%)));}
 
-body {@include prefix((filter: grayscale(100%)));
-	/* &:after {content: 'Wireframing is Active'; font-size: 8px;} */
-}
+body.nebula-wireframing-wireframe {@include prefix((filter: grayscale(100%)));} //Greyscale only when wireframe is active and being viewed
 
 #wireframing-bar {position: relative; background: black; color: #fff; padding-top: 5px; padding-bottom: 5px;}
 
@@ -17,7 +15,7 @@ img, a.logocon {@include prefix((filter: none));}
 .fpo-component {background: #e2e2e2; padding: 5px 10px 1px 10px;}
 .fpo-component-con {
 	.component-name {display: block; color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px;
-		.component-icon {font-size(11);}
+		.component-icon {font-size: 11px;}
 	}
 	.component-comment-toggle {float: right; color: #222;
 		&:hover,
@@ -28,8 +26,8 @@ img, a.logocon {@include prefix((filter: none));}
 		}
 	}
 	.component-comment-drawer {display: none; background: #eee; border: 1px solid #bbb; border-top: none; padding: 0 10px 1px 10px;
-		.comment-header {display: block; font-size(12); color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 4px;}
-		p {font-size(12);}
+		.comment-header {display: block; font-size: 12; color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 4px;}
+		p {font-size: 12;}
 	}
 }
 
