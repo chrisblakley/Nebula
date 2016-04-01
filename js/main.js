@@ -73,6 +73,13 @@ jQuery(document).ready(function(){
 		initHeadroom();
 	}
 
+	//Admin Bar Toggle
+	jQuery(document).on('keydown', function(e){
+		if ( e.altKey && e.which == 65 ){ //Alt+A
+			jQuery('html').toggleClass('admin-bar-inactive');
+		}
+	});
+
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
 	window.lastWindowWidth = nebula.dom.window.width();

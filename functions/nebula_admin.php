@@ -347,6 +347,10 @@ if ( nebula_option('nebula_admin_notices') ){
 				}
 			}
 
+			if ( nebula_option('nebula_wireframing', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Wireframe Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
+			}
+
 			//Check if the parent theme template is correctly referenced
 			if ( is_child_theme() ){
 				$active_theme = wp_get_theme();

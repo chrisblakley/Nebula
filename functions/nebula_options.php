@@ -89,6 +89,7 @@ function register_nebula_options(){
 		'nebula_last_version_number' => nebula_version('full'),
 		'nebula_last_version_date' => nebula_version('date'),
 		'nebula_version_legacy' => 'false',
+		'nebula_users_status' => '',
 
 		//Metadata Tab
 		'nebula_site_owner' => '',
@@ -279,9 +280,9 @@ function nebula_options_page(){
 			});
 			function wireframeModeToggle(){
 				if ( jQuery('#wireframingmodeselect').val() === 'enabled' ){
-					jQuery('.wireframerequired').css('opacity', '1').find('input').css('pointer-events', 'all');
+					jQuery('.wireframerequired').css('opacity', '1').find('select').css('pointer-events', 'all');
 				} else {
-					jQuery('.wireframerequired').css('opacity', '0.5').find('input').css('pointer-events', 'none');
+					jQuery('.wireframerequired').css('opacity', '0.5').find('select').css('pointer-events', 'none');
 				}
 			}
 
@@ -409,6 +410,13 @@ function nebula_options_page(){
 		        	<td>
 						<input type="text" name="nebula_version_legacy" value="<?php echo get_option('nebula_version_legacy'); ?>" />
 						<p class="helper"><small>If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Online Users&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" name="nebula_users_status" value="<?php echo nebula_online_users(); ?>" />
+						<p class="helper"><small>Currently online and last seen times of logged in users. If this number is 1 or greater, it is working.</small></p>
 					</td>
 		        </tr>
 		    </table>
@@ -595,21 +603,32 @@ function nebula_options_page(){
 						<p class="helper"><small>When prototyping, enable this setting to use the greyscale stylesheet. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
+
+		        <?php $themes = wp_get_themes(); ?>
 		        <tr class="short wireframerequired" valign="top">
 		        	<th scope="row">Wireframe Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input id="wireframetheme" type="text" name="nebula_wireframe_theme" value="<?php echo get_option('nebula_wireframe_theme'); ?>" />
-						<p class="helper"><small>The directory name of the wireframe theme.</small></p>
+						<select id="wireframetheme" name="nebula_wireframe_theme">
+							<option value="" <?php selected('', get_option('nebula_wireframe_theme')); ?>>None</option>
+							<?php foreach ( $themes as $key => $value ): ?>
+								<option value="<?php echo $key; ?>" <?php selected($key, get_option('nebula_wireframe_theme')); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
+							<?php endforeach; ?>
+						</select>
+						<p class="helper"><small>The theme to use as the wireframe.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short wireframerequired" valign="top">
 		        	<th scope="row">Production Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input id="productiontheme" type="text" name="nebula_production_theme" value="<?php echo get_option('nebula_production_theme'); ?>" />
-						<p class="helper"><small>The directory name of the production theme. This theme will become the live site.</small></p>
+						<select id="productiontheme" name="nebula_production_theme">
+							<option value="" <?php selected('', get_option('nebula_production_theme')); ?>>None</option>
+							<?php foreach ( $themes as $key => $value ): ?>
+								<option value="<?php echo $key; ?>" <?php selected($key, get_option('nebula_production_theme')); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
+							<?php endforeach; ?>
+						</select>
+						<p class="helper"><small>The theme to use for production. This theme will become the live site.</small></p>
 					</td>
 		        </tr>
-
 
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">

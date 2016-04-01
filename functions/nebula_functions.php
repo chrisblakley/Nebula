@@ -313,7 +313,7 @@ function nav_menu_locations(){
 add_action('init', 'nebula_users_status_init');
 add_action('admin_init', 'nebula_users_status_init');
 function nebula_users_status_init(){
-	$logged_in_users = get_transient('users_status');
+	$logged_in_users = get_option('nebula_users_status');
 	$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9]+/", "", $_SERVER['HTTP_USER_AGENT']);
 	$current_user = wp_get_current_user();
 
@@ -326,11 +326,11 @@ function nebula_users_status_init(){
 			'last' => time(),
 			'unique' => array($unique_id),
 		);
-		set_transient('users_status', $logged_in_users, 1800); //30 minutes
+		update_option('nebula_users_status', $logged_in_users);
 	} else {
 		if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
 			array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
-			set_transient('users_status', $logged_in_users, 1800); //30 minutes
+			update_option('nebula_users_status', $logged_in_users);
 		}
 	}
 }
