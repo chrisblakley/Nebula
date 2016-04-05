@@ -417,7 +417,7 @@ function nebula_options_page(){
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Online Users&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_users_status" value="<?php echo nebula_online_users(); ?>" />
+						<input type="text" value="<?php echo nebula_online_users(); ?>" />
 						<p class="helper"><small>Currently online and last seen times of logged in users. A value of 1 or greater indicates it is working.</small></p>
 					</td>
 		        </tr>
