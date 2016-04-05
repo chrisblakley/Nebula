@@ -233,7 +233,6 @@ function nebula_initialization_email_prev_settings(){
 	global $wpdb;
 	$current_user = wp_get_current_user();
 	$to = $current_user->user_email;
-	$headers[] = 'From: ' . get_bloginfo('name');
 
 	//Carbon copy the admin if reset was done by another user.
 	$admin_user_email = nebula_option('nebula_contact_email', nebula_option('admin_email'));
@@ -242,47 +241,29 @@ function nebula_initialization_email_prev_settings(){
 	}
 
 	$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
-	$message = '<p>Wordpress theme settings have been reset for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p><p>Below is a record of the previous settings prior to the reset for backup purposes:</p>';
-	$message .= '<table style="width: 100%;>';
+	$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
 
-	$options = $wpdb->get_results("SELECT * FROM $wpdb->options ORDER BY option_name");
-	foreach ( $options as $option ){
-		if ( $option->option_name != '' ){
-			if ( is_serialized($option->option_value) ){
-				$value = 'SERIALIZED DATA';
-				if ( is_serialized_string($option->option_value) ){
-					$value = maybe_unserialize($option->option_value);
-					$options_to_update[] = $option->option_name;
-				}
-			} else {
-				$value = $option->option_value;
-				$options_to_update[] = $option->option_name;
-			}
-			$message .= '<tr><td style="width: 40%; min-width: 330px;">';
+	$connection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+	$sql = "SELECT * FROM $wpdb->options";
+	$result = mysqli_query($connection, $sql);
 
-			if ( strpos(esc_html($option->option_name), 'nebula') !== false ){
-				$message .= '<strong style="color: #0098d7;">' . esc_html($option->option_name) . '</strong>';
-			} else {
-				$message .= '<strong>' . esc_html($option->option_name) . '</strong>';
-			}
-
-			$message .=	'</td><td style="width: 60%;">';
-			if ( strpos($value, "\n") !== false ){
-				$message .= '<textarea rows="5" style="width: 95%; resize: vertical;">' . esc_textarea($value) . '</textarea>';
-			} else {
-				$message .= '<input type="text" value="' . esc_attr($value) . '" style="width: 95%;" />';
-			}
-			$message .= '</td></tr>';
-		}
+	$options_backup_file = get_template_directory() . '/includes/data/options_backup_' . date('Y-m-d\TH:i:s') . '.csv';
+	$fp = fopen($options_backup_file, 'w');
+	while ( $row = mysqli_fetch_assoc($result) ){
+		fputcsv($fp, $row);
 	}
-	$message .= '</table>';
+	fclose($fp);
+	mysqli_close($connection);
+
+	$attachments = array($options_backup_file);
 
 	add_filter('wp_mail_content_type', function($content_type){
 		return 'text/html';
 	});
-	wp_mail($to, $subject, $message, $headers);
+	wp_mail($to, $subject, $message, $headers, $attachments);
+	unlink($options_backup_file);
 
-	set_transient('nebula_email_admin_timeout', 'true', 60*15); //15 minute expiration
+	set_transient('nebula_email_admin_timeout', 'true', 900); //15 minute expiration
 }
 
 //Create Homepage

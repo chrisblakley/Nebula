@@ -303,13 +303,13 @@ function nebula_retarget($category=false, $data=null, $strict=true, $return=fals
 	return false;
 }
 
-//Check if a user has been online in the last 15 minutes
+//Check if a user has been online in the last 10 minutes
 function nebula_is_user_online($id){
 	$override = apply_filters('pre_nebula_is_user_online', false, $id);
 	if ( $override !== false ){return $override;}
 
 	$logged_in_users = get_option('nebula_users_status');
-	return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-900; //15 Minutes
+	return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
 }
 
 //Check when a user was last online.
@@ -330,14 +330,14 @@ function nebula_online_users($return='count'){
 	if ( $override !== false ){return $override;}
 
 	$logged_in_users = get_option('nebula_users_status');
-	if ( empty($logged_in_users) ){
-		return ( $return == 'count' )? 0 : false;
+	if ( empty($logged_in_users) || !is_array($logged_in_users) ){
+		return ( $return == 'count' )? 0 : false; //If this happens it indicates an error.
 	}
+
 	$user_online_count = 0;
 	$online_users = array();
-
 	foreach ( $logged_in_users as $user ){
-		if ( !empty($user['username']) && isset($user['last']) && $user['last'] > time()-900 ){
+		if ( !empty($user['username']) && isset($user['last']) && $user['last'] > time()-600 ){
 			$online_users[] = $user;
 			$user_online_count++;
 		}

@@ -314,12 +314,17 @@ add_action('init', 'nebula_users_status_init');
 add_action('admin_init', 'nebula_users_status_init');
 function nebula_users_status_init(){
 	$logged_in_users = get_option('nebula_users_status');
+	//$logged_in_users = ''; //@TODO "Nebula" 0: This is breaking just on Nebula sometimes. This line fixes it temporarily, though. Sometimes the nebula_users_status option is set to "AA".
+
 	$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9]+/", "", $_SERVER['HTTP_USER_AGENT']);
 	$current_user = wp_get_current_user();
 
-	//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
+	//var_dump( $logged_in_users );
 
-	if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-900 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 15 minutes, update.
+	//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
+	//Who is 98.115.139.106 and why do they show up as user ID 0 with no username? Unique ID: 98.115.139.106.Mozilla50MacintoshIntelMacOSX1011rv450Gecko20100101Firefox450 Could be a DB deleted user?
+
+	if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
 		$logged_in_users[$current_user->ID] = array(
 			'id' => $current_user->ID,
 			'username' => $current_user->user_login,

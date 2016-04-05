@@ -209,17 +209,14 @@ function nebula_theme_update_automation(){
 	}
 
 	nebula_theme_update_email(); //Send email with update information
-	delete_transient('users_status'); //Reset logged in user count
-
 	update_option('nebula_last_version_number', nebula_version('full'));
 	update_option('nebula_last_version_date', nebula_version('date'));
 	update_option('nebula_version_legacy', 'false');
 }
-function nebula_theme_update_email(){ //@TODO "Nebula" 0: Is this still working?
+function nebula_theme_update_email(){
 	global $wpdb;
 	$current_user = wp_get_current_user();
 	$to = $current_user->user_email;
-	$headers[] = 'From: ' . get_bloginfo('name');
 
 	//Carbon copy the admin if update was done by another user.
 	$admin_user_email = nebula_option('nebula_contact_email', nebula_option('admin_email'));
@@ -511,7 +508,7 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 
 //Extension skip list for both TODO Manager and Developer Metabox
 function skip_extensions(){
-	return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx');
+	return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx');
 }
 
 //TODO Metabox
@@ -917,7 +914,7 @@ function nebula_user_columns_content($value='', $column_name, $id){
 		if ( nebula_is_user_online($id) ){
 			$online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
 			if ( nebula_user_single_concurrent($id) > 1 ){
-				$online_now .= ' <small>(<strong>' . nebula_user_single_concurrent($id) . '</strong> locations)</small>';
+				$online_now .= '<br/><small>(<strong>' . nebula_user_single_concurrent($id) . '</strong> locations)</small>';
 			}
 			return $online_now;
 		} else {

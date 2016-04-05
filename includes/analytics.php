@@ -41,6 +41,7 @@
 			prerenderedLink: '<?php echo nebula_option('nebula_cd_prerenderedlink'); //Hit ?>',
 			sessionID: '<?php echo nebula_option('nebula_cd_sessionid'); //Session ?>',
 			sessionNotes: '<?php echo nebula_option('nebula_cd_sessionnotes'); //Session ?>',
+			notablePOI: '<?php echo nebula_option('nebula_cd_notablepoi'); //User ?>',
 			role: '<?php echo nebula_option('nebula_cd_role'); //User ?>',
 			timestamp: '<?php echo nebula_option('nebula_cd_timestamp'); //Hit ?>',
 			userID: '<?php echo nebula_option('nebula_cd_userid'); //User ?>',
@@ -234,6 +235,18 @@
 				$temp_round_celcius = round(($temp_round-32)/1.8);
 				$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F (' . strval($temp_round_celcius) . '°C - ' . strval($temp_round_celcius+2) . '°C)';
 				echo 'ga("set", gaCustomDimensions["temperature"], "' . $temp_range . '");';
+			}
+
+			//Notable POI (IP Addresses)
+			if ( nebula_option('nebula_cd_notablepoi') && nebula_option('nebula_notableiplist') ){
+				$notable_ip_lines = explode("\n", nebula_option('nebula_notableiplist'));
+				foreach ( $notable_ip_lines as $line ){
+					$ip_info = explode(' ', $line, 2); //0 = IP Address or RegEx pattern, 1 = Name
+					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $_SERVER['REMOTE_ADDR'])) || $ip_info[0] == $_SERVER['REMOTE_ADDR'] ){ //If regex pattern and matches IP, or if direct match
+						echo 'ga("set", gaCustomDimensions["notablePOI"], "' . $ip_info[1] . '");';
+						break;
+					}
+				}
 			}
 		?>
 

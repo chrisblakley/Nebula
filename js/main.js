@@ -75,7 +75,7 @@ jQuery(document).ready(function(){
 
 	//Admin Bar Toggle
 	jQuery(document).on('keydown', function(e){
-		if ( e.altKey && e.which == 65 ){ //Alt+A
+		if ( e.altKey && e.which === 65 ){ //Alt+A
 			jQuery('html').toggleClass('admin-bar-inactive');
 		}
 	});

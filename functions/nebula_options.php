@@ -180,6 +180,7 @@ function register_nebula_options(){
 		'nebula_cd_geoname' => '',
 		'nebula_cd_geoaccuracy' => '',
 		'nebula_cd_sessionnotes' => '',
+		'nebula_cd_notablepoi' => '',
 		'nebula_cd_relativetime' => '',
 		'nebula_cd_scrolldepth' => '',
 		'nebula_cd_maxscroll' => '',
@@ -232,6 +233,7 @@ function register_nebula_options(){
 		'nebula_dev_email_domain' => '',
 		'nebula_client_ip' => '',
 		'nebula_client_email_domain' => '',
+		'nebula_notableiplist' => '',
 		'nebula_cpanel_url' => '',
 		'nebula_hosting_url' => '',
 		'nebula_registrar_url' => '',
@@ -416,7 +418,7 @@ function nebula_options_page(){
 		        	<th scope="row">Online Users&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" name="nebula_users_status" value="<?php echo nebula_online_users(); ?>" />
-						<p class="helper"><small>Currently online and last seen times of logged in users. If this number is 1 or greater, it is working.</small></p>
+						<p class="helper"><small>Currently online and last seen times of logged in users. A value of 1 or greater indicates it is working.</small></p>
 					</td>
 		        </tr>
 		    </table>
@@ -823,7 +825,7 @@ function nebula_options_page(){
 							<option value="enabled" <?php selected('enabled', get_option('nebula_admin_bar')); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', get_option('nebula_admin_bar')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <strong>Note:</strong> When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -1194,7 +1196,13 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-
+				<tr class="short" valign="top">
+		        	<th scope="row">Notable POI&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_notablepoi" value="<?php echo get_option('nebula_cd_notablepoi'); ?>" />
+						<p class="helper"><small>Stores named IP addresses (from the Administration tab). <strong>Scope: User</strong></small></p>
+					</td>
+		        </tr>
 
 
 				<tr valign="top">
@@ -1462,7 +1470,7 @@ function nebula_options_page(){
 			<table class="form-table dependent administration" style="display: none;">
 		        <tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
-						<h3>Staff</h3>
+						<h3>Staff and Notable Users</h3>
 
 						<?php
 			        		$current_user = wp_get_current_user();
@@ -1506,6 +1514,13 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
+				<tr class="short" valign="top">
+		        	<th scope="row">Notable IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<textarea name="nebula_notableiplist" placeholder="192.168.0.1 Name Here"><?php echo get_option('nebula_notableiplist'); ?></textarea>
+						<p class="helper"><small>A list of named IP addresses. Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name. <strong>Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the <strong>Analytics</strong> tab!</strong><br/><strong>Tip:</strong> IP data is sent with <a href="https://gearside.com/nebula/documentation/3rd-party-libraries/contact-form-7-sample-form/" target="_blank">Nebula contact forms</a>!</small></p>
+					</td>
+		        </tr>
 
 		        <tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
