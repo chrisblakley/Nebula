@@ -47,27 +47,29 @@ if ( nebula_option('nebula_wireframing', 'enabled') ){
 	add_action('admin_bar_menu', 'nebula_admin_bar_nebula_wireframing', 900);
 	function nebula_admin_bar_nebula_wireframing($wp_admin_bar){
 		if ( nebula_is_viewing_wireframe() ){
-			$wireframe_menu_title = 'Wireframe';
+			$wireframe_menu_title = ( !is_admin() )? ' (Wireframe)' : '';
 			$wireframe_toggle_title = 'Production Site';
 			$wireframe_toggle_bool = 'false';
 		} else {
-			$wireframe_menu_title = 'Production';
+			$wireframe_menu_title = ( !is_admin() )? ' (Production)' : '';
 			$wireframe_toggle_title = 'Wireframe';
 			$wireframe_toggle_bool = 'true';
 		}
 
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula-wireframing',
-			'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Wireframing (' . $wireframe_menu_title . ')',
+			'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Wireframing' . $wireframe_menu_title,
 			'href' => get_admin_url() . 'themes.php?page=nebula_options'
 		));
 
-		$wp_admin_bar->add_node(array(
-			'parent' => 'nebula-wireframing',
-			'id' => 'nebula-wireframing-toggle',
-			'title' => '<i class="nebula-admin-fa fa fa-fw fa-map-signs" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View ' . $wireframe_toggle_title . ' &raquo;',
-			'href' => get_permalink() . '?wireframe=' . $wireframe_toggle_bool,
-		));
+		if ( !is_admin() ){
+			$wp_admin_bar->add_node(array(
+				'parent' => 'nebula-wireframing',
+				'id' => 'nebula-wireframing-toggle',
+				'title' => '<i class="nebula-admin-fa fa fa-fw fa-map-signs" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View ' . $wireframe_toggle_title . ' &raquo;',
+				'href' => get_permalink() . '?wireframe=' . $wireframe_toggle_bool,
+			));
+		}
 
 		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula-wireframing',

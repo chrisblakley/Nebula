@@ -314,7 +314,6 @@ add_action('init', 'nebula_users_status_init');
 add_action('admin_init', 'nebula_users_status_init');
 function nebula_users_status_init(){
 	$logged_in_users = get_option('nebula_users_status');
-	$logged_in_users = ''; //@TODO "Nebula" 0: This is breaking just on Nebula sometimes. This line fixes it temporarily, though. Sometimes the nebula_users_status option is set to "AA".
 
 	$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9]+/", "", $_SERVER['HTTP_USER_AGENT']);
 	$current_user = wp_get_current_user();
