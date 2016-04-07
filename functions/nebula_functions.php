@@ -81,7 +81,7 @@ function nebula_console_warnings($console_warnings=array()){
 		}
 
 		if ( is_site_live() && nebula_option('nebula_wireframing', 'enabled') ){
-			$console_warnings[] = array('error', 'Wireframing mode is still enabled!');
+			$console_warnings[] = array('error', 'Wireframe Mode is enabled!');
 		}
 
 		//If no Google Analytics tracking ID

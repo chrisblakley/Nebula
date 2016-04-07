@@ -58,7 +58,7 @@
 					text: 'Pre',
 					onclick : function(){
 						ed.focus();
-						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[pre lang=LANGUAGE]' + shortcodeContent + '[/pre]');
 					}
 				}, {
@@ -76,7 +76,7 @@
 				onclick : function(){
 					ed.focus();
 
-					var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+					var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 					ed.selection.setContent('[div class="CLASSES" style=STYLES]' + shortcodeContent + '[/div]');
 				}
 			}),
@@ -89,28 +89,28 @@
 					text: 'Colgrid',
 					onclick : function(){
 						ed.focus();
-						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + shortcodeContent + '[/colspan]');
 					}
 				}, {
 					text: 'Container',
 					onclick : function() {
 						ed.focus();
-						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + shortcodeContent + '[/container]');
 					}
 				}, {
 					text: 'Row',
 					onclick : function() {
 						ed.focus();
-						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + shortcodeContent + '[/row]');
 					}
 				}, {
 					text: 'Column',
 					onclick : function(){
 						ed.focus();
-						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + shortcodeContent + '[/columns]');
 					}
 				}]
@@ -204,7 +204,7 @@
 				classes : 'widget btn nebula-icon',
 				onclick : function(){
 					ed.focus();
-					var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() != '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
+					var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 					ed.selection.setContent('[tooltip tip="BUBBLE_TEXT_HERE"]' + shortcodeContent + '[/tooltip]');
 				}
 			}),

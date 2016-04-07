@@ -243,7 +243,7 @@
 				foreach ( $notable_ip_lines as $line ){
 					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
 					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $_SERVER['REMOTE_ADDR'])) || $ip_info[0] == $_SERVER['REMOTE_ADDR'] ){ //If regex pattern and matches IP, or if direct match
-						echo 'ga("set", gaCustomDimensions["notablePOI"], "' . str_replace(array("\n"), '', $ip_info[1]) . '");';
+						echo 'ga("set", gaCustomDimensions["notablePOI"], "' . str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]) . '");';
 						break;
 					}
 				}

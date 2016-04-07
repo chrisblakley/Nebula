@@ -290,7 +290,8 @@ function youtube_shortcode($atts){
 		$ignore_visibility = 'ignore-visibility';
 	}
 
-	$youtube = '<article class="nebula-youtube youtube video"><iframe id="' . youtube_meta($id, 'safetitle') . '" class="youtubeplayer ' . $class . ' ' . $ignore_visibility . '" ' . $width . ' ' . $height . ' src="//www.youtube.com/embed/' . youtube_meta($id, 'id') . '?wmode=transparent&enablejsapi=1&origin=' . youtube_meta($id, 'origin') . '&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
+	//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
+	$youtube = '<article class="nebula-youtube youtube video"><iframe id="' . youtube_meta($id, 'safetitle') . '" class="youtubeplayer ' . $class . ' ' . $ignore_visibility . '" ' . $width . ' ' . $height . ' src="//www.youtube.com/embed/' . youtube_meta($id, 'id') . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
 	return $youtube;
 }
 

@@ -3532,7 +3532,7 @@ function mmenus(){
 			});
 
 			//Close mmenu on back button click
-			if (window.history && window.history.pushState){
+			if ( window.history && window.history.pushState ){
 				window.addEventListener("popstate", function(e){
 					if ( jQuery('html.mm-opened').is('*') ){
 						mobileNav.data('mmenu').close();

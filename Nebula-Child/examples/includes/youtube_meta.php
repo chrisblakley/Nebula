@@ -3,7 +3,7 @@
 		Note: youtube_meta() needs a Google server API key in order to work!
 		Set it in Nebula Options (instructions can be found there).
 
-		Note: If getting many console errors (and API ready never triggering), try removing the &origin= parameter entirely from the iframe.
+		Note: The &origin=<?php echo youtube_meta($youtube_id, 'origin'); ?> parameter may trigger many console errors (and API ready never triggering). It is removed, but may be needed at some point.
 
 		Once the Player API is ready, you can control videos with the Nebula object "players" and the iframe ID (*not* Youtube video ID).
 		Ex: players.youtube['The-ID-From-The-Iframe-Here'].playVideo();
@@ -15,7 +15,7 @@
 		<?php $youtube_id = 'jtip7Gdcf0Q'; ?>
 		<?php if ( youtube_meta($youtube_id) ): ?>
 			<article class="youtube video">
-				<iframe id="<?php echo youtube_meta($youtube_id, 'safetitle'); ?>" class="youtubeplayer" width="560" height="315" src="//www.youtube.com/embed/<?php echo <?php echo youtube_meta($youtube_id, 'id'); ?>; ?>?wmode=transparent&enablejsapi=1&origin=<?php echo youtube_meta($youtube_id, 'origin'); ?>&rel=0" frameborder="0" allowfullscreen=""></iframe>
+				<iframe id="<?php echo youtube_meta($youtube_id, 'safetitle'); ?>" class="youtubeplayer" width="560" height="315" src="//www.youtube.com/embed/<?php echo <?php echo youtube_meta($youtube_id, 'id'); ?>; ?>?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe>
 			</article>
 			<br />
 			<div class="container">
@@ -39,7 +39,7 @@
 		<?php $youtube_id = 'fjh61K3hyY0'; ?>
 		<?php if ( youtube_meta($youtube_id) ): ?>
 			<article class="youtube video">
-				<iframe id="<?php echo youtube_meta($youtube_id, 'safetitle'); ?>" class="youtubeplayer" width="560" height="315" src="//www.youtube.com/embed/<?php echo youtube_meta($youtube_id, 'id'); ?>?wmode=transparent&enablejsapi=1&origin=<?php echo youtube_meta($youtube_id, 'origin'); ?>" frameborder="0" allowfullscreen=""></iframe>
+				<iframe id="<?php echo youtube_meta($youtube_id, 'safetitle'); ?>" class="youtubeplayer" width="560" height="315" src="//www.youtube.com/embed/<?php echo youtube_meta($youtube_id, 'id'); ?>?wmode=transparent&enablejsapi=1" frameborder="0" allowfullscreen=""></iframe>
 			</article>
 			<br />
 			<div class="container">
