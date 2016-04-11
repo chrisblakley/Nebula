@@ -138,8 +138,9 @@ function register_nebula_options(){
 		'nebula_instagram_url' => '',
 
 		//Functions Tab
-		'nebula_wireframing' => 'disabled',
+		'nebula_prototype_mode' => 'disabled',
 		'nebula_wireframe_theme' => '',
+		'nebula_staging_theme' => '',
 		'nebula_production_theme' => '',
 		'nebula_admin_bar' => 'enabled',
 		'nebula_admin_notices' => 'enabled',
@@ -277,11 +278,11 @@ function nebula_options_page(){
 			});
 
 			wireframeModeToggle();
-			jQuery('#wireframingmodeselect').on('change', function(){
+			jQuery('#prototypemodeselect').on('change', function(){
 				wireframeModeToggle();
 			});
 			function wireframeModeToggle(){
-				if ( jQuery('#wireframingmodeselect').val() === 'enabled' ){
+				if ( jQuery('#prototypemodeselect').val() === 'enabled' ){
 					jQuery('.wireframerequired').css('opacity', '1').find('select').css('pointer-events', 'all');
 				} else {
 					jQuery('.wireframerequired').css('opacity', '0.5').find('select').css('pointer-events', 'none');
@@ -591,18 +592,18 @@ function nebula_options_page(){
 			<table class="form-table dependent functions" style="display: none;">
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
-						<h3>Wireframing</h3>
+						<h3>Prototyping</h3>
 					</td>
 		        </tr>
 				<tr class="short" valign="top">
-		        	<th scope="row">Wireframe Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Prototype Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select id="wireframingmodeselect" name="nebula_wireframing">
+						<select id="prototypemodeselect" name="nebula_prototype_mode">
 							<option disabled>Default: Disabled</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_wireframing')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_wireframing')); ?>>Disabled</option>
+							<option value="enabled" <?php selected('enabled', get_option('nebula_prototype_mode')); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', get_option('nebula_prototype_mode')); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>When prototyping, enable this setting to use the greyscale stylesheet. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>When prototyping, enable this setting. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -616,9 +617,23 @@ function nebula_options_page(){
 								<option value="<?php echo $key; ?>" <?php selected($key, get_option('nebula_wireframe_theme')); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
 							<?php endforeach; ?>
 						</select>
-						<p class="helper"><small>The theme to use as the wireframe.</small></p>
+						<p class="helper"><small>The theme to use as the wireframe. Viewing this theme will trigger a greyscale view.</small></p>
 					</td>
 		        </tr>
+
+		        <tr class="short wireframerequired" valign="top">
+		        	<th scope="row">Staging Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select id="stagingtheme" name="nebula_staging_theme">
+							<option value="" <?php selected('', get_option('nebula_staging_theme')); ?>>None</option>
+							<?php foreach ( $themes as $key => $value ): ?>
+								<option value="<?php echo $key; ?>" <?php selected($key, get_option('nebula_staging_theme')); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
+							<?php endforeach; ?>
+						</select>
+						<p class="helper"><small>The theme to use for staging new features. This is useful for site development after launch.</small></p>
+					</td>
+		        </tr>
+
 		        <tr class="short wireframerequired" valign="top">
 		        	<th scope="row">Production Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
@@ -628,7 +643,7 @@ function nebula_options_page(){
 								<option value="<?php echo $key; ?>" <?php selected($key, get_option('nebula_production_theme')); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
 							<?php endforeach; ?>
 						</select>
-						<p class="helper"><small>The theme to use for production. This theme will become the live site.</small></p>
+						<p class="helper"><small>The theme to use for production/live. This theme will become the live site.</small></p>
 					</td>
 		        </tr>
 

@@ -152,6 +152,38 @@ if ( nebula_option('nebula_admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 	}
+
+	//Remove core WP admin bar head CSS and add our own
+	add_action('get_header', 'remove_admin_bar_bump');
+	function remove_admin_bar_bump(){
+		remove_action('wp_head', '_admin_bar_bump_cb');
+	}
+	add_action('wp_head', 'mp6_override_toolbar_margin', 11);
+	function mp6_override_toolbar_margin(){
+		if ( is_admin_bar_showing() ){ ?>
+			<style type="text/css">
+				html {margin-top: 32px !important; transition: margin-top 0.5s linear;}
+				* html body {margin-top: 32px !important;}
+
+				#wpadminbar {transition: top 0.5s linear;}
+					.admin-bar-inactive #wpadminbar {top: -32px;}
+					#wpadminbar i {-webkit-font-smoothing: antialiased;}
+
+				@media screen and (max-width: 782px){
+					html {margin-top: 46px !important;}
+					* html body {margin-top: 46px !important;}
+
+					.admin-bar-inactive #wpadminbar {top: -46px;}
+				}
+
+				@media screen and (max-width: 600px){
+					#wpadminbar {top: -46px;}
+				}
+
+				html.admin-bar-inactive {margin-top: 0 !important;}
+			</style>
+		<?php }
+	}
 }
 
 //Disable Wordpress Core update notifications in WP Admin
@@ -204,7 +236,7 @@ function nebula_theme_update_automation(){
 	$override = apply_filters('pre_nebula_theme_update_automation', false);
 	if ( $override !== false ){return;}
 
-	if ( nebula_option('nebula_last_version_number') == nebula_version('full') ){ //Check if Nebula theme was updated.
+	if ( nebula_option('nebula_last_version_number') == nebula_version('full') ){ //Check if Nebula theme was updated. //@TODO "Nebula" 0: Is this working as intended?
 		return;
 	}
 
@@ -344,8 +376,8 @@ if ( nebula_option('nebula_admin_notices') ){
 				}
 			}
 
-			if ( nebula_option('nebula_wireframing', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Wireframe Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
+			if ( nebula_option('nebula_prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
 			}
 
 			//Check if the parent theme template is correctly referenced

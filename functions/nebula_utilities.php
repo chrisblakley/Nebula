@@ -3,7 +3,7 @@
 //Generate Session ID
 function nebula_session_id(){
 	$session_info = ( is_debug() )? 'dbg.' : '';
-	$session_info .= ( nebula_option('nebula_wireframing', 'enabled') )? 'wrf.' : '';
+	$session_info .= ( nebula_option('nebula_prototype_mode', 'enabled') )? 'prt.' : '';
 
 	if ( is_client() ){
 		$session_info .= 'cli.';
@@ -1218,7 +1218,7 @@ function nebula_render_scss($specific_scss=null, $child=false){
 			//$nebula_debug_start_time = microtime(true); //Debug timing start ******************************
 
 			$file_path_info = pathinfo($file);
-			if ( $file_path_info['filename'] == 'wireframing' && nebula_option('nebula_wireframing', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
+			if ( $file_path_info['filename'] == 'wireframing' && nebula_option('nebula_prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
 				continue;
 			}
 			if ( $file_path_info['filename'] == 'dev' && nebula_option('nebula_dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.

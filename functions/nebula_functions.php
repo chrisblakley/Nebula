@@ -75,13 +75,13 @@ function nebula_console_warnings($console_warnings=array()){
 		if ( get_option('blog_public') == 0 ){
 			if ( is_site_live() ){
 				$console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
-			} elseif ( nebula_option('nebula_wireframing', 'disabled') ){
+			} elseif ( nebula_option('nebula_prototype_mode', 'disabled') ){
 				$console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
 			}
 		}
 
-		if ( is_site_live() && nebula_option('nebula_wireframing', 'enabled') ){
-			$console_warnings[] = array('error', 'Wireframe Mode is enabled!');
+		if ( is_site_live() && nebula_option('nebula_prototype_mode', 'enabled') ){
+			$console_warnings[] = array('error', 'Prototype Mode is enabled!');
 		}
 
 		//If no Google Analytics tracking ID

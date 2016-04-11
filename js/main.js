@@ -3189,7 +3189,7 @@ function vimeoControls(){
 		}
 	}
 
-	function vimeoPlay(id){
+	function vimeoPlay(data, id){
 	    var videoTitle = id.replace(/-/g, ' ');
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
@@ -3236,7 +3236,7 @@ function vimeoControls(){
 		}
 	}
 
-	function vimeoPause(id){
+	function vimeoPause(data, id){
 		var videoTitle = id.replace(/-/g, ' ');
 		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
@@ -3255,7 +3255,7 @@ function vimeoControls(){
 	    videoData[id].seeker = true;
 	}
 
-	function vimeoFinish(id){
+	function vimeoFinish(data, id){
 		var videoTitle = id.replace(/-/g, ' ');
 		ga('set', gaCustomMetrics['videoCompletions'], 1);
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));

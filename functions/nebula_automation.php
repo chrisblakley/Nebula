@@ -143,8 +143,12 @@ if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or i
 	add_action('admin_notices', 'nebula_activation');
 }
 function nebula_activation(){
-	$is_standard_initialization = ( isset($_GET['nebula-initialization']) )? true : false; //Detect if non-AJAX initialization is needed.
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, 'http://gearside.com/nebula/usage/index.php');
+	$output = curl_exec($ch);
+	curl_close($ch);
 
+	$is_standard_initialization = ( isset($_GET['nebula-initialization']) )? true : false; //Detect if non-AJAX initialization is needed.
 	if ( $is_standard_initialization ){
 		//@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
 		nebula_initialization(true);

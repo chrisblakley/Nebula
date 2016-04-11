@@ -11,6 +11,8 @@ $admin_media_queries: (
 	mobile: "(max-width: 500px)",
 );
 
+#wpadminbar i {-webkit-font-smoothing: antialiased;}
+
 .nebula_help_link {text-decoration: none;}
 i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 	&:hover {color: #444;}

@@ -8,7 +8,7 @@
 	<?php fpo_component_end(); ?>
 */
 
-if ( nebula_option('nebula_wireframing', 'enabled') ){
+if ( nebula_option('nebula_prototype_mode', 'enabled') ){
 	add_action('wp_enqueue_scripts', 'enqueue_nebula_wireframing');
 	function enqueue_nebula_wireframing(){
 		wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
@@ -21,81 +21,115 @@ if ( nebula_option('nebula_wireframing', 'enabled') ){
 	//Set up wireframe redirect based on ?wireframe query string.
 	if ( is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 		$mt_settings = get_option('jr_mt_settings');
-		if ( !isset($mt_settings['query']['wireframe']) ){ //If wireframe setting has not been set yet, set it.
-			$mt_settings['query'] = array(
-				'wireframe' => array(
-					'true' => get_option('nebula_wireframe_theme'), //Wireframe Theme
-					'false' => get_option('nebula_production_theme') //Production Theme @TODO "Nebula" 0: Find a way that this can just pull the current theme directory name. Then remove the corresponding Nebula Option.
-				),
-			);
+		$mt_settings['query'] = array(
+			'phase' => array(
+				'wireframe' => get_option('nebula_wireframe_theme'), //Wireframe Theme
+				'staging' => get_option('nebula_staging_theme'), //Staging Theme
+				'production' => get_option('nebula_production_theme') //Production Theme
+			),
+		);
 
-			$mt_settings['remember'] = array('query' => array('wireframe' => array('true' => true)));
-			$mt_settings['override'] = array('query' => array('wireframe' => array('false' => true)));
-			update_option('jr_mt_settings', $mt_settings);
-		}
+		$mt_settings['remember'] = array('query' => array('phase' => array('wireframe' => true, 'staging' => true)));
+		$mt_settings['override'] = array('query' => array('phase' => array('production' => true)));
+		update_option('jr_mt_settings', $mt_settings);
 	}
 
 	//Add wireframing body class
 	add_filter('body_class', 'nebula_wireframing_body_classes');
 	function nebula_wireframing_body_classes($classes){
 	    $classes[] = 'nebula-wireframing';
-		$classes[] = ( nebula_is_viewing_wireframe() )? 'nebula-wireframing-wireframe' : 'nebula-wireframing-production';
+
+		if ( nebula_dev_phase() == 'wireframe' ){
+			$classes[] = 'nebula-wireframing-wireframe';
+		} elseif ( nebula_dev_phase() == 'staging' ){
+			$classes[] = 'nebula-wireframing-staging';
+		} else {
+			$classes[] = 'nebula-wireframing-production';
+		}
+
 		return $classes;
 	}
 
 	//Add a link to Nebula Wireframing on the Admin Bar
 	add_action('admin_bar_menu', 'nebula_admin_bar_nebula_wireframing', 900);
 	function nebula_admin_bar_nebula_wireframing($wp_admin_bar){
-		if ( nebula_is_viewing_wireframe() ){
+		if ( nebula_dev_phase() == 'wireframe' ){
 			$wireframe_menu_title = ( !is_admin() )? ' (Wireframe)' : '';
-			$wireframe_toggle_title = 'Production Site';
-			$wireframe_toggle_bool = 'false';
+		} elseif ( nebula_dev_phase() == 'staging' ){
+			$wireframe_menu_title = ( !is_admin() )? ' (Staging)' : '';
 		} else {
 			$wireframe_menu_title = ( !is_admin() )? ' (Production)' : '';
-			$wireframe_toggle_title = 'Wireframe';
-			$wireframe_toggle_bool = 'true';
 		}
 
 		$wp_admin_bar->add_node(array(
-			'id' => 'nebula-wireframing',
-			'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Wireframing' . $wireframe_menu_title,
+			'id' => 'nebula-prototype',
+			'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Prototype' . $wireframe_menu_title,
 			'href' => get_admin_url() . 'themes.php?page=nebula_options'
 		));
 
-		if ( !is_admin() ){
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula-wireframing',
-				'id' => 'nebula-wireframing-toggle',
-				'title' => '<i class="nebula-admin-fa fa fa-fw fa-map-signs" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View ' . $wireframe_toggle_title . ' &raquo;',
-				'href' => get_permalink() . '?wireframe=' . $wireframe_toggle_bool,
-			));
+		if ( nebula_dev_phase() ){
+			$permalink = ( is_admin() )? home_url() : get_permalink();
+
+			if ( nebula_dev_phase() != 'wireframe' && nebula_option('nebula_wireframe_theme') ){
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-prototype',
+					'id' => 'nebula-wireframe-activate',
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-flag-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Wireframe &raquo;',
+					'href' => $permalink . '?phase=wireframe',
+				));
+			}
+
+			if ( nebula_dev_phase() != 'staging' && nebula_option('nebula_staging_theme') ){
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-prototype',
+					'id' => 'nebula-staging-activate',
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-flag" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Staging Site &raquo;',
+					'href' => $permalink . '?phase=staging',
+				));
+			}
+
+			if ( (nebula_dev_phase() != 'production' || is_admin()) ){
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-prototype',
+					'id' => 'nebula-production-activate',
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-flag-checkered" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Production Site &raquo;',
+					'href' => $permalink . '?phase=production',
+				));
+			}
 		}
 
 		$wp_admin_bar->add_node(array(
-			'parent' => 'nebula-wireframing',
-			'id' => 'nebula-wireframing-help',
+			'parent' => 'nebula-prototype',
+			'id' => 'nebula-prototype-help',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
-			'href' => 'https://gearside.com/nebula/documentation/custom-functionality/wireframing/',
+			'href' => 'https://gearside.com/nebula/documentation/custom-functionality/prototype-mode/',
 			'meta' => array('target' => '_blank')
 		));
 
-		$wp_admin_bar->remove_menu('wpseo-menu'); //SEO menu not important during wireframing
+		$wp_admin_bar->remove_menu('wpseo-menu'); //SEO menu not important during prototyping
 	}
 }
 
-//Check if viewing wireframe (true) or production site (false).
-function nebula_is_viewing_wireframe(){
-	if ( is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') && isset($_GET['wireframe']) && $_GET['wireframe'] == 'true' ){
-		return true;
+//Detect which prototype phase is currently being viewed.
+function nebula_dev_phase(){
+	if ( !is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+		return false;
 	}
 
-	return false;
+	if ( isset($_GET['phase']) && $_GET['phase'] == 'wireframe' ){
+		return 'wireframe';
+	}
+
+	if ( isset($_GET['phase']) && $_GET['phase'] == 'staging' ){
+		return 'staging';
+	}
+
+	return 'production';
 }
 
 //Top header for each component
 function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
-
-	if ( nebula_option('nebula_wireframing', 'disabled') ){
+	if ( nebula_option('nebula_prototype_mode', 'disabled') ){
 		return false;
 	}
 
@@ -121,7 +155,7 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
 //Top header for each component (with opening .fpo div)
 function fpo_component_start($component='Component', $icon='fa-cube'){
-	if ( nebula_option('nebula_wireframing', 'disabled') ){
+	if ( nebula_option('nebula_prototype_mode', 'disabled') ){
 		return false;
 	}
 	fpo_component($component, $icon, '');
@@ -130,7 +164,7 @@ function fpo_component_start($component='Component', $icon='fa-cube'){
 
 //Closes .fpo div (from fpo_component_start)
 function fpo_component_end(){
-	if ( nebula_option('nebula_wireframing', 'disabled') ){
+	if ( nebula_option('nebula_prototype_mode', 'disabled') ){
 		return false;
 	}
 	echo '</div><!-- /fpo -->';
