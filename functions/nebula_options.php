@@ -86,8 +86,6 @@ function register_nebula_options(){
 	$GLOBALS['nebula_options_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
 		'nebula_edited_yet' => 'false',
 		'nebula_scss_last_processed' => '0',
-		'nebula_last_version_number' => nebula_version('full'),
-		'nebula_last_version_date' => nebula_version('date'),
 		'nebula_version_legacy' => 'false',
 		'nebula_users_status' => '',
 
@@ -392,20 +390,6 @@ function nebula_options_page(){
 		        	<td>
 						<input type="text" name="nebula_edited_yet" value="true" />
 						<p class="helper"><small>This is pre-set to "true" so that when the user clicks "Save Changes" it becomes stored in the DB. Therefore, this will always say "true" even if it hasn't actually been saved yet!</small></p>
-					</td>
-		        </tr>
-		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
-		        	<th scope="row">Last Version Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-		        	<td>
-						<input type="text" name="nebula_last_version_number" value="<?php echo nebula_version('full'); ?>" />
-						<p class="helper"><small>This is the Nebula version number when it was last saved.</small></p>
-					</td>
-		        </tr>
-		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
-		        	<th scope="row">Last Version Date&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-		        	<td>
-						<input type="text" name="nebula_last_version_date" value="<?php echo nebula_version('date'); ?>" />
-						<p class="helper"><small>This is the Nebula version date when it was last saved.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">

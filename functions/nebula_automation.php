@@ -217,9 +217,6 @@ function nebula_initialization($standard=null){
 		nebula_initialization_set_install_date();
 		nebula_render_scss('all'); //Re-render all SCSS files.
 
-		update_option('nebula_last_version_number', nebula_version('full'));
-		update_option('nebula_last_version_date', nebula_version('date'));
-
 		if ( empty($standard) ){ //If AJAX initialization
 			echo '1';
 			exit;

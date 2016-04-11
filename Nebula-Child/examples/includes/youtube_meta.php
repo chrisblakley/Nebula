@@ -15,7 +15,7 @@
 		<?php $youtube_id = 'jtip7Gdcf0Q'; ?>
 		<?php if ( youtube_meta($youtube_id) ): ?>
 			<article class="youtube video">
-				<iframe id="<?php echo youtube_meta($youtube_id, 'safetitle'); ?>" class="youtubeplayer" width="560" height="315" src="//www.youtube.com/embed/<?php echo <?php echo youtube_meta($youtube_id, 'id'); ?>; ?>?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe>
+				<iframe id="<?php echo youtube_meta($youtube_id, 'safetitle'); ?>" class="youtubeplayer" width="560" height="315" src="//www.youtube.com/embed/<?php echo youtube_meta($youtube_id, 'id'); ?>?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe>
 			</article>
 			<br />
 			<div class="container">

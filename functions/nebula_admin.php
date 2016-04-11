@@ -215,12 +215,6 @@ function nebula_theme_json(){
 		return;
 	}
 
-	//Make sure the version stored in the DB always matches the actual version
-	if ( nebula_option('nebula_last_version_number') != nebula_version('full') ){
-		update_option('nebula_last_version_number', nebula_version('full'));
-		update_option('nebula_last_version_date', nebula_version('date'));
-	}
-
 	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('nebula_theme_update_notification', 'enabled') && nebula_option('nebula_version_legacy', 'false') ){
 		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker.
 		$theme_update_checker = new ThemeUpdateChecker(
@@ -231,21 +225,22 @@ function nebula_theme_json(){
 }
 
 //Send an email to the current user and site admin that Nebula has been updated.
-add_action('upgrader_process_complete', 'nebula_theme_update_automation');
-function nebula_theme_update_automation(){
+add_action('upgrader_process_complete', 'nebula_theme_update_automation', 10, 2);
+function nebula_theme_update_automation($upgrader_object, $options){
 	$override = apply_filters('pre_nebula_theme_update_automation', false);
 	if ( $override !== false ){return;}
 
-	if ( nebula_option('nebula_last_version_number') == nebula_version('full') ){ //Check if Nebula theme was updated. //@TODO "Nebula" 0: Is this working as intended?
-		return;
+	if ( $options['type'] == 'theme' && in_array_r('Nebula-master', $options['themes']) ){
+		nebula_theme_update_email(nebula_version('full'), $upgrader_object->skin->theme_info->get('Version')); //Send email with update information
+		update_option('nebula_version_legacy', 'false');
+	}
+}
+function nebula_theme_update_email($prev_version, $new_version='the latest version'){
+	if ( empty($prev_version) ){
+		$prev_version = nebula_version('full');
+		$prev_version_commit_date = nebula_version('date');
 	}
 
-	nebula_theme_update_email(); //Send email with update information
-	update_option('nebula_last_version_number', nebula_version('full'));
-	update_option('nebula_last_version_date', nebula_version('date'));
-	update_option('nebula_version_legacy', 'false');
-}
-function nebula_theme_update_email(){
 	global $wpdb;
 	$current_user = wp_get_current_user();
 	$to = $current_user->user_email;
@@ -256,8 +251,8 @@ function nebula_theme_update_email(){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}
 
-	$subject = 'Nebula parent theme updated to ' . nebula_version('full') . ' for ' . get_bloginfo('name') . '.';
-	$message = '<p>The parent Nebula theme has been updated from version <strong>' . nebula_option('nebula_last_version_number') . ' (Committed on ' . nebula_option('nebula_last_version_date') . ')</strong> to <strong>' . nebula_version('full') . ' (Committed on ' . nebula_version('date') . ')</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+	$subject = 'Nebula parent theme updated to ' . $new_version . ' for ' . get_bloginfo('name') . '.';
+	$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . ' (Committed: ' . $prev_version_commit_date . ')</strong> to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
 
 	//Set the content type to text/html for the email.
 	add_filter('wp_mail_content_type', function($content_type){
