@@ -18,7 +18,6 @@ add_filter('run_wptexturize', '__return_false');
 
 
 //Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
-//@TODO "Nebula" 0: Update for WP 4.3 - Favicon will be a General Setting
 add_action('admin_head', 'admin_favicon');
 function admin_favicon(){
 	$cache_buster = ( is_debug() )? '?r' . mt_rand(1000, 99999) : '';
@@ -224,22 +223,29 @@ function nebula_theme_json(){
 	}
 }
 
+//When checking for theme updates, store the next and current Nebula versions from the response.
+add_action('nebula_theme_update_check', 'nebula_theme_update_version_store', 10, 2);
+function nebula_theme_update_version_store($themeUpdate, $installedVersion){
+	update_option('nebula_next_version', $themeUpdate->version);
+	update_option('nebula_current_version', nebula_version('full'));
+	update_option('nebula_current_version_date', nebula_version('date'));
+}
+
 //Send an email to the current user and site admin that Nebula has been updated.
-add_action('upgrader_process_complete', 'nebula_theme_update_automation', 10, 2);
+add_action('upgrader_process_complete', 'nebula_theme_update_automation', 10, 2); //Action 'upgrader_post_install' also exists.
 function nebula_theme_update_automation($upgrader_object, $options){
 	$override = apply_filters('pre_nebula_theme_update_automation', false);
 	if ( $override !== false ){return;}
 
 	if ( $options['type'] == 'theme' && in_array_r('Nebula-master', $options['themes']) ){
-		nebula_theme_update_email(nebula_version('full'), $upgrader_object->skin->theme_info->get('Version')); //Send email with update information
+		nebula_theme_update_email(); //Send email with update information
 		update_option('nebula_version_legacy', 'false');
 	}
 }
-function nebula_theme_update_email($prev_version, $new_version='the latest version'){
-	if ( empty($prev_version) ){
-		$prev_version = nebula_version('full');
-		$prev_version_commit_date = nebula_version('date');
-	}
+function nebula_theme_update_email(){
+	$prev_version = get_option('nebula_current_version');
+	$prev_version_commit_date = get_option('nebula_current_version_date');
+	$new_version = get_option('nebula_next_version');
 
 	global $wpdb;
 	$current_user = wp_get_current_user();
@@ -247,12 +253,19 @@ function nebula_theme_update_email($prev_version, $new_version='the latest versi
 
 	//Carbon copy the admin if update was done by another user.
 	$admin_user_email = nebula_option('nebula_contact_email', nebula_option('admin_email'));
-	if ( $admin_user_email && $admin_user_email != $current_user->user_email ){
+	if ( !empty($admin_user_email) && $admin_user_email != $current_user->user_email ){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}
 
-	$subject = 'Nebula parent theme updated to ' . $new_version . ' for ' . get_bloginfo('name') . '.';
-	$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . ' (Committed: ' . $prev_version_commit_date . ')</strong> to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+	$subject = 'Nebula updated to ' . $new_version . ' for ' . get_bloginfo('name') . '.';
+	$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+
+	$message .= '<p>Debug info for temporary testing. Note this is run from the "previous version" (version being updated).<br/>
+		nebula_version full: ' . nebula_version('full') . '<br/>
+		nebula_version date: ' . nebula_version('date') . '<br/>
+		passed "new_version" var: ' . $new_version . '<br/>
+		passed "old_version_temp var (nebula_version full but passed): ' . $old_version_temp . '<br/>
+	</p>';
 
 	//Set the content type to text/html for the email.
 	add_filter('wp_mail_content_type', function($content_type){
@@ -731,6 +744,18 @@ if ( nebula_option('nebula_dev_metabox') ){
 				echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			}
 
+			if ( nebula_option('nebula_prototype_mode', 'enabled') ){
+				if ( nebula_option('nebula_wireframe_theme') ){
+					$nebula_wireframe_size = foldersize(get_theme_root() . '/' . nebula_option('nebula_wireframe_theme'));
+					echo '<li title="' . nebula_option('nebula_wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
+				}
+
+				if ( nebula_option('nebula_staging_theme') ){
+					$nebula_staging_size = foldersize(get_theme_root() . '/' . nebula_option('nebula_staging_theme'));
+					echo '<li title="' . nebula_option('nebula_staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
+				}
+			}
+
 			//Uploads directory size (and max upload size)
 			$upload_dir = wp_upload_dir();
 			$uploads_size = foldersize($upload_dir['basedir']);
@@ -822,24 +847,25 @@ if ( nebula_option('nebula_dev_metabox') ){
 			//SCSS last processed date
 			$scss_last_processed = ( get_option('nebula_scss_last_processed') )? '<span title="' . human_time_diff(get_option('nebula_scss_last_processed')) . ' ago"><strong>' . date("F j, Y", get_option('nebula_scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", get_option('nebula_scss_last_processed')) . '</strong></span>' : '<strong>Never</strong>';
 			echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
-
 		echo '</ul>';
 
 		//Directory search
 		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
-		if ( is_child_theme() ){
+		if ( nebula_option('nebula_prototype_mode', 'enabled') ){
+			echo '<option value="production">Production</option>';
+			if ( nebula_option('nebula_staging_theme') ){
+				echo '<option value="staging">Staging</option>';
+			}
+			if ( nebula_option('nebula_wireframe_theme') ){
+				echo '<option value="wireframe">Wireframe</option>';
+			}
+		} elseif ( is_child_theme() ){
 			echo '<option value="parent">Parent Theme</option><option value="child">Child Theme</option>';
 		} else {
 			echo '<option value="theme">Theme</option>';
 		}
 		echo '<option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
 		echo '<div class="search_results"></div>';
-
-
-
-
-
-
 	}
 }
 
@@ -864,6 +890,16 @@ function search_theme_files(){
 		$dirpath = get_template_directory();
 	} elseif ( $_POST['data'][0]['directory'] == 'child' ){
 		$dirpath = get_stylesheet_directory();
+	} elseif ( $_POST['data'][0]['directory'] == 'wireframe' ){
+		$dirpath = get_theme_root() . '/' . nebula_option('nebula_wireframe_theme');
+	} elseif ( $_POST['data'][0]['directory'] == 'staging' ){
+		$dirpath = get_theme_root() . '/' . nebula_option('nebula_staging_theme');
+	} elseif ( $_POST['data'][0]['directory'] == 'production' ){
+		if ( nebula_option('nebula_production_theme') ){
+			$dirpath = get_theme_root() . '/' . nebula_option('nebula_production_theme');
+		} else {
+			$dirpath = get_stylesheet_directory();
+		}
 	} elseif ( $_POST['data'][0]['directory'] == 'plugins' ){
 		$dirpath = WP_PLUGIN_DIR;
 	} elseif ( $_POST['data'][0]['directory'] == 'uploads' ){

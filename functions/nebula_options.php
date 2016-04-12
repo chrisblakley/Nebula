@@ -86,6 +86,9 @@ function register_nebula_options(){
 	$GLOBALS['nebula_options_fields'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
 		'nebula_edited_yet' => 'false',
 		'nebula_scss_last_processed' => '0',
+		'nebula_next_version' => '',
+		'nebula_current_version' => nebula_version('full'),
+		'nebula_current_version_date' => nebula_version('date'),
 		'nebula_version_legacy' => 'false',
 		'nebula_users_status' => '',
 
@@ -393,10 +396,31 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Current Version Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" value="<?php echo get_option('nebula_current_version'); ?>" />
+						<p class="helper"><small>This is the Nebula version number when it was last saved.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Last Version Date&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" value="<?php echo get_option('nebula_current_version_date'); ?>" />
+						<p class="helper"><small>This is the Nebula version date when it was last saved.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Legacy Version?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" name="nebula_version_legacy" value="<?php echo get_option('nebula_version_legacy'); ?>" />
 						<p class="helper"><small>If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
+		        	<th scope="row">Next Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<td>
+						<input type="text" value="<?php echo get_option('nebula_next_version'); ?>" />
+						<p class="helper"><small>The latest version available on Github. Updates when theme update check is ran.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">

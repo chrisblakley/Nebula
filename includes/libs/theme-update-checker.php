@@ -77,6 +77,8 @@ class ThemeUpdateChecker {
 	 * @return ThemeUpdate
 	 */
 	public function requestUpdate($queryArgs = array()){
+		echo 'requesting update';
+
 		//Query args to append to the URL. Themes can add their own by using a filter callback (see addQueryArgFilter()).
 		$queryArgs['installed_version'] = $this->getInstalledVersion();
 		$queryArgs = apply_filters(self::$filterPrefix.'query_args-'.$this->theme, $queryArgs);
@@ -102,6 +104,10 @@ class ThemeUpdateChecker {
 		if ( ($code == 200) && !empty($body) ){
 			$themeUpdate = ThemeUpdate::fromJson($body);
 			//The update should be newer than the currently installed version.
+
+			do_action('nebula_theme_update_check', $themeUpdate, $this->getInstalledVersion());
+			echo 'inside library';
+
 			if ( ($themeUpdate != null) && version_compare($themeUpdate->version, $this->getInstalledVersion(), '<=') ){
 				$themeUpdate = null;
 			}
