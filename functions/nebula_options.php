@@ -413,14 +413,14 @@ function nebula_options_page(){
 		        	<th scope="row">Legacy Version?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" name="nebula_version_legacy" value="<?php echo get_option('nebula_version_legacy'); ?>" />
-						<p class="helper"><small>If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled.</small></p>
+						<p class="helper"><small>If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled. Incompatible versions will be labeled with a "u" at the end of the version number.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
-		        	<th scope="row">Next Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Latest Github Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" value="<?php echo get_option('nebula_next_version'); ?>" />
-						<p class="helper"><small>The latest version available on Github. Updates when theme update check is ran.</small></p>
+						<p class="helper"><small>The latest version available on Github. Re-checks with <a href="/update-core.php">theme update check</a>.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">

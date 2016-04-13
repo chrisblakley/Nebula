@@ -84,12 +84,12 @@
 
 				<div id="logonavcon" class="container">
 					<div class="row">
-						<div class="six columns">
+						<div class="five columns">
 							<a class="logocon" href="<?php echo home_url(); ?>">
 								<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
 							</a>
 						</div><!--/columns-->
-						<div class="ten columns">
+						<div class="eleven columns">
 							<?php if ( has_nav_menu('primary') ): ?>
 								<nav id="primarynav" class="clearfix">
 									<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>

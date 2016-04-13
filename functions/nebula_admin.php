@@ -229,6 +229,12 @@ function nebula_theme_update_version_store($themeUpdate, $installedVersion){
 	update_option('nebula_next_version', $themeUpdate->version);
 	update_option('nebula_current_version', nebula_version('full'));
 	update_option('nebula_current_version_date', nebula_version('date'));
+
+	if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) != str_replace('u', '', nebula_version('full')) ){ //If Github version has "u", disable automated updates.
+		update_option('nebula_version_legacy', 'true');
+	} elseif ( nebula_option('nebula_version_legacy', 'true') ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
+		update_option('nebula_version_legacy', 'false');
+	}
 }
 
 //Send an email to the current user and site admin that Nebula has been updated.
