@@ -266,13 +266,6 @@ function nebula_theme_update_email(){
 	$subject = 'Nebula updated to ' . $new_version . ' for ' . get_bloginfo('name') . '.';
 	$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
 
-	$message .= '<p>Debug info for temporary testing. Note this is run from the "previous version" (version being updated).<br/>
-		nebula_version full: ' . nebula_version('full') . '<br/>
-		nebula_version date: ' . nebula_version('date') . '<br/>
-		passed "new_version" var: ' . $new_version . '<br/>
-		passed "old_version_temp var (nebula_version full but passed): ' . $old_version_temp . '<br/>
-	</p>';
-
 	//Set the content type to text/html for the email.
 	add_filter('wp_mail_content_type', function($content_type){
 		return 'text/html';

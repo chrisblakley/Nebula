@@ -285,7 +285,7 @@ function debugInfo(){
 
 	if ( typeof nebula.user.client !== 'undefined' ){
 		var fullDevice = '';
-		if ( nebula.user.client.device.full.trim().length ){
+		if ( jQuery.trim(nebula.user.client.device.full).length ){
 			var fullDevice = ' (' + nebula.user.client.device.full + ')';
 		}
 		debugInfoVal += 'Device: ' + nebula.user.client.device.type + fullDevice + '\n';
@@ -741,7 +741,7 @@ function gaEventTracking(){
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
 		var linkText = jQuery(this).text();
-		if ( linkText.trim() === '' ){
+		if ( jQuery.trim(linkText) === '' ){
 			if ( jQuery(this).find('img').attr('alt') ){
 				linkText = jQuery(this).find('img').attr('alt');
 			} else if ( jQuery(this).find('img').is('*') ){
@@ -1090,7 +1090,7 @@ function menuSearchReplacement(){
 		jQuery(this).addClass('focus active');
 	});
 	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
-		if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
+		if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
 			jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
 		} else {
 			jQuery(this).removeClass('active');
@@ -1123,8 +1123,8 @@ function autocompleteSearch(){
 		thisSearchInput = jQuery(this);
 		nebulaTimer('autocompleteSearch', 'start');
 		nebulaTimer('autocompleteResponse', 'start');
-		if ( !thisSearchInput.hasClass('no-autocomplete') && !nebula.dom.html.hasClass('lte-ie8') && thisSearchInput.val().trim().length ){
-			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && thisSearchInput.val().trim().length >= 2 && searchTriggerOnlyChars(e) ){
+		if ( !thisSearchInput.hasClass('no-autocomplete') && !nebula.dom.html.hasClass('lte-ie8') && jQuery.trim(thisSearchInput.val()).length ){
+			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && jQuery.trim(thisSearchInput.val()).length >= 2 && searchTriggerOnlyChars(e) ){
 				thisSearchInput.parents('form').addClass('searching');
 				setTimeout(function(){
 					thisSearchInput.parents('form').removeClass('searching');
@@ -1571,7 +1571,7 @@ function searchValidator(){
 	if ( !nebula.dom.html.hasClass('lte-ie8') ){
 		jQuery('.lt-ie9 form.search .btn.submit').val('Search');
 		jQuery('.input.search').each(function(){
-			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
+			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 			} else {
 				jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
@@ -1580,7 +1580,7 @@ function searchValidator(){
 		});
 		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
 			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
-			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
+			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 				jQuery(this).parent().find('.btn.submit').val('Go');
 			} else {
@@ -1595,7 +1595,7 @@ function searchValidator(){
 			}
 		})
 		jQuery('form.search').submit(function(){
-			if ( jQuery(this).find('.input.search').val() === '' || jQuery(this).find('.input.search').val().trim().length === 0 ){
+			if ( jQuery(this).find('.input.search').val() === '' || jQuery.trim(jQuery(this).find('.input.search').val()).length === 0 ){
 				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
 				jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
 				return false;
@@ -1668,7 +1668,7 @@ function pageSuggestion(){
 				var queryStrings = [''];
 			}
 			var path = window.location.pathname;
-			var phrase = decodeURIComponent(path.replace(/\/+/g, ' ').trim()) + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ').trim());
+			var phrase = decodeURIComponent(jQuery.trim(path.replace(/\/+/g, ' '))) + ' ' + decodeURIComponent(jQuery.trim(queryStrings[0].replace(/\+/g, ' ')));
 			trySearch(phrase);
 
 			nebula.dom.document.on('mousedown touch tap', 'a.suggestion', function(e){
@@ -1822,6 +1822,9 @@ function cf7Functions(){
 
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Attempt)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		if ( jQuery('.nebula-poi').val().length > 0 ){
+			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
+		}
 		ga('send', 'event', 'Contact', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
 	});
@@ -1829,6 +1832,9 @@ function cf7Functions(){
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7:invalid', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Invalid)');
+		if ( jQuery('.nebula-poi').val().length > 0 ){
+			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
+		}
 		ga('send', 'event', 'Contact', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 	});
@@ -1836,12 +1842,18 @@ function cf7Functions(){
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7:spam', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Spam)');
+		if ( jQuery('.nebula-poi').val().length > 0 ){
+			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
+		}
 		ga('send', 'event', 'Contact', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.target.id);
 	});
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7:mailfailed', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Failed)');
+		if ( jQuery('.nebula-poi').val().length > 0 ){
+			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
+		}
 		ga('send', 'event', 'Contact', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.target.id);
 	});
 
@@ -1852,6 +1864,11 @@ function cf7Functions(){
 		}
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Success)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+
+		if ( jQuery('.nebula-poi').val().length > 0 ){
+			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
+		}
+
 		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
 		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + millisecondsToString(nebulaTimer(e.target.id, 'end')));
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
@@ -1910,7 +1927,7 @@ function cf7LiveValidator(){
 
 	//Standard text inputs
 	jQuery('.wpcf7-text').on('keyup blur', function(e){
-		if ( jQuery(this).val().trim() === '' ){
+		if ( jQuery.trim(jQuery(this).val()) === '' ){
 			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success');
 		} else {
 			jQuery(this).parents('.field').removeClass('danger warning').addClass('success');
@@ -1957,7 +1974,7 @@ function cf7LiveValidator(){
 
 	//Message textarea
 	jQuery('.wpcf7-textarea').on('keyup blur', function(e){
-		if ( jQuery(this).val().trim() === '' ){
+		if ( jQuery.trim(jQuery(this).val()) === '' ){
 			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success');
 		} else {
 			if ( e.type === 'blur' ){
@@ -2488,7 +2505,7 @@ function nebulaScrollTo(element, milliseconds){
 		return false;
 	}
 
-	nebula.dom.document.on('click touch tap', 'a[href^=#]:not([href=#])', function(){ //Using an ID as the href
+	nebula.dom.document.on('click touch tap', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
 		if ( jQuery(this).parents('.mm-menu').is('*') ){
 			return false;
 		}
@@ -2879,7 +2896,7 @@ function nebula_pre(){
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){
 		if ( !jQuery(this).parent('.nebula-pre-con').is('*') ){
-			lang = jQuery(this).attr('class').replace('nebula-code', '').trim();
+			lang = jQuery.trim(jQuery(this).attr('class').replace('nebula-code', ''));
 			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-pre-con clearfix ' + lang.toLowerCase() + '"></div>');
 			jQuery(this).parents('.nebula-pre-con').prepend('<span class="nebula-pre nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}

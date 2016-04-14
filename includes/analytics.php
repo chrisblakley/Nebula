@@ -41,7 +41,7 @@
 			prerenderedLink: '<?php echo nebula_option('nebula_cd_prerenderedlink'); //Hit ?>',
 			sessionID: '<?php echo nebula_option('nebula_cd_sessionid'); //Session ?>',
 			sessionNotes: '<?php echo nebula_option('nebula_cd_sessionnotes'); //Session ?>',
-			notablePOI: '<?php echo nebula_option('nebula_cd_notablepoi'); //User ?>',
+			poi: '<?php echo nebula_option('nebula_cd_notablepoi'); //User ?>',
 			role: '<?php echo nebula_option('nebula_cd_role'); //User ?>',
 			timestamp: '<?php echo nebula_option('nebula_cd_timestamp'); //Hit ?>',
 			userID: '<?php echo nebula_option('nebula_cd_userid'); //User ?>',
@@ -243,10 +243,12 @@
 				foreach ( $notable_ip_lines as $line ){
 					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
 					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $_SERVER['REMOTE_ADDR'])) || $ip_info[0] == $_SERVER['REMOTE_ADDR'] ){ //If regex pattern and matches IP, or if direct match
-						echo 'ga("set", gaCustomDimensions["notablePOI"], "' . str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]) . '");';
+						echo 'ga("set", gaCustomDimensions["poi"], "' . str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]) . '");';
 						break;
 					}
 				}
+			} elseif ( isset($_GET['poi']) ){ //If POI query string exists //@TODO "Nebula" 0: in main.js strip this query string off the URL somehow?
+				echo 'ga("set", gaCustomDimensions["poi"], "' . str_replace('%20', '', $_GET['poi']) . '");';
 			}
 		?>
 
@@ -263,7 +265,7 @@
 				jQuery('html').addClass('ad-blocker');
 				adBlockUser = 'Ad Blocker Detected';
 				<?php if ( nebula_option('nebula_cd_adblocker') ): //Scope: Session ?>
-					ga('set', gaCustomDimensions['adBlocker'], adBlockUser); //Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below.
+					ga('set', gaCustomDimensions['adBlocker'], adBlockUser); <?php //Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
 				<?php endif; ?>
 				ga('send', 'event', adBlockUser, 'This user is using ad blocking software.');
 			});

@@ -1223,7 +1223,7 @@ function nebula_options_page(){
 		        	<th scope="row">Notable POI&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_notablepoi" value="<?php echo get_option('nebula_cd_notablepoi'); ?>" />
-						<p class="helper"><small>Stores named IP addresses (from the Administration tab). <strong>Scope: User</strong></small></p>
+						<p class="helper"><small>Stores named IP addresses (from the Administration tab). Also passes date using the <code>?poi</code> query string (useful for email marketing using personalization within links). Also sends value of input fields with class "nebula-poi" on form submits (when applicable). <strong>Scope: User</strong></small></p>
 					</td>
 		        </tr>
 
