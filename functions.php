@@ -149,6 +149,10 @@ function register_nebula_scripts(){
 			'history' => false,
 			'notes' => false,
 			'geolocation' => false,
+			'flags' => array(
+				'adblock' => false,
+				'gablock' => false,
+			),
 		);
 	}
 
@@ -184,6 +188,9 @@ function register_nebula_scripts(){
 			),
 			'cid' => ga_parse_cookie(),
 			'conversions' => false,
+			'flags' => array(
+				'fbconnect' => false,
+			),
 			'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 				'bot' => nebula_is_bot(),
 				'remote_addr' => $_SERVER['REMOTE_ADDR'],
@@ -261,7 +268,7 @@ function enqueue_nebula_frontend(){
 	//wp_enqueue_script('nebula-modernizr_dev');
 	wp_enqueue_script('nebula-modernizr');
 	wp_enqueue_script('nebula-mmenu');
-	wp_enqueue_script('nebula-headroom');
+	wp_enqueue_script('nebula-headroom'); //Can this be loaded dynamically as needed?
 	wp_enqueue_script('nebula-gumby');
 	wp_enqueue_script('nebula-main');
 
@@ -274,7 +281,7 @@ function enqueue_nebula_frontend(){
 		//wp_enqueue_script('nebula-mmenu_debugger');
 	}
 
-	if ( nebula_is_browser('ie', '9', '<=') ){ //Old IE. Eventually remove this entirely.
+	if ( nebula_is_browser('ie', '9', '<=') ){ //Old IE Scripts.
 		wp_enqueue_script('nebula-respond');
 		wp_enqueue_script('nebula-html5shiv');
 	}
@@ -291,11 +298,11 @@ function enqueue_nebula_frontend(){
 
 	if ( is_page(9999) ){ //Twitter pages (conditional may need to change depending on type of page it's used on)
 		wp_enqueue_script('nebula-twitter');
-		//wp_enqueue_script('nebula-moment'); //Uncomment if using moment.js instead of Date.parse() for times.
+		//wp_enqueue_script('nebula-moment'); //Uncomment (or enqueue in Child theme) if using moment.js instead of Date.parse() for times.
 	}
 
 	if ( nebula_is_desktop() ){ //Desktop traffic only
-		//wp_enqueue_script('nebula-skrollr');
+		//wp_enqueue_script('nebula-skrollr'); //Uncomment (or enqueue in child theme) if using skrollr for parallax.
 	}
 }
 

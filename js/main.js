@@ -13,7 +13,6 @@ jQuery(document).ready(function(){
 	}
 
 	globalVariables();
-	gaBlockDetect();
 	initSessionInfo();
 
 	//Social
@@ -92,6 +91,8 @@ jQuery(document).ready(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
+	gaBlockDetect(); //on doc load if possible...
+
 	//Focus on hero search field on load and hover.
 	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
 		if ( !jQuery('input:focus').is('*') ){
@@ -191,7 +192,7 @@ function windowTypeDetection(){
 		if ( window.parent.location.toString().indexOf('wp-admin') === -1 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Iframe'));
-			ga('send', 'event', 'Iframe', 'Loaded within: ' + window.parent.location, {'nonInteraction': 1});
+			ga('send', 'event', 'Iframe', 'Loaded Within', window.parent.location, {'nonInteraction': 1});
 		}
 		//Break out of the iframe when link is clicked.
 		jQuery('a').each(function(){
@@ -253,11 +254,11 @@ function initSessionInfo(){
 	} else {
 		nebula.session = JSON.parse(sessionStorage['nebulaSession']);
 
-		if ( nebula.session.history && document.referrer && document.referrer.indexOf(nebula.site.domain) < 0 ){ //If user navigated away and came back.
+		if ( has(nebula, 'session.history') && document.referrer && document.referrer.indexOf(nebula.site.domain) < 0 ){ //If user navigated away and came back.
 			nebula.session.history.push('---Returned from: ' + document.referrer.replace(/"|%22/g, ''));
 		}
 
-		if ( nebula.session.history && window.location.href !== nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
+		if ( has(nebula, 'session.history') && window.location.href !== nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
 			nebula.session.history.push(window.location.href.replace(/"|%22/g, ''));
 		}
 	}
@@ -283,7 +284,7 @@ function debugInfo(){
 		debugInfoVal += 'http://udger.com/resources/online-parser\n\n';
 	}
 
-	if ( typeof nebula.user.client !== 'undefined' ){
+	if ( has(nebula, 'user.client') ){
 		var fullDevice = '';
 		if ( jQuery.trim(nebula.user.client.device.full).length ){
 			var fullDevice = ' (' + nebula.user.client.device.full + ')';
@@ -308,10 +309,10 @@ function debugInfo(){
 			debugInfoVal += 'Page load time not available.\n\n';
 		}
 
-		if ( nebula.session.id ){
+		if ( has(nebula, 'session.id') ){
 			debugInfoVal += 'Current Session ID: ' + nebula.session.id + '\n';
 		}
-		if ( nebula.session.referrer.length ){
+		if ( has(nebula, 'session.referrer') ){
 			debugInfoVal += 'Original Referrer: ' + nebula.session.referrer + '\n';
 		} else {
 			debugInfoVal += 'Original Referrer: (Direct or Unknown)\n';
@@ -321,7 +322,7 @@ function debugInfo(){
 			debugInfoVal += 'History Depth: ' + window.history.length + '\n';
 		}
 
-		if ( nebula.session.history ){
+		if ( has(nebula, 'session.history') ){
 			jQuery.each(nebula.session.history, function(i){
 				if ( nebula.session.history.length > 10 && i < 10 ){
 					return true;
@@ -339,18 +340,18 @@ function debugInfo(){
 			debugInfoVal += 'Ads: ' + adBlockUser + '\n';
 		}
 
-		if ( typeof nebula.user.client.businessopen !== 'undefined' ){
+		if ( has(nebula, 'user.client.businessopen') ){
 			debugInfoVal += ( nebula.user.client.businessopen )? 'During Business Hours\n\n' : 'Non-Business Hours\n\n';
 		}
 	}
 
-	if ( typeof nebula.user !== 'undefined' ){
+	if ( has(nebula, 'user') ){
 		debugInfoVal += 'User:\n';
 		debugInfoVal += JSON.stringify(nebula.user);
 		debugInfoVal += '\n\n';
 	}
 
-	if ( typeof nebula.session.geolocation !== 'undefined' && typeof nebula.session.geolocation.coordinates !== 'undefined' && nebula.session.geolocation !== '' ){
+	if ( has(nebula, 'session.geolocation.coordinates') ){
 		if ( !nebula.session.geolocation.error ){
 			debugInfoVal += 'Geolocation: ' + nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude + '\n';
 			debugInfoVal += 'Accuracy: ' + nebula.session.geolocation.accuracy.meters + ' meters (' + nebula.session.geolocation.accuracy.miles + ' miles)\n';
@@ -388,8 +389,8 @@ function pageVisibility(){
 			nebula.dom.document.trigger('nebula_page_hidden');
 			nebula.dom.body.addClass('page-visibility-hidden');
 			nebulaTimer('pageVisibilityHidden', 'start');
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Visibility'));
-			ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1});
+			//ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Visibility'));
+			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1});
 			pauseAllVideos(false);
 			visFirstHidden = true;
 		} else { //Page is visible
@@ -397,7 +398,7 @@ function pageVisibility(){
 				nebula.dom.document.trigger('nebula_page_visible');
 				nebula.dom.body.removeClass('page-visibility-hidden');
 				//ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'lap')), 'Page in background tab for this time'); //Uncomment if this timing data is useful. GA limits timings, so disabled in favor of more important default timings.
-				ga('send', 'event', 'Page Visibility', 'Visibile', pageTitle, {'nonInteraction': 1});
+				//ga('send', 'event', 'Page Visibility', 'Visibile', pageTitle, {'nonInteraction': 1});
 			}
 		}
 	}
@@ -431,6 +432,7 @@ function overflowDetector(){
 function gaBlockDetect(){
 	if ( !nebula.user.client.bot ){
 		gablocked = true;
+
 		ga(function(){
 			gablocked = false;
 		});
@@ -438,17 +440,20 @@ function gaBlockDetect(){
 		setTimeout(function(){
 			if ( gablocked ){
 				jQuery('html').addClass('no-gajs');
-				jQuery.ajax({
-					type: "POST",
-					url: nebula.site.ajax.url,
-					data: {
-						nonce: nebula.site.ajax.nonce,
-						action: 'nebula_ga_blocked',
-						data: [{
-							id: ( nebula.post )? nebula.post.id : false,
-						}],
-					}
-				});
+
+				if ( has(nebula, 'session.flags') && nebula.session.flags.gablock !== 'true' ){
+					jQuery.ajax({
+						type: "POST",
+						url: nebula.site.ajax.url,
+						data: {
+							nonce: nebula.site.ajax.nonce,
+							action: 'nebula_ga_blocked',
+							data: [{
+								id: ( nebula.post )? nebula.post.id : false,
+							}],
+						}
+					});
+				}
 
 				function ga(send, event, category, action, label, value, misc){
 					if ( send === 'send' && event === 'event' ){
@@ -475,6 +480,8 @@ function gaBlockDetect(){
 						});
 					}
 				}
+			} else {
+				nebula.session.flags.gablock = 'false';
 			}
 		}, 1000);
 	}
@@ -499,7 +506,7 @@ function facebookSDK(){
 //Facebook Connect functions
 function facebookConnect(){
 	window.fbConnectFlag = false;
-	if ( nebula.site.options.facebook_app_id ){
+	if ( has(nebula, 'site.options.facebook_app_id') ){
 		window.fbAsyncInit = function(){
 			FB.init({
 				appId: nebula.site.options.facebook_app_id,
@@ -542,6 +549,7 @@ function facebookConnect(){
 			});
 		};
 
+		//Connect to Facebook without using the Facebook Login button
 		nebula.dom.document.on('click touch tap', '.facebook-connect', function(){
 			facebookLoginLogout();
 			return false;
@@ -569,7 +577,7 @@ function facebookLoginLogout(){
 function checkFacebookStatus(){
 	FB.getLoginStatus(function(response){
 		nebula.user.facebook = {'status': response.status}
-		if ( nebula.user.facebook.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
+		if ( has(nebula, 'user.facebook') && nebula.user.facebook.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
 			FB.api('/me', function(response){
 				//Update the Nebula User Facebook Object
 				nebula.user.facebook = {
@@ -593,7 +601,6 @@ function checkFacebookStatus(){
 					},
 					verified: response.verified,
 				}
-				nebulaConversion('facebook', 'connect');
 
 				//Update Nebula User Object
 				nebula.user.name = {
@@ -608,21 +615,34 @@ function checkFacebookStatus(){
 					timezone: response.timezone,
 				}
 
+				nebulaConversion('facebook', 'connect');
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Connect'));
-				ga('send', 'event', 'Social', 'Facebook Connect', nebula.user.facebook.id);
+				ga('set', gaCustomDimensions['fbID'], nebula.user.facebook.id);
+
+				if ( has(nebula, 'user.flags') && nebula.user.flags.fbconnect !== 'true' ){
+					ga('send', 'event', 'Social', 'Facebook Connect', nebula.user.facebook.id);
+					nebula.user.flags.fbconnect = 'true';
+				}
+
 				nebula.dom.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebula.user.facebook.id);
 				createCookie('nebulaUser', JSON.stringify(nebula.user));
 				nebula.dom.document.trigger('fbConnected');
 			});
-		} else if ( nebula.user.facebook.status === 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
+		} else if ( has(nebula, 'user.facebook') && nebula.user.facebook.status === 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
 			nebulaConversion('facebook', 'connect', 'remove');
 			nebula.dom.body.removeClass('fb-connected').addClass('fb-not_authorized');
 			nebula.dom.document.trigger('fbNotAuthorized');
+			if ( nebula.user.flags ){
+				nebula.user.flags.fbconnect = 'false';
+			}
 		} else { //User is not logged into Facebook.
 			nebulaConversion('facebook', 'connect', 'remove');
 			nebula.dom.body.removeClass('fb-connected').addClass('fb-disconnected');
 			nebula.dom.document.trigger('fbDisconnected');
+			if ( has(nebula, 'user.flags') ){
+				nebula.user.flags.fbconnect = 'false';
+			}
 		}
 	});
 }
@@ -713,6 +733,10 @@ function socialSharing(){
     jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'LinkedIn');
+    });
+    jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
+	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+	    ga('send', 'event', 'Social', 'Share', 'Pinterest');
     });
     jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
@@ -903,12 +927,12 @@ function gaEventTracking(){
 		if ( copyCount < 13 ){
 			if ( words.length > 8 ){
 				words = words.slice(0, 8).join(' ');
-				ga('send', 'event', 'Copied Text', words + '... [' + wordsLength + ' words]');
+				ga('send', 'event', 'Copied Text', words.length + ' words', words + '... [' + wordsLength + ' words]');
 			} else {
 				if ( selection === '' || selection === ' ' ){
 					ga('send', 'event', 'Copied Text', '[0 words]');
 				} else {
-					ga('send', 'event', 'Copied Text', selection);
+					ga('send', 'event', 'Copied Text', words.length + ' words', selection);
 					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Copied Text'));
 				}
 			}
@@ -1661,7 +1685,7 @@ function singleResultDrawer(){
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 function pageSuggestion(){
 	if ( nebula.dom.body.hasClass('search-no-results') || nebula.dom.body.hasClass('error404') ){
-		if ( nebula.site.options.nebula_cse_id !== '' && nebula.site.options.nebula_google_browser_api_key !== '' ){
+		if ( has(nebula, 'site.options') && nebula.site.options.nebula_cse_id !== '' && nebula.site.options.nebula_google_browser_api_key !== '' ){
 			if ( get().length ){
 				var queryStrings = get();
 			} else {
@@ -1744,32 +1768,6 @@ function nebulaPrerenderListeners(){
 			clearTimeout(hoverTimer);
 		}
 	});
-
-	//Store correct/inccorect predictions in Google Analytics.
-	//This Nebula option must be used for data to be reported.
-	/*
-		Use Top Events report to find data, then secondary dimensions for comparisons.
-		Page = the current page
-		Prerender Link = the predicted page that was prerendered
-		Event label = the URL that was actually clicked by the user.
-	*/
-	if ( gaCustomDimensions['prerenderedLink'] && jQuery('link#prerender').is('*') ){ //If custom dimension is enabled, and prerender exists
-		jQuery(document).on('click touch tap', 'a', function(){
-			if ( jQuery(this).attr('target') !== '_blank' && jQuery(this).attr('href') !== '#' && jQuery(this).attr('href') !== window.location.href ){ //If link is eligible to have been prerendered
-				var clickedLink =  jQuery(this).attr('href');
-				var prerenderedLink = jQuery('link#prerender').attr('href');
-
-				ga('set', gaCustomDimensions['prerenderedLink'], prerenderedLink);
-
-				if ( prerenderedLink.indexOf('//') === 0 ){
-					clickedLink = clickedLink.replace(/https?:/g, '');
-				}
-
-				var predictionResult = ( clickedLink === prerenderedLink )? 'Correct' : 'Incorrect';
-				ga('send', 'event', 'Prerender Prediction', predictionResult, clickedLink, {'nonInteraction': 1});
-			}
-		});
-	}
 }
 
 //Actually prerender a URL
@@ -2170,10 +2168,10 @@ function nebulaAddressAutocomplete(autocompleteInput){
 									//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
 							}
 						}
-						if ( nebula.user.address.street.number && nebula.user.address.street.name ){
+						if ( has(nebula, 'user.address.street') ){
 							nebula.user.address.street.full = nebula.user.address.street.number + ' ' + nebula.user.address.street.name;
 						}
-						if ( nebula.user.address.zip.code && nebula.user.address.zip.suffix ){
+						if ( has(nebula, 'user.address.zip') ){
 							nebula.user.address.zip.full = nebula.user.address.zip.code + '-' + nebula.user.address.zip.suffix;
 						}
 
@@ -2857,18 +2855,35 @@ function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-time
 	var system_date = new Date(time);
 	var user_date = new Date();
 	var diff = Math.floor((user_date-system_date)/1000);
-	if (diff <= 1) return "just now";
-	if (diff < 20) return diff + " seconds ago";
-	if (diff < 60) return "less than a minute ago";
-	if (diff <= 90) return "one minute ago";
-	if (diff <= 3540) return Math.round(diff/60) + " minutes ago";
-	if (diff <= 5400) return "1 hour ago";
-	if (diff <= 86400) return Math.round(diff/3600) + " hours ago";
-	if (diff <= 129600) return "1 day ago";
-	if (diff < 604800) return Math.round(diff/86400) + " days ago";
-	if (diff <= 777600) return "1 week ago";
-	return "on " + system_date;
+	if ( diff <= 1 ){ return "just now"; }
+	if ( diff < 20 ){ return diff + " seconds ago"; }
+	if ( diff < 60 ){ return "less than a minute ago"; }
+	if ( diff <= 90 ){ return "one minute ago"; }
+	if ( diff <= 3540 ){ return Math.round(diff/60) + " minutes ago"; }
+	if ( diff <= 5400 ){ return "1 hour ago"; }
+	if ( diff <= 86400 ){ return Math.round(diff/3600) + " hours ago"; }
+	if ( diff <= 129600 ){ return "1 day ago"; }
+	if ( diff < 604800 ){ return Math.round(diff/86400) + " days ago"; }
+	if ( diff <= 777600 ){ return "1 week ago"; }
+	return "on " + time;
 }
+
+//Check nested objects (boolean)
+//has(nebula, 'user.client.remote_addr');
+function has(obj, prop){
+	var parts = prop.split('.');
+	for ( var i = 0, l = parts.length; i < l; i++ ){
+		var part = parts[i];
+		if ( obj !== null && typeof obj === "object" && part in obj ){
+			obj = obj[part];
+		} else {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 
 /*==========================

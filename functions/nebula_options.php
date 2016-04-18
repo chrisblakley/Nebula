@@ -186,10 +186,10 @@ function register_nebula_options(){
 		'nebula_cd_relativetime' => '',
 		'nebula_cd_scrolldepth' => '',
 		'nebula_cd_maxscroll' => '',
-		'nebula_cd_prerenderedlink' => '',
 		'nebula_cd_sessionid' => '',
 		'nebula_cd_timestamp' => '',
 		'nebula_cd_userid' => '',
+		'nebula_cd_fbid' => '',
 		'nebula_cd_role' => '',
 		'nebula_cd_videowatcher' => '',
 		'nebula_cd_eventintent' => '',
@@ -1085,14 +1085,6 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="short" valign="top">
-		        	<th scope="row">Prerendered Link&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_cd_prerenderedlink" value="<?php echo get_option('nebula_cd_prerenderedlink'); ?>" />
-						<p class="helper"><small>Stores the prerendered URL to compare correct/incorrect predictions. <strong>Scope: Hit</strong></small></p>
-					</td>
-		        </tr>
-
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
 						<h3>Business Data</h3>
@@ -1160,6 +1152,14 @@ function nebula_options_page(){
 					<td>
 						<input class="dimension" type="text" name="nebula_cd_userid" value="<?php echo get_option('nebula_cd_userid'); ?>" />
 						<p class="helper"><small>If allowing visitors to sign up to create WordPress accounts, this will send user IDs to Google Analytics. <em>User IDs are also passed in the Session ID, but this scope is tied more specifically to the user (it can often capture data even when they are not currently logged in).</em> <strong>Scope: User</strong></small></p>
+					</td>
+		        </tr>
+
+		         <tr class="short" valign="top">
+		        	<th scope="row">Facebook ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_cd_fbid" value="<?php echo get_option('nebula_cd_fbid'); ?>" />
+						<p class="helper"><small>Send Facebook ID to Google Analytics when using Facebook Connect API. Add the ID to this URL to view it: <code>https://www.facebook.com/app_scoped_user_id/</code> <strong>Scope: User</strong></small></p>
 					</td>
 		        </tr>
 

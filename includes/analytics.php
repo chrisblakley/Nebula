@@ -38,13 +38,13 @@
 			relativeTime: '<?php echo nebula_option('nebula_cd_relativetime'); //Hit ?>',
 			scrollDepth: '<?php echo nebula_option('nebula_cd_scrolldepth'); //Hit ?>',
 			maxScroll: '<?php echo nebula_option('nebula_cd_maxscroll'); //Hit ?>',
-			prerenderedLink: '<?php echo nebula_option('nebula_cd_prerenderedlink'); //Hit ?>',
 			sessionID: '<?php echo nebula_option('nebula_cd_sessionid'); //Session ?>',
 			sessionNotes: '<?php echo nebula_option('nebula_cd_sessionnotes'); //Session ?>',
 			poi: '<?php echo nebula_option('nebula_cd_notablepoi'); //User ?>',
 			role: '<?php echo nebula_option('nebula_cd_role'); //User ?>',
 			timestamp: '<?php echo nebula_option('nebula_cd_timestamp'); //Hit ?>',
 			userID: '<?php echo nebula_option('nebula_cd_userid'); //User ?>',
+			fbID: '<?php echo nebula_option('nebula_cd_fbid'); //User ?>',
 			videoWatcher: '<?php echo nebula_option('nebula_cd_videowatcher'); //Session ?>',
 			eventIntent: '<?php echo nebula_option('nebula_cd_eventintent'); //Hit ?>',
 			wordCount: '<?php echo nebula_option('nebula_cd_wordcount'); //Hit ?>',
@@ -261,13 +261,20 @@
 		<?php if ( !nebula_is_bot() ): //Detect Ad Blockers. ?>
 			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/show_ads.js').done(function(){
 				adBlockUser = 'No Ad Blocker';
+				if ( nebula.session.flags ){
+					nebula.session.flags.adblock = 'false';
+				}
 			}).fail(function(){ //Ad blocker detected
 				jQuery('html').addClass('ad-blocker');
 				adBlockUser = 'Ad Blocker Detected';
 				<?php if ( nebula_option('nebula_cd_adblocker') ): //Scope: Session ?>
 					ga('set', gaCustomDimensions['adBlocker'], adBlockUser); <?php //Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
 				<?php endif; ?>
-				ga('send', 'event', adBlockUser, 'This user is using ad blocking software.');
+
+				if ( nebula.session.flags && nebula.session.flags.adblock !== 'true' ){
+					ga('send', 'event', adBlockUser, 'This user is using ad blocking software.');
+					nebula.session.flags.adblock = 'true';
+				}
 			});
 		<?php endif; ?>
 

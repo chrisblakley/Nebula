@@ -15,7 +15,7 @@ function nebula_no_js_event(){
 			$dimension_array = array('cd' . $cd_number => 'JS Disabled');
 		}
 
-		ga_send_event('JavaScript Disabled', $_SERVER['HTTP_USER_AGENT'], $title, null, 1, $dimension_array);
+		ga_send_event('JavaScript Disabled', $title, $_SERVER['HTTP_USER_AGENT'], null, 1, $dimension_array);
 		header('Location: ' . nebula_prefer_child_directory('/images/no-js.gif') . '?id=' . $_GET['id']); //Redirect and parameters here do nothing (deter false data).
 		die; //Die as a precaution.
 	}
@@ -42,7 +42,7 @@ function nebula_ga_blocked(){
 	}
 
 	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id), $dimension_array);
-	ga_send_event('Google Analytics Blocked', $_SERVER['HTTP_USER_AGENT'], get_the_title($post_id));
+	ga_send_event('Google Analytics Blocked', get_the_title($post_id), $_SERVER['HTTP_USER_AGENT']);
 }
 
 
@@ -2180,8 +2180,8 @@ function youtube_meta($videoID, $meta=''){
 	}
 	$youtube_json = json_decode($youtube_json);
 
-	if ( !$youtube_json ){
-		trigger_error('A Youtube Data API error occurred.', E_USER_WARNING);
+	if ( empty($youtube_json) ){
+		trigger_error('A Youtube Data API error occurred. Make sure the Youtube Data API is enabled in the Google Developer Console and the browser key is saved in Nebula Options.', E_USER_WARNING);
 		return false;
 	} elseif ( !empty($youtube_json->error) ){
 		trigger_error('Youtube API Error: ' . $youtube_json->error->message, E_USER_WARNING);
