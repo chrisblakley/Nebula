@@ -47,12 +47,31 @@ function nebula_defer_async_scripts($url){
 	}
 }
 
-//Enqueue required scripts strictly as needed
-add_action('comment_form_before', 'nebula_enqueue_comments_reply');
-function nebula_enqueue_comments_reply(){
-	if ( get_option('thread_comments') ){
-		wp_enqueue_script('comment-reply');
+//Defer and Async specific scripts
+add_filter('script_loader_tag', 'nebula_defer_async_additional_scripts', 10);
+function nebula_defer_async_additional_scripts($tag){
+	$to_defer = array('jquery-migrate.min.js', 'jquery.form.min.js', 'contact-form-7', 'wp-embed.min.js'); //Scripts to defer. Strings can be anywhere in the filepath.
+	$to_async = array(); //Scripts to async. Strings can be anywhere in the filepath.
+
+	//Defer scripts
+	if ( !empty($to_defer) ){
+		foreach ( $to_defer as $script ){
+			if ( strpos($tag, $script) ){
+				return str_replace(' src', ' data-nebula-test="defer-this" defer="defer" src', $tag);
+			}
+		}
 	}
+
+	//Async scripts
+	if ( !empty($to_async) ){
+		foreach ( $to_async as $script ){
+			if ( strpos($tag, $script) ){
+				return str_replace(' src', ' data-nebula-test="async-this" async="async" src', $tag);
+			}
+		}
+	}
+
+	return $tag;
 }
 
 //Remove version query strings from styles/scripts (to allow caching)
@@ -62,22 +81,22 @@ function nebula_remove_script_version($src){
 	return remove_query_arg('ver', $src);
 }
 
-//Dequeue redundant files (from plugins)
+//Dequeue certain scripts
 //Important: Add a reason in comments to help future updates: Plugin Name - Reason
 add_action('wp_print_scripts', 'nebula_dequeues', 9999);
 add_action('wp_print_styles', 'nebula_dequeues', 9999);
 function nebula_dequeues(){
+	$override = apply_filters('pre_nebula_dequeues', false);
+	if ( $override !== false ){return $override;}
+
 	if ( !is_admin() ){
 		//Styles
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
 
 		//Page specific dequeues
 		if ( is_front_page() ){
-			//Styles
-			wp_deregister_style('thickbox'); //WP Core Thickbox - Comment out if thickbox type gallery IS used on the homepage.
-
-			//Scripts
-			wp_deregister_script('thickbox'); //WP Thickbox - Comment out if thickbox type gallery IS used on the homepage.
+			wp_deregister_style('thickbox'); //WP Core Thickbox - Override if thickbox type gallery IS used on the homepage.
+			wp_deregister_script('thickbox'); //WP Thickbox - Override if thickbox type gallery IS used on the homepage.
 		}
 	}
 }
@@ -85,6 +104,9 @@ function nebula_dequeues(){
 //Force settings within plugins
 add_action('admin_init', 'nebula_plugin_force_settings');
 function nebula_plugin_force_settings(){
+	$override = apply_filters('pre_nebula_plugin_force_settings', false);
+	if ( $override !== false ){return $override;}
+
 	//Wordpress SEO (Yoast)
 	if ( file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ){
 		remove_submenu_page('wpseo_dashboard', 'wpseo_files'); //Remove the ability to edit files.
@@ -101,37 +123,11 @@ function nebula_plugin_force_settings(){
 //Please add a comment with the reason for the override!
 add_action('wp_print_scripts', 'nebula_remove_actions', 9999);
 function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
-	if ( !is_admin() ){
-		//Frontend
-		//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
-
-		if ( nebula_option('nebula_admin_bar', 'disabled') ){
-			remove_action('wp_head', '_admin_bar_bump_cb'); //Admin bar <style> bump
-		}
-
-		if ( get_the_ID() == 1 ){ remove_action('wp_footer', 'cff_js', 10); } //Custom Facebook Feed - Remove the feed from the homepage. @TODO "Plugins" 2: Update to any page/post type that should NOT have the Facebook Feed
-	} else {
-		//WP Admin
+	if ( is_admin() ){ //WP Admin
 		remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 		remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
-		remove_meta_box('espresso_news_dashboard_widget', 'dashboard', 'normal'); //Event Espresso - Remove Dashboard Metabox
-		//remove_action('init', 'wpseo_description_test'); //Wordpress SEO (Yoast) - Remove Meta Description test (@TODO "Nebula" 0: Not Working - this function is called all over the place...)
-		//remove_action('admin_init', 'after_update_notice', 15); //Wordpress SEO (Yoast) - Remove "WordPress SEO by Yoast has been updated" box (@TODO "Nebula" 0: Not Working)
-
-		//global $WPSEO_Admin_Init; //@TODO "Nebula" 0: Test this next time the box appears after an update.
-		//remove_action('admin_init', array($WPSEO_Admin_Init, 'after_update_notice'), 15); //@TODO "Nebula" 0: Test this next time the box appears after an update... didnt work
-	}
-}
-
-//Remove the Admin Bar entirely
-if ( nebula_option('nebula_admin_bar', 'disabled') ){
-	show_admin_bar(false);
-} else {
-	//Remove admin bar logo
-	add_action('wp_before_admin_bar_render', 'remove_admin_bar_logo', 0);
-	function remove_admin_bar_logo() {
-		global $wp_admin_bar;
-		$wp_admin_bar->remove_menu('wp-logo');
+	} else { //Frontend
+		//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
 	}
 }
 

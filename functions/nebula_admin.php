@@ -35,6 +35,8 @@ function nebula_admin_body_classes($classes){
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
 if ( nebula_option('nebula_admin_bar', 'disabled') ){
+	show_admin_bar(false);
+
 	add_action('wp_print_scripts', 'dequeue_admin_bar', 9999);
 	add_action('wp_print_styles', 'dequeue_admin_bar', 9999);
 	function dequeue_admin_bar(){
@@ -56,6 +58,12 @@ if ( nebula_option('nebula_admin_bar', 'disabled') ){
 		}
 	}
 } else {
+	add_action('wp_before_admin_bar_render', 'remove_admin_bar_logo', 0);
+	function remove_admin_bar_logo() {
+		global $wp_admin_bar;
+		$wp_admin_bar->remove_menu('wp-logo');
+	}
+
 	//Create custom menus within the WordPress Admin Bar
 	add_action('admin_bar_menu', 'nebula_admin_bar_menus', 800);
 	function nebula_admin_bar_menus($wp_admin_bar){

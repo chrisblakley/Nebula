@@ -411,6 +411,14 @@ if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_s
 	function enable_comments_status(){
 		return true;
 	}
+
+	//Enqueue threaded comments script only as needed
+	add_action('comment_form_before', 'nebula_enqueue_comments_reply');
+	function nebula_enqueue_comments_reply(){
+		if ( get_option('thread_comments') ){
+			wp_enqueue_script('comment-reply');
+		}
+	}
 }
 
 //Disable support for trackbacks in post types

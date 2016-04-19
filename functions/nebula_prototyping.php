@@ -12,7 +12,7 @@ if ( nebula_option('nebula_prototype_mode', 'enabled') ){
 	add_action('wp_enqueue_scripts', 'enqueue_nebula_wireframing');
 	function enqueue_nebula_wireframing(){
 		wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
-		nebula_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', null, array('nebula-main'), null, true);
+		nebula_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', 'defer', array('nebula-main'), null, true);
 
 		wp_enqueue_style('nebula-wireframing');
 		wp_enqueue_script('nebula-wireframing');
