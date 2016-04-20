@@ -57,6 +57,7 @@
 <?php //Facebook Metadata ?>
 <meta property="fb:app_id" content="<?php echo get_option('nebula_facebook_app_id'); ?>" />
 <meta property="fb:page_id" content="<?php echo get_option('nebula_facebook_page_id'); ?>" />
+<meta property="fb:pages" content="<?php echo get_option('nebula_facebook_page_id'); ?>" />
 <meta property="fb:admins" content="<?php echo get_option('facebook_admin_ids'); ?>" />
 
 

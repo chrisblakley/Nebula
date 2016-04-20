@@ -155,7 +155,6 @@ function register_nebula_options(){
 		'nebula_ataglance_metabox' => 'enabled',
 		'nebula_dev_metabox' => 'enabled',
 		'nebula_todo_metabox' => 'enabled',
-		'nebula_domain_exp' => 'disabled',
 		'nebula_scss' => 'enabled',
 		'nebula_minify_css' => 'disabled',
 		'nebula_dev_stylesheets' => 'enabled',
@@ -814,18 +813,6 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', get_option('nebula_plugin_update_warning')); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Control whether or not the plugin update warning appears on admin pages. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-				<tr class="short" valign="top">
-		        	<th scope="row">Domain Expiration Email&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_domain_exp">
-							<option disabled>Default: Enabled</option>
-							<option value="enabled" <?php selected('enabled', get_option('nebula_domain_exp')); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', get_option('nebula_domain_exp')); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Send an email to all site admins if the detected domain expiration date is within one week. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 

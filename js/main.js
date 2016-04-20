@@ -13,7 +13,6 @@ jQuery(document).ready(function(){
 	}
 
 	globalVariables();
-	initSessionInfo();
 
 	//Social
 	facebookSDK();
@@ -246,26 +245,6 @@ function updateViewportDimensions(){
 	return viewportObject;
 }
 
-//Detect user flow around website.
-function initSessionInfo(){
-	if ( typeof sessionStorage['nebulaSession'] === 'undefined' ){
-		nebula.session.referrer = document.referrer.replace(/"|%22/g, '');
-		nebula.session.history = [window.location.href.replace(/"|%22/g, '')];
-	} else {
-		nebula.session = JSON.parse(sessionStorage['nebulaSession']);
-
-		if ( has(nebula, 'session.history') && document.referrer && document.referrer.indexOf(nebula.site.domain) < 0 ){ //If user navigated away and came back.
-			nebula.session.history.push('---Returned from: ' + document.referrer.replace(/"|%22/g, ''));
-		}
-
-		if ( has(nebula, 'session.history') && window.location.href !== nebula.session.history[nebula.session.history.length-1] ){ //Disregard page refreshes
-			nebula.session.history.push(window.location.href.replace(/"|%22/g, ''));
-		}
-	}
-
-	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
-}
-
 //Fill debugInfo field with browser information (to send with forms).
 function debugInfo(){
 	var debugInfoVal = '';
@@ -320,16 +299,6 @@ function debugInfo(){
 
 		if ( typeof window.history !== 'undefined' ){
 			debugInfoVal += 'History Depth: ' + window.history.length + '\n';
-		}
-
-		if ( has(nebula, 'session.history') ){
-			jQuery.each(nebula.session.history, function(i){
-				if ( nebula.session.history.length > 10 && i < 10 ){
-					return true;
-				}
-				debugInfoVal += (i+1) + '.) ' + nebula.session.history[i] + '\n';
-			});
-			debugInfoVal += '\n';
 		}
 
 		if ( typeof sessionStorage['nebulaSession'] !== 'undefined' && sessionStorage['nebulaSession'].length ){
@@ -986,7 +955,7 @@ function gaEventTracking(){
 
 	//404 Pages
 	if ( nebula.dom.body.hasClass('error404') ){
-		nebulaConversion('404', true);
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP 404 Page'));
 	}
 }
 

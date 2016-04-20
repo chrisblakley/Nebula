@@ -73,7 +73,6 @@
 		<?php
 			if ( is_404() ){
 				echo 'ga("set", gaCustomDimensions["sessionNotes"], sessionNote("HTTP 404 Page"));';
-				echo 'nebulaConversion("404", true);';
 			}
 
 			if ( is_singular() || is_page() ){
@@ -298,44 +297,48 @@
 
 		//Add or remove session notes
 		function sessionNote(action, item){
-			if ( typeof sessionStorage['nebulaSession'] === 'undefined' ){
-				nebula.session.notes = [];
-			} else {
-				nebula.session = JSON.parse(sessionStorage['nebulaSession']);
-				if ( !nebula.session.notes ){
+			if ( !jQuery('html').hasClass('lte-ie8') ){
+				if ( typeof sessionStorage['nebulaSession'] === 'undefined' ){
 					nebula.session.notes = [];
-				}
-			}
-
-			if ( action == 'return' ){
-				return nebula.session.notes.join(', ');
-			} else if ( action != 'add' && action != 'remove' ){
-				item = action;
-				action = 'add';
-			}
-
-			if ( !item ){
-				return nebula.session.notes.join(', ');
-			}
-
-			itemIndex = nebula.session.notes.indexOf(item.replace(/"|%22/g, ''));
-
-			if ( action == 'add' ){
-				if ( itemIndex < 0 ){
-					nebula.session.notes.push(item);
 				} else {
+					nebula.session = JSON.parse(sessionStorage['nebulaSession']);
+					if ( !nebula.session.notes ){
+						nebula.session.notes = [];
+					}
+				}
+
+				if ( action === 'return' ){
+					return nebula.session.notes.join(', ');
+				} else if ( action != 'add' && action != 'remove' ){
+					item = action;
+					action = 'add';
+				}
+
+				if ( !item ){ //IE8 does not like this.
 					return nebula.session.notes.join(', ');
 				}
+
+				itemIndex = nebula.session.notes.indexOf(item.replace(/"|%22/g, ''));
+
+				if ( action === 'add' ){
+					if ( itemIndex < 0 ){
+						nebula.session.notes.push(item);
+					} else {
+						return nebula.session.notes.join(', ');
+					}
+				} else {
+					if ( itemIndex >= 0 ){
+						nebula.session.notes.splice(itemIndex, 1);
+					} else {
+						return nebula.session.notes.join(', ');
+					}
+				}
+
+				sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
+				return nebula.session.notes.join(', ');
 			} else {
-				if ( itemIndex >= 0 ){
-					nebula.session.notes.splice(itemIndex, 1);
-				} else {
-					return nebula.session.notes.join(', ');
-				}
+				return 'IE8';
 			}
-
-			sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
-			return nebula.session.notes.join(', ');
 		}
 	</script>
 	<noscript>

@@ -47,17 +47,17 @@ function nebula_defer_async_scripts($url){
 	}
 }
 
-//Defer and Async specific scripts
+//Defer and Async specific scripts. This only works with registered/enqueued scripts!
 add_filter('script_loader_tag', 'nebula_defer_async_additional_scripts', 10);
 function nebula_defer_async_additional_scripts($tag){
-	$to_defer = array('jquery-migrate.min.js', 'jquery.form.min.js', 'contact-form-7', 'wp-embed.min.js'); //Scripts to defer. Strings can be anywhere in the filepath.
+	$to_defer = array('jquery-migrate', 'jquery.form', 'contact-form-7', 'wp-embed'); //Scripts to defer. Strings can be anywhere in the filepath.
 	$to_async = array(); //Scripts to async. Strings can be anywhere in the filepath.
 
 	//Defer scripts
 	if ( !empty($to_defer) ){
 		foreach ( $to_defer as $script ){
 			if ( strpos($tag, $script) ){
-				return str_replace(' src', ' data-nebula-test="defer-this" defer="defer" src', $tag);
+				return str_replace(' src', ' defer="defer" src', $tag);
 			}
 		}
 	}
@@ -66,7 +66,7 @@ function nebula_defer_async_additional_scripts($tag){
 	if ( !empty($to_async) ){
 		foreach ( $to_async as $script ){
 			if ( strpos($tag, $script) ){
-				return str_replace(' src', ' data-nebula-test="async-this" async="async" src', $tag);
+				return str_replace(' src', ' async="async" src', $tag);
 			}
 		}
 	}
