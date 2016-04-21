@@ -42,7 +42,7 @@ function nebula_ga_blocked(){
 	}
 
 	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id), $dimension_array);
-	ga_send_event('Google Analytics Blocked', get_the_title($post_id), $_SERVER['HTTP_USER_AGENT']);
+	//ga_send_event('Google Analytics Blocked', get_the_title($post_id), $_SERVER['HTTP_USER_AGENT']);
 }
 
 

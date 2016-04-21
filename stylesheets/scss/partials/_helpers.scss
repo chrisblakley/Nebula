@@ -100,7 +100,7 @@ body:not(.wp-admin) {
 				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
 			}
 		} @else {
-			a[href$=".#{$filetype}"], li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
+			a[href$=".#{$filetype}"], li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color; //Find a way for this to be less intrusive for things that shouldn't have icons (images).
 				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
 			}
 		}

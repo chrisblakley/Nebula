@@ -13,6 +13,7 @@ jQuery(document).ready(function(){
 	}
 
 	globalVariables();
+	gaBlockDetection();
 
 	//Social
 	facebookSDK();
@@ -90,7 +91,7 @@ jQuery(document).ready(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
-	gaBlockDetect(); //on doc load if possible...
+	gaBlockSend();
 
 	//Focus on hero search field on load and hover.
 	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
@@ -397,15 +398,15 @@ function overflowDetector(){
     });
 }
 
-//Detect GA blocking
-function gaBlockDetect(){
-	if ( !nebula.user.client.bot ){
-		gablocked = true;
-
-		ga(function(){
-			gablocked = false;
-		});
-
+//Google Analytics block detection
+function gaBlockDetection(){
+	gablocked = true;
+	ga(function(){
+		gablocked = false;
+	});
+}
+function gaBlockSend(){
+	if ( has(nebula, 'user.client') && !nebula.user.client.bot && has(nebula, 'site.options.gaid') && nebula.site.options.gaid != '' ){
 		setTimeout(function(){
 			if ( gablocked ){
 				jQuery('html').addClass('no-gajs');
@@ -431,7 +432,7 @@ function gaBlockDetect(){
 							ni = 1;
 						}
 
-						jQuery.ajax({ //test success
+						jQuery.ajax({
 							type: "POST",
 							url: nebula.site.ajax.url,
 							data: {
@@ -452,10 +453,9 @@ function gaBlockDetect(){
 			} else {
 				nebula.session.flags.gablock = 'false';
 			}
-		}, 1000);
+		}, 2000);
 	}
 }
-
 
 /*==========================
  Social Functions
@@ -2368,17 +2368,21 @@ function addHelperClasses(){
 	jQuery('li:last-child, tr:last-child').addClass('last-child'); //IE8 support
 	jQuery('.column:first-child, .columns:first-child').addClass('first-child'); //IE6 support
 	jQuery('a:hover, li:hover, tr:hover').addClass('hover'); //IE8 support
+
+	//Add rel attributes to external links
 	jQuery('a').each(function(){
-		var a = new RegExp('/' + window.location.host + '/');
-		if ( !a.test(this.href) ){
+		var hostPattern = new RegExp('/' + window.location.host + '/');
+		if ( !hostPattern.test(this.href) ){
 			if ( this.href.indexOf('http') !== -1 ){ //excludes all non-http link (ex: mailto: and tel:)
-				var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' ? jQuery(this).attr('rel') + ' ' : '' );
+				var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' )? jQuery(this).attr('rel') + ' ' : '';
 				jQuery(this).attr('rel', rel + 'external');
 			}
 		}
 	});
-	jQuery('a.icon img, li.icon a img').each(function(){
-		jQuery(this).parent('a').removeClass('icon').addClass('no-icon'); //Remove filetype icons from images within <a> tags.
+
+	//Remove filetype icons from images within <a> tags.
+	jQuery('a img').each(function(){
+		jQuery(this).parents('a').addClass('no-icon');
 	});
 }
 

@@ -114,6 +114,7 @@ function register_nebula_scripts(){
 			),
 			'upload_dir' => $upload_dir['baseurl'],
 			'options' => array(
+				'gaid' => $GLOBALS['ga'],
 				'nebula_cse_id' => get_option('nebula_cse_id'),
 				'nebula_google_browser_api_key' => get_option('nebula_google_browser_api_key'),
 				'facebook_url' => get_option('nebula_facebook_url'),
@@ -145,7 +146,6 @@ function register_nebula_scripts(){
 			'ip' => $_SERVER['REMOTE_ADDR'],
 			'id' => nebula_session_id(),
 			'referrer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : false,
-			'history' => false,
 			'notes' => false,
 			'geolocation' => false,
 			'flags' => array(
