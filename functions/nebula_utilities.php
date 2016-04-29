@@ -3,7 +3,7 @@
 //Generate Session ID
 function nebula_session_id(){
 	$session_info = ( is_debug() )? 'dbg.' : '';
-	$session_info .= ( nebula_option('nebula_prototype_mode', 'enabled') )? 'prt.' : '';
+	$session_info .= ( nebula_option('prototype_mode', 'enabled') )? 'prt.' : '';
 
 	if ( is_client() ){
 		$session_info .= 'cli.';
@@ -22,6 +22,7 @@ function nebula_session_id(){
 	$wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
 	$ga_cid = ( isset($nebula['user']['cid']) )? $nebula['user']['cid'] : ga_parse_cookie();
 
+	$site_live = '';
 	if ( !is_site_live() ){
 		$site_live = '.n';
 	}
@@ -308,7 +309,7 @@ function nebula_is_user_online($id){
 	$override = apply_filters('pre_nebula_is_user_online', false, $id);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = get_option('nebula_users_status');
+	$logged_in_users = nebula_option('users_status');
 	return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
 }
 
@@ -317,7 +318,7 @@ function nebula_user_last_online($id){
 	$override = apply_filters('pre_nebula_user_last_online', false, $id);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = get_option('nebula_users_status');
+	$logged_in_users = nebula_option('users_status');
 	if ( isset($logged_in_users[$id]['last']) ){
 		return $logged_in_users[$id]['last'];
 	}
@@ -329,7 +330,7 @@ function nebula_online_users($return='count'){
 	$override = apply_filters('pre_nebula_online_users', false, $return);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = get_option('nebula_users_status');
+	$logged_in_users = nebula_option('users_status');
 	if ( empty($logged_in_users) || !is_array($logged_in_users) ){
 		return ( $return == 'count' )? 0 : false; //If this happens it indicates an error.
 	}
@@ -350,7 +351,7 @@ function nebula_user_single_concurrent($id){
 	$override = apply_filters('pre_nebula_user_single_concurrent', false, $id);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = get_option('nebula_users_status');
+	$logged_in_users = nebula_option('users_status');
 	if ( isset($logged_in_users[$id]['unique']) ){
 		return count($logged_in_users[$id]['unique']);
 	}
@@ -365,11 +366,11 @@ function is_dev($strict=false){
 	if ( $override !== false ){return $override;}
 
 	if ( empty($strict) ){
-		$devIPs = explode(',', get_option('nebula_dev_ip'));
+		$devIPs = explode(',', nebula_option('dev_ip'));
 		foreach ( $devIPs as $devIP ){
 			$devIP = trim($devIP);
 
-			if ( $devIP[0] != '/' && $devIp == $_SERVER['REMOTE_ADDR'] ){
+			if ( $devIP[0] != '/' && $devIP == $_SERVER['REMOTE_ADDR'] ){
 				return true;
 			}
 
@@ -384,7 +385,7 @@ function is_dev($strict=false){
 		$current_user = wp_get_current_user();
 		list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
-		$devEmails = explode(',', get_option('nebula_dev_email_domain'));
+		$devEmails = explode(',', nebula_option('dev_email_domain'));
 		foreach ( $devEmails as $devEmail ){
 			if ( trim($devEmail) == $current_user_domain ){
 				return true;
@@ -403,7 +404,7 @@ function is_client($strict=false){
 	if ( $override !== false ){return $override;}
 
 	if ( empty($strict) ){
-		$clientIPs = explode(',', get_option('nebula_client_ip'));
+		$clientIPs = explode(',', nebula_option('client_ip'));
 		foreach ( $clientIPs as $clientIP ){
 			$clientIP = trim($clientIP);
 
@@ -422,7 +423,7 @@ function is_client($strict=false){
 		list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
 
 		//Check if the current user's email domain matches any of the client email domains from Nebula Options
-		$clientEmails = explode(',', get_option('nebula_client_email_domain'));
+		$clientEmails = explode(',', nebula_option('client_email_domain'));
 		foreach ( $clientEmails as $clientEmail ){
 			if ( trim($clientEmail) == $current_user_domain ){
 				return true;
@@ -459,8 +460,8 @@ function is_site_live(){
 	$override = apply_filters('pre_is_site_live', false);
 	if ( $override !== false ){return $override;}
 
-	if ( nebula_option('nebula_hostnames') ){
-		if ( strpos(get_option('nebula_hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
+	if ( nebula_option('hostnames') ){
+		if ( strpos(nebula_option('hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
 			return true;
 		}
 		return false;
@@ -1072,6 +1073,7 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 }
 
 //Prefer a child theme directory or file. Not declaring a directory will return the theme directory.
+//nebula_prefer_child_directory('/images/logo.png');
 function nebula_prefer_child_directory($directory='', $uri=true){
 	if ( $directory[0] != '/' ){
 		$directory = '/' . $directory;
@@ -1162,7 +1164,7 @@ function nebula_version($return=false){
 	SCSS Compiling
  ===========================*/
 
-if ( nebula_option('nebula_scss') ){
+if ( nebula_option('scss') ){
 	if ( is_writable(get_template_directory()) ){
 		add_action('init', 'nebula_render_scss');
 		add_action('admin_init', 'nebula_render_scss');
@@ -1172,7 +1174,7 @@ function nebula_render_scss($specific_scss=null, $child=false){
 	$override = apply_filters('pre_nebula_render_scss', false, $specific_scss, $child);
 	if ( $override !== false ){return $override;}
 
-	if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && (is_dev() || is_client()) ){
+	if ( nebula_option('scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && (is_dev() || is_client()) ){
 		$specific_scss = 'all';
 	}
 
@@ -1190,7 +1192,7 @@ function nebula_render_scss($specific_scss=null, $child=false){
 	$scss = new \Leafo\ScssPhp\Compiler();
 	$scss->addImportPath($stylesheets_directory . '/scss/partials/');
 
-	if ( nebula_option('nebula_minify_css', 'enabled') && !is_debug() ){
+	if ( nebula_option('minify_css', 'enabled') && !is_debug() ){
 		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
 	} else {
 		$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
@@ -1209,7 +1211,7 @@ function nebula_render_scss($specific_scss=null, $child=false){
 		}
 
 		//Combine Developer Stylesheets
-		if ( nebula_option('nebula_dev_stylesheets') ){
+		if ( nebula_option('dev_stylesheets') ){
 			nebula_combine_dev_stylesheets($stylesheets_directory, $stylesheets_directory_uri);
 		}
 
@@ -1218,10 +1220,10 @@ function nebula_render_scss($specific_scss=null, $child=false){
 			//$nebula_debug_start_time = microtime(true); //Debug timing start ******************************
 
 			$file_path_info = pathinfo($file);
-			if ( $file_path_info['filename'] == 'wireframing' && nebula_option('nebula_prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
+			if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
 				continue;
 			}
-			if ( $file_path_info['filename'] == 'dev' && nebula_option('nebula_dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
+			if ( $file_path_info['filename'] == 'dev' && nebula_option('dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
 				continue;
 			}
 			if ( !is_admin() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
@@ -1337,7 +1339,7 @@ function nebula_scss_variables($scss){
 	$scss = preg_replace("<%__utm.gif%>", ga_UTM_gif(), $scss); //GA __utm.gif pixel with parameters for tracking via CSS
 	do_action('nebula_scss_variables');
 	$scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
-	update_option('nebula_scss_last_processed', time());
+	nebula_update_option('scss_last_processed', time());
 	return $scss;
 }
 

@@ -34,7 +34,7 @@ function nebula_admin_body_classes($classes){
 }
 
 //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-if ( nebula_option('nebula_admin_bar', 'disabled') ){
+if ( nebula_option('admin_bar', 'disabled') ){
 	show_admin_bar(false);
 
 	add_action('wp_print_scripts', 'dequeue_admin_bar', 9999);
@@ -111,7 +111,7 @@ if ( nebula_option('nebula_admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 
-		$scss_last_processed = ( get_option('nebula_scss_last_processed') )? date('l, F j, Y - g:i:sa', get_option('nebula_scss_last_processed')) : 'Never';
+		$scss_last_processed = ( nebula_option('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula_option('scss_last_processed')) : 'Never';
 		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula',
 			'id' => 'nebula-options-scss',
@@ -194,12 +194,12 @@ if ( nebula_option('nebula_admin_bar', 'disabled') ){
 }
 
 //Disable Wordpress Core update notifications in WP Admin
-if ( nebula_option('nebula_wp_core_updates_notify', 'disabled') ){
+if ( nebula_option('wp_core_updates_notify', 'disabled') ){
 	add_filter('pre_site_transient_update_core', create_function('$a', "return null;"));
 }
 
 //Show update warning on Wordpress Core/Plugin update admin pages
-if ( nebula_option('nebula_plugin_update_warning') ){
+if ( nebula_option('plugin_update_warning') ){
 	if ( $pagenow == 'plugins.php' || $pagenow == 'update-core.php' ){
 		add_action('admin_notices', 'nebula_update_warning');
 		function nebula_update_warning(){
@@ -217,12 +217,15 @@ function nebula_theme_json(){
 
 	//If newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 	$remote_version_info = get_option('external_theme_updates-Nebula-master');
-	if ( (!nebula_option('nebula_version_legacy') || nebula_option('nebula_version_legacy', 'false')) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full')) ){
-		update_option('nebula_version_legacy', 'true');
+	if ( (!nebula_option('version_legacy') || nebula_option('version_legacy', 'false')) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full')) ){
+		nebula_update_option('version_legacy', 'true');
+		nebula_update_option('current_version', nebula_version('full'));
+		nebula_update_option('current_version_date', nebula_version('date'));
+		nebula_update_option('next_version', 'INCOMPATIBLE');
 		return;
 	}
 
-	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('nebula_theme_update_notification', 'enabled') && nebula_option('nebula_version_legacy', 'false') ){
+	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('theme_update_notification', 'enabled') && nebula_option('version_legacy', 'false') ){
 		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker.
 		$theme_update_checker = new ThemeUpdateChecker(
 			'Nebula-master', //This should be the directory slug of the parent theme.
@@ -234,14 +237,14 @@ function nebula_theme_json(){
 //When checking for theme updates, store the next and current Nebula versions from the response.
 add_action('nebula_theme_update_check', 'nebula_theme_update_version_store', 10, 2);
 function nebula_theme_update_version_store($themeUpdate, $installedVersion){
-	update_option('nebula_next_version', $themeUpdate->version);
-	update_option('nebula_current_version', nebula_version('full'));
-	update_option('nebula_current_version_date', nebula_version('date'));
+	nebula_update_option('next_version', $themeUpdate->version);
+	nebula_update_option('current_version', nebula_version('full'));
+	nebula_update_option('current_version_date', nebula_version('date'));
 
 	if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) != str_replace('u', '', nebula_version('full')) ){ //If Github version has "u", disable automated updates.
-		update_option('nebula_version_legacy', 'true');
-	} elseif ( nebula_option('nebula_version_legacy', 'true') ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
-		update_option('nebula_version_legacy', 'false');
+		nebula_update_option('version_legacy', 'true');
+	} elseif ( nebula_option('version_legacy', 'true') ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
+		nebula_update_option('version_legacy', 'false');
 	}
 }
 
@@ -253,33 +256,35 @@ function nebula_theme_update_automation($upgrader_object, $options){
 
 	if ( $options['type'] == 'theme' && in_array_r('Nebula-master', $options['themes']) ){
 		nebula_theme_update_email(); //Send email with update information
-		update_option('nebula_version_legacy', 'false');
+		nebula_update_option('version_legacy', 'false');
 	}
 }
 function nebula_theme_update_email(){
-	$prev_version = get_option('nebula_current_version');
-	$prev_version_commit_date = get_option('nebula_current_version_date');
-	$new_version = get_option('nebula_next_version');
+	$prev_version = nebula_option('current_version');
+	$prev_version_commit_date = nebula_option('current_version_date');
+	$new_version = nebula_option('next_version');
 
-	global $wpdb;
-	$current_user = wp_get_current_user();
-	$to = $current_user->user_email;
+	if ( $prev_version != $new_version ){
+		global $wpdb;
+		$current_user = wp_get_current_user();
+		$to = $current_user->user_email;
 
-	//Carbon copy the admin if update was done by another user.
-	$admin_user_email = nebula_option('nebula_contact_email', nebula_option('admin_email'));
-	if ( !empty($admin_user_email) && $admin_user_email != $current_user->user_email ){
-		$headers[] = 'Cc: ' . $admin_user_email;
+		//Carbon copy the admin if update was done by another user.
+		$admin_user_email = nebula_option('contact_email', nebula_option('admin_email'));
+		if ( !empty($admin_user_email) && $admin_user_email != $current_user->user_email ){
+			$headers[] = 'Cc: ' . $admin_user_email;
+		}
+
+		$subject = 'Nebula updated to ' . $new_version . ' for ' . get_bloginfo('name') . '.';
+		$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+
+		//Set the content type to text/html for the email.
+		add_filter('wp_mail_content_type', function($content_type){
+			return 'text/html';
+		});
+
+		wp_mail($to, $subject, $message, $headers);
 	}
-
-	$subject = 'Nebula updated to ' . $new_version . ' for ' . get_bloginfo('name') . '.';
-	$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
-
-	//Set the content type to text/html for the email.
-	add_filter('wp_mail_content_type', function($content_type){
-		return 'text/html';
-	});
-
-	wp_mail($to, $subject, $message, $headers);
 }
 
 //Remove the examples directory
@@ -290,7 +295,7 @@ function nebula_remove_examples_directory(){
 	$override = apply_filters('pre_nebula_remove_examples_directory', false);
 	if ( $override !== false ){return;}
 
-	if ( nebula_option('nebula_examples_directory', 'disabled') && current_user_can('manage_options') ){
+	if ( nebula_option('examples_directory', 'disabled') && current_user_can('manage_options') ){
 		if ( file_exists(get_stylesheet_directory() . '/examples') || file_exists(get_template_directory() . '/Nebula-Child/examples') ){
 			WP_Filesystem();
 			global $wp_filesystem;
@@ -316,8 +321,8 @@ function nebula_session_expire($expirein){
 remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
 
 //Custom login screen
-add_action('login_head', 'custom_login_css');
-function custom_login_css(){
+add_action('login_head', 'nebula_login_ga');
+function nebula_login_ga(){
 	if ( empty($_POST['signed_request']) ){
 	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $GLOBALS['ga'] . "', 'auto');</script>";
 	}
@@ -335,8 +340,36 @@ function new_wp_login_title(){
     return get_option('blogname');
 }
 
+//Update user online status
+add_action('init', 'nebula_users_status_init');
+add_action('admin_init', 'nebula_users_status_init');
+function nebula_users_status_init(){
+	$logged_in_users = nebula_option('users_status');
+
+	$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9]+/", "", $_SERVER['HTTP_USER_AGENT']);
+	$current_user = wp_get_current_user();
+
+	//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
+	//Who is 98.115.139.106 and why do they show up as user ID 0 with no username? Unique ID: 98.115.139.106.Mozilla50MacintoshIntelMacOSX1011rv450Gecko20100101Firefox450 Could be a DB deleted user?
+
+	if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
+		$logged_in_users[$current_user->ID] = array(
+			'id' => $current_user->ID,
+			'username' => $current_user->user_login,
+			'last' => time(),
+			'unique' => array($unique_id),
+		);
+		nebula_update_option('users_status', $logged_in_users);
+	} else {
+		if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
+			array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
+			nebula_update_option('users_status', $logged_in_users);
+		}
+	}
+}
+
 //Nebula Admin Notices
-if ( nebula_option('nebula_admin_notices') ){
+if ( nebula_option('admin_notices') ){
 	add_action('admin_notices', 'nebula_admin_notices');
 	function nebula_admin_notices(){
 		if ( current_user_can('manage_options') || is_dev() ){
@@ -368,7 +401,7 @@ if ( nebula_option('nebula_admin_notices') ){
 			}
 
 			//Check for Google Analytics Tracking ID
-			if ( get_option('nebula_ga_tracking_id') == '' && $GLOBALS['ga'] == '' ){
+			if ( nebula_option('ga_tracking_id') == '' && $GLOBALS['ga'] == '' ){
 				echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
 			}
 
@@ -383,7 +416,7 @@ if ( nebula_option('nebula_admin_notices') ){
 			}
 
 			//Check if all SCSS files were processed manually.
-			if ( nebula_option('nebula_scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
+			if ( nebula_option('scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
 				if ( is_dev() || is_client() ){
 					echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
 				} else {
@@ -391,7 +424,7 @@ if ( nebula_option('nebula_admin_notices') ){
 				}
 			}
 
-			if ( nebula_option('nebula_prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+			if ( nebula_option('prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
 			}
 
@@ -440,7 +473,7 @@ function nebula_unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_ty
 }
 
 //Welcome Panel
-if ( nebula_option('nebula_welcome_panel') ){
+if ( nebula_option('welcome_panel') ){
 	remove_action('welcome_panel','wp_welcome_panel');
 	add_action('welcome_panel','nebula_welcome_panel');
 	function nebula_welcome_panel(){
@@ -451,7 +484,7 @@ if ( nebula_option('nebula_welcome_panel') ){
 }
 
 //Remove unnecessary Dashboard metaboxes
-if ( nebula_option('nebula_unnecessary_metaboxes') ){
+if ( nebula_option('unnecessary_metaboxes') ){
 	add_action('wp_dashboard_setup', 'remove_dashboard_metaboxes');
 	function remove_dashboard_metaboxes(){
 		//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
@@ -461,14 +494,14 @@ if ( nebula_option('nebula_unnecessary_metaboxes') ){
 	    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
 	    remove_meta_box('dashboard_quick_press', 'dashboard', 'side');
 
-		if ( nebula_option('nebula_ataglance_metabox') ){
+		if ( nebula_option('ataglance_metabox') ){
 	    	remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
 	    }
 	}
 }
 
 //"At a Glance" metabox replacement
-if ( nebula_option('nebula_ataglance_metabox') ){
+if ( nebula_option('ataglance_metabox') ){
 	add_action('wp_dashboard_setup', 'nebula_ataglance_metabox');
 	function nebula_ataglance_metabox(){
 		global $wp_meta_boxes;
@@ -536,15 +569,15 @@ if ( nebula_option('nebula_ataglance_metabox') ){
 				echo '<li><i class="fa fa-users fa-fw"></i> This user is active in <strong>' . nebula_user_single_concurrent($current_user->ID) . ' locations</strong>.</li>';
 			}
 
-			if ( nebula_option('nebula_comments', 'enabled') && get_option('nebula_disqus_shortname') == '' ){
+			if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){
 				$comments_count = wp_count_comments();
 				$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
 				echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
 			} else {
-				if ( nebula_option('nebula_comments', 'disabled') ){
+				if ( nebula_option('comments', 'disabled') ){
 					echo '<li><i class="fa fa-comments-o fa-fw"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
 				} else {
-					echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . get_option('nebula_disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
+					echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . nebula_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
 				}
 			}
 		echo '</ul>';
@@ -560,7 +593,7 @@ function skip_extensions(){
 
 //TODO Metabox
 //This metabox tracks TODO messages throughout development.
-if ( nebula_option('nebula_todo_metabox') ){
+if ( nebula_option('todo_metabox') ){
 	if ( is_dev() ){
 		add_action('wp_dashboard_setup', 'todo_metabox');
 	}
@@ -664,7 +697,7 @@ if ( nebula_option('nebula_todo_metabox') ){
 
 //Developer Info Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
-if ( nebula_option('nebula_dev_metabox') ){
+if ( nebula_option('dev_metabox') ){
 	if ( is_dev() ){
 		add_action('wp_dashboard_setup', 'dev_info_metabox');
 	}
@@ -745,21 +778,26 @@ if ( nebula_option('nebula_dev_metabox') ){
 				$nebula_parent_size = foldersize(get_template_directory());
 				$nebula_child_size = foldersize(get_stylesheet_directory());
 				echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
-				echo '<li><i class="fa fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
+
+				if ( nebula_option('prototype_mode', 'enabled') ){
+					echo '<li><i class="fa fa-flag-checkered"></i> Production directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
+				} else {
+					echo '<li><i class="fa fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
+				}
 			} else {
 				$nebula_size = foldersize(get_stylesheet_directory());
 				echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			}
 
-			if ( nebula_option('nebula_prototype_mode', 'enabled') ){
-				if ( nebula_option('nebula_wireframe_theme') ){
-					$nebula_wireframe_size = foldersize(get_theme_root() . '/' . nebula_option('nebula_wireframe_theme'));
-					echo '<li title="' . nebula_option('nebula_wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
+			if ( nebula_option('prototype_mode', 'enabled') ){
+				if ( nebula_option('wireframe_theme') ){
+					$nebula_wireframe_size = foldersize(get_theme_root() . '/' . nebula_option('wireframe_theme'));
+					echo '<li title="' . nebula_option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
 				}
 
-				if ( nebula_option('nebula_staging_theme') ){
-					$nebula_staging_size = foldersize(get_theme_root() . '/' . nebula_option('nebula_staging_theme'));
-					echo '<li title="' . nebula_option('nebula_staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
+				if ( nebula_option('staging_theme') ){
+					$nebula_staging_size = foldersize(get_theme_root() . '/' . nebula_option('staging_theme'));
+					echo '<li title="' . nebula_option('staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
 				}
 			}
 
@@ -802,7 +840,7 @@ if ( nebula_option('nebula_dev_metabox') ){
 
 			//Initial installation date
 			function initial_install_date(){
-				$nebula_initialized = get_option('nebula_initialized');
+				$nebula_initialized = nebula_option('initialized');
 				if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
 					$install_date = '<span title="' . human_time_diff($nebula_initialized) . ' ago"><strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong></span> <small>(Nebula Init)</small>';
 				} else { //Use the last modified time of the admin page itself
@@ -852,20 +890,21 @@ if ( nebula_option('nebula_dev_metabox') ){
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong title="' . human_time_diff($latest_file['date']) . ' ago">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
 
 			//SCSS last processed date
-			$scss_last_processed = ( get_option('nebula_scss_last_processed') )? '<span title="' . human_time_diff(get_option('nebula_scss_last_processed')) . ' ago"><strong>' . date("F j, Y", get_option('nebula_scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", get_option('nebula_scss_last_processed')) . '</strong></span>' : '<strong>Never</strong>';
+			$scss_last_processed = ( nebula_option('scss_last_processed') )? '<span title="' . human_time_diff(nebula_option('scss_last_processed')) . ' ago"><strong>' . date("F j, Y", nebula_option('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_option('scss_last_processed')) . '</strong></span>' : '<strong>Never</strong>';
 			echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
 		echo '</ul>';
 
 		//Directory search
 		echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
-		if ( nebula_option('nebula_prototype_mode', 'enabled') ){
+		if ( nebula_option('prototype_mode', 'enabled') ){
 			echo '<option value="production">Production</option>';
-			if ( nebula_option('nebula_staging_theme') ){
+			if ( nebula_option('staging_theme') ){
 				echo '<option value="staging">Staging</option>';
 			}
-			if ( nebula_option('nebula_wireframe_theme') ){
+			if ( nebula_option('wireframe_theme') ){
 				echo '<option value="wireframe">Wireframe</option>';
 			}
+			echo '<option value="parent">Parent Theme</option>';
 		} elseif ( is_child_theme() ){
 			echo '<option value="parent">Parent Theme</option><option value="child">Child Theme</option>';
 		} else {
@@ -898,12 +937,12 @@ function search_theme_files(){
 	} elseif ( $_POST['data'][0]['directory'] == 'child' ){
 		$dirpath = get_stylesheet_directory();
 	} elseif ( $_POST['data'][0]['directory'] == 'wireframe' ){
-		$dirpath = get_theme_root() . '/' . nebula_option('nebula_wireframe_theme');
+		$dirpath = get_theme_root() . '/' . nebula_option('wireframe_theme');
 	} elseif ( $_POST['data'][0]['directory'] == 'staging' ){
-		$dirpath = get_theme_root() . '/' . nebula_option('nebula_staging_theme');
+		$dirpath = get_theme_root() . '/' . nebula_option('staging_theme');
 	} elseif ( $_POST['data'][0]['directory'] == 'production' ){
-		if ( nebula_option('nebula_production_theme') ){
-			$dirpath = get_theme_root() . '/' . nebula_option('nebula_production_theme');
+		if ( nebula_option('production_theme') ){
+			$dirpath = get_theme_root() . '/' . nebula_option('production_theme');
 		} else {
 			$dirpath = get_stylesheet_directory();
 		}

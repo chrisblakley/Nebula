@@ -70,40 +70,40 @@
 					<ul>
 						<li><i class="fa fa-list-alt fa-fw"></i> <a href="themes.php?page=nebula_options">Nebula Options</a></li>
 
-						<?php if ( nebula_option('nebula_cpanel_url') ): ?>
-							<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo nebula_option('nebula_cpanel_url'); ?>" target="_blank">Server Control Panel</a></li>
+						<?php if ( nebula_option('cpanel_url') ): ?>
+							<li><i class="fa fa-gears fa-fw"></i> <a href="<?php echo nebula_option('cpanel_url'); ?>" target="_blank">Server Control Panel</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('nebula_hosting_url') ): ?>
-							<li><i class="fa fa-hdd-o fa-fw"></i> <a href="<?php echo nebula_option('nebula_hosting_url'); ?>" target="_blank">Hosting</a></li>
+						<?php if ( nebula_option('hosting_url') ): ?>
+							<li><i class="fa fa-hdd-o fa-fw"></i> <a href="<?php echo nebula_option('hosting_url'); ?>" target="_blank">Hosting</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('nebula_registrar_url') ): ?>
-							<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo nebula_option('nebula_registrar_url'); ?>" target="_blank">Domain Registrar</a></li>
+						<?php if ( nebula_option('registrar_url') ): ?>
+							<li><i class="fa fa-globe fa-fw"></i> <a href="<?php echo nebula_option('registrar_url'); ?>" target="_blank">Domain Registrar</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('nebula_ga_url') ): ?>
-							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_option('nebula_ga_url'); ?>" target="_blank">Google Analytics</a></li>
+						<?php if ( nebula_option('ga_url') ): ?>
+							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_option('ga_url'); ?>" target="_blank">Google Analytics</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('nebula_google_webmaster_tools_url') ): ?>
-							<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo nebula_option('nebula_google_webmaster_tools_url'); ?>" target="_blank">Google Webmaster Tools</a></li>
+						<?php if ( nebula_option('google_webmaster_tools_url') ): ?>
+							<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo nebula_option('google_webmaster_tools_url'); ?>" target="_blank">Google Webmaster Tools</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('nebula_google_adsense_url') ): ?>
-							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_option('nebula_google_adsense_url'); ?>" target="_blank">Google AdSense</a></li>
+						<?php if ( nebula_option('google_adsense_url') ): ?>
+							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_option('google_adsense_url'); ?>" target="_blank">Google AdSense</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('nebula_google_adwords_url') ): ?>
-							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_option('nebula_google_adwords_url'); ?>" target="_blank">Google AdWords</a></li>
+						<?php if ( nebula_option('google_adwords_url') ): ?>
+							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_option('google_adwords_url'); ?>" target="_blank">Google AdWords</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('nebula_mention_url') ): ?>
-							<li><i class="fa fa-star fa-fw"></i> <a href="<?php echo nebula_option('nebula_mention_url'); ?>" target="_blank">Mention</a></li>
+						<?php if ( nebula_option('mention_url') ): ?>
+							<li><i class="fa fa-star fa-fw"></i> <a href="<?php echo nebula_option('mention_url'); ?>" target="_blank">Mention</a></li>
 						<?php endif; ?>
 					</ul>
 
-					<?php if ( !nebula_option('nebula_cpanel_url') && !nebula_option('nebula_hosting_url') && !nebula_option('nebula_registrar_url') && !nebula_option('nebula_ga_url') && !nebula_option('nebula_google_webmaster_tools_url') && !nebula_option('nebula_google_adsense_url') && !nebula_option('nebula_google_adwords_url') && !nebula_option('nebula_mention_url') ): ?>
+					<?php if ( !nebula_option('cpanel_url') && !nebula_option('hosting_url') && !nebula_option('registrar_url') && !nebula_option('ga_url') && !nebula_option('google_webmaster_tools_url') && !nebula_option('google_adsense_url') && !nebula_option('google_adwords_url') && !nebula_option('mention_url') ): ?>
 						<p><em>Add administrative links to <strong><a href="themes.php?page=nebula_options">Nebula Options</a></strong> to see them here.</em></p>
 					<?php endif; ?>
 				</div>
@@ -112,36 +112,36 @@
 			<div class="welcome-panel-column">
 				<h4>Social</h4>
 				<ul>
-					<?php if ( nebula_option('nebula_facebook_url') ): ?>
-						<li><i class="fa fa-facebook-square fa-fw"></i> <a href="<?php echo nebula_option('nebula_facebook_url'); ?>" target="_blank">Facebook</a></li>
+					<?php if ( nebula_option('facebook_url') ): ?>
+						<li><i class="fa fa-facebook-square fa-fw"></i> <a href="<?php echo nebula_option('facebook_url'); ?>" target="_blank">Facebook</a></li>
 					<?php endif; ?>
 
-					<?php if ( nebula_option('nebula_twitter_url') ): ?>
-						<li><i class="fa fa-twitter-square fa-fw"></i> <a href="<?php echo nebula_option('nebula_twitter_url'); ?>" target="_blank">Twitter</a></li>
+					<?php if ( nebula_option('twitter_url') ): ?>
+						<li><i class="fa fa-twitter-square fa-fw"></i> <a href="<?php echo nebula_option('twitter_url'); ?>" target="_blank">Twitter</a></li>
 					<?php endif; ?>
 
-					<?php if ( nebula_option('nebula_google_plus_url') ): ?>
-						<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="<?php echo nebula_option('nebula_google_plus_url'); ?>" target="_blank">Google+</a></li>
+					<?php if ( nebula_option('google_plus_url') ): ?>
+						<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="<?php echo nebula_option('google_plus_url'); ?>" target="_blank">Google+</a></li>
 					<?php endif; ?>
 
-					<?php if ( nebula_option('nebula_linkedin_url') ): ?>
-						<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="<?php echo nebula_option('nebula_linkedin_url'); ?>" target="_blank">LinkedIn</a></li>
+					<?php if ( nebula_option('linkedin_url') ): ?>
+						<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="<?php echo nebula_option('linkedin_url'); ?>" target="_blank">LinkedIn</a></li>
 					<?php endif; ?>
 
-					<?php if ( nebula_option('nebula_youtube_url') ): ?>
-						<li><i class="fa fa-youtube-square fa-fw"></i> <a href="<?php echo nebula_option('nebula_youtube_url'); ?>" target="_blank">Youtube</a></li>
+					<?php if ( nebula_option('youtube_url') ): ?>
+						<li><i class="fa fa-youtube-square fa-fw"></i> <a href="<?php echo nebula_option('youtube_url'); ?>" target="_blank">Youtube</a></li>
 					<?php endif; ?>
 
-					<?php if ( nebula_option('nebula_instagram_url') ): ?>
-						<li><i class="fa fa-instagram fa-fw"></i> <a href="<?php echo nebula_option('nebula_instagram_url'); ?>" target="_blank">Instagram</a></li>
+					<?php if ( nebula_option('instagram_url') ): ?>
+						<li><i class="fa fa-instagram fa-fw"></i> <a href="<?php echo nebula_option('instagram_url'); ?>" target="_blank">Instagram</a></li>
 					<?php endif; ?>
 
-					<?php if ( nebula_option('nebula_disqus_shortname') ): ?>
-						<li><i class="fa fa-comments-o fa-fw"></i> <a href="https://<?php echo nebula_option('nebula_disqus_shortname'); ?>.disqus.com/admin/moderate/" target="_blank">Disqus</a></li>
+					<?php if ( nebula_option('disqus_shortname') ): ?>
+						<li><i class="fa fa-comments-o fa-fw"></i> <a href="https://<?php echo nebula_option('disqus_shortname'); ?>.disqus.com/admin/moderate/" target="_blank">Disqus</a></li>
 					<?php endif; ?>
 				</ul>
 
-				<?php if ( !nebula_option('nebula_facebook_url') && !nebula_option('nebula_twitter_url') && !nebula_option('nebula_google_plus_url') && !nebula_option('nebula_linkedin_url') && !nebula_option('nebula_youtube_url') && !nebula_option('nebula_instagram_url') && !nebula_option('nebula_disqus_shortname') ): ?>
+				<?php if ( !nebula_option('facebook_url') && !nebula_option('twitter_url') && !nebula_option('google_plus_url') && !nebula_option('linkedin_url') && !nebula_option('youtube_url') && !nebula_option('instagram_url') && !nebula_option('disqus_shortname') ): ?>
 					<?php if ( current_user_can('manage_options') ): ?>
 						<p>Add social links to <strong><a href="themes.php?page=nebula_options">Nebula Options</a></strong> to see them here.</em></p>
 					<?php else : ?>

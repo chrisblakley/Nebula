@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 3.9.21
+	Version: 4.0.0u
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -387,13 +387,15 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 #mobilebarcon {position: relative; background: $primary_color; width: 100%; height: 0; overflow: hidden; @include prefix((transition: all 0.5s));
 	a {font-size: 32px; @include link-colors(#fff, #ccc); text-decoration: underline;}
 	.mobilenavcon {/* display: none; */
-		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 60%; height: 42px;
+		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 80%; height: 42px;
 			input {width: 100%; color: #fff; font-size: 18px; padding-left: 24px; line-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
 			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			.borderimage &:before {color: #fff; font-size: 19px; width: 19px; height: 19px; top: 12px; left: 0;}
+
+			@include mobile(landscape){width: 74%;};
 		}
 		@include tablet(){display: block;};
 	}
@@ -571,7 +573,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 .entry-content {margin-top: 10px; font-size: 14px;
 	ul {list-style-position: inside; overflow: hidden; padding-left: 20px; list-style: disc;}
 	ol {margin: 0; padding-left: 20px;}
-	img {margin: 0 24px 12px 24px;
+	img {
 		&.alignnone {margin: 0 0 12px 0;}
 		&.alignleft {display: inline; margin-left: 0; margin-right: 24px;}
 		&.alignright {display: inline; margin-left: 24px; margin-right: 0;}

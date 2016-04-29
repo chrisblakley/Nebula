@@ -120,7 +120,7 @@ body:not(.wp-admin) {
 @include file_icon(swf, f1c9, #c31e24, true);
 
 a.off, a.no-icon, a.noicon {text-decoration: none; border: none;
-	&:before {content: "" !important; margin-right: 0 !important;}
+	&:before {display: none;}
 }
 a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	&:before {color: #fff !important;}

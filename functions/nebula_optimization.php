@@ -92,6 +92,7 @@ function nebula_dequeues(){
 	if ( !is_admin() ){
 		//Styles
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
+		wp_dequeue_style('contact-form-7');
 
 		//Page specific dequeues
 		if ( is_front_page() ){
@@ -108,7 +109,7 @@ function nebula_plugin_force_settings(){
 	if ( $override !== false ){return $override;}
 
 	//Wordpress SEO (Yoast)
-	if ( file_exists(WP_PLUGIN_DIR . '/wordpress-seo') ){
+	if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
 		remove_submenu_page('wpseo_dashboard', 'wpseo_files'); //Remove the ability to edit files.
 		$wpseo = get_option('wpseo');
 		$wpseo['ignore_meta_description_warning'] = true; //Disable the meta description warning.
@@ -116,6 +117,10 @@ function nebula_plugin_force_settings(){
 		$wpseo['theme_description_found'] = false; //@TODO "Nebula" 0: Not working because this keeps getting checked/tested at many various times in the plugin.
 		$wpseo['theme_has_description'] = false; //@TODO "Nebula" 0: Not working because this keeps getting checked/tested at many various times in the plugin.
 		update_option('wpseo', $wpseo);
+
+		//Disable update notifications
+		remove_action('admin_notices', array(Yoast_Notification_Center::get(), 'display_notifications'));
+		remove_action('all_admin_notices', array(Yoast_Notification_Center::get(), 'display_notifications'));
 	}
 }
 
@@ -124,8 +129,10 @@ function nebula_plugin_force_settings(){
 add_action('wp_print_scripts', 'nebula_remove_actions', 9999);
 function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
 	if ( is_admin() ){ //WP Admin
-		remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
-		remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
+		if ( is_plugin_active('event-espresso/espresso.php') ){
+			remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
+			remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
+		}
 	} else { //Frontend
 		//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
 	}

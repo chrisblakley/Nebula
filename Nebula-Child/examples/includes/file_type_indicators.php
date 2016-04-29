@@ -27,3 +27,27 @@
 		<a class="icon" href="document.swf" onclick="return false;">SWF Document</a> <small>(Only available with declared icon)</small><br />
 	</div><!--/columns-->
 </div><!--/row-->
+
+<br/><br/>
+
+<div class="row">
+	<div class="eight columns filetypeexamples">
+		<h3>"off" and "no-icon" Classes</h3>
+		<a class="off" href="document.doc" onclick="return false;">MS Word Document</a><br />
+		<a class="off" href="document.xls" onclick="return false;">MS Excel Document</a><br />
+		<a class="off" href="document.pdf" onclick="return false;">PDF Document</a><br />
+		<a class="no-icon" href="document.ppt" onclick="return false;">MS Powerpoint Document</a><br />
+		<a class="no-icon" href="document.zip" onclick="return false;">Archive</a><br />
+		<a class="no-icon" href="document.txt" onclick="return false;">Text Document</a><br />
+	</div><!--/columns-->
+	<div class="eight columns filetypeexamples">
+		<h3>Icon Prevention</h3>
+		<a href="document.pdf" onclick="return false;"><img src="http://placehold.it/150x150" /></a><br /><br/>
+
+		<div class="medium primary btn">
+			<a href="document.pdf" onclick="return false;">PDF Button</a>
+		</div><br/>
+		<p><em>Note: To add an icon to the button, use the standard Font Awesome syntax inside of the tag.</em></p>
+
+	</div><!--/columns-->
+</div><!--/row-->

@@ -178,10 +178,6 @@ get_header(); ?>
 							include_once('includes/weather_detection.php');
 						} ?>
 
-						<?php if ( is_page(819) ){ //Facebook Feed
-							include_once('includes/facebook_feed.php');
-						} ?>
-
 						<?php if ( is_page(815) ){ //Twitter Feed (OLD)
 							include_once('includes/twitter_feed_old.php');
 						} ?>
@@ -517,6 +513,14 @@ get_header(); ?>
 
 						<?php if ( is_page(2571) ){ //Animations
 							include_once('includes/animations.php');
+						} ?>
+
+						<?php if ( is_page(2639) ){ //Context Menu
+							include_once('includes/context_menu.php');
+						} ?>
+
+						<?php if ( is_page(2643) ){ //Instagram API
+							include_once('includes/instagram_api.php');
 						} ?>
 
 

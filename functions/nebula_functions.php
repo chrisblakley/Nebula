@@ -9,8 +9,8 @@ function nebula_no_js_event(){
 		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
 
 		$dimension_array = array();
-		if ( nebula_option('nebula_cd_sessionnotes') ){
-			$dimension_index = nebula_option('nebula_cd_sessionnotes');
+		if ( nebula_option('cd_sessionnotes') ){
+			$dimension_index = nebula_option('cd_sessionnotes');
 			$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
 			$dimension_array = array('cd' . $cd_number => 'JS Disabled');
 		}
@@ -29,14 +29,14 @@ function nebula_ga_blocked(){
 	$post_id = $_POST['data'][0]['id'];
 	$dimension_array = array();
 
-	if ( nebula_option('nebula_cd_sessionid') ){
-		$dimension_index = nebula_option('nebula_cd_sessionid');
+	if ( nebula_option('cd_sessionid') ){
+		$dimension_index = nebula_option('cd_sessionid');
 		$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
 		$dimension_array['cd' . $cd_number] = nebula_session_id();
 	}
 
-	if ( nebula_option('nebula_cd_sessionnotes') ){
-		$dimension_index = nebula_option('nebula_cd_sessionnotes');
+	if ( nebula_option('cd_sessionnotes') ){
+		$dimension_index = nebula_option('cd_sessionnotes');
 		$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
 		$dimension_array['cd' . $cd_number] = 'GA Blocked';
 	}
@@ -50,38 +50,34 @@ function nebula_ga_blocked(){
 add_action('init', 'nebula_set_default_timezone', 1);
 add_action('admin_init', 'nebula_set_default_timezone', 1);
 function nebula_set_default_timezone(){
-	date_default_timezone_set(nebula_option('timezone_string', 'America/New_York'));
+	date_default_timezone_set(get_option('timezone_string', 'America/New_York'));
 }
 
-//Add the calling card to the browser console
-if ( nebula_option('nebula_console_css') ){
+//Add the Nebula note to the browser console (if enabled)
+if ( nebula_option('console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card(){
-		$console_log = "<script>";
 		if ( nebula_is_desktop() && !nebula_is_browser('ie') && !nebula_is_browser('edge') ){
-			//$console_log .= "console.log('%c', 'padding: 28px 119px; line-height: 35px; background: url(" . get_template_directory_uri() . "/images/phg/phg-logo.png) no-repeat; background-size: auto 60px;');"; //@TODO "Nebula" 0: This isn't working on many browsers...
-			$console_log .= "console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');";
+			echo "<script>console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 		}
-		$console_log .= "</script>";
-		echo $console_log;
 	}
 }
 
 //Check for warnings and send them to the console.
 add_action('wp_head', 'nebula_console_warnings');
 function nebula_console_warnings($console_warnings=array()){
-	if ( is_dev() && nebula_option('nebula_admin_notices') ){
+	if ( is_dev() && nebula_option('admin_notices') ){
 		//If search indexing is disabled
 		if ( get_option('blog_public') == 0 ){
 			if ( is_site_live() ){
 				$console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
-			} elseif ( nebula_option('nebula_prototype_mode', 'disabled') ){
+			} elseif ( nebula_option('prototype_mode', 'disabled') ){
 				$console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
 			}
 		}
 
-		if ( is_site_live() && nebula_option('nebula_prototype_mode', 'enabled') ){
-			$console_warnings[] = array('error', 'Prototype Mode is enabled!');
+		if ( is_site_live() && nebula_option('prototype_mode', 'enabled') ){
+			$console_warnings[] = array('warn', 'Prototype Mode is enabled!');
 		}
 
 		//If no Google Analytics tracking ID
@@ -125,7 +121,7 @@ function nebula_manifest_json(){
 	$manifest_json = '{
 	"short_name": "' . get_bloginfo('name') . '",
 	"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
-	"gcm_sender_id": "' . nebula_option('nebula_gcm_sender_id') . '",
+	"gcm_sender_id": "' . nebula_option('gcm_sender_id') . '",
 	"icons": [{
 		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-36x36.png",
 		"sizes": "36x36",
@@ -181,12 +177,11 @@ function nebula_favicon_cache(){
 //If an eligible page is determined after load, use the JavaScript nebulaPrerender(url) function.
 //Use the Audience > User Flow report in Google Analytics for better predictions.
 function nebula_prerender(){
+	$override = apply_filters('pre_nebula_prerender', false);
+	if ( $override !== false ){return $override;}
+
 	$prerender_url = false;
 	if ( is_404() ){
-		$prerender_url = home_url('/');
-	} elseif ( is_front_page() ){
-		$prerender_url = ''; //@TODO "Nebula" 0: Contact page or something?
-	} elseif ( !is_front_page() ){
 		$prerender_url = home_url('/');
 	}
 
@@ -208,14 +203,34 @@ remove_theme_support('custom-header');
 //Add new image sizes
 add_image_size('open_graph_large', 1200, 630, 1);
 add_image_size('open_graph_small', 600, 315, 1);
+add_image_size('twitter_large', 280, 150, 1);
+add_image_size('twitter_small', 200, 200, 1);
+
+//Convenience function to return only the URL for specific thumbnail sizes of an ID.
+//Example: nebula_get_thumbnail_src(get_the_post_thumbnail($post->ID, 'twitter_large'))
+//Example: nebula_get_thumbnail_src($post->ID, 'twitter_large');
+function nebula_get_thumbnail_src($id=null, $size='full'){
+	if ( empty($id) ){
+		return false;
+	}
+
+	if ( strpos($id, '<img') !== false || $size == 'full' ){
+		$image = wp_get_attachment_image_src(get_post_thumbnail_id($id), $size);
+		return $image[0];
+	} else {
+		return ( preg_match('~\bsrc="([^"]++)"~', get_the_post_thumbnail($post->ID, $size), $matches) )? $matches[1] : ''; //Use Regex as a last resort if get_the_post_thumbnail() was passed.
+
+	}
+}
+
 
 //Determine if the author should be the Company Name or the specific author's name.
 function nebula_the_author($show_authors=1){
 	$override = apply_filters('pre_nebula_the_author', false, $show_authors);
 	if ( $override !== false ){return $override;}
 
-	if ( !is_single() || $show_authors == 0 || nebula_option('nebula_author_bios', 'disabled') ){
-		return get_option('nebula_site_owner', get_bloginfo('name'));
+	if ( !is_single() || $show_authors == 0 || nebula_option('author_bios', 'disabled') ){
+		return nebula_option('site_owner', get_bloginfo('name'));
 	} else {
 		return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 	}
@@ -309,35 +324,7 @@ function nav_menu_locations(){
 	));
 }
 
-//Update user online status
-add_action('init', 'nebula_users_status_init');
-add_action('admin_init', 'nebula_users_status_init');
-function nebula_users_status_init(){
-	$logged_in_users = get_option('nebula_users_status');
-
-	$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9]+/", "", $_SERVER['HTTP_USER_AGENT']);
-	$current_user = wp_get_current_user();
-
-	//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
-	//Who is 98.115.139.106 and why do they show up as user ID 0 with no username? Unique ID: 98.115.139.106.Mozilla50MacintoshIntelMacOSX1011rv450Gecko20100101Firefox450 Could be a DB deleted user?
-
-	if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
-		$logged_in_users[$current_user->ID] = array(
-			'id' => $current_user->ID,
-			'username' => $current_user->user_login,
-			'last' => time(),
-			'unique' => array($unique_id),
-		);
-		update_option('nebula_users_status', $logged_in_users);
-	} else {
-		if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
-			array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
-			update_option('nebula_users_status', $logged_in_users);
-		}
-	}
-}
-
-if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
+if ( nebula_option('comments', 'disabled') || nebula_option('disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
 	//Remove the Activity metabox
 	add_action('wp_dashboard_setup', 'remove_activity_metabox');
 	function remove_activity_metabox(){
@@ -361,7 +348,7 @@ if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_s
 	}
 
 	//Remove comments menu from Admin Bar
-	if ( nebula_option('nebula_admin_bar', 'enabled') ){
+	if ( nebula_option('admin_bar', 'enabled') ){
 		add_action('admin_bar_menu', 'nebula_admin_bar_remove_comments', 900);
 		function nebula_admin_bar_remove_comments($wp_admin_bar){
 			$wp_admin_bar->remove_menu('comments');
@@ -398,10 +385,10 @@ if ( nebula_option('nebula_comments', 'disabled') || get_option('nebula_disqus_s
 	}
 
 	//Link to Disqus on comments page (if using Disqus)
-	if ( $pagenow == 'edit-comments.php' && get_option('nebula_disqus_shortname') ){
+	if ( $pagenow == 'edit-comments.php' && nebula_option('disqus_shortname') ){
 		add_action('admin_notices', 'disqus_link');
 		function disqus_link(){
-			echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . get_option('nebula_disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
+			echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . nebula_option('disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
 		}
 	}
 } else { //If WP core comments are enabled
@@ -512,7 +499,7 @@ function nebula_post_author($icon=true, $linked=true, $force=false){
 		$the_icon = '<i class="fa fa-user"></i> ';
 	}
 
-	if ( nebula_option('nebula_author_bios', 'enabled') || $force ){
+	if ( nebula_option('author_bios', 'enabled') || $force ){
 		if ( $linked && !$force ){
 			return '<span class="posted-by">' . $the_icon . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
 		} else {
@@ -818,7 +805,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $username . '&count=' . $number_tweets . '&include_rts=' . $include_retweets;
 	}
 
-	$bearer = get_option('nebula_twitter_bearer_token', '');
+	$bearer = nebula_option('twitter_bearer_token', '');
 
 	$tweets = get_transient('nebula_twitter_' . $username);
 	if ( empty($tweets) || is_debug() ){
@@ -1349,7 +1336,7 @@ function nebula_autocomplete_search(){
 	}
 
 	//Find authors (if author bios are enabled)
-	if ( nebula_option('nebula_author_bios', 'enabled') ){
+	if ( nebula_option('author_bios', 'enabled') ){
 		$authors = get_transient('nebula_autocomplete_authors');
 		if ( empty($authors) || is_debug() ){
 			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
@@ -1422,7 +1409,7 @@ function nebula_advanced_search(){
 
 	foreach ( $posts as $post ){
 		$author = null;
-		if ( nebula_option('nebula_author_bios', 'enabled') ){ //&& $post->post_type != 'page' ?
+		if ( nebula_option('author_bios', 'enabled') ){ //&& $post->post_type != 'page' ?
 			$author = array(
 				'id' => $post->post_author,
 				'name' => array(
@@ -1731,9 +1718,9 @@ function nebula_body_classes($classes){
 		$classes[] = 'time-am';
 	}
 
-	if ( get_option('nebula_latitude') && get_option('nebula_longitude') ){
-		$lat = get_option('nebula_latitude');
-		$lng = get_option('nebula_longitude');
+	if ( nebula_option('latitude') && nebula_option('longitude') ){
+		$lat = nebula_option('latitude');
+		$lng = nebula_option('longitude');
 		$gmt = intval(get_option('gmt_offset'));
 		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
 		global $sunrise, $sunset;
@@ -1788,8 +1775,10 @@ function nebula_post_classes($classes){
 		$classes[] = 'date-month-' . strtolower(get_the_date('F'));
     }
 
-	foreach ( get_the_category($post->ID) as $category ){
-		$classes[] = 'cat-id-' . $category->cat_ID;
+	if ( !empty($post) ){
+		foreach ( get_the_category($post->ID) as $category ){
+			$classes[] = 'cat-id-' . $category->cat_ID;
+		}
 	}
 
 	$classes[] = 'author-id-' . get_the_author_id();
@@ -1832,7 +1821,7 @@ function nebula_save_attachment_fields($attachment_id){
 //Check if the passed time is within business hours.
 function has_business_hours(){
 	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
-		if ( nebula_option('nebula_business_hours_' . $weekday . '_enabled') || nebula_option('nebula_business_hours_' . $weekday . '_open') || nebula_option('nebula_business_hours_' . $weekday . '_close') ){
+		if ( nebula_option('business_hours_' . $weekday . '_enabled') || nebula_option('business_hours_' . $weekday . '_open') || nebula_option('business_hours_' . $weekday . '_close') ){
 			return true;
 		}
 	}
@@ -1855,13 +1844,13 @@ function business_open($date=null, $general=0){
 	$businessHours = array();
 	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
 		$businessHours[$weekday] = array(
-			'enabled' => get_option('nebula_business_hours_' . $weekday . '_enabled'),
-			'open' => get_option('nebula_business_hours_' . $weekday . '_open'),
-			'close' => get_option('nebula_business_hours_' . $weekday . '_close')
+			'enabled' => nebula_option('business_hours_' . $weekday . '_enabled'),
+			'open' => nebula_option('business_hours_' . $weekday . '_open'),
+			'close' => nebula_option('business_hours_' . $weekday . '_close')
 		);
 	}
 
-	$days_off = array_filter(explode(', ', get_option('nebula_business_hours_closed')));
+	$days_off = array_filter(explode(', ', nebula_option('business_hours_closed')));
     if ( !empty($days_off) ){
 		foreach ( $days_off as $key => $day_off ){
 			$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
@@ -1970,9 +1959,9 @@ function nebula_weather($zipcode=null, $data=''){
 
 	if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
 		$data = $zipcode;
-		$zipcode = get_option('nebula_postal_code', '13204');
+		$zipcode = nebula_option('postal_code', '13204');
 	} elseif ( empty($zipcode) ){
-		$zipcode = get_option('nebula_postal_code', '13204');
+		$zipcode = nebula_option('postal_code', '13204');
 	}
 
 	$weather_json = get_transient('nebula_weather_' . $zipcode);
@@ -2147,7 +2136,7 @@ function youtube_meta($videoID, $meta=''){
 	$override = apply_filters('pre_youtube_meta', false, $videoID, $meta);
 	if ( $override !== false ){return $override;}
 
-	if ( !nebula_option('nebula_google_server_api_key') ){
+	if ( !nebula_option('google_server_api_key') ){
 		trigger_error('A Google server API key is required to use the youtube_meta function.', E_USER_WARNING);
 		return false;
 	}
@@ -2170,7 +2159,7 @@ function youtube_meta($videoID, $meta=''){
 
 	$youtube_json = get_transient('nebula_youtube_' . $videoID);
 	if ( empty($youtube_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-		if ( get_option('nebula_google_server_api_key') == '' ){
+		if ( nebula_option('google_server_api_key') == '' ){
 			if ( current_user_can('manage_options') || is_dev() ){
 				trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Options (in the WordPress Admin).", E_USER_WARNING);
 				return false;
@@ -2182,7 +2171,7 @@ function youtube_meta($videoID, $meta=''){
 
 		WP_Filesystem();
 		global $wp_filesystem;
-		$youtube_json = $wp_filesystem->get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $videoID . '&part=snippet,contentDetails,statistics&key=' . get_option('nebula_google_server_api_key'));
+		$youtube_json = $wp_filesystem->get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $videoID . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
 
 		set_transient('nebula_youtube_' . $videoID, $youtube_json, 60*60); //1 hour expiration
 	}

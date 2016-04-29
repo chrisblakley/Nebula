@@ -15,7 +15,7 @@ require_once('functions/nebula_utilities.php'); //Nebula Utilities
  Google Analytics Tracking ID
  ===========================*/
 
-$GLOBALS['ga'] = nebula_option('nebula_ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
+$GLOBALS['ga'] = nebula_option('ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
 
 
 /*==========================
@@ -84,6 +84,7 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/js/jquery.dataTables.min.js', 'defer', array(), '1.10.10', true);
 	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js', 'defer', array(), '1.4.2', true);
 	nebula_register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js', 'defer', array(), '2.11.2', true);
+	nebula_register_script('performance-timing', get_template_directory_uri() . '/js/libs/performance-timing.js', 'defer', array(), null, false);
 	nebula_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', 'defer', array('nebula-gumby', 'jquery', 'nebula-jquery_ui'), null, true);
 	nebula_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', null, array('jquery'), null, true);
 	nebula_register_script('nebula-admin', get_template_directory_uri() . '/js/admin.js', 'defer', array(), null, true);
@@ -115,15 +116,15 @@ function register_nebula_scripts(){
 			'upload_dir' => $upload_dir['baseurl'],
 			'options' => array(
 				'gaid' => $GLOBALS['ga'],
-				'nebula_cse_id' => get_option('nebula_cse_id'),
-				'nebula_google_browser_api_key' => get_option('nebula_google_browser_api_key'),
-				'facebook_url' => get_option('nebula_facebook_url'),
-				'facebook_app_id' => get_option('nebula_facebook_app_id'),
-				'twitter_url' => get_option('nebula_twitter_url'),
-				'google_plus_url' => get_option('nebula_google_plus_url'),
-				'linkedin_url' => get_option('nebula_linkedin_url'),
-				'youtube_url' => get_option('nebula_youtube_url'),
-				'instagram_url' => get_option('nebula_instagram_url'),
+				'nebula_cse_id' => nebula_option('cse_id'),
+				'nebula_google_browser_api_key' => nebula_option('google_browser_api_key'),
+				'facebook_url' => nebula_option('facebook_url'),
+				'facebook_app_id' => nebula_option('facebook_app_id'),
+				'twitter_url' => nebula_option('twitter_url'),
+				'google_plus_url' => nebula_option('google_plus_url'),
+				'linkedin_url' => nebula_option('linkedin_url'),
+				'youtube_url' => nebula_option('youtube_url'),
+				'instagram_url' => nebula_option('instagram_url'),
 				'manage_options' => current_user_can('manage_options'),
 				'debug' => is_debug(),
 			),
@@ -237,12 +238,18 @@ if ( is_debug() ){
 		wp_enqueue_script('performance-timing');
 	}
 
-	add_action('shutdown', 'nebula_echo_db_queries');
+	add_action('wp_footer', 'nebula_echo_db_queries');
 	function nebula_echo_db_queries(){
-		echo "<script>console.log('DB Queries: " . get_num_queries() . "');</script>";
+		echo "<script>console.log('" . get_num_queries() . " DB Queries in " . timer_stop() . " seconds.');</script>";
+
+		if ( SAVEQUERIES && is_dev() ){ //Must add define('SAVEQUERIES', true); to wp-config.php
+			global $wpdb;
+			echo "<!--\r\n";
+			print_r($wpdb->queries);
+			echo "\r\n-->\r\n";
+		}
 	}
 }
-
 
 /*==========================
  Enqueue Styles & Scripts on the Front-End
@@ -310,7 +317,6 @@ function enqueue_nebula_login(){
 	//Scripts
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('nebula-modernizr');
-
 	wp_enqueue_script('nebula-login');
 
 	//Localized objects (localized to jquery to appear in <head>)

@@ -6,24 +6,16 @@ jQuery.noConflict();
 
 jQuery(document).ready(function(){
 	getQueryStrings();
-	if ( get('killall') || get('kill') || get('die') ){
-		throw new Error('(Manually terminated main.js)');
-	} else if ( get('layout') ){
-		[].forEach.call(jQuery("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)});
-	}
-
-	globalVariables();
+	cacheSelectors();
 	gaBlockDetection();
 
 	//Social
 	facebookSDK();
 	facebookConnect();
-	prefillFacebookFields();
 	socialSharing();
 
 	//Navigation
 	mmenus();
-	//jQuery('#primarynav .menu-item-has-children').doubleTapToGo(); //@TODO "Mobile": Either use mmenu or uncomment this line for mobile navigation.
 	dropdownWidthController();
 	overflowDetector();
 	subnavExpanders();
@@ -44,7 +36,6 @@ jQuery(document).ready(function(){
 	cf7Functions();
 	cf7LiveValidator();
 	cf7LocalStorage();
-	prefillCommentAuthorCookieFields(cookieAuthorName, cookieAuthorEmail);
 	nebulaAddressAutocomplete('#address-autocomplete');
 
 	//Helpers
@@ -156,7 +147,7 @@ jQuery(window).on('resize', function(){
 }); //End Window Resize
 
 //Cache common selectors and set consistent regex patterns
-function globalVariables(){
+function cacheSelectors(){
 	//Selectors
 	nebula.dom = {
 		window: jQuery(window),
@@ -347,7 +338,6 @@ function pageVisibility(){
 
 	function visibilityChangeActions(){
 		var pageTitle = nebula.dom.document.attr('title');
-
 		if ( document.visibilityState === 'prerender' ){ //Page was prerendered/prefetched
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Prerendered'));
@@ -406,7 +396,7 @@ function gaBlockDetection(){
 	});
 }
 function gaBlockSend(){
-	if ( has(nebula, 'user.client') && !nebula.user.client.bot && has(nebula, 'site.options.gaid') && nebula.site.options.gaid != '' ){
+	if ( typeof gablocked !== 'undefined' && has(nebula, 'user.client') && !nebula.user.client.bot && has(nebula, 'site.options.gaid') && nebula.site.options.gaid != '' ){
 		setTimeout(function(){
 			if ( gablocked ){
 				jQuery('html').addClass('no-gajs');
@@ -475,6 +465,7 @@ function facebookSDK(){
 //Facebook Connect functions
 function facebookConnect(){
 	window.fbConnectFlag = false;
+
 	if ( has(nebula, 'site.options.facebook_app_id') ){
 		window.fbAsyncInit = function(){
 			FB.init({
@@ -484,11 +475,12 @@ function facebookConnect(){
 				xfbml: true
 			});
 
-			checkFacebookStatus();
+			jQuery(document).trigger('fbinit');
+
 			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Liked'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Like');
 				nebulaConversion('facebook', 'like');
 			});
@@ -496,7 +488,7 @@ function facebookConnect(){
 			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Unliked'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Unlike');
 				nebulaConversion('facebook', 'like', 'remove');
 			});
@@ -504,7 +496,7 @@ function facebookConnect(){
 			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Share'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Share');
 				nebulaConversion('facebook', 'share');
 			});
@@ -512,147 +504,13 @@ function facebookConnect(){
 			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Comment'));
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': nebula.dom.document.attr('title')});
+				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Comment');
 				nebulaConversion('facebook', 'comment');
 			});
 		};
-
-		//Connect to Facebook without using the Facebook Login button
-		nebula.dom.document.on('click touch tap', '.facebook-connect', function(){
-			facebookLoginLogout();
-			return false;
-		});
 	} else {
 		jQuery('.facebook-connect').remove();
-	}
-}
-
-//Connect to Facebook without using Facebook Login button
-function facebookLoginLogout(){
-	if ( !nebula.user.facebook.status ){
-		FB.login(function(response){
-			checkFacebookStatus();
-		}, {scope:'public_profile,email'});
-	} else {
-		FB.logout(function(response){
-			checkFacebookStatus();
-		});
-	}
-	return false;
-}
-
-//Fetch Facebook user information
-function checkFacebookStatus(){
-	FB.getLoginStatus(function(response){
-		nebula.user.facebook = {'status': response.status}
-		if ( has(nebula, 'user.facebook') && nebula.user.facebook.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
-			FB.api('/me', function(response){
-				//Update the Nebula User Facebook Object
-				nebula.user.facebook = {
-					id: response.id,
-					name: {
-						first: response.first_name,
-						last: response.last_name,
-						full: response.name,
-					},
-					gender: response.gender,
-					email: response.email,
-					image: {
-						base: 'https://graph.facebook.com/' + response.id + '/picture',
-						thumbnail: 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100',
-						large: 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
-					},
-					url: response.link,
-					location: {
-						locale: response.locale,
-						timezone: response.timezone,
-					},
-					verified: response.verified,
-				}
-
-				//Update Nebula User Object
-				nebula.user.name = {
-					first: response.first_name,
-					last: response.last_name,
-					full: response.name,
-				};
-				nebula.user.gender = response.gender;
-				nebula.user.email = response.email;
-				nebula.user.location = {
-					locale: response.locale,
-					timezone: response.timezone,
-				}
-
-				nebulaConversion('facebook', 'connect');
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Connect'));
-				ga('set', gaCustomDimensions['fbID'], nebula.user.facebook.id);
-
-				if ( has(nebula, 'user.flags') && nebula.user.flags.fbconnect !== 'true' ){
-					ga('send', 'event', 'Social', 'Facebook Connect', nebula.user.facebook.id);
-					nebula.user.flags.fbconnect = 'true';
-				}
-
-				nebula.dom.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebula.user.facebook.id);
-				createCookie('nebulaUser', JSON.stringify(nebula.user));
-				nebula.dom.document.trigger('fbConnected');
-			});
-		} else if ( has(nebula, 'user.facebook') && nebula.user.facebook.status === 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
-			nebulaConversion('facebook', 'connect', 'remove');
-			nebula.dom.body.removeClass('fb-connected').addClass('fb-not_authorized');
-			nebula.dom.document.trigger('fbNotAuthorized');
-			if ( nebula.user.flags ){
-				nebula.user.flags.fbconnect = 'false';
-			}
-		} else { //User is not logged into Facebook.
-			nebulaConversion('facebook', 'connect', 'remove');
-			nebula.dom.body.removeClass('fb-connected').addClass('fb-disconnected');
-			nebula.dom.document.trigger('fbDisconnected');
-			if ( has(nebula, 'user.flags') ){
-				nebula.user.flags.fbconnect = 'false';
-			}
-		}
-	});
-}
-
-//Fill or clear form inputs with Facebook data
-function prefillFacebookFields(){
-	nebula.dom.document.on('fbConnected', function(){
-		fbConnectFlag = true;
-
-		jQuery('.fb-name, .comment-form-author input, input.name').each(function(){
-			jQuery(this).val(nebula.user.facebook.name.full).trigger('keyup');
-		});
-		jQuery('.fb-first-name, input.first-name').each(function(){
-			jQuery(this).val(nebula.user.facebook.name.first).trigger('keyup');
-		});
-		jQuery('.fb-last-name, input.last-name').each(function(){
-			jQuery(this).val(nebula.user.facebook.name.last).trigger('keyup');
-		});
-		jQuery('.fb-email, .comment-form-email input, .wpcf7-email, input.email').each(function(){
-			jQuery(this).val(nebula.user.facebook.email).trigger('keyup');
-		});
-		debugInfo();
-	});
-
-	nebula.dom.document.on('fbNotAuthorized fbDisconnected', function(){
-		if ( fbConnectFlag ){ //If FB was actually logged in at some point.
-			jQuery('.fb-form-name, .comment-form-author input, .cform7-name, .fb-form-email, .comment-form-email input, input[type="email"]').each(function(){
-				jQuery(this).val('').trigger('keyup');
-			});
-		}
-	});
-}
-
-function prefillCommentAuthorCookieFields(name, email){
-	if ( cookieAuthorName ){
-		jQuery('.fb-name, .comment-form-author input, input.name').each(function(){
-			jQuery(this).val(name).trigger('keyup');
-		});
-		jQuery('.fb-email, .comment-form-email input, .wpcf7-email, input.email').each(function(){
-			jQuery(this).val(email).trigger('keyup');
-		});
 	}
 }
 
@@ -683,10 +541,8 @@ function googlePlusCallback(jsonParam){
 
 //Social sharing buttons
 function socialSharing(){
-    var loc = window.location;
-    var title = nebula.dom.document.attr('title');
-    var encloc = encodeURI(loc);
-    var enctitle = encodeURI(title);
+    var encloc = encodeURI(window.location);
+    var enctitle = encodeURI(document.title);
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Facebook');
@@ -707,7 +563,7 @@ function socialSharing(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Pinterest');
     });
-    jQuery('.emshare').attr('href', 'mailto:?subject=' + title + '&body=' + loc).attr('target', '_blank').on('click tap touch', function(){
+    jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Email');
     });
@@ -1068,6 +924,7 @@ function scrollDepth(){
  ===========================*/
 
 //Search Keywords
+//container is the parent container, parent is the individual item, value is usually the input val.
 function keywordSearch(container, parent, value, filteredClass){
 	if ( !filteredClass ){
 		var filteredClass = 'filtereditem';
@@ -1551,11 +1408,11 @@ function wpSearchInput(){
 //Mobile search placeholder toggle
 function mobileSearchPlaceholder(){
 	var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
-	if ( nebula.dom.window.width() <= 410 ){
-		mobileHeaderSearchInput.attr('placeholder', 'Search');
-	} else {
-		mobileHeaderSearchInput.attr('placeholder', 'What are you looking for?');
+	var searchPlaceholder = 'What are you looking for?';
+	if ( window.matchMedia && window.matchMedia("(max-width: 410px)").matches ){
+		searchPlaceholder = 'Search';
 	}
+	mobileHeaderSearchInput.attr('placeholder', searchPlaceholder);
 }
 
 
@@ -1605,7 +1462,7 @@ function searchTermHighlighter(){
 	if ( typeof theSearchTerm !== 'undefined' ){
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
 		jQuery('article .entry-title a, article .entry-summary').each(function(i){
-			var searchFinder = jQuery(this).text().replace(new RegExp( '(' + preg_quote(theSearchTerm) + ')' , 'gi' ), '<span class="searchresultword">$1</span>');
+			var searchFinder = jQuery(this).text().replace(new RegExp( '(' + preg_quote(theSearchTerm) + ')' , 'gi' ), '<mark class="searchresultword">$1</mark>');
 			jQuery(this).html(searchFinder);
 		});
 	}
@@ -1789,7 +1646,7 @@ function cf7Functions(){
 
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Attempt)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		if ( jQuery('.nebula-poi').val().length > 0 ){
+		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
 		ga('send', 'event', 'Contact', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
@@ -1799,7 +1656,7 @@ function cf7Functions(){
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7:invalid', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Invalid)');
-		if ( jQuery('.nebula-poi').val().length > 0 ){
+		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
 		ga('send', 'event', 'Contact', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
@@ -1809,7 +1666,7 @@ function cf7Functions(){
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7:spam', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Spam)');
-		if ( jQuery('.nebula-poi').val().length > 0 ){
+		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
 		ga('send', 'event', 'Contact', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.target.id);
@@ -1818,7 +1675,7 @@ function cf7Functions(){
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7:mailfailed', function(e){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Failed)');
-		if ( jQuery('.nebula-poi').val().length > 0 ){
+		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
 		ga('send', 'event', 'Contact', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.target.id);
@@ -1832,7 +1689,7 @@ function cf7Functions(){
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Success)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
-		if ( jQuery('.nebula-poi').val().length > 0 ){
+		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
 
@@ -2380,9 +2237,12 @@ function addHelperClasses(){
 		}
 	});
 
-	//Remove filetype icons from images within <a> tags.
+	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').each(function(){
 		jQuery(this).parents('a').addClass('no-icon');
+	});
+	jQuery('.btn a').each(function(){
+		jQuery(this).addClass('no-icon');
 	});
 }
 
@@ -3602,7 +3462,7 @@ function initHeadroom(headerElement, footerElement, fixedElement){
 		headerElement = nebula.dom.body; //@TODO: If this fallback happens, the padding would need to move to the top.
 	}
 
-	if ( typeof headroom !== 'undefined' || !window.matchMedia("(min-width: 767px)").matches ){ //If headroom needs to be re-init or if tablet or mobile
+	if ( typeof headroom !== 'undefined' || (window.matchMedia && !window.matchMedia("(min-width: 767px)").matches) ){ //If headroom needs to be re-init or if tablet or mobile
 		if ( !window.matchMedia("(min-width: 767px)").matches ){
 			return false;
 		}

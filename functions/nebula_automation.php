@@ -117,7 +117,12 @@ if ( is_dev(true) || current_user_can('manage_options') ){
 	        array(
 	            'name'      => 'Wordfence Security',
 	            'slug'      => 'wordfence',
-	            'required'  => true,
+	            'required'  => false,
+	        ),
+	        array(
+	            'name'      => 'Query Monitor',
+	            'slug'      => 'query-monitor',
+	            'required'  => false,
 	        ),
 	    );
 
@@ -236,7 +241,7 @@ function nebula_initialization_email_prev_settings(){
 	$to = $current_user->user_email;
 
 	//Carbon copy the admin if reset was done by another user.
-	$admin_user_email = nebula_option('nebula_contact_email', nebula_option('admin_email'));
+	$admin_user_email = nebula_option('contact_email', nebula_option('admin_email'));
 	if ( $admin_user_email != $current_user->user_email ){
 		$headers[] = 'Cc: ' . $admin_user_email;
 	}
@@ -308,9 +313,7 @@ function nebula_initialization_default_settings(){
 	global $wp_rewrite;
 
 	//Update Nebula options
-	foreach ( $GLOBALS['nebula_options_fields'] as $nebula_option_name => $default_value ){
-		update_option($nebula_option_name, $default_value);
-	}
+	update_option('nebula_options', $GLOBALS['nebula_options_defaults']);
 
 	//Update certain Wordpress Core options
 	update_option('blogdescription', ''); //Empty the site tagline
@@ -345,7 +348,7 @@ function nebula_initialization_deactivate_widgets(){
 }
 
 function nebula_is_initialized_before(){
-	$nebula_initialized_option = get_option('nebula_initialized');
+	$nebula_initialized_option = nebula_option('initialized');
 
 	if ( empty($nebula_initialized_option) ){
 		return false;
@@ -359,12 +362,12 @@ function nebula_initialization_set_install_date(){
 	if ( 1==2 ){ //Set to true to force an initialization date (in case of some kind of accidental reset).
 		$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
 		if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
-			update_option('nebula_initialized', strtotime($force_date));
+			nebula_update_option('initialized', strtotime($force_date));
 			return false;
 		}
 	} else {
 		if ( !nebula_is_initialized_before() ){
-			update_option('nebula_initialized', date('U'));
+			nebula_update_option('initialized', date('U'));
 		}
 	}
 }

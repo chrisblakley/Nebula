@@ -8,7 +8,7 @@
 	<?php fpo_component_end(); ?>
 */
 
-if ( nebula_option('nebula_prototype_mode', 'enabled') ){
+if ( nebula_option('prototype_mode', 'enabled') ){
 	add_action('wp_enqueue_scripts', 'enqueue_nebula_wireframing');
 	function enqueue_nebula_wireframing(){
 		wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
@@ -23,9 +23,9 @@ if ( nebula_option('nebula_prototype_mode', 'enabled') ){
 		$mt_settings = get_option('jr_mt_settings');
 		$mt_settings['query'] = array(
 			'phase' => array(
-				'wireframe' => get_option('nebula_wireframe_theme'), //Wireframe Theme
-				'staging' => get_option('nebula_staging_theme'), //Staging Theme
-				'production' => get_option('nebula_production_theme') //Production Theme
+				'wireframe' => nebula_option('wireframe_theme'), //Wireframe Theme
+				'staging' => nebula_option('staging_theme'), //Staging Theme
+				'production' => nebula_option('production_theme') //Production Theme
 			),
 		);
 
@@ -70,7 +70,7 @@ if ( nebula_option('nebula_prototype_mode', 'enabled') ){
 		if ( nebula_dev_phase() ){
 			$permalink = ( is_admin() )? home_url() : get_permalink();
 
-			if ( nebula_dev_phase() != 'wireframe' && nebula_option('nebula_wireframe_theme') ){
+			if ( nebula_dev_phase() != 'wireframe' && nebula_option('wireframe_theme') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-prototype',
 					'id' => 'nebula-wireframe-activate',
@@ -79,7 +79,7 @@ if ( nebula_option('nebula_prototype_mode', 'enabled') ){
 				));
 			}
 
-			if ( nebula_dev_phase() != 'staging' && nebula_option('nebula_staging_theme') ){
+			if ( nebula_dev_phase() != 'staging' && nebula_option('staging_theme') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-prototype',
 					'id' => 'nebula-staging-activate',
@@ -129,7 +129,7 @@ function nebula_dev_phase(){
 
 //Top header for each component
 function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
-	if ( nebula_option('nebula_prototype_mode', 'disabled') ){
+	if ( nebula_option('prototype_mode', 'disabled') ){
 		return false;
 	}
 
@@ -155,7 +155,7 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 
 //Top header for each component (with opening .fpo div)
 function fpo_component_start($component='Component', $icon='fa-cube'){
-	if ( nebula_option('nebula_prototype_mode', 'disabled') ){
+	if ( nebula_option('prototype_mode', 'disabled') ){
 		return false;
 	}
 	fpo_component($component, $icon, '');
@@ -164,7 +164,7 @@ function fpo_component_start($component='Component', $icon='fa-cube'){
 
 //Closes .fpo div (from fpo_component_start)
 function fpo_component_end(){
-	if ( nebula_option('nebula_prototype_mode', 'disabled') ){
+	if ( nebula_option('prototype_mode', 'disabled') ){
 		return false;
 	}
 	echo '</div><!-- /fpo -->';

@@ -23,7 +23,7 @@
 				<?php endif; ?>
 
 				<?php if ( !in_array("page", get_post_class()) ): ?>
-					<?php nebula_meta('on'); ?> <?php if ( nebula_option('nebula_author_bios', 'enabled') && !is_author() ){ nebula_meta('by'); } ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
+					<?php nebula_meta('on'); ?> <?php if ( nebula_option('author_bios', 'enabled') && !is_author() ){ nebula_meta('by'); } ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
 				<?php endif; ?>
 			</div>
 

@@ -251,7 +251,7 @@ function nebula_domain_prevention(){
 //Valid Hostname Regex
 function nebula_valid_hostname_regex($domains=null){
 	$domains = ( $domains )? $domains : array(nebula_url_components('domain'));
-	$settingsdomains = ( get_option('nebula_hostnames') )? explode(',', get_option('nebula_hostnames')) : array(nebula_url_components('domain'));
+	$settingsdomains = ( nebula_option('hostnames') )? explode(',', nebula_option('hostnames')) : array(nebula_url_components('domain'));
 	$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com', 'youtube.com', 'paypal.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 	$fulldomains = preg_filter('/^/', '.*', $fulldomains);
 	$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
