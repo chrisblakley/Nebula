@@ -98,7 +98,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<div id="datauploadcon">
 			<div class="field">
@@ -113,5 +113,5 @@
 		</div>
 		<textarea id="debugresponse" placeholder="AJAX response information will appear here."></textarea>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

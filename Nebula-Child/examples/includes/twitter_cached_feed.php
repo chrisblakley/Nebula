@@ -93,7 +93,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<div>
 			<strong>Example 1</strong><br />
@@ -113,5 +113,5 @@
 		</div>
 		<ul class="example2"></ul>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

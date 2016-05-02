@@ -27,7 +27,7 @@
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<?php echo do_shortcode('[contact-form-7 id="1796" title="Address"]'); ?>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

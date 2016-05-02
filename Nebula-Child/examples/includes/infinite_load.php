@@ -4,7 +4,7 @@
 
 <br/><br/>
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<h2>Infinite Load Example</h2><br/><br/>
 
@@ -13,5 +13,5 @@
 			wp_reset_query(); //Always reset the query!
 		?>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -309,7 +309,7 @@
 </style>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h3>Location Information</h3>
 		<div id="location-results">
 			<p class="latlng"></p>
@@ -317,12 +317,12 @@
 			<br />
 			<p class="specific-location"></p>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div class="googlemapcon">
 			<div id="map_canvas"></div>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

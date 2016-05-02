@@ -26,22 +26,22 @@
 </script>
 
 <div class="row">
-	<div class="eight columns">
+	<div class="col-md-6">
 		<span class="contact-form-heading">CSV or Path Array to convert*</span>
 		<textarea id="generated-polygon" placeholder="CSV or path array to convert..."></textarea>
-	</div><!--/columns-->
-	<div class="eight columns">
+	</div><!--/col-->
+	<div class="col-md-6">
 		<span class="contact-form-heading">Converted nested array</span>
 		<textarea id="nested-array" placeholder="Converted array will go here..."></textarea>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br />
 
 <div class="row">
-	<div class="sixteen columns" style="text-align: center;">
+	<div class="col-md-12" style="text-align: center;">
 		<div class="btn primary medium">
 			<a id="convertbtn" href="#">Convert to nested array</a>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

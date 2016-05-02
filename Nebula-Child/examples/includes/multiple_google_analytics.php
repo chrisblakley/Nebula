@@ -11,13 +11,3 @@
 	ga('send', 'pageview'); //Standard code. No change necessary.
 	ga('b.send', 'pageview'); //"b" can again be anything you want, but it MUST match "b" above.
 </script>
-
-
-
-<div class="row">
-	<div class="sixteen columns">
-
-
-
-	</div><!--/columns-->
-</div><!--/row-->

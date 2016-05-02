@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 4.0.0u
+ Version: 4.0.2u
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -801,6 +801,8 @@
 
  a:hover,a.hover { color:#95d600; }
 
+ a:hover { text-decoration:none; }
+
  .btn > a:hover { color:#fff; }
 
  #form-messages .sending { color:#f6b83f; }
@@ -919,10 +921,6 @@
 
  .loadmorecon.loading .infinite-load-more { opacity:0; pointer-events:none; }
 
- /* Gumby overrides */ .row { max-width:1080px; }
-
- table tr td:first-child { font-weight:normal; }
-
  h1,h2,h3,h4,h5,h6,body,p,.btn,.skiplink,.field input,.field input[type="*"],.field textarea,.prepend .adjoined,.append .adjoined,.picker,.alert,.tab-nav > li > li > a,.tab-nav > li > a { font-family:'Open Sans', sans-serif; }
 
  abbr,acronym { cursor:pointer; border-bottom:none; color:auto; }
@@ -942,12 +940,6 @@
  .tab-content ul { padding-left:20px; }
 
  .tab-content ul li { list-style:disc; }
-
- body .video-override .video { padding-bottom:0px !important; height:auto !important; }
-
- /* Overrides Gumby video setting */ i[class^="icon-"],i[class*=" icon-"] { margin:0; min-width:0; }
-
- .btn,.skiplink { -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  input[type="submit"] { color:#fff; }
 
@@ -984,8 +976,6 @@
  .field input,.field .input,.field textarea,.field .textarea { font-size:14px; line-height:22px; padding:6px 10px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  .field .wpcf7-not-valid { border-color:#ca3838; color:#000; background:#f5d9d9; }
-
- .field:after { content:''; display:none; }
 
  .field.danger .wpcf7-form-control-wrap:after { content:"\f00d"; position:absolute; top:7px; right:7px; font-family:"FontAwesome"; color:#ca3838; }
 
@@ -1024,6 +1014,8 @@
  /* Eventually remove this line. */ input:not(.nofade):focus::-moz-placeholder { color:rgba(153, 153, 153, 0) !important; }
 
  input:not(.nofade):focus:-ms-input-placeholder { color:rgba(153, 153, 153, 0) !important; }
+
+ div#nebula-hero-formcon { text-align:center; }
 
  @media only screen and (max-width:767px) { div#nebula-hero-formcon { display:none !important; }
 
@@ -1533,7 +1525,7 @@
 
  .gallery-caption { font-size:12px; }
 
- .xoxo { padding:0; margin:0; }
+ .xoxo { padding:0; margin:0; list-style:none; }
 
  .xoxo li.widget-container { margin:10px 0 30px 0; }
 
@@ -1549,9 +1541,9 @@
 
  .xoxo ul.menu li.current-menu-item .sub-menu a:hover,.xoxo ul.menu li.current-menu-item .sub-menu a.hover { color:#95d600; }
 
- .xoxo ul.menu li.menu-item { position:relative; padding:5px 0 5px 0; }
+ .xoxo ul.menu li.menu-item { position:relative; padding:5px 0 5px 0; list-style:none; }
 
- .xoxo ul.menu li.menu-item ul.sub-menu { /* padding-left: 20px; */ }
+ .xoxo ul.menu li.menu-item ul.sub-menu { padding-left:20px; }
 
  .xoxo ul.menu li.menu-item ul.sub-menu li.menu-item { padding:5px 0 5px 10px; border-left:1px solid #95d600; }
 
@@ -1763,4 +1755,4 @@
  }
 
 
-/* Processed on Friday, April 29, 2016 at 10:04am */
+/* Processed on Monday, May 2, 2016 at 3:34pm */

@@ -146,14 +146,14 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<p>Enter values below and the campaign URL will generate automatically. Click the <i class="fa fa-question-circle"></i> links for a description of the field and examples.</p>
 		<br />
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="eight columns">
+	<div class="col-md-6">
 
 		<form>
 			<ul>
@@ -207,9 +207,9 @@
 			</ul>
 		</form>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 
-	<div class="eight columns">
+	<div class="col-md-6">
 
 		<ul>
 			<li class="field">
@@ -238,11 +238,11 @@
 			</li>
 		</ul>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<br />
 		<hr />
 
@@ -273,5 +273,5 @@
 			<span class="answer"><a href="https://support.google.com/adwords/answer/2476688" target="_blank">Google Re-marketing</a> and <a href="https://support.google.com/adwords/answer/1722054?hl=en" target="_blank">Google Conversion</a> tags go at the end of <code>&lt;body&gt;</code>. <a href="https://developers.facebook.com/docs/ads-for-websites/website-custom-audiences/getting-started#install-the-pixel" target="_blank">Facebook Re-marketing</a> and <a href="https://www.facebook.com/help/435189689870514/" target="_blank">Facebook Conversion</a> tags need to go at the end of <code>&lt;head&gt;</code>.</span>
 			<span class="source">Sources: <a href="https://support.google.com/adwords/answer/2476688" target="_blank">Google Re-marketing &raquo;</a>, <a href="https://support.google.com/adwords/answer/1722054?hl=en" target="_blank">Google Conversion &raquo;</a>, <a href="https://developers.facebook.com/docs/ads-for-websites/website-custom-audiences/getting-started#install-the-pixel" target="_blank">Facebook Re-marketing &raquo;</a>, <a href="https://www.facebook.com/help/435189689870514/" target="_blank">Facebook Conversion &raquo;</a></span>
 		</p>
-	</div><!--/coluns-->
+	</div><!--/col-->
 </div><!--/row-->

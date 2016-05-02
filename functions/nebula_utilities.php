@@ -1125,7 +1125,7 @@ function nebula_version($return=false){
 	*/
 
 	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
-	$nebula_months = array('July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June'); //Modify this array when 4.0 is released (May is first)
+	$nebula_months = array('May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April');
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
 	$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
 	$nebula_version_day_formated = ( empty($nebula_version['small']) )? ' ' : ' ' . $nebula_version['small'] . ', ';
@@ -1143,6 +1143,9 @@ function nebula_version($return=false){
 	);
 
 	switch ( str_replace(array(' ', '_', '-'), '', strtolower($return)) ){
+		case ('raw'):
+			return $nebula_theme_info->get('Version');
+			break;
 		case ('version'):
 		case ('full'):
 			return $nebula_version_info['full'];

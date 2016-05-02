@@ -66,11 +66,11 @@
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div id="msg">Enable JavaScript to use speech synthesis...</div>
 
 		<select name="voice" id="voice"></select><br /><br />
 		<input id="speaktext" type="text" placeholder="Text to speak..."/>
 		<a id="speakit" href="#">Speak It!</a>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -41,7 +41,7 @@
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<p>After creating a Twitter App, enter your consumer key and consumer secret in the following fields. This tool does not store any data.</p>
 
@@ -66,5 +66,5 @@
 			</div>
 		</div>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -35,7 +35,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 	<h2>Example</h2>
 	<p>Open the JavaScript console to see the data for this example.</p>
@@ -44,5 +44,5 @@
 	<p class="lap-timer"><a href="#">New Lap</a></p>
 	<p class="end-timer"><a href="#">End</a></p>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -38,9 +38,9 @@ div.cssbs {position: relative; display: table; height: 150px; min-width: 300px; 
 </style>
 
 <div class="row">
-	<div class="six columns">
+	<div class="col-md-5">
 		<div class="cssbs"></div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br/><br/><hr/><br/><br/>

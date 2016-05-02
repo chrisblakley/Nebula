@@ -6,7 +6,7 @@
 </style>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<p>Toggle cookie: <a class="jscookie" href="#">OFF</a> Last set on: <span class="setdate">(not set)</span></p>
 
 		<script>
@@ -55,5 +55,5 @@
 		</script>
 
 		<br />
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

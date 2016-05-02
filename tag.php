@@ -11,24 +11,28 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="row">
-	<div class="sixteen columns">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/columns-->
-</div><!--/row-->
-
-<div class="container fullcontentcon">
+<div class="container">
 	<div class="row">
-		<div class="eleven columns">
-			<h1 class="page-title"><i class="archiveicon fa fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
-			<?php get_template_part('loop', 'tag'); ?>
-			<?php wp_pagenavi(); ?>
-		</div><!--/columns-->
-		<div class="four columns push_one">
-			<?php get_sidebar(); ?>
-		</div><!--/columns-->
+		<div class="col-md-12">
+			<?php the_breadcrumb(); ?>
+			<hr />
+		</div><!--/col-->
 	</div><!--/row-->
 </div><!--/container-->
+
+<div class="fullcontentcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<h1 class="page-title"><i class="archiveicon fa fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
+				<?php get_template_part('loop', 'tag'); ?>
+				<?php wp_pagenavi(); ?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div>
 
 <?php get_footer(); ?>

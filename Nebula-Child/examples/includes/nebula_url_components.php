@@ -68,7 +68,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<br />
 		<h2>Nebula Requested URL</h2>
@@ -141,5 +141,5 @@
 
 		<p id="testerresults"></p>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -5,10 +5,10 @@
 <?php endif; ?>
 
 <div class="row" style="background: #0098d7; color: #fff; padding: 10px 15px;">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2 style="color: #fff;">Components</h2>
 		<p>Components are the containers of either a single element, a group of elements, or even markup and elements. Elements can be custom Nebula wireframing functions, custom Nebula functions, or custom code of your own.</p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br /><br />
@@ -17,7 +17,7 @@
 
 <!-- Component -->
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2><strong>Component</strong></h2>
 		<p>The <?php echo do_shortcode('[code]fpo_component()[/code]'); ?> function will create the named component bar.</p>
 
@@ -33,11 +33,11 @@
 		<h2>Example</h2>
 		<?php echo do_shortcode('[pre lang=php]<?php fpo_component("Breadcrumbs"); ?>[/pre]'); ?>
 		<div class="row">
-			<div class="sixteen columns">
+			<div class="col-md-12">
 				<?php //fpo_component('Breadcrumbs'); ?>
 			</div>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br /><br />
@@ -46,7 +46,7 @@
 
 <!-- Component Start/End -->
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2><strong>Component Start/End</strong></h2>
 		<p>The <?php echo do_shortcode('[code]fpo_component_start()[/code]'); ?> and <?php echo do_shortcode('[code]fpo_component_end()[/code]'); ?> function will create the named component bar and wrap the elements in a contained div.</p>
 
@@ -64,13 +64,13 @@
 <p>Breadcrumbs would go here.</p>
 <?php fpo_component_end(); ?>[/pre]'); ?>
 		<div class="row">
-			<div class="sixteen columns">
+			<div class="col-md-12">
 				<?php fpo_component_start('Breadcrumbs'); ?>
 				<p>Breadcrumbs would go here.</p>
 				<?php fpo_component_end(); ?>
 			</div>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br /><br />
@@ -78,17 +78,17 @@
 <br />
 
 <div class="row" style="background: #0098d7; color: #fff; padding: 10px 15px; margin-top: 50px;">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2 style="color: #fff;">Elements</h2>
 		<p>Elements are what makes components unique to the project. FPO Elements (as seen below) are made specifically to make wireframing easy and consistent. Markup and other code can be used alongside elements for an even more unique mockup. During development, elements will be replaced with finalized code. Upon launch, there should be <strong>no</strong> FPO functions anywhere in the project.</p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br /><br />
 
 <!-- FPO -->
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2><strong>FPO</strong></h2>
 		<p>The <?php echo do_shortcode('[code]fpo()[/code]'); ?> function will create a placeholder box. The class "nebula-fpo" and a websafe version of the $title parameter are added to the element.</p>
 
@@ -109,14 +109,14 @@
 
 		<h2>Examples</h2>
 		<div class="row">
-			<div class="eight columns">
+			<div class="col-md-6">
 				<?php fpo('Test Element', "This element uses only two parameters of the FPO function."); ?>
 			</div>
-			<div class="eight columns">
+			<div class="col-md-6">
 				<?php fpo('Advanced syntax', "This element utilizes almost all of the FPO function's parameters.", '100%', '250px', 'linear-gradient(to bottom, #0098d7, #0073a3)', 'home', 'border: 1px solid #025678;', ''); ?>
 			</div>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br /><br />
@@ -125,7 +125,7 @@
 
 <!-- Image -->
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2><strong>Image</strong></h2>
 		<p>Placeholder images can be created using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function. The class "nebula-fpo-image" is added to the element.</p>
 
@@ -144,10 +144,10 @@
 
 		<h2>Examples</h2>
 		<div class="row">
-			<div class="eight columns">
+			<div class="col-md-6">
 				<?php fpo_image(); ?>
 			</div>
-			<div class="eight columns">
+			<div class="col-md-6">
 				<?php fpo_image('unsplash'); ?>
 			</div>
 		</div>
@@ -160,7 +160,7 @@
 
 <!-- BG Image -->
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2><strong>Background Image</strong></h2>
 		<p>Background placeholder images (useful for CSS) can be created using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function or the <?php echo do_shortcode('[code]fpo_bg_image()[/code]'); ?> function. This function must be placed in a style tag on the desired HTML element.</p>
 
@@ -179,7 +179,7 @@
 		<?php echo do_shortcode('[pre lang=php]<div class="row" style="<?php fpo_bg_image(); ?>">[/pre]'); ?>
 
 		<div class="row" style="<?php fpo_bg_image(); ?>">
-			<div class="eight columns push_eight">
+			<div class="col-md-6 push_eight">
 				<p style="text-align: center; margin: 0; padding: 25px; background: rgba(255, 0, 0, 0.75); color: #fff;">Lorem ipsum dolor sit amet.</p>
 			</div>
 		</div>

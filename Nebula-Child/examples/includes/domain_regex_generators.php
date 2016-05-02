@@ -38,7 +38,7 @@
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<br /><hr /><br />
 
@@ -77,5 +77,5 @@
 
 		<p><em>Note: Google Analytics filters limit patterns to 255 characters.</em></p>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

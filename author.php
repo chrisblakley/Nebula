@@ -19,34 +19,36 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container">
 		<div class="row">
-			<div class="sixteen columns">
+			<div class="col-md-12">
 				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
-			</div><!--/columns-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
 
 <div class="breadcrumbbar">
-	<div class="row">
-		<div class="sixteen columns">
-			<?php the_breadcrumb(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php the_breadcrumb(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
 	<hr />
-</div><!--/container-->
+</div>
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">
 	<div class="row">
 	<?php if ( get_the_author_meta('headshot_url') ): ?>
-		<div class="three columns">
+		<div class="col-md-2">
 			<div class="author-headshot">
 				<img src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
 			</div>
-		</div><!--/columns-->
-		<div class="thirteen columns">
+		</div><!--/col-->
+		<div class="col-md-10">
 	<?php else : ?>
-		<div class="sixteen columns">
+		<div class="col-md-12">
 	<?php endif; ?>
 
 			<h2 class="author-name">
@@ -126,23 +128,23 @@ get_header(); ?>
 			</div>
 
 			<p class="authorbio"><?php echo esc_html(the_author_meta('description')); ?></p>
-		</div><!--/columns-->
+		</div><!--/col-->
 	</div><!--/row-->
 </div><!--/container-->
 
 <div class="container fullcontentcon">
 	<div class="row">
-		<div class="eleven columns">
+		<div class="col-md-8">
 			<?php
 				rewind_posts();
 				get_template_part('loop', 'author');
 				wp_pagenavi();
 			?>
-		</div><!--/columns-->
+		</div><!--/col-->
 
-		<div class="four columns push_one">
+		<div class="col-md-4">
 			<?php get_sidebar(); ?>
-		</div><!--/columns-->
+		</div><!--/col-->
 
 	</div><!--/row-->
 </div><!--/container-->

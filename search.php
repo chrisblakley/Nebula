@@ -14,7 +14,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container">
 		<div class="row">
-			<div class="sixteen columns">
+			<div class="col-md-12">
 				<?php if ( have_posts() ): ?>
 					<h1 class="page-title">Search Results</h1>
 					<p>
@@ -40,33 +40,37 @@ get_header(); ?>
 				<?php endif; ?>
 
 				<?php get_search_form(); ?>
-			</div><!--/columns-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
 
 <div class="breadcrumbbar">
-	<div class="row">
-		<div class="sixteen columns">
-			<?php the_breadcrumb(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php the_breadcrumb(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
 	<hr />
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-8">
+			<?php if ( have_posts() ): ?>
+				<div id="searchresults">
+					<?php get_template_part('loop', 'search'); ?>
+					<?php wp_pagenavi(); ?>
+				</div><!--/#searchresults-->
+			<?php endif; ?>
+		</div><!--/col-->
+
+		<div class="col-md-4">
+			<?php get_sidebar(); ?>
+		</div><!--/col-->
+	</div><!--/row-->
 </div><!--/container-->
-
-<div class="row">
-	<div class="eleven columns">
-		<?php if ( have_posts() ): ?>
-			<div id="searchresults">
-				<?php get_template_part('loop', 'search'); ?>
-				<?php wp_pagenavi(); ?>
-			</div><!--/#searchresults-->
-		<?php endif; ?>
-	</div><!--/columns-->
-
-	<div class="four columns push_one">
-		<?php get_sidebar(); ?>
-	</div><!--/columns-->
-</div><!--/row-->
 
 <?php get_footer(); ?>

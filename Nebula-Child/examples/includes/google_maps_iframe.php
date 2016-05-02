@@ -1,7 +1,7 @@
 <?php //https://developers.google.com/maps/documentation/embed/start ?>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<iframe class="googlemap nebulaborder"
 			width="100%"
 			height="250"
@@ -15,5 +15,5 @@
 		<div class="nebulashadow floating" offset="-6"></div>
 
 		<small>Seen above with a nebulaborder and floating nebulashadow (to examine when browsers begin supporting better data-attributes in CSS)</small>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

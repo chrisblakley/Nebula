@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<p>
 			<span>This number will be linked on mobile devices:</span><br />
 			<code>nebula_tel_link('(315) 478-6700');</code><br />
@@ -93,5 +93,5 @@
 			<code>nebula_phone_format('(315) 478-6700', 'human');</code><br />
 			<?php echo nebula_phone_format('(315) 478-6700', 'human'); ?>
 		</p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -14,47 +14,51 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container">
 		<div class="row">
-			<div class="sixteen columns">
+			<div class="col-md-12">
 				<h1 class="page-title"><?php the_title(); ?></h1>
-			</div><!--/columns-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
 
 <div class="breadcrumbbar">
-	<div class="row">
-		<div class="sixteen columns">
-			<?php the_breadcrumb(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php the_breadcrumb(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
 	<hr />
-</div><!--/container-->
+</div>
 
-<div class="container fullcontentcon">
-	<div class="row">
-		<div class="eleven columns">
-			<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<?php if ( has_post_thumbnail() ): ?>
-						<?php the_post_thumbnail(); ?>
-					<?php endif; ?>
+<div class="fullcontentcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
+					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<?php if ( has_post_thumbnail() ): ?>
+							<?php the_post_thumbnail(); ?>
+						<?php endif; ?>
 
-					<div class="entry-social">
-						<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
-					</div>
+						<div class="entry-social">
+							<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
+						</div>
 
-					<div class="entry-content">
-						<?php the_content(); ?>
-					</div><!-- .entry-content -->
-				</article><!-- #post-## -->
+						<div class="entry-content">
+							<?php the_content(); ?>
+						</div><!-- .entry-content -->
+					</article><!-- #post-## -->
 
-				<?php comments_template(); ?>
-			<?php endwhile; ?>
-		</div><!--/columns-->
-		<div class="four columns push_one">
-			<?php get_sidebar(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
-</div><!--/container-->
+					<?php comments_template(); ?>
+				<?php endwhile; ?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div>
 
 <?php get_footer(); ?>

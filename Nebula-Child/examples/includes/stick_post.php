@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="sixteen columns sticky-con">
+	<div class="col-md-12 sticky-con">
 		<?php
    			$sticky = get_option('sticky_posts');
    			$args = array(
@@ -28,11 +28,11 @@
 								<?php if ( current_user_can('manage_options') ) : ?>
 									<div class="container entry-manage">
 										<div class="row">
-											<div class="sixteen columns">
+											<div class="col-md-12">
 												<hr />
 												<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
 												<hr />
-											</div><!--/columns-->
+											</div><!--/col-->
 										</div>
 									</div>
 								<?php endif; ?>
@@ -44,5 +44,5 @@
 				<?php wp_reset_query(); ?>
 			</ul>
 		<?php endif; ?>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

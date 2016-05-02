@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<?php
 			$new_date_time_cache = false; //This variable is for example purposes only and is NOT NEEDED when using transients normally!
@@ -27,5 +27,5 @@
 			</p>
 		<?php endif; ?>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

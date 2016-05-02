@@ -37,27 +37,27 @@
 	});
 </script>
 
-<div class="row">
-	<div class="sixteen columns">
-		<form id="ajax-contact" method="post" action="<?php echo get_template_directory_uri(); ?>/includes/mailer.php">
-			<ul>
-				<li class="field">
-					<span class="contact-form-heading">Name*</span>
-					<input class="input name" type="text" placeholder="Name" required/>
-				</li>
-				<li class="field">
-					<span class="contact-form-heading">Email*</span>
-					<input class="input email" type="email" placeholder="Email" required/>
-				</li>
-				<li class="field">
-					<span class="contact-form-heading">Message*</span>
-					<textarea class="input textarea message" placeholder="Message" required></textarea>
-				</li>
-				<li class="field">
-					<input class="submit" type="submit" value="Send">
-				</li>
-			</ul>
-		</form>
-		<div id="form-messages"></div>
-	</div><!--/columns-->
-</div><!--/row-->
+	<div class="row">
+		<div class="col-md-12">
+			<form id="ajax-contact" method="post" action="<?php echo get_template_directory_uri(); ?>/includes/mailer.php">
+				<ul>
+					<li class="field">
+						<span class="contact-form-heading">Name*</span>
+						<input class="input name" type="text" placeholder="Name" required/>
+					</li>
+					<li class="field">
+						<span class="contact-form-heading">Email*</span>
+						<input class="input email" type="email" placeholder="Email" required/>
+					</li>
+					<li class="field">
+						<span class="contact-form-heading">Message*</span>
+						<textarea class="input textarea message" placeholder="Message" required></textarea>
+					</li>
+					<li class="field">
+						<input class="submit" type="submit" value="Send">
+					</li>
+				</ul>
+			</form>
+			<div id="form-messages"></div>
+		</div><!--/col-->
+	</div><!--/row-->

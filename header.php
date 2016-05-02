@@ -45,7 +45,7 @@
 
 				<div id="mobilebarcon">
 					<div class="row mobilenavcon">
-						<div class="sixteen columns clearfix">
+						<div class="col-md-12 clearfix">
 							<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
 							<nav id="mobilenav">
 								<?php
@@ -66,74 +66,84 @@
 								?>
 								<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
 							</form>
-						</div><!--/columns-->
+						</div><!--/col-->
 					</div><!--/row-->
 				</div><!--/topbarcon-->
 
 				<?php if ( has_nav_menu('secondary') ): ?>
-					<div id="secondarynavcon" class="container">
-						<div class="row">
-							<div class="sixteen columns">
-								<nav id="secondarynav">
-				        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
-				        		</nav>
-							</div><!--/columns-->
-						</div><!--/row-->
-					</div><!--/container-->
+					<div id="secondarynavcon">
+						<div class="container">
+							<div class="row">
+								<div class="col-md-12">
+									<nav id="secondarynav">
+					        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
+					        		</nav>
+								</div><!--/col-->
+							</div><!--/row-->
+						</div><!--/container-->
+					</div>
 				<?php endif; ?>
 
-				<div id="logonavcon" class="container">
-					<div class="row">
-						<div class="five columns">
-							<a class="logocon" href="<?php echo home_url(); ?>">
-								<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
-							</a>
-						</div><!--/columns-->
-						<div class="eleven columns">
-							<?php if ( has_nav_menu('primary') ): ?>
-								<nav id="primarynav" class="clearfix">
-									<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
-				        		</nav>
-			        		<?php endif; ?>
-			        	</div><!--/columns-->
-					</div><!--/row-->
-				</div><!--/container-->
+				<div id="logonavcon">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-4">
+								<a class="logocon" href="<?php echo home_url(); ?>">
+									<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
+								</a>
+							</div><!--/col-->
+							<div class="col-md-8">
+								<?php if ( has_nav_menu('primary') ): ?>
+									<nav id="primarynav" class="clearfix">
+										<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
+					        		</nav>
+				        		<?php endif; ?>
+				        	</div><!--/col-->
+						</div><!--/row-->
+					</div><!--/container-->
+				</div>
 			</div><!--/header-->
 
 			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ): ?>
-				<div class="container headerdrawercon">
-					<hr />
-					<div class="row">
-						<div class="sixteen columns headerdrawer">
-							<span>Your search returned only one result. You have been automatically redirected.</span>
-							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-							<?php echo get_search_form(); ?>
-						</div><!--/columns-->
-					</div><!--/row-->
-					<hr class="zero" />
-				</div><!--/container-->
+				<div class="headerdrawercon">
+					<div class="container">
+						<hr />
+						<div class="row">
+							<div class="col-md-12 headerdrawer">
+								<span>Your search returned only one result. You have been automatically redirected.</span>
+								<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+								<?php echo get_search_form(); ?>
+							</div><!--/col-->
+						</div><!--/row-->
+						<hr class="zero" />
+					</div><!--/container-->
+				</div>
 			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ): ?>
-				<div class="container headerdrawercon">
-					<hr />
-					<div class="row">
-						<div class="sixteen columns headerdrawer invalid">
-							<span>Your search was invalid. Please try again.</span>
-							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-							<?php echo get_search_form(); ?>
-						</div><!--/columns-->
-					</div><!--/row-->
-					<hr class="zero" />
-				</div><!--/container-->
+				<div class="headerdrawercon">
+					<div class="container">
+						<hr />
+						<div class="row">
+							<div class="col-md-12 headerdrawer invalid">
+								<span>Your search was invalid. Please try again.</span>
+								<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+								<?php echo get_search_form(); ?>
+							</div><!--/col-->
+						</div><!--/row-->
+						<hr class="zero" />
+					</div><!--/container-->
+				</div>
 			<?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) || is_page_template('http_status.php') ): ?>
-				<div id="suggestedpage" class="container headerdrawercon">
-					<hr />
-					<div class="row">
-						<div class="sixteen columns headerdrawer">
-							<h3>Did you mean?</h3>
-							<p><a class="suggestion" href="#"></a></p>
-							<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-						</div><!--/columns-->
-					</div><!--/row-->
-					<hr class="zero" />
-				</div><!--/container-->
+				<div id="suggestedpage" class="headerdrawercon">
+					<div class="container">
+						<hr />
+						<div class="row">
+							<div class="col-md-12 headerdrawer">
+								<h3>Did you mean?</h3>
+								<p><a class="suggestion" href="#"></a></p>
+								<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
+							</div><!--/col-->
+						</div><!--/row-->
+						<hr class="zero" />
+					</div><!--/container-->
+				</div>
 			<?php endif; ?>

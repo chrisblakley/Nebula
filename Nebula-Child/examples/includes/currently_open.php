@@ -1,31 +1,31 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h3>Right now?</h3>
 		<?php if ( business_open() ): ?>
 			<p style="font-size: 24px;"><i class="fa fa-building-o"></i> We are currently <strong style="color: green;">open</strong>!</p>
 		<?php else : ?>
 			<p style="font-size: 24px;"><i class="fa fa-building"></i> We are currently <strong style="color: maroon;">closed</strong>.</p>
 		<?php endif; ?>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br />
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h3>Tomorrow at any time?</h3>
 		<?php if ( business_open('tomorrow', 1) ): //2nd parameter in for any time on that day. ?>
 			<p style="font-size: 24px;"><i class="fa fa-building-o"></i> We will be <strong style="color: green;">open</strong>!</p>
 		<?php else : ?>
 			<p style="font-size: 24px;"><i class="fa fa-building"></i> We will be <strong style="color: maroon;">closed</strong>.</p>
 		<?php endif; ?>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br />
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h3>How about November 24th of this year?</h3>
 		<?php
 			if ( date('Ymd') == date('Ymd', time()) ){
@@ -39,5 +39,5 @@
 		<?php else : ?>
 			<p style="font-size: 24px;"><i class="fa fa-building"></i> We <?php echo $tense; ?> <strong style="color: maroon;">closed</strong>.</p>
 		<?php endif; ?>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

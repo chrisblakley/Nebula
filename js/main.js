@@ -5,9 +5,11 @@ jQuery.noConflict();
  ===========================*/
 
 jQuery(document).ready(function(){
+	//Utilities
 	getQueryStrings();
 	cacheSelectors();
 	gaBlockDetection();
+	conditionalJSLoading();
 
 	//Social
 	facebookSDK();
@@ -54,8 +56,6 @@ jQuery(document).ready(function(){
 	checkForYoutubeVideos();
 	vimeoControls();
 	animationTriggers();
-
-	conditionalJSLoading();
 
 	if ( jQuery('.home.page').is('*') ){
 		initHeadroom(jQuery('#heroslidercon'));
@@ -2223,7 +2223,6 @@ function addHelperClasses(){
 	jQuery('li:odd, tr:odd').not('.dataTables_wrapper tr').addClass('odd'); //IE8 support
 	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child'); //IE6 support
 	jQuery('li:last-child, tr:last-child').addClass('last-child'); //IE8 support
-	jQuery('.column:first-child, .columns:first-child').addClass('first-child'); //IE6 support
 	jQuery('a:hover, li:hover, tr:hover').addClass('hover'); //IE8 support
 
 	//Add rel attributes to external links
@@ -2244,6 +2243,11 @@ function addHelperClasses(){
 	jQuery('.btn a').each(function(){
 		jQuery(this).addClass('no-icon');
 	});
+
+	//Initialize Bootstrap features
+	if ( jQuery('[data-toggle="tooltip"]').length ){
+		jQuery('[data-toggle="tooltip"]').tooltip();
+	}
 }
 
 //Try to fix some errors automatically
@@ -2290,7 +2294,7 @@ function nebulaEqualize(){
 	jQuery('.row.equalize').each(function(){
 		var oThis = jQuery(this);
 		tallestColumn = 0;
-		oThis.children('.columns').css('min-height', '0').each(function(i){
+		oThis.children('[class*="col-"]').css('min-height', '0').each(function(i){
 			if ( !jQuery(this).hasClass('no-equalize') ){
 				columnHeight = jQuery(this).outerHeight();
 				if ( columnHeight > tallestColumn ){
@@ -2298,7 +2302,7 @@ function nebulaEqualize(){
 				}
 			}
 		});
-		oThis.find('.columns').css('min-height', tallestColumn);
+		oThis.find('[class*="col-"]').css('min-height', tallestColumn);
 	});
 
 	nebula.dom.document.on('nebula_infinite_finish', function(){
@@ -2907,7 +2911,7 @@ function bxSlider(){
 
 //Check for Youtube Videos
 function checkForYoutubeVideos(){
-	if ( jQuery('.youtubeplayer').length ){
+	if ( jQuery('.youtube').length ){
 		var tag = document.createElement('script');
 		tag.src = "https://www.youtube.com/iframe_api";
 		var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -2922,7 +2926,7 @@ function onYouTubeIframeAPIReady(e){
 		};
 		videoData = {};
 	}
-	jQuery('iframe.youtubeplayer').each(function(i){
+	jQuery('iframe.youtube').each(function(i){
 		var youtubeiframeID = jQuery(this).attr('id');
 		players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, {
 			events: {
@@ -3013,7 +3017,7 @@ function onPlayerStateChange(e){
 
 function vimeoControls(){
 	//Load the Vimeo API script (froogaloop) remotely (with local backup)
-	if ( jQuery('.vimeoplayer').is('*') ){
+	if ( jQuery('.vimeo').is('*') ){
         jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
@@ -3037,7 +3041,7 @@ function vimeoControls(){
 			};
 			videoData = {};
 		}
-	    jQuery('iframe.vimeoplayer').each(function(i){
+	    jQuery('iframe.vimeo').each(function(i){
 			var vimeoiframeID = jQuery(this).attr('id');
 			players.vimeo[vimeoiframeID] = $f(vimeoiframeID);
 			players.vimeo[vimeoiframeID].addEvent('ready', function(id){
@@ -3145,7 +3149,7 @@ function pauseAllVideos(force){
 	}
 
 	//Pause Youtube Videos
-	jQuery('iframe.youtubeplayer').each(function(){
+	jQuery('iframe.youtube').each(function(){
 		youtubeiframeID = jQuery(this).attr('id');
 		if ( (force || !jQuery(this).hasClass('ignore-visibility')) && players.youtube[youtubeiframeID].getPlayerState() === 1 ){
 			players.youtube[youtubeiframeID].pauseVideo();
@@ -3153,7 +3157,7 @@ function pauseAllVideos(force){
 	});
 
 	//Pause Vimeo Videos
-	jQuery('iframe.vimeoplayer').each(function(){
+	jQuery('iframe.vimeo').each(function(){
 		vimeoiframeID = jQuery(this).attr('id');
 		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
 			players.vimeo[vimeoiframeID].api('pause');

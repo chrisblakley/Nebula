@@ -98,7 +98,7 @@ function register_nebula_options(){
 		'edited_yet' => 'false',
 		'scss_last_processed' => '0',
 		'next_version' => '',
-		'current_version' => nebula_version('full'),
+		'current_version' => nebula_version('raw'),
 		'current_version_date' => nebula_version('date'),
 		'version_legacy' => 'false',
 		'users_status' => '',

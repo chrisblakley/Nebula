@@ -30,7 +30,7 @@
 
 <div id="theslider" class="container nebulaframe">
     <div class="row">
-        <div class="sixteen columns sliderwrap">
+        <div class="col-md-12 sliderwrap">
 
             <a href="#" class="status">
             	<i class="fa fa-pause"></i> <span>Paused</span>
@@ -52,7 +52,7 @@
                 </ul>
             </div><!--/slider-nav-con-->
 
-        </div><!--/columns-->
+        </div><!--/col-->
     </div><!--/row-->
 </div><!--/container-->
 
@@ -258,7 +258,7 @@
 	</script>
 
 	<div class="row">
-		<div class="sixteen columns">
+		<div class="col-md-12">
 			<div class="nebulaframe">
 				<div class="nebula-slider">
 					<ul class="nebula-slide-con clearfix fade">
@@ -274,6 +274,6 @@
 					</ul>
 				</div>
 			</div>
-		</div><!--/columns-->
+		</div><!--/col-->
 	</div><!--/row-->
 <?php endif; //End Slider ?>

@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<?php
 			//Example "Event" post type query sorted by event time
 			//query_posts(array('post_type' => array('event'), 'meta_key' => 'event_date', 'orderby' => 'meta_value_num', 'order' => 'ASC', 'showposts' => 6, 'paged' => get_query_var('paged')));
@@ -50,5 +50,5 @@
 			//Always reset queries!
 			wp_reset_query();
 		?>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -17,59 +17,61 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<?php the_breadcrumb(); ?>
 		<hr />
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
-<div class="container fullcontentcon">
-	<div class="row">
-		<div class="eleven columns">
-			<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<?php if ( has_post_thumbnail() ): ?>
-						<?php the_post_thumbnail(); ?>
-					<?php endif; ?>
+<div class="fullcontentcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
+					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<?php if ( has_post_thumbnail() ): ?>
+							<?php the_post_thumbnail(); ?>
+						<?php endif; ?>
 
-					<h1 class="entry-title"><?php the_title(); ?></h1>
+						<h1 class="entry-title"><?php the_title(); ?></h1>
 
-					<div class="entry-meta">
-						<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
-					</div>
+						<div class="entry-meta">
+							<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
+						</div>
 
-					<div class="entry-social">
-						<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
-					</div>
+						<div class="entry-social">
+							<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
+						</div>
 
-					<div class="entry-content">
-						<?php the_content(); ?>
+						<div class="entry-content">
+							<?php the_content(); ?>
 
-						<div class="row prevnextcon">
-							<?php if ( get_previous_post_link() ): ?>
-								<div class="<?php echo ( get_next_post_link() )? 'eight' : 'sixteen'; ?> columns prev-link-con">
-									<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
-		                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
-								</div><!--/columns-->
-							<?php endif; ?>
+							<div class="row prevnextcon">
+								<?php if ( get_previous_post_link() ): ?>
+									<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col-md-12'; ?> prev-link-con">
+										<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
+			                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
+									</div><!--/col-->
+								<?php endif; ?>
 
-							<?php if ( get_next_post_link() ): ?>
-								<div class="<?php echo ( get_previous_post_link() )? 'eight' : 'sixteen'; ?> columns next-link-con">
-									<p class="prevnext-post-heading next-post-heading">Next Post</p>
-		                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
-								</div><!--/columns-->
-							<?php endif; ?>
-						</div><!--/row-->
-					</div><!-- .entry-content -->
-				</article><!-- #post-## -->
+								<?php if ( get_next_post_link() ): ?>
+									<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col-md-12'; ?> next-link-con">
+										<p class="prevnext-post-heading next-post-heading">Next Post</p>
+			                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
+									</div><!--/col-->
+								<?php endif; ?>
+							</div><!--/row-->
+						</div><!-- .entry-content -->
+					</article><!-- #post-## -->
 
-				<?php comments_template(); ?>
-			<?php endwhile; ?>
-		</div><!--/columns-->
-		<div class="four columns push_one">
-			<?php get_sidebar(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
-</div><!--/container-->
+					<?php comments_template(); ?>
+				<?php endwhile; ?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div>
 
 <?php get_footer(); ?>

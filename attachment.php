@@ -11,16 +11,18 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="row">
-	<div class="sixteen columns">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/columns-->
-</div><!--/row-->
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<?php the_breadcrumb(); ?>
+			<hr />
+		</div><!--/col-->
+	</div><!--/row-->
+</div><!--/container-->
 
 <div class="container fullcontentcon">
 	<div class="row">
-		<div class="sixteen columns">
+		<div class="col-md-12">
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 					<h1 class="entry-title">
@@ -106,7 +108,7 @@ get_header(); ?>
 					</div><!-- .entry-content -->
 				</article>
 			<?php endwhile; ?>
-		</div><!--/columns-->
+		</div><!--/col-->
 	</div><!--/row-->
 </div><!--/container-->
 

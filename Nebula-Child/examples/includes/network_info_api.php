@@ -19,7 +19,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<h2>Network Information</h2>
 		<p class="networkinfo">
@@ -29,5 +29,5 @@
 		</p>
 
 		<p><strong>Debug:</strong> <span class="networkdebug"></span></p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

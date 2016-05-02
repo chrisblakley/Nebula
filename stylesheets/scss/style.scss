@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.0.0u
+	Version: 4.0.2u
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -53,6 +53,7 @@ span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
 a {@include link-colors($primary_color, $secondary_color); @include prefix((transition: all 0.25s));
+	&:hover {text-decoration: none;}
 	.btn > &:hover {color: #fff;}
 }
 
@@ -170,10 +171,6 @@ div.nebula-button {margin-bottom: 10px;}
 // Specific library feature modifications
 // ===========================
 
-/* Gumby overrides */
-.row {max-width: 1080px;} //Default Gumby Row max-width is 980px. Be sure to update $content_width in functions.php to reflect this change!
-table tr td:first-child {font-weight: normal;}
-
 //Default font override
 h1, h2, h3, h4, h5, h6,
 body,
@@ -201,9 +198,8 @@ abbr, acronym {cursor: pointer; border-bottom: none; color: auto;}
     }
 }
 
-body .video-override .video {padding-bottom: 0px !important; height: auto !important;} /* Overrides Gumby video setting */
-i[class^="icon-"], i[class*=" icon-"] {margin: 0; min-width: 0;}
-.btn, .skiplink {@include prefix((transition: all 0.25s));}
+//body .video-override .video {padding-bottom: 0px !important; height: auto !important;} /* Overrides Gumby video setting */
+//.btn, .skiplink {@include prefix((transition: all 0.25s));}
 
 
 //Contact Form Styles
@@ -251,7 +247,6 @@ form fieldset {border: 1px solid #ccc;}
 
 	.wpcf7-not-valid {border-color: $danger_color; color: #000; background: lighten($danger_color, 40%);}
 
-	&:after {content: ''; display: none;} //Override Gumby setting
 	&.danger {
 		.wpcf7-form-control-wrap {
 			&:after {content: "\f00d"; position: absolute; top: 7px; right: 7px; font-family: "FontAwesome"; color: $danger_color;}
@@ -293,7 +288,7 @@ input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @inclu
 	input:not(.nofade):focus:-ms-input-placeholder {color: $placeholder_color_focus;}
 
 //jQuery UI Autocomplete Hero Search
-div#nebula-hero-formcon {@include tablet(){display: none !important;};}
+div#nebula-hero-formcon {text-align: center; @include tablet(){display: none !important;};}
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
 	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: 16px; line-height: 16px;}
 	input {display: block; width: 100%; font-size: 18px; line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
@@ -710,7 +705,7 @@ li.comment div.comment-meta {
 // Sidebar
 // ===========================
 
-.xoxo {padding: 0; margin: 0;}
+.xoxo {padding: 0; margin: 0; list-style: none;}
 	.xoxo li.widget-container {margin: 10px 0 30px 0;
 		&:first-child,
 		&.first-child {margin-top: 0;}
@@ -723,8 +718,8 @@ li.comment div.comment-meta {
 			a {color: $secondary_color;}
 			.sub-menu a {@include link-colors($primary_color, $secondary_color);}
 		}
-		li.menu-item {position: relative; padding: 5px 0 5px 0;
-			ul.sub-menu {/* padding-left: 20px; */
+		li.menu-item {position: relative; padding: 5px 0 5px 0; list-style: none;
+			ul.sub-menu {padding-left: 20px;
 				li.menu-item {padding: 5px 0 5px 10px; border-left: 1px solid $secondary_color;}
 			}
 		}

@@ -14,37 +14,41 @@ get_header(); ?>
 <div id="heroslidercon">
 	<div class="herobgcolor"></div>
 	<div class="nebulashadow inner-top bulging"></div>
-	<div class="row">
-		<div class="sixteen columns">
-			<h1><?php echo get_bloginfo('name'); ?></h1>
-			<?php if ( get_bloginfo('description') != '' ): ?>
-				<h2><?php echo get_bloginfo('description'); ?></h2>
-			<?php endif; ?>
-			<div class="text-center"><?php nebula_hero_search(); ?></div>
-		</div><!--/columns-->
-	</div><!--/row-->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1><?php echo get_bloginfo('name'); ?></h1>
+				<?php if ( get_bloginfo('description') != '' ): ?>
+					<h2><?php echo get_bloginfo('description'); ?></h2>
+				<?php endif; ?>
+				<?php nebula_hero_search(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
 	<div class="nebulashadow inner-bottom bulging"></div>
 </div><!--/heroslidercon-->
 
-<div class="container fullcontentcon">
-	<div class="row">
-		<div class="eleven columns">
-			<?php if ( !empty($nebula['user']['sessions']['last']) ): ?>
-				<h2>Welcome back!</h2>
-			<?php endif; ?>
+<div class="fullcontentcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php if ( !empty($nebula['user']['sessions']['last']) ): ?>
+					<h2>Welcome back!</h2>
+				<?php endif; ?>
 
-			<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<div class="entry-content">
-						<?php the_content(); ?>
-					</div><!-- .entry-content -->
-				</article><!-- #post-## -->
-			<?php endwhile; ?>
-		</div><!--/columns-->
-		<div class="four columns push_one">
-			<?php get_sidebar(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
-</div><!--/container-->
+				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
+					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<div class="entry-content">
+							<?php the_content(); ?>
+						</div><!-- .entry-content -->
+					</article><!-- #post-## -->
+				<?php endwhile; ?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/fullcontentcon-->
 
 <?php get_footer(); ?>

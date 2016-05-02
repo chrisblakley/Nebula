@@ -24,40 +24,44 @@ get_header();
 /* Edit the code below to match the theme, or duplicate the desired template and rename the template (above). Remember to make the desired variations to test individually on each template! */
 ?>
 
-<div class="row">
-	<div class="sixteen columns">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/columns-->
-</div><!--/row-->
-
-<div class="container fullcontentcon">
+<div class="container">
 	<div class="row">
-		<div class="sixteen columns">
-			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<h1 class="entry-title"><?php the_title(); ?></h1>
-					<div class="entry-content">
-						<?php the_content(); ?>
-
-						<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-						<?php if ( current_user_can('manage_options') ) : ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<hr />
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr />
-								</div>
-							</div>
-						<?php endif; ?>
-					</div><!-- .entry-content -->
-				</article><!-- #post-## -->
-
-				<?php comments_template(); ?>
-			<?php endwhile; ?>
-		</div><!--/columns-->
+		<div class="col-md-12">
+			<?php the_breadcrumb(); ?>
+			<hr />
+		</div><!--/cols-->
 	</div><!--/row-->
 </div><!--/container-->
+
+<div class="fullcontentcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<h1 class="entry-title"><?php the_title(); ?></h1>
+						<div class="entry-content">
+							<?php the_content(); ?>
+
+							<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
+							<?php if ( current_user_can('manage_options') ) : ?>
+								<div class="container entry-manage">
+									<div class="row">
+										<hr />
+										<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
+										<hr />
+									</div>
+								</div>
+							<?php endif; ?>
+						</div><!-- .entry-content -->
+					</article><!-- #post-## -->
+
+					<?php comments_template(); ?>
+				<?php endwhile; ?>
+			</div><!--/cols-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div>
 
 <?php get_footer(); ?>
 <?php do_action('nebula_footer'); ?>

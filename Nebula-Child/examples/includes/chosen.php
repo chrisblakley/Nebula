@@ -65,7 +65,7 @@
 
 <div id="nflteams">
 	<div class="row">
-		<div class="eight columns">
+		<div class="col-md-6">
 			<h4>Your favorite NFL team</h4>
 			<select class="chosen-example favteam" data-placeholder="Your favorite NFL team">
 				<option value=""></option>
@@ -120,7 +120,7 @@
 			</select>
 
 		</div><!--/columns-->
-		<div class="eight columns">
+		<div class="col-md-6">
 			<h4>Your most hated NFL teams</h4>
 			<select class="chosen-example hateteams" data-placeholder="Your most hated NFL teams" multiple>
 				<option value=""></option>
@@ -174,19 +174,19 @@
 				</optgroup>
 			</select>
 
-		</div><!--/columns-->
+		</div><!--/col-->
 	</div><!--/row-->
 	<div class="row">
-		<div class="sixteen columns">
+		<div class="col-md-12">
 			<input class="btn medium primary submitteams" type="submit" value="Submit" style="padding: 0 10px !important; margin-top: 15px !important; float: right;" />
-		</div><!--/columns-->
+		</div><!--/col-->
 	</div><!--/row-->
 </div>
 
 <div class="row submitsuccess" style="display: none;">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<p style="color: green; font-size: 21px; text-align: center;">Thank you! Your selection has been logged!</p>
-	</div>
-</div>
+	</div><!--/col-->
+</div><!--/row-->
 
 <br /><br />

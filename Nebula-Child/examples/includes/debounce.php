@@ -61,17 +61,12 @@
 
 
 <div class="row">
-	<div class="eight columns waitchecks">
-
+	<div class="col-md-6 waitchecks">
 		<p class="waitresult clicktest"><i class="fa fa-circle-thin"></i> Click Test</p>
 		<p class="waitresult mousemove"><i class="fa fa-circle-thin"></i> Mouse Movement</p>
-
-	</div><!--/columns-->
-
-	<div class="eight columns waitchecks">
-
+	</div><!--/col-->
+	<div class="col-md-6 waitchecks">
 		<p class="waitresult windowresize"><i class="fa fa-circle-thin"></i> Window Resize</p>
 		<p class="waitresult windowscroll"><i class="fa fa-circle-thin"></i> Window Scroll</p>
-
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

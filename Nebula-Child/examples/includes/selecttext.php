@@ -98,7 +98,7 @@
 </script>
 
 <div class="row selectcopyexamplecon">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<br /><br /><br />
 
@@ -122,5 +122,5 @@
 
 		<textarea id="testtextarea" placeholder="Click the copy link and then try pasting here to see if it worked..." style="width: 100%; min-height: 150px;"></textarea>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -37,49 +37,49 @@
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<hr />
 		<div id="facebook-connect" style="margin-top: 15px;">
 			<p><strong>Connect with Facebook to see how the banner can obtain user information too:</strong></p>
 			<?php nebula_facebook_link(); ?>
 		</div>
 		<hr />
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="eight columns">
+	<div class="col-md-6">
 
 		<h2>Embedded GA Code</h2>
 		<p>This flash banner embeds the entire Google Analytics code within it. This increases the filesize to well over 40kb before artwork/animation even begins.</p>
 
 		<div id="embeddedVersion"></div>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 
-	<div class="eight columns">
+	<div class="col-md-6">
 
 		<h2>External GA Code</h2>
 		<p>This flash banner attempts to pull a GA code that is already used on the page, and duplicates the tracker (with an alternate ID) to send the event to a different account.</p>
 
 		<div id="externalVersion"></div>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <hr style="margin: 25px 0;"/>
 
 <div class="row">
-	<div class="eight columns">
+	<div class="col-md-6">
 
 		<h2>Hybrid GA Code</h2>
 		<p>This flash banner detects if the GATracker is imported or not. If so, it uses it, otherwise it attempts to use the external GA code. <em>Note: This is in progress.</em></p>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 
-	<div class="eight columns">
+	<div class="col-md-6">
 
 		<div id="hybridVersion"></div>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

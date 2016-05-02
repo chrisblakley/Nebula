@@ -45,11 +45,11 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<h2 class="browsersupport">Detecting browser support...</h2>
 		<h2 class="serversupport">Detecting server connection...</h2>
 		<p>This instance of the Websocket API is listening on port 9998. To install websockets, download <a href="https://code.google.com/p/pywebsocket/" target="_blank">pywebsocket</a> and install on your server.</p>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -14,7 +14,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container">
 		<div class="row">
-			<div class="sixteen columns">
+			<div class="col-md-12">
 				<?php if ( have_posts() ){ the_post(); } //Queue the first post, then reset before running the loop. ?>
 				<h1 class="page-title">
 					<?php if ( is_day() ): ?>
@@ -29,30 +29,34 @@ get_header(); ?>
 					<?php endif; ?>
 				</h1>
 				<?php rewind_posts(); //Reset the queue before running the loop. ?>
-			</div><!--/columns-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
 
 <div class="breadcrumbbar">
-	<div class="row">
-		<div class="sixteen columns">
-			<?php the_breadcrumb(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php the_breadcrumb(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
 	<hr />
-</div><!--/container-->
+</div>
 
-<div class="container fullcontentcon">
-	<div class="row">
-		<div class="eleven columns">
-			<?php get_template_part('loop', 'archive'); ?>
-			<?php wp_pagenavi(); ?>
-		</div><!--/columns-->
-		<div class="four columns push_one">
-			<?php get_sidebar(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
-</div><!--/container-->
+<div class="fullcontentcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php get_template_part('loop', 'archive'); ?>
+				<?php wp_pagenavi(); ?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div>
 
 <?php get_footer(); ?>

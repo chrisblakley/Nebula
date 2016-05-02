@@ -62,10 +62,10 @@
 </style>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div class="notie">This example only works with Internet Explorer.</div>
 		<div class="iemode"></div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <script>

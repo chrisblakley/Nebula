@@ -169,11 +169,11 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div id="facebook-connect" style="margin-top: 15px;">
 			<p><strong>The Facebook SDK has not loaded yet.</strong></p>
 			<img class="fbpicture" style="margin: 0; max-width: 360px;" /><br /><br />
 			<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" scope="public_profile,email" onlogin="checkFacebookStatus();"></div>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

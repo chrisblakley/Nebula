@@ -33,7 +33,7 @@
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<p>Open <strong><a href="<?php the_permalink(); ?>" target="_blank">this page</a></strong> in another tab and change the text below.</p>
 		<p>The <code>storage</code> event triggers on the other windows, giving us a way to communicate between windows using localStorage. This will be used for things like contact form messages so tabs/windows can be switched by the user without losing message data.</p>
@@ -52,5 +52,5 @@
 			</ul>
 		</form>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

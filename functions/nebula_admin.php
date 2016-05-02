@@ -209,6 +209,7 @@ if ( nebula_option('plugin_update_warning') ){
 }
 
 
+
 //Nebula Theme Update Checker
 add_action('admin_init', 'nebula_theme_json');
 function nebula_theme_json(){
@@ -217,9 +218,9 @@ function nebula_theme_json(){
 
 	//If newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 	$remote_version_info = get_option('external_theme_updates-Nebula-master');
-	if ( (!nebula_option('version_legacy') || nebula_option('version_legacy', 'false')) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full')) ){
+	if ( strpos(nebula_version('raw'), 'u') || nebula_option('version_legacy', 'false') && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full')) ){
 		nebula_update_option('version_legacy', 'true');
-		nebula_update_option('current_version', nebula_version('full'));
+		nebula_update_option('current_version', nebula_version('raw'));
 		nebula_update_option('current_version_date', nebula_version('date'));
 		nebula_update_option('next_version', 'INCOMPATIBLE');
 		return;

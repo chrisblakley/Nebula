@@ -69,13 +69,13 @@
 
 		<div id="fullherovideocon">
 			<div id="fullherovideo" class="row">
-				<div class="sixteen columns">
+				<div class="col-md-12">
 					<?php vimeo_meta('1084537'); ?>
 					<iframe id="<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" class="vimeoplayer" src="https://player.vimeo.com/video/<?php echo $GLOBALS['vimeo_meta']['id']; ?>?api=1&player_id=<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-				</div><!--/column-->
+				</div><!--/col-->
 			</div><!--/row-->
 		</div>
-	</div><!-- /herovideo -->
+	</div><!--/herovideo -->
 </div><!--/container-->
 
 <div class="nebulashadow bulging"></div><br />

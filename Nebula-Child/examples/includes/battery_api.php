@@ -91,9 +91,8 @@
 	}
 </script>
 
-
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<h2>Battery Status</h2>
 		<p class="batteryinfo batterysupported">
@@ -104,5 +103,5 @@
 		</p>
 		<p class="batterynotsupported hidden">Unsupported</p>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

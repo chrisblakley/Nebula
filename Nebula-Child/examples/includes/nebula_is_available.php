@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<?php
 			$testdomain = 'http://www.pinckneyhugo.com';
@@ -48,5 +48,5 @@
 		?>
 		<br />
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

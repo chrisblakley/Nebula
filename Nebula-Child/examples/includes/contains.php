@@ -21,7 +21,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<strong>Example Filter</strong>
 		<div class="field">
@@ -59,5 +59,5 @@
 			</li>
 		</ul>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

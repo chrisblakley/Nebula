@@ -28,7 +28,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div style="padding: 30px; padding-bottom: 60px; text-align: center;">
 			<?php if ( nebula_retarget('nebula_retargeting', 'clicked') ): ?>
 				<h3><strong>Thanks</strong> for testing this out!</h3>
@@ -96,5 +96,5 @@
 		</pre>
 
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

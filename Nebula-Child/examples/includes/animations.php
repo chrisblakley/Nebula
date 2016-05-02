@@ -53,13 +53,13 @@
 
 
 <div class="row">
-	<div class="sixteen columns animatecon">
+	<div class="col-md-12 animatecon">
 		<img id="animatethis" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" />
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row animationformcon">
-	<div class="nine columns animationselectcon">
+	<div class="col-md-7 animationselectcon">
 		<div class="picker">
 			<select id="animationselect">
 				<option value="" disabled selected>Select an animation...</option>
@@ -99,13 +99,13 @@
 					<option value="nebula-nod active">Nod</option>
 			</select>
 		</div>
-	</div><!--/columns-->
-	<div class="seven columns animationresetcon">
+	</div><!--/col-->
+	<div class="col-md-5 animationresetcon">
 		<div id="playanimation" class="btn medium primary inactive">
 			<a href="#">Animate</a>
 		</div>
 		<div id="resetanimation" class="btn medium info inactive">
 			<a href="#">Reset</a>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

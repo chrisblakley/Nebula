@@ -349,7 +349,7 @@
 
 
 <div class="row">
-	<div id="fulldata" class="sixteen columns">
+	<div id="fulldata" class="col-md-12">
 
 		<h3>User</h3>
 		<p>
@@ -434,14 +434,14 @@
 		</p>
 		<div id="test_map_canvas" class="googlemaptester"></div>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="sixteen column">
+	<div class="col-md-12">
 		<?php
 			//@TODO "Nebula" 0: Create a form so people can email us their environment settings.
 			//However, if anything on this page breaks, then the email form will likely not work.
 		?>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

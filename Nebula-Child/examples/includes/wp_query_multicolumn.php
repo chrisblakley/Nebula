@@ -7,7 +7,7 @@
             <div class="row multi-column-query">
         <?php endif; ?>
 
-        <div class="eight columns">
+        <div class="col-md-6">
 		    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
 
@@ -19,7 +19,7 @@
 		            <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
 		        </div><!-- .entry-content -->
 		    </article><!-- #post-## -->
-		</div><!--/columns-->
+		</div><!--/col-->
 
         <?php $count++; ?>
     <?php endwhile; ?>

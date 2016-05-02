@@ -51,15 +51,15 @@
 <?php if ( !$nebula['user']['sessions']['last'] && $nebula['user']['sessions']['first'] == $nebula['user']['sessions']['current'] || 1==1 ): //Only show if first pageview of first visit (remove || 1==1 for live site) ?>
 	<div id="eu-cookie-notification" class="container">
 		<div class="row">
-			<div class="twelve columns">
+			<div class="col-md-9">
 				<h4><strong>This site uses cookies.</strong></h4>
 				<p>By continuing to use this website you agree to the terms of service.</p>
-			</div><!--/columns-->
-			<div class="four columns btncon">
+			</div><!--/col-->
+			<div class="col-md-3 btncon">
 				<div class="btn medium info">
 					<a href="#">Continue</a>
 				</div>
-			</div><!--/columns-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div>
 <?php endif; ?>

@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<h3>Nebula Frame</h3>
 		<p>With various shadow types.</p>
@@ -166,5 +166,5 @@
 		<div class="nebulashadow floating" offset="10"></div>
 
 		<p><small>Note: The Gumby "Vertical Align" component is also used in these examples! See the homepage for another example of Gumby Vertical Align.</small></p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

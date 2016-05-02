@@ -31,27 +31,22 @@
 				jQuery(this).parents('li').removeClass('warning');
 			}
 		});
-
-
-
-
-
 	});
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<strong>Example __utm.gif Path:</strong><br/>
 		<pre class="nebula-code HTML"><?php echo ga_UTM_gif(); ?></pre>
 
 		<?php if ( 1==2 ): //For testing ?>
 			<img src="<?php echo ga_UTM_gif(); ?>" />
 		<?php endif; ?>
-	</div>
-</div>
+	</div><!--/col-->
+</div><!--/row-->
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2>Google Analytics __utm.gif Generator</h2>
 		<p>Note: Still in progress!!</p>
 
@@ -207,5 +202,5 @@
 				</li>
 			</ul>
 		</form>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

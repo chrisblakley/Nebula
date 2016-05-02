@@ -111,7 +111,7 @@
 					onclick : function(){
 						ed.focus();
 						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
-						ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + shortcodeContent + '[/columns]');
+						ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + shortcodeContent + '[/columns]'); //@TODO "Nebula" 0: Update this to Bootstrap syntax.
 					}
 				}]
 			}),

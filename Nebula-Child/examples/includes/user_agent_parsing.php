@@ -1,6 +1,6 @@
 <h2>Example</h2>
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<?php if ( nebula_is_bot() ): ?>
 			<p style="font-size: 42px;"><strong>You are a robot!</strong></p>
 		<?php endif; ?>
@@ -26,13 +26,13 @@
 				Is it less than Safari 6? <strong><?php echo ( nebula_is_browser('safari', 5, 'lt') )? 'Yes' : 'No'; ?></strong>
 			<?php endif; ?>
 		</p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <br />
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<hr />
 		<p>See all data Nebula can see - <a href="https://gearside.com/nebula/documentation/utilities/environment-feature-detection/">Full environment detection &raquo;</a></p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -18,64 +18,64 @@
 </style>
 
 <div class="row">
-	<div class="sixteen columns">
-		<div class="blend"></div>								
-	</div><!--/columns-->
+	<div class="col-md-12">
+		<div class="blend"></div>
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="four columns">
-		<div class="blend multiply"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend screen"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend overlay"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend darken"></div>								
-	</div><!--/columns-->
+	<div class="col-md-3">
+		<div class="blend multiply"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend screen"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend overlay"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend darken"></div>
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="four columns">
-		<div class="blend lighten"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend color-dodge"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend color-burn"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend hard-light"></div>								
-	</div><!--/columns-->
+	<div class="col-md-3">
+		<div class="blend lighten"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend color-dodge"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend color-burn"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend hard-light"></div>
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="four columns">
-		<div class="blend soft-light"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend difference"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend exclusion"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend hue"></div>								
-	</div><!--/columns-->
+	<div class="col-md-3">
+		<div class="blend soft-light"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend difference"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend exclusion"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend hue"></div>
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="four columns">
-		<div class="blend saturation"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend color"></div>								
-	</div><!--/columns-->
-	<div class="four columns">
-		<div class="blend luminosity"></div>								
-	</div><!--/columns-->
+	<div class="col-md-3">
+		<div class="blend saturation"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend color"></div>
+	</div><!--/col-->
+	<div class="col-md-3">
+		<div class="blend luminosity"></div>
+	</div><!--/col-->
 </div><!--/row-->

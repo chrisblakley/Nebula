@@ -225,24 +225,24 @@
 </script>
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div class="container">
 			<div class="row">
-				<div class="eight columns">
+				<div class="col-md-6">
 					<ul>
 						<li><strong>Example Locations</strong></li>
 						<li class="latlngcon"><i class="fa fa-location-arrow" style="color: #fe7569;"></i> <span class="lat">43.109205</span>, <span class="lng">-76.095831</span></li>
 						<li class="latlngcon"><i class="fa fa-location-arrow" style="color: #fe7569;"></i> <span class="lat">43.093068</span>, <span class="lng">-76.163809</span></li>
 						<li class="latlngcon"><i class="fa fa-location-arrow" style="color: #fe7569;"></i> <span class="lat">43.100150</span>, <span class="lng">-76.207207</span></li>
 					</ul>
-				</div><!--/columns-->
-				<div class="eight columns">
+				</div><!--/col-->
+				<div class="col-md-6">
 					<ul>
 						<li><i class="maptraffic-icon fa fa-car fa-fw inactive"></i> <a class="maptraffic" href="#">Enable Traffic</a></li>
 						<li><i class="mapgeolocation-icon fa fa-location-arrow fa-fw inactive"></i> <a class="mapgeolocation" href="#">Detect Location</a></li>
 						<li><i class="maprefresh-icon fa fa-refresh fa-fw inactive"></i> <a class="maprefresh" href="#">Refresh Map</a></li>
 					</ul>
-				</div><!--/columns-->
+				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
 
@@ -250,5 +250,5 @@
 			<div id="map_canvas" class="googlemap"></div>
 		</div>
 		<br />
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

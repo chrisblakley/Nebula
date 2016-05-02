@@ -87,9 +87,8 @@
 	});
 </script>
 
-
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<h2>Ambient Light</h2>
 		<p>
@@ -98,5 +97,5 @@
 			<strong>Light Level: </strong> <span class="lightlevelsupport">lightlevel is not supported.</span><br />
 		</p>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

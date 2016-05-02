@@ -42,7 +42,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<?php if ( 1==1 ): ?>
 			<a href="https://api.instagram.com/oauth/authorize/?client_id=<?php echo nebula_option('instagram_client_id'); ?>&redirect_uri=<?php echo get_permalink(); ?>&response_type=code">Click here to authorize Instagram</a>
@@ -50,5 +50,5 @@
 
 		<ul class="instagramcon"></ul>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

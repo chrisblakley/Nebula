@@ -11,28 +11,32 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="row">
-	<div class="sixteen columns">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/columns-->
-</div><!--/row-->
-
-<div class="container fullcontentcon">
+<div class="container">
 	<div class="row">
-		<div class="eleven columns">
-			<article id="post-0" class="post error404 not-found" role="main">
-				<h1 class="page-title">Not Found</h1>
-				<p>The page you requested could not be found.</p>
-
-				<?php get_search_form(); ?>
-			</article>
-		</div><!--/columns-->
-		<div class="four columns push_one">
-			<?php get_sidebar(); ?>
-		</div><!--/columns-->
+		<div class="col-md-12">
+			<?php the_breadcrumb(); ?>
+			<hr />
+		</div><!--/col-->
 	</div><!--/row-->
 </div><!--/container-->
+
+<div class="fullcontentcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<article id="post-0" class="post error404 not-found" role="main">
+					<h1 class="page-title">Not Found</h1>
+					<p>The page you requested could not be found.</p>
+
+					<?php get_search_form(); ?>
+				</article>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div>
 
 <script>
 	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP 404 Page'));

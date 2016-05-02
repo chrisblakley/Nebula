@@ -15,22 +15,24 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container">
 		<div class="row">
-			<div class="sixteen columns">
+			<div class="col-md-12">
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 				<p><?php the_field('description'); ?></p>
-			</div><!--/columns-->
+			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
 
 <div class="breadcrumbbar">
-	<div class="row">
-		<div class="sixteen columns">
-			<?php the_breadcrumb(); ?>
-		</div><!--/columns-->
-	</div><!--/row-->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php the_breadcrumb(); ?>
+			</div><!--/cols-->
+		</div><!--/row-->
+	</div><!--/container-->
 	<hr />
-</div><!--/container-->
+</div>
 
 <?php if ( is_page(680) ){ //Hero Slider (bxslider)
 	include_once('includes/hero_slider_bxslider.php');
@@ -42,7 +44,7 @@ get_header(); ?>
 
 <div id="example-container" class="container">
 	<div class="row">
-		<div class="eleven columns">
+		<div class="col-md-8">
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 				<?php if ( get_field('example_filename') ): ?>
@@ -56,7 +58,7 @@ get_header(); ?>
 				<div class="container">
 					<div class="entry-content">
 						<div class="row">
-							<div class="sixteen columns">
+							<div class="col-md-12">
 								<?php if ( get_field('usage') ): ?>
 									<h2>Usage</h2>
 									<?php echo do_shortcode(get_field('usage')); ?>
@@ -134,7 +136,7 @@ get_header(); ?>
 										</ul>
 									</div>
 								<?php endif; ?>
-							</div><!--/columns-->
+							</div><!--/cols-->
 						</div><!--/row-->
 
 
@@ -150,12 +152,8 @@ get_header(); ?>
 							include_once('includes/stick_post.php');
 						} ?>
 
-						<?php if ( is_page(318) ){ //Vimeo Meta
-							include_once('includes/vimeo_meta.php');
-						} ?>
-
-						<?php if ( is_page(263) ){ //Youtube Meta
-							include_once('includes/youtube_meta.php');
+						<?php if ( is_page(263) ){ //Video Meta
+							include_once('includes/video_meta.php');
 						} ?>
 
 						<?php if ( is_page(1366) ){ //Ooyala Player
@@ -569,15 +567,15 @@ get_header(); ?>
 					</div><!--/entry-content-->
 
 					<div class="row">
-						<div class="sixteen columns">
+						<div class="col-md-12">
 							<?php comments_template(); ?>
-						</div><!--/columns-->
+						</div><!--/cols-->
 					</div><!--/row-->
 
 				</div><!--/container-->
 			</article>
-		</div><!--/columns-->
-		<div class="four columns push_one">
+		</div><!--/cols-->
+		<div class="col-md-4">
 			<div id="sidebar">
 				<ul class="xoxo">
 					<li class="widget-container">
@@ -588,7 +586,7 @@ get_header(); ?>
 					</li>
 				</ul>
 			</div>
-		</div><!--/columns-->
+		</div><!--/cols-->
 	</div><!--/row-->
 </div><!--/container-->
 

@@ -1,7 +1,7 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<hr />
 		<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
 		<hr />
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -35,77 +35,67 @@ function div_shortcode($atts, $content=''){
 }
 
 
-//Gumby Grid Shortcodes
-
-//Colgrid
-if ( shortcode_exists( 'colgrid' ) ){
-	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
-} else {
-	add_shortcode('gumby_colgrid', 'colgrid_shortcode');
-	add_shortcode('colgrid', 'colgrid_shortcode');
-}
-function colgrid_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('grid' => '', 'class' => '', 'style' => ''), $atts) );
-	$flags = get_flags($atts);
-	$grid = array_values($flags);
-	return '<section class="nebula-colgrid ' . $grid[0] . ' colgrid ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</section><!--/' . $grid[0] . ' colgrid-->';
-} //end colgrid_grid()
+//Bootstrap Grid Shortcodes
 
 //Container
-if ( shortcode_exists( 'container' ) ){
-	add_shortcode('gumby_container', 'container_shortcode');
+if ( shortcode_exists('container') ){
+	add_shortcode('bootstrap_container', 'container_shortcode');
 } else {
-	add_shortcode('gumby_container', 'container_shortcode');
+	add_shortcode('bootstrap_container', 'container_shortcode');
 	add_shortcode('container', 'container_shortcode');
 }
 function container_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
 	return '<div class="nebula-container container ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/container-->';
-} //end container_grid()
+}
 
 //Row
 if ( shortcode_exists('row') ){
-	add_shortcode('gumby_row', 'row_shortcode');
+	add_shortcode('bootstrap_row', 'row_shortcode');
 } else {
-	add_shortcode('gumby_row', 'row_shortcode');
+	add_shortcode('bootstrap_row', 'row_shortcode');
 	add_shortcode('row', 'row_shortcode');
 }
 function row_shortcode($atts, $content=''){
 	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
 	$GLOBALS['col_counter'] = 0;
 	return '<div class="nebula-row row ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/row-->';
-} //end row_grid()
+}
 
 //Columns
+//@TODO "Nebula" 0: Update this to Bootstrap!
 if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exists('cols') || shortcode_exists('col') ){
-	add_shortcode('gumby_column', 'column_shortcode');
-	add_shortcode('gumby_columns', 'column_shortcode');
-	add_shortcode('gumby_col', 'column_shortcode');
-	add_shortcode('gumby_cols', 'column_shortcode');
+	add_shortcode('bootstrap_column', 'column_shortcode');
+	add_shortcode('bootstrap_columns', 'column_shortcode');
+	add_shortcode('bootstrap_col', 'column_shortcode');
+	add_shortcode('bootstrap_cols', 'column_shortcode');
 } else {
-	add_shortcode('gumby_column', 'column_shortcode');
-	add_shortcode('gumby_columns', 'column_shortcode');
-	add_shortcode('gumby_col', 'column_shortcode');
-	add_shortcode('gumby_cols', 'column_shortcode');
+	add_shortcode('bootstrap_column', 'column_shortcode');
+	add_shortcode('bootstrap_columns', 'column_shortcode');
+	add_shortcode('bootstrap_col', 'column_shortcode');
+	add_shortcode('bootstrap_cols', 'column_shortcode');
 	add_shortcode('column', 'column_shortcode');
 	add_shortcode('columns', 'column_shortcode');
 	add_shortcode('col', 'column_shortcode');
 	add_shortcode('cols', 'column_shortcode');
 }
 function column_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('columns' => '', 'push' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts) );
+	extract( shortcode_atts( array('scale' => 'md', 'columns' => '', 'offset' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts) );
 
 	$flags = get_flags($atts);
-	if ( in_array('centered', $flags) ){
+	$columns = str_replace(array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'), array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'), $columns);
+
+
+	if ( in_array('centered', $flags) ){  //@TODO "Nebula" 0: update to bootstrap centered
 		$centered = 'centered';
 		$key = array_search('centered', $flags);
 		unset($flags[$key]);
 	} elseif ( in_array('first', $flags) ){
-		$GLOBALS['col_counter'] = 1;
+		$GLOBALS['col_counter'] = 1; //@todo "Nebula" 0: what does this do? do we still need it?
 		$first = 'margin-left: 0;';
 		$key = array_search('first', $flags);
 	} elseif ( $GLOBALS['col_counter'] == 0 ){
-		$GLOBALS['col_counter'] = 1;
+		$GLOBALS['col_counter'] = 1; //@todo "Nebula" 0: what does this do? do we still need it?
 		$first = 'margin-left: 0;';
 	} else {
 		$GLOBALS['col_counter']++;
@@ -120,12 +110,11 @@ function column_shortcode($atts, $content=''){
 	$columns = array_values($flags);
 
 	if ( !empty($push) ){
-		$push = 'push_' . $push;
+		$push = 'push_' . $push; //@TODO "Nebula" 0: update to bootstrap offset
 	}
 
-	return '<div class="nebula-columns ' . $columns[0] . ' columns ' . $push . ' ' . $centered . ' ' . $class . '" style="' . $style . ' ' . $first . '">' . do_shortcode($content) . '</div>';
-
-} //end column_grid()
+	return '<div class="nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class . '" style="' . $style . ' ' . $first . '">' . do_shortcode($content) . '</div>';
+}
 
 
 //Divider
@@ -271,9 +260,20 @@ function map_shortcode($atts){
 add_shortcode('vimeo', 'vimeo_shortcode');
 function vimeo_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );
-	$width = 'width="' . $width . '"';
-	$height = 'height="' . $height . '"';
-	$vimeo = '<article class="nebula-vimeo vimeo video"><iframe id="' . vimeo_meta($id, 'safetitle') . '" class="vimeoplayer" src="//player.vimeo.com/video/' . $id . '?api=1&player_id=' . vimeo_meta($id, 'safetitle') . '" ' . $width . ' ' . $height . ' autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></article>';
+
+	$vimeo_data = video_meta('vimeo', $id);
+	$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
+	if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
+		$vimeo .= '<iframe id="' . $vimeo_data['safetitle'] . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '?api=1&player_id=' . $vimeo_data['safetitle'] . '" width="' . $width . '" height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+	} else {
+		$vimeo .= '<iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '" width="' . $width . ' height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+
+		if ( is_dev() ){
+			$vimeo .= '<script>console.warn("' . $vimeo_data['error'] . ' (via Vimeo shortcode)");</script>';
+		}
+	}
+	$vimeo .= '</div>';
+
 	return $vimeo;
 }
 
@@ -282,16 +282,26 @@ function vimeo_shortcode($atts){
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
 	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts) );
-	$width = 'width="' . $width . '"';
-	$height = 'height="' . $height . '"';
 
 	$flags = get_flags($atts);
 	if ( in_array('ignore_visibility', $flags) ){
 		$ignore_visibility = 'ignore-visibility';
 	}
 
-	//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-	$youtube = '<article class="nebula-youtube youtube video"><iframe id="' . youtube_meta($id, 'safetitle') . '" class="youtubeplayer ' . $class . ' ' . $ignore_visibility . '" ' . $width . ' ' . $height . ' src="//www.youtube.com/embed/' . youtube_meta($id, 'id') . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></article>';
+	$youtube_data = video_meta('youtube', $id);
+	$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
+	if ( !empty($youtube_data) && empty($youtube_data['error']) ){
+		//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
+		$youtube .= '<iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility . '" width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe>';
+	} else {
+		$youtube .= '<iframe class="no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility . '" width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $id . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe>';
+
+		if ( is_dev() ){
+			$youtube .= '<script>console.warn("(' . $youtube_data['error'] . ' (via Youtube shortcode)");</script>';
+		}
+	}
+	$youtube .= '</div>';
+
 	return $youtube;
 }
 
@@ -487,8 +497,8 @@ function bio_shortcode($atts, $content=''){
 //Tooltip
 add_shortcode('tooltip', 'tooltip_shortcode');
 function tooltip_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('tip' => '', 'class' => '', 'style' => ''), $atts) );
-	return '<span class="nebula-tooltip ttip ' . $class . '" data-tooltip="' . $tip . '" style="' . $style . '">' . $content . '</span>';
+	extract( shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts) );
+	return '<span class="nebula-tooltip ttip ' . $class . '" data-toggle="tooltip" data-placement="' . $placement . '" title="' . $tip . '" style="' . $style . '">' . $content . '</span>';
 } //end tooltip_shortcode()
 
 

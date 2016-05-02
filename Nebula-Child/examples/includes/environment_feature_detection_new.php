@@ -325,7 +325,7 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<table id="detections">
 			<tr>
@@ -692,5 +692,5 @@
 			</tr>
 		</table>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -21,14 +21,14 @@
 
 
 <div class="row" contextmenu="nebulamenu" style="border: 1px solid red; padding: 20px;">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<h2>Context Menu Example</h2>
 		<p><strong>Right-click in this section to see extra options added to the contextual menu.</strong></p>
 
 		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sed libero quam. Praesent dignissim pretium massa. Integer tempus a augue vel porttitor. Nunc in consequat ligula. Sed semper aliquam arcu, at sodales arcu venenatis et. Pellentesque vestibulum dui velit, quis rhoncus felis aliquam a. Sed velit tortor, euismod eget egestas a, consequat sed ipsum. Sed vestibulum fringilla justo, at dapibus dui suscipit ut. Proin mi diam, consequat ut lacinia eu, semper vel risus. Suspendisse sodales iaculis est, vitae ornare nisi imperdiet eu. Etiam vel dolor porta nisi viverra maximus vitae sed dui. In accumsan elit sed mi fringilla mollis. Integer feugiat nisi at sem sodales, eu vestibulum felis ornare.</p>
 
 		<p>Cras facilisis commodo diam, non aliquam lorem. In hac habitasse platea dictumst. Etiam molestie tellus purus, accumsan finibus ante suscipit nec. Nunc in elementum risus. Nullam vitae tempor velit. Fusce quis suscipit ligula. Etiam at bibendum odio. Integer ornare neque magna, at rutrum eros feugiat vitae. Morbi mollis elit erat, sit amet tempor lorem aliquam eget. Nunc suscipit dignissim lacus at condimentum. Quisque eleifend, arcu nec fringilla venenatis, enim nunc maximus ante, non volutpat justo turpis eu diam. In quis efficitur lectus.</p>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 

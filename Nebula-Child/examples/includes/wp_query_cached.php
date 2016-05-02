@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 		<?php
 			$cached_query = get_transient('example_cached_query');
@@ -22,5 +22,5 @@
 
 		<?php endwhile; ?>
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

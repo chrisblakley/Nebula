@@ -19,8 +19,8 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 
 
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

@@ -61,17 +61,17 @@
 
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div class="level-four-media-query">
 			<div></div>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<div class="level-four-selector">
 			<div></div>
 		</div>
-	</div><!--/columns-->
+	</div><!--/col-->
 </div><!--/row-->

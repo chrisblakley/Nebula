@@ -2053,188 +2053,100 @@ function nebula_weather($zipcode=null, $data=''){
 	return false;
 }
 
-function vimeo_meta($videoID, $meta=''){
-	$override = apply_filters('pre_vimeo_meta', false, $videoID, $meta);
+//Get metadata from Youtube or Vimeo
+function video_meta($provider, $id){
+	$override = apply_filters('pre_video_meta', false, $id, $meta);
 	if ( $override !== false ){return $override;}
 
-	if ( $meta == 'id' ){
-		return $videoID;
+	$meta = str_replace('-', '', $meta);
+	$video_metadata = array(
+		'origin' => nebula_url_components('basedomain'),
+		'id' => $id,
+		'error' => false
+	);
+
+	if ( !empty($provider) ){
+		$provider = strtolower($provider);
+	} else {
+		$video_metadata['error'] = 'Video provider is required.';
+		return $video_metadata;
 	}
 
-	$vimeo_json = get_transient('nebula_vimeo_' . $videoID);
-	if ( empty($vimeo_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+	//Get Transients
+	$video_json = get_transient('nebula_' . $provider . '_' . $id);
+	if ( empty($video_json) || 1==1 ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		WP_Filesystem();
 		global $wp_filesystem;
-		$vimeo_json = $wp_filesystem->get_contents('http://vimeo.com/api/v2/video/' . $videoID . '.json');
-
-		set_transient('nebula_vimeo_' . $videoID, $vimeo_json, 60*60); //1 hour expiration
+		if ( $provider == 'youtube' ){
+			$video_json = $wp_filesystem->get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
+		} elseif ( $provider == 'vimeo' ){
+			$video_json = $wp_filesystem->get_contents('http://vimeo.com/api/v2/video/' . $id . '.json');
+		}
+		set_transient('nebula_' . $provider . '_' . $id, $video_json, 60*60); //1 hour expiration
 	}
-	$vimeo_json = json_decode($vimeo_json);
+	$video_json = json_decode($video_json);
 
-	if ( !$vimeo_json ){
-		trigger_error('A Vimeo API error occurred (A video with ID ' . $videoID . ' may not exist).', E_USER_WARNING);
-		return false;
-	} elseif ( empty($vimeo_json[0]) ){
-		trigger_error('A Vimeo video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
-		return false;
-	} elseif ( $meta == '' ){
-		return true;
-	}
-
-	switch ( $meta ){
-		case 'json':
-			return $vimeo_json[0];
-			break;
-		case 'title':
-			return $vimeo_json[0]->title;
-			break;
-		case 'safetitle':
-		case 'safe-title':
-			return str_replace(array(" ", "'", '"'), array("-", "", ""), $vimeo_json[0]->title);
-			break;
-		case 'description':
-		case 'content':
-			return $vimeo_json[0]->description;
-			break;
-		case 'thumbnail':
-			return $vimeo_json[0]->thumbnail_large;
-			break;
-		case 'author':
-		case 'channeltitle':
-		case 'channel':
-		case 'user':
-			return $vimeo_json[0]->user_name;
-			break;
-		case 'uploaded':
-		case 'published':
-		case 'date':
-		case 'upload_date':
-			return $vimeo_json[0]->upload_date;
-			break;
-		case 'href':
-		case 'link':
-		case 'url':
-			return $vimeo_json[0]->url;
-			break;
-		case 'seconds':
-		case 'duration':
-		    $duration_seconds = strval($vimeo_json[0]->duration);
-		    if ( $meta == 'seconds' ){
-			    return $duration_seconds;
-		    } else {
-			    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
-		    }
-			break;
-		default:
-			break;
-	}
-	return false;
-}
-
-//Get Youtube Video metadata
-function youtube_meta($videoID, $meta=''){
-	$override = apply_filters('pre_youtube_meta', false, $videoID, $meta);
-	if ( $override !== false ){return $override;}
-
-	if ( !nebula_option('google_server_api_key') ){
-		trigger_error('A Google server API key is required to use the youtube_meta function.', E_USER_WARNING);
-		return false;
-	}
-
-	switch ( $meta ){
-		case 'origin':
-			return nebula_url_components('basedomain');
-			break;
-		case 'id':
-			return $videoID;
-			break;
-		case 'href':
-		case 'link':
-		case 'url':
-			return 'https://www.youtube.com/watch?v=' . $videoID;
-			break;
-		default:
-			break;
-	}
-
-	$youtube_json = get_transient('nebula_youtube_' . $videoID);
-	if ( empty($youtube_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-		if ( nebula_option('google_server_api_key') == '' ){
-			if ( current_user_can('manage_options') || is_dev() ){
-				trigger_error("A Google API Server Key is needed for Youtube Meta. Add one in Nebula Options (in the WordPress Admin).", E_USER_WARNING);
-				return false;
+	//Check for errors
+	if ( empty($video_json) ){
+		if ( current_user_can('manage_options') || is_dev() ){
+			if ( $provider == 'youtube' ){
+				$video_metadata['error'] = 'A Youtube Data API error occurred. Make sure the Youtube Data API is enabled in the Google Developer Console and the server key is saved in Nebula Options.';
 			} else {
-				trigger_error("Google API Server Key not found.", E_USER_WARNING);
-				return false;
+				$video_metadata['error'] = 'A Vimeo API error occurred (A video with ID ' . $id . ' may not exist). Tracking will not be possible.';
 			}
 		}
-
-		WP_Filesystem();
-		global $wp_filesystem;
-		$youtube_json = $wp_filesystem->get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $videoID . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
-
-		set_transient('nebula_youtube_' . $videoID, $youtube_json, 60*60); //1 hour expiration
-	}
-	$youtube_json = json_decode($youtube_json);
-
-	if ( empty($youtube_json) ){
-		trigger_error('A Youtube Data API error occurred. Make sure the Youtube Data API is enabled in the Google Developer Console and the browser key is saved in Nebula Options.', E_USER_WARNING);
-		return false;
-	} elseif ( !empty($youtube_json->error) ){
-		trigger_error('Youtube API Error: ' . $youtube_json->error->message, E_USER_WARNING);
-		return false;
-	} elseif ( empty($youtube_json->items) ){
-		trigger_error('A Youtube video with ID ' . $videoID . ' does not exist.', E_USER_WARNING);
-		return false;
-	} elseif ( empty($meta) ){
-		return true;
+		return $video_metadata;
+	} elseif ( $provider == 'youtube' && !empty($video_json->error) ){
+		if ( current_user_can('manage_options') || is_dev() ){
+			$video_metadata['error'] = 'Youtube API Error: ' . $youtube_json->error->message;
+		}
+		return $video_metadata;
+	} elseif ( $provider == 'youtube' && empty($video_json->items) ){
+		if ( current_user_can('manage_options') || is_dev() ){
+			$video_metadata['error'] = 'A Youtube video with ID ' . $id . ' does not exist.';
+		}
+		return $video_metadata;
+	} elseif ( $provider == 'vimeo' && is_array($video_json) && empty($video_json[0]) ){
+		$video_metadata['error'] = 'A Vimeo video with ID ' . $id . ' does not exist.';
 	}
 
-	switch ( $meta ){
-		case 'json':
-			return $youtube_json->items[0];
-			break;
-		case 'title':
-			return $youtube_json->items[0]->snippet->title;
-			break;
-		case 'safetitle':
-		case 'safe-title':
-			return str_replace(array(" ", "'", '"'), array("-", "", ""), $youtube_json->items[0]->snippet->title);
-			break;
-		case 'description':
-		case 'content':
-			return $youtube_json->items[0]->snippet->description;
-			break;
-		case 'thumbnail':
-			return $youtube_json->items[0]->snippet->thumbnails->high->url;
-			break;
-		case 'author':
-		case 'channeltitle':
-		case 'channel':
-		case 'user':
-			return $youtube_json->items[0]->snippet->channelTitle;
-			break;
-		case 'uploaded':
-		case 'published':
-		case 'date':
-		case 'upload_date':
-			return $youtube_json->items[0]->snippet->publishedAt;
-			break;
-		case 'seconds':
-		case 'duration':
-			$start = new DateTime('@0'); //Unix epoch
-		    $start->add(new DateInterval($youtube_json->items[0]->contentDetails->duration));
-		    $duration_seconds = intval($start->format('H'))*60*60 + intval($start->format('i'))*60 + intval($start->format('s'));
-		    if ( $meta == 'seconds' ){
-			    return $duration_seconds;
-		    } else {
-			    return intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds);
-		    }
-			break;
-		default:
-			break;
+	//Build Data
+	if ( $provider == 'youtube' ){
+		$video_metadata['raw'] = $video_json->items[0];
+		$video_metadata['title'] = $video_json->items[0]->snippet->title;
+		$video_metadata['safetitle'] = str_replace(array(" ", "'", '"'), array("-", "", ""), $video_json->items[0]->snippet->title);
+		$video_metadata['description'] = $video_json->items[0]->snippet->description;
+		$video_metadata['thumbnail'] = $video_json->items[0]->snippet->thumbnails->high->url;
+		$video_metadata['author'] = $video_json->items[0]->snippet->channelTitle;
+		$video_metadata['date'] = $video_json->items[0]->snippet->publishedAt;
+		$video_metadata['url'] = 'https://www.youtube.com/watch?v=' . $id;
+		$start = new DateTime('@0'); //Unix epoch
+	    $start->add(new DateInterval($video_json->items[0]->contentDetails->duration));
+	    $duration_seconds = intval($start->format('H'))*60*60 + intval($start->format('i'))*60 + intval($start->format('s'));
+	} elseif ( $provider == 'vimeo' ){
+		$video_metadata['raw'] = $video_json[0];
+		$video_metadata['title'] = $video_json[0]->title;
+		$video_metadata['safetitle'] = str_replace(array(" ", "'", '"'), array("-", "", ""), $video_json[0]->title);
+		$video_metadata['description'] = $video_json[0]->description;
+		$video_metadata['thumbnail'] = $video_json[0]->thumbnail_large;
+		$video_metadata['author'] = $video_json[0]->user_name;
+		$video_metadata['date'] = $video_json[0]->upload_date;
+		$video_metadata['url'] = $video_json[0]->url;
+		$duration_seconds = strval($video_json[0]->duration);
 	}
-	return false;
+	$video_metadata['duration'] = array(
+		'time' => intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds),
+		'seconds' => $duration_seconds
+	);
+
+	return $video_metadata;
+}
+//Video Meta aliases
+function vimeo_meta($id, $meta=''){
+	return video_meta('vimeo', $id, $meta);
+}
+function youtube_meta($id, $meta=''){
+	return video_meta('youtube', $id, $meta);
 }
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number
