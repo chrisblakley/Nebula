@@ -313,7 +313,8 @@ function nebula_initialization_default_settings(){
 	global $wp_rewrite;
 
 	//Update Nebula options
-	update_option('nebula_options', $GLOBALS['nebula_options_defaults']);
+	$nebula_options_defaults = nebula_default_options();
+	update_option('nebula_options', $nebula_options_defaults);
 
 	//Update certain Wordpress Core options
 	update_option('blogdescription', ''); //Empty the site tagline

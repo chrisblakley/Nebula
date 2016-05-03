@@ -37,8 +37,10 @@ function nebula_option($option, $operand=false){
 
 function nebula_update_option($option, $value){
 	$nebula_options = get_option('nebula_options');
-	$nebula_options[$option] = $value;
-	update_option('nebula_options', $nebula_options);
+	if ( $nebula_options[$option] != $value ){
+		$nebula_options[$option] = $value;
+		update_option('nebula_options', $nebula_options);
+	}
 }
 
 /*==========================
@@ -81,19 +83,15 @@ function nebula_google_font_option(){
 	return 'https://fonts.googleapis.com/css?family=Open+Sans:400,800';
 }
 
-//Initialize the Nebula Submenu
-add_action('admin_menu', 'nebula_sub_menu');
-add_action('admin_init', 'register_nebula_options');
-
 //Create the Nebula Submenu
+add_action('admin_menu', 'nebula_sub_menu');
 function nebula_sub_menu(){
 	add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', 'nebula_options_page');
 }
 
-//Register all Nebula Options as one object.
-//Note: All options must be registered here- can not add options afterwords to $nebula_options without registering.
-function register_nebula_options(){
-	$GLOBALS['nebula_options_defaults'] = array( //@TODO "Nebula" 0: How can I avoid $GLOBALS here?
+//Prepare default option values
+function nebula_default_options(){
+	$nebula_options_defaults = array(
 		'initialized' => '',
 		'edited_yet' => 'false',
 		'scss_last_processed' => '0',
@@ -255,7 +253,12 @@ function register_nebula_options(){
 		'google_adwords_url' => '',
 		'mention_url' => '',
 	);
+	return $nebula_options_defaults;
+}
 
+//Register all Nebula Options as one object.
+add_action('admin_init', 'register_nebula_options');
+function register_nebula_options(){
 	register_setting('nebula_options', 'nebula_options');
 }
 
@@ -381,7 +384,6 @@ function nebula_options_page(){
 			<?php
 				settings_fields('nebula_options');
 				do_settings_sections('nebula_options');
-
 				$nebula_options = get_option('nebula_options');
 			?>
 
@@ -394,8 +396,9 @@ function nebula_options_page(){
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Initialized?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo date('F j, Y @ g:ia', $nebula_options['initialized']); ?>" />
-						<p class="helper"><small>Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty. Note: This field is only reading from the DB; it can not be updated from this page!</small></p>
+						<input type="text" name="nebula_options[initialized]" value="<?php echo $nebula_options['initialized']; ?>" readonly />
+						<p><small>Initialized on <strong><?php echo date('F j, Y \a\t g:ia', $nebula_options['initialized']); ?></strong> (<?php echo $years_ago = number_format((time()-$nebula_options['initialized'])/31622400, 2); ?> <?php echo ( $years_ago == 1 )? 'year' : 'years'; ?> ago).</small></p>
+						<p class="helper"><small>Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
