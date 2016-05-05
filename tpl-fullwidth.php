@@ -34,17 +34,6 @@ get_header(); ?>
 
 						<div class="entry-content">
 							<?php the_content(); ?>
-
-							<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-							<?php if ( current_user_can('manage_options') ): ?>
-								<div class="container entry-manage">
-									<div class="row">
-										<hr />
-										<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-										<hr />
-									</div>
-								</div>
-							<?php endif; ?>
 						</div><!-- .entry-content -->
 					</article><!-- #post-## -->
 

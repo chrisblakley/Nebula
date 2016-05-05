@@ -99,19 +99,17 @@
 
 <div class="row">
 	<div class="col-md-12">
-
 		<div id="datauploadcon">
-			<div class="field">
-				<input id="datatostore" class="input" type="text" placeholder="Type something here!" required/>
+			<div class="form-group">
+				<input id="datatostore" class="form-control" type="text" placeholder="Type something here!" required/>
 			</div>
 
-			<div class="primary large btn">
-				<a id="uploadtest" href="#">Upload a test!</a>
-			</div>
+			<a id="uploadtest" class="btn btn-primary" href="#">Upload a test!</a>
 
 			<br /><br />
 		</div>
-		<textarea id="debugresponse" placeholder="AJAX response information will appear here."></textarea>
-
+		<div class="form-group">
+			<textarea id="debugresponse" class="form-control" placeholder="AJAX response information will appear here."></textarea>
+		</div>
 	</div><!--/col-->
 </div><!--/row-->

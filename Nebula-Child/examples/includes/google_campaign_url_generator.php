@@ -154,68 +154,65 @@
 
 <div class="row">
 	<div class="col-md-6">
-
 		<form>
 			<ul>
-				<li class="field">
+				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Destination URL<span class="required">*</span></span>
 					<span>
-						<input type="url" id="destination-url" class="builderinput text input builderrequired" placeholder="http://">
+						<input type="url" id="destination-url" class="form-control builderinput builderrequired" placeholder="http://">
 					</span>
 					<p class="inputhelp-description"><strong>(Required)</strong> The URL of the destination page. Don't forget to include the "http://" or "https://" protocol!</p>
 				</li>
 
-				<li class="field">
+				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Source<span class="required">*</span></span>
 					<span>
-						<input type="text" id="campaign-source" class="builderinput text input builderrequired">
+						<input type="text" id="campaign-source" class="form-control builderinput builderrequired">
 					</span>
 					<p class="inputhelp-description"><strong>(Required)</strong> The source of the campaign such as a search engine, newsletter name, or referrer.<br />Examples: google, facebook, newsletter 4, coupon</p>
 				</li>
 
-				<li class="field">
+				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Medium<span class="required">*</span></span>
 					<span>
-						<input type="text" id="campaign-medium" class="builderinput text input builderrequired">
+						<input type="text" id="campaign-medium" class="form-control builderinput builderrequired">
 					</span>
 					<p class="inputhelp-description"><strong>(Required)</strong> The medium of the campaign such as email, or cost-per-click.<br />Examples: cpc, banner, email, retargeting, display</p>
 				</li>
 
-				<li class="field">
+				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Term</span>
 					<span>
-						<input type="text" id="campaign-term" class="builderinput text input">
+						<input type="text" id="campaign-term" class="form-control builderinput">
 					</span>
 					<p class="inputhelp-description"><em>(Optional)</em> Used for paid search. Enter the associated paid keyword(s) with this ad. This can be used for the text that was specifically linked in an email.</p>
 				</li>
 
-				<li class="field">
+				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Content</span>
 					<span>
-						<input type="text" id="campaign-content" class="builderinput text input">
+						<input type="text" id="campaign-content" class="form-control builderinput">
 					</span>
 					<p class="inputhelp-description"><em>(Optional)</em> Used for differentiating ads/links that point to the same URL.<br />Examples: buffalo, ottawa, syracuse, logo link, text link</p>
 				</li>
 
-				<li class="field">
+				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Name<span class="required">*</span></span>
 					<span>
-						<input type="text" id="campaign-name" class="builderinput text input builderrequired">
+						<input type="text" id="campaign-name" class="form-control builderinput builderrequired">
 					</span>
 					<p class="inputhelp-description"><strong>(Required)</strong> Used for identifying a specific promotion or campaign.<br />Examples: clearance sale, promo code, slogan</p>
 				</li>
 			</ul>
 		</form>
-
 	</div><!--/col-->
 
 	<div class="col-md-6">
-
 		<ul>
-			<li class="field">
+			<li class="form-group">
 				<span class="builder-form-heading">Generated Campaign URL</span> <span class="generatingspinner"><i class="fa fa-spin fa-spinner" title="Generating..."></i> Generating...</span>
 				<span class="message">
-					<textarea id="generatedoutput" name="generatedurl" class="textarea input" placeholder="Your generated campaign URL will appear here." readonly></textarea>
+					<textarea id="generatedoutput" name="generatedurl" class="form-control" placeholder="Your generated campaign URL will appear here." readonly></textarea>
 				</span>
 				<a class="selectall" href="#">Select All</a>
 			</li>
@@ -230,14 +227,13 @@
 		<br />
 
 		<ul id="lastcampaignurl">
-			<li class="field">
+			<li class="form-group">
 				<span class="builder-form-heading">Your last generated campaign URL</span>
 				<span class="message">
-					<textarea name="lastcampaignurlhere" class="lastcampaignurlhere textarea input" placeholder="None" readonly></textarea>
+					<textarea name="lastcampaignurlhere" class="form-control lastcampaignurlhere" placeholder="None" readonly></textarea>
 				</span>
 			</li>
 		</ul>
-
 	</div><!--/col-->
 </div><!--/row-->
 

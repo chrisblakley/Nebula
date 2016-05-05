@@ -11,7 +11,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div id="heroslidercon">
+<div id="herocon">
 	<div class="herobgcolor"></div>
 	<div class="nebulashadow inner-top bulging"></div>
 	<div class="container">

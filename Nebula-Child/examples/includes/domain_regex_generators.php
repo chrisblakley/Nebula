@@ -39,7 +39,6 @@
 
 <div class="row">
 	<div class="col-md-12">
-
 		<br /><hr /><br />
 
 		<?php if ( function_exists('nebula_spambot_regex') ) : ?>
@@ -65,17 +64,14 @@
 		<h2 id="customhostnames">Custom Valid Hostnames Include Regex Pattern</h2>
 		<p>Enter a comma-separated list of valid hostnames here (including domains, sub-domains, vanity domains, etc).</p>
 		<form id="customhostnameregex">
-			<div class="field">
+			<div class="form-group">
 				<span>Valid Hostnames (Comma Separated)</span>
-				<input id="validhostnames" class="input" type="text" placeholder="gearside.com, gearsidecreative.com">
+				<input id="validhostnames" class="form-control" type="text" placeholder="gearside.com, gearsidecreative.com">
 			</div>
-			<div class="field btn primary medium">
-				<input class="submit" type="submit" value="Generate" style="padding-left: 15px; padding-right: 15px;">
-			</div><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
+			<input class="btn btn-primary" type="submit" value="Generate"><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
 		</form>
-		<textarea id="customregex" class="spambot-regex-con hidden"></textarea>
+		<textarea id="customregex" class="form-control spambot-regex-con hidden"></textarea>
 
 		<p><em>Note: Google Analytics filters limit patterns to 255 characters.</em></p>
-
 	</div><!--/col-->
 </div><!--/row-->

@@ -34,7 +34,6 @@ get_header(); ?>
 		<div class="row">
 
 			<div class="col-md-8">
-
 				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<h1 class="page-title"><?php the_title(); ?></h1>
@@ -49,8 +48,8 @@ get_header(); ?>
 								<div class="col-md-6 left-side">
 									<div class="advanced-search-group">
 										<span class="contact-form-heading">Date Range</span>
-										<div class="field">
-											<input id="advanced-search-date-start" class="advanced-search-date input" type="text" name="advanced-search-date-start" max="<?php echo date('Y-m-d', strtotime('now')); ?>" placeholder="From"> - <input id="advanced-search-date-end" class="advanced-search-date input" type="text" name="advanced-search-date-end" max="<?php echo date('Y-m-d', strtotime('now')); ?>" placeholder="To">
+										<div class="form-group">
+											<input id="advanced-search-date-start" class="form-control advanced-search-date" type="text" name="advanced-search-date-start" max="<?php echo date('Y-m-d', strtotime('now')); ?>" placeholder="From"> - <input id="advanced-search-date-end" class="advanced-search-date input" type="text" name="advanced-search-date-end" max="<?php echo date('Y-m-d', strtotime('now')); ?>" placeholder="To">
 										</div>
 										<input id="advanced-search-date-start-alt" class="hidden" type="text">
 										<input id="advanced-search-date-end-alt" class="hidden" type="text">
@@ -107,8 +106,8 @@ get_header(); ?>
 							<div class="row">
 								<div class="col-md-12">
 									<span class="contact-form-heading">Keyword Filter</span>
-									<div class="field" style="margin-bottom: 0;">
-										<input type="text" name="s" id="s" class="no-autocomplete input advanced-search-keyword" placeholder="Keyword filter" />
+									<div class="form-group" style="margin-bottom: 0;">
+										<input type="text" name="s" id="s" class="form-control no-autocomplete advanced-search-keyword" placeholder="Keyword filter" />
 									</div>
 									<input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" style="float: right; position: absolute; left: -9999px;" />
 								</div><!--/col-->
@@ -130,35 +129,12 @@ get_header(); ?>
 								<a id="load-more-events" class="more-or-prev-events primary btn" href="#">More results &raquo;</a>
 							</div><!--/col-->
 						</div><!--/row-->
-
-						<?php if ( current_user_can('manage_options') ): ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<hr />
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr />
-								</div>
-							</div>
-						<?php endif; ?>
 					</article><!-- #post-## -->
 				<?php endwhile; ?>
 			</div><!--/col-->
-
 			<div class="col-md-4">
-				<h3>Contact Us</h3>
-				<?php if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ): ?>
-					<ul id="cform7-container">
-						<?php echo do_shortcode('[contact-form-7 id="384" title="Contact Form 7 Documentation"]'); ?>
-					</ul>
-				<?php else : ?>
-					<div class="row">
-						<div class="col-md-12">
-							<?php nebula_backup_contact_form(); ?>
-						</div><!--/col-->
-					</div><!--/row-->
-				<?php endif; ?>
+				<?php get_sidebar(); ?>
 			</div><!--/col-->
-
 		</div><!--/row-->
 	</div><!--/container-->
 </div>

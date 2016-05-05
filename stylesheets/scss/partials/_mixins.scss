@@ -46,7 +46,7 @@
 
 //.element {@include widescreen(){background: red;};}
 @mixin widescreen(){
-	@media only screen and (min-width: 1400px){& {@content}} //This size and larger
+	@media only screen and (min-width: 1200px){& {@content}} //This size and larger
 }
 //.element {@include tablet(){background: red;};}
 //.element {@include tablet(landscape){background: purple;};}
@@ -93,6 +93,20 @@
 	}
 	@if $group == "custom" {
 		@media #{$custom} {& {@content}}
+	}
+
+	//Bootstrap
+	@if $group == "sm" {
+		@media (min-width: 544px){& {@content}} //This size and larger
+	}
+	@if $group == "md" {
+		@media (min-width: 768px){& {@content}} //This size and larger
+	}
+	@if $group == "lg" {
+		@media (min-width: 992px){& {@content}} //This size and larger
+	}
+	@if $group == "xl" {
+		@include widescreen(){& {@content}}
 	}
 }
 

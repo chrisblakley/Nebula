@@ -358,9 +358,10 @@ function nebula_is_initialized_before(){
 	return true;
 }
 
-//add_action('admin_init', 'nebula_initialization_set_install_date'); //Uncomment this line to force an initialization date.
-function nebula_initialization_set_install_date(){
-	if ( 1==2 ){ //Set to true to force an initialization date (in case of some kind of accidental reset).
+//add_action('admin_init', 'nebula_force_settings', 9); //Uncomment this line to force an initialization date.
+function nebula_force_settings(){
+	//Force initialization date
+	if ( 1==2 ){
 		$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
 		if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
 			nebula_update_option('initialized', strtotime($force_date));
@@ -370,5 +371,16 @@ function nebula_initialization_set_install_date(){
 		if ( !nebula_is_initialized_before() ){
 			nebula_update_option('initialized', date('U'));
 		}
+	}
+
+	//Re-allow remote Nebula version updates. Ideally this would be detected automatically and this condition would not be needed.
+	if ( 1==2 ){
+		echo 'forcing compatibility';
+		nebula_update_option('version_legacy', 'false');
+		nebula_update_option('next_version', '');
+		nebula_update_option('current_version', nebula_version('raw'));
+		nebula_update_option('current_version_date', nebula_version('date'));
+		nebula_update_option('theme_update_notification', 'enabled');
+		update_option('external_theme_updates-Nebula-master', '');
 	}
 }

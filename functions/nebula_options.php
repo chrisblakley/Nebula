@@ -404,42 +404,42 @@ function nebula_options_page(){
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Edited Yet?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_options[edited_yet]" value="true" />
-						<p class="helper"><small>This is pre-set to "true" so that when the user clicks "Save Changes" it becomes stored in the DB. Therefore, this will always say "true" even if it hasn't actually been saved yet!</small></p>
+						<input type="text" name="nebula_options[edited_yet]" value="true" readonly />
+						<p class="helper"><small>This is pre-set to "true" so that when the user clicks "Save Changes" it becomes stored in the DB. Therefore, this will always say "true" even if it hasn't actually been saved yet!<br/>Has it actually been saved yet? <strong><?php echo ( $nebula_options['edited_yet'] )? 'Yes' : 'No'; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Current Version Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo $nebula_options['current_version']; ?>" />
-						<p class="helper"><small>This is the Nebula version number when it was last saved.</small></p>
+						<input type="text" name="nebula_options[current_version]" value="<?php echo $nebula_options['current_version']; ?>" readonly />
+						<p class="helper"><small>This is the Nebula version number when it was last saved. It should match: <strong><?php echo nebula_version('raw'); ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Last Version Date&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo $nebula_options['current_version_date']; ?>" />
-						<p class="helper"><small>This is the Nebula version date when it was last saved.</small></p>
+						<input type="text" name="nebula_options[current_version_date]" value="<?php echo $nebula_options['current_version_date']; ?>" readonly />
+						<p class="helper"><small>This is the Nebula version date when it was last saved. It should match: <strong><?php echo nebula_version('date'); ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Legacy Version?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_options[version_legacy]" value="<?php echo $nebula_options['version_legacy']; ?>" />
+						<input type="text" name="nebula_options[version_legacy]" value="<?php echo $nebula_options['version_legacy']; ?>" readonly />
 						<p class="helper"><small>If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled. Incompatible versions will be labeled with a "u" at the end of the version number.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Latest Github Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo $nebula_options['next_version']; ?>" />
+						<input type="text" name="nebula_options[next_version]" value="<?php echo $nebula_options['next_version']; ?>" readonly />
 						<p class="helper"><small>The latest version available on Github. Re-checks with <a href="/update-core.php">theme update check</a>.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Online Users&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" value="<?php echo nebula_online_users(); ?>" />
+						<input type="text" value="<?php echo nebula_online_users(); ?>" readonly />
 						<p class="helper"><small>Currently online and last seen times of logged in users. A value of 1 or greater indicates it is working.</small></p>
 					</td>
 		        </tr>

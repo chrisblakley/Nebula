@@ -93,17 +93,6 @@ get_header(); ?>
 						</div>
 
 						<?php the_content(); ?>
-
-						<?php if ( current_user_can('manage_options') ): ?>
-							<div class="container entry-manage">
-								<div class="row">
-									<hr />
-									<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-									<hr />
-								</div>
-							</div>
-						<?php endif; ?>
-
 						<?php comments_template(); ?>
 					</div><!-- .entry-content -->
 				</article>

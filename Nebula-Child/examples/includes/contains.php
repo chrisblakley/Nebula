@@ -22,10 +22,9 @@
 
 <div class="row">
 	<div class="col-md-12">
-
 		<strong>Example Filter</strong>
-		<div class="field">
-			<input id="example-input" class="input" type="text" placeholder="Type here..." />
+		<div class="form-group">
+			<input id="example-input" class="form-control" type="text" placeholder="Type here..." />
 		</div>
 
 		<ul id="example-list">
@@ -58,6 +57,5 @@
 				<span class="hidden">bye cya c-ya adios aloha</span>
 			</li>
 		</ul>
-
 	</div><!--/col-->
 </div><!--/row-->

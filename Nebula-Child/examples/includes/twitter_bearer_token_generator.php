@@ -42,29 +42,25 @@
 
 <div class="row">
 	<div class="col-md-12">
-
 		<p>After creating a Twitter App, enter your consumer key and consumer secret in the following fields. This tool does not store any data.</p>
 
 		<form id="bearergenerator">
-			<div class="field">
+			<div class="form-group">
 				<span>Consumer Key</span>
-				<input id="consumerkey" class="input" type="text" required />
+				<input id="consumerkey" class="form-control" type="text" required />
 			</div>
-			<div class="field">
+			<div class="form-group">
 				<span>Consumer Secret</span>
-				<input id="consumersecret" class="input" type="text" required />
+				<input id="consumersecret" class="form-control" type="text" required />
 			</div>
-			<div class="field btn primary medium">
-				<input class="submit" type="submit" value="Generate" style="padding-left: 15px; padding-right: 15px;"/>
-			</div><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
+			<input class="btn btn-primary" type="submit" value="Generate" /><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
 		</form>
 
 		<div id="generatorresults" class="hidden">
-			<div class="field">
+			<div class="form-group">
 				<span>Generated Access Token</span>
-				<textarea readonly style="padding: 10px 15px; font-family: monospace; font-size: 12px;"></textarea>
+				<textarea readonly class="form-control" style="padding: 10px 15px; font-family: monospace; font-size: 12px;"></textarea>
 			</div>
 		</div>
-
 	</div><!--/col-->
 </div><!--/row-->

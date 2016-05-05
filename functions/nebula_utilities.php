@@ -775,9 +775,9 @@ function foldersize($path){
 	$total_size = 0;
 	$files = scandir($path);
 	$cleanPath = rtrim($path, '/') . '/';
-	foreach ( $files as $t ){
-		if ( $t <> "." && $t <> ".."){
-			$currentFile = $cleanPath . $t;
+	foreach ( $files as $file ){
+		if ( $file <> "." && $file <> ".."){
+			$currentFile = $cleanPath . $file;
 			if ( is_dir($currentFile) ){
 				$size = foldersize($currentFile);
 				$total_size += $size;

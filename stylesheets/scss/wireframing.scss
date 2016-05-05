@@ -8,8 +8,6 @@ body.nebula-wireframing-wireframe {@include prefix((filter: grayscale(100%)));} 
 
 #wireframing-bar {position: relative; background: black; color: #fff; padding-top: 5px; padding-bottom: 5px;}
 
-.fixedbar {display: none;}
-
 img, a.logocon {@include prefix((filter: none));}
 
 .fpo-component {background: #e2e2e2; padding: 5px 10px 1px 10px;}

@@ -15,8 +15,6 @@
 
  #wireframing-bar { position:relative; background:black; color:#fff; padding-top:5px; padding-bottom:5px; }
 
- .fixedbar { display:none; }
-
  img,a.logocon { -webkit-filter:none; -moz-filter:none; -ms-filter:none; -o-filter:none; filter:none; }
 
  .fpo-component { background:#e2e2e2; padding:5px 10px 1px 10px; }
@@ -40,4 +38,4 @@
  .fpo { background:#e2e2e2; padding:5px 10px 5px 10px; margin-bottom:15px; }
 
  /* Not sure if I'm a fan of this margin-bottom. */
-/* Processed on Tuesday, May 3, 2016 at 8:34am */
+/* Processed on Thursday, May 5, 2016 at 8:34am */

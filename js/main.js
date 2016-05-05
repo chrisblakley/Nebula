@@ -58,7 +58,7 @@ jQuery(document).ready(function(){
 	animationTriggers();
 
 	if ( jQuery('.home.page').is('*') ){
-		initHeadroom(jQuery('#heroslidercon'));
+		initHeadroom(jQuery('#herocon'));
 	} else {
 		initHeadroom();
 	}
@@ -127,7 +127,7 @@ jQuery(window).on('resize', function(){
 		mobileSearchPlaceholder();
 
 		if ( jQuery('.home.page').is('*') ){
-			initHeadroom(jQuery('#heroslidercon'));
+			initHeadroom(jQuery('#herocon'));
 		} else {
 			initHeadroom();
 		}

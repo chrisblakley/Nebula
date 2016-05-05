@@ -41,21 +41,20 @@
 		<div class="col-md-12">
 			<form id="ajax-contact" method="post" action="<?php echo get_template_directory_uri(); ?>/includes/mailer.php">
 				<ul>
-					<li class="field">
+					<li class="form-group">
 						<span class="contact-form-heading">Name*</span>
-						<input class="input name" type="text" placeholder="Name" required/>
+						<input class="form-control" type="text" placeholder="Name" required/>
 					</li>
-					<li class="field">
+					<li class="form-group">
 						<span class="contact-form-heading">Email*</span>
-						<input class="input email" type="email" placeholder="Email" required/>
+						<input class="form-control" type="email" placeholder="Email" required/>
 					</li>
-					<li class="field">
+					<li class="form-group">
 						<span class="contact-form-heading">Message*</span>
-						<textarea class="input textarea message" placeholder="Message" required></textarea>
+						<textarea class="form-control" placeholder="Message" required></textarea>
 					</li>
-					<li class="field">
-						<input class="submit" type="submit" value="Send">
-					</li>
+
+					<input class="btn btn-primary" type="submit" value="Send">
 				</ul>
 			</form>
 			<div id="form-messages"></div>

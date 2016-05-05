@@ -173,21 +173,21 @@ if ( nebula_option('admin_bar', 'disabled') ){
 				* html body {margin-top: 32px !important;}
 
 				#wpadminbar {transition: top 0.5s linear;}
-					.admin-bar-inactive #wpadminbar {top: -32px;}
+					.admin-bar-inactive #wpadminbar {top: -32px; overflow: hidden;}
 					#wpadminbar i {-webkit-font-smoothing: antialiased;}
 
 				@media screen and (max-width: 782px){
 					html {margin-top: 46px !important;}
 					* html body {margin-top: 46px !important;}
 
-					.admin-bar-inactive #wpadminbar {top: -46px;}
+					.admin-bar-inactive #wpadminbar {top: -46px; overflow: hidden;}
 				}
 
 				@media screen and (max-width: 600px){
 					#wpadminbar {top: -46px;}
 				}
 
-				html.admin-bar-inactive {margin-top: 0 !important;}
+				html.admin-bar-inactive {margin-top: 0 !important; overflow: hidden;}
 			</style>
 		<?php }
 	}
@@ -208,26 +208,29 @@ if ( nebula_option('plugin_update_warning') ){
 	}
 }
 
-
-
 //Nebula Theme Update Checker
 add_action('admin_init', 'nebula_theme_json');
 function nebula_theme_json(){
 	$override = apply_filters('pre_nebula_theme_json', false);
 	if ( $override !== false ){return;}
 
+	//Make sure the version number is always up-to-date in options.
+	if ( nebula_option('current_version') != nebula_version('raw') ){
+		nebula_update_option('current_version', nebula_version('raw'));
+		nebula_update_option('current_version_date', nebula_version('date'));
+	}
+
 	//If newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 	$remote_version_info = get_option('external_theme_updates-Nebula-master');
-	if ( strpos(nebula_version('raw'), 'u') || nebula_option('version_legacy', 'false') && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full')) ){
+
+	//Check for an unsupported version
+	if ( (strpos(nebula_version('raw'), 'u') || nebula_option('version_legacy') == 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full'))) ){
 		nebula_update_option('version_legacy', 'true');
 		nebula_update_option('current_version', nebula_version('raw'));
 		nebula_update_option('current_version_date', nebula_version('date'));
 		nebula_update_option('next_version', 'INCOMPATIBLE');
-		return;
-	}
-
-	if ( current_user_can('manage_options') && is_child_theme() && nebula_option('theme_update_notification', 'enabled') && nebula_option('version_legacy', 'false') ){
-		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker.
+	} elseif ( current_user_can('manage_options') && is_child_theme() && nebula_option('theme_update_notification', 'enabled') ){
+		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
 		$theme_update_checker = new ThemeUpdateChecker(
 			'Nebula-master', //This should be the directory slug of the parent theme.
 			'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
@@ -235,7 +238,7 @@ function nebula_theme_json(){
 	}
 }
 
-//When checking for theme updates, store the next and current Nebula versions from the response.
+//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
 add_action('nebula_theme_update_check', 'nebula_theme_update_version_store', 10, 2);
 function nebula_theme_update_version_store($themeUpdate, $installedVersion){
 	nebula_update_option('next_version', $themeUpdate->version);
@@ -244,7 +247,7 @@ function nebula_theme_update_version_store($themeUpdate, $installedVersion){
 
 	if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) != str_replace('u', '', nebula_version('full')) ){ //If Github version has "u", disable automated updates.
 		nebula_update_option('version_legacy', 'true');
-	} elseif ( nebula_option('version_legacy', 'true') ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
+	} elseif ( nebula_option('version_legacy') == 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
 		nebula_update_option('version_legacy', 'false');
 	}
 }

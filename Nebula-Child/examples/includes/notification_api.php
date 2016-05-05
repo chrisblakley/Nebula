@@ -114,17 +114,17 @@
 	<fieldset>
 		<legend><strong>Custom Message Notification</strong></legend>
 		<ul>
-			<li class="field">
-				<input id="text1" class="input customtitle" type="text" placeholder="Title"/>
+			<li class="form-group">
+				<input id="text1" class="form-control customtitle" type="text" placeholder="Title"/>
 			</li>
-			<li class="field">
-				<input id="text2" class="input custommessage" type="text" placeholder="Custom message"/>
+			<li class="form-group">
+				<input id="text2" class="form-control custommessage" type="text" placeholder="Custom message"/>
 			</li>
 			<li style="text-align: right; margin-top: -15px;">
 				<a class="resetcustomfields" href="#" style="color: red; font-size: 10px;">Reset</a>
 			</li>
-			<li class="medium primary btn">
-				<input class="customnotify" type="submit" value="Custom Notification" />
+			<li>
+				<input class="btn btn-primary customnotify" type="submit" value="Custom Notification" />
 			</li>
 		</ul>
 	</fieldset>

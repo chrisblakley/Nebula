@@ -131,12 +131,10 @@
 		<p>Enter a URL to see what <code>nebula_url_components()</code> returns.</p>
 
 		<form id="urltester">
-			<div class="field">
-				<input id="urlstring" class="input" type="text" placeholder="Enter any URL here!" />
+			<div class="form-group">
+				<input id="urlstring" class="form-control" type="url" placeholder="Enter any URL here!" />
 			</div>
-			<div class="field btn primary medium">
-				<input class="submit" type="submit" value="Test" style="padding-left: 15px; padding-right: 15px;"/>
-			</div><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
+			<input class="btn btn-primary" type="submit" value="Test" /><i class="fa fa-spinner fa-spin hidden" style="font-size: 18px; margin-left: 10px; display: inline-block;"></i>
 		</form>
 
 		<p id="testerresults"></p>
