@@ -1462,13 +1462,14 @@ function searchTermHighlighter(){
 	if ( typeof theSearchTerm !== 'undefined' ){
 		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
 		jQuery('article .entry-title a, article .entry-summary').each(function(i){
-			var searchFinder = jQuery(this).text().replace(new RegExp( '(' + preg_quote(theSearchTerm) + ')' , 'gi' ), '<mark class="searchresultword">$1</mark>');
+			var searchFinder = jQuery(this).text().replace(new RegExp('(' + preg_quote(theSearchTerm) + ')', 'gi'), '<mark class="searchresultword">$1</mark>');
 			jQuery(this).html(searchFinder);
 		});
 	}
-	function preg_quote(str){
-		return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
-	}
+}
+
+function preg_quote(str){
+	return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
 }
 
 //Emphasize the search Terms
@@ -1752,59 +1753,59 @@ function cf7LiveValidator(){
 	//Standard text inputs
 	jQuery('.wpcf7-text').on('keyup blur', function(e){
 		if ( jQuery.trim(jQuery(this).val()) === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning has-success');
 		} else {
-			jQuery(this).parents('.field').removeClass('danger warning').addClass('success');
+			jQuery(this).parents('.form-group').removeClass('has-danger has-warning').addClass('has-success');
 		}
 	});
 
 	//Email address inputs
 	jQuery('.wpcf7-email').on('keyup blur', function(e){
 		if ( jQuery(this).val() === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('success danger warning');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-success has-danger hsa-warning');
 		} else if ( regexPattern.email.test(jQuery(this).val()) ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
 		} else {
-			var warnDanger = ( e.type === 'keyup' )? 'warning' : 'danger';
-			jQuery(this).parents('.field').removeClass('success warning danger').addClass(warnDanger);
+			var warnDanger = ( e.type === 'keyup' )? 'has-warning' : 'has-danger';
+			jQuery(this).parents('.form-group').removeClass('has-success has-warning has-danger').addClass(warnDanger);
 		}
 	});
 
 	//Phone number inputs
 	jQuery('.wpcf7-text.phone').on('keyup blur', function(e){
 		if ( jQuery(this).val() === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('success danger warning');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-success has-danger has-warning');
 		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
 		} else {
-			jQuery(this).parents('.field').removeClass('success').addClass('warning');
+			jQuery(this).parents('.form-group').removeClass('has-success').addClass('has-warning');
 		}
 	});
 
 	//Date inputs
 	jQuery('.wpcf7-text.date').on('keyup blur', function(e){
 		if ( jQuery(this).val() === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('success danger warning');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-success has-danger has-warning');
 		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
 		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
 		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('warning danger').addClass('success');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
 		} else {
-			jQuery(this).parents('.field').removeClass('success').addClass('warning');
+			jQuery(this).parents('.form-group').removeClass('has-success').addClass('has-warning');
 		}
 	});
 
 	//Message textarea
 	jQuery('.wpcf7-textarea').on('keyup blur', function(e){
 		if ( jQuery.trim(jQuery(this).val()) === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success');
+			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning has-success');
 		} else {
 			if ( e.type === 'blur' ){
-				jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning').addClass('success');
+				jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning').addClass('has-success');
 			} else {
-				jQuery(this).removeClass('wpcf7-not-valid').parents('.field').removeClass('danger warning success'); //Remove green while typing
+				jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning has-success'); //Remove green while typing
 			}
 		}
 	});
@@ -1813,9 +1814,9 @@ function cf7LiveValidator(){
 	jQuery('.wpcf7-captchar').on('keyup blur', function(e){
 		jQuery(this).removeClass('wpcf7-not-valid');
 		if ( jQuery(this).val().length > 4 ){
-			jQuery(this).parents('.field').addClass('warning');
+			jQuery(this).parents('.form-group').addClass('has-warning');
 		} else {
-			jQuery(this).parents('.field').removeClass('warning');
+			jQuery(this).parents('.form-group').removeClass('has-warning');
 		}
 	});
 }
@@ -1877,13 +1878,6 @@ function conditionalJSLoading(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
             ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
-        });
-
-		//Only load Highlight if dataTables table exists.
-        jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/jquery.highlight-5.closure.js').fail(function(){
-            ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-            ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
-            ga('send', 'event', 'Error', 'JS Error', 'jquery.highlight-5.closure.js could not be loaded.', {'nonInteraction': 1});
         });
     }
 
@@ -2869,10 +2863,20 @@ function chosenSelectOptions(){
 }
 
 function dataTablesActions(){
-	nebula.dom.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){ //@TODO "Nebula" 0: Something here is eating the first letter after a few have been typed... lol
-	    //console.log('keyup: ' + jQuery(this).val());
-	    //jQuery('.dataTables_wrapper').removeHighlight();
-	    //jQuery('.dataTables_wrapper').highlight(jQuery(this).val());
+	//DataTables search term highlighter. @TODO "Nebula" 0: This could certainly be improved.
+	nebula.dom.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){
+		theSearchTerm = jQuery(this).val().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
+		var pattern = new RegExp("(" + theSearchTerm + ")", "gi");
+		if ( theSearchTerm.length ){
+			jQuery('.dataTables_wrapper td').each(function(i){
+				var searchFinder = jQuery(this).text().replace(new RegExp('(' + preg_quote(theSearchTerm) + ')', 'gi'), '<mark class="filterresultword">$1</mark>');
+				jQuery(this).html(searchFinder);
+			});
+		} else {
+			jQuery('.dataTables_wrapper td mark').each(function(){
+				jQuery(this).contents().unwrap();
+			});
+		}
 	});
 }
 

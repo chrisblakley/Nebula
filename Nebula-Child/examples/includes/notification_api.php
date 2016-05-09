@@ -1,12 +1,11 @@
 <script>
 	jQuery(document).ready(function() {
-
 		//This is the same as checkNotificationPermission(), but tailored for this example.
 		//Generally, you could just call it with: if ( !checkNotificationPermission() ) { //Supported and Permission Granted }
 		Notification = window.Notification || window.mozNotification || window.webkitNotification;
 		if ( !(Notification) ) {
 			jQuery('.notsupported').css('color', 'red').text('Desktop Notifications are not supported in your browser.');
-			jQuery('.basicnotify, .fullnotify, .customnotify').parents('div').removeClass('primary').addClass('danger');
+			jQuery('.basicnotify, .fullnotify, .customnotify').removeClass('btn-primary').addClass('btn-danger');
 		} else if ( Notification.permission === "granted" ) {
 			jQuery('.notsupported').css('color', 'green').addClass('hidden');
 		} else if ( Notification.permission !== 'denied' ) {
@@ -40,24 +39,24 @@
 			nebulaConversion('notification_api', true);
 
 			function clickNotify() {
-				jQuery('.fullnotify').parents('div').removeClass('primary danger success info warning').addClass('success');
+				jQuery('.fullnotify').removeClass('btn-primary btn-danger btn-success btn-info btn-warning').addClass('btn-success');
 				//console.log('You clicked the notification!');
 				ga('send', 'event', 'Notification Clicked');
 			}
 
 			function closeNotify() {
-				jQuery('.fullnotify').parents('div').removeClass('warning primary info danger success').addClass('info');
+				jQuery('.fullnotify').removeClass('btn-warning btn-primary btn-info btn-danger btn-success').addClass('btn-info');
 				//console.log('You closed the notification.');
 				ga('send', 'event', 'Notification Closed');
 			}
 
 			function showNotify() {
-				jQuery('.fullnotify').parents('div').removeClass('primary success warning info danger').addClass('warning');
+				jQuery('.fullnotify').removeClass('btn-primary btn-success btn-warning btn-info btn-danger').addClass('btn-warning');
 				//console.log('The notification has been shown.');
 			}
 
 			function errorNotify() {
-				jQuery('.fullnotify').parents('div').removeClass('primary warning danger success info').addClass('danger');
+				jQuery('.fullnotify').removeClass('btn-primary btn-warning btn-danger btn-success btn-info').addClass('btn-danger');
 				//console.log('There was an error with the notification.');
 				ga('send', 'event', 'Notification Error', 'An error happened when the fully customized notification was clicked.');
 			}
@@ -96,19 +95,13 @@
 	});
 </script>
 
-
 <p class="notsupported" style="font-weight: bold;">Checking notification permissions.</p>
 
-
 <p>The following button passes only a title and body and uses Nebula defaults for everything else:</p>
-<div class="medium primary btn">
-	<a class="basicnotify" href="#">Basic Notification</a>
-</div>
+<a class="basicnotify btn btn-primary" href="#">Basic Notification</a>
 
 <br /><br /><br /><p>The following button passes everything and uses the callbacks too:</p>
-<div class="medium primary btn">
-	<a class="fullnotify" href="#">Fully Customized</a>
-</div>
+<a class="fullnotify btn btn-primary" href="#">Fully Customized</a>
 
 <form class="custommessageform">
 	<fieldset>

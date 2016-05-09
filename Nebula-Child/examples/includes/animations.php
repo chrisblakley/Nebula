@@ -21,15 +21,15 @@
 
 		jQuery('#animationselect').on('change', function(){ //Enable/Disable the buttons to animate or reset
 			if ( jQuery('#animationselect').val() != '' ){
-				jQuery('#playanimation').removeClass('inactive').addClass('animate');
-				jQuery('#resetanimation').removeClass('inactive').addClass('animate');
+				jQuery('#playanimation').removeClass('disabled').addClass('animate');
+				jQuery('#resetanimation').removeClass('disabled').addClass('animate');
 			} else {
-				jQuery('#playanimation').removeClass('animate').addClass('inactive');
-				jQuery('#resetanimation').removeClass('animate').addClass('inactive');
+				jQuery('#playanimation').removeClass('animate').addClass('disabled');
+				jQuery('#resetanimation').removeClass('animate').addClass('disabled');
 			}
 		});
 
-		jQuery('#playanimation a').on('click tap touch', function(){
+		jQuery('#playanimation').on('click tap touch', function(){
 			if ( jQuery('#animationselect').val() != '' ){
 				jQuery('#animatethis').removeClass();
 				reflow(jQuery('#animatethis')); //Trigger a reflow so that animation can be repeated.
@@ -40,7 +40,7 @@
 			return false;
 		});
 
-		jQuery('#resetanimation a').on('click tap touch', function(){
+		jQuery('#resetanimation').on('click tap touch', function(){
 			jQuery('#animatethis').removeClass();
 			//jQuery('#animationselect').prop('selectedIndex', 0);
 			//jQuery('#playanimation').removeClass('animate').addClass('inactive');
@@ -60,8 +60,8 @@
 
 <div class="row animationformcon">
 	<div class="col-md-7 animationselectcon">
-		<div class="picker">
-			<select id="animationselect">
+		<div class="form-group">
+			<select id="animationselect" class="form-control">
 				<option value="" disabled selected>Select an animation...</option>
 				<option value="" disabled>Repeating:</option>
 					<option value="nebula-spin">Spin</option>
@@ -101,11 +101,7 @@
 		</div>
 	</div><!--/col-->
 	<div class="col-md-5 animationresetcon">
-		<div id="playanimation" class="btn medium primary inactive">
-			<a href="#">Animate</a>
-		</div>
-		<div id="resetanimation" class="btn medium info inactive">
-			<a href="#">Reset</a>
-		</div>
+		<a id="playanimation" class="btn btn-primary btn-sm disabled" href="#">Animate</a>
+		<a id="resetanimation" class="btn btn-danger btn-sm disabled" href="#">Reset</a>
 	</div><!--/col-->
 </div><!--/row-->

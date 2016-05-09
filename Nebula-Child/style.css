@@ -325,9 +325,9 @@
 
  .slow { animation-duration:1s !important; }
 
- .slower { animation-duration:1.5s !important; }
+ .slower { animation-duration:2s !important; }
 
- .slowest { animation-duration:2s !important; }
+ .slowest { animation-duration:3s !important; }
 
  .nebula-spin { -webkit-animation:nebula-spin 2s infinite linear; animation:nebula-spin 2s infinite linear; }
 
@@ -611,6 +611,36 @@
 
  }
 
+ .nebula-reveal-in { width:0; pointer-events:none; overflow:hidden; }
+
+ .nebula-reveal-in.animate,.nebula-reveal-in.load-animate { -webkit-animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; pointer-events:all; }
+
+ @-webkit-keyframes nebula-reveal-in { 0% { display:block; width:0; }
+
+ 100% { width:100%; }
+
+ }
+
+ @keyframes nebula-reveal-in { 0% { display:block; width:0; }
+
+ 100% { width:100%; }
+
+ }
+
+ .nebula-reveal-out { width:100%; pointer-events:none; overflow:hidden; }
+
+ @-webkit-keyframes nebula-reveal-out { 0% { display:block; width:100%; }
+
+ 100% { width:0; }
+
+ }
+
+ @keyframes nebula-reveal-out { 0% { display:block; width:100%; }
+
+ 100% { width:0; }
+
+ }
+
  .nebula-stretch-in { opacity:0; pointer-events:none; }
 
  .nebula-stretch-in.animate,.nebula-stretch-in.load-animate { -webkit-animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
@@ -766,4 +796,4 @@
  a:hover,a.hover { color:#95d600; }
 
 
-/* Processed on Thursday, May 5, 2016 at 8:34am */
+/* Processed on Sunday, May 8, 2016 at 5:19pm */

@@ -111,7 +111,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 
-		$scss_last_processed = ( nebula_option('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula_option('scss_last_processed')) : 'Never';
+		$scss_last_processed = ( nebula_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula_data('scss_last_processed')) : 'Never';
 		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula',
 			'id' => 'nebula-options-scss',
@@ -187,7 +187,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 					#wpadminbar {top: -46px;}
 				}
 
-				html.admin-bar-inactive {margin-top: 0 !important; overflow: hidden;}
+				html.admin-bar-inactive {margin-top: 0 !important;}
 			</style>
 		<?php }
 	}
@@ -215,20 +215,20 @@ function nebula_theme_json(){
 	if ( $override !== false ){return;}
 
 	//Make sure the version number is always up-to-date in options.
-	if ( nebula_option('current_version') != nebula_version('raw') ){
-		nebula_update_option('current_version', nebula_version('raw'));
-		nebula_update_option('current_version_date', nebula_version('date'));
+	if ( nebula_data('current_version') != nebula_version('raw') ){
+		nebula_update_data('current_version', nebula_version('raw'));
+		nebula_update_data('current_version_date', nebula_version('date'));
 	}
 
 	//If newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 	$remote_version_info = get_option('external_theme_updates-Nebula-master');
 
 	//Check for an unsupported version
-	if ( (strpos(nebula_version('raw'), 'u') || nebula_option('version_legacy') == 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full'))) ){
-		nebula_update_option('version_legacy', 'true');
-		nebula_update_option('current_version', nebula_version('raw'));
-		nebula_update_option('current_version_date', nebula_version('date'));
-		nebula_update_option('next_version', 'INCOMPATIBLE');
+	if ( (strpos(nebula_version('raw'), 'u') || nebula_data('version_legacy') == 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full'))) ){
+		nebula_update_data('version_legacy', 'true');
+		nebula_update_data('current_version', nebula_version('raw'));
+		nebula_update_data('current_version_date', nebula_version('date'));
+		nebula_update_data('next_version', 'INCOMPATIBLE');
 	} elseif ( current_user_can('manage_options') && is_child_theme() && nebula_option('theme_update_notification', 'enabled') ){
 		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
 		$theme_update_checker = new ThemeUpdateChecker(
@@ -241,14 +241,14 @@ function nebula_theme_json(){
 //When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
 add_action('nebula_theme_update_check', 'nebula_theme_update_version_store', 10, 2);
 function nebula_theme_update_version_store($themeUpdate, $installedVersion){
-	nebula_update_option('next_version', $themeUpdate->version);
-	nebula_update_option('current_version', nebula_version('full'));
-	nebula_update_option('current_version_date', nebula_version('date'));
+	nebula_update_data('next_version', $themeUpdate->version);
+	nebula_update_data('current_version', nebula_version('full'));
+	nebula_update_data('current_version_date', nebula_version('date'));
 
 	if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) != str_replace('u', '', nebula_version('full')) ){ //If Github version has "u", disable automated updates.
-		nebula_update_option('version_legacy', 'true');
-	} elseif ( nebula_option('version_legacy') == 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
-		nebula_update_option('version_legacy', 'false');
+		nebula_update_data('version_legacy', 'true');
+	} elseif ( nebula_data('version_legacy') == 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
+		nebula_update_data('version_legacy', 'false');
 	}
 }
 
@@ -260,13 +260,13 @@ function nebula_theme_update_automation($upgrader_object, $options){
 
 	if ( $options['type'] == 'theme' && in_array_r('Nebula-master', $options['themes']) ){
 		nebula_theme_update_email(); //Send email with update information
-		nebula_update_option('version_legacy', 'false');
+		nebula_update_data('version_legacy', 'false');
 	}
 }
 function nebula_theme_update_email(){
-	$prev_version = nebula_option('current_version');
-	$prev_version_commit_date = nebula_option('current_version_date');
-	$new_version = nebula_option('next_version');
+	$prev_version = nebula_data('current_version');
+	$prev_version_commit_date = nebula_data('current_version_date');
+	$new_version = nebula_data('next_version');
 
 	if ( $prev_version != $new_version ){
 		global $wpdb;
@@ -349,7 +349,7 @@ add_action('init', 'nebula_users_status_init');
 add_action('admin_init', 'nebula_users_status_init');
 function nebula_users_status_init(){
 	if ( is_user_logged_in() ){
-		$logged_in_users = nebula_option('users_status');
+		$logged_in_users = nebula_data('users_status');
 
 		$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
 		$current_user = wp_get_current_user();
@@ -363,11 +363,11 @@ function nebula_users_status_init(){
 				'last' => time(),
 				'unique' => array($unique_id),
 			);
-			nebula_update_option('users_status', $logged_in_users);
+			nebula_update_data('users_status', $logged_in_users);
 		} else {
 			if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
 				array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
-				nebula_update_option('users_status', $logged_in_users);
+				nebula_update_data('users_status', $logged_in_users);
 			}
 		}
 	}
@@ -895,7 +895,7 @@ if ( nebula_option('dev_metabox') ){
 			echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong title="' . human_time_diff($latest_file['date']) . ' ago">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
 
 			//SCSS last processed date
-			$scss_last_processed = ( nebula_option('scss_last_processed') )? '<span title="' . human_time_diff(nebula_option('scss_last_processed')) . ' ago"><strong>' . date("F j, Y", nebula_option('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_option('scss_last_processed')) . '</strong></span>' : '<strong>Never</strong>';
+			$scss_last_processed = ( nebula_data('scss_last_processed') )? '<span title="' . human_time_diff(nebula_data('scss_last_processed')) . ' ago"><strong>' . date("F j, Y", nebula_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_data('scss_last_processed')) . '</strong></span>' : '<strong>Never</strong>';
 			echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
 		echo '</ul>';
 

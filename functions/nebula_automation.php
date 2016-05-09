@@ -312,7 +312,11 @@ Even if you aren't looking to use Nebula in its entirety as a theme, it is also
 function nebula_initialization_default_settings(){
 	global $wp_rewrite;
 
-	//Update Nebula options
+	//Update Nebula default data
+	$nebula_data_defaults = nebula_default_data();
+	update_option('nebula_data', $nebula_data_defaults);
+
+	//Update Nebula default options
 	$nebula_options_defaults = nebula_default_options();
 	update_option('nebula_options', $nebula_options_defaults);
 
@@ -349,7 +353,7 @@ function nebula_initialization_deactivate_widgets(){
 }
 
 function nebula_is_initialized_before(){
-	$nebula_initialized_option = nebula_option('initialized');
+	$nebula_initialized_option = nebula_data('initialized');
 
 	if ( empty($nebula_initialized_option) ){
 		return false;
@@ -364,23 +368,22 @@ function nebula_force_settings(){
 	if ( 1==2 ){
 		$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
 		if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
-			nebula_update_option('initialized', strtotime($force_date));
+			nebula_update_data('initialized', strtotime($force_date));
 			return false;
 		}
 	} else {
 		if ( !nebula_is_initialized_before() ){
-			nebula_update_option('initialized', date('U'));
+			nebula_update_data('initialized', date('U'));
 		}
 	}
 
 	//Re-allow remote Nebula version updates. Ideally this would be detected automatically and this condition would not be needed.
 	if ( 1==2 ){
-		echo 'forcing compatibility';
-		nebula_update_option('version_legacy', 'false');
-		nebula_update_option('next_version', '');
-		nebula_update_option('current_version', nebula_version('raw'));
-		nebula_update_option('current_version_date', nebula_version('date'));
-		nebula_update_option('theme_update_notification', 'enabled');
+		nebula_update_data('version_legacy', 'false');
+		nebula_update_data('next_version', '');
+		nebula_update_data('current_version', nebula_version('raw'));
+		nebula_update_data('current_version_date', nebula_version('date'));
+		nebula_update_data('theme_update_notification', 'enabled');
 		update_option('external_theme_updates-Nebula-master', '');
 	}
 }

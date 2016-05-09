@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 4.0.5
+ Version: 4.0.7
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -29,9 +29,9 @@
 
  .slow { animation-duration:1s !important; }
 
- .slower { animation-duration:1.5s !important; }
+ .slower { animation-duration:2s !important; }
 
- .slowest { animation-duration:2s !important; }
+ .slowest { animation-duration:3s !important; }
 
  .nebula-spin { -webkit-animation:nebula-spin 2s infinite linear; animation:nebula-spin 2s infinite linear; }
 
@@ -312,6 +312,36 @@
  70% { transform:scale3d(0.95, 0.95, 0.95); }
 
  100% { transform:scale3d(1, 1, 1); }
+
+ }
+
+ .nebula-reveal-in { width:0; pointer-events:none; overflow:hidden; }
+
+ .nebula-reveal-in.animate,.nebula-reveal-in.load-animate { -webkit-animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; pointer-events:all; }
+
+ @-webkit-keyframes nebula-reveal-in { 0% { display:block; width:0; }
+
+ 100% { width:100%; }
+
+ }
+
+ @keyframes nebula-reveal-in { 0% { display:block; width:0; }
+
+ 100% { width:100%; }
+
+ }
+
+ .nebula-reveal-out { width:100%; pointer-events:none; overflow:hidden; }
+
+ @-webkit-keyframes nebula-reveal-out { 0% { display:block; width:100%; }
+
+ 100% { width:0; }
+
+ }
+
+ @keyframes nebula-reveal-out { 0% { display:block; width:100%; }
+
+ 100% { width:0; }
 
  }
 
@@ -869,6 +899,8 @@
 
  article:hover .searchresultword { background:#ff0 !important; background:rgba(0, 1, 0, ); }
 
+ .filterresultword { background:#ff0; background:rgba(255, 255, 0, 0.2); padding:0 2px; border-radius:6px; font-size:inherit !important; }
+
  .search .highlight { background:#0098d7; background:rgba(0, 152, 215, 0.2); }
 
  .googlemapcon { width:100%; height:250px; }
@@ -921,7 +953,7 @@
 
  .loadmorecon.loading .infinite-load-more { opacity:0; pointer-events:none; }
 
- h1,h2,h3,h4,h5,h6,body,p,.btn,.skiplink,.field input,.field input[type="*"],.field textarea,.prepend .adjoined,.append .adjoined,.picker,.alert,.tab-nav > li > li > a,.tab-nav > li > a { font-family:'Open Sans', sans-serif; }
+ h1,h2,h3,h4,h5,h6,body,p { font-family:'Open Sans', sans-serif; }
 
  abbr,acronym { cursor:pointer; border-bottom:none; color:auto; }
 
@@ -929,21 +961,7 @@
 
  #___plusone_0 { width:60px !important; }
 
- /* Allows tab text to wrap to a new line */ .tab-nav > li.active > a { height:auto; line-height:inherit; }
-
- .tab-nav > li > a { height:auto; line-height:inherit; padding-top:7px; padding-bottom:7px; }
-
- .tab-content { padding-top:0; }
-
- .tab-content p:first-child { margin-top:0; }
-
- .tab-content ul { padding-left:20px; }
-
- .tab-content ul li { list-style:disc; }
-
- input[type="submit"] { color:#fff; }
-
- form.search .submit.btn { width:22% !important; height:auto !important; font-size:12px; line-height:24px !important; }
+ .col-centered { float:none; margin:0 auto; }
 
  h3.comment-reply-title { font-size:12px; }
 
@@ -961,35 +979,13 @@
 
  .no-js p.comment-form-comment textarea { min-height:150px; }
 
- p.contact-form-submit input,#cform7-container .submit,p.form-submit input { border:0; background:#0098d7; padding:4px 10px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ p.contact-form-submit input,p.form-submit input { border:0; background:#0098d7; padding:4px 10px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
- p.contact-form-submit input:hover,#cform7-container .submit:hover,p.form-submit input:hover,p.contact-form-submit input.hover,#cform7-container .submit.hover,p.form-submit input.hover { background:#95d600; }
+ p.contact-form-submit input:hover,p.form-submit input:hover,p.contact-form-submit input.hover,p.form-submit input.hover { background:#95d600; }
 
- p.contact-form-submit input.disabled,#cform7-container .submit.disabled,p.form-submit input.disabled { background:#ccc !important; cursor:not-allowed; outline:none; }
+ p.contact-form-submit input.disabled,p.form-submit input.disabled { background:#ccc !important; cursor:not-allowed; outline:none; }
 
  .screen-reader-response { display:none; }
-
- form fieldset { border:1px solid #ccc; }
-
- .field .wpcf7-form-control-wrap { position:relative; display:inline-block; width:100%; }
-
- .field input,.field .input,.field textarea,.field .textarea { font-size:14px; line-height:22px; padding:6px 10px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
-
- .field .wpcf7-not-valid { border-color:#ca3838; color:#000; background:#f5d9d9; }
-
- .field.danger .wpcf7-form-control-wrap:after { content:"\f00d"; position:absolute; top:7px; right:7px; font-family:"FontAwesome"; color:#ca3838; }
-
- .field.danger input,.field.danger .input,.field.danger textarea,.field.danger .textarea { border-color:#ca3838; color:#000; background:#f5d9d9; }
-
- .field.warning .wpcf7-form-control-wrap:after { content:"\f071"; position:absolute; top:7px; right:7px; font-family:"FontAwesome"; color:#f6b83f; }
-
- .field.warning input,.field.warning .input,.field.warning textarea,.field.warning .textarea { border-color:#d8d8d8; color:#000; background:#fef7ea; }
-
- .field.success .wpcf7-form-control-wrap:after { content:"\f00c"; position:absolute; top:7px; right:7px; font-family:"FontAwesome"; color:#58c026; }
-
- .field.success input,.field.success .input,.field.success textarea,.field.success .textarea { border-color:#d8d8d8; color:#000; background:#f0fbea; }
-
- .picker:after { content:"\f0d7"; font-family:"FontAwesome"; }
 
  .wpcf7-not-valid-tip { color:#ca3838; }
 
@@ -1073,7 +1069,7 @@
 
  .ui-autocomplete.ui-widget-content li.no-results:before { content:'\00a0'; }
 
- .ui-autocomplete.ui-widget-content { width:100% !important; margin-top:-10px; background:#fff; background:rgba(255, 255, 255, 0.95); color:#444; border:none; border-top:1px dotted #ddd; box-shadow:1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index:9999 !important; overflow:hidden; }
+ .ui-autocomplete.ui-widget-content { margin-top:-10px; background:#fff; background:rgba(255, 255, 255, 0.95); color:#444; border:none; border-top:1px dotted #ddd; box-shadow:1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index:9999 !important; overflow:hidden; }
 
  .ui-autocomplete.ui-widget-content .ui-menu .ui-menu-item { font-size:12px; padding:3px 5px; }
 
@@ -1091,7 +1087,7 @@
 
  .ui-autocomplete.ui-widget-content li a { display:inline-block; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; width:90%; -webkit-transition:none 0.25s; -moz-transition:none 0.25s; -ms-transition:none 0.25s; -o-transition:none 0.25s; transition:none 0.25s; }
 
- @media only screen and (max-width:668px) { .ui-autocomplete.ui-widget-content { left:0 !important; }
+ @media only screen and (max-width:668px) { .ui-autocomplete.ui-widget-content { left:0 !important; width:100% !important; }
 
  }
 
@@ -1657,4 +1653,4 @@
  }
 
 
-/* Processed on Thursday, May 5, 2016 at 8:34am */
+/* Processed on Sunday, May 8, 2016 at 5:19pm */

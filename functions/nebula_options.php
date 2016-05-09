@@ -35,11 +35,22 @@ function nebula_option($option, $operand=false){
 	return $data;
 }
 
-function nebula_update_option($option, $value){
-	$nebula_options = get_option('nebula_options');
-	if ( $nebula_options[$option] != $value ){
-		$nebula_options[$option] = $value;
-		update_option('nebula_options', $nebula_options);
+//Retrieve non-option Nebula data
+function nebula_data($option){
+	$nebula_data = get_option('nebula_data');
+	if ( empty($nebula_data[$option]) ){
+		return false;
+	}
+	return $nebula_data[$option];
+}
+
+//Update data outside of the Nebula Options page
+function nebula_update_option($option, $value){nebula_update_data($option, $value);} //Alias
+function nebula_update_data($option, $value){
+	$nebula_data = get_option('nebula_data');
+	if ( $nebula_data[$option] != $value ){
+		$nebula_data[$option] = $value;
+		update_option('nebula_data', $nebula_data);
 	}
 }
 
@@ -89,17 +100,24 @@ function nebula_sub_menu(){
 	add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', 'nebula_options_page');
 }
 
-//Prepare default option values
-function nebula_default_options(){
-	$nebula_options_defaults = array(
+//Prepare default data values
+function nebula_default_data(){
+	$nebula_data_defaults = array(
 		'initialized' => '',
-		'edited_yet' => 'false',
 		'scss_last_processed' => '0',
 		'next_version' => '',
 		'current_version' => nebula_version('raw'),
 		'current_version_date' => nebula_version('date'),
 		'version_legacy' => 'false',
 		'users_status' => '',
+	);
+	return $nebula_data_defaults;
+}
+
+//Prepare default option values
+function nebula_default_options(){
+	$nebula_options_defaults = array(
+		'edited_yet' => 'false',
 
 		//Metadata Tab
 		'site_owner' => '',
@@ -178,7 +196,7 @@ function nebula_default_options(){
 		'ga_displayfeatures' => 'disabled',
 		'ga_linkid' => 'enabled',
 		'hostnames' => '',
-		'google_webmaster_tools_verification' => '',
+		'google_search_console_verification' => '',
 		'facebook_custom_audience_pixel_id' => '',
 		'cd_author' => '',
 		'cd_businesshours' => '',
@@ -248,7 +266,7 @@ function nebula_default_options(){
 		'hosting_url' => '',
 		'registrar_url' => '',
 		'ga_url' => '',
-		'google_webmaster_tools_url' => '',
+		'google_search_console_url' => '',
 		'google_adsense_url' => '',
 		'google_adwords_url' => '',
 		'mention_url' => '',
@@ -301,12 +319,12 @@ function nebula_options_page(){
 				}
 			}
 
-			//Pull content from full meta tag HTML (Google Webmaster Tools)
-			jQuery('#nebula_google_webmaster_tools_verification').on('paste change blur', function(){
-				var gwtInputValue = jQuery('#nebula_google_webmaster_tools_verification').val();
+			//Pull content from full meta tag HTML (Google Search Console)
+			jQuery('#nebula_google_search_console_verification').on('paste change blur', function(){
+				var gwtInputValue = jQuery('#nebula_google_search_console_verification').val();
 				if ( gwtInputValue.indexOf('<meta') >= 0 ){
 					var gwtContent = gwtInputValue.slice(gwtInputValue.indexOf('content="')+9, gwtInputValue.indexOf('" />'));
-					jQuery('#nebula_google_webmaster_tools_verification').val(gwtContent);
+					jQuery('#nebula_google_search_console_verification').val(gwtContent);
 				}
 			});
 
@@ -384,6 +402,7 @@ function nebula_options_page(){
 			<?php
 				settings_fields('nebula_options');
 				do_settings_sections('nebula_options');
+				$nebula_data = get_option('nebula_data');
 				$nebula_options = get_option('nebula_options');
 			?>
 
@@ -396,8 +415,8 @@ function nebula_options_page(){
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Initialized?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_options[initialized]" value="<?php echo $nebula_options['initialized']; ?>" readonly />
-						<p><small>Initialized on <strong><?php echo date('F j, Y \a\t g:ia', $nebula_options['initialized']); ?></strong> (<?php echo $years_ago = number_format((time()-$nebula_options['initialized'])/31622400, 2); ?> <?php echo ( $years_ago == 1 )? 'year' : 'years'; ?> ago).</small></p>
+						<input type="text" value="<?php echo $nebula_data['initialized']; ?>" readonly />
+						<p><small>Initialized on <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['initialized']); ?></strong> (<?php echo $years_ago = number_format((time()-$nebula_data['initialized'])/31622400, 2); ?> <?php echo ( $years_ago == 1 )? 'year' : 'years'; ?> ago).</small></p>
 						<p class="helper"><small>Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty.</small></p>
 					</td>
 		        </tr>
@@ -411,28 +430,28 @@ function nebula_options_page(){
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Current Version Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_options[current_version]" value="<?php echo $nebula_options['current_version']; ?>" readonly />
+						<input type="text" value="<?php echo $nebula_data['current_version']; ?>" readonly />
 						<p class="helper"><small>This is the Nebula version number when it was last saved. It should match: <strong><?php echo nebula_version('raw'); ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Last Version Date&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_options[current_version_date]" value="<?php echo $nebula_options['current_version_date']; ?>" readonly />
+						<input type="text" value="<?php echo $nebula_data['current_version_date']; ?>" readonly />
 						<p class="helper"><small>This is the Nebula version date when it was last saved. It should match: <strong><?php echo nebula_version('date'); ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Legacy Version?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_options[version_legacy]" value="<?php echo $nebula_options['version_legacy']; ?>" readonly />
+						<input type="text" value="<?php echo $nebula_data['version_legacy']; ?>" readonly />
 						<p class="helper"><small>If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled. Incompatible versions will be labeled with a "u" at the end of the version number.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
 		        	<th scope="row">Latest Github Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
-						<input type="text" name="nebula_options[next_version]" value="<?php echo $nebula_options['next_version']; ?>" readonly />
+						<input type="text" name="nebula_options[next_version]" value="<?php echo $nebula_data['next_version']; ?>" readonly />
 						<p class="helper"><small>The latest version available on Github. Re-checks with <a href="/update-core.php">theme update check</a>.</small></p>
 					</td>
 		        </tr>
@@ -748,7 +767,7 @@ function nebula_options_page(){
 							<option value="enabled" <?php selected('enabled', $nebula_options['scss']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['scss']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Enable the bundled SCSS compiler. Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( $nebula_options['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_options['scss_last_processed']) : 'Never'; ?></strong>. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Enable the bundled SCSS compiler. Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong>. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -796,7 +815,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<?php if ( $nebula_options['version_legacy'] == 'false' || !$nebula_options['version_legacy'] ): ?>
+				<?php if ( $nebula_data['version_legacy'] == 'false' || !$nebula_data['version_legacy'] ): ?>
 					<tr class="short" valign="top">
 			        	<th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
@@ -1011,10 +1030,10 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr valign="top">
-		        	<th scope="row">Google Webmaster Tools Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google Search Console Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input id="nebula_google_webmaster_tools_verification" type="text" name="nebula_options[google_webmaster_tools_verification]" value="<?php echo $nebula_options['google_webmaster_tools_verification']; ?>" placeholder="AAAAAA..." style="width: 392px;" />
-						<p class="helper"><small>This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Webmaster Tools</a>. Note: Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</small></p>
+						<input id="nebula_google_search_console_verification" type="text" name="nebula_options[google_search_console_verification]" value="<?php echo $nebula_options['google_search_console_verification']; ?>" placeholder="AAAAAA..." style="width: 392px;" />
+						<p class="helper"><small>This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Search Console</a>. Note: Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</small></p>
 					</td>
 		        </tr>
 
@@ -1600,10 +1619,10 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
-		        	<th scope="row">Google Webmaster Tools&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Google Search Console&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[google_webmaster_tools_url]" value="<?php echo $nebula_options['google_webmaster_tools_url']; ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
-						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/webmasters/tools/" target="_blank">Google Webmaster</a> Tools.</small></p>
+						<input type="text" name="nebula_options[google_search_console_url]" value="<?php echo $nebula_options['google_search_console_url']; ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
+						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/webmasters/tools/" target="_blank">Google Search Console</a>.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">

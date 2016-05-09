@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.0.5
+	Version: 4.0.7
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -114,6 +114,7 @@ div.nebula-button {margin-bottom: 10px;}
 	&.transitionable {@include prefix((transition: background 0.25s));}
 	article:hover & {@include background-color(#ff0 !important, 0.5);}
 }
+.filterresultword {@include background-color(#ff0, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important;}
 
 .search .highlight {@include background-color($primary_color, 0.2);}
 
@@ -174,41 +175,17 @@ div.nebula-button {margin-bottom: 10px;}
 //Default font override
 h1, h2, h3, h4, h5, h6,
 body,
-p,
-.btn, .skiplink,
-.field input, .field input[type="*"], .field textarea,
-.prepend .adjoined, .append .adjoined,
-.picker,
-.alert,
-.tab-nav > li > li > a,
-.tab-nav > li > a {font-family: $font_stack;}
+p {font-family: $font_stack;}
 
 abbr, acronym {cursor: pointer; border-bottom: none; color: auto;}
 
 .pinterest-pin a {@include prefix((transition: none 0.25s));}
 #___plusone_0 {width: 60px !important;}
 
-/* Allows tab text to wrap to a new line */
-.tab-nav > li.active > a {height: auto; line-height: inherit;}
-    .tab-nav > li > a {height: auto; line-height: inherit; padding-top: 7px; padding-bottom: 7px;}
-.tab-content {padding-top: 0;
-	p:first-child {margin-top: 0;}
-    ul {padding-left: 20px;
-	    li {list-style: disc;}
-    }
-}
+//Bootstrap
+.col-centered {float: none; margin: 0 auto;}
 
-//body .video-override .video {padding-bottom: 0px !important; height: auto !important;} /* Overrides Gumby video setting */
-//.btn, .skiplink {@include prefix((transition: all 0.25s));}
-
-
-//Contact Form Styles
-
-input[type="submit"] {color: #fff;}
-form.search .submit.btn {width: 22% !important; height: auto !important; font-size: 12px; line-height: 24px !important;}
-
-.formcon {}
-
+//Form Styles
 h3.comment-reply-title {font-size: 12px;}
 
 .logged-in-as {margin: 0;}
@@ -232,41 +209,12 @@ p.comment-form-comment {margin: 0;
 
 p.form-submit {}
 	p.contact-form-submit input,
-	#cform7-container .submit,
 	p.form-submit input {border: 0; background: $primary_color; padding: 4px 10px; @include prefix((transition: all 0.25s));
 		&:hover,
 		&.hover {background: $secondary_color;}
 		&.disabled {background: #ccc !important; cursor: not-allowed; outline: none;}
 	}
 	.screen-reader-response {display: none;}
-
-form fieldset {border: 1px solid #ccc;}
-.field {
-	.wpcf7-form-control-wrap {position: relative; display: inline-block; width: 100%;}
-	input, .input, textarea, .textarea {font-size: 14px; line-height: 22px; padding: 6px 10px; @include prefix((transition: all 0.25s);}
-
-	.wpcf7-not-valid {border-color: $danger_color; color: #000; background: lighten($danger_color, 40%);}
-
-	&.danger {
-		.wpcf7-form-control-wrap {
-			&:after {content: "\f00d"; position: absolute; top: 7px; right: 7px; font-family: "FontAwesome"; color: $danger_color;}
-		}
-		input, .input, textarea, .textarea {border-color: $danger_color; color: #000; background: lighten($danger_color, 40%);}
-	}
-	&.warning {
-		.wpcf7-form-control-wrap {
-			&:after {content: "\f071"; position: absolute; top: 7px; right: 7px; font-family: "FontAwesome"; color: $warning_color;}
-		}
-		input, .input, textarea, .textarea {border-color: #d8d8d8; color: #000; background: lighten($warning_color, 35%);}
-	}
-	&.success {
-		.wpcf7-form-control-wrap {
-			&:after {content: "\f00c"; position: absolute; top: 7px; right: 7px; font-family: "FontAwesome"; color: $success_color;}
-		}
-		input, .input, textarea, .textarea {border-color: #d8d8d8; color: #000; background: lighten($success_color, 50%);;}
-	}
-}
-.picker:after {content: "\f0d7"; font-family: "FontAwesome";}
 
 .wpcf7-not-valid-tip {color: $danger_color;}
 .wpcf7-validation-errors {font-size: 14px; color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
@@ -323,7 +271,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 }
 
 //jQuery UI Autocomplete
-.ui-autocomplete.ui-widget-content {width: 100% !important; margin-top: -10px; @include background-color(#fff, 0.95); color: $text_color; border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
+.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); color: $text_color; border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
 	.ui-menu .ui-menu-item {font-size: 12px; padding: 3px 5px;}
 	.ui-state-hover,
 	.ui-widget-content .ui-state-hover,
@@ -336,7 +284,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	li.ui-state-focus a {@include link-colors(#fff, #fff, #fff, #fff, #fff);}
 	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 90%; @include prefix((transition: none 0.25s));}
 
-	@include mobile("landscape"){left: 0 !important;}
+	@include mobile("landscape"){left: 0 !important; width: 100% !important;}
 }
 
 div.bx-wrapper {

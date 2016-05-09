@@ -3,7 +3,7 @@
 
 		if ( !checkVibration() ) {
 			jQuery('.notsupported').removeClass('hidden');
-			jQuery('.basicvibrate').parents('div').removeClass('primary').addClass('danger');
+			jQuery('.basicvibrate').removeClass('btn-primary').addClass('btn-danger');
 		}
 
 		jQuery('.basicvibrate').on('click tap touch', function(){
@@ -25,14 +25,12 @@
 
 <p class="notsupported hidden" style="font-weight: bold; color: red;">Vibration is not supported in your browser!</p>
 
-<div class="medium primary btn">
-	<a class="basicvibrate" href="#">Go Go Vibration Test</a>
-</div>
+<a class="basicvibrate btn btn-primary" href="#">Go Go Vibration Test</a>
 
 <br /><br /><br />
 <form id="patterntester">
 	<h2>Vibration Pattern Tester</h2>
 	<p>Enter comma separated integers (in milliseconds) to test the vibration pattern.</p>
 	<input type="text" id="pattern" />
-	<input class="primary btn" type="submit" value="Test Pattern" style="display: inline-block; padding: 3px 10px !important;" />
+	<input class="btn btn-primary" type="submit" value="Test Pattern" />
 </form>

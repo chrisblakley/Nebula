@@ -86,8 +86,8 @@
 							<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="<?php echo nebula_option('ga_url'); ?>" target="_blank">Google Analytics</a></li>
 						<?php endif; ?>
 
-						<?php if ( nebula_option('google_webmaster_tools_url') ): ?>
-							<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo nebula_option('google_webmaster_tools_url'); ?>" target="_blank">Google Webmaster Tools</a></li>
+						<?php if ( nebula_option('google_search_console_url') ): ?>
+							<li><i class="fa fa-google fa-fw"></i> <a href="<?php echo nebula_option('google_search_console_url'); ?>" target="_blank">Google Search Console</a></li>
 						<?php endif; ?>
 
 						<?php if ( nebula_option('google_adsense_url') ): ?>
@@ -103,7 +103,7 @@
 						<?php endif; ?>
 					</ul>
 
-					<?php if ( !nebula_option('cpanel_url') && !nebula_option('hosting_url') && !nebula_option('registrar_url') && !nebula_option('ga_url') && !nebula_option('google_webmaster_tools_url') && !nebula_option('google_adsense_url') && !nebula_option('google_adwords_url') && !nebula_option('mention_url') ): ?>
+					<?php if ( !nebula_option('cpanel_url') && !nebula_option('hosting_url') && !nebula_option('registrar_url') && !nebula_option('ga_url') && !nebula_option('google_search_console_url') && !nebula_option('google_adsense_url') && !nebula_option('google_adwords_url') && !nebula_option('mention_url') ): ?>
 						<p><em>Add administrative links to <strong><a href="themes.php?page=nebula_options">Nebula Options</a></strong> to see them here.</em></p>
 					<?php endif; ?>
 				</div>

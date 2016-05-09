@@ -34,8 +34,8 @@
 
 <?php //Open Graph ?>
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') || is_front_page() ): ?>
-	<?php if ( nebula_option('google_webmaster_tools_verification') ): ?>
-		<meta name="google-site-verification" content="<?php echo nebula_option('google_webmaster_tools_verification'); ?>" />
+	<?php if ( nebula_option('google_search_console_verification') ): ?>
+		<meta name="google-site-verification" content="<?php echo nebula_option('google_search_console_verification'); ?>" />
 	<?php endif; ?>
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />

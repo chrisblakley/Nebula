@@ -92,10 +92,10 @@
 
 		if ( requiredPassed >= 4 ) {
 			if ( validateURL(destinationURL) ) {
-				jQuery('#destination-url').parents('li').removeClass('danger');
+				jQuery('#destination-url').parents('.form-group').removeClass('has-danger');
 				generatedResult = destinationURL;
 			} else {
-				jQuery('#destination-url').parents('li').addClass('danger');
+				jQuery('#destination-url').parents('.form-group').addClass('has-danger');
 				jQuery('#generatedoutput').addClass('danger').val('Invalid Destination URL.');
 				return false;
 			}

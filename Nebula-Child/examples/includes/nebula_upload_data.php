@@ -9,14 +9,14 @@
 		jQuery('#datatostore').on('keyup', function(){
 			console.log('checking length');
 			if ( jQuery(this).val().trim().length > 0 ) {
-				jQuery(this).parent('.field').removeClass('danger');
+				jQuery(this).parent('.form-group').removeClass('has-danger');
 			}
 		});
 
 		jQuery('#uploadtest').on('click touch tap', function(){
 
 			if ( jQuery('#datatostore').val().trim().length < 1 ) {
-				jQuery('#datatostore').attr('placeholder', 'This is a required field.').parent('.field').addClass('danger');
+				jQuery('#datatostore').attr('placeholder', 'This is a required field.').parent('.form-group').addClass('has-danger');
 				return false;
 			}
 

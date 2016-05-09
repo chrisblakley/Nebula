@@ -309,7 +309,7 @@ function nebula_is_user_online($id){
 	$override = apply_filters('pre_nebula_is_user_online', false, $id);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = nebula_option('users_status');
+	$logged_in_users = nebula_data('users_status');
 	return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
 }
 
@@ -318,7 +318,7 @@ function nebula_user_last_online($id){
 	$override = apply_filters('pre_nebula_user_last_online', false, $id);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = nebula_option('users_status');
+	$logged_in_users = nebula_data('users_status');
 	if ( isset($logged_in_users[$id]['last']) ){
 		return $logged_in_users[$id]['last'];
 	}
@@ -330,7 +330,7 @@ function nebula_online_users($return='count'){
 	$override = apply_filters('pre_nebula_online_users', false, $return);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = nebula_option('users_status');
+	$logged_in_users = nebula_data('users_status');
 	if ( empty($logged_in_users) || !is_array($logged_in_users) ){
 		return ( $return == 'count' )? 0 : false; //If this happens it indicates an error.
 	}
@@ -351,7 +351,7 @@ function nebula_user_single_concurrent($id){
 	$override = apply_filters('pre_nebula_user_single_concurrent', false, $id);
 	if ( $override !== false ){return $override;}
 
-	$logged_in_users = nebula_option('users_status');
+	$logged_in_users = nebula_data('users_status');
 	if ( isset($logged_in_users[$id]['unique']) ){
 		return count($logged_in_users[$id]['unique']);
 	}
@@ -1342,7 +1342,7 @@ function nebula_scss_variables($scss){
 	$scss = preg_replace("<%__utm.gif%>", ga_UTM_gif(), $scss); //GA __utm.gif pixel with parameters for tracking via CSS
 	do_action('nebula_scss_variables');
 	$scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
-	nebula_update_option('scss_last_processed', time());
+	nebula_update_data('scss_last_processed', time());
 	return $scss;
 }
 

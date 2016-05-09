@@ -14,14 +14,15 @@
 // ===========================
 // Modifiers
 // These helper classes make it easy to adjust animations without needing to copy/customize the entire animation property.
+// You can create custom speed classes in your own stylesheet to be applied too.
 // ===========================
 
 .fastest {animation-duration: .25s !important;}
 .faster {animation-duration: .5s !important;}
 .fast {animation-duration: .75s !important;}
 .slow {animation-duration: 1s !important;}
-.slower {animation-duration: 1.5s !important;}
-.slowest {animation-duration: 2s !important;}
+.slower {animation-duration: 2s !important;}
+.slowest {animation-duration: 3s !important;}
 
 
 // ===========================
@@ -184,7 +185,24 @@
   100% {transform: scale3d(1, 1, 1);}
 }
 
-//Increase width from the center
+//Increase width from the center (reveal contents)
+.nebula-reveal-in {width: 0; pointer-events: none; overflow: hidden;
+	&.animate,
+	&.load-animate {@include prefix((animation: nebula-reveal-in .5s easing(easeInOutQuad) forwards), webkit); pointer-events: all;}
+}
+@include keyframes(nebula-reveal-in){
+    0% {display: block; width: 0;}
+    100% {width: 100%;}
+}
+
+//Decrease width from the center (hide contents)
+.nebula-reveal-out {width: 100%; pointer-events: none; overflow: hidden;}
+@include keyframes(nebula-reveal-out){
+    0% {display: block; width: 100%;}
+    100% {width: 0;}
+}
+
+//Increase width from the center (stretch contents)
 .nebula-stretch-in {opacity: 0; pointer-events: none;
 	&.animate,
 	&.load-animate {@include prefix((animation: nebula-stretch-in .5s easing(easeInOutQuad) forwards), webkit); opacity: 1; pointer-events: all;}
@@ -195,7 +213,7 @@
     100% {transform: scale3d(1, 1, 1);}
 }
 
-//Decrease width from the center
+//Decrease width from the center (stretch contents)
 .nebula-stretch-out.animate {@include prefix((animation: nebula-stretch-out .5s easing(easeInOutQuad) forwards), webkit);}
 @include keyframes(nebula-stretch-out){
     0% {transform: scale3d(1, 1, 1);}

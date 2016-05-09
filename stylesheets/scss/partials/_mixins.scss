@@ -117,6 +117,17 @@
 	&:after {clear: both;}
 }
 
+//Maintain a responsive aspect ratio
+//.element {@include ratio(16, 9);}
+@mixin ratio($x, $y, $pseudo: false){
+	$padding: unquote(($y/$x) * 100 + '%');
+	@if $pseudo {
+		&:before {content: ''; display: block; position: relative; width: 100%; padding-top: $padding;}
+	} @else {
+		padding-top: $padding;
+	}
+}
+
 //.element {@include zoom(1.5);}
 //.element {@include zoom(0.75, center top);}
 @mixin zoom($zoom: 1, $origin: 0 0){
