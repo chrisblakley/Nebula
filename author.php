@@ -26,16 +26,15 @@ get_header(); ?>
 	</div><!--/container-->
 </section>
 
-<div class="breadcrumbbar">
+<div id="breadcrumb-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<?php the_breadcrumb(); ?>
+				<?php nebula_breadcrumbs(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-	<hr />
-</div>
+</div><!--/breadcrumb-section-->
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">
@@ -132,21 +131,21 @@ get_header(); ?>
 	</div><!--/row-->
 </div><!--/container-->
 
-<div class="container fullcontentcon">
-	<div class="row">
-		<div class="col-md-8">
-			<?php
-				rewind_posts();
-				get_template_part('loop', 'author');
-				wp_pagenavi();
-			?>
-		</div><!--/col-->
-
-		<div class="col-md-4">
-			<?php get_sidebar(); ?>
-		</div><!--/col-->
-
-	</div><!--/row-->
-</div><!--/container-->
+<div id="content-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php
+					rewind_posts();
+					get_template_part('loop', 'author');
+					wp_pagenavi();
+				?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/content-section-->
 
 <?php get_footer(); ?>

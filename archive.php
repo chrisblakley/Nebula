@@ -34,18 +34,17 @@ get_header(); ?>
 	</div><!--/container-->
 </section>
 
-<div class="breadcrumbbar">
+<div id="breadcrumb-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<?php the_breadcrumb(); ?>
+				<?php nebula_breadcrumbs(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-	<hr />
-</div>
+</div><!--/breadcrumb-section-->
 
-<div class="fullcontentcon">
+<div id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">

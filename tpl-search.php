@@ -20,16 +20,17 @@ get_header(); ?>
 ?>
 
 
-<div class="container">
-<div class="row">
-	<div class="col-md-12">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/col-->
-</div><!--/row-->
-</div><!--/container-->
+<div id="breadcrumb-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php nebula_breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/breadcrumb-section-->
 
-<div class="fullcontentcon">
+<div id="content-section">
 	<div class="container">
 		<div class="row">
 
@@ -129,7 +130,7 @@ get_header(); ?>
 								<a id="load-more-events" class="more-or-prev-events primary btn" href="#">More results &raquo;</a>
 							</div><!--/col-->
 						</div><!--/row-->
-					</article><!-- #post-## -->
+					</article>
 				<?php endwhile; ?>
 			</div><!--/col-->
 			<div class="col-md-4">
@@ -137,6 +138,6 @@ get_header(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div>
+</div><!--/content-section-->
 
 <?php get_footer(); ?>

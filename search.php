@@ -39,38 +39,39 @@ get_header(); ?>
 					</script>
 				<?php endif; ?>
 
-				<?php get_search_form(); ?>
+				<?php echo nebula_search_form(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
 
-<div class="breadcrumbbar">
+<div id="breadcrumb-section" class="full">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<?php the_breadcrumb(); ?>
+				<?php nebula_breadcrumbs(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-	<hr />
-</div>
+</div><!--/breadcrumb-section-->
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-8">
-			<?php if ( have_posts() ): ?>
-				<div id="searchresults">
-					<?php get_template_part('loop', 'search'); ?>
-					<?php wp_pagenavi(); ?>
-				</div><!--/#searchresults-->
-			<?php endif; ?>
-		</div><!--/col-->
+<div id="content-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php if ( have_posts() ): ?>
+					<div id="searchresults">
+						<?php get_template_part('loop', 'search'); ?>
+						<?php wp_pagenavi(); ?>
+					</div><!--/#searchresults-->
+				<?php endif; ?>
+			</div><!--/col-->
 
-		<div class="col-md-4">
-			<?php get_sidebar(); ?>
-		</div><!--/col-->
-	</div><!--/row-->
-</div><!--/container-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/content-section-->
 
 <?php get_footer(); ?>

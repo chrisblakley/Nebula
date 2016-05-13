@@ -36,9 +36,9 @@
 		<?php get_template_part('includes/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>
 	<body <?php body_class(); ?>>
-		<div id="fullbodywrapper">
+		<div id="body-wrapper">
 
-			<div id="header">
+			<div id="header-section">
 				<div id="fb-root"></div>
 
 				<?php do_action('nebula_body_open'); ?>
@@ -102,48 +102,6 @@
 						</div><!--/row-->
 					</div><!--/container-->
 				</div>
-			</div><!--/header-->
+			</div><!--/header-section-->
 
-			<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ): ?>
-				<div class="headerdrawercon">
-					<div class="container">
-						<hr />
-						<div class="row">
-							<div class="col-md-12 headerdrawer">
-								<span>Your search returned only one result. You have been automatically redirected.</span>
-								<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-								<?php echo get_search_form(); ?>
-							</div><!--/col-->
-						</div><!--/row-->
-						<hr class="zero" />
-					</div><!--/container-->
-				</div>
-			<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ): ?>
-				<div class="headerdrawercon">
-					<div class="container">
-						<hr />
-						<div class="row">
-							<div class="col-md-12 headerdrawer invalid">
-								<span>Your search was invalid. Please try again.</span>
-								<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-								<?php echo get_search_form(); ?>
-							</div><!--/col-->
-						</div><!--/row-->
-						<hr class="zero" />
-					</div><!--/container-->
-				</div>
-			<?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) || is_page_template('http_status.php') ): ?>
-				<div id="suggestedpage" class="headerdrawercon">
-					<div class="container">
-						<hr />
-						<div class="row">
-							<div class="col-md-12 headerdrawer">
-								<h3>Did you mean?</h3>
-								<p><a class="suggestion" href="#"></a></p>
-								<a class="close" href="<?php the_permalink(); ?>"><i class="fa fa-times"></i></a>
-							</div><!--/col-->
-						</div><!--/row-->
-						<hr class="zero" />
-					</div><!--/container-->
-				</div>
-			<?php endif; ?>
+			<?php get_template_part('includes/header_drawer'); //Header drawer logic. ?>

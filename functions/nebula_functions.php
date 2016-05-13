@@ -716,52 +716,94 @@ function nebula_facebook_both($counts=0){
 	</div>
 <?php }
 
-$nebula_twitter_tweet = 0;
+$nebula_twitter_widget_loaded = false;
 function nebula_twitter_tweet($counts=0){
 	$override = apply_filters('pre_nebula_twitter_tweet', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
 	<div class="nebula-social-button twitter-tweet">
 		<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 )? '': 'data-count="none"'; ?>>Tweet</a>
-		<?php if ( $nebula_twitter_tweet == 0 ) : ?>
-			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-		<?php endif; ?>
+		<?php twitter_widget_script(); ?>
 	</div>
 <?php
-	$nebula_twitter_tweet = 1;
 }
 
-$nebula_google_plus = 0;
+function nebula_twitter_follow($counts=0, $username=false){
+	$override = apply_filters('pre_nebula_twitter_follow', false, $counts, $username);
+	if ( $override !== false ){echo $override; return;}
+
+	if ( empty($username) && !nebula_option('twitter_username') ){
+		return false;
+	} elseif ( empty($username) && nebula_option('twitter_username') ){
+		$username = nebula_option('twitter_username');
+	} elseif ( strpos($username, '@') === false ){
+		$username = '@' . $username;
+	}
+?>
+	<div class="nebula-social-button twitter-follow">
+		<a href="https://twitter.com/<?php echo str_replace('@', '', $username); ?>" class="twitter-follow-button" <?php echo ( $counts != 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>>Follow <?php echo $username; ?></a>
+		<?php twitter_widget_script(); ?>
+	</div>
+<?php
+}
+
+function twitter_widget_script(){
+	if ( empty($nebula_twitter_widget_loaded) ){
+		?>
+		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+		<?php
+		$nebula_twitter_widget_loaded = true;
+	}
+}
+
+$nebula_google_plus_widget_loaded = true;
 function nebula_google_plus($counts=0){
 	$override = apply_filters('pre_nebula_google_plus', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
 	<div class="nebula-social-button google-plus-plus-one">
 		<div class="g-plusone" data-size="medium" <?php echo ( $counts != 0 )? '' : 'data-annotation="none"'; ?>></div>
-		<?php if ( $nebula_google_plus == 0 ) : ?>
+		<?php if ( empty($nebula_google_plus_widget_loaded) ) : ?>
 			<script src="https://apis.google.com/js/platform.js" async defer></script>
+			<?php $nebula_google_plus_widget_loaded = true; ?>
 		<?php endif; ?>
 	</div>
 <?php
-	$nebula_google_plus = 1;
 }
 
-$nebula_linkedin_share = 0;
-function nebula_linkedin_share($counts=0){ //@TODO "Nebula" 0: Bubble counts are not showing up...
+$nebula_linkedin_widget_loaded = false;
+function nebula_linkedin_share($counts=0){
 	$override = apply_filters('pre_nebula_linkedin_share', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
 	<div class="nebula-social-button linkedin-share">
-		<?php if ( $nebula_linkedin_share == 0 ) : ?>
-			<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
-		<?php endif; ?>
+		<?php linkedin_widget_script(); ?>
 		<script type="IN/Share" <?php echo ( $counts != 0 )? 'data-counter="right"' : ''; ?>></script>
 	</div>
 <?php
-	$nebula_linkedin_share = 1;
 }
 
-$nebula_pinterest_pin = 0;
+function nebula_linkedin_follow($counts=0){
+	$override = apply_filters('pre_nebula_linkedin_follow', false, $counts);
+	if ( $override !== false ){echo $override; return;}
+?>
+	<div class="nebula-social-button linkedin-follow">
+		<?php linkedin_widget_script(); ?>
+		<script type="IN/FollowCompany" data-id="1337" <?php echo ( $counts != 0 )? 'data-counter="right"' : ''; ?>></script>
+	</div>
+<?php
+}
+
+function linkedin_widget_script(){
+	if ( empty($nebula_linkedin_widget_loaded) ){
+		?>
+		<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
+		<?php
+		$nebula_linkedin_widget_loaded = true;
+	}
+}
+
+$nebula_pinterest_pin_widget_loaded = false;
 function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are not showing up...
 	$override = apply_filters('pre_nebula_pinterest_pin', false, $counts);
 	if ( $override !== false ){echo $override; return;}
@@ -776,12 +818,12 @@ function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are 
 		<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts != 0 )? 'beside' : 'none'; ?>" data-pin-color="red">
 			<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" />
 		</a>
-		<?php if ( $nebula_pinterest_pin == 0 ) : ?>
+		<?php if ( empty($nebula_pinterest_pin_widget_loaded) ): ?>
 			<script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>
+			<?php $nebula_pinterest_pin_widget_loaded = true; ?>
 		<?php endif; ?>
 	</div>
 <?php
-	$nebula_pinterest_pin = 1;
 }
 
 //Twitter cached feed
@@ -933,7 +975,7 @@ function nebula_password_form_simplify(){
 }
 
 //Breadcrumbs
-function the_breadcrumb(){
+function nebula_breadcrumbs(){
 	$override = apply_filters('pre_the_breadcrumb', false);
 	if ( $override !== false ){echo $override; return;}
 
@@ -947,12 +989,12 @@ function the_breadcrumb(){
 	$homeLink = home_url('/');
 
 	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
-		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
+		echo '<div class="nebula-breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
 	} elseif ( is_home() || is_front_page() ){
-		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></nav></div>';
+		echo '<div class="nebula-breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></div></div>';
 		return false;
 	} else {
-		echo '<div class="breadcrumbcon"><nav class="breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
+		echo '<div class="nebula-breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
 		if ( is_category() ){
 			$thisCat = get_category(get_query_var('cat'), false);
 			if ( $thisCat->parent != 0 ){
@@ -1047,7 +1089,7 @@ function the_breadcrumb(){
 				echo ')';
 			}
 		}
-		echo '</nav></div><!--/breadcrumbcon-->';
+		echo '</div>';
 	}
 }
 
@@ -1061,18 +1103,7 @@ function nebula_always_get_post_custom($posts){
     return $posts;
 }
 
-//Override the default Wordpress search form
-//@TODO "Nebula" 0: Use this on templates like 404 (and maybe even advanced search?) and search redirect (in header). Then expand this a little bit.
-add_filter('get_search_form', 'nebula_search_form');
-function nebula_search_form($form){
-    $form = '<form role="search" method="get" id="searchform" action="' . home_url('/') . '" >
-	    <div>
-		    <input type="text" value="' . get_search_query() . '" name="s" id="s" />
-		    <input type="submit" id="searchsubmit" class="wp_search_submit" value="'. esc_attr__('Search') .'" />
-	    </div>
-    </form>';
-    return $form;
-}
+
 
 //Prevent empty search query error (Show all results instead)
 add_action('pre_get_posts', 'redirect_empty_search');
@@ -1112,16 +1143,43 @@ function redirect_single_post(){
     }
 }
 
+//Modified WordPress search form using Bootstrap components
+function nebula_search_form($placeholder=''){
+	$override = apply_filters('pre_nebula_search_form', false, $placeholder);
+	if ( $override !== false ){echo $override; return;}
+
+	$value = $placeholder;
+    if ( empty($placeholder) ){
+		$placeholder = 'Search';
+	    if ( get_search_query() ){
+		    $value = get_search_query();
+		    $placeholder = get_search_query();
+	    }
+    }
+
+    $form = '<form id="searchform" class="form-inline" role="search" method="get" action="' . home_url('/') . '">
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-search"></i></div>
+						<input id="s" class="form-control form-control-sm" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" />
+					</div>
+				</div>
+				<input id="searchsubmit" class="btn btn-primary btn-sm wp_search_submit" type="submit" value="Search" />
+			</form>';
+    return $form;
+}
+
 //Easily create markup for a Hero area search input
 function nebula_hero_search($placeholder='What are you looking for?'){
 	$override = apply_filters('pre_nebula_hero_search', false, $placeholder);
 	if ( $override !== false ){echo $override; return;}
 
-	echo '<div id="nebula-hero-formcon">
-		<form id="nebula-hero-search" class="nebula-search-iconable search" method="get" action="' . home_url('/') . '">
-			<input type="search" class="nebula-search open input search nofade" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
-		</form>
-	</div>';
+	$form = '<div id="nebula-hero-formcon">
+			<form id="nebula-hero-search" class="nebula-search-iconable search" method="get" action="' . home_url('/') . '">
+				<input type="search" class="nebula-search open input search nofade" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
+			</form>
+		</div>';
+	return $form;
 }
 
 //Autocomplete Search AJAX.

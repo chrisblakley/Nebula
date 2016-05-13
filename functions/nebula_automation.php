@@ -380,6 +380,7 @@ function nebula_force_settings(){
 	//Re-allow remote Nebula version updates. Ideally this would be detected automatically and this condition would not be needed.
 	if ( 1==2 ){
 		nebula_update_data('version_legacy', 'false');
+		nebula_update_data('scss_last_processed', 0);
 		nebula_update_data('next_version', '');
 		nebula_update_data('current_version', nebula_version('raw'));
 		nebula_update_data('current_version_date', nebula_version('date'));

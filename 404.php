@@ -11,24 +11,24 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<?php the_breadcrumb(); ?>
-			<hr />
-		</div><!--/col-->
-	</div><!--/row-->
-</div><!--/container-->
+<div id="breadcrumb-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php nebula_breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/breadcrumb-section-->
 
-<div class="fullcontentcon">
+<div class="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
 				<article id="post-0" class="post error404 not-found" role="main">
 					<h1 class="page-title">Not Found</h1>
 					<p>The page you requested could not be found.</p>
-
-					<?php get_search_form(); ?>
+					<?php echo nebula_search_form(); ?>
 				</article>
 			</div><!--/col-->
 			<div class="col-md-4">

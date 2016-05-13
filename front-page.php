@@ -11,7 +11,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div id="herocon">
+<div id="hero-section">
 	<div class="herobgcolor"></div>
 	<div class="nebulashadow inner-top bulging"></div>
 	<div class="container">
@@ -21,27 +21,23 @@ get_header(); ?>
 				<?php if ( get_bloginfo('description') != '' ): ?>
 					<h2><?php echo get_bloginfo('description'); ?></h2>
 				<?php endif; ?>
-				<?php nebula_hero_search(); ?>
+				<?php echo nebula_hero_search(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 	<div class="nebulashadow inner-bottom bulging"></div>
-</div><!--/heroslidercon-->
+</div><!--/hero-section-->
 
-<div class="fullcontentcon">
+<div id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
-				<?php if ( !empty($nebula['user']['sessions']['last']) ): ?>
-					<h2>Welcome back!</h2>
-				<?php endif; ?>
-
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-content">
 							<?php the_content(); ?>
 						</div><!-- .entry-content -->
-					</article><!-- #post-## -->
+					</article>
 				<?php endwhile; ?>
 			</div><!--/col-->
 			<div class="col-md-4">
@@ -49,6 +45,6 @@ get_header(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/fullcontentcon-->
+</div><!--/content-section-->
 
 <?php get_footer(); ?>

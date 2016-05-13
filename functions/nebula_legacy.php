@@ -5,6 +5,12 @@
  ===========================*/
 
 
+//Renamed function (5/10/2016)
+function the_breadcrumb(){
+	nebula_breadcrumbs();
+}
+
+
  //Update old options to new options
  add_action('admin_init', 'nebula_legacy_options');
  function nebula_legacy_options(){

@@ -172,35 +172,33 @@ switch ( $GLOBALS['http'] ){
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<?php the_breadcrumb(); ?>
-			<hr />
-		</div><!--/col-->
-	</div><!--/row-->
-</div><!--/container-->
-
-<div class="fullcontentcon">
+<div id="breadcrumb-section">
 	<div class="container">
 		<div class="row">
+			<div class="col-md-12">
+				<?php nebula_breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/breadcrumb-section-->
 
+<div id="content-section">
+	<div class="container">
+		<div class="row">
 			<div class="col-md-8">
 				<article id="post-0" class="post error<?php echo $GLOBALS['http']; ?>" role="main">
 					<h1><?php echo $http_type; ?> <?php echo $GLOBALS['http']; ?>: <?php echo $http_name; ?></h1>
 					<p><?php echo $http_description; ?></p>
 
-					<?php get_search_form(); ?>
+					<?php echo nebula_search_form(); ?>
 				</article>
 			</div><!--/col-->
-
 			<div class="col-md-4">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
-
 		</div><!--/row-->
 	</div><!--/container-->
-</div>
+</div><!--/content-section-->
 
 <script>
 	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP <?php echo $GLOBALS['http']; ?> Page'));

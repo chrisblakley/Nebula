@@ -50,7 +50,7 @@ jQuery(document).ready(function(){
 
 	//Interaction
 	windowTypeDetection();
-	gaEventTracking();
+	eventTracking();
 	scrollDepth();
 	pageVisibility();
 	checkForYoutubeVideos();
@@ -575,7 +575,7 @@ function socialSharing(){
  ===========================*/
 
 //Google Analytics Universal Analytics Event Trackers
-function gaEventTracking(){
+function eventTracking(){
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//nebula.dom.document.on('mousedown', '.selector', function(e){
 	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
@@ -709,18 +709,6 @@ function gaEventTracking(){
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
 		}
 	});
-	jQuery('.btn:not(input)').on('click tap touch', function(e){
-		if ( e.target !== this ){
-			return; //Only continue if the button is clicked, but not the <a> link.
-		}
-		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Non-Linked Click Attempt'));
-		if ( jQuery(this).find('a').is('*') ){
-			ga('send', 'event', 'Non-Linked Click Attempt', 'Button', jQuery(this).find('a').text());
-		} else {
-			ga('send', 'event', 'Non-Linked Click Attempt', 'Button', '(no <a> tag) ' + jQuery(this).text());
-		}
-	});
 
 	//Word copy tracking
 	var copyCount = 0;
@@ -817,7 +805,7 @@ function gaEventTracking(){
 
 //Detect scroll depth for engagement and more accurate bounce rate
 function scrollDepth(){
-	var headerHeight = ( jQuery('#header').is('*') )? jQuery('#header').height() : 250;
+	var headerHeight = ( jQuery('#header-section').is('*') )? jQuery('#header-section').height() : 250;
 	var entryContent = jQuery('.entry-content');
 
 	//Flags
@@ -888,19 +876,20 @@ function scrollDepth(){
 				//Set Custom Dimensions
 				if ( gaCustomDimensions['scrollDepth'] ){
 					if ( readTime < 10 ){
-						ga('set', gaCustomDimensions['scrollDepth'], 'Previewer');
+						var readerType = 'Previewer';
 					} else if ( readTime < 60 ){
-						ga('set', gaCustomDimensions['scrollDepth'], 'Scanner');
+						var readerType = 'Scanner';
 					} else {
+						var readerType = 'Reader';
 						ga('set', gaCustomMetrics['engagedReaders'], 1);
-						ga('set', gaCustomDimensions['scrollDepth'], 'Reader');
 						nebulaConversion('engaged', nebula.post.title);
 					}
 				}
 
+				ga('set', gaCustomDimensions['scrollDepth'], 'Reader');
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Scroll Depth', 'Finished reading', Math.round(readTime) + ' seconds (since reading began)');
-				ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), 'Scrolled from top of entry-content to bottom');
+				ga('send', 'event', 'Scroll Depth', 'Finished reading', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)');
+				ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
 				endContent = true;
 			}
 		}
@@ -1318,13 +1307,13 @@ function postSearch(posts){
 		var thisPost = this;
 
 		//Search Dates
-		if ( jQuery('#advanced-search-date-start-alt').val() ){
+		if ( jQuery.trim(jQuery('#advanced-search-date-start-alt').val()).length ){
 			var postDate = new Date(thisPost.posted*1000);
 			var postDateStamp = postDate.getFullYear() + '-' + postDate.getMonth() + '-' + postDate.getDate();
 			var searchDateStart = new Date(parseInt(jQuery('#advanced-search-date-start-alt').val()));
 			var searchDateStartStamp = searchDateStart.getFullYear() + '-' + searchDateStart.getMonth() + '-' + searchDateStart.getDate();
 
-			if ( jQuery('#advanced-search-date-end-alt').val() ){
+			if ( jQuery.trim(jQuery('#advanced-search-date-end-alt').val()).length ){
 				var searchDateEnd = new Date(parseInt(jQuery('#advanced-search-date-end-alt').val()));
 				if ( postDate < searchDateStart || postDate > searchDateEnd ){
 					delete tempFilteringObject[i]; //Date is not in the range
@@ -1339,7 +1328,7 @@ function postSearch(posts){
 		}
 
 		//Search Categories and Tags
-		if ( jQuery('#advanced-search-catstags').val() ){
+		if ( jQuery.trim(jQuery('#advanced-search-catstags').val()).length ){
 			if ( thisPost.categories || thisPost.tags ){
 				jQuery.each(jQuery('#advanced-search-catstags').val(), function(key, value){
 					thisCatTag = value.split('__');
@@ -1362,7 +1351,7 @@ function postSearch(posts){
 		}
 
 		//Search Post Types (This is an inclusive filter)
-		if ( jQuery('#advanced-search-type').val() ){
+		if ( jQuery.trim(jQuery('#advanced-search-type').val()).length ){
 			var requestedPostType = jQuery('#advanced-search-type').val().join(', ').toLowerCase();
 			if ( requestedPostType.indexOf(thisPost.type.toLowerCase()) < 0 ){
 				delete tempFilteringObject[i]; //Post Type does not match
@@ -1370,7 +1359,7 @@ function postSearch(posts){
 		}
 
 		//Search Author
-		if ( jQuery('#advanced-search-author').val() !== '' ){
+		if ( jQuery.trim(jQuery('#advanced-search-author').val()).length ){ //yolo
 			if ( thisPost.author.id !== jQuery('#advanced-search-author').val() ){
 				delete tempFilteringObject[i]; //Author ID does not match
 				return;
@@ -1378,7 +1367,7 @@ function postSearch(posts){
 		}
 
 		//Keyword Filter
-		if ( jQuery('#s').val() !== '' ){
+		if ( jQuery.trim(jQuery('#s').val()).length ){
 			thisEventString = JSON.stringify(thisPost).toLowerCase();
 			thisEventString += '';
 			if ( thisEventString.indexOf(jQuery('#s').val().toLowerCase()) < 0 ){
@@ -1394,7 +1383,7 @@ function postSearch(posts){
 }
 
 function wpSearchInput(){
-	jQuery('#post-0 #s, .headerdrawer #s, .search-results #s').focus(); //Automatically focus on specific search inputs
+	jQuery('#post-0 #s, #header-drawer #s, .search-results #s').focus(); //Automatically focus on specific search inputs
 
 	//Set search value as placeholder
 	var searchVal = get('s') || jQuery('#s').val();
@@ -1460,16 +1449,13 @@ function searchValidator(){
 function searchTermHighlighter(){
 	var theSearchTerm = document.URL.split('?s=')[1];
 	if ( typeof theSearchTerm !== 'undefined' ){
-		theSearchTerm = theSearchTerm.replace(/\+/g, ' ').replace(/\%20/g, ' ').replace(/\%22/g, '');
+		var reg = new RegExp("(?![^<]+>)(" + preg_quote(theSearchTerm.replace(/(\+|%22|%20)/g, ' ')) + ")", "ig");
 		jQuery('article .entry-title a, article .entry-summary').each(function(i){
-			var searchFinder = jQuery(this).text().replace(new RegExp('(' + preg_quote(theSearchTerm) + ')', 'gi'), '<mark class="searchresultword">$1</mark>');
-			jQuery(this).html(searchFinder);
+			jQuery(this).html(function(i, html){
+				return html.replace(reg, '<mark class="searchresultword">$1</mark>');
+			});
 		});
 	}
-}
-
-function preg_quote(str){
-	return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
 }
 
 //Emphasize the search Terms
@@ -1501,10 +1487,10 @@ function singleResultDrawer(){
 		jQuery('#searchform input#s').val(theSearchTerm);
 	}
 
-	nebula.dom.document.on('click touch tap', '.headerdrawer .close', function(){
+	nebula.dom.document.on('click touch tap', '#header-drawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
-		jQuery('.headerdrawercon').slideUp();
+		jQuery('#header-drawer').slideUp();
 		return false;
 	});
 }
@@ -1563,7 +1549,7 @@ function showSuggestedPage(title, url){
 	var hostname = new RegExp(location.host);
 	if ( hostname.test(url) ){
 		jQuery('.suggestion').attr('href', url).text(title);
-		jQuery('#suggestedpage').slideDown();
+		jQuery('#header-drawer.suggestedpage').slideDown();
 		nebulaPrerender(url);
 	}
 }
@@ -1622,12 +1608,14 @@ function cf7Functions(){
 		formID = jQuery(this).parents('div.wpcf7').attr('id');
 
 		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomMetrics['formStarts'], 1);
+			ga('send', 'event', 'Contact', 'Started Form', 'Began filling out form ID: ' + formID);
 			formStarted[formID] = true;
 		}
 
 		nebulaTimer(formID, 'start', jQuery(this).attr('name'));
-		nebulaConversion('abandoned_form', 'Form ID: ' + formID);
+		nebulaConversion('abandoned_form', 'Form ID: ' + formID); //Prep an abandoned form conversion that is removed when successfully submitted.
 
 		//Individual form field timings
 		if ( typeof nebulaTimings[formID].lap[nebulaTimings[formID].laps-1] !== 'undefined' ){
@@ -3447,11 +3435,11 @@ function subnavExpanders(){
 //Affix the logo/navigation when scrolling passed it
 function initHeadroom(headerElement, footerElement, fixedElement){
 	if ( !headerElement ){
-		var headerElement = jQuery('#header');
+		var headerElement = jQuery('#header-section');
 	}
 
 	if ( !footerElement ){
-		var footerElement = jQuery('#footer');
+		var footerElement = jQuery('#footer-section');
 	}
 
 	if ( !fixedElement ){
@@ -3545,5 +3533,8 @@ function initHeadroom(headerElement, footerElement, fixedElement){
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
 jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
 
-//Parse dates (equivalent of PHP function). Source: https://raw.githubusercontent.com/kvz/phpjs/master/functions/datetime/strtotime.js
+//Escape required characters from a provided string. https://github.com/kvz/locutus
+function preg_quote(str, delimiter){return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');}
+
+//Parse dates (equivalent of PHP function). https://github.com/kvz/locutus
 function strtotime(e,t){function a(e,t,a){var n,r=c[t];"undefined"!=typeof r&&(n=r-w.getDay(),0===n?n=7*a:n>0&&"last"===e?n-=7:0>n&&"next"===e&&(n+=7),w.setDate(w.getDate()+n))}function n(e){var t=e.split(" "),n=t[0],r=t[1].substring(0,3),s=/\d+/.test(n),u="ago"===t[2],i=("last"===n?-1:1)*(u?-1:1);if(s&&(i*=parseInt(n,10)),o.hasOwnProperty(r)&&!t[1].match(/^mon(day|\.)?$/i))return w["set"+o[r]](w["get"+o[r]]()+i);if("wee"===r)return w.setDate(w.getDate()+7*i);if("next"===n||"last"===n)a(n,r,i);else if(!s)return!1;return!0}var r,s,u,i,w,c,o,d,D,f,g,l=!1;if(!e)return l;if(e=e.replace(/^\s+|\s+$/g,"").replace(/\s{2,}/g," ").replace(/[\t\r\n]/g,"").toLowerCase(),s=e.match(/^(\d{1,4})([\-\.\/\:])(\d{1,2})([\-\.\/\:])(\d{1,4})(?:\s(\d{1,2}):(\d{2})?:?(\d{2})?)?(?:\s([A-Z]+)?)?$/),s&&s[2]===s[4])if(s[1]>1901)switch(s[2]){case"-":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return l;case"/":return s[3]>12||s[5]>31?l:new Date(s[1],parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else if(s[5]>1901)switch(s[2]){case"-":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case".":return s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3;case"/":return s[1]>12||s[3]>31?l:new Date(s[5],parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3}else switch(s[2]){case"-":return s[3]>12||s[5]>31||s[1]<70&&s[1]>38?l:(i=s[1]>=0&&s[1]<=38?+s[1]+2e3:s[1],new Date(i,parseInt(s[3],10)-1,s[5],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case".":return s[5]>=70?s[3]>12||s[1]>31?l:new Date(s[5],parseInt(s[3],10)-1,s[1],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3:s[5]<60&&!s[6]?s[1]>23||s[3]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0,s[9]||0)/1e3):l;case"/":return s[1]>12||s[3]>31||s[5]<70&&s[5]>38?l:(i=s[5]>=0&&s[5]<=38?+s[5]+2e3:s[5],new Date(i,parseInt(s[1],10)-1,s[3],s[6]||0,s[7]||0,s[8]||0,s[9]||0)/1e3);case":":return s[1]>23||s[3]>59||s[5]>59?l:(u=new Date,new Date(u.getFullYear(),u.getMonth(),u.getDate(),s[1]||0,s[3]||0,s[5]||0)/1e3)}if("now"===e)return null===t||isNaN(t)?(new Date).getTime()/1e3|0:0|t;if(!isNaN(r=Date.parse(e)))return r/1e3|0;if(w=t?new Date(1e3*t):new Date,c={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6},o={yea:"FullYear",mon:"Month",day:"Date",hou:"Hours",min:"Minutes",sec:"Seconds"},D="(years?|months?|weeks?|days?|hours?|minutes?|min|seconds?|sec|sunday|sun\\.?|monday|mon\\.?|tuesday|tue\\.?|wednesday|wed\\.?|thursday|thu\\.?|friday|fri\\.?|saturday|sat\\.?)",f="([+-]?\\d+\\s"+D+"|(last|next)\\s"+D+")(\\sago)?",s=e.match(new RegExp(f,"gi")),!s)return l;for(g=0,d=s.length;d>g;g++)if(!n(s[g]))return l;return w.getTime()/1e3}

@@ -11,16 +11,17 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<?php the_breadcrumb(); ?>
-			<hr />
-		</div><!--/col-->
-	</div><!--/row-->
-</div><!--/container-->
+<div id="breadcrumb-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php nebula_breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/breadcrumb-section-->
 
-<div class="fullcontentcon">
+<div id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
@@ -33,6 +34,6 @@ get_header(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div>
+</div><!--/content-section-->
 
 <?php get_footer(); ?>

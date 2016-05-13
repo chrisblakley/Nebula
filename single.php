@@ -16,14 +16,17 @@ if ( get_post_format() ){
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div class="row">
-	<div class="col-md-12">
-		<?php the_breadcrumb(); ?>
-		<hr />
-	</div><!--/col-->
-</div><!--/row-->
+<div id="breadcrumb-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<?php nebula_breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/breadcrumb-section-->
 
-<div class="fullcontentcon">
+<div id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
@@ -61,8 +64,8 @@ get_header(); ?>
 									</div><!--/col-->
 								<?php endif; ?>
 							</div><!--/row-->
-						</div><!-- .entry-content -->
-					</article><!-- #post-## -->
+						</div>
+					</article>
 
 					<?php comments_template(); ?>
 				<?php endwhile; ?>
@@ -72,6 +75,6 @@ get_header(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div>
+</div><!--/content-section-->
 
 <?php get_footer(); ?>

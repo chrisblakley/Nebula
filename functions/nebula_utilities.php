@@ -434,6 +434,16 @@ function is_client($strict=false){
 	return false;
 }
 
+//Check if the current IP address or logged-in user is a developer or client.
+//Note: This does not account for user role (An admin could return false here). Check role separately.
+function is_staff($strict=false){
+	if ( is_dev($strict) || is_client($strict) ){
+		return true;
+	} else {
+		return false;
+	}
+}
+
 //Check if user is using the debug query string.
 //$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
 function is_debug($strict=false){
@@ -1220,8 +1230,6 @@ function nebula_render_scss($specific_scss=null, $child=false){
 
 		//Compile each SCSS file
 		foreach ( glob($stylesheets_directory . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
-			//$nebula_debug_start_time = microtime(true); //Debug timing start ******************************
-
 			$file_path_info = pathinfo($file);
 			if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
 				continue;
@@ -1235,10 +1243,38 @@ function nebula_render_scss($specific_scss=null, $child=false){
 
 			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
+
+				//If style.css has been edited after style.scss, save backup and stop compiling SCSS
+				if ( $file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0 ){
+					if ( !is_admin() && is_dev() ){
+						echo '<div style="position: fixed; left: 0; right: 0; margin: 20 auto; width: 100%; max-width: 640px; text-align: center; background: rgba(255, 255, 255, 0.97); overflow: hidden; border-radius: 15px; border: 1px solid #ca3838; box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.3); z-index: 99999;">
+							<h5 style="background: #ca3838; color: #fff; padding: 10px;">
+								<strong>Warning:</strong> Sass is enabled, but style.css has been manually updated!
+							</h5>
+							<p>
+								If <em>not</em> using Sass, disable it in <a href="' . home_url() . '/wp-admin/themes.php?page=nebula_options" target="_blank">Nebula Options &raquo;</a><br/><br/>
+								Otherwise, make all edits in style.scss in the <a href="https://github.com/chrisblakley/Nebula/tree/master/stylesheets/scss" target="_blank">/stylesheets/scss</a> directory.<br/>
+								A <strong title="' . $css_filepath . '.bak">style.css.bak</strong> backup has been made.<br/>
+								<span style="color: #58c026;">Delete or rename style.css when fixed to continue using Sass.</span>
+							</p>
+							<p><small>This message is only shown to developers.</small></p>
+						</div>';
+					} elseif ( is_admin() ){
+						echo '<div class="nebula_admin_notice error"><p><strong>WARNING:</strong> Sass is enabled, but style.css has been manually updated!</p>
+							<p>
+								If <em>not</em> using Sass, disable it in <a href="' . home_url() . '/wp-admin/themes.php?page=nebula_options" target="_blank">Nebula Options &raquo;</a><br/>
+								Otherwise, make all edits in style.scss in the <a href="https://github.com/chrisblakley/Nebula/tree/master/stylesheets/scss" target="_blank">/stylesheets/scss</a> directory.<br/>
+								A <strong title="' . $css_filepath . '.bak">style.css.bak</strong> backup has been made.<br/>
+								<span style="color: #58c026;">Delete or rename style.css when fixed to continue using Sass.</span>
+							</p>
+						</div>';
+					}
+
+					copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
+					return false;
+				}
+
 				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $specific_scss == 'all' ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
-
-					//echo '(re-processing: ' . $file_path_info['filename'] . ' ) ';
-
 					ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
 					WP_Filesystem();
 					global $wp_filesystem;
@@ -1249,12 +1285,11 @@ function nebula_render_scss($specific_scss=null, $child=false){
 
 						$compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
 						$enhanced_css = nebula_scss_variables($compiled_css); //Compile server-side variables into SCSS
-
 						$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
+						nebula_update_data('scss_last_processed', time());
 					}
 				}
 			}
-			//echo "Elapsed Nebula Debug time for <strong>" . $file_path_info['filename'] . "</strong> was: " . number_format((microtime(true)-$nebula_debug_start_time), 6, '.', '') . " seconds.<br/>"; //Debug timing end ************************
 		}
 
 		if ( !$child && is_child_theme() ){ //If not in the second (child) pass, and is a child theme.

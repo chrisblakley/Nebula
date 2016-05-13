@@ -24,33 +24,34 @@ get_header(); ?>
 	</div><!--/container-->
 </section>
 
-<div class="breadcrumbbar">
+<div id="breadcrumb-section" class="full">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<?php the_breadcrumb(); ?>
+				<?php nebula_breadcrumbs(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-	<hr />
-</div>
+</div><!--/breadcrumb-section-->
 
-<div class="container fullcontentcon">
-	<div class="row">
-		<div class="col-md-8">
-			<?php
-				$category_description = category_description();
-				if ( !empty($category_description) ){
-					echo $category_description . '';
-				}
-				get_template_part('loop', 'category');
-				wp_pagenavi();
-			?>
-		</div><!--/col-->
-		<div class="col-md-4">
-			<?php get_sidebar(); ?>
-		</div><!--/col-->
-	</div><!--/row-->
-</div><!--/container-->
+<div id="content-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php
+					$category_description = category_description();
+					if ( !empty($category_description) ){
+						echo $category_description . '';
+					}
+					get_template_part('loop', 'category');
+					wp_pagenavi();
+				?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/content-section-->
 
 <?php get_footer(); ?>

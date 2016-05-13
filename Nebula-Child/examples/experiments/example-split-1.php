@@ -24,44 +24,38 @@ get_header();
 /* Edit the code below to match the theme, or duplicate the desired template and rename the template (above). Remember to make the desired variations to test individually on each template! */
 ?>
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<?php the_breadcrumb(); ?>
-			<hr />
-		</div><!--/cols-->
-	</div><!--/row-->
-</div><!--/container-->
-
-<div class="fullcontentcon">
+<div id="breadcrumb-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-						<h1 class="entry-title"><?php the_title(); ?></h1>
-						<div class="entry-content">
-							<?php the_content(); ?>
-
-							<?php wp_link_pages( array( 'before' => '' . 'Pages:', 'after' => '' ) ); ?>
-							<?php if ( current_user_can('manage_options') ) : ?>
-								<div class="container entry-manage">
-									<div class="row">
-										<hr />
-										<?php nebula_manage('edit'); ?> <?php nebula_manage('modified'); ?>
-										<hr />
-									</div>
-								</div>
-							<?php endif; ?>
-						</div><!-- .entry-content -->
-					</article><!-- #post-## -->
-
-					<?php comments_template(); ?>
-				<?php endwhile; ?>
-			</div><!--/cols-->
+				<?php nebula_breadcrumbs(); ?>
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div>
+</div><!--/breadcrumb-section-->
+
+<div id="content-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
+					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<?php if ( has_post_thumbnail() ): ?>
+							<?php the_post_thumbnail(); ?>
+						<?php endif; ?>
+
+						<div class="entry-content">
+							<?php the_content(); ?>
+						</div>
+					</article>
+				<?php endwhile; ?>
+			</div><!--/col-->
+			<div class="col-md-4">
+				<?php get_sidebar(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</div><!--/content-section-->
 
 <?php get_footer(); ?>
 <?php do_action('nebula_footer'); ?>

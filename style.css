@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 4.0.7
+ Version: 4.0.12
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -783,6 +783,8 @@
 
  .background-purple,.bg-purple,.background-violet,.bg-violet { background:purple; }
 
+ .test { border:1px solid yellow; }
+
  html { height:auto; color:#444; }
 
  body { overflow-x:hidden; background:#f6f6f6; color:#444; }
@@ -1109,9 +1111,15 @@
 
  .ooyalacon .video { position:absolute; top:0; padding-bottom:0 !important; height:100% !important; }
 
- .borderimage #fullbodywrapper:before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:#000; background:rgba(0, 0, 0, 0); z-index:99995; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ .sharing-links { display:block; }
 
- .borderimage.mm-opening #fullbodywrapper:before { background:#000; background:rgba(0, 0, 0, 0.7); }
+ .sharing-links .nebula-social-button { display:inline-block; margin-right:10px; }
+
+ .sharing-links .nebula-social-button span { vertical-align:inherit !important; }
+
+ .borderimage #body-wrapper:before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:#000; background:rgba(0, 0, 0, 0); z-index:99995; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+
+ .borderimage.mm-opening #body-wrapper:before { background:#000; background:rgba(0, 0, 0, 0.7); }
 
  #mobilebarcon { position:relative; background:#0098d7; width:100%; height:42px; overflow:hidden; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
@@ -1235,37 +1243,37 @@
 
  }
 
- .headerdrawercon { position:relative; background:#000; background:rgba(0, 0, 0, 0.05); z-index:8888; }
+ #header-drawer { position:relative; background:#000; background:rgba(0, 0, 0, 0.05); z-index:8888; border-top:1px solid #ccc; border-bottom:1px solid #fff; padding-top:10px; padding-bottom:15px; text-align:center; font-size:12px; }
 
- .headerdrawercon .headerdrawer { position:relative; padding-top:10px; text-align:center; font-size:12px; }
+ #header-drawer:before { content:""; position:absolute; top:0; left:0; width:100%; height:1px; background:#fff; }
 
- .headerdrawercon .headerdrawer p { text-align:center; }
+ #header-drawer:after { content:""; position:absolute; bottom:0; left:0; width:100%; height:1px; background:#ccc; }
 
- .headerdrawercon .headerdrawer a.close { position:absolute; top:0; right:0; }
+ #header-drawer .close { position:absolute; top:0; right:5px; z-index:500; float:none; text-shadow:none; }
 
  #suggestedpage { display:none; }
 
- #herocon { position:relative; padding:150px 0; margin:0; overflow:hidden; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-nebula.jpg") fixed center center; background-size:cover; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ #hero-section { position:relative; padding:150px 0; margin:0; overflow:hidden; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-nebula.jpg") fixed center center; background-size:cover; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- #herocon .herobgcolor { position:absolute; top:0; left:0; width:100%; height:100%; background:#0098d7; background:rgba(0, 152, 215, 0.8); z-index:0; }
+ #hero-section .herobgcolor { position:absolute; top:0; left:0; width:100%; height:100%; background:#0098d7; background:rgba(0, 152, 215, 0.8); z-index:0; }
 
- #herocon h1 { position:relative; text-align:center; color:#fff; margin:0; padding:0; font-size:48px; font-weight:800; z-index:10; text-shadow:0 3px 16px rgba(0, 0, 0, 0.3); -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ #hero-section h1 { position:relative; text-align:center; color:#fff; margin:0; padding:0; font-size:48px; font-weight:800; z-index:10; text-shadow:0 3px 16px rgba(0, 0, 0, 0.3); -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
- @media (min-width:768px) { #herocon h1 { font-size:60px; }
-
- }
-
- @media (min-width:992px) { #herocon h1 { font-size:90px; }
+ @media (min-width:768px) { #hero-section h1 { font-size:60px; }
 
  }
 
- #herocon h2 { position:relative; text-align:center; color:#fff; margin:0; padding:0; font-size:18px; font-weight:300; z-index:1; text-shadow:0 3px 10px rgba(0, 0, 0, 0.5); -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
-
- @media (min-width:768px) { #herocon h2 { font-size:24px; }
+ @media (min-width:992px) { #hero-section h1 { font-size:90px; }
 
  }
 
- @media (min-width:992px) { #herocon h2 { font-size:32px; }
+ #hero-section h2 { position:relative; text-align:center; color:#fff; margin:0; padding:0; font-size:18px; font-weight:300; z-index:1; text-shadow:0 3px 10px rgba(0, 0, 0, 0.5); -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+
+ @media (min-width:768px) { #hero-section h2 { font-size:24px; }
+
+ }
+
+ @media (min-width:992px) { #hero-section h2 { font-size:32px; }
 
  }
 
@@ -1277,15 +1285,23 @@
 
  #bigheadingcon a:hover,#bigheadingcon a.hover { color:#aaa; }
 
- .breadcrumbbar { background-color:rgba(0, 0, 0, 0.0225); margin-bottom:30px; }
+ #breadcrumb-section { position:relative; margin-bottom:30px; z-index:1; }
 
- .breadcrumbcon { position:relative; z-index:1; }
+ #breadcrumb-section .nebula-breadcrumbs { position:relative; padding:3px 0; border-bottom:1px solid #fff; font-size:10px; }
 
- .breadcrumbcon .breadcrumbs { font-size:10px; }
+ #breadcrumb-section .nebula-breadcrumbs:after { content:""; position:absolute; bottom:0; left:0; width:100%; height:1px; background:#ccc; }
 
- .fullcontentcon { position:relative; margin-top:15px; }
+ #breadcrumb-section.full { background-color:rgba(0, 0, 0, 0.0225); border-bottom:1px solid #fff; }
 
- @media (min-width:544px) { .fullcontentcon { margin-top:30px; }
+ #breadcrumb-section.full:after { content:""; position:absolute; bottom:0; left:0; width:100%; height:1px; background:#ccc; }
+
+ #breadcrumb-section.full .nebula-breadcrumbs { border:none; }
+
+ #breadcrumb-section.full .nebula-breadcrumbs:after { display:none; }
+
+ #content-section { position:relative; margin-top:15px; }
+
+ @media (min-width:544px) { #content-section { margin-top:30px; }
 
  }
 
@@ -1306,14 +1322,6 @@
  .entry-meta .meta-item a:hover,.entry-meta .meta-item a.hover { color:#0098d7; }
 
  .entry-meta .post-tags { font-style:italic; }
-
- .entry-social .sharing-links { display:block; /* @TODO "Nebula" 0: If we want to have a button that slideToggles and adds .inactive on sharing links. If so, track clicks on this, and set a cookie so they are always hidden. */ }
-
- .entry-social .sharing-links.inactive { display:none; }
-
- .entry-social .sharing-links .nebula-social-button { display:inline-block; margin-right:10px; }
-
- .entry-social .sharing-links .nebula-social-button span { vertical-align:inherit !important; }
 
  .entry-content { margin-top:10px; font-size:14px; }
 
@@ -1341,7 +1349,7 @@
 
  .prevnext-post-link { font-size:12px; }
 
- #searchresults article,.archive .fullcontentcon article { margin-bottom:50px; }
+ #searchresults article,.archive .content-section article { margin-bottom:50px; }
 
  div.wp-pagenavi { float:right; margin-bottom:20px; }
 
@@ -1519,7 +1527,7 @@
 
  .mm-listview .mm-next:hover:after,.mm-listview .mm-next.hover:after { right:15px; }
 
- #footer { background:#0098d7; background:linear-gradient(to bottom, #0098d7, #00628b); }
+ #footer-section { background:#0098d7; background:linear-gradient(to bottom, #0098d7, #00628b); }
 
  .twitterago { font-size:12px; text-decoration:underline; }
 
@@ -1542,6 +1550,10 @@
  }
 
  .row.powerfootercon #powerfooter { position:relative; z-index:1000; }
+
+ .row.powerfootercon #powerfooter ul:before,.row.powerfootercon #powerfooter ul:after { content:""; display:table; }
+
+ .row.powerfootercon #powerfooter ul:after { clear:both; }
 
  .row.powerfootercon #powerfooter ul li.menu-item { position:relative; display:inline-block; float:left; margin:0 5px; padding:0 10px; width:180px; }
 
@@ -1573,9 +1585,9 @@
 
  a.footerlogo img { float:left; width:36px; height:36px; margin:2px 8px 0 0; }
 
- form.footer-search,#footer form.nebula-search-iconable { display:none; float:right; }
+ form.footer-search,#footer-section form.nebula-search-iconable { display:none; float:right; }
 
- @media (min-width:768px) { form.footer-search,#footer form.nebula-search-iconable { display:inline-block; }
+ @media (min-width:768px) { form.footer-search,#footer-section form.nebula-search-iconable { display:inline-block; }
 
  }
 
@@ -1653,4 +1665,4 @@
  }
 
 
-/* Processed on Sunday, May 8, 2016 at 5:19pm */
+/* Processed on Thursday, May 12, 2016 at 4:11pm */

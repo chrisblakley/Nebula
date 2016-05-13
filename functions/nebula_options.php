@@ -104,7 +104,7 @@ function nebula_sub_menu(){
 function nebula_default_data(){
 	$nebula_data_defaults = array(
 		'initialized' => '',
-		'scss_last_processed' => '0',
+		'scss_last_processed' => 0,
 		'next_version' => '',
 		'current_version' => nebula_version('raw'),
 		'current_version_date' => nebula_version('date'),
@@ -183,7 +183,7 @@ function nebula_default_options(){
 		'ataglance_metabox' => 'enabled',
 		'dev_metabox' => 'enabled',
 		'todo_metabox' => 'enabled',
-		'scss' => 'enabled',
+		'scss' => 'disabled',
 		'minify_css' => 'disabled',
 		'dev_stylesheets' => 'enabled',
 		'appcache_manifest' => 'disabled',
