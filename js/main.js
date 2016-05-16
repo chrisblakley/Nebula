@@ -960,6 +960,7 @@ function autocompleteSearch(){
 
 	jQuery("input#s, input.search").on('keypress paste', function(e){
 		thisSearchInput = jQuery(this);
+		jQuery(document).trigger('nebula_autocomplete_search_start');
 		nebulaTimer('autocompleteSearch', 'start');
 		nebulaTimer('autocompleteResponse', 'start');
 		if ( !thisSearchInput.hasClass('no-autocomplete') && !nebula.dom.html.hasClass('lte-ie8') && jQuery.trim(thisSearchInput.val()).length ){
@@ -989,16 +990,19 @@ function autocompleteSearch(){
 							data: request,
 						},
 						success: function(data){
+							jQuery(document).trigger('nebula_autocomplete_search_success');
 							ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 							if ( data ){
+								jQuery(document).trigger('nebula_autocomplete_search_results');
 								nebulaPrerender(data[0].link);
 								jQuery.each(data, function(index, value){
 									value.label = value.label.replace(/&#038;/g, "\&");
 								});
 								noSearchResults = '';
 							} else {
+								jQuery(document).trigger('nebula_autocomplete_search_no_results');
 								noSearchResults = ' (No Results)';
 								ga('set', gaCustomDimensions['sessionNotes'], sessionNote('No Search Results'));
 							}
@@ -1012,6 +1016,7 @@ function autocompleteSearch(){
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
+							jQuery(document).trigger('nebula_autocomplete_search_error');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							debounce(function(){
 								ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Autocomplete Search Error'));
@@ -1026,6 +1031,7 @@ function autocompleteSearch(){
 					event.preventDefault(); //Prevent input value from changing.
 				},
 				select: function(event, ui){
+					jQuery(document).trigger('nebula_autocomplete_search_selected');
 					ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
@@ -3447,7 +3453,7 @@ function initHeadroom(headerElement, footerElement, fixedElement){
 	}
 
 	if ( once('headroom padding') ){
-		needHeadroomPadding = ( fixedElement.css('position') === 'relative' )? true : false; //If positioned relative, then padding is needed.
+		needHeadroomPadding = ( typeof fixedElement.css('position') === 'undefined' || fixedElement.css('position') === 'relative' )? true : false; //If positioned relative, then padding is needed.
 	}
 
 	if ( typeof fixedElement === 'undefined' || !fixedElement.is('*') ){

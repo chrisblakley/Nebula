@@ -22,13 +22,11 @@
 		<meta class="theme-color" name="theme-color" content="<?php echo nebula_sass_color('primary'); ?>">
 		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula_sass_color('primary'); ?>">
 		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula_sass_color('primary'); ?>">
+		<?php get_template_part('includes/metadata'); //All text components of metadata. ?>
 
 		<link rel="manifest" href="<?php echo get_template_directory_uri() . $GLOBALS['manifest_json']; ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<?php nebula_prerender(); ?>
-
-		<?php get_template_part('includes/metadata'); //All text components of metadata. ?>
-		<?php get_template_part('includes/metagraphics'); //All graphic components of metadata. ?>
 
 		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
 		<?php wp_head(); ?>
