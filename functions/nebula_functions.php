@@ -1637,6 +1637,26 @@ function nebula_infinite_load(){
     exit;
 }
 
+//404 page suggestions
+add_action('wp', 'nebula_404_internal_suggestions');
+function nebula_404_internal_suggestions(){
+	if ( is_404() ){
+		global $slug_keywords;
+		$slug_keywords = end(array_filter(explode('/', nebula_url_components('filepath'))));
+
+		global $error_query;
+		$error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $slug_keywords)));
+		if ( is_plugin_active('relevanssi/relevanssi.php') ){
+			relevanssi_do_query($error_query);
+		}
+
+		if ( $slug_keywords == $error_query->posts[0]->post_name ){
+			global $error_404_exact_match;
+			$error_404_exact_match = $error_query->posts[0];
+		}
+	}
+}
+
 //Remove capital P core function
 remove_filter('the_title', 'capital_P_dangit', 11);
 remove_filter('the_content', 'capital_P_dangit', 11);

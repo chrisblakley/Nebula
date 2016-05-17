@@ -19,11 +19,18 @@
 		</div><!--/row-->
 	</div><!--/container-->
 <?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) || is_page_template('http_status.php') ): ?>
-	<div id="header-drawer" class="container-fluid suggestedpage">
+	<?php global $error_404_exact_match; ?>
+	<div id="header-drawer" class="container-fluid suggestedpage" style="display: <?php echo ( !empty($error_404_exact_match) )? 'block' : 'none' ?>">
 		<div class="row">
 			<div class="col-md-12">
 				<h3>Did you mean?</h3>
-				<p><a class="suggestion" href="#"></a></p>
+
+				<?php if ( !empty($error_404_exact_match) ): ?>
+					<p><a class="internal-suggestion" href="<?php echo get_permalink($error_404_exact_match->ID); ?>"><?php echo get_the_title($error_404_exact_match->ID); ?></a></p>
+				<?php else: ?>
+					<p><a class="gcse-suggestion" href="#"></a></p>
+				<?php endif; ?>
+
 				<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 			</div><!--/col-->
 		</div><!--/row-->

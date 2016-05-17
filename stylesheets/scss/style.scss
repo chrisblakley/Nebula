@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.0.16
+	Version: 4.0.17
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -23,13 +23,13 @@
 // ===========================
 
 html {height: auto; color: $text_color;}
-body {overflow-x: hidden; background: $background_color; color: $text_color;}
+body {overflow-x: hidden; background: $background_color; color: $text_color; -webkit-font-smoothing: antialiased;}
 button, input, select, textarea {color: $text_color; font-size: 14px;}
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 
 img,
-svg {vertical-align: middle;}
+svg {vertical-align: middle; max-width: 100%; height: auto;}
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical;}
 ul {list-style-position: inside;
@@ -38,7 +38,6 @@ ul {list-style-position: inside;
 }
 
 //Typography
-
 h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.15538em;
 	a {color: $primary_color;}
 }
@@ -57,10 +56,7 @@ a {@include link-colors($primary_color, $secondary_color); @include prefix((tran
 	.btn > &:hover {color: #fff;}
 }
 
-strong {font-weight: 600;}
-
 //Forms
-
 #form-messages {
 	.sending {color: $warning_color;}
 	.error {color: $danger_color;}
@@ -319,6 +315,10 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	}
 }
 
+#error-page-suggestions {margin-top: 50px;
+	h2 {font-size: 21px;}
+	.suggestion-title {font-size: 16px; line-height: 28px;}
+}
 
 // ===========================
 // Header

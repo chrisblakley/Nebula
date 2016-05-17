@@ -65,8 +65,6 @@
 			videoCompletions: '<?php echo nebula_option('cm_videocompletions'); //Hit, Integer ?>',
 			autocompleteSearches: '<?php echo nebula_option('cm_autocompletesearches'); //Hit, Integer ?>',
 			autocompleteSearchClicks: '<?php echo nebula_option('cm_autocompletesearchclicks'); //Hit, Integer ?>',
-			pageSuggestions: '<?php echo nebula_option('cm_pagesuggestions'); //Hit, Integer ?>',
-			pageSuggestionsAccepted: '<?php echo nebula_option('cm_pagesuggestionsaccepted'); //Hit, Integer ?>',
 			wordCount: '<?php echo nebula_option('cm_wordcount'); //Hit, Integer ?>',
 		}
 

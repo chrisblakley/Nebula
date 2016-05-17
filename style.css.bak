@@ -1115,11 +1115,11 @@
 
  .sharing-links .nebula-social-button span { vertical-align:inherit !important; }
 
- #error-page-suggestions { margin-top:50px; }
+ #error-page-suggestions { margin-top:30px; }
 
  #error-page-suggestions h2 { font-size:21px; }
 
- #error-page-suggestions .suggestion-title { font-size:16px; line-height:28px; }
+ #error-page-suggestions .suggestion-title { font-size:16px; margin-bottom:15px; }
 
  .borderimage #body-wrapper:before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:#000; background:rgba(0, 0, 0, 0); z-index:99995; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
@@ -1669,4 +1669,4 @@
  }
 
 
-/* Processed on Monday, May 16, 2016 at 8:59pm */
+/* Processed on Monday, May 16, 2016 at 7:19pm */

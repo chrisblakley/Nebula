@@ -886,7 +886,7 @@ function scrollDepth(){
 					}
 				}
 
-				ga('set', gaCustomDimensions['scrollDepth'], 'Reader');
+				ga('set', gaCustomDimensions['scrollDepth'], readerType);
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', 'event', 'Scroll Depth', 'Finished reading', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)');
 				ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
@@ -1513,19 +1513,23 @@ function pageSuggestion(){
 			var path = window.location.pathname;
 			var phrase = decodeURIComponent(jQuery.trim(path.replace(/\/+/g, ' '))) + ' ' + decodeURIComponent(jQuery.trim(queryStrings[0].replace(/\+/g, ' ')));
 			trySearch(phrase);
-
-			nebula.dom.document.on('mousedown touch tap', 'a.suggestion', function(e){
-				eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-				var suggestedPage = jQuery(this).text();
-
-				ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-				ga('set', gaCustomMetrics['pageSuggestionsAccepted'], 1);
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Suggestion Accepted'));
-				ga('send', 'event', 'Page Suggestion', 'Click', 'Suggested Page: ' + suggestedPage);
-			});
 		}
 	}
+
+	nebula.dom.document.on('mousedown touch tap', 'a.gcse-suggestion, a.internal-suggestion', function(e){
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Suggestion Accepted'));
+
+		if ( jQuery(this).hasClass('internal-suggestion') ){
+			var suggestionType = 'internal';
+		} else {
+			var suggestionType = 'GCSE';
+		}
+
+		ga('send', 'event', 'Page Suggestion', suggestionType, jQuery(this).text());
+	});
 }
 
 function trySearch(phrase){
@@ -1542,11 +1546,9 @@ function trySearch(phrase){
 	jQuery.getJSON(API_URL, queryParams, function(response){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		if ( response.items && response.items.length ){
-			ga('set', gaCustomMetrics['pageSuggestions'], 1);
-			ga('send', 'event', 'Page Suggestion', 'Suggested Page: ' + response.items[0].title, 'Requested URL: ' + window.location, {'nonInteraction': 1});
-			showSuggestedPage(response.items[0].title, response.items[0].link);
-		} else {
-			ga('send', 'event', 'Page Suggestion', 'No Suggestions Found', 'Requested URL: ' + window.location, {'nonInteraction': 1});
+			if ( response.items[0].link !== window.location.href ){
+				showSuggestedPage(response.items[0].title, response.items[0].link);
+			}
 		}
 	});
 }
@@ -1554,7 +1556,7 @@ function trySearch(phrase){
 function showSuggestedPage(title, url){
 	var hostname = new RegExp(location.host);
 	if ( hostname.test(url) ){
-		jQuery('.suggestion').attr('href', url).text(title);
+		jQuery('.gcse-suggestion').attr('href', url).text(title);
 		jQuery('#header-drawer.suggestedpage').slideDown();
 		nebulaPrerender(url);
 	}

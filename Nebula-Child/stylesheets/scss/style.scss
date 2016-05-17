@@ -26,6 +26,9 @@
 //Child theme partials.
 @import 'variables';
 
+::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
+::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
+
 //Default font override
 h1, h2, h3, h4, h5, h6,
 body,

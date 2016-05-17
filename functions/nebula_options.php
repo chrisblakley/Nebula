@@ -232,8 +232,6 @@ function nebula_default_options(){
 		'cm_videoplaytime' => '',
 		'cm_videostarts' => '',
 		'cm_videocompletions' => '',
-		'cm_pagesuggestions' => '',
-		'cm_pagesuggestionsaccepted' => '',
 		'cm_autocompletesearches' => '',
 		'cm_autocompletesearchclicks' => '',
 		'cm_wordcount' => '',
@@ -1402,22 +1400,6 @@ function nebula_options_page(){
 					<td>
 						<input class="metric" type="text" name="nebula_options[cm_autocompletesearchclicks]" value="<?php echo $nebula_options['cm_autocompletesearchclicks']; ?>" />
 						<p class="helper"><small>Tracks when a user clicks an autocomplete search result. <strong>Scope: Hit, Format: Integer</strong></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Page Suggestions&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="metric" type="text" name="nebula_options[cm_pagesuggestions]" value="<?php echo $nebula_options['cm_pagesuggestions']; ?>" />
-						<p class="helper"><small>Tracks when a page is suggested to the user. <strong>Scope: Hit, Format: Integer</strong></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Page Suggestions Accepted&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="metric" type="text" name="nebula_options[cm_pagesuggestionsaccepted]" value="<?php echo $nebula_options['cm_pagesuggestionsaccepted']; ?>" />
-						<p class="helper"><small>Tracks when a user clicks a page suggestion. <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 		    </table>

@@ -28,7 +28,27 @@ get_header(); ?>
 				<article id="post-0" class="post error404 not-found" role="main">
 					<h1 class="page-title">Not Found</h1>
 					<p>The page you requested could not be found.</p>
+
 					<?php echo nebula_search_form(); ?>
+
+					<?php if ( $error_query->have_posts() ): //$error_query is defined in nebula_functions.php ?>
+						<div id="error-page-suggestions">
+							<h2>Suggestions</h2>
+							<?php while ( $error_query->have_posts() ): ?>
+								<?php $error_query->the_post(); ?>
+
+								<h3 class="suggestion-title entry-title">
+									<?php if ( strpos(get_permalink(), $slug_keywords) ): ?>
+										<i class="fa fa-fw fa-star" title="Exact match"></i>
+									<?php endif; ?>
+
+									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a>
+								</h3>
+						    <?php endwhile; ?>
+							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', $slug_keywords); ?>">View all results &raquo;</a></p>
+						</div>
+					<?php endif; ?>
+					<?php wp_reset_query(); ?>
 				</article>
 			</div><!--/col-->
 			<div class="col-md-4">

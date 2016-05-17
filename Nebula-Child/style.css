@@ -785,6 +785,10 @@
 
  .nebula-grow:hover { transform:scale3d(1.2, 1.2, 1.2); }
 
+ ::selection { background:#d7f3ff; background:rgba(62, 198, 255, 0.25); color:#000; }
+
+ ::-moz-selection { background:#d7f3ff; background:rgba(62, 198, 255, 0.25); color:#000; }
+
  h1,h2,h3,h4,h5,h6,body,p,.btn,.skiplink,.field input,.field input[type="*"],.field textarea,.prepend .adjoined,.append .adjoined,.picker,.alert,.tab-nav > li > li > a,.tab-nav > li > a { font-family:'Open Sans', sans-serif; }
 
  h1,h2,h3,h4,h5,h6 { color:#444; }
@@ -796,4 +800,4 @@
  a:hover,a.hover { color:#95d600; }
 
 
-/* Processed on Monday, May 16, 2016 at 10:42am */
+/* Processed on Monday, May 16, 2016 at 5:34pm */
