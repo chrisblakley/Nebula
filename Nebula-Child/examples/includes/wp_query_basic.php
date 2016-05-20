@@ -2,24 +2,41 @@
 	<div class="col-md-12">
 		<?php
 			//Example "Event" post type query sorted by event time
-			//query_posts(array('post_type' => array('event'), 'meta_key' => 'event_date', 'orderby' => 'meta_value_num', 'order' => 'ASC', 'showposts' => 6, 'paged' => get_query_var('paged')));
+			$args = array('post_type' => array('event'), 'meta_key' => 'event_date', 'orderby' => 'meta_value_num', 'order' => 'ASC', 'showposts' => 6, 'paged' => get_query_var('paged'));
 		?>
 
 
 		<?php
 			/*
-				Example using loop.php (the "right" way to loop)
+				Example using loop.php
 				This allows all post listings to be consistent.
 			*/
 
-			//query_posts(array('showposts' => 4, 'paged' => get_query_var('paged')));
+			//query_posts($args);
 			//get_template_part('loop');
 		?>
 
 
-		<?php //Example using a custom loop ?>
-		<?php query_posts(array('showposts' => 4, 'paged' => get_query_var('paged'))); ?>
+		<?php //Example using a custom loop with query_posts (avoid if possible in favor of WP_Query) ?>
+		<?php query_posts($args); ?>
 		<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
+		    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
+
+		        <div class="entry-meta">
+		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
+		        </div>
+
+		        <div class="entry-content">
+		            <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
+		        </div>
+		    </article>
+	    <?php endwhile; ?>
+
+
+		<?php //Example using a custom loop with WP_Query ?>
+		<?php $example_query = new WP_Query($args); ?>
+		<?php if ( $example_query->have_posts() ) while ( $example_query->have_posts() ): $example_query->the_post(); ?>
 		    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
 
@@ -36,19 +53,19 @@
 
 		<?php
 			//If paginating, Pagenavi is recommended:
-			wp_pagenavi();
+			if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
+				wp_pagenavi(); //query_posts
+				//wp_pagenavi(array('query' => $cached_query)); //wp_query
+			}
 		?>
 
 
 		<?php
 			//Example using Nebula Infinite Load (see also infinite_load.php)
-			//nebula_infinite_load_query(array('showposts' => 4, 'paged' => 1));
+			//nebula_infinite_load_query($args);
 		?>
 
 
-		<?php
-			//Always reset queries!
-			wp_reset_query();
-		?>
+		<?php wp_reset_query(); //Always reset queries! ?>
 	</div><!--/col-->
 </div><!--/row-->

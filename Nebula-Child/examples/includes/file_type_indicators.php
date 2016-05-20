@@ -44,10 +44,7 @@
 		<h3>Icon Prevention</h3>
 		<a href="document.pdf" onclick="return false;"><img src="http://placehold.it/150x150" /></a><br /><br/>
 
-		<div class="medium primary btn">
-			<a href="document.pdf" onclick="return false;">PDF Button</a>
-		</div><br/>
+		<a class="btn btn-brand" href="document.pdf" onclick="return false;">PDF Button</a>
 		<p><em>Note: To add an icon to the button, use the standard Font Awesome syntax inside of the tag.</em></p>
-
 	</div><!--/col-->
 </div><!--/row-->

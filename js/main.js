@@ -42,6 +42,7 @@ jQuery(document).ready(function(){
 
 	//Helpers
 	addHelperClasses();
+	initBootstrapFunctions();
 	errorMitigation();
 	powerFooterWidthDist();
 	nebulaEqualize();
@@ -873,7 +874,6 @@ function scrollDepth(){
 				readEndTime = currentTime.getTime();
 				readTime = (readEndTime-readStartTime)/1000;
 
-				//Set Custom Dimensions
 				if ( gaCustomDimensions['scrollDepth'] ){
 					if ( readTime < 10 ){
 						var readerType = 'Previewer';
@@ -1840,19 +1840,6 @@ function conversionTracker(conversionpage){
 //Conditional JS Library Loading
 //This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading(){
-
-	//Only load bxslider library on a page that calls bxslider.
-	if ( jQuery('.bxslider').is('*') ){
-		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.js').done(function(){
-			bxSlider();
-		}).fail(function(){
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
-			ga('send', 'event', 'Error', 'JS Error', 'bxSlider could not be loaded.', {'nonInteraction': 1});
-		});
-		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/jquery.bxslider.min.css');
-	}
-
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').is('*') ){
 		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
@@ -1883,7 +1870,7 @@ function conditionalJSLoading(){
 	}
 
 	if ( jQuery('.flag').is('*') ){
-		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/css/flags.css');
+		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/libs/flags.css');
 	}
 }
 
@@ -2230,13 +2217,42 @@ function addHelperClasses(){
 	jQuery('a img').each(function(){
 		jQuery(this).parents('a').addClass('no-icon');
 	});
-	jQuery('.btn a').each(function(){
+	jQuery('a.btn').each(function(){
 		jQuery(this).addClass('no-icon');
 	});
+}
 
-	//Initialize Bootstrap features
-	if ( jQuery('[data-toggle="tooltip"]').length ){
+function initBootstrapFunctions(){
+	//Tooltips
+	if ( jQuery('[data-toggle="tooltip"]').is('*') ){
 		jQuery('[data-toggle="tooltip"]').tooltip();
+	}
+
+	//Carousels - Override this to customize options
+	if ( jQuery('.carousel').is('*') ){
+		jQuery('.carousel').each(function(){
+			if ( jQuery(this).hasClass('auto-indicators') ){
+				var carouselID = jQuery(this).attr('id');
+				var slideCount = jQuery(this).find('.carousel-item').length;
+
+				var i = 0;
+				var markup = '<ol class="carousel-indicators">'; //@TODO "Nebula" 0: Why is there no space between indicators when using this auto-indicators?
+				while ( i < slideCount ){
+					var active = ( i == 0 )? 'class="active"' : '';
+					markup += '<li data-target="#' + carouselID + '" data-slide-to="' + i + '" ' + active + '></li>';
+					i++;
+				}
+				markup += '</ol>';
+				jQuery(this).prepend(markup);
+				jQuery(this).find('.carousel-item').first().addClass('active');
+
+				if ( !jQuery(this).find('.carousel-inner').length ){
+					jQuery(this).find('.carousel-item').wrapAll('<div class="carousel-inner">');
+				}
+			}
+
+			jQuery(this).carousel();
+		});
 	}
 }
 
@@ -2331,7 +2347,7 @@ function nebulaScrollTo(element, milliseconds){
 	}
 
 	nebula.dom.document.on('click touch tap', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
-		if ( jQuery(this).parents('.mm-menu').is('*') ){
+		if ( jQuery(this).parents('.mm-menu, .carousel').is('*') ){
 			return false;
 		}
 
@@ -2859,7 +2875,8 @@ function chosenSelectOptions(){
 }
 
 function dataTablesActions(){
-	//DataTables search term highlighter. @TODO "Nebula" 0: This could certainly be improved.
+	//DataTables search term highlighter. @TODO "Nebula" 0: Not quite ready... When highlighting, all other styling is removed.
+/*
 	nebula.dom.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){
 		theSearchTerm = jQuery(this).val().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
 		var pattern = new RegExp("(" + theSearchTerm + ")", "gi");
@@ -2874,40 +2891,8 @@ function dataTablesActions(){
 			});
 		}
 	});
+*/
 }
-
-
-//Place all bxSlider events inside this function!
-function bxSlider(){
-	if ( typeof bxSlider !== 'undefined' ){
-		jQuery('.exampleslider').bxSlider({
-			mode: 'horizontal', //'horizontal', 'vertical', 'fade'
-			speed: 800,
-			captions: false,
-			auto: true,
-			pause: 6000,
-			autoHover: true,
-			adaptiveHeight: true,
-			useCSS: false,
-			easing: 'easeInOutCubic',
-			controls: false
-		});
-
-		jQuery('.heroslider').bxSlider({
-			mode: 'fade',
-			speed: 800,
-			captions: false,
-			pager: false,
-			auto: false,
-			pause: 10000,
-			autoHover: true,
-			adaptiveHeight: true,
-			useCSS: true,
-			controls: true
-		});
-	}
-}
-
 
 //Check for Youtube Videos
 function checkForYoutubeVideos(){
@@ -2939,17 +2924,17 @@ function onYouTubeIframeAPIReady(e){
 	pauseFlag = false;
 }
 function onPlayerError(e){
-	var videoTitle = e.target.F.videoData.title;
+	var videoInfo = e.target.getVideoData();
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Youtube Error'));
-	ga('send', 'event', 'Error', 'Youtube API', videoTitle + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
+	ga('send', 'event', 'Error', 'Youtube API', videoInfo.title + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
 }
 function onPlayerReady(e){
 	if ( typeof videoProgress === 'undefined' ){
 		videoProgress = {};
 	}
 
-	var videoInfo = e.target.F;
+	var videoInfo = e.target.getVideoData();
 	var id = videoInfo.video_id;
 	videoData[id] = {
 		platform: 'youtube', //The platform the video is hosted using.
@@ -2963,8 +2948,7 @@ function onPlayerReady(e){
 	};
 }
 function onPlayerStateChange(e){
-	var videoInfo = e.target.F;
-	var videoTitle = videoInfo.videoData.title;
+	var videoInfo = e.target.getVideoData();
 	var id = videoInfo.video_id;
 
 	videoData[id].current = videoInfo.currentTime;
@@ -2974,8 +2958,8 @@ function onPlayerStateChange(e){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
         ga('set', gaCustomDimensions['videoWatcher'], 'Started');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Play', videoTitle);
-        nebulaConversion('videos', 'Youtube Played: ' + videoTitle);
+        ga('send', 'event', 'Videos', 'Play', videoInfo.title);
+        nebulaConversion('videos', 'Youtube Played: ' + videoInfo.title);
         pauseFlag = true;
 		updateInterval = 500;
 
@@ -2987,8 +2971,8 @@ function onPlayerStateChange(e){
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-				ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': 1});
-				nebulaConversion('videos', 'Youtube Engaged: ' + videoTitle);
+				ga('send', 'event', 'Videos', 'Engaged', videoInfo.title, {'nonInteraction': 1});
+				nebulaConversion('videos', 'Youtube Engaged: ' + videoInfo.title);
 				videoData[id].engaged = true;
 			}
 		}, updateInterval);
@@ -2999,18 +2983,18 @@ function onPlayerStateChange(e){
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
-        ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoTitle); //Amount of time watched (can exceed video duration).
-        nebulaConversion('videos', 'Youtube Finished: ' + videoTitle);
+        ga('send', 'event', 'Videos', 'Finished', videoInfo.title, {'nonInteraction': 1});
+        ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
+        nebulaConversion('videos', 'Youtube Finished: ' + videoInfo.title);
     } else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
         ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Pause', videoTitle);
-        ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoTitle); //Amount of time watched, not the timestamp of when paused!
-        nebulaConversion('videos', 'Youtube Paused: ' + videoTitle);
+        ga('send', 'event', 'Videos', 'Pause', videoInfo.title);
+        ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoInfo.title); //Amount of time watched, not the timestamp of when paused!
+        nebulaConversion('videos', 'Youtube Paused: ' + videoInfo.title);
         pauseFlag = false;
     }
 }

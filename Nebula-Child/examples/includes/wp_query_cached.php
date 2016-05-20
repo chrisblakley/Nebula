@@ -21,6 +21,11 @@
 		    </div>
 
 		<?php endwhile; ?>
+		<?php
+			if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
+				wp_pagenavi(array('query' => $cached_query));
+			}
+		?>
 
 	</div><!--/col-->
 </div><!--/row-->

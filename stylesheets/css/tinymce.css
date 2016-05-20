@@ -195,15 +195,19 @@
 
  a.icon[href$=".swf"]:before { content:"\f1c9"; font-family:"FontAwesome"; color:#c31e24; margin-right:5px; font-weight:normal; }
 
- a.off,a.no-icon,a.noicon { text-decoration:none; border:none; }
+ a.off,a.no-icon,a.no-icons,a.noicon,a.noicons,.no-icon a,.no-icons a,.off a,a.btn { border-bottom:none !important; }
 
- a.off:before,a.no-icon:before,a.noicon:before { display:none; }
+ a.off:before,a.no-icon:before,a.no-icons:before,a.noicon:before,a.noicons:before,.no-icon a:before,.no-icons a:before,.off a:before,a.btn:before { display:none !important; }
 
  a.white,li.icon.white a { color:#fff; }
 
  a.white:hover,li.icon.white a:hover,a.white.hover,li.icon.white a.hover { color:#ccc; }
 
  a.white:before,li.icon.white a:before { color:#fff !important; }
+
+ .btn-brand { background-color:#0098d7; border-color:#0098d7; color:#fff; }
+
+ .btn-brand:hover { background:#0074a4; border-color:#0074a4; color:#fff; }
 
  a.phg { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
 
@@ -312,4 +316,4 @@
  body#tinymce.wp-editor a:hover,body#tinymce.wp-editor a.hover { color:#95d600; }
 
 
-/* Processed on Monday, May 16, 2016 at 10:42am */
+/* Processed on Wednesday, May 18, 2016 at 4:43pm */

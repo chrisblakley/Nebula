@@ -119,8 +119,8 @@ body:not(.wp-admin) {
 @include file_icon(css scss, f1c9, #30a9dc, true);
 @include file_icon(swf, f1c9, #c31e24, true);
 
-a.off, a.no-icon, a.noicon {text-decoration: none; border: none;
-	&:before {display: none;}
+a.off, a.no-icon, a.no-icons, a.noicon, a.noicons, .no-icon a, .no-icons a, .off a, a.btn {border-bottom: none !important;
+	&:before {display: none !important;}
 }
 a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	&:before {color: #fff !important;}
@@ -130,6 +130,10 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 // ===========================
 // Brand colors
 // ===========================
+
+.btn-brand {background-color: $primary_color; border-color: $primary_color; color: #fff;
+    &:hover {background: darken($primary_color, 10%); border-color: darken($primary_color, 10%); color: #fff;}
+}
 
 a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
 	&.white {background: url($template_directory + "/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;

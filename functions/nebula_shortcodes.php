@@ -503,9 +503,11 @@ function tooltip_shortcode($atts, $content=''){
 
 
 //Slider
+add_shortcode('carousel', 'slider_shortcode');
 add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('id' => false, 'mode' => 'fade', 'delay' => '8000', 'speed' => '1000', 'frame' => false, 'titles' => false), $atts) );
+	extract( shortcode_atts(array('id' => false, 'indicators' => true), $atts) );
+	$flags = get_flags($atts);
 
 	if ( !$id ){
 		$id = 'nebula-slider-' . rand(1, 10000);
@@ -513,74 +515,25 @@ function slider_shortcode($atts, $content=''){
 		$id = 'nebula-slider-' . $id;
 	}
 
-	$return = '<div id="' . $id . '" class="nebula-slider-con"><ul class="bxslider ' . $id . '" style="padding-left: 0;">';
+	if ( $indicators ){
+		$indicators = 'auto-indicators';
+	} else {
+		$indicators = '';
+	}
+
+	$return = '<div id="' . $id . '" class="carousel slide ' . $indicators . '" data-ride="carousel">';
 	$return .= parse_shortcode_content(do_shortcode($content));
-	$return .= '</ul></div><!--/nebula-shortcode-slider-con-->';
-
-	$flags = get_flags($atts);
-
-	if ( !in_array('frame', $flags) ){
-		$return .= '<style>
-			#' . $id . ' .bx-wrapper .bx-viewport {box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none; border: none; background: none;}
-		</style>';
-		if ( $mode == 'fade' ){
-			$return .= '<style>
-				#' . $id . ' .bx-wrapper .bx-viewport .nebula-slide {width: auto !important;}
-			</style>';
-		}
-	}
-
-	if ( in_array('titles', $flags) ){
-		$titles= 'true';
-	} else {
-		$titles= 'false';
-	}
-
-	if ( !in_array('controls', $flags) ){
-		$controls = 'false';
-		$auto = 'true';
-	} else {
-		$controls = 'true';
-		if ( in_array('delay', $flags) ){
-			$auto = 'true';
-		} else {
-			$auto = 'false';
-		}
-	}
-
-	$return .= '<script>
-		jQuery(window).on("load", function(){
-			setTimeout(function(){
-				jQuery(".' . $id . '").bxSlider({
-					mode: "' . $mode . '",
-					speed: ' . $speed . ',
-					captions: ' . $titles . ',
-					pager: false,
-					auto: ' . $auto . ',
-					pause: ' . $delay . ',
-					autoHover: true,
-					adaptiveHeight: true,
-					useCSS: true,
-					controls: ' . $controls . '
-				});
-			}, 1000);
-		});
-	</script>';
+	$return .= '<a class="left carousel-control" href="#' . $id . '" data-slide="prev"><span class="icon-prev"></span><span class="sr-only">Previous</span></a><a class="right carousel-control" href="#' . $id . '" data-slide="next"><span class="icon-next"></span><span class="sr-only">Next</span></a></div>';
 
 	return $return;
 } //end slider_shortcode()
 
 
 //Slide
+add_shortcode('carousel_item', 'slide_shortcode');
 add_shortcode('slide', 'slide_shortcode');
 function slide_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('title' => '', 'link' => '', 'target' => ''), $atts) );
-
-	if ( !empty($title) ){
-		$alt_and_title = 'alt="' . $title . '" title="' . $title . '"';
-	} else {
-		$alt_and_title = '';
-	}
+	extract( shortcode_atts(array('link' => '', 'target' => ''), $atts) );
 
 	if ( empty($link) ){
 		$linkopen = '';
@@ -594,7 +547,7 @@ function slide_shortcode($atts, $content=''){
 		$linkclose = '</a>';
 	}
 
-	return '<li class="nebula-slide clearfix">' . $linkopen . '<img src="' . $content . '" ' . $alt_and_title . '"/>' . $linkclose . '</li>';
+	return '<div class="carousel-item">' . $linkopen . '<img src="' . $content . '">' . $linkclose . '</div>'; //need <div class="carousel-inner">
 } //end slide_shortcode()
 
 

@@ -1232,6 +1232,7 @@ function nebula_render_scss($child=false){
 		//Compile each SCSS file
 		foreach ( glob($stylesheets_directory . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 			$file_path_info = pathinfo($file);
+
 			if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
 				continue;
 			}
@@ -1244,6 +1245,8 @@ function nebula_render_scss($child=false){
 
 			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
+
+				wp_mkdir_p($stylesheets_directory . '/css'); //Create the /css directory (in case it doesn't exist already).
 
 				//If style.css has been edited after style.scss, save backup but continue compiling SCSS
 				if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){
@@ -1289,7 +1292,6 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 	global $wp_filesystem;
 
 	$file_counter = 0;
-	$partials = array('variables', 'mixins', 'helpers');
 	$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
 	$dev_stylesheet_files = glob($directory . '/scss/dev/*css');
 	$dev_scss_file = $directory . '/scss/dev.scss';
@@ -1305,9 +1307,10 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 			//Include partials in dev.scss
 			if ( $file_counter == 1 ){
 				$import_partials = '';
-				foreach ( $partials as $partial ){
-					$import_partials .= "@import '" . $partial . "';\r\n";
-				}
+				$import_partials .= "@import '../../../../Nebula-master/stylesheets/scss/partials/variables';\r\n";
+				$import_partials .= "@import '../partials/variables';\r\n";
+				$import_partials .= "@import '../../../../Nebula-master/stylesheets/scss/partials/mixins';\r\n";
+				$import_partials .= "@import '../../../../Nebula-master/stylesheets/scss/partials/helpers';\r\n";
 
 				$wp_filesystem->put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
 			}
@@ -1316,14 +1319,15 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 			$empty_scss = ( $this_scss_contents == '' )? ' (empty)' : '';
 			$dev_scss_contents = $wp_filesystem->get_contents($directory . '/scss/dev.scss');
 
-			$dev_scss_contents .= "\r\n/* ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . $directory_uri . "/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
+			$dev_scss_contents .= "\r\n\r\n\r\n/*! ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . $directory_uri . "/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
 
 			$wp_filesystem->put_contents($directory . '/scss/dev.scss', $dev_scss_contents);
 		}
 	}
 	if ( $file_counter > 0 ){
 		add_action('wp_enqueue_scripts', function(){
-			wp_enqueue_style('nebula-dev_styles', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
+			wp_enqueue_style('nebula-dev_styles-parent', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
+			wp_enqueue_style('nebula-dev_styles-child', get_stylesheet_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
 		});
 	}
 }

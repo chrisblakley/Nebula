@@ -17,14 +17,12 @@
 //@TODO "Wordpress" 4: Change the Theme Name (above) to be the client/project and the year! Make sure the Template matches the Nebula parent theme directory name.
 //@TODO "Launch" 1: Replace /screenshot.png with an actual screenshot of the developed website (using the existing file dimensions).
 
-//Parent theme partials. Removing is not recommended!
+//Import partials
 @import '../../../../Nebula-master/stylesheets/scss/partials/variables';
+@import 'variables'; //Child theme variables
 @import '../../../../Nebula-master/stylesheets/scss/partials/mixins';
 @import '../../../../Nebula-master/stylesheets/scss/partials/helpers';
 @import '../../../../Nebula-master/stylesheets/scss/partials/animations';
-
-//Child theme partials.
-@import 'variables';
 
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}

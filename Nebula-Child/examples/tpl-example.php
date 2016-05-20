@@ -33,8 +33,8 @@ get_header(); ?>
 	</div><!--/container-->
 </div><!--/breadcrumb-section-->
 
-<?php if ( is_page(680) ){ //Hero Slider (bxslider)
-	include_once('includes/hero_slider_bxslider.php');
+<?php if ( is_page(680) ){ //Hero Carousel (Slider)
+	include_once('includes/hero_carousel.php');
 } ?>
 
 <?php if ( is_page(1610) ){ //Hero Video
@@ -284,8 +284,8 @@ get_header(); ?>
 							include_once('includes/push_notifications.php');
 						} ?>
 
-						<?php if ( is_page(760) ){ //bxSlider
-							include_once('includes/bxslider.php');
+						<?php if ( is_page(760) ){ //Bootstrap Carousel (Slider)
+							include_once('includes/bootstrap_carousel.php');
 						} ?>
 
 						<?php if ( is_page(785) ){ //Seamless Iframe
