@@ -35,7 +35,7 @@
 
 //.element {@include background-color(#333, 0.5);}
 @mixin background-color($color, $opacity: 1){
-    background: $color; background: rgba($color, $opacity);
+    background-color: $color; background-color: rgba($color, $opacity);
 }
 
 //.element {@include linear-gradient(#31B7D7, #EDAC7D);}

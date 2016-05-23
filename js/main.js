@@ -58,7 +58,7 @@ jQuery(document).ready(function(){
 	vimeoControls();
 	animationTriggers();
 
-	if ( jQuery('.home.page').is('*') ){
+	if ( jQuery('.home.page').length ){
 		initHeadroom(jQuery('#herocon'));
 	} else {
 		initHeadroom();
@@ -87,7 +87,7 @@ jQuery(window).on('load', function(){
 
 	//Focus on hero search field on load and hover.
 	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
-		if ( !jQuery('input:focus').is('*') ){
+		if ( !jQuery('input:focus').length ){
 			jQuery(this).focus();
 		}
 	});
@@ -127,7 +127,7 @@ jQuery(window).on('resize', function(){
 		nebulaEqualize();
 		mobileSearchPlaceholder();
 
-		if ( jQuery('.home.page').is('*') ){
+		if ( jQuery('.home.page').length ){
 			initHeadroom(jQuery('#herocon'));
 		} else {
 			initHeadroom();
@@ -594,7 +594,7 @@ function eventTracking(){
 		if ( jQuery.trim(linkText) === '' ){
 			if ( jQuery(this).find('img').attr('alt') ){
 				linkText = jQuery(this).find('img').attr('alt');
-			} else if ( jQuery(this).find('img').is('*') ){
+			} else if ( jQuery(this).find('img').length ){
 				var filePath = jQuery(this).attr('src');
 				linkText = jQuery(this).find('img').attr('src').substr(filePath.lastIndexOf("/")+1);
 			} else if ( jQuery(this).find('img').attr('title') ){
@@ -806,7 +806,7 @@ function eventTracking(){
 
 //Detect scroll depth for engagement and more accurate bounce rate
 function scrollDepth(){
-	var headerHeight = ( jQuery('#header-section').is('*') )? jQuery('#header-section').height() : 250;
+	var headerHeight = ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250;
 	var entryContent = jQuery('.entry-content');
 
 	//Flags
@@ -851,7 +851,7 @@ function scrollDepth(){
 		documentHeight = nebula.dom.document.height();
 
 		//When the user scrolls past the header
-		var becomesReaderAt = ( entryContent.is('*') )? entryContent.offset().top : headerHeight;
+		var becomesReaderAt = ( entryContent.length )? entryContent.offset().top : headerHeight;
 		if ( viewportBottom >= becomesReaderAt && !isReader ){
 			currentTime = new Date();
 			readStartTime = currentTime.getTime();
@@ -868,7 +868,7 @@ function scrollDepth(){
 		}
 
 		//When the reader reaches the end of the entry-content
-		if ( entryContent.is('*') ){
+		if ( entryContent.length ){
 			if ( viewportBottom >= entryContent.offset().top+entryContent.innerHeight() && !endContent ){
 				currentTime = new Date();
 				readEndTime = currentTime.getTime();
@@ -1565,7 +1565,7 @@ function showSuggestedPage(title, url){
 //Detections for events specific to predicting the next pageview.
 function nebulaPrerenderListeners(){
 	//Any post listing page
-	if ( jQuery('.first-post').is('*') ){
+	if ( jQuery('.first-post').length ){
 		nebulaPrerender(jQuery('.first-post').find('.entry-title a').attr('href'));
 	}
 
@@ -1574,7 +1574,7 @@ function nebulaPrerenderListeners(){
 		var oThis = jQuery(this);
 		if ( oThis.attr('href') !== jQuery('link#prerender').attr('href') && oThis.attr('target') !== '_blank' ){
 			var hoverLength = 500;
-			if ( jQuery('link#prerender').is('*') ){ //If prerender already exists, extend the hover time needed to update
+			if ( jQuery('link#prerender').length ){ //If prerender already exists, extend the hover time needed to update
 				hoverLength = 1000;
 			}
 
@@ -1594,7 +1594,7 @@ function nebulaPrerenderListeners(){
 //Actually prerender a URL
 function nebulaPrerender(url){
 	if ( url ){
-		if ( jQuery('link#prerender').is('*') ){
+		if ( jQuery('link#prerender').length ){
 			jQuery('link#prerender').attr('href', url); //Update prerender link
 		} else {
 			jQuery('head').append('<link id="prerender" rel="prerender prefetch" href="' + url + '>'); //Create new prerender link
@@ -1841,7 +1841,7 @@ function conversionTracker(conversionpage){
 //This could be done better I think (also, it runs too late in the stack).
 function conditionalJSLoading(){
 	//Only load Chosen library if 'chosen-select' class exists.
-	if ( jQuery('.chosen-select').is('*') ){
+	if ( jQuery('.chosen-select').length ){
 		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
 			chosenSelectOptions();
 		}).fail(function(){
@@ -1853,7 +1853,7 @@ function conditionalJSLoading(){
 	}
 
 	//Only load dataTables library if dataTables table exists.
-    if ( jQuery('.dataTables_wrapper').is('*') ){
+    if ( jQuery('.dataTables_wrapper').length ){
         jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/js/jquery.dataTables.min.js').done(function(){
             nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/css/jquery.dataTables.min.css');
 			dataTablesActions();
@@ -1864,12 +1864,17 @@ function conditionalJSLoading(){
         });
     }
 
-	if ( jQuery('pre.nebula-code').is('*') || jQuery('pre.nebula-pre').is('*') ){
+	//Only load tether if Tooltips exist
+	if ( jQuery('[data-toggle="tooltip"]').length ){
+		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/css/tether.min.css');
+	}
+
+	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-pre').length ){
 		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/css/pre.css');
 		nebula_pre();
 	}
 
-	if ( jQuery('.flag').is('*') ){
+	if ( jQuery('.flag').length ){
 		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/libs/flags.css');
 	}
 }
@@ -1901,11 +1906,13 @@ function nebulaLoadCSS(url){
    ========================================================================== */
 
 //Places - Address Autocomplete
+//This uses the Google Maps Geocoding API
+//The passed selector must be an input element
 function nebulaAddressAutocomplete(autocompleteInput){
-	if ( jQuery(autocompleteInput).is('*') ){ //If the addressAutocomplete ID exists
+	if ( jQuery(autocompleteInput).length && jQuery(autocompleteInput).is('input') ){ //If the addressAutocomplete ID exists
 		jQuery.getScript('https://www.google.com/jsapi', function(){
 		    google.load('maps', '3', {
-			    other_params: 'libraries=places',
+			    other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
 			    callback: function(){
 					addressAutocomplete = new google.maps.places.Autocomplete(
 						jQuery(autocompleteInput)[0],
@@ -1986,7 +1993,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 					});
 
 					jQuery(autocompleteInput).on('focus', function(){
-						if ( navigator.geolocation ){
+						if ( nebula.site.protocol === 'https' && navigator.geolocation ){
 							navigator.geolocation.getCurrentPosition(function(position){ //Bias to the user's geographical location.
 								var geolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 								var circle = new google.maps.Circle({
@@ -1997,7 +2004,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 							});
 						}
 					}).on('keydown', function(e){
-						if ( e.which === 13 && jQuery('.pac-container:visible').is('*') ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
+						if ( e.which === 13 && jQuery('.pac-container:visible').length ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
 							return false;
 						}
 					});
@@ -2021,7 +2028,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 function requestPosition(){
     jQuery.getScript('https://www.google.com/jsapi', function(){
 	    google.load('maps', '3', {
-		    other_params: 'libraries=places',
+		    other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
 		    callback: function(){
 		        var nav = null;
 			    if (nav === null){
@@ -2127,6 +2134,7 @@ function errorCallback(error){
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
 }
 
+
 //Rough address Lookup
 //If needing to look up an address that isn't the user's geolocation based on lat/long, consider a different function. This one stores user data.
 function addressLookup(lat, lng){
@@ -2136,14 +2144,14 @@ function addressLookup(lat, lng){
 		if ( status === google.maps.GeocoderStatus.OK ){
 			if ( results ){
 				nebula.session.geolocation.address = {
-					number: results[0].address_components[0].long_name,
-					street: results[0].address_components[1].long_name,
-					city: results[0].address_components[2].long_name,
-					town: results[0].address_components[3].long_name,
-					county: results[0].address_components[4].long_name,
-					state: results[0].address_components[5].long_name,
-					country: results[0].address_components[6].long_name,
-					zip: results[0].address_components[7].long_name,
+					number: extractFromAddress(results[0].address_components, "street_number"),
+					street: extractFromAddress(results[0].address_components, "route"),
+					city: extractFromAddress(results[0].address_components, "locality"),
+					town: extractFromAddress(results[0].address_components, "administrative_area_level_3"),
+					county: extractFromAddress(results[0].address_components, "administrative_area_level_2"),
+					state: extractFromAddress(results[0].address_components, "administrative_area_level_1"),
+					country: extractFromAddress(results[0].address_components, "country"),
+					zip: extractFromAddress(results[0].address_components, "postal_code"),
 					formatted: results[0].formatted_address,
 					place: {
 						id: results[0].place_id,
@@ -2158,6 +2166,19 @@ function addressLookup(lat, lng){
 			}
 		}
 	});
+}
+
+//Extract address components from Google Maps Geocoder
+function extractFromAddress(components, type){
+	for ( var i = 0; i < components.length; i++ ){
+		for ( var j = 0; j < components[i].types.length; j++ ){
+			if ( components[i].types[j] === type ){
+				return components[i].long_name;
+			}
+		}
+	}
+
+	return '';
 }
 
 //Lookup place information
@@ -2177,7 +2198,7 @@ function placeLookup(placeID){
 					ratings: {
 						rating: place.rating,
 						total: place.user_ratings_total,
-						reviews: place.reviews.length
+						reviews: ( typeof place.reviews !== 'undefined' )? place.reviews.length : 0,
 					},
 					utc_offset: place.utc_offset,
 				}
@@ -2224,12 +2245,12 @@ function addHelperClasses(){
 
 function initBootstrapFunctions(){
 	//Tooltips
-	if ( jQuery('[data-toggle="tooltip"]').is('*') ){
+	if ( jQuery('[data-toggle="tooltip"]').length ){
 		jQuery('[data-toggle="tooltip"]').tooltip();
 	}
 
 	//Carousels - Override this to customize options
-	if ( jQuery('.carousel').is('*') ){
+	if ( jQuery('.carousel').length ){
 		jQuery('.carousel').each(function(){
 			if ( jQuery(this).hasClass('auto-indicators') ){
 				var carouselID = jQuery(this).attr('id');
@@ -2347,7 +2368,7 @@ function nebulaScrollTo(element, milliseconds){
 	}
 
 	nebula.dom.document.on('click touch tap', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
-		if ( jQuery(this).parents('.mm-menu, .carousel').is('*') ){
+		if ( jQuery(this).parents('.mm-menu, .carousel').length ){
 			return false;
 		}
 
@@ -2753,7 +2774,7 @@ function nebula_pre(){
 
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){
-		if ( !jQuery(this).parent('.nebula-pre-con').is('*') ){
+		if ( !jQuery(this).parent('.nebula-pre-con').length ){
 			lang = jQuery.trim(jQuery(this).attr('class').replace('nebula-code', ''));
 			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-pre-con clearfix ' + lang.toLowerCase() + '"></div>');
 			jQuery(this).parents('.nebula-pre-con').prepend('<span class="nebula-pre nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
@@ -3001,7 +3022,7 @@ function onPlayerStateChange(e){
 
 function vimeoControls(){
 	//Load the Vimeo API script (froogaloop) remotely (with local backup)
-	if ( jQuery('.vimeo').is('*') ){
+	if ( jQuery('.vimeo').length ){
         jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
@@ -3319,7 +3340,7 @@ function mmenus(){
 		var mobileNav = jQuery('#mobilenav');
 		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
 
-		if ( mobileNav.is('*') ){
+		if ( mobileNav.length ){
 			mobileNav.mmenu({
 				//Options
 				offCanvas: {
@@ -3387,7 +3408,7 @@ function mmenus(){
 			//Close mmenu on back button click
 			if ( window.history && window.history.pushState ){
 				window.addEventListener("popstate", function(e){
-					if ( jQuery('html.mm-opened').is('*') ){
+					if ( jQuery('html.mm-opened').length ){
 						mobileNav.data('mmenu').close();
 						e.stopPropagation();
 					}
@@ -3442,11 +3463,11 @@ function initHeadroom(headerElement, footerElement, fixedElement){
 		needHeadroomPadding = ( typeof fixedElement.css('position') === 'undefined' || fixedElement.css('position') === 'relative' )? true : false; //If positioned relative, then padding is needed.
 	}
 
-	if ( typeof fixedElement === 'undefined' || !fixedElement.is('*') ){
+	if ( typeof fixedElement === 'undefined' || !fixedElement.length ){
 		return false;
 	}
 
-	if ( typeof headerElement === 'undefined' || !headerElement.is('*') ){
+	if ( typeof headerElement === 'undefined' || !headerElement.length ){
 		headerElement = nebula.dom.body; //@TODO: If this fallback happens, the padding would need to move to the top.
 	}
 

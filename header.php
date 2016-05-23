@@ -35,7 +35,6 @@
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="body-wrapper">
-
 			<div id="header-section">
 				<div id="fb-root"></div>
 

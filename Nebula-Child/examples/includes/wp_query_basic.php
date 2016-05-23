@@ -21,6 +21,10 @@
 		<?php query_posts($args); ?>
 		<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 		    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+		        <?php if ( has_post_thumbnail() ): ?>
+					<a href="<?php echo get_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
+				<?php endif; ?>
+
 		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 		        <div class="entry-meta">
@@ -38,6 +42,10 @@
 		<?php $example_query = new WP_Query($args); ?>
 		<?php if ( $example_query->have_posts() ) while ( $example_query->have_posts() ): $example_query->the_post(); ?>
 		    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+		        <?php if ( has_post_thumbnail() ): ?>
+					<a href="<?php echo get_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
+				<?php endif; ?>
+
 		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 		        <div class="entry-meta">

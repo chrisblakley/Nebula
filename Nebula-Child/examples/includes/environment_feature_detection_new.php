@@ -102,9 +102,6 @@
 			jQuery('#actualload').html('<span class="datapoint data-unavailable">Unavailable</span>');
 		}
 
-		js_print_bool(nebula.user.client.capabilities.adblock, '#adblock');
-		js_print_bool(nebula.user.client.capabilities.gablock, '#gablock');
-
 		jQuery('#resolution').html(window.screen.width + 'px x ' + window.screen.height + 'px'); //Screen Resolution Detection
 		jQuery('#viewportsize').html(jQuery(window).width() + 'px x ' + jQuery(window).height() + 'px'); //Viewport Detection
 		jQuery('#pixeldensity').html(window.devicePixelRatio); //Pixel Density Detection
@@ -113,18 +110,6 @@
 		var cookiesEnabled = ( navigator.cookieEnabled === true )? 'Enabled' : 'Disabled';
 		jQuery('#cookies').html(cookiesEnabled);
 
-
-		//Flash
-		if ( typeof swfobject !== 'undefined' ) {
-			var playerVersion = swfobject.getFlashPlayerVersion();
-			if ( playerVersion.major != '0' ) { //Working?
-				var majorVersion = playerVersion.major;
-				var flashEnabled = playerVersion['major'] + '.' + playerVersion['minor'] + '.' + playerVersion['release'];
-				jQuery('#flash').html('v' + flashEnabled);
-			} else {
-				jQuery('#flash').html('Not Supported');
-			}
-		}
 
 		//Network Connection
 		var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || false;
@@ -139,7 +124,7 @@
 
 
 		//Facebook
-		if ( typeof nebula.user.facebook !== 'undefined' && typeof nebula.user.facebook.id !== 'undefined' ){
+		if ( has(nebula, 'user.facebook.id') ){
 			jQuery('.fbdata').removeClass('hidden');
 			jQuery('#fbid').html(nebula.user.facebook.id);
 			jQuery('#fburl').html(nebula.user.facebook.url);
@@ -150,12 +135,12 @@
 		}
 
 		//Geolocation
-		if ( typeof nebula.session.geolocation !== 'undefined' ){
+		if ( has(nebula, 'session.geolocation.coordinates.latitude') ){
 			jQuery('.geodata').removeClass('hidden');
 			jQuery('#geocoords').html(nebula.session.geolocation.coordinates.latitude + ', ' + nebula.session.geolocation.coordinates.longitude);
 			jQuery('#geoacc').html(nebula.session.geolocation.accuracy.meters + 'meters (' + nebula.session.geolocation.accuracy.miles + ' miles)');
 
-			if ( typeof nebula.session.geolocation.address.number !== 'undefined' ){
+			if ( has(nebula, 'session.geolocation.address.number') ){
 				jQuery('.geoaddressdata').removeClass('hidden');
 				jQuery('#geostreet').html(nebula.session.geolocation.address.number + ' ' + nebula.session.geolocation.address.street);
 				jQuery('#geocity').html(nebula.session.geolocation.address.city);
@@ -165,7 +150,7 @@
 				jQuery('#geocounty').html(nebula.session.geolocation.address.county);
 				jQuery('#geocountry').html(nebula.session.geolocation.address.country);
 
-				if ( typeof nebula.session.geolocation.address.place.name !== 'undefined' ){
+				if ( has(nebula, 'session.geolocation.address.place.name') ){
 					jQuery('.geoplacedata').removeClass('hidden');
 					jQuery('#geoplaceid').html(nebula.session.geolocation.address.place.place_id);
 					jQuery('#geoplacename').html(nebula.session.geolocation.address.place);
@@ -193,7 +178,7 @@
 	    var bounds = new google.maps.LatLngBounds();
 
 		//Detected Location Marker
-		if ( typeof nebula.session.geolocation.coordinates.latitude !== 'undefined' ){
+		if ( has(nebula, 'session.geolocation.coordinates.latitude') ){
 			var detectLoc = new google.maps.LatLng(nebula.session.geolocation.coordinates.latitude, nebula.session.geolocation.coordinates.longitude);
 			marker = new google.maps.Marker({
 		        position: detectLoc,
@@ -327,7 +312,7 @@
 <div class="row">
 	<div class="col-md-12">
 
-		<table id="detections">
+		<table id="detections" class="table">
 			<tr>
 				<td colspan="2" class="heading">Hardware</td>
 			</tr>

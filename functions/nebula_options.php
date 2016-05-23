@@ -178,11 +178,7 @@ function nebula_default_options(){
 		'theme_update_notification' => 'enabled',
 		'wp_core_updates_notify' => 'enabled',
 		'plugin_update_warning' => 'enabled',
-		'welcome_panel' => 'enabled',
 		'unnecessary_metaboxes' => 'enabled',
-		'ataglance_metabox' => 'enabled',
-		'dev_metabox' => 'enabled',
-		'todo_metabox' => 'enabled',
 		'scss' => 'disabled',
 		'minify_css' => 'disabled',
 		'dev_stylesheets' => 'enabled',
@@ -502,7 +498,7 @@ function nebula_options_page(){
 		        <tr class="short" valign="top">
 		        	<th scope="row">Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[keywords]" value="<?php echo $nebula_options['keywords']; ?>" placeholder="Keywords" style="width: 392px;" />
+						<input type="text" name="nebula_options[keywords]" value="<?php echo $nebula_options['keywords']; ?>" placeholder="Keywords" />
 						<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata. Note: This meta is rarely used by site crawlers.</small></p>
 					</td>
 		        </tr>
@@ -531,17 +527,17 @@ function nebula_options_page(){
 		        <tr class="short" valign="top">
 		        	<th scope="row">Geolocation&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						Lat: <input type="text" name="nebula_options[latitude]" value="<?php echo $nebula_options['latitude']; ?>" placeholder="43.0536854" style="width: 100px;" />
-						Long: <input type="text" name="nebula_options[longitude]" value="<?php echo $nebula_options['longitude']; ?>" placeholder="-76.1654569" style="width: 100px;" />
+						Lat: <input type="text" name="nebula_options[latitude]" value="<?php echo $nebula_options['latitude']; ?>" placeholder="43.0536854" style="width: 120px;" />
+						Long: <input type="text" name="nebula_options[longitude]" value="<?php echo $nebula_options['longitude']; ?>" placeholder="-76.1654569" style="width: 120px;" />
 						<p class="helper"><small>The latitude and longitude of the physical location (or headquarters if multiple locations). Use the format "43.0536854".</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Address&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[street_address]" value="<?php echo $nebula_options['street_address']; ?>" placeholder="760 West Genesee Street" style="width: 392px;" /><br />
+						<input type="text" name="nebula_options[street_address]" value="<?php echo $nebula_options['street_address']; ?>" placeholder="760 West Genesee Street" /><br />
 						<input type="text" name="nebula_options[locality]" value="<?php echo $nebula_options['locality']; ?>" placeholder="Syracuse"  style="width: 194px;" />
-						<input type="text" name="nebula_options[region]" value="<?php echo $nebula_options['region']; ?>" placeholder="NY"  style="width: 40px;" />
+						<input type="text" name="nebula_options[region]" value="<?php echo $nebula_options['region']; ?>" placeholder="NY"  style="width: 70px;" />
 						<input type="text" name="nebula_options[postal_code]" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204"  style="width: 70px;" />
 						<input type="text" name="nebula_options[country_name]" value="<?php echo $nebula_options['country_name']; ?>" placeholder="USA"  style="width: 70px;" />
 						<p class="helper"><small>The address of the location (or headquarters if multiple locations).</small></p>
@@ -829,7 +825,7 @@ function nebula_options_page(){
 			    	<tr class="short" valign="top">
 			        	<th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
-							<input type="text" value="Future updates have been deemed incompatible." readonly style="width: 392px;" />
+							<input type="text" value="Future updates have been deemed incompatible." readonly />
 							<p class="helper"><small>A future version of Nebula was deemed incompatible for automated updates. Nebula would need to be manually updated.</small></p>
 						</td>
 			        </tr>
@@ -883,18 +879,6 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
-		        	<th scope="row">Welcome Panel&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_options[welcome_panel]">
-							<option disabled>Default: Enabled</option>
-							<option value="enabled" <?php selected('enabled', $nebula_options['welcome_panel']); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', $nebula_options['welcome_panel']); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Control the Welcome Panel with useful links related to the project. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-				<tr class="short" valign="top">
 		        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[unnecessary_metaboxes]">
@@ -903,42 +887,6 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', $nebula_options['unnecessary_metaboxes']); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Remove metaboxes on the Dashboard that are not necessary for most users. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-				<tr class="short" valign="top">
-		        	<th scope="row">Nebula At a Glance Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_options[ataglance_metabox]">
-							<option disabled>Default: Enabled</option>
-							<option value="enabled" <?php selected('enabled', $nebula_options['ataglance_metabox']); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', $nebula_options['ataglance_metabox']); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Replaces the core WordPress "At a Glance" metabox with more information. <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_options[dev_metabox]">
-							<option disabled>Default: Enabled</option>
-							<option value="enabled" <?php selected('enabled', $nebula_options['dev_metabox']); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', $nebula_options['dev_metabox']); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Control the Developer Information Metabox with useful server information. Requires a user with a matching email address domain to the "Developer Email Domains" setting (under the Administration tab). <em>(Default: Enabled)</em></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">TODO Manager Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_options[todo_metabox]">
-							<option disabled>Default: Enabled</option>
-							<option value="enabled" <?php selected('enabled', $nebula_options['todo_metabox']); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', $nebula_options['todo_metabox']); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Finds TODO messages in theme files to track open issues. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -1019,7 +967,7 @@ function nebula_options_page(){
 				<tr valign="top">
 		        	<th scope="row">Valid Hostnames&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[hostnames]" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" style="width: 392px;" />
+						<input type="text" name="nebula_options[hostnames]" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" />
 						<p class="helper"><small>
 							These help generate regex patterns for Google Analytics filters. It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br />
 							Include this RegEx pattern for a filter/segment <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
@@ -1030,7 +978,7 @@ function nebula_options_page(){
 				<tr valign="top">
 		        	<th scope="row">Google Search Console Verification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input id="nebula_google_search_console_verification" type="text" name="nebula_options[google_search_console_verification]" value="<?php echo $nebula_options['google_search_console_verification']; ?>" placeholder="AAAAAA..." style="width: 392px;" />
+						<input id="nebula_google_search_console_verification" type="text" name="nebula_options[google_search_console_verification]" value="<?php echo $nebula_options['google_search_console_verification']; ?>" placeholder="AAAAAA..." />
 						<p class="helper"><small>This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Search Console</a>. Note: Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</small></p>
 					</td>
 		        </tr>
@@ -1423,8 +1371,8 @@ function nebula_options_page(){
 				<tr valign="top">
 		        	<th scope="row">Google Public API&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						Browser Key: <input type="text" name="nebula_options[google_browser_api_key]" value="<?php echo $nebula_options['google_browser_api_key']; ?>" style="width: 392px;" /><br />
-						Server Key: <input type="text" name="nebula_options[google_server_api_key]" value="<?php echo $nebula_options['google_server_api_key']; ?>" style="width: 392px;" />
+						Browser Key: <input type="text" name="nebula_options[google_browser_api_key]" value="<?php echo $nebula_options['google_browser_api_key']; ?>" /><br />
+						Server Key: <input type="text" name="nebula_options[google_server_api_key]" value="<?php echo $nebula_options['google_server_api_key']; ?>" />
 						<p class="helper"><small>In the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a> make a new project (if you don't have one yet). Under "Credentials" create a new key.<br />Your current server IP address is <strong><?php echo gethostbyname(gethostname()); ?></strong> <em>(for server key whitelisting)</em>. Do not use the Server Key in JavaScript or any client-side code!</small></p>
 					</td>
 		        </tr>
@@ -1432,7 +1380,7 @@ function nebula_options_page(){
 		        <tr valign="top">
 		        	<th scope="row">Google Custom Search Engine&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						Engine ID: <input type="text" name="nebula_options[cse_id]" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" style="width: 392px;" /><br />
+						Engine ID: <input type="text" name="nebula_options[cse_id]" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" /><br />
 						<p class="helper"><small>Google Custom Search Engine (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
 					</td>
 		        </tr>
@@ -1440,7 +1388,7 @@ function nebula_options_page(){
 				<tr valign="top">
 		        	<th scope="row">Google Cloud Messaging Sender ID*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input id="nebula_gcm_sender_id" type="text" name="nebula_options[gcm_sender_id]" value="<?php echo $nebula_options['gcm_sender_id']; ?>" placeholder="000000000000" style="width: 392px;" />
+						<input id="nebula_gcm_sender_id" type="text" name="nebula_options[gcm_sender_id]" value="<?php echo $nebula_options['gcm_sender_id']; ?>" placeholder="000000000000" />
 						<p class="helper"><small>The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a>. This is the "Project number" within the project box on the Dashboard. Do not include parenthesis or the "#" symbol. This is used for push notifications. <strong>*Note: This feature is still in development and not currently active!</strong></small></p>
 					</td>
 		        </tr>
@@ -1448,7 +1396,7 @@ function nebula_options_page(){
 				<tr valign="top">
 		        	<th scope="row">Disqus Shortname&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[disqus_shortname]" value="<?php echo $nebula_options['disqus_shortname']; ?>" style="width: 392px;" />
+						<input type="text" name="nebula_options[disqus_shortname]" value="<?php echo $nebula_options['disqus_shortname']; ?>" />
 						<p class="helper"><small> Enter your Disqus shortname here. <a href="https://disqus.com/admin/create/" target="_blank">Sign-up for an account here</a>. In your <a href="https://<?php echo $nebula_options['disqus_shortname']; ?>.disqus.com/admin/settings/" target="_blank">Disqus account settings</a> (where you will find your shortname), please uncheck the "Discovery" box.</small></p>
 					</td>
 		        </tr>
@@ -1518,21 +1466,21 @@ function nebula_options_page(){
 		        <tr class="short" valign="top">
 		        	<th scope="row">Developer IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[dev_ip]" value="<?php echo $nebula_options['dev_ip']; ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
+						<input type="text" name="nebula_options[dev_ip]" value="<?php echo $nebula_options['dev_ip']; ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" />
 						<p class="helper"><small>Comma-separated IP addresses of the developer to enable specific console logs and other dev info. RegEx may also be used here. Ex: <code>/192\.168\./i</code><br />Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Developer Email Domains&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[dev_email_domain]" value="<?php echo $nebula_options['dev_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
+						<input type="text" name="nebula_options[dev_email_domain]" value="<?php echo $nebula_options['dev_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" />
 						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable specific console logs and other dev info. RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code><br />Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Client IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[client_ip]" value="<?php echo $nebula_options['client_ip']; ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" style="width: 392px;" />
+						<input type="text" name="nebula_options[client_ip]" value="<?php echo $nebula_options['client_ip']; ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" />
 						<p class="helper"><small>Comma-separated IP addresses of the client to enable certain features. RegEx may also be used here. Ex: <code>/192\.168\./i</code><br />Your current IP address is <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong></small></p>
 					</td>
 		        </tr>
@@ -1544,7 +1492,7 @@ function nebula_options_page(){
 
 		        	<th scope="row">Client Email Domains&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[client_email_domain]" value="<?php echo $nebula_options['client_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" style="width: 392px;" />
+						<input type="text" name="nebula_options[client_email_domain]" value="<?php echo $nebula_options['client_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" />
 						<p class="helper"><small>Comma separated domains of the developer emails (without the "@") to enable certain features. RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code><br />Your email domain is: <strong><?php echo $current_user_domain; ?></strong></small></p>
 					</td>
 		        </tr>
@@ -1572,7 +1520,7 @@ function nebula_options_page(){
 								$serverProtocol = 'https://';
 							}
 						?>
-						<input type="text" name="nebula_options[cpanel_url]" value="<?php echo $nebula_options['cpanel_url']; ?>" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" style="width: 392px;" />
+						<input type="text" name="nebula_options[cpanel_url]" value="<?php echo $nebula_options['cpanel_url']; ?>" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" />
 						<p class="helper"><small>Link to the control panel of the hosting account. cPanel on this domain would be <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a>.</small></p>
 					</td>
 		        </tr>
@@ -1582,49 +1530,49 @@ function nebula_options_page(){
 						<?php
 							$hostURL = explode(".", gethostname());
 						?>
-						<input type="text" name="nebula_options[hosting_url]" value="<?php echo $nebula_options['hosting_url']; ?>" placeholder="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>/" style="width: 392px;" />
+						<input type="text" name="nebula_options[hosting_url]" value="<?php echo $nebula_options['hosting_url']; ?>" placeholder="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>/" />
 						<p class="helper"><small>Link to the server host for easy access to support and other information. Server detected as <a href="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>" target="_blank">http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?></a>.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Domain Registrar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[registrar_url]" value="<?php echo $nebula_options['registrar_url']; ?>" style="width: 392px;" />
+						<input type="text" name="nebula_options[registrar_url]" value="<?php echo $nebula_options['registrar_url']; ?>" />
 						<p class="helper"><small>Link to the domain registrar used for access to pointers, forwarding, and other information.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Google Analytics&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[ga_url]" value="<?php echo $nebula_options['ga_url']; ?>" placeholder="http://www.google.com/analytics/..." style="width: 392px;" />
+						<input type="text" name="nebula_options[ga_url]" value="<?php echo $nebula_options['ga_url']; ?>" placeholder="http://www.google.com/analytics/..." />
 						<p class="helper"><small>Link directly to this project's <a href="http://www.google.com/analytics/" target="_blank">Google Analytics</a> report.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Google Search Console&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[google_search_console_url]" value="<?php echo $nebula_options['google_search_console_url']; ?>" placeholder="https://www.google.com/webmasters/tools/..." style="width: 392px;" />
+						<input type="text" name="nebula_options[google_search_console_url]" value="<?php echo $nebula_options['google_search_console_url']; ?>" placeholder="https://www.google.com/webmasters/tools/..." />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/webmasters/tools/" target="_blank">Google Search Console</a>.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Google AdSense&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[google_adsense_url]" value="<?php echo $nebula_options['google_adsense_url']; ?>" placeholder="https://www.google.com/adsense/app" style="width: 392px;" />
+						<input type="text" name="nebula_options[google_adsense_url]" value="<?php echo $nebula_options['google_adsense_url']; ?>" placeholder="https://www.google.com/adsense/app" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Google AdWords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[google_adwords_url]" value="<?php echo $nebula_options['google_adwords_url']; ?>" placeholder="https://www.google.com/adwords/" style="width: 392px;" />
+						<input type="text" name="nebula_options[google_adwords_url]" value="<?php echo $nebula_options['google_adwords_url']; ?>" placeholder="https://www.google.com/adwords/" />
 						<p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adwords/" target="_blank">Google AdWords</a> account.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">
 		        	<th scope="row">Mention&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input type="text" name="nebula_options[mention_url]" value="<?php echo $nebula_options['mention_url']; ?>" placeholder="https://web.mention.com/" style="width: 392px;" />
+						<input type="text" name="nebula_options[mention_url]" value="<?php echo $nebula_options['mention_url']; ?>" placeholder="https://web.mention.com/" />
 						<p class="helper"><small>Direct link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account.</small></p>
 					</td>
 		        </tr>

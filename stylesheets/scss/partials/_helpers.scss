@@ -23,7 +23,6 @@
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;
 	&:after {content: ''; position: absolute; left: 0; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-floating.png") no-repeat top center; background-size: contain; @include prefix((transition: all 0.5s)); pointer-events: none;}
 	&.bulging:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-bulging.png") no-repeat top center; background-size: contain; pointer-events: none;}
-	&.buldging:after {content: 'You spelled "bulging" wrong.'; display: block; color: #fff; text-align: center; width: 100%; background: none;}
 	&.curling:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-curling.png") no-repeat top center; background-size: contain; pointer-events: none;}
 	&.hovering:after {content: ''; position: absolute; bottom: -35px; width: 100%; height: 35px; background: url($template_directory + "/images/shadow-hovering.png") no-repeat top center; background-size: contain; pointer-events: none;}
 	&.anchored-right:after, &.rising-left:after {content: ''; position: absolute; bottom: -24px; width: 100%; height: 24px; background: url($template_directory + "/images/shadow-anchored-right.png") no-repeat top right; background-size: contain; pointer-events: none;}
@@ -34,7 +33,8 @@
 
 //Note: To use nebula-vmiddle, the parent element must have a set height (not a min-height)!
 //!.nebula-vmiddle, .nebula-vmiddle-con {@include prefix((transform-style: preserve-3d));} //Prevent blurry half-pixel centering on parent element
-	.nebula-vmiddle {position: relative; top: 50%; @include prefix((transform: translateY(-50%)));}
+	.nebula-vmiddle,
+	.valign > div {position: relative; top: 50%; @include prefix((transform: translateY(-50%)));}
 
 
 // ===========================

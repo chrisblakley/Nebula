@@ -18,59 +18,7 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 	&:hover {color: #444;}
 }
 
-//Nebula Welcome Panel (Only on Dashboard page)
-.index-php {
-	.welcome-panel {display: block; padding: 8px 12px; overflow: hidden;
-		.about-description {font-size: 13px;}
-		li {color: #444; font-size: 13px; padding-bottom: 0;
-			strong {color: #000;}
-		}
-		#phg-welcome {margin: 0;
-			#welcome-content {width: 50%;
-				h3 {margin-top: 0;}
-				.welcome-panel-column {min-width: 100px;
-					&:first-child {width: 33% !important;}
-					li {@include media(custom, map_get($admin_media_queries, tablet)){display: block;};}
-					@include media(custom, map_get($admin_media_queries, desktop)){width: 31% !important;};
-					@include media(custom, map_get($admin_media_queries, tablet)){width: 33% !important; float: left !important;};
-					@include media(custom, map_get($admin_media_queries, mobile)){width: 100% !important;};
-				}
-				.logocon {float: left; max-width: 22%; /* max-height: 56px; */ margin-right: 15px;
-					a {display: inline-block;
-						img {max-height: 48px; width: auto;}
-					}
-					@include media(custom, map_get($admin_media_queries, mobile)){display: none;};
-				}
-				hr {margin: 10px 0 0 -12px; border-bottom: none; border-top: 1px solid #eee; width: 5000px;}
-				@include media(custom, map_get($admin_media_queries, widescreen)){width: 67%;};
-				@include media(custom, map_get($admin_media_queries, desktop)){width: 50%;};
-				@include media(custom, map_get($admin_media_queries, non_widescreen)){width: 100%;};
-			}
-
-			#welcome-photo {position: absolute; top: 0; right: 0; height: 100%; width: 47%; padding: 5px 20px;
-				.welcome-photo-bg {position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: url($template_directory + "/images/phg/welcome.jpg") center 90% no-repeat; background-size: cover; z-index: 40;
-					&.hidden {display: none !important; visibility: hidden; border: 3px solid blue;}
-				}
-				.weclome-map {position: absolute; top: 0; left: 0; height: 100%; width: 100%; padding: 0;}
-				.phg-info {position: relative; background: rgba(0,0,0,0.6); position: absolute; bottom: 10px; left: 0; width: 100%; padding: 5px 12px; @include prefix((transition: all 0.25s));
-					&:hover {background: rgba(0,0,0,0.8);}
-					&.maininfo {z-index: 50;}
-					&.mapinfo {z-index: 25;}
-					h4 {margin: 0; height: 25px; overflow: hidden; opacity: 1; @include prefix((transition: all 0.25s));}
-					span {display: inline-block; color: #fff;}
-					a {display: inline-block; color: #fff; @include prefix((box-shadow: none)); @include prefix((transition: all 0.25s));
-						&:hover {color: brand(phg);}
-					}
-					p {color: #fff; margin: 0;}
-				}
-				.js .jsinfo {bottom: -50px; @include prefix((transition: all 0.5s));}
-				@include media(custom, map_get($admin_media_queries, widescreen)){width: 30%;};
-				@include media(custom, map_get($admin_media_queries, desktop)){width: 45%;};
-				@include media(custom, map_get($admin_media_queries, non_widescreen)){display: none;};
-			}
-		}
-	}
-}
+#screen-options-wrap label img {display: none;}
 
 //Nebula Options Page
 .appearance_page_nebula_options {
@@ -99,7 +47,7 @@ i.help {cursor: help; color: #aaa; @include prefix((transition: all 0.25s));
 	}
 
 	input[type="text"],
-	input[type="password"] {width: 206px; font-size: 12px;
+	input[type="password"] {width: 421px; font-size: 12px;
 		@include media(custom, map_get($admin_media_queries, tablet)){width: 100% !important;};
 	}
 

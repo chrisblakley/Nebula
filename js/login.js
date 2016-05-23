@@ -14,7 +14,7 @@ jQuery(document).on('ready', function(){
 		ga('send', 'event', 'Password Reset', 'User: ' + resetUser);
 	});
 
-	if ( jQuery('.flag').is('*') ){
+	if ( jQuery('.flag').length ){
 		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/libs/flags.css');
 	}
 

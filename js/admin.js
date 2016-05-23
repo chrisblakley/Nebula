@@ -1,41 +1,9 @@
 jQuery.noConflict();
 jQuery(document).on('ready', function(){
 	getQueryStrings();
-	if ( get('killall') || get('kill') || get('die') ){
-		throw ' (Manually terminated admin.js)';
-	}
 
 	if ( nebula.user.client.remote_addr === '72.43.235.106' ){
 		jQuery('html').addClass('phg');
-	}
-
-	//Welcome Panel
-	if ( jQuery('.index-php').is('*') ){
-		jQuery('#welcome-panel').removeClass('hidden');
-		jQuery('.welcome-panel-close').addClass('hidden');
-		jQuery('#wp_welcome_panel-hide').parent().addClass('hidden').css('display', 'none');
-
-		jQuery('.showmap').hover(function(){
-			jQuery('.welcome-photo-bg').stop().fadeOut();
-		}, function(){
-			jQuery('.welcome-photo-bg').stop().fadeIn();
-		});
-
-		var address = jQuery('.maptoggle').text();
-		jQuery('.maptoggle').on('click tap touch', function(){
-			if ( jQuery('.maininfo').hasClass('no-map') ){
-				jQuery('.maininfo').removeClass('no-map');
-				jQuery('.welcome-photo-bg').addClass('hidden');
-				jQuery('.maptoggle').html("&laquo; Back");
-				jQuery('.maininfo h4, .hideformap').addClass('noheight');
-			} else {
-				jQuery('.maininfo').addClass('no-map');
-				jQuery('.welcome-photo-bg').removeClass('hidden');
-				jQuery('.maptoggle').text(address);
-				jQuery('.maininfo h4, .hideformap').removeClass('noheight');
-			}
-			return false;
-		});
 	}
 
 	if ( jQuery('#edit-slug-box').length ){
@@ -135,7 +103,7 @@ jQuery(document).on('ready', function(){
 	});
 
 
-	if ( jQuery('.flag').is('*') ){
+	if ( jQuery('.flag').length ){
 		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/libs/flags.css');
 	}
 
@@ -239,10 +207,7 @@ jQuery(document).on('ready', function(){
 
 jQuery(window).on('load', function(){
 
-	//Welcome panel...?
-	setTimeout(function(){
-		jQuery('.jsinfo').removeClass('jsinfo');
-	}, 350);
+
 
 }); //End Window Load
 

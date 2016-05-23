@@ -43,8 +43,6 @@
 
  .nebulaframe.bulging:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.buldging:after { content:'You spelled "bulging" wrong.'; display:block; color:#fff; text-align:center; width:100%; background:none; }
-
  .nebulaframe.curling:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
  .nebulaframe.hovering:after { content:''; position:absolute; bottom:-35px; width:100%; height:35px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; pointer-events:none; }
@@ -55,13 +53,13 @@
 
  a.nebulaframe { border:none; }
 
- .nebula-vmiddle { position:relative; top:50%; -webkit-transform:translateY(-50%); -moz-transform:translateY(-50%); -ms-transform:translateY(-50%); -o-transform:translateY(-50%); transform:translateY(-50%); }
+ .nebula-vmiddle,.valign > div { position:relative; top:50%; -webkit-transform:translateY(-50%); -moz-transform:translateY(-50%); -ms-transform:translateY(-50%); -o-transform:translateY(-50%); transform:translateY(-50%); }
 
- body:not(.wp-admin) hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background:#fff; background:rgba(255, 255, 255, 1); margin:3px 0; padding:0; }
+ body:not(.wp-admin) hr { display:block; height:1px; border:0; border-top:1px solid #ccc; background-color:#fff; background-color:rgba(255, 255, 255, 1); margin:3px 0; padding:0; }
 
  .rgba body:not(.wp-admin) hr { display:block; height:1px; border:0; margin:3px 0; padding:0; /* mix-blend-mode: screen; */ }
 
- .rgba body:not(.wp-admin) hr:before { content:''; position:relative; top:-1px; height:1px; display:block; background:#000; background:rgba(0, 0, 0, 0.2); /* mix-blend-mode: multiply; */ }
+ .rgba body:not(.wp-admin) hr:before { content:''; position:relative; top:-1px; height:1px; display:block; background-color:#000; background-color:rgba(0, 0, 0, 0.2); /* mix-blend-mode: multiply; */ }
 
  body:not(.wp-admin) hr.zero { margin:0; }
 
@@ -785,103 +783,7 @@
 
  i.help:hover { color:#444; }
 
- .index-php .welcome-panel { display:block; padding:8px 12px; overflow:hidden; }
-
- .index-php .welcome-panel .about-description { font-size:13px; }
-
- .index-php .welcome-panel li { color:#444; font-size:13px; padding-bottom:0; }
-
- .index-php .welcome-panel li strong { color:#000; }
-
- .index-php .welcome-panel #phg-welcome { margin:0; }
-
- .index-php .welcome-panel #phg-welcome #welcome-content { width:50%; }
-
- .index-php .welcome-panel #phg-welcome #welcome-content h3 { margin-top:0; }
-
- .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { min-width:100px; }
-
- .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column:first-child { width:33% !important; }
-
- @media (max-width: 900px) and (min-width: 501px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column li { display:block; }
-
- }
-
- @media (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:31% !important; }
-
- }
-
- @media (max-width: 900px) and (min-width: 501px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:33% !important; float:left !important; }
-
- }
-
- @media (max-width: 500px) { .index-php .welcome-panel #phg-welcome #welcome-content .welcome-panel-column { width:100% !important; }
-
- }
-
- .index-php .welcome-panel #phg-welcome #welcome-content .logocon { float:left; max-width:22%; /* max-height: 56px; */ margin-right:15px; }
-
- .index-php .welcome-panel #phg-welcome #welcome-content .logocon a { display:inline-block; }
-
- .index-php .welcome-panel #phg-welcome #welcome-content .logocon a img { max-height:48px; width:auto; }
-
- @media (max-width: 500px) { .index-php .welcome-panel #phg-welcome #welcome-content .logocon { display:none; }
-
- }
-
- .index-php .welcome-panel #phg-welcome #welcome-content hr { margin:10px 0 0 -12px; border-bottom:none; border-top:1px solid #eee; width:5000px; }
-
- @media (max-width: 1800px) and (min-width: 1500px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:67%; }
-
- }
-
- @media (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:50%; }
-
- }
-
- @media (max-width: 1110px) { .index-php .welcome-panel #phg-welcome #welcome-content { width:100%; }
-
- }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo { position:absolute; top:0; right:0; height:100%; width:47%; padding:5px 20px; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .welcome-photo-bg { position:absolute; top:0; left:0; height:100%; width:100%; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/welcome.jpg") center 90% no-repeat; background-size:cover; z-index:40; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .welcome-photo-bg.hidden { display:none !important; visibility:hidden; border:3px solid blue; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .weclome-map { position:absolute; top:0; left:0; height:100%; width:100%; padding:0; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info { position:relative; background:rgba(0, 0, 0, 0.6); position:absolute; bottom:10px; left:0; width:100%; padding:5px 12px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info:hover { background:rgba(0, 0, 0, 0.8); }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info.maininfo { z-index:50; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info.mapinfo { z-index:25; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info h4 { margin:0; height:25px; overflow:hidden; opacity:1; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info span { display:inline-block; color:#fff; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info a { display:inline-block; color:#fff; -webkit-box-shadow:none; -moz-box-shadow:none; -ms-box-shadow:none; -o-box-shadow:none; box-shadow:none; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info a:hover { color:#0098d7; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .phg-info p { color:#fff; margin:0; }
-
- .index-php .welcome-panel #phg-welcome #welcome-photo .js .jsinfo { bottom:-50px; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
-
- @media (max-width: 1800px) and (min-width: 1500px) { .index-php .welcome-panel #phg-welcome #welcome-photo { width:30%; }
-
- }
-
- @media (max-width: 1499px) and (min-width: 800px) { .index-php .welcome-panel #phg-welcome #welcome-photo { width:45%; }
-
- }
-
- @media (max-width: 1110px) { .index-php .welcome-panel #phg-welcome #welcome-photo { display:none; }
-
- }
+ #screen-options-wrap label img { display:none; }
 
  .appearance_page_nebula_options a { box-shadow:none; }
 
@@ -911,7 +813,7 @@
 
  .appearance_page_nebula_options p.helper.active { display:block; }
 
- .appearance_page_nebula_options input[type="text"],.appearance_page_nebula_options input[type="password"] { width:206px; font-size:12px; }
+ .appearance_page_nebula_options input[type="text"],.appearance_page_nebula_options input[type="password"] { width:421px; font-size:12px; }
 
  @media (max-width: 900px) and (min-width: 501px) { .appearance_page_nebula_options input[type="text"],.appearance_page_nebula_options input[type="password"] { width:100% !important; }
 
@@ -919,7 +821,7 @@
 
  .appearance_page_nebula_options tr.short th,.appearance_page_nebula_options tr.short td { padding-top:5px; padding-bottom:5px; }
 
- .appearance_page_nebula_options input.dimension.error,.appearance_page_nebula_options input.metric.error { border:1px solid #ca3838; background:#ca3838; background:rgba(202, 56, 56, 0.1); }
+ .appearance_page_nebula_options input.dimension.error,.appearance_page_nebula_options input.metric.error { border:1px solid #ca3838; background-color:#ca3838; background-color:rgba(202, 56, 56, 0.1); }
 
  .appearance_page_nebula_options .mobiletitle { display:none; }
 
@@ -1088,4 +990,4 @@
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
 
-/* Processed on Wednesday, May 18, 2016 at 4:43pm */
+/* Processed on Sunday, May 22, 2016 at 1:13pm */
