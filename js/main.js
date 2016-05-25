@@ -1842,20 +1842,20 @@ function conversionTracker(conversionpage){
 function conditionalJSLoading(){
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').length ){
-		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js').done(function(){
+		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js').done(function(){
 			chosenSelectOptions();
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
 		});
-		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css');
+		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css');
 	}
 
 	//Only load dataTables library if dataTables table exists.
     if ( jQuery('.dataTables_wrapper').length ){
-        jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/js/jquery.dataTables.min.js').done(function(){
-            nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.10/css/jquery.dataTables.min.css');
+        jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap4.min.js').done(function(){
+            nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap4.min.css');
 			dataTablesActions();
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -2353,8 +2353,11 @@ function powerFooterWidthDist(){
 	}
 }
 
-function nebulaScrollTo(element, milliseconds){
-	var headerHtOffset = ( jQuery('.headroom').length )? jQuery('.headroom').outerHeight() : 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+//Offset must be an integer
+function nebulaScrollTo(element, milliseconds, offset){
+	if ( !offset ){
+		var offset = ( jQuery('.headroom').length )? jQuery('.headroom').outerHeight() : 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+	}
 
 	//Call this function with a selector to trigger scroll to an element (note: not a selector).
 	if ( element ){
@@ -2362,13 +2365,13 @@ function nebulaScrollTo(element, milliseconds){
 			var milliseconds = 1000;
 		}
 		jQuery('html, body').animate({
-			scrollTop: element.offset().top-headerHtOffset
+			scrollTop: element.offset().top-offset
 		}, milliseconds);
 		return false;
 	}
 
 	nebula.dom.document.on('click touch tap', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
-		if ( jQuery(this).parents('.mm-menu, .carousel').length ){
+		if ( jQuery(this).hasClass('no-scroll') || jQuery(this).parents('.mm-menu, .carousel').length ){
 			return false;
 		}
 
@@ -2377,7 +2380,7 @@ function nebulaScrollTo(element, milliseconds){
 			var target = jQuery(this.hash);
 			target = ( target.length )? target : jQuery('[name=' + this.hash.slice(1) +']');
 			if ( target.length ){ //If target exists
-				var nOffset = Math.floor(target.offset().top-headerHtOffset+pOffset);
+				var nOffset = Math.floor(target.offset().top-offset+pOffset);
 				jQuery('html, body').animate({
 					scrollTop: nOffset
 				}, 500);
@@ -2392,7 +2395,7 @@ function nebulaScrollTo(element, milliseconds){
 			var scrollElement = jQuery(this).attr('scrollto');
 			if ( scrollElement !== '' ){
 				jQuery('html, body').animate({
-					scrollTop: Math.floor(jQuery(scrollElement).offset().top-headerHtOffset+pOffset)
+					scrollTop: Math.floor(jQuery(scrollElement).offset().top-offset+pOffset)
 				}, 500);
 			}
 		}
@@ -2882,6 +2885,13 @@ function selectText(element, copy, callback){
 	if ( callback ){
 		callback(false);
 	}
+	return false;
+}
+
+function copyText(string, callback){
+	jQuery('<div>').attr('id', 'copydiv').text(string).css({'position': 'absolute', 'top': '0', 'left': '-9999px', 'width': '0', 'height': '0', 'opacity': '0', 'color': 'transparent', }).appendTo(jQuery('body'));
+	selectText(jQuery('#copydiv'), true, callback);
+	jQuery('#copydiv').remove();
 	return false;
 }
 

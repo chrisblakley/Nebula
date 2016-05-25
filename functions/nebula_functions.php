@@ -1164,7 +1164,7 @@ function nebula_search_form($placeholder=''){
 						<input id="s" class="form-control form-control-sm" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" />
 					</div>
 				</div>
-				<input id="searchsubmit" class="btn btn-primary btn-sm wp_search_submit" type="submit" value="Search" />
+				<input id="searchsubmit" class="btn btn-brand btn-sm wp_search_submit" type="submit" value="Search" />
 			</form>';
     return $form;
 }
@@ -1524,6 +1524,11 @@ function nebula_advanced_search(){
 function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
 	$override = apply_filters('pre_nebula_infinite_load_query', false);
 	if ( $override !== false ){return;}
+
+	if ( !empty($loop) && !function_exists($loop) ){
+		echo '<strong>Warning:</strong> The custom loop function ' . $loop . ' does not exist! Falling back to loop.php.';
+		$loop = false;
+	}
 
 	if ( empty($args['paged']) ){
 		$args['paged'] = 1;

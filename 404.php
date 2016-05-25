@@ -21,7 +21,7 @@ get_header(); ?>
 	</div><!--/container-->
 </div><!--/breadcrumb-section-->
 
-<div class="content-section">
+<div id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">

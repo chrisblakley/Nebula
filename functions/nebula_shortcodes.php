@@ -9,9 +9,9 @@
 */
 function get_flags($atts){
 	$flags = array();
-	if (is_array($atts)){
-		foreach ($atts as $key => $value){
-			if ($value != '' && is_numeric($key)){
+	if ( is_array($atts) ){
+		foreach ( $atts as $key => $value ){
+			if ( $value != '' && is_numeric($key) ){
 				array_push($flags, $value);
 			}
 		}
@@ -21,7 +21,7 @@ function get_flags($atts){
 
 add_shortcode('div', 'div_shortcode');
 function div_shortcode($atts, $content=''){
-	extract( shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts) );
+	extract(shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts));
 	if ( $content ){
 		$div = '<div class="nebula-div ' . $class . '" style="' . $style . '">' . $content . '</div>';
 	} else {
@@ -45,7 +45,7 @@ if ( shortcode_exists('container') ){
 	add_shortcode('container', 'container_shortcode');
 }
 function container_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
+	extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
 	return '<div class="nebula-container container ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/container-->';
 }
 
@@ -57,13 +57,12 @@ if ( shortcode_exists('row') ){
 	add_shortcode('row', 'row_shortcode');
 }
 function row_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('class' => '', 'style' => ''), $atts) );
+	extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
 	$GLOBALS['col_counter'] = 0;
 	return '<div class="nebula-row row ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/row-->';
 }
 
 //Columns
-//@TODO "Nebula" 0: Update this to Bootstrap!
 if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exists('cols') || shortcode_exists('col') ){
 	add_shortcode('bootstrap_column', 'column_shortcode');
 	add_shortcode('bootstrap_columns', 'column_shortcode');
@@ -80,14 +79,14 @@ if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exis
 	add_shortcode('cols', 'column_shortcode');
 }
 function column_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('scale' => 'md', 'columns' => '', 'offset' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts) );
+	extract(shortcode_atts(array('scale' => 'md', 'columns' => '', 'offset' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts));
 
 	$flags = get_flags($atts);
 	$columns = str_replace(array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'), array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'), $columns);
 
 
 	if ( in_array('centered', $flags) ){  //@TODO "Nebula" 0: update to bootstrap centered
-		$centered = 'centered';
+		$centered = 'col-centered';
 		$key = array_search('centered', $flags);
 		unset($flags[$key]);
 	} elseif ( in_array('first', $flags) ){
@@ -110,7 +109,7 @@ function column_shortcode($atts, $content=''){
 	$columns = array_values($flags);
 
 	if ( !empty($push) ){
-		$push = 'push_' . $push; //@TODO "Nebula" 0: update to bootstrap offset
+		$push = 'offset_' . $scale . '_' . $push;
 	}
 
 	return '<div class="nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class . '" style="' . $style . ' ' . $first . '">' . do_shortcode($content) . '</div>';
@@ -122,7 +121,7 @@ add_shortcode('divider', 'divider_shortcode');
 add_shortcode('hr', 'divider_shortcode');
 add_shortcode('line', 'divider_shortcode');
 function divider_shortcode($atts){
-	extract( shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts) );
+	extract(shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts));
 	if ( $space ){
 		$above = $space;
 		$below = $space;
@@ -135,44 +134,40 @@ function divider_shortcode($atts){
 //Icon
 add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){
-	extract( shortcode_atts(array('type'=>'', 'color'=>'inherit', 'size'=>'inherit', 'class'=>''), $atts) );
-	if (strpos($type, 'fa-') !== false){
-	    $fa = 'fa fa-fw ';
+	extract(shortcode_atts(array('type' => '', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
+	if ( strpos($type, 'fa-') == false ){
+	    $type = 'fa-' . $type;
 	}
 	$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
 	$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
-	return '<i class="' . $class . ' nebula-icon-shortcode ' . $fa . $type . '" style="' . $extra_style . '"></i>';
+	return '<i class="' . $class . ' nebula-icon-shortcode ' . 'fa fa-fw ' . $type . '" style="' . $extra_style . '"></i>';
 }
 
 
 //Button
 add_shortcode('button', 'button_shortcode');
 function button_shortcode($atts, $content=''){
-	extract( shortcode_atts( array('size' => 'medium', 'type' => 'primary', 'pretty' => false, 'metro' => false, 'icon' => false, 'side' => 'left', 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts) );
-
-	$flags = get_flags($atts);
-	if ( in_array('pretty', $flags) ){
-		$btnstyle = ' pretty';
-	} elseif ( in_array('metro', $flags) ){
-		$btnstyle = ' metro';
-	}
-
-	if ( !empty($icon) ){
-		$side = 'icon-' . $side;
-		if (strpos($icon, 'fa-') !== false){
-		    $icon_family = 'fa ';
-		} else {
-			$icon_family = 'entypo ';
-		}
-	} else {
-		$icon = '';
-	}
+	extract(shortcode_atts( array('size' => 'md', 'type' => 'brand', 'icon' => false, 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts));
 
 	if ( $target ){
 		$target = ' target="' . $target . '"';
 	}
 
-	return '<div class="nebula-button ' . $size . ' ' . $type . $btnstyle . ' btn '. $side . ' ' . $icon_family . ' ' . $icon . ' ' . $class . '" style="' . $style . '"><a href="' . $href . '"' . $target . '>' . $content . '</a></div>';
+	if ( $icon ){
+		if ( strpos($icon, 'fa-' ) == false){
+			$icon = 'fa-' . $icon;
+		}
+		$icon = '<i class="fa fa-fw ' . $icon . '"></i> ';
+	}
+
+	if ( $size ){
+		$size = str_replace(array('small', 'medium', 'large'), array('sm', 'md', 'lg'), $size);
+		if ( strpos($size, 'btn-' ) == false){
+			$icon = 'btn-' . $size;
+		}
+	}
+
+	return '<div class="nebula-button"><a class="btn btn-' . $type . ' ' . $size . ' ' . $class . '" href="' . $href . '"' . $target . '>' . $icon . $content . '</a></div>';
 } //end button_shortcode()
 
 
@@ -180,7 +175,7 @@ function button_shortcode($atts, $content=''){
 add_shortcode('space', 'space_shortcode');
 add_shortcode('gap', 'space_shortcode');
 function space_shortcode($atts){
-	extract( shortcode_atts(array("height" => '20'), $atts) );
+	extract(shortcode_atts(array("height" => '20'), $atts));
 	return '<div class="space" style=" height:' . $height . 'px;" ></div>';
 }
 
@@ -196,7 +191,7 @@ function clear_shortcode(){
 //Map
 add_shortcode('map', 'map_shortcode');
 function map_shortcode($atts){
-	extract( shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', 'overlay' => false, "class" => '', "style" => ''), $atts) );
+	extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', 'overlay' => false, "class" => '', "style" => ''), $atts));
 
 	$flags = get_flags($atts);
 	if ( in_array('overlay', $flags) ){
@@ -259,7 +254,7 @@ function map_shortcode($atts){
 //Vimeo
 add_shortcode('vimeo', 'vimeo_shortcode');
 function vimeo_shortcode($atts){
-	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts) );
+	extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts));
 
 	$vimeo_data = video_meta('vimeo', $id);
 	$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
@@ -281,7 +276,7 @@ function vimeo_shortcode($atts){
 //Youtube
 add_shortcode('youtube', 'youtube_shortcode');
 function youtube_shortcode($atts){
-	extract( shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts) );
+	extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts));
 
 	$flags = get_flags($atts);
 	if ( in_array('ignore_visibility', $flags) ){
@@ -309,7 +304,7 @@ function youtube_shortcode($atts){
 //Code
 add_shortcode('code', 'code_shortcode');
 function code_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
+	extract(shortcode_atts(array('class' => '', 'style' => ''), $atts));
 	$content = htmlspecialchars_decode($content);
 	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . htmlentities($content) . '</code>';
 } //end code_shortcode()
@@ -318,7 +313,7 @@ function code_shortcode($atts, $content=''){
 //Pre
 add_shortcode('pre', 'pre_shortcode');
 function pre_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts) );
+	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts));
 
 	if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
 		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
@@ -354,7 +349,7 @@ function pre_shortcode($atts, $content=''){
 //Gist embedding
 add_shortcode('gist', 'gist_shortcode');
 function gist_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) );
+	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts));
 
 	if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
 		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
@@ -385,7 +380,7 @@ function gist_shortcode($atts, $content=''){
 //Github embedding
 add_shortcode('github', 'github_shortcode');
 function github_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts) );
+	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts));
 
 	if ( !empty($file) ){
 		WP_Filesystem();
@@ -419,7 +414,7 @@ function github_shortcode($atts, $content=''){
 $GLOBALS['accordion'] = 0;
 add_shortcode('accordion', 'accordion_shortcode');
 function accordion_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => '', 'type' => 'single'), $atts) );
+	extract(shortcode_atts(array('class' => '', 'style' => '', 'type' => 'single'), $atts));
 
 	$return = '<div class="accordion ' . $class . ' ' . $type . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 
@@ -459,7 +454,7 @@ function accordion_shortcode($atts, $content=''){
 //Accordion_Item
 add_shortcode('accordion_item', 'accordion_item_shortcode');
 function accordion_item_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => ''), $atts) );
+	extract(shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => ''), $atts));
 
 	$return = '<div class="accordion-item accordion-collapsed ' . $class . ' ' . $default . '" style="' . $style . '"><div class="accordion-toggle"><a href="#" class="accordion-heading">' . $title . '</a></div><div class="accordion-content-con"><div class="accordion-content">' . $content . '</div></div></div>';
 
@@ -467,37 +462,10 @@ function accordion_item_shortcode($atts, $content=''){
 } //end accordion_item_shortcode()
 
 
-//Bio
-add_shortcode('bio', 'bio_shortcode');
-function bio_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('class' => '', 'style' => ''), $atts) );
-
-	/*
-		Parameters to use:
-			Name
-			Title
-			Email
-			Phone
-			Extension
-			vCard path
-			Website
-			Twitter
-			Facebook
-			Instagram
-			LinkedIn
-			Photo path
-			Excerpt ($content)
-	*/
-
-	return '<div class="nebula-bio ' . $class . '" style="' . $style . '" >' . $content . '</code>';
-
-} //end bio_shortcode()
-
-
 //Tooltip
 add_shortcode('tooltip', 'tooltip_shortcode');
 function tooltip_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts) );
+	extract(shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts));
 	return '<span class="nebula-tooltip ttip ' . $class . '" data-toggle="tooltip" data-placement="' . $placement . '" title="' . $tip . '" style="' . $style . '">' . $content . '</span>';
 } //end tooltip_shortcode()
 
@@ -506,7 +474,7 @@ function tooltip_shortcode($atts, $content=''){
 add_shortcode('carousel', 'slider_shortcode');
 add_shortcode('slider', 'slider_shortcode');
 function slider_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('id' => false, 'indicators' => true), $atts) );
+	extract(shortcode_atts(array('id' => false, 'indicators' => true), $atts));
 	$flags = get_flags($atts);
 
 	if ( !$id ){
@@ -533,7 +501,7 @@ function slider_shortcode($atts, $content=''){
 add_shortcode('carousel_item', 'slide_shortcode');
 add_shortcode('slide', 'slide_shortcode');
 function slide_shortcode($atts, $content=''){
-	extract( shortcode_atts(array('link' => '', 'target' => ''), $atts) );
+	extract(shortcode_atts(array('link' => '', 'target' => ''), $atts));
 
 	if ( empty($link) ){
 		$linkopen = '';

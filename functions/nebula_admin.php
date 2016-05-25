@@ -541,6 +541,10 @@ if ( nebula_option('ataglance_metabox') ){
 				echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
 			}
 
+			if ( is_multisite() ){
+				echo '<li><i class="fa fa-cubes fa-fw"></i>Multisite <a href="' . network_admin_url() . '">(Network Admin)</a></li>';
+			}
+
 			//Post Types
 			foreach ( get_post_types() as $post_type ){
 			    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
@@ -668,6 +672,7 @@ function dashboard_current_user(){
 			echo '<li><i class="fa fa-phone fa-fw"></i> Phone: <strong>' . get_the_author_meta('phonenumber', $user_info->ID) . '</strong></li>';
 		}
 
+		echo '<li><i class="fa fa-user fa-fw"></i> Username: <strong>' . $user_info->user_login . '</strong></li>';
 		echo '<li><i class="fa fa-info-circle fa-fw"></i> ID: <strong>' . $user_info->ID . '</strong></li>';
 
 		//Role
