@@ -16,9 +16,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-md-12">
 				<h1 class="page-title"><i class="fa fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
-				<?php if ( 1==2 ): //@TODO "Nebula" 0: pull the category description if it exists ?>
-					<p>Category description from WordPress here...</p>
-				<?php endif; ?>
+				<?php echo category_description(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -38,14 +36,8 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
-				<?php
-					$category_description = category_description();
-					if ( !empty($category_description) ){
-						echo $category_description . '';
-					}
-					get_template_part('loop', 'category');
-					wp_pagenavi();
-				?>
+				<?php get_template_part('loop', 'category'); ?>
+				<?php wp_pagenavi(); ?>
 			</div><!--/col-->
 			<div class="col-md-4">
 				<?php get_sidebar(); ?>

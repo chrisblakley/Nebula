@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 4.0.24
+ Version: 4.0.25
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -491,7 +491,7 @@
 
  .nebulaborder { padding:5px; background:#fff; border:1px solid #aaa; }
 
- .nebulashadow { margin-top:0; margin-top:attr(offset, px, 0); height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ .nebulashadow { margin-top:0; margin-top:attr(offset, px, 0); height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
  .nebulashadow.above { height:12px; width:100%; background:rgba(0, 0, 0, 0.2); background:linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); -webkit-transform:scaleY(-1); -moz-transform:scaleY(-1); -ms-transform:scaleY(-1); -o-transform:scaleY(-1); transform:scaleY(-1); -ms-filter:flipv; filter:flipv; }
 
@@ -501,15 +501,15 @@
 
  .nebulashadow.inner-bottom { bottom:0; left:0; height:12px; position:absolute; width:100%; background:rgba(0, 0, 0, 0.2); background:linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); -webkit-transform:scaleY(-1); -moz-transform:scaleY(-1); -ms-transform:scaleY(-1); -o-transform:scaleY(-1); transform:scaleY(-1); -ms-filter:flipv; filter:flipv; }
 
- .nebulashadow.bulging { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; }
+ .nebulashadow.bulging { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; }
 
- .nebulashadow.curling { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; }
+ .nebulashadow.curling { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; }
 
- .nebulashadow.hovering { height:35px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; }
+ .nebulashadow.hovering { height:35px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; }
 
- .nebulashadow.anchored-right,.nebulashadow.rising-left { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; }
+ .nebulashadow.anchored-right,.nebulashadow.rising-left { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; }
 
- .nebulashadow.anchored-left,.nebulashadow.rising-right { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; }
+ .nebulashadow.anchored-left,.nebulashadow.rising-right { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; }
 
  .lte-ie9 .nebulashadow.inner-bottom,.lte-ie9 .nebulashadow.above { transform:none; filter:-; -ms-filter:-; display:none; }
 
@@ -517,17 +517,17 @@
 
  .nebulaframe { position:relative; padding:5px; background:#fff; border:1px solid #aaa; /* &.animate:hover:after {background-position-y: -24px;} */ }
 
- .nebulaframe:after { content:''; position:absolute; left:0; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; pointer-events:none; }
+ .nebulaframe:after { content:''; position:absolute; left:0; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; pointer-events:none; }
 
- .nebulaframe.bulging:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; pointer-events:none; }
+ .nebulaframe.bulging:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.curling:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; pointer-events:none; }
+ .nebulaframe.curling:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.hovering:after { content:''; position:absolute; bottom:-35px; width:100%; height:35px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; pointer-events:none; }
+ .nebulaframe.hovering:after { content:''; position:absolute; bottom:-35px; width:100%; height:35px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.anchored-right:after,.nebulaframe.rising-left:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; pointer-events:none; }
+ .nebulaframe.anchored-right:after,.nebulaframe.rising-left:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; pointer-events:none; }
 
- .nebulaframe.anchored-left:after,.nebulaframe.rising-right:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; pointer-events:none; }
+ .nebulaframe.anchored-left:after,.nebulaframe.rising-right:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; pointer-events:none; }
 
  a.nebulaframe { border:none; }
 
@@ -587,65 +587,65 @@
 
  }
 
- a[href$=".doc"],li.icon a[href$=".doc"] { text-decoration:none; border-bottom:1px dotted #2b5797; }
+ a[href$=".doc"]:not(.no-icon):not(.btn),li.icon a[href$=".doc"] { text-decoration:none; border-bottom:1px dotted #2b5797; }
 
- a[href$=".doc"]:before,li.icon a[href$=".doc"]:before { content:"\f1c2"; font-family:"FontAwesome"; color:#2b5797; margin-right:5px; font-weight:normal; }
+ a[href$=".doc"]:not(.no-icon):not(.btn):before,li.icon a[href$=".doc"]:before { content:"\f1c2"; font-family:"FontAwesome"; color:#2b5797; margin-right:5px; font-weight:normal; }
 
- a[href$=".docx"],li.icon a[href$=".docx"] { text-decoration:none; border-bottom:1px dotted #2b5797; }
+ a[href$=".docx"]:not(.no-icon):not(.btn),li.icon a[href$=".docx"] { text-decoration:none; border-bottom:1px dotted #2b5797; }
 
- a[href$=".docx"]:before,li.icon a[href$=".docx"]:before { content:"\f1c2"; font-family:"FontAwesome"; color:#2b5797; margin-right:5px; font-weight:normal; }
+ a[href$=".docx"]:not(.no-icon):not(.btn):before,li.icon a[href$=".docx"]:before { content:"\f1c2"; font-family:"FontAwesome"; color:#2b5797; margin-right:5px; font-weight:normal; }
 
- a[href$=".xls"],li.icon a[href$=".xls"] { text-decoration:none; border-bottom:1px dotted #1e7145; }
+ a[href$=".xls"]:not(.no-icon):not(.btn),li.icon a[href$=".xls"] { text-decoration:none; border-bottom:1px dotted #1e7145; }
 
- a[href$=".xls"]:before,li.icon a[href$=".xls"]:before { content:"\f1c3"; font-family:"FontAwesome"; color:#1e7145; margin-right:5px; font-weight:normal; }
+ a[href$=".xls"]:not(.no-icon):not(.btn):before,li.icon a[href$=".xls"]:before { content:"\f1c3"; font-family:"FontAwesome"; color:#1e7145; margin-right:5px; font-weight:normal; }
 
- a[href$=".xlsx"],li.icon a[href$=".xlsx"] { text-decoration:none; border-bottom:1px dotted #1e7145; }
+ a[href$=".xlsx"]:not(.no-icon):not(.btn),li.icon a[href$=".xlsx"] { text-decoration:none; border-bottom:1px dotted #1e7145; }
 
- a[href$=".xlsx"]:before,li.icon a[href$=".xlsx"]:before { content:"\f1c3"; font-family:"FontAwesome"; color:#1e7145; margin-right:5px; font-weight:normal; }
+ a[href$=".xlsx"]:not(.no-icon):not(.btn):before,li.icon a[href$=".xlsx"]:before { content:"\f1c3"; font-family:"FontAwesome"; color:#1e7145; margin-right:5px; font-weight:normal; }
 
- a[href$=".ppt"],li.icon a[href$=".ppt"] { text-decoration:none; border-bottom:1px dotted #d04525; }
+ a[href$=".ppt"]:not(.no-icon):not(.btn),li.icon a[href$=".ppt"] { text-decoration:none; border-bottom:1px dotted #d04525; }
 
- a[href$=".ppt"]:before,li.icon a[href$=".ppt"]:before { content:"\f1c4"; font-family:"FontAwesome"; color:#d04525; margin-right:5px; font-weight:normal; }
+ a[href$=".ppt"]:not(.no-icon):not(.btn):before,li.icon a[href$=".ppt"]:before { content:"\f1c4"; font-family:"FontAwesome"; color:#d04525; margin-right:5px; font-weight:normal; }
 
- a[href$=".pptx"],li.icon a[href$=".pptx"] { text-decoration:none; border-bottom:1px dotted #d04525; }
+ a[href$=".pptx"]:not(.no-icon):not(.btn),li.icon a[href$=".pptx"] { text-decoration:none; border-bottom:1px dotted #d04525; }
 
- a[href$=".pptx"]:before,li.icon a[href$=".pptx"]:before { content:"\f1c4"; font-family:"FontAwesome"; color:#d04525; margin-right:5px; font-weight:normal; }
+ a[href$=".pptx"]:not(.no-icon):not(.btn):before,li.icon a[href$=".pptx"]:before { content:"\f1c4"; font-family:"FontAwesome"; color:#d04525; margin-right:5px; font-weight:normal; }
 
- a[href$=".pdf"],li.icon a[href$=".pdf"] { text-decoration:none; border-bottom:1px dotted #eb3b00; }
+ a[href$=".pdf"]:not(.no-icon):not(.btn),li.icon a[href$=".pdf"] { text-decoration:none; border-bottom:1px dotted #eb3b00; }
 
- a[href$=".pdf"]:before,li.icon a[href$=".pdf"]:before { content:"\f1c1"; font-family:"FontAwesome"; color:#eb3b00; margin-right:5px; font-weight:normal; }
+ a[href$=".pdf"]:not(.no-icon):not(.btn):before,li.icon a[href$=".pdf"]:before { content:"\f1c1"; font-family:"FontAwesome"; color:#eb3b00; margin-right:5px; font-weight:normal; }
 
- a[href$=".pdfx"],li.icon a[href$=".pdfx"] { text-decoration:none; border-bottom:1px dotted #eb3b00; }
+ a[href$=".pdfx"]:not(.no-icon):not(.btn),li.icon a[href$=".pdfx"] { text-decoration:none; border-bottom:1px dotted #eb3b00; }
 
- a[href$=".pdfx"]:before,li.icon a[href$=".pdfx"]:before { content:"\f1c1"; font-family:"FontAwesome"; color:#eb3b00; margin-right:5px; font-weight:normal; }
+ a[href$=".pdfx"]:not(.no-icon):not(.btn):before,li.icon a[href$=".pdfx"]:before { content:"\f1c1"; font-family:"FontAwesome"; color:#eb3b00; margin-right:5px; font-weight:normal; }
 
- a[href$=".zip"],li.icon a[href$=".zip"] { text-decoration:none; border-bottom:1px dotted #777; }
+ a[href$=".zip"]:not(.no-icon):not(.btn),li.icon a[href$=".zip"] { text-decoration:none; border-bottom:1px dotted #777; }
 
- a[href$=".zip"]:before,li.icon a[href$=".zip"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
+ a[href$=".zip"]:not(.no-icon):not(.btn):before,li.icon a[href$=".zip"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
 
- a[href$=".zipx"],li.icon a[href$=".zipx"] { text-decoration:none; border-bottom:1px dotted #777; }
+ a[href$=".zipx"]:not(.no-icon):not(.btn),li.icon a[href$=".zipx"] { text-decoration:none; border-bottom:1px dotted #777; }
 
- a[href$=".zipx"]:before,li.icon a[href$=".zipx"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
+ a[href$=".zipx"]:not(.no-icon):not(.btn):before,li.icon a[href$=".zipx"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
 
- a[href$=".rar"],li.icon a[href$=".rar"] { text-decoration:none; border-bottom:1px dotted #777; }
+ a[href$=".rar"]:not(.no-icon):not(.btn),li.icon a[href$=".rar"] { text-decoration:none; border-bottom:1px dotted #777; }
 
- a[href$=".rar"]:before,li.icon a[href$=".rar"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
+ a[href$=".rar"]:not(.no-icon):not(.btn):before,li.icon a[href$=".rar"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
 
- a[href$=".gz"],li.icon a[href$=".gz"] { text-decoration:none; border-bottom:1px dotted #777; }
+ a[href$=".gz"]:not(.no-icon):not(.btn),li.icon a[href$=".gz"] { text-decoration:none; border-bottom:1px dotted #777; }
 
- a[href$=".gz"]:before,li.icon a[href$=".gz"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
+ a[href$=".gz"]:not(.no-icon):not(.btn):before,li.icon a[href$=".gz"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
 
- a[href$=".tar"],li.icon a[href$=".tar"] { text-decoration:none; border-bottom:1px dotted #777; }
+ a[href$=".tar"]:not(.no-icon):not(.btn),li.icon a[href$=".tar"] { text-decoration:none; border-bottom:1px dotted #777; }
 
- a[href$=".tar"]:before,li.icon a[href$=".tar"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
+ a[href$=".tar"]:not(.no-icon):not(.btn):before,li.icon a[href$=".tar"]:before { content:"\f1c6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
 
- a[href$=".txt"],li.icon a[href$=".txt"] { text-decoration:none; border-bottom:1px dotted #777; }
+ a[href$=".txt"]:not(.no-icon):not(.btn),li.icon a[href$=".txt"] { text-decoration:none; border-bottom:1px dotted #777; }
 
- a[href$=".txt"]:before,li.icon a[href$=".txt"]:before { content:"\f0f6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
+ a[href$=".txt"]:not(.no-icon):not(.btn):before,li.icon a[href$=".txt"]:before { content:"\f0f6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
 
- a[href$=".rtf"],li.icon a[href$=".rtf"] { text-decoration:none; border-bottom:1px dotted #777; }
+ a[href$=".rtf"]:not(.no-icon):not(.btn),li.icon a[href$=".rtf"] { text-decoration:none; border-bottom:1px dotted #777; }
 
- a[href$=".rtf"]:before,li.icon a[href$=".rtf"]:before { content:"\f0f6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
+ a[href$=".rtf"]:not(.no-icon):not(.btn):before,li.icon a[href$=".rtf"]:before { content:"\f0f6"; font-family:"FontAwesome"; color:#777; margin-right:5px; font-weight:normal; }
 
  a.icon[href$=".html"] { text-decoration:none; border-bottom:1px dotted #f1672c; }
 
@@ -671,23 +671,23 @@
 
  a.icon[href$=".swf"]:before { content:"\f1c9"; font-family:"FontAwesome"; color:#c31e24; margin-right:5px; font-weight:normal; }
 
- a.off,a.no-icon,a.no-icons,a.noicon,a.noicons,.no-icon a,.no-icons a,.off a { border-bottom:none !important; }
+ .no-icon a { border-bottom:none !important; }
 
- a.off:before,a.no-icon:before,a.no-icons:before,a.noicon:before,a.noicons:before,.no-icon a:before,.no-icons a:before,.off a:before { display:none !important; }
+ .no-icon a:before { display:none !important; }
 
  a.white,li.icon.white a { color:#fff; }
 
- a.white:hover,li.icon.white a:hover,a.white.hover,li.icon.white a.hover { color:#ccc; }
+ a.white:hover,li.icon.white a:hover { color:#ccc; }
 
  a.white:before,li.icon.white a:before { color:#fff !important; }
 
- .btn-brand,.btn-brand:visited { background-color:#0098d7; border-color:#0098d7; color:#fff; }
+ .btn.btn-brand,.btn.btn-brand:visited { background-color:#0098d7; border-color:#0098d7; color:#fff; }
 
- .btn-brand:hover,.btn-brand:visited:hover,.btn-brand:focus,.btn-brand:visited:focus,.btn-brand:active,.btn-brand:visited:active { background:#0074a4; border-color:#0074a4; color:#fff; }
+ .btn.btn-brand:hover,.btn.btn-brand:visited:hover,.btn.btn-brand:focus,.btn.btn-brand:visited:focus,.btn.btn-brand:active,.btn.btn-brand:visited:active { background:#0074a4; border-color:#0074a4; color:#fff; }
 
- a.phg { margin-left:3px; padding-left:15px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
+ a.phg { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
 
- a.phg.white { background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
+ a.phg.white { background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
 
  a.phg.white span { color:#fff; }
 
@@ -707,7 +707,7 @@
 
  a.phg:hover span.group,a.phg.hover span.group { color:#9fa1a4; }
 
- a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") -15px 6px no-repeat; background-size:13px 8px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") -15px 6px no-repeat; background-size:13px 8px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  a.phg.anim span { margin-right:3px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
@@ -719,7 +719,7 @@
 
  a.phg.anim span.group { color:inherit; }
 
- a.phg.anim:hover,a.phg.anim.hover { margin-left:3px; padding-left:15px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
+ a.phg.anim:hover,a.phg.anim.hover { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
 
  a.phg.anim:hover span,a.phg.anim.hover span { margin-right:0px; }
 
@@ -731,35 +731,35 @@
 
  a.facebook { color:#3b5998; }
 
- a.facebook:hover,a.facebook.hover { color:#263961; }
+ a.facebook:hover { color:#263961; }
 
  a.twitter { color:#55acee; }
 
- a.twitter:hover,a.twitter.hover { color:#1689e0; }
+ a.twitter:hover { color:#1689e0; }
 
  a.googleplus { color:#d73d32; }
 
- a.googleplus:hover,a.googleplus.hover { color:#9e271f; }
+ a.googleplus:hover { color:#9e271f; }
 
  a.linkedin { color:#0077b5; }
 
- a.linkedin:hover,a.linkedin.hover { color:#000; }
+ a.linkedin:hover { color:#000; }
 
  a.github { color:#333; }
 
- a.github:hover,a.github.hover { color:#4183c4; }
+ a.github:hover { color:#4183c4; }
 
  a.youtube { color:#cd201f; }
 
- a.youtube:hover,a.youtube.hover { color:#8b1615; }
+ a.youtube:hover { color:#8b1615; }
 
  a.instagram { color:#3f729b; }
 
- a.instagram:hover,a.instagram.hover { color:#294a65; }
+ a.instagram:hover { color:#294a65; }
 
  a.soundcloud { color:#f80; }
 
- a.soundcloud:hover,a.soundcloud.hover { color:#f30; }
+ a.soundcloud:hover { color:#f30; }
 
  .border-red,.outline-red { outline:1px solid red; }
 
@@ -835,7 +835,7 @@
 
  a:focus { color:#95d600; }
 
- a:hover,a.hover { color:#95d600; }
+ a:hover { color:#95d600; }
 
  a:active { color:#95d600; }
 
@@ -847,7 +847,7 @@
 
  #form-messages .success { color:#58c026; }
 
- input.nebula-search { max-width:30px; padding:0 6px; color:transparent; font-size:12px; background:#eee url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.png") no-repeat 6px center; border:1px solid #ccc; border-radius:20px; outline:none; cursor:pointer; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ input.nebula-search { max-width:30px; padding:0 6px; color:transparent; font-size:12px; background:#eee url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.png") no-repeat 6px center; border:1px solid #ccc; border-radius:20px; outline:none; cursor:pointer; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  input.nebula-search:hover,input.nebula-search.hover { background-color:#fff; }
 
@@ -857,7 +857,7 @@
 
  input.nebula-search.active { border-color:#0098d7; box-shadow:0 0 5px rgba(0, 152, 215, .5); }
 
- .svg input.nebula-search { background:#eee url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.svg") no-repeat 6px center; background-size:auto 80%; }
+ .svg input.nebula-search { background:#eee url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.svg") no-repeat 6px center; background-size:auto 80%; }
 
  input.nebula-search::-webkit-search-decoration,input.nebula-search::-webkit-search-cancel-button { display:none; }
 
@@ -931,7 +931,7 @@
 
  .facebook-connect-con i,.facebook-connect-con a { color:#3b5998; color:#3b5998; }
 
- .facebook-connect-con i:hover,.facebook-connect-con a:hover,.facebook-connect-con i.hover,.facebook-connect-con a.hover { color:#263961; }
+ .facebook-connect-con i:hover,.facebook-connect-con a:hover { color:#263961; }
 
  .loadmorecon { position:relative; text-align:center; margin:50px 0; }
 
@@ -969,7 +969,7 @@
 
  .col-centered { float:none; margin:0 auto; }
 
- .btn { max-width:100%; white-space:normal; }
+ html .btn { max-width:100%; white-space:normal; }
 
  h3.comment-reply-title { font-size:12px; }
 
@@ -1089,7 +1089,7 @@
 
  .ui-autocomplete.ui-widget-content .ui-state-hover a:focus,.ui-autocomplete.ui-widget-content li.ui-state-focus a:focus { color:#fff; }
 
- .ui-autocomplete.ui-widget-content .ui-state-hover a:hover,.ui-autocomplete.ui-widget-content li.ui-state-focus a:hover,.ui-autocomplete.ui-widget-content .ui-state-hover a.hover,.ui-autocomplete.ui-widget-content li.ui-state-focus a.hover { color:#fff; }
+ .ui-autocomplete.ui-widget-content .ui-state-hover a:hover,.ui-autocomplete.ui-widget-content li.ui-state-focus a:hover { color:#fff; }
 
  .ui-autocomplete.ui-widget-content .ui-state-hover a:active,.ui-autocomplete.ui-widget-content li.ui-state-focus a:active { color:#fff; }
 
@@ -1129,7 +1129,7 @@
 
  #mobilebarcon a { font-size:32px; color:#fff; text-decoration:underline; }
 
- #mobilebarcon a:hover,#mobilebarcon a.hover { color:#ccc; }
+ #mobilebarcon a:hover { color:#ccc; }
 
  #mobilebarcon .mobilenavcon { display:block; }
 
@@ -1173,7 +1173,7 @@
 
  #secondarynavcon #secondarynav ul li.menu-item a { display:block; color:#fff; font-size:11px; line-height:30px; }
 
- #secondarynavcon #secondarynav ul li.menu-item a:hover,#secondarynavcon #secondarynav ul li.menu-item a.hover { color:#ccc; }
+ #secondarynavcon #secondarynav ul li.menu-item a:hover { color:#ccc; }
 
  #secondarynavcon #secondarynav ul li.menu-item ul.sub-menu { position:absolute; display:block; margin:0; padding:0 5px; left:-9999px; opacity:0; max-width:250px; background:#fff; border-left:1px solid #95d600; box-shadow:1px 1px 3px 0 rgba(0, 0, 0, 0.05); -webkit-transition:opacity 0.25s; -moz-transition:opacity 0.25s; -ms-transition:opacity 0.25s; -o-transition:opacity 0.25s; transition:opacity 0.25s; }
 
@@ -1181,7 +1181,7 @@
 
  #secondarynavcon #secondarynav ul li.menu-item ul.sub-menu li.menu-item a { display:block; color:#444; font-size:11px; }
 
- #secondarynavcon #secondarynav ul li.menu-item ul.sub-menu li.menu-item a:hover,#secondarynavcon #secondarynav ul li.menu-item ul.sub-menu li.menu-item a.hover { color:#0098d7; }
+ #secondarynavcon #secondarynav ul li.menu-item ul.sub-menu li.menu-item a:hover { color:#0098d7; }
 
  #secondarynavcon #secondarynav ul li.menu-item:hover ul.sub-menu,#secondarynavcon #secondarynav ul li.menu-item.hover ul.sub-menu { left:5px; opacity:1; }
 
@@ -1257,7 +1257,7 @@
 
  #suggestedpage { display:none; }
 
- #hero-section { position:relative; padding:150px 0; margin:0; overflow:hidden; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-nebula.jpg") fixed center center; background-size:cover; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ #hero-section { position:relative; padding:150px 0; margin:0; overflow:hidden; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-nebula.jpg") fixed center center; background-size:cover; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
  #hero-section .herobgcolor { position:absolute; top:0; left:0; width:100%; height:100%; background-color:#0098d7; background-color:rgba(0, 152, 215, 0.8); z-index:0; }
 
@@ -1477,7 +1477,7 @@
 
  .xoxo ul.menu li.current-menu-item .sub-menu a { color:#0098d7; }
 
- .xoxo ul.menu li.current-menu-item .sub-menu a:hover,.xoxo ul.menu li.current-menu-item .sub-menu a.hover { color:#95d600; }
+ .xoxo ul.menu li.current-menu-item .sub-menu a:hover { color:#95d600; }
 
  .xoxo ul.menu li.menu-item { position:relative; padding:5px 0 5px 0; list-style:none; }
 
@@ -1545,7 +1545,7 @@
 
  .footerwidgets .widget-container a { color:#fff; }
 
- .footerwidgets .widget-container a:hover,.footerwidgets .widget-container a.hover { color:#aaa; }
+ .footerwidgets .widget-container a:hover { color:#aaa; }
 
  .row.powerfootercon { display:none; padding-top:20px; margin-bottom:30px; }
 
@@ -1567,7 +1567,7 @@
 
  .row.powerfootercon #powerfooter ul li.menu-item a { display:block; color:#fff; font-size:16px; font-weight:bold; text-transform:uppercase; margin-bottom:5px; border-bottom:1px dotted #fff; }
 
- .row.powerfootercon #powerfooter ul li.menu-item a:hover,.row.powerfootercon #powerfooter ul li.menu-item a.hover { color:#aaa; }
+ .row.powerfootercon #powerfooter ul li.menu-item a:hover { color:#aaa; }
 
  .row.powerfootercon #powerfooter ul li.menu-item ul.sub-menu { margin:0; padding:5px 0; }
 
@@ -1575,7 +1575,7 @@
 
  .row.powerfootercon #powerfooter ul li.menu-item ul.sub-menu li a { display:block; color:#fff; font-size:12px; font-weight:normal; text-transform:none; margin-bottom:0; border-bottom:none; }
 
- .row.powerfootercon #powerfooter ul li.menu-item ul.sub-menu li a:hover,.row.powerfootercon #powerfooter ul li.menu-item ul.sub-menu li a.hover { color:#aaa; }
+ .row.powerfootercon #powerfooter ul li.menu-item ul.sub-menu li a:hover { color:#aaa; }
 
  .row.powerfootercon #powerfooter ul li.menu-item ul.sub-menu li ul.sub-menu { display:none; }
 
@@ -1585,7 +1585,7 @@
 
  div.copyright a { color:#fff; }
 
- div.copyright a:hover,div.copyright a.hover { color:#ccc; }
+ div.copyright a:hover { color:#ccc; }
 
  a.footerlogo img { float:left; width:36px; height:36px; margin:2px 8px 0 0; }
 
@@ -1669,4 +1669,4 @@
  }
 
 
-/* Processed on Wednesday, May 25, 2016 at 8:50am */
+/* Processed on Wednesday, May 25, 2016 at 3:44pm */

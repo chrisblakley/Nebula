@@ -506,117 +506,115 @@ if ( nebula_option('unnecessary_metaboxes') ){
 
 
 //WordPress Information metabox ("At a Glance" replacement)
-if ( nebula_option('ataglance_metabox') ){
-	add_action('wp_dashboard_setup', 'nebula_ataglance_metabox');
-	function nebula_ataglance_metabox(){
-		global $wp_meta_boxes;
-		wp_add_dashboard_widget('nebula_ataglance', '<img src="' . nebula_prefer_child_directory('/images/meta') . '/favicon-32x32.png" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), 'dashboard_nebula_ataglance');
-	}
-	function dashboard_nebula_ataglance(){
-		global $wp_version;
-		global $wp_post_types;
+add_action('wp_dashboard_setup', 'nebula_ataglance_metabox');
+function nebula_ataglance_metabox(){
+	global $wp_meta_boxes;
+	wp_add_dashboard_widget('nebula_ataglance', '<img src="' . nebula_prefer_child_directory('/images/meta') . '/favicon-32x32.png" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), 'dashboard_nebula_ataglance');
+}
+function dashboard_nebula_ataglance(){
+	global $wp_version;
+	global $wp_post_types;
 
-		echo '<ul>';
-			echo '<li><i class="fa fa-globe fa-fw"></i> <a href="' . home_url('/') . '" target="_blank">' . home_url() . '</a></li>';
+	echo '<ul>';
+		echo '<li><i class="fa fa-globe fa-fw"></i> <a href="' . home_url('/') . '" target="_blank">' . home_url() . '</a></li>';
 
-			//Address
-			if ( nebula_option('street_address') ){
-				echo '<li><i class="fa fa-map-marker fa-fw"></i> <a href="https://www.google.com/maps/place/' . nebula_full_address(1) . '" target="_blank">' . nebula_full_address() . '</a></li>';
-			}
+		//Address
+		if ( nebula_option('street_address') ){
+			echo '<li><i class="fa fa-map-marker fa-fw"></i> <a href="https://www.google.com/maps/place/' . nebula_full_address(1) . '" target="_blank">' . nebula_full_address() . '</a></li>';
+		}
 
-			//Open/Closed
-			if ( has_business_hours() ){
-				$open_closed = ( business_open() )? '<strong style="color: green;">Open</strong>' : '<strong>Closed</strong>';
-				echo '<li><i class="fa fa-clock-o fa-fw"></i> Currently ' . $open_closed . '</li>';
-			}
+		//Open/Closed
+		if ( has_business_hours() ){
+			$open_closed = ( business_open() )? '<strong style="color: green;">Open</strong>' : '<strong>Closed</strong>';
+			echo '<li><i class="fa fa-clock-o fa-fw"></i> Currently ' . $open_closed . '</li>';
+		}
 
-			//WordPress Version
-			echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
+		//WordPress Version
+		echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
-			//Nebula Version
-			echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
+		//Nebula Version
+		echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
 
-			//Child Theme
-			if ( is_child_theme() ){
-				echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
-			}
+		//Child Theme
+		if ( is_child_theme() ){
+			echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
+		}
 
-			if ( is_multisite() ){
-				echo '<li><i class="fa fa-cubes fa-fw"></i>Multisite <a href="' . network_admin_url() . '">(Network Admin)</a></li>';
-			}
+		if ( is_multisite() ){
+			echo '<li><i class="fa fa-cubes fa-fw"></i>Multisite <a href="' . network_admin_url() . '">(Network Admin)</a></li>';
+		}
 
-			//Post Types
-			foreach ( get_post_types() as $post_type ){
-			    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
-				    continue;
-			    }
-				$count_pages = wp_count_posts($post_type);
-				$labels_plural = ( $count_pages->publish == 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
-				switch ( $post_type ){
-					case ('post'):
-						$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
-						break;
-					case ('page'):
-						$post_icon_img = '<i class="fa fa-file-text fa-fw"></i>';
-						break;
-					case ('wpcf7_contact_form'):
-						$post_icon_img = '<i class="fa fa-envelope fa-fw"></i>';
-						break;
-					default:
-						$post_icon = $wp_post_types[$post_type]->menu_icon;
-						if ( !empty($post_icon) ){
-							if ( strpos('dashicons-', $post_icon) >= 0 ){
-								$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
-							} else {
-								$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
-							}
+		//Post Types
+		foreach ( get_post_types() as $post_type ){
+		    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
+			    continue;
+		    }
+			$count_pages = wp_count_posts($post_type);
+			$labels_plural = ( $count_pages->publish == 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+			switch ( $post_type ){
+				case ('post'):
+					$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
+					break;
+				case ('page'):
+					$post_icon_img = '<i class="fa fa-file-text fa-fw"></i>';
+					break;
+				case ('wpcf7_contact_form'):
+					$post_icon_img = '<i class="fa fa-envelope fa-fw"></i>';
+					break;
+				default:
+					$post_icon = $wp_post_types[$post_type]->menu_icon;
+					if ( !empty($post_icon) ){
+						if ( strpos('dashicons-', $post_icon) >= 0 ){
+							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 						} else {
-							$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
+							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
 						}
-						break;
-				}
-				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_pages->publish . '</strong> ' . $labels_plural . '</a></li>';
+					} else {
+						$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
+					}
+					break;
 			}
+			echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_pages->publish . '</strong> ' . $labels_plural . '</a></li>';
+		}
 
-			//Revisions
-			$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
-			$revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
-			$revisions_plural = ( $revision_count == 1 )? 'revision' : 'revisions';
-			echo '<li><i class="fa fa-history fa-fw"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
+		//Revisions
+		$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
+		$revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
+		$revisions_plural = ( $revision_count == 1 )? 'revision' : 'revisions';
+		echo '<li><i class="fa fa-history fa-fw"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
-			//Plugins
-			$all_plugins = get_plugins();
-			$active_plugins = get_option('active_plugins', array());
-			echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> Plugins</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
+		//Plugins
+		$all_plugins = get_plugins();
+		$active_plugins = get_option('active_plugins', array());
+		echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> Plugins</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
-			//Users
-			$user_count = count_users();
-			$users_icon = 'users';
-			$users_plural = 'Users';
-			if ( $user_count['total_users'] == 1 ){
-				$users_plural = 'User';
-				$users_icon = 'user';
-			}
-			echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula_online_users('count') . ' currently active)</small></li>';
+		//Users
+		$user_count = count_users();
+		$users_icon = 'users';
+		$users_plural = 'Users';
+		if ( $user_count['total_users'] == 1 ){
+			$users_plural = 'User';
+			$users_icon = 'user';
+		}
+		echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula_online_users('count') . ' currently active)</small></li>';
 
-			//Comments
-			if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){
-				$comments_count = wp_count_comments();
-				$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
-				echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
+		//Comments
+		if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){
+			$comments_count = wp_count_comments();
+			$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
+			echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
+		} else {
+			if ( nebula_option('comments', 'disabled') ){
+				echo '<li><i class="fa fa-comments-o fa-fw"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
 			} else {
-				if ( nebula_option('comments', 'disabled') ){
-					echo '<li><i class="fa fa-comments-o fa-fw"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
-				} else {
-					echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . nebula_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
-				}
+				echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . nebula_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
 			}
-		echo '</ul>';
+		}
+	echo '</ul>';
 
-		do_action('nebula_ataglance');
+	do_action('nebula_ataglance');
 
-		echo '<p><em>Designed and Developed by ' . pinckneyhugogroup(1) . '</em></p>';
-	}
+	echo '<p><em>Designed and Developed by ' . pinckneyhugogroup(1) . '</em></p>';
 }
 
 

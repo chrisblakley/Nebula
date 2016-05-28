@@ -163,7 +163,7 @@ function button_shortcode($atts, $content=''){
 	if ( $size ){
 		$size = str_replace(array('small', 'medium', 'large'), array('sm', 'md', 'lg'), $size);
 		if ( strpos($size, 'btn-' ) == false){
-			$icon = 'btn-' . $size;
+			$size = 'btn-' . $size;
 		}
 	}
 

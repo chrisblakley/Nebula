@@ -1838,24 +1838,25 @@ function conversionTracker(conversionpage){
  ===========================*/
 
 //Conditional JS Library Loading
-//This could be done better I think (also, it runs too late in the stack).
+//@TODO "Nebula" 0: Dynamically store these library URLs in the nebula.site.resources object
 function conditionalJSLoading(){
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').length ){
-		jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js').done(function(){
+		jQuery.getScript(nebula.site.resources.js.chosen).done(function(){
 			chosenSelectOptions();
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
 		});
-		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css');
+		nebulaLoadCSS(nebula.site.resources.css.chosen);
 	}
 
 	//Only load dataTables library if dataTables table exists.
     if ( jQuery('.dataTables_wrapper').length ){
-        jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap4.min.js').done(function(){
-            nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.bootstrap4.min.css');
+        console.log('loading datatables');
+        jQuery.getScript(nebula.site.resources.js.datatables).done(function(){
+            nebulaLoadCSS(nebula.site.resources.css.datatables);
 			dataTablesActions();
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -1866,7 +1867,7 @@ function conditionalJSLoading(){
 
 	//Only load tether if Tooltips exist
 	if ( jQuery('[data-toggle="tooltip"]').length ){
-		nebulaLoadCSS('https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/css/tether.min.css');
+		nebulaLoadCSS(nebula.site.resources.css.tether);
 	}
 
 	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-pre').length ){
@@ -2237,9 +2238,6 @@ function addHelperClasses(){
 	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').each(function(){
 		jQuery(this).parents('a').addClass('no-icon');
-	});
-	jQuery('a.btn').each(function(){
-		jQuery(this).addClass('no-icon');
 	});
 }
 
@@ -3451,8 +3449,8 @@ function subnavExpanders(){
         return false;
     });
     //Automatically expand subnav to show current page
-    jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
-    jQuery('.current-menu-item').children('.toplevelvert_expander').click();
+    jQuery('.current-menu-ancestor').find('.toplevelvert_expander').click();
+    jQuery('.current-menu-item').find('.toplevelvert_expander').click();
 } //end subnavExpanders()
 
 //Affix the logo/navigation when scrolling passed it

@@ -25,11 +25,27 @@
 		&:focus {color: $focus;}
 	}
 	@if $hover {
-		&:hover,
-		&.hover {color: $hover;}
+		&:hover {color: $hover;}
 	}
 	@if $active {
 		&:active {color: $active;}
+	}
+}
+
+//.element a {@include link-backgrounds(red, orange, yellow, green, blue);}
+@mixin link-backgrounds($normal, $hover: false, $active: false, $visited: false, $focus: false){
+	color: $normal;
+	@if $visited {
+		&:visited {background: $visited;}
+	}
+	@if $focus {
+		&:focus {background: $focus;}
+	}
+	@if $hover {
+		&:hover {background: $hover;}
+	}
+	@if $active {
+		&:active {background: $active;}
 	}
 }
 

@@ -11,7 +11,18 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div id="breadcrumb-section">
+<section id="bigheadingcon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1 class="page-title"><i class="fa fa-fw fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
+				<?php echo tag_description(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+	</div><!--/container-->
+</section>
+
+<div id="breadcrumb-section" class="full">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
@@ -25,7 +36,6 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
-				<h1 class="page-title"><i class="archiveicon fa fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
 				<?php get_template_part('loop', 'tag'); ?>
 				<?php wp_pagenavi(); ?>
 			</div><!--/col-->

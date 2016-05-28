@@ -39,7 +39,7 @@
 	<?php endif; ?>
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
-	<meta property="og:title" content="<?php the_title(); ?>" />
+	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
 	<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
 	<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ) : ?>
 		<meta property="og:url" content="<?php the_permalink(); ?>" />
@@ -87,7 +87,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" >
 <link rel="icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>">
 <link rel="icon" type="image/png" sizes="96x96" href="<?php echo $image_meta_directory; ?>/favicon-96x96.png<?php echo $cache_query; ?>">
-<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="#0098d7">
+<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula_sass_color('primary'); ?>">
 
 
 <?php //Apple iOS ?>
@@ -116,7 +116,7 @@
 
 <?php //Facebook Metadata ?>
 <meta property="fb:app_id" content="<?php echo nebula_option('facebook_app_id'); ?>" />
-<meta property="fb:page_id" content="<?php echo nebula_option('facebook_page_id'); ?>" />
+<meta property="fb:page_id" content="<?php echo nebula_option('facebook_page_id'); //Is this even used anymore? ?>" />
 <meta property="fb:pages" content="<?php echo nebula_option('facebook_page_id'); ?>" />
 <meta property="fb:admins" content="<?php echo get_option('facebook_admin_ids'); ?>" />
 
