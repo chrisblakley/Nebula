@@ -88,36 +88,38 @@
 					}
 				}
 
-				//Categories
-				$post_cats = get_the_category();
-				if ( !empty($post_cats) ){
-					foreach($post_cats as $category){
-						$cats[] = $category->name;
+				if ( !is_front_page() ){ //Don't track cat/tags on front page
+					//Categories
+					$post_cats = get_the_category();
+					if ( !empty($post_cats) ){
+						foreach($post_cats as $category){
+							$cats[] = $category->name;
+						}
+						sort($cats);
+						$cat_list = implode(', ', $cats);
+					} else {
+						$cat_list = '(No Categories)';
 					}
-					sort($cats);
-					$cat_list = implode(', ', $cats);
-				} else {
-					$cat_list = 'No Categories';
-				}
-				echo 'nebula.post.categories = "' . $cat_list . '";';
-				if ( nebula_option('cd_categories') ){
-					echo 'ga("set", gaCustomDimensions["categories"], "' . $cat_list . '");';
-				}
+					echo 'nebula.post.categories = "' . $cat_list . '";';
+					if ( nebula_option('cd_categories') ){
+						echo 'ga("set", gaCustomDimensions["categories"], "' . $cat_list . '");';
+					}
 
-				//Tags
-				$post_tags = get_the_tags();
-				if ( !empty($post_tags) ){
-					foreach( get_the_tags() as $tag ){
-						$tags[] = $tag->name;
+					//Tags
+					$post_tags = get_the_tags();
+					if ( !empty($post_tags) ){
+						foreach( get_the_tags() as $tag ){
+							$tags[] = $tag->name;
+						}
+						sort($tags);
+						$tag_list = implode(', ', $tags);
+					} else {
+						$tag_list = '(No Tags)';
 					}
-					sort($tags);
-					$tag_list = implode(', ', $tags);
-				} else {
-					$tag_list = 'No Tags';
-				}
-				echo 'nebula.post.tags = "' . $tag_list . '";';
-				if ( nebula_option('cd_tags') ){
-					echo 'ga("set", gaCustomDimensions["tags"], "' . $tag_list . '");';
+					echo 'nebula.post.tags = "' . $tag_list . '";';
+					if ( nebula_option('cd_tags') && !is_front_page() ){
+						echo 'ga("set", gaCustomDimensions["tags"], "' . $tag_list . '");';
+					}
 				}
 
 				//Word Count

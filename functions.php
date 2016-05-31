@@ -78,8 +78,6 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true); //Can this be deferred?
 	nebula_register_script('nebula-skrollr', 'https://cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.30/skrollr.min.js', null, null, '0.6.30', true);
 	nebula_register_script('nebula-headroom', 'https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.3/headroom.min.js', 'defer', null, '0.9.3', true);
-	nebula_register_script('nebula-respond', 'https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js', 'defer', null, '1.4.2', true);
-	nebula_register_script('nebula-html5shiv', 'https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js', 'defer', null, '3.7.3', true);
 	nebula_register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js', 'defer', null, '1.3.2', true);
 	nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js', 'defer', array('nebula-tether'), '4.0.0a2', true);
 	nebula_register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js', 'defer', null, '1.10.12', true); //Datatables is called via main.js only as needed.
@@ -308,11 +306,6 @@ function enqueue_nebula_frontend(){
 	if ( is_debug() ){ //When ?debug query string is used
 		wp_enqueue_script('nebula-performance_timing');
 		//wp_enqueue_script('nebula-mmenu_debugger');
-	}
-
-	if ( nebula_is_browser('ie', '9', '<=') ){ //Old IE Scripts.
-		wp_enqueue_script('nebula-respond');
-		wp_enqueue_script('nebula-html5shiv');
 	}
 
 	if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in main.js.

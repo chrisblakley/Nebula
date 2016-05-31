@@ -1,3 +1,10 @@
+<?php
+	/*
+		Note: Consider using WP_Query as shown in the basic query example.
+		Also note: Using Bootstrap, creating a new row may not be necessary. You could continue to repeat columns with no adverse affects.
+	*/
+?>
+
 <div class="row multi-column-query">
 <?php $count = 0; ?>
 <?php query_posts( array( 'category_name' => 'Documentation', 'showposts' => 4, 'paged' => get_query_var('paged') ) ); ?>

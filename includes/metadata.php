@@ -22,28 +22,22 @@
 <?php //Keywords and Description ?>
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
 	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
-	<meta name="keywords" content="<?php echo nebula_option('keywords'); ?>" />
 	<?php if ( function_exists('get_field') && get_field('news_keywords') ): //News keywords are <=10 comma separated keywords. ?>
 		<meta name="news_keywords" content="<?php echo get_field('news_keywords'); ?>" />
 	<?php endif; ?>
-	<?php if ( nebula_option('author_bios', 'enabled') ): ?>
-		<meta name="author" content="<?php echo nebula_the_author(); ?>" />
-	<?php endif; ?>
 <?php endif; ?>
 
+<?php if ( nebula_option('google_search_console_verification') ): ?>
+	<meta name="google-site-verification" content="<?php echo nebula_option('google_search_console_verification'); ?>" />
+<?php endif; ?>
 
 <?php //Open Graph ?>
-<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') || is_front_page() ): ?>
-	<?php if ( nebula_option('google_search_console_verification') ): ?>
-		<meta name="google-site-verification" content="<?php echo nebula_option('google_search_console_verification'); ?>" />
-	<?php endif; ?>
+<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
 	<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
-	<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ) : ?>
-		<meta property="og:url" content="<?php the_permalink(); ?>" />
-	<?php endif; ?>
+	<meta property="og:url" content="<?php the_permalink(); ?>" />
 	<meta property="og:site_name" content="<?php bloginfo('name'); ?>" />
 
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
@@ -65,6 +59,7 @@
 		<?php endif; ?>
 	<?php endif; ?>
 <?php endif; ?>
+
 <?php if ( file_exists(nebula_prefer_child_directory('/images/meta', false) . '/og-thumb.png') ): ?>
 	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
@@ -81,45 +76,40 @@
 	<?php endif; ?>
 <?php endforeach; ?>
 
-
 <?php //Favicons ?>
-<link rel="shortcut icon" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" >
-<link rel="icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="96x96" href="<?php echo $image_meta_directory; ?>/favicon-96x96.png<?php echo $cache_query; ?>">
-<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula_sass_color('primary'); ?>">
-
+<link rel="shortcut icon" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" sizes="96x96" href="<?php echo $image_meta_directory; ?>/favicon-96x96.png<?php echo $cache_query; ?>" />
+<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula_sass_color('primary'); ?>" />
 
 <?php //Apple iOS ?>
-<link rel="apple-touch-icon" sizes="57x57" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-57x57.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="60x60" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-60x60.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="72x72" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-72x72.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="76x76" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-76x76.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="114x114" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-114x114.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="120x120" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-120x120.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="144x144" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-144x144.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="152x152" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-152x152.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-180x180.png<?php echo $cache_query; ?>">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-precomposed.png<?php echo $cache_query; ?>">
-
+<link rel="apple-touch-icon" sizes="57x57" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-57x57.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="60x60" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-60x60.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="72x72" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-72x72.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="76x76" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-76x76.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="114x114" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-114x114.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="120x120" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-120x120.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="144x144" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-144x144.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="152x152" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-152x152.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-180x180.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-precomposed.png<?php echo $cache_query; ?>" />
 
 <?php //Android/Chrome ?>
-<link rel="icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="36x36" href="<?php echo $image_meta_directory; ?>/android-chrome-36x36.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="48x48" href="<?php echo $image_meta_directory; ?>/android-chrome-48x48.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="72x72" href="<?php echo $image_meta_directory; ?>/android-chrome-72x72.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="96x96" href="<?php echo $image_meta_directory; ?>/android-chrome-96x96.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="144x144" href="<?php echo $image_meta_directory; ?>/android-chrome-144x144.png<?php echo $cache_query; ?>">
-<link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>">
-
+<link rel="icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="36x36" href="<?php echo $image_meta_directory; ?>/android-chrome-36x36.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="48x48" href="<?php echo $image_meta_directory; ?>/android-chrome-48x48.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="72x72" href="<?php echo $image_meta_directory; ?>/android-chrome-72x72.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="96x96" href="<?php echo $image_meta_directory; ?>/android-chrome-96x96.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="144x144" href="<?php echo $image_meta_directory; ?>/android-chrome-144x144.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
 
 <?php //Facebook Metadata ?>
 <meta property="fb:app_id" content="<?php echo nebula_option('facebook_app_id'); ?>" />
 <meta property="fb:page_id" content="<?php echo nebula_option('facebook_page_id'); //Is this even used anymore? ?>" />
 <meta property="fb:pages" content="<?php echo nebula_option('facebook_page_id'); ?>" />
 <meta property="fb:admins" content="<?php echo get_option('facebook_admin_ids'); ?>" />
-
 
 <?php //Twitter Metadata ?>
 <?php if ( has_post_thumbnail($post->ID) ): ?>
@@ -148,7 +138,6 @@
 	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $user->ID); ?>" />
 <?php endif; ?>
 
-
 <?php //Windows Tiles ?>
 <meta name="application-name" content="<?php bloginfo('name') ?>" />
 <meta name="msapplication-TileColor" content="#0098d7" />
@@ -157,7 +146,6 @@
 <meta name="msapplication-wide310x150logo" content="<?php echo $image_meta_directory; ?>/mstile-310x150.png<?php echo $cache_query; ?>" />
 <meta name="msapplication-square310x310logo" content="<?php echo $image_meta_directory; ?>/mstile-310x310.png<?php echo $cache_query; ?>" />
 <meta name="msapplication-notification" content="frequency=30;polling-uri=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=1;polling-uri2=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=2;polling-uri3=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=3;polling-uri4=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=4;polling-uri5=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=5; cycle=1" />
-
 
 <?php //Local/Geolocation Metadata ?>
 <meta name="geo.placename" content="<?php echo nebula_option('locality'); ?>, <?php echo nebula_option('region'); ?>" />

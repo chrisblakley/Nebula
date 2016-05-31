@@ -497,10 +497,7 @@ if ( nebula_option('unnecessary_metaboxes') ){
 	    remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
 	    remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');
 	    remove_meta_box('dashboard_quick_press', 'dashboard', 'side');
-
-		if ( nebula_option('ataglance_metabox') ){
-	    	remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
-	    }
+	    remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
 	}
 }
 

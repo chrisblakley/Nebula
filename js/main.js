@@ -1854,10 +1854,10 @@ function conditionalJSLoading(){
 
 	//Only load dataTables library if dataTables table exists.
     if ( jQuery('.dataTables_wrapper').length ){
-        console.log('loading datatables');
         jQuery.getScript(nebula.site.resources.js.datatables).done(function(){
             nebulaLoadCSS(nebula.site.resources.css.datatables);
 			dataTablesActions();
+			jQuery(document).trigger('nebula_datatables_loaded');
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));

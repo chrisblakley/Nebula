@@ -1521,7 +1521,7 @@ function nebula_advanced_search(){
 }
 
 //Infinite Load
-function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
+function nebula_infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
 	$override = apply_filters('pre_nebula_infinite_load_query', false);
 	if ( $override !== false ){return;}
 
@@ -1530,13 +1530,28 @@ function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
 		$loop = false;
 	}
 
+	global $wp_query;
 	if ( empty($args['paged']) ){
 		$args['paged'] = 1;
+		if ( !empty(get_query_var('paged')) ){
+			$args['paged'] = get_query_var('paged'); //@TODO "Nebula" 0: Add link to go back to page 1? (aka the regular permalink)
+			?>
+			<div class="infinite-start-note">
+				<a href="<?php echo get_the_permalink(); ?>">&laquo; Back to page 1</a>
+			</div>
+			<?php
+		} elseif ( !empty($wp_query->query['paged']) ){
+			$args['paged'] = $wp_query->query['paged']; //@TODO "Nebula" 0: Add link to go back to page 1? (aka the regular permalink)
+			?>
+			<div class="infinite-start-note">
+				<a href="<?php echo get_the_permalink(); ?>">&laquo; Back to page 1</a>
+			</div>
+			<?php
+		}
 	}
 
 	query_posts($args); //@TODO "Nebula" 0: Change to WP_Query? How do we still use loop.php? Need to modify global loop ($wp_query).
 	//Maybe: $GLOBALS['wp_query'] = new WP_Query($args); (untested)?
-	global $wp_query;
 
 	if ( empty($args['post_type']) ){
 		$post_type_label = 'posts';
@@ -1586,12 +1601,14 @@ function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
 							loop: <?php echo json_encode($loop); ?>,
 						},
 						success: function(response){
-							jQuery("#infinite-posts-list").append('<div class="clearfix infinite-page infinite-page-' + (pageNumber-1) + '" style="display: none;">' + response + '</div>');
+							jQuery("#infinite-posts-list").append('<div class="clearfix infinite-page infinite-page-' + (pageNumber-1) + ' sliding" style="display: none;">' + response + '</div>');
 							jQuery('.infinite-page-' + (pageNumber-1)).slideDown({
 			                    duration: 750,
 			                    easing: 'easeInOutQuad',
 			                    complete: function(){
 				                    jQuery('.loadmorecon').removeClass('loading');
+				                    jQuery('.infinite-page.sliding').removeClass('sliding');
+				                    nebula.dom.document.trigger('nebula_infinite_slidedown_complete');
 			                    }
 			                });
 
@@ -1599,20 +1616,26 @@ function nebula_infinite_load_query($args=array('showposts' => 4), $loop=false){
 								jQuery('.loadmorecon').addClass('disabled').find('a').text('No more <?php echo $post_type_label; ?>.');
 							}
 
-							//history.replaceState(null, document.title, nebula.post.permalink + 'page/' + (pageNumber-1)); //@TODO "Nebula" 0: Needs to preserve query strings!
-							jQuery(document).trigger('nebula_infinite_finish');
+							var newQueryStrings = '';
+							if ( typeof document.URL.split('?')[1] !== 'undefined' ){
+								newQueryStrings = '?' + document.URL.split('?')[1].replace(/[?&]paged=\d+/, '');
+							}
+
+							history.replaceState(null, document.title, nebula.post.permalink + 'page/' + pageNumber + newQueryStrings);
+							nebula.dom.document.trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load'));
+							ga('send', 'event', 'Infinite Query', 'Load More', 'Loaded page ' + pageNumber);
+							pageNumber++;
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
 							jQuery(document).trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load AJAX Error'));
-							ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Load AJAX');
+							ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
 						},
 						timeout: 60000
 					});
-			        pageNumber++;
 				}
 				return false;
 			});
