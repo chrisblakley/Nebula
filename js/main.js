@@ -1630,7 +1630,7 @@ function cf7Functions(){
 			var labelText = '';
 			if ( jQuery(this).parent('.label') ){
 				labelText = jQuery(this).parent('.label').text();
-			else if ( jQuery('label[for="' + jQuery(this).attr('id') + '"]').length ){
+			} else if ( jQuery('label[for="' + jQuery(this).attr('id') + '"]').length ){
 				labelText = jQuery('label[for="' + jQuery(this).attr('id') + '"]').text();
 			} else if ( jQuery(this).attr('placeholder').length ){
 				labelText = ' "' + jQuery(this).attr('placeholder') + '"';
