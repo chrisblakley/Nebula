@@ -873,7 +873,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 	}
 }
 
-//Use this instead of the_excerpt(); and get_the_excerpt(); so we can have better control over the excerpt.
+//Use this instead of the_excerpt(); and get_the_excerpt(); to have better control over the excerpt.
 //Several ways to implement this:
 	//Inside the loop (or outside the loop for current post/page): nebula_the_excerpt('Read more &raquo;', 20, 1);
 	//Outside the loop: nebula_the_excerpt(572, 'Read more &raquo;', 20, 1);
@@ -891,10 +891,9 @@ function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
 				$hellip = false;
 			}
 
+			$length = 55;
 			if ( is_int($more) ){
 				$length = $more;
-			} else {
-				$length = 55;
 			}
 
 			$more = $postID;
@@ -903,11 +902,8 @@ function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
 		$the_post = get_post($postID);
 	}
 
-	if ( $the_post->post_excerpt ){
-		$string = strip_tags(strip_shortcodes($the_post->post_excerpt), '');
-	} else {
-		$string = strip_tags(strip_shortcodes($the_post->post_content), '');
-	}
+	$string = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
+	$string = str_replace(array("\r\n", "\r", "\n"), ' ', strip_tags(strip_shortcodes($string), ''));
 
 	if ( $length == -1 || $length == '' || $length === null ){
         $string = string_limit_words($string, strlen($string));

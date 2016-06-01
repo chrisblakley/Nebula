@@ -19,20 +19,12 @@
 	*/
 ?>
 
-<?php //Keywords and Description ?>
-<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
-	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
-	<?php if ( function_exists('get_field') && get_field('news_keywords') ): //News keywords are <=10 comma separated keywords. ?>
-		<meta name="news_keywords" content="<?php echo get_field('news_keywords'); ?>" />
-	<?php endif; ?>
-<?php endif; ?>
-
 <?php if ( nebula_option('google_search_console_verification') ): ?>
 	<meta name="google-site-verification" content="<?php echo nebula_option('google_search_console_verification'); ?>" />
 <?php endif; ?>
 
-<?php //Open Graph ?>
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
+	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
@@ -67,8 +59,7 @@
 	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb2.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
 
-<?php //Business hours of operation. ?>
-<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): ?>
+<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): //Business hours of operation. ?>
 	<?php if ( nebula_option('business_hours_' . $weekday . '_enabled') && nebula_option('business_hours_' . $weekday . '_open') != '' && nebula_option('business_hours_' . $weekday . '_close') != '' ) : ?>
 		<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
 		<meta property="business:hours:start" content="<?php echo nebula_option('business_hours_' . $weekday . '_open'); ?>" />

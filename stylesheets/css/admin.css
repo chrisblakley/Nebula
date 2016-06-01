@@ -13,7 +13,7 @@
  }
  */ .nebulaborder { padding:5px; background:#fff; border:1px solid #aaa; }
 
- .nebulashadow { margin-top:0; margin-top:attr(offset, px, 0); height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ .nebulashadow { margin-top:0; margin-top:attr(offset, px, 0); height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; pointer-events:none; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
  .nebulashadow.above { height:12px; width:100%; background:rgba(0, 0, 0, 0.2); background:linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); -webkit-transform:scaleY(-1); -moz-transform:scaleY(-1); -ms-transform:scaleY(-1); -o-transform:scaleY(-1); transform:scaleY(-1); -ms-filter:flipv; filter:flipv; }
 
@@ -23,15 +23,15 @@
 
  .nebulashadow.inner-bottom { bottom:0; left:0; height:12px; position:absolute; width:100%; background:rgba(0, 0, 0, 0.2); background:linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); -webkit-transform:scaleY(-1); -moz-transform:scaleY(-1); -ms-transform:scaleY(-1); -o-transform:scaleY(-1); transform:scaleY(-1); -ms-filter:flipv; filter:flipv; }
 
- .nebulashadow.bulging { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; }
+ .nebulashadow.bulging { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; }
 
- .nebulashadow.curling { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; }
+ .nebulashadow.curling { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; }
 
- .nebulashadow.hovering { height:35px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; }
+ .nebulashadow.hovering { height:35px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; }
 
- .nebulashadow.anchored-right,.nebulashadow.rising-left { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; }
+ .nebulashadow.anchored-right,.nebulashadow.rising-left { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; }
 
- .nebulashadow.anchored-left,.nebulashadow.rising-right { height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; }
+ .nebulashadow.anchored-left,.nebulashadow.rising-right { height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; }
 
  .lte-ie9 .nebulashadow.inner-bottom,.lte-ie9 .nebulashadow.above { transform:none; filter:-; -ms-filter:-; display:none; }
 
@@ -39,17 +39,17 @@
 
  .nebulaframe { position:relative; padding:5px; background:#fff; border:1px solid #aaa; /* &.animate:hover:after {background-position-y: -24px;} */ }
 
- .nebulaframe:after { content:''; position:absolute; left:0; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; pointer-events:none; }
+ .nebulaframe:after { content:''; position:absolute; left:0; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-floating.png") no-repeat top center; background-size:contain; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; pointer-events:none; }
 
- .nebulaframe.bulging:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; pointer-events:none; }
+ .nebulaframe.bulging:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-bulging.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.curling:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; pointer-events:none; }
+ .nebulaframe.curling:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-curling.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.hovering:after { content:''; position:absolute; bottom:-35px; width:100%; height:35px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; pointer-events:none; }
+ .nebulaframe.hovering:after { content:''; position:absolute; bottom:-35px; width:100%; height:35px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-hovering.png") no-repeat top center; background-size:contain; pointer-events:none; }
 
- .nebulaframe.anchored-right:after,.nebulaframe.rising-left:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; pointer-events:none; }
+ .nebulaframe.anchored-right:after,.nebulaframe.rising-left:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-right.png") no-repeat top right; background-size:contain; pointer-events:none; }
 
- .nebulaframe.anchored-left:after,.nebulaframe.rising-right:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; pointer-events:none; }
+ .nebulaframe.anchored-left:after,.nebulaframe.rising-right:after { content:''; position:absolute; bottom:-24px; width:100%; height:24px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/shadow-anchored-left.png") no-repeat top left; background-size:contain; pointer-events:none; }
 
  a.nebulaframe { border:none; }
 
@@ -193,10 +193,6 @@
 
  a.icon[href$=".swf"]:before { content:"\f1c9"; font-family:"FontAwesome"; color:#c31e24; margin-right:5px; font-weight:normal; }
 
- .no-icon a { border-bottom:none !important; }
-
- .no-icon a:before { display:none !important; }
-
  a.white,li.icon.white a { color:#fff; }
 
  a.white:hover,li.icon.white a:hover { color:#ccc; }
@@ -207,9 +203,9 @@
 
  .btn.btn-brand:hover,.btn.btn-brand:visited:hover,.btn.btn-brand:focus,.btn.btn-brand:visited:focus,.btn.btn-brand:active,.btn.btn-brand:visited:active { background:#0074a4; border-color:#0074a4; color:#fff; }
 
- a.phg { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
+ a.phg { margin-left:3px; padding-left:15px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
 
- a.phg.white { background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
+ a.phg.white { background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
 
  a.phg.white span { color:#fff; }
 
@@ -229,7 +225,7 @@
 
  a.phg:hover span.group,a.phg.hover span.group { color:#9fa1a4; }
 
- a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") -15px 6px no-repeat; background-size:13px 8px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") -15px 6px no-repeat; background-size:13px 8px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  a.phg.anim span { margin-right:3px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
@@ -241,7 +237,7 @@
 
  a.phg.anim span.group { color:inherit; }
 
- a.phg.anim:hover,a.phg.anim.hover { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
+ a.phg.anim:hover,a.phg.anim.hover { margin-left:3px; padding-left:15px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
 
  a.phg.anim:hover span,a.phg.anim.hover span { margin-right:0px; }
 
@@ -963,15 +959,15 @@
 
  #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i { background-position:0px 0px; background-repeat:no-repeat; }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon { background-image:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulaicon.png"); }
+ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulaicon { background-image:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulaicon.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap { background-image:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulamap.png"); }
+ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulamap,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulamap { background-image:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulamap.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode { background-image:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulacode.png"); }
+ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacode,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacode { background-image:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulacode.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid { background-image:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulacolgrid.png"); }
+ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulacolgrid { background-image:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulacolgrid.png"); }
 
- #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo { background-image:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulavideo.png"); }
+ #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i.mce-i-nebulavideo { background-image:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/admin/nebulavideo.png"); }
 
  #wp-fullscreen-buttons .mce-btn.mce-nebula-icon:focus button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:focus button i,#wp-fullscreen-buttons .mce-btn.mce-nebula-icon:hover button i,.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon:hover button i { background-position:0px -20px; background-repeat:no-repeat; }
 
@@ -990,4 +986,4 @@
  .noheight { height:0 !important; overflow:hidden; opacity:0 !important; }
 
 
-/* Processed on Wednesday, May 25, 2016 at 3:45pm */
+/* Processed on Wednesday, June 1, 2016 at 12:07am */

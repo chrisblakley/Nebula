@@ -44,3 +44,13 @@ h1, h2, h3, h4, h5, h6 {color: $text_color;
 }
 
 a {@include link-colors($primary_color, $secondary_color);}
+
+.xoxo {
+	ul li.current-menu-item {
+		.sub-menu {
+			ul li {border-left: 1px solid $secondary_color;
+				a {@include link-colors($primary_color, $secondary_color);}
+			}
+		}
+	}
+}

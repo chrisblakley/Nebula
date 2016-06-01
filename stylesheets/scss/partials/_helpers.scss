@@ -119,9 +119,6 @@ body:not(.wp-admin) {
 @include file_icon(css scss, f1c9, #30a9dc, true);
 @include file_icon(swf, f1c9, #c31e24, true);
 
-.no-icon a {border-bottom: none !important;
-	&:before {display: none !important;}
-}
 a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	&:before {color: #fff !important;}
 }

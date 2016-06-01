@@ -1627,7 +1627,15 @@ function cf7Functions(){
 
 		//Individual form field timings
 		if ( typeof nebulaTimings[formID].lap[nebulaTimings[formID].laps-1] !== 'undefined' ){
-			ga('send', 'timing', 'Contact', nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].name, Math.round(nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
+			var labelText = '';
+			if ( jQuery(this).parent('.label') ){
+				labelText = jQuery(this).parent('.label').text();
+			else if ( jQuery('label[for="' + jQuery(this).attr('id') + '"]').length ){
+				labelText = jQuery('label[for="' + jQuery(this).attr('id') + '"]').text();
+			} else if ( jQuery(this).attr('placeholder').length ){
+				labelText = ' "' + jQuery(this).attr('placeholder') + '"';
+			}
+			ga('send', 'timing', 'Forms', nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].name + labelText + ' (Form ID: ' + formID + ')', Math.round(nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
 		}
 	});
 
@@ -1690,7 +1698,7 @@ function cf7Functions(){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
 
-		ga('send', 'timing', 'Contact', 'Form Completion', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
+		ga('send', 'timing', 'Contact', 'Form Completion (ID: ' + e.target.id + ')', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
 		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + millisecondsToString(nebulaTimer(e.target.id, 'end')));
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
 		nebulaConversion('contact', 'Form ID: ' + e.target.id);
@@ -2236,9 +2244,8 @@ function addHelperClasses(){
 	});
 
 	//Remove filetype icons from images within <a> tags and buttons.
-	jQuery('a img').each(function(){
-		jQuery(this).parents('a').addClass('no-icon');
-	});
+	jQuery('a img').parents('a').addClass('no-icon');
+	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
 }
 
 function initBootstrapFunctions(){

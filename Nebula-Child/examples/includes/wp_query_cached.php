@@ -2,7 +2,8 @@
 	<div class="col-md-12">
 
 		<?php
-			$cached_query = get_transient('example_cached_query');
+			//Note: You must set a new transient for each page of the query.
+			$cached_query = get_transient('example_cached_query' . get_query_var('paged'));
 			if ( empty($cached_query) || is_debug() ){
 			    $cached_query = new WP_Query(array(
 			        'post_type' => 'event',
@@ -10,7 +11,7 @@
 			        'showposts' => 2,
 			        'paged' => get_query_var('paged')
 			    ));
-			    set_transient('example_cached_query', $cached_query, 60*60); //1 hour cache
+			    set_transient('example_cached_query' . get_query_var('paged'), $cached_query, 60*60); //1 hour cache
 			}
 			while ( $cached_query->have_posts() ): $cached_query->the_post();
 		?>

@@ -3,11 +3,20 @@
 //Force expire query transients when posts/pages are saved.
 add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){
-	delete_transient('nebula_autocomplete_menus');
-	delete_transient('nebula_autocomplete_categories');
-	delete_transient('nebula_autocomplete_tags');
-	delete_transient('nebula_autocomplete_authors');
-	delete_transient('nebula_everything_query');
+	delete_transient('nebula_autocomplete_menus'); //Autocomplete Search
+	delete_transient('nebula_autocomplete_categories'); //Autocomplete Search
+	delete_transient('nebula_autocomplete_tags'); //Autocomplete Search
+	delete_transient('nebula_autocomplete_authors'); //Autocomplete Search
+	delete_transient('nebula_everything_query'); //Advanced Search
+
+	//@TODO "Nebula" 0: Delete all transients with an expiration here.
+	//if ( is_plugin_active('transients-manager/transients-manager.php') ){
+		//$_REQUEST['action'] = 'delete_transients_with_expiration';
+		//$transient_manager = new PW_Transients_Manager();
+		//$transient_manager->process_actions();
+
+		//$transient_manager->delete_transients_with_expirations();
+	//}
 }
 
 //Disable auto curly quotes (smart quotes)
@@ -21,7 +30,9 @@ add_filter('run_wptexturize', '__return_false');
 add_action('admin_head', 'admin_favicon');
 function admin_favicon(){
 	$cache_buster = ( is_debug() )? '?r' . mt_rand(1000, 99999) : '';
-	echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/images/meta/favicon.ico' . $cache_buster . '" />';
+	echo '<link rel="shortcut icon" href="' . nebula_prefer_child_directory('/images/meta/favicon.ico') . $cache_buster . '" />';
+
+
 }
 
 //Add classes to the admin body
