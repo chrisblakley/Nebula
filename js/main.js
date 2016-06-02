@@ -1878,7 +1878,7 @@ function conditionalJSLoading(){
 		nebulaLoadCSS(nebula.site.resources.css.tether);
 	}
 
-	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-pre').length ){
+	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){
 		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/css/pre.css');
 		nebula_pre();
 	}
@@ -2782,22 +2782,23 @@ function nebula_pre(){
 
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){
-		if ( !jQuery(this).parent('.nebula-pre-con').length ){
+		if ( !jQuery(this).parent('.nebula-code-con').length ){
 			lang = jQuery.trim(jQuery(this).attr('class').replace('nebula-code', ''));
-			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-pre-con clearfix ' + lang.toLowerCase() + '"></div>');
-			jQuery(this).parents('.nebula-pre-con').prepend('<span class="nebula-pre nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
+			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con clearfix ' + lang.toLowerCase() + '"></div>');
+			jQuery(this).parents('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}
 	});
 
-	jQuery('.nebula-pre-con').each(function(){
+	jQuery('.nebula-code-con').each(function(){
 		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>');
+		jQuery(this).find('p:empty').remove();
 	});
 
 	nebula.dom.document.on('click touch tap', '.nebula-selectcopy-code', function(){
 	    oThis = jQuery(this);
 
 	    if ( jQuery(this).text() === 'Copy to clipboard' ){
-		    selectText(jQuery(this).parents('.nebula-pre-con').find('pre'), 'copy', function(success){
+		    selectText(jQuery(this).parents('.nebula-code-con').find('pre'), 'copy', function(success){
 			    if ( success ){
 				    oThis.text('Copied!').removeClass('error').addClass('success');
 				    setTimeout(function(){
@@ -2814,7 +2815,7 @@ function nebula_pre(){
 			    }
 		    });
 	    } else {
-		    selectText(jQuery(this).parents('.nebula-pre-con').find('pre'), function(success){
+		    selectText(jQuery(this).parents('.nebula-code-con').find('pre'), function(success){
 			    if ( success ){
 				    oThis.text('Selected!').removeClass('error').addClass('success');
 				    setTimeout(function(){
@@ -3456,8 +3457,8 @@ function subnavExpanders(){
         return false;
     });
     //Automatically expand subnav to show current page
-    jQuery('.current-menu-ancestor').find('.toplevelvert_expander').click();
-    jQuery('.current-menu-item').find('.toplevelvert_expander').click();
+    jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
+    jQuery('.current-menu-item').children('.toplevelvert_expander').click();
 } //end subnavExpanders()
 
 //Affix the logo/navigation when scrolling passed it

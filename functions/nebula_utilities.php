@@ -498,11 +498,11 @@ function nebula_url_components($segment="all", $url=null){
 		$url = nebula_requested_url();
 	}
 
-	$url_compontents = parse_url($url);
-	if ( empty($url_compontents['host']) ){
+	$url_components = parse_url($url);
+	if ( empty($url_components['host']) ){
 		return;
 	}
-	$host = explode('.', $url_compontents['host']);
+	$host = explode('.', $url_components['host']);
 
 	//Best way to get the domain so far. Probably a better way by checking against all known TLDs.
 	preg_match("/[a-z0-9\-]{1,63}\.[a-z\.]{2,6}$/", parse_url($url, PHP_URL_HOST), $domain);
@@ -518,18 +518,18 @@ function nebula_url_components($segment="all", $url=null){
 		case ('protocol'): //Protocol and Scheme are aliases and return the same value.
 		case ('scheme'): //Protocol and Scheme are aliases and return the same value.
 		case ('schema'):
-			if ( $url_compontents['scheme'] != '' ){
-				return $url_compontents['scheme'];
+			if ( $url_components['scheme'] != '' ){
+				return $url_components['scheme'];
 			} else {
 				return false;
 			}
 			break;
 
 		case ('port'):
-			if ( $url_compontents['port'] ){
-				return $url_compontents['port'];
+			if ( $url_components['port'] ){
+				return $url_components['port'];
 			} else {
-				switch( $url_compontents['scheme'] ){
+				switch( $url_components['scheme'] ){
 	                case ('http'):
 	                    return 80; //Default for http
 	                    break;
@@ -551,8 +551,8 @@ function nebula_url_components($segment="all", $url=null){
 
 		case ('user'): //Returns the username from this type of syntax: https://username:password@gearside.com/
 		case ('username'):
-			if ( $url_compontents['user'] ){
-				return $url_compontents['user'];
+			if ( $url_components['user'] ){
+				return $url_components['user'];
 			} else {
 				return false;
 			}
@@ -560,16 +560,16 @@ function nebula_url_components($segment="all", $url=null){
 
 		case ('pass'): //Returns the password from this type of syntax: https://username:password@gearside.com/
 		case ('password'):
-			if ( $url_compontents['pass'] ){
-				return $url_compontents['pass'];
+			if ( $url_components['pass'] ){
+				return $url_components['pass'];
 			} else {
 				return false;
 			}
 			break;
 
 		case ('authority'):
-			if ( $url_compontents['user'] && $url_compontents['pass'] ){
-				return $url_compontents['user'] . ':' . $url_compontents['pass'] . '@' . $url_compontents['host'] . ':' . nebula_url_components('port', $url);
+			if ( $url_components['user'] && $url_components['pass'] ){
+				return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . nebula_url_components('port', $url);
 			} else {
 				return false;
 			}
@@ -577,7 +577,7 @@ function nebula_url_components($segment="all", $url=null){
 
 		case ('host'): //In http://something.example.com the host is "something.example.com"
 		case ('hostname'):
-			return $url_compontents['host'];
+			return $url_components['host'];
 			break;
 
 		case ('www') :
@@ -604,7 +604,7 @@ function nebula_url_components($segment="all", $url=null){
 		case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"
 		case ('base_domain'):
 		case ('origin') :
-			return $url_compontents['scheme'] . '://' . $domain[0];
+			return $url_components['scheme'] . '://' . $domain[0];
 			break;
 
 		case ('sld') : //In example.com the sld is "example"
@@ -621,21 +621,21 @@ function nebula_url_components($segment="all", $url=null){
 
 		case ('filepath'): //Filepath will be both path and file/extension
 		case ('pathname'):
-			return $url_compontents['path'];
+			return $url_components['path'];
 			break;
 
 		case ('file'): //Filename will be just the filename/extension.
 		case ('filename'):
-			if ( contains(basename($url_compontents['path']), array('.')) ){
-				return basename($url_compontents['path']);
+			if ( contains(basename($url_components['path']), array('.')) ){
+				return basename($url_components['path']);
 			} else {
 				return false;
 			}
 			break;
 
 		case ('extension'): //The extension only (without ".")
-		    if ( contains(basename($url_compontents['path']), array('.')) ){
-		        $file_parts = explode('.', $url_compontents['path']);
+		    if ( contains(basename($url_components['path']), array('.')) ){
+		        $file_parts = explode('.', $url_components['path']);
 		        return $file_parts[1];
 		    } else {
 		        return false;
@@ -643,17 +643,17 @@ function nebula_url_components($segment="all", $url=null){
 		    break;
 
 		case ('path'): //Path should be just the path without the filename/extension.
-			if ( contains(basename($url_compontents['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
-				return str_replace(basename($url_compontents['path']), '', $url_compontents['path']);
+			if ( contains(basename($url_components['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
+				return str_replace(basename($url_components['path']), '', $url_components['path']);
 			} else {
-				return $url_compontents['path'];
+				return $url_components['path'];
 			}
 			break;
 
 		case ('query'):
 		case ('queries'):
 		case ('search'):
-			return $url_compontents['query'];
+			return $url_components['query'];
 			break;
 
 		case ('fragment'):
@@ -662,7 +662,7 @@ function nebula_url_components($segment="all", $url=null){
 		case ('hash') :
 		case ('hashtag'):
 		case ('id'):
-			return $url_compontents['fragment'];
+			return $url_components['fragment'];
 			break;
 
 		default :

@@ -15,13 +15,12 @@
 			}
 			while ( $cached_query->have_posts() ): $cached_query->the_post();
 		?>
-
 		    <div class="home-feed-item event-feed-item">
 		        <h3><a href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>
 		        <?php echo nebula_the_excerpt('Read More &raquo;', 35, 1); ?>
 		    </div>
-
 		<?php endwhile; ?>
+
 		<?php
 			if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
 				wp_pagenavi(array('query' => $cached_query));

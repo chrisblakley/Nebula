@@ -19,13 +19,13 @@
 
 		<?php //Example using a custom loop with query_posts (avoid if possible in favor of WP_Query) ?>
 		<?php query_posts($args); ?>
-		<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
+		<?php while ( have_posts() ): the_post(); ?>
 		    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		        <?php if ( has_post_thumbnail() ): ?>
 					<a href="<?php echo get_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
 				<?php endif; ?>
 
-		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
+		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
 
 		        <div class="entry-meta">
 		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>
@@ -40,13 +40,14 @@
 
 		<?php //Example using a custom loop with WP_Query ?>
 		<?php $example_query = new WP_Query($args); ?>
-		<?php if ( $example_query->have_posts() ) while ( $example_query->have_posts() ): $example_query->the_post(); ?>
+		<?php //Example to get just the first post ID: $example_query->posts[0]->ID; ?>
+		<?php while ( $example_query->have_posts() ): $example_query->the_post(); ?>
 		    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		        <?php if ( has_post_thumbnail() ): ?>
 					<a href="<?php echo get_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
 				<?php endif; ?>
 
-		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h2>
+		        <h2 class="news-title entry-title"><a href="<?php echo get_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
 
 		        <div class="entry-meta">
 		        	<?php nebula_meta('on', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('by'); ?> <?php nebula_meta('tags'); ?>

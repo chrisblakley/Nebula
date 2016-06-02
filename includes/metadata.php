@@ -68,10 +68,10 @@
 <?php endforeach; ?>
 
 <?php //Favicons ?>
-<link rel="shortcut icon" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" sizes="96x96" href="<?php echo $image_meta_directory; ?>/favicon-96x96.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" sizes="96x96" href="<?php echo $image_meta_directory; ?>/favicon-96x96.png<?php echo $cache_query; ?>" />
 <link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula_sass_color('primary'); ?>" />
 
 <?php //Apple iOS ?>

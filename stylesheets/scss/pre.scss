@@ -1,20 +1,14 @@
 @import 'variables';
 @import 'mixins';
 
-.nebula-code-con,
-.nebula-pre-con {margin: 0 0 20px 0;}
+.nebula-code-con {margin: 0 0 20px 0;}
 	pre.nebula-code,
-	pre.nebula-pre {position: relative; display: block; height: auto; font: normal 12px/22px Monaco, Monospace !important; color: #222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
+ 	.nebula-code-con pre {position: relative; display: block; height: auto; font: normal 12px/22px Monaco, Monospace !important; color: #222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
 
-	/* .no-js pre.nebula-pre {margin: 10px 0 20px 0;} */
+	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
 
-	.nebula-code.codetitle,
-	.nebula-pre.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
-
-.nebula-selectcopy-code,
-.nebula-selectcopy-pre {font-size: 10px; float: right; margin-top: -4px; font-weight: normal; opacity: 0.7;
-	&:hover,
-	&.hover {opacity: 1;}
+.nebula-selectcopy-code {font-size: 10px; float: right; margin-top: -4px; font-weight: normal; opacity: 0.7;
+	&:hover {opacity: 1;}
 	&.success {color: $success_color;}
 	&.error {color: $danger_color;}
 }
@@ -22,28 +16,20 @@
 //@include nebula_code(javascript jquery js, #2b5797);
 @mixin nebula_code($languages, $color: $text_color, $unicode: false){
 	@each $language in $languages {
-		.nebula-code.codetitle.#{$language},
-		.nebula-pre.codetitle.#{$language} {color: $color;
+		.nebula-code.codetitle.#{$language} {color: $color;
 			@if $unicode {
 				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; margin-right: 3px;}
 			}
 		}
 
 		.nebula-code-con.#{$language} a,
-		.nebula-pre-con.#{$language} a,
-		.nebula-code.codetitle.#{$language},
-		.nebula-pre.codetitle.#{$language},
-		.nebula-code.pretitle.#{$language},
-		.nebula-pre.pretitle.#{$language} {color: $color;}
+		.nebula-code.codetitle.#{$language} {color: $color;}
 
 		code.nebula-code.#{$language},
 		pre.nebula-code.#{$language},
-		code.nebula-pre.#{$language},
-		pre.nebula-pre.#{$language},
-		.nebula-code.#{$language} .gist-file,
-		.nebula-pre.#{$language} .gist-file {border: 1px solid $color; border-left: 5px solid $color;}
-			.nebula-code.#{$language}::selection,
-			.nebula-pre.#{$language}::selection {background: lighten($color, 50%); background: rgba(lighten($color, 20%), 0.25);} //::Selection does not work with SASS parent selectors
+		.nebula-code-con.#{$language} pre,
+		.nebula-code.#{$language} .gist-file {border: 1px solid $color; border-left: 5px solid $color;}
+			.nebula-code.#{$language}::selection {background: lighten($color, 50%); background: rgba(lighten($color, 20%), 0.25);} //::Selection does not work with SASS parent selectors
 	}
 }
 

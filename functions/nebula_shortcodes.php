@@ -309,13 +309,13 @@ function code_shortcode($atts, $content=''){
 	return '<code class="nebula-code ' . $class . '" style="' . $style . '" >' . htmlentities($content) . '</code>';
 } //end code_shortcode()
 
-
 //Pre
+//To preserve indentation, use the Preformatted style in the WYSIWYG and wrap that in this [pre] shortcode (make sure the shortcode is not in the <pre> tag)
 add_shortcode('pre', 'pre_shortcode');
 function pre_shortcode($atts, $content=''){
-	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'br' => false, 'class' => '', 'style' => ''), $atts));
+	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'force' => false, 'br' => false, 'class' => '', 'style' => ''), $atts));
 
-	if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+	if ( $GLOBALS['pre'] == 0 ){
 		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
@@ -325,22 +325,21 @@ function pre_shortcode($atts, $content=''){
 		$content = preg_replace('#<br\s*/?>#', '', $content);
 	}
 
-	$content = htmlspecialchars_decode($content);
-	$content = htmlspecialchars($content);
+	$pre_tag_open = '';
+	$pre_tag_close = '';
+	if ( strpos($content, '<pre>') === false && $force == false ){
+		$content = htmlspecialchars_decode($content);
+		$content = htmlspecialchars($content);
+		$pre_tag_open = '<pre class="nebula-code ' . $lang . '">';
+		$pre_tag_close = '</pre>';
+	}
 
 	if ( empty($lang) && !empty($language) ){
 		$lang = $language;
 	}
-	$lang = strtolower(str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang));
-	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'regex', 'shortcode', 'sql');
-	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'RegEx', 'Shortcode', 'SQL');
-	$vislang = str_replace($search, $replace, $lang);
+	$vislang = visibleLanguage($lang);
 
-	$return = '<div class="nebula-pre-con clearfix ' . $lang . '"><span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
-	if ( $color != '' ){
-		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
-	}
-	$return .= $style . '" >' . $content . '</pre></div>';
+	$return = '<div class="nebula-code-con clearfix ' . strtolower($lang) . '"><span class="nebula-code codetitle ' . strtolower($lang) . '">' . $vislang . '</span>' . $pre_tag_open . $content . $pre_tag_close . '</div>';
 
 	return $return;
 } //end pre_shortcode()
@@ -351,7 +350,7 @@ add_shortcode('gist', 'gist_shortcode');
 function gist_shortcode($atts, $content=''){
 	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts));
 
-	if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+	if ( $GLOBALS['pre'] == 0 ){
 		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
@@ -359,16 +358,13 @@ function gist_shortcode($atts, $content=''){
 	if ( empty($lang) && !empty($language) ){
 		$lang = $language;
 	}
-	$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
-	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
-	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
-	$vislang = str_replace($search, $replace, $lang);
+	$vislang = visibleLanguage($lang);
 
 	if ( $file ){
 		$file = '?file=' . $file;
 	}
 
-	$return = '<span class="nebula-gist nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><div class="nebula-code ' . $lang . ' ' . $class . '" style="';
+	$return = '<span class="nebula-gist nebula-code codetitle ' . strtolower($lang) . '" style="color: ' . $color . ';">' . $vislang . '</span><div class="nebula-code ' . strtolower($lang) . ' ' . $class . '" style="';
 	if ( $color != '' ){
 		$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 	}
@@ -387,7 +383,7 @@ function github_shortcode($atts, $content=''){
 		global $wp_filesystem;
 		$file_contents = $wp_filesystem->get_contents($file);
 
-		if ( $GLOBALS['pre'] == 0 ){ //@TODO "Nebula" 0: Change this to a wordpress enqueue style or require_once so it only gets loaded one time.
+		if ( $GLOBALS['pre'] == 0 ){
 			echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 			$GLOBALS['pre'] = 1;
 		}
@@ -395,12 +391,9 @@ function github_shortcode($atts, $content=''){
 		if ( empty($lang) && !empty($language) ){
 			$lang = $language;
 		}
-		$lang = str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang);
-		$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'shortcode', 'sql');
-		$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'Shortcode', 'SQL');
-		$vislang = str_replace($search, $replace, $lang);
+		$vislang = visibleLanguage($lang);
 
-		$return = '<div class="nebula-pre-con clearfix ' . $lang . '"><span class="nebula-pre nebula-code codetitle ' . $lang . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
+		$return = '<div class="nebula-code-con clearfix ' . strtolower($lang) . '"><span class="nebula-code codetitle ' . strtolower($lang) . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
 		if ( $color != '' ){
 			$return .= 'border: 1px solid ' . $color . '; border-left: 5px solid ' . $color . ';';
 		}
@@ -408,6 +401,15 @@ function github_shortcode($atts, $content=''){
 
 		return $return;
 	}
+}
+
+//Modify the language string into a proper visible language
+function visibleLanguage($lang){
+	$lang = strtolower(str_replace(array('"', "'", "&quot;", "&#039;"), '', $lang));
+	$search = array('actionscript', 'apache', 'css', 'directive', 'html', 'js', 'javascript', 'jquery', 'mysql', 'php', 'regex', 'shortcode', 'sql');
+	$replace = array('ActionScript', 'Apache', 'CSS', 'Directive', 'HTML', 'JavaScript', 'JavaScript', 'jQuery', 'MySQL', 'PHP', 'RegEx', 'Shortcode', 'SQL');
+
+	return str_replace($search, $replace, $lang);
 }
 
 //Accordion

@@ -3,19 +3,16 @@
 //Force expire query transients when posts/pages are saved.
 add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){
-	delete_transient('nebula_autocomplete_menus'); //Autocomplete Search
-	delete_transient('nebula_autocomplete_categories'); //Autocomplete Search
-	delete_transient('nebula_autocomplete_tags'); //Autocomplete Search
-	delete_transient('nebula_autocomplete_authors'); //Autocomplete Search
-	delete_transient('nebula_everything_query'); //Advanced Search
-
 	//@TODO "Nebula" 0: Delete all transients with an expiration here.
 	//if ( is_plugin_active('transients-manager/transients-manager.php') ){
-		//$_REQUEST['action'] = 'delete_transients_with_expiration';
 		//$transient_manager = new PW_Transients_Manager();
-		//$transient_manager->process_actions();
-
 		//$transient_manager->delete_transients_with_expirations();
+	//} else {
+		delete_transient('nebula_autocomplete_menus'); //Autocomplete Search
+		delete_transient('nebula_autocomplete_categories'); //Autocomplete Search
+		delete_transient('nebula_autocomplete_tags'); //Autocomplete Search
+		delete_transient('nebula_autocomplete_authors'); //Autocomplete Search
+		delete_transient('nebula_everything_query'); //Advanced Search
 	//}
 }
 
@@ -31,8 +28,6 @@ add_action('admin_head', 'admin_favicon');
 function admin_favicon(){
 	$cache_buster = ( is_debug() )? '?r' . mt_rand(1000, 99999) : '';
 	echo '<link rel="shortcut icon" href="' . nebula_prefer_child_directory('/images/meta/favicon.ico') . $cache_buster . '" />';
-
-
 }
 
 //Add classes to the admin body
@@ -830,7 +825,7 @@ function dashboard_phg(){
 
 //Extension skip list for both TODO Manager and Developer Metabox
 function skip_extensions(){
-	return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx');
+	return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx', '.bak');
 }
 
 //TODO metabox
@@ -1094,12 +1089,12 @@ function dashboard_developer_info(){
 				$directory = get_template_directory();
 			}
 			$dir = glob_r($directory . '/*');
-			$skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json'); //Files or directories to skip. Be specific!
+			$skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
 
 			foreach ( $dir as $file ){
 				if ( is_file($file) ){
 					$mod_date = filemtime($file);
-					if ( $mod_date > $last_date && !contains($file, $skip_files) ){
+					if ( $mod_date > $last_date && !contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
 						$latest_file['date'] = $mod_date;
 						$latest_file['file'] = basename($file);
 
