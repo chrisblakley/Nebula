@@ -1,0 +1,6 @@
+*.log
+sitemap.xml
+sitemap.xml.gz
+wp-config.php
+
+*.bak
