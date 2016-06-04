@@ -44,7 +44,7 @@
 </script>
 
 
-<div class="container">
+<div class="container nebulashadow bulging">
 	<div id="herovideo">
 	    <?php if ( nebula_is_desktop() ): ?>
 		    <video id="video-background" width="872" height="492" autobuffer autoplay muted loop>
@@ -77,5 +77,3 @@
 		</div>
 	</div><!--/herovideo -->
 </div><!--/container-->
-
-<div class="nebulashadow bulging"></div><br />

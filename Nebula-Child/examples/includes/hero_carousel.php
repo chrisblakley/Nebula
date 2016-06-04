@@ -19,9 +19,8 @@
 </style>
 
 <div>
-	<div id="heroslider" class="closed">
-	    <div class="nebulashadow inner-top bulging" style="z-index: 2;"></div>
-	    <div id="example-carousel" class="carousel slide" data-ride="carousel">
+	<div id="heroslider" class="closed nebulashadow inner-top">
+	    <div id="example-carousel" class="carousel slide nebulashadow inner-bottom" data-ride="carousel">
 			<ol class="carousel-indicators">
 				<li data-target="#example-carousel" data-slide-to="0" class="active"></li>
 				<li data-target="#example-carousel" data-slide-to="1"></li>
@@ -64,7 +63,6 @@
 				<span class="sr-only">Next</span>
 			</a>
 		</div>
-	    <div class="nebulashadow inner-bottom bulging" style="z-index: 2;"></div>
 	</div><!-- /heroslider -->
 	<hr style="margin-bottom: 15px;"/>
 </div>

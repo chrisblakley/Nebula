@@ -145,8 +145,7 @@ function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
 		<div class="component-name fpo-' . strtolower(str_replace(' ', '-', $component)) . '">
 			<i class="component-icon fa ' . $icon . '"></i> <strong>' . $component . '</strong><a class="component-comment-toggle" href="#"><i class="component-icon fa ' . $comment_icon . '"></i></a>
 		</div><!-- /component-name -->
-		<div class="component-comment-drawer">
-			<div class="nebulashadow bulging" style="height: 10px;"></div>
+		<div class="component-comment-drawer nebulashadow bulging">
 			<strong class="comment-header">0 Comments</strong>
 			<p>Comment functionality coming soon.</p>
 		</div>

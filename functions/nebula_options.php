@@ -122,7 +122,6 @@ function nebula_default_options(){
 		//Metadata Tab
 		'site_owner' => '',
 		'contact_email' => '',
-		'keywords' => '',
 		'phone_number' => '',
 		'fax_number' => '',
 		'latitude' => '',
@@ -495,13 +494,6 @@ function nebula_options_page(){
 						<p class="helper"><small>The main contact email address. If left empty, the admin email address will be used (shown by placeholder).</small></p>
 					</td>
 		        </tr>
-		        <tr class="short" valign="top">
-		        	<th scope="row">Keywords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input type="text" name="nebula_options[keywords]" value="<?php echo $nebula_options['keywords']; ?>" placeholder="Keywords" />
-						<p class="helper"><small>Comma-separated list of keywords (without quotes) that will be used as keyword metadata. Note: This meta is rarely used by site crawlers.</small></p>
-					</td>
-		        </tr>
 
 
 		        <tr valign="top">
@@ -637,7 +629,7 @@ function nebula_options_page(){
 							<option value="enabled" <?php selected('enabled', $nebula_options['prototype_mode']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['prototype_mode']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>When prototyping, enable this setting. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>When prototyping, enable this setting. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (<em>Note: If using this setting, you may need to select that same theme for the admin-ajax option too!</em>). <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 

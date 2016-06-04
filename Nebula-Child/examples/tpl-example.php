@@ -48,11 +48,10 @@ get_header(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 					<?php if ( get_field('example_filename') ): ?>
-						<div class="example-filename">
+						<div class="example-filename nebulashadow anchored-left">
 							<i class="fa fa-github"></i> Example Location: <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/examples/includes/<?php echo get_field('example_filename'); ?>" target="_blank" title="View the exact code snippet rendering this example.">/examples/includes/<?php echo get_field('example_filename'); ?></a><br />
 							<i class="fa fa-code"></i> Example Include: <code class="nebula-code" title="Copy/Paste this snippet to see this example on the Nebula implementation on your server.">&lt;?php include('examples/includes/<?php echo get_field('example_filename'); ?>'); ?&gt;</code>
 						</div>
-						<div class="nebulashadow anchored-left" style="opacity: 0.15;"></div>
 					<?php endif; ?>
 
 					<div class="entry-content">
@@ -568,7 +567,7 @@ get_header(); ?>
 					</div><!--/row-->
 				</article>
 			</div><!--/cols-->
-			<div class="col-md-4">
+			<div class="col-md-3 col-md-offset-1">
 				<div id="sidebar">
 					<ul class="xoxo">
 						<li class="widget-container">

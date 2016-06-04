@@ -327,7 +327,7 @@ function pre_shortcode($atts, $content=''){
 
 	$pre_tag_open = '';
 	$pre_tag_close = '';
-	if ( strpos($content, '<pre>') === false && $force == false ){
+	if ( strpos($content, '<pre') === false && $force == false ){
 		$content = htmlspecialchars_decode($content);
 		$content = htmlspecialchars($content);
 		$pre_tag_open = '<pre class="nebula-code ' . $lang . '">';
@@ -419,7 +419,6 @@ function accordion_shortcode($atts, $content=''){
 	extract(shortcode_atts(array('class' => '', 'style' => '', 'type' => 'single'), $atts));
 
 	$return = '<div class="accordion ' . $class . ' ' . $type . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
-
 	if ( $GLOBALS['accordion'] == 0 ){
 		$return .= "<script>jQuery(document).ready(function(){
 			jQuery('.accordion-item').each(function(){
@@ -428,21 +427,21 @@ function accordion_shortcode($atts, $content=''){
 					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
 				}
 			});
-			jQuery('.accordion-item').on('click touch tap', function(){
-				if ( jQuery(this).parent('.accordion').hasClass('multiple') ){
-					jQuery(this).children('.accordion-content-con').slideToggle();
-					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
+			jQuery('.accordion-toggle').on('click touch tap', function(){
+				if ( jQuery(this).parent('.accordion-item').parent('.accordion').hasClass('multiple') ){
+					jQuery(this).parent('.accordion-item').children('.accordion-content-con').slideToggle();
+					jQuery(this).parent('.accordion-item').toggleClass('accordion-collapsed accordion-expanded');
 				}
-				if ( jQuery(this).parent('.accordion').hasClass('single') ){
-					if ( jQuery(this).hasClass('accordion-collapsed') ){
-						jQuery(this).parent('.accordion').find('.accordion-item.accordion-expanded').children('.accordion-content-con').slideUp();
-						jQuery(this).parent('.accordion').find('.accordion-item.accordion-expanded').toggleClass('accordion-collapsed accordion-expanded');
-						jQuery(this).children('.accordion-content-con').slideToggle();
+				if ( jQuery(this).parent('.accordion-item').parent('.accordion').hasClass('single') ){
+					if ( jQuery(this).parent('.accordion-item').hasClass('accordion-collapsed') ){
+						jQuery(this).parent('.accordion-item').parent('.accordion').find('.accordion-item.accordion-expanded').children('.accordion-content-con').slideUp();
+						jQuery(this).parent('.accordion-item').parent('.accordion').find('.accordion-item.accordion-expanded').toggleClass('accordion-collapsed accordion-expanded');
+						jQuery(this).parent('.accordion-item').children('.accordion-content-con').slideToggle();
 					}
 					if ( jQuery(this).hasClass('accordion-expanded') ){
-						jQuery(this).children('.accordion-content-con').slideUp();
+						jQuery(this).parent('.accordion-item').children('.accordion-content-con').slideUp();
 					}
-					jQuery(this).toggleClass('accordion-collapsed accordion-expanded');
+					jQuery(this).parent('.accordion-item').toggleClass('accordion-collapsed accordion-expanded');
 				}
 				return false;
 			});

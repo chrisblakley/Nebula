@@ -11,9 +11,8 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div id="hero-section">
+<div id="hero-section" class="nebulashadow inner-top inner-bottom">
 	<div class="herobgcolor"></div>
-	<div class="nebulashadow inner-top bulging"></div>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
@@ -25,7 +24,6 @@ get_header(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-	<div class="nebulashadow inner-bottom bulging"></div>
 </div><!--/hero-section-->
 
 <div id="content-section">
@@ -40,7 +38,7 @@ get_header(); ?>
 					</article>
 				<?php endwhile; ?>
 			</div><!--/col-->
-			<div class="col-md-4">
+			<div class="col-md-3 col-md-offset-1">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

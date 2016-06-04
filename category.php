@@ -39,7 +39,7 @@ get_header(); ?>
 				<?php get_template_part('loop', 'category'); ?>
 				<?php wp_pagenavi(); ?>
 			</div><!--/col-->
-			<div class="col-md-4">
+			<div class="col-md-3 col-md-offset-1">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

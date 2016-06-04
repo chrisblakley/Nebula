@@ -2,7 +2,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<iframe class="googlemap nebulaborder"
+		<iframe class="googlemap nebulaframe nebulashadow floating"
 			width="100%"
 			height="250"
 			frameborder="0"
@@ -12,8 +12,5 @@
 			&zoom=14
 			&maptype=roadmap">
 		</iframe>
-		<div class="nebulashadow floating" offset="-6"></div>
-
-		<small>Seen above with a nebulaborder and floating nebulashadow (to examine when browsers begin supporting better data-attributes in CSS)</small>
 	</div><!--/col-->
 </div><!--/row-->

@@ -126,32 +126,32 @@ function nebula_manifest_json(){
 		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-36x36.png",
 		"sizes": "36x36",
 		"type": "image/png",
-		"density": "0.75"
+		"density": 0.75
 	}, {
 		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-48x48.png",
 		"sizes": "48x48",
 		"type": "image/png",
-		"density": "1.0"
+		"density": 1.0
 	}, {
 		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-72x72.png",
 		"sizes": "72x72",
 		"type": "image/png",
-		"density": "1.5"
+		"density": 1.5
 	}, {
 		"src": "' . get_template_directory_uri() . '/images/meta/favicon-96x96.png",
 		"sizes": "96x96",
 		"type": "image/png",
-		"density": "2.0"
+		"density": 2.0
 	}, {
 		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-144x144.png",
 		"sizes": "144x144",
 		"type": "image/png",
-		"density": "3.0"
+		"density": 3.0
 	}, {
 		"src": "' . get_template_directory_uri() . '/images/meta/favicon-192x192.png",
 		"sizes": "192x192",
 		"type": "image/png",
-		"density": "4.0"
+		"density": 4.0
 	}],
 	"start_url": "' . home_url() . '?hs=1",
 	"display": "standalone",
@@ -1529,15 +1529,15 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 	global $wp_query;
 	if ( empty($args['paged']) ){
 		$args['paged'] = 1;
-		if ( !empty(get_query_var('paged')) ){
-			$args['paged'] = get_query_var('paged'); //@TODO "Nebula" 0: Add link to go back to page 1? (aka the regular permalink)
+		if ( get_query_var('paged') ){
+			$args['paged'] = get_query_var('paged');
 			?>
 			<div class="infinite-start-note">
 				<a href="<?php echo get_the_permalink(); ?>">&laquo; Back to page 1</a>
 			</div>
 			<?php
 		} elseif ( !empty($wp_query->query['paged']) ){
-			$args['paged'] = $wp_query->query['paged']; //@TODO "Nebula" 0: Add link to go back to page 1? (aka the regular permalink)
+			$args['paged'] = $wp_query->query['paged'];
 			?>
 			<div class="infinite-start-note">
 				<a href="<?php echo get_the_permalink(); ?>">&laquo; Back to page 1</a>

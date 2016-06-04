@@ -76,7 +76,6 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js', 'defer', null, '1.11.4', true);
 	nebula_register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.6.4/js/jquery.mmenu.all.min.js', 'defer', null, '5.6.4', true);
 	nebula_register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true); //Can this be deferred?
-	nebula_register_script('nebula-skrollr', 'https://cdnjs.cloudflare.com/ajax/libs/skrollr/0.6.30/skrollr.min.js', null, null, '0.6.30', true);
 	nebula_register_script('nebula-headroom', 'https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.3/headroom.min.js', 'defer', null, '0.9.3', true);
 	nebula_register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js', 'defer', null, '1.3.2', true);
 	nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js', 'defer', array('nebula-tether'), '4.0.0a2', true);
@@ -311,10 +310,6 @@ function enqueue_nebula_frontend(){
 	if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in main.js.
 		wp_enqueue_style('nebula-chosen');
 		wp_enqueue_script('nebula-chosen');
-	}
-
-	if ( nebula_is_desktop() ){ //Desktop traffic only
-		//wp_enqueue_script('nebula-skrollr'); //Uncomment (or enqueue in child theme) if using skrollr for parallax.
 	}
 }
 

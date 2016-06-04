@@ -51,7 +51,7 @@ get_header(); ?>
 					<?php wp_reset_query(); ?>
 				</article>
 			</div><!--/col-->
-			<div class="col-md-4">
+			<div class="col-md-3 col-md-offset-1">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
