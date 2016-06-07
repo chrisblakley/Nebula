@@ -67,28 +67,10 @@ function nebula_upload_data(){
 
 	$filetype = ( $_POST['data']['filetype'] == '' )? 'txt' : $_POST['data']['filetype'];
     //Check filetype for bad extensions, check data for bad strings.
-    if ( !in_array($filetype, array('txt', 'jpg', 'png', 'gif', 'jpeg', 'doc', 'docx', 'csv', 'pdf')) || in_array($data, array('header(', 'Content-type:', '<?', 'htaccess', '.sql', 'DROP TABLE', 'base64')) ){ //|| in_array($directory, array('.'))
+    if ( !in_array($filetype, array('txt', 'jpg', 'png', 'gif', 'jpeg', 'doc', 'docx', 'csv', 'pdf')) || in_array($data, array('header(', 'Content-type:', '<?', 'htaccess', '.sql', 'DROP TABLE', 'base64')) ){
 	    echo 'You are attempting to upload something that is not allowed. ';
 
-	    $upload_dir = wp_upload_dir();
-
-	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ){
-		    echo 'nebula_custom_data directory does not exist. Creating it! ';
-		    mkdir($upload_dir['basedir'] . '/nebula_custom_data');
-	    }
-
-	    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/bad_data/') ){
-		    echo 'nebula_custom_data/bad_data directory does not exist. Creating it! ';
-		    mkdir($upload_dir['basedir'] . '/nebula_custom_data/bad_data');
-	    }
-
-		$data .= "\r\nAttempted Directory: " . $directory .
-		"\r\nAttempted Filetype: " . $filetype;
-
-	    $file = $upload_dir['basedir'] . '/nebula_custom_data/bad_data/' . date('Y-m-d_H-i-s', strtotime('now')) . '_id' . $this_id . '.txt';
-	    $success = file_put_contents($file, $data);
-
-	    ga_send_event('Security Precaution', 'Nebula Upload Data Block', '/bad_data/...id' . $this_id);
+	    ga_send_event('Security Precaution', 'Nebula Upload Data Block');
 	    exit;
     }
 
@@ -96,44 +78,16 @@ function nebula_upload_data(){
 
     $upload_dir = wp_upload_dir();
 
-	if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/') ){
-	    echo 'nebula_custom_data directory does not exist. Creating it! ';
-	    mkdir($upload_dir['basedir'] . '/nebula_custom_data');
-    }
-
-    if ( !is_dir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/') ){
-	    echo 'nebula_custom_data/' . $directory . ' directory does not exist. Creating it! ';
-	    mkdir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory);
-    }
-
-    $file = $upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/' . date('Y-m-d_H-i-s', strtotime('now')) . '_id' . $this_id . '.' . $filetype;
-    $success = file_put_contents($file, $data);
+	WP_Filesystem();
+	global $wp_filesystem;
+	$wp_filesystem->mkdir($upload_dir['basedir'] . '/nebula_custom_data/' . $directory);
+	$wp_filesystem->put_contents($upload_dir['basedir'] . '/nebula_custom_data/' . $directory . '/' . date('Y-m-d_H-i-s', strtotime('now')) . '_id' . $this_id . '.' . $filetype, $data);
 
 	if ( $category ){
 		ga_send_event($category, $action, '/' . $directory . '/...id' . $this_id);
 	}
 
     exit();
-
-/*
-			if ( ! function_exists( 'wp_handle_upload' ) ){
-			    require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			}
-
-			$uploadedfile = $_FILES['file'];
-
-			$upload_overrides = array( 'test_form' => false );
-
-			$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
-
-			if ( $movefile && !isset( $movefile['error'] ) ){
-			    echo "File is valid, and was successfully uploaded.\n";
-			    var_dump( $movefile);
-			} else {
-			    echo $movefile['error'];
-			}
-*/
-
 }
 
 

@@ -2226,12 +2226,6 @@ function placeLookup(placeID){
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function addHelperClasses(){
-	jQuery('li:even, tr:even').not('.dataTables_wrapper tr').addClass('even'); //IE8 support
-	jQuery('li:odd, tr:odd').not('.dataTables_wrapper tr').addClass('odd'); //IE8 support
-	jQuery('ul:first-child, li:first-child, tr:first-child').addClass('first-child'); //IE6 support
-	jQuery('li:last-child, tr:last-child').addClass('last-child'); //IE8 support
-	jQuery('a:hover, li:hover, tr:hover').addClass('hover'); //IE8 support
-
 	//Add rel attributes to external links
 	jQuery('a').each(function(){
 		var hostPattern = new RegExp('/' + window.location.host + '/');
@@ -2306,19 +2300,21 @@ function errorMitigation(){
 
 //Convert img tags with class .svg to raw SVG elements
 function svgImgs(){
-	jQuery('img.svg').each(function(){
-        var oThis = jQuery(this);
+	if ( !nebula.dom.body.hasClass('internet_explorer') ){ //yolo
+		jQuery('img.svg').each(function(){
+	        var oThis = jQuery(this);
 
-		if ( oThis.attr('src').indexOf('.svg') >= 1 ){
-	        jQuery.get(oThis.attr('src'), function(data){
-	            var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
-	            theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
-	            theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
-	            theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
-	            oThis.replaceWith(theSVG); //Replace image with new SVG
-	        }, 'xml');
-        }
-    });
+			if ( oThis.attr('src').indexOf('.svg') >= 1 ){
+		        jQuery.get(oThis.attr('src'), function(data){
+		            var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
+		            theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
+		            theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+		            theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
+		            oThis.replaceWith(theSVG); //Replace image with new SVG
+		        }, 'xml');
+	        }
+	    });
+	}
 }
 
 //Column height equalizer
@@ -3192,19 +3188,28 @@ function animationTriggers(){
 		nebulaAnimate(jQuery(this));
 	});
 
-	nebula.dom.window.on('load', function(){
-		jQuery('.load').each(function(){
-			var oThis = jQuery(this);
-			animationDelay = oThis.attr('data-delay');
-			if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
-				nebulaAnimate(oThis, 'load-animate');
-			} else {
-				setTimeout(function(){
-					nebulaAnimate(oThis, 'load-animate');
-				}, animationDelay);
-			}
+	nebula.dom.document.ready(function(){
+		jQuery('.ready').each(function(){
+			loadAnimate(jQuery(this));
 		});
 	});
+
+	nebula.dom.window.on('load', function(){
+		jQuery('.load').each(function(){
+			loadAnimate(jQuery(this));
+		});
+	});
+}
+
+function loadAnimate(oThis){
+	animationDelay = oThis.attr('data-delay');
+	if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
+		nebulaAnimate(oThis, 'load-animate');
+	} else {
+		setTimeout(function(){
+			nebulaAnimate(oThis, 'load-animate');
+		}, animationDelay);
+	}
 }
 
 //Create desktop notifications

@@ -5,40 +5,40 @@
 .nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
 
 .nebulashadow {position: relative;
-	&,
-	&.floating {@include prefix((box-shadow: 0 17px 25px -15px rgba(0, 0, 0, 0.4)));
-		&.above {@include prefix((box-shadow: 0 -17px 25px -15px rgba(0, 0, 0, 0.4)));
-			&.below {box-shadow: 0 17px 25px -15px rgba(0, 0, 0, 0.4), 0 -17px 25px -15px rgba(0, 0, 0, 0.4);} //Doesn't work with prefix mixin (because of the comma)
+	&.floating {
+		&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include prefix((box-shadow: 0 17px 25px -15px rgba(0, 0, 0, 0.4))); z-index: -1; pointer-events: none;}
+		&.above {
+			&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include prefix((box-shadow: 0 -17px 25px -15px rgba(0, 0, 0, 0.4))); z-index: -1; pointer-events: none;}
 		}
 	}
 
-	&.bulging {box-shadow: none !important;
+	&.bulging {
 		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -15px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.3))); z-index: -1; pointer-events: none;}
 		&.above {
 			&:before {content: ""; position: absolute; left: 0; right: 0; top: -15px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.3))); z-index: -1; pointer-events: none;}
 		}
 	}
 
-	&.curling {box-shadow: none !important; //This can not appear above.
+	&.curling {//This can not appear above.
 		&:before {content: ""; position: absolute; bottom: 4px; left: 10px; height: 20px; width: 70%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(-3deg))); z-index: -1; pointer-events: none;}
 		&:after {content: ""; position: absolute; bottom: 4px; right: 10px; height: 20px; width: 70%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(3deg))); z-index: -1; pointer-events: none;}
 	}
 
-	&.hovering {box-shadow: none !important;
+	&.hovering {
 		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.15); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.2))); z-index: -1; pointer-events: none;}
 		&.above {
 			&:before {content: ""; position: absolute; left: 0; right: 0; top: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.15); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.2))); z-index: -1; pointer-events: none;}
 		}
 	}
 
-	&.anchored-right {box-shadow: none !important;
+	&.anchored-right {
 		&:after {content: ""; position: absolute; bottom: 0; left: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(-2deg))); z-index: -1; pointer-events: none;}
 		&.above {
 			&:before {content: ""; position: absolute; top: 0; left: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(2deg))); z-index: -1; pointer-events: none;}
 		}
 	}
 
-	&.anchored-left {box-shadow: none !important;
+	&.anchored-left {
 		&:after {content: ""; position: absolute; bottom: 0; right: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(2deg))); z-index: -1; pointer-events: none;}
 		&.above {
 			&:before {content: ""; position: absolute; top: 0; right: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(-2deg))); z-index: -1; pointer-events: none;}
@@ -166,15 +166,14 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
 	&.white {background: url($template_directory + "/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
 		span {color: #fff;}
-		&:hover span, &.hover span {color: #aaa;}
+		&:hover span {color: #aaa;}
 	}
 	span {@include prefix((transition: all 0.25s));
 		&.pinckney {color: brand(phg);}
 		&.hugo {color: brand(phg, 2);}
 		&.group {color: brand(phg, 3);}
 	}
-	&:hover,
-	&.hover {
+	&:hover {
 		span.pinckney {color: brand(phg);}
 		span.hugo {color: brand(phg, 2);}
 		span.group {color: brand(phg, 3);}
@@ -187,8 +186,7 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory
 			&.hugo {color: inherit;}
 			&.group {color: inherit;}
 		}
-		&:hover,
-		&.hover {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
+		&:hover {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
 			span {margin-right: 0px;
 				&.pinckney {color: brand(phg);}
 				&.hugo {color: brand(phg, 2);}

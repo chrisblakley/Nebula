@@ -1708,23 +1708,6 @@ function addBackPostFeed(){
     echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
 }
 
-//Declare support for WooCommerce
-if ( is_plugin_active('woocommerce/woocommerce.php') ){
-	add_theme_support('woocommerce');
-	//Remove existing WooCommerce hooks to be replaced with our own
-	remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
-	remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
-	//Replace WooCommerce hooks at our own declared locations
-	add_action('woocommerce_before_main_content', 'custom_woocommerce_start', 10);
-	add_action('woocommerce_after_main_content', 'custom_woocommerce_end', 10);
-	function custom_woocommerce_start(){
-		echo '<section id="WooCommerce">';
-	}
-	function custom_woocommerce_end(){
-		echo '</section>';
-	}
-}
-
 //Add custom body classes
 add_filter('body_class', 'nebula_body_classes');
 function nebula_body_classes($classes){

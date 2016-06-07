@@ -46,6 +46,7 @@
 			userID: '<?php echo nebula_option('cd_userid'); //User ?>',
 			fbID: '<?php echo nebula_option('cd_fbid'); //User ?>',
 			videoWatcher: '<?php echo nebula_option('cd_videowatcher'); //Session ?>',
+			wooCustomer: '<?php echo nebula_option('cd_woocustomer'); //User ?>',
 			eventIntent: '<?php echo nebula_option('cd_eventintent'); //Hit ?>',
 			wordCount: '<?php echo nebula_option('cd_wordcount'); //Hit ?>',
 			weather: '<?php echo nebula_option('cd_weather'); //Hit ?>',
@@ -277,8 +278,15 @@
 			});
 		<?php endif; ?>
 
+
+
+
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
+
 		ga('send', 'pageview'); <?php //Send pageview along with set dimensions. ?>
+
+		<?php do_action('nebula_ga_after_send_pageview'); ?>
+
 
 		//Get local time string with timezone offset
 		function localTimestamp(){

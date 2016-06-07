@@ -3,7 +3,7 @@
 // Either use the provided class, or customize/call by copying and pasting the prefix() parameters to your own selector.
 // Elements must be display block or inline-block to be animated.
 
-// Use class "load" to trigger animation on window load. Use class "click" to trigger the animation on click.
+// Use class "ready" or "load" to trigger animation on DOM ready or window load. Use class "click" to trigger the animation on click.
 // Otherwise, add class "animate" manually to create your own triggers (not all animations require "animate" class).
 // ===========================
 

@@ -123,8 +123,8 @@ if ( is_dev(true) || current_user_can('manage_options') ){
 
 	    if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
 	    	array_push($plugins, array(
-	    		'name'      => 'WooCommerce Google Analytics Integration',
-	    		'slug'      => 'woocommerce-google-analytics-integration',
+	    		'name'      => 'Enhanced Ecommerce Google Analytics Plugin for WooCommerce',
+	    		'slug'      => 'enhanced-e-commerce-for-woocommerce-store',
 	    		'required'  => true
 	    	));
 	    }

@@ -214,6 +214,7 @@ function nebula_default_options(){
 		'cd_role' => '',
 		'cd_videowatcher' => '',
 		'cd_eventintent' => '',
+		'cd_woocustomer' => '',
 		'cd_weather' => '',
 		'cd_temperature' => '',
 		'cd_publishyear' => '',
@@ -1225,6 +1226,17 @@ function nebula_options_page(){
 						<p class="helper"><small>Sets a dimension when videos are started and finished. <strong>Scope: Session</strong></small></p>
 					</td>
 		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Ecommerce Customer&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_options[cd_woocustomer]" value="<?php echo $nebula_options['cd_woocustomer']; ?>" />
+						<p class="helper"><small>Sets a dimension when a user completes the checkout process in WooCommerce. Appears in Google Analytics as "Order Received". <strong>Scope: User</strong></small></p>
+					</td>
+		        </tr>
+
+
+
 
 
 

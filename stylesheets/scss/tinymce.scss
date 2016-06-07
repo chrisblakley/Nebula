@@ -4,7 +4,6 @@
 
 body#tinymce.wp-editor {background: $background_color; font-family: $font_stack; font-size: 14px; color: $text_color;
 	a {color: $primary_color; text-decoration: none;
-		&:hover,
-		&.hover {color: $secondary_color;}
+		&:hover {color: $secondary_color;}
 	}
 }

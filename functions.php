@@ -34,6 +34,10 @@ require_once('functions/nebula_prototyping.php'); //Nebula Wireframing (can be c
 require_once('functions/nebula_legacy.php'); //Nebula Legacy (to maximize backwards compatibility)
 //require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)
 
+if ( is_plugin_active('woocommerce/woocommerce.php') ){
+	require_once('functions/nebula_ecommerce.php'); //Nebula Ecommerce
+}
+
 
 /*==========================
  Register All Stylesheets
