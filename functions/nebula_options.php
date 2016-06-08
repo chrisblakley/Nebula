@@ -214,6 +214,7 @@ function nebula_default_options(){
 		'cd_role' => '',
 		'cd_videowatcher' => '',
 		'cd_eventintent' => '',
+		'cd_woocart' => '',
 		'cd_woocustomer' => '',
 		'cd_weather' => '',
 		'cd_temperature' => '',
@@ -1224,6 +1225,14 @@ function nebula_options_page(){
 					<td>
 						<input class="dimension" type="text" name="nebula_options[cd_videowatcher]" value="<?php echo $nebula_options['cd_videowatcher']; ?>" />
 						<p class="helper"><small>Sets a dimension when videos are started and finished. <strong>Scope: Session</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Ecommerce Cart&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_options[cd_woocart]" value="<?php echo $nebula_options['cd_woocart']; ?>" />
+						<p class="helper"><small>If the user has any product(s) in their cart. <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 

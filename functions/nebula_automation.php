@@ -102,7 +102,7 @@ if ( is_dev(true) || current_user_can('manage_options') ){
 	        array(
 	            'name'      => 'Transients Manager',
 	            'slug'      => 'transients-manager',
-	            'required'  => true,
+	            'required'  => false,
 	        ),
 	        array(
 	            'name'      => 'UpdraftPlus Backup and Restoration',

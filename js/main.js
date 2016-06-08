@@ -1365,7 +1365,7 @@ function postSearch(posts){
 		}
 
 		//Search Author
-		if ( jQuery.trim(jQuery('#advanced-search-author').val()).length ){ //yolo
+		if ( jQuery.trim(jQuery('#advanced-search-author').val()).length ){
 			if ( thisPost.author.id !== jQuery('#advanced-search-author').val() ){
 				delete tempFilteringObject[i]; //Author ID does not match
 				return;
@@ -2300,7 +2300,7 @@ function errorMitigation(){
 
 //Convert img tags with class .svg to raw SVG elements
 function svgImgs(){
-	if ( !nebula.dom.body.hasClass('internet_explorer') ){ //yolo
+	if ( !nebula.dom.body.hasClass('internet_explorer') ){
 		jQuery('img.svg').each(function(){
 	        var oThis = jQuery(this);
 

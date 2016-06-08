@@ -36,13 +36,32 @@
 		}
 	}
 
-	//Set custom dimension and send event on order received page.
+	//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
+	add_action('nebula_ga_before_send_pageview', 'nebula_woo_custom_dimensions');
+	function nebula_woo_custom_dimensions(){
+		//Set custom dimension for if the cart is empty or full
+		if ( nebula_option('cd_woocart') ){
+			echo 'gaCustomDimensions.wooCart = "' . nebula_option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
+			$cart_text = ( WC()->cart->get_cart_contents_count() >= 1 )? 'Full Cart (' . WC()->cart->get_cart_contents_count() . ')' : 'Empty Cart';
+			echo 'ga("set", gaCustomDimensions["wooCart"], "' . $cart_text . '");';
+		}
+	}
+
+	//Set dimensions and send events after the Google Analytics pageview is sent
 	add_action('nebula_ga_after_send_pageview', 'nebula_woo_custom_events');
 	function nebula_woo_custom_events(){
+		//Set custom dimension and send event on order received page.
 		if ( is_order_received_page() ){
-			if ( nebula_option('woo_ordered') ){
+			if ( nebula_option('cd_woocustomer') ){
+				echo 'gaCustomDimensions.wooCustomer = "' . nebula_option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
 				echo 'ga("set", gaCustomDimensions["wooCustomer"], "Order Received");';
 		    }
 		    echo 'ga("send", "event", "Ecommerce", "Checkout", "Order Received");';
 		}
+	}
+
+	//Remove WooCommerce Breadcrumbs
+	//add_action('init', 'nebula_remove_woo_breadcrumbs');
+	function nebula_remove_woo_breadcrumbs() {
+		remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0);
 	}

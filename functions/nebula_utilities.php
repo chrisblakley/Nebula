@@ -1251,7 +1251,7 @@ function nebula_render_scss($child=false){
 				//If style.css has been edited after style.scss, save backup but continue compiling SCSS
 				if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){
 					copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
-					echo '<script>console.error("Warning: Sass compiling is enabled, but it appears that ' . $file_path_info['filename'] . '.css has been manually updated! A ' . $file_path_info['filename'] . '.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
+					add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
 				}
 
 				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $compile_all ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
@@ -1276,6 +1276,11 @@ function nebula_render_scss($child=false){
 			nebula_render_scss(true); //Re-run on child theme stylesheets
 		}
 	}
+}
+
+//Log Sass .bak note in the browser console
+function nebula_scss_console_warning(){
+	echo '<script>console.error("Warning: Sass compiling is enabled, but it appears that ' . $file_path_info['filename'] . '.css has been manually updated! A ' . $file_path_info['filename'] . '.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
 }
 
 //Combine developer stylesheets

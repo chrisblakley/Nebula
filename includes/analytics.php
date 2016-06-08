@@ -24,7 +24,10 @@
 			ga('require', 'linkid');
 		<?php endif; ?>
 
-		<?php //Create various custom dimensions and custom metrics in Google Analytics, then store the index ("dimension3", "metric5", etc.) in Nebula Options. ?>
+		<?php
+			//Create various custom dimensions and custom metrics in Google Analytics, then store the index ("dimension3", "metric5", etc.) in Nebula Options.
+			//Note: Ecommerce dimensions are added in nebula_ecommerce.php
+		?>
 		gaCustomDimensions = {
 			author: '<?php echo nebula_option('cd_author'); //Hit ?>',
 			businessHours: '<?php echo nebula_option('cd_businesshours'); //Hit ?>',
@@ -46,7 +49,6 @@
 			userID: '<?php echo nebula_option('cd_userid'); //User ?>',
 			fbID: '<?php echo nebula_option('cd_fbid'); //User ?>',
 			videoWatcher: '<?php echo nebula_option('cd_videowatcher'); //Session ?>',
-			wooCustomer: '<?php echo nebula_option('cd_woocustomer'); //User ?>',
 			eventIntent: '<?php echo nebula_option('cd_eventintent'); //Hit ?>',
 			wordCount: '<?php echo nebula_option('cd_wordcount'); //Hit ?>',
 			weather: '<?php echo nebula_option('cd_weather'); //Hit ?>',
@@ -212,6 +214,7 @@
 				$current_user = wp_get_current_user();
 				if ( $current_user && nebula_option('cd_userid') ){
 					echo 'ga("set", gaCustomDimensions["userID"], "' . $current_user->ID . '");';
+					echo 'ga("set", "userId", ' . $current_user->ID . ');';
 				}
 			}
 
@@ -277,8 +280,6 @@
 				}
 			});
 		<?php endif; ?>
-
-
 
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
