@@ -57,6 +57,9 @@ jQuery(document).ready(function(){
 	checkForYoutubeVideos();
 	vimeoControls();
 	animationTriggers();
+	if ( has(nebula, 'site.ecommerce') && nebula.site.ecommerce ){
+		ecommerceTracking();
+	}
 
 	if ( jQuery('.home.page').length ){
 		initHeadroom(jQuery('#herocon'));
@@ -802,6 +805,49 @@ function eventTracking(){
 	if ( nebula.dom.body.hasClass('error404') ){
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP 404 Page'));
 	}
+}
+
+//Ecommerce event tracking
+//Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
+function ecommerceTracking(){
+	//Add to Cart clicks
+	nebula.dom.document.on('click tap touch', 'a.add_to_cart', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Ecommerce', 'Add to Cart', jQuery(this).attr('data-product_id'));
+	});
+
+	//Update cart clicks
+	nebula.dom.document.on('click tap touch', '.button[name="update_cart"]', function(){
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Ecommerce', 'Update Cart Button', 'Update Cart button click');
+	});
+
+	//Product Remove buttons
+	nebula.dom.document.on('click tap touch', '.product-remove a.remove', function(){
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Ecommerce', 'Remove this item', jQuery(this).attr('data-product_id'));
+	});
+
+	//Proceed to Checkout
+	nebula.dom.document.on('click tap touch', '.wc-proceed-to-checkout .checkout-button', function(){
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Ecommerce', 'Proceed to Checkout Button', 'Proceed to Checkout button click');
+	});
+
+	//Checkout form timing
+	nebula.dom.document.on('click tap touch focus', '#billing_first_name', function(){
+		nebulaTimer('ecommerce_checkout', 'start');
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Ecommerce', 'Started Checkout Form', 'Began filling out the checkout form (Billing First Name)');
+	});
+
+	//Place order button
+	nebula.dom.document.on('click tap touch', '#place_order', function(){
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Placed Order'));
+		ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebulaTimer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
+		ga('send', 'event', 'Ecommerce', 'Place Order Button', 'Place Order button click (likely exit to payment gateway)');
+	});
 }
 
 //Detect scroll depth for engagement and more accurate bounce rate

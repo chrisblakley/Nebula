@@ -50,13 +50,16 @@
 	//Set dimensions and send events after the Google Analytics pageview is sent
 	add_action('nebula_ga_after_send_pageview', 'nebula_woo_custom_events');
 	function nebula_woo_custom_events(){
+		echo 'nebula.site.ecommerce = true;'; //Set the ecommerce setting to true
+
 		//Set custom dimension and send event on order received page.
 		if ( is_order_received_page() ){
 			if ( nebula_option('cd_woocustomer') ){
 				echo 'gaCustomDimensions.wooCustomer = "' . nebula_option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
 				echo 'ga("set", gaCustomDimensions["wooCustomer"], "Order Received");';
 		    }
-		    echo 'ga("send", "event", "Ecommerce", "Checkout", "Order Received");';
+		    echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
+		    echo 'ga("send", "event", "Ecommerce", "Order Received", "Order Received page load (Success from payment gateway)");';
 		}
 	}
 

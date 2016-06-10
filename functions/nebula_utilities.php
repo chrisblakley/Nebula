@@ -686,7 +686,6 @@ function nebula_fuzzy_posts_where($where){
 
 
 //Use WordPress core browser detection
-//@TODO "Nebula" 0: Look into using this in addition to a more powerful library.
 function wp_browser_detect(){
 	$override = apply_filters('pre_wp_browser_detect', false);
 	if ( $override !== false ){return $override;}
@@ -1180,7 +1179,6 @@ function nebula_version($return=false){
 if ( nebula_option('scss', 'enabled') ){
 	if ( is_writable(get_template_directory()) ){
 		add_action('init', 'nebula_render_scss');
-		add_action('admin_init', 'nebula_render_scss');
 	}
 }
 function nebula_render_scss($child=false){
@@ -1245,13 +1243,14 @@ function nebula_render_scss($child=false){
 
 			if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
 				$css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
-
 				wp_mkdir_p($stylesheets_directory . '/css'); //Create the /css directory (in case it doesn't exist already).
 
 				//If style.css has been edited after style.scss, save backup but continue compiling SCSS
-				if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){
+				if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){ //@todo "Nebula" 0: Getting a lot of false positives here
 					copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
-					add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
+					if ( is_dev() || current_user_can('manage_options') ){
+						add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
+					}
 				}
 
 				if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $compile_all ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
