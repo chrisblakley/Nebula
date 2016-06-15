@@ -24,11 +24,11 @@
 <?php endif; ?>
 
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
-	<meta name="description" content="<?php echo nebula_the_excerpt('', 100, 0); ?>" />
+	<meta name="description" content="<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false)); ?>" />
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
-	<meta property="og:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+	<meta property="og:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false)); ?>" />
 	<meta property="og:url" content="<?php the_permalink(); ?>" />
 	<meta property="og:site_name" content="<?php bloginfo('name'); ?>" />
 
@@ -121,7 +121,7 @@
 	<?php endif; ?>
 <?php endif; ?>
 <meta name="twitter:title" content="<?php the_title(); ?>" />
-<meta name="twitter:description" content="<?php echo nebula_the_excerpt('', 30, 1); ?>" />
+<meta name="twitter:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false)); ?>" />
 <?php if ( nebula_option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula_option('twitter_user'); ?>" />
 <?php endif; ?>

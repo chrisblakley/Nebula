@@ -90,7 +90,7 @@ get_header(); ?>
 
 							<div class="entry-caption">
 								<?php if ( !empty($post->post_excerpt) ): ?>
-									<?php echo nebula_the_excerpt(); ?>
+									<?php echo nebula_excerpt(); ?>
 								<?php endif; ?>
 							</div>
 

@@ -34,7 +34,7 @@
 					</div>
 				<?php else: ?>
 					<div class="entry-summary">
-						<?php echo nebula_the_excerpt('Read More &raquo;', 70, 1); ?>
+						<?php echo nebula_excerpt(array('length' => 70)); ?>
 					</div>
 				<?php endif; ?>
 			</article>
