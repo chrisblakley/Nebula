@@ -874,80 +874,57 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 }
 
 //Use this instead of the_excerpt(); and get_the_excerpt(); to have better control over the excerpt.
-//Several ways to implement this:
-	//Inside the loop (or outside the loop for current post/page): nebula_the_excerpt('Read more &raquo;', 20, 1);
-	//Outside the loop: nebula_the_excerpt(572, 'Read more &raquo;', 20, 1);
-function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
-	$override = apply_filters('pre_nebula_the_excerpt', false, $postID, $more, $length, $hellip);
+	//Inside the loop (or outside the loop for current post/page): nebula_excerpt(array('length' => 20, 'ellipsis' => true));
+	//Outside the loop: nebula_excerpt(array('id' => 572, 'length' => 20, 'ellipsis' => true));
+	//Custom text: nebula_excerpt(array('text' => 'Lorem ipsum <strong>dolor</strong> sit amet.', 'more' => 'Continue &raquo;', 'length' => 3, 'ellipsis' => true, 'strip_tags' => true));
+function nebula_excerpt($options=array()){
+	$override = apply_filters('pre_nebula_excerpt', false, $options);
 	if ( $override !== false ){return $override;}
 
-	if ( $postID && is_int($postID) ){
-		$the_post = get_post($postID);
-	} else {
-		if ( $postID != 0 || is_string($postID) ){
-			if ( $length == 0 || $length == 1 ){
-				$hellip = $length;
-			} else {
-				$hellip = false;
-			}
+	$defaults = array(
+		'id' => false,
+		'text' => false,
+		'length' => 55,
+		'ellipsis' => false,
+		'url' => false,
+		'more' => 'Read More &raquo;',
+		'strip_tags' => true,
+	);
 
-			$length = 55;
-			if ( is_int($more) ){
-				$length = $more;
-			}
+	$data = array_merge($defaults, $options);
 
-			$more = $postID;
+	//Establish text
+	if ( empty($data['text']) ){
+		$the_post = ( !empty($data['id']) && is_int($data['id']) )? get_post($data['id']) : get_post(get_the_ID());
+		$data['text'] = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
+	}
+
+	//Strip Tags
+	if ( $data['strip_tags'] ){
+		$data['text'] = strip_tags(strip_shortcodes($data['text']), '');
+	}
+
+	//Length
+	if ( !empty($data['length']) && is_int($data['length']) ){
+		$limited = string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
+		$data['text'] = $limited['text'];
+	}
+
+	//Ellipsis
+	if ( $data['ellipsis'] && !empty($limited['is_limited']) ){
+		$data['text'] .= '&hellip;';
+	}
+
+	//Link
+	if ( !empty($data['more']) ){
+		if ( empty($data['url']) ){ //If has "more" text, but no link URL
+			$data['url'] = ( !empty($data['id']) )? get_permalink($data['id']) : get_permalink(get_the_id()); //Use the ID if available, or use the current ID.
 		}
-		$postID = get_the_ID();
-		$the_post = get_post($postID);
+
+		$data['text'] .= ' <a class="nebula_excerpt" href="' . $data['url'] . '">' . $data['more'] . '</a>';
 	}
 
-	$string = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
-	$string = str_replace(array("\r\n", "\r", "\n"), ' ', strip_tags(strip_shortcodes($string), ''));
-
-	if ( $length == -1 || $length == '' || $length === null ){
-        $string = string_limit_words($string, strlen($string));
-    } else {
-        $string = string_limit_words($string, $length);
-    }
-
-	if ( $hellip ){
-		if ( $string[1] == 1 ){
-			$string[0] .= '&hellip; ';
-		}
-	}
-
-	if ( isset($more) && $more != '' ){
-		$string[0] .= ' <a class="nebula_the_excerpt" href="' . get_permalink($postID) . '">' . $more . '</a>';
-	}
-
-	return $string[0];
-}
-
-//Pass custom text to a Nebula-style excerpt
-function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=false, $more=false){
-	$override = apply_filters('pre_nebula_custom_excerpt', false, $text, $length, $hellip, $link, $more);
-	if ( $override !== false ){return $override;}
-
-	$string = strip_tags(strip_shortcodes($text), '');
-
-	if ( $length == -1 || $length == '' || $length == 'all' || $length === null ){
-        $string = string_limit_words($string, strlen($string));
-    } else {
-        $string = string_limit_words($string, $length);
-    }
-
-	if ( $hellip ){
-		if ( $string[1] == 1 ){
-			$string[0] .= '&hellip; ';
-		}
-	}
-
-	if ( isset($link) && isset($more) && $more != '' ){
-		$string[0] .= ' <a class="nebula_custom_excerpt" href="' . $link . '">' . $more . '</a>';
-	}
-
-	return $string[0];
+	return $data['text'];
 }
 
 //Speech recognition AJAX for navigating
@@ -972,7 +949,7 @@ function nebula_password_form_simplify(){
 
 //Breadcrumbs
 function nebula_breadcrumbs(){
-	$override = apply_filters('pre_the_breadcrumb', false);
+	$override = apply_filters('pre_nebula_breadcrumbs', false);
 	if ( $override !== false ){echo $override; return;}
 
 	global $post;
@@ -1077,13 +1054,7 @@ function nebula_breadcrumbs(){
 		}
 
 		if ( get_query_var('paged') ){
-			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ){
-				echo ' (';
-			}
-			echo 'Page ' . get_query_var('paged');
-			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ){
-				echo ')';
-			}
+			echo ' (Page ' . get_query_var('paged') . ')';
 		}
 		echo '</div>';
 	}

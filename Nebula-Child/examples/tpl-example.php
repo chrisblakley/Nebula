@@ -194,8 +194,8 @@ get_header(); ?>
 							include_once('includes/nebula_meta.php');
 						} ?>
 
-						<?php if ( is_page(224) ){ //Nebula the Excerpt
-							include_once('includes/nebula_the_excerpt.php');
+						<?php if ( is_page(224) ){ //Nebula Excerpt
+							include_once('includes/nebula_excerpt.php');
 						} ?>
 
 						<?php if ( is_page(648) ){ //Facebook Graph API

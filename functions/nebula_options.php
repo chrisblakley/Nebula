@@ -180,7 +180,7 @@ function nebula_default_options(){
 		'unnecessary_metaboxes' => 'enabled',
 		'scss' => 'disabled',
 		'minify_css' => 'disabled',
-		'dev_stylesheets' => 'enabled',
+		'dev_stylesheets' => 'disabled',
 		'appcache_manifest' => 'disabled',
 		'console_css' => 'enabled',
 		'examples_directory' => 'enabled',
@@ -775,11 +775,11 @@ function nebula_options_page(){
 		        	<th scope="row">Developer Stylesheets&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[dev_stylesheets]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: Disabled</option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['dev_stylesheets']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['dev_stylesheets']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Combines CSS files within /stylesheets/css/dev/ into /stylesheets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Combines CSS files within /stylesheets/css/dev/ into /stylesheets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 

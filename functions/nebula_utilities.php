@@ -719,13 +719,13 @@ function string_limit_words($string, $word_limit){
 	$override = apply_filters('pre_string_limit_words', false, $string, $word_limit);
 	if ( $override !== false ){return $override;}
 
-	$limited[0] = $string;
-	$limited[1] = 0;
-	$words = explode(' ', $string, ($word_limit + 1));
+	$limited['text'] = $string;
+	$limited['is_limited'] = false;
+	$words = explode(' ', $string, ($word_limit+1));
 	if ( count($words) > $word_limit ){
 		array_pop($words);
-		$limited[0] = implode(' ', $words);
-		$limited[1] = 1;
+		$limited['text'] = implode(' ', $words);
+		$limited['is_limited'] = true;
 	}
 	return $limited;
 }
@@ -1279,7 +1279,7 @@ function nebula_render_scss($child=false){
 
 //Log Sass .bak note in the browser console
 function nebula_scss_console_warning(){
-	echo '<script>console.error("Warning: Sass compiling is enabled, but it appears that ' . $file_path_info['filename'] . '.css has been manually updated! A ' . $file_path_info['filename'] . '.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
+	echo '<script>console.error("Warning: Sass compiling is enabled, but it appears that style.css has been manually updated! A stylee.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
 }
 
 //Combine developer stylesheets

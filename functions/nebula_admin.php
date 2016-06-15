@@ -68,6 +68,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 	function remove_admin_bar_logo() {
 		global $wp_admin_bar;
 		$wp_admin_bar->remove_menu('wp-logo');
+		$wp_admin_bar->remove_menu('wpseo-menu'); //Remove Yoast SEO from admin bar
 	}
 
 	//Create custom menus within the WordPress Admin Bar
