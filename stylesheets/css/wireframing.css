@@ -25,9 +25,9 @@
 
  .fpo-component-con .component-comment-toggle { float:right; color:#222; }
 
- .fpo-component-con .component-comment-toggle:hover,.fpo-component-con .component-comment-toggle.hover,.fpo-component-con .component-comment-toggle.active { color:#0098d7; }
+ .fpo-component-con .component-comment-toggle:hover,.fpo-component-con .component-comment-toggle.active { color:#0098d7; }
 
- .fpo-component-con .component-comment-toggle:hover:hover,.fpo-component-con .component-comment-toggle.hover:hover,.fpo-component-con .component-comment-toggle.active:hover,.fpo-component-con .component-comment-toggle:hover.hover,.fpo-component-con .component-comment-toggle.hover.hover,.fpo-component-con .component-comment-toggle.active.hover { color:#222; }
+ .fpo-component-con .component-comment-toggle:hover:hover,.fpo-component-con .component-comment-toggle.active:hover { color:#222; }
 
  .fpo-component-con .component-comment-drawer { display:none; background:#eee; border:1px solid #bbb; border-top:none; padding:0 10px 1px 10px; }
 
@@ -38,4 +38,4 @@
  .fpo { background:#e2e2e2; padding:5px 10px 5px 10px; margin-bottom:15px; }
 
  /* Not sure if I'm a fan of this margin-bottom. */
-/* Processed on Friday, June 3, 2016 at 12:32am */
+/* Processed on Wednesday, June 15, 2016 at 2:55pm */

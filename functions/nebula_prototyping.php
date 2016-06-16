@@ -18,17 +18,20 @@ if ( nebula_option('prototype_mode', 'enabled') ){
 		wp_enqueue_script('nebula-wireframing');
 	}
 
-	//Set up wireframe redirect based on ?wireframe query string.
+	//Set up redirects based on the ?phase query.
 	if ( is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 		$mt_settings = get_option('jr_mt_settings');
+
 		$mt_settings['query'] = array(
 			'phase' => array(
 				'wireframe' => nebula_option('wireframe_theme'), //Wireframe Theme
 				'staging' => nebula_option('staging_theme'), //Staging Theme
 				'production' => nebula_option('production_theme') //Production Theme
-			),
+			)
 		);
 
+		$mt_settings['current'] = nebula_option('production_theme'); //"Everything Else" theme
+		$mt_settings['ajax_all'] = ( nebula_option('staging_theme') )? nebula_option('staging_theme') : nebula_option('production_theme'); //Theme for AJAX functions. Staging (if exists) or Production
 		$mt_settings['remember'] = array('query' => array('phase' => array('wireframe' => true, 'staging' => true)));
 		$mt_settings['override'] = array('query' => array('phase' => array('production' => true)));
 		update_option('jr_mt_settings', $mt_settings);

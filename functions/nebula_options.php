@@ -663,7 +663,7 @@ function nebula_options_page(){
 		        </tr>
 
 		        <tr class="short wireframerequired" valign="top">
-		        	<th scope="row">Production Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Production/Live Theme&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select id="productiontheme" name="nebula_options[production_theme]">
 							<option value="" <?php selected('', $nebula_options['production_theme']); ?>>None</option>
@@ -1193,7 +1193,7 @@ function nebula_options_page(){
 		        	<th scope="row">Notable POI&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_options[cd_notablepoi]" value="<?php echo $nebula_options['cd_notablepoi']; ?>" />
-						<p class="helper"><small>Stores named IP addresses (from the Administration tab). Also passes date using the <code>?poi</code> query string (useful for email marketing using personalization within links). Also sends value of input fields with class "nebula-poi" on form submits (when applicable). <strong>Scope: User</strong></small></p>
+						<p class="helper"><small>Stores named IP addresses (from the Administration tab). Also passes data using the <code>?poi</code> query string (useful for email marketing using personalization within links). Also sends value of input fields with class "nebula-poi" on form submits (when applicable). <strong>Scope: User</strong></small></p>
 					</td>
 		        </tr>
 
