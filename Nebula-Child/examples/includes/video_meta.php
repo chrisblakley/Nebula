@@ -3,10 +3,12 @@
 		Note: youtube_meta() needs a Google server API key in order to work!
 		Set it in Nebula Options (instructions can be found there).
 
+		The ID of the iframe is not required, but should be the video ID for Youtube or the "Safe Title" for Vimeo. See the various examples below.
+
 		Note: The &origin=<?php echo youtube_meta($youtube_id, 'origin'); ?> parameter may trigger many console errors (and API ready never triggering). It is removed, but may be needed at some point.
 
-		Once the Player API is ready, you can control videos with the Nebula object "players" and the iframe ID (*not* Youtube video ID).
-		Ex: players.youtube['The-ID-From-The-Iframe-Here'].playVideo();
+		Once the Player API is ready, you can control videos with the Nebula object "players" and the ID.
+		Ex: players.youtube['jtip7Gdcf0Q'].playVideo();
 	*/
 ?>
 
@@ -19,7 +21,7 @@
 		<?php $youtube_data = video_meta('youtube', 'jtip7Gdcf0Q'); ?>
 		<?php if ( !empty($youtube_data) ): ?>
 			<div class="embed-responsive embed-responsive-16by9">
-				<iframe id="<?php echo $youtube_data['safetitle']; ?>" class="youtube embed-responsive-item" width="560" height="315" src="//www.youtube.com/embed/<?php echo $youtube_data['id']; ?>?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe>
+				<iframe id="<?php echo $youtube_data['id']; ?>" class="youtube embed-responsive-item" width="560" height="315" src="//www.youtube.com/embed/<?php echo $youtube_data['id']; ?>?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe>
 			</div>
 
 			<br />
@@ -43,7 +45,7 @@
 		<?php $youtube_data = video_meta('youtube', 'fjh61K3hyY0'); ?>
 		<?php if ( !empty($youtube_data) ): ?>
 			<div class="embed-responsive embed-responsive-16by9">
-				<iframe id="<?php echo $youtube_data['safetitle']; ?>" class="youtube embed-responsive-item" width="560" height="315" src="//www.youtube.com/embed/<?php echo $youtube_data['id']; ?>?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe>
+				<iframe class="youtube embed-responsive-item" width="560" height="315" src="//www.youtube.com/embed/<?php echo $youtube_data['id']; ?>?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe>
 			</div>
 
 			<br />
@@ -104,7 +106,7 @@
 		<?php $vimeo_data = video_meta('vimeo', '132454664'); ?>
 		<?php if ( !empty($vimeo_data) ): ?>
 			<div class="embed-responsive embed-responsive-16by9">
-				<iframe id="<?php echo $vimeo_data['safetitle']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $vimeo_data['id']; ?>?api=1&player_id=<?php echo $vimeo_data['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+				<iframe class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $vimeo_data['id']; ?>?api=1&player_id=<?php echo $vimeo_data['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 			</div>
 
 			<br />

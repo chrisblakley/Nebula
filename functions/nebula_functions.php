@@ -688,31 +688,31 @@ function nebula_social($networks=array('facebook', 'twitter', 'google+'), $count
 	//@TODO "Nebula" 0: Eventually upgrade these to support vertical count bubbles as an option.
 */
 
-function nebula_facebook_share($counts=0){
+function nebula_facebook_share($counts=0, $url=false){
 	$override = apply_filters('pre_nebula_facebook_share', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
 	<div class="nebula-social-button facebook-share">
-		<div class="fb-share-button" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>"></div>
+		<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>"></div>
 	</div>
 <?php }
 
 
-function nebula_facebook_like($counts=0){
+function nebula_facebook_like($counts=0, $url=false){
 	$override = apply_filters('pre_nebula_facebook_like', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
 	<div class="nebula-social-button facebook-like">
-		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
+		<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
 	</div>
 <?php }
 
-function nebula_facebook_both($counts=0){
+function nebula_facebook_both($counts=0, $url=false){
 	$override = apply_filters('pre_nebula_facebook_both', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
 	<div class="nebula-social-button facebook-both">
-		<div class="fb-like" data-href="<?php echo get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
+		<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
 	</div>
 <?php }
 
@@ -2111,7 +2111,7 @@ function video_meta($provider, $id){
 
 	//Get Transients
 	$video_json = get_transient('nebula_' . $provider . '_' . $id);
-	if ( empty($video_json) || 1==1 ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+	if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		WP_Filesystem();
 		global $wp_filesystem;
 		if ( $provider == 'youtube' ){

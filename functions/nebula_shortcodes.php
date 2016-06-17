@@ -58,7 +58,6 @@ if ( shortcode_exists('row') ){
 }
 function row_shortcode($atts, $content=''){
 	extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
-	$GLOBALS['col_counter'] = 0;
 	return '<div class="nebula-row row ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/row-->';
 }
 
@@ -79,40 +78,22 @@ if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exis
 	add_shortcode('cols', 'column_shortcode');
 }
 function column_shortcode($atts, $content=''){
-	extract(shortcode_atts(array('scale' => 'md', 'columns' => '', 'offset' => '', 'centered' => '', 'first' => false, 'last' => false, 'class' => '', 'style' => ''), $atts));
+	extract(shortcode_atts(array('scale' => 'md', 'columns' => '', 'offset' => '', 'centered' => '', 'class' => '', 'style' => ''), $atts));
 
 	$flags = get_flags($atts);
 	$columns = str_replace(array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'), array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'), $columns);
 
-
-	if ( in_array('centered', $flags) ){  //@TODO "Nebula" 0: update to bootstrap centered
+	if ( in_array('centered', $flags) ){
 		$centered = 'col-centered';
 		$key = array_search('centered', $flags);
 		unset($flags[$key]);
-	} elseif ( in_array('first', $flags) ){
-		$GLOBALS['col_counter'] = 1; //@todo "Nebula" 0: what does this do? do we still need it?
-		$first = 'margin-left: 0;';
-		$key = array_search('first', $flags);
-	} elseif ( $GLOBALS['col_counter'] == 0 ){
-		$GLOBALS['col_counter'] = 1; //@todo "Nebula" 0: what does this do? do we still need it?
-		$first = 'margin-left: 0;';
-	} else {
-		$GLOBALS['col_counter']++;
 	}
-
-	if ( in_array('last', $flags) ){
-		$GLOBALS['col_counter'] = 0;
-		$key = array_search('last', $flags);
-		unset($flags[$key]);
-	}
-
-	$columns = array_values($flags);
 
 	if ( !empty($push) ){
 		$push = 'offset_' . $scale . '_' . $push;
 	}
 
-	return '<div class="nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class . '" style="' . $style . ' ' . $first . '">' . do_shortcode($content) . '</div>';
+	return '<div class="nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 }
 
 

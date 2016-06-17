@@ -2975,7 +2975,7 @@ function dataTablesActions(){
 
 //Check for Youtube Videos
 function checkForYoutubeVideos(){
-	if ( jQuery('.youtube').length ){
+	if ( jQuery('iframe[src*="youtube"]').length ){
 		var tag = document.createElement('script');
 		tag.src = "https://www.youtube.com/iframe_api";
 		var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -2990,8 +2990,13 @@ function onYouTubeIframeAPIReady(e){
 		};
 		videoData = {};
 	}
-	jQuery('iframe.youtube').each(function(i){
+	jQuery('iframe[src*="youtube"]').each(function(i){
 		var youtubeiframeID = jQuery(this).attr('id');
+		if ( !youtubeiframeID ){
+			youtubeiframeID = jQuery(this).attr('src').split('?')[0].split('/').pop();
+			jQuery(this).attr('id', youtubeiframeID);
+		}
+
 		players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, {
 			events: {
 				onReady: onPlayerReady,
@@ -3018,9 +3023,9 @@ function onPlayerReady(e){
 	videoData[id] = {
 		platform: 'youtube', //The platform the video is hosted using.
 		player: players.youtube[id], //The player ID of this video. Can access the API here.
-		duration: videoInfo.duration, //The total duration of the video. Unit: Seconds
-		current: videoInfo.currentTime, //The current position of the video. Units: Seconds
-		percent: videoInfo.currentTime/videoInfo.duration, //The percent of the current position. Multiply by 100 for actual percent.
+		duration: e.target.getDuration(), //The total duration of the video. Unit: Seconds
+		current: e.target.getCurrentTime(), //The current position of the video. Units: Seconds
+		percent: e.target.getCurrentTime()/e.target.getDuration(), //The percent of the current position. Multiply by 100 for actual percent.
 		engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
 		watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
 		watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
@@ -3030,8 +3035,8 @@ function onPlayerStateChange(e){
 	var videoInfo = e.target.getVideoData();
 	var id = videoInfo.video_id;
 
-	videoData[id].current = videoInfo.currentTime;
-	videoData[id].percent = videoInfo.currentTime/videoInfo.duration;
+	videoData[id].current = e.target.getCurrentTime();
+	videoData[id].percent = videoData[id].current/videoData[id].duration;
 
     if ( e.data === YT.PlayerState.PLAYING ){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
@@ -3043,10 +3048,10 @@ function onPlayerStateChange(e){
 		updateInterval = 500;
 
 		youtubePlayProgress = setInterval(function(){
-			videoData[id].current = videoInfo.currentTime;
-			videoData[id].percent = videoInfo.currentTime/videoInfo.duration;
+			videoData[id].current = e.target.getCurrentTime();
+			videoData[id].percent = videoInfo.currentTime/videoData[id].duration;
 			videoData[id].watched = videoData[id].watched+(updateInterval/1000);
-			videoData[id].watchedPercent = (videoData[id].watched)/videoInfo.duration;
+			videoData[id].watchedPercent = (videoData[id].watched)/videoData[id].duration;
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
@@ -3080,7 +3085,7 @@ function onPlayerStateChange(e){
 
 function vimeoControls(){
 	//Load the Vimeo API script (froogaloop) remotely (with local backup)
-	if ( jQuery('.vimeo').length ){
+	if ( jQuery('iframe[src*="vimeo"]').length ){
         jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
@@ -3104,8 +3109,13 @@ function vimeoControls(){
 			};
 			videoData = {};
 		}
-	    jQuery('iframe.vimeo').each(function(i){
+	    jQuery('iframe[src*="vimeo"]').each(function(i){
 			var vimeoiframeID = jQuery(this).attr('id');
+			if ( !vimeoiframeID ){
+				vimeoiframeID = jQuery(this).attr('src').split('player_id=').pop().split('&')[0];
+				jQuery(this).attr('id', vimeoiframeID);
+			}
+
 			players.vimeo[vimeoiframeID] = $f(vimeoiframeID);
 			players.vimeo[vimeoiframeID].addEvent('ready', function(id){
 			    players.vimeo[id].addEvent('play', vimeoPlay);
