@@ -663,7 +663,7 @@ function dashboard_current_user(){
 		}
 
 		//Location
-		if ( get_the_author_meta('userlocation', $user->ID) ){
+		if ( get_the_author_meta('userlocation', $user_info->ID) ){
 			echo '<li><i class="fa fa-map-marker fa-fw"></i> <strong>' . get_the_author_meta('userlocation', $user_info->ID) . '</strong></li>';
 		}
 
@@ -1084,42 +1084,6 @@ function dashboard_developer_info(){
 		}
 		echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
 
-		//Get last modified filename and date from a directory
-		function nebula_last_modified($directory=null, $last_date=0, $child=false){
-			if ( empty($directory) ){
-				$directory = get_template_directory();
-			}
-			$dir = glob_r($directory . '/*');
-			$skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
-
-			foreach ( $dir as $file ){
-				if ( is_file($file) ){
-					$mod_date = filemtime($file);
-					if ( $mod_date > $last_date && !contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
-						$latest_file['date'] = $mod_date;
-						$latest_file['file'] = basename($file);
-
-						if ( is_child_theme() && $child ){
-							$latest_file['path'] = 'Child: ';
-						} elseif ( is_child_theme() && !$child ){
-							$latest_file['path'] = 'Parent: ';
-						}
-						$latest_file['path'] .= str_replace($directory, '', dirname($file)) . '/' . $latest_file['file'];
-
-						$last_date = $latest_file['date'];
-					}
-				}
-			}
-
-			if ( is_child_theme() && !$child ){
-				$latest_child_file = nebula_last_modified(get_stylesheet_directory(), $latest_file['date'], true);
-				if ( $latest_child_file['date'] > $latest_file['date'] ){
-					return $latest_child_file;
-				}
-			}
-
-			return $latest_file;
-		}
 		$latest_file = nebula_last_modified();
 		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong title="' . human_time_diff($latest_file['date']) . ' ago">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
 
@@ -1146,6 +1110,45 @@ function dashboard_developer_info(){
 	}
 	echo '<option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
 	echo '<div class="search_results"></div>';
+}
+
+//Get last modified filename and date from a directory
+function nebula_last_modified($directory=null, $last_date=0, $child=false){
+	global $latest_file;
+
+	if ( empty($directory) ){
+		$directory = get_template_directory();
+	}
+	$dir = glob_r($directory . '/*');
+	$skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
+
+	foreach ( $dir as $file ){
+		if ( is_file($file) ){
+			$mod_date = filemtime($file);
+			if ( $mod_date > $last_date && !contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
+				$latest_file['date'] = $mod_date;
+				$latest_file['file'] = basename($file);
+
+				if ( is_child_theme() && $child ){
+					$latest_file['path'] = 'Child: ';
+				} elseif ( is_child_theme() && !$child ){
+					$latest_file['path'] = 'Parent: ';
+				}
+				$latest_file['path'] .= str_replace($directory, '', dirname($file)) . '/' . $latest_file['file'];
+
+				$last_date = $latest_file['date'];
+			}
+		}
+	}
+
+	if ( is_child_theme() && !$child ){
+		$latest_child_file = nebula_last_modified(get_stylesheet_directory(), $latest_file['date'], true);
+		if ( $latest_child_file['date'] > $latest_file['date'] ){
+			return $latest_child_file;
+		}
+	}
+
+	return $latest_file;
 }
 
 //Search theme or plugin files via Developer Information Metabox

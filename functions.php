@@ -29,7 +29,7 @@ require_once('functions/nebula_admin.php'); //Nebula Admin Functions
 require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
-require_once('functions/nebula_widgets.php'); //Nebula Widgets
+//require_once('functions/nebula_widgets.php'); //Nebula Widgets
 require_once('functions/nebula_prototyping.php'); //Nebula Wireframing (can be commented out after launch)
 require_once('functions/nebula_legacy.php'); //Nebula Legacy (to maximize backwards compatibility)
 //require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)

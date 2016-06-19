@@ -17,9 +17,6 @@ while ( list($key, $val) = each($process) ){
 }
 unset($process);
 
-//Add IE compatibility header
-header("X-UA-Compatible: IE=edge");
-
 //Extend registering scripts to include async/defer executions (used by the nebula_defer_async_scripts() funtion)
 function nebula_register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
 	if ( !is_debug() ){
@@ -74,7 +71,7 @@ function nebula_defer_async_additional_scripts($tag){
 	return $tag;
 }
 
-//Remove version query strings from styles/scripts (to allow caching)
+//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
 add_filter('script_loader_src', 'nebula_remove_script_version', 15, 1);
 add_filter('style_loader_src', 'nebula_remove_script_version', 15, 1);
 function nebula_remove_script_version($src){

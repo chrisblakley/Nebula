@@ -4,6 +4,7 @@
 		die('Error 403: Forbidden.');
 	}
 
+	global $post;
 	$image_meta_directory = nebula_prefer_child_directory('/images/meta');
 	$cache_query = ( is_debug() )? '?nocache' . mt_rand(1000, 99999) . '=debug' . mt_rand(1000, 99999) : ''; //Add a random query string when debugging to force-clear the cache.
 
@@ -30,7 +31,7 @@
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
 	<meta property="og:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false)); ?>" />
 	<meta property="og:url" content="<?php the_permalink(); ?>" />
-	<meta property="og:site_name" content="<?php bloginfo('name'); ?>" />
+	<meta property="og:site_name" content="<?php echo get_bloginfo('name'); ?>" />
 
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
 
@@ -125,23 +126,201 @@
 <?php if ( nebula_option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula_option('twitter_user'); ?>" />
 <?php endif; ?>
-<?php if ( nebula_option('author_bios', 'enabled') && get_the_author_meta('twitter', $user->ID) ): ?>
-	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $user->ID); ?>" />
+<?php if ( nebula_option('author_bios', 'enabled') && get_the_author_meta('twitter', $post->post_author) ): ?>
+	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $post->post_author); ?>" />
 <?php endif; ?>
 
 <?php //Windows Tiles ?>
-<meta name="application-name" content="<?php bloginfo('name') ?>" />
+<meta name="application-name" content="<?php echo get_bloginfo('name') ?>" />
 <meta name="msapplication-TileColor" content="#0098d7" />
 <meta name="msapplication-square70x70logo" content="<?php echo $image_meta_directory; ?>/mstile-70x70.png<?php echo $cache_query; ?>" />
 <meta name="msapplication-square150x150logo" content="<?php echo $image_meta_directory; ?>/mstile-150x150.png<?php echo $cache_query; ?>" />
 <meta name="msapplication-wide310x150logo" content="<?php echo $image_meta_directory; ?>/mstile-310x150.png<?php echo $cache_query; ?>" />
 <meta name="msapplication-square310x310logo" content="<?php echo $image_meta_directory; ?>/mstile-310x310.png<?php echo $cache_query; ?>" />
-<meta name="msapplication-notification" content="frequency=30;polling-uri=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=1;polling-uri2=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=2;polling-uri3=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=3;polling-uri4=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=4;polling-uri5=http://notifications.buildmypinnedsite.com/?feed=<?php bloginfo('rss_url'); ?>&amp;id=5; cycle=1" />
+<meta name="msapplication-notification" content="frequency=30;polling-uri=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=1;polling-uri2=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=2;polling-uri3=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=3;polling-uri4=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=4;polling-uri5=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=5; cycle=1" />
 
 <?php //Local/Geolocation Metadata ?>
 <meta name="geo.placename" content="<?php echo nebula_option('locality'); ?>, <?php echo nebula_option('region'); ?>" />
 <meta name="geo.position" content="<?php echo nebula_option('latitude'); ?>;<?php echo nebula_option('longitude'); ?>" />
-<meta name="geo.region" content="<?php echo bloginfo('language'); ?>" />
+<meta name="geo.region" content="<?php echo get_bloginfo('language'); ?>" />
 <meta name="ICBM" content="<?php echo nebula_option('latitude'); ?>, <?php echo nebula_option('longitude'); ?>" />
 <meta property="place:location:latitude" content="<?php echo nebula_option('latitude'); ?>" />
 <meta property="place:location:longitude" content="<?php echo nebula_option('longitude'); ?>" />
+
+<?php
+	//JSON-LD Structured Data
+	//Google Structured Data Documentation: https://developers.google.com/search/docs/data-types/data-type-selector
+	//JSON-LD Examples: http://jsonld.com/
+	//Google Structured Data Testing Tool: https://search.google.com/structured-data/testing-tool
+
+	$company_type = 'LocalBusiness'; //@TODO "Nebula" 0: Consider a Nebula Option for this type (LocalBusiness (default), Organization, etc)
+?>
+<script type="application/ld+json">
+	{
+		"@context": "http://schema.org/",
+		"@type": "<?php echo $company_type; ?>",
+		"name": "<?php echo ( nebula_option('site_owner') )? nebula_option('site_owner') : get_bloginfo('name'); ?>",
+		"url": "<?php echo home_url('/'); ?>",
+		"address": {
+			"@type": "PostalAddress",
+			"streetAddress": "<?php echo nebula_option('street_address'); ?>",
+			"addressLocality": "<?php echo nebula_option('locality'); ?>",
+			"addressRegion": "<?php echo nebula_option('region'); ?>",
+			"postalCode": "<?php echo nebula_option('postal_code'); ?>",
+			"addressCountry": "<?php echo nebula_option('country_name'); ?>"
+		},
+
+		<?php if ( $company_type == 'LocalBusiness' ): ?>
+			"geo": {
+				"@type": "GeoCoordinates",
+				"latitude": <?php echo nebula_option('latitude'); ?>,
+				"longitude": <?php echo nebula_option('longitude'); ?>
+			},
+			<?php
+				$opening_hours_specification = '';
+				foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
+					if ( nebula_option('business_hours_' . $weekday . '_enabled') && nebula_option('business_hours_' . $weekday . '_open') != '' && nebula_option('business_hours_' . $weekday . '_close') != '' ){
+						$opening_hours_specification .= '{
+							"@type": "OpeningHoursSpecification",
+							"dayOfWeek": "' . $weekday . '",
+							"opens": "' . date('H:i', strtotime(nebula_option('business_hours_' . $weekday . '_open'))) . '",
+							"closes": "' . date('H:i', strtotime(nebula_option('business_hours_' . $weekday . '_close'))) . '"
+						},';
+					}
+				}
+			?>
+			<?php if ( !empty($opening_hours_specification) ): ?>
+				"openingHoursSpecification": [
+					<?php echo rtrim($opening_hours_specification, ','); ?>
+				],
+			<?php endif; ?>
+		<?php endif; ?>
+
+		"contactPoint": {
+			"@type": "ContactPoint",
+			"telephone": "+<?php echo nebula_option('phone_number'); ?>",
+			"email": "<?php echo nebula_option('contact_email'); ?>",
+			"contactType": "customer service"
+		},
+
+		<?php
+			if ( nebula_option('facebook_url') ){
+				$company_same_as .= '"' . nebula_option('facebook_url') . '",';
+			}
+
+			if ( nebula_option('twitter_username') ){
+				$company_same_as .= '"http://www.twitter.com/' . nebula_option('twitter_username') . '",';
+			}
+
+			if ( nebula_option('google_plus_url') ){
+				$company_same_as .= '"' . nebula_option('google_plus_url') . '",';
+			}
+
+			if ( nebula_option('linkedin_url') ){
+				$company_same_as .= '"' . nebula_option('linkedin_url') . '",';
+			}
+
+			if ( nebula_option('youtube_url') ){
+				$company_same_as .= '"' . nebula_option('youtube_url') . '",';
+			}
+
+			if ( nebula_option('instagram_url') ){
+				$company_same_as .= '"' . nebula_option('instagram_url') . '",';
+			}
+		?>
+		<?php if ( !empty($company_same_as) ): ?>
+			"sameAs": [
+				<?php echo rtrim($company_same_as, ','); ?>
+			],
+		<?php endif; ?>
+
+		"logo": "<?php echo nebula_prefer_child_directory('/images/logo.png'); ?>"
+	}
+</script>
+
+<?php if ( is_author() && nebula_option('author_bios', 'enabled') ): ?>
+	<script type="application/ld+json">
+		{
+			"@context": "http://schema.org/",
+			"@type": "Person",
+			"name": "<?php echo get_the_author(); ?>",
+			"email": "<?php echo get_the_author_meta('user_email'); ?>",
+			"jobTitle": "<?php echo get_the_author_meta('jobtitle'); ?>",
+			"telephone": "+<?php echo get_the_author_meta('phonenumber'); ?>",
+
+			<?php
+				if ( get_the_author_meta('facebook', $user->ID) ){
+					$person_same_as .= '"http://www.facebook.com/' . get_the_author_meta('facebook', $user->ID) . '",';
+				}
+
+				if ( get_the_author_meta('twitter', $user->ID) ){
+					$person_same_as .= '"http://www.twitter.com/' . get_the_author_meta('twitter', $user->ID) . '",';
+				}
+
+				if ( get_the_author_meta('googleplus', $user->ID) ){
+					$person_same_as .= '"https://plus.google.com/+' . get_the_author_meta('googleplus', $user->ID) . '",';
+				}
+
+				if ( get_the_author_meta('linkedin', $user->ID) ){
+					$person_same_as .= '"https://www.linkedin.com/profile/view?id=' . get_the_author_meta('linkedin', $user->ID) . '",';
+				}
+
+				if ( get_the_author_meta('youtube', $user->ID) ){
+					$person_same_as .= '"https://www.youtube.com/channel/' . get_the_author_meta('youtube', $user->ID) . '",';
+				}
+
+				if ( get_the_author_meta('instagram', $user->ID) ){
+					$person_same_as .= '"http://instagram.com/' . get_the_author_meta('instagram', $user->ID) . '",';
+				}
+			?>
+			<?php if ( !empty($person_same_as) ): ?>
+				"sameAs": [
+					<?php echo rtrim($person_same_as, ','); ?>
+				],
+			<?php endif; ?>
+
+			"image": "<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>"
+		}
+	</script>
+<?php endif; ?>
+
+<?php if ( is_single() ): ?>
+	<script type="application/ld+json">
+		{
+			"@context": "http://schema.org/",
+			"@type": "Article",
+			"mainEntityofPage": {
+				"@type": "WebPage",
+				"@id": "<?php echo get_permalink(); ?>"
+			},
+			"headline": "<?php echo get_the_title(); ?>",
+			"image": {
+				"@type": "ImageObject",
+				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full'); ?>
+				"url": "<?php echo $post_thumbnail_meta[0]; ?>",
+				"width": "<?php echo $post_thumbnail_meta[1]; ?>",
+				"height": "<?php echo $post_thumbnail_meta[2]; ?>"
+			},
+			"datePublished": "<?php echo get_the_date('c'); ?>",
+			"dateModified": "<?php echo get_the_modified_date('c'); ?>",
+			"author": {
+				<?php if ( nebula_option('author_bios', 'enabled') ): ?>
+					"@type": "Person",
+					"name": "<?php echo the_author_meta('display_name', $post->post_author); ?>"
+				<?php else: ?>
+					"@type": "Organization",
+					"name": "<?php echo nebula_option('site_owner'); ?>"
+				<?php endif; ?>
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "<?php echo ( nebula_option('site_owner') )? nebula_option('site_owner') : get_bloginfo('name'); ?>",
+				"logo": {
+					"@type": "ImageObject",
+					"url": "<?php echo nebula_prefer_child_directory('/images/logo.png'); ?>"
+				}
+			},
+			"description": "<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false)); ?>"
+		}
+	</script>
+<?php endif; ?>

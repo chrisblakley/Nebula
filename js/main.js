@@ -2346,7 +2346,7 @@ function errorMitigation(){
 
 //Convert img tags with class .svg to raw SVG elements
 function svgImgs(){
-	if ( !nebula.dom.body.hasClass('internet_explorer') ){
+	if ( nebula.dom.body.hasClass('chrome') || nebula.dom.body.hasClass('firefox') ){ //Currently only supporting these- can remove conditional eventually
 		jQuery('img.svg').each(function(){
 	        var oThis = jQuery(this);
 

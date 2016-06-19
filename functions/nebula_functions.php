@@ -1,5 +1,53 @@
 <?php
 
+//Prep custom theme support
+add_action('after_setup_theme', 'nebula_theme_setup');
+function nebula_theme_setup(){
+	//Additions
+	add_theme_support('post-thumbnails');
+	add_theme_support('title-tag'); //Title tag support allows WordPress core to create the <title> tag.
+	add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
+	add_theme_support('automatic-feed-links'); //Add default posts and comments RSS feed links to head
+
+	add_post_type_support('page', 'excerpt'); //Allow pages to have excerpts too
+
+	header("X-UA-Compatible: IE=edge"); //Add IE compatibility header
+	header('Developed-with-Nebula: https://gearside.com/nebula'); //Nebula header
+
+	//Add new image sizes
+	add_image_size('open_graph_large', 1200, 630, 1);
+	add_image_size('open_graph_small', 600, 315, 1);
+	add_image_size('twitter_large', 280, 150, 1);
+	add_image_size('twitter_small', 200, 200, 1);
+
+	//Removals
+	remove_theme_support('custom-background');
+	remove_theme_support('custom-header');
+
+	//Remove capital P core function
+	remove_filter('the_title', 'capital_P_dangit', 11);
+	remove_filter('the_content', 'capital_P_dangit', 11);
+	remove_filter('comment_text', 'capital_P_dangit', 31);
+
+	//Head information
+	remove_action('wp_head', 'rsd_link'); //Remove the link to the Really Simple Discovery service endpoint and EditURI link (third-party editing APIs)
+	remove_action('wp_head', 'wp_generator'); //Removes the WordPress XHTML Generator meta tag and WP version
+	remove_action('wp_head', 'wp_shortlink_wp_head'); //Removes the shortlink tag in the head
+	remove_action('wp_head', 'feed_links', 2); //Remove the links to the general feeds: Post and Comment Feed
+	remove_action('wp_head', 'wlwmanifest_link'); //Remove the link to the Windows Live Writer manifest file
+	remove_action('wp_head', 'feed_links_extra', 3); //Remove the links to the extra feeds such as category feeds
+	remove_action('wp_head', 'index_rel_link'); //Remove index link (deprecated?)
+	remove_action('wp_head', 'start_post_rel_link', 10, 0); //Remove start link
+	remove_action('wp_head', 'parent_post_rel_link', 10, 0); //Remove previous link
+	remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0); //Remove relational links for the posts adjacent to the current post
+}
+
+//Add the Posts RSS Feed back in
+add_action('wp_head', 'addBackPostFeed');
+function addBackPostFeed(){
+    echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
+}
+
 //Send event to Google Analytics if JavaScript is disabled
 add_action('init', 'nebula_no_js_event');
 function nebula_no_js_event(){
@@ -123,32 +171,32 @@ function nebula_manifest_json(){
 	"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 	"gcm_sender_id": "' . nebula_option('gcm_sender_id') . '",
 	"icons": [{
-		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-36x36.png",
+		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-36x36.png",
 		"sizes": "36x36",
 		"type": "image/png",
 		"density": 0.75
 	}, {
-		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-48x48.png",
+		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-48x48.png",
 		"sizes": "48x48",
 		"type": "image/png",
 		"density": 1.0
 	}, {
-		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-72x72.png",
+		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-72x72.png",
 		"sizes": "72x72",
 		"type": "image/png",
 		"density": 1.5
 	}, {
-		"src": "' . get_template_directory_uri() . '/images/meta/favicon-96x96.png",
+		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-96x96.png",
 		"sizes": "96x96",
 		"type": "image/png",
 		"density": 2.0
 	}, {
-		"src": "' . get_template_directory_uri() . '/images/meta/apple-touch-icon-144x144.png",
+		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-144x144.png",
 		"sizes": "144x144",
 		"type": "image/png",
 		"density": 3.0
 	}, {
-		"src": "' . get_template_directory_uri() . '/images/meta/favicon-192x192.png",
+		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-192x192.png",
 		"sizes": "192x192",
 		"type": "image/png",
 		"density": 4.0
@@ -169,7 +217,7 @@ function nebula_manifest_json(){
 add_action('wp_loaded', 'nebula_favicon_cache');
 function nebula_favicon_cache(){
 	if ( array_key_exists('favicon', $_GET) ){
-		header('Location: ' . get_template_directory_uri() . '/images/meta/favicon.ico');
+		header('Location: ' . nebula_prefer_child_directory('/images/meta') . '/favicon.ico');
 	}
 }
 
@@ -190,22 +238,6 @@ function nebula_prerender(){
 	}
 }
 
-//Allow pages to have excerpts too
-add_post_type_support('page', 'excerpt');
-
-//Add/Remove Theme Support
-add_theme_support('post-thumbnails');
-add_theme_support('title-tag'); //Title tag support allows WordPress core to create the <title> tag.
-add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
-remove_theme_support('custom-background');
-remove_theme_support('custom-header');
-
-//Add new image sizes
-add_image_size('open_graph_large', 1200, 630, 1);
-add_image_size('open_graph_small', 600, 315, 1);
-add_image_size('twitter_large', 280, 150, 1);
-add_image_size('twitter_small', 200, 200, 1);
-
 //Convenience function to return only the URL for specific thumbnail sizes of an ID.
 //Example: nebula_get_thumbnail_src(get_the_post_thumbnail($post->ID, 'twitter_large'))
 //Example: nebula_get_thumbnail_src($post->ID, 'twitter_large');
@@ -222,7 +254,6 @@ function nebula_get_thumbnail_src($id=null, $size='full'){
 
 	}
 }
-
 
 //Determine if the author should be the Company Name or the specific author's name.
 function nebula_the_author($show_authors=1){
@@ -310,9 +341,9 @@ function nebula_widgets_init(){
 }
 
 //Register the Navigation Menus
-add_action('after_setup_theme', 'nav_menu_locations');
-function nav_menu_locations(){
-	$override = apply_filters('pre_nav_menu_locations', false);
+add_action('after_setup_theme', 'nebula_nav_menu_locations');
+function nebula_nav_menu_locations(){
+	$override = apply_filters('pre_nebula_nav_menu_locations', false);
 	if ( $override !== false ){return;}
 
 	register_nav_menus(array(
@@ -451,7 +482,7 @@ if ( !function_exists('pinckneyhugogroup') ){
 //Show different meta data information about the post. Typically used inside the loop.
 //Example: nebula_meta('by');
 function nebula_meta($meta){
-	$override = apply_filters('pre_nebula_meta', false, $meta, $secondary);
+	$override = apply_filters('pre_nebula_meta', false, $meta);
 	if ( $override !== false ){echo $override; return;}
 
 	if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
@@ -487,9 +518,9 @@ function nebula_post_date($icon=true, $linked=true, $day=true){
 	}
 
 	if ( $linked ){
-		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 	} else {
-		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date">' . get_the_date('F j, Y') . '</span></span>';
+		return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . get_the_date('F j, Y') . '</span></span>';
 	}
 }
 
@@ -501,9 +532,9 @@ function nebula_post_author($icon=true, $linked=true, $force=false){
 
 	if ( nebula_option('author_bios', 'enabled') || $force ){
 		if ( $linked && !$force ){
-			return '<span class="posted-by">' . $the_icon . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '">' . get_the_author() . '</a></span></span>';
+			return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $the_icon . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
 		} else {
-			return '<span class="posted-by">' . $the_icon . '<span class="meta-item entry-author">' . get_the_author() . '</span></span>';
+			return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $the_icon . '<span class="meta-item entry-author" itemprop="name">' . get_the_author() . '</span></span>';
 		}
 	}
 }
@@ -863,8 +894,6 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		set_transient('nebula_twitter_' . $username, $tweets, 60*5); //5 minute expiration
 	}
 
-	error_reporting(1); //Re-enable PHP error reporting
-
 	if ( $_POST['data'] ){
 		echo $tweets;
 		exit;
@@ -962,12 +991,12 @@ function nebula_breadcrumbs(){
 	$homeLink = home_url('/');
 
 	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
-		echo '<div class="nebula-breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
+		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $homeLink . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
 	} elseif ( is_home() || is_front_page() ){
-		echo '<div class="nebula-breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a></div></div>';
+		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $homeLink . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $home . '</a></div></div>';
 		return false;
 	} else {
-		echo '<div class="nebula-breadcrumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
+		echo '<div class="nebula-breadcrumbs"  itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $homeLink . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $home . '</a> ' . $delimiter . ' ';
 		if ( is_category() ){
 			$thisCat = get_category(get_query_var('cat'), false);
 			if ( $thisCat->parent != 0 ){
@@ -977,11 +1006,11 @@ function nebula_breadcrumbs(){
 		} elseif ( is_search() ){
 			echo $before . 'Search results' . $after;
 		} elseif ( is_day() ){
-			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
-			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
 			echo $before . get_the_time('d') . $after;
 		} elseif ( is_month() ){
-			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
 			echo $before . get_the_time('F') . $after;
 		} elseif ( is_year() ){
 			echo $before . get_the_time('Y') . $after;
@@ -1017,7 +1046,7 @@ function nebula_breadcrumbs(){
 			}
 		} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 			if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
-				echo '<a href="' . get_permalink($post->post_parent) . '">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter . ' ' . get_the_title();
+				echo '<a href="' . get_permalink($post->post_parent) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter . ' ' . get_the_title();
 			} else {
 				echo get_the_title();
 			}
@@ -1030,7 +1059,7 @@ function nebula_breadcrumbs(){
 			$breadcrumbs = array();
 			while ( $parent_id ){
 				$page = get_page($parent_id);
-				$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
+				$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($page->ID) . '</a>';
 				$parent_id  = $page->post_parent;
 			}
 			$breadcrumbs = array_reverse($breadcrumbs);
@@ -1069,8 +1098,6 @@ function nebula_always_get_post_custom($posts){
     }
     return $posts;
 }
-
-
 
 //Prevent empty search query error (Show all results instead)
 add_action('pre_get_posts', 'redirect_empty_search');
@@ -1517,8 +1544,7 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 		}
 	}
 
-	query_posts($args); //@TODO "Nebula" 0: Change to WP_Query? How do we still use loop.php? Need to modify global loop ($wp_query).
-	//Maybe: $GLOBALS['wp_query'] = new WP_Query($args); (untested)?
+	query_posts($args);
 
 	if ( empty($args['post_type']) ){
 		$post_type_label = 'posts';
@@ -1652,33 +1678,6 @@ function nebula_404_internal_suggestions(){
 	}
 }
 
-//Remove capital P core function
-remove_filter('the_title', 'capital_P_dangit', 11);
-remove_filter('the_content', 'capital_P_dangit', 11);
-remove_filter('comment_text', 'capital_P_dangit', 31);
-
-//Add default posts and comments RSS feed links to head
-add_theme_support('automatic-feed-links');
-
-//Remove extraneous <head> from Wordpress
-remove_action('wp_head', 'rsd_link');
-remove_action('wp_head', 'wp_generator');
-remove_action('wp_head', 'feed_links', 2);
-remove_action('wp_head', 'index_rel_link');
-remove_action('wp_head', 'wlwmanifest_link');
-remove_action('wp_head', 'feed_links_extra', 3);
-remove_action('wp_head', 'start_post_rel_link', 10, 0);
-remove_action('wp_head', 'parent_post_rel_link', 10, 0);
-remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
-remove_action('wp_head', 'feed_links', 2);
-header(base64_decode('RGV2ZWxvcGVkLXdpdGgtTmVidWxhOiBodHRwOi8vZ2VhcnNpZGUuY29tL25lYnVsYQ' . '=='));
-
-//Add the Posts RSS Feed back in
-add_action('wp_head', 'addBackPostFeed');
-function addBackPostFeed(){
-    echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
-}
-
 //Add custom body classes
 add_filter('body_class', 'nebula_body_classes');
 function nebula_body_classes($classes){
@@ -1797,7 +1796,9 @@ function nebula_body_classes($classes){
 //Add additional classes to post wrappers
 add_filter('post_class', 'nebula_post_classes');
 function nebula_post_classes($classes){
+    global $post;
     global $wp_query;
+
     if ( $wp_query->current_post == 0 ){ //If first post in a query
         $classes[] = 'first-post';
     }
@@ -1818,7 +1819,7 @@ function nebula_post_classes($classes){
 		}
 	}
 
-	$classes[] = 'author-id-' . get_the_author_id();
+	$classes[] = 'author-id-' . $post->post_author;
 
     return $classes;
 }
@@ -2092,10 +2093,9 @@ function nebula_weather($zipcode=null, $data=''){
 
 //Get metadata from Youtube or Vimeo
 function video_meta($provider, $id){
-	$override = apply_filters('pre_video_meta', false, $id, $meta);
+	$override = apply_filters('pre_video_meta', false, $provider, $id);
 	if ( $override !== false ){return $override;}
 
-	$meta = str_replace('-', '', $meta);
 	$video_metadata = array(
 		'origin' => nebula_url_components('basedomain'),
 		'id' => $id,
@@ -2184,6 +2184,19 @@ function vimeo_meta($id, $meta=''){
 }
 function youtube_meta($id, $meta=''){
 	return video_meta('youtube', $id, $meta);
+}
+
+//Fix responsive oEmbeds
+//Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
+add_filter('embed_oembed_html', 'nebula_embed_oembed_html', 9999, 4);
+function nebula_embed_oembed_html($html, $url, $attr, $post_id) {
+	if ( strpos($html, 'youtube') !== false || strpos($html, 'vimeo') !== false ){
+		return '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-16by9">' . $html . '</div>';
+	} elseif ( strpos($html, 'vine') !== false ){
+		return '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-1by1" style="max-width: 710px; max-height: 710px;">' . $html . '</div>';
+	}
+
+	return $html;
 }
 
 //Create tel: link if on mobile, otherwise return unlinked, human-readable number

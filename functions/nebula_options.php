@@ -386,7 +386,7 @@ function nebula_options_page(){
 			}
 		?>
 
-		<?php if ( $_GET['settings-updated'] == 'true' ): ?>
+		<?php if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ): ?>
 			<div class="updated notice is-dismissible">
 				<p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
 				<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
@@ -545,7 +545,11 @@ function nebula_options_page(){
 					<td>
 						<?php foreach ( $weekdays as $weekday ): ?>
 							<div class="businessday">
-								<input type="checkbox" name="nebula_options[business_hours_<?php echo $weekday; ?>_enabled]" value="1" <?php checked('1', $nebula_options['business_hours_' . $weekday . '_enabled']); ?> /> <span style="display: inline-block; width: 85px;"><?php echo ucfirst($weekday); ?>:</span> <input class="business-hour" type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_open]" value="<?php echo $nebula_options['business_hours_' . $weekday . '_open']; ?>" style="width: 60px;" /> &ndash; <input class="business-hour" type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_close]" value="<?php echo $nebula_options['business_hours_' . $weekday . '_close']; ?>" style="width: 60px;"  />
+								<input type="checkbox" name="nebula_options[business_hours_<?php echo $weekday; ?>_enabled]" value="1" <?php checked('1', !empty($nebula_options['business_hours_' . $weekday . '_enabled'])); ?> />
+								<span style="display: inline-block; width: 85px;"><?php echo ucfirst($weekday); ?>:</span>
+								<input class="business-hour" type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_open]" value="<?php echo $nebula_options['business_hours_' . $weekday . '_open']; ?>" style="width: 60px;" />
+								&nbsp;&ndash;&nbsp;
+								<input class="business-hour" type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_close]" value="<?php echo $nebula_options['business_hours_' . $weekday . '_close']; ?>" style="width: 60px;"  />
 							</div>
 						<?php endforeach; ?>
 						<p class="helper"><small>Open/Close times. Times should be in the format "5:30 pm" or "17:30". Uncheck all to disable this meta.</small></p>
