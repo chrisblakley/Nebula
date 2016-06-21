@@ -42,7 +42,7 @@ get_header(); ?>
 	<?php if ( get_the_author_meta('headshot_url') ): ?>
 		<div class="col-md-2">
 			<div class="author-headshot">
-				<img src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
+				<img src="<?php echo esc_attr(get_the_author_meta('headshot_url')); ?>" />
 			</div>
 		</div><!--/col-->
 		<div class="col-md-10">
@@ -65,28 +65,28 @@ get_header(); ?>
 
 
 			<span class="author-social">
-				<?php if ( get_the_author_meta('facebook', $user->ID) ): ?>
-					<a class="facebook" href="http://www.facebook.com/<?php echo get_the_author_meta('facebook', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('facebook', $user->ID); ?>"><i class="fa fa-facebook-square"></i></a> <!-- add tooltips or titles -->
+				<?php if ( get_the_author_meta('facebook') ): ?>
+					<a class="facebook" href="http://www.facebook.com/<?php echo get_the_author_meta('facebook'); ?>" target="_blank" title="<?php echo get_the_author_meta('facebook'); ?>"><i class="fa fa-facebook-square"></i></a> <!-- add tooltips or titles -->
 				<?php endif; ?>
 
-				<?php if ( get_the_author_meta('twitter', $user->ID) ): ?>
-					<a class="twitter" href="http://www.twitter.com/<?php echo get_the_author_meta('twitter', $user->ID); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter', $user->ID); ?>"><i class="fa fa-twitter-square"></i></a>
+				<?php if ( get_the_author_meta('twitter') ): ?>
+					<a class="twitter" href="http://www.twitter.com/<?php echo get_the_author_meta('twitter'); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
 				<?php endif; ?>
 
-				<?php if ( get_the_author_meta('googleplus', $user->ID) ): ?>
-					<a class="googleplus" href="https://plus.google.com/+<?php echo get_the_author_meta('googleplus', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('googleplus', $user->ID); ?>"><i class="fa fa-google-plus-square"></i></a>
+				<?php if ( get_the_author_meta('googleplus') ): ?>
+					<a class="googleplus" href="https://plus.google.com/+<?php echo get_the_author_meta('googleplus'); ?>" target="_blank" title="<?php echo get_the_author_meta('googleplus'); ?>"><i class="fa fa-google-plus-square"></i></a>
 				<?php endif; ?>
 
-				<?php if ( get_the_author_meta('linkedin', $user->ID) ): ?>
-					<a class="linkedin" href="https://www.linkedin.com/profile/view?id=<?php echo get_the_author_meta('linkedin', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('linkedin', $user->ID); ?>"><i class="fa fa-linkedin-square"></i></a>
+				<?php if ( get_the_author_meta('linkedin') ): ?>
+					<a class="linkedin" href="https://www.linkedin.com/profile/view?id=<?php echo get_the_author_meta('linkedin'); ?>" target="_blank" title="<?php echo get_the_author_meta('linkedin'); ?>"><i class="fa fa-linkedin-square"></i></a>
 				<?php endif; ?>
 
-				<?php if ( get_the_author_meta('youtube', $user->ID) ): ?>
-					<a class="youtube" href="https://www.youtube.com/channel/<?php echo get_the_author_meta('youtube', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('youtube', $user->ID); ?>"><i class="fa fa-youtube"></i></a>
+				<?php if ( get_the_author_meta('youtube') ): ?>
+					<a class="youtube" href="https://www.youtube.com/channel/<?php echo get_the_author_meta('youtube'); ?>" target="_blank" title="<?php echo get_the_author_meta('youtube'); ?>"><i class="fa fa-youtube"></i></a>
 				<?php endif; ?>
 
-				<?php if ( get_the_author_meta('instagram', $user->ID) ): ?>
-					<a class="instagram" href="http://instagram.com/<?php echo get_the_author_meta('instagram', $user->ID); ?>" target="_blank" title="<?php echo get_the_author_meta('instagram', $user->ID); ?>"><i class="fa fa-instagram"></i></a>
+				<?php if ( get_the_author_meta('instagram') ): ?>
+					<a class="instagram" href="http://instagram.com/<?php echo get_the_author_meta('instagram'); ?>" target="_blank" title="<?php echo get_the_author_meta('instagram'); ?>"><i class="fa fa-instagram"></i></a>
 				<?php endif; ?>
 			</span>
 

@@ -1786,7 +1786,7 @@ function nebula_body_classes($classes){
 	$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
 	$classes[] = 'date-month-' . strtolower(date('F'));
 
-	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
+	if ( isset($GLOBALS['http']) && is_int($GLOBALS['http']) ){
 		$classes[] = 'error' . $GLOBALS['http'];
 	}
 

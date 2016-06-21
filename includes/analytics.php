@@ -132,8 +132,10 @@
 						echo 'ga("set", gaCustomMetrics["wordCount"], ' . $word_count . ');';
 					}
 					echo 'nebula.post.wordcount = ' . $word_count . ';';
-					if ( $word_count < 500 ){
-						$word_count_range = '<500 words';
+					if ( $word_count < 10 ){
+						$word_count_range = '<10 words';
+					} elseif ( $word_count < 500 ){
+						$word_count_range = '10 - 499 words';
 					} elseif ( $word_count < 1000 ){
 						$word_count_range = '500 - 999 words';
 					} elseif ( $word_count < 1500 ){

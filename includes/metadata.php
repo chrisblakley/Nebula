@@ -25,11 +25,11 @@
 <?php endif; ?>
 
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
-	<meta name="description" content="<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false)); ?>" />
+	<meta name="description" content="<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
-	<meta property="og:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false)); ?>" />
+	<meta property="og:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 	<meta property="og:url" content="<?php the_permalink(); ?>" />
 	<meta property="og:site_name" content="<?php echo get_bloginfo('name'); ?>" />
 
@@ -122,7 +122,7 @@
 	<?php endif; ?>
 <?php endif; ?>
 <meta name="twitter:title" content="<?php the_title(); ?>" />
-<meta name="twitter:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false)); ?>" />
+<meta name="twitter:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 <?php if ( nebula_option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula_option('twitter_user'); ?>" />
 <?php endif; ?>
@@ -198,7 +198,13 @@
 
 		"contactPoint": {
 			"@type": "ContactPoint",
-			"telephone": "+<?php echo nebula_option('phone_number'); ?>",
+
+			<?php if ( nebula_option('phone_number') ): ?>
+				"telephone": "+<?php echo nebula_option('phone_number'); ?>",
+			<?php else: ?>
+				"url": "<?php echo home_url(); ?>/contact",
+			<?php endif; ?>
+
 			"email": "<?php echo nebula_option('contact_email'); ?>",
 			"contactType": "customer service"
 		},
@@ -245,8 +251,14 @@
 			"@type": "Person",
 			"name": "<?php echo get_the_author(); ?>",
 			"email": "<?php echo get_the_author_meta('user_email'); ?>",
-			"jobTitle": "<?php echo get_the_author_meta('jobtitle'); ?>",
-			"telephone": "+<?php echo get_the_author_meta('phonenumber'); ?>",
+
+			<?php if ( get_the_author_meta('jobtitle') ): ?>
+				"jobTitle": "<?php echo get_the_author_meta('jobtitle'); ?>",
+			<?php endif; ?>
+
+			<?php if ( get_the_author_meta('phonenumber') ): ?>
+				"telephone": "+<?php echo get_the_author_meta('phonenumber'); ?>",
+			<?php endif; ?>
 
 			<?php
 				if ( get_the_author_meta('facebook', $user->ID) ){
@@ -284,7 +296,7 @@
 	</script>
 <?php endif; ?>
 
-<?php if ( is_single() ): ?>
+<?php if ( is_singular('post') ): //@todo: but not products ?>
 	<script type="application/ld+json">
 		{
 			"@context": "http://schema.org/",
@@ -294,13 +306,24 @@
 				"@id": "<?php echo get_permalink(); ?>"
 			},
 			"headline": "<?php echo get_the_title(); ?>",
-			"image": {
-				"@type": "ImageObject",
-				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full'); ?>
-				"url": "<?php echo $post_thumbnail_meta[0]; ?>",
-				"width": "<?php echo $post_thumbnail_meta[1]; ?>",
-				"height": "<?php echo $post_thumbnail_meta[2]; ?>"
-			},
+
+			<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full'); ?>
+			<?php if ( !empty($post_thumbnail_meta) ): ?>
+				"image": {
+					"@type": "ImageObject",
+					"url": "<?php echo $post_thumbnail_meta[0]; ?>",
+					"width": "<?php echo $post_thumbnail_meta[1]; ?>",
+					"height": "<?php echo $post_thumbnail_meta[2]; ?>"
+				},
+			<?php else: ?>
+				"image": {
+					"@type": "ImageObject",
+					"url": "<?php echo nebula_prefer_child_directory('/images/meta/og-thumb.png'); ?>",
+					"width": "1200",
+					"height": "600"
+				},
+			<?php endif; ?>
+
 			"datePublished": "<?php echo get_the_date('c'); ?>",
 			"dateModified": "<?php echo get_the_modified_date('c'); ?>",
 			"author": {
@@ -320,7 +343,9 @@
 					"url": "<?php echo nebula_prefer_child_directory('/images/logo.png'); ?>"
 				}
 			},
-			"description": "<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false)); ?>"
+			"description": "<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>"
 		}
 	</script>
 <?php endif; ?>
+
+<?php do_action('nebula_metadata_end'); ?>
