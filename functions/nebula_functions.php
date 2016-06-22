@@ -250,7 +250,7 @@ function nebula_get_thumbnail_src($id=null, $size='full'){
 		$image = wp_get_attachment_image_src(get_post_thumbnail_id($id), $size);
 		return $image[0];
 	} else {
-		return ( preg_match('~\bsrc="([^"]++)"~', get_the_post_thumbnail($post->ID, $size), $matches) )? $matches[1] : ''; //Use Regex as a last resort if get_the_post_thumbnail() was passed.
+		return ( preg_match('~\bsrc="([^"]++)"~', get_the_post_thumbnail($id, $size), $matches) )? $matches[1] : ''; //Use Regex as a last resort if get_the_post_thumbnail() was passed.
 
 	}
 }
@@ -540,7 +540,7 @@ function nebula_post_author($icon=true, $linked=true, $force=false){
 }
 
 //Post type meta
-function nebula_post_type($icon=true, $linked=true){
+function nebula_post_type($icon=true){
 	if ( $icon ){
 		global $wp_post_types;
 		$post_type = get_post_type();
@@ -987,7 +987,6 @@ function nebula_breadcrumbs(){
 	$showCurrent = 1; //1: Show current post/page title in breadcrumbs, 0: Don't show
 	$before = '<span class="current">'; //Tag before the current crumb
 	$after = '</span>'; //Tag after the current crumb
-	$dontCapThese = array('the', 'and', 'but', 'of', 'a', 'and', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'in');
 	$homeLink = home_url('/');
 
 	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
@@ -1000,7 +999,7 @@ function nebula_breadcrumbs(){
 		if ( is_category() ){
 			$thisCat = get_category(get_query_var('cat'), false);
 			if ( $thisCat->parent != 0 ){
-				echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
+				echo get_category_parents($thisCat->parent, true, ' ' . $delimiter . ' ');
 			}
 			echo $before . 'Category: ' . single_cat_title('', false) . $after;
 		} elseif ( is_search() ){
@@ -1026,7 +1025,7 @@ function nebula_breadcrumbs(){
 				$cat = get_the_category();
 				if ( !empty($cat) ){
 					$cat = $cat[0];
-					$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+					$cats = get_category_parents($cat, true, ' ' . $delimiter . ' ');
 					if ( $showCurrent == 0 ){
 						$cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
 					}
@@ -1429,7 +1428,7 @@ function nebula_advanced_search(){
 	ini_set('memory_limit', '512M'); //Increase memory limit for this script.
 
 	$everything_query = get_transient('nebula_everything_query');
-	if ( empty($venue_query) ){
+	if ( empty($everything_query) ){
 		$everything_query = new WP_Query(array(
 			'post_type' => array('any'),
 			'post_status' => 'publish',
@@ -1734,7 +1733,7 @@ function nebula_body_classes($classes){
 	$classes[] = 'nebula';
 	$classes[] = 'nebula_' . str_replace('.', '-', nebula_version('full'));
 
-	$classes[] = 'lang-' . get_bloginfo('language');
+	$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
 	if ( is_rtl() ){
 		$classes[] = 'lang-dir-rtl';
 	}
@@ -1765,19 +1764,48 @@ function nebula_body_classes($classes){
 
 		if ( time() >= $sunrise && time() <= $sunset ){
 			$classes[] = 'time-daylight';
-			$classes[] = ( strtotime('now') < $sunrise+(($sunset-$sunrise)/2) )? 'time-light-wax' : 'time-light-wane'; //Before or after solar noon
+			if ( strtotime('now') < $sunrise+(($sunset-$sunrise)/2) ){
+				$classes[] = 'time-waxing-gibbous'; //Before solar noon
+				if ( strtotime('now') < ($sunset-$sunrise)/4+$sunrise ){
+					$classes[] = 'time-narrow';
+				} else {
+					$classes[] = 'time-wide';
+				}
+			} else {
+				$classes[] = 'time-waning-gibbous'; //After solar noon
+				if ( strtotime('now') < ((3*$sunset)+$sunrise)/4 ){
+					$classes[] = 'time-wide';
+				} else {
+					$classes[] = 'time-narrow';
+				}
+			}
 		} else {
 			$classes[] = 'time-darkness';
-			$previous_sunset_modifier = ( date('H') < 12 )? 86400 : 0;
-			$wane_time = (($sunset-$previous_sunset_modifier)+((86400-($sunset-$sunrise))/2)); //if it is after midnight, then we need to get the previous sunset (not the next- else we're always before tomorrow's wane time)
-			$classes[] = ( strtotime('now') < $wane_time )? 'time-dark-wax' : 'time-dark-wane'; //Before or after solar midnight
+			$previous_sunset_modifier = ( date('H') < 12 )? 86400 : 0; //Times are in UTC, so if it is after actual midnight (before noon) we need to use the sunset minus 1 day in formulas
+			$solar_midnight = (($sunset-$previous_sunset_modifier)+((86400-($sunset-$sunrise))/2)); //Calculate the appropriate solar midnight (either yesterday's or tomorrow's) [see above]
+
+			if ( strtotime('now') < $solar_midnight ){
+				$classes[] = 'time-waning-crescent'; //Before solar midnight
+				if ( strtotime('now') < ($sunrise-$solar_midnight)/2+($sunset-$previous_sunset_modifier) ){
+					$classes[] = 'time-wide';
+				} else {
+					$classes[] = 'time-narrow';
+				}
+			} else {
+				$classes[] = 'time-waxing-crescent'; //After solar midnight
+				if ( strtotime('now') < ($sunrise+$solar_midnight)/2 ){
+					$classes[] = 'time-narrow';
+				} else {
+					$classes[] = 'time-wide';
+				}
+			}
 		}
 
 		$sunrise_sunset_length = 45; //Length of sunrise/sunset in minutes. Default: 45
-		if ( strtotime('now') >= $sunrise-60*$sunrise_sunset_length && strtotime('now') <= $sunrise+60*$sunrise_sunset_length ){ //X minutes before and after true sunrise
+		if ( strtotime('now') >= $sunrise-(60*$sunrise_sunset_length) && strtotime('now') <= $sunrise+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunrise
 			$classes[] = 'time-sunrise';
 		}
-		if ( strtotime('now') >= $sunset-60*$sunrise_sunset_length && strtotime('now') <= $sunset+60*$sunrise_sunset_length ){ //X minutes before and after true sunset
+		if ( strtotime('now') >= $sunset-(60*$sunrise_sunset_length) && strtotime('now') <= $sunset+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunset
 			$classes[] = 'time-sunset';
 		}
 	}
@@ -1786,7 +1814,7 @@ function nebula_body_classes($classes){
 	$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
 	$classes[] = 'date-month-' . strtolower(date('F'));
 
-	if ( isset($GLOBALS['http']) && is_int($GLOBALS['http']) ){
+	if ( !empty($GLOBALS['http']) && is_int($GLOBALS['http']) ){
 		$classes[] = 'error' . $GLOBALS['http'];
 	}
 

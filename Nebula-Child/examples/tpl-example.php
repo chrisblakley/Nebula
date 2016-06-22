@@ -515,6 +515,10 @@ get_header(); ?>
 							include_once('includes/instagram_api.php');
 						} ?>
 
+						<?php if ( is_page(2750) ){ //Time of Day Classes
+							include_once('includes/time_of_day_classes.php');
+						} ?>
+
 
 						<?php
 						/*==========================

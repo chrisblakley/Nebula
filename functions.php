@@ -161,8 +161,6 @@ function register_nebula_scripts(){
 		'dom' => null,
 	);
 
-
-
 	//Check for session data
 	if ( isset($_SESSION['nebulaSession']) && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
 		$nebula['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data

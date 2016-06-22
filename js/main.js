@@ -2546,11 +2546,13 @@ function once(fn, args, unique){
 	}
 }
 
-
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
-var debounceTimers = {};
 function debounce(callback, wait, uniqueId, immediate){
+	if ( typeof debounceTimers === "undefined" ){
+		debounceTimers = {};
+	}
+
     if ( !uniqueId ){
 		uniqueId = "Don't call this twice without a uniqueId";
 	}

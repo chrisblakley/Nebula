@@ -239,7 +239,7 @@
 
  a.phg.anim:hover { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
 
- a.phg.anim:hover span { margin-right:0px; }
+ a.phg.anim:hover span { margin-right:0; }
 
  a.phg.anim:hover span.pinckney { color:#0098d7; }
 
@@ -310,4 +310,4 @@
  body#tinymce.wp-editor a:hover { color:#95d600; }
 
 
-/* Processed on Thursday, June 16, 2016 at 4:12pm */
+/* Processed on Tuesday, June 21, 2016 at 2:07pm */

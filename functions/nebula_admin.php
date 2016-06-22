@@ -846,87 +846,86 @@ function dashboard_todo_manager(){
 	$todo_file_counter = 0;
 	$todo_instance_counter = 0;
 
-	function nebula_todo_files($todo_dirpath=null, $child=false){
-		if ( is_child_theme() && !$child ){
-			nebula_todo_files(get_stylesheet_directory(), true);
-		}
-
-		if ( empty($todo_dirpath) ){
-			$todo_dirpath = get_template_directory();
-		}
-
-		foreach ( glob_r($todo_dirpath . '/*') as $todo_file ){
-			$todo_counted = 0;
-			if ( is_file($todo_file) ){
-			    if ( strpos(basename($todo_file), '@todo') !== false ){
-				    echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
-				    $todo_file_counter++;
-				    $todo_counted = 1;
-			    }
-
-			    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs', 'examples/');
-			    if ( !contains(basename($todo_file), skip_extensions()) && !contains($todo_file, $todo_skipFilenames) ){
-				    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
-				        if ( stripos($todo_line, '@TODO') !== false ){
-
-							$theme = '';
-							if ( is_child_theme() ){
-								if ( $child ){
-									$theme = 'child';
-									$theme_note = ' <small>(Child)</small>';
-								} else {
-									$theme = 'parent';
-									$theme_note = ' <small>(Parent)</small>';
-								}
-							}
-
-							$the_full_todo = substr($todo_line, strpos($todo_line, '@TODO'));
-							$the_todo_meta = current(explode(':', $the_full_todo));
-
-							//Get the priority
-							preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
-
-							//Get the category
-							$the_todo_quote_check = '';
-							$the_todo_cat = '';
-							$the_todo_cat_html = '';
-							preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
-							if ( !empty($the_todo_quote_check[0][0]) ){
-								$the_todo_cat = substr($the_todo_quote_check[0][0], 1, -1);
-								$the_todo_cat_html = '<span class="todocategory">' . $the_todo_cat . '</span>';
-							}
-
-							//Get the message
-							$the_todo_text_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
-							$end_todo_text_strings = array('-->', '?>', '*/');
-							$the_todo_text = explode($end_todo_text_strings[0], str_replace($end_todo_text_strings, $end_todo_text_strings[0], $the_todo_text_full));
-
-							$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
-							if ( $todo_last_filename != $todo_this_filename ){
-								if ( !empty($todo_last_filename) ){
-									echo '</div><!--/todofilewrap-->';
-								}
-								echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
-							}
-
-							echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_cat)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_cat_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_text[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
-
-							$todo_last_filename = $todo_this_filename;
-							$todo_instance_counter++;
-							if ( $todo_counted == 0 ){
-								$todo_file_counter++;
-								$todo_counted = 1;
-							}
-				        }
-				    }
-			    }
-			}
-		}
-		echo '</div><!--/todofilewrap-->';
-	}
-
 	nebula_todo_files();
 	echo '</div><!--/todo_results-->';
+}
+function nebula_todo_files($todo_dirpath=null, $child=false){
+	if ( is_child_theme() && !$child ){
+		nebula_todo_files(get_stylesheet_directory(), true);
+	}
+
+	if ( empty($todo_dirpath) ){
+		$todo_dirpath = get_template_directory();
+	}
+
+	foreach ( glob_r($todo_dirpath . '/*') as $todo_file ){
+		$todo_counted = 0;
+		if ( is_file($todo_file) ){
+		    if ( strpos(basename($todo_file), '@todo') !== false ){
+			    echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
+			    $todo_file_counter++;
+			    $todo_counted = 1;
+		    }
+
+		    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs', 'examples/');
+		    if ( !contains(basename($todo_file), skip_extensions()) && !contains($todo_file, $todo_skipFilenames) ){
+			    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
+			        if ( stripos($todo_line, '@TODO') !== false ){
+
+						$theme = '';
+						if ( is_child_theme() ){
+							if ( $child ){
+								$theme = 'child';
+								$theme_note = ' <small>(Child)</small>';
+							} else {
+								$theme = 'parent';
+								$theme_note = ' <small>(Parent)</small>';
+							}
+						}
+
+						$the_full_todo = substr($todo_line, strpos($todo_line, '@TODO'));
+						$the_todo_meta = current(explode(':', $the_full_todo));
+
+						//Get the priority
+						preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
+
+						//Get the category
+						$the_todo_quote_check = '';
+						$the_todo_cat = '';
+						$the_todo_cat_html = '';
+						preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
+						if ( !empty($the_todo_quote_check[0][0]) ){
+							$the_todo_cat = substr($the_todo_quote_check[0][0], 1, -1);
+							$the_todo_cat_html = '<span class="todocategory">' . $the_todo_cat . '</span>';
+						}
+
+						//Get the message
+						$the_todo_text_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
+						$end_todo_text_strings = array('-->', '?>', '*/');
+						$the_todo_text = explode($end_todo_text_strings[0], str_replace($end_todo_text_strings, $end_todo_text_strings[0], $the_todo_text_full));
+
+						$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
+						if ( $todo_last_filename != $todo_this_filename ){
+							if ( !empty($todo_last_filename) ){
+								echo '</div><!--/todofilewrap-->';
+							}
+							echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
+						}
+
+						echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_cat)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $the_todo_ints[0][0])) . '"><p class="todoresult"> ' . $the_todo_cat_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_text[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
+
+						$todo_last_filename = $todo_this_filename;
+						$todo_instance_counter++;
+						if ( $todo_counted == 0 ){
+							$todo_file_counter++;
+							$todo_counted = 1;
+						}
+			        }
+			    }
+		    }
+		}
+	}
+	echo '</div><!--/todofilewrap-->';
 }
 
 

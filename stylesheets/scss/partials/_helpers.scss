@@ -187,7 +187,7 @@ a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory
 			&.group {color: inherit;}
 		}
 		&:hover {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
-			span {margin-right: 0px;
+			span {margin-right: 0;
 				&.pinckney {color: brand(phg);}
 				&.hugo {color: brand(phg, 2);}
 				&.group {color: brand(phg, 3);}

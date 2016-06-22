@@ -13,7 +13,7 @@ function nebula_log_direct_access_attempts(){
 //Detect HTTP status error codes and redirect to the appropriate page.
 //List of HTTP status codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 add_action('nebula_preheaders', 'nebula_http_status');
-function nebula_http_status($status=200, $redirect=false){
+function nebula_http_status($status=200){
 	if ( isset($_GET['http']) ){
 		$status = $_GET['http'];
 	}

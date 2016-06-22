@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.1.19
+	Version: 4.1.20
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -105,7 +105,7 @@ form.nebula-search-iconable {position: relative; display: inline-block; margin: 
 	&:hover {background: $secondary_color;}
 }
 
-code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: 1px 3px; color: #222;}
+code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: .2rem .4rem; border-radius: .25rem; color: #222;}
 
 div.nebula-button {margin-bottom: 10px;}
 
