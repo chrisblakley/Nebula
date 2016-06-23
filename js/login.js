@@ -36,17 +36,17 @@ jQuery(window).on('load', function(){
 //Get query string parameters
 function getQueryStrings(){
 	queries = {};
-    var q = document.URL.split('?')[1];
-    if ( q ){
-        q = q.split('&');
-        for ( var i = 0; i < q.length; i++ ){
-            hash = q[i].split('=');
-            if ( hash[1] ){
-	            queries[hash[0]] = hash[1];
-            } else {
-	            queries[hash[0]] = true;
-            }
-        }
+	var q = document.URL.split('?')[1];
+	if ( q ){
+		q = q.split('&');
+		for ( var i = 0; i < q.length; i++ ){
+			hash = q[i].split('=');
+			if ( hash[1] ){
+				queries[hash[0]] = hash[1];
+			} else {
+				queries[hash[0]] = true;
+			}
+		}
 	}
 }
 
@@ -63,16 +63,16 @@ function get(query){
 //Dynamically load CSS files using JS
 function nebulaLoadCSS(url){
 	if ( document.createStyleSheet ){
-	    try { document.createStyleSheet(url); } catch(e){
-		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
-	    }
+		try { document.createStyleSheet(url); } catch(e){
+			ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
+		}
 	} else {
-	    var css;
-	    css = document.createElement('link');
-	    css.rel = 'stylesheet';
-	    css.type = 'text/css';
-	    css.media = "all";
-	    css.href = url;
-	    document.getElementsByTagName("head")[0].appendChild(css);
+		var css;
+		css = document.createElement('link');
+		css.rel = 'stylesheet';
+		css.type = 'text/css';
+		css.media = 'all';
+		css.href = url;
+		document.getElementsByTagName('head')[0].appendChild(css);
 	}
 }

@@ -126,7 +126,7 @@ jQuery(window).on('load', function(){
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
-    	powerFooterWidthDist();
+		powerFooterWidthDist();
 		nebulaEqualize();
 		mobileSearchPlaceholder();
 
@@ -136,17 +136,17 @@ jQuery(window).on('resize', function(){
 			initHeadroom();
 		}
 
-    	//Track size change
-    	if ( window.lastWindowWidth > nebula.dom.window.width() ){
-    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
-    		ga('send', 'event', 'Window Resize', 'Smaller', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
-    	} else if ( window.lastWindowWidth < nebula.dom.window.width() ){
-    		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-    		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
-    		ga('send', 'event', 'Window Resize', 'Bigger', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
-    	}
-    	window.lastWindowWidth = nebula.dom.window.width();
+		//Track size change
+		if ( window.lastWindowWidth > nebula.dom.window.width() ){
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
+			ga('send', 'event', 'Window Resize', 'Smaller', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
+		} else if ( window.lastWindowWidth < nebula.dom.window.width() ){
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
+			ga('send', 'event', 'Window Resize', 'Bigger', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
+		}
+		window.lastWindowWidth = nebula.dom.window.width();
 	}, 500, 'window resize');
 }); //End Window Resize
 
@@ -400,7 +400,7 @@ function gaBlockDetection(){
 	});
 }
 function gaBlockSend(){
-	if ( typeof gablocked !== 'undefined' && has(nebula, 'user.client') && !nebula.user.client.bot && has(nebula, 'site.options.gaid') && nebula.site.options.gaid != '' ){
+	if ( typeof gablocked !== 'undefined' && has(nebula, 'user.client') && !nebula.user.client.bot && has(nebula, 'site.options.gaid') && nebula.site.options.gaid !== '' ){
 		setTimeout(function(){
 			if ( gablocked ){
 				jQuery('html').addClass('no-gajs');
@@ -2304,7 +2304,7 @@ function initBootstrapFunctions(){
 				var i = 0;
 				var markup = '<ol class="carousel-indicators">'; //@TODO "Nebula" 0: Why is there no space between indicators when using this auto-indicators?
 				while ( i < slideCount ){
-					var active = ( i == 0 )? 'class="active"' : '';
+					var active = ( i === 0 )? 'class="active"' : '';
 					markup += '<li data-target="#' + carouselID + '" data-slide-to="' + i + '" ' + active + '></li>';
 					i++;
 				}

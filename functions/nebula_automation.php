@@ -129,8 +129,23 @@ if ( is_dev(true) || current_user_can('manage_options') ){
 	    	));
 	    }
 
-		$config = array('id' => 'nebula');
-		tgmpa( $plugins, $config );
+		$config = array(
+			'id' => 'nebula',
+			'strings' => array(
+				'notice_can_install_recommended' => _n_noop(
+					'The following optional plugin may be needed for the theme: %1$s.',
+					'The following optional plugins may be needed for the theme: %1$s.',
+					'tgmpa'
+				),
+				'notice_can_activate_recommended' => _n_noop(
+					'The following optional plugin is currently inactive: %1$s.',
+					'The following optional plugins are currently inactive: %1$s.',
+					'tgmpa'
+				),
+			)
+		);
+
+		tgmpa($plugins, $config);
 	}
 }
 
@@ -144,8 +159,9 @@ if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or i
 }
 function nebula_activation(){
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, 'http://gearside.com/nebula/usage/index.php');
-	$output = curl_exec($ch);
+	curl_setopt($ch, CURLOPT_REFERER, home_url());
+	curl_setopt($ch, CURLOPT_URL, 'https://gearside.com/nebula/usage/index.php');
+	curl_exec($ch);
 	curl_close($ch);
 
 	$is_standard_initialization = ( isset($_GET['nebula-initialization']) )? true : false; //Detect if non-AJAX initialization is needed.

@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.1.20
+	Version: 4.1.21
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -93,7 +93,7 @@ form.nebula-search-iconable {position: relative; display: inline-block; margin: 
 		.ie10 & {background: #eee;}
 	}
 	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: 14px; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
-	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit);}
+	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
 }
 
 .nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
@@ -152,7 +152,7 @@ div.nebula-button {margin-bottom: 10px;}
 	&:before {content: '\f141'; font-family: "FontAwesome"; position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
 
 	.infinite-loading {display: none; position: absolute; top: 0; left: 0; width: 100%;
-		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; @include prefix((animation: nebula-zoom 1s infinite easing(easeInOutQuad)), webkit);
+		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; @include prefix((animation: nebula-zoom 1s infinite easing(easeInOutQuad)), webkit moz);
 			&.b {animation-delay: .2s;}
 			&.c {animation-delay: .4s;}
 		}
@@ -180,7 +180,7 @@ h1, h2, h3, h4, h5, h6,
 body,
 p {font-family: $font_stack;}
 
-abbr, acronym {cursor: pointer; border-bottom: none; color: auto;}
+abbr, acronym {cursor: pointer; border-bottom: none; color: inherit;}
 
 .pinterest-pin a {@include prefix((transition: none 0.25s));}
 #___plusone_0 {width: 60px !important;}

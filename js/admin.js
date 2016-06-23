@@ -11,7 +11,7 @@ jQuery(document).on('ready', function(){
 	}
 
 	jQuery(function(){
-	    jQuery("#post textarea").allowTabChar();
+		jQuery('#post textarea').allowTabChar();
 	});
 
 	if ( jQuery('body').hasClass('profile-php') ){
@@ -21,14 +21,14 @@ jQuery(document).on('ready', function(){
 		});
 
 		window.send_to_editor = function(html){
-			var image_url = jQuery(html).attr('src');
-			jQuery('#headshot_url').val(image_url); //updates our hidden field that will update our author's meta when the form is saved
+			var imageURL = jQuery(html).attr('src');
+			jQuery('#headshot_url').val(imageURL); //updates our hidden field that will update our author's meta when the form is saved
 			tb_remove();
-			jQuery('#headshot_preview').html('<img src="' + image_url + '" style="max-width: 100%; max-height: 100%;" />');
+			jQuery('#headshot_preview').html('<img src="' + imageURL + '" style="max-width: 100%; max-height: 100%;" />');
 
 			jQuery('#submit_options_form').trigger('click');
 			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
-		}
+		};
 
 		jQuery('#headshot_remove').on('click tap touch', function(){
 			jQuery('#headshot_url').val('');
@@ -62,27 +62,27 @@ jQuery(document).on('ready', function(){
 	});
 
 	//Developer Info Metabox
-	jQuery(document).on("keyup", "input.findterm", function(){
-		jQuery("input.findterm").attr("placeholder", "Search files");
+	jQuery(document).on('keyup', 'input.findterm', function(){
+		jQuery('input.findterm').attr('placeholder', 'Search files');
 	});
 
-	jQuery(document).on("submit", ".searchfiles", function(e){
-		if ( jQuery("input.findterm").val().trim().length >= 3 ){
-			jQuery("#searchprogress").removeClass().addClass("fa fa-spinner fa-fw fa-spin");
+	jQuery(document).on('submit', '.searchfiles', function(e){
+		if ( jQuery('input.findterm').val().trim().length >= 3 ){
+			jQuery('#searchprogress').removeClass().addClass('fa fa-spinner fa-fw fa-spin');
 
 			jQuery.ajax({
-				type: "POST",
+				type: 'POST',
 				url: nebula.site.ajax.url,
 				data: {
 					nonce: nebula.site.ajax.nonce,
-					action: "search_theme_files",
+					action: 'search_theme_files',
 					data: [{
-						"directory": jQuery("select.searchdirectory").val(),
-						"searchData": jQuery("input.findterm").val()
+						directory: jQuery('select.searchdirectory').val(),
+						searchData: jQuery('input.findterm').val()
 					}]
 				},
 				success: function(response){
-					jQuery("#searchprogress").removeClass().addClass("fa fa-search fa-fw");
+					jQuery('#searchprogress').removeClass().addClass('fa fa-search fa-fw');
 					jQuery('div.search_results').html(response).addClass('done');
 				},
 				error: function(MLHttpRequest, textStatus, errorThrown){
@@ -91,13 +91,13 @@ jQuery(document).on('ready', function(){
 				timeout: 60000
 			});
 		} else {
-			jQuery("input.findterm").val("").attr("placeholder", "Minimum 3 characters.");
+			jQuery('input.findterm').val('').attr('placeholder', 'Minimum 3 characters.');
 		}
 		e.preventDefault();
 		return false;
 	});
 
-	jQuery(document).on("click", ".linenumber", function(){
+	jQuery(document).on('click', '.linenumber', function(){
 		jQuery(this).parents('.linewrap').find('.precon').slideToggle();
 		return false;
 	});

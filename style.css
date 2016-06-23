@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 4.1.20
+ Version: 4.1.21
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -33,7 +33,7 @@
 
  .slowest { animation-duration:3s !important; }
 
- .nebula-spin { -webkit-animation:nebula-spin 2s infinite linear; animation:nebula-spin 2s infinite linear; }
+ .nebula-spin { -webkit-animation:nebula-spin 2s infinite linear; -moz-animation:nebula-spin 2s infinite linear; animation:nebula-spin 2s infinite linear; }
 
  @-webkit-keyframes nebula-spin { 0% { -webkit-transform:rotate(0deg); transform:rotate(0deg); }
 
@@ -47,7 +47,7 @@
 
  }
 
- .nebula-fade { -webkit-animation:nebula-fade 4s infinite linear; animation:nebula-fade 4s infinite linear; }
+ .nebula-fade { -webkit-animation:nebula-fade 4s infinite linear; -moz-animation:nebula-fade 4s infinite linear; animation:nebula-fade 4s infinite linear; }
 
  @-webkit-keyframes nebula-fade { 0% { opacity:1; }
 
@@ -61,7 +61,7 @@
 
  }
 
- .nebula-zoom { -webkit-animation:nebula-zoom 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-zoom 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); }
+ .nebula-zoom { -webkit-animation:nebula-zoom 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); -moz-animation:nebula-zoom 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-zoom 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); }
 
  @-webkit-keyframes nebula-zoom { 0% { transform:scale3d(1, 1, 1); opacity:1; }
 
@@ -79,7 +79,7 @@
 
  }
 
- .nebula-wave-x { -webkit-animation:nebula-wave-x 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-wave-x 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); }
+ .nebula-wave-x { -webkit-animation:nebula-wave-x 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); -moz-animation:nebula-wave-x 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-wave-x 3s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); }
 
  @-webkit-keyframes nebula-wave-x { 0% { transform:translate3d(0, 0, 0); animation-timing-function:cubic-bezier(0.250, 0.460, 0.450, 0.940); }
 
@@ -101,7 +101,7 @@
 
  }
 
- .nebula-wave-y { -webkit-animation:nebula-wave-y 3s infinite linear; animation:nebula-wave-y 3s infinite linear; }
+ .nebula-wave-y { -webkit-animation:nebula-wave-y 3s infinite linear; -moz-animation:nebula-wave-y 3s infinite linear; animation:nebula-wave-y 3s infinite linear; }
 
  @-webkit-keyframes nebula-wave-y { 0% { transform:translate3d(0, 0, 0); animation-timing-function:cubic-bezier(0.250, 0.460, 0.450, 0.940); }
 
@@ -123,7 +123,7 @@
 
  }
 
- .nebula-fade-out.animate { -webkit-animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-fade-out.animate { -webkit-animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out { 0% { opacity:1; }
 
@@ -137,7 +137,7 @@
 
  }
 
- .nebula-fade-out-up.animate { -webkit-animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-fade-out-up.animate { -webkit-animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-up 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-up { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
@@ -151,7 +151,7 @@
 
  }
 
- .nebula-fade-out-down.animate { -webkit-animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-fade-out-down.animate { -webkit-animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-down 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-down { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
@@ -165,7 +165,7 @@
 
  }
 
- .nebula-fade-out-left.animate { -webkit-animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-fade-out-left.animate { -webkit-animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-left 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-left { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
@@ -179,7 +179,7 @@
 
  }
 
- .nebula-fade-out-right.animate { -webkit-animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-fade-out-right.animate { -webkit-animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-out-right 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-fade-out-right { 0% { opacity:1; transform:translate3d(0, 0, 0); }
 
@@ -195,7 +195,7 @@
 
  .nebula-fade-in { opacity:0; pointer-events:none; }
 
- .nebula-fade-in.animate,.nebula-fade-in.load-animate { -webkit-animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
+ .nebula-fade-in.animate,.nebula-fade-in.load-animate { -webkit-animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-fade-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in { 0% { display:block; opacity:0; }
 
@@ -211,7 +211,7 @@
 
  .nebula-fade-in-up { opacity:0; pointer-events:none; }
 
- .nebula-fade-in-up.animate,.nebula-fade-in-up.load-animate { -webkit-animation:nebula-fade-in-up 1.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; animation:nebula-fade-in-up 1.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; opacity:1; pointer-events:all; }
+ .nebula-fade-in-up.animate,.nebula-fade-in-up.load-animate { -webkit-animation:nebula-fade-in-up 1.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; -moz-animation:nebula-fade-in-up 1.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; animation:nebula-fade-in-up 1.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-up { 0% { display:block; opacity:0; transform:translate3d(0, 40px, 0); }
 
@@ -227,7 +227,7 @@
 
  .nebula-fade-in-down { opacity:0; pointer-events:none; }
 
- .nebula-fade-in-down.animate,.nebula-fade-in-down.load-animate { -webkit-animation:nebula-fade-in-down 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-down 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
+ .nebula-fade-in-down.animate,.nebula-fade-in-down.load-animate { -webkit-animation:nebula-fade-in-down 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; -moz-animation:nebula-fade-in-down 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-down 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-down { 0% { display:block; opacity:0; transform:translate3d(0, -40px, 0); }
 
@@ -243,7 +243,7 @@
 
  .nebula-fade-in-left { opacity:0; pointer-events:none; }
 
- .nebula-fade-in-left.animate,.nebula-fade-in-left.load-animate { -webkit-animation:nebula-fade-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
+ .nebula-fade-in-left.animate,.nebula-fade-in-left.load-animate { -webkit-animation:nebula-fade-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; -moz-animation:nebula-fade-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-left { 0% { display:block; opacity:0; transform:translate3d(-40px, 0, 0); }
 
@@ -259,7 +259,7 @@
 
  .nebula-fade-in-right { opacity:0; pointer-events:none; }
 
- .nebula-fade-in-right.animate,.nebula-fade-in-right.load-animate { -webkit-animation:nebula-fade-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
+ .nebula-fade-in-right.animate,.nebula-fade-in-right.load-animate { -webkit-animation:nebula-fade-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; -moz-animation:nebula-fade-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; animation:nebula-fade-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-fade-in-right { 0% { display:block; opacity:0; transform:translate3d(40px, 0, 0); }
 
@@ -273,7 +273,7 @@
 
  }
 
- .nebula-zoom-out.animate { -webkit-animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-zoom-out.animate { -webkit-animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-zoom-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-zoom-out { 0% { transform:scale3d(1, 1, 1); opacity:1; }
 
@@ -293,7 +293,7 @@
 
  .nebula-zoom-in { opacity:0; pointer-events:none; }
 
- .nebula-zoom-in.animate,.nebula-zoom-in.load-animate { -webkit-animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
+ .nebula-zoom-in.animate,.nebula-zoom-in.load-animate { -webkit-animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-zoom-in 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-zoom-in { 0% { display:block; opacity:0; transform:scale3d(0, 0, 0); }
 
@@ -317,7 +317,7 @@
 
  .nebula-reveal-in { width:0; pointer-events:none; overflow:hidden; }
 
- .nebula-reveal-in.animate,.nebula-reveal-in.load-animate { -webkit-animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; pointer-events:all; }
+ .nebula-reveal-in.animate,.nebula-reveal-in.load-animate { -webkit-animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-reveal-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; pointer-events:all; }
 
  @-webkit-keyframes nebula-reveal-in { 0% { display:block; width:0; }
 
@@ -347,7 +347,7 @@
 
  .nebula-stretch-in { opacity:0; pointer-events:none; }
 
- .nebula-stretch-in.animate,.nebula-stretch-in.load-animate { -webkit-animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
+ .nebula-stretch-in.animate,.nebula-stretch-in.load-animate { -webkit-animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-stretch-in 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @-webkit-keyframes nebula-stretch-in { 0% { display:block; transform:scale3d(0, 1, 1); opacity:0; }
 
@@ -365,7 +365,7 @@
 
  }
 
- .nebula-stretch-out.animate { -webkit-animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-stretch-out.animate { -webkit-animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-stretch-out 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @-webkit-keyframes nebula-stretch-out { 0% { transform:scale3d(1, 1, 1); }
 
@@ -385,7 +385,7 @@
 
  .nebula-flip-in-x { opacity:0; pointer-events:none; }
 
- .nebula-flip-in-x.animate,.nebula-flip-in-x.load-animate { -webkit-animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
+ .nebula-flip-in-x.animate,.nebula-flip-in-x.load-animate { -webkit-animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-in-x 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @keyframes nebula-flip-in-x { 0% { transform:perspective(400px) rotate3d(1, 0, 0, 90deg); opacity:0; }
 
@@ -401,7 +401,7 @@
 
  .nebula-flip-in-y { opacity:0; pointer-events:none; }
 
- .nebula-flip-in-y.animate,.nebula-flip-in-y.load-animate { -webkit-animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
+ .nebula-flip-in-y.animate,.nebula-flip-in-y.load-animate { -webkit-animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-in-y 1s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; opacity:1; pointer-events:all; }
 
  @keyframes nebula-flip-in-y { 0% { transform:perspective(400px) rotate3d(0, 1, 0, 90deg); opacity:0; }
 
@@ -415,7 +415,7 @@
 
  }
 
- .nebula-flip-out-x.animate { -webkit-animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-flip-out-x.animate { -webkit-animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-out-x 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @keyframes nebula-flip-out-x { 0% { transform:perspective(400px); }
 
@@ -425,7 +425,7 @@
 
  }
 
- .nebula-flip-out-y.animate { -webkit-animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
+ .nebula-flip-out-y.animate { -webkit-animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; -moz-animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; animation:nebula-flip-out-y 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) forwards; }
 
  @keyframes nebula-flip-out-y { 0% { transform:perspective(400px); }
 
@@ -435,7 +435,7 @@
 
  }
 
- .nebula-push.animate { -webkit-animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); }
+ .nebula-push.animate { -webkit-animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); -moz-animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); animation:nebula-push 0.4s cubic-bezier(0.175, 0.885, 0.320, 1.275); }
 
  @-webkit-keyframes nebula-push { 0% { transform:scale3d(1, 1, 1); }
 
@@ -449,7 +449,7 @@
 
  }
 
- .nebula-shake.animate { -webkit-animation:nebula-shake 0.5s linear; animation:nebula-shake 0.5s linear; }
+ .nebula-shake.animate { -webkit-animation:nebula-shake 0.5s linear; -moz-animation:nebula-shake 0.5s linear; animation:nebula-shake 0.5s linear; }
 
  @-webkit-keyframes nebula-shake { 0% { transform:translate3d(0, 0, 0); }
 
@@ -467,7 +467,7 @@
 
  }
 
- .nebula-nod.animate { -webkit-animation:nebula-nod 0.5s linear; animation:nebula-nod 0.5s linear; }
+ .nebula-nod.animate { -webkit-animation:nebula-nod 0.5s linear; -moz-animation:nebula-nod 0.5s linear; animation:nebula-nod 0.5s linear; }
 
  @-webkit-keyframes nebula-nod { 0% { transform:translate3d(0, 0, 0); }
 
@@ -883,7 +883,7 @@
 
  .borderimage form.nebula-search-iconable:before { content:'\f002'; display:inline-block; position:absolute; top:4px; left:7px; width:15px; height:15px; pointer-events:none; font:normal normal normal 14px/1 FontAwesome; font-size:14px; text-rendering:auto; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; transform:translate(0, 0); }
 
- .borderimage form.nebula-search-iconable.searching:before { content:'\f110'; -webkit-animation:fa-spin 2s infinite linear; animation:fa-spin 2s infinite linear; }
+ .borderimage form.nebula-search-iconable.searching:before { content:'\f110'; -webkit-animation:fa-spin 2s infinite linear; -moz-animation:fa-spin 2s infinite linear; animation:fa-spin 2s infinite linear; }
 
  .nebula_the_excerpt,.nebula_custom_excerpt { white-space:nowrap; }
 
@@ -945,7 +945,7 @@
 
  .loadmorecon .infinite-loading { display:none; position:absolute; top:0; left:0; width:100%; }
 
- .loadmorecon .infinite-loading div { display:inline-block; width:6px; height:6px; border-radius:12px; background:#444; -webkit-animation:nebula-zoom 1s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-zoom 1s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); }
+ .loadmorecon .infinite-loading div { display:inline-block; width:6px; height:6px; border-radius:12px; background:#444; -webkit-animation:nebula-zoom 1s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); -moz-animation:nebula-zoom 1s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); animation:nebula-zoom 1s infinite cubic-bezier(0.455, 0.030, 0.515, 0.955); }
 
  .loadmorecon .infinite-loading div.b { animation-delay:0.2s; }
 
@@ -967,7 +967,7 @@
 
  h1,h2,h3,h4,h5,h6,body,p { font-family:'Open Sans', sans-serif; }
 
- abbr,acronym { cursor:pointer; border-bottom:none; color:auto; }
+ abbr,acronym { cursor:pointer; border-bottom:none; color:inherit; }
 
  .pinterest-pin a { -webkit-transition:none 0.25s; -moz-transition:none 0.25s; -ms-transition:none 0.25s; -o-transition:none 0.25s; transition:none 0.25s; }
 
@@ -1675,4 +1675,4 @@
  }
 
 
-/* Processed on Tuesday, June 21, 2016 at 3:05pm */
+/* Processed on Wednesday, June 22, 2016 at 10:29pm */

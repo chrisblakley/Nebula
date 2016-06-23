@@ -1761,47 +1761,32 @@ function nebula_body_classes($classes){
 		global $sunrise, $sunset;
 		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
 		$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+		$length_of_daylight = $sunset-$sunrise;
+		$length_of_darkness = 86400-$length_of_daylight;
 
 		if ( time() >= $sunrise && time() <= $sunset ){
 			$classes[] = 'time-daylight';
-			if ( strtotime('now') < $sunrise+(($sunset-$sunrise)/2) ){
+			if ( strtotime('now') < $sunrise+($length_of_daylight/2) ){
 				$classes[] = 'time-waxing-gibbous'; //Before solar noon
-				if ( strtotime('now') < ($sunset-$sunrise)/4+$sunrise ){
-					$classes[] = 'time-narrow';
-				} else {
-					$classes[] = 'time-wide';
-				}
+				$classes[] = ( strtotime('now') < ($length_of_daylight/4)+$sunrise )? 'time-narrow' : 'time-wide';
 			} else {
 				$classes[] = 'time-waning-gibbous'; //After solar noon
-				if ( strtotime('now') < ((3*$sunset)+$sunrise)/4 ){
-					$classes[] = 'time-wide';
-				} else {
-					$classes[] = 'time-narrow';
-				}
+				$classes[] = ( strtotime('now') < ((3*$sunset)+$sunrise)/4 )? 'time-wide' : 'time-narrow';
 			}
 		} else {
 			$classes[] = 'time-darkness';
 			$previous_sunset_modifier = ( date('H') < 12 )? 86400 : 0; //Times are in UTC, so if it is after actual midnight (before noon) we need to use the sunset minus 1 day in formulas
-			$solar_midnight = (($sunset-$previous_sunset_modifier)+((86400-($sunset-$sunrise))/2)); //Calculate the appropriate solar midnight (either yesterday's or tomorrow's) [see above]
-
+			$solar_midnight = (($sunset-$previous_sunset_modifier)+($length_of_darkness/2)); //Calculate the appropriate solar midnight (either yesterday's or tomorrow's) [see above]
 			if ( strtotime('now') < $solar_midnight ){
 				$classes[] = 'time-waning-crescent'; //Before solar midnight
-				if ( strtotime('now') < ($sunrise-$solar_midnight)/2+($sunset-$previous_sunset_modifier) ){
-					$classes[] = 'time-wide';
-				} else {
-					$classes[] = 'time-narrow';
-				}
+				$classes[] = ( strtotime('now') < ($length_of_darkness/4)+($sunset-$previous_sunset_modifier) )? 'time-wide' : 'time-narrow';
 			} else {
 				$classes[] = 'time-waxing-crescent'; //After solar midnight
-				if ( strtotime('now') < ($sunrise+$solar_midnight)/2 ){
-					$classes[] = 'time-narrow';
-				} else {
-					$classes[] = 'time-wide';
-				}
+				$classes[] = ( strtotime('now') < ($sunrise+$solar_midnight)/2 )? 'time-narrow' : 'time-wide';
 			}
 		}
 
-		$sunrise_sunset_length = 45; //Length of sunrise/sunset in minutes. Default: 45
+		$sunrise_sunset_length = 35; //Length of sunrise/sunset in minutes.
 		if ( strtotime('now') >= $sunrise-(60*$sunrise_sunset_length) && strtotime('now') <= $sunrise+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunrise
 			$classes[] = 'time-sunrise';
 		}
