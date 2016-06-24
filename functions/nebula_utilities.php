@@ -1249,6 +1249,7 @@ function nebula_render_scss($child=false){
 				if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){ //@todo "Nebula" 0: Getting a lot of false positives here
 					copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
 					if ( is_dev() || current_user_can('manage_options') ){
+						global $scss_debug_ref;
 						$scss_debug_ref = ( $child )? 'C' : 'P';
 						$scss_debug_ref .= (nebula_data('scss_last_processed')-filemtime($css_filepath));
 						add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
