@@ -749,8 +749,8 @@ function eventTracking(){
 				if ( selection === '' || selection === ' ' ){
 					ga('send', 'event', 'Copied Text', '[0 words]');
 				} else {
-					ga('send', 'event', 'Copied Text', words.length + ' words', selection);
 					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Copied Text'));
+					ga('send', 'event', 'Copied Text', words.length + ' words', selection);
 				}
 			}
 		} else {

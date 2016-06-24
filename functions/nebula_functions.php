@@ -1694,8 +1694,13 @@ function nebula_body_classes($classes){
 
 	//IE versions outside conditional comments
 	if ( nebula_is_browser('ie', '10') ){
+		$classes[] = 'ie';
+		$classes[] = 'ie10';
 		$classes[] = 'lte-ie10';
+		$classes[] = 'lt-ie11';
 	} elseif ( nebula_is_browser('ie', '11') ){
+		$classes[] = 'ie';
+		$classes[] = 'ie11';
 		$classes[] = 'lte-ie11';
 	}
 

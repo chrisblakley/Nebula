@@ -1249,6 +1249,8 @@ function nebula_render_scss($child=false){
 				if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){ //@todo "Nebula" 0: Getting a lot of false positives here
 					copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
 					if ( is_dev() || current_user_can('manage_options') ){
+						$scss_debug_ref = ( $child )? 'C' : 'P';
+						$scss_debug_ref .= (nebula_data('scss_last_processed')-filemtime($css_filepath));
 						add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
 					}
 				}
@@ -1279,7 +1281,8 @@ function nebula_render_scss($child=false){
 
 //Log Sass .bak note in the browser console
 function nebula_scss_console_warning(){
-	echo '<script>console.error("Warning: Sass compiling is enabled, but it appears that style.css has been manually updated! A stylee.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
+	global $scss_debug_ref;
+	echo '<script>console.warn("Warning: Sass compiling is enabled, but it appears that style.css has been manually updated (Reference: ' . $scss_debug_ref . 's)! A style.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
 }
 
 //Combine developer stylesheets
@@ -1616,7 +1619,7 @@ function nebula_is_browser($browser=null, $version=null, $comparison='=='){
 	if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
 		if ( !empty($version) ){
 			if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
-				if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
+				if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
 					if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
 						return true;
 					} else {
