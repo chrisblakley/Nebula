@@ -61,6 +61,10 @@
 
  .nebulashadow.inner-top.inner-bottom { box-shadow:inset 0 17px 25px -15px rgba(0, 0, 0, 0.4), inset 0 -17px 25px -15px rgba(0, 0, 0, 0.4); }
 
+ .ie .nebulashadow:after,.microsoft_edge .nebulashadow:after { display:none; }
+
+ .ie .nebulashadow:before,.microsoft_edge .nebulashadow:before { display:none; }
+
  .nebulaframe { position:relative; padding:5px; background:#fff; border:1px solid #aaa; }
 
  a.nebulaframe { border:none; }
@@ -804,4 +808,4 @@
  .xoxo ul li.current-menu-item .sub-menu ul li a:hover { color:#95d600; }
 
 
-/* Processed on Wednesday, June 22, 2016 at 10:42pm */
+/* Processed on Friday, June 24, 2016 at 8:39pm */

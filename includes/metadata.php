@@ -24,16 +24,19 @@
 	<meta name="google-site-verification" content="<?php echo nebula_option('google_search_console_verification'); ?>" />
 <?php endif; ?>
 
-<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
+<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): //If Yoast SEO is not active ?>
 	<meta name="description" content="<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
+	<link rel="canonical" href="<?php the_permalink(); ?>" />
+<?php endif; ?>
+
+<?php $wpseo_social = get_option('wpseo_social'); ?>
+<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') || (!empty($wpseo_social) && !$wpseo_social['opengraph']) ): //If Yoast SEO is not active, or if it is and the Open Graph settings are disabled ?>
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
 	<meta property="og:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 	<meta property="og:url" content="<?php the_permalink(); ?>" />
 	<meta property="og:site_name" content="<?php echo get_bloginfo('name'); ?>" />
-
-	<link rel="canonical" href="<?php the_permalink(); ?>" />
 
 	<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
 	<meta property="business:contact_data:phone_number" content="+<?php echo nebula_option('phone_number'); ?>" />
@@ -44,7 +47,15 @@
 	<meta property="business:contact_data:postal_code" content="<?php echo nebula_option('postal_code'); ?>" />
 	<meta property="business:contact_data:country_name" content="<?php echo nebula_option('country_name'); ?>" />
 
-	<?php if ( has_post_thumbnail($post->ID) ): ?>
+	<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): //Business hours of operation. ?>
+		<?php if ( nebula_option('business_hours_' . $weekday . '_enabled') && nebula_option('business_hours_' . $weekday . '_open') != '' && nebula_option('business_hours_' . $weekday . '_close') != '' ) : ?>
+			<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
+			<meta property="business:hours:start" content="<?php echo nebula_option('business_hours_' . $weekday . '_open'); ?>" />
+			<meta property="business:hours:end" content="<?php echo nebula_option('business_hours_' . $weekday . '_close'); ?>" />
+		<?php endif; ?>
+	<?php endforeach; ?>
+
+	<?php if ( !empty($post) && has_post_thumbnail($post->ID) ): ?>
 		<?php if ( get_the_post_thumbnail($post->ID, 'open_graph_large') ): ?>
 			<meta property="og:image" content="<?php echo nebula_get_thumbnail_src($post->ID, 'open_graph_large'); ?>" />
 		<?php else: ?>
@@ -59,14 +70,6 @@
 <?php if ( file_exists(nebula_prefer_child_directory('/images/meta', false) . '/og-thumb2.png') ): ?>
 	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb2.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
-
-<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): //Business hours of operation. ?>
-	<?php if ( nebula_option('business_hours_' . $weekday . '_enabled') && nebula_option('business_hours_' . $weekday . '_open') != '' && nebula_option('business_hours_' . $weekday . '_close') != '' ) : ?>
-		<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
-		<meta property="business:hours:start" content="<?php echo nebula_option('business_hours_' . $weekday . '_open'); ?>" />
-		<meta property="business:hours:end" content="<?php echo nebula_option('business_hours_' . $weekday . '_close'); ?>" />
-	<?php endif; ?>
-<?php endforeach; ?>
 
 <?php //Favicons ?>
 <link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
@@ -98,13 +101,18 @@
 <link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
 
 <?php //Facebook Metadata ?>
-<meta property="fb:app_id" content="<?php echo nebula_option('facebook_app_id'); ?>" />
-<meta property="fb:page_id" content="<?php echo nebula_option('facebook_page_id'); //Is this even used anymore? ?>" />
-<meta property="fb:pages" content="<?php echo nebula_option('facebook_page_id'); ?>" />
-<meta property="fb:admins" content="<?php echo get_option('facebook_admin_ids'); ?>" />
+<?php if ( nebula_option('facebook_app_id') ): ?>
+	<meta property="fb:app_id" content="<?php echo nebula_option('facebook_app_id'); ?>" />
+<?php endif; ?>
+<?php if ( get_option('facebook_page_id') ): ?>
+	<meta property="fb:pages" content="<?php echo nebula_option('facebook_page_id'); ?>" />
+<?php endif; ?>
+<?php if ( get_option('facebook_admin_ids') ): ?>
+	<meta property="fb:admins" content="<?php echo get_option('facebook_admin_ids'); ?>" />
+<?php endif; ?>
 
 <?php //Twitter Metadata ?>
-<?php if ( has_post_thumbnail($post->ID) ): ?>
+<?php if ( !empty($post) && has_post_thumbnail($post->ID) ): ?>
 	<?php if ( get_the_post_thumbnail($post->ID, 'twitter_large') ): ?>
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:image" content="<?php echo nebula_get_thumbnail_src($post->ID, 'twitter_large'); ?>?<?php echo uniqid(); ?>" />
@@ -126,7 +134,7 @@
 <?php if ( nebula_option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula_option('twitter_user'); ?>" />
 <?php endif; ?>
-<?php if ( nebula_option('author_bios', 'enabled') && get_the_author_meta('twitter', $post->post_author) ): ?>
+<?php if ( nebula_option('author_bios', 'enabled') && !empty($post) && get_the_author_meta('twitter', $post->post_author) ): ?>
 	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $post->post_author); ?>" />
 <?php endif; ?>
 

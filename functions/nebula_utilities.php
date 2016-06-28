@@ -347,6 +347,7 @@ function nebula_online_users($return='count'){
 	return ( $return == 'count' )? $user_online_count : $online_users;
 }
 
+//Check how many locations a single user is logged in from.
 function nebula_user_single_concurrent($id){
 	$override = apply_filters('pre_nebula_user_single_concurrent', false, $id);
 	if ( $override !== false ){return $override;}

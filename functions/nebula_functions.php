@@ -977,81 +977,87 @@ function nebula_password_form_simplify(){
 }
 
 //Breadcrumbs
-function nebula_breadcrumbs(){
+function nebula_breadcrumbs($options=array()){ //yolo
 	$override = apply_filters('pre_nebula_breadcrumbs', false);
 	if ( $override !== false ){echo $override; return;}
 
 	global $post;
-	$delimiter = '<span class="arrow">&rsaquo;</span>'; //Delimiter between crumbs
-	$home = '<i class="fa fa-home"></i>'; //Text for the 'Home' link
-	$showCurrent = 1; //1: Show current post/page title in breadcrumbs, 0: Don't show
-	$before = '<span class="current">'; //Tag before the current crumb
-	$after = '</span>'; //Tag after the current crumb
-	$homeLink = home_url('/');
+	$defaults = array(
+		'delimiter' => '&rsaquo;', //Delimiter between crumbs
+		'home' => '<i class="fa fa-home"></i>', //Text for the 'Home' link
+		'home_link' => home_url('/'),
+		'current' => true, //Show/Hide the current title in the breadcrumb
+		'before' => '<span class="current">', //Tag before the current crumb
+		'after' => '</span>' //Tag after the current crumb
+	);
 
-	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){
-		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $homeLink . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $home . '</a> ' . $delimiter . ' ' . $before . 'Error ' . $GLOBALS['http'] . $after;
+	$data = array_merge($defaults, $options);
+
+	$delimiter_html = '<span class="arrow">' . $data['delimiter'] . '</span>';
+
+	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){ //If there is an HTTP status code
+		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ' . $data['before'] . 'Error ' . $GLOBALS['http'] . $data['after'];
 	} elseif ( is_home() || is_front_page() ){
-		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $homeLink . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $home . '</a></div></div>';
+		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a></div></div>';
 		return false;
 	} else {
-		echo '<div class="nebula-breadcrumbs"  itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $homeLink . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $home . '</a> ' . $delimiter . ' ';
+		echo '<div class="nebula-breadcrumbs"  itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ';
 		if ( is_category() ){
 			$thisCat = get_category(get_query_var('cat'), false);
 			if ( $thisCat->parent != 0 ){
-				echo get_category_parents($thisCat->parent, true, ' ' . $delimiter . ' ');
+				echo get_category_parents($thisCat->parent, true, ' ' . $delimiter_html . ' ');
 			}
-			echo $before . 'Category: ' . single_cat_title('', false) . $after;
+			echo $data['before'] . 'Category: ' . single_cat_title('', false) . $data['after'];
 		} elseif ( is_search() ){
-			echo $before . 'Search results' . $after;
+			echo $data['before'] . 'Search results' . $data['after'];
 		} elseif ( is_day() ){
-			echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
-			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
-			echo $before . get_the_time('d') . $after;
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter_html . ' ';
+			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('F') . '</a> ' . $delimiter_html . ' ';
+			echo $data['before'] . get_the_time('d') . $data['after'];
 		} elseif ( is_month() ){
-			echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
-			echo $before . get_the_time('F') . $after;
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter_html . ' ';
+			echo $data['before'] . get_the_time('F') . $data['after'];
 		} elseif ( is_year() ){
-			echo $before . get_the_time('Y') . $after;
+			echo $data['before'] . get_the_time('Y') . $data['after'];
 		} elseif ( is_single() && !is_attachment() ){
 			if ( get_post_type() != 'post' ){
 				$post_type = get_post_type_object(get_post_type());
 				$slug = $post_type->rewrite;
-				echo '<a href="' . $homeLink . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
-				if ( $showCurrent == 1 ){
-					echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+				echo '<a href="' . $data['home_link'] . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
+				if ( !empty($data['current']) ){
+					echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
 				}
 			} else {
 				$cat = get_the_category();
 				if ( !empty($cat) ){
 					$cat = $cat[0];
-					$cats = get_category_parents($cat, true, ' ' . $delimiter . ' ');
-					if ( $showCurrent == 0 ){
-						$cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
+					$cats = get_category_parents($cat, true, ' ' . $delimiter_html . ' ');
+					if ( empty($data['current']) ){
+						$cats = preg_replace("#^(.+)\s" . $delimiter_html . "\s$#", "$1", $cats);
 					}
 					echo $cats;
-					if ( $showCurrent == 1 ){
-						echo $before . get_the_title() . $after;
+					if ( !empty($data['current']) ){
+						echo $data['before'] . get_the_title() . $data['after'];
 					}
 				}
 			}
 		} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ){
 			if ( is_archive() ){ //@TODO "Nebula" 0: Might not be perfect... This may never else out.
 				$userdata = get_user_by('slug', get_query_var('author_name'));
-				echo $before . $userdata->first_name . ' ' . $userdata->last_name . $after;
+				echo $data['before'] . $userdata->first_name . ' ' . $userdata->last_name . $data['after'];
 			} else { //What does this one do?
 				$post_type = get_post_type_object(get_post_type());
-				echo $before . $post_type->labels->singular_name . $after;
+				echo $data['before'] . $post_type->labels->singular_name . $data['after'];
 			}
 		} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 			if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
-				echo '<a href="' . get_permalink($post->post_parent) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter . ' ' . get_the_title();
+				echo '<a href="' . get_permalink($post->post_parent) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter_html . ' ' . get_the_title();
 			} else {
 				echo get_the_title();
 			}
 		} elseif ( is_page() && !$post->post_parent ){
-			if ( $showCurrent == 1 ){
-				echo $before . get_the_title() . $after;
+			if ( !empty($data['current']) ){
+				echo $data['before'] . get_the_title() . $data['after'];
 			}
 		} elseif ( is_page() && $post->post_parent ){
 			$parent_id = $post->post_parent;
@@ -1065,20 +1071,20 @@ function nebula_breadcrumbs(){
 			for ( $i = 0; $i < count($breadcrumbs); $i++ ){
 				echo $breadcrumbs[$i];
 				if ( $i != count($breadcrumbs)-1 ){
-					echo ' ' . $delimiter . ' ';
+					echo ' ' . $delimiter_html . ' ';
 				}
 			}
-			if ( $showCurrent == 1 ){
-				echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+			if ( !empty($data['current']) ){
+				echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
 			}
 		} elseif ( is_tag() ){
-			echo $before . 'Tag: ' . single_tag_title('', false) . $after;
+			echo $data['before'] . 'Tag: ' . single_tag_title('', false) . $data['after'];
 		} elseif ( is_author() ){
 			global $author;
 			$userdata = get_userdata($author);
-			echo $before . $userdata->display_name . $after;
+			echo $data['before'] . $userdata->display_name . $data['after'];
 		} elseif ( is_404() ){
-			echo $before . 'Error 404' . $after;
+			echo $data['before'] . 'Error 404' . $data['after'];
 		}
 
 		if ( get_query_var('paged') ){
@@ -1662,7 +1668,8 @@ add_action('wp', 'nebula_404_internal_suggestions');
 function nebula_404_internal_suggestions(){
 	if ( is_404() ){
 		global $slug_keywords;
-		$slug_keywords = end(array_filter(explode('/', nebula_url_components('filepath'))));
+		$slug_keywords = array_filter(explode('/', nebula_url_components('filepath')));
+		$slug_keywords = end($slug_keywords);
 
 		global $error_query;
 		$error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $slug_keywords)));
@@ -1691,6 +1698,11 @@ function nebula_body_classes($classes){
 	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('full'))); //Browser name and version
 	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
 	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
+
+	//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
+	if ( nebula_get_browser('name') == 'Chrome Mobile' ){
+		$classes[] = 'chrome';
+	}
 
 	//IE versions outside conditional comments
 	if ( nebula_is_browser('ie', '10') ){

@@ -13,7 +13,8 @@
 	.bool-false {color: #aaa;}
 		.bool-false.bool-reverse {color: green;}
 
-	.htmlclass-no {color: red;}
+	.htmlclass-no,
+	.bodyclass-no {color: red;}
 
 	.googlemapcon {height: 400px;}
 </style>
@@ -27,6 +28,7 @@
 
 		onlyJSdetection();
 		pullHTMLClasses();
+		pullBodyClasses();
 
 		jQuery('#jsenabled').html('Enabled');
 
@@ -239,6 +241,31 @@
 		}
 	}
 
+	function pullBodyClasses(){
+		features = jQuery('body').attr('class').split(' ');
+		uniqueFeatures = features;
+		if ( !jQuery('html').hasClass('ie') ) {
+			features = features.sort();
+			uniqueFeatures = features.filter(function(elem, pos) {
+			    return features.indexOf(elem) == pos;
+			});
+			jQuery('#bodyclasses').html('');
+			jQuery.each(uniqueFeatures, function(index, value) {
+				if ( value.match('no-') ) {
+					jQuery('#bodyclasses').append(' <span class="bodyclass bodyclass-no">' + value + '</span>,');
+				} else {
+					jQuery('#bodyclasses').append(' <span class="bodyclass bodyclass-yes">' + value + '</span>,');
+				}
+			 });
+		} else {
+			uniqueFeatures = features.sort();
+			jQuery('#htmlclasses').html('');
+			jQuery.each(uniqueFeatures, function(index, value){
+				jQuery('#htmlclasses').append(value + ' ');
+			})
+		}
+	}
+
 	function js_print_bool(bool, id, reverse){
 		if ( typeof bool !== 'boolean' ){
 			jQuery(id).html('<span class="bool bool-null">null</span>');
@@ -392,15 +419,19 @@
 			</tr>
 			<tr>
 				<td>Ad Blocker</td>
-				<td id="adblock"><?php nebula_print_bool($nebula['user']['client']['capabilities']['adblock'], true); ?></td>
+				<td id="adblock"><?php nebula_print_bool($nebula['session']['flags']['adblock'], true); ?></td>
 			</tr>
 			<tr>
 				<td>GA Blocker</td>
-				<td id="gablock"><?php nebula_print_bool($nebula['user']['client']['capabilities']['gablock'], true); ?></td>
+				<td id="gablock"><?php nebula_print_bool($nebula['session']['flags']['gablock'], true); ?></td>
 			</tr>
 			<tr>
 				<td>HTML Classes</td>
 				<td id="htmlclasses" class="onlyjsdetection">Unknown</td>
+			</tr>
+			<tr>
+				<td>Body Classes</td>
+				<td id="bodyclasses" class="onlyjsdetection">Unknown</td>
 			</tr>
 			<tr>
 				<td>Flash</td>
@@ -509,7 +540,15 @@
 			</tr>
 			<tr>
 				<td>History Depth</td>
-				<td><?php nebula_print_data($nebula['session']['history']); ?></td>
+				<td>
+					<?php
+						if ( !empty($nebula['session']['history']) ){
+							nebula_print_data($nebula['session']['history']);
+						} else {
+							echo 'Unavailable';
+						}
+					?>
+				</td>
 			</tr>
 			<tr>
 				<td>Session Notes</td>
@@ -637,10 +676,12 @@
 					<td>Hostname</td>
 					<td><?php echo gethostname(); ?></td>
 				</tr>
-				<tr>
-					<td>Remote Host</td>
-					<td><?php echo $_SERVER['REMOTE_HOST']; ?></td>
-				</tr>
+				<?php if ( !empty($_SERVER['REMOTE_HOST']) ): ?>
+					<tr>
+						<td>Remote Host</td>
+						<td><?php echo $_SERVER['REMOTE_HOST']; ?></td>
+					</tr>
+				<?php endif; ?>
 				<tr>
 					<td>HTTP Host</td>
 					<td><?php echo $_SERVER['HTTP_HOST']; ?></td>

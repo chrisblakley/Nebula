@@ -296,7 +296,7 @@ add_shortcode('pre', 'pre_shortcode');
 function pre_shortcode($atts, $content=''){
 	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'force' => false, 'br' => false, 'class' => '', 'style' => ''), $atts));
 
-	if ( $GLOBALS['pre'] == 0 ){
+	if ( empty($GLOBALS['pre']) ){
 		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
@@ -331,7 +331,7 @@ add_shortcode('gist', 'gist_shortcode');
 function gist_shortcode($atts, $content=''){
 	extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts));
 
-	if ( $GLOBALS['pre'] == 0 ){
+	if ( empty($GLOBALS['pre']) ){
 		echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 		$GLOBALS['pre'] = 1;
 	}
@@ -364,7 +364,7 @@ function github_shortcode($atts, $content=''){
 		global $wp_filesystem;
 		$file_contents = $wp_filesystem->get_contents($file);
 
-		if ( $GLOBALS['pre'] == 0 ){
+		if ( empty($GLOBALS['pre']) ){
 			echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
 			$GLOBALS['pre'] = 1;
 		}

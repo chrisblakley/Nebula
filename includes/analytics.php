@@ -173,6 +173,7 @@
 
 			//Role
 			if ( nebula_option('cd_role') ){
+				$usertype = '';
 				if ( is_user_logged_in() ){
 					$user_info = get_userdata(get_current_user_id());
 					switch ( $user_info->roles[0] ){
@@ -197,12 +198,16 @@
 					}
 				}
 
+				$staff = '';
 				if ( is_dev() ){
 					$staff = ' (Developer)';
 				} elseif ( is_client() ){
 					$staff = ' (Client)';
 				}
-				echo 'ga("set", gaCustomDimensions["role"], "' . $usertype .  $staff . '");';
+
+				if ( !empty($usertype) || !empty($staff) ){
+					echo 'ga("set", gaCustomDimensions["role"], "' . $usertype .  $staff . '");';
+				}
 			}
 
 			//Session ID

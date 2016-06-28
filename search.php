@@ -23,7 +23,7 @@ get_header(); ?>
 							if ( file_exists(WP_PLUGIN_DIR . '/relevanssi') && $wp_query->found_posts ){ //If Relevanssi is enabled
 								echo $wp_query->found_posts;
 							} else {
-								$search_results = &new WP_Query("s=$s&showposts=-1");
+								$search_results = new WP_Query("s=$s&showposts=-1");
 								echo $search_results->post_count;
 								wp_reset_query();
 							}
@@ -64,6 +64,8 @@ get_header(); ?>
 						<?php get_template_part('loop', 'search'); ?>
 						<?php wp_pagenavi(); ?>
 					</div><!--/#searchresults-->
+				<?php else: ?>
+					<p>No search results.</p>
 				<?php endif; ?>
 			</div><!--/col-->
 			<div class="col-md-3 col-md-offset-1">
