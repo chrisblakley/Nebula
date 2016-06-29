@@ -4,7 +4,7 @@
  Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
  Author: Pinckney Hugo Group
  Author URI: http://www.pinckneyhugo.com
- Version: 4.1.24
+ Version: 4.1.26
  License: GNU General Public License v2.0 or later
  License URI: http://www.gnu.org/licenses/gpl-2.0.html
  Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
@@ -685,9 +685,9 @@
 
  .btn.btn-brand:hover,.btn.btn-brand:visited:hover,.btn.btn-brand:focus,.btn.btn-brand:visited:focus,.btn.btn-brand:active,.btn.btn-brand:visited:active { background:#0074a4; border-color:#0074a4; color:#fff; }
 
- a.phg { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
+ a.phg { margin-left:3px; padding-left:15px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; text-decoration:none !important; }
 
- a.phg.white { background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
+ a.phg.white { background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size:13px 8px; }
 
  a.phg.white span { color:#fff; }
 
@@ -707,7 +707,7 @@
 
  a.phg:hover span.group { color:#9fa1a4; }
 
- a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") -15px 6px no-repeat; background-size:13px 8px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ a.phg.anim { margin-left:0; padding-left:0; text-decoration:none !important; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") -15px 6px no-repeat; background-size:13px 8px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  a.phg.anim span { margin-right:3px; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
@@ -719,7 +719,7 @@
 
  a.phg.anim span.group { color:inherit; }
 
- a.phg.anim:hover { margin-left:3px; padding-left:15px; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
+ a.phg.anim:hover { margin-left:3px; padding-left:15px; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-symbol.svg") 0 6px no-repeat; background-size:13px 8px; }
 
  a.phg.anim:hover span { margin-right:0; }
 
@@ -853,7 +853,7 @@
 
  input[type="radio"] { -webkit-appearance:radio; }
 
- input.nebula-search { max-width:30px; padding:0 6px; color:transparent; font-size:12px; background:#eee url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.png") no-repeat 6px center; border:1px solid #ccc; border-radius:20px; outline:none; cursor:pointer; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
+ input.nebula-search { max-width:30px; padding:0 6px; color:transparent; font-size:12px; background:#eee url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.png") no-repeat 6px center; border:1px solid #ccc; border-radius:20px; outline:none; cursor:pointer; -webkit-transition:all 0.25s; -moz-transition:all 0.25s; -ms-transition:all 0.25s; -o-transition:all 0.25s; transition:all 0.25s; }
 
  input.nebula-search:hover { background-color:#fff; }
 
@@ -863,7 +863,7 @@
 
  input.nebula-search.active { border-color:#0098d7; box-shadow:0 0 5px rgba(0, 152, 215, .5); }
 
- .svg input.nebula-search { background:#eee url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.svg") no-repeat 6px center; background-size:auto 80%; }
+ .svg input.nebula-search { background:#eee url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/search.svg") no-repeat 6px center; background-size:auto 80%; }
 
  input.nebula-search::-webkit-search-decoration,input.nebula-search::-webkit-search-cancel-button { display:none; }
 
@@ -1267,7 +1267,7 @@
 
  #suggestedpage { display:none; }
 
- #hero-section { position:relative; padding:150px 0; margin:0; overflow:hidden; background:url("https://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-nebula.jpg") fixed center center; background-size:cover; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
+ #hero-section { position:relative; padding:150px 0; margin:0; overflow:hidden; background:url("http://gearside.com/nebula/wp-content/themes/Nebula-master/images/phg/phg-nebula.jpg") fixed center center; background-size:cover; -webkit-transition:all 0.5s; -moz-transition:all 0.5s; -ms-transition:all 0.5s; -o-transition:all 0.5s; transition:all 0.5s; }
 
  #hero-section .herobgcolor { position:absolute; top:0; left:0; width:100%; height:100%; background-color:#0098d7; background-color:rgba(0, 152, 215, 0.8); z-index:0; }
 
@@ -1679,4 +1679,4 @@
  }
 
 
-/* Processed on Friday, June 24, 2016 at 8:39pm */
+/* Processed on Monday, June 27, 2016 at 11:22pm */

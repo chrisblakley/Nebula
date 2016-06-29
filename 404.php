@@ -25,7 +25,7 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
-				<article id="post-0" class="post error404 not-found" role="main">
+				<article id="post-0" class="post error404 not-found">
 					<h1 class="page-title">Not Found</h1>
 					<p>The page you requested could not be found.</p>
 

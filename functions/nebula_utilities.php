@@ -368,15 +368,17 @@ function is_dev($strict=false){
 
 	if ( empty($strict) ){
 		$devIPs = explode(',', nebula_option('dev_ip'));
-		foreach ( $devIPs as $devIP ){
-			$devIP = trim($devIP);
+		if ( !empty($devIPs) ){
+			foreach ( $devIPs as $devIP ){
+				$devIP = trim($devIP);
 
-			if ( $devIP[0] != '/' && $devIP == $_SERVER['REMOTE_ADDR'] ){
-				return true;
-			}
+				if ( !empty($devIP) && $devIP[0] != '/' && $devIP == $_SERVER['REMOTE_ADDR'] ){
+					return true;
+				}
 
-			if ( $devIP[0] === '/' && preg_match($devIP, $_SERVER['REMOTE_ADDR']) ){
-				return true;
+				if ( !empty($devIP) && $devIP[0] === '/' && preg_match($devIP, $_SERVER['REMOTE_ADDR']) ){
+					return true;
+				}
 			}
 		}
 	}
@@ -406,15 +408,17 @@ function is_client($strict=false){
 
 	if ( empty($strict) ){
 		$clientIPs = explode(',', nebula_option('client_ip'));
-		foreach ( $clientIPs as $clientIP ){
-			$clientIP = trim($clientIP);
+		if ( !empty($clientIPs) ){
+			foreach ( $clientIPs as $clientIP ){
+				$clientIP = trim($clientIP);
 
-			if ( $clientIP[0] != '/' && $clientIP == $_SERVER['REMOTE_ADDR'] ){
-				return true;
-			}
+				if ( !empty($clientIP) && $clientIP[0] != '/' && $clientIP == $_SERVER['REMOTE_ADDR'] ){
+					return true;
+				}
 
-			if ( $clientIP[0] === '/' && preg_match($clientIP, $_SERVER['REMOTE_ADDR']) ){
-				return true;
+				if ( !empty($clientIP) && $clientIP[0] === '/' && preg_match($clientIP, $_SERVER['REMOTE_ADDR']) ){
+					return true;
+				}
 			}
 		}
 	}

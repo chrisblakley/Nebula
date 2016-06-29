@@ -218,6 +218,7 @@
 		},
 
 		<?php
+			$company_same_as = '';
 			if ( nebula_option('facebook_url') ){
 				$company_same_as .= '"' . nebula_option('facebook_url') . '",';
 			}

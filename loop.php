@@ -29,7 +29,7 @@
 					<?php endif; ?>
 				</div>
 
-				<?php if ( is_search() && file_exists(WP_PLUGIN_DIR . '/relevanssi') && $post->relevance_score ): ?>
+				<?php if ( is_search() && is_plugin_active('relevanssi/relevanssi.php') && $post->relevance_score ): ?>
 					<div class="entry-summary score-<?php echo str_replace('.', '_', $post->relevance_score); ?>">
 						<?php echo the_excerpt(); //Relevanssi creates a custom excerpt for search results to highlight the hit area. This requires using the_excerpt(). ?>
 					</div>
