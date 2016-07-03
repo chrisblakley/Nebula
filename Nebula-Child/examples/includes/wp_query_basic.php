@@ -64,7 +64,7 @@
 			//If paginating, Pagenavi is recommended:
 			if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
 				wp_pagenavi(); //query_posts
-				//wp_pagenavi(array('query' => $cached_query)); //wp_query
+				//wp_pagenavi(array('query' => $cached_query)); //WP_Query
 			}
 		?>
 
@@ -75,6 +75,9 @@
 		?>
 
 
-		<?php wp_reset_query(); //Always reset queries! ?>
+		<?php
+			wp_reset_query(); //Reset for the main loop (query_posts)
+			wp_reset_postdata(); //Reset for WP_Query
+		?>
 	</div><!--/col-->
 </div><!--/row-->

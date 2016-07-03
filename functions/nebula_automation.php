@@ -158,11 +158,7 @@ if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or i
 	add_action('admin_notices', 'nebula_activation');
 }
 function nebula_activation(){
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_REFERER, home_url());
-	curl_setopt($ch, CURLOPT_URL, 'https://gearside.com/nebula/usage/index.php');
-	curl_exec($ch);
-	curl_close($ch);
+	nebula_log('Activated');
 
 	$is_standard_initialization = ( isset($_GET['nebula-initialization']) )? true : false; //Detect if non-AJAX initialization is needed.
 	if ( $is_standard_initialization ){
@@ -221,9 +217,20 @@ function nebula_activation(){
 	return;
 }
 
+//Log Nebula activation/initialization
+function nebula_log($event=''){
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_REFERER, home_url());
+	curl_setopt($ch, CURLOPT_URL, 'https://gearside.com/nebula/usage/index.php?e=' . $event . '&s=' . home_url());
+	curl_exec($ch);
+	curl_close($ch);
+}
+
 //Nebula Initialization (Triggered by either AJAX or manually)
 add_action('wp_ajax_nebula_initialization', 'nebula_initialization');
 function nebula_initialization($standard=null){
+	nebula_log('Initialized');
+
 	if ( current_user_can('manage_options') ){
 		nebula_initialization_email_prev_settings();
 		nebual_initialization_create_homepage();

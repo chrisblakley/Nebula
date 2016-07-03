@@ -457,13 +457,15 @@ function gaBlockSend(){
 
 //Load the SDK asynchronously
 function facebookSDK(){
-	(function(d, s, id){
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/all.js";
-		fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));
+	if ( jQuery('[class*="fb-"]').length || jQuery('.require-fbsdk').length ){ //Only load the Facebook SDK when needed
+		(function(d, s, id){
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	}
 }
 
 //Facebook Connect functions
@@ -580,6 +582,8 @@ function socialSharing(){
 
 //Google Analytics Universal Analytics Event Trackers
 function eventTracking(){
+	//console.log('inside event tracking function');
+
 	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//nebula.dom.document.on('mousedown', '.selector', function(e){
 	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
@@ -852,6 +856,8 @@ function ecommerceTracking(){
 
 //Detect scroll depth for engagement and more accurate bounce rate
 function scrollDepth(){
+	//console.log('inside scroll depth function');
+
 	var headerHeight = ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250;
 	var entryContent = jQuery('.entry-content');
 
@@ -874,6 +880,7 @@ function scrollDepth(){
 			initialScroll = currentTime.getTime();
 			delayBeforeInitial = (initialScroll-beginning)/1000;
 
+			//console.log('sent timing for initial scroll');
 			ga('send', 'timing', 'Scroll Depth', 'Initial scroll', Math.round(delayBeforeInitial*1000), 'Delay after pageload until initial scroll');
 			isScroller = true;
 		}
@@ -910,6 +917,7 @@ function scrollDepth(){
 			//To use the more traditional definition of bounce rate as a "Page Depth" engagement metric remove this line (or add a non-interaction object).
 			ga('send', 'event', 'Scroll Depth', 'Began reading', Math.round(timeToScroll) + ' seconds (since initial scroll) [Signifies non-bounce visit]'); //This line alters bounce rate in Google Analytics.
 			ga('send', 'timing', 'Scroll Depth', 'Began reading', Math.round(timeToScroll*1000), 'Scrolled from top of page to top of entry-content'); //Unless there is a giant header, this timing will likely be 0 on most sites.
+			//console.log('sent event and timing for began reading');
 			isReader = true;
 		}
 

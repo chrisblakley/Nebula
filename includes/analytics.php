@@ -292,6 +292,7 @@
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
 		ga('send', 'pageview'); <?php //Send pageview along with set dimensions. ?>
+		//console.log('pageview sent');
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 

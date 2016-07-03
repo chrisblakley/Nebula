@@ -723,7 +723,7 @@ function nebula_facebook_share($counts=0, $url=false){
 	$override = apply_filters('pre_nebula_facebook_share', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
-	<div class="nebula-social-button facebook-share">
+	<div class="nebula-social-button facebook-share require-fbsdk">
 		<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>"></div>
 	</div>
 <?php }
@@ -733,7 +733,7 @@ function nebula_facebook_like($counts=0, $url=false){
 	$override = apply_filters('pre_nebula_facebook_like', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
-	<div class="nebula-social-button facebook-like">
+	<div class="nebula-social-button facebook-like require-fbsdk">
 		<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
 	</div>
 <?php }
@@ -742,7 +742,7 @@ function nebula_facebook_both($counts=0, $url=false){
 	$override = apply_filters('pre_nebula_facebook_both', false, $counts);
 	if ( $override !== false ){echo $override; return;}
 ?>
-	<div class="nebula-social-button facebook-both">
+	<div class="nebula-social-button facebook-both require-fbsdk">
 		<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
 	</div>
 <?php }
@@ -988,20 +988,57 @@ function nebula_breadcrumbs($options=array()){ //yolo
 		'home_link' => home_url('/'),
 		'current' => true, //Show/Hide the current title in the breadcrumb
 		'before' => '<span class="current">', //Tag before the current crumb
-		'after' => '</span>' //Tag after the current crumb
+		'after' => '</span>', //Tag after the current crumb
+		'force' => false //Override the breadcrumbs with an array of specific links
 	);
 
 	$data = array_merge($defaults, $options);
-
 	$delimiter_html = '<span class="arrow">' . $data['delimiter'] . '</span>';
 
-	if ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){ //If there is an HTTP status code
+	if ( !empty($data['force']) ){ //If using forced override
+		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">';
+
+		foreach ( $data['force'] as $node ){
+			$node_text = ( !empty($node['text']) )? $node['text'] : $node[0];
+			$node_url = false;
+			if ( !empty($node['url']) ){
+				$node_url = $node['url'];
+			} else {
+				if ( !empty($node[1]) ){
+					$node_url = $node[1];
+				}
+			}
+
+			if ( !empty($node_text) ){
+				if ( !empty($node_url) ){
+					echo '<a href="' . $node_url . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">';
+				}
+
+				echo $node_text;
+
+				if ( !empty($node_url) ){
+					echo '</a>';
+				}
+
+				echo ' ' . $delimiter_html . ' ';
+			}
+		}
+
+		if ( !empty($data['current']) ){
+			echo $data['before'] . get_the_title() . $data['after'];
+		}
+
+		echo '</div>';
+
+
+
+	} elseif ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){ //If there is an HTTP status code
 		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ' . $data['before'] . 'Error ' . $GLOBALS['http'] . $data['after'];
 	} elseif ( is_home() || is_front_page() ){
 		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a></div></div>';
 		return false;
 	} else {
-		echo '<div class="nebula-breadcrumbs"  itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ';
+		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ';
 		if ( is_category() ){
 			$thisCat = get_category(get_query_var('cat'), false);
 			if ( $thisCat->parent != 0 ){

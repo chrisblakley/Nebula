@@ -307,11 +307,11 @@
 
  .background-purple,.bg-purple,.background-violet,.bg-violet { background:purple; }
 
- body#tinymce.wp-editor { background:#f6f6f6; font-family:'Open Sans', sans-serif; font-size:14px; color:#444; }
+ body#tinymce.wp-editor { background:#f6f6f6; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif; font-size:14px; color:#444; }
 
  body#tinymce.wp-editor a { color:#0098d7; text-decoration:none; }
 
  body#tinymce.wp-editor a:hover { color:#95d600; }
 
 
-/* Processed on Friday, June 24, 2016 at 8:39pm */
+/* Processed on Thursday, June 30, 2016 at 11:34pm */

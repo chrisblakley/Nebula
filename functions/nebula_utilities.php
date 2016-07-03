@@ -134,6 +134,8 @@ function ga_send_data($data){
 	$override = apply_filters('pre_ga_send_data', false, $data);
 	if ( $override !== false ){return $override;}
 
+	return false; //@todo: temporarily removing for testing (not set) on landing page GA issue.
+
 	$getString = 'https://ssl.google-analytics.com/collect';
 	$getString .= '?payload_data&';
 	$getString .= http_build_query($data);
@@ -184,7 +186,6 @@ function ga_send_pageview($hostname=null, $path=null, $title=null, $array=array(
 }
 
 //Send Event Function for Server-Side Google Analytics
-//@TODO "Nebula" 0: "WordPress" is still appearing in Google Analytics browser reports for these events!
 function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
 	$override = apply_filters('pre_ga_send_event', false, $category, $action, $label, $value, $ni, $array);
 	if ( $override !== false ){return $override;}
@@ -958,27 +959,6 @@ function placehold_it($width=800, $height=600, $text=false, $color=false){
 		return 'https://placehold.it/' . $width . 'x' . $height . '/' . $color . $text;
 	}
 	return get_template_directory_uri() . '/images/x.png'; //Placehold.it is not available.
-}
-
-//Automatically convert HEX colors to RGB.
-function hex2rgb($color){
-	$override = apply_filters('pre_hex2rgb', false, $color);
-	if ( $override !== false ){return $override;}
-
-	if ( $color[0] == '#' ){
-		$color = substr($color, 1);
-	}
-	if ( strlen($color) == 6 ){
-		list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-	} elseif ( strlen($color) == 3 ){
-		list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
-	} else {
-		return false;
-	}
-	$r = hexdec($r);
-	$g = hexdec($g);
-	$b = hexdec($b);
-	return array('r' => $r, 'g' => $g, 'b' => $b);
 }
 
 //Check the brightness of a color. 0=darkest, 255=lightest, 256=false

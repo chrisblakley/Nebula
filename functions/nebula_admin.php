@@ -459,18 +459,20 @@ if ( nebula_option('admin_notices') ){
 		if ( $pagenow == 'post.php' || $pagenow == 'edit.php' ){
 			global $post;
 
-			foreach ( get_categories() as $category ){
-			    if ( $category->slug == $post->post_name ){
-			        echo '<div class="nebula-admin-notice error"><p>Page and category slug conflict: <strong>' . $category->slug . '</strong> - Consider changing this page slug.</p></div>';
-			        return false;
-			    }
-			}
+			if ( !empty($post) ){ //If the listing has results
+				foreach ( get_categories() as $category ){
+				    if ( $category->slug == $post->post_name ){
+				        echo '<div class="nebula-admin-notice error"><p>Page and category slug conflict: <strong>' . $category->slug . '</strong> - Consider changing this page slug.</p></div>';
+				        return false;
+				    }
+				}
 
-			foreach ( get_tags() as $tag ){
-			    if ( $tag->slug == $post->post_name ){
-			        echo '<div class="nebula-admin-notice error"><p>Page and tag slug conflict: <strong>' . $tag->slug . '</strong> - Consider changing this page slug.</p></div>';
-			        return false;
-			    }
+				foreach ( get_tags() as $tag ){
+				    if ( $tag->slug == $post->post_name ){
+				        echo '<div class="nebula-admin-notice error"><p>Page and tag slug conflict: <strong>' . $tag->slug . '</strong> - Consider changing this page slug.</p></div>';
+				        return false;
+				    }
+				}
 			}
 		}
 	}

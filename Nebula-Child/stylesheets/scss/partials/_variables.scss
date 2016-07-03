@@ -5,7 +5,7 @@
 $primary_color: #0098d7;
 $secondary_color: #95d600;
 $text_color: #444;
-$font_stack: 'Open Sans', sans-serif;
+$font_stack: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 $background_color: #f6f6f6;
 
 $dark_primary_color: darken(desaturate($primary_color, 95%), 20%);

@@ -79,8 +79,8 @@ function nebula_google_font_option(){
 	if ( $nebula_options['google_font_url'] ){
 		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', $nebula_options['google_font_url']);
 	} elseif ( $nebula_options['google_font_family'] ) {
-		$google_font_family = preg_replace('/ /', '+', $nebula_options['google_font_family']); //Need default here of "Open Sans"?
-		$google_font_weights = preg_replace('/ /', '', $nebula_options['google_font_weights']); //Need default here of "400,800"?
+		$google_font_family = preg_replace('/ /', '+', $nebula_options['google_font_family']);
+		$google_font_weights = preg_replace('/ /', '', $nebula_options['google_font_weights']);
 		$google_font = 'https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights;
 
 		WP_Filesystem();
@@ -91,7 +91,8 @@ function nebula_google_font_option(){
 			return $google_font;
 		}
 	}
-	return 'https://fonts.googleapis.com/css?family=Open+Sans:400,800';
+
+	return false;
 }
 
 //Create the Nebula Submenu
