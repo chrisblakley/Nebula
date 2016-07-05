@@ -16,9 +16,6 @@ $warning_color: #f6b83f !default;
 $info_color: #00a0d2 !default;
 $success_color: #58c026 !default;
 
-$template_directory: "<%template_directory_uri%>"; //This variable is modified using PHP when compiled. Do not change!
-$stylesheet_directory: "<%stylesheet_directory_uri%>"; //This variable is modified using PHP when compiled. Do not change!
-
 //Easings
 $easings: (
 	linear: 		"0.250, 0.250, 0.750, 0.750",

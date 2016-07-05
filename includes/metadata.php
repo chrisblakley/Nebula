@@ -64,40 +64,24 @@
 	<?php endif; ?>
 <?php endif; ?>
 
+<?php //Open Graph Thumbnails ?>
 <?php if ( file_exists(nebula_prefer_child_directory('/images/meta', false) . '/og-thumb.png') ): ?>
 	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
-<?php if ( file_exists(nebula_prefer_child_directory('/images/meta', false) . '/og-thumb2.png') ): ?>
-	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb2.png<?php echo $cache_query; ?>" />
-<?php endif; ?>
+<?php for ( $i = 2; file_exists(nebula_prefer_child_directory('/images/meta', false) . '/og-thumb-' . $i . '.png'); $i++ ): //Check for additional Open Graph thumbnail images named "og-thumb-#.png" ?>
+	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb-<?php echo $i; ?>.png<?php echo $cache_query; ?>" />
+<?php endfor; ?>
 
 <?php //Favicons ?>
 <link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
 <link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" type="image/png" sizes="96x96" href="<?php echo $image_meta_directory; ?>/favicon-96x96.png<?php echo $cache_query; ?>" />
 <link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula_sass_color('primary'); ?>" />
 
 <?php //Apple iOS ?>
-<link rel="apple-touch-icon" sizes="57x57" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-57x57.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="60x60" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-60x60.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="72x72" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-72x72.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="76x76" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-76x76.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="114x114" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-114x114.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="120x120" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-120x120.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="144x144" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-144x144.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="152x152" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-152x152.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-180x180.png<?php echo $cache_query; ?>" />
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon-precomposed.png<?php echo $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon.png<?php echo $cache_query; ?>" />
 
 <?php //Android/Chrome ?>
-<link rel="icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
-<link rel="icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
-<link rel="icon" type="image/png" sizes="36x36" href="<?php echo $image_meta_directory; ?>/android-chrome-36x36.png<?php echo $cache_query; ?>" />
-<link rel="icon" type="image/png" sizes="48x48" href="<?php echo $image_meta_directory; ?>/android-chrome-48x48.png<?php echo $cache_query; ?>" />
-<link rel="icon" type="image/png" sizes="72x72" href="<?php echo $image_meta_directory; ?>/android-chrome-72x72.png<?php echo $cache_query; ?>" />
-<link rel="icon" type="image/png" sizes="96x96" href="<?php echo $image_meta_directory; ?>/android-chrome-96x96.png<?php echo $cache_query; ?>" />
-<link rel="icon" type="image/png" sizes="144x144" href="<?php echo $image_meta_directory; ?>/android-chrome-144x144.png<?php echo $cache_query; ?>" />
 <link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
 
 <?php //Facebook Metadata ?>

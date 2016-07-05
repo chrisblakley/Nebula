@@ -1199,6 +1199,13 @@ function nebula_render_scss($child=false){
 			}
 		}
 
+		//Variables
+		$scss->setVariables(array(
+			'template_directory' => '"' . get_template_directory_uri() . '"',
+			'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
+			'__utm-gif' => '"' . ga_UTM_gif() . '"',
+		));
+
 		//Partials
 		$latest_partial = 0;
 		foreach ( glob($stylesheets_directory . '/scss/partials/*') as $partial_file ){
@@ -1249,9 +1256,8 @@ function nebula_render_scss($child=false){
 
 					if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
 						$this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
-
 						$compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
-						$enhanced_css = nebula_scss_variables($compiled_css); //Compile server-side variables into SCSS
+						$enhanced_css = nebula_scss_post_compile($compiled_css); //Compile server-side variables into SCSS
 						$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 						nebula_update_data('scss_last_processed', time());
 					}
@@ -1326,18 +1332,16 @@ function nebula_combine_dev_stylesheets($directory=null, $directory_uri=null){
 }
 
 //Compile server-side variables into SCSS
-function nebula_scss_variables($scss){
-	$override = apply_filters('pre_nebula_scss_variables', false, $scss);
+function nebula_scss_post_compile($scss){
+	$override = apply_filters('pre_nebula_scss_post_compile', false, $scss);
 	if ( $override !== false ){return $override;}
 
-	$scss = preg_replace("(<%template_directory_uri%>)", get_template_directory_uri(), $scss); //Template Directory
-	$scss = preg_replace("(<%stylesheet_directory_uri%>)", get_stylesheet_directory_uri(), $scss); //Stylesheet Directory (For child themes)
 	$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
 	$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
-	$scss = preg_replace("<%__utm.gif%>", ga_UTM_gif(), $scss); //GA __utm.gif pixel with parameters for tracking via CSS
-	do_action('nebula_scss_variables');
+	do_action('nebula_scss_post_compile');
 	$scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
 	nebula_update_data('scss_last_processed', time());
+
 	return $scss;
 }
 

@@ -10,13 +10,11 @@
 require_once('functions/nebula_options.php'); //Nebula Options
 require_once('functions/nebula_utilities.php'); //Nebula Utilities
 
-
 /*==========================
  Google Analytics Tracking ID
  ===========================*/
 
 $GLOBALS['ga'] = nebula_option('ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
-
 
 /*==========================
  Include Remaining Nebula Functions Groups
@@ -38,7 +36,6 @@ if ( is_plugin_active('woocommerce/woocommerce.php') ){
 	require_once('functions/nebula_ecommerce.php'); //Nebula Ecommerce
 }
 
-
 /*==========================
  Register All Stylesheets
  ===========================*/
@@ -54,7 +51,7 @@ function register_nebula_styles(){
 	}
 	wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css', null, '4.0.0a2', 'all');
 	wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css', null, '4.6.3', 'all');
-	wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.6.4/css/jquery.mmenu.all.min.css', null, '5.6.4', 'all');
+	wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.6.5/css/jquery.mmenu.all.min.css', null, '5.6.5', 'all');
 	wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/jquery.dataTables.min.css', null, '1.10.12', 'all'); //Datatables is called via main.js only as needed.
 	wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css', null, '1.5.1', 'all');
 	wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css', null, '1.11.4', 'all');
@@ -62,7 +59,6 @@ function register_nebula_styles(){
 	wp_register_style('nebula-login', get_template_directory_uri() . '/stylesheets/css/login.css', null, null);
 	wp_register_style('nebula-admin', get_template_directory_uri() . '/stylesheets/css/admin.css', null, null);
 }
-
 
 /*==========================
  Register All Scripts
@@ -79,7 +75,7 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js', 'defer', null, '3.3.1', false);
 	nebula_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
 	nebula_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js', 'defer', null, '1.11.4', true);
-	nebula_register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.6.4/js/jquery.mmenu.all.min.js', 'defer', null, '5.6.4', true);
+	nebula_register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.6.5/js/jquery.mmenu.all.min.js', 'defer', null, '5.6.5', true);
 	nebula_register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true); //Can this be deferred?
 	nebula_register_script('nebula-headroom', 'https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.3/headroom.min.js', 'defer', null, '0.9.3', true);
 	nebula_register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js', 'defer', null, '1.3.2', true);
@@ -265,13 +261,6 @@ if ( is_debug() ){
 	add_action('wp_footer', 'nebula_echo_db_queries');
 	function nebula_echo_db_queries(){
 		echo "<script>console.log('" . get_num_queries() . " DB Queries in " . timer_stop() . " seconds.');</script>";
-
-		if ( SAVEQUERIES && is_dev() ){ //Must add define('SAVEQUERIES', true); to wp-config.php
-			global $wpdb;
-			echo "<!--\r\n";
-			print_r($wpdb->queries);
-			echo "\r\n-->\r\n";
-		}
 	}
 }
 
@@ -318,7 +307,6 @@ function enqueue_nebula_frontend(){
 	}
 }
 
-
 /*==========================
  Enqueue Styles & Scripts on the Login
  ===========================*/
@@ -338,7 +326,6 @@ function enqueue_nebula_login(){
 	//Localized objects (localized to jquery to appear in <head>)
 	wp_localize_script('jquery', 'nebula', $nebula);
 }
-
 
 /*==========================
  Enqueue Styles & Scripts on the Admin
@@ -360,13 +347,11 @@ function enqueue_nebula_admin(){
 	wp_localize_script('jquery', 'nebula', $nebula);
 }
 
-
 //If Nebula wireframing functions don't exist, return false.
 if ( !function_exists('fpo') ){ function fpo(){ return false; } }
 if ( !function_exists('fpo_component') ){ function fpo_component(){ return false; } }
 if ( !function_exists('fpo_component_start') ){ function fpo_component_start(){ return false; } }
 if ( !function_exists('fpo_component_end') ){ function fpo_component_end(){ return false; } }
-
 
 /*====================================================
  Custom Theme Functions
@@ -391,56 +376,5 @@ function nebula_set_content_width(){
         $content_width = 1040;
     }
 }
-
-//Add new image sizes
-//Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.
-//add_image_size('example', 32, 32, 1);
-
-
-//Add/remove post formats as needed - http://codex.wordpress.org/Post_Formats
-//add_theme_support('post-formats', array('aside', 'chat', 'status', 'gallery', 'link', 'image', 'quote', 'video', 'audio'));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Google Analytics Experiments (Split Tests)
-//Documentation: http://gearside.com/nebula/documentation/custom-functionality/split-tests-using-google-analytics-experiments-with-nebula/
-//Add a new condition for each experiment group. There can be as many concurrent experiments as needed (just make sure there is no overlap!)
-add_action('nebula_head_open', 'nebula_ga_experiment_detection');
-function nebula_ga_experiment_detection(){
-	$override = apply_filters('pre_nebula_ga_experiment_detection', false);
-	if ( $override !== false ){return $override;}
-
-	//Example Experiment
-	if ( is_page(9999) ){ //Use is_post(9999) for single posts. Change the ID to match the desired page/post! ?>
-		<!-- Paste Google Analytics Experiment generated script here -->
-	<?php }
-
-}
-
-
 
 //Close functions.php. DO NOT add anything after this closing tag!! ?>

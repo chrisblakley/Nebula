@@ -140,11 +140,11 @@ jQuery(window).on('resize', function(){
 		if ( window.lastWindowWidth > nebula.dom.window.width() ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
-			ga('send', 'event', 'Window Resize', 'Smaller', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
+			//ga('send', 'event', 'Window Resize', 'Smaller', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px'); //@TODO "Nebula" 0: Disabled for GA bugtesting
 		} else if ( window.lastWindowWidth < nebula.dom.window.width() ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
-			ga('send', 'event', 'Window Resize', 'Bigger', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px');
+			//ga('send', 'event', 'Window Resize', 'Bigger', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px'); //@TODO "Nebula" 0: Disabled for GA bugtesting
 		}
 		window.lastWindowWidth = nebula.dom.window.width();
 	}, 500, 'window resize');
@@ -881,7 +881,7 @@ function scrollDepth(){
 			delayBeforeInitial = (initialScroll-beginning)/1000;
 
 			//console.log('sent timing for initial scroll');
-			ga('send', 'timing', 'Scroll Depth', 'Initial scroll', Math.round(delayBeforeInitial*1000), 'Delay after pageload until initial scroll');
+			//ga('send', 'timing', 'Scroll Depth', 'Initial scroll', Math.round(delayBeforeInitial*1000), 'Delay after pageload until initial scroll'); //@TODO "Nebula" 0: Disabled for GA bugtesting
 			isScroller = true;
 		}
 
@@ -915,8 +915,8 @@ function scrollDepth(){
 			//This next line (event) is the line that alters Bounce Rate.
 			//This line allows bounce rate to be calculated for individual page engagement.
 			//To use the more traditional definition of bounce rate as a "Page Depth" engagement metric remove this line (or add a non-interaction object).
-			ga('send', 'event', 'Scroll Depth', 'Began reading', Math.round(timeToScroll) + ' seconds (since initial scroll) [Signifies non-bounce visit]'); //This line alters bounce rate in Google Analytics.
-			ga('send', 'timing', 'Scroll Depth', 'Began reading', Math.round(timeToScroll*1000), 'Scrolled from top of page to top of entry-content'); //Unless there is a giant header, this timing will likely be 0 on most sites.
+			//ga('send', 'event', 'Scroll Depth', 'Began reading', Math.round(timeToScroll) + ' seconds (since initial scroll) [Signifies non-bounce visit]'); //This line alters bounce rate in Google Analytics.  //@TODO "Nebula" 0: Disabled for GA bugtesting
+			//ga('send', 'timing', 'Scroll Depth', 'Began reading', Math.round(timeToScroll*1000), 'Scrolled from top of page to top of entry-content'); //Unless there is a giant header, this timing will likely be 0 on most sites.  //@TODO "Nebula" 0: Disabled for GA bugtesting
 			//console.log('sent event and timing for began reading');
 			isReader = true;
 		}
@@ -942,8 +942,8 @@ function scrollDepth(){
 
 				ga('set', gaCustomDimensions['scrollDepth'], readerType);
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Scroll Depth', 'Finished reading', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)');
-				ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
+				//ga('send', 'event', 'Scroll Depth', 'Finished reading', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)'); //@TODO "Nebula" 0: Disabled for GA bugtesting
+				//ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom'); //@TODO "Nebula" 0: Disabled for GA bugtesting
 				endContent = true;
 			}
 		}
@@ -955,8 +955,8 @@ function scrollDepth(){
 			totalTime = (endTime-readStartTime)/1000;
 
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime) + ' seconds (since pageload)');
-			ga('send', 'timing', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom');
+			//ga('send', 'event', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime) + ' seconds (since pageload)'); //@TODO "Nebula" 0: Disabled for GA bugtesting
+			//ga('send', 'timing', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom'); //@TODO "Nebula" 0: Disabled for GA bugtesting
 			endPage = true;
 		}
 	}
