@@ -1,6 +1,5 @@
 <script>
 	jQuery(document).ready(function() {
-
 		if ( !checkVibration() ) {
 			jQuery('.notsupported').removeClass('hidden');
 			jQuery('.basicvibrate').removeClass('btn-primary').addClass('btn-danger');

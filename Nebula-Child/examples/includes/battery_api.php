@@ -37,7 +37,6 @@
 		});
 	});
 
-
 	function toTime(sec) {
 		sec = parseInt(sec, 10);
 
@@ -93,7 +92,6 @@
 
 <div class="row">
 	<div class="col-md-12">
-
 		<h2>Battery Status</h2>
 		<p class="batteryinfo batterysupported">
 			<strong>Percentage:</strong> <span class="batterypercentage">Unsupported</span><br />
@@ -102,6 +100,5 @@
 			<strong class="batteryremainingitem">Remaining Charge:</strong> <span class="batteryremainingitem batteryremaining">Unsupported</span><br />
 		</p>
 		<p class="batterynotsupported hidden">Unsupported</p>
-
 	</div><!--/col-->
 </div><!--/row-->

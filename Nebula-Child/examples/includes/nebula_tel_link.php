@@ -24,7 +24,6 @@
 			<a href="tel:+13154786700;239">+13154786700;239</a><br /><br />
 		</p>
 
-
 		<p>
 			<span>Hard-coded for testing SMS:</span><br />
 			<span>Note which devices each format works on!</span><br />

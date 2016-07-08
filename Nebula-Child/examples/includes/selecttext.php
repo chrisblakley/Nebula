@@ -12,14 +12,11 @@
 
 <script>
 	jQuery(document).ready(function() {
-
 		//console.debug( document.queryCommandEnabled('copy') );
 		//console.debug( document.queryCommandSupported('SelectAll') );
 		//console.debug( document.queryCommandIndeterm('copy') );
 		//console.debug( document.queryCommandState('copy') );
 		//console.debug( document.queryCommandValue('copy') );
-
-
 
 		//This tests to see if selecting text is possible.
 		if ( document.body.createTextRange || window.getSelection ) {
@@ -30,14 +27,11 @@
 			nebula.user.client.capabilities.select_text = false;
 		}
 
-
 		//Example of selecting text
 		jQuery(document).on('click touch tap', '.example-select-trigger', function(){
 		    selectText('.example-select');
 			return false;
 		});
-
-
 
 		//This just tests to see if copying is available.
 		try {
@@ -51,7 +45,6 @@
 			jQuery('.example-copy-supported').addClass('nope').html('Copying text is NOT supported in your browser.');
 			nebula.user.client.capabilities.clipboard.copy = false;
 		}
-
 
 		//Example of copying text
 		jQuery(document).on('click touch tap', '.example-copy-trigger', function(){
@@ -99,7 +92,6 @@
 
 <div class="row selectcopyexamplecon">
 	<div class="col-md-12">
-
 		<br /><br /><br />
 
 		<div class="example-select-supported"><i class="fa fa-spin fa-spinner"></i> Testing browser support...</div>
@@ -121,6 +113,5 @@
 		<br /><br /><br />
 
 		<textarea id="testtextarea" placeholder="Click the copy link and then try pasting here to see if it worked..." style="width: 100%; min-height: 150px;"></textarea>
-
 	</div><!--/col-->
 </div><!--/row-->

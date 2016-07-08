@@ -45,20 +45,12 @@
 			.level-four-media-query div:after {content: 'Hover Available'; color: green;}
 	}
 
-
-
 	/* Level 4 Selectors */
 	.level-four-selector {margin-top: 30px; border: 1px solid blue; padding: 5px;}
 
 	.level-four-selector:after {content: 'Parent Selector not supported'; color: red; display: block; text-align: center;}
 		div! .level-four-selector:after {content: 'Parent Selector supported'; color: green;}
-
-
-
-
-
 </style>
-
 
 <div class="row">
 	<div class="col-md-12">

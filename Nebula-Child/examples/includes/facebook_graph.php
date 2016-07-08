@@ -123,13 +123,7 @@
 		});
 	}
 
-
-
-
-
-
 	//EXAMPLE SCRIPTS BELOW
-
 	//Connect to Facebook without using the Facebook Login button
 	jQuery(document).on('click touch tap', '.facebook-connect', function(){
 		facebookLoginLogout();
@@ -162,11 +156,6 @@
 		}
 	});
 </script>
-
-
-
-
-
 
 <div class="row">
 	<div class="col-md-12">

@@ -8,8 +8,6 @@
 
 <script>
 	jQuery(document).ready(function(){
-
-
 		jQuery(document).on('click', function(){
 			inProgress(jQuery('.clicktest'));
 			debounce(function(){
@@ -37,12 +35,9 @@
 				checkThenFade(jQuery('.mousemove'));
 			}, 1000, 'mouse move test');
 		});
-
 	});
 
-
 	//The following functions are only for this example and are not needed for debounce.
-
 	function inProgress(oThis) {
 		if ( !oThis.hasClass('activated') ) {
 			oThis.find('i').removeClass('fa-circle-thin').addClass('fa-spinner fa-spin');
@@ -58,7 +53,6 @@
 		}, 1500);
 	}
 </script>
-
 
 <div class="row">
 	<div class="col-md-6 waitchecks">

@@ -78,7 +78,6 @@ get_header(); ?>
 									<?php the_content(); ?>
 								<?php endwhile; ?>
 
-
 								<?php if ( is_page(15) ): //Top-level Documentation Page ?>
 									<style>
 										ul.documentation-search-list {padding: 0;}
@@ -136,7 +135,6 @@ get_header(); ?>
 								<?php endif; ?>
 							</div><!--/cols-->
 						</div><!--/row-->
-
 
 						<?php if ( is_page(1408) ){ //Basic Wordpress Query
 							include_once('includes/wp_query_basic.php');
@@ -519,7 +517,6 @@ get_header(); ?>
 							include_once('includes/time_of_day_classes.php');
 						} ?>
 
-
 						<?php
 						/*==========================
 						 Utilities
@@ -561,7 +558,6 @@ get_header(); ?>
 						<?php if ( is_page(2150) ){ //Generate a custom Google Analytics utm.gif paramters
 							include_once('includes/google_analytics_utm_gif.php');
 						} ?>
-
 					</div><!--/entry-content-->
 
 					<div class="row">

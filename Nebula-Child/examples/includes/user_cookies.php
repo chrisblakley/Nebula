@@ -30,7 +30,6 @@
 
 		- Store in DB example
 	*/
-
 ?>
 
 <!-- PHP Method Output -->
@@ -40,15 +39,8 @@
 	</div><!--/col-->
 </div><!--/row-->
 
-
-
-
-
-
-
 <script>
 	jQuery(document).on('ready', function(){
-
 		//This example should be JS only (no PHP) and not use any Nebula functions (so it is modular)
 		/* @TODO "Nebula" 0:
 			- Check previous cookie for User Object
@@ -67,7 +59,6 @@
 			- Send Custom dimension of VIP (or whatever) example
 			- Store in DB example (AJAX?)
 		*/
-
 	});
 </script>
 

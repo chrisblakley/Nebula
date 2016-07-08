@@ -1,6 +1,5 @@
 <div class="row">
 	<div class="col-md-12">
-
 		<?php
 			//Note: You must set a new transient for each page of the query.
 			$cached_query = get_transient('example_cached_query' . get_query_var('paged'));
@@ -26,6 +25,5 @@
 				wp_pagenavi(array('query' => $cached_query));
 			}
 		?>
-
 	</div><!--/col-->
 </div><!--/row-->

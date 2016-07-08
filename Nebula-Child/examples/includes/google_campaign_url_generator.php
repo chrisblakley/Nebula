@@ -23,7 +23,6 @@
 		span.source a.hover {color: #0098d7;}
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
 
@@ -143,7 +142,6 @@
 		}
 	}
 </script>
-
 
 <div class="row">
 	<div class="col-md-12">

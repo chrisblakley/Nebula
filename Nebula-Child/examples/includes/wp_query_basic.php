@@ -5,7 +5,6 @@
 			$args = array('post_type' => array('event'), 'meta_key' => 'event_date', 'orderby' => 'meta_value_num', 'order' => 'ASC', 'showposts' => 6, 'paged' => get_query_var('paged'));
 		?>
 
-
 		<?php
 			/*
 				Example using loop.php
@@ -15,7 +14,6 @@
 			//query_posts($args);
 			//get_template_part('loop');
 		?>
-
 
 		<?php //Example using a custom loop with query_posts (avoid if possible in favor of WP_Query) ?>
 		<?php query_posts($args); ?>
@@ -36,7 +34,6 @@
 		        </div>
 		    </article>
 	    <?php endwhile; ?>
-
 
 		<?php //Example using a custom loop with WP_Query ?>
 		<?php $example_query = new WP_Query($args); ?>
@@ -59,7 +56,6 @@
 		    </article>
 	    <?php endwhile; ?>
 
-
 		<?php
 			//If paginating, Pagenavi is recommended:
 			if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
@@ -68,12 +64,10 @@
 			}
 		?>
 
-
 		<?php
 			//Example using Nebula Infinite Load (see also infinite_load.php)
 			//nebula_infinite_load_query($args);
 		?>
-
 
 		<?php
 			wp_reset_query(); //Reset for the main loop (query_posts)

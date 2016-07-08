@@ -343,7 +343,6 @@
 			}
 		}
 
-
 		function checkAlternates(transcript, altPhrases) {
 			var length = altPhrases.length;
 			while ( length-- ) {
@@ -370,5 +369,4 @@
 		@TODO "Nebula" 0:
 			- Recording button should pulsate color when recording.
 	*/
-
 </script>

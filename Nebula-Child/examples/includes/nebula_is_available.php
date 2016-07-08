@@ -1,6 +1,5 @@
 <div class="row">
 	<div class="col-md-12">
-
 		<?php
 			$testdomain = 'http://www.pinckneyhugo.com';
 			if ( nebula_is_available($testdomain) ) {
@@ -47,6 +46,5 @@
 			}
 		?>
 		<br />
-
 	</div><!--/col-->
 </div><!--/row-->

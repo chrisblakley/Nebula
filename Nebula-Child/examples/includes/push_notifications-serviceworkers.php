@@ -1,17 +1,12 @@
 <link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/examples/components/serviceworkermanifest.json">
 
-
 <script>
-
-
 	//chrome://serviceworker-internals/
-
 
 	//Tutorial: https://dbwriteups.wordpress.com/2015/11/16/service-workers-part-5-push-notifications/
 
 	//Nested: '<?php echo get_template_directory_uri(); ?>/examples/components/wp_sw.js'
 	//Theme root (ideal): '<?php echo get_template_directory_uri(); ?>/wp_sw.js'
-
 
 	if (navigator.serviceWorker) {
 	    console.log("ServiceWorkers are supported");
@@ -37,7 +32,6 @@
 	        console.log("Notifications not supported by this browser.");
 	    }
 	}
-
 
 	function registerForPush() {
 	    if (navigator.serviceWorker.controller) { //This is always null. Could be a 'scope' issue? Where the sw.js file is located? Tried in root, still no luck. Would prefer it to stay within the theme somewhere (even the theme root)...
@@ -84,15 +78,10 @@
 	        console.log("Everthing is fine you can continue")
 	    }
 	};
-
 </script>
-
 
 <button type="button" onclick="requestNotificationPermission()">Request for Notification</button>
 <button type="button" onclick="registerForPush()">Register For Push</button>
-
-
-
 
 <?php if ( 1==2 ): //I don't know how to get/generate registration ids ?>
 curl --header "Authorization: key=AIzaSyANqY4BRp3VC59vLsgu-2IF5jGKPJCm8Jo" --header "Content-Type: application/json" https://android.googleapis.com/gcm/send -d "{\"registration_ids\":[\"APA91bE9DAy6_p9bZ9I58rixOv-ya6PsNMi9Nh5VfV4lpXGw1wS6kxrkQbowwBu17ryjGO0ExDlp-S-mCiwKc5HmVNbyVfylhgwITXBYsmSszpK0LpCxr9Cc3RgxqZD7614SqDokwsc3vIEXkaT8OPIM-mnGMRYG1-hsarEU4coJWNjdFP16gWs\"]}"

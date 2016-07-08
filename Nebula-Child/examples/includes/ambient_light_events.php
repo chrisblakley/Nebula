@@ -40,7 +40,6 @@
 	*/
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
 
@@ -89,13 +88,11 @@
 
 <div class="row">
 	<div class="col-md-12">
-
 		<h2>Ambient Light</h2>
 		<p>
 			<strong>Luminosity Profile:</strong> <span class="luminosityprofile">Unsupported</span><br />
 			<strong>Device Light: </strong> <span class="devicelightsupport">devicelight is not supported.</span><br />
 			<strong>Light Level: </strong> <span class="lightlevelsupport">lightlevel is not supported.</span><br />
 		</p>
-
 	</div><!--/col-->
 </div><!--/row-->

@@ -172,15 +172,6 @@
     }); //End Window Load
 </script>
 
-
-
-
-
-
-
-
-
-
 <?php if ( 1==2 ) : //Old Slider (but still has good carriage) ?>
 	<style>
 		div.nebula-slider {position: relative; overflow: hidden;}

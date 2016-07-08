@@ -15,10 +15,8 @@
 		}
 </style>
 
-
 <script>
 	jQuery(document).on('ready', function(){
-
 		jQuery('#animationselect').on('change', function(){ //Enable/Disable the buttons to animate or reset
 			if ( jQuery('#animationselect').val() != '' ){
 				jQuery('#playanimation').removeClass('disabled').addClass('animate');
@@ -47,10 +45,8 @@
 			//jQuery('#resetanimation').removeClass('animate').addClass('inactive');
 			return false;
 		});
-
 	});
 </script>
-
 
 <div class="row">
 	<div class="col-md-12 animatecon">

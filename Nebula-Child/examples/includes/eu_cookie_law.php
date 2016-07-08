@@ -11,10 +11,8 @@
 	}
 </style>
 
-
 <script>
 	jQuery(document).on('ready', function(){
-
 		if ( !nebula.user.sessions.last && nebula.user.sessions.first === nebula.user.sessions.current || 1==1 ){ //If first pageview of first visit enable functionality (remove || 1==1 for live site)
 			hasAcceptedEUCookies = false;
 
@@ -43,10 +41,8 @@
 				}
 			}
 		}
-
 	});
 </script>
-
 
 <?php if ( !$nebula['user']['sessions']['last'] && $nebula['user']['sessions']['first'] == $nebula['user']['sessions']['current'] || 1==1 ): //Only show if first pageview of first visit (remove || 1==1 for live site) ?>
 	<div id="eu-cookie-notification" class="container">

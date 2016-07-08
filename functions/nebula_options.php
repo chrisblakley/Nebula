@@ -199,6 +199,7 @@ function nebula_default_options(){
 		'cd_categories' => '',
 		'cd_tags' => '',
 		'cd_contactmethod' => '',
+		'cd_formtimer' => '',
 		'cd_firstinteraction' => '',
 		'cd_geolocation' => '',
 		'cd_geoname' => '',
@@ -1222,6 +1223,14 @@ function nebula_options_page(){
 					<td>
 						<input class="dimension" type="text" name="nebula_options[cd_contactmethod]" value="<?php echo $nebula_options['cd_contactmethod']; ?>" />
 						<p class="helper"><small>If the user triggers a contact event, the method of contact is stored here. <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Form Timing&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_options[cd_formtiming]" value="<?php echo $nebula_options['cd_formtiming']; ?>" />
+						<p class="helper"><small>Timings are automatically sent to Google Analytics in Nebula, but are sampled in the User Timings report, so they can also be sent along with the each form submission as a Custom Dimension here. Data will be in milliseconds. <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 

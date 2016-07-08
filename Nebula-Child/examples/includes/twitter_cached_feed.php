@@ -7,10 +7,8 @@
 	.twitter-posted-on {font-size: smaller; color: #888; white-space: nowrap;}
 </style>
 
-
 <script>
 	jQuery(document).ready(function(){
-
 		//Example 1
 		//Fill pre-existing HTML with tweet data. This is good for displaying a single, latest tweet.
 		jQuery.ajax({
@@ -91,10 +89,8 @@
 	});
 </script>
 
-
 <div class="row">
 	<div class="col-md-12">
-
 		<div>
 			<strong>Example 1</strong><br />
 			<span>Fill pre-existing HTML with tweet data. This is good for displaying a single, latest tweet.</span>
@@ -112,6 +108,5 @@
 			<span>Generate the markup within a UL to display tweets. This method is good for showing multiple tweets.</span>
 		</div>
 		<ul class="example2"></ul>
-
 	</div><!--/col-->
 </div><!--/row-->

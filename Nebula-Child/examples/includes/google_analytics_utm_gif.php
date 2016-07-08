@@ -13,7 +13,6 @@
 	.utm_campaign {background: #dedede; padding: 25px; margin-bottom: 25px; margin-top: 25px;}
 </style>
 
-
 <script>
 	jQuery(document).on('ready', function(){
 
@@ -58,13 +57,11 @@
 					<p class="inputhelp-description"><strong>(Required)</strong> This will generate a domain hash for this pixel.</p>
 				</li>
 
-
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmwv - Tracking Code Version<span class="required">*</span></span>
 					<span><input type="text" id="utmwv" class="form-control builderinput builderrequired" value="5.3.8" placeholder="5.3.8"></span>
 					<p class="inputhelp-description"><strong>(Required)</strong> The tracking code version.</p>
 				</li>
-
 
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmac - Account Code<span class="required">*</span></span>
@@ -72,13 +69,11 @@
 					<p class="inputhelp-description"><strong>(Required)</strong> This property's tracking code.</p>
 				</li>
 
-
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmdt - Page Title<span class="required">*</span></span>
 					<span><input type="text" id="utmdt" class="form-control builderinput builderrequired" placeholder="<?php echo get_the_title(); ?>"></span>
 					<p class="inputhelp-description"><strong>(Required)</strong> The title of the page.</p>
 				</li>
-
 
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmp - Path<span class="required">*</span></span>
@@ -135,13 +130,11 @@
 					</li>
 				</div>
 
-
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmhn - Hostname</span>
 					<span><input type="text" id="utmhn" class="form-control builderinput" placeholder="<?php echo nebula_url_components('hostname'); ?>"></span>
 					<p class="inputhelp-description">The hostname for this account.</p>
 				</li>
-
 
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmn - Unique ID</span>
@@ -150,13 +143,11 @@
 					<p class="inputhelp-description">A random ID generated for each gif request to prevent caching of the image.</p>
 				</li>
 
-
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utms - Session Requests</span>
 					<span><input type="text" id="utms" class="form-control builderinput" placeholder="1"></span>
 					<p class="inputhelp-description">Generally updates every time the gif is requested (max: 500).</p>
 				</li>
-
 
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmul - Language</span>
@@ -164,13 +155,11 @@
 					<p class="inputhelp-description">Language encoding for the browser. Use "-" for none.</p>
 				</li>
 
-
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmje - Java Enabled</span>
 					<span><input type="text" id="utmje" class="form-control builderinput" placeholder="1"></span>
 					<p class="inputhelp-description">Indicates if the browser supports Java.</p>
 				</li>
-
 
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmhid - Random Number</span>
@@ -179,13 +168,11 @@
 					<p class="inputhelp-description">A random number used to link the gif request with AdSense.</p>
 				</li>
 
-
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmr - Referral</span>
 					<span><input type="text" id="utmr" class="form-control builderinput" placeholder="<?php echo $_SERVER['HTTP_REFERER']; ?>"></span>
 					<p class="inputhelp-description">The complete URL of the referrer.</p>
 				</li>
-
 
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> utmu</span>

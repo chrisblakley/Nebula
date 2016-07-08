@@ -3,7 +3,6 @@
 	h2.serversupport {text-align: center; padding: 10px 15px; margin-bottom: 15px;}
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
 
@@ -42,7 +41,6 @@
 			}
 	});
 </script>
-
 
 <div class="row">
 	<div class="col-md-12">

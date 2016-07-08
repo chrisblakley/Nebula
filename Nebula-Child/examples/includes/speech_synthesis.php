@@ -1,6 +1,5 @@
 <script>
 	jQuery(document).ready(function() {
-
 		var voiceSelect = document.getElementById('voice');
 		// Check for browser support
 		var supportMsg = document.getElementById('msg');
@@ -43,7 +42,6 @@
 		window.speechSynthesis.onvoiceschanged = function(e) {
 			loadVoices();
 		};
-
 
 		// Create a new utterance for the specified text and add it to the queue.
 		function speak(text) {

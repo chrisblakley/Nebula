@@ -1,6 +1,5 @@
 <script>
 	jQuery(document).on('ready', function(){
-
 		hoverFlag = false;
 		jQuery('#testbutton').hover(function(){
 			if ( !hoverFlag ){
@@ -26,7 +25,6 @@
 	});
 </script>
 
-
 <div class="row">
 	<div class="col-md-12">
 		<div style="padding: 30px; padding-bottom: 60px; text-align: center;">
@@ -47,7 +45,6 @@
 				</div>
 			<?php endif; ?>
 		</div>
-
 
 		<h2>Some other things you have done</h2>
 		<ul>
@@ -94,7 +91,5 @@
 		<pre class="nebula-code">
 			<?php var_dump($nebula['user']['conversions']); ?>
 		</pre>
-
-
 	</div><!--/col-->
 </div><!--/row-->

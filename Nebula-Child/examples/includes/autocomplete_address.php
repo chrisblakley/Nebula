@@ -1,6 +1,5 @@
 <script>
 	jQuery(document).ready(function(){
-
 		nebulaAddressAutocomplete('#address-street');
 
 		jQuery(document).on('nebula_address_selected', function(){
@@ -22,7 +21,6 @@
 
 			nebulaConversion('contact', 'Example Autocomplete Address');
 		});
-
 	});
 </script>
 

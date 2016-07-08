@@ -19,7 +19,6 @@
 	}
 </script>
 
-
 <div class="row" contextmenu="nebulamenu" style="border: 1px solid red; padding: 20px;">
 	<div class="col-md-12">
 		<h2>Context Menu Example</h2>
@@ -30,7 +29,6 @@
 		<p>Cras facilisis commodo diam, non aliquam lorem. In hac habitasse platea dictumst. Etiam molestie tellus purus, accumsan finibus ante suscipit nec. Nunc in elementum risus. Nullam vitae tempor velit. Fusce quis suscipit ligula. Etiam at bibendum odio. Integer ornare neque magna, at rutrum eros feugiat vitae. Morbi mollis elit erat, sit amet tempor lorem aliquam eget. Nunc suscipit dignissim lacus at condimentum. Quisque eleifend, arcu nec fringilla venenatis, enim nunc maximus ante, non volutpat justo turpis eu diam. In quis efficitur lectus.</p>
 	</div><!--/col-->
 </div><!--/row-->
-
 
 <menu type="context" id="nebulamenu">
 	<menuitem label="Nebula Context Menu" icon="<?php echo get_template_directory_uri(); ?>/images/meta/favicon-16x16.png" onclick="linkTo('https://gearside.com/nebula/documentation/examples/context-menu/')"></menuitem>

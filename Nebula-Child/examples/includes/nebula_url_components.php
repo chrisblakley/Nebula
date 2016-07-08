@@ -26,7 +26,6 @@
 			exit();
 		}
 	*/
-
 ?>
 
 <script>
@@ -66,14 +65,11 @@
 	});
 </script>
 
-
 <div class="row">
 	<div class="col-md-12">
-
 		<br />
 		<h2>Nebula Requested URL</h2>
 		<p><?php echo nebula_requested_url(); ?></p>
-
 
 		<br />
 		<h2>Detected URL</h2>
@@ -98,7 +94,6 @@
 			<strong>"query"</strong>: <?php echo nebula_url_components('query'); ?><br />
 			<strong>"fragment"</strong>: <?php echo nebula_url_components('fragment'); ?><br />
 		</p>
-
 
 		<br />
 		<h2>Passed URL</h2>
@@ -125,7 +120,6 @@
 			<strong>"fragment"</strong>: <?php echo nebula_url_components('fragment', 'https://something.gearside.co.uk/nebula/documentation/custom-functionality/nebula-url-components/filename.php?query=something#anchorpoint'); ?><br />
 		</p>
 
-
 		<br />
 		<h2>URL Tester</h2>
 		<p>Enter a URL to see what <code>nebula_url_components()</code> returns.</p>
@@ -138,6 +132,5 @@
 		</form>
 
 		<p id="testerresults"></p>
-
 	</div><!--/col-->
 </div><!--/row-->

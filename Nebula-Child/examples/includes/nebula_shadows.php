@@ -74,9 +74,7 @@
 			</div>
 		</div>
 
-
 		<br /><br /><br /><br />
-
 
 		<h3>Inner Nebula Shadow</h3>
 		<div class="nebulashadow inner-top inner-bottom valign row" style="position: relative; background: tan; color: #fff; text-align: center; height: 120px; width: 100%; margin-top: 50px;">
@@ -84,8 +82,5 @@
 				Nebula Shadow using "Inner-Top" and "Inner-Bottom"
 			</div>
 		</div>
-
-
-
 	</div><!--/col-->
 </div><!--/row-->

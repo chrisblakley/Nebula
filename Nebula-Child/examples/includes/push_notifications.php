@@ -1,6 +1,5 @@
 <script>
 	jQuery(document).ready(function() {
-
 		//This is the same as checkNotificationPermission(), but tailored for this example.
 		//Generally, you could just call it with: if ( !checkNotificationPermission() ) { //Supported and Permission Granted }
 		Notification = window.Notification || window.mozNotification || window.webkitNotification;
@@ -63,7 +62,6 @@
 			return false;
 		});
 
-
 		jQuery('.custommessageform').on('submit', function(){
 			var customtitle = 'Default Custom Title';
 			var custommessage = 'Default custom message.';
@@ -94,9 +92,7 @@
 	});
 </script>
 
-
 <p class="notsupported" style="font-weight: bold;">Checking notification permissions.</p>
-
 
 <p>The following button passes only a title and body and uses Nebula defaults for everything else:</p>
 <a class="btn btn-primary basicnotify" href="#">Basic Notification</a>

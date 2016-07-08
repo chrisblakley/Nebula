@@ -37,26 +37,26 @@
 	});
 </script>
 
-	<div class="row">
-		<div class="col-md-12">
-			<form id="ajax-contact" method="post" action="<?php echo get_template_directory_uri(); ?>/includes/mailer.php">
-				<ul>
-					<li class="form-group">
-						<span class="contact-form-heading">Name*</span>
-						<input class="form-control" type="text" placeholder="Name" required/>
-					</li>
-					<li class="form-group">
-						<span class="contact-form-heading">Email*</span>
-						<input class="form-control" type="email" placeholder="Email" required/>
-					</li>
-					<li class="form-group">
-						<span class="contact-form-heading">Message*</span>
-						<textarea class="form-control" placeholder="Message" required></textarea>
-					</li>
+<div class="row">
+	<div class="col-md-12">
+		<form id="ajax-contact" method="post" action="<?php echo get_template_directory_uri(); ?>/includes/mailer.php">
+			<ul>
+				<li class="form-group">
+					<span class="contact-form-heading">Name*</span>
+					<input class="form-control" type="text" placeholder="Name" required/>
+				</li>
+				<li class="form-group">
+					<span class="contact-form-heading">Email*</span>
+					<input class="form-control" type="email" placeholder="Email" required/>
+				</li>
+				<li class="form-group">
+					<span class="contact-form-heading">Message*</span>
+					<textarea class="form-control" placeholder="Message" required></textarea>
+				</li>
 
-					<input class="btn btn-primary" type="submit" value="Send">
-				</ul>
-			</form>
-			<div id="form-messages"></div>
-		</div><!--/col-->
-	</div><!--/row-->
+				<input class="btn btn-primary" type="submit" value="Send">
+			</ul>
+		</form>
+		<div id="form-messages"></div>
+	</div><!--/col-->
+</div><!--/row-->

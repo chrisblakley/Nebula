@@ -64,7 +64,6 @@
 			return false;
 		});
 
-
 		jQuery('.custommessageform').on('submit', function(){
 			var customtitle = 'Default Custom Title';
 			var custommessage = 'Default custom message.';

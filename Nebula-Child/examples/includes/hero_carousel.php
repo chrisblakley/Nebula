@@ -1,7 +1,6 @@
 <style>
 	#heroslider {margin-top: -30px;} /* Do not copy over this line - it is for this example page only! */
 
-
 	div#heroslider {position: relative; height: 500px; overflow: hidden; -webkit-transition: all 1s; -moz-transition: all 1s; -o-transition: all 1s; transition: all 1s;}
 		div#heroslider.closed {height: 0;}
             div#heroslider #example-carousel {margin: 0; background: #222 url("http://www.transparenttextures.com/patterns/black-linen.png"); height: 100%;}

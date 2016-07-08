@@ -1,6 +1,5 @@
 <div class="row">
 	<div class="col-md-12">
-
 		<?php
 			$new_date_time_cache = false; //This variable is for example purposes only and is NOT NEEDED when using transients normally!
 
@@ -26,6 +25,5 @@
 				The transient was set on: <strong style="color: maroon;"><?php echo $the_date_time; ?></strong>
 			</p>
 		<?php endif; ?>
-
 	</div><!--/col-->
 </div><!--/row-->

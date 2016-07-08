@@ -289,9 +289,6 @@
 	}
 </script>
 
-
-
-
 <?php
 	function nebula_print_bool($bool=null, $reverse=false){ //@todo: instead of reverse, maybe pass strings for true and false as parameters for class? or color?
 		if ( !is_bool($bool) ){
@@ -332,9 +329,6 @@
 	    }
 	}
 ?>
-
-
-
 
 <div class="row">
 	<div class="col-md-12">
@@ -711,7 +705,6 @@
 				<td>Sunset</td>
 				<td><?php nebula_print_data(date('g:ia', $sunset)); ?></td>
 			</tr>
-
 
 			<tr>
 				<td colspan="2" class="heading">Debug</td>

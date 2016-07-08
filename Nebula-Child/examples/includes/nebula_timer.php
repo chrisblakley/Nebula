@@ -1,18 +1,11 @@
-<style>
-
-</style>
-
-
 <script>
 	jQuery(document).on('ready', function(){
-
 		jQuery('.start-timer a').on('click touch tap', function(){
 			console.log('Nebula Timer starting...');
 			nebulaTimer('example', 'start');
 			console.debug(nebulaTimings);
 			return false;
 		});
-
 
 		jQuery('.lap-timer a').on('click touch tap', function(){
 			console.log('************************');
@@ -22,17 +15,14 @@
 			return false;
 		});
 
-
 		jQuery('.end-timer a').on('click touch tap', function(){
 			console.log('Stopping Nebula Timer...');
 			console.debug( nebulaTimer('example', 'end') );
 			console.debug(nebulaTimings);
 			return false;
 		});
-
 	});
 </script>
-
 
 <div class="row">
 	<div class="col-md-12">

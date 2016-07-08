@@ -58,7 +58,6 @@
 			IE9
 			IE11 w/ IE9 Standards (Could be isolated with OS detection [.win7 ..., .win8 ...])
 	*/
-
 </style>
 
 <div class="row">

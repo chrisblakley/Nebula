@@ -8,10 +8,8 @@
 		.videocon #canvas {position: relative; max-width: 100%;}
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
-
 		//@TODO "Nebula" 0: Features to look into more: front/back facing camera toggle, audio settings, ideal dimensions, ideal framerate settings, more...?
 
 		var context = jQuery('#canvas')[0].getContext("2d");
@@ -51,7 +49,6 @@
 			jQuery('#getusermediacon').addClass('hidden').remove();
 		}
 
-
 		if ( !videoError ){
 			jQuery('#snapcon').removeClass('hidden');
 			snapshotCount = 0;
@@ -72,9 +69,7 @@
 				return false;
 			});
 		}
-
 	});
-
 
 	function snapshotExample(context){
 		var videoWidth = jQuery('#video').width();
@@ -128,7 +123,6 @@
 		}
 	}
 
-
 	function similarity(a, b){
 	    var lengthA = a.length;
 	    var lengthB = b.length;
@@ -144,7 +138,6 @@
 	    return (weight*100);
 	}
 </script>
-
 
 <?php if ( 1==2 ) {
 
@@ -177,10 +170,8 @@
 
 } ?>
 
-
 <div class="row">
 	<div class="col-md-12">
-
 		<div id="videoerrors" class="hidden"></div>
 
 		<div id="getusermediacon">

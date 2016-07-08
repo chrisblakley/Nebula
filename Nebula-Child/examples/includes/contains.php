@@ -3,10 +3,8 @@
 	.filtered {display: none;} /* This class is in style.css, but also here for demonstration */
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
-
 		jQuery(document).on('keyup', '#example-input', function(){
 			filter = jQuery('#example-input').val().trim();
 
@@ -15,10 +13,8 @@
 			jQuery('#example-list').find("*:not(:Contains(" + filter + "))").parents('li').addClass('filtered');
 			jQuery('#example-list').find("*:Contains(" + filter + ")").parents('li').removeClass('filtered');
 		});
-
 	});
 </script>
-
 
 <div class="row">
 	<div class="col-md-12">

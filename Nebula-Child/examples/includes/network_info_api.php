@@ -1,6 +1,5 @@
 <script>
 	jQuery(document).ready(function() {
-
 		var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || false;
 
 		console.debug(connection);
@@ -13,10 +12,8 @@
 		} else {
 			jQuery('.networkinfo').html('Your browser does not support the Network Information API.');
 		}
-
 	});
 </script>
-
 
 <div class="row">
 	<div class="col-md-12">

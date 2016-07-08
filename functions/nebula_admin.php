@@ -927,7 +927,7 @@ function nebula_todo_files($todo_dirpath=null, $child=false){
 
 						$todo_last_filename = $todo_this_filename;
 
-						if ( $child && $todo_priority != 0 ){ //Only count @todo files/comments on the child theme.
+						if ( $child && ($todo_priority == 'empty' || $todo_priority > 0) ){ //Only count @todo files/comments on the child theme.
 							$todo_instance_counter++;
 							if ( !$todo_counted ){
 								$todo_file_counter++;

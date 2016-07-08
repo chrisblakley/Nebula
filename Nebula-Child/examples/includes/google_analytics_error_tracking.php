@@ -1,6 +1,5 @@
 <script>
 	jQuery(document).ready(function() {
-
 		if ( window.addEventListener ) { //IE9+
 			window.addEventListener('error', function(e) {
 				if ( typeof e !== 'undefined' && typeof e.message !== 'undefined' && e.lineno != 0 ) {
@@ -16,6 +15,5 @@
 				}
 			});
 		}
-
 	});
 </script>

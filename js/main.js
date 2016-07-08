@@ -51,14 +51,15 @@ jQuery(document).ready(function(){
 
 	//Interaction
 	windowTypeDetection();
-	eventTracking();
-	scrollDepth();
 	pageVisibility();
 	checkForYoutubeVideos();
 	vimeoControls();
 	animationTriggers();
-	if ( has(nebula, 'site.ecommerce') && nebula.site.ecommerce ){
-		ecommerceTracking();
+
+	//Prevent events from sending before the pageview
+	window.nebulaTrackingCalled = false;
+	if ( typeof ga === 'function' ){ //if GA is defined
+		initEventTracking();
 	}
 
 	if ( jQuery('.home.page').length ){
@@ -80,13 +81,16 @@ jQuery(document).ready(function(){
 	createCookie('nebulaUser', JSON.stringify(nebula.user));
 }); //End Document Ready
 
-
 /*==========================
  Window Load
  ===========================*/
 
 jQuery(window).on('load', function(){
 	gaBlockSend();
+
+	if ( !window.nebulaTrackingCalled ){ //If event tracking still hasn't been initialized
+		initEventTracking();
+	}
 
 	//Focus on hero search field on load and hover.
 	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
@@ -118,7 +122,6 @@ jQuery(window).on('load', function(){
 		emphasizeSearchTerms();
 	}, 1000);
 }); //End Window Load
-
 
 /*==========================
  Window Resize
@@ -579,6 +582,17 @@ function socialSharing(){
 /*==========================
  Analytics Functions
  ===========================*/
+
+//Call the event tracking functions (since it needs to happen twice.
+function initEventTracking(){
+	window.nebulaTrackingCalled = true;
+	eventTracking();
+	scrollDepth();
+
+	if ( has(nebula, 'site.ecommerce') && nebula.site.ecommerce ){
+		ecommerceTracking();
+	}
+}
 
 //Google Analytics Universal Analytics Event Trackers
 function eventTracking(){
@@ -1700,10 +1714,11 @@ function cf7Functions(){
 	//CF7 Submit (CF7 AJAX response after any submit attempt)
 	nebula.dom.document.on('wpcf7:submit', function(e){
 		//@TODO "Nebula" 0: This is still called after data is already pulled (just like a regular 'submit' listener), so this debugInfo does not make it into the email... Until CF7 updates, this is how it will be.
-		nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-attempt');
+		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-attempt');
 		debugInfo();
 
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Attempt)');
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
@@ -1714,17 +1729,21 @@ function cf7Functions(){
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7:invalid', function(e){
+		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-spam');
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Invalid)');
 		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
 		ga('send', 'event', 'Contact', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 	});
 
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7:spam', function(e){
+		var formTime = nebulaTimer(e.target.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Spam)');
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
 		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
@@ -1733,7 +1752,9 @@ function cf7Functions(){
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7:mailfailed', function(e){
+		var formTime = nebulaTimer(e.target.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Failed)');
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
 		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
@@ -1742,18 +1763,20 @@ function cf7Functions(){
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
 	nebula.dom.document.on('wpcf7:mailsent', function(e){
+		var formTime = nebulaTimer(e.target.id, 'end');
 		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
 		}
 		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Success)');
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
 		if ( jQuery('.nebula-poi').length ){
 			ga('set', gaCustomDimensions['poi'], jQuery('.nebula-poi').val());
 		}
 
-		ga('send', 'timing', 'Contact', 'Form Completion (ID: ' + e.target.id + ')', Math.round(nebulaTimer(e.target.id, 'end')), 'Initial form focus until valid submit');
-		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id + ' (Completed in: ' + millisecondsToString(nebulaTimer(e.target.id, 'end')));
+		ga('send', 'timing', 'Contact', 'Form Completion (ID: ' + e.target.id + ')', Math.round(formTime), 'Initial form focus until valid submit');
+		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id);
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
 		nebulaConversion('contact', 'Form ID: ' + e.target.id);
 		nebulaConversion('abandoned_form', 'Form ID: ' + e.target.id, 'remove');

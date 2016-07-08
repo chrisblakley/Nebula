@@ -49,16 +49,13 @@
 			timeout: 60000
 		});
 
-
 	});
-
 
 	function jsDetection(){
 		jQuery('.jsdetection').each(function(){
 			jQuery(this).html('<i class="fa fa-spin fa-spinner"></i> Detecting...');
 		});
 	}
-
 
 	function detectData(){
 
@@ -96,11 +93,8 @@
 		jQuery('.screen-info .pixel-density').html(window.devicePixelRatio); //Pixel Density Detection
 		jQuery('.screen-info .color-depth').html(screen.colorDepth + 'bit'); //Color Depth detection
 
-
 		var cookiesEnabled = ( navigator.cookieEnabled === true ? 'Enabled' : 'Disabled' );
 		jQuery('.cookies-enabled').html(cookiesEnabled);
-
-
 
 		if ( typeof swfobject !== 'undefined' ) {
 			var playerVersion = swfobject.getFlashPlayerVersion();
@@ -114,7 +108,6 @@
 		}
 
 	} //End detectData()
-
 
 	//Get lat/lon
 	//NOTE: These geolocation functions are customized for this example page! Use the built-in location functions in main.js for standard detection!
@@ -343,10 +336,7 @@
 		}, 250);
 
 	}
-
 </script>
-
-
 
 <div class="row">
 	<div id="fulldata" class="col-md-12">
@@ -390,19 +380,16 @@
 			<?php endif; ?>
 		</p>
 
-
 		<h3>Operating System</h3>
 		<p>
 			<?php echo nebula_get_os('full'); ?><br />
 		</p>
-
 
 		<h3 class="browservardumptrigger">Browser</h3>
 		<p>
 			<?php echo nebula_get_browser('full'); ?><br />
 			<strong>Rendering Engine:</strong> <?php echo nebula_get_browser('engine'); ?><br />
 		</p>
-
 
 		<h3>Features</h3>
 		<p class="jsdetection features-info">Enable JavaScript to detect features.</p>
@@ -416,14 +403,12 @@
 			<strong>Color Depth:</strong> <span class="jsdetection color-depth">Enable JavaScript to detect color depth.</span><br />
 		</p>
 
-
 		<h3>Miscellaneous</h3>
 		<p class="miscellaneous-info">
 			<strong>JavaScript:</strong> <span class="javascript-enabled">Disabled</span><br />
 			<strong>Cookies:</strong> <span class="jsdetection cookies-enabled">Enable JavaScript to detect cookies.</span><br />
 			<strong>Flash:</strong> <span class="jsdetection flashversion">Enable JavaScript to detect flash version.</span><br />
 		</p>
-
 
 		<h3>Location</h3>
 		<p>
@@ -433,7 +418,6 @@
 			<strong>Location Accuracy:</strong> <span class="jsdetection locacc">Enable JavaScript to detect accuracy.</span><br />
 		</p>
 		<div id="test_map_canvas" class="googlemaptester"></div>
-
 	</div><!--/col-->
 </div><!--/row-->
 

@@ -129,7 +129,6 @@
 		});
 	} //End mapActions()
 
-
 	//Render Google Map
 	function renderMap(mapInfo){
 	    if ( typeof google === 'undefined' ){

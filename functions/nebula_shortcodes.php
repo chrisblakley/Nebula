@@ -19,6 +19,7 @@ function get_flags($atts){
 	return $flags;
 }
 
+//Div
 add_shortcode('div', 'div_shortcode');
 function div_shortcode($atts, $content=''){
 	extract(shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts));
@@ -26,7 +27,7 @@ function div_shortcode($atts, $content=''){
 		$div = '<div class="nebula-div ' . $class . '" style="' . $style . '">' . $content . '</div>';
 	} else {
 		if ( $close ){
-			$div = '</div><!-- /nebula-div -->';
+			$div = '</div>';
 		} else {
 			$div = '<div class="nebula-div nebula-div-open' . $class . '" style="' . $style . '">';
 		}
@@ -38,40 +39,31 @@ function div_shortcode($atts, $content=''){
 //Bootstrap Grid Shortcodes
 
 //Container
-if ( shortcode_exists('container') ){
-	add_shortcode('bootstrap_container', 'container_shortcode');
-} else {
-	add_shortcode('bootstrap_container', 'container_shortcode');
+add_shortcode('bootstrap_container', 'container_shortcode');
+if ( !shortcode_exists('container') ){
 	add_shortcode('container', 'container_shortcode');
 }
 function container_shortcode($atts, $content=''){
 	extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
-	return '<div class="nebula-container container ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/container-->';
+	return '<div class="nebula-container container ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 }
 
 //Row
-if ( shortcode_exists('row') ){
-	add_shortcode('bootstrap_row', 'row_shortcode');
-} else {
-	add_shortcode('bootstrap_row', 'row_shortcode');
+add_shortcode('bootstrap_row', 'row_shortcode');
+if ( !shortcode_exists('row') ){
 	add_shortcode('row', 'row_shortcode');
 }
 function row_shortcode($atts, $content=''){
 	extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
-	return '<div class="nebula-row row ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div><!--/row-->';
+	return '<div class="nebula-row row ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 }
 
 //Columns
-if ( shortcode_exists('columns') || shortcode_exists('column') || shortcode_exists('cols') || shortcode_exists('col') ){
-	add_shortcode('bootstrap_column', 'column_shortcode');
-	add_shortcode('bootstrap_columns', 'column_shortcode');
-	add_shortcode('bootstrap_col', 'column_shortcode');
-	add_shortcode('bootstrap_cols', 'column_shortcode');
-} else {
-	add_shortcode('bootstrap_column', 'column_shortcode');
-	add_shortcode('bootstrap_columns', 'column_shortcode');
-	add_shortcode('bootstrap_col', 'column_shortcode');
-	add_shortcode('bootstrap_cols', 'column_shortcode');
+add_shortcode('bootstrap_column', 'column_shortcode');
+add_shortcode('bootstrap_columns', 'column_shortcode');
+add_shortcode('bootstrap_col', 'column_shortcode');
+add_shortcode('bootstrap_cols', 'column_shortcode');
+if ( !shortcode_exists('columns') && !shortcode_exists('column') && !shortcode_exists('cols') && !shortcode_exists('col') ){
 	add_shortcode('column', 'column_shortcode');
 	add_shortcode('columns', 'column_shortcode');
 	add_shortcode('col', 'column_shortcode');

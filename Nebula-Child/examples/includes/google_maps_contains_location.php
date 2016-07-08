@@ -26,10 +26,6 @@
 	function nebula_checkSpecificLocation(){
 	    var latlng = new google.maps.LatLng(nebula.session.geolocation.coordinates.latitude, nebula.session.geolocation.coordinates.longitude);
 
-
-
-
-
 				/*
 					//How to pull locations from a custom field to create a polygon
 					if ( google.maps.geometry.poly.containsLocation(latlng, nysfPolygon) ){
@@ -58,15 +54,6 @@
 						}
 					}
 				*/
-
-
-
-
-
-
-
-
-
 
 		//Admin/Upstairs
 		var adminUpstairsPolygon = new google.maps.Polygon({
@@ -236,8 +223,6 @@
 			jQuery('#location-results .latlng').html('<strong>Error:</strong> ' + nebula.session.geolocation.error.description);
 		}
 	}
-
-
 
 	//Render Google Map
 	function renderMap(){

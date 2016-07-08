@@ -34,6 +34,7 @@
 			categories: '<?php echo nebula_option('cd_categories'); //Hit ?>',
 			tags: '<?php echo nebula_option('cd_tags'); //Hit ?>',
 			contactMethod: '<?php echo nebula_option('cd_contactmethod'); //Session ?>',
+			formTiming: '<?php echo nebula_option('cd_formtiming'); //Hit ?>',
 			firstInteraction: '<?php echo nebula_option('cd_firstinteraction'); //User ?>',
 			geolocation: '<?php echo nebula_option('cd_geolocation'); //Session ?>',
 			geoAccuracy: '<?php echo nebula_option('cd_geoaccuracy'); //Session ?>',
@@ -292,7 +293,7 @@
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
 		ga('send', 'pageview'); <?php //Send pageview along with set dimensions. ?>
-		//console.log('pageview sent');
+		//console.log('pageview triggered');
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 

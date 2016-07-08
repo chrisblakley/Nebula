@@ -1,7 +1,6 @@
 <style>
 	#herovideo {margin-top: -30px;} /* Do not copy over this line - it is for this example page only! */
 
-
 	#herovideo {position: relative; overflow: hidden; min-height: 492px;}
 
 	#video-background,
@@ -28,7 +27,6 @@
 			#fullherovideo iframe {width: 100%; min-height: 492px;}
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
 		jQuery('.herovideobtn').on('click tap touch', function(){
@@ -42,7 +40,6 @@
 		});
 	});
 </script>
-
 
 <div class="container nebulashadow bulging">
 	<div id="herovideo">

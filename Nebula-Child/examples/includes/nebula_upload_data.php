@@ -2,7 +2,6 @@
 	#debugresponse {width: 100%; height: 200px; padding: 5px 10px; display: none;}
 </style>
 
-
 <script>
 	jQuery(document).ready(function() {
 
@@ -95,7 +94,6 @@
 		});
 	}
 </script>
-
 
 <div class="row">
 	<div class="col-md-12">
