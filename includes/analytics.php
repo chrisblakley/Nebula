@@ -283,12 +283,11 @@
 				<?php endif; ?>
 
 				if ( nebula.session.flags && nebula.session.flags.adblock !== 'true' ){
-					ga('send', 'event', adBlockUser, 'This user is using ad blocking software.');
+					ga('send', 'event', adBlockUser, 'This user is using ad blocking software.'); //Might need to move this into main.js and check against the below flag
 					nebula.session.flags.adblock = 'true';
 				}
 			});
 		<?php endif; ?>
-
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
@@ -296,7 +295,6 @@
 		//console.log('pageview triggered');
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
-
 
 		//Get local time string with timezone offset
 		function localTimestamp(){

@@ -583,7 +583,7 @@ function socialSharing(){
  Analytics Functions
  ===========================*/
 
-//Call the event tracking functions (since it needs to happen twice.
+//Call the event tracking functions (since it needs to happen twice).
 function initEventTracking(){
 	window.nebulaTrackingCalled = true;
 	eventTracking();
