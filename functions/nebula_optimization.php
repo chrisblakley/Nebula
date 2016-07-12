@@ -99,6 +99,21 @@ function nebula_dequeues(){
 	}
 }
 
+//Remove jQuery Migrate, but keep jQuery
+add_filter('wp_default_scripts', 'nebula_remove_jquery_migrate');
+function nebula_remove_jquery_migrate($scripts){
+	if ( !is_admin() ){
+		$scripts->remove('jquery');
+		$scripts->add('jquery', false, array('jquery-core'), null);
+	}
+}
+
+//Override needing the Tether library for Bootstrap. If Tether is needed, it is dynamically loaded via main.js.
+add_action('wp_enqueue_scripts', 'test_tether');
+function test_tether(){
+	echo '<script>window.Tether = function(){}</script>'; //Must be a function to bypass Bootstrap check.
+}
+
 //Force settings within plugins
 add_action('admin_init', 'nebula_plugin_force_settings');
 function nebula_plugin_force_settings(){

@@ -1950,9 +1950,13 @@ function conditionalJSLoading(){
         });
     }
 
-	//Only load tether if Tooltips exist
+	//Only load Tether library when Bootstrap tooltips are present.
 	if ( jQuery('[data-toggle="tooltip"]').length ){
-		nebulaLoadCSS(nebula.site.resources.css.tether);
+		jQuery.getScript(nebula.site.resources.js.tether).fail(function(){
+            ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+            ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
+            ga('send', 'event', 'Error', 'JS Error', 'tether.min.js could not be loaded', {'nonInteraction': 1});
+        });
 	}
 
 	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){

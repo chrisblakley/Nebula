@@ -134,8 +134,6 @@ function ga_send_data($data){
 	$override = apply_filters('pre_ga_send_data', false, $data);
 	if ( $override !== false ){return $override;}
 
-	return false; //@todo: temporarily removing for testing (not set) on landing page GA issue.
-
 	$getString = 'https://ssl.google-analytics.com/collect';
 	$getString .= '?payload_data&';
 	$getString .= http_build_query($data);

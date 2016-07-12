@@ -370,6 +370,10 @@
 
 
 <?php if ( nebula_option('facebook_custom_audience_pixel_id') ): ?>
+	<?php
+		$override = apply_filters('pre_nebula_facebook_pixel', false);
+		if ( $override !== false ){echo $override; return;}
+	?>
 	<script>
 		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
