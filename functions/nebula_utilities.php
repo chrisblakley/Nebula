@@ -258,6 +258,166 @@ function nebula_ga_event_ajax(){
 	exit;
 }
 
+//Send data to Hubspot CRM via PHP curl
+function nebula_hubspot_curl($url, $content){
+	$curl = curl_init($url . '?hapikey=' . nebula_option('hubspot_api'));
+	curl_setopt($curl, CURLOPT_HEADER, false);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+	curl_setopt($curl, CURLOPT_POST, true);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+	return curl_exec($curl);
+}
+
+//Create Custom Properties
+function nebula_create_hubspot_property(){ //@todo "Nebula" 0: Only need to do this once!
+	if ( nebula_option('hubspot_portal') ){
+		//Create the Nebula group of properties
+		$content = '{
+	        "name": "nebula",
+	        "displayName": "Nebula",
+	        "displayOrder": 5
+	    }';
+		nebula_hubspot_curl('http://api.hubapi.com/contacts/v2/groups?portalId=' . nebula_option('hubspot_portal'), $content);
+	}
+
+	//Create GA CID custom property within the Nebula group
+	$content = '{
+		"name": "gacid",
+		"label": "Google Analytics CID",
+		"description": "The Client ID from the Google Analytics cookie.",
+		"groupName": "nebula",
+		"type": "string",
+		"fieldType": "text",
+		"formField": true,
+		"displayOrder": 6,
+		"options": []
+	}';
+	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+
+	//Create Nebula IP custom property within the Nebula group
+	$content = '{
+		"name": "nebulaip",
+		"label": "IP Address (Nebula)",
+		"description": "The IP address.",
+		"groupName": "nebula",
+		"type": "string",
+		"fieldType": "text",
+		"formField": true,
+		"displayOrder": 6,
+		"options": []
+	}';
+	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+
+	//Create Notable POI custom property within the Nebula group
+	$content = '{
+		"name": "notablepoi",
+		"label": "Notable POI",
+		"description": "A notable place of interest (based on IP addresses in Nebula Options)",
+		"groupName": "nebula",
+		"type": "string",
+		"fieldType": "text",
+		"formField": true,
+		"displayOrder": 6,
+		"options": []
+	}';
+	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+
+	//Create Session ID custom property within the Nebula group
+	$content = '{
+		"name": "sessionid",
+		"label": "Session ID",
+		"description": "The session ID as assigned by Nebula.",
+		"groupName": "nebula",
+		"type": "string",
+		"fieldType": "text",
+		"formField": true,
+		"displayOrder": 6,
+		"options": []
+	}';
+	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+}
+
+//Create/Update Contact
+add_action('wp_ajax_nebula_send_to_hubspot', 'nebula_send_to_hubspot');
+add_action('wp_ajax_nopriv_nebula_send_to_hubspot', 'nebula_send_to_hubspot');
+function nebula_send_to_hubspot(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+
+	if ( nebula_option('hubspot_api') ){
+		$data = array( //@todo: validate these?
+			'email' => $_POST['email'],
+			'properties' => $_POST['properties'],
+		);
+
+		nebula_create_hubspot_property();
+
+		//Create the properties array
+		$content = array('properties' => array());
+
+		//Loop through provided properties
+		foreach ( $data['properties'] as $property => $value ){
+			$content['properties'][] = array(
+				'property' => $property,
+				'value' => $value
+			);
+		}
+
+		//Append supplemental data
+		//IP Address (Note: The Hubspot core "ipaddress" property is read only so the value can not be set.)
+		$content['properties'][] = array(
+			'property' => 'nebulaip',
+			'value' => $_SERVER['REMOTE_ADDR']
+		);
+
+		//Notable POI
+		$notable_poi = nebula_poi();
+		if ( !empty($notable_poi) ){
+			$content['properties'][] = array(
+				'property' => 'notablepoi',
+				'value' => $notable_poi
+			);
+		}
+
+		//Google Analytics CID
+		$content['properties'][] = array(
+			'property' => 'gacid',
+			'value' => $GLOBALS['ga_cid']
+		);
+
+		//Session ID
+		$content['properties'][] = array(
+			'property' => 'sessionid',
+			'value' => nebula_session_id()
+		);
+
+		echo nebula_hubspot_curl('https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/' . $data['email'] . '/', json_encode($content));
+	}
+
+	exit;
+}
+
+//Get contact data from Hubspot
+//Set this to a variable to avoid multiple calls, then parse it like this: $hubspot_data['properties']['firstname']['value']
+function nebula_get_hubspot_contact($vid=null, $property=''){
+	global $nebula;
+	if ( empty($vid) && !empty($nebula['user']['vid']) ){
+		$vid = $nebula['user']['vid'];
+	} else {
+		return false;
+	}
+
+	if ( !empty($property) ){
+		$property = '&property=' . $property;
+	}
+
+	WP_Filesystem();
+	global $wp_filesystem;
+	$contact_data = $wp_filesystem->get_contents('https://api.hubapi.com/contacts/v1/contact/vid/' . $vid . '/profile?hapikey=' . nebula_option('hubspot_api') . $property);
+
+	return json_decode($contact_data, true);
+}
+
 //Retarget users based on prior conversions/leads
 function nebula_retarget($category=false, $data=null, $strict=true, $return=false){
 	global $nebula;
@@ -300,6 +460,24 @@ function nebula_retarget($category=false, $data=null, $strict=true, $return=fals
 			return $nebula['user']['conversions'][$category];
 		}
 	}
+	return false;
+}
+
+//Detect Notable POI
+function nebula_poi(){
+	if ( nebula_option('notableiplist') ){
+		$notable_ip_lines = explode("\n", nebula_option('notableiplist'));
+		foreach ( $notable_ip_lines as $line ){
+			$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
+			if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $_SERVER['REMOTE_ADDR'])) || $ip_info[0] == $_SERVER['REMOTE_ADDR'] ){ //If regex pattern and matches IP, or if direct match
+				return str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]);
+				break;
+			}
+		}
+	} elseif ( isset($_GET['poi']) ){ //If POI query string exists //@TODO "Nebula" 0: in main.js strip this query string off the URL somehow?
+		return str_replace('%20', '', $_GET['poi']);
+	}
+
 	return false;
 }
 

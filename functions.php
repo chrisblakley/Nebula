@@ -207,6 +207,7 @@ function register_nebula_scripts(){
 				'count' => 1
 			),
 			'cid' => ga_parse_cookie(),
+			'vid' => false,
 			'conversions' => false,
 			'flags' => array(
 				'fbconnect' => false,

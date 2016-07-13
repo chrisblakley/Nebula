@@ -243,6 +243,8 @@ function nebula_default_options(){
 		'google_server_api_key' => '',
 		'google_browser_api_key' => '',
 		'cse_id' => '',
+		'hubspot_api' => '',
+		'hubspot_portal' => '',
 		'disqus_shortname' => '',
 		'facebook_app_id' => '',
 		'twitter_consumer_key' => '',
@@ -1421,10 +1423,19 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr valign="top">
+		        	<th scope="row">Hubspot&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						API Key: <input type="text" name="nebula_options[hubspot_api]" value="<?php echo $nebula_options['hubspot_api']; ?>" /><br/>
+						Portal ID: <input type="text" name="nebula_options[hubspot_portal]" value="<?php echo $nebula_options['hubspot_portal']; ?>" />
+						<p class="helper"><small>Enter your Hubspot API key here. It can be obtained from your <a href="https://app.hubspot.com/hapikeys">API Keys page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your account screen.</small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
 		        	<th scope="row">Disqus Shortname&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_options[disqus_shortname]" value="<?php echo $nebula_options['disqus_shortname']; ?>" />
-						<p class="helper"><small> Enter your Disqus shortname here. <a href="https://disqus.com/admin/create/" target="_blank">Sign-up for an account here</a>. In your <a href="https://<?php echo $nebula_options['disqus_shortname']; ?>.disqus.com/admin/settings/" target="_blank">Disqus account settings</a> (where you will find your shortname), please uncheck the "Discovery" box.</small></p>
+						<p class="helper"><small>Enter your Disqus shortname here. <a href="https://disqus.com/admin/create/" target="_blank">Sign-up for an account here</a>. In your <a href="https://<?php echo $nebula_options['disqus_shortname']; ?>.disqus.com/admin/settings/" target="_blank">Disqus account settings</a> (where you will find your shortname), please uncheck the "Discovery" box.</small></p>
 					</td>
 		        </tr>
 

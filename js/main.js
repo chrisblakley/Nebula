@@ -976,6 +976,34 @@ function scrollDepth(){
 	}
 }
 
+//Create/Update contact
+function hubspot(mode, type, email, properties){
+	if ( mode === 'send' && type === 'contact' ){
+		jQuery.ajax({
+			type: "POST",
+			url: nebula.site.ajax.url,
+			data: {
+				nonce: nebula.site.ajax.nonce,
+				action: 'nebula_send_to_hubspot',
+				email: email,
+				properties: properties,
+			},
+			success: function(data){
+				data = JSON.parse(data);
+				if ( data ){
+					nebula.user.vid = data.vid;
+					createCookie('nebulaUser', JSON.stringify(nebula.user));
+				}
+				jQuery(document).trigger('nebula_hubspot_sent');
+			},
+			error: function(MLHttpRequest, textStatus, errorThrown){
+				//Error functions here
+			},
+			timeout: 60000
+		});
+	}
+}
+
 /*==========================
  Search Functions
  ===========================*/

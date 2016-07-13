@@ -249,17 +249,8 @@
 			}
 
 			//Notable POI (IP Addresses)
-			if ( nebula_option('cd_notablepoi') && nebula_option('notableiplist') ){
-				$notable_ip_lines = explode("\n", nebula_option('notableiplist'));
-				foreach ( $notable_ip_lines as $line ){
-					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
-					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $_SERVER['REMOTE_ADDR'])) || $ip_info[0] == $_SERVER['REMOTE_ADDR'] ){ //If regex pattern and matches IP, or if direct match
-						echo 'ga("set", gaCustomDimensions["poi"], "' . str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]) . '");';
-						break;
-					}
-				}
-			} elseif ( isset($_GET['poi']) ){ //If POI query string exists //@TODO "Nebula" 0: in main.js strip this query string off the URL somehow?
-				echo 'ga("set", gaCustomDimensions["poi"], "' . str_replace('%20', '', $_GET['poi']) . '");';
+			if ( nebula_option('cd_notablepoi') ){
+				echo 'ga("set", gaCustomDimensions["poi"], "' . nebula_poi() . '");';
 			}
 		?>
 
