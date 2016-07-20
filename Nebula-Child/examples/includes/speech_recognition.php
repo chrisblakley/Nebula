@@ -180,7 +180,7 @@
 					} else {
 						ga('send', 'event', 'Speech Recognition', 'Transcript', '"' + final_transcript + '"');
 					}
-					nebulaConversion('speech_recognition', final_transcript);
+					nv('append', {'speech_recognition': final_transcript});
 				}
 
 				if ( ignore_onend ) {

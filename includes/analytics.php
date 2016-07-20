@@ -232,8 +232,11 @@
 			}
 
 			//First visit timestamp
-			if ( nebula_option('cd_firstinteraction') && !empty($nebula['user']['sessions']['initial']) ){
-				echo 'ga("set", gaCustomDimensions["firstInteraction"], "' . time() . '");';
+			if ( nebula_option('cd_firstinteraction') ){
+				$first_session = nebula_get_visitor_data('first_session');
+				if ( !empty($first_session) ){
+					echo 'ga("set", gaCustomDimensions["firstInteraction"], "' . time() . '");';
+				}
 			}
 
 			//Weather Conditions

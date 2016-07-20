@@ -23,6 +23,7 @@
 		jQuery('.basicnotify').on('click', function(){
 			desktopNotification("Basic Notification", "This is the message");
 			ga('send', 'event', 'Notification Activated', 'Basic Notification');
+			nv('send', {'desktop_notification_example': 'Basic Notification'});
 			return false;
 		});
 
@@ -35,6 +36,7 @@
 			}
 			desktopNotification("Fully Customized Notification", message, clickNotify, closeNotify, showNotify, errorNotify);
 			ga('send', 'event', 'Notification Activated', 'Fully Customized');
+			nv('send', {'desktop_notification_example': 'Fully Customized'});
 
 			function clickNotify() {
 				jQuery('.fullnotify').removeClass('btn-primary btn-danger btn-success btn-info btn-warning').addClass('btn-success');
@@ -81,6 +83,7 @@
 			ga('send', 'event', 'Notification Activated', 'Custom Message', customtitle + ': ' +  message);
 			jQuery('.customtitle').val('').focus();
 			jQuery('.custommessage').val('');
+			nv('send', {'desktop_notification_example': customtitle + ': ' +  custommessage});
 			return false;
 		});
 

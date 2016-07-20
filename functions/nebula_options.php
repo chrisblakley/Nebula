@@ -171,6 +171,7 @@ function nebula_default_options(){
 		'staging_theme' => '',
 		'production_theme' => '',
 		'admin_bar' => 'enabled',
+		'visitors_db' => 'disabled',
 		'admin_notices' => 'enabled',
 		'author_bios' => 'disabled',
 		'comments' => 'disabled',
@@ -179,6 +180,7 @@ function nebula_default_options(){
 		'wp_core_updates_notify' => 'enabled',
 		'plugin_update_warning' => 'enabled',
 		'unnecessary_metaboxes' => 'enabled',
+		'visitor_database' => 'disabled',
 		'scss' => 'disabled',
 		'minify_css' => 'disabled',
 		'dev_stylesheets' => 'disabled',
@@ -877,6 +879,18 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', $nebula_options['admin_bar']); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <strong>Note:</strong> When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Visitor Database&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_options[visitors_db]">
+							<option disabled>Default: Disabled</option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['visitors_db']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['visitors_db']); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Adds a table to the database to store visitor usage information. This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank">full marketing automation service</a>. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 

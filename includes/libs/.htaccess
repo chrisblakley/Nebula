@@ -1,0 +1,2 @@
+#Only PHP can access these files. Do not put includes that require JS, CSS, or HTML to access in this directory!
+Deny from all

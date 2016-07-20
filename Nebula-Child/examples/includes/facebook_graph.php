@@ -62,7 +62,18 @@
 						timezone: response.timezone,
 					}
 
-					nebulaConversion('facebook', 'connect');
+					nv('send', {
+						'first_name': response.first_name,
+						'last_name': response.last_name,
+						'full_name': response.name,
+						'gender': response.gender,
+						'email_address': response.email,
+						'locale': response.locale,
+						'timezone': response.timezone,
+						'facebook_id': response.id,
+						'facebook_connect': '1',
+					});
+
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Connect'));
 					ga('set', gaCustomDimensions['fbID'], nebula.user.facebook.id);

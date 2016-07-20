@@ -6,6 +6,11 @@
 			'message': jQuery("#ajax-contact textarea.message").val(),
 		}];
 
+		nv('send', {
+			'full_name': jQuery("#ajax-contact input.name").val(),
+			'email_address': jQuery("#ajax-contact input.email").val()
+		});
+
 		jQuery('#form-messages').html('<i class="fa fa-spinner fa-spin sending"></i> Sending...');
 
 		jQuery.ajax({

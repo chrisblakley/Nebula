@@ -33,6 +33,10 @@
 
 			ga('send', 'event', 'NFL Teams', 'Favorite: ' + favTeam, 'Hated: ' + hateTeams.join(', '));
 			nebulaConversion('form', 'Example Chosen Form (NFL Teams)');
+			nv('append', {
+				'favorite_nfl_team': favTeam,
+				'hated_nfl_teams': hateTeams.join(', '),
+			});
 			lockForm();
 
 			return false;

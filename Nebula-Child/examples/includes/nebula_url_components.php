@@ -32,6 +32,7 @@
 	jQuery(document).on('submit', '#urltester', function(e){
 		if ( jQuery("#urlstring").val().trim() != '' ) {
 			ga('send', 'event', 'Nebula URL Components Test', jQuery("#urlstring").val().trim());
+			nv('append', {'url_components_tester': jQuery("#urlstring").val().trim()});
 
 			jQuery('i.fa-spinner').removeClass('hidden');
 

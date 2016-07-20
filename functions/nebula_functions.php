@@ -52,7 +52,7 @@ function addBackPostFeed(){
 add_action('init', 'nebula_no_js_event');
 function nebula_no_js_event(){
 	if ( !nebula_is_bot() && isset($_GET['nonce']) && isset($_GET['js']) && $_GET['js'] == 'false' ){
-		if ( !wp_verify_nonce($_GET['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+		if ( !wp_verify_nonce($_GET['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
 
@@ -73,7 +73,7 @@ function nebula_no_js_event(){
 add_action('wp_ajax_nebula_ga_blocked', 'nebula_ga_blocked');
 add_action('wp_ajax_nopriv_nebula_ga_blocked', 'nebula_ga_blocked');
 function nebula_ga_blocked(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	$post_id = $_POST['data'][0]['id'];
 	$dimension_array = array();
 
@@ -863,7 +863,7 @@ add_action('wp_ajax_nebula_twitter_cache', 'nebula_twitter_cache');
 add_action('wp_ajax_nopriv_nebula_twitter_cache', 'nebula_twitter_cache');
 function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_tweets=5, $include_retweets=1){
 	if ( $_POST['data'] ){
-		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 		$username = ( $_POST['data']['username'] )? $_POST['data']['username'] : 'Great_Blakes';
 		$listname = ( $_POST['data']['listname'] )? $_POST['data']['listname'] : null; //Only used for list feeds
 		$number_tweets = ( $_POST['data']['numbertweets'] )? $_POST['data']['numbertweets'] : 5;
@@ -960,7 +960,7 @@ function nebula_excerpt($options=array()){
 add_action('wp_ajax_navigator', 'nebula_ajax_navigator');
 add_action('wp_ajax_nopriv_navigator', 'nebula_ajax_navigator');
 function nebula_ajax_navigator(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	include(get_template_directory() . '/includes/navigator.php');
 	exit();
 }
@@ -1216,7 +1216,7 @@ function nebula_hero_search($placeholder='What are you looking for?'){
 add_action('wp_ajax_nebula_autocomplete_search', 'nebula_autocomplete_search');
 add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_search');
 function nebula_autocomplete_search(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 	ini_set('memory_limit', '256M');
 	$_POST['data']['term'] = trim($_POST['data']['term']);
@@ -1460,7 +1460,7 @@ function nebula_autocomplete_search(){
 add_action('wp_ajax_nebula_advanced_search', 'nebula_advanced_search');
 add_action('wp_ajax_nopriv_nebula_advanced_search', 'nebula_advanced_search');
 function nebula_advanced_search(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 	ini_set('memory_limit', '512M'); //Increase memory limit for this script.
 
@@ -1677,7 +1677,7 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 add_action('wp_ajax_nebula_infinite_load', 'nebula_infinite_load');
 add_action('wp_ajax_nopriv_nebula_infinite_load', 'nebula_infinite_load');
 function nebula_infinite_load(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	$page_number = $_POST['page'];
 	$args = $_POST['args'];
 	$args['paged'] = $page_number;
@@ -1980,6 +1980,16 @@ function business_open($date=null, $general=0){
 
 	return false;
 }
+
+//If the business is open, return the time that the business closes today
+function business_open_until(){
+    if ( is_business_open() ){
+        return nebula_option('business_hours_' . $weekday . '_close');
+    }
+
+    return false;
+}
+
 
 //Get the relative time of day
 function nebula_relative_time($format=null){

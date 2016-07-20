@@ -75,3 +75,34 @@ function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=fal
 	));
 };
 
+
+
+
+
+//Retarget users based on prior conversions/leads (Modified to work with new DB storage method)
+function nebula_retarget($category=false, $data=null, $strict=true, $return=false){
+	$response = nebula_get_visitor_data($category);
+
+	if ( $strict ){
+		if ( $response == $data ){
+			if ( !empty($return) ){
+				return $response;
+			}
+
+			return true;
+		}
+	} else {
+		if ( strpos($response, $data) !== false ){
+			if ( !empty($return) ){
+				return $response;
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+

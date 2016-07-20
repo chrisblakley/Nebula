@@ -14,7 +14,7 @@
 			var textToSay = jQuery('#speaktext').val();
 			speak(textToSay);
 			//console.log('sending to speak');
-			nebulaConversion('speech_synthesis', textToSay);
+			nv('append', {'speech_synthesis': textToSay});
 			return false;
 		});
 

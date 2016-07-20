@@ -70,11 +70,6 @@ if ( is_dev(true) || current_user_can('manage_options') ){
 	            'required'  => false,
 	        ),
 	        array(
-	            'name'      => 'Really Simple CAPTCHA',
-	            'slug'      => 'really-simple-captcha',
-	            'required'  => false,
-	        ),
-	        array(
 	            'name'      => 'TinyMCE Advanced',
 	            'slug'      => 'tinymce-advanced',
 	            'required'  => false,

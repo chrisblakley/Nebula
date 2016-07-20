@@ -143,6 +143,8 @@ function register_nebula_scripts(){
 				'instagram_url' => nebula_option('instagram_url'),
 				'manage_options' => current_user_can('manage_options'),
 				'debug' => is_debug(),
+				'visitors_db' => nebula_option('visitors_db'),
+				'hubspot_api' => ( nebula_option('hubspot_api') )? true : false,
 			),
 			'resources' => array(
 				'css' => $nebula_styles,
@@ -166,9 +168,6 @@ function register_nebula_scripts(){
 		$nebula['session'] = array(
 			'ip' => $_SERVER['REMOTE_ADDR'],
 			'id' => nebula_session_id(),
-			'referrer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : false,
-			'notes' => false,
-			'geolocation' => false,
 			'flags' => array(
 				'adblock' => false,
 				'gablock' => false,
@@ -178,66 +177,35 @@ function register_nebula_scripts(){
 
 	$user_info = get_userdata(get_current_user_id());
 
-	//Check for user cookie here.
-	if ( $_COOKIE['nebulaUser'] && json_decode($_COOKIE['nebulaUser'], true) ){ //If user cookie exists and is valid JSON
-		$nebula['user'] = json_decode($_COOKIE['nebulaUser'], true); //Replace nebula.user with cookie data
-
-		if ( session_id() == '' || !isset($_SESSION) ){ //If it is a new session
-			$nebula['user']['sessions'] = array(
-				'initial' => true,
-				'first' => $nebula['user']['sessions']['first'], //is this right? not time()?
-				'last' => $nebula['user']['sessions']['current'],
-				'current' => time(),
-				'count' => $nebula['user']['sessions']['count']++,
-			);
-		} else { //Else it is an existing session?
-			$nebula['user']['sessions']['current'] = time();
-			$nebula['user']['sessions']['initial'] = false;
-		}
-	} else {
-		$nebula['user'] = array(
-			'ip' => $_SERVER['REMOTE_ADDR'],
-			'id' => get_current_user_id(), //Never use this for security checks!
-			'role' => $user_info->roles[0], //Never use this for security checks!
-			'sessions' => array(
-				'initial' => true,
-				'first' => time(),
-				'last' => false,
-				'current' => time(),
-				'count' => 1
+	//User Data
+	$nebula['user'] = array(
+		'ip' => $_SERVER['REMOTE_ADDR'],
+		'nid' => get_nebula_id(),
+		'cid' => ga_parse_cookie(),
+		'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
+			'bot' => nebula_is_bot(),
+			'remote_addr' => $_SERVER['REMOTE_ADDR'],
+			'device' => array(
+				'full' => nebula_get_device('full'),
+				'formfactor' => nebula_get_device('formfactor'),
+				'brand' => nebula_get_device('brand'),
+				'model' => nebula_get_device('model'),
+				'type' => nebula_get_device('type'),
 			),
-			'cid' => ga_parse_cookie(),
-			'vid' => false,
-			'conversions' => false,
-			'flags' => array(
-				'fbconnect' => false,
+			'os' => array(
+				'full' => nebula_get_os('full'),
+				'name' => nebula_get_os('name'),
+				'version' => nebula_get_os('version'),
 			),
-			'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
-				'bot' => nebula_is_bot(),
-				'remote_addr' => $_SERVER['REMOTE_ADDR'],
-				//'user_agent' => urlencode($_SERVER['HTTP_USER_AGENT']), //@TODO "Nebula" 0: This is causing some serious issues. Only half of it shows up causing the json_decode() above to be null. Try var dumping the user agent to see if a certain character is messing it up.
-				'device' => array(
-					'full' => nebula_get_device('full'),
-					'formfactor' => nebula_get_device('formfactor'),
-					'brand' => nebula_get_device('brand'),
-					'model' => nebula_get_device('model'),
-					'type' => nebula_get_device('type'),
-				),
-				'os' => array(
-					'full' => nebula_get_os('full'),
-					'name' => nebula_get_os('name'),
-					'version' => nebula_get_os('version'),
-				),
-				'browser' => array(
-					'full' => nebula_get_browser('full'),
-					'name' => nebula_get_browser('name'),
-					'version' => nebula_get_browser('version'),
-					'engine' => nebula_get_browser('engine'),
-					'type' => nebula_get_browser('type'),
-				),
+			'browser' => array(
+				'full' => nebula_get_browser('full'),
+				'name' => nebula_get_browser('name'),
+				'version' => nebula_get_browser('version'),
+				'engine' => nebula_get_browser('engine'),
+				'type' => nebula_get_browser('type'),
 			),
-		);
-	}
+		),
+	);
 }
 
 //Start a session

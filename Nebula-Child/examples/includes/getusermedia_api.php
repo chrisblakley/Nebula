@@ -56,7 +56,7 @@
 			jQuery('#snap').on('click tap touch', function(){
 				if ( snapshotCount <= 3 ) {
 					snapshotExample(context);
-					nebulaConversion('getusermedia', true);
+					nv('send', {'get_user_media_example': '1'});
 				} else {
 					jQuery('#snapcon').fadeOut();
 					ga('send', 'event', 'Get User Media API Example', 'Snap Limit Reached', 'Snapshot Count: ' + snapshotCount);

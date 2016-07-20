@@ -514,10 +514,6 @@
 				<td>Facebook Image</td>
 				<td id="fbimage"><?php nebula_print_data($nebula['user']['facebook']['image']['base']); ?></td>
 			</tr>
-			<tr>
-				<td>Conversions</td>
-				<td><?php print_array_r($nebula['user']['conversions']); ?></td>
-			</tr>
 
 
 

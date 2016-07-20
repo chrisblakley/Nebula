@@ -20,7 +20,7 @@ function nebula_session_id(){
 	$session_info .= ( nebula_is_bot() )? 'bot.' : '';
 
 	$wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
-	$ga_cid = ( isset($nebula['user']['cid']) )? $nebula['user']['cid'] : ga_parse_cookie();
+	$ga_cid = ga_parse_cookie();
 
 	$site_live = '';
 	if ( !is_site_live() ){
@@ -251,27 +251,514 @@ function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional para
 add_action('wp_ajax_nebula_ga_event_ajax', 'nebula_ga_event_ajax');
 add_action('wp_ajax_nopriv_nebula_ga_event_ajax', 'nebula_ga_event_ajax');
 function nebula_ga_event_ajax(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	if ( !nebula_is_bot() ){
 		ga_send_event($_POST['data'][0]['category'], $_POST['data'][0]['action'], $_POST['data'][0]['label'], $_POST['data'][0]['value'], $_POST['data'][0]['ni']);
 	}
 	exit;
 }
 
+/*==========================
+	Nebula Visitor Data
+ ===========================*/
+
+//Create Users Table with minimal default columns.
+add_action('admin_init', 'nebula_create_visitors_table');
+function nebula_create_visitors_table(){
+	if ( nebula_option('visitors_db') && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this when Nebula Options are saved.
+		if ( nebula_option('visitors_db') ){
+			global $wpdb;
+			$created = $wpdb->query("CREATE TABLE nebula_visitors (
+				id INT(255) NOT NULL AUTO_INCREMENT,
+				nebula_id VARCHAR(255) NOT NULL,
+				known BOOLEAN NOT NULL DEFAULT FALSE,
+				email_address VARCHAR(255) NOT NULL,
+				hubspot_vid VARCHAR(255) NOT NULL,
+				PRIMARY KEY (id)
+			) ENGINE = MyISAM;");
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Check if the Nebula ID exists on load and generate/store a new one if it does not.
+add_action('wp_head', 'check_nebula_id'); //Might want to do this after the head scripts have finished to make sure ga_cid is from Google and not Nebula (when possible). Maybe on nebula_ga_after_send_pageview or even on wp_footer
+function check_nebula_id(){
+	if ( nebula_is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
+		return false; //Don't add bots to the DB
+	}
+
+	$nebula_id = get_nebula_id();
+
+	if ( empty($nebula_id) ){ //If new user
+		generate_nebula_id();
+	} else { //Returning user
+		new_or_returning_visitor();
+	}
+}
+
+function new_or_returning_visitor(){
+	if ( nebula_option('visitors_db') && !nebula_is_bot() ){
+		$last_session_id = nebula_get_visitor_data('last_session_id'); //Check if this returning visitor exists in the DB (in case they were removed)
+
+		if ( empty($last_session_id) ){ //if the nebula_id is not in the DB already, treat it as a new user
+			nebula_insert_visitor(array('first_session' => false));
+		} else {
+			//Check if new session or another pageview in same session
+			if ( session_id() != $last_session_id ){
+				$update_data = array(
+					'first_session' => 'false',
+					'session_count' => '9999', //@todo "Nebula" 0: This needs to increment
+					'current_session' => time(),
+					'current_session_pageviews' => '1',
+					'last_modified_date' => time(),
+				);
+			} else { //Same session
+				$update_data = array(
+					'current_session' => time(),
+					'current_session_pageviews' => '9999', //@todo "Nebula" 0: This needs to increment
+					'last_modified_date' => time(),
+				);
+			}
+
+			nebula_update_visitor($update_data);
+		}
+	}
+}
+
+//Return the Nebula ID (or false)
+function get_nebula_id(){
+	if ( isset($_COOKIE['nid']) ){
+		return htmlentities(preg_replace('/[^a-zA-Z0-9\.]+/', '', $_COOKIE['nid']));
+	}
+
+	return false;
+}
+
+//Generate a unique Nebula ID and store it in a cookie and insert into DB
+function generate_nebula_id(){
+	$_COOKIE['nid'] = nebula_version('full') . '.' . bin2hex(random_bytes(5)) . '.' . uniqid();
+	$nid_expiration = strtotime('January 1, 2035'); //Note: Do not let this cookie expire past 2038 or it instantly expires.
+
+	setcookie('nid', $_COOKIE['nid'], $nid_expiration, COOKIEPATH, COOKIE_DOMAIN); //Store the Nebula ID as a cookie called "nid".
+
+	if ( nebula_option('visitors_db') ){
+		global $wpdb;
+		$nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM nebula_visitors WHERE ga_cid = '%s'", ga_parse_cookie())); //Check if the ga_cid exists, and if so use THAT nebula_id again
+
+		if ( !empty($nebula_id_from_matching_ga_cid) ){
+			$_COOKIE['nid'] = reset($nebula_id_from_matching_ga_cid[0]);
+			setcookie('nid', $_COOKIE['nid'], $nid_expiration, COOKIEPATH, COOKIE_DOMAIN); //Update the Nebula ID cookie
+
+			new_or_returning_visitor(); //Update session info since this is actually a returning visitor
+		} else {
+			nebula_insert_visitor(); //Add the new visitor to the database
+		}
+	}
+	return $_COOKIE['nid'];
+}
+
+//Retrieve User Data
+add_action('wp_ajax_nebula_ajax_get_visitor_data', 'nebula_ajax_get_visitor_data');
+add_action('wp_ajax_nopriv_nebula_ajax_get_visitor_data', 'nebula_ajax_get_visitor_data');
+function nebula_ajax_get_visitor_data(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || nebula_is_bot() ){ die('Permission Denied.'); }
+	$column = $_POST['data'];
+	echo nebula_get_visitor_data($column);
+	exit;
+}
+function nebula_get_visitor_data($column){ //@TODO "Nebula" 0: Update to allow multiple datapoints to be accessed in one query.
+	if ( nebula_option('visitors_db') ){
+		$column = sanitize_text_field($column);
+
+		if ( is_nebula_visitor_column_name_valid($column) ){
+			if ( $column == 'notes' ){
+				return false;
+			}
+
+			$nebula_id = get_nebula_id();
+			if ( !empty($nebula_id) && !empty($column) ){
+				global $wpdb;
+				$requested_data = $wpdb->get_results($wpdb->prepare("SELECT " . $column . " FROM nebula_visitors WHERE nebula_id = '%s'", $nebula_id));
+
+				if ( !empty($requested_data) && !empty($requested_data[0]) && strtolower(reset($requested_data[0])) != 'null' ){
+					return reset($requested_data[0]); //@TODO "Nebula" 0: update so this could return multiple values
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+//Vague Data - Only update if it doesn't already exist in the DB
+add_action('wp_ajax_nebula_ajax_vague_visitor', 'nebula_ajax_vague_visitor');
+add_action('wp_ajax_nopriv_nebula_ajax_vague_visitor', 'nebula_ajax_vague_visitor');
+function nebula_ajax_low_visitor(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || nebula_is_bot() ){ die('Permission Denied.'); }
+	$data = $_POST['data'];
+	echo nebula_vague_visitor($data);
+	exit;
+}
+function nebula_vague_visitor($data=array()){
+	if ( nebula_option('visitors_db') && !nebula_is_bot() ){
+		$data_to_send = array();
+		foreach ( $data as $column => $value ){
+			$existing_value = nebula_get_visitor_data($column);
+			if ( empty($existing_value) ){ //If the requested data is empty/null, then update.
+				$data_to_send[$column] = $value;
+			}
+		}
+
+		if ( !empty($data_to_send) ){
+			nebula_update_visitor($data_to_send);
+		}
+	}
+	return false;
+}
+
+//Update User Data
+add_action('wp_ajax_nebula_ajax_update_visitor', 'nebula_ajax_update_visitor');
+add_action('wp_ajax_nopriv_nebula_ajax_update_visitor', 'nebula_ajax_update_visitor');
+function nebula_ajax_update_visitor(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || nebula_is_bot() ){ die('Permission Denied.'); }
+	$data = $_POST['data'];
+	echo nebula_update_visitor($data);
+	exit;
+}
+function nebula_update_visitor($data=array(), $send_to_hubspot=true){ //$data is going to be array(column => value) or an array of arrays
+	if ( nebula_option('visitors_db') && nebula_is_bot() ){
+		global $wpdb;
+		$nebula_id = get_nebula_id();
+
+		if ( !empty($nebula_id) && !empty($data) ){
+			$update_every_time = array(
+				'last_modified_date' => time(),
+				'nebula_session_id' => nebula_session_id(),
+			);
+
+			$all_data = array_merge($update_every_time, $data); //Add any passed data
+
+			//Check if the data should be sent to Hubspot
+			if ( !empty($send_to_hubspot) ){
+				$need_to_resend = false;
+				$non_priority_columns = array('id', 'known', 'create_date', 'last_modified_date', 'initial_session', 'first_session', 'last_session_id', 'previous_session', 'current_session', 'current_session_pageviews', 'session_count', 'hubspot_vid', 'bot', 'expiration', 'score', 'ga_block', 'ad_block', 'nebula_session_id'); //These columns should not facilitate a Hubspot send by themselves.
+				foreach ( $all_data as $column => $value ){
+					if ( !in_array($column, $non_priority_columns) ){
+						$need_to_resend = true;
+					}
+				}
+
+				if ( empty($need_to_resend) ){
+					$send_to_hubspot = false;
+				}
+			}
+
+			nebula_visitors_create_missing_columns($all_data);
+			$all_strings = array_fill(0, count($all_data), '%s'); //Create sanitization array
+
+			//Update the visitor row
+			$updated_visitor = $wpdb->update(
+				'nebula_visitors',
+				$all_data,
+				array('nebula_id' => $nebula_id),
+				$all_strings,
+				array('%s')
+			);
+
+			if ( $updated_visitor === false ){ //If visitor does not exist in the table, create it with defaults and current data... might need to be true if its int(0) too, so maybe go back to empty($updated_visitor)
+				nebula_insert_visitor($all_data);
+			} else {
+				check_if_known($send_to_hubspot);
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Append to User Data
+add_action('wp_ajax_nebula_ajax_append_visitor', 'nebula_ajax_append_visitor');
+add_action('wp_ajax_nopriv_nebula_ajax_append_visitor', 'nebula_ajax_append_visitor');
+function nebula_ajax_append_visitor(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || nebula_is_bot() ){ die('Permission Denied.'); }
+	$data = $_POST['data']; //json_decode(stripslashes()); but its already an array... why?
+	echo nebula_append_visitor($data);
+	exit;
+}
+function nebula_append_visitor($data=array(), $send_to_hubspot=true){ //$data is going to be array(column => value) or an array of arrays
+	if ( nebula_option('visitors_db') && !nebula_is_bot() ){
+		global $wpdb;
+		$nebula_id = get_nebula_id();
+
+		if ( !empty($nebula_id) && !empty($data) ){
+			nebula_update_visitor(array('last_modified_date' => time()));
+			nebula_visitors_create_missing_columns($data);
+
+			$append_query = "UPDATE nebula_visitors ";
+			foreach ( $data as $column => $value ){
+				$column = sanitize_text_field($column);
+
+				if ( is_nebula_visitor_column_name_valid($column) ){
+					$value = sanitize_text_field($value);
+					$append_query .= "SET " . $column . " = CONCAT_WS(',', NULLIF(" . $column . ", ''), '" . $value . "'),"; //how to further prepare/sanitize this value? not sure how many %s are needed...
+				}
+			}
+			$append_query = rtrim($append_query, ', ');
+			$append_query .= "WHERE nebula_id = '" . $nebula_id . "'";
+			$appended_visitor = $wpdb->query($append_query); //currently working on this
+
+			if ( $appended_visitor === false ){ //If visitor does not exist in the table, create it with defaults and current data. might need to be true if its int(0) too, so maybe go back to empty($updated_visitor)
+				nebula_insert_visitor($data);
+			} else {
+				check_if_known($send_to_hubspot);
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Insert visitor into table with all default detections
+function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
+	if ( nebula_option('visitors_db') && !nebula_is_bot() ){
+		$nebula_id = get_nebula_id();
+		if ( !empty($nebula_id) ){
+			global $wpdb;
+			$user_info = get_userdata(get_current_user_id()); //move this up?
+			$wp_role = ( !empty($user_info->roles[0]) )? $user_info->roles[0] : '';
+
+			$defaults = array(
+				'nebula_id' => $nebula_id,
+				'known' => 0,
+				'ip_address' => $_SERVER['REMOTE_ADDR'],
+				'notable_poi' => nebula_poi(),
+				'wp_user_id' => get_current_user_id(),
+				'wp_role' => ( !empty($user_info->roles[0]) )? $user_info->roles[0] : '',
+				'create_date' => time(),
+				'last_modified_date' => time(),
+				'first_session' => 1,
+				'prev_session' => 0,
+				'last_session_id' => session_id(),
+				'nebula_session_id' => nebula_session_id(),
+				'current_session' => time(),
+				'current_session_pageviews' => 1,
+				'session_count' => 1,
+				'utm_source' => ( isset($_GET['utm_source']) )? $_GET['utm_source'] : '',
+				'utm_medium' => ( isset($_GET['utm_medium']) )? $_GET['utm_medium'] : '',
+				'utm_campaign' => ( isset($_GET['utm_campaign']) )? $_GET['utm_campaign'] : '',
+				'utm_term' => ( isset($_GET['utm_term']) )? $_GET['utm_term'] : '',
+				'utm_content' => ( isset($_GET['utm_content']) )? $_GET['utm_content'] : '',
+				'referer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
+				'ga_cid' => ga_parse_cookie(), //@todo "Nebula" 0: this is sometimes pulling from ga cookie and sometimes generating on its own (which creates new rows)- try to always get the 00000000.000000000 style cid somehow.
+				'hubspot_vid' => false,
+				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+				'device_full' => nebula_get_device('full'),
+				'device_form_factor' => nebula_get_device('formfactor'),
+				'device_brand' => nebula_get_device('brand'),
+				'device_model' => nebula_get_device('model'),
+				'device_type' => nebula_get_device('type'),
+				'os_full' => nebula_get_os('full'),
+				'os_name' => nebula_get_os('name'),
+				'os_version' => nebula_get_os('version'),
+				'browser_full' => nebula_get_browser('full'),
+				'browser_name' => nebula_get_browser('name'),
+				'browser_version' => nebula_get_browser('version'),
+				'browser_engine' => nebula_get_browser('engine'),
+				'browser_type' => nebula_get_browser('type'),
+				'score' => 0,
+				'notes' => '',
+			);
+
+			$all_data = array_merge($defaults, $data); //Add any passed data
+			nebula_visitors_create_missing_columns($all_data);
+			$all_strings = array_fill(0, count($all_data), '%s'); //Create sanitization array
+
+			$wpdb->insert('nebula_visitors', $all_data, $all_strings); //Insert a row with all the default (and passed) sanitized values.
+
+			check_if_known($send_to_hubspot);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Look up what columns currently exist in the nebula_visitors table.
+function nebula_visitors_existing_columns(){
+	global $wpdb;
+	return $wpdb->get_col("SHOW COLUMNS FROM nebula_visitors", 0); //Returns an array of current table column names
+}
+
+//Create necessary columns by comparing passed data to existing columns
+function nebula_visitors_create_missing_columns($all_data){
+	if ( nebula_option('visitors_db') && !nebula_is_bot() ){
+		$existing_columns = nebula_visitors_existing_columns(); //Returns an array of current table column names
+
+		$needed_columns = array();
+		foreach ( $all_data as $column => $value ){
+			if ( is_null($value) ){
+				$all_data[$column] = ''; //Convert null values to empty strings.
+			}
+
+			if ( !in_array($column, $existing_columns) ){ //If the column does not exist, add it to an array
+				$needed_columns[] = $column;
+			}
+		}
+
+		if ( !empty($needed_columns) ){
+			global $wpdb;
+
+			$alter_query = "ALTER TABLE nebula_visitors ";
+			foreach ( $needed_columns as $column_name ){
+				$column_name = sanitize_text_field($column_name);
+				if ( is_nebula_visitor_column_name_valid($column_name) ){
+					$alter_query .= "ADD " . $column_name . " VARCHAR(255) NOT NULL, "; //Prep each needed column into a query
+				}
+			}
+
+			$create_columns = $wpdb->query(rtrim($alter_query, ', ')); //Create the needed columns
+		}
+	}
+}
+
+//Only allow lowercase characters and underscores in column names
+function is_nebula_visitor_column_name_valid($column_name){
+	return preg_match('/^[a-z_]+$/', $column_name);
+}
+
+//Query email address or Hubspot VID to see if the user is known
+function check_if_known($send_to_hubspot=true){
+	if ( nebula_option('visitors_db') && !nebula_is_bot() ){
+		global $wpdb;
+		$nebula_id = get_nebula_id();
+
+		$known_visitor = $wpdb->get_results("SELECT * FROM nebula_visitors WHERE nebula_id LIKE '" . $nebula_id . "' AND (email_address <> '' OR hubspot_vid <> '')");
+
+		if ( !empty($known_visitor) ){
+			if ( !is_known() ){
+				nebula_update_visitor(array('known' => '1')); //Update to known visitor (if previously unknown)
+			}
+
+			$known_visitor_data = (array) $known_visitor[0];
+			if ( !empty($send_to_hubspot) ){
+				nebula_prep_data_for_hubspot_crm_delivery($known_visitor_data);
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Lookup if this visitor is known
+function is_known(){
+	$known = nebula_get_visitor_data('known');
+	if ( !empty($known) && ($known == 1 || $known == '1') ){ //@TODO "Nebula" 0: Figure out which of these is best
+		return true;
+	}
+
+	return false;
+}
+
+//@TODO "Nebula" 0: Create a page in the WP Admin to view the collected data (datatables?) Maybe add features to modify/remove the data?
+
+//Prepare Nebula Visitor data to be sent to Hubspot CRM
+//This includes skipping empty fields, ignoring certain fields, and renaming others.
+function nebula_prep_data_for_hubspot_crm_delivery($data){
+	if ( nebula_option('hubspot_api') ){
+		$data_for_hubspot = array();
+		if ( !empty($data['hubspot_vid']) ){
+			$data_for_hubspot['hubspot_vid'] = $data['hubspot_vid'];
+		}
+		if ( !empty($data['email_address']) ){
+			$data_for_hubspot['email_address'] = $data['email_address'];
+		}
+		$data_for_hubspot['properties'] = array();
+
+		$ignore_columns = array('id', 'known', 'last_modified_date', 'first_session', 'prev_session', 'last_session_id', 'current_session', 'hubspot_vid', 'bot', 'current_session_pageviews', 'score', 'expiration', 'street_number', 'street_name', 'zip_suffix', 'zip_full');
+		$rename_columns = array(
+			'ip_address' => 'nebula_ip',
+			'street_full' => 'address',
+			'state_abbr' => 'state',
+			'country_name' => 'country',
+			'zip_code' => 'zip',
+			'first_name' => 'firstname',
+			'last_name' => 'lastname',
+			'email_address' => 'email',
+			'phone_number' => 'phone',
+		);
+
+		foreach ( $data as $column => $value ){
+			//Skip empty column values
+			if ( empty($value) ){
+				continue;
+			}
+
+			//Ignore unnecessary columns
+			if ( in_array($column, $ignore_columns) ){
+				continue;
+			}
+
+			//Rename certain columns to Hubspot CRM notation
+			if ( array_key_exists($column, $rename_columns) ){
+				$column = $rename_columns[$column];
+			}
+
+			//Add the column/value to the Hubspot data array
+			$data_for_hubspot['properties'][] = array(
+				'property' => $column,
+				'value' => $value
+			);
+		}
+
+		nebula_send_to_hubspot($data_for_hubspot);
+	}
+}
+
+/*==========================
+	Hubspot CRM Integration Functions
+ ===========================*/
+
 //Send data to Hubspot CRM via PHP curl
-function nebula_hubspot_curl($url, $content){
+function nebula_hubspot_curl($url, $content=null){
 	$curl = curl_init($url . '?hapikey=' . nebula_option('hubspot_api'));
 	curl_setopt($curl, CURLOPT_HEADER, false);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-	curl_setopt($curl, CURLOPT_POST, true);
-	curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+	if ( !empty($content) ){
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+	}
+
 	return curl_exec($curl);
 }
 
+//Get all existing Hubspot CRM contact properties in the Nebula group
+function get_nebula_hubspot_properties(){
+	$all_hubspot_properties = nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties');
+	$all_hubspot_properties = json_decode($all_hubspot_properties, true);
+
+	$existing_nebula_properties = array();
+	foreach ( $all_hubspot_properties as $property ){
+		if ( $property['groupName'] == 'nebula' ){
+			$existing_nebula_properties[] = $property['name'];
+		}
+	}
+
+	return $existing_nebula_properties;
+}
+
 //Create Custom Properties
-function nebula_create_hubspot_property(){ //@todo "Nebula" 0: Only need to do this once!
-	if ( nebula_option('hubspot_portal') ){
+function nebula_create_hubspot_properties($columns=null){
+	if ( nebula_option('hubspot_portal') && !nebula_is_bot() ){
 		//Create the Nebula group of properties
 		$content = '{
 	        "name": "nebula",
@@ -279,132 +766,138 @@ function nebula_create_hubspot_property(){ //@todo "Nebula" 0: Only need to do t
 	        "displayOrder": 5
 	    }';
 		nebula_hubspot_curl('http://api.hubapi.com/contacts/v2/groups?portalId=' . nebula_option('hubspot_portal'), $content);
+
+		//Get an array of all existing Hubspot CRM contact properties
+		$existing_nebula_properties = get_nebula_hubspot_properties();
+
+		//Create Nebula IP custom property within the Nebula group
+		if ( !in_array('nebula_ip', $existing_nebula_properties) ){
+			$content = '{
+				"name": "nebula_ip",
+				"label": "IP Address (Nebula)",
+				"description": "The IP address.",
+				"groupName": "nebula",
+				"type": "string",
+				"fieldType": "text",
+				"formField": true,
+				"displayOrder": 6,
+				"options": []
+			}';
+			nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+		}
+
+		//Create a property from the passed array
+		if ( !empty($columns) ){
+			if ( is_string($columns) ){
+				$columns = array($columns);
+			}
+			foreach ( $columns as $column ){
+				$column_label = ucwords(str_replace('_', ' ', $column));
+				if ( !in_array($column, $existing_nebula_properties) ){
+					//Create Nebula ID custom property within the Nebula group
+					$content = '{
+						"name": "' . $column . '",
+						"label": "' . $column_label . '",
+						"description": "' . $column_label . ' (Parsed from Visitor DB).",
+						"groupName": "nebula",
+						"type": "string",
+						"fieldType": "text",
+						"formField": true,
+						"displayOrder": 6,
+						"options": []
+					}';
+					nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+				}
+			}
+		}
 	}
-
-	//Create GA CID custom property within the Nebula group
-	$content = '{
-		"name": "gacid",
-		"label": "Google Analytics CID",
-		"description": "The Client ID from the Google Analytics cookie.",
-		"groupName": "nebula",
-		"type": "string",
-		"fieldType": "text",
-		"formField": true,
-		"displayOrder": 6,
-		"options": []
-	}';
-	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
-
-	//Create Nebula IP custom property within the Nebula group
-	$content = '{
-		"name": "nebulaip",
-		"label": "IP Address (Nebula)",
-		"description": "The IP address.",
-		"groupName": "nebula",
-		"type": "string",
-		"fieldType": "text",
-		"formField": true,
-		"displayOrder": 6,
-		"options": []
-	}';
-	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
-
-	//Create Notable POI custom property within the Nebula group
-	$content = '{
-		"name": "notablepoi",
-		"label": "Notable POI",
-		"description": "A notable place of interest (based on IP addresses in Nebula Options)",
-		"groupName": "nebula",
-		"type": "string",
-		"fieldType": "text",
-		"formField": true,
-		"displayOrder": 6,
-		"options": []
-	}';
-	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
-
-	//Create Session ID custom property within the Nebula group
-	$content = '{
-		"name": "sessionid",
-		"label": "Session ID",
-		"description": "The session ID as assigned by Nebula.",
-		"groupName": "nebula",
-		"type": "string",
-		"fieldType": "text",
-		"formField": true,
-		"displayOrder": 6,
-		"options": []
-	}';
-	nebula_hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
 }
 
-//Create/Update Contact
-add_action('wp_ajax_nebula_send_to_hubspot', 'nebula_send_to_hubspot');
-add_action('wp_ajax_nopriv_nebula_send_to_hubspot', 'nebula_send_to_hubspot');
-function nebula_send_to_hubspot(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+//Create/Update Contact in Hubspot CRM
+add_action('wp_ajax_nebula_ajax_send_to_hubspot', 'nebula_ajax_send_to_hubspot');
+add_action('wp_ajax_nopriv_nebula_ajax_send_to_hubspot', 'nebula_ajax_send_to_hubspot');
+function nebula_ajax_send_to_hubspot(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || nebula_is_bot() ){ die('Permission Denied.'); }
 
-	if ( nebula_option('hubspot_api') ){
-		$data = array( //@todo: validate these?
-			'email' => $_POST['email'],
-			'properties' => $_POST['properties'],
-		);
+	$data = array(
+		'properties' => $_POST['properties'],
+	);
 
-		nebula_create_hubspot_property();
-
-		//Create the properties array
-		$content = array('properties' => array());
-
-		//Loop through provided properties
-		foreach ( $data['properties'] as $property => $value ){
-			$content['properties'][] = array(
-				'property' => $property,
-				'value' => $value
-			);
+	echo nebula_send_to_hubspot($data);
+	exit;
+}
+function nebula_send_to_hubspot($data=array()){
+	if ( nebula_option('hubspot_api') && !nebula_is_bot() ){
+		//Determine if we'll be using email_address or hubspot_vid for our send. Prefer VID.
+		if ( empty($data['hubspot_vid']) && empty($data['email_address']) ){ //If calling from AJAX we must lookup VID or Email Address
+			global $wpdb;
+			$nebula_id = get_nebula_id();
+			$vid_and_email = $wpdb->get_results("SELECT hubspot_vid, email_address FROM nebula_visitors WHERE nebula_id LIKE '" . $nebula_id . "' AND email_address <> '' OR hubspot_vid <> ''"); //here
+			$vid_and_email = (array) $vid_and_email[0];
+			$hubspot_vid = $vid_and_email['hubspot_vid'];
+			$email_address = $vid_and_email['email_address'];
+		} else { //Calling directly from another PHP function
+			if ( !empty($data['hubspot_vid']) ){
+				$hubspot_vid = $data['hubspot_vid'];
+			}
+			if ( !empty($data['email_address']) ){
+				$email_address = $data['email_address'];
+			}
 		}
 
-		//Append supplemental data
-		//IP Address (Note: The Hubspot core "ipaddress" property is read only so the value can not be set.)
-		$content['properties'][] = array(
-			'property' => 'nebulaip',
-			'value' => $_SERVER['REMOTE_ADDR']
-		);
+		if ( !empty($hubspot_vid) || !empty($email_address) ){ //If visitor has hubspot_vid or email_address
 
-		//Notable POI
-		$notable_poi = nebula_poi();
-		if ( !empty($notable_poi) ){
-			$content['properties'][] = array(
-				'property' => 'notablepoi',
-				'value' => $notable_poi
-			);
+			//Create the properties array
+			$content = array('properties' => array());
+			$needed_properties = array();
+
+			//Loop through provided properties
+			foreach ( $data['properties'] as $group ){
+				$needed_properties[] = $group['property'];
+
+				$content['properties'][] = array(
+					'property' => $group['property'],
+					'value' => $group['value']
+				);
+			}
+
+			nebula_create_hubspot_properties($needed_properties); //Check and create existing properties
+
+			if ( !empty($hubspot_vid) ){
+				$response = nebula_hubspot_curl('https://api.hubapi.com/contacts/v1/contact/vid/' . $hubspot_vid . '/profile', json_encode($content)); //Update the existing contact using their VID
+
+				if ( strpos($response, 'error') != false ){ //There was an error
+					return false;
+				} elseif ( is_string($response) && $response == '' ){ //This API reponse is simply a 200 when it succeeds (empty string).
+					nebula_update_visitor(array('hubspot_vid' => $hubspot_vid), false); //Update visitor withour re-sending to Hubspot CRM
+					return $hubspot_vid;
+				}
+			} else {
+				$response = nebula_hubspot_curl('https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/' . $email_address . '/', json_encode($content)); //Create or update the contact using their Email
+
+				if ( strpos($response, 'error') != false ){ //There was an error
+					return false;
+				} else {
+					$response = (array) json_decode($response);
+					nebula_update_visitor(array('hubspot_vid' => $response['vid']), false); //Update visitor withour re-sending to Hubspot CRM
+					return $response['vid'];
+				}
+			}
 		}
-
-		//Google Analytics CID
-		$content['properties'][] = array(
-			'property' => 'gacid',
-			'value' => $GLOBALS['ga_cid']
-		);
-
-		//Session ID
-		$content['properties'][] = array(
-			'property' => 'sessionid',
-			'value' => nebula_session_id()
-		);
-
-		echo nebula_hubspot_curl('https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/' . $data['email'] . '/', json_encode($content));
 	}
 
-	exit;
+	return false;
 }
 
 //Get contact data from Hubspot
 //Set this to a variable to avoid multiple calls, then parse it like this: $hubspot_data['properties']['firstname']['value']
 function nebula_get_hubspot_contact($vid=null, $property=''){
 	global $nebula;
-	if ( empty($vid) && !empty($nebula['user']['vid']) ){
-		$vid = $nebula['user']['vid'];
-	} else {
-		return false;
+	if ( empty($vid) ){
+		$vid = nebula_get_visitor_data('hubspot_vid');
+		if ( empty($vid) ){
+			return false;
+		}
 	}
 
 	if ( !empty($property) ){
@@ -416,51 +909,6 @@ function nebula_get_hubspot_contact($vid=null, $property=''){
 	$contact_data = $wp_filesystem->get_contents('https://api.hubapi.com/contacts/v1/contact/vid/' . $vid . '/profile?hapikey=' . nebula_option('hubspot_api') . $property);
 
 	return json_decode($contact_data, true);
-}
-
-//Retarget users based on prior conversions/leads
-function nebula_retarget($category=false, $data=null, $strict=true, $return=false){
-	global $nebula;
-
-	if ( empty($category) ){ //$category is required
-		return false;
-	}
-
-	if ( is_bool($data) ){ //If data is boolean, then $strict is irrelevant, $data should be empty, and $return was meant to be boolean
-		$return = $data;
-		$data = null;
-	}
-
-	if ( !empty($nebula['user']['conversions']) ){ //If there are any conversions
-		if ( !empty($data) ){ //If specific data is being requested
-			if ( !empty($nebula['user']['conversions'][$category]) ){ //If the requested category exists
-				if ( !$return ){ //If returning boolean
-					if ( $strict ){ //If checking for exact match
-						return in_array_r($data, $nebula['user']['conversions'][$category]);
-					}
-
-					//Else search for string position
-					$data_string = implode(' ', $nebula['user']['conversions'][$category]);
-					if ( strpos(strtolower($data_string), strtolower($data)) ){
-						return true;
-					}
-				}
-				//Else returning the value
-				if ( in_array_r($data, $nebula['user']['conversions'][$category]) ){
-					return $nebula['user']['conversions'][$category][$data];
-				}
-			}
-		}
-		//If no specific data is requested (check if the category itself exists)
-		if ( !$return ){ //If returning boolean
-			return array_key_exists($category, $nebula['user']['conversions']);
-		}
-		//Else returning the value
-		if ( array_key_exists($category, $nebula['user']['conversions']) ){
-			return $nebula['user']['conversions'][$category];
-		}
-	}
-	return false;
 }
 
 //Detect Notable POI
@@ -1849,7 +2297,6 @@ function nebula_is_bot(){
 	}
 	return false;
 }
-
 
 //Device Detection - https://github.com/piwik/device-detector
 //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!

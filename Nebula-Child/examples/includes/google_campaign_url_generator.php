@@ -115,6 +115,7 @@
 			jQuery('#generatedoutput').removeClass('danger').val(generatedResult);
 			createCookie('CampaignURL', generatedResult);
 			ga('send', 'event', 'Campaign URL Generated', generatedResult);
+			nv('send', {'campaign_url_generated': generatedResult});
 
 			jQuery('.ex-source').html(utm_source);
 			jQuery('.ex-medium').text(utm_medium);

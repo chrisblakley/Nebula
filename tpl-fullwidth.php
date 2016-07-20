@@ -30,7 +30,7 @@ get_header(); ?>
 						<h1 class="page-title"><?php the_title(); ?></h1>
 
 						<div class="entry-social">
-							<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
+							<?php //nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
 						</div>
 
 						<div class="entry-content">

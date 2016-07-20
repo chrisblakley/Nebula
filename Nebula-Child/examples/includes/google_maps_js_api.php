@@ -175,7 +175,6 @@
 			            clickable: false,
 			            map: map
 			        });
-			        if ( typeof Gumby != 'undefined' ){ Gumby.log('Marker created for: ' + mapInfo['markers'][i][0] + ', ' + mapInfo['markers'][i][1]); }
 			    }(marker, i);
 		    }
 

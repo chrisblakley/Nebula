@@ -18,8 +18,6 @@
 
 			//console.log('Raw Google Address Components:');
 			//console.debug(place.address_components); //@TODO "Nebula" 0: place is undefined (probably a scope issue). window.place isn't working.
-
-			nebulaConversion('contact', 'Example Autocomplete Address');
 		});
 	});
 </script>

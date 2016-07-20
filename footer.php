@@ -29,7 +29,7 @@
 								<p>
 									<a class="footerlogo" href="<?php echo home_url('/'); ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/meta/favicon-32x32.png" /></a>
 									<?php echo date('Y'); ?> &copy; <a href="<?php echo home_url('/'); ?>" title="Last commit: <?php echo nebula_version('date'); ?>"><strong><?php bloginfo('name'); ?></strong> <?php echo nebula_version('version'); ?></a>, all rights reserved.<br />
-									<a href="https://www.google.com/maps/place/<?php echo nebula_full_address(1); ?>" target="_blank"><?php echo nebula_full_address(); ?></a>
+									<a href="https://www.google.com/maps/place/<?php echo nebula_full_address(true); ?>" target="_blank"><?php echo nebula_full_address(); ?></a>
 								</p>
 							</div><!--/col-->
 							<div class="col-md-4">

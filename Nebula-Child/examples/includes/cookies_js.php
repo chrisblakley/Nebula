@@ -22,10 +22,11 @@
 					}
 				}
 
-				jQuery('.jscookie').on('click', function(){
+				jQuery('.jscookie').on('click tap touch', function(){
 					if ( jQuery(this).hasClass('cookie-on') ) {
 						eraseCookie('examplejs');
 						checkExample();
+						ga('send', 'event', 'Cookie Example', 'Disabled');
 					} else {
 						var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 						var month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -46,9 +47,12 @@
 						ss = ( ss <10 ? '0'+ss : ss ); //Add leading 0 to seconds (as needed)
 						currentTime = dddd + ', ' + MMMM + ' ' + d + ', ' + yyyy + ' @ ' + h + ':' + mm + ' ' + tt;
 
+						ga('send', 'event', 'Cookie Example', 'Enabled', currentTime);
 						createCookie('examplejs', currentTime, 9999);
 						checkExample();
 					}
+
+
 					return false;
 				});
 			});

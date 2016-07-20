@@ -1168,7 +1168,7 @@ function nebula_last_modified($directory=null, $last_date=0, $child=false){
 add_action('wp_ajax_search_theme_files', 'search_theme_files');
 add_action('wp_ajax_nopriv_search_theme_files', 'search_theme_files');
 function search_theme_files(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce')){ die('Permission Denied.'); }
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 	ini_set('max_execution_time', 120);
 	ini_set('memory_limit', '512M');

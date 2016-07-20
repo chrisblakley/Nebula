@@ -32,6 +32,7 @@
 			timeout: 60000
 		});
 
+		nv('send', {'domain_regex_generator': jQuery('#validhostnames').val().trim()});
 		e.preventDefault();
 		return false;
 	});
