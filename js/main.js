@@ -872,7 +872,7 @@ function scrollDepth(){
 				readTime = (readEndTime-readStartTime)/1000;
 
 				if ( gaCustomDimensions['scrollDepth'] ){
-					if ( readTime < 10 ){
+					if ( readTime < 8 ){
 						var readerType = 'Previewer';
 					} else if ( readTime < 60 ){
 						var readerType = 'Scanner';
@@ -926,7 +926,6 @@ function nv(action, data, callback){
 	}
 
 	if ( action == 'send' ){
-		//console.log('updating visitor data');
 		action = 'nebula_ajax_update_visitor';
 	}
 
@@ -935,12 +934,14 @@ function nv(action, data, callback){
 	}
 
 	if ( action == 'append' ){
-		//console.log('appending to existing data');
 		action = 'nebula_ajax_append_visitor';
 	}
 
+	if ( action == 'increment' ){
+		action = 'nebula_ajax_increment_visitor';
+	}
+
 	if ( action == 'get' ){
-		//console.log('getting visitor data');
 		action = 'nebula_ajax_get_visitor_data';
 	}
 
@@ -951,7 +952,6 @@ function nv(action, data, callback){
 		data[cat] = '';
 	}
 
-	//console.log('ajaxing...');
 	jQuery.ajax({
 		type: "POST",
 		url: nebula.site.ajax.url,
