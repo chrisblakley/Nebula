@@ -925,27 +925,27 @@ function nv(action, data, callback){
 		return false; //data object is empty
 	}
 
-	if ( action == 'send' ){
+	if ( action === 'send' ){
 		action = 'nebula_ajax_update_visitor';
 	}
 
-	if ( action == 'vague' ){ //Update only if value doesn't already exist
+	if ( action === 'vague' ){ //Update only if value doesn't already exist
 		action = 'nebula_ajax_vague_visitor';
 	}
 
-	if ( action == 'append' ){
+	if ( action === 'append' ){
 		action = 'nebula_ajax_append_visitor';
 	}
 
-	if ( action == 'increment' ){
+	if ( action === 'increment' ){
 		action = 'nebula_ajax_increment_visitor';
 	}
 
-	if ( action == 'get' ){
+	if ( action === 'get' ){
 		action = 'nebula_ajax_get_visitor_data';
 	}
 
-	if ( action == 'remove' ){
+	if ( action === 'remove' ){
 		action = 'nebula_ajax_update_visitor';
 		var cat = data;
 		var data = {};

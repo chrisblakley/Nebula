@@ -128,13 +128,13 @@ function save_extra_profile_fields($user_id){
 	if ( !current_user_can('edit_user', $user_id) ){
 		return false;
 	}
-	update_user_meta($user_id, 'headshot', $_POST['headshot']);
-	update_user_meta($user_id, 'headshot_url', $_POST['headshot_url']);
-	update_user_meta($user_id, 'jobtitle', $_POST['jobtitle']);
-	update_user_meta($user_id, 'jobcompany', $_POST['jobcompany']);
-	update_user_meta($user_id, 'jobcompanywebsite', $_POST['jobcompanywebsite']);
-	update_user_meta($user_id, 'userlocation', $_POST['userlocation']);
-	update_user_meta($user_id, 'phonenumber', $_POST['phonenumber']);
+	update_user_meta($user_id, 'headshot', sanitize_text_field($_POST['headshot']));
+	update_user_meta($user_id, 'headshot_url', sanitize_text_field($_POST['headshot_url']));
+	update_user_meta($user_id, 'jobtitle', sanitize_text_field($_POST['jobtitle']));
+	update_user_meta($user_id, 'jobcompany', sanitize_text_field($_POST['jobcompany']));
+	update_user_meta($user_id, 'jobcompanywebsite', sanitize_text_field($_POST['jobcompanywebsite']));
+	update_user_meta($user_id, 'userlocation', sanitize_text_field($_POST['userlocation']));
+	update_user_meta($user_id, 'phonenumber', sanitize_text_field($_POST['phonenumber']));
 }
 
 function nebula_facebook_link(){

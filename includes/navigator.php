@@ -8,7 +8,7 @@
 <?php
 	//@TODO "Nebula" 0: Consider using the Autocomplete function in nebula_functions.php here instead of this file?
 
-	$requested_page = $_POST['data'];
+	$requested_page = sanitize_text_field($_POST['data']);
 	$resultCounter = 0;
 
 	//Check Page Titles

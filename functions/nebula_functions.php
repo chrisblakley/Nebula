@@ -74,7 +74,7 @@ add_action('wp_ajax_nebula_ga_blocked', 'nebula_ga_blocked');
 add_action('wp_ajax_nopriv_nebula_ga_blocked', 'nebula_ga_blocked');
 function nebula_ga_blocked(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-	$post_id = $_POST['data'][0]['id'];
+	$post_id = sanitize_text_field($_POST['data'][0]['id']);
 	$dimension_array = array();
 
 	if ( nebula_option('cd_sessionid') ){
@@ -864,10 +864,10 @@ add_action('wp_ajax_nopriv_nebula_twitter_cache', 'nebula_twitter_cache');
 function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_tweets=5, $include_retweets=1){
 	if ( $_POST['data'] ){
 		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-		$username = ( $_POST['data']['username'] )? $_POST['data']['username'] : 'Great_Blakes';
-		$listname = ( $_POST['data']['listname'] )? $_POST['data']['listname'] : null; //Only used for list feeds
-		$number_tweets = ( $_POST['data']['numbertweets'] )? $_POST['data']['numbertweets'] : 5;
-		$include_retweets = ( $_POST['data']['includeretweets'] )? $_POST['data']['includeretweets'] : 1; //1: Yes, 0: No
+		$username = ( $_POST['data']['username'] )? sanitize_text_field($_POST['data']['username']) : 'Great_Blakes';
+		$listname = ( $_POST['data']['listname'] )? sanitize_text_field($_POST['data']['listname']) : null; //Only used for list feeds
+		$number_tweets = ( $_POST['data']['numbertweets'] )? sanitize_text_field($_POST['data']['numbertweets']) : 5;
+		$include_retweets = ( $_POST['data']['includeretweets'] )? sanitize_text_field($_POST['data']['includeretweets']) : 1; //1: Yes, 0: No
 	}
 
 	error_reporting(0); //Prevent PHP errors from being cached.
@@ -1219,8 +1219,8 @@ function nebula_autocomplete_search(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 	ini_set('memory_limit', '256M');
-	$_POST['data']['term'] = trim($_POST['data']['term']);
-	if ( empty($_POST['data']['term']) ){
+	$term = sanitize_text_field(trim($_POST['data']['term'])); //yolo
+	if ( empty($term) ){
 		return false;
 		exit;
 	}
@@ -1240,7 +1240,7 @@ function nebula_autocomplete_search(){
 	    'post_type' => array('any'),
 		'post_status' => 'publish',
 		'posts_per_page' => 4,
-		's' => $_POST['data']['term'],
+		's' => $term,
 	));
 
 	//Search custom fields
@@ -1250,7 +1250,7 @@ function nebula_autocomplete_search(){
 		'posts_per_page' => 4,
 		'meta_query' => array(
 			array(
-				'value' => $_POST['data']['term'],
+				'value' => $term,
 				'compare' => 'LIKE'
 			)
 		)
@@ -1271,7 +1271,7 @@ function nebula_autocomplete_search(){
 			$post = get_post();
 
 			$suggestion = array();
-			similar_text(strtolower($_POST['data']['term']), strtolower(get_the_title()), $suggestion['similarity']); //Determine how similar the query is to this post title
+			similar_text(strtolower($term), strtolower(get_the_title()), $suggestion['similarity']); //Determine how similar the query is to this post title
 			$suggestion['label'] = get_the_title();
 			$suggestion['link'] = get_permalink();
 
@@ -1287,7 +1287,7 @@ function nebula_autocomplete_search(){
 	}
 
 	//Find media library items
-	$attachments = get_posts(array('post_type' => 'attachment', 's' => $_POST['data']['term'], 'numberposts' => 10, 'post_status' => null));
+	$attachments = get_posts(array('post_type' => 'attachment', 's' => $term, 'numberposts' => 10, 'post_status' => null));
 	if ( $attachments ){
 		$attachment_count = 0;
 		foreach ( $attachments as $attachment ){
@@ -1298,7 +1298,7 @@ function nebula_autocomplete_search(){
 			$attachment_meta = wp_get_attachment_metadata($attachment->ID);
 			$path_parts = pathinfo($attachment_meta['file']);
 			$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
-			similar_text(strtolower($_POST['data']['term']), strtolower($attachment_search_meta), $suggestion['similarity']);
+			similar_text(strtolower($term), strtolower($attachment_search_meta), $suggestion['similarity']);
 			if ( $suggestion['similarity'] >= 50 ){
 			    $suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
 				$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
@@ -1330,8 +1330,8 @@ function nebula_autocomplete_search(){
 		$menu_items = wp_get_nav_menu_items($menu->term_id);
 		foreach ( $menu_items as $key => $menu_item ){
 		    $suggestion = array();
-		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->title), $menu_title_similarity);
-		    similar_text(strtolower($_POST['data']['term']), strtolower($menu_item->attr_title), $menu_attr_similarity);
+		    similar_text(strtolower($term), strtolower($menu_item->title), $menu_title_similarity);
+		    similar_text(strtolower($term), strtolower($menu_item->attr_title), $menu_attr_similarity);
 		    if ( $menu_title_similarity >= 65 || $menu_attr_similarity >= 65 ){
 				if ( $menu_title_similarity >= $menu_attr_similarity ){
 					$suggestion['similarity'] = $menu_title_similarity;
@@ -1367,7 +1367,7 @@ function nebula_autocomplete_search(){
 	foreach ( $categories as $category ){
 		$suggestion = array();
 		$cat_count = 0;
-		similar_text(strtolower($_POST['data']['term']), strtolower($category->name), $suggestion['similarity']);
+		similar_text(strtolower($term), strtolower($category->name), $suggestion['similarity']);
 		if ( $suggestion['similarity'] >= 65 ){
 			$suggestion['label'] = $category->name;
 			$suggestion['link'] = get_category_link($category->term_id);
@@ -1390,7 +1390,7 @@ function nebula_autocomplete_search(){
 	foreach ( $tags as $tag ){
 		$suggestion = array();
 		$tag_count = 0;
-		similar_text(strtolower($_POST['data']['term']), strtolower($tag->name), $suggestion['similarity']);
+		similar_text(strtolower($term), strtolower($tag->name), $suggestion['similarity']);
 		if ( $suggestion['similarity'] >= 65 ){
 			$suggestion['label'] = $tag->name;
 			$suggestion['link'] = get_tag_link($tag->term_id);
@@ -1413,7 +1413,7 @@ function nebula_autocomplete_search(){
 		}
 		foreach ( $authors as $author ){
 			$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
-			if ( strtolower($author_name) == strtolower($_POST['data']['term']) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
+			if ( strtolower($author_name) == strtolower($term) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
 				$suggestion = array();
 				$suggestion['label'] = $author_name;
 				$suggestion['link'] = 'http://google.com/';
@@ -1447,8 +1447,8 @@ function nebula_autocomplete_search(){
 	//Link to search at the end of the list
 	//@TODO "Nebula" 0: The empty result is not working for some reason... (Press Enter... is never appearing)
 	$suggestion = array();
-	$suggestion['label'] = ( sizeof($suggestions) >= 1 )? '...more results for "' . $_POST['data']['term'] . '"' : 'Press enter to search for "' . $_POST['data']['term'] . '"';
-	$suggestion['link'] = home_url('/') . '?s=' . str_replace(' ', '%20', $_POST['data']['term']);
+	$suggestion['label'] = ( sizeof($suggestions) >= 1 )? '...more results for "' . $term . '"' : 'Press enter to search for "' . $term . '"';
+	$suggestion['link'] = home_url('/') . '?s=' . str_replace(' ', '%20', $term);
 	$suggestion['classes'] = ( sizeof($suggestions) >= 1 )? 'more-results search-link' : 'no-results search-link';
 	$outputArray[] = $suggestion;
 
@@ -1555,6 +1555,7 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 	$override = apply_filters('pre_nebula_infinite_load_query', false);
 	if ( $override !== false ){return;}
 
+	$loop = sanitize_text_field($loop);
 	if ( !empty($loop) && !function_exists($loop) ){
 		echo '<strong>Warning:</strong> The custom loop function ' . $loop . ' does not exist! Falling back to loop.php.';
 		$loop = false;
@@ -1678,11 +1679,12 @@ add_action('wp_ajax_nebula_infinite_load', 'nebula_infinite_load');
 add_action('wp_ajax_nopriv_nebula_infinite_load', 'nebula_infinite_load');
 function nebula_infinite_load(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-	$page_number = $_POST['page'];
+	$page_number = sanitize_text_field($_POST['page']);
 	$args = $_POST['args'];
 	$args['paged'] = $page_number;
-	$loop = $_POST['loop'];
+	$loop = sanitize_text_field($_POST['loop']);
 
+	$args = array_map('esc_attr', $args); //Sanitize the args array
 	query_posts($args);
 
 	if ( $loop == 'false' ){

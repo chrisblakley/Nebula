@@ -253,7 +253,7 @@ add_action('wp_ajax_nopriv_nebula_ga_event_ajax', 'nebula_ga_event_ajax');
 function nebula_ga_event_ajax(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	if ( !nebula_is_bot() ){ //Is this conditional preventing this from working at times?
-		ga_send_event($_POST['data'][0]['category'], $_POST['data'][0]['action'], $_POST['data'][0]['label'], $_POST['data'][0]['value'], $_POST['data'][0]['ni']);
+		ga_send_event(sanitize_text_field($_POST['data'][0]['category']), sanitize_text_field($_POST['data'][0]['action']), sanitize_text_field($_POST['data'][0]['label']), sanitize_text_field($_POST['data'][0]['value']), sanitize_text_field($_POST['data'][0]['ni']));
 	}
 	exit;
 }
@@ -363,27 +363,25 @@ add_action('wp_ajax_nebula_ajax_get_visitor_data', 'nebula_ajax_get_visitor_data
 add_action('wp_ajax_nopriv_nebula_ajax_get_visitor_data', 'nebula_ajax_get_visitor_data');
 function nebula_ajax_get_visitor_data(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-	$column = $_POST['data'];
+	$column = sanitize_text_field($_POST['data']);
 	echo nebula_get_visitor_data($column);
 	exit;
 }
 function nebula_get_visitor_data($column){ //@TODO "Nebula" 0: Update to allow multiple datapoints to be accessed in one query.
 	if ( nebula_option('visitors_db') ){
-		$column = sanitize_text_field($column);
+		$column = sanitize_key($column);
 
-		if ( is_nebula_visitor_column_name_valid($column) ){
-			if ( $column == 'notes' ){
-				return false;
-			}
+		if ( $column == 'notes' ){
+			return false;
+		}
 
-			$nebula_id = get_nebula_id();
-			if ( !empty($nebula_id) && !empty($column) ){
-				global $wpdb;
-				$requested_data = $wpdb->get_results($wpdb->prepare("SELECT " . $column . " FROM nebula_visitors WHERE nebula_id = '%s'", $nebula_id));
+		$nebula_id = get_nebula_id();
+		if ( !empty($nebula_id) && !empty($column) ){
+			global $wpdb;
+			$requested_data = $wpdb->get_results($wpdb->prepare("SELECT " . $column . " FROM nebula_visitors WHERE nebula_id = '%s'", $nebula_id));
 
-				if ( !empty($requested_data) && !empty($requested_data[0]) && strtolower(reset($requested_data[0])) != 'null' ){
-					return reset($requested_data[0]); //@TODO "Nebula" 0: update so this could return multiple values
-				}
+			if ( !empty($requested_data) && !empty($requested_data[0]) && strtolower(reset($requested_data[0])) != 'null' ){
+				return reset($requested_data[0]); //@TODO "Nebula" 0: update so this could return multiple values
 			}
 		}
 	}
@@ -499,12 +497,10 @@ function nebula_append_visitor($data=array(), $send_to_hubspot=true){ //$data is
 
 			$append_query = "UPDATE nebula_visitors ";
 			foreach ( $data as $column => $value ){
-				$column = sanitize_text_field($column);
+				$column = sanitize_key($column);
 
-				if ( is_nebula_visitor_column_name_valid($column) ){
-					$value = sanitize_text_field($value);
-					$append_query .= "SET " . $column . " = CONCAT_WS(',', NULLIF(" . $column . ", ''), '" . $value . "'),"; //how to further prepare/sanitize this value? not sure how many %s are needed...
-				}
+				$value = sanitize_text_field($value);
+				$append_query .= "SET " . $column . " = CONCAT_WS(',', NULLIF(" . $column . ", ''), '" . $value . "'),"; //how to further prepare/sanitize this value? not sure how many %s are needed...
 			}
 			$append_query = rtrim($append_query, ', ');
 			$append_query .= "WHERE nebula_id = '" . $nebula_id . "'";
@@ -543,11 +539,9 @@ function nebula_increment_visitor($data){ //Data should be an array of columns t
 		if ( !empty($nebula_id) && !empty($data) ){
 			$increment_query = "UPDATE nebula_visitors ";
 			foreach ( $data as $column ){
-				$column = sanitize_text_field($column);
+				$column = sanitize_key($column);
 
-				if ( is_nebula_visitor_column_name_valid($column) ){
-					$increment_query .= "SET " . $column . " = " . $column . " + 1, ";
-				}
+				$increment_query .= "SET " . $column . " = " . $column . " + 1, ";
 			}
 			$increment_query = rtrim($increment_query, ', ') . ' ';
 			$increment_query .= "WHERE nebula_id = '" . $nebula_id . "'";
@@ -658,20 +652,13 @@ function nebula_visitors_create_missing_columns($all_data){
 
 			$alter_query = "ALTER TABLE nebula_visitors ";
 			foreach ( $needed_columns as $column_name ){
-				$column_name = sanitize_text_field($column_name);
-				if ( is_nebula_visitor_column_name_valid($column_name) ){
-					$alter_query .= "ADD " . $column_name . " VARCHAR(255) NOT NULL, "; //Prep each needed column into a query
-				}
+				$column_name = sanitize_key($column_name);
+				$alter_query .= "ADD " . $column_name . " VARCHAR(255) NOT NULL, "; //Prep each needed column into a query
 			}
 
 			$create_columns = $wpdb->query(rtrim($alter_query, ', ')); //Create the needed columns
 		}
 	}
-}
-
-//Only allow lowercase characters and underscores in column names
-function is_nebula_visitor_column_name_valid($column_name){
-	return preg_match('/^[a-z_]+$/', $column_name);
 }
 
 //Query email address or Hubspot VID to see if the user is known
