@@ -267,22 +267,22 @@ add_action('admin_init', 'nebula_create_visitors_table');
 function nebula_create_visitors_table(){
 	if ( nebula_option('visitors_db') && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this when Nebula Options are saved.
 		global $wpdb;
-		$created = $wpdb->query("CREATE TABLE nebula_visitors (
-			id INT(255) NOT NULL AUTO_INCREMENT,
-			nebula_id VARCHAR(255) NOT NULL,
-			known BOOLEAN NOT NULL DEFAULT FALSE,
-			email_address VARCHAR(255) NOT NULL,
-			hubspot_vid VARCHAR(255) NOT NULL,
-			last_modified_date INT(255) NOT NULL DEFAULT 0,
-			PRIMARY KEY (id)
-		) ENGINE = MyISAM;");
 
-		nebula_remove_expired_visitors();
-
-		return true;
+		$visitors_table = $wpdb->query("SHOW TABLES LIKE 'nebula_visitors'");
+		if ( empty($visitors_table) ){
+			$created = $wpdb->query("CREATE TABLE nebula_visitors (
+				id INT(255) NOT NULL AUTO_INCREMENT,
+				nebula_id VARCHAR(255) NOT NULL,
+				known BOOLEAN NOT NULL DEFAULT FALSE,
+				email_address VARCHAR(255) NOT NULL,
+				hubspot_vid VARCHAR(255) NOT NULL,
+				last_modified_date INT(255) NOT NULL DEFAULT 0,
+				PRIMARY KEY (id)
+			) ENGINE = MyISAM;");
+		} else {
+			nebula_remove_expired_visitors();
+		}
 	}
-
-	return false;
 }
 
 //Check if the Nebula ID exists on load and generate/store a new one if it does not.
