@@ -8,6 +8,7 @@
 <script>
 	jQuery(document).on('ready', function(){
 		jQuery('#hubspot-example').submit(function(){
+			nvForm();
 			hubspot('send', 'contact', jQuery('#emailaddress').val(), {
 				firstname: jQuery('#firstname').val(),
 				lastname: jQuery('#lastname').val(),
@@ -39,15 +40,15 @@
 			<ul>
 				<li class="form-group">
 					<span class="contact-form-heading">First Name</span>
-					<input id="firstname" class="form-control" type="text" placeholder="First Name" required/>
+					<input id="firstname" class="form-control nv-first_name" type="text" placeholder="First Name" required/>
 				</li>
 				<li class="form-group">
 					<span class="contact-form-heading">Last Name</span>
-					<input id="lastname" class="form-control" type="text" placeholder="Last Name" required/>
+					<input id="lastname" class="form-control nv-last_name" type="text" placeholder="Last Name" required/>
 				</li>
 				<li class="form-group">
 					<span class="contact-form-heading">Email*</span>
-					<input id="emailaddress" class="form-control" type="email" placeholder="Email" required/>
+					<input id="emailaddress" class="form-control nv-email_address" type="email" placeholder="Email" required/>
 				</li>
 				<input class="btn btn-primary" type="submit" value="Send">
 			</ul>

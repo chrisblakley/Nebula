@@ -273,8 +273,11 @@ function nebula_create_visitors_table(){
 			known BOOLEAN NOT NULL DEFAULT FALSE,
 			email_address VARCHAR(255) NOT NULL,
 			hubspot_vid VARCHAR(255) NOT NULL,
+			last_modified_date INT(255) NOT NULL DEFAULT 0,
 			PRIMARY KEY (id)
 		) ENGINE = MyISAM;");
+
+		nebula_remove_expired_visitors();
 
 		return true;
 	}
@@ -433,6 +436,7 @@ function nebula_update_visitor($data=array(), $send_to_hubspot=true){ //$data is
 			$update_every_time = array(
 				'last_modified_date' => time(),
 				'nebula_session_id' => nebula_session_id(),
+				'score' => nebula_calculate_visitor_score(),
 			);
 
 			$all_data = array_merge($update_every_time, $data); //Add any passed data
@@ -618,11 +622,71 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 			$wpdb->insert('nebula_visitors', $all_data, $all_strings); //Insert a row with all the default (and passed) sanitized values.
 
 			check_if_known($send_to_hubspot);
+
+			nebula_remove_expired_visitors();
 			return true;
 		}
 	}
 
 	return false;
+}
+
+//Calculate and update the visitor with a score
+//@TODO "Nebula" 0: This is not implemented yet.
+add_action('wp_footer', 'nebula_calculate_visitor_score');
+function nebula_calculate_visitor_score(){
+	if ( nebula_option('visitors_db') ){ //remove is_dev
+		$nebula_id = get_nebula_id();
+		if ( !empty($nebula_id) ){
+			global $wpdb;
+			$this_visitor = $wpdb->get_results("SELECT * FROM nebula_visitors WHERE nebula_id LIKE '" . $nebula_id . "'");
+
+			if ( $this_visitor ){
+				//A score of 100+ will prevent deletion
+				$point_values = array(
+					'notable_poi' => 75,
+					'known' => 100,
+					'hubspot_vid' => 100,
+					'notes' => 25,
+					'notable_download' => 10,
+					'pdf_view' => 10,
+					'internal_search' => 20,
+					'contact_method' => 75,
+					'ecommerce_addtocart' => 50,
+					'ecommerce_checkout' => 75,
+					'engaged_reader' => 10,
+					'contact_funnel' => 25,
+					'street_full' => 75,
+					'geo_latitude' => 75,
+					'video_play' => 10,
+					'video_engaged' => 25,
+					'video_finished' => 25,
+				);
+
+				$this_visitor = (array) $this_visitor[0];
+				$score = 0;
+				foreach ( $this_visitor as $column => $value ){
+					if ( array_key_exists($column, $point_values) && !empty($value) ){
+						$score += $point_values[$column];
+					}
+				}
+
+				return $score;
+			}
+		}
+	}
+
+	return false;
+}
+
+//Remove expired visitors from the DB
+//This is only ran when Nebula Options are saved, and when new visitors are inserted.
+function nebula_remove_expired_visitors(){
+	if ( nebula_option('visitors_db') ){
+		global $wpdb;
+		$expiration_length = time()-2592000; //30 days
+		$wpdb->query($wpdb->prepare( "DELETE FROM nebula_visitors WHERE last_modified_date = %d AND known = %d AND score < %d", $expiration_length, 0, 100));
+	}
 }
 
 //Look up what columns currently exist in the nebula_visitors table.
@@ -696,6 +760,8 @@ function is_known(){
 }
 
 //@TODO "Nebula" 0: Create a page in the WP Admin to view the collected data (datatables?) Maybe add features to modify/remove the data?
+//@TODO "Nebula" 0: Need a function to handle scoring.
+//@TODO "Nebula" 0: Need a function to handle expiration.
 
 //Prepare Nebula Visitor data to be sent to Hubspot CRM
 //This includes skipping empty fields, ignoring certain fields, and renaming others.

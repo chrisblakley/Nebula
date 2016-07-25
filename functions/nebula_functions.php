@@ -1219,7 +1219,7 @@ function nebula_autocomplete_search(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 	ini_set('memory_limit', '256M');
-	$term = sanitize_text_field(trim($_POST['data']['term'])); //yolo
+	$term = sanitize_text_field(trim($_POST['data']['term']));
 	if ( empty($term) ){
 		return false;
 		exit;
