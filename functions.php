@@ -312,6 +312,12 @@ function enqueue_nebula_admin(){
 	//Scripts
 	wp_enqueue_script('nebula-admin');
 
+	//Nebula Visitors Data page
+	if ( isset($_GET['page']) && $_GET['page'] == 'nebula_visitors_data' ){
+		wp_enqueue_style('nebula-datatables');
+		wp_enqueue_script('nebula-datatables');
+	}
+
 	//Localized objects (localized to jquery to appear in <head>)
 	wp_localize_script('jquery', 'nebula', $nebula);
 }

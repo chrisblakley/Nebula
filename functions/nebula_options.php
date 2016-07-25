@@ -95,12 +95,6 @@ function nebula_google_font_option(){
 	return false;
 }
 
-//Create the Nebula Submenu
-add_action('admin_menu', 'nebula_sub_menu');
-function nebula_sub_menu(){
-	add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', 'nebula_options_page');
-}
-
 //Prepare default data values
 function nebula_default_data(){
 	$nebula_data_defaults = array(
@@ -282,6 +276,7 @@ function register_nebula_options(){
 }
 
 //Output the options page
+//This is called from nebula_admin.php
 function nebula_options_page(){
 ?>
 	<script>
