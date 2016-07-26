@@ -595,7 +595,7 @@ function eventTracking(){
 	//Generic Interal Search Tracking
 	if ( get('s') || get('rs') ){
 		var searchQuery = get('s') || get('rs');
-		nv('append', {'internal_search': searchQuery});
+		//nv('append', {'internal_search': searchQuery}); //Could be doubling up the data
 	}
 	nebula.dom.document.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();

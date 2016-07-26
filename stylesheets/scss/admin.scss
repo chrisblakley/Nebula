@@ -212,6 +212,27 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 	}
 }
 
+//Nebula Visitors Data
+#nebula-visitor-data {
+	.dataTables_wrapper {
+		thead {background-color: #0098d7; color: #fff;
+			td {text-align: center !important;
+				&.sorting_asc,
+				&.sorting_desc {background-color: #0074a4;}
+			}
+		}
+
+		.known {color: green;}
+		.you td {font-style: italic;}
+
+		td {font-size: 12px; text-align: center; white-space: nowrap; }
+
+		.moreinfo {cursor: help;}
+		.zerovalue {color: rgba(0, 0, 0, 0.2);}
+
+		.dataTables_empty {text-align: left;}
+	}
+}
 
 
 #wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,

@@ -1,121 +1,5 @@
 <?php
 
-
-
-
-
-//Add Nebula admin subpages
-add_action('admin_menu', 'nebula_admin_sub_menu');
-function nebula_admin_sub_menu(){
-	add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', 'nebula_options_page'); //Nebula Options page
-
-	if ( nebula_option('visitors_db') ){
-		add_theme_page('Nebula Visitors Data', 'Nebula Visitors Data', 'manage_options', 'nebula_visitors_data', 'nebula_visitors_data_page'); //Nebula Visitors Data page
-	}
-}
-
-//The Nebula Visitors Data page output
-function nebula_visitors_data_page(){
-	global $wpdb;
-	$all_visitors_data_head = $wpdb->get_results("SHOW columns FROM nebula_visitors");
-	$all_visitors_data_head = (array) $all_visitors_data_head;
-	$all_visitors_data = $wpdb->get_results("SELECT * FROM nebula_visitors");
-	$all_visitors_data = (array) $all_visitors_data;
-	?>
-	<script>
-		jQuery(window).on('load', function(){
-			jQuery('#visitors_data').DataTable({
-				"aaSorting": [[0, "desc"]], //Default sort (column number)
-				"aLengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
-				"iDisplayLength": 25, //Default entries shown (Does NOT need to match aLengthMenu).
-				"scrollX": true
-			});
-
-			jQuery('.dataTables_filter input').attr('placeholder', 'Search');
-
-			jQuery(document).on('click tap touch', '.dataTables_wrapper td', function(){
-				jQuery(this).parents('tr').toggleClass('selected');
-			});
-		});
-	</script>
-
-	<style>
-			.dataTables_wrapper thead td {text-align: center !important;}
-
-			.dataTables_wrapper .you td {font-style: italic;}
-			.dataTables_wrapper td {font-size: 12px; text-align: center; white-space: nowrap;}
-			.dataTables_wrapper .moreinfo {cursor: help;}
-			.dataTables_wrapper .zerovalue {color: rgba(0, 0, 0, 0.2);}
-	</style>
-
-	<div class="wrap">
-		<h2>Nebula Visitor Data</h2>
-		<?php
-			if ( !current_user_can('manage_options') && !is_dev() ){
-				wp_die('You do not have sufficient permissions to access this page.');
-			}
-		?>
-
-		<div class="dataTables_wrapper">
-			<table id="visitors_data" class="display" cellspacing="0" width="100%">
-				<thead>
-					<tr>
-						<?php foreach ( $all_visitors_data_head as $column_name ): ?>
-							<td>
-								<?php
-									$column_name = (array) $column_name;
-									echo ucwords(str_replace('_', ' ', $column_name['Field']));
-								?>
-							</td>
-						<?php endforeach; ?>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $all_visitors_data as $visitor_data ): ?>
-						<?php $visitor_data = (array) $visitor_data; ?>
-						<tr <?php echo ( $visitor_data['nebula_id'] == get_nebula_id() )? 'class="you"' : ''; ?>>
-							<?php foreach ( $visitor_data as $column => $value ): ?>
-								<?php
-									$cell_title = '';
-									$cell_class = '';
-									$date_columns = array('create_date', 'last_modified_date', 'current_session');
-									if ( in_array($column, $date_columns) ){
-										$cell_title = date('l, F j, Y - g:ia', $value);
-										$cell_class = 'moreinfo';
-										$value = $value . ' (' . date('F j, Y - g:ia', $value) . ')';
-									}
-
-									if ( $value == '0' ){
-										$cell_class = 'zerovalue';
-									}
-								?>
-								<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>"><?php echo $value; ?></td>
-							<?php endforeach; ?>
-						</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-		</div>
-	</div>
-<?php
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //Force expire query transients when posts/pages are saved.
 add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){
@@ -1599,4 +1483,104 @@ function nebula_save_post_class_meta($post_id, $post){
 	} elseif ( $new_meta_value == '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
 		delete_post_meta($post_id, 'nebula_internal_search_keywords', $meta_value);
 	}
+}
+
+//Add Nebula admin subpages
+add_action('admin_menu', 'nebula_admin_sub_menu');
+function nebula_admin_sub_menu(){
+	add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', 'nebula_options_page'); //Nebula Options page
+
+	if ( nebula_option('visitors_db') ){
+		add_theme_page('Nebula Visitors Data', 'Nebula Visitors Data', 'manage_options', 'nebula_visitors_data', 'nebula_visitors_data_page'); //Nebula Visitors Data page
+	}
+}
+
+//The Nebula Visitors Data page output
+function nebula_visitors_data_page(){
+	global $wpdb;
+	$all_visitors_data_head = $wpdb->get_results("SHOW columns FROM nebula_visitors");
+	$all_visitors_data_head = (array) $all_visitors_data_head;
+	$all_visitors_data = $wpdb->get_results("SELECT * FROM nebula_visitors");
+	$all_visitors_data = (array) $all_visitors_data;
+	?>
+	<script>
+		jQuery(window).on('load', function(){
+			jQuery('#visitors_data').DataTable({
+				"aaSorting": [[0, "desc"]], //Default sort (column number)
+				"aLengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
+				"iDisplayLength": 25, //Default entries shown (Does NOT need to match aLengthMenu).
+				"scrollX": true,
+				"scrollY": '65vh',
+				"scrollCollapse": true,
+				//"paging": false
+			});
+
+			jQuery('.dataTables_filter input').attr('placeholder', 'Search');
+
+			jQuery(document).on('click tap touch', '.dataTables_wrapper td', function(){
+				jQuery(this).parents('tr').toggleClass('selected');
+			});
+		});
+	</script>
+
+	<div id="nebula-visitor-data" class="wrap">
+		<h2>Nebula Visitor Data</h2>
+		<?php
+			if ( !current_user_can('manage_options') && !is_dev() ){
+				wp_die('You do not have sufficient permissions to access this page.');
+			}
+		?>
+
+		<div class="dataTables_wrapper">
+			<table id="visitors_data" class="display" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<?php foreach ( $all_visitors_data_head as $column_name ): ?>
+							<td>
+								<?php
+									$column_name = (array) $column_name;
+									echo ucwords(str_replace('_', ' ', $column_name['Field']));
+								?>
+							</td>
+						<?php endforeach; ?>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $all_visitors_data as $visitor_data ): ?>
+						<?php
+							$visitor_data = (array) $visitor_data;
+							$row_class = '';
+							if ( $visitor_data['nebula_id'] == get_nebula_id() ){
+								$row_class .= 'you ';
+							}
+
+							if ( $visitor_data['known'] == '1' ){
+								$row_class .= 'known ';
+							}
+						?>
+						<tr class="<?php echo $row_class; ?>">
+							<?php foreach ( $visitor_data as $column => $value ): ?>
+								<?php
+									$cell_title = '';
+									$cell_class = '';
+									$date_columns = array('create_date', 'last_modified_date', 'current_session');
+									if ( in_array($column, $date_columns) ){
+										$cell_title = date('l, F j, Y - g:ia', $value);
+										$cell_class = 'moreinfo';
+										$value = $value . ' (' . date('F j, Y - g:ia', $value) . ')';
+									}
+
+									if ( $value == '0' ){
+										$cell_class = 'zerovalue';
+									}
+								?>
+								<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>"><?php echo $value; ?></td>
+							<?php endforeach; ?>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+<?php
 }

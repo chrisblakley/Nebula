@@ -1974,7 +1974,7 @@ function business_open($date=null, $general=0){
 		}
 
 		$openToday = date('Gi', strtotime($businessHours[$today]['open']));
-		$closeToday = date('Gi', strtotime($businessHours[$today]['close']));
+		$closeToday = date('Gi', strtotime($businessHours[$today]['close'])-1); //Subtract one second to ensure midnight represents the same day
 		if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
 			return true;
 		}
