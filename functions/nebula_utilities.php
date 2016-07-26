@@ -433,12 +433,7 @@ function nebula_update_visitor($data=array(), $send_to_hubspot=true){ //$data is
 		$nebula_id = get_nebula_id();
 
 		if ( !empty($nebula_id) && !empty($data) ){
-			$update_every_time = array(
-				'last_modified_date' => time(),
-				'nebula_session_id' => nebula_session_id(),
-				'score' => nebula_calculate_visitor_score(),
-			);
-
+			$update_every_time = nebula_visitor_data_update_everytime();
 			$all_data = array_merge($update_every_time, $data); //Add any passed data
 
 			//Check if the data should be sent to Hubspot
@@ -570,33 +565,26 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 		$nebula_id = get_nebula_id();
 		if ( !empty($nebula_id) ){
 			global $wpdb;
-			$user_info = get_userdata(get_current_user_id()); //move this up?
-			$wp_role = ( !empty($user_info->roles[0]) )? $user_info->roles[0] : '';
 
 			$defaults = array(
 				'nebula_id' => $nebula_id,
+				'ga_cid' => ga_parse_cookie(), //@todo "Nebula" 0: this is sometimes pulling from ga cookie and sometimes generating on its own (which creates new rows)- try to always get the 00000000.000000000 style cid somehow.
 				'known' => '0',
 				'ip_address' => $_SERVER['REMOTE_ADDR'],
 				'notable_poi' => nebula_poi(),
-				'wp_user_id' => get_current_user_id(),
-				'wp_role' => ( !empty($user_info->roles[0]) )? $user_info->roles[0] : '',
 				'create_date' => time(),
 				'last_modified_date' => time(),
+				'hubspot_vid' => false,
+				'score' => '0',
+				'notes' => '',
+				'referer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
 				'first_session' => '1',
+				'session_count' => '1',
 				'prev_session' => '0',
 				'last_session_id' => session_id(),
 				'nebula_session_id' => nebula_session_id(),
 				'current_session' => time(),
 				'current_session_pageviews' => '1',
-				'session_count' => '1',
-				'utm_source' => ( isset($_GET['utm_source']) )? $_GET['utm_source'] : '',
-				'utm_medium' => ( isset($_GET['utm_medium']) )? $_GET['utm_medium'] : '',
-				'utm_campaign' => ( isset($_GET['utm_campaign']) )? $_GET['utm_campaign'] : '',
-				'utm_term' => ( isset($_GET['utm_term']) )? $_GET['utm_term'] : '',
-				'utm_content' => ( isset($_GET['utm_content']) )? $_GET['utm_content'] : '',
-				'referer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
-				'ga_cid' => ga_parse_cookie(), //@todo "Nebula" 0: this is sometimes pulling from ga cookie and sometimes generating on its own (which creates new rows)- try to always get the 00000000.000000000 style cid somehow.
-				'hubspot_vid' => false,
 				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
 				'device_full' => nebula_get_device('full'),
 				'device_form_factor' => nebula_get_device('formfactor'),
@@ -611,9 +599,9 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 				'browser_version' => nebula_get_browser('version'),
 				'browser_engine' => nebula_get_browser('engine'),
 				'browser_type' => nebula_get_browser('type'),
-				'score' => '0',
-				'notes' => '',
 			);
+
+			$defaults = nebula_visitor_data_update_everytime($defaults);
 
 			$all_data = array_merge($defaults, $data); //Add any passed data
 			nebula_visitors_create_missing_columns($all_data);
@@ -629,6 +617,51 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 	}
 
 	return false;
+}
+
+//Update certain visitor data everytime.
+//Pass the existing data array to this to append to it (otherwise a new array is created)!
+function nebula_visitor_data_update_everytime($defaults=array()){
+	$defaults['ga_cid'] = ga_parse_cookie();
+	$defaults['notable_poi'] = nebula_poi();
+	$defaults['last_modified_date'] = time();
+	$defaults['nebula_session_id'] = nebula_session_id();
+	$defaults['score'] = nebula_calculate_visitor_score(); //Try to limit this (without doing a DB query to check)
+
+	//Logged-in User Data
+	if ( is_user_logged_in() ){
+		$defaults['wp_user_id'] = get_current_user_id();
+
+		$user_info = get_userdata(get_current_user_id());
+		if ( !empty($user_info) ){
+			$defaults['wp_role'] = $user_info->roles[0];
+			$defaults['first_name'] = $user_info->user_firstname;
+			$defaults['last_name'] = $user_info->user_lastname;
+			$defaults['full_name'] = $user_info->user_firstname . ' ' . $user_info->user_lastname;
+			$defaults['email_address'] = $user_info->user_email;
+			$defaults['username'] = $user_info->user_login;
+			$defaults['known'] = '1';
+		}
+	}
+
+	//Campaign Data (not using ternary to prevent emptying existing data)
+	if ( isset($_GET['utm_source']) ){
+		$defaults['utm_source'] = $_GET['utm_source'];
+	}
+	if ( isset($_GET['utm_medium']) ){
+		$defaults['utm_medium'] = $_GET['utm_medium'];
+	}
+	if ( isset($_GET['utm_campaign']) ){
+		$defaults['utm_campaign'] = $_GET['utm_campaign'];
+	}
+	if ( isset($_GET['utm_term']) ){
+		$defaults['utm_term'] = $_GET['utm_term'];
+	}
+	if ( isset($_GET['utm_content']) ){
+		$defaults['utm_content'] = $_GET['utm_content'];
+	}
+
+	return $defaults;
 }
 
 //Calculate and update the visitor with a score
