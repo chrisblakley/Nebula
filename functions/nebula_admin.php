@@ -1532,7 +1532,7 @@ function nebula_visitors_data_page(){
 		?>
 
 		<div class="dataTables_wrapper">
-			<table id="visitors_data" class="display" cellspacing="0" width="100%">
+			<table id="visitors_data" class="display compact" cellspacing="0" width="100%">
 				<thead>
 					<tr>
 						<?php foreach ( $all_visitors_data_head as $column_name ): ?>
@@ -1565,9 +1565,9 @@ function nebula_visitors_data_page(){
 									$cell_class = '';
 									$date_columns = array('create_date', 'last_modified_date', 'current_session');
 									if ( in_array($column, $date_columns) ){
-										$cell_title = date('l, F j, Y - g:ia', $value);
+										$cell_title = date('l, F j, Y - g:i:sa', $value);
 										$cell_class = 'moreinfo';
-										$value = $value . ' (' . date('F j, Y - g:ia', $value) . ')';
+										$value = $value . ' (' . date('F j, Y - g:i:sa', $value) . ')';
 									}
 
 									if ( $value == '0' ){
