@@ -232,6 +232,15 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 
 		.dataTables_empty {text-align: left;}
 	}
+
+	#modify-visitor-form {margin-top: 30px;
+		.label-cell {font-size: 10px;}
+		.id-col {width: 50px;}
+		.col-col {}
+		.val-col {width: 300px;}
+		.run-col {}
+		input {width: 100%;}
+	}
 }
 
 

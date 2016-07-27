@@ -286,7 +286,7 @@ function nebula_theme_update_email(){
 			$headers[] = 'Cc: ' . $admin_user_email;
 		}
 
-		$subject = 'Nebula updated to ' . $new_version . ' for ' . get_bloginfo('name') . '.';
+		$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
 		$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
 
 		//Set the content type to text/html for the email.
@@ -1517,8 +1517,77 @@ function nebula_visitors_data_page(){
 
 			jQuery('.dataTables_filter input').attr('placeholder', 'Search');
 
-			jQuery(document).on('click tap touch', '.dataTables_wrapper td', function(){
+			jQuery(document).on('click tap touch', '.dataTables_wrapper tbody td', function(){
 				jQuery(this).parents('tr').toggleClass('selected');
+
+				if ( jQuery(this).parents('tr').hasClass('selected') ){
+					if ( jQuery(this).attr('data-column') == 'id' || jQuery(this).attr('data-column') == 'nebula_id' || jQuery(this).attr('data-column') == 'ga_cid' ){
+						jQuery('#querystatus').html('This column is protected.');
+					} else {
+						jQuery(this).addClass('activecell');
+						jQuery('#queryid').val(jQuery(this).parents('tr').find('td[data-column="id"]').text());
+						jQuery('#querycol').val(jQuery(this).attr('data-column'));
+						jQuery('#queryval').val(jQuery(this).text());
+						jQuery('#querystatus').html('');
+					}
+				} else {
+					jQuery(this).removeClass('activecell');
+					jQuery('#queryid').val('');
+					jQuery('#querycol').val('');
+					jQuery('#queryval').val('');
+				}
+				jQuery('#queryprog').removeClass();
+			});
+
+			jQuery(document).on('click tap touch', '.refreshpage', function(){
+				window.location.reload();
+				return false;
+			});
+
+			jQuery('#runquery').on('click tap touch', function(){
+				if ( jQuery('#queryid').val() != '' && jQuery('#querycol').val() != '' ){
+					if ( jQuery('#querycol').val() == 'id' || jQuery('#querycol').val() == 'nebula_id' || jQuery('#querycol').val() == 'ga_cid' ){
+						jQuery('#querystatus').html('This column is protected.');
+						return false;
+					}
+
+					jQuery('#querystatus').html('');
+					jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-spinner fa-spin');
+
+					jQuery.ajax({
+						type: "POST",
+						url: nebula.site.ajax.url,
+						data: {
+							nonce: nebula.site.ajax.nonce,
+							action: 'nebula_ajax_manual_update_visitor',
+							id: jQuery('#queryid').val(),
+							col: jQuery('#querycol').val(),
+							val: jQuery('#queryval').val(),
+						},
+						success: function(response){
+							jQuery('#querystatus').html('Success! Updated table value visualized; <a class="refreshpage" href="#">refresh this page</a> to see actual updated data.');
+							jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-check');
+							setTimeout(function(){
+								jQuery('#queryprog').removeClass();
+							}, 1500);
+
+							jQuery('.activecell').text(jQuery('#queryval').val());
+
+							jQuery('#queryid').val('');
+							jQuery('#querycol').val('');
+							jQuery('#queryval').val('');
+						},
+						error: function(MLHttpRequest, textStatus, errorThrown){
+							jQuery('#querystatus').text('An AJAX error occured.');
+							jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-times');
+						},
+						timeout: 60000
+					});
+				} else {
+					jQuery('#querystatus').html('ID and Column are required.');
+				}
+
+				return false;
 			});
 		});
 	</script>
@@ -1574,13 +1643,64 @@ function nebula_visitors_data_page(){
 										$cell_class = 'zerovalue';
 									}
 								?>
-								<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>"><?php echo $value; ?></td>
+								<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo $value; ?></td>
 							<?php endforeach; ?>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
 		</div>
+
+		<div id="modify-visitor-form">
+			<h2>Modify Visitor Data</h2>
+			<p>Click a cell in the table to modify that visitor data. Some columns are protected, and others may revert when that visitor returns to the website (for example: Nebula Session ID, User Agent, and others will be re-stored each new visit).</p>
+
+			<table>
+				<tr class="label-cell">
+					<td class="id-col">ID</td>
+					<td class="col-col">Column</td>
+					<td class="val-col">Value</td>
+					<td class="run-col"></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="id-col"><input id="queryid" type="text" /></td>
+					<td class="col-col"><input id="querycol" type="text" /></td>
+					<td class="val-col"><input id="queryval" type="text" /></td>
+					<td class="run-col"><input id="runquery" class="button button-primary" type="submit" name="submit" value="Update Data"></td>
+					<td><i id="queryprog" class="fa fa-fw"></i></td>
+				</tr>
+			</table>
+
+			<p id="querystatus"></p>
+		</div>
 	</div>
 <?php
+}
+
+//Manually update visitor data
+add_action('wp_ajax_nebula_ajax_manual_update_visitor', 'nebula_ajax_manual_update_visitor');
+add_action('wp_ajax_nopriv_nebula_ajax_manual_update_visitor', 'nebula_ajax_manual_update_visitor');
+function nebula_ajax_manual_update_visitor(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+	$id = absint(intval($_POST['id']));
+	$col = sanitize_key($_POST['col']);
+	$val = sanitize_text_field($_POST['val']);
+
+	$protected_columns = array('id', 'nebula_id', 'ga_cid');
+	if ( in_array($col, $protected_columns) ){
+		return false;
+		exit;
+	}
+
+	global $wpdb;
+	$manual_update = $wpdb->update(
+		'nebula_visitors',
+		array($col => $val),
+		array('id' => $id),
+		array('%s'),
+		array( '%d' )
+	);
+
+	exit;
 }
