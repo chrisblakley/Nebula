@@ -1515,7 +1515,7 @@ function nebula_visitors_data_page(){
 				//"paging": false
 			});
 
-			jQuery('.dataTables_filter input').attr('placeholder', 'Search');
+			jQuery('.dataTables_filter input').attr('placeholder', 'Filter');
 
 			jQuery(document).on('click tap touch', '.dataTables_wrapper tbody td', function(){
 				jQuery(this).parents('tr').toggleClass('selected');
@@ -1524,6 +1524,7 @@ function nebula_visitors_data_page(){
 					if ( jQuery(this).attr('data-column') == 'id' || jQuery(this).attr('data-column') == 'nebula_id' || jQuery(this).attr('data-column') == 'ga_cid' ){
 						jQuery('#querystatus').html('This column is protected.');
 					} else {
+						jQuery('.activecell').removeClass('activecell');
 						jQuery(this).addClass('activecell');
 						jQuery('#queryid').val(jQuery(this).parents('tr').find('td[data-column="id"]').text());
 						jQuery('#querycol').val(jQuery(this).attr('data-column'));
@@ -1643,7 +1644,7 @@ function nebula_visitors_data_page(){
 										$cell_class = 'zerovalue';
 									}
 								?>
-								<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo $value; ?></td>
+								<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo sanitize_text_field($value); ?></td>
 							<?php endforeach; ?>
 						</tr>
 					<?php endforeach; ?>

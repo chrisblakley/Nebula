@@ -1,4 +1,6 @@
 <style>
+	#generator-section ul {padding-left: 0; list-style: none;}
+
 	.builder-form-heading {display: inline-block; margin: 0; font-size: 12px; font-weight: bold;}
 	.inputhelp-description {display: none; margin: 0; padding: 0; font-size: 10px;}
 
@@ -99,18 +101,17 @@
 				return false;
 			}
 
-			generatedResult += '?utm_source=' + encodeURIComponent(utm_source);
+			generatedResult += '?utm_campaign=' + encodeURIComponent(utm_campaign);
 			generatedResult += '&utm_medium=' + encodeURIComponent(utm_medium);
-
-			if ( utm_term != '' ) {
-				generatedResult += '&utm_term=' + encodeURIComponent(utm_term);
-			}
+			generatedResult += '&utm_source=' + encodeURIComponent(utm_source);
 
 			if ( utm_content != '' ) {
 				generatedResult += '&utm_content=' + encodeURIComponent(utm_content);
 			}
 
-			generatedResult += '&utm_campaign=' + encodeURIComponent(utm_campaign);
+			if ( utm_term != '' ) {
+				generatedResult += '&utm_term=' + encodeURIComponent(utm_term);
+			}
 
 			jQuery('#generatedoutput').removeClass('danger').val(generatedResult);
 			createCookie('CampaignURL', generatedResult);
@@ -151,7 +152,7 @@
 	</div><!--/col-->
 </div><!--/row-->
 
-<div class="row">
+<div id="generator-section" class="row">
 	<div class="col-md-6">
 		<form>
 			<ul>
@@ -164,11 +165,11 @@
 				</li>
 
 				<li class="form-group">
-					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Source<span class="required">*</span></span>
+					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Name<span class="required">*</span></span>
 					<span>
-						<input type="text" id="campaign-source" class="form-control builderinput builderrequired">
+						<input type="text" id="campaign-name" class="form-control builderinput builderrequired">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> The source of the campaign such as a search engine, newsletter name, or referrer.<br />Examples: google, facebook, newsletter 4, coupon</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> Used for identifying a specific promotion or campaign.<br />Examples: clearance sale, promo code, slogan</p>
 				</li>
 
 				<li class="form-group">
@@ -180,11 +181,11 @@
 				</li>
 
 				<li class="form-group">
-					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Term</span>
+					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Source<span class="required">*</span></span>
 					<span>
-						<input type="text" id="campaign-term" class="form-control builderinput">
+						<input type="text" id="campaign-source" class="form-control builderinput builderrequired">
 					</span>
-					<p class="inputhelp-description"><em>(Optional)</em> Used for paid search. Enter the associated paid keyword(s) with this ad. This can be used for the text that was specifically linked in an email.</p>
+					<p class="inputhelp-description"><strong>(Required)</strong> The source of the campaign such as a search engine, newsletter name, or referrer.<br />Examples: google, facebook, newsletter 4, coupon</p>
 				</li>
 
 				<li class="form-group">
@@ -196,11 +197,11 @@
 				</li>
 
 				<li class="form-group">
-					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Name<span class="required">*</span></span>
+					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Campaign Term</span>
 					<span>
-						<input type="text" id="campaign-name" class="form-control builderinput builderrequired">
+						<input type="text" id="campaign-term" class="form-control builderinput">
 					</span>
-					<p class="inputhelp-description"><strong>(Required)</strong> Used for identifying a specific promotion or campaign.<br />Examples: clearance sale, promo code, slogan</p>
+					<p class="inputhelp-description"><em>(Optional)</em> Used for paid search. Enter the associated paid keyword(s) with this ad. This can be used for the text that was specifically linked in an email.</p>
 				</li>
 			</ul>
 		</form>

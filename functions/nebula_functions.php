@@ -6,7 +6,7 @@ function nebula_theme_setup(){
 	//Additions
 	add_theme_support('post-thumbnails');
 	add_theme_support('title-tag'); //Title tag support allows WordPress core to create the <title> tag.
-	add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
+	//add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
 	add_theme_support('automatic-feed-links'); //Add default posts and comments RSS feed links to head
 
 	add_post_type_support('page', 'excerpt'); //Allow pages to have excerpts too

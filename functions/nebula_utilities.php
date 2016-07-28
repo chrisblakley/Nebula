@@ -301,6 +301,7 @@ function check_nebula_id(){
 	}
 }
 
+//Check if this visitor is new or returning using several factors
 function new_or_returning_visitor(){
 	if ( nebula_option('visitors_db') ){
 		$last_session_id = nebula_get_visitor_data('last_session_id'); //Check if this returning visitor exists in the DB (in case they were removed)
@@ -608,6 +609,17 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 				'current_session_pageviews' => '1',
 			);
 
+			//Attempt to detect IP Geolocation data using https://freegeoip.net/
+			WP_Filesystem();
+			global $wp_filesystem;
+			$ip_geo_data = $wp_filesystem->get_contents('http://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
+			$ip_geo_data = json_decode($ip_geo_data);
+			if ( !empty($ip_geo_data) ){
+				$defaults['ip_country'] = sanitize_text_field($ip_geo_data->country_name);
+				$defaults['ip_region'] = sanitize_text_field($ip_geo_data->region_name);
+				$defaults['ip_city'] = sanitize_text_field($ip_geo_data->city);
+			}
+
 			$defaults = nebula_visitor_data_update_everytime($defaults);
 
 			$all_data = array_merge($defaults, $data); //Add any passed data
@@ -635,23 +647,36 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 	$defaults['nebula_session_id'] = nebula_session_id();
 	$defaults['score'] = nebula_calculate_visitor_score(); //Try to limit this (without doing a DB query to check)
 
+	//Avoid ternary operators to prevent overwriting existing data (like manual DB entries)
+
 	//Logged-in User Data
 	if ( is_user_logged_in() ){
 		$defaults['wp_user_id'] = get_current_user_id();
 
 		$user_info = get_userdata(get_current_user_id());
 		if ( !empty($user_info) ){
-			$defaults['wp_role'] = sanitize_text_field($user_info->roles[0]);
-			$defaults['first_name'] = sanitize_text_field($user_info->user_firstname);
-			$defaults['last_name'] = sanitize_text_field($user_info->user_lastname);
-			$defaults['full_name'] = sanitize_text_field($user_info->user_firstname . ' ' . $user_info->user_lastname);
-			$defaults['email_address'] = sanitize_text_field($user_info->user_email);
-			$defaults['username'] = sanitize_text_field($user_info->user_login);
-			$defaults['known'] = '1';
+			if ( !empty($user_info->roles[0]) ){
+				$defaults['wp_role'] = sanitize_text_field($user_info->roles[0]);
+			}
+			if ( !empty($user_info->user_firstname) ){
+				$defaults['first_name'] = sanitize_text_field($user_info->user_firstname);
+			}
+			if ( !empty($user_info->user_lastname) ){
+				$defaults['last_name'] = sanitize_text_field($user_info->user_lastname);
+			}
+			if ( !empty($user_info->user_firstname) && !empty($user_info->user_lastname) ){
+				$defaults['full_name'] = sanitize_text_field($user_info->user_firstname . ' ' . $user_info->user_lastname);
+			}
+			if ( !empty($user_info->user_email) ){
+				$defaults['email_address'] = sanitize_text_field($user_info->user_email);
+			}
+			if ( !empty($user_info->user_login) ){
+				$defaults['username'] = sanitize_text_field($user_info->user_login);
+			}
 		}
 	}
 
-	//Campaign Data (not using ternary to prevent emptying existing data)
+	//Campaign Data
 	if ( isset($_GET['utm_source']) ){
 		$defaults['utm_source'] = sanitize_text_field($_GET['utm_source']);
 	}
