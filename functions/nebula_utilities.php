@@ -296,9 +296,9 @@ function check_nebula_id(){
 
 	if ( empty($nebula_id) ){ //If new user
 		generate_nebula_id();
-	} else { //Returning user
-		new_or_returning_visitor();
 	}
+
+	new_or_returning_visitor();
 }
 
 //Check if this visitor is new or returning using several factors
@@ -319,7 +319,11 @@ function new_or_returning_visitor(){
 							'first_session' => '0',
 							'notes' => 'This user tracked by IP and User Agent.',
 						));
+					} else {
+						nebula_insert_visitor(array('first_session' => '0')); //The matching visitor row had a GA CID assigned (no dashes)
 					}
+				} else {
+					nebula_insert_visitor(array('first_session' => '0')); //No matching IP Address with same User Agent
 				}
 			} else {
 				nebula_insert_visitor(array('first_session' => '0'));
@@ -375,9 +379,6 @@ function generate_nebula_id($force=null){
 			if ( !empty($nebula_id_from_matching_ga_cid) ){
 				$_COOKIE['nid'] = reset($nebula_id_from_matching_ga_cid[0]);
 				setcookie('nid', $_COOKIE['nid'], $nid_expiration, COOKIEPATH, COOKIE_DOMAIN); //Update the Nebula ID cookie
-				new_or_returning_visitor(); //Update session info since this is actually a returning visitor
-			} else {
-				nebula_insert_visitor(); //Add the new visitor to the database
 			}
 		}
 	}
@@ -677,26 +678,26 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 	}
 
 	//Campaign Data
-	if ( isset($_GET['utm_source']) ){
-		$defaults['utm_source'] = sanitize_text_field($_GET['utm_source']);
+	if ( isset($_GET['utm_campaign']) ){
+		$defaults['utm_campaign'] = sanitize_text_field($_GET['utm_campaign']);
 	}
 	if ( isset($_GET['utm_medium']) ){
 		$defaults['utm_medium'] = sanitize_text_field($_GET['utm_medium']);
 	}
-	if ( isset($_GET['utm_campaign']) ){
-		$defaults['utm_campaign'] = sanitize_text_field($_GET['utm_campaign']);
-	}
-	if ( isset($_GET['utm_term']) ){
-		$defaults['utm_term'] = sanitize_text_field($_GET['utm_term']);
+	if ( isset($_GET['utm_source']) ){
+		$defaults['utm_source'] = sanitize_text_field($_GET['utm_source']);
 	}
 	if ( isset($_GET['utm_content']) ){
 		$defaults['utm_content'] = sanitize_text_field($_GET['utm_content']);
 	}
+	if ( isset($_GET['utm_term']) ){
+		$defaults['utm_term'] = sanitize_text_field($_GET['utm_term']);
+	}
 
 	//Device information
 	$defaults['user_agent'] = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
-	$defaults['device_full'] = nebula_get_device('full');
 	$defaults['device_form_factor'] = nebula_get_device('formfactor');
+	$defaults['device_full'] = nebula_get_device('full');
 	$defaults['device_brand'] = nebula_get_device('brand');
 	$defaults['device_model'] = nebula_get_device('model');
 	$defaults['device_type'] = nebula_get_device('type');

@@ -616,7 +616,7 @@ function eventTracking(){
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Mailto'));
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
-		nv('append', {'contact_method': 'mailto', 'contact_email': emailAddress});
+		nv('append', {'contact_method': 'mailto', 'contacted_email': emailAddress});
 	});
 
 	//Telephone link tracking
@@ -624,13 +624,13 @@ function eventTracking(){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var phoneNumber = jQuery(this).attr('href');
-		phoneNumber = phoneNumber.replace('tel:+', '');
+		phoneNumber = phoneNumber.replace('tel:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Click-to-Call'));
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
-		nv('append', {'contact_method': 'click-to-call', 'contact_phone': phoneNumber}); //@todo: combine these into one call
+		nv('append', {'contact_method': 'click-to-call', 'contacted_phone': phoneNumber});
 	});
 
 	//SMS link tracking
@@ -644,7 +644,7 @@ function eventTracking(){
 		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('SMS'));
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
-		nv('append', {'contact_method': 'sms', 'contact_sms': phoneNumber});
+		nv('append', {'contact_method': 'sms', 'contacted_sms': phoneNumber});
 	});
 
 	//Non-Linked Click Attempts
@@ -674,13 +674,13 @@ function eventTracking(){
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Mailto'));
 			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone);
-			nv('append', {'contact_method': 'email (copied)', 'contact_email': emailPhone});
+			nv('append', {'contact_method': 'email (copied)', 'contacted_email': emailPhone});
 		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Click-to-Call'));
 			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone);
-			nv('append', {'contact_method': 'phone (copied)', 'contact_phone': emailPhone});
+			nv('append', {'contact_method': 'phone (copied)', 'contacted_phone': emailPhone});
 		}
 
 		if ( copyCount < 13 ){

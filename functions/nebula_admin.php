@@ -1502,181 +1502,187 @@ function nebula_visitors_data_page(){
 	$all_visitors_data_head = (array) $all_visitors_data_head;
 	$all_visitors_data = $wpdb->get_results("SELECT * FROM nebula_visitors");
 	$all_visitors_data = (array) $all_visitors_data;
-	?>
-	<script>
-		jQuery(window).on('load', function(){
-			jQuery('#visitors_data').DataTable({
-				"aaSorting": [[0, "desc"]], //Default sort (column number)
-				"aLengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
-				"iDisplayLength": 25, //Default entries shown (Does NOT need to match aLengthMenu).
-				"scrollX": true,
-				"scrollY": '65vh',
-				"scrollCollapse": true,
-				//"paging": false
-			});
 
-			jQuery('.dataTables_filter input').attr('placeholder', 'Filter');
+	if ( !empty($all_visitors_data) ): ?>
+		<script>
+			jQuery(window).on('load', function(){
+				jQuery('#visitors_data').DataTable({
+					"aaSorting": [[0, "desc"]], //Default sort (column number)
+					"aLengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
+					"iDisplayLength": 25, //Default entries shown (Does NOT need to match aLengthMenu).
+					"scrollX": true,
+					"scrollY": '65vh',
+					"scrollCollapse": true,
+					//"paging": false
+				});
 
-			jQuery(document).on('click tap touch', '.dataTables_wrapper tbody td', function(){
-				jQuery(this).parents('tr').toggleClass('selected');
+				jQuery('.dataTables_filter input').attr('placeholder', 'Filter');
 
-				if ( jQuery(this).parents('tr').hasClass('selected') ){
-					if ( jQuery(this).attr('data-column') == 'id' || jQuery(this).attr('data-column') == 'nebula_id' || jQuery(this).attr('data-column') == 'ga_cid' ){
-						jQuery('#querystatus').html('This column is protected.');
+				jQuery(document).on('click tap touch', '.dataTables_wrapper tbody td', function(){
+					jQuery(this).parents('tr').toggleClass('selected');
+
+					if ( jQuery(this).parents('tr').hasClass('selected') ){
+						if ( jQuery(this).attr('data-column') == 'id' || jQuery(this).attr('data-column') == 'nebula_id' || jQuery(this).attr('data-column') == 'ga_cid' ){
+							jQuery('#querystatus').html('This column is protected.');
+						} else {
+							jQuery('.activecell').removeClass('activecell');
+							jQuery(this).addClass('activecell');
+							jQuery('#queryid').val(jQuery(this).parents('tr').find('td[data-column="id"]').text());
+							jQuery('#querycol').val(jQuery(this).attr('data-column'));
+							jQuery('#queryval').val(jQuery(this).text());
+							jQuery('#querystatus').html('');
+						}
 					} else {
-						jQuery('.activecell').removeClass('activecell');
-						jQuery(this).addClass('activecell');
-						jQuery('#queryid').val(jQuery(this).parents('tr').find('td[data-column="id"]').text());
-						jQuery('#querycol').val(jQuery(this).attr('data-column'));
-						jQuery('#queryval').val(jQuery(this).text());
+						jQuery(this).removeClass('activecell');
+						jQuery('#queryid').val('');
+						jQuery('#querycol').val('');
+						jQuery('#queryval').val('');
+					}
+					jQuery('#queryprog').removeClass();
+				});
+
+				jQuery(document).on('click tap touch', '.refreshpage', function(){
+					window.location.reload();
+					return false;
+				});
+
+				jQuery('#runquery').on('click tap touch', function(){
+					if ( jQuery('#queryid').val() != '' && jQuery('#querycol').val() != '' ){
+						if ( jQuery('#querycol').val() == 'id' || jQuery('#querycol').val() == 'nebula_id' || jQuery('#querycol').val() == 'ga_cid' ){
+							jQuery('#querystatus').html('This column is protected.');
+							return false;
+						}
+
 						jQuery('#querystatus').html('');
+						jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-spinner fa-spin');
+
+						jQuery.ajax({
+							type: "POST",
+							url: nebula.site.ajax.url,
+							data: {
+								nonce: nebula.site.ajax.nonce,
+								action: 'nebula_ajax_manual_update_visitor',
+								id: jQuery('#queryid').val(),
+								col: jQuery('#querycol').val(),
+								val: jQuery('#queryval').val(),
+							},
+							success: function(response){
+								jQuery('#querystatus').html('Success! Updated table value visualized; <a class="refreshpage" href="#">refresh this page</a> to see actual updated data.');
+								jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-check');
+								setTimeout(function(){
+									jQuery('#queryprog').removeClass();
+								}, 1500);
+
+								jQuery('.activecell').text(jQuery('#queryval').val());
+
+								jQuery('#queryid').val('');
+								jQuery('#querycol').val('');
+								jQuery('#queryval').val('');
+							},
+							error: function(MLHttpRequest, textStatus, errorThrown){
+								jQuery('#querystatus').text('An AJAX error occured.');
+								jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-times');
+							},
+							timeout: 60000
+						});
+					} else {
+						jQuery('#querystatus').html('ID and Column are required.');
 					}
-				} else {
-					jQuery(this).removeClass('activecell');
-					jQuery('#queryid').val('');
-					jQuery('#querycol').val('');
-					jQuery('#queryval').val('');
+
+					return false;
+				});
+			});
+		</script>
+
+		<div id="nebula-visitor-data" class="wrap">
+			<h2>Nebula Visitors Data</h2>
+			<?php
+				if ( !current_user_can('manage_options') && !is_dev() ){
+					wp_die('You do not have sufficient permissions to access this page.');
 				}
-				jQuery('#queryprog').removeClass();
-			});
+			?>
 
-			jQuery(document).on('click tap touch', '.refreshpage', function(){
-				window.location.reload();
-				return false;
-			});
-
-			jQuery('#runquery').on('click tap touch', function(){
-				if ( jQuery('#queryid').val() != '' && jQuery('#querycol').val() != '' ){
-					if ( jQuery('#querycol').val() == 'id' || jQuery('#querycol').val() == 'nebula_id' || jQuery('#querycol').val() == 'ga_cid' ){
-						jQuery('#querystatus').html('This column is protected.');
-						return false;
-					}
-
-					jQuery('#querystatus').html('');
-					jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-spinner fa-spin');
-
-					jQuery.ajax({
-						type: "POST",
-						url: nebula.site.ajax.url,
-						data: {
-							nonce: nebula.site.ajax.nonce,
-							action: 'nebula_ajax_manual_update_visitor',
-							id: jQuery('#queryid').val(),
-							col: jQuery('#querycol').val(),
-							val: jQuery('#queryval').val(),
-						},
-						success: function(response){
-							jQuery('#querystatus').html('Success! Updated table value visualized; <a class="refreshpage" href="#">refresh this page</a> to see actual updated data.');
-							jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-check');
-							setTimeout(function(){
-								jQuery('#queryprog').removeClass();
-							}, 1500);
-
-							jQuery('.activecell').text(jQuery('#queryval').val());
-
-							jQuery('#queryid').val('');
-							jQuery('#querycol').val('');
-							jQuery('#queryval').val('');
-						},
-						error: function(MLHttpRequest, textStatus, errorThrown){
-							jQuery('#querystatus').text('An AJAX error occured.');
-							jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-times');
-						},
-						timeout: 60000
-					});
-				} else {
-					jQuery('#querystatus').html('ID and Column are required.');
-				}
-
-				return false;
-			});
-		});
-	</script>
-
-	<div id="nebula-visitor-data" class="wrap">
-		<h2>Nebula Visitor Data</h2>
-		<?php
-			if ( !current_user_can('manage_options') && !is_dev() ){
-				wp_die('You do not have sufficient permissions to access this page.');
-			}
-		?>
-
-		<div class="dataTables_wrapper">
-			<table id="visitors_data" class="display compact" cellspacing="0" width="100%">
-				<thead>
-					<tr>
-						<?php foreach ( $all_visitors_data_head as $column_name ): ?>
-							<td>
-								<?php
-									$column_name = (array) $column_name;
-									echo ucwords(str_replace('_', ' ', $column_name['Field']));
-								?>
-							</td>
-						<?php endforeach; ?>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $all_visitors_data as $visitor_data ): ?>
-						<?php
-							$visitor_data = (array) $visitor_data;
-							$row_class = '';
-							if ( $visitor_data['nebula_id'] == get_nebula_id() ){
-								$row_class .= 'you ';
-							}
-
-							if ( $visitor_data['known'] == '1' ){
-								$row_class .= 'known ';
-							}
-						?>
-						<tr class="<?php echo $row_class; ?>">
-							<?php foreach ( $visitor_data as $column => $value ): ?>
-								<?php
-									$cell_title = '';
-									$cell_class = '';
-									$date_columns = array('create_date', 'last_modified_date', 'current_session');
-									if ( in_array($column, $date_columns) ){
-										$cell_title = date('l, F j, Y - g:i:sa', $value);
-										$cell_class = 'moreinfo';
-										$value = $value . ' (' . date('F j, Y - g:i:sa', $value) . ')';
-									}
-
-									if ( $value == '0' ){
-										$cell_class = 'zerovalue';
-									}
-								?>
-								<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo sanitize_text_field($value); ?></td>
+			<div class="dataTables_wrapper">
+				<table id="visitors_data" class="display compact" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<?php foreach ( $all_visitors_data_head as $column_name ): ?>
+								<td>
+									<?php
+										$column_name = (array) $column_name;
+										echo ucwords(str_replace('_', ' ', $column_name['Field']));
+									?>
+								</td>
 							<?php endforeach; ?>
 						</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<?php foreach ( $all_visitors_data as $visitor_data ): ?>
+							<?php
+								$visitor_data = (array) $visitor_data;
+								$row_class = '';
+								if ( $visitor_data['nebula_id'] == get_nebula_id() ){
+									$row_class .= 'you ';
+								}
+
+								if ( $visitor_data['known'] == '1' ){
+									$row_class .= 'known ';
+								}
+							?>
+							<tr class="<?php echo $row_class; ?>">
+								<?php foreach ( $visitor_data as $column => $value ): ?>
+									<?php
+										$cell_title = '';
+										$cell_class = '';
+										$date_columns = array('create_date', 'last_modified_date', 'current_session');
+										if ( in_array($column, $date_columns) ){
+											$cell_title = date('l, F j, Y - g:i:sa', $value);
+											$cell_class = 'moreinfo';
+											$value = $value . ' (' . date('F j, Y - g:i:sa', $value) . ')';
+										}
+
+										if ( $value == '0' ){
+											$cell_class = 'zerovalue';
+										}
+									?>
+									<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo sanitize_text_field($value); ?></td>
+								<?php endforeach; ?>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+
+			<div id="modify-visitor-form">
+				<h2>Modify Visitor Data</h2>
+				<p>Click a cell in the table to modify that visitor data. Some columns are protected, and others may revert when that visitor returns to the website (for example: Nebula Session ID, User Agent, and others will be re-stored each new visit).</p>
+
+				<table>
+					<tr class="label-cell">
+						<td class="id-col">ID</td>
+						<td class="col-col">Column</td>
+						<td class="val-col">Value</td>
+						<td class="run-col"></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="id-col"><input id="queryid" type="text" /></td>
+						<td class="col-col"><input id="querycol" type="text" /></td>
+						<td class="val-col"><input id="queryval" type="text" /></td>
+						<td class="run-col"><input id="runquery" class="button button-primary" type="submit" name="submit" value="Update Data"></td>
+						<td><i id="queryprog" class="fa fa-fw"></i></td>
+					</tr>
+				</table>
+
+				<p id="querystatus"></p>
+			</div>
 		</div>
-
-		<div id="modify-visitor-form">
-			<h2>Modify Visitor Data</h2>
-			<p>Click a cell in the table to modify that visitor data. Some columns are protected, and others may revert when that visitor returns to the website (for example: Nebula Session ID, User Agent, and others will be re-stored each new visit).</p>
-
-			<table>
-				<tr class="label-cell">
-					<td class="id-col">ID</td>
-					<td class="col-col">Column</td>
-					<td class="val-col">Value</td>
-					<td class="run-col"></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td class="id-col"><input id="queryid" type="text" /></td>
-					<td class="col-col"><input id="querycol" type="text" /></td>
-					<td class="val-col"><input id="queryval" type="text" /></td>
-					<td class="run-col"><input id="runquery" class="button button-primary" type="submit" name="submit" value="Update Data"></td>
-					<td><i id="queryprog" class="fa fa-fw"></i></td>
-				</tr>
-			</table>
-
-			<p id="querystatus"></p>
+	<?php else: ?>
+		<div class="wrap">
+			<h2>Nebula Visitors Data</h2>
+			<p>Nebula Visitors table is empty or does not exist!</p>
 		</div>
-	</div>
-<?php
+	<?php endif;
 }
 
 //Manually update visitor data
