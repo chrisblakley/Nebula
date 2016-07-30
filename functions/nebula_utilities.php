@@ -717,7 +717,7 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 //@TODO "Nebula" 0: This is not implemented yet.
 add_action('wp_footer', 'nebula_calculate_visitor_score');
 function nebula_calculate_visitor_score(){
-	if ( nebula_option('visitors_db') ){ //remove is_dev
+	if ( nebula_option('visitors_db') ){
 		$nebula_id = get_nebula_id();
 		if ( !empty($nebula_id) ){
 			global $wpdb;
@@ -746,7 +746,8 @@ function nebula_calculate_visitor_score(){
 				);
 
 				$this_visitor = (array) $this_visitor[0];
-				$score = 0;
+
+				$score = ( $this_visitor['session_count'] > 1 )? $this_visitor['session_count'] : 0; //Start the score at the session count if higher than 1
 				foreach ( $this_visitor as $column => $value ){
 					if ( array_key_exists($column, $point_values) && !empty($value) ){
 						$score += $point_values[$column];
@@ -767,7 +768,7 @@ function nebula_remove_expired_visitors(){
 	if ( nebula_option('visitors_db') ){
 		global $wpdb;
 		$expiration_length = time()-2592000; //30 days
-		$wpdb->query($wpdb->prepare( "DELETE FROM nebula_visitors WHERE last_modified_date = %d AND known = %d AND score < %d", $expiration_length, 0, 100));
+		$wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE last_modified_date = %d AND known = %d AND score < %d", $expiration_length, 0, 100));
 	}
 }
 
@@ -814,7 +815,6 @@ function check_if_known($send_to_hubspot=true){
 		$nebula_id = get_nebula_id();
 
 		$known_visitor = $wpdb->get_results("SELECT * FROM nebula_visitors WHERE nebula_id LIKE '" . $nebula_id . "' AND (email_address REGEXP '.+@.+\..+' OR hubspot_vid REGEXP '^\d+$')");
-
 		if ( !empty($known_visitor) ){
 			if ( !is_known() ){
 				nebula_update_visitor(array('known' => '1')); //Update to known visitor (if previously unknown)
@@ -841,10 +841,6 @@ function is_known(){
 	return false;
 }
 
-//@TODO "Nebula" 0: Create a page in the WP Admin to view the collected data (datatables?) Maybe add features to modify/remove the data?
-//@TODO "Nebula" 0: Need a function to handle scoring.
-//@TODO "Nebula" 0: Need a function to handle expiration.
-
 //Prepare Nebula Visitor data to be sent to Hubspot CRM
 //This includes skipping empty fields, ignoring certain fields, and renaming others.
 function nebula_prep_data_for_hubspot_crm_delivery($data){
@@ -861,6 +857,9 @@ function nebula_prep_data_for_hubspot_crm_delivery($data){
 		$ignore_columns = array('id', 'known', 'last_modified_date', 'first_session', 'prev_session', 'last_session_id', 'current_session', 'hubspot_vid', 'bot', 'current_session_pageviews', 'score', 'expiration', 'street_number', 'street_name', 'zip_suffix', 'zip_full');
 		$rename_columns = array(
 			'ip_address' => 'nebula_ip',
+			'ip_city' => 'nebula_ip_city',
+			'ip_region' => 'nebula_ip_region',
+			'ip_country' => 'nebula_ip_country',
 			'street_full' => 'address',
 			'state_abbr' => 'state',
 			'country_name' => 'country',
@@ -1022,7 +1021,6 @@ function nebula_send_to_hubspot($data=array()){
 		}
 
 		if ( !empty($hubspot_vid) || !empty($email_address) ){ //If visitor has hubspot_vid or email_address
-
 			//Create the properties array
 			$content = array('properties' => array());
 			$needed_properties = array();
@@ -1050,7 +1048,6 @@ function nebula_send_to_hubspot($data=array()){
 				}
 			} else {
 				$response = nebula_hubspot_curl('https://api.hubapi.com/contacts/v1/contact/createOrUpdate/email/' . $email_address . '/', json_encode($content)); //Create or update the contact using their Email
-
 				if ( strpos($response, 'error') != false ){ //There was an error
 					return false;
 				} else {

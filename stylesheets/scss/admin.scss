@@ -213,7 +213,7 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 }
 
 //Nebula Visitors Data
-#nebula-visitor-data {
+#nebula-visitor-data {margin-bottom: 50px;
 	.dataTables_wrapper {
 		thead {background-color: #0098d7; color: #fff;
 			td {text-align: center !important;
@@ -240,6 +240,14 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 		.val-col {width: 300px;}
 		.run-col {}
 		input {width: 100%;}
+	}
+
+	#deletezeroscores {margin-top: 30px;
+		a {text-decoration: none;
+			&.danger {color: $danger_color;
+				&:hover {color: maroon;}
+			}
+		}
 	}
 }
 

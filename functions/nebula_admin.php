@@ -1567,7 +1567,7 @@ function nebula_visitors_data_page(){
 								val: jQuery('#queryval').val(),
 							},
 							success: function(response){
-								jQuery('#querystatus').html('Success! Updated table value visualized; <a class="refreshpage" href="#">refresh this page</a> to see actual updated data.');
+								jQuery('#querystatus').html('Success! Updated table value visualized- <a class="refreshpage" href="#">refresh this page</a> to see actual updated data.');
 								jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-check');
 								setTimeout(function(){
 									jQuery('#queryprog').removeClass();
@@ -1591,6 +1591,33 @@ function nebula_visitors_data_page(){
 
 					return false;
 				});
+
+				<?php if ( current_user_can('manage_options') ): ?>
+					jQuery('#deletezeroscores a').on('click tap touch', function(){
+						if ( confirm("Are you sure you want to remove all scores of 0 (or less)? This can not be undone.") ){
+							jQuery('#deletezeroscores').html('<i class="fa fa-fw fa-spin fa-spinner"></i> Removing scores of 0 (or less)...');
+
+							jQuery.ajax({
+								type: "POST",
+								url: nebula.site.ajax.url,
+								data: {
+									nonce: nebula.site.ajax.nonce,
+									action: 'nebula_ajax_remove_zero_scores',
+								},
+								success: function(response){
+									jQuery('#deletezeroscores').html('Success! Visitor data with score of 0 (or less) have been removed. Refreshing page... <a class="refreshpage" href="#">Manual Refresh</a>');
+									window.location.reload();
+								},
+								error: function(MLHttpRequest, textStatus, errorThrown){
+									jQuery('#deletezeroscores').html('Error. An AJAX error occured. <a class="refreshpage" href="#">Please refresh and try again.</a>');
+								},
+								timeout: 60000
+							});
+						}
+
+						return false;
+					});
+				<?php endif; ?>
 			});
 		</script>
 
@@ -1601,6 +1628,9 @@ function nebula_visitors_data_page(){
 					wp_die('You do not have sufficient permissions to access this page.');
 				}
 			?>
+
+			<p>Visitor data can be sorted and filtered here. Lines in <em>italics</em> are your data. Green lines are "known" visitors who have identified themselves. If your Hubspot CRM API key is added to <a href="themes.php?page=nebula_options" target="_blank">Nebula Options</a>, known visitors' data is automatically updated there. To modify data, click the cell to be updated and complete the form below the table. Use the Notes column to make notes about users (this column can not be accessed for retargeting!)</p>
+			<p>Data will expire 30 days after the visitors' "Last Modified Date" unless the score is 100 or greater. Scores of 0 (or less) can be deleted manually by clicking the corresponding link at the bottom of this page.</p>
 
 			<div class="dataTables_wrapper">
 				<table id="visitors_data" class="display compact" cellspacing="0" width="100%">
@@ -1675,6 +1705,10 @@ function nebula_visitors_data_page(){
 				</table>
 
 				<p id="querystatus"></p>
+
+				<?php if ( current_user_can('manage_options') ): ?>
+					<div id="deletezeroscores"><a class="danger" href="#"><i class="fa fa-fw fa-warning"></i> Delete Scores of 0 (or less)</a></div>
+				<?php endif; ?>
 			</div>
 		</div>
 	<?php else: ?>
@@ -1708,6 +1742,20 @@ function nebula_ajax_manual_update_visitor(){
 		array('%s'),
 		array( '%d' )
 	);
+
+	exit;
+}
+
+//Manually delete null and 0 score rows
+add_action('wp_ajax_nebula_ajax_remove_zero_scores', 'nebula_ajax_remove_zero_scores');
+add_action('wp_ajax_nopriv_nebula_ajax_remove_zero_scores', 'nebula_ajax_remove_zero_scores');
+function nebula_ajax_remove_zero_scores(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+	if ( current_user_can('manage_options') ){
+		global $wpdb;
+		$zero_scores = $wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE score <= %d", 0));
+	}
 
 	exit;
 }

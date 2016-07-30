@@ -1584,8 +1584,9 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 	query_posts($args);
 
 	if ( empty($args['post_type']) ){
-		$post_type_label = 'posts';
+		$post_type_label = 'posts'; //This sets the label (not the arg)
 	} else {
+		$post_type = ( is_array($args['post_type']) )? $args['post_type'][0] : $args['post_type']; //If multiple post types queried, use the first one as the label.
 		$post_type_obj = get_post_type_object($args['post_type']);
 		$post_type_label = lcfirst($post_type_obj->label);
 	}

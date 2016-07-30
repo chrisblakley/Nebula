@@ -7,7 +7,7 @@
 <div class="loop-section">
 	<?php if ( !have_posts() ): //If there are no posts to display (such as an empty archive page). ?>
 		<article id="post-0" class="post error404 not-found">
-			<h3 class="entry-title">Not Found</h3>
+			<h2 class="entry-title">Not Found</h2>
 			<div class="entry-summary">
 				<p>No results were found for the requested archive.</p>
 				<?php echo nebula_search_form(); ?>
@@ -16,8 +16,11 @@
 	<?php else: //Begin the loop. ?>
 		<?php while ( have_posts() ): the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+				<?php if ( has_post_thumbnail() ): ?>
+					<?php the_post_thumbnail(); ?>
+				<?php endif; ?>
 
-				<h3 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+				<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 				<div class="entry-meta">
 					<?php if ( is_search() ): ?>
