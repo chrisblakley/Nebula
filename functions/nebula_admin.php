@@ -1522,7 +1522,7 @@ function nebula_visitors_data_page(){
 					jQuery(this).parents('tr').toggleClass('selected');
 
 					if ( jQuery(this).parents('tr').hasClass('selected') ){
-						if ( jQuery(this).attr('data-column') == 'id' || jQuery(this).attr('data-column') == 'nebula_id' || jQuery(this).attr('data-column') == 'ga_cid' ){
+						if ( jQuery(this).attr('data-column') == 'id' || jQuery(this).attr('data-column') == 'nebula_id' || jQuery(this).attr('data-column') == 'ga_cid' || jQuery(this).attr('data-column') == 'score' ){
 							jQuery('#querystatus').html('This column is protected.');
 						} else {
 							jQuery('.activecell').removeClass('activecell');
@@ -1567,7 +1567,7 @@ function nebula_visitors_data_page(){
 								val: jQuery('#queryval').val(),
 							},
 							success: function(response){
-								jQuery('#querystatus').html('Success! Updated table value visualized- <a class="refreshpage" href="#">refresh this page</a> to see actual updated data.');
+								jQuery('#querystatus').html('Success! Updated table value visualized- <a class="refreshpage" href="#">refresh this page</a> to see actual updated data (and updated score).');
 								jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-check');
 								setTimeout(function(){
 									jQuery('#queryprog').removeClass();
@@ -1728,7 +1728,7 @@ function nebula_ajax_manual_update_visitor(){
 	$col = sanitize_key($_POST['col']);
 	$val = sanitize_text_field($_POST['val']);
 
-	$protected_columns = array('id', 'nebula_id', 'ga_cid');
+	$protected_columns = array('id', 'nebula_id', 'ga_cid', 'score');
 	if ( in_array($col, $protected_columns) ){
 		return false;
 		exit;
@@ -1740,7 +1740,16 @@ function nebula_ajax_manual_update_visitor(){
 		array($col => $val),
 		array('id' => $id),
 		array('%s'),
-		array( '%d' )
+		array('%d')
+	);
+
+	//recalculate the score after the update
+	$update_score = $wpdb->update(
+		'nebula_visitors',
+		array('score' => nebula_calculate_visitor_score($id)),
+		array('id' => $id),
+		array('%d'),
+		array('%d')
 	);
 
 	exit;

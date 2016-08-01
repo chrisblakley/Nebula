@@ -3,14 +3,6 @@
 #@TODO: Find/Replace "yourdomain" with the actual domain name!
 #@NOTE: Non-ghost referral spambots are blocked with PHP logic (to extract data) with a self-updating blacklist. Blocking referral spambots here in .htaccess would prevent that data!
 
-#Set Error Documents
-ErrorDocument 400 /?http=400
-ErrorDocument 401 /?http=401
-ErrorDocument 402 /?http=402
-ErrorDocument 403 /?http=403
-ErrorDocument 404 /?http=404
-ErrorDocument 405 /?http=405
-
 <IfModule mod_headers.c>
 	Header set Connection keep-alive
 </IfModule>

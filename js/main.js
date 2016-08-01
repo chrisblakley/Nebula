@@ -140,12 +140,12 @@ jQuery(window).on('resize', function(){
 		//Track size change
 		if ( window.lastWindowWidth > nebula.dom.window.width() ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Reduced Window Width'));
 			//ga('send', 'event', 'Window Resize', 'Smaller', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px'); //@TODO "Nebula" 0: Disabled for GA bugtesting
+			nv('append', {'window_resize': 'Smaller'});
 		} else if ( window.lastWindowWidth < nebula.dom.window.width() ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Enlarged Window Width'));
 			//ga('send', 'event', 'Window Resize', 'Bigger', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px'); //@TODO "Nebula" 0: Disabled for GA bugtesting
+			nv('append', {'window_resize': 'Larger'});
 		}
 		window.lastWindowWidth = nebula.dom.window.width();
 	}, 500, 'window resize');
@@ -187,8 +187,8 @@ function windowTypeDetection(){
 		nebula.dom.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') === -1 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Iframe'));
 			ga('send', 'event', 'Iframe', 'Loaded Within', window.parent.location, {'nonInteraction': 1});
+			nv('send', {'window_type': 'iframe', 'window_parent': window.parent.location});
 		}
 		//Break out of the iframe when link is clicked.
 		jQuery('a').each(function(){
@@ -202,8 +202,8 @@ function windowTypeDetection(){
 	if ( navigator.standalone || get('hs') ){
 		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string (in manifest) is not working, so this detection method doesn't work.
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Homescreen App'));
 		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
+		nv('send', {'window_type': 'Standalone App'});
 	}
 }
 
@@ -254,8 +254,8 @@ function pageVisibility(){
 		var pageTitle = nebula.dom.document.attr('title');
 		if ( document.visibilityState === 'prerender' ){ //Page was prerendered/prefetched
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Prerendered'));
 			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
+			nv('increment', 'prerendered');
 			pauseAllVideos(false);
 		}
 
@@ -263,8 +263,8 @@ function pageVisibility(){
 			nebula.dom.document.trigger('nebula_page_hidden');
 			nebula.dom.body.addClass('page-visibility-hidden');
 			nebulaTimer('pageVisibilityHidden', 'start');
-			//ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Visibility'));
 			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1});
+			nv('increment', 'page_visibility_hidden');
 			pauseAllVideos(false);
 			visFirstHidden = true;
 		} else { //Page is visible
@@ -273,6 +273,7 @@ function pageVisibility(){
 				nebula.dom.body.removeClass('page-visibility-hidden');
 				//ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'lap')), 'Page in background tab for this time'); //Uncomment if this timing data is useful. GA limits timings, so disabled in favor of more important default timings.
 				//ga('send', 'event', 'Page Visibility', 'Visibile', pageTitle, {'nonInteraction': 1});
+				nv('increment', 'page_visibility_visible');
 			}
 		}
 	}
@@ -315,8 +316,8 @@ function gaBlockSend(){
 			if ( gablocked ){
 				jQuery('html').addClass('no-gajs');
 
-				nv('get', 'ga_block', function(response){
-					if ( !response || response != 'true' ){
+				nv('get', 'ga_block', function(response){ //@TODO "Nebula" 0: also store in cookie or localstorage to save DB query here?
+					if ( !response || response != '1' ){
 						jQuery.ajax({
 							type: "POST",
 							url: nebula.site.ajax.url,
@@ -357,9 +358,7 @@ function gaBlockSend(){
 					}
 				}
 
-				nv('send', {'ga_block': 'true'});
-			} else {
-				nv('remove', 'ga_block'); //maybe dont need this?
+				nv('send', {'ga_block': '1'});
 			}
 		}, 2000);
 	}
@@ -399,34 +398,30 @@ function facebookConnect(){
 
 			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Liked'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Like');
-				nv('send', {'fb_like': 'true'});
+				nv('send', {'fb_like': '1'});
 			});
 
 			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Unliked'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Unlike');
-				nv('send', {'fb_unlike': 'true'});
+				nv('send', {'fb_unlike': '1'});
 			});
 
 			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Share'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Share');
-				nv('send', {'fb_share': 'true'});
+				nv('send', {'fb_share': '1'});
 			});
 
 			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Comment'));
 				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': jQuery(document).attr('title')});
 				ga('send', 'event', 'Social', 'Facebook Comment');
-				nv('send', {'fb_comment': 'true'});
+				nv('send', {'fb_comment': '1'});
 			});
 		};
 	} else {
@@ -445,14 +440,12 @@ function tweetLinks(tweet){
 function googlePlusCallback(jsonParam){
 	if ( jsonParam.state === 'on' ){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('G+ Liked'));
 		ga('send', 'event', 'Social', 'Google+ Like');
-		nv('send', {'gplus_like': 'true'});
+		nv('send', {'gplus_like': '1'});
 	} else if ( jsonParam.state === 'off' ){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('G+ Unliked'));
 		ga('send', 'event', 'Social', 'Google+ Unlike');
-		nv('send', {'gplus_unlike': 'true'});
+		nv('send', {'gplus_unlike': '1'});
 	} else {
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Social', 'Google+ [JSON Unavailable]');
@@ -466,32 +459,32 @@ function socialSharing(){
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Facebook');
-	    nv('send', {'fb_share': 'true'});
+	    nv('send', {'fb_share': '1'});
     });
     jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Twitter');
-	    nv('send', {'twitter_share': 'true'});
+	    nv('send', {'twitter_share': '1'});
     });
     jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Google+');
-	    nv('send', {'gplus_share': 'true'});
+	    nv('send', {'gplus_share': '1'});
     });
     jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'LinkedIn');
-	    nv('send', {'li_share': 'true'});
+	    nv('send', {'li_share': '1'});
     });
     jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Pinterest');
-	    nv('send', {'pin_share': 'true'});
+	    nv('send', {'pin_share': '1'});
     });
     jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Email');
-	    nv('send', {'email_share': 'true'});
+	    nv('send', {'email_share': '1'});
     });
 }
 
@@ -548,8 +541,8 @@ function eventTracking(){
 
 		var destinationURL = jQuery(this).attr('href');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('External Link'));
 		ga('send', 'event', 'External Link', linkText, destinationURL);
+		nv('increment', 'external_links');
 	});
 
 	//PDF View/Download
@@ -560,7 +553,6 @@ function eventTracking(){
 		var filePath = jQuery(this).attr('href');
 		var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('PDF View'));
 		if ( linkText === '' || linkText.toLowerCase() === 'download' ){
 			ga('send', 'event', 'PDF View', 'File: ' + fileName);
 			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
@@ -578,7 +570,6 @@ function eventTracking(){
 		if ( filePath !== '#' ){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', gaCustomMetrics['notableDownloads'], 1);
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Notable Download'));
 			var linkText = jQuery(this).text();
 			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 			if ( linkText === '' || linkText.toLowerCase() === 'download' ){
@@ -593,17 +584,21 @@ function eventTracking(){
 	});
 
 	//Generic Interal Search Tracking
-	if ( get('s') || get('rs') ){
-		var searchQuery = get('s') || get('rs');
-		//nv('append', {'internal_search': searchQuery}); //Could be doubling up the data
-	}
 	nebula.dom.document.on('submit', '.search', function(){
 		var searchQuery = jQuery(this).find('input[name="s"]').val();
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 		ga('send', 'event', 'Internal Search', 'Submit', searchQuery);
 		if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: searchQuery});}
-		nv('append', {'internal_search': searchQuery});
+	});
+
+	//Use one NV for all internal search
+	nebula.dom.document.on('keyup paste', '#s, input.search', function(e){
+		oThis = jQuery(this);
+		debounce(function(){
+			if ( jQuery.trim(oThis.val()) ){
+				nv('append', {'internal_search': jQuery.trim(oThis.val())});
+			}
+		}, 1000);
 	});
 
 	//Mailto link tracking
@@ -613,7 +608,6 @@ function eventTracking(){
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Mailto'));
 		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
 		nv('append', {'contact_method': 'mailto', 'contacted_email': emailAddress});
@@ -627,7 +621,6 @@ function eventTracking(){
 		phoneNumber = phoneNumber.replace('tel:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Click-to-Call'));
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
 		nv('append', {'contact_method': 'click-to-call', 'contacted_phone': phoneNumber});
@@ -641,7 +634,6 @@ function eventTracking(){
 		phoneNumber = phoneNumber.replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('SMS'));
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
 		nv('append', {'contact_method': 'sms', 'contacted_sms': phoneNumber});
@@ -651,8 +643,8 @@ function eventTracking(){
 	jQuery('img').on('click tap touch', function(){
 		if ( !jQuery(this).parents('a').length ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Non-Linked Click Attempt'));
 			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
+			nv('increment', 'non_linked_click');
 		}
 	});
 
@@ -672,13 +664,11 @@ function eventTracking(){
 		if ( regexPattern.email.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Mailto'));
 			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone);
 			nv('append', {'contact_method': 'email (copied)', 'contacted_email': emailPhone});
 		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Click-to-Call'));
 			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone);
 			nv('append', {'contact_method': 'phone (copied)', 'contacted_phone': emailPhone});
 		}
@@ -691,13 +681,12 @@ function eventTracking(){
 				if ( selection === '' || selection === ' ' ){
 					ga('send', 'event', 'Copied Text', '[0 words]');
 				} else {
-					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Copied Text'));
 					ga('send', 'event', 'Copied Text', words.length + ' words', selection);
+					nv('increment', 'copied_text');
 				}
 			}
 		} else {
 			if ( copyOver === 0 ){
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Many Copies'));
 				ga('send', 'event', 'Copied Text', '[Copy limit reached]');
 			}
 			copyOver = 1;
@@ -707,9 +696,9 @@ function eventTracking(){
 	//AJAX Errors
 	nebula.dom.document.ajaxError(function(e, request, settings){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('General AJAX Error'));
 		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
 		ga('send', 'exception', e.result, true);
+		nv('increment', 'ajax_errors');
 	});
 
 	//Capture Print Intent
@@ -719,9 +708,8 @@ function eventTracking(){
 			printed = 1;
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Printed'));
 			ga('send', 'event', 'Print', 'Print');
-			nv('send', {'print': 'true'});
+			nv('send', {'print': '1'});
 		}
 	};
 	if ( window.matchMedia ){
@@ -741,11 +729,6 @@ function eventTracking(){
 		nebula.dom.document.on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
 			ga('send', 'event', 'Pinned Header', 'Click', 'Used pinned header (after scrolling) to navigate');
 		});
-	}
-
-	//404 Pages
-	if ( nebula.dom.body.hasClass('error404') ){
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP 404 Page'));
 	}
 }
 
@@ -790,10 +773,9 @@ function ecommerceTracking(){
 	//Place order button
 	nebula.dom.document.on('click tap touch', '#place_order', function(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Placed Order'));
 		ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebulaTimer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
 		ga('send', 'event', 'Ecommerce', 'Place Order Button', 'Place Order button click (likely exit to payment gateway)');
-		nv('send', {'ecommerce_checkout': 'Placed Order', 'ecommerce_customer': 'true'});
+		nv('send', {'ecommerce_checkout': 'Placed Order', 'ecommerce_customer': '1'});
 	});
 }
 
@@ -879,7 +861,7 @@ function scrollDepth(){
 					} else {
 						var readerType = 'Reader';
 						ga('set', gaCustomMetrics['engagedReaders'], 1);
-						nv('send', {'engaged_reader': 'true'});
+						nv('send', {'engaged_reader': '1'});
 					}
 				}
 
@@ -937,7 +919,7 @@ function nv(action, data, callback){
 		action = 'nebula_ajax_append_visitor';
 	}
 
-	if ( action === 'increment' ){
+	if ( action === 'increment' ){ //Pass data as string (not object)
 		action = 'nebula_ajax_increment_visitor';
 	}
 
@@ -1120,7 +1102,6 @@ function autocompleteSearch(){
 							jQuery(document).trigger('nebula_autocomplete_search_success');
 							ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 							if ( data ){
 								jQuery(document).trigger('nebula_autocomplete_search_results');
 								nebulaPrerender(data[0].link);
@@ -1131,12 +1112,10 @@ function autocompleteSearch(){
 							} else {
 								jQuery(document).trigger('nebula_autocomplete_search_no_results');
 								noSearchResults = ' (No Results)';
-								ga('set', gaCustomDimensions['sessionNotes'], sessionNote('No Search Results'));
 							}
 							debounce(function(){
 								ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
 								if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: request.term});}
-								nv('append', {'internal_search': request.term}); //Could this be sending multiple too quickly?
 							}, 1500, 'autocomplete success buffer');
 							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'lap')), 'Each search until server results');
 							response(data);
@@ -1146,9 +1125,8 @@ function autocompleteSearch(){
 							jQuery(document).trigger('nebula_autocomplete_search_error');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							debounce(function(){
-								ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Autocomplete Search Error'));
 								ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
-								nv('append', {'internal_search': request.term}); //Could this be sending multiple too quickly?
+								nv('increment', 'ajax_error');
 							}, 1500, 'autocomplete error buffer');
 							thisSearchInput.parents('form').removeClass('searching');
 						},
@@ -1214,9 +1192,7 @@ function advancedSearchTriggers(){
 		debounce(function(){
 			if ( jQuery('#s').val() ){
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Internal Search'));
 				ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
-				nv('append', {'internal_search': jQuery('#s').val()}); //Could this be sending multiple too quickly?
 			}
 		}, 1500);
 	});
@@ -1333,8 +1309,8 @@ function advancedSearchPrep(startingAt, waitingText){
 					jQuery('#advanced-search-results').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
 					haveAllEvents = 0;
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Advanced Search AJAX Error'));
 					ga('send', 'event', 'Error', 'AJAX Error', 'Advanced Search AJAX');
+					nv('increment', 'ajax_errors');
 				},
 				timeout: 60000
 			});
@@ -1375,7 +1351,6 @@ function advancedSearch(start, eventObject){
 		advancedSearchIndicator.html('<i class="fa fa-fw fa-times-circle"></i> <strong>No pages found</strong> that match your filters.');
 		if ( jQuery('#s').val() ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('No Search Results'));
 			ga('send', 'event', 'Internal Search', 'Advanced No Results', jQuery('#s').val());
 		}
 		moreEvents(0);
@@ -1648,7 +1623,6 @@ function pageSuggestion(){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Page Suggestion Accepted'));
 
 		if ( jQuery(this).hasClass('internal-suggestion') ){
 			var suggestionType = 'internal';
@@ -1657,6 +1631,7 @@ function pageSuggestion(){
 		}
 
 		ga('send', 'event', 'Page Suggestion', suggestionType, jQuery(this).text());
+		nv('increment', 'page_suggestion_clicks');
 	});
 }
 
@@ -1972,8 +1947,8 @@ function conditionalJSLoading(){
 			chosenSelectOptions();
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
+			nv('increment', 'js_errors');
 		});
 		nebulaLoadCSS(nebula.site.resources.css.chosen);
 	}
@@ -1986,8 +1961,8 @@ function conditionalJSLoading(){
 			jQuery(document).trigger('nebula_datatables_loaded');
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-            ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
             ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
+            nv('increment', 'js_errors');
         });
     }
 
@@ -1995,8 +1970,8 @@ function conditionalJSLoading(){
 	if ( jQuery('[data-toggle="tooltip"]').length ){
 		jQuery.getScript(nebula.site.resources.js.tether).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-            ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
             ga('send', 'event', 'Error', 'JS Error', 'tether.min.js could not be loaded', {'nonInteraction': 1});
+            nv('increment', 'js_errors');
         });
 	}
 
@@ -2017,8 +1992,8 @@ function nebulaLoadCSS(url){
 		    document.createStyleSheet(url);
 	    } catch(e){
 		    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		    ga('set', gaCustomDimensions['sessionNotes'], sessionNote('CSS Resource Load Error'));
 		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
+		    nv('increment', 'css_errors');
 	    }
 	} else {
 	    var css;
@@ -2164,8 +2139,8 @@ function nebulaAddressAutocomplete(autocompleteInput){
 		    }); //End Google Maps load
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
+			nv('increment', 'js_errors');
 		});
 	}
 }
@@ -2275,8 +2250,8 @@ function errorCallback(error){
     nebula.dom.body.addClass('geo-error');
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
     ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-    ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Geolocation Error (' + geoErrorNote + ')'));
     ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
+    nv('increment', 'js_errors');
 }
 
 
@@ -2426,12 +2401,12 @@ function errorMitigation(){
 				thisImage.prop('src', fallbackPNG);
 				thisImage.removeClass('svg');
 			}).fail(function() {
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('SVG Migitation Error'));
 				ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
+				nv('increment', 'html_errors');
 			});
 		} else {
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Broken Image'));
 			ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
+			nv('increment', 'html_errors');
 		}
 	});
 }
@@ -3066,8 +3041,8 @@ function onYouTubeIframeAPIReady(e){
 function onPlayerError(e){
 	var videoInfo = e.target.getVideoData();
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Youtube Error'));
 	ga('send', 'event', 'Error', 'Youtube API', videoInfo.title + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
+	nv('increment', 'js_errors');
 }
 function onPlayerReady(e){
 	if ( typeof videoProgress === 'undefined' ){
@@ -3145,13 +3120,13 @@ function vimeoControls(){
         jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': 1});
+			nv('increment', 'js_errors');
 			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/froogaloop.min.js').done(function(){
 				createVimeoPlayers();
 			}).fail(function(){
-				ga('set', gaCustomDimensions['sessionNotes'], sessionNote('JS Resource Load Error'));
 				ga('send', 'event', 'Error', 'JS Error', 'froogaloop (local) could not be loaded.', {'nonInteraction': 1});
+				nv('increment', 'js_errors');
 			});
 		});
 	}

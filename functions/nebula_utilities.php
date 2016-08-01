@@ -464,7 +464,7 @@ function nebula_update_visitor($data=array(), $send_to_hubspot=true){ //$data is
 			//Check if the data should be sent to Hubspot
 			if ( !empty($send_to_hubspot) ){
 				$need_to_resend = false;
-				$non_priority_columns = array('id', 'known', 'create_date', 'last_modified_date', 'initial_session', 'first_session', 'last_session_id', 'previous_session', 'current_session', 'current_session_pageviews', 'session_count', 'hubspot_vid', 'bot', 'expiration', 'score', 'ga_block', 'ad_block', 'nebula_session_id'); //These columns should not facilitate a Hubspot send by themselves.
+				$non_priority_columns = array('id', 'known', 'create_date', 'last_modified_date', 'initial_session', 'first_session', 'last_session_id', 'previous_session', 'current_session', 'current_session_pageviews', 'session_count', 'hubspot_vid', 'bot', 'expiration', 'score', 'ga_block', 'js_block', 'ad_block', 'nebula_session_id'); //These columns should not facilitate a Hubspot send by themselves.
 				foreach ( $all_data as $column => $value ){
 					if ( !in_array($column, $non_priority_columns) ){
 						$need_to_resend = true;
@@ -608,6 +608,22 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 				'nebula_session_id' => nebula_session_id(),
 				'current_session' => time(),
 				'current_session_pageviews' => '1',
+				'prerendered' => '0',
+				'page_visibility_hidden' => '0',
+				'page_visibility_visible' => '0',
+				'ga_block' => '0',
+				'page_not_found' => '0',
+				'no_search_results' => '0',
+				'external_links' => '0',
+				'non_linked_click' => '0',
+				'copied_text' => '0',
+				'html_errors' => '0',
+				'js_errors' => '0',
+				'css_errors' => '0',
+				'ajax_errors' => '0',
+				'page_suggestion_clicks' => '0',
+				'infinite_query_loads' => '0',
+				'score_mod' => '0',
 			);
 
 			//Attempt to detect IP Geolocation data using https://freegeoip.net/
@@ -714,48 +730,55 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 }
 
 //Calculate and update the visitor with a score
-//@TODO "Nebula" 0: This is not implemented yet.
-add_action('wp_footer', 'nebula_calculate_visitor_score');
-function nebula_calculate_visitor_score(){
+function nebula_calculate_visitor_score($id=null){
 	if ( nebula_option('visitors_db') ){
-		$nebula_id = get_nebula_id();
-		if ( !empty($nebula_id) ){
-			global $wpdb;
-			$this_visitor = $wpdb->get_results("SELECT * FROM nebula_visitors WHERE nebula_id LIKE '" . $nebula_id . "'");
+		global $wpdb;
 
-			if ( $this_visitor ){
-				//A score of 100+ will prevent deletion
-				$point_values = array(
-					'notable_poi' => 75,
-					'known' => 100,
-					'hubspot_vid' => 100,
-					'notes' => 25,
-					'notable_download' => 10,
-					'pdf_view' => 10,
-					'internal_search' => 20,
-					'contact_method' => 75,
-					'ecommerce_addtocart' => 50,
-					'ecommerce_checkout' => 75,
-					'engaged_reader' => 10,
-					'contact_funnel' => 25,
-					'street_full' => 75,
-					'geo_latitude' => 75,
-					'video_play' => 10,
-					'video_engaged' => 25,
-					'video_finished' => 25,
-				);
-
-				$this_visitor = (array) $this_visitor[0];
-
-				$score = ( $this_visitor['session_count'] > 1 )? $this_visitor['session_count'] : 0; //Start the score at the session count if higher than 1
-				foreach ( $this_visitor as $column => $value ){
-					if ( array_key_exists($column, $point_values) && !empty($value) ){
-						$score += $point_values[$column];
-					}
-				}
-
-				return $score;
+		//Which visitor data to calculate for?
+		if ( !empty($id) && current_user_can('manage_options') ){ //If an ID is passed and the user is an admin, use the passed visitor ID (Note: ID is from the visitor DB- not WordPress ID).
+			$this_visitor = $wpdb->get_results("SELECT * FROM nebula_visitors WHERE id = '" . $id . "'");
+		} else { //Else, use the current visitor
+			$nebula_id = get_nebula_id();
+			if ( !empty($nebula_id) ){
+				$this_visitor = $wpdb->get_results("SELECT * FROM nebula_visitors WHERE nebula_id = '" . $nebula_id . "'");
 			}
+		}
+
+		if ( $this_visitor ){
+			$this_visitor = (array) $this_visitor[0];
+
+			//A score of 100+ will prevent deletion
+			$point_values = array(
+				'notable_poi' => 100,
+				'known' => 100,
+				'hubspot_vid' => 100,
+				'notes' => 25,
+				'notable_download' => 10,
+				'pdf_view' => 10,
+				'internal_search' => 20,
+				'contact_method' => 75,
+				'ecommerce_addtocart' => 75,
+				'ecommerce_checkout' => 75,
+				'engaged_reader' => 10,
+				'contact_funnel' => 25,
+				'street_full' => 75,
+				'geo_latitude' => 75,
+				'video_play' => 10,
+				'video_engaged' => 25,
+				'video_finished' => 25,
+				'fb_like' => 20,
+				'fb_share' => 20,
+				'score_mod' => $this_visitor['score_mod'],
+			);
+
+			$score = ( $this_visitor['session_count'] > 1 )? $this_visitor['session_count'] : 0; //Start the score at the session count if higher than 1
+			foreach ( $this_visitor as $column => $value ){
+				if ( array_key_exists($column, $point_values) && !empty($value) ){
+					$score += $point_values[$column];
+				}
+			}
+
+			return $score;
 		}
 	}
 
@@ -1096,7 +1119,7 @@ function nebula_poi(){
 			}
 		}
 	} elseif ( isset($_GET['poi']) ){ //If POI query string exists //@TODO "Nebula" 0: in main.js strip this query string off the URL somehow?
-		return str_replace('%20', '', $_GET['poi']);
+		return str_replace(array('%20', '+'), ' ', $_GET['poi']);
 	}
 
 	return false;

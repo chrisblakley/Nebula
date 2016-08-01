@@ -200,7 +200,6 @@ function nebula_default_options(){
 		'cd_geolocation' => '',
 		'cd_geoname' => '',
 		'cd_geoaccuracy' => '',
-		'cd_sessionnotes' => '',
 		'cd_notablepoi' => '',
 		'cd_relativetime' => '',
 		'cd_scrolldepth' => '',
@@ -1195,14 +1194,6 @@ function nebula_options_page(){
 					<td>
 						<input class="dimension" type="text" name="nebula_options[cd_adblocker]" value="<?php echo $nebula_options['cd_adblocker']; ?>" />
 						<p class="helper"><small>Detects if the user is blocking ads. This can be used even if not intending to serve ads on this site. <em>It is important that this dimension is <strong>not</strong> set to the "hit" scope.</em> <strong>Scope: Session</strong></small></p>
-					</td>
-		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Session Notes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_options[cd_sessionnotes]" value="<?php echo $nebula_options['cd_sessionnotes']; ?>" />
-						<p class="helper"><small>Miscellaneous data detected during the user's session. Useful for filtering reports based on miscellaneous session data. <strong>Scope: Session</strong></small></p>
 					</td>
 		        </tr>
 

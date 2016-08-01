@@ -9,6 +9,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 }
 
 do_action('nebula_preheaders');
+nebula_increment_visitor('page_not_found');
 get_header(); ?>
 
 <div id="breadcrumb-section">
@@ -59,7 +60,6 @@ get_header(); ?>
 </div>
 
 <script>
-	ga('set', gaCustomDimensions['sessionNotes'], sessionNote('HTTP 404 Page'));
 	if ( document.referrer.length ) {
 		ga('send', 'event', '404 Not Found', 'Referrer: ' + document.referrer, {'nonInteraction': 1});
 	} else {

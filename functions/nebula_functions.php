@@ -55,15 +55,8 @@ function nebula_no_js_event(){
 		if ( !wp_verify_nonce($_GET['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
-
-		$dimension_array = array();
-		if ( nebula_option('cd_sessionnotes') ){
-			$dimension_index = nebula_option('cd_sessionnotes');
-			$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
-			$dimension_array = array('cd' . $cd_number => 'JS Disabled');
-		}
-
-		ga_send_event('JavaScript Disabled', $title, $_SERVER['HTTP_USER_AGENT'], null, 1, $dimension_array);
+		ga_send_event('JavaScript Disabled', $title, $_SERVER['HTTP_USER_AGENT'], null, 1);
+		nebula_update_visitor(array('js_block' => 'true'));
 		header('Location: ' . nebula_prefer_child_directory('/images/no-js.gif') . '?id=' . $_GET['id']); //Redirect and parameters here do nothing (deter false data).
 		die; //Die as a precaution.
 	}
@@ -80,17 +73,12 @@ function nebula_ga_blocked(){
 	if ( nebula_option('cd_sessionid') ){
 		$dimension_index = nebula_option('cd_sessionid');
 		$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
-		$dimension_array['cd' . $cd_number] = nebula_session_id();
-	}
-
-	if ( nebula_option('cd_sessionnotes') ){
-		$dimension_index = nebula_option('cd_sessionnotes');
-		$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
-		$dimension_array['cd' . $cd_number] = 'GA Blocked';
+		$dimension_array['cd' . $cd_number] = nebula_session_id() . '.noga';
 	}
 
 	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id), $dimension_array);
 	//ga_send_event('Google Analytics Blocked', get_the_title($post_id), $_SERVER['HTTP_USER_AGENT']);
+	nebula_increment_visitor('current_session_pageviews');
 }
 
 
@@ -1655,15 +1643,15 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 							history.replaceState(null, document.title, nebula.post.permalink + 'page/' + pageNumber + newQueryStrings);
 							nebula.dom.document.trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load'));
 							ga('send', 'event', 'Infinite Query', 'Load More', 'Loaded page ' + pageNumber);
+							nv('increment', 'infinite_query_loads');
 							pageNumber++;
 						},
 						error: function(MLHttpRequest, textStatus, errorThrown){
 							jQuery(document).trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-							ga('set', gaCustomDimensions['sessionNotes'], sessionNote('Infinite Load AJAX Error'));
 							ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
+							nv('increment', 'ajax_error');
 						},
 						timeout: 60000
 					});

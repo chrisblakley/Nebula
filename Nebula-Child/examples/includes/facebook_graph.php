@@ -75,7 +75,6 @@
 					});
 
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-					ga('set', gaCustomDimensions['sessionNotes'], sessionNote('FB Connect'));
 					ga('set', gaCustomDimensions['fbID'], nebula.user.facebook.id);
 
 					if ( has(nebula, 'user.flags') && nebula.user.flags.fbconnect !== 'true' ){

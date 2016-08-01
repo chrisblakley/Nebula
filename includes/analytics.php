@@ -43,7 +43,6 @@
 			scrollDepth: '<?php echo nebula_option('cd_scrolldepth'); //Hit ?>',
 			maxScroll: '<?php echo nebula_option('cd_maxscroll'); //Hit ?>',
 			sessionID: '<?php echo nebula_option('cd_sessionid'); //Session ?>',
-			sessionNotes: '<?php echo nebula_option('cd_sessionnotes'); //Session ?>',
 			poi: '<?php echo nebula_option('cd_notablepoi'); //User ?>',
 			role: '<?php echo nebula_option('cd_role'); //User ?>',
 			timestamp: '<?php echo nebula_option('cd_timestamp'); //Hit ?>',
@@ -73,10 +72,6 @@
 		}
 
 		<?php
-			if ( is_404() ){
-				echo 'ga("set", gaCustomDimensions["sessionNotes"], sessionNote("HTTP 404 Page"));';
-			}
-
 			if ( is_singular() || is_page() ){
 				global $post;
 
@@ -284,10 +279,7 @@
 		<?php endif; ?>
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
-
 		ga('send', 'pageview'); <?php //Send pageview along with set dimensions. ?>
-		//console.log('pageview triggered');
-
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 
 		//Get local time string with timezone offset
@@ -301,55 +293,9 @@
 			};
 			return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
 		}
-
-		//Add or remove session notes
-		function sessionNote(action, item){
-			if ( !jQuery('html').hasClass('lte-ie8') ){
-				if ( typeof sessionStorage['nebulaSession'] === 'undefined' ){
-					nebula.session.notes = [];
-				} else {
-					nebula.session = JSON.parse(sessionStorage['nebulaSession']);
-					if ( !nebula.session.notes ){
-						nebula.session.notes = [];
-					}
-				}
-
-				if ( action === 'return' ){
-					return nebula.session.notes.join(', ');
-				} else if ( action != 'add' && action != 'remove' ){
-					item = action;
-					action = 'add';
-				}
-
-				if ( !item ){ //IE8 does not like this.
-					return nebula.session.notes.join(', ');
-				}
-
-				itemIndex = nebula.session.notes.indexOf(item.replace(/"|%22/g, ''));
-
-				if ( action === 'add' ){
-					if ( itemIndex < 0 ){
-						nebula.session.notes.push(item);
-					} else {
-						return nebula.session.notes.join(', ');
-					}
-				} else {
-					if ( itemIndex >= 0 ){
-						nebula.session.notes.splice(itemIndex, 1);
-					} else {
-						return nebula.session.notes.join(', ');
-					}
-				}
-
-				sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
-				return nebula.session.notes.join(', ');
-			} else {
-				return 'IE8';
-			}
-		}
 	</script>
 	<noscript>
-		<img src="<?php echo ga_UTM_gif(); ?>" width="1" height="1" style="display: none;" /><?php //Track pageviews of users who disable JavaScript. ?>
+		<img src="<?php echo ga_UTM_gif(); ?>" width="1" height="1" style="position: absolute; opacity: 0; visibility: hidden;" /><?php //Track pageviews of users who disable JavaScript. ?>
 		<iframe class="hidden" src="<?php echo home_url(); ?>/?nonce=<?php global $nebula; echo $nebula['site']['ajax']['nonce']; ?>&js=false&id=<?php echo $post->ID; ?>" width="0" height="0" style="display: none; position: absolute;"></iframe><?php //Send "JavaScript Disabled" event. ?>
 	</noscript>
 <?php else: //If Tracking ID is empty: ?>
@@ -358,7 +304,6 @@
 		function gaCustomDimensions(){return false;}
 		function gaCustomMetrics(){return false;}
 		function localTimestamp(){return false;}
-		function sessionNote(){return false;}
 	</script>
 <?php endif; ?>
 
