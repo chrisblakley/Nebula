@@ -11,11 +11,6 @@ jQuery(document).ready(function(){
 	gaBlockDetection();
 	conditionalJSLoading();
 
-	//Social
-	facebookSDK();
-	facebookConnect();
-	socialSharing();
-
 	//Navigation
 	mmenus();
 	dropdownWidthController();
@@ -52,6 +47,7 @@ jQuery(document).ready(function(){
 	//Interaction
 	windowTypeDetection();
 	pageVisibility();
+	socialSharing();
 	checkForYoutubeVideos();
 	vimeoControls();
 	animationTriggers();
@@ -78,7 +74,6 @@ jQuery(document).ready(function(){
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').val(nebula.user.nid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
-	window.lastWindowWidth = nebula.dom.window.width();
 }); //End Document Ready
 
 /*==========================
@@ -86,6 +81,8 @@ jQuery(document).ready(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
+	facebookSDK();
+	facebookConnect();
 	gaBlockSend();
 
 	if ( !window.nebulaTrackingCalled ){ //If event tracking still hasn't been initialized
@@ -136,18 +133,6 @@ jQuery(window).on('resize', function(){
 		} else {
 			initHeadroom();
 		}
-
-		//Track size change
-		if ( window.lastWindowWidth > nebula.dom.window.width() ){
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			//ga('send', 'event', 'Window Resize', 'Smaller', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px'); //@TODO "Nebula" 0: Disabled for GA bugtesting
-			nv('append', {'window_resize': 'Smaller'});
-		} else if ( window.lastWindowWidth < nebula.dom.window.width() ){
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			//ga('send', 'event', 'Window Resize', 'Bigger', window.lastWindowWidth + 'px to ' + nebula.dom.window.width() + 'px'); //@TODO "Nebula" 0: Disabled for GA bugtesting
-			nv('append', {'window_resize': 'Larger'});
-		}
-		window.lastWindowWidth = nebula.dom.window.width();
 	}, 500, 'window resize');
 }); //End Window Resize
 
@@ -317,7 +302,7 @@ function gaBlockSend(){
 				jQuery('html').addClass('no-gajs');
 
 				nv('get', 'ga_block', function(response){ //@TODO "Nebula" 0: also store in cookie or localstorage to save DB query here?
-					if ( !response || response != '1' ){
+					if ( !response || response !== '1' ){
 						jQuery.ajax({
 							type: "POST",
 							url: nebula.site.ajax.url,
@@ -459,32 +444,32 @@ function socialSharing(){
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Facebook');
-	    nv('send', {'fb_share': '1'});
+		nv('send', {'fb_share': '1'});
     });
     jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Twitter');
-	    nv('send', {'twitter_share': '1'});
+		nv('send', {'twitter_share': '1'});
     });
     jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Google+');
-	    nv('send', {'gplus_share': '1'});
+		nv('send', {'gplus_share': '1'});
     });
     jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'LinkedIn');
-	    nv('send', {'li_share': '1'});
+		nv('send', {'li_share': '1'});
     });
     jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Pinterest');
-	    nv('send', {'pin_share': '1'});
+		nv('send', {'pin_share': '1'});
     });
     jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr('target', '_blank').on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Email');
-	    nv('send', {'email_share': '1'});
+		nv('send', {'email_share': '1'});
     });
 }
 
@@ -1636,24 +1621,26 @@ function pageSuggestion(){
 }
 
 function trySearch(phrase){
-	var queryParams = {
-		cx: nebula.site.options.nebula_cse_id,
-		key: nebula.site.options.nebula_google_browser_api_key,
-		num: 10,
-		q: phrase,
-		alt: 'JSON'
-	}
-	var API_URL = 'https://www.googleapis.com/customsearch/v1?';
-
-	// Send the request to the custom search API
-	jQuery.getJSON(API_URL, queryParams, function(response){
-		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		if ( response.items && response.items.length ){
-			if ( response.items[0].link !== window.location.href ){
-				showSuggestedPage(response.items[0].title, response.items[0].link);
-			}
+	if ( nebula.site.options.nebula_cse_id.length && nebula.site.options.nebula_google_browser_api_key.length ){
+		var queryParams = {
+			cx: nebula.site.options.nebula_cse_id,
+			key: nebula.site.options.nebula_google_browser_api_key,
+			num: 10,
+			q: phrase,
+			alt: 'JSON'
 		}
-	});
+		var API_URL = 'https://www.googleapis.com/customsearch/v1?';
+
+		// Send the request to the custom search API
+		jQuery.getJSON(API_URL, queryParams, function(response){
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			if ( response.items && response.items.length ){
+				if ( response.items[0].link !== window.location.href ){
+					showSuggestedPage(response.items[0].title, response.items[0].link);
+				}
+			}
+		});
+	}
 }
 
 function showSuggestedPage(title, url){

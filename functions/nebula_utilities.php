@@ -560,12 +560,17 @@ function nebula_increment_visitor($data){ //Data should be an array of columns t
 		global $wpdb;
 		$nebula_id = get_nebula_id();
 
+		if ( is_string($data) ){
+			$data = array($data);
+		}
+
+		//@TODO "Nebula" 0: echo here to see if this gets triggered multiple times (when it should only get triggered once)
+
 		if ( !empty($nebula_id) && !empty($data) ){
 			$increment_query = "UPDATE nebula_visitors ";
 			foreach ( $data as $column ){
 				$column = sanitize_key($column);
-
-				$increment_query .= "SET " . $column . " = " . $column . " + 1, ";
+				$increment_query .= "SET " . $column . " = " . $column . "+1, ";
 			}
 			$increment_query = rtrim($increment_query, ', ') . ' ';
 			$increment_query .= "WHERE nebula_id = '" . $nebula_id . "'";
@@ -774,6 +779,9 @@ function nebula_calculate_visitor_score($id=null){
 			$score = ( $this_visitor['session_count'] > 1 )? $this_visitor['session_count'] : 0; //Start the score at the session count if higher than 1
 			foreach ( $this_visitor as $column => $value ){
 				if ( array_key_exists($column, $point_values) && !empty($value) ){
+					if ( $column == 'notes' && $value == 'This user tracked by IP and User Agent.' ){
+						continue;
+					}
 					$score += $point_values[$column];
 				}
 			}

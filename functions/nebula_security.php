@@ -10,29 +10,6 @@ function nebula_log_direct_access_attempts(){
 	}
 }
 
-//Detect HTTP status error codes and redirect to the appropriate page.
-//List of HTTP status codes: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-add_action('nebula_preheaders', 'nebula_http_status');
-function nebula_http_status($status=200){
-	if ( isset($_GET['http']) ){
-		$status = $_GET['http'];
-	}
-
-	$GLOBALS['http'] = intval($status);
-	if ( is_int($GLOBALS['http']) && $GLOBALS['http'] != 0 && $GLOBALS['http'] != 200 ){
-		if ( $GLOBALS['http'] == '404' ){
-			global $wp_query;
-			$wp_query->set_404();
-			status_header(404);
-			get_template_part('404');
-		} else {
-			status_header(403);
-			get_template_part('http_status');
-		}
-		die();
-	}
-}
-
 //Prevent known bot/brute-force query strings.
 //This is less for security and more for preventing garbage data in Google Analytics reports.
 add_action('wp_loaded', 'nebula_prevent_bad_query_strings');

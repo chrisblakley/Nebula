@@ -4,4 +4,4 @@
   header("Cache-Control: maxage=" . $cache_expire);
   header('Expires: ' . gmdate('D, d M Y H:i:s', time()+$cache_expire) . ' GMT');
 ?>
-<script src="//connect.facebook.net/en_US/all.js"></script><?php //Can async/defer be added to this? ?>
+<script src="//connect.facebook.net/en_US/all.js" defer></script>

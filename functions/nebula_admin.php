@@ -3,8 +3,7 @@
 //Force expire query transients when posts/pages are saved.
 add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){
-	//@TODO "Nebula" 0: Delete all transients with an expiration here.
-	//if ( is_plugin_active('transients-manager/transients-manager.php') ){
+	//if ( is_plugin_active('transients-manager/transients-manager.php') ){ //@TODO "Nebula" 0: Uncomment this when the delete_transients_with_expirations() in Transients Manager becomes public
 		//$transient_manager = new PW_Transients_Manager();
 		//$transient_manager->delete_transients_with_expirations();
 	//} else {

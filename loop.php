@@ -17,7 +17,7 @@
 		<?php while ( have_posts() ): the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<?php if ( has_post_thumbnail() ): ?>
-					<?php the_post_thumbnail(); ?>
+					<a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
 				<?php endif; ?>
 
 				<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
@@ -38,7 +38,7 @@
 					</div>
 				<?php else: ?>
 					<div class="entry-summary">
-						<?php echo nebula_excerpt(array('length' => 70)); ?>
+						<?php echo nebula_excerpt(array('length' => 35)); ?>
 					</div>
 				<?php endif; ?>
 			</article>

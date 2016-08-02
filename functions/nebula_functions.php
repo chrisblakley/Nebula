@@ -816,7 +816,7 @@ function nebula_linkedin_follow($counts=0){
 function linkedin_widget_script(){
 	if ( empty($nebula_linkedin_widget_loaded) ){
 		?>
-		<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
+		<script type="text/javascript" src="//platform.linkedin.com/in.js" async defer> lang: en_US</script>
 		<?php
 		$nebula_linkedin_widget_loaded = true;
 	}
@@ -1543,12 +1543,6 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 	$override = apply_filters('pre_nebula_infinite_load_query', false);
 	if ( $override !== false ){return;}
 
-	$loop = sanitize_text_field($loop);
-	if ( !empty($loop) && !function_exists($loop) ){
-		echo '<strong>Warning:</strong> The custom loop function ' . $loop . ' does not exist! Falling back to loop.php.';
-		$loop = false;
-	}
-
 	global $wp_query;
 	if ( empty($args['paged']) ){
 		$args['paged'] = 1;
@@ -1572,20 +1566,30 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 	query_posts($args);
 
 	if ( empty($args['post_type']) ){
-		$post_type_label = 'posts'; //This sets the label (not the arg)
+		$post_type_label = 'posts';
 	} else {
-		$post_type = ( is_array($args['post_type']) )? $args['post_type'][0] : $args['post_type']; //If multiple post types queried, use the first one as the label.
+		$post_type = ( is_array($args['post_type']) )? $args['post_type'][0] : $args['post_type'];
 		$post_type_obj = get_post_type_object($args['post_type']);
 		$post_type_label = lcfirst($post_type_obj->label);
 	}
 	?>
 
 	<div id="infinite-posts-list" data-max-pages="<?php echo $wp_query->max_num_pages; ?>" data-max-posts="<?php echo $wp_query->found_posts; ?>">
-	    <?php
-		    if ( !$loop ){
-	    		get_template_part('loop');
+		<?php
+			$loop = sanitize_text_field($loop);
+			if ( !$loop ){
+				get_template_part('loop');
 			} else {
-	    		call_user_func($loop);
+				if ( function_exists($loop) ){
+					call_user_func($loop);
+				} elseif ( locate_template($loop . '.php') ){
+					get_template_part($loop);
+				} else {
+					if ( is_dev() ){
+						echo '<strong>Warning:</strong> The custom loop template or function ' . $loop . ' does not exist! Falling back to loop.php.';
+					}
+					get_template_part('loop');
+				}
 			}
 		?>
 	</div>
