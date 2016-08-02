@@ -10,7 +10,8 @@ namespace DeviceDetector\Parser;
 use DeviceDetector\Cache\StaticCache;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Cache\Cache;
-use \Spyc;
+use DeviceDetector\Yaml\Parser AS YamlParser;
+use DeviceDetector\Yaml\Spyc;
 
 /**
  * Class ParserAbstract
@@ -87,9 +88,14 @@ abstract class ParserAbstract
     const VERSION_TRUNCATION_NONE  = null;
 
     /**
-     * @var Cache|\Doctrine\Common\Cache\Cache
+     * @var Cache|\Doctrine\Common\Cache\CacheProvider
      */
     protected $cache;
+
+    /**
+     * @var YamlParser
+     */
+    protected $yamlParser;
 
     abstract public function parse();
 
@@ -145,11 +151,21 @@ abstract class ParserAbstract
             $cacheKey = preg_replace('/([^a-z0-9_-]+)/i', '', $cacheKey);
             $this->regexList = $this->getCache()->fetch($cacheKey);
             if (empty($this->regexList)) {
-                $this->regexList = Spyc::YAMLLoad(dirname(__DIR__).DIRECTORY_SEPARATOR.$this->fixtureFile);
+                $this->regexList = $this->getYamlParser()->parseFile(
+                    $this->getRegexesDirectory().DIRECTORY_SEPARATOR.$this->fixtureFile
+                );
                 $this->getCache()->save($cacheKey, $this->regexList);
             }
         }
         return $this->regexList;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRegexesDirectory()
+    {
+        return dirname(__DIR__);
     }
 
     /**
@@ -161,7 +177,7 @@ abstract class ParserAbstract
     protected function matchUserAgent($regex)
     {
         // only match if useragent begins with given regex or there is no letter before it
-        $regex = '/(?:^|[^A-Z0-9\_\-])(?:' . str_replace('/', '\/', $regex) . ')/i';
+        $regex = '/(?:^|[^A-Z0-9\-_]|[^A-Z0-9\-]_|sprd-)(?:' . str_replace('/', '\/', $regex) . ')/i';
 
         if (preg_match($regex, $this->userAgent, $matches)) {
             return $matches;
@@ -279,5 +295,35 @@ abstract class ParserAbstract
         }
 
         return new StaticCache();
+    }
+
+    /**
+     * Sets the Cache class
+     *
+     * @param YamlParser
+     * @throws \Exception
+     */
+    public function setYamlParser($yamlParser)
+    {
+        if ($yamlParser instanceof YamlParser) {
+            $this->yamlParser = $yamlParser;
+            return;
+        }
+
+        throw new \Exception('Yaml Parser not supported');
+    }
+
+    /**
+     * Returns Cache object
+     *
+     * @return YamlParser
+     */
+    public function getYamlParser()
+    {
+        if (!empty($this->yamlParser)) {
+            return $this->yamlParser;
+        }
+
+        return new Spyc();
     }
 }

@@ -1518,36 +1518,6 @@ function nebula_fuzzy_posts_where($where){
 	return $where;
 }
 
-
-//Use WordPress core browser detection
-function wp_browser_detect(){
-	$override = apply_filters('pre_wp_browser_detect', false);
-	if ( $override !== false ){return $override;}
-
-	//Browsers
-	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome, $is_iphone;
-
-	//$browser = get_browser(null, true); //@TODO "Nebula" 0: Find a server this works on and then wrap in if $browser, then echo the version number too
-	//@TODO "Nebula" 0: Also look into the function wp_check_browser_version().
-
-    if ( $is_lynx ){
-    	return 'Lynx';
-    } elseif ( $is_gecko ){
-    	return 'Gecko';
-    } elseif ( $is_opera ){
-    	return 'Opera';
-    } elseif ( $is_NS4 ){
-    	return 'NS4';
-    } elseif ( $is_safari ){
-    	return 'Safari';
-    } elseif ( $is_chrome ){
-    	return 'Chrome';
-    } elseif ( $is_IE ){
-    	return 'IE';
-    }
-    return 'Unknown Browser';
-}
-
 //Text limiter by words
 function string_limit_words($string, $word_limit){
 	$override = apply_filters('pre_string_limit_words', false, $string, $word_limit);
@@ -1872,8 +1842,8 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 			$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file);
 		}
 	}
-	$php_timeline = json_decode($php_timeline);
 
+	$php_timeline = json_decode($php_timeline);
 	foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
 		if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
 			$output = array();
@@ -2504,7 +2474,6 @@ function nebula_is_bot(){
 
 //Device Detection - https://github.com/piwik/device-detector
 //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
-//@TODO "Nebula" 0: Store cookie on user device to prevent re-checking this every time?
 require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
 use DeviceDetector\DeviceDetector;
 $GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);

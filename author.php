@@ -120,7 +120,7 @@ get_header(); ?>
 						<span class="author-email"><i class="fa fa-envelope"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;
 					<?php endif; ?>
 					<?php if ( get_the_author_meta('phonenumber') ): ?>
-						<span class="author-phonenumber"><i class="fa fa-phone"></i> <?php echo nebula_tel_link(get_the_author_meta('phonenumber')); ?></span>
+						<span class="author-phonenumber"><i class="fa fa-phone"></i> <?php echo get_the_author_meta('phonenumber'); ?></span>
 					<?php endif; ?>
 				</span>
 				<hr />

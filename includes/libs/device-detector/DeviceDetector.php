@@ -9,21 +9,23 @@
 /***********
 	Important! This file has been edited to work without Composer. If updating this file, require_once functions must be added!
 	BEGIN Nebula fix for required files.
-	//@TODO "Nebula" 0: Can not update to 3.5+ due to error... Need to fix and make it work easier for future versions as well. Can I require these files in a different file so this entire file can be replaced?
 ***********/
 
 namespace DeviceDetector;
 
-require_once(realpath(dirname(__FILE__) . '/..') . '/spyc.php'); //This file is not included with Device Detector
-require_once(dirname(__FILE__) . '/Cache/Cache.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Cache/StaticCache.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Parser/ParserAbstract.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Parser/Bot.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Parser/OperatingSystem.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Parser/VendorFragment.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php'); //This line has been modified for Nebula
-require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine.php'); //This line has been modified for Nebula
+require_once (dirname(__FILE__) . '/Cache/Cache.php');
+require_once (dirname(__FILE__) . '/Cache/StaticCache.php');
+require_once (dirname(__FILE__) . '/Parser/ParserAbstract.php');
+require_once (dirname(__FILE__) . '/Parser/Bot.php');
+require_once (dirname(__FILE__) . '/Parser/OperatingSystem.php');
+require_once (dirname(__FILE__) . '/Parser/VendorFragment.php');
+require_once (dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php');
+require_once (dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php');
+require_once (dirname(__FILE__) . '/Parser/Client/Browser.php');
+//require_once (dirname(__FILE__) . '/Parser/Client/Browser/Engine.php');
+require_once (dirname(__FILE__) . '/Yaml/Parser.php');
+require_once (dirname(__FILE__) . '/Yaml/Spyc.php');
+require_once(realpath(dirname(__FILE__) . '/..') . '/spyc.php');
 
 /***********
 	END Nebula fix for required files.
@@ -32,11 +34,13 @@ require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine.php'); //This li
 use DeviceDetector\Cache\StaticCache;
 use DeviceDetector\Cache\Cache;
 use DeviceDetector\Parser\Bot;
+use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
 use DeviceDetector\Parser\Client\ClientParserAbstract;
 use DeviceDetector\Parser\Device\DeviceParserAbstract;
 use DeviceDetector\Parser\VendorFragment;
-use \Spyc;
+use DeviceDetector\Yaml\Parser AS YamlParser;
+use DeviceDetector\Yaml\Spyc;
 
 /**
  * Class DeviceDetector
@@ -68,7 +72,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.4.2';
+    const VERSION = '3.7.0';
 
     /**
      * Holds all registered client types
@@ -138,8 +142,14 @@ class DeviceDetector
      */
     protected $bot = null;
 
+    /**
+     * @var bool
+     */
     protected $discardBotInformation = false;
 
+    /**
+     * @var bool
+     */
     protected $skipBotDetection = false;
 
     /**
@@ -149,11 +159,32 @@ class DeviceDetector
     protected $cache = null;
 
     /**
+     * Holds the parser class used for parsing yml-Files
+     * @var \DeviceDetector\Yaml\Parser
+     */
+    protected $yamlParser = null;
+
+    /**
+     * @var ClientParserAbstract[]
+     */
+    protected $clientParsers = array();
+
+    /**
+     * @var DeviceParserAbstract[]
+     */
+    protected $deviceParsers = array();
+
+    /**
+     * @var bool
+     */
+    private $parsed = false;
+
+    /**
      * Constructor
      *
-     * @param string $userAgent  UA to parse
+     * @param string $userAgent UA to parse
      */
-    public function __construct($userAgent='')
+    public function __construct($userAgent = '')
     {
         if ($userAgent != '') {
             $this->setUserAgent($userAgent);
@@ -177,13 +208,13 @@ class DeviceDetector
     public function __call($methodName, $arguments)
     {
         foreach (DeviceParserAbstract::getAvailableDeviceTypes() as $deviceName => $deviceType) {
-            if (strtolower($methodName) == 'is'.strtolower(str_replace(' ', '', $deviceName))) {
+            if (strtolower($methodName) == 'is' . strtolower(str_replace(' ', '', $deviceName))) {
                 return $this->getDevice() == $deviceType;
             }
         }
 
         foreach (self::$clientTypes as $client) {
-            if (strtolower($methodName) == 'is'.strtolower(str_replace(' ', '', $client))) {
+            if (strtolower($methodName) == 'is' . strtolower(str_replace(' ', '', $client))) {
                 return $this->getClient('type') == $client;
             }
         }
@@ -206,19 +237,14 @@ class DeviceDetector
 
     protected function reset()
     {
-        $this->bot    = null;
+        $this->bot = null;
         $this->client = null;
         $this->device = null;
-        $this->os     = null;
-        $this->brand  = '';
-        $this->model  = '';
+        $this->os = null;
+        $this->brand = '';
+        $this->model = '';
         $this->parsed = false;
     }
-
-    /**
-     * @var ClientParserAbstract[]
-     */
-    protected $clientParsers = array();
 
     /**
      * @param ClientParserAbstract|string $parser
@@ -226,9 +252,10 @@ class DeviceDetector
      */
     public function addClientParser($parser)
     {
-	    require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');  //This line has been added for Nebula
-        if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Client\\'.$parser)) {
-            $className = 'DeviceDetector\\Parser\\Client\\'.$parser;
+        require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');
+
+        if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Client\\' . $parser)) {
+            $className = 'DeviceDetector\\Parser\\Client\\' . $parser;
             $parser = new $className();
         }
 
@@ -247,19 +274,15 @@ class DeviceDetector
     }
 
     /**
-     * @var DeviceParserAbstract[]
-     */
-    protected $deviceParsers = array();
-
-    /**
      * @param DeviceParserAbstract|string $parser
      * @throws \Exception
      */
     public function addDeviceParser($parser)
     {
-	    require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php'); //This line has been added for Nebula
-        if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Device\\'.$parser)) {
-            $className = 'DeviceDetector\\Parser\\Device\\'.$parser;
+        require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php');
+
+        if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Device\\' . $parser)) {
+            $className = 'DeviceDetector\\Parser\\Device\\' . $parser;
             $parser = new $className();
         }
 
@@ -283,7 +306,7 @@ class DeviceDetector
      *
      * @param bool $discard
      */
-    public function discardBotInformation($discard=true)
+    public function discardBotInformation($discard = true)
     {
         $this->discardBotInformation = $discard;
     }
@@ -295,7 +318,7 @@ class DeviceDetector
      *
      * @param bool $skip
      */
-    public function skipBotDetection($skip=true)
+    public function skipBotDetection($skip = true)
     {
         $this->skipBotDetection = $skip;
     }
@@ -332,7 +355,7 @@ class DeviceDetector
      */
     protected function hasAndroidTableFragment()
     {
-        $regex = 'Android; Tablet;';
+        $regex = 'Android( [\.0-9]+)?; Tablet;';
         return $this->matchUserAgent($regex);
     }
 
@@ -343,12 +366,18 @@ class DeviceDetector
      */
     protected function hasAndroidMobileFragment()
     {
-        $regex = 'Android; Mobile;';
+        $regex = 'Android( [\.0-9]+)?; Mobile;';
         return $this->matchUserAgent($regex);
+    }
+
+    protected function usesMobileBrowser()
+    {
+        return $this->getClient('type') == 'browser' && Browser::isMobileOnlyBrowser($this->getClient('short_name'));
     }
 
     public function isMobile()
     {
+        // Mobile device types
         if (!empty($this->device) && in_array($this->device, array(
                 DeviceParserAbstract::DEVICE_TYPE_FEATURE_PHONE,
                 DeviceParserAbstract::DEVICE_TYPE_SMARTPHONE,
@@ -356,7 +385,23 @@ class DeviceDetector
                 DeviceParserAbstract::DEVICE_TYPE_PHABLET,
                 DeviceParserAbstract::DEVICE_TYPE_CAMERA,
                 DeviceParserAbstract::DEVICE_TYPE_PORTABLE_MEDIA_PAYER,
-            ))) {
+            ))
+        ) {
+            return true;
+        }
+
+        // non mobile device types
+        if (!empty($this->device) && in_array($this->device, array(
+                DeviceParserAbstract::DEVICE_TYPE_TV,
+                DeviceParserAbstract::DEVICE_TYPE_SMART_DISPLAY,
+                DeviceParserAbstract::DEVICE_TYPE_CONSOLE
+            ))
+        ) {
+            return false;
+        }
+
+        // Check for browsers available for mobile devices only
+        if ($this->usesMobileBrowser()) {
             return true;
         }
 
@@ -383,6 +428,11 @@ class DeviceDetector
             return false;
         }
 
+        // Check for browsers available for mobile devices only
+        if ($this->usesMobileBrowser()) {
+            return false;
+        }
+
         $decodedFamily = OperatingSystem::getOsFamily($osShort);
 
         return in_array($decodedFamily, self::$desktopOsArray);
@@ -393,7 +443,7 @@ class DeviceDetector
      *
      * If $attr is given only that property will be returned
      *
-     * @param string $attr  property to return(optional)
+     * @param string $attr property to return(optional)
      *
      * @return array|string
      */
@@ -415,7 +465,7 @@ class DeviceDetector
      *
      * If $attr is given only that property will be returned
      *
-     * @param string $attr  property to return(optional)
+     * @param string $attr property to return(optional)
      *
      * @return array|string
      */
@@ -514,21 +564,29 @@ class DeviceDetector
         return $this->bot;
     }
 
-    protected $parsed = false;
+    /**
+     * Returns true, if userAgent was already parsed with parse()
+     *
+     * @return bool
+     */
+    public function isParsed()
+    {
+        return $this->parsed;
+    }
 
     /**
      * Triggers the parsing of the current user agent
      */
     public function parse()
     {
-        if ($this->parsed) {
+        if ($this->isParsed()) {
             return;
         }
 
         $this->parsed = true;
 
         // skip parsing for empty useragents or those not containing any letter
-        if (empty($this->userAgent) || preg_match('[a-z]', $this->userAgent)) {
+        if (empty($this->userAgent) || !preg_match('/([a-z])/i', $this->userAgent)) {
             return;
         }
 
@@ -561,6 +619,7 @@ class DeviceDetector
 
         $botParser = new Bot();
         $botParser->setUserAgent($this->getUserAgent());
+        $botParser->setYamlParser($this->getYamlParser());
         $botParser->setCache($this->getCache());
         if ($this->discardBotInformation) {
             $botParser->discardDetails();
@@ -574,6 +633,7 @@ class DeviceDetector
         $parsers = $this->getClientParsers();
 
         foreach ($parsers as $parser) {
+            $parser->setYamlParser($this->getYamlParser());
             $parser->setCache($this->getCache());
             $parser->setUserAgent($this->getUserAgent());
             $client = $parser->parse();
@@ -589,12 +649,13 @@ class DeviceDetector
         $parsers = $this->getDeviceParsers();
 
         foreach ($parsers as $parser) {
+            $parser->setYamlParser($this->getYamlParser());
             $parser->setCache($this->getCache());
             $parser->setUserAgent($this->getUserAgent());
             if ($parser->parse()) {
                 $this->device = $parser->getDeviceType();
-                $this->model  = $parser->getModel();
-                $this->brand  = $parser->getBrand();
+                $this->model = $parser->getModel();
+                $this->brand = $parser->getBrand();
                 break;
             }
         }
@@ -604,13 +665,33 @@ class DeviceDetector
          */
         if (empty($this->brand)) {
             $vendorParser = new VendorFragment($this->getUserAgent());
+            $vendorParser->setYamlParser($this->getYamlParser());
+            $vendorParser->setCache($this->getCache());
             $this->brand = $vendorParser->parse();
         }
 
+        $osShortName = $this->getOs('short_name');
+        $osFamily = OperatingSystem::getOsFamily($osShortName);
+        $osVersion = $this->getOs('version');
+        $clientName = $this->getClient('name');
+
         /**
-         * Some user agents simply contain the fragment 'Android; Tablet;', so we assume those devices as tablets
+         * Chrome on Android passes the device type based on the keyword 'Mobile'
+         * If it is present the device should be a smartphone, otherwise it's a tablet
+         * See https://developer.chrome.com/multidevice/user-agent#chrome_for_android_user_agent
          */
-        if (is_null($this->device) && $this->hasAndroidTableFragment()) {
+        if (is_null($this->device) && $osFamily == 'Android' && in_array($this->getClient('name'), array('Chrome', 'Chrome Mobile'))) {
+            if ($this->matchUserAgent('Chrome/[\.0-9]* Mobile')) {
+                $this->device = DeviceParserAbstract::DEVICE_TYPE_SMARTPHONE;
+            } else if ($this->matchUserAgent('Chrome/[\.0-9]* (?!Mobile)')) {
+                $this->device = DeviceParserAbstract::DEVICE_TYPE_TABLET;
+            }
+        }
+
+        /**
+         * Some user agents simply contain the fragment 'Android; Tablet;' or 'Opera Tablet', so we assume those devices as tablets
+         */
+        if (is_null($this->device) && ($this->hasAndroidTableFragment() || $this->matchUserAgent('Opera Tablet'))) {
             $this->device = DeviceParserAbstract::DEVICE_TYPE_TABLET;
         }
 
@@ -620,10 +701,6 @@ class DeviceDetector
         if (is_null($this->device) && $this->hasAndroidMobileFragment()) {
             $this->device = DeviceParserAbstract::DEVICE_TYPE_SMARTPHONE;
         }
-
-        $osShortName = $this->getOs('short_name');
-        $osFamily = OperatingSystem::getOsFamily($osShortName);
-        $osVersion = $this->getOs('version');
 
         /**
          * Android up to 3.0 was designed for smartphones only. But as 3.0, which was tablet only, was published
@@ -669,6 +746,13 @@ class DeviceDetector
             $this->device = DeviceParserAbstract::DEVICE_TYPE_TV;
         }
 
+        /**
+         * Devices running Kylo or Espital TV Browsers are assumed to be a TV
+         */
+        if (is_null($this->device) && in_array($clientName, array('Kylo', 'Espial TV Browser'))) {
+            $this->device = DeviceParserAbstract::DEVICE_TYPE_TV;
+        }
+
         // set device type to desktop for all devices running a desktop os that were not detected as an other device type
         if (is_null($this->device) && $this->isDesktop()) {
             $this->device = DeviceParserAbstract::DEVICE_TYPE_DESKTOP;
@@ -679,6 +763,7 @@ class DeviceDetector
     {
         $osParser = new OperatingSystem();
         $osParser->setUserAgent($this->getUserAgent());
+        $osParser->setYamlParser($this->getYamlParser());
         $osParser->setCache($this->getCache());
         $this->os = $osParser->parse();
     }
@@ -716,7 +801,7 @@ class DeviceDetector
         if ($deviceDetector->isBot()) {
             return array(
                 'user_agent' => $deviceDetector->getUserAgent(),
-                'bot'        => $deviceDetector->getBot()
+                'bot' => $deviceDetector->getBot()
             );
         }
 
@@ -724,15 +809,15 @@ class DeviceDetector
         $browserFamily = \DeviceDetector\Parser\Client\Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
 
         $processed = array(
-            'user_agent'     => $deviceDetector->getUserAgent(),
-            'os'             => $deviceDetector->getOs(),
-            'client'         => $deviceDetector->getClient(),
-            'device'         => array(
-                'type'       => $deviceDetector->getDeviceName(),
-                'brand'      => $deviceDetector->getBrand(),
-                'model'      => $deviceDetector->getModel(),
+            'user_agent' => $deviceDetector->getUserAgent(),
+            'os' => $deviceDetector->getOs(),
+            'client' => $deviceDetector->getClient(),
+            'device' => array(
+                'type' => $deviceDetector->getDeviceName(),
+                'brand' => $deviceDetector->getBrand(),
+                'model' => $deviceDetector->getModel(),
             ),
-            'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
+            'os_family' => $osFamily !== false ? $osFamily : 'Unknown',
             'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
         );
         return $processed;
@@ -747,7 +832,8 @@ class DeviceDetector
     public function setCache($cache)
     {
         if ($cache instanceof Cache ||
-            (class_exists('\Doctrine\Common\Cache\CacheProvider') && $cache instanceof \Doctrine\Common\Cache\CacheProvider)) {
+            (class_exists('\Doctrine\Common\Cache\CacheProvider') && $cache instanceof \Doctrine\Common\Cache\CacheProvider)
+        ) {
             $this->cache = $cache;
             return;
         }
@@ -767,5 +853,35 @@ class DeviceDetector
         }
 
         return new StaticCache();
+    }
+
+    /**
+     * Sets the Yaml Parser class
+     *
+     * @param YamlParser
+     * @throws \Exception
+     */
+    public function setYamlParser($yamlParser)
+    {
+        if ($yamlParser instanceof YamlParser) {
+            $this->yamlParser = $yamlParser;
+            return;
+        }
+
+        throw new \Exception('Yaml Parser not supported');
+    }
+
+    /**
+     * Returns Yaml Parser object
+     *
+     * @return YamlParser
+     */
+    public function getYamlParser()
+    {
+        if (!empty($this->yamlParser)) {
+            return $this->yamlParser;
+        }
+
+        return new Spyc();
     }
 }

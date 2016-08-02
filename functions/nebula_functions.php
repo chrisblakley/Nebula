@@ -1893,25 +1893,6 @@ function wp_get_attachment_url_example($url){
     }
 }
 
-//Add more fields to attachments //@TODO "Nebula" 0: Enable this as needed. The below example adds a "License" field.
-//add_filter('attachment_fields_to_edit', 'nebula_attachment_fields', 10, 2);
-function nebula_attachment_fields($form_fields, $post){
-    $field_value = get_post_meta($post->ID, 'license', true);
-    $form_fields['license'] = array(
-        'value' => $field_value ? $field_value : '',
-        'label' => 'License',
-        'helps' => 'Specify the license type used for this image'
-    );
-    return $form_fields;
-}
-//add_action('edit_attachment', 'nebula_save_attachment_fields');
-function nebula_save_attachment_fields($attachment_id){
-    $license = $_REQUEST['attachments'][$attachment_id]['license'];
-    if ( isset($license) ){
-        update_post_meta($attachment_id, 'license', $license);
-    }
-}
-
 //Check if the passed time is within business hours.
 function has_business_hours(){
 	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
@@ -2265,92 +2246,6 @@ function nebula_embed_oembed_html($html, $url, $attr, $post_id) {
 	return $html;
 }
 
-//Create tel: link if on mobile, otherwise return unlinked, human-readable number
-function nebula_tel_link($phone, $postd=''){
-	$override = apply_filters('pre_nebula_tel_link', false, $phone, $postd);
-	if ( $override !== false ){return $override;}
-
-	if ( nebula_is_mobile() ){
-		if ( $postd ){
-			$search = array('#', 'p', 'w');
-			$replace   = array('%23', ',', ';');
-			$postd = str_replace($search, $replace, $postd);
-			if ( strpos($postd, ',') === false || strpos($postd, ';') === false ){
-				$postd = ',' . $postd;
-			}
-		}
-		return '<a class="nebula-tel-link" href="tel:' . nebula_phone_format($phone, 'tel') . $postd . '">' . nebula_phone_format($phone, 'human') . '</a>';
-	} else {
-		return nebula_phone_format($phone, 'human');
-	}
-}
-
-//Create sms: link if on mobile, otherwise return unlinked, human-readable number
-function nebula_sms_link($phone, $message=''){
-	$override = apply_filters('pre_nebula_sms_link', false, $phone, $message);
-	if ( $override !== false ){return $override;}
-
-	if ( nebula_is_mobile() ){
-		$sep = ( nebula_is_os('ios') )? '?' : ';';
-		//@TODO "Nebula" 0: Encode $message string here...?
-		return '<a class="nebula-sms-link" href="sms:' . nebula_phone_format($phone, 'tel') . $sep . 'body=' . $message . '">' . nebula_phone_format($phone, 'human') . '</a>';
-	} else {
-		return nebula_phone_format($phone, 'human');
-	}
-}
-
-//Convert phone numbers into ten digital dial-able or to human-readable
-function nebula_phone_format($number, $format=''){
-	$override = apply_filters('pre_nebula_phone_format', false, $number, $format);
-	if ( $override !== false ){return $override;}
-
-	if ( $format == 'human' && (strpos($number, ')') == 4 || strpos($number, ')') == 6) ){
-		//Format is already human-readable
-		return $number;
-	} elseif ( $format == 'tel' && (strpos($number, '+1') == 0 && strlen($number) == 12) ){
-		//Format is already dialable
-		return $number;
-	}
-
-	if ( (strpos($number, '+1') == 0 && strlen($number) == 12) || (strpos($number, '1') == 0 && strlen($number) == 11) || strlen($number) == 10 && $format != 'tel' ){
-		//Convert from dialable to human
-		if ( strpos($number, '1') == 0 && strlen($number) == 11 ){
-			//13154786700
-			$number = '(' . substr($number, 1, 3) . ') ' . substr($number, 4, 3) . '-' . substr($number, 7);
-		} elseif ( strlen($number) == 10 ){
-			//3154786700
-			$number = '(' . substr($number, 0, 3) . ') ' . substr($number, 3, 3) . '-' . substr($number, 6);
-		} elseif ( strpos($number, '+1') == 0 && strlen($number) == 12 ){
-			//+13154786700
-			$number = '(' . substr($number, 2, 3) . ') ' . substr($number, 5, 3) . '-' . substr($number, 8);
-		} else {
-			return 'Error: Unknown format.';
-		}
-		//@TODO "Nebula" 0: Maybe any numbers after "," "p" ";" or "w" could be added to the human-readable in brackets, like: (315) 555-1346 [323]
-		//To do the above, set a remainder variable from above and add it to the return (if it exists). Maybe even add them to a span with a class so they can be hidden if undesired?
-		return $number;
-	} else {
-		if ( strlen($number) < 7 ){
-			return 'Error: Too few digits.';
-		} elseif ( strlen($number) < 10 ){
-			return 'Error: Too few digits (area code is required).';
-		}
-		//Convert from human to dialable
-		if ( strpos($number, '1') != '0' ){
-			$number = '1 ' . $number;
-		}
-
-		if ( strpos($number,'x') !== false ){
-			$postd = ';p' . substr($number, strpos($number, "x") + 1);
-		} else {
-			$postd = '';
-		}
-		$number = str_replace(array(' ', '-', '(', ')', '.', 'x'), '', $number);
-		$number = substr($number, 0, 11);
-		return '+' . $number . $postd;
-	}
-}
-
 //Footer Widget Counter
 function footerWidgetCounter(){
 	$footerWidgetCount = 0;
@@ -2367,38 +2262,4 @@ function footerWidgetCounter(){
 		$footerWidgetCount++;
 	}
 	return $footerWidgetCount;
-}
-
-//Track PHP errors...
-//Disabled for now. Will revisit when fatal errors can be caught/reported (PHP7?).
-//register_shutdown_function('shutdownFunction');
-function shutDownFunction(){
-	$error = error_get_last(); //Will return an error number, or null on normal end of script (without any errors).
-	if ( $error['type'] == 1 || $error['type'] == 16 || $error['type'] == 64 || $error['type'] == 4 || $error['type'] == 256 || $error['type'] == 4096 ){
-		//ga_send_event('Error', 'PHP Error', 'Fatal Error [' . $error['type'] . ']: ' . $error['message'] . ' in ' . $error['file'] . ' on ' . $error['line'] . '.');
-	}
-}
-//set_error_handler('nebula_error_handler');
-function nebula_error_handler($error_level, $error_message, $error_file, $error_line, $error_contest){
-    switch ( $error_level ){
-        case E_WARNING:
-        case E_CORE_WARNING:
-        case E_COMPILE_WARNING:
-        case E_USER_WARNING:
-            //ga_send_event('Error', 'PHP Error', 'Warning [' . $error_level . ']: ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
-            break;
-        case E_NOTICE:
-        case E_USER_NOTICE:
-        case E_DEPRECATED:
-        case E_USER_DEPRECATED:
-            //ga_send_event('Error', 'PHP Error', 'Notice ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track notices.
-            break;
-        case E_STRICT:
-            //ga_send_event('Error', 'PHP Error', 'Strict ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.'); //By default we do not track strict errors.
-            break;
-        default:
-            //ga_send_event('Error', 'PHP Error', 'Unknown Error Level ' . $error_level . ': ' . $error_message . ' in ' . $error_file . ' on ' . $error_line . '.');
-            break;
-    }
-    return false; //After reporting, 'false' allows the original error handler to print errors.
 }

@@ -209,7 +209,7 @@ if ( nebula_option('plugin_update_warning') ){
 	if ( $pagenow == 'plugins.php' || $pagenow == 'update-core.php' ){
 		add_action('admin_notices', 'nebula_update_warning');
 		function nebula_update_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com/'>Pinckney Hugo Group</a> if there are questions about updates: " . nebula_tel_link('13154786700') . "</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com/'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
 		}
 	}
 }
@@ -1424,7 +1424,7 @@ function clear_all_w3_caches(){
 //Left Side
 add_filter('admin_footer_text', 'change_admin_footer_left');
 function change_admin_footer_left(){
-    return pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; ' . nebula_tel_link('13154786700');
+    return pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
 }
 //Right Side
 add_filter('update_footer', 'change_admin_footer_right', 11);
