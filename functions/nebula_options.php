@@ -178,7 +178,6 @@ function nebula_default_options(){
 		'scss' => 'disabled',
 		'minify_css' => 'disabled',
 		'dev_stylesheets' => 'disabled',
-		'appcache_manifest' => 'disabled',
 		'console_css' => 'enabled',
 		'examples_directory' => 'enabled',
 
@@ -717,18 +716,6 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', $nebula_options['adblock_detect']); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Detect if visitors are using ad blocking software. To track in Google Analytics, add a dimension index under the "Analytics" tab. <em>(Default: Disabled)</em></small></p>
-					</td>
-		        </tr>
-
-				<tr class="short" valign="top">
-		        	<th scope="row">App Cache Manifest&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_options[appcache_manifest]">
-							<option disabled>Default: Disabled</option>
-							<option value="enabled" <?php selected('enabled', $nebula_options['appcache_manifest']); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', $nebula_options['appcache_manifest']); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Enabled the appcache manifest for offline "app" storage. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 

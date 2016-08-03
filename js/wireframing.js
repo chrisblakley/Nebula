@@ -1,16 +1,13 @@
 jQuery.noConflict();
 jQuery(document).on('ready', function(){
-
 	jQuery('.component-comment-toggle').on('click tap touch', function(){
 		jQuery(this).toggleClass('active');
 		jQuery(this).parents('.fpo-component-con').find('.component-comment-drawer').slideToggle();
 		return false;
 	});
-
 }); //End Document Ready
 
 jQuery(window).on('load', function(){
-
 	//Fix issue when already on a "sticky" query that it appends a duplicate (instead of changing)
 	setTimeout(function(){
 		jQuery('#wp-admin-bar-nebula-prototype-default li a').each(function(){
@@ -21,5 +18,4 @@ jQuery(window).on('load', function(){
 			}
 		});
 	}, 1);
-
 });

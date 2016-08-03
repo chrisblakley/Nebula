@@ -303,29 +303,7 @@
 
 						jQuery('#ajaxarea').css('border', '1px solid grey');
 
-						jQuery.ajax({
-							type: "POST",
-							url: '<?php echo admin_url('admin-ajax.php'); ?>',
-							data: {
-								action: 'navigator',
-								data: navigationRequest,
-								nonce: '<?php echo wp_create_nonce('nebula_ajax_navigator_nonce'); ?>'
-							},
-							//dataType: 'html',
-							success: function(response){
-								jQuery('#ajaxnavtext').fadeIn();
-								jQuery('#ajaxarea').val(response).css('border', '1px solid green');
-								//@TODO "Nebula" 0: window location href here
-								console.log(response);
-								ga('send', 'event', 'Speech Recognition', 'Navigate to: ' + navigationRequest, 'Response: ' + response);
-							},
-							error: function(MLHttpRequest, textStatus, errorThrown){
-								console.log('There was an AJAX error: ' + errorThrown);
-								ga('send', 'event', 'Speech Recognition', 'Error', 'Navigation error: ' + errorThrown);
-							},
-							timeout: 60000
-						});
-
+						//Do navigation here...
 					}
 				}, 3000);
 			}

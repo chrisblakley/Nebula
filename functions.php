@@ -49,12 +49,12 @@ function register_nebula_styles(){
 	if ( nebula_google_font_option() ){
 		wp_register_style('nebula-google_font', nebula_google_font_option(), array(), null, 'all');
 	}
-	wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css', null, '4.0.0a2', 'all');
+	wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.3/css/bootstrap.min.css', null, '4.0.0a3', 'all');
 	wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css', null, '4.6.3', 'all');
 	wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.6.5/css/jquery.mmenu.all.min.css', null, '5.6.5', 'all');
 	wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/jquery.dataTables.min.css', null, '1.10.12', 'all'); //Datatables is called via main.js only as needed.
-	wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css', null, '1.5.1', 'all');
-	wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css', null, '1.11.4', 'all');
+	wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.1/chosen.min.css', null, '1.6.1', 'all');
+	wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css', null, '1.12.0', 'all');
 	wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
 	wp_register_style('nebula-login', get_template_directory_uri() . '/stylesheets/css/login.css', null, null);
 	wp_register_style('nebula-admin', get_template_directory_uri() . '/stylesheets/css/admin.css', null, null);
@@ -74,14 +74,14 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.dev.js', 'defer', null, '3.3.1', false);
 	nebula_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js', 'defer', null, '3.3.1', false);
 	nebula_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
-	nebula_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js', 'defer', null, '1.11.4', true);
+	nebula_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js', 'defer', null, '1.12.0', true);
 	nebula_register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.6.5/js/jquery.mmenu.all.min.js', 'defer', null, '5.6.5', true);
 	nebula_register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true); //Can this be deferred?
 	nebula_register_script('nebula-headroom', 'https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.3/headroom.min.js', 'defer', null, '0.9.3', true);
-	nebula_register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js', 'defer', null, '1.3.2', true); //This is not enqueued or dependent because it is called via main.js only as needed.
-	nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js', 'defer', null, '4.0.0a2', true);
+	nebula_register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.3/js/tether.min.js', 'defer', null, '1.3.3', true); //This is not enqueued or dependent because it is called via main.js only as needed.
+	nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.3/js/bootstrap.min.js', 'defer', null, '4.0.0a3', true);
 	nebula_register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js', 'defer', null, '1.10.12', true); //Datatables is called via main.js only as needed.
-	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js', 'defer', null, '1.5.1', true);
+	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.1/chosen.jquery.min.js', 'defer', null, '1.6.1', true);
 	nebula_register_script('performance-timing', get_template_directory_uri() . '/js/libs/performance-timing.js', 'defer', null, null, false);
 	nebula_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', 'defer', array('nebula-bootstrap', 'jquery', 'nebula-jquery_ui'), null, true);
 	nebula_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', null, array('jquery'), null, true);
@@ -286,14 +286,14 @@ function enqueue_nebula_login(){
 
 	//Stylesheets
 	wp_enqueue_style('nebula-login');
+	echo '<style>
+		div#login h1 a {background: url(' . nebula_prefer_child_directory('/images/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
+			.svg div#login h1 a {background: url(' . nebula_prefer_child_directory('/images/logo.svg') . ') center center no-repeat; background-size: contain;}
+	</style>';
 
 	//Scripts
 	wp_enqueue_script('jquery');
-	wp_enqueue_script('nebula-modernizr');
 	wp_enqueue_script('nebula-login');
-
-	//Localized objects (localized to jquery to appear in <head>)
-	wp_localize_script('jquery', 'nebula', $nebula);
 }
 
 /*==========================
@@ -305,7 +305,6 @@ function enqueue_nebula_admin(){
 	global $nebula;
 
 	//Stylesheets
-	wp_enqueue_style('nebula-open_sans');
 	wp_enqueue_style('nebula-admin');
 	wp_enqueue_style('nebula-font_awesome');
 

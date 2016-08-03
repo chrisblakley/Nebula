@@ -1179,10 +1179,10 @@ function nebula_search_form($placeholder=''){
 				<div class="form-group">
 					<div class="input-group">
 						<div class="input-group-addon"><i class="fa fa-search"></i></div>
-						<input id="s" class="form-control form-control-sm" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" />
+						<input id="s" class="form-control form-control-md" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" />
 					</div>
 				</div>
-				<input id="searchsubmit" class="btn btn-brand btn-sm wp_search_submit" type="submit" value="Search" />
+				<input id="searchsubmit" class="btn btn-brand btn-md wp_search_submit" type="submit" value="Search" />
 			</form>';
     return $form;
 }

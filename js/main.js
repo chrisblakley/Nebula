@@ -10,6 +10,7 @@ jQuery(document).ready(function(){
 	cacheSelectors();
 	gaBlockDetection();
 	conditionalJSLoading();
+	nebulaBattery();
 
 	//Navigation
 	mmenus();
@@ -192,41 +193,6 @@ function windowTypeDetection(){
 	}
 }
 
-//Create an object of the viewport dimensions
-function updateViewportDimensions(){
-	if ( typeof viewport === 'undefined' ){
-		var viewportHistory = 0;
-		//console.log('creating viewport History: ' + viewportHistory);
-	} else {
-		var viewportHistory = viewport.history+1;
-		viewport.prevWidth = viewport.width; //Not pushing to the object...
-		viewport.prevHeight = viewport.height; //Not pushing to the object...
-		//console.log('increasing viewport History: ' + viewportHistory); //Triggering twice on window resize...
-	}
-
-	var x = nebula.dom.window.innerWidth || nebula.dom.document.documentElement.clientWidth || nebula.dom.body.clientWidth;
-	var y = nebula.dom.window.innerHeight || nebula.dom.document.documentElement.clientHeight || nebula.dom.body.clientHeight;
-
-	if ( viewportHistory === 0 ){
-		var viewportObject = {
-			initialWidth: x,
-			initialHeight: y,
-			width: x,
-			height: y,
-			history: viewportHistory
-		};
-	} else {
-		viewportObject = {
-		    initialWidth: viewport.initialWidth,
-			initialHeight: viewport.initialHeight,
-		    width: x,
-		    height: y,
-		    history: viewportHistory
-		};
-	}
-	return viewportObject;
-}
-
 //Page Visibility
 function pageVisibility(){
 	visFirstHidden = false;
@@ -247,8 +213,6 @@ function pageVisibility(){
 		if ( getPageVisibility() ){ //Page is hidden
 			nebula.dom.document.trigger('nebula_page_hidden');
 			nebula.dom.body.addClass('page-visibility-hidden');
-			nebulaTimer('pageVisibilityHidden', 'start');
-			//ga('send', 'event', 'Page Visibility', 'Hidden', pageTitle, {'nonInteraction': 1});
 			nv('increment', 'page_visibility_hidden');
 			pauseAllVideos(false);
 			visFirstHidden = true;
@@ -256,8 +220,6 @@ function pageVisibility(){
 			if ( visFirstHidden ){
 				nebula.dom.document.trigger('nebula_page_visible');
 				nebula.dom.body.removeClass('page-visibility-hidden');
-				//ga('send', 'timing', 'Page Visibility', 'Tab Hidden', Math.round(nebulaTimer('pageVisibilityHidden', 'lap')), 'Page in background tab for this time'); //Uncomment if this timing data is useful. GA limits timings, so disabled in favor of more important default timings.
-				//ga('send', 'event', 'Page Visibility', 'Visibile', pageTitle, {'nonInteraction': 1});
 				nv('increment', 'page_visibility_visible');
 			}
 		}
@@ -347,6 +309,34 @@ function gaBlockSend(){
 			}
 		}, 2000);
 	}
+}
+
+//Detect Battery Level
+function nebulaBattery(){
+	nebula.user.client.device.battery = false;
+	navigator.getBattery().then(function(battery){
+		nebulaBatteryData(battery);
+		jQuery(battery).on('chargingchange levelchange', function(){
+			nebulaBatteryData(battery);
+		});
+	});
+}
+
+//Prep battery info for lookup
+function nebulaBatteryData(battery){
+	nebula.user.client.device.battery = {
+		mode: ( battery.charging )? 'Adapter' : 'Battery',
+		charging: ( battery.charging )? true : false,
+		chargingTime: battery.chargingTime,
+		dischargingTime: battery.dischargingTime,
+		level: battery.level,
+		percentage: parseFloat((battery.level*100).toFixed(2)) + '%',
+	};
+	nv('send', {
+		'battery_mode': nebula.user.client.device.battery.mode,
+		'battery_percentage': nebula.user.client.device.battery.percentage,
+	});
+	jQuery(document).trigger('batteryChange');
 }
 
 /*==========================
@@ -708,13 +698,6 @@ function eventTracking(){
 		}
 	}
 	window.onafterprint = afterPrint;
-
-	//Detect clicks on pinned header
-	if ( typeof headroom !== 'undefined' && headroom.classes.pinned && headroom.classes.notTop ){
-		nebula.dom.document.on('click tap touch', '.' + headroom.classes.pinned + '.' + headroom.classes.notTop + ' a', function(){
-			ga('send', 'event', 'Pinned Header', 'Click', 'Used pinned header (after scrolling) to navigate');
-		});
-	}
 }
 
 //Ecommerce event tracking
@@ -3523,9 +3506,6 @@ function dropdownWidthController(){
 		jQuery(this).css('width', bigWidth+15 + 'px');
 	});
 } //end dropdownWidthController()
-
-
-
 
 //Vertical subnav expanders
 function subnavExpanders(){

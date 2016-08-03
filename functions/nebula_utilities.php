@@ -366,7 +366,7 @@ function generate_nebula_id($force=null){
 	if ( !empty($force) ){
 		$_COOKIE['nid'] = $force;
 	} else {
-		$_COOKIE['nid'] = nebula_version('full') . '.' . bin2hex(random_bytes(5)) . '.' . uniqid();
+		$_COOKIE['nid'] = nebula_version('full') . '.' . bin2hex(openssl_random_pseudo_bytes(5)) . '.' . uniqid(); //Update to random_bytes() when moving to PHP7
 	}
 
 	$nid_expiration = strtotime('January 1, 2035'); //Note: Do not let this cookie expire past 2038 or it instantly expires.

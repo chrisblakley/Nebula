@@ -1,10 +1,10 @@
 jQuery.noConflict();
 jQuery(document).on('ready', function(){
-	getQueryStrings();
 
-	if ( nebula.user.client.remote_addr === '72.43.235.106' ){
-		jQuery('html').addClass('phg');
-	}
+	userHeadshotFields();
+	initializationStuff();
+	developerMetaboxes();
+	wysiwygMods();
 
 	if ( jQuery('#edit-slug-box').length ){
 		nebulaUniqueSlugChecker();
@@ -14,53 +14,19 @@ jQuery(document).on('ready', function(){
 		jQuery('#post textarea').allowTabChar();
 	});
 
-	if ( jQuery('body').hasClass('profile-php') ){
-		jQuery('#headshot_button').on('click tap touch', function(){
-			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
-			return false;
-		});
-
-		window.send_to_editor = function(html){
-			var imageURL = jQuery(html).attr('src');
-			jQuery('#headshot_url').val(imageURL); //updates our hidden field that will update our author's meta when the form is saved
-			tb_remove();
-			jQuery('#headshot_preview').html('<img src="' + imageURL + '" style="max-width: 100%; max-height: 100%;" />');
-
-			jQuery('#submit_options_form').trigger('click');
-			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
-		};
-
-		jQuery('#headshot_remove').on('click tap touch', function(){
-			jQuery('#headshot_url').val('');
-			jQuery('#headshot_preview').remove();
-			jQuery('#upload_success').text('Picture removed.');
-		});
-
-
-
-		jQuery('#avatar_button').on('click tap touch', function(){
-			tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
-			return false;
-		});
-
-		jQuery('#avatar_remove').on('click tap touch', function(){
-			jQuery('#avatar_url').val('');
-			jQuery('#avatar_preview').remove();
-			jQuery('#upload_success').text('Picture removed.');
-		});
-	}
-
 	if ( !jQuery('li#menu-comments').is(':visible') ){
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small>.');
 	}
 
-	//Re-initialize confirm dialog.
-	jQuery('.reinitializenebula').on('click tap touch', function(){
-		if ( !confirm('This will reset all Nebula options and reset the homepage content! Are you sure you want to re-initialize?') ) {
-			return false;
-		}
+	businessHoursCheck();
+	jQuery('.businessday input[type="checkbox"]').on('click tap touch', function(){
+		businessHoursCheck();
 	});
 
+}); //End Document Ready
+
+//Developer Metaboxe functions
+function developerMetaboxes(){
 	//Developer Info Metabox
 	jQuery(document).on('keyup', 'input.findterm', function(){
 		jQuery('input.findterm').attr('placeholder', 'Search files');
@@ -102,18 +68,16 @@ jQuery(document).on('ready', function(){
 		return false;
 	});
 
-
-	if ( jQuery('.flag').length ){
-		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/libs/flags.css');
-	}
-
 	//Hide TODO files with only hidden items
 	jQuery('.todofilewrap').each(function(){
 		if ( jQuery(this).find('.linewrap').length === jQuery(this).find('.todo-priority-0').length ){
 			jQuery(this).addClass('hidden');
 		}
 	});
+}
 
+//Modifications to TinyMCE
+function wysiwygMods(){
 	//Detect external links in the TinyMCE link modal (to check the "new window" box).
 	linkTargetUsered = 0;
 	jQuery(document).on('click tap touch keydown', '#wp-link-target', function(){
@@ -143,10 +107,16 @@ jQuery(document).on('ready', function(){
 			jQuery('#wp-link-target').prop('checked', false);
 		}
 	});
+}
 
-	//Add .entry-content to the WYSIWYG to pull in more styles to match the front-end
-	jQuery('#wp-content-editor-container').addClass('entry-content'); //not working
-
+//Initialization alerts
+function initializationStuff(){
+	//Re-initialize confirm dialog.
+	jQuery('.reinitializenebula').on('click tap touch', function(){
+		if ( !confirm('This will reset all Nebula options and reset the homepage content! Are you sure you want to re-initialize?') ) {
+			return false;
+		}
+	});
 
 	//Initialize confirm dialog.
 	jQuery('#run-nebula-initialization').on('click tap touch', function(){
@@ -197,20 +167,46 @@ jQuery(document).on('ready', function(){
 		cleanURL = window.location.href.split('?');
 		history.replaceState(null, document.title, cleanURL[0]);
 	}
+}
 
-	businessHoursCheck();
-	jQuery('.businessday input[type="checkbox"]').on('click tap touch', function(){
-		businessHoursCheck();
-	});
+//Add user fields for headshot image
+function userHeadshotFields(){
+	if ( jQuery('body').hasClass('profile-php') ){
+		jQuery('#headshot_button').on('click tap touch', function(){
+			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
+			return false;
+		});
 
-}); //End Document Ready
+		window.send_to_editor = function(html){
+			var imageURL = jQuery(html).attr('src');
+			jQuery('#headshot_url').val(imageURL); //updates our hidden field that will update our author's meta when the form is saved
+			tb_remove();
+			jQuery('#headshot_preview').html('<img src="' + imageURL + '" style="max-width: 100%; max-height: 100%;" />');
 
-jQuery(window).on('load', function(){
+			jQuery('#submit_options_form').trigger('click');
+			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
+		};
+
+		jQuery('#headshot_remove').on('click tap touch', function(){
+			jQuery('#headshot_url').val('');
+			jQuery('#headshot_preview').remove();
+			jQuery('#upload_success').text('Picture removed.');
+		});
 
 
 
-}); //End Window Load
+		jQuery('#avatar_button').on('click tap touch', function(){
+			tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
+			return false;
+		});
 
+		jQuery('#avatar_remove').on('click tap touch', function(){
+			jQuery('#avatar_url').val('');
+			jQuery('#avatar_preview').remove();
+			jQuery('#upload_success').text('Picture removed.');
+		});
+	}
+}
 
 //Check business hours for open checkbox
 function businessHoursCheck(){
@@ -234,53 +230,6 @@ function nebulaUniqueSlugChecker(postType){
 		jQuery('#sample-permalink a').css('color', 'red');
 	}
 }
-
-
-//Get query string parameters
-function getQueryStrings(){
-	queries = {};
-    var q = document.URL.split('?')[1];
-    if ( q ){
-        q = q.split('&');
-        for ( var i = 0; i < q.length; i++ ){
-            hash = q[i].split('=');
-            if ( hash[1] ){
-	            queries[hash[0]] = hash[1];
-            } else {
-	            queries[hash[0]] = true;
-            }
-        }
-	}
-}
-
-//Search query strings for the passed parameter
-function get(query){
-	if ( !query ){
-		return queries;
-	} else {
-		return queries[query];
-	}
-	return false;
-}
-
-
-//Dynamically load CSS files using JS
-function nebulaLoadCSS(url){
-	if ( document.createStyleSheet ){
-	    try { document.createStyleSheet(url); } catch(e){
-		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
-	    }
-	} else {
-	    var css;
-	    css = document.createElement('link');
-	    css.rel = 'stylesheet';
-	    css.type = 'text/css';
-	    css.media = "all";
-	    css.href = url;
-	    document.getElementsByTagName("head")[0].appendChild(css);
-	}
-}
-
 
 //Allow tab character in textareas
 (function($){

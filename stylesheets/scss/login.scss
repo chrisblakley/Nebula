@@ -1,9 +1,7 @@
-//Copy this file to the child theme for customized logo and colors.
+//Copy this file to the child theme for customized colors.
 
 @import 'variables';
 @import 'mixins';
-@import 'helpers';
-@import 'animations';
 
 a {color: $primary_color !important; @include prefix((transition: all 0.25s)); text-decoration: none;
 	&:hover {color: $secondary_color !important; text-decoration: underline;}
@@ -12,45 +10,17 @@ a {color: $primary_color !important; @include prefix((transition: all 0.25s)); t
 body.login {@include linear-gradient(to bottom, #f2f2f2, #ddd);
 	form {margin: 0 auto;}
 	div#login {
-		.js & {display: none;}
-		h1 { //Logo
-			a {width: auto; background: url($template_directory + "/images/logo.png") center center no-repeat; background-size: contain; //Change this to $stylesheet_directory as needed.
-				.svg & {background: url($template_directory + "/images/logo.svg") center center no-repeat; background-size: contain;} //Change this to $stylesheet_directory as needed.
-			}
-		}
 		form#loginform {
-			p {
-				label {}
-				&.submit {
-					input#wp-submit {}
-					input.button-primary {@include linear-gradient(to bottom, $primary_color, darken($primary_color, 20%)); border: 1px solid darken($primary_color, 40%);
-						&:hover {@include linear-gradient(to bottom, darken($primary_color, 20%), darken($primary_color, 40%)); border: 1px solid darken($primary_color, 60%);}
-						&:active {}
-					}
+			p.submit {
+				input.button-primary {@include linear-gradient(to bottom, $primary_color, darken($primary_color, 20%)); border: 1px solid darken($primary_color, 40%);
+					&:hover {@include linear-gradient(to bottom, darken($primary_color, 20%), darken($primary_color, 40%)); border: 1px solid darken($primary_color, 60%);}
 				}
 			}
-			input {}
-			input#user_login {}
-			input#user_pass {}
-			p.forgetmenot {
-				input#rememberme {}
-			}
 		}
-		p#nav { //Lost your password?
+		p#nav, p#backtoblog {
 			a {color: $primary_color !important; @include prefix((transition: all 0.25s)); text-decoration: none;
 				&:hover {color: $primary_color !important; text-decoration: underline;}
 			}
 		}
-		p#backtoblog {
-			a {color: $primary_color !important; @include prefix((transition: all 0.25s)); text-decoration: none;
-				&:hover {color: $secondary_color !important; text-decoration: underline;}
-			}
-		}
 	}
-	p.message {}
-	#login_error {}
-}
-
-.ipcon {margin: 20px 0 -20px 0;
-	p {font-size: 12px; margin: 0; padding: 0; color: #888;}
 }

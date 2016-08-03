@@ -357,7 +357,10 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 					}
 				}
 				&:hover ul.sub-menu {left: 5px; opacity: 1;}
-				input.nebula-search {height: 22px; font-size: 11px; line-height: 22px;}
+
+				&.nebula-search {font-size: 14px;
+					input {height: 22px; font-size: 11px; line-height: 22px;}
+				}
 			}
 		}
 	}
