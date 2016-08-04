@@ -1,9 +1,6 @@
 @import 'variables';
 @import 'mixins';
 
-//@TODO "Nebula" 0: Adding div to this list gets a white page. This also crashes most browsers
-//div, h1, h2, h3, h4, h5, h6, p, span, a, a:hover, sup, sub, input, textarea, ul, ol, dl, li, dd, table, tr, td, th, legend, button, .active {@include prefix((filter: grayscale(100%)));}
-
 body.nebula-wireframing-wireframe {@include prefix((filter: grayscale(100%)));} //Greyscale only when wireframe is active and being viewed
 
 #wireframing-bar {position: relative; background: black; color: #fff; padding-top: 5px; padding-bottom: 5px;}

@@ -1,7 +1,5 @@
 @import 'variables';
 @import 'mixins';
-@import 'helpers';
-@import 'animations';
 
 $admin_media_queries: (
 	widescreen: "(max-width: 1800px) and (min-width: 1500px)",
@@ -242,7 +240,7 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 		input {width: 100%;}
 	}
 
-	#deletezeroscores {margin-top: 30px;
+	.action-warning {margin-top: 30px;
 		a {text-decoration: none;
 			&.danger {color: $danger_color;
 				&:hover {color: maroon;}

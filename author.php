@@ -59,8 +59,8 @@ get_header(); ?>
 					</a>
 				<?php endif; ?>
 			</h2>
-			<?php if ( get_the_author_meta('userlocation') ): ?>
-				<span class="author-location"><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps?q=<?php echo urlencode(str_replace(',', '', get_the_author_meta('userlocation'))); ?>" target="_blank"><?php echo get_the_author_meta('userlocation'); ?></a></span>
+			<?php if ( get_the_author_meta('usercity') && get_the_author_meta('userstate') ): ?>
+				<span class="author-location"><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps?q=<?php echo urlencode(get_the_author_meta('usercity') . '+' . get_the_author_meta('userstate')); ?>" target="_blank"><?php echo get_the_author_meta('usercity') . ', ' . get_the_author_meta('userstate'); ?></a></span>
 			<?php endif; ?>
 
 

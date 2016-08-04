@@ -664,8 +664,8 @@ function dashboard_current_user(){
 		}
 
 		//Location
-		if ( get_the_author_meta('userlocation', $user_info->ID) ){
-			echo '<li><i class="fa fa-map-marker fa-fw"></i> <strong>' . get_the_author_meta('userlocation', $user_info->ID) . '</strong></li>';
+		if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
+			echo '<li><i class="fa fa-map-marker fa-fw"></i> <strong>' . get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . '</strong></li>';
 		}
 
 		//Email
@@ -1616,6 +1616,30 @@ function nebula_visitors_data_page(){
 
 						return false;
 					});
+
+					jQuery('#dropnvtable a').on('click tap touch', function(){
+						if ( confirm("Are you sure you want to delete the entire Nebula Visitors table? This can not be undone.") ){
+							jQuery('#dropnvtable').html('<i class="fa fa-fw fa-spin fa-spinner"></i> Deleting Nebula Visitors Table...');
+
+							jQuery.ajax({
+								type: "POST",
+								url: nebula.site.ajax.url,
+								data: {
+									nonce: nebula.site.ajax.nonce,
+									action: 'nebula_ajax_drop_nv_table',
+								},
+								success: function(response){
+									jQuery('#dropnvtable').html('Success! Nebula Visitors table has been dropped from the database. The option has also been disabled. Re-enable it in <a href="themes.php?page=nebula_options">Nebula Options</a>.');
+								},
+								error: function(MLHttpRequest, textStatus, errorThrown){
+									jQuery('#dropnvtable').html('Error. An AJAX error occured. <a class="refreshpage" href="#">Please refresh and try again.</a>');
+								},
+								timeout: 60000
+							});
+						}
+
+						return false;
+					});
 				<?php endif; ?>
 			});
 		</script>
@@ -1706,14 +1730,21 @@ function nebula_visitors_data_page(){
 				<p id="querystatus"></p>
 
 				<?php if ( current_user_can('manage_options') ): ?>
-					<div id="deletezeroscores"><a class="danger" href="#"><i class="fa fa-fw fa-warning"></i> Delete Scores of 0 (or less)</a></div>
+					<div id="deletezeroscores" class="action-warning"><a class="danger" href="#"><i class="fa fa-fw fa-warning"></i> Delete Scores of 0 (or less).</a></div>
+				<?php endif; ?>
+
+				<?php if ( current_user_can('manage_options') ): ?>
+					<div id="dropnvtable" class="action-warning"><a class="danger" href="#"><i class="fa fa-fw fa-warning"></i> Delete entire Nebula Visitors table and disable Visitors Database option.</a></div>
 				<?php endif; ?>
 			</div>
 		</div>
 	<?php else: ?>
 		<div class="wrap">
 			<h2>Nebula Visitors Data</h2>
-			<p>Nebula Visitors table is empty or does not exist!</p>
+			<p>
+				<strong>Nebula Visitors table is empty or does not exist!</strong><br/>
+				To create the table, simply save the <a href="themes.php?page=nebula_options">Nebula Options</a> (and be sure that "Visitor Database" is enabled under the Functions tab).
+			</p>
 		</div>
 	<?php endif;
 }
@@ -1763,6 +1794,21 @@ function nebula_ajax_remove_zero_scores(){
 	if ( current_user_can('manage_options') ){
 		global $wpdb;
 		$zero_scores = $wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE score <= %d", 0));
+	}
+
+	exit;
+}
+
+//Manually delete the entire Nebula Visitor table
+add_action('wp_ajax_nebula_ajax_drop_nv_table', 'nebula_ajax_drop_nv_table');
+add_action('wp_ajax_nopriv_nebula_ajax_drop_nv_table', 'nebula_ajax_drop_nv_table');
+function nebula_ajax_drop_nv_table(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+	if ( current_user_can('manage_options') ){
+		global $wpdb;
+		$remove_nv_table = $wpdb->query("DROP TABLE nebula_visitors");
+		nebula_update_option('visitors_db', 'disabled');
 	}
 
 	exit;

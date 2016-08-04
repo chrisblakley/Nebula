@@ -303,6 +303,7 @@ function enqueue_nebula_login(){
 add_action('admin_enqueue_scripts', 'enqueue_nebula_admin');
 function enqueue_nebula_admin(){
 	global $nebula;
+	$current_screen = get_current_screen();
 
 	//Stylesheets
 	wp_enqueue_style('nebula-admin');
@@ -312,9 +313,16 @@ function enqueue_nebula_admin(){
 	wp_enqueue_script('nebula-admin');
 
 	//Nebula Visitors Data page
-	if ( isset($_GET['page']) && $_GET['page'] == 'nebula_visitors_data' ){
+	if ( $current_screen->base == 'appearance_page_nebula_visitors_data' ){
 		wp_enqueue_style('nebula-datatables');
 		wp_enqueue_script('nebula-datatables');
+	}
+
+	//User Profile edit page
+	if ( $current_screen->base == 'profile' ){
+		wp_enqueue_style('thickbox');
+		wp_enqueue_script('thickbox');
+		wp_enqueue_script('media-upload');
 	}
 
 	//Localized objects (localized to jquery to appear in <head>)

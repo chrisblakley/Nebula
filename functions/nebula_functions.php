@@ -1014,8 +1014,6 @@ function nebula_breadcrumbs($options=array()){ //yolo
 		}
 
 		echo '</div>';
-	} elseif ( $GLOBALS['http'] && is_int($GLOBALS['http']) ){ //If there is an HTTP status code
-		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ' . $data['before'] . 'Error ' . $GLOBALS['http'] . $data['after'];
 	} elseif ( is_home() || is_front_page() ){
 		echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a></div></div>';
 		return false;

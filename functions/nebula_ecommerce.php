@@ -72,6 +72,38 @@ function nebula_remove_woo_breadcrumbs() {
 	remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0);
 }
 
+//Checkout visitor data
+add_action('woocommerce_payment_complete', 'nebula_woocommerce_order_data');
+function nebula_woocommerce_order_data($order_id){
+	if ( nebula_option('visitors_db') ){
+		$order = new WC_Order($order_id);
+
+		//Append order ID and product IDs
+		$products = array();
+		$items = $order->get_items();
+		foreach ( $items as $item ) {
+		    $products['ecommerce_product_ids'] = $item['product_id'];
+		}
+		$products['ecommerce_order_id'] = $order_id;
+		nebula_append_visitor($products);
+
+		//Update Customer data
+		nebula_update_visitor(array(
+			'wp_role' => 'Customer',
+			'email_address' => $order->billing_email,
+			'first_name' => $order->billing_first_name,
+			'last_name' => $order->billing_last_name,
+			'full_name' => $order->billing_first_name . ' ' . $order->billing_last_name,
+			'street_full' => $order->billing_address_1 . ' ' . $order->billing_address_2,
+			'city' => $order->billing_city,
+			'state_abbr' => $order->billing_state,
+			'zip_code' => $order->billing_postcode,
+			'country' => $order->billing_country,
+			'phone_number' => $order->billing_phone,
+		));
+	}
+}
+
 //JSON-LD for Products
 add_action('nebula_metadata_end', 'nebula_json_ld_ecommerce');
 function nebula_json_ld_ecommerce(){

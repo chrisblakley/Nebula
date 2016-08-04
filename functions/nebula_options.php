@@ -2,6 +2,8 @@
 
 /*==========================
  Global Nebula Options Conditional Functions
+ Options are for customizing Nebula functionality to the needs of each project.
+ Data is for values that are used by Nebula functionality to check for reference and conditions.
  ===========================*/
 
 //If the desired option is an enabled/disabled dropdown check against that, else check for the option and return the default.
@@ -35,6 +37,15 @@ function nebula_option($option, $operand=false){
 	return $data;
 }
 
+//Update Nebula options outside of the Nebula Options page
+function nebula_update_option($option, $value){
+	$nebula_data = get_option('nebula_options');
+	if ( $nebula_data[$option] != $value ){
+		$nebula_data[$option] = $value;
+		update_option('nebula_options', $nebula_data);
+	}
+}
+
 //Retrieve non-option Nebula data
 function nebula_data($option){
 	$nebula_data = get_option('nebula_data');
@@ -45,7 +56,6 @@ function nebula_data($option){
 }
 
 //Update data outside of the Nebula Options page
-function nebula_update_option($option, $value){nebula_update_data($option, $value);} //Alias
 function nebula_update_data($option, $value){
 	$nebula_data = get_option('nebula_data');
 	if ( $nebula_data[$option] != $value ){
@@ -165,7 +175,6 @@ function nebula_default_options(){
 		'staging_theme' => '',
 		'production_theme' => '',
 		'admin_bar' => 'enabled',
-		'visitors_db' => 'disabled',
 		'admin_notices' => 'enabled',
 		'author_bios' => 'disabled',
 		'comments' => 'disabled',
@@ -174,7 +183,7 @@ function nebula_default_options(){
 		'wp_core_updates_notify' => 'enabled',
 		'plugin_update_warning' => 'enabled',
 		'unnecessary_metaboxes' => 'enabled',
-		'visitor_database' => 'disabled',
+		'visitors_db' => 'disabled',
 		'scss' => 'disabled',
 		'minify_css' => 'disabled',
 		'dev_stylesheets' => 'disabled',
@@ -864,7 +873,7 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
-		        	<th scope="row">Visitor Database&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Visitors Database&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[visitors_db]">
 							<option disabled>Default: Disabled</option>

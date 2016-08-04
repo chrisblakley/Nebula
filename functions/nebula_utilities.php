@@ -263,22 +263,23 @@ function nebula_ga_event_ajax(){
  ===========================*/
 
 //Create Users Table with minimal default columns.
-add_action('admin_init', 'nebula_create_visitors_table');
+add_action('init', 'nebula_create_visitors_table', 2); //Using init instead of admin_init so this triggers before check_nebula_id (below)
 function nebula_create_visitors_table(){
-	if ( nebula_option('visitors_db') && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this when Nebula Options are saved.
+	if ( is_admin() && nebula_option('visitors_db') && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this in admin when Nebula Options are saved.
 		global $wpdb;
 
 		$visitors_table = $wpdb->query("SHOW TABLES LIKE 'nebula_visitors'");
 		if ( empty($visitors_table) ){
 			$created = $wpdb->query("CREATE TABLE nebula_visitors (
-				id INT(255) NOT NULL AUTO_INCREMENT,
-				nebula_id VARCHAR(255) NOT NULL,
+				id INT(11) NOT NULL AUTO_INCREMENT,
+				nebula_id TEXT NOT NULL,
 				known BOOLEAN NOT NULL DEFAULT FALSE,
-				email_address VARCHAR(255) NOT NULL,
-				hubspot_vid VARCHAR(255) NOT NULL,
-				last_modified_date INT(255) NOT NULL DEFAULT 0,
+				email_address TEXT NOT NULL,
+				hubspot_vid INT(11) NOT NULL,
+				last_modified_date INT(12) NOT NULL DEFAULT 0,
+				last_session_id TEXT NOT NULL,
 				PRIMARY KEY (id)
-			) ENGINE = MyISAM;");
+			) ENGINE = MyISAM;"); //Try InnoDB as engine? and add ROW_FORMAT=COMPRESSED ?
 		} else {
 			nebula_remove_expired_visitors();
 		}
@@ -286,7 +287,7 @@ function nebula_create_visitors_table(){
 }
 
 //Check if the Nebula ID exists on load and generate/store a new one if it does not.
-add_action('init', 'check_nebula_id');
+add_action('init', 'check_nebula_id', 11);
 function check_nebula_id(){
 	if ( nebula_is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
 		return false; //Don't add bots to the DB
@@ -384,6 +385,45 @@ function generate_nebula_id($force=null){
 	}
 
 	return $_COOKIE['nid'];
+}
+
+//Create necessary columns by comparing passed data to existing columns
+function nebula_visitors_create_missing_columns($all_data){
+	if ( nebula_option('visitors_db') ){
+		$existing_columns = nebula_visitors_existing_columns(); //Returns an array of current table column names
+
+		$needed_columns = array();
+		foreach ( $all_data as $column => $value ){
+			if ( is_null($value) ){
+				$all_data[$column] = ''; //Convert null values to empty strings.
+			}
+
+			if ( !in_array($column, $existing_columns) ){ //If the column does not exist, add it to an array
+				$needed_columns[] = $column;
+			}
+		}
+
+		if ( !empty($needed_columns) ){
+			global $wpdb;
+
+			$alter_query = "ALTER TABLE nebula_visitors ";
+			foreach ( $needed_columns as $column_name ){
+				$column_name = sanitize_key($column_name);
+
+				$sample_value = $all_data[$column_name];
+				$data_type = 'TEXT'; //Default data type
+				if ( is_int($sample_value) ){
+					$data_type = 'INT(12)';
+				} elseif ( strlen($sample_value) == 1 && ($sample_value === '1' || $sample_value === '0') ){
+					$data_type = 'INT(7)';
+				}
+
+				$alter_query .= "ADD " . $column_name . " " . $data_type . " NOT NULL, "; //Prep each needed column into a query
+			}
+
+			$create_columns = $wpdb->query(rtrim($alter_query, ', ')); //Create the needed columns
+		}
+	}
 }
 
 //Retrieve User Data
@@ -489,7 +529,7 @@ function nebula_update_visitor($data=array(), $send_to_hubspot=true){ //$data is
 			);
 
 			if ( $updated_visitor === false ){ //If visitor does not exist in the table, create it with defaults and current data... might need to be true if its int(0) too, so maybe go back to empty($updated_visitor)
-				nebula_insert_visitor($all_data);
+				nebula_insert_visitor($all_data, $send_to_hubspot);
 			} else {
 				check_if_known($send_to_hubspot);
 			}
@@ -533,7 +573,7 @@ function nebula_append_visitor($data=array(), $send_to_hubspot=true){ //$data is
 				$appended_visitor = $wpdb->query($append_query); //currently working on this
 
 				if ( $appended_visitor === false ){ //If visitor does not exist in the table, create it with defaults and current data. might need to be true if its int(0) too, so maybe go back to empty($updated_visitor)
-					nebula_insert_visitor($data);
+					nebula_insert_visitor($data, $send_to_hubspot);
 				} else {
 					check_if_known($send_to_hubspot);
 				}
@@ -675,25 +715,49 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 	if ( is_user_logged_in() ){
 		$defaults['wp_user_id'] = get_current_user_id();
 
-		$user_info = get_userdata(get_current_user_id());
-		if ( !empty($user_info) ){
-			if ( !empty($user_info->roles[0]) ){
-				$defaults['wp_role'] = sanitize_text_field($user_info->roles[0]);
+		$user = get_userdata(get_current_user_id());
+		if ( !empty($user) ){
+			//Default WordPress user info
+			if ( !empty($user->roles[0]) ){
+				$defaults['wp_role'] = sanitize_text_field($user->roles[0]);
 			}
-			if ( !empty($user_info->user_firstname) ){
-				$defaults['first_name'] = sanitize_text_field($user_info->user_firstname);
+			if ( !empty($user->user_firstname) ){
+				$defaults['first_name'] = sanitize_text_field($user->user_firstname);
 			}
-			if ( !empty($user_info->user_lastname) ){
-				$defaults['last_name'] = sanitize_text_field($user_info->user_lastname);
+			if ( !empty($user->user_lastname) ){
+				$defaults['last_name'] = sanitize_text_field($user->user_lastname);
 			}
-			if ( !empty($user_info->user_firstname) && !empty($user_info->user_lastname) ){
-				$defaults['full_name'] = sanitize_text_field($user_info->user_firstname . ' ' . $user_info->user_lastname);
+			if ( !empty($user->user_firstname) && !empty($user->user_lastname) ){
+				$defaults['full_name'] = sanitize_text_field($user->user_firstname . ' ' . $user->user_lastname);
 			}
-			if ( !empty($user_info->user_email) ){
-				$defaults['email_address'] = sanitize_text_field($user_info->user_email);
+			if ( !empty($user->user_email) ){
+				$defaults['email_address'] = sanitize_text_field($user->user_email);
 			}
-			if ( !empty($user_info->user_login) ){
-				$defaults['username'] = sanitize_text_field($user_info->user_login);
+			if ( !empty($user->user_login) ){
+				$defaults['username'] = sanitize_text_field($user->user_login);
+			}
+
+			//Custom user fields
+			if ( get_user_meta($user->ID, 'headshot_url', true) ){
+				$defaults['photo'] = sanitize_text_field(get_user_meta($user->ID, 'headshot_url', true));
+			}
+			if ( get_user_meta($user->ID, 'jobtitle', true) ){
+				$defaults['job_title'] = sanitize_text_field(get_user_meta($user->ID, 'jobtitle', true));
+			}
+			if ( get_user_meta($user->ID, 'jobcompany', true) ){
+				$defaults['company'] = sanitize_text_field(get_user_meta($user->ID, 'jobcompany', true));
+			}
+			if ( get_user_meta($user->ID, 'jobcompanywebsite', true) ){
+				$defaults['company_website'] = sanitize_text_field(get_user_meta($user->ID, 'jobcompanywebsite', true));
+			}
+			if ( get_user_meta($user->ID, 'phonenumber', true) ){
+				$defaults['phone_number'] = sanitize_text_field(get_user_meta($user->ID, 'phonenumber', true));
+			}
+			if ( get_user_meta($user->ID, 'usercity', true) ){
+				$defaults['city'] = sanitize_text_field(get_user_meta($user->ID, 'usercity', true));
+			}
+			if ( get_user_meta($user->ID, 'userstate', true) ){
+				$defaults['state_name'] = sanitize_text_field(get_user_meta($user->ID, 'userstate', true));
 			}
 		}
 	}
@@ -807,36 +871,6 @@ function nebula_remove_expired_visitors(){
 function nebula_visitors_existing_columns(){
 	global $wpdb;
 	return $wpdb->get_col("SHOW COLUMNS FROM nebula_visitors", 0); //Returns an array of current table column names
-}
-
-//Create necessary columns by comparing passed data to existing columns
-function nebula_visitors_create_missing_columns($all_data){
-	if ( nebula_option('visitors_db') ){
-		$existing_columns = nebula_visitors_existing_columns(); //Returns an array of current table column names
-
-		$needed_columns = array();
-		foreach ( $all_data as $column => $value ){
-			if ( is_null($value) ){
-				$all_data[$column] = ''; //Convert null values to empty strings.
-			}
-
-			if ( !in_array($column, $existing_columns) ){ //If the column does not exist, add it to an array
-				$needed_columns[] = $column;
-			}
-		}
-
-		if ( !empty($needed_columns) ){
-			global $wpdb;
-
-			$alter_query = "ALTER TABLE nebula_visitors ";
-			foreach ( $needed_columns as $column_name ){
-				$column_name = sanitize_key($column_name);
-				$alter_query .= "ADD " . $column_name . " VARCHAR(255) NOT NULL, "; //Prep each needed column into a query
-			}
-
-			$create_columns = $wpdb->query(rtrim($alter_query, ', ')); //Create the needed columns
-		}
-	}
 }
 
 //Query email address or Hubspot VID to see if the user is known
