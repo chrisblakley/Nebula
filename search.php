@@ -68,7 +68,7 @@ get_header(); ?>
 					<p>No search results.</p>
 				<?php endif; ?>
 			</div><!--/col-->
-			<div class="col-md-3 col-md-offset-1">
+			<div class="col-md-3 offset-md-1">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

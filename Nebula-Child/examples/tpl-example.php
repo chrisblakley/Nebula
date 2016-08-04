@@ -571,7 +571,7 @@ get_header(); ?>
 					</div><!--/row-->
 				</article>
 			</div><!--/cols-->
-			<div class="col-md-3 col-md-offset-1">
+			<div class="col-md-3 offset-md-1">
 				<div id="sidebar">
 					<ul class="xoxo">
 						<li class="widget-container">

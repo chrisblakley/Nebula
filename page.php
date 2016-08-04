@@ -53,7 +53,7 @@ get_header(); ?>
 					<?php comments_template(); ?>
 				<?php endwhile; ?>
 			</div><!--/col-->
-			<div class="col-md-3 col-md-offset-1">
+			<div class="col-md-3 offset-md-1">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
