@@ -5,7 +5,7 @@
 	}
 ?>
 
-<?php if ( !empty($GLOBALS['ga']) ): //Universal Google Analytics ?>
+<?php if ( nebula_option('ga_tracking_id') ): //Universal Google Analytics ?>
 	<script>
 		<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
 
@@ -14,7 +14,7 @@
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 		})(window,document,'script','//www.google-analytics.com/<?php echo ( is_debug(1) )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
 
-		ga('create', '<?php echo $GLOBALS['ga']; ?>', 'auto'<?php echo ( nebula_option('ga_wpuserid', 'enabled') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>); <?php //Change Tracking ID in Nebula Options or functions.php! ?>
+		ga('create', '<?php echo nebula_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula_option('ga_wpuserid', 'enabled') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>); <?php //Change Tracking ID in Nebula Options or functions.php! ?>
 
 		<?php if ( nebula_option('ga_displayfeatures', 'enabled') ): ?>
 			ga('require', 'displayfeatures');

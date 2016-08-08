@@ -4,34 +4,34 @@
  */
 
 /*==========================
- Include Nebula Utility Functions
+ Include Nebula Functions
  ===========================*/
 
 require_once('functions/nebula_options.php'); //Nebula Options
 require_once('functions/nebula_utilities.php'); //Nebula Utilities
-
-/*==========================
- Google Analytics Tracking ID
- ===========================*/
-
-$GLOBALS['ga'] = nebula_option('ga_tracking_id', ''); //Change Google Analytics Tracking ID here or in Nebula Options (or both)!
-
-/*==========================
- Include Remaining Nebula Functions Groups
- ===========================*/
-
 require_once('functions/nebula_security.php'); //Nebula Security
-require_once('functions/nebula_automation.php'); //Nebula Automations
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
-require_once('functions/nebula_admin.php'); //Nebula Admin Functions
-require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 //require_once('functions/nebula_widgets.php'); //Nebula Widgets
-require_once('functions/nebula_prototyping.php'); //Nebula Wireframing (can be commented out after launch)
 require_once('functions/nebula_legacy.php'); //Nebula Legacy (to maximize backwards compatibility)
 //require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)
 
+//Include functions for Wireframing and Prototyping
+if ( nebula_option('prototype_mode') ){
+	require_once('functions/nebula_prototyping.php'); //Nebula Wireframing
+}
+
+//Include functions for the admin interface
+if ( is_admin() || is_admin_bar_showing() ){
+	require_once('functions/nebula_admin.php'); //Nebula Admin Functions
+}
+if ( is_admin() ){
+	require_once('functions/nebula_automation.php'); //Nebula Automations
+	require_once('functions/nebula_user_fields.php'); //Nebula User Fields
+}
+
+//Include functions for ecommerce websites
 if ( is_plugin_active('woocommerce/woocommerce.php') ){
 	require_once('functions/nebula_ecommerce.php'); //Nebula Ecommerce
 }
@@ -131,7 +131,7 @@ function register_nebula_scripts(){
 			'upload_dir' => $upload_dir['baseurl'],
 			'ecommerce' => false,
 			'options' => array(
-				'gaid' => $GLOBALS['ga'],
+				'gaid' => nebula_option('ga_tracking_id'),
 				'nebula_cse_id' => nebula_option('cse_id'),
 				'nebula_google_browser_api_key' => nebula_option('google_browser_api_key'),
 				'facebook_url' => nebula_option('facebook_url'),
@@ -313,13 +313,13 @@ function enqueue_nebula_admin(){
 	wp_enqueue_script('nebula-admin');
 
 	//Nebula Visitors Data page
-	if ( $current_screen->base == 'appearance_page_nebula_visitors_data' ){
+	if ( $current_screen->base === 'appearance_page_nebula_visitors_data' ){
 		wp_enqueue_style('nebula-datatables');
 		wp_enqueue_script('nebula-datatables');
 	}
 
 	//User Profile edit page
-	if ( $current_screen->base == 'profile' ){
+	if ( $current_screen->base === 'profile' ){
 		wp_enqueue_style('thickbox');
 		wp_enqueue_script('thickbox');
 		wp_enqueue_script('media-upload');

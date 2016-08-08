@@ -1,12 +1,8 @@
 <?php
 
-//Used to detect if plugins are active. Enables use of is_plugin_active($plugin)
-require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-require_once(ABSPATH . 'wp-admin/includes/file.php');
-
 //Detect and prompt install of Recommended and Optional plugins using TGMPA
 //Configuration Documentation: http://tgmpluginactivation.com/configuration/
-if ( is_dev(true) || current_user_can('manage_options') ){
+if ( is_admin() && is_dev(true) || current_user_can('manage_options') ){
 	/*
 		Until there is support for Required, Recommended, AND Optional plugins:
 		When updating the class file (in the /includes/libs/ directory, be sure to edit the text on the following function to be 'Recommended' and 'Optional' in the installation table:

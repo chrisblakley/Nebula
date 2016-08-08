@@ -93,7 +93,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 		));
 
 		//Add modified date under View/Edit node
-		if ( get_the_modified_date() != get_the_date() ){ //If the post has been modified
+		if ( get_the_modified_date() !== get_the_date() ){ //If the post has been modified
 			$manage_author = ( get_the_modified_author() )? get_the_modified_author() : get_the_author();
 			$wp_admin_bar->add_node(array(
 				'parent' => $node_id,
@@ -206,7 +206,7 @@ if ( nebula_option('wp_core_updates_notify', 'disabled') ){
 
 //Show update warning on Wordpress Core/Plugin update admin pages
 if ( nebula_option('plugin_update_warning') ){
-	if ( $pagenow == 'plugins.php' || $pagenow == 'update-core.php' ){
+	if ( $pagenow === 'plugins.php' || $pagenow === 'update-core.php' ){
 		add_action('admin_notices', 'nebula_update_warning');
 		function nebula_update_warning(){
 			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com/'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
@@ -221,7 +221,7 @@ function nebula_theme_json(){
 	if ( $override !== false ){return;}
 
 	//Make sure the version number is always up-to-date in options.
-	if ( nebula_data('current_version') != nebula_version('raw') ){
+	if ( nebula_data('current_version') !== nebula_version('raw') ){
 		nebula_update_data('current_version', nebula_version('raw'));
 		nebula_update_data('current_version_date', nebula_version('date'));
 	}
@@ -230,7 +230,7 @@ function nebula_theme_json(){
 	$remote_version_info = get_option('external_theme_updates-Nebula-master');
 
 	//Check for an unsupported version
-	if ( (strpos(nebula_version('raw'), 'u') || nebula_data('version_legacy') == 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) != str_replace('u', '', nebula_version('full'))) ){
+	if ( (strpos(nebula_version('raw'), 'u') || nebula_data('version_legacy') === 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full'))) ){
 		nebula_update_data('version_legacy', 'true');
 		nebula_update_data('current_version', nebula_version('raw'));
 		nebula_update_data('current_version_date', nebula_version('date'));
@@ -251,9 +251,9 @@ function nebula_theme_update_version_store($themeUpdate, $installedVersion){
 	nebula_update_data('current_version', nebula_version('full'));
 	nebula_update_data('current_version_date', nebula_version('date'));
 
-	if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) != str_replace('u', '', nebula_version('full')) ){ //If Github version has "u", disable automated updates.
+	if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) !== str_replace('u', '', nebula_version('full')) ){ //If Github version has "u", disable automated updates.
 		nebula_update_data('version_legacy', 'true');
-	} elseif ( nebula_data('version_legacy') == 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
+	} elseif ( nebula_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
 		nebula_update_data('version_legacy', 'false');
 	}
 }
@@ -264,7 +264,7 @@ function nebula_theme_update_automation($upgrader_object, $options){
 	$override = apply_filters('pre_nebula_theme_update_automation', false);
 	if ( $override !== false ){return;}
 
-	if ( $options['type'] == 'theme' && in_array_r('Nebula-master', $options['themes']) ){
+	if ( $options['type'] === 'theme' && in_array_r('Nebula-master', $options['themes']) ){
 		nebula_theme_update_email(); //Send email with update information
 		nebula_update_data('version_legacy', 'false');
 	}
@@ -274,14 +274,14 @@ function nebula_theme_update_email(){
 	$prev_version_commit_date = nebula_data('current_version_date');
 	$new_version = nebula_data('next_version');
 
-	if ( $prev_version != $new_version ){
+	if ( $prev_version !== $new_version ){
 		global $wpdb;
 		$current_user = wp_get_current_user();
 		$to = $current_user->user_email;
 
 		//Carbon copy the admin if update was done by another user.
 		$admin_user_email = nebula_option('contact_email', nebula_option('admin_email'));
-		if ( !empty($admin_user_email) && $admin_user_email != $current_user->user_email ){
+		if ( !empty($admin_user_email) && $admin_user_email !== $current_user->user_email ){
 			$headers[] = 'Cc: ' . $admin_user_email;
 		}
 
@@ -334,7 +334,7 @@ remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
 add_action('login_head', 'nebula_login_ga');
 function nebula_login_ga(){
 	if ( empty($_POST['signed_request']) ){
-	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $GLOBALS['ga'] . "', 'auto');</script>";
+	    echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . nebula_option('ga_tracking_id') . "', 'auto');</script>";
 	}
 }
 
@@ -386,11 +386,11 @@ if ( nebula_option('admin_notices') ){
 		if ( current_user_can('manage_options') || is_dev() ){
 			//Check PHP version
 			$php_version_lifecycle = nebula_php_version_support();
-			if ( $php_version_lifecycle['lifecycle'] == 'security' ){
+			if ( $php_version_lifecycle['lifecycle'] === 'security' ){
 				if ( $php_version_lifecycle['end']-time() < 2592000 ){ //1 month
 					echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong title="In ' . human_time_diff($php_version_lifecycle['end']) . '">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 				}
-			} elseif ( $php_version_lifecycle['lifecycle'] == 'end' ){
+			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 				echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong title="' . human_time_diff($php_version_lifecycle['end']) . ' ago">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
 			}
 
@@ -412,7 +412,7 @@ if ( nebula_option('admin_notices') ){
 			}
 
 			//Check for Google Analytics Tracking ID
-			if ( nebula_option('ga_tracking_id') == '' && $GLOBALS['ga'] == '' ){
+			if ( !nebula_option('ga_tracking_id') ){
 				echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
 			}
 
@@ -455,7 +455,7 @@ if ( nebula_option('admin_notices') ){
 
 		//Check page slug against categories and tags. //@TODO "Nebula" 0: Consider adding other taxonomies here too
 		global $pagenow;
-		if ( $pagenow == 'post.php' || $pagenow == 'edit.php' ){
+		if ( $pagenow === 'post.php' || $pagenow === 'edit.php' ){
 			global $post;
 
 			if ( !empty($post) ){ //If the listing has results
@@ -477,12 +477,54 @@ if ( nebula_option('admin_notices') ){
 	}
 }
 
+//Check the current (or passed) PHP version against the PHP support timeline.
+function nebula_php_version_support($php_version=PHP_VERSION){
+	$override = apply_filters('pre_nebula_php_version_support', false, $php_version);
+	if ( $override !== false ){return $override;}
+
+	$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
+	$php_timeline = get_transient('nebula_php_timeline');
+	if ( empty($php_timeline) || is_debug() ){
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$php_timeline = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
+
+		if ( !empty($php_timeline) ){
+			$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
+			set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
+		} else {
+			$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file);
+		}
+	}
+
+	$php_timeline = json_decode($php_timeline);
+	foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
+		if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
+			$output = array();
+			if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
+				$output['lifecycle'] = 'active';
+			} elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
+				$output['lifecycle'] = 'security';
+			} elseif ( time() >= strtotime($php_timeline_dates->end) ) {
+				$output['lifecycle'] = 'end';
+			} else {
+				$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
+			}
+			$output['security'] = strtotime($php_timeline_dates->security);
+			$output['end'] = strtotime($php_timeline_dates->end);
+			return $output;
+			break;
+		}
+	}
+}
+
 //Check if a post slug has a number appended to it (indicating a duplicate post).
 //add_filter('wp_unique_post_slug', 'nebula_unique_slug_warning_ajax', 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! is_admin() does not prevent that...
 function nebula_unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
 	if ( current_user_can('publish_posts') && is_admin() && (headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ){ //Should work with AJAX and without (as long as headers have been sent)
 		echo '<script>
-			if ( typeof nebulaUniqueSlugChecker == "function" ){
+			if ( typeof nebulaUniqueSlugChecker === "function" ){
 				nebulaUniqueSlugChecker("' . $post_type . '");
 			}
 		</script>';
@@ -555,7 +597,7 @@ function dashboard_nebula_ataglance(){
 			    continue;
 		    }
 			$count_pages = wp_count_posts($post_type);
-			$labels_plural = ( $count_pages->publish == 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+			$labels_plural = ( $count_pages->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
 			switch ( $post_type ){
 				case ('post'):
 					$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
@@ -585,7 +627,7 @@ function dashboard_nebula_ataglance(){
 		//Revisions
 		$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
 		$revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
-		$revisions_plural = ( $revision_count == 1 )? 'revision' : 'revisions';
+		$revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
 		echo '<li><i class="fa fa-history fa-fw"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 		//Plugins
@@ -597,7 +639,7 @@ function dashboard_nebula_ataglance(){
 		$user_count = count_users();
 		$users_icon = 'users';
 		$users_plural = 'Users';
-		if ( $user_count['total_users'] == 1 ){
+		if ( $user_count['total_users'] === 1 ){
 			$users_plural = 'User';
 			$users_icon = 'user';
 		}
@@ -606,7 +648,7 @@ function dashboard_nebula_ataglance(){
 		//Comments
 		if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){
 			$comments_count = wp_count_comments();
-			$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
+			$comments_plural = ( $comments_count->approved === 1 )? 'Comment' : 'Comments';
 			echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
 		} else {
 			if ( nebula_option('comments', 'disabled') ){
@@ -697,7 +739,7 @@ function dashboard_current_user(){
 
 		//IP Address
 		echo '<li>';
-			if ( $_SERVER['REMOTE_ADDR'] == '72.43.235.106' ){
+			if ( $_SERVER['REMOTE_ADDR'] === '72.43.235.106' ){
 				echo '<img src="' . get_template_directory_uri() . '/images/phg/phg-symbol.png" style="max-width: 14px;" />';
 			} else {
 				echo '<i class="fa fa-laptop fa-fw"></i>';
@@ -915,7 +957,7 @@ function nebula_todo_files($todo_dirpath=null, $child=false){
 						$the_todo_text = explode($end_todo_text_strings[0], str_replace($end_todo_text_strings, $end_todo_text_strings[0], $the_todo_text_full));
 
 						$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
-						if ( $todo_last_filename != $todo_this_filename ){
+						if ( $todo_last_filename !== $todo_this_filename ){
 							if ( !empty($todo_last_filename) ){
 								echo '</div><!--/todofilewrap-->';
 							}
@@ -926,7 +968,7 @@ function nebula_todo_files($todo_dirpath=null, $child=false){
 
 						$todo_last_filename = $todo_this_filename;
 
-						if ( $child && ($todo_priority == 'empty' || $todo_priority > 0) ){ //Only count @todo files/comments on the child theme.
+						if ( $child && ($todo_priority === 'empty' || $todo_priority > 0) ){ //Only count @todo files/comments on the child theme.
 							$todo_instance_counter++;
 							if ( !$todo_counted ){
 								$todo_file_counter++;
@@ -978,7 +1020,7 @@ function dashboard_developer_info(){
 
 		//Server IP address (and connection security)
 		$secureServer = '';
-		if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
+		if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443 ){
 			$secureServer = '<small class="secured-connection"><i class="fa fa-lock fa-fw"></i>Secured Connection</small>';
 		}
 		echo '<li><i class="fa fa-upload fa-fw"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
@@ -998,11 +1040,11 @@ function dashboard_developer_info(){
 		$php_version_info = '';
 		$php_version_cursor = 'normal';
 		$php_version_lifecycle = nebula_php_version_support();
-		if ( $php_version_lifecycle['lifecycle'] == 'security' ){
+		if ( $php_version_lifecycle['lifecycle'] === 'security' ){
 			$php_version_color = '#ca8038';
 			$php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['security']) . '.';
 			$php_version_cursor = 'help';
-		} elseif ( $php_version_lifecycle['lifecycle'] == 'end' ){
+		} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 			$php_version_color = '#ca3838';
 			$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 			$php_version_cursor = 'help';
@@ -1116,7 +1158,7 @@ function dashboard_developer_info(){
 		}
 		echo '<option value="parent">Parent Theme</option>';
 	} elseif ( is_child_theme() ){
-		echo '<option value="parent">Parent Theme</option><option value="child">Child Theme</option>';
+		echo '<option value="child">Child Theme</option><option value="parent">Parent Theme</option>';
 	} else {
 		echo '<option value="theme">Theme</option>';
 	}
@@ -1178,25 +1220,25 @@ function search_theme_files(){
 		die();
 	}
 
-	if ( $_POST['data'][0]['directory'] == 'theme' ){
+	if ( $_POST['data'][0]['directory'] === 'theme' ){
 		$dirpath = get_template_directory();
-	} elseif ( $_POST['data'][0]['directory'] == 'parent' ){
+	} elseif ( $_POST['data'][0]['directory'] === 'parent' ){
 		$dirpath = get_template_directory();
-	} elseif ( $_POST['data'][0]['directory'] == 'child' ){
+	} elseif ( $_POST['data'][0]['directory'] === 'child' ){
 		$dirpath = get_stylesheet_directory();
-	} elseif ( $_POST['data'][0]['directory'] == 'wireframe' ){
+	} elseif ( $_POST['data'][0]['directory'] === 'wireframe' ){
 		$dirpath = get_theme_root() . '/' . nebula_option('wireframe_theme');
-	} elseif ( $_POST['data'][0]['directory'] == 'staging' ){
+	} elseif ( $_POST['data'][0]['directory'] === 'staging' ){
 		$dirpath = get_theme_root() . '/' . nebula_option('staging_theme');
-	} elseif ( $_POST['data'][0]['directory'] == 'production' ){
+	} elseif ( $_POST['data'][0]['directory'] === 'production' ){
 		if ( nebula_option('production_theme') ){
 			$dirpath = get_theme_root() . '/' . nebula_option('production_theme');
 		} else {
 			$dirpath = get_stylesheet_directory();
 		}
-	} elseif ( $_POST['data'][0]['directory'] == 'plugins' ){
+	} elseif ( $_POST['data'][0]['directory'] === 'plugins' ){
 		$dirpath = WP_PLUGIN_DIR;
-	} elseif ( $_POST['data'][0]['directory'] == 'uploads' ){
+	} elseif ( $_POST['data'][0]['directory'] === 'uploads' ){
 		$uploadDirectory = wp_upload_dir();
 		$dirpath = $uploadDirectory['basedir'];
 	} else {
@@ -1227,7 +1269,7 @@ function search_theme_files(){
 								<div class="precon"><pre class="actualline">' . trim(htmlentities($line)) . '</pre></div>
 							</div>';
 						$instance_counter++;
-						if ( $counted == 0 ){
+						if ( $counted === 0 ){
 							$file_counter++;
 							$counted = 1;
 						}
@@ -1264,10 +1306,10 @@ function nebula_user_columns_head($defaults){
 }
 add_action('manage_users_custom_column', 'nebula_user_columns_content', 15, 3);
 function nebula_user_columns_content($value='', $column_name, $id){
-    if ( $column_name == 'company' ){
+    if ( $column_name === 'company' ){
 		return get_the_author_meta('jobcompany', $id);
 	}
-    if ( $column_name == 'status' ){
+    if ( $column_name === 'status' ){
 		if ( nebula_is_user_online($id) ){
 			$online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
 			if ( nebula_user_single_concurrent($id) > 1 ){
@@ -1278,7 +1320,7 @@ function nebula_user_columns_content($value='', $column_name, $id){
 			return ( nebula_user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula_user_last_online($id)) . '</em></small>' : '';
 		}
 	}
-	if ( $column_name == 'id' ){
+	if ( $column_name === 'id' ){
 		return $id;
 	}
 }
@@ -1293,7 +1335,7 @@ function nebula_id_columns_head($defaults){
 add_action('manage_posts_custom_column', 'nebula_id_columns_content', 15, 3);
 add_action('manage_pages_custom_column', 'nebula_id_columns_content', 15, 3);
 function nebula_id_columns_content($column_name, $id){
-    if ( $column_name == 'id' ){
+    if ( $column_name === 'id' ){
 		echo $id;
 	}
 }
@@ -1317,7 +1359,7 @@ function remove_yoast_columns($columns){
 add_action('admin_action_duplicate_post_as_draft', 'duplicate_post_as_draft');
 function duplicate_post_as_draft(){
 	global $wpdb;
-	if ( !(isset($_GET['post']) || isset($_POST['post'])  || (isset($_REQUEST['action']) && 'duplicate_post_as_draft' == $_REQUEST['action'])) ){
+	if ( !(isset($_GET['post']) || isset($_POST['post'])  || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'duplicate_post_as_draft')) ){
 		wp_die('No post to duplicate has been supplied!');
 	}
 
@@ -1356,7 +1398,7 @@ function duplicate_post_as_draft(){
 
 		//Duplicate all post meta
 		$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
-		if ( count($post_meta_infos) != 0 ){
+		if ( count($post_meta_infos) !== 0 ){
 			$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 			foreach ( $post_meta_infos as $meta_info ){
 				$meta_key = $meta_info->meta_key;
@@ -1393,7 +1435,7 @@ function muc_column($cols){
 }
 add_action('manage_media_custom_column', 'muc_value', 10, 2);
 function muc_value( $column_name, $id ){
-	if ( $column_name == "media_url" ){
+	if ( $column_name === "media_url" ){
 		echo '<input type="text" width="100%" value="' . wp_get_attachment_url($id) . '" readonly />';
 	}
 }
@@ -1402,7 +1444,7 @@ function muc_value( $column_name, $id ){
 add_editor_style('stylesheets/css/tinymce.css');
 
 //Enable All Settings page for only Developers who are Admins
-if ( is_dev(true) ){
+if ( is_dev(true) && current_user_can('manage_options') ){
 	add_action('admin_menu', 'all_settings_link');
 	function all_settings_link(){
 	    add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php');
@@ -1413,7 +1455,7 @@ if ( is_dev(true) ){
 add_action('admin_init', 'clear_all_w3_caches');
 function clear_all_w3_caches(){
 	include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-	if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_GET['activate']) && $_GET['activate'] == 'true' ){
+	if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_GET['activate']) && $_GET['activate'] === 'true' ){
 		if ( function_exists('w3tc_pgcache_flush') ){
 			w3tc_pgcache_flush();
 		}
@@ -1475,7 +1517,7 @@ function nebula_save_post_class_meta($post_id, $post){
 
 	$new_meta_value = sanitize_text_field($_POST['nebula-internal-search-keywords']); //Get the posted data and sanitize it if needed.
 	$meta_value = get_post_meta($post_id, 'nebula_internal_search_keywords', true); //Get the meta value of the custom field key.
-	if ( $new_meta_value && $meta_value == '' ){ //If a new meta value was added and there was no previous value, add it.
+	if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
 		add_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value, true);
 	} elseif ( $new_meta_value && $meta_value != $new_meta_value ){ //If the new meta value does not match the old value, update it.
 		update_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value);
@@ -1521,7 +1563,7 @@ function nebula_visitors_data_page(){
 					jQuery(this).parents('tr').toggleClass('selected');
 
 					if ( jQuery(this).parents('tr').hasClass('selected') ){
-						if ( jQuery(this).attr('data-column') == 'id' || jQuery(this).attr('data-column') == 'nebula_id' || jQuery(this).attr('data-column') == 'ga_cid' || jQuery(this).attr('data-column') == 'score' ){
+						if ( jQuery(this).attr('data-column') === 'id' || jQuery(this).attr('data-column') === 'nebula_id' || jQuery(this).attr('data-column') === 'ga_cid' || jQuery(this).attr('data-column') === 'score' ){
 							jQuery('#querystatus').html('This column is protected.');
 						} else {
 							jQuery('.activecell').removeClass('activecell');
@@ -1546,8 +1588,8 @@ function nebula_visitors_data_page(){
 				});
 
 				jQuery('#runquery').on('click tap touch', function(){
-					if ( jQuery('#queryid').val() != '' && jQuery('#querycol').val() != '' ){
-						if ( jQuery('#querycol').val() == 'id' || jQuery('#querycol').val() == 'nebula_id' || jQuery('#querycol').val() == 'ga_cid' ){
+					if ( jQuery('#queryid').val() !== '' && jQuery('#querycol').val() !== '' ){
+						if ( jQuery('#querycol').val() === 'id' || jQuery('#querycol').val() === 'nebula_id' || jQuery('#querycol').val() === 'ga_cid' ){
 							jQuery('#querystatus').html('This column is protected.');
 							return false;
 						}
@@ -1674,7 +1716,7 @@ function nebula_visitors_data_page(){
 							<?php
 								$visitor_data = (array) $visitor_data;
 								$row_class = '';
-								if ( $visitor_data['nebula_id'] == get_nebula_id() ){
+								if ( $visitor_data['nebula_id'] === get_nebula_id() ){
 									$row_class .= 'you ';
 								}
 
@@ -1698,7 +1740,7 @@ function nebula_visitors_data_page(){
 											$cell_class = 'zerovalue';
 										}
 									?>
-									<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo sanitize_text_field($value); ?></td>
+									<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo sanitize_text_field(mb_strimwidth($value, 0, 153, '...')); ?></td>
 								<?php endforeach; ?>
 							</tr>
 						<?php endforeach; ?>

@@ -57,7 +57,6 @@ function nebula_remove_rsd_link(){
 	remove_action('wp_head', 'rsd_link');
 }
 
-
 /*
 	@TODO "Security" 4: It is advised to create an Intelligence Alert in Google Analytics with the following settings:
 	Name: Possible Brute Force Attack
@@ -151,6 +150,45 @@ function track_notable_bots(){
 //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
 add_action('wp_loaded', 'nebula_domain_prevention');
 function nebula_domain_prevention(){
+	if ( nebula_option('domain_blacklisting') ){
+		$blacklisted_domains = nebula_get_domain_blacklist();
+
+		if ( count($blacklisted_domains) > 1 ){
+			if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
+				header('HTTP/1.1 403 Forbidden');
+				die;
+			}
+
+			if ( isset($_SERVER['REMOTE_HOST']) && contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
+				header('HTTP/1.1 403 Forbidden');
+				die;
+			}
+
+			if ( isset($_SERVER['SERVER_NAME']) && contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
+				header('HTTP/1.1 403 Forbidden');
+				die;
+			}
+
+			if ( isset($_SERVER['REMOTE_ADDR']) && contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
+				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+				do_action('nebula_spambot_prevention');
+				header('HTTP/1.1 403 Forbidden');
+				die;
+			}
+		} else {
+			ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
+		}
+	}
+}
+
+//Return an array of blacklisted domains from Piwik (or the latest Nebula on Github)
+function nebula_get_domain_blacklist(){
 	$domain_blacklist_json_file = get_template_directory() . '/includes/data/domain_blacklist.txt';
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
 	if ( empty($domain_blacklist) || is_debug() ){
@@ -171,67 +209,21 @@ function nebula_domain_prevention(){
 	}
 
 	if ( !empty($domain_blacklist) ){
-		$GLOBALS['domain_blacklist'] = array();
-		foreach( explode("\n", $domain_blacklist) as $line ){ //@TODO "Nebula" 0: continue; if empty line.
-			$GLOBALS['domain_blacklist'][] = $line;
+		$blacklisted_domains = array();
+		foreach( explode("\n", $domain_blacklist) as $line ){
+			if ( !empty($line) ){
+				$blacklisted_domains[] = $line;
+			}
 		}
 
-		//Additional blacklisted domains
+		//Additional blacklisted domains //@TODO "Nebula" 0: Make this an add_filter so extra domains can be passed to it.
 		$additional_blacklisted_domains = array(
 			//'secureserver.net',
 		);
-		$GLOBALS['domain_blacklist'] = array_merge($GLOBALS['domain_blacklist'], $additional_blacklisted_domains);
 
-		if ( count($GLOBALS['domain_blacklist']) > 1 ){
-			if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $GLOBALS['domain_blacklist']) ){
-				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
-				do_action('nebula_spambot_prevention');
-				header('HTTP/1.1 403 Forbidden');
-				die;
-			}
-
-			if ( isset($_SERVER['REMOTE_HOST']) && contains(strtolower($_SERVER['REMOTE_HOST']), $GLOBALS['domain_blacklist']) ){
-				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
-				do_action('nebula_spambot_prevention');
-				header('HTTP/1.1 403 Forbidden');
-				die;
-			}
-
-			if ( isset($_SERVER['SERVER_NAME']) && contains(strtolower($_SERVER['SERVER_NAME']), $GLOBALS['domain_blacklist']) ){
-				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
-				do_action('nebula_spambot_prevention');
-				header('HTTP/1.1 403 Forbidden');
-				die;
-			}
-
-			if ( isset($_SERVER['REMOTE_ADDR']) && contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $GLOBALS['domain_blacklist']) ){
-				ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
-				do_action('nebula_spambot_prevention');
-				header('HTTP/1.1 403 Forbidden');
-				die;
-			}
-		} else {
-			ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
-		}
-
-		//Use this to generate a regex string of common referral spambots (or a custom passes array of strings). Unfortunately Google Analytics limits filters to 255 characters.
-		function nebula_spambot_regex($domains=null){
-			$domains = ( $domains )? $domains : $GLOBALS['domain_blacklist'];
-			$domains = str_replace(array('.', '-'), array('\.', '\-'), $domains);
-			return implode("|", $domains);
-		}
-	} else {
-		ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
+		return array_merge($blacklisted_domains, $additional_blacklisted_domains);
 	}
-}
 
-//Valid Hostname Regex
-function nebula_valid_hostname_regex($domains=null){
-	$domains = ( $domains )? $domains : array(nebula_url_components('domain'));
-	$settingsdomains = ( nebula_option('hostnames') )? explode(',', nebula_option('hostnames')) : array(nebula_url_components('domain'));
-	$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com', 'youtube.com', 'paypal.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
-	$fulldomains = preg_filter('/^/', '.*', $fulldomains);
-	$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
-	$fulldomains = array_unique($fulldomains);
-	return implode("|", $fulldomains);
+	ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
+	return false;
 }

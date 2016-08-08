@@ -1,16 +1,16 @@
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<?php if ( nebula_weather() ): ?>
 			<p>It is currently <strong><?php echo nebula_weather('temp'); ?>&deg;F</strong> and <strong><?php echo nebula_weather('conditions'); ?></strong> in <strong><?php echo nebula_weather('city'); ?></strong>, <strong><?php echo nebula_weather('state'); ?></strong>.</p>
 			<p>Sunrise: <strong><?php echo nebula_weather('sunrise'); ?></strong>, Sunset: <strong><?php echo nebula_weather('sunset'); ?></strong>.</p>
 		<?php else: ?>
-			<p><strong>Error:</strong> Weather forecast does not exist.</p>
+			<p><strong>Error:</strong> Weather detection is disabled, or forecast does not exist.</p>
 		<?php endif; ?>
 	</div><!--/columns-->
 </div><!--/row-->
 
 <div class="row">
-	<div class="sixteen columns">
+	<div class="col-md-12">
 		<br />
 		<h4>Available Data</h4>
 		<p>Using the 'json' parameter: <?php echo do_shortcode("[code]nebula_weather('13204', 'json')[/code]"); ?></p>

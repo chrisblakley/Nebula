@@ -4,7 +4,7 @@
 	#herovideo {position: relative; overflow: hidden; min-height: 492px;}
 
 	#video-background,
-	.mobile-video-background {position: absolute; bottom: 0px; right: 0px; top: 0px; left:0px; margin: auto; width: auto; height: auto; min-width: 100%; min-height: 100%; z-index: 2; overflow: hidden;}
+	.mobile-video-background {position: absolute; bottom: 0px; right: 0px; top: 0px; left: 0px; margin: auto; width: auto; height: auto; min-width: 100%; min-height: 100%; z-index: 2; overflow: hidden;}
 	.mobile-video-background {display: none !important;}
 
 	@media only screen and (max-width: 767px) {
@@ -20,7 +20,7 @@
 
 	#herocontent {position: relative; padding-top: 100px; z-index: 100;}
 		#herocontent h2 {color: #fff; font-weight: 700;}
-		#herocontent p {color: #fff;}
+		#herocontent p, #herocontent a {color: #fff;}
 
 	#fullherovideocon {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1;}
 		#fullherovideo {position: relative; height: 100%;}
@@ -33,15 +33,15 @@
 			jQuery('#video-background').fadeOut(1000);
 			jQuery('#herocontent').fadeOut(1000);
 			jQuery('.heroshading').fadeOut(1000);
-			player[0].api("play");
+			players.vimeo['Big-Buck-Bunny'].api('play');
 
-			nebulaConversion('hero_video', 'played');
+			nv('send', {'hero_video': 'played'});
 			return false;
 		});
 	});
 </script>
 
-<div class="container nebulashadow bulging">
+<div class="nebulashadow bulging">
 	<div id="herovideo">
 	    <?php if ( nebula_is_desktop() ): ?>
 		    <video id="video-background" width="872" height="492" autobuffer autoplay muted loop>
@@ -54,23 +54,25 @@
 
 		<div class="heroshading"></div>
 
-		<div id="herocontent" class="row valign">
-			<div class="eight columns">
-				<h2>Title Text</h2>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dapibus ante eget quam ullamcorper congue vel at diam. Curabitur sagittis turpis in nisi tincidunt, at pharetra magna dictum.</p>
-				<div class="large primary btn herovideobtn">
-					<a href="#">Watch now!</a>
-				</div>
-			</div><!--/column-->
-		</div><!--/row-->
-
-		<div id="fullherovideocon">
-			<div id="fullherovideo" class="row">
-				<div class="col-md-12">
-					<?php vimeo_meta('1084537'); ?>
-					<iframe id="<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" class="vimeoplayer" src="https://player.vimeo.com/video/<?php echo $GLOBALS['vimeo_meta']['id']; ?>?api=1&player_id=<?php echo $GLOBALS['vimeo_meta']['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-				</div><!--/col-->
+		<div class="container">
+			<div id="herocontent" class="row nebula-valign">
+				<div class="col-md-6">
+					<h2>Title Text</h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dapibus ante eget quam ullamcorper congue vel at diam. Curabitur sagittis turpis in nisi tincidunt, at pharetra magna dictum.</p>
+					<a class="btn btn-lg btn-primary herovideobtn" href="#">Watch now!</a>
+				</div><!--/column-->
 			</div><!--/row-->
+
+			<div id="fullherovideocon">
+				<div id="fullherovideo" class="row">
+					<div class="col-md-12">
+						<?php $vimeo_data = video_meta('vimeo', '1084537'); ?>
+						<?php if ( !empty($vimeo_data) ): ?>
+							<iframe id="<?php echo $vimeo_data['safetitle']; ?>" class="vimeoplayer" src="https://player.vimeo.com/video/<?php echo $vimeo_data['id']; ?>?api=1&player_id=<?php echo $vimeo_data['safetitle']; ?>" width="560" height="315" autoplay="1" badge="1" byline="1" color="00adef" loop="0" portrait="1" title="1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+						<?php endif; ?>
+					</div><!--/col-->
+				</div><!--/row-->
+			</div>
 		</div>
 	</div><!--/herovideo -->
 </div><!--/container-->

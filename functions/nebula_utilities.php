@@ -1,5 +1,9 @@
 <?php
 
+//Used to detect if plugins are active. Enables use of is_plugin_active($plugin)
+require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+require_once(ABSPATH . 'wp-admin/includes/file.php');
+
 //Generate Session ID
 function nebula_session_id(){
 	$session_info = ( is_debug() )? 'dbg.' : '';
@@ -44,9 +48,6 @@ function ga_parse_cookie(){
 	}
 	return $cid;
 }
-
-$GLOBALS['ga_v'] = 1; //Version
-$GLOBALS['ga_cid'] = ga_parse_cookie(); //Anonymous Client ID
 
 //Generate UUID v4 function (needed to generate a CID when one isn't available)
 function ga_generate_UUID(){
@@ -104,7 +105,7 @@ function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
 
 	$data = array(
 		'utmwv' => '5.3.8', //Tracking code version *** REQUIRED ***
-		'utmac' => $GLOBALS['ga'], //Account string, appears on all requests *** REQUIRED ***
+		'utmac' => nebula_option('ga_tracking_id'), //Account string, appears on all requests *** REQUIRED ***
 		'utmdt' => get_the_title(), //Page title, which is a URL-encoded string *** REQUIRED ***
 		'utmp' => nebula_url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
 		'utmcc' => '__utma=' . $cookies['utma'] . ';+', //Cookie values. This request parameter sends all the cookies requested from the page. *** REQUIRED ***
@@ -146,14 +147,6 @@ function ga_send_pageview($hostname=null, $path=null, $title=null, $array=array(
 	$override = apply_filters('pre_ga_send_pageview', false, $hostname, $path, $title, $array);
 	if ( $override !== false ){return $override;}
 
-	if ( empty($GLOBALS['ga_v']) ){
-		$GLOBALS['ga_v'] = 1;
-	}
-
-	if ( empty($GLOBALS['ga_cid']) ){
-		$GLOBALS['ga_cid'] = ga_parse_cookie();
-	}
-
 	if ( empty($hostname) ){
 		$hostname = nebula_url_components('hostname');
 	}
@@ -169,9 +162,9 @@ function ga_send_pageview($hostname=null, $path=null, $title=null, $array=array(
 	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
 	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 	$data = array(
-		'v' => $GLOBALS['ga_v'],
-		'tid' => $GLOBALS['ga'],
-		'cid' => $GLOBALS['ga_cid'],
+		'v' => 1,
+		'tid' => nebula_option('ga_tracking_id'),
+		'cid' => ga_parse_cookie(),
 		't' => 'pageview',
 		'dh' => $hostname, //Document Hostname "gearside.com"
 		'dp' => $path, //Path "/something"
@@ -188,20 +181,12 @@ function ga_send_event($category=null, $action=null, $label=null, $value=null, $
 	$override = apply_filters('pre_ga_send_event', false, $category, $action, $label, $value, $ni, $array);
 	if ( $override !== false ){return $override;}
 
-	if ( empty($GLOBALS['ga_v']) ){
-		$GLOBALS['ga_v'] = 1;
-	}
-
-	if ( empty($GLOBALS['ga_cid']) ){
-		$GLOBALS['ga_cid'] = ga_parse_cookie();
-	}
-
 	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
 	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 	$data = array(
-		'v' => $GLOBALS['ga_v'],
-		'tid' => $GLOBALS['ga'],
-		'cid' => $GLOBALS['ga_cid'],
+		'v' => 1,
+		'tid' => nebula_option('ga_tracking_id'),
+		'cid' => ga_parse_cookie(),
 		't' => 'event',
 		'ec' => $category, //Category (Required)
 		'ea' => $action, //Action (Required)
@@ -227,9 +212,9 @@ function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional para
 	//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
 	//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 	$defaults = array(
-		'v' => $GLOBALS['ga_v'],
-		'tid' => $GLOBALS['ga'],
-		'cid' => $GLOBALS['ga_cid'],
+		'v' => 1,
+		'tid' => nebula_option('ga_tracking_id'),
+		'cid' => ga_parse_cookie(),
 		't' => '',
 		'ni' => 1,
 		'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
@@ -278,6 +263,9 @@ function nebula_create_visitors_table(){
 				hubspot_vid INT(11) NOT NULL,
 				last_modified_date INT(12) NOT NULL DEFAULT 0,
 				last_session_id TEXT NOT NULL,
+				notable_poi TEXT NOT NULL,
+				score INT(5) NOT NULL DEFAULT 0,
+				score_mod INT(5) NOT NULL DEFAULT 0,
 				PRIMARY KEY (id)
 			) ENGINE = MyISAM;"); //Try InnoDB as engine? and add ROW_FORMAT=COMPRESSED ?
 		} else {
@@ -638,7 +626,7 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 
 			$defaults = array(
 				'nebula_id' => $nebula_id,
-				'ga_cid' => ga_parse_cookie(), //@todo "Nebula" 0: this is sometimes pulling from ga cookie and sometimes generating on its own (which creates new rows)- try to always get the 00000000.000000000 style cid somehow.
+				'ga_cid' => ga_parse_cookie(), //Will be UUID on first visit then followed up with actual GA CID via AJAX (if available)
 				'known' => '0',
 				'ip_address' => sanitize_text_field($_SERVER['REMOTE_ADDR']),
 				'create_date' => time(),
@@ -671,15 +659,17 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 				'score_mod' => '0',
 			);
 
-			//Attempt to detect IP Geolocation data using https://freegeoip.net/
-			WP_Filesystem();
-			global $wp_filesystem;
-			$ip_geo_data = $wp_filesystem->get_contents('http://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
-			$ip_geo_data = json_decode($ip_geo_data);
-			if ( !empty($ip_geo_data) ){
-				$defaults['ip_country'] = sanitize_text_field($ip_geo_data->country_name);
-				$defaults['ip_region'] = sanitize_text_field($ip_geo_data->region_name);
-				$defaults['ip_city'] = sanitize_text_field($ip_geo_data->city);
+			if ( nebula_option('ip_geolocation') ){
+				//Attempt to detect IP Geolocation data using https://freegeoip.net/
+				WP_Filesystem();
+				global $wp_filesystem;
+				$ip_geo_data = $wp_filesystem->get_contents('http://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
+				$ip_geo_data = json_decode($ip_geo_data);
+				if ( !empty($ip_geo_data) ){
+					$defaults['ip_country'] = sanitize_text_field($ip_geo_data->country_name);
+					$defaults['ip_region'] = sanitize_text_field($ip_geo_data->region_name);
+					$defaults['ip_city'] = sanitize_text_field($ip_geo_data->city);
+				}
 			}
 
 			$defaults = nebula_visitor_data_update_everytime($defaults);
@@ -935,6 +925,7 @@ function nebula_prep_data_for_hubspot_crm_delivery($data){
 			'phone_number' => 'phone',
 		);
 
+		$nebula_debug_start_time = microtime(true);
 		foreach ( $data as $column => $value ){
 			//Skip empty column values
 			if ( empty($value) ){
@@ -1027,6 +1018,7 @@ function nebula_create_hubspot_properties($columns=null){
 		}
 
 		//Create a property from the passed array
+		//@todo "Nebula" 0: This loop is accounting for 1 second of server time (about 0.14s per call)! Need to find a way to optimize...
 		if ( !empty($columns) ){
 			if ( is_string($columns) ){
 				$columns = array($columns);
@@ -1856,48 +1848,6 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
     }
 }
 
-//Check the current (or passed) PHP version against the PHP support timeline.
-function nebula_php_version_support($php_version=PHP_VERSION){
-	$override = apply_filters('pre_nebula_php_version_support', false, $php_version);
-	if ( $override !== false ){return $override;}
-
-	$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
-	$php_timeline = get_transient('nebula_php_timeline');
-	if ( empty($php_timeline) || is_debug() ){
-
-		WP_Filesystem();
-		global $wp_filesystem;
-		$php_timeline = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
-
-		if ( !empty($php_timeline) ){
-			$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
-			set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
-		} else {
-			$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file);
-		}
-	}
-
-	$php_timeline = json_decode($php_timeline);
-	foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
-		if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
-			$output = array();
-			if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
-				$output['lifecycle'] = 'active';
-			} elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
-				$output['lifecycle'] = 'security';
-			} elseif ( time() >= strtotime($php_timeline_dates->end) ) {
-				$output['lifecycle'] = 'end';
-			} else {
-				$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
-			}
-			$output['security'] = strtotime($php_timeline_dates->security);
-			$output['end'] = strtotime($php_timeline_dates->end);
-			return $output;
-			break;
-		}
-	}
-}
-
 //Prefer a child theme directory or file. Not declaring a directory will return the theme directory.
 //nebula_prefer_child_directory('/images/logo.png');
 function nebula_prefer_child_directory($directory='', $uri=true){
@@ -2236,280 +2186,312 @@ function nebula_sass_color($color='primary', $theme='child'){
 
 //Boolean return if the user's device is mobile.
 function nebula_is_mobile(){
-	$override = apply_filters('pre_nebula_is_mobile', false);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_is_mobile', false);
+		if ( $override !== false ){return $override;}
 
-	if ( $GLOBALS["device_detect"]->isMobile() ){
-		return true;
+		if ( $GLOBALS["device_detect"]->isMobile() ){
+			return true;
+		}
 	}
+
 	return false;
 }
 
 //Boolean return if the user's device is a tablet.
 function nebula_is_tablet(){
-	$override = apply_filters('pre_nebula_is_tablet', false);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_is_tablet', false);
+		if ( $override !== false ){return $override;}
 
-	if ( $GLOBALS["device_detect"]->isTablet() ){
-		return true;
+		if ( $GLOBALS["device_detect"]->isTablet() ){
+			return true;
+		}
 	}
+
 	return false;
 }
 
 //Boolean return if the user's device is a desktop.
 function nebula_is_desktop(){
-	$override = apply_filters('pre_nebula_is_desktop', false);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_is_desktop', false);
+		if ( $override !== false ){return $override;}
 
-	if ( $GLOBALS["device_detect"]->isDesktop() ){
-		return true;
+		if ( $GLOBALS["device_detect"]->isDesktop() ){
+			return true;
+		}
 	}
+
 	return false;
 }
 
 //Returns the requested information of the operating system of the user's device.
 function nebula_get_os($info='full'){
-	$override = apply_filters('pre_nebula_get_os', false, $info);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_get_os', false, $info);
+		if ( $override !== false ){return $override;}
 
-	$os = $GLOBALS["device_detect"]->getOs();
-	switch ( strtolower($info) ){
-		case 'full':
-			return $os['name'] . ' ' . $os['version'];
-			break;
-		case 'name':
-			return $os['name'];
-			break;
-		case 'version':
-			return $os['version'];
-			break;
-		default:
-			return false;
-			break;
+		$os = $GLOBALS["device_detect"]->getOs();
+		switch ( strtolower($info) ){
+			case 'full':
+				return $os['name'] . ' ' . $os['version'];
+				break;
+			case 'name':
+				return $os['name'];
+				break;
+			case 'version':
+				return $os['version'];
+				break;
+			default:
+				return false;
+				break;
+		}
 	}
 }
 
 //Check to see how the operating system version of the user's device compares to a passed version number.
 function nebula_is_os($os=null, $version=null, $comparison='=='){
-	$override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
+		if ( $override !== false ){return $override;}
 
-	if ( empty($os) ){
-		trigger_error('nebula_is_os requires a parameter of requested operating system.');
-		return false;
-	}
+		if ( empty($os) ){
+			trigger_error('nebula_is_os requires a parameter of requested operating system.');
+			return false;
+		}
 
-	switch ( strtolower($os) ){
-		case 'macintosh':
-			$os = 'mac';
-			break;
-		case 'win':
-			$os = 'windows';
-			break;
-	}
+		switch ( strtolower($os) ){
+			case 'macintosh':
+				$os = 'mac';
+				break;
+			case 'win':
+				$os = 'windows';
+				break;
+		}
 
-	$actual_os = $GLOBALS["device_detect"]->getOs();
-	$actual_version = explode('.', $actual_os['version']);
-	$version_parts = explode('.', $version);
-	if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
-		if ( !empty($version) ){
-			if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
-				if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
-					if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
-						return true;
+		$actual_os = $GLOBALS["device_detect"]->getOs();
+		$actual_version = explode('.', $actual_os['version']);
+		$version_parts = explode('.', $version);
+		if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
+			if ( !empty($version) ){
+				if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
+					if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
+						if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
+							return true;
+						} else {
+							return false;
+						}
 					} else {
-						return false;
+						return true;
 					}
-				} else {
-					return true;
 				}
+			} else {
+				return true;
 			}
-		} else {
-			return true;
 		}
 	}
+
 	return false;
 }
 
 //Returns the requested information of the model of the user's device.
 function nebula_get_device($info='model'){
-	$override = apply_filters('pre_nebula_get_device', false, $info);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_get_device', false, $info);
+		if ( $override !== false ){return $override;}
 
-	$info = str_replace(' ', '', $info);
-	switch ( strtolower($info) ){
-		case 'full':
-			return $GLOBALS["device_detect"]->getBrandName() . ' ' . $GLOBALS["device_detect"]->getModel();
-			break;
-		case 'brand':
-		case 'brandname':
-		case 'make':
-			return $GLOBALS["device_detect"]->getBrandName();
-			break;
-		case 'model':
-		case 'version':
-		case 'name':
-			return $GLOBALS["device_detect"]->getModel();
-			break;
-		case 'type':
-			return $GLOBALS["device_detect"]->getDeviceName();
-			break;
-		case 'formfactor':
-			if ( nebula_is_mobile() ){
-				return 'mobile';
-			} elseif ( nebula_is_tablet() ){
-				return 'tablet';
-			} else {
-				return 'desktop';
-			}
-		default:
-			return false;
-			break;
+		$info = str_replace(' ', '', $info);
+		switch ( strtolower($info) ){
+			case 'full':
+				return $GLOBALS["device_detect"]->getBrandName() . ' ' . $GLOBALS["device_detect"]->getModel();
+				break;
+			case 'brand':
+			case 'brandname':
+			case 'make':
+				return $GLOBALS["device_detect"]->getBrandName();
+				break;
+			case 'model':
+			case 'version':
+			case 'name':
+				return $GLOBALS["device_detect"]->getModel();
+				break;
+			case 'type':
+				return $GLOBALS["device_detect"]->getDeviceName();
+				break;
+			case 'formfactor':
+				if ( nebula_is_mobile() ){
+					return 'mobile';
+				} elseif ( nebula_is_tablet() ){
+					return 'tablet';
+				} else {
+					return 'desktop';
+				}
+			default:
+				return false;
+				break;
+		}
 	}
 }
 
 //Returns the requested information of the browser being used.
 function nebula_get_client($info){ return get_browser($info); }
 function nebula_get_browser($info='name'){
-	$override = apply_filters('pre_nebula_get_browser', false, $info);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_get_browser', false, $info);
+		if ( $override !== false ){return $override;}
 
-	$client = $GLOBALS["device_detect"]->getClient();
-	switch ( strtolower($info) ){
-		case 'full':
-			return $client['name'] . ' ' . $client['version'];
-			break;
-		case 'name':
-		case 'browser':
-		case 'client':
-			return $client['name'];
-			break;
-		case 'version':
-			return $client['version'];
-			break;
-		case 'engine':
-			return $client['engine'];
-			break;
-		case 'type':
-			return $client['type'];
-			break;
-		default:
-			return false;
-			break;
+		$client = $GLOBALS["device_detect"]->getClient();
+		switch ( strtolower($info) ){
+			case 'full':
+				return $client['name'] . ' ' . $client['version'];
+				break;
+			case 'name':
+			case 'browser':
+			case 'client':
+				return $client['name'];
+				break;
+			case 'version':
+				return $client['version'];
+				break;
+			case 'engine':
+				return $client['engine'];
+				break;
+			case 'type':
+				return $client['type'];
+				break;
+			default:
+				return false;
+				break;
+		}
 	}
 }
 
 //Check to see how the browser version compares to a passed version number.
 function nebula_is_browser($browser=null, $version=null, $comparison='=='){
-	$override = apply_filters('pre_nebula_is_browser', false, $browser, $version, $comparison);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_is_browser', false, $browser, $version, $comparison);
+		if ( $override !== false ){return $override;}
 
-	if ( empty($browser) ){
-		trigger_error('nebula_is_browser requires a parameter of requested browser.');
-		return false;
-	}
+		if ( empty($browser) ){
+			trigger_error('nebula_is_browser requires a parameter of requested browser.');
+			return false;
+		}
 
-	switch ( strtolower($browser) ){
-		case 'ie':
-			$browser = 'internet explorer';
-			break;
-		case 'ie7':
-			$browser = 'internet explorer';
-			$version = '7';
-			break;
-		case 'ie8':
-			$browser = 'internet explorer';
-			$version = '8';
-			break;
-		case 'ie9':
-			$browser = 'internet explorer';
-			$version = '9';
-			break;
-		case 'ie10':
-			$browser = 'internet explorer';
-			$version = '10';
-			break;
-		case 'ie11':
-			$browser = 'internet explorer';
-			$version = '11';
-			break;
-	}
+		switch ( strtolower($browser) ){
+			case 'ie':
+				$browser = 'internet explorer';
+				break;
+			case 'ie7':
+				$browser = 'internet explorer';
+				$version = '7';
+				break;
+			case 'ie8':
+				$browser = 'internet explorer';
+				$version = '8';
+				break;
+			case 'ie9':
+				$browser = 'internet explorer';
+				$version = '9';
+				break;
+			case 'ie10':
+				$browser = 'internet explorer';
+				$version = '10';
+				break;
+			case 'ie11':
+				$browser = 'internet explorer';
+				$version = '11';
+				break;
+		}
 
-	$actual_browser = $GLOBALS["device_detect"]->getClient();
-	$actual_version = explode('.', $actual_browser['version']);
-	$version_parts = explode('.', $version);
-	if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
-		if ( !empty($version) ){
-			if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
-				if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
-					if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
-						return true;
+		$actual_browser = $GLOBALS["device_detect"]->getClient();
+		$actual_version = explode('.', $actual_browser['version']);
+		$version_parts = explode('.', $version);
+		if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
+			if ( !empty($version) ){
+				if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
+					if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
+						if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
+							return true;
+						} else {
+							return false;
+						}
 					} else {
-						return false;
+						return true;
 					}
-				} else {
-					return true;
 				}
+			} else {
+				return true;
 			}
-		} else {
-			return true;
 		}
 	}
+
 	return false;
 }
 
 //Check to see if the rendering engine matches a passed parameter.
 function nebula_is_engine($engine=null){
-	$override = apply_filters('pre_nebula_is_engine', false, $engine);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_is_engine', false, $engine);
+		if ( $override !== false ){return $override;}
 
-	if ( empty($engine) ){
-		trigger_error('nebula_is_engine requires a parameter of requested engine.');
-		return false;
+		if ( empty($engine) ){
+			trigger_error('nebula_is_engine requires a parameter of requested engine.');
+			return false;
+		}
+
+		switch ( strtolower($engine) ){
+			case 'ie':
+			case 'internet explorer':
+				$engine = 'trident';
+				break;
+			case 'web kit':
+				$engine = 'webkit';
+				break;
+		}
+
+		$actual_engine = $GLOBALS["device_detect"]->getClient();
+		if ( strpos(strtolower($actual_browser['engine']), strtolower($engine)) !== false ){
+			return true;
+		}
 	}
 
-	switch ( strtolower($engine) ){
-		case 'ie':
-		case 'internet explorer':
-			$engine = 'trident';
-			break;
-		case 'web kit':
-			$engine = 'webkit';
-			break;
-	}
-
-	$actual_engine = $GLOBALS["device_detect"]->getClient();
-	if ( strpos(strtolower($actual_browser['engine']), strtolower($engine)) !== false ){
-		return true;
-	}
 	return false;
 }
 
 //Check for bot/crawler traffic
 //UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
 function nebula_is_bot(){
-	$override = apply_filters('pre_nebula_is_bot', false);
-	if ( $override !== false ){return $override;}
+	if ( nebula_option('device_detection') ){
+		$override = apply_filters('pre_nebula_is_bot', false);
+		if ( $override !== false ){return $override;}
 
-	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
-	foreach( $bots as $bot ){
-		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
+		$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
+		foreach( $bots as $bot ){
+			if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
+				return true;
+				break;
+			}
+		}
+
+		if ( $GLOBALS["device_detect"]->isBot() ){ //This might work fine on it's own without the above foreach loop
 			return true;
 			break;
 		}
 	}
 
-	if ( $GLOBALS["device_detect"]->isBot() ){ //This might work fine on it's own without the above foreach loop
-		return true;
-		break;
-	}
 	return false;
 }
 
 //Device Detection - https://github.com/piwik/device-detector
 //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
-require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
 use DeviceDetector\DeviceDetector;
-$GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
-$GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
-$GLOBALS["device_detect"]->parse();
+add_action('init', 'nebula_device_detection');
+function nebula_device_detection(){
+	if ( nebula_option('device_detection') ){
+		require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
+		$GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
+		$GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
+		$GLOBALS["device_detect"]->parse();
+	}
+}

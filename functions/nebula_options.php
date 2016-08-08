@@ -178,7 +178,11 @@ function nebula_default_options(){
 		'admin_notices' => 'enabled',
 		'author_bios' => 'disabled',
 		'comments' => 'disabled',
+		'device_detection' => 'enabled',
+		'ip_geolocation' => 'disabled',
 		'adblock_detect' => 'disabled',
+		'domain_blacklisting' => 'enabled',
+		'weather' => 'disabled',
 		'theme_update_notification' => 'enabled',
 		'wp_core_updates_notify' => 'enabled',
 		'plugin_update_warning' => 'enabled',
@@ -272,6 +276,7 @@ function nebula_default_options(){
 		'google_adsense_url' => '',
 		'google_adwords_url' => '',
 		'mention_url' => '',
+		'notes' => '',
 	);
 	return $nebula_options_defaults;
 }
@@ -717,6 +722,42 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
+		        	<th scope="row">Device Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_options[device_detection]">
+							<option disabled>Default: Enabled</option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['device_detection']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['device_detection']); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Detect information about the user's device and browser. Useful for cross-browser support. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">IP Geolocation&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_options[ip_geolocation]">
+							<option disabled>Default: Disabled</option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['ip_geolocation']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['ip_geolocation']); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Lookup the country, region, and city of the user based on their IP address. This can be used for content as well as analytics (including Visitors Database) <em>(Default: Disabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Domain Blacklisting&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_options[domain_blacklisting]">
+							<option disabled>Default: Enabled</option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['domain_blacklisting']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['domain_blacklisting']); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Block traffic from known spambots and other illegitimate domains. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
 		        	<th scope="row">Ad Block Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[adblock_detect]">
@@ -737,6 +778,18 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', $nebula_options['console_css']); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Adds CSS to the browser console. <em>(Default: Enabled)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Weather Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_options[weather]">
+							<option disabled>Default: Disabled</option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['weather']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['weather']); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Lookup weather conditions for locations. Can be used for changing content as well as analytics. <em>(Default: Disabled)</em></small></p>
 					</td>
 		        </tr>
 
@@ -1410,7 +1463,7 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr valign="top">
+				<tr valign="top" class="hidden">
 		        	<th scope="row">Google Cloud Messaging Sender ID*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input id="nebula_gcm_sender_id" type="text" name="nebula_options[gcm_sender_id]" value="<?php echo $nebula_options['gcm_sender_id']; ?>" placeholder="000000000000" />
@@ -1608,6 +1661,13 @@ function nebula_options_page(){
 					<td>
 						<input type="text" name="nebula_options[mention_url]" value="<?php echo $nebula_options['mention_url']; ?>" placeholder="https://web.mention.com/" />
 						<p class="helper"><small>Direct link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account.</small></p>
+					</td>
+		        </tr>
+		        <tr valign="top">
+		        	<th scope="row">Notes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<textarea name="nebula_options[notes]"><?php echo $nebula_options['notes']; ?></textarea>
+						<p class="helper"><small>This area can be used to keep notes. It is not used anywhere on the front-end.</small></p>
 					</td>
 		        </tr>
 		    </table>

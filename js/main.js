@@ -187,6 +187,7 @@ function windowTypeDetection(){
 	//Detect if loaded from the homescreen ("installed" as an app)
 	if ( navigator.standalone || get('hs') ){
 		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string (in manifest) is not working, so this detection method doesn't work.
+		nebula.dom.document.trigger('nebula_standalone_app_load');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
 		nv('send', {'window_type': 'Standalone App'});
@@ -305,6 +306,7 @@ function gaBlockSend(){
 					}
 				}
 
+				nebula.dom.document.trigger('nebula_ga_block_detected');
 				nv('send', {'ga_block': '1'});
 			}
 		}, 2000);
@@ -314,12 +316,14 @@ function gaBlockSend(){
 //Detect Battery Level
 function nebulaBattery(){
 	nebula.user.client.device.battery = false;
-	navigator.getBattery().then(function(battery){
-		nebulaBatteryData(battery);
-		jQuery(battery).on('chargingchange levelchange', function(){
+	if ( Modernizr.batteryapi ){
+		navigator.getBattery().then(function(battery){
 			nebulaBatteryData(battery);
+			jQuery(battery).on('chargingchange levelchange', function(){
+				nebulaBatteryData(battery);
+			});
 		});
-	});
+	}
 }
 
 //Prep battery info for lookup
@@ -473,6 +477,7 @@ function initEventTracking(){
 	window.nebulaTrackingCalled = true;
 	eventTracking();
 	scrollDepth();
+	nebula.dom.document.trigger('nebula_ga_available');
 
 	ga(function(tracker) {
 		nv('send', {'ga_cid': tracker.get('clientId')});
@@ -749,8 +754,6 @@ function ecommerceTracking(){
 
 //Detect scroll depth for engagement and more accurate bounce rate
 function scrollDepth(){
-	//console.log('inside scroll depth function');
-
 	var headerHeight = ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250;
 	var entryContent = jQuery('.entry-content');
 
@@ -830,6 +833,7 @@ function scrollDepth(){
 						var readerType = 'Reader';
 						ga('set', gaCustomMetrics['engagedReaders'], 1);
 						nv('send', {'engaged_reader': '1'});
+						nebula.dom.document.trigger('nebula_engaged_reader');
 					}
 				}
 
@@ -3045,6 +3049,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Play', videoInfo.title);
         nv('append', {'video_play': videoInfo.title});
+        nebula.dom.document.trigger('nebula_playing_video');
         pauseFlag = true;
 		updateInterval = 500;
 
@@ -3059,6 +3064,7 @@ function onPlayerStateChange(e){
 				ga('send', 'event', 'Videos', 'Engaged', videoInfo.title, {'nonInteraction': 1});
 				nv('append', {'video_engaged': videoInfo.title});
 				videoData[id].engaged = true;
+				nebula.dom.document.trigger('nebula_engaged_video');
 			}
 		}, updateInterval);
     }
@@ -3071,6 +3077,7 @@ function onPlayerStateChange(e){
         ga('send', 'event', 'Videos', 'Finished', videoInfo.title, {'nonInteraction': 1});
         ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
         nv('append', {'video_finished': videoInfo.title});
+        nebula.dom.document.trigger('nebula_finished_video');
     } else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
@@ -3080,6 +3087,7 @@ function onPlayerStateChange(e){
         ga('send', 'event', 'Videos', 'Pause', videoInfo.title);
         ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoInfo.title); //Amount of time watched, not the timestamp of when paused!
         nv('append', {'video_paused': videoInfo.title});
+        nebula.dom.document.trigger('nebula_paused_video');
         pauseFlag = false;
     }
 }
@@ -3139,6 +3147,7 @@ function vimeoControls(){
 	    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
 	    nv('append', {'video_play': videoTitle});
+	    nebula.dom.document.trigger('nebula_playing_video');
 	}
 
 	function vimeoPlayProgress(data, id){
@@ -3176,6 +3185,7 @@ function vimeoControls(){
 			ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': 1});
 			nv('append', {'video_engaged': videoTitle});
 			videoData[id].engaged = true;
+			nebula.dom.document.trigger('nebula_engaged_video');
 		}
 	}
 
@@ -3188,6 +3198,7 @@ function vimeoControls(){
 		ga('send', 'event', 'Videos', 'Pause', videoTitle);
 		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
 		nv('append', {'video_paused': videoTitle});
+		nebula.dom.document.trigger('nebula_paused_video');
 	}
 
 	function vimeoSeek(data, id){
@@ -3196,6 +3207,7 @@ function vimeoControls(){
 	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
 	    nv('append', {'video_seeked': videoTitle});
 	    videoData[id].seeker = true;
+	    nebula.dom.document.trigger('nebula_seeked_video');
 	}
 
 	function vimeoFinish(data, id){
@@ -3207,6 +3219,7 @@ function vimeoControls(){
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
 		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 		nv('append', {'video_finished': videoTitle});
+		nebula.dom.document.trigger('nebula_finished_video');
 	}
 }
 
