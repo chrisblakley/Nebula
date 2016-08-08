@@ -1339,6 +1339,17 @@ function is_site_live(){
 	return true;
 }
 
+//Valid Hostname Regex
+function nebula_valid_hostname_regex($domains=null){
+	$domains = ( $domains )? $domains : array(nebula_url_components('domain'));
+	$settingsdomains = ( nebula_option('hostnames') )? explode(',', nebula_option('hostnames')) : array(nebula_url_components('domain'));
+	$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com', 'youtube.com', 'paypal.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
+	$fulldomains = preg_filter('/^/', '.*', $fulldomains);
+	$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
+	$fulldomains = array_unique($fulldomains);
+	return implode("|", $fulldomains);
+}
+
 //Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
 	$override = apply_filters('pre_nebula_requested_url', false, $host);
