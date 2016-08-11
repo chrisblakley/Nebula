@@ -80,7 +80,7 @@ function nebula_login_errors($error){
 			$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
 		}
 
-		if ( $incorrect_username != '' ){
+		if ( !empty($incorrect_username) ){
 			ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
 		} else {
 			ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
@@ -117,7 +117,7 @@ function at_remove_wp_ver_css_js($src){
 //Check referrer in order to comment
 add_action('check_comment_flood', 'check_referrer');
 function check_referrer(){
-	if ( !isset($_SERVER['HTTP_REFERER']) || $_SERVER['HTTP_REFERER'] == '' ){
+	if ( !isset($_SERVER['HTTP_REFERER']) || empty($_SERVER['HTTP_REFERER']) ){
 		wp_die('Please do not access this file directly.');
 	}
 }

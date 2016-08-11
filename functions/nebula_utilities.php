@@ -1614,6 +1614,7 @@ function glob_r($pattern, $flags = 0){
     foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir ){
         $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
     }
+
     return $files;
 }
 
@@ -1637,6 +1638,7 @@ function foldersize($path){
 			}
 		}
 	}
+
 	return $total_size;
 }
 
@@ -2061,6 +2063,11 @@ function nebula_render_scss($child=false){
 		if ( !$child && is_child_theme() ){ //If not in the second (child) pass, and is a child theme.
 			nebula_render_scss(true); //Re-run on child theme stylesheets
 		}
+
+		//If SCSS has not been rendered in 1 month, disable the option.
+		if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
+			nebula_update_option('scss', 'disabled');
+		}
 	}
 }
 
@@ -2194,6 +2201,19 @@ function nebula_sass_color($color='primary', $theme='child'){
 /*==========================
  User Agent Parsing Functions/Helpers
  ===========================*/
+
+//Device Detection - https://github.com/piwik/device-detector
+//Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
+use DeviceDetector\DeviceDetector;
+add_action('init', 'nebula_device_detection');
+function nebula_device_detection(){
+	if ( nebula_option('device_detection') ){
+		require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
+		$GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
+		$GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
+		$GLOBALS["device_detect"]->parse();
+	}
+}
 
 //Boolean return if the user's device is mobile.
 function nebula_is_mobile(){
@@ -2492,17 +2512,4 @@ function nebula_is_bot(){
 	}
 
 	return false;
-}
-
-//Device Detection - https://github.com/piwik/device-detector
-//Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
-use DeviceDetector\DeviceDetector;
-add_action('init', 'nebula_device_detection');
-function nebula_device_detection(){
-	if ( nebula_option('device_detection') ){
-		require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php');
-		$GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
-		$GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
-		$GLOBALS["device_detect"]->parse();
-	}
 }

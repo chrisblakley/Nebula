@@ -44,7 +44,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form id="ajax-contact" method="post" action="<?php echo get_template_directory_uri(); ?>/includes/mailer.php">
+		<form id="ajax-contact" method="post" action="<?php echo get_stylesheet_directory_uri(); ?>/resources/includes/mailer.php">
 			<ul>
 				<li class="form-group">
 					<span class="contact-form-heading">Name*</span>

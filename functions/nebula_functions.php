@@ -144,7 +144,7 @@ function nebula_console_warnings($console_warnings=array()){
 
 //Create/Write a manifest JSON file
 if ( is_writable(get_template_directory()) ){
-	if ( !file_exists(nebula_manifest_json_location()) || filemtime(nebula_manifest_json_location()) > (time()-(60*60*24)) || is_debug() ){
+	if ( !file_exists(nebula_manifest_json_location()) || filemtime(nebula_manifest_json_location()) > (time()-(60*60*24)) || is_debug() ){ //@todo: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
 		add_action('init', 'nebula_manifest_json');
 		add_action('admin_init', 'nebula_manifest_json');
 	}
@@ -1731,15 +1731,17 @@ function nebula_body_classes($classes){
 	}
 
 	//IE versions outside conditional comments
-	if ( nebula_is_browser('ie', '10') ){
-		$classes[] = 'ie';
-		$classes[] = 'ie10';
-		$classes[] = 'lte-ie10';
-		$classes[] = 'lt-ie11';
-	} elseif ( nebula_is_browser('ie', '11') ){
-		$classes[] = 'ie';
-		$classes[] = 'ie11';
-		$classes[] = 'lte-ie11';
+	if ( nebula_is_browser('ie') ){
+		if ( nebula_is_browser('ie', '10') ){
+			$classes[] = 'ie';
+			$classes[] = 'ie10';
+			$classes[] = 'lte-ie10';
+			$classes[] = 'lt-ie11';
+		} elseif ( nebula_is_browser('ie', '11') ){
+			$classes[] = 'ie';
+			$classes[] = 'ie11';
+			$classes[] = 'lte-ie11';
+		}
 	}
 
 	//User Information

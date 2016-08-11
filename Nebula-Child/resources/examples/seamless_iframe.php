@@ -11,8 +11,8 @@
 
 <div class="iframeswrap">
 	<h3>Standard Iframe:</h3>
-	<iframe src="<?php echo get_template_directory_uri(); ?>/examples/includes/seamless.html" style="width: 100%;"></iframe>
+	<iframe src="<?php echo get_stylesheet_directory_uri(); ?>/resources/examples/includes/seamless.html" style="width: 100%;"></iframe>
 	<br /><hr /><br />
 	<h3>Seamless Iframe:</h3>
-	<iframe src="<?php echo get_template_directory_uri(); ?>/examples/includes/seamless.html" seamless style="width: 100%;"></iframe>
+	<iframe src="<?php echo get_stylesheet_directory_uri(); ?>/resources/examples/includes/seamless.html" seamless style="width: 100%;"></iframe>
 </div>

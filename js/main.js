@@ -1695,7 +1695,7 @@ function cf7Functions(){
 		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomMetrics['formStarts'], 1);
-			ga('send', 'event', 'Contact', 'Started Form', 'Began filling out form ID: ' + formID);
+			ga('send', 'event', 'CF7 Form', 'Started Form', 'Began filling out form ID: ' + formID);
 			nv('send', {'contact_funnel': 'Started Form'});
 			formStarted[formID] = true;
 		}
@@ -1713,16 +1713,16 @@ function cf7Functions(){
 			} else if ( jQuery(this).attr('placeholder').length ){
 				labelText = ' "' + jQuery(this).attr('placeholder') + '"';
 			}
-			ga('send', 'timing', 'Forms', nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].name + labelText + ' (Form ID: ' + formID + ')', Math.round(nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
+			ga('send', 'timing', 'CF7 Form', nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].name + labelText + ' (Form ID: ' + formID + ')', Math.round(nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
 		}
 	});
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7:invalid', function(e){
 		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-spam');
-		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Invalid)');
+		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
-		ga('send', 'event', 'Contact', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
+		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 		nv('send', {'contact_funnel': 'Submit Validation Error(s) (' + e.target.id + ')'});
 	});
@@ -1730,18 +1730,18 @@ function cf7Functions(){
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7:spam', function(e){
 		var formTime = nebulaTimer(e.target.id, 'end');
-		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Spam)');
+		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
-		ga('send', 'event', 'Contact', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.target.id);
+		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.target.id);
 		nv('send', {'contact_funnel': 'Submit Spam (' + e.target.id + ')'});
 	});
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7:mailfailed', function(e){
 		var formTime = nebulaTimer(e.target.id, 'end');
-		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Failed)');
+		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Failed)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
-		ga('send', 'event', 'Contact', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.target.id);
+		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.target.id);
 		nv('send', {'contact_funnel': 'Submit Failed (' + e.target.id + ')'});
 	});
 
@@ -1751,11 +1751,11 @@ function cf7Functions(){
 		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
 		}
-		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Success)');
+		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Success)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'timing', 'Contact', 'Form Completion (ID: ' + e.target.id + ')', Math.round(formTime), 'Initial form focus until valid submit');
-		ga('send', 'event', 'Contact', 'Submit (Success)', 'Form ID: ' + e.target.id);
+		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + e.target.id + ')', Math.round(formTime), 'Initial form focus until valid submit');
+		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + e.target.id);
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
 		nv('send', {'contact_funnel': 'Submit Success (' + e.target.id + ')'});
 		nv('remove', 'abandoned_form');
@@ -1770,10 +1770,10 @@ function cf7Functions(){
 	nebula.dom.document.on('wpcf7:submit', function(e){
 		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-attempt');
 		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
-		ga('set', gaCustomDimensions['contactMethod'], 'Contact Form (Attempt)');
+		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Attempt)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Contact', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
+		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
 	});
 }

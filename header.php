@@ -38,7 +38,6 @@
 		<div id="body-wrapper">
 			<div id="header-section">
 				<div id="fb-root"></div>
-
 				<?php do_action('nebula_body_open'); ?>
 
 				<div id="mobilebarcon">
