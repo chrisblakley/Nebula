@@ -61,6 +61,11 @@
 }
 
 //.element {@include widescreen(){background: red;};}
+@mixin ultrawidescreen(){
+	@media only screen and (min-width: 1600px){& {@content}} //This size and larger
+}
+
+//.element {@include widescreen(){background: red;};}
 @mixin widescreen(){
 	@media only screen and (min-width: 1200px){& {@content}} //This size and larger
 }
@@ -89,6 +94,9 @@
 //.element {@include media(mobile) {background: red;};}
 //.element {@include media(custom, "only screen and (max-width: 550px)") {background: red;};}
 @mixin media($group, $custom: ""){
+	@if $group == "ultrawidescreen" {
+		@include ultrawidescreen(){& {@content}}
+	}
 	@if $group == "widescreen" {
 		@include widescreen(){& {@content}}
 	}

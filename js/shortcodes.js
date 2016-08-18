@@ -75,13 +75,6 @@
 				icon: 'nebulacolgrid',
 				classes: 'widget btn nebula-icon',
 				menu: [{
-					text: 'Colgrid',
-					onclick: function(){
-						ed.focus();
-						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
-						ed.selection.setContent('[colspan sixteen class="CLASSES" style="STYLES"]' + shortcodeContent + '[/colspan]');
-					}
-				}, {
 					text: 'Container',
 					onclick: function() {
 						ed.focus();
@@ -100,7 +93,7 @@
 					onclick: function(){
 						ed.focus();
 						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
-						ed.selection.setContent('[columns four push=one class="CLASSES" style="STYLES"]' + shortcodeContent + '[/columns]'); //@TODO "Nebula" 0: Update this to Bootstrap syntax.
+						ed.selection.setContent('[columns scale=md columns=12 class="CLASSES" style="STYLES"]' + shortcodeContent + '[/columns]');
 					}
 				}]
 			}),

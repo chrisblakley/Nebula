@@ -7,16 +7,19 @@
 //Additional Contact Info fields
 add_filter('user_contactmethods', 'nebula_user_contactmethods');
 function nebula_user_contactmethods($contactmethods){
-    unset($contactmethods['yim']);
-    unset($contactmethods['aim']);
-    unset($contactmethods['jabber']);
-    $contactmethods['facebook'] = 'Facebook Username';
-    $contactmethods['twitter'] = 'Twitter Username <small>(Without @)</small>';
-    $contactmethods['googleplus'] = 'Google+ Username <small>(Without +)</small>';
-    $contactmethods['linkedin'] = 'LinkedIn ID';
-    $contactmethods['youtube'] = 'YouTube Channel ID';
-    $contactmethods['instagram'] = 'Instagram Username';
-    return $contactmethods;
+	$override = apply_filters('pre_nebula_user_contactmethods', false, $user);
+	if ( $override !== false ){echo $override; return;}
+
+	unset($contactmethods['yim']);
+	unset($contactmethods['aim']);
+	unset($contactmethods['jabber']);
+	$contactmethods['facebook'] = 'Facebook Username';
+	$contactmethods['twitter'] = 'Twitter Username <small>(Without @)</small>';
+	$contactmethods['googleplus'] = 'Google+ Username <small>(Without +)</small>';
+	$contactmethods['linkedin'] = 'LinkedIn ID';
+	$contactmethods['youtube'] = 'YouTube Channel ID';
+	$contactmethods['instagram'] = 'Instagram Username';
+	return $contactmethods;
 }
 
 //Custom User headshot
@@ -42,7 +45,10 @@ if ( !user_can($current_user, 'subscriber') && !user_can($current_user, 'contrib
 	add_action('show_user_profile', 'extra_profile_fields');
 	add_action('edit_user_profile', 'extra_profile_fields');
 }
-function extra_profile_fields($user){ ?>
+function nebula_extra_profile_fields($user){
+	$override = apply_filters('nebula_extra_profile_fields', false, $user);
+	if ( $override !== false ){echo $override; return;}
+?>
 	<h3>Additional Information</h3>
 	<table class="form-table">
 		<tr class="headshot_button_con">

@@ -761,7 +761,7 @@ function scrollDepth(){
 	var timer = 0;
 	var maxScroll = -1;
 	var isScroller = false;
-	var isReader = false;
+	var beganReading = false;
 	var endContent = false;
 	var endPage = false;
 
@@ -801,20 +801,10 @@ function scrollDepth(){
 
 		//When the user scrolls past the header
 		var becomesReaderAt = ( entryContent.length )? entryContent.offset().top : headerHeight;
-		if ( viewportBottom >= becomesReaderAt && !isReader ){
+		if ( viewportBottom >= becomesReaderAt && !beganReading ){
 			currentTime = new Date();
 			readStartTime = currentTime.getTime();
-			timeToScroll = (readStartTime-initialScroll)/1000;
-
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-
-			//This next line (event) is the line that alters Bounce Rate.
-			//This line allows bounce rate to be calculated for individual page engagement.
-			//To use the more traditional definition of bounce rate as a "Page Depth" engagement metric remove this line (or add a non-interaction object).
-			ga('send', 'event', 'Scroll Depth', 'Began reading', Math.round(timeToScroll) + ' seconds (since initial scroll) [Signifies non-bounce visit]'); //This line alters bounce rate in Google Analytics.
-			ga('send', 'timing', 'Scroll Depth', 'Began reading', Math.round(timeToScroll*1000), 'Scrolled from top of page to top of entry-content'); //Unless there is a giant header, this timing will likely be 0 on most sites.
-			//console.log('sent event and timing for began reading');
-			isReader = true;
+			beganReading = true;
 		}
 
 		//When the reader reaches the end of the entry-content
@@ -824,13 +814,15 @@ function scrollDepth(){
 				readEndTime = currentTime.getTime();
 				readTime = (readEndTime-readStartTime)/1000;
 
+				var nonInteractionScroll = 1;
 				if ( gaCustomDimensions['scrollDepth'] ){
 					if ( readTime < 8 ){
 						var readerType = 'Previewer';
-					} else if ( readTime < 60 ){
+					} else if ( readTime < 30 ){
 						var readerType = 'Scanner';
 					} else {
 						var readerType = 'Reader';
+						nonInteractionScroll = 0;
 						ga('set', gaCustomMetrics['engagedReaders'], 1);
 						nv('send', {'engaged_reader': '1'});
 						nebula.dom.document.trigger('nebula_engaged_reader');
@@ -839,8 +831,8 @@ function scrollDepth(){
 
 				ga('set', gaCustomDimensions['scrollDepth'], readerType);
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Scroll Depth', 'Finished reading', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)');
-				ga('send', 'timing', 'Scroll Depth', 'Finished reading', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
+				ga('send', 'event', 'Scroll Depth', 'Reached bottom of entry content', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)', {'nonInteraction': nonInteractionScroll}); //If the user has read the page, it is not a bounce.
+				ga('send', 'timing', 'Scroll Depth', 'Reached bottom of entry content', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
 				endContent = true;
 			}
 		}

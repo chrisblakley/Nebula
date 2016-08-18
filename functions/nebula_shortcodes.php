@@ -35,8 +35,9 @@ function div_shortcode($atts, $content=''){
 	return $div;
 }
 
-
-//Bootstrap Grid Shortcodes
+/*==========================
+	Bootstrap Grid Shortcodes
+ ===========================*/
 
 //Container
 add_shortcode('bootstrap_container', 'container_shortcode');
@@ -88,7 +89,6 @@ function column_shortcode($atts, $content=''){
 	return '<div class="nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 }
 
-
 //Divider
 add_shortcode('divider', 'divider_shortcode');
 add_shortcode('hr', 'divider_shortcode');
@@ -103,7 +103,6 @@ function divider_shortcode($atts){
 	return $divider;
 }
 
-
 //Icon
 add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){
@@ -115,7 +114,6 @@ function icon_shortcode($atts){
 	$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
 	return '<i class="' . $class . ' nebula-icon-shortcode ' . 'fa fa-fw ' . $type . '" style="' . $extra_style . '"></i>';
 }
-
 
 //Button
 add_shortcode('button', 'button_shortcode');
@@ -143,7 +141,6 @@ function button_shortcode($atts, $content=''){
 	return '<div class="nebula-button"><a class="btn btn-' . $type . ' ' . $size . ' ' . $class . '" href="' . $href . '"' . $target . '>' . $icon . $content . '</a></div>';
 } //end button_shortcode()
 
-
 //Space (aka Gap)
 add_shortcode('space', 'space_shortcode');
 add_shortcode('gap', 'space_shortcode');
@@ -152,14 +149,12 @@ function space_shortcode($atts){
 	return '<div class="space" style=" height:' . $height . 'px;" ></div>';
 }
 
-
 //Clear (aka Clearfix)
 add_shortcode('clear', 'clear_shortcode');
 add_shortcode('clearfix', 'clear_shortcode');
 function clear_shortcode(){
 	return '<div class="clearfix" style="clear: both;"></div>';
 }
-
 
 //Map
 add_shortcode('map', 'map_shortcode');
@@ -174,7 +169,7 @@ function map_shortcode($atts){
 	}
 
 	if ( empty($key) ){
-		$key = 'AIzaSyArNNYFkCtWuMJOKuiqknvcBCyfoogDy3E'; //@TODO "APIs" 2: Replace with your own key to avoid designating a key every time.
+		$key = nebula_option('google_browser_api_key');
 	}
 	if ( !empty($q) ){
 		$q = str_replace(' ', '+', $q);
@@ -223,7 +218,6 @@ function map_shortcode($atts){
 	return $return;
 }
 
-
 //Vimeo
 add_shortcode('vimeo', 'vimeo_shortcode');
 function vimeo_shortcode($atts){
@@ -244,7 +238,6 @@ function vimeo_shortcode($atts){
 
 	return $vimeo;
 }
-
 
 //Youtube
 add_shortcode('youtube', 'youtube_shortcode');
@@ -272,7 +265,6 @@ function youtube_shortcode($atts){
 
 	return $youtube;
 }
-
 
 //Code
 add_shortcode('code', 'code_shortcode');
@@ -316,7 +308,6 @@ function pre_shortcode($atts, $content=''){
 
 	return $return;
 } //end pre_shortcode()
-
 
 //Gist embedding
 add_shortcode('gist', 'gist_shortcode');
@@ -435,14 +426,12 @@ function accordion_item_shortcode($atts, $content=''){
 	return $return;
 } //end accordion_item_shortcode()
 
-
 //Tooltip
 add_shortcode('tooltip', 'tooltip_shortcode');
 function tooltip_shortcode($atts, $content=''){
 	extract(shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts));
 	return '<span class="nebula-tooltip ttip ' . $class . '" data-toggle="tooltip" data-placement="' . $placement . '" title="' . $tip . '" style="' . $style . '">' . $content . '</span>';
 } //end tooltip_shortcode()
-
 
 //Slider
 add_shortcode('carousel', 'slider_shortcode');
@@ -457,7 +446,7 @@ function slider_shortcode($atts, $content=''){
 		$id = 'nebula-slider-' . $id;
 	}
 
-	if ( $indicators ){
+	if ( !empty($indicators) ){
 		$indicators = 'auto-indicators';
 	} else {
 		$indicators = '';
@@ -469,7 +458,6 @@ function slider_shortcode($atts, $content=''){
 
 	return $return;
 } //end slider_shortcode()
-
 
 //Slide
 add_shortcode('carousel_item', 'slide_shortcode');
@@ -491,8 +479,6 @@ function slide_shortcode($atts, $content=''){
 
 	return '<div class="carousel-item">' . $linkopen . '<img src="' . $content . '">' . $linkclose . '</div>'; //need <div class="carousel-inner">
 } //end slide_shortcode()
-
-
 
 //Map parameters of nested shortcodes
 function attribute_map($str, $att = null){
@@ -541,7 +527,6 @@ function parse_shortcode_content($content){
 remove_filter('the_content', 'wpautop');
 add_filter('the_content', 'wpautop' , 99);
 add_filter('the_content', 'shortcode_unautop',100);
-
 
 //Add Nebula Toolbar to TinyMCE
 add_action('admin_init', 'add_shortcode_button');

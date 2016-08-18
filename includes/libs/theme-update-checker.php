@@ -9,6 +9,10 @@
  * http://www.gnu.org/licenses/gpl.html
  */
 
+/*
+	Note: This library has been modified for use with Nebula. The added line is commented below.
+*/
+
 if ( !class_exists('ThemeUpdateChecker') ):
 
 /**
@@ -103,7 +107,7 @@ class ThemeUpdateChecker {
 			$themeUpdate = ThemeUpdate::fromJson($body);
 			//The update should be newer than the currently installed version.
 
-			do_action('nebula_theme_update_check', $themeUpdate, $this->getInstalledVersion());
+			do_action('nebula_theme_update_check', $themeUpdate, $this->getInstalledVersion()); //This line has been modified for Nebula
 
 			if ( ($themeUpdate != null) && version_compare($themeUpdate->version, $this->getInstalledVersion(), '<=') ){
 				$themeUpdate = null;

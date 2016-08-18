@@ -1,5 +1,6 @@
 @import 'variables';
 @import 'mixins';
+@import 'helpers';
 
 $admin_media_queries: (
 	widescreen: "(max-width: 1800px) and (min-width: 1500px)",

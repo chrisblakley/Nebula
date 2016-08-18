@@ -220,27 +220,29 @@ function nebula_theme_json(){
 	$override = apply_filters('pre_nebula_theme_json', false);
 	if ( $override !== false ){return;}
 
-	//Make sure the version number is always up-to-date in options.
-	if ( nebula_data('current_version') !== nebula_version('raw') ){
-		nebula_update_data('current_version', nebula_version('raw'));
-		nebula_update_data('current_version_date', nebula_version('date'));
-	}
+	if ( nebula_option('theme_update_notification', 'enabled') ){
+		//Make sure the version number is always up-to-date in options.
+		if ( nebula_data('current_version') !== nebula_version('raw') ){
+			nebula_update_data('current_version', nebula_version('raw'));
+			nebula_update_data('current_version_date', nebula_version('date'));
+		}
 
-	//If newer version of Nebula has a "u" at the end of the version number, disable automated updates.
-	$remote_version_info = get_option('external_theme_updates-Nebula-master');
-
-	//Check for an unsupported version
-	if ( (strpos(nebula_version('raw'), 'u') || nebula_data('version_legacy') === 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full'))) ){
-		nebula_update_data('version_legacy', 'true');
-		nebula_update_data('current_version', nebula_version('raw'));
-		nebula_update_data('current_version_date', nebula_version('date'));
-		nebula_update_data('next_version', 'INCOMPATIBLE');
-	} elseif ( current_user_can('manage_options') && is_child_theme() && nebula_option('theme_update_notification', 'enabled') ){
-		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
-		$theme_update_checker = new ThemeUpdateChecker(
-			'Nebula-master', //This should be the directory slug of the parent theme.
-			'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
-		);
+		//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
+		$remote_version_info = get_option('external_theme_updates-Nebula-master');
+		if ( (strpos(nebula_version('raw'), 'u') || nebula_data('version_legacy') === 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full'))) ){
+			nebula_update_data('version_legacy', 'true');
+			nebula_update_data('current_version', nebula_version('raw'));
+			nebula_update_data('current_version_date', nebula_version('date'));
+			nebula_update_data('next_version', 'INCOMPATIBLE');
+			nebula_update_option('theme_update_notification', 'disabled');
+		} elseif ( current_user_can('manage_options') && is_child_theme() ){
+			//@TODO "Nebula" 0: does this need to happen every admin pageload?
+			require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
+			$theme_update_checker = new ThemeUpdateChecker(
+				'Nebula-master', //This should be the directory slug of the parent theme.
+				'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
+			);
+		}
 	}
 }
 
