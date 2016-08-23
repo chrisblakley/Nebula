@@ -75,7 +75,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 	function nebula_admin_bar_menus($wp_admin_bar){
 		wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
 
-		$node_id = ( is_admin() )? 'view' : 'edit';
+		$node_id = ( is_admin_page() )? 'view' : 'edit';
 		$new_content_node = $wp_admin_bar->get_node($node_id);
 		if ( $new_content_node ){
 			$new_content_node->title = ucfirst($node_id) . ' Page <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(ID: ' . get_the_id() . ')</span>';
@@ -522,9 +522,9 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 }
 
 //Check if a post slug has a number appended to it (indicating a duplicate post).
-//add_filter('wp_unique_post_slug', 'nebula_unique_slug_warning_ajax', 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! is_admin() does not prevent that...
+//add_filter('wp_unique_post_slug', 'nebula_unique_slug_warning_ajax', 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! is_admin_page() does not prevent that...
 function nebula_unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
-	if ( current_user_can('publish_posts') && is_admin() && (headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ){ //Should work with AJAX and without (as long as headers have been sent)
+	if ( current_user_can('publish_posts') && is_admin_page() && (headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ){ //Should work with AJAX and without (as long as headers have been sent)
 		echo '<script>
 			if ( typeof nebulaUniqueSlugChecker === "function" ){
 				nebulaUniqueSlugChecker("' . $post_type . '");

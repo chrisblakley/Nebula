@@ -57,11 +57,11 @@ if ( nebula_option('prototype_mode', 'enabled') ){
 	add_action('admin_bar_menu', 'nebula_admin_bar_nebula_wireframing', 900);
 	function nebula_admin_bar_nebula_wireframing($wp_admin_bar){
 		if ( nebula_dev_phase() == 'wireframe' ){
-			$wireframe_menu_title = ( !is_admin() )? ' (Wireframe)' : '';
+			$wireframe_menu_title = ( !is_admin_page() )? ' (Wireframe)' : '';
 		} elseif ( nebula_dev_phase() == 'staging' ){
-			$wireframe_menu_title = ( !is_admin() )? ' (Staging)' : '';
+			$wireframe_menu_title = ( !is_admin_page() )? ' (Staging)' : '';
 		} else {
-			$wireframe_menu_title = ( !is_admin() )? ' (Production)' : '';
+			$wireframe_menu_title = ( !is_admin_page() )? ' (Production)' : '';
 		}
 
 		$wp_admin_bar->add_node(array(
@@ -71,7 +71,7 @@ if ( nebula_option('prototype_mode', 'enabled') ){
 		));
 
 		if ( nebula_dev_phase() ){
-			$permalink = ( is_admin() )? home_url() : get_permalink();
+			$permalink = ( is_admin_page() )? home_url() : get_permalink();
 
 			if ( nebula_dev_phase() != 'wireframe' && nebula_option('wireframe_theme') ){
 				$wp_admin_bar->add_node(array(
@@ -91,7 +91,7 @@ if ( nebula_option('prototype_mode', 'enabled') ){
 				));
 			}
 
-			if ( (nebula_dev_phase() != 'production' || is_admin()) ){
+			if ( (nebula_dev_phase() != 'production' || is_admin_page()) ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-prototype',
 					'id' => 'nebula-production-activate',

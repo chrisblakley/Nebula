@@ -250,7 +250,7 @@ function nebula_ga_event_ajax(){
 //Create Users Table with minimal default columns.
 add_action('init', 'nebula_create_visitors_table', 2); //Using init instead of admin_init so this triggers before check_nebula_id (below)
 function nebula_create_visitors_table(){
-	if ( is_admin() && nebula_option('visitors_db') && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this in admin when Nebula Options are saved.
+	if ( is_admin_page() && nebula_option('visitors_db') && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this in admin when Nebula Options are saved.
 		global $wpdb;
 
 		$visitors_table = $wpdb->query("SHOW TABLES LIKE 'nebula_visitors'");
@@ -1214,6 +1214,11 @@ function nebula_user_single_concurrent($id){
 	return 0;
 }
 
+//Alias for a less confusing is_admin() function to try to prevent security issues
+function is_admin_page(){
+	return is_admin();
+}
+
 //Check if the current IP address matches any of the dev IP address from Nebula Options
 //Passing $strict bypasses IP check, so user must be a dev and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.
@@ -2024,7 +2029,7 @@ function nebula_render_scss($child=false){
 			if ( $file_path_info['filename'] == 'dev' && nebula_option('dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
 				continue;
 			}
-			if ( !is_admin() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
+			if ( !is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
 				continue;
 			}
 

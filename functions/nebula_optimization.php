@@ -86,7 +86,7 @@ function nebula_dequeues(){
 	$override = apply_filters('pre_nebula_dequeues', false);
 	if ( $override !== false ){return $override;}
 
-	if ( !is_admin() ){
+	if ( !is_admin_page() ){
 		//Styles
 		wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
 		wp_dequeue_style('contact-form-7');
@@ -102,7 +102,7 @@ function nebula_dequeues(){
 //Remove jQuery Migrate, but keep jQuery
 add_filter('wp_default_scripts', 'nebula_remove_jquery_migrate');
 function nebula_remove_jquery_migrate($scripts){
-	if ( !is_admin() ){
+	if ( !is_admin_page() ){
 		$scripts->remove('jquery');
 		$scripts->add('jquery', false, array('jquery-core'), null);
 	}
@@ -140,7 +140,7 @@ function nebula_plugin_force_settings(){
 //Please add a comment with the reason for the override!
 add_action('wp_print_scripts', 'nebula_remove_actions', 9999);
 function nebula_remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
-	if ( is_admin() ){ //WP Admin
+	if ( is_admin_page() ){ //WP Admin
 		if ( is_plugin_active('event-espresso/espresso.php') ){
 			remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 			remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer

@@ -23,10 +23,10 @@ if ( nebula_option('prototype_mode') ){
 }
 
 //Include functions for the admin interface
-if ( is_admin() || is_admin_bar_showing() ){
+if ( is_admin_page() || is_admin_bar_showing() ){
 	require_once('functions/nebula_admin.php'); //Nebula Admin Functions
 }
-if ( is_admin() ){
+if ( is_admin_page() ){
 	require_once('functions/nebula_automation.php'); //Nebula Automations
 	require_once('functions/nebula_user_fields.php'); //Nebula User Fields
 }

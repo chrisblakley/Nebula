@@ -1128,7 +1128,7 @@ add_action('pre_get_posts', 'redirect_empty_search');
 function redirect_empty_search($query){
 	global $wp_query;
 	if ( isset($_GET['s']) && $wp_query->query && !array_key_exists('invalid', $_GET) ){
-		if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !is_admin() ){
+		if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !is_admin_page() ){
 			ga_send_event('Internal Search', 'Invalid', '(Empty query)');
 			header('Location: ' . home_url('/') . 'search/?invalid');
 			exit;
