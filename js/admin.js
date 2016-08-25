@@ -133,7 +133,7 @@ function initializationStuff(){
 					action: 'nebula_initialization'
 				},
 				success: function(data){
-					if ( data === '1' ){
+					if ( data.indexOf('successful-nebula-init') !== -1 ){
 						jQuery('.nebula-activated-title').html('<i class="fa fa-check" style="color: green;"></i> Nebula has been initialized!');
 						jQuery('.nebula-activated-description').html('Settings have been updated. The home page has been updated and has been set as the static front page in <a href="options-reading.php">Settings > Reading</a>.<br /><strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>');
 						return false;

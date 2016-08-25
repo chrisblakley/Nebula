@@ -192,7 +192,7 @@ function nebula_default_options(){
 		'minify_css' => 'disabled',
 		'dev_stylesheets' => 'disabled',
 		'console_css' => 'enabled',
-		'examples_directory' => 'enabled',
+		'resources_directory' => 'enabled',
 
 		//Analytics Tab
 		'ga_tracking_id' => '',
@@ -950,15 +950,15 @@ function nebula_options_page(){
 		        </tr>
 
 		        <tr class="short" valign="top">
-		        	<th scope="row">Nebula Examples Directory&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+		        	<th scope="row">Nebula Resources Directory&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<select name="nebula_options[examples_directory]">
+						<select name="nebula_options[resources_directory]">
 							<option disabled>Default: Enabled</option>
-							<option value="enabled" <?php selected('enabled', $nebula_options['examples_directory']); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', $nebula_options['examples_directory']); ?>>Disabled</option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['resources_directory']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['resources_directory']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Controls whether the example directory is included (Examples directories are found in <strong><?php echo get_stylesheet_directory_uri(); ?>/examples</strong> and <strong><?php echo get_template_directory_uri(); ?>/Nebula-Child/examples</strong>).<br/>
-						Note: If re-enabled, the directory will not re-appear until Nebula-master is updated or the <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/examples" target="_blank">/examples</a> directory is manually uploaded. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Controls whether the resources directory is included (Resources directories are found in <strong><?php echo get_stylesheet_directory_uri(); ?>/resources</strong> and <strong><?php echo get_template_directory_uri(); ?>/Nebula-Child/resources</strong>).<br/>
+						Note: If re-enabled, the directory will not re-appear until Nebula-master is updated or the <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/resources" target="_blank">/resources</a> directory is manually uploaded. <em>(Default: Enabled)</em></small></p>
 					</td>
 		        </tr>
 

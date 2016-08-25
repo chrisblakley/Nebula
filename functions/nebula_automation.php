@@ -212,7 +212,7 @@ function nebula_activation(){
 function nebula_log($event=''){
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_REFERER, home_url());
-	curl_setopt($ch, CURLOPT_URL, 'https://gearside.com/nebula/usage/index.php?e=' . $event . '&s=' . home_url());
+	curl_setopt($ch, CURLOPT_URL, 'https://gearside.com/nebula/usage/index.php?e=' . $event);
 	curl_exec($ch);
 	curl_close($ch);
 }
@@ -234,7 +234,7 @@ function nebula_initialization($standard=null){
 		nebula_render_scss('all'); //Re-render all SCSS files.
 
 		if ( empty($standard) ){ //If AJAX initialization
-			echo '1';
+			echo 'successful-nebula-init';
 			exit;
 		}
 	}
