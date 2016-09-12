@@ -589,8 +589,13 @@ function dashboard_nebula_ataglance(){
 			echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
 		}
 
+		//Multisite (and Super Admin detection)
 		if ( is_multisite() ){
-			echo '<li><i class="fa fa-cubes fa-fw"></i>Multisite <a href="' . network_admin_url() . '">(Network Admin)</a></li>';
+			$network_admin_link = '';
+			if ( is_super_admin() ){
+				$network_admin_link = ' <a href="' . network_admin_url() . '">(Network Admin)</a></li>';
+			}
+			echo '<li><i class="fa fa-cubes fa-fw"></i> Multisite' . $network_admin_link;
 		}
 
 		//Post Types

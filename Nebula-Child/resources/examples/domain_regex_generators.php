@@ -5,7 +5,7 @@
 <script>
 	jQuery(document).on('submit', '#customhostnameregex', function(e){
 		jQuery('i.fa-spinner').removeClass('hidden');
-		nebulaConversion('form', 'Example Regex Generator');
+		//nebulaConversion('form', 'Example Regex Generator'); //@TODO "Nebula" 0: Change to nv()
 
 		var hostnameData = [{
 			'hostnames': jQuery('#validhostnames').val().trim(),

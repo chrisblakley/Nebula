@@ -541,7 +541,6 @@ function eventTracking(){
 			ga('send', 'event', 'PDF View', 'Text: ' + linkText);
 			nv('append', {'pdf_view': linkText});
 		}
-
 	});
 
 	//Notable Downloads
@@ -597,8 +596,7 @@ function eventTracking(){
 	nebula.dom.document.on('mousedown touch tap', 'a[href^="tel"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-		var phoneNumber = jQuery(this).attr('href');
-		phoneNumber = phoneNumber.replace('tel:', '');
+		var phoneNumber = jQuery(this).attr('href').replace('tel:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
@@ -610,8 +608,7 @@ function eventTracking(){
 	nebula.dom.document.on('mousedown touch tap', 'a[href^="sms"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-		var phoneNumber = jQuery(this).attr('href');
-		phoneNumber = phoneNumber.replace('sms:+', '');
+		var phoneNumber = jQuery(this).attr('href').replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
@@ -775,8 +772,6 @@ function scrollDepth(){
 			currentTime = new Date();
 			initialScroll = currentTime.getTime();
 			delayBeforeInitial = (initialScroll-beginning)/1000;
-
-			//console.log('sent timing for initial scroll');
 			ga('send', 'timing', 'Scroll Depth', 'Initial scroll', Math.round(delayBeforeInitial*1000), 'Delay after pageload until initial scroll');
 			isScroller = true;
 		}
@@ -842,9 +837,8 @@ function scrollDepth(){
 			currentTime = new Date();
 			endTime = currentTime.getTime();
 			totalTime = (endTime-readStartTime)/1000;
-
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime) + ' seconds (since pageload)');
+			ga('send', 'event', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime) + ' seconds (since pageload)', {'nonInteraction': 1});
 			ga('send', 'timing', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom');
 			endPage = true;
 		}
@@ -2305,16 +2299,7 @@ function placeLookup(placeID){
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function addHelperClasses(){
-	//Add rel attributes to external links
-	jQuery('a').each(function(){
-		var hostPattern = new RegExp('/' + window.location.host + '/');
-		if ( !hostPattern.test(this.href) ){
-			if ( this.href.indexOf('http') !== -1 ){ //excludes all non-http link (ex: mailto: and tel:)
-				var rel = ( typeof jQuery(this).attr('rel') !== 'undefined' )? jQuery(this).attr('rel') + ' ' : '';
-				jQuery(this).attr('rel', rel + 'external');
-			}
-		}
-	});
+	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external'); //Add rel attributes to external links
 
 	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').parents('a').addClass('no-icon');

@@ -134,6 +134,13 @@
 	}
 }
 
+//.element {@include supports(box-shadow, 2px 2px 2px black);}
+@mixin supports($property, $value){ //@TODO "Nebula" 0: Ideally the property and value would be passed as a single variable: supports(box-shadow: 2px 2px 2px black);
+	@supports ($property $value){
+		& {#{$property}: $value}
+	}
+}
+
 //.element {@include clearfix();}
 @mixin clearfix(){
 	&:before,

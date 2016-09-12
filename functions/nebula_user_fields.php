@@ -42,8 +42,8 @@ function q_replace_thickbox_button_text($translated_text, $text, $domain){
 
 //Show the fields in the user admin page
 if ( !user_can($current_user, 'subscriber') && !user_can($current_user, 'contributor') ){
-	add_action('show_user_profile', 'extra_profile_fields');
-	add_action('edit_user_profile', 'extra_profile_fields');
+	add_action('show_user_profile', 'nebula_extra_profile_fields');
+	add_action('edit_user_profile', 'nebula_extra_profile_fields');
 }
 function nebula_extra_profile_fields($user){
 	$override = apply_filters('nebula_extra_profile_fields', false, $user);
