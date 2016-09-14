@@ -74,7 +74,6 @@ jQuery(document).ready(function(){
 
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').val(nebula.user.nid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
-	jQuery('.wpcf7-captchar').attr('title', 'Not case-sensitive');
 }); //End Document Ready
 
 /*==========================
@@ -762,17 +761,14 @@ function scrollDepth(){
 	var endContent = false;
 	var endPage = false;
 
-	//Reading time calculations
+	//Time calculations
 	var startTime = new Date();
-	var beginning = startTime.getTime();
 	var totalTime = 0;
 
 	nebula.dom.window.on('scroll', function(){
 		if ( !isScroller ){
 			currentTime = new Date();
 			initialScroll = currentTime.getTime();
-			delayBeforeInitial = (initialScroll-beginning)/1000;
-			ga('send', 'timing', 'Scroll Depth', 'Initial scroll', Math.round(delayBeforeInitial*1000), 'Delay after pageload until initial scroll');
 			isScroller = true;
 		}
 
@@ -783,16 +779,16 @@ function scrollDepth(){
 			ga('set', gaCustomDimensions['maxScroll'], maxScroll + '%'); //Don't send an event here- this is only needed when another event is triggered.
 		}
 
-		if ( timer ){
-			clearTimeout(timer);
-		}
-		timer = setTimeout(scrollLocation, 100); //Use a buffer so we don't call scrollLocation too often.
+		debounce(function(){
+			scrollLocation();
+		}, 100, 'scroll depth');
 	});
 
 	//Check the scroll location
 	function scrollLocation(){
-		viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
-		documentHeight = nebula.dom.document.height();
+		var viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
+		var documentHeight = nebula.dom.document.height();
+		var beganReading = false;
 
 		//When the user scrolls past the header
 		var becomesReaderAt = ( entryContent.length )? entryContent.offset().top : headerHeight;
@@ -804,13 +800,13 @@ function scrollDepth(){
 
 		//When the reader reaches the end of the entry-content
 		if ( entryContent.length ){
-			if ( viewportBottom >= entryContent.offset().top+entryContent.innerHeight() && !endContent ){
+			if ( readStartTime && viewportBottom >= entryContent.offset().top+entryContent.innerHeight() && !endContent ){
 				currentTime = new Date();
 				readEndTime = currentTime.getTime();
 				readTime = (readEndTime-readStartTime)/1000;
 
-				var nonInteractionScroll = 1;
-				if ( gaCustomDimensions['scrollDepth'] ){
+				if ( Math.round(readTime) > 0 ){
+					var nonInteractionScroll = 1;
 					if ( readTime < 8 ){
 						var readerType = 'Previewer';
 					} else if ( readTime < 30 ){
@@ -822,24 +818,28 @@ function scrollDepth(){
 						nv('send', {'engaged_reader': '1'});
 						nebula.dom.document.trigger('nebula_engaged_reader');
 					}
+
+					ga('set', gaCustomDimensions['scrollDepth'], readerType);
+					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+					ga('send', 'event', 'Scroll Depth', 'Entry Content', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)', {'nonInteraction': nonInteractionScroll}); //If the user has read the page, it is not a bounce.
+					ga('send', 'timing', 'Scroll Depth', 'Entry Content', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
 				}
 
-				ga('set', gaCustomDimensions['scrollDepth'], readerType);
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Scroll Depth', 'Reached bottom of entry content', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)', {'nonInteraction': nonInteractionScroll}); //If the user has read the page, it is not a bounce.
-				ga('send', 'timing', 'Scroll Depth', 'Reached bottom of entry content', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
 				endContent = true;
 			}
 		}
 
 		//If user has hit the bottom of the page
-		if ( viewportBottom >= documentHeight && !endPage ){
+		if ( initialScroll && viewportBottom >= documentHeight && !endPage ){
 			currentTime = new Date();
 			endTime = currentTime.getTime();
-			totalTime = (endTime-readStartTime)/1000;
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime) + ' seconds (since pageload)', {'nonInteraction': 1});
-			ga('send', 'timing', 'Scroll Depth', 'Reached bottom of page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom');
+			totalTime = (endTime-initialScroll)/1000;
+			if ( Math.round(totalTime) > 0 ){
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(totalTime) + ' seconds (since pageload)', {'nonInteraction': 1});
+				ga('send', 'timing', 'Scroll Depth', 'Entire Page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom');
+			}
+
 			endPage = true;
 		}
 	}
@@ -1917,8 +1917,8 @@ function conditionalJSLoading(){
     if ( jQuery('.dataTables_wrapper').length ){
         jQuery.getScript(nebula.site.resources.js.datatables).done(function(){
             nebulaLoadCSS(nebula.site.resources.css.datatables);
-			dataTablesActions();
-			jQuery(document).trigger('nebula_datatables_loaded');
+			dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in child.js (or elsewhere)
+			jQuery(document).trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
