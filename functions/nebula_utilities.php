@@ -17,7 +17,10 @@ function nebula_session_id(){
 
 	if ( is_user_logged_in() ){
 		$user_info = get_userdata(get_current_user_id());
-		$role_abv = substr($user_info->roles[0], 0, 3);
+		$role_abv = 'ukn';
+		if ( !empty($user_info->roles) ){
+			$role_abv = substr($user_info->roles[0], 0, 3);
+		}
 		$session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
 	}
 
@@ -659,8 +662,8 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 				'score_mod' => '0',
 			);
 
+			//Attempt to detect IP Geolocation data using https://freegeoip.net/
 			if ( nebula_option('ip_geolocation') ){
-				//Attempt to detect IP Geolocation data using https://freegeoip.net/
 				WP_Filesystem();
 				global $wp_filesystem;
 				$ip_geo_data = $wp_filesystem->get_contents('http://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
@@ -669,6 +672,7 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 					$defaults['ip_country'] = sanitize_text_field($ip_geo_data->country_name);
 					$defaults['ip_region'] = sanitize_text_field($ip_geo_data->region_name);
 					$defaults['ip_city'] = sanitize_text_field($ip_geo_data->city);
+					$defaults['ip_zip'] = sanitize_text_field($ip_geo_data->zip_code);
 				}
 			}
 
@@ -2004,6 +2008,9 @@ function nebula_render_scss($child=false){
 			'template_directory' => '"' . get_template_directory_uri() . '"',
 			'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
 			'__utm-gif' => '"' . ga_UTM_gif() . '"',
+			//Primary Color?
+			//Secondary Color?
+			//Tertiary Color?
 		));
 
 		//Partials
@@ -2164,7 +2171,7 @@ function nebula_sass_color($color='primary', $theme='child'){
 	}
 
 	$scss_variables = get_transient($transient_name);
-	if ( empty($menus) || is_debug() ){
+	if ( empty($scss_variables) || is_debug() ){
 		$variables_file = $stylesheets_directory . '/scss/partials/_variables.scss';
 		if ( !file_exists($variables_file) ){
 			return false;
@@ -2173,8 +2180,8 @@ function nebula_sass_color($color='primary', $theme='child'){
 		WP_Filesystem();
 		global $wp_filesystem;
 		$scss_variables = $wp_filesystem->get_contents($variables_file);
-		set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
-	}
+ 		set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
+ 	}
 
 	switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){
 		case 'primary':

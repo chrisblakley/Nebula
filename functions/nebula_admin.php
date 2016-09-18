@@ -664,6 +664,13 @@ function dashboard_nebula_ataglance(){
 				echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . nebula_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
 			}
 		}
+
+		//Nebula Visitors DB
+		if ( nebula_option('visitors_db') ){
+			global $wpdb;
+			echo '<li><i class="fa fa-database fa-fw"></i> <a href="themes.php?page=nebula_visitors_data">Nebula Visitors DB</a> has <strong>' . $wpdb->get_var("select count(*) from nebula_visitors") . '</strong> rows.</li>';
+		}
+
 	echo '</ul>';
 
 	do_action('nebula_ataglance');
@@ -693,6 +700,7 @@ function dashboard_current_user(){
 
 	echo '<ul>';
 		//Company
+		$company = '';
 		if ( get_the_author_meta('jobcompany', $user_info->ID) ){
 			$company = get_the_author_meta('jobcompany', $user_info->ID);
 			if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
@@ -701,6 +709,7 @@ function dashboard_current_user(){
 		}
 
 		//Job Title
+		$job_title = '';
 		if ( get_the_author_meta('jobtitle', $user_info->ID) ){
 			$job_title = get_the_author_meta('jobtitle', $user_info->ID);
 			if ( !empty($company) ){
@@ -744,23 +753,102 @@ function dashboard_current_user(){
 			echo '<li><i class="fa fa-gears fa-fw"></i> <strong>Developer</strong></li>';
 		}
 
+		//User's posts
+		echo '<li><i class="fa fa-thumb-tack fa-fw"></i> Your posts: <strong>' . count_user_posts($user_info->ID) . '</strong></li>';
+
+		if ( nebula_option('device_detection') ){
+			//Device
+			if ( nebula_is_desktop() ){
+				if ( str_replace('%', '', nebula_get_visitor_data('battery_percentage')) < 100 || nebula_get_visitor_data('battery_mode') === 'Battery' ){
+					echo '<li><i class="fa fa-laptop fa-fw"></i> Device: <strong>Laptop</strong></li>';
+				} else {
+					echo '<li><i class="fa fa-desktop fa-fw"></i> Device: <strong>Desktop</strong></li>';
+				}
+			} elseif ( nebula_is_tablet() ){
+				echo '<li><i class="fa fa-tablet fa-fw"></i> Device: <strong>' . nebula_get_device('full') . ' (Tablet)</strong></li>';
+			} else {
+				echo '<li><i class="fa fa-mobile fa-fw"></i> Device: <strong>' . nebula_get_device('full') . ' (Mobile)</strong></li>';
+			}
+
+			//Operating System
+			switch ( strtolower(nebula_get_os('name')) ){
+				case 'windows':
+					$os_icon = 'fa-windows';
+					break;
+				case 'mac':
+				case 'ios':
+					$os_icon = 'fa-apple';
+					break;
+				case 'linux':
+					$os_icon = 'fa-linux';
+					break;
+				case 'android':
+					$os_icon = 'fa-android';
+					break;
+				default:
+					$os_icon = 'fa-picture-o';
+					break;
+			}
+			echo '<li><i class="fa ' . $os_icon . ' fa-fw"></i> OS: <strong>' . nebula_get_os('full') . '</strong></li>';
+
+			//Browser
+			switch ( str_replace(array('mobile', ' '), '', strtolower(nebula_get_browser('name'))) ){
+				case 'edge':
+					$browser_icon = 'fa-edge';
+					break;
+				case 'safari':
+					$browser_icon = 'fa-safari';
+					break;
+				case 'internet explorer':
+					$browser_icon = 'fa-internet-explorer';
+					break;
+				case 'firefox':
+					$browser_icon = 'fa-firefox';
+					break;
+				case 'chrome':
+				case 'chrome mobile':
+					$browser_icon = 'fa-chrome';
+					break;
+				case 'opera':
+					$browser_icon = 'fa-opera';
+					break;
+				default:
+					$browser_icon = 'fa-globe';
+					break;
+			}
+			echo '<li><i class="fa ' . $browser_icon . ' fa-fw"></i> Browser: <strong>' . nebula_get_browser('full') . '</strong></li>';
+		}
+
 		//IP Address
 		echo '<li>';
 			if ( $_SERVER['REMOTE_ADDR'] === '72.43.235.106' ){
 				echo '<img src="' . get_template_directory_uri() . '/images/phg/phg-symbol.png" style="max-width: 14px;" />';
 			} else {
-				echo '<i class="fa fa-laptop fa-fw"></i>';
+				echo '<i class="fa fa-globe fa-fw"></i>';
 			}
-			echo 'IP Address: <a href="http://whatismyipaddress.com/ip/' . $_SERVER["REMOTE_ADDR"] . '" target="_blank"><strong class="admin-user-info admin-user-ip">' . $_SERVER["REMOTE_ADDR"] . '</strong></a>';
+			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $_SERVER["REMOTE_ADDR"] . '" target="_blank"><strong class="admin-user-info admin-user-ip">' . $_SERVER["REMOTE_ADDR"] . '</strong></a>';
 		echo '</li>';
+
+		//IP Location
+		if ( nebula_ip_location() ){
+			echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . nebula_ip_location('city') . ', ' . nebula_ip_location('state') . '</strong></li>';
+		}
+
+		//Weather
+		if ( nebula_weather() ){
+			$ip_zip = '';
+			if ( nebula_get_visitor_data('zip_code') ){
+				$ip_zip = nebula_get_visitor_data('zip_code');
+			} elseif ( nebula_ip_location() ){
+				$ip_zip = nebula_ip_location('zip');
+			}
+			echo '<li><i class="fa fa-cloud fa-fw"></i> Weather: <strong>' . nebula_weather($ip_zip, 'temp') . '&deg;F ' . nebula_weather($ip_zip, 'conditions') . '</strong></li>';
+		}
 
 		//Multiple locations
 		if ( nebula_user_single_concurrent($user_info->ID) > 1 ){
 			echo '<li><i class="fa fa-users fa-fw"></i> Active in <strong>' . nebula_user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
 		}
-
-		//User's posts
-		echo '<li><i class="fa fa-thumb-tack fa-fw"></i> Your posts: <strong>' . count_user_posts($user_info->ID) . '</strong></li>';
 	echo '</ul>';
 
 	echo '<p><small><em><a href="profile.php">Manage your user information</a></em></small></p>';
@@ -826,8 +914,8 @@ function dashboard_social(){
 			echo '<li><i class="fa fa-facebook-square fa-fw"></i> <a href="' . nebula_option('facebook_url') . '" target="_blank">Facebook</a></li>';
 		}
 
-		if ( nebula_option('twitter_url') ){
-			echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="' . nebula_option('twitter_url') . '" target="_blank">Twitter</a></li>';
+		if ( nebula_option('twitter_username') ){
+			echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="https://twitter.com/' . str_replace('@', '', nebula_option('twitter_username')) . '" target="_blank">Twitter</a></li>';
 		}
 
 		if ( nebula_option('google_plus_url') ){

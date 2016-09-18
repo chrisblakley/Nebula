@@ -1750,7 +1750,11 @@ function nebula_body_classes($classes){
 		$classes[] = 'user-logged-in';
 		$classes[] = 'user-' . $current_user->user_login;
 		$user_info = get_userdata(get_current_user_id());
-		$classes[] = 'user-role-' . $user_info->roles[0];
+		if ( !empty($user_info->roles) ){
+			$classes[] = 'user-role-' . $user_info->roles[0];
+		} else {
+			$classes[] = 'user-role-unknown';
+		}
 	} else {
 		$classes[] = 'user-not-logged-in';
 	}
@@ -2032,6 +2036,77 @@ function nebula_relative_time($format=null){
 		return $relative_time[$format];
 	} else {
 		return $relative_time;
+	}
+}
+
+//Detect location from IP address using https://freegeoip.net/
+function nebula_ip_location($data=null, $ip=false){
+	if ( nebula_option('ip_geolocation') ){
+		if ( empty($ip) ){
+			$ip = $_SERVER['REMOTE_ADDR'];
+
+			if ( empty($data) ){
+				return true; //If passed with no parameters, simply check if Nebula Option is enabled
+			}
+		}
+
+		if ( empty($_SESSION['nebulageoip']) ){
+			WP_Filesystem();
+			global $wp_filesystem;
+			$ip_geo_data = $wp_filesystem->get_contents('http://freegeoip.net/json/' . $ip);
+			$_SESSION['nebulageoip'] = $ip_geo_data;
+		} else {
+			$ip_geo_data = $_SESSION['nebulageoip'];
+		}
+		$ip_geo_data = json_decode($ip_geo_data);
+
+		if ( !empty($ip_geo_data) ){
+			switch ( str_replace(array(' ', '_', '-'), '', $data) ){
+				case 'country':
+				case 'countryname':
+					return $ip_geo_data->country_name;
+					break;
+				case 'countrycode':
+					return $ip_geo_data->country_code;
+					break;
+				case 'region':
+				case 'state':
+				case 'regionname':
+				case 'statename':
+					return $ip_geo_data->region_name;
+					break;
+				case 'regioncode':
+				case 'statecode':
+					return $ip_geo_data->country_code;
+					break;
+				case 'city':
+					return $ip_geo_data->city;
+					break;
+				case 'zip':
+				case 'zipcode':
+					return $ip_geo_data->zip_code;
+					break;
+				case 'lat':
+				case 'latitude':
+					return $ip_geo_data->latitude;
+					break;
+				case 'lng':
+				case 'longitude':
+					return $ip_geo_data->longitude;
+					break;
+				case 'geo':
+				case 'coordinates':
+					return $ip_geo_data->latitude . ',' . $ip_geo_data->longitude;
+					break;
+				case 'timezone':
+					return $ip_geo_data->time_zone;
+					break;
+				default:
+					return false;
+					break;
+			}
+		}
+		return false;
 	}
 }
 

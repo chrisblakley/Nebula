@@ -28,7 +28,7 @@
 <script>
 	jQuery(document).ready(function() {
 
-		jQuery('a.inputhelp').on('click', function(){
+		jQuery('a.inputhelp').on('click tap touch', function(){
 			jQuery(this).toggleClass('hover');
 			jQuery(this).parents('li').find('.inputhelp-description').slideToggle();
 			return false;
@@ -38,7 +38,7 @@
 			jQuery('#lastcampaignurl').fadeIn().find('.lastcampaignurlhere').val(readCookie('CampaignURL'));
 		}
 
-		jQuery(document).on('keyup blur', 'input.builderinput', function(){
+		jQuery(document).on('click tap touch keyup blur', 'input.builderinput, #nebularecs', function(){
 			jQuery('.generatingspinner').fadeIn();
 
 			//Check required fields
@@ -52,7 +52,6 @@
 
 			debounce(function(){
 		    	generateCampaignURL();
-		    	nebulaConversion('campaign_url', true);
 			}, 1000, "campaignurlgenerator");
 		});
 
@@ -101,16 +100,16 @@
 				return false;
 			}
 
-			generatedResult += '?utm_campaign=' + encodeURIComponent(utm_campaign);
-			generatedResult += '&utm_medium=' + encodeURIComponent(utm_medium);
-			generatedResult += '&utm_source=' + encodeURIComponent(utm_source);
+			generatedResult += '?utm_campaign=' + nebulaParameterString(utm_campaign);
+			generatedResult += '&utm_medium=' + nebulaParameterString(utm_medium);
+			generatedResult += '&utm_source=' + nebulaParameterString(utm_source);
 
 			if ( utm_content != '' ) {
-				generatedResult += '&utm_content=' + encodeURIComponent(utm_content);
+				generatedResult += '&utm_content=' + nebulaParameterString(utm_content);
 			}
 
 			if ( utm_term != '' ) {
-				generatedResult += '&utm_term=' + encodeURIComponent(utm_term);
+				generatedResult += '&utm_term=' + nebulaParameterString(utm_term);
 			}
 
 			jQuery('#generatedoutput').removeClass('danger').val(generatedResult);
@@ -118,11 +117,34 @@
 			ga('send', 'event', 'Campaign URL Generated', generatedResult);
 			nv('send', {'campaign_url_generated': generatedResult});
 
-			jQuery('.ex-source').html(utm_source);
-			jQuery('.ex-medium').text(utm_medium);
-			jQuery('.ex-name').text(utm_campaign);
+			if ( jQuery('#nebularecs').prop('checked') ){
+				jQuery('.ex-source').html(utm_source.toLowerCase().replace(/eblast|e-blast|e-mail/, 'email'));
+				jQuery('.ex-medium').text(utm_medium.toLowerCase().replace(/eblast|e-blast|e-mail/, 'email'));
+				jQuery('.ex-name').text(utm_campaign.toLowerCase().replace(/eblast|e-blast|e-mail/, 'email'));
+			} else {
+				jQuery('.ex-source').html(utm_source);
+				jQuery('.ex-medium').text(utm_medium);
+				jQuery('.ex-name').text(utm_campaign);
+			}
+
 			jQuery('.example-report').removeClass('hidden');
 		}
+	}
+
+	function nebulaParameterString(string){
+		if ( jQuery('#nebularecs').prop('checked') ){
+			newString = string.toLowerCase();
+		} else {
+			newString = string;
+		}
+
+		newString = encodeURIComponent(newString);
+
+		if ( jQuery('#nebularecs').prop('checked') ){
+			newString = newString.replace(/eblast|e-blast|e-mail/, 'email').replace(/%2B|%20/, '+');
+		}
+
+		return newString;
 	}
 
 	function validateURL(url) {
@@ -156,6 +178,16 @@
 	<div class="col-md-6">
 		<form>
 			<ul>
+				<li class="form-check">
+					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Nebula Recommendations</span>
+					<span>
+						<label class="form-check-label">
+							<input id="nebularecs" class="form-check-input" type="checkbox" value="" checked> Use Nebula recommendations
+						</label>
+					</span>
+					<p class="inputhelp-description">Leaving this checked will apply Nebula recommendations (like all lowercase) for more consistent campaign URLs.</p>
+				</li>
+
 				<li class="form-group">
 					<span class="builder-form-heading"><a class="inputhelp" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a> Destination URL<span class="required">*</span></span>
 					<span>

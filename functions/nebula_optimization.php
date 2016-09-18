@@ -109,8 +109,8 @@ function nebula_remove_jquery_migrate($scripts){
 }
 
 //Override needing the Tether library for Bootstrap. If Tether is needed, it is dynamically loaded via main.js.
-add_action('wp_enqueue_scripts', 'test_tether');
-function test_tether(){
+add_action('wp_enqueue_scripts', 'nebula_override_bootstrap_tether');
+function nebula_override_bootstrap_tether(){
 	echo '<script>window.Tether = function(){}</script>'; //Must be a function to bypass Bootstrap check.
 }
 

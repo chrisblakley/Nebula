@@ -172,25 +172,28 @@
 				$usertype = '';
 				if ( is_user_logged_in() ){
 					$user_info = get_userdata(get_current_user_id());
-					switch ( $user_info->roles[0] ){
-					    case 'administrator':
-					    	$usertype = 'Administrator';
-					    	break;
-					    case 'editor':
-					    	$usertype = 'Editor';
-					    	break;
-					    case 'author':
-					    	$usertype = 'Author';
-					    	break;
-					    case 'contributor':
-					    	$usertype = 'Contributor';
-					    	break;
-					    case 'subscriber':
-					    	$usertype = 'Subscriber';
-					    	break;
-					    default:
-					    	$usertype = ucwords($user_info->roles[0]);
-					    	break;
+					$usertype = 'Unknown';
+					if ( !empty($user_info->roles) ){
+						switch ( $user_info->roles[0] ){
+						    case 'administrator':
+						    	$usertype = 'Administrator';
+						    	break;
+						    case 'editor':
+						    	$usertype = 'Editor';
+						    	break;
+						    case 'author':
+						    	$usertype = 'Author';
+						    	break;
+						    case 'contributor':
+						    	$usertype = 'Contributor';
+						    	break;
+						    case 'subscriber':
+						    	$usertype = 'Subscriber';
+						    	break;
+						    default:
+						    	$usertype = ucwords($user_info->roles[0]);
+						    	break;
+						}
 					}
 				}
 
