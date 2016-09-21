@@ -705,6 +705,16 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 
 	//Avoid ternary operators to prevent overwriting existing data (like manual DB entries)
 
+	//Check for nv_ query parameters
+	if ( !empty($_SERVER['QUERY_STRING']) ){
+		parse_str($_SERVER['QUERY_STRING'], $query_parameters);
+		foreach ( $query_parameters as $key => $value ){
+			if ( strpos($key, 'nv_') === 0 ){
+				$defaults[sanitize_key(substr($key, 3))] = sanitize_text_field($value);
+			}
+		}
+	}
+
 	//Logged-in User Data
 	if ( is_user_logged_in() ){
 		$defaults['wp_user_id'] = get_current_user_id();
@@ -852,12 +862,12 @@ function nebula_calculate_visitor_score($id=null){
 }
 
 //Remove expired visitors from the DB
-//This is only ran when Nebula Options are saved, and when new visitors are inserted.
+//This is only ran when Nebula Options are saved, and when *new* visitors are inserted.
 function nebula_remove_expired_visitors(){
 	if ( nebula_option('visitors_db') ){
 		global $wpdb;
 		$expiration_length = time()-2592000; //30 days
-		$wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE last_modified_date = %d AND known = %d AND score < %d", $expiration_length, 0, 100));
+		$wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE last_modified_date < %d AND known = %d AND score < %d", $expiration_length, 0, 100));
 	}
 }
 
@@ -929,7 +939,6 @@ function nebula_prep_data_for_hubspot_crm_delivery($data){
 			'phone_number' => 'phone',
 		);
 
-		$nebula_debug_start_time = microtime(true);
 		foreach ( $data as $column => $value ){
 			//Skip empty column values
 			if ( empty($value) ){

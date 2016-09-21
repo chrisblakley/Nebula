@@ -750,98 +750,95 @@ function ecommerceTracking(){
 
 //Detect scroll depth for engagement and more accurate bounce rate
 function scrollDepth(){
-	var headerHeight = ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250;
-	var entryContent = jQuery('.entry-content');
-
-	//Flags
-	var timer = 0;
-	var maxScroll = -1;
-	var isScroller = false;
-	var beganReading = false;
-	var endContent = false;
-	var endPage = false;
-
-	//Time calculations
-	var startTime = new Date();
-	var totalTime = 0;
+	scrollInfo = {
+		headerHeight = ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250,
+		entryContent = jQuery('.entry-content'),
+		timer = 0,
+		startTime = new Date(),
+		totalTime = 0,
+		maxScroll = -1,
+		isScroller = false,
+		beganReading = false,
+		endContent = false,
+		endPage = false
+	}
 
 	nebula.dom.window.on('scroll', function(){
-		if ( !isScroller ){
-			currentTime = new Date();
-			initialScroll = currentTime.getTime();
-			isScroller = true;
+		if ( !scrollInfo.isScroller ){
+			scrollInfo.currentTime = new Date();
+			scrollInfo.initialScroll = currentTime.getTime();
+			scrollInfo.isScroller = true;
 		}
 
 		//Calculate max scroll percent
-		scrollPercent = Math.round((nebula.dom.window.scrollTop()/(nebula.dom.document.height()-nebula.dom.window.height()))*100);
-		if ( scrollPercent > maxScroll ){
-			maxScroll = scrollPercent;
-			ga('set', gaCustomDimensions['maxScroll'], maxScroll + '%'); //Don't send an event here- this is only needed when another event is triggered.
+		scrollInfo.scrollPercent = Math.round((nebula.dom.window.scrollTop()/(nebula.dom.document.height()-nebula.dom.window.height()))*100);
+		if ( scrollInfo.scrollPercent > scrollInfo.maxScroll ){
+			scrollInfo.maxScroll = scrollInfo.scrollPercent;
+			ga('set', gaCustomDimensions['maxScroll'], scrollInfo.maxScroll + '%'); //Don't send an event here- this is only needed when another event is triggered.
 		}
 
 		debounce(function(){
-			scrollLocation();
+			scrollLocation(scrollInfo);
 		}, 100, 'scroll depth');
 	});
+}
 
-	//Check the scroll location
-	function scrollLocation(){
-		var viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
-		var documentHeight = nebula.dom.document.height();
-		var beganReading = false;
+//Check the scroll location (Called from scrollDepth() function)
+function scrollLocation(scrollInfo){
+	scrollInfo.viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
+	scrollInfo.documentHeight = nebula.dom.document.height();
 
-		//When the user scrolls past the header
-		var becomesReaderAt = ( entryContent.length )? entryContent.offset().top : headerHeight;
-		if ( viewportBottom >= becomesReaderAt && !beganReading ){
-			currentTime = new Date();
-			readStartTime = currentTime.getTime();
-			beganReading = true;
-		}
+	//When the user scrolls past the header
+	scrollInfo.becomesReaderAt = ( scrollInfo.entryContent.length )? scrollInfo.entryContent.offset().top : scrollInfo.headerHeight;
+	if ( scrollInfo.viewportBottom >= scrollInfo.becomesReaderAt && !scrollInfo.beganReading ){
+		scrollInfo.currentTime = new Date();
+		scrollInfo.readStartTime = scrollInfo.currentTime.getTime();
+		scrollInfo.beganReading = true;
+	}
 
-		//When the reader reaches the end of the entry-content
-		if ( entryContent.length ){
-			if ( readStartTime && viewportBottom >= entryContent.offset().top+entryContent.innerHeight() && !endContent ){
-				currentTime = new Date();
-				readEndTime = currentTime.getTime();
-				readTime = (readEndTime-readStartTime)/1000;
+	//When the reader reaches the end of the entry-content
+	if ( scrollInfo.entryContent.length ){
+		if ( scrollInfo.readStartTime && scrollInfo.viewportBottom >= scrollInfo.entryContent.offset().top+scrollInfo.entryContent.innerHeight() && !scrollInfo.endContent ){
+			scrollInfo.currentTime = new Date();
+			scrollInfo.readEndTime = scrollInfo.currentTime.getTime();
+			scrollInfo.readTime = (scrollInfo.readEndTime-scrollInfo.readStartTime)/1000;
 
-				if ( Math.round(readTime) > 0 ){
-					var nonInteractionScroll = 1;
-					if ( readTime < 8 ){
-						var readerType = 'Previewer';
-					} else if ( readTime < 30 ){
-						var readerType = 'Scanner';
-					} else {
-						var readerType = 'Reader';
-						nonInteractionScroll = 0;
-						ga('set', gaCustomMetrics['engagedReaders'], 1);
-						nv('send', {'engaged_reader': '1'});
-						nebula.dom.document.trigger('nebula_engaged_reader');
-					}
-
-					ga('set', gaCustomDimensions['scrollDepth'], readerType);
-					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-					ga('send', 'event', 'Scroll Depth', 'Entry Content', readerType + ': ' + Math.round(readTime) + ' seconds (since reading began)', {'nonInteraction': nonInteractionScroll}); //If the user has read the page, it is not a bounce.
-					ga('send', 'timing', 'Scroll Depth', 'Entry Content', Math.round(readTime*1000), readerType + ': Scrolled from top of entry-content to bottom');
+			if ( Math.round(scrollInfo.readTime) > 0 ){
+				scrollInfo.nonInteractionScroll = 1;
+				if ( scrollInfo.readTime < 8 ){
+					scrollInfo.readerType = 'Previewer';
+				} else if ( scrollInfo.readTime < 30 ){
+					scrollInfo.readerType = 'Scanner';
+				} else {
+					scrollInfo.readerType = 'Reader';
+					scrollInfo.nonInteractionScroll = 0;
+					ga('set', gaCustomMetrics['engagedReaders'], 1);
+					nv('send', {'engaged_reader': '1'});
+					nebula.dom.document.trigger('nebula_engaged_reader');
 				}
 
-				endContent = true;
-			}
-		}
-
-		//If user has hit the bottom of the page
-		if ( initialScroll && viewportBottom >= documentHeight && !endPage ){
-			currentTime = new Date();
-			endTime = currentTime.getTime();
-			totalTime = (endTime-initialScroll)/1000;
-			if ( Math.round(totalTime) > 0 ){
+				ga('set', gaCustomDimensions['scrollDepth'], scrollInfo.readerType);
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(totalTime) + ' seconds (since pageload)', {'nonInteraction': 1});
-				ga('send', 'timing', 'Scroll Depth', 'Entire Page', Math.round(totalTime*1000), 'Scrolled from top of page to bottom');
+				ga('send', 'event', 'Scroll Depth', 'Entry Content', scrollInfo.readerType + ': ' + Math.round(scrollInfo.readTime) + ' seconds (since reading began)', {'nonInteraction': scrollInfo.nonInteractionScroll}); //If the user has read the page, it is not a bounce.
+				ga('send', 'timing', 'Scroll Depth', 'Entry Content', Math.round(scrollInfo.readTime*1000), scrollInfo.readerType + ': Scrolled from top of entry-content to bottom');
 			}
 
-			endPage = true;
+			scrollInfo.endContent = true;
 		}
+	}
+
+	//If user has hit the bottom of the page
+	if ( scrollInfo.initialScroll && scrollInfo.viewportBottom >= scrollInfo.documentHeight && !scrollInfo.endPage ){
+		scrollInfo.currentTime = new Date();
+		scrollInfo.endTime = scrollInfo.currentTime.getTime();
+		scrollInfo.totalTime = (scrollInfo.endTime-scrollInfo.initialScroll)/1000;
+		if ( Math.round(scrollInfo.totalTime) > 0 ){
+			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+			ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime) + ' seconds (since pageload)', {'nonInteraction': 1});
+			ga('send', 'timing', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime*1000), 'Scrolled from top of page to bottom');
+		}
+
+		scrollInfo.endPage = true;
 	}
 }
 
