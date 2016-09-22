@@ -766,7 +766,7 @@ function scrollDepth(){
 	nebula.dom.window.on('scroll', function(){
 		if ( !scrollInfo.isScroller ){
 			scrollInfo.currentTime = new Date();
-			scrollInfo.initialScroll = currentTime.getTime();
+			scrollInfo.initialScroll = scrollInfo.currentTime.getTime();
 			scrollInfo.isScroller = true;
 		}
 
@@ -1124,7 +1124,6 @@ function autocompleteSearch(){
 }
 
 //Advanced Search
-//@TODO "Nebula" 0: Advanced Search functionality is still in development.
 function advancedSearchTriggers(){
 	var advancedSearchForm = jQuery('#advanced-search-form');
 	haveAllEvents = 0;
@@ -1896,7 +1895,6 @@ function conversionTracker(conversionpage){
  ===========================*/
 
 //Conditional JS Library Loading
-//@TODO "Nebula" 0: Dynamically store these library URLs in the nebula.site.resources object
 function conditionalJSLoading(){
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').length ){
