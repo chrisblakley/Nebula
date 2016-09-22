@@ -751,16 +751,16 @@ function ecommerceTracking(){
 //Detect scroll depth for engagement and more accurate bounce rate
 function scrollDepth(){
 	scrollInfo = {
-		headerHeight = ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250,
-		entryContent = jQuery('.entry-content'),
-		timer = 0,
-		startTime = new Date(),
-		totalTime = 0,
-		maxScroll = -1,
-		isScroller = false,
-		beganReading = false,
-		endContent = false,
-		endPage = false
+		headerHeight: ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250,
+		entryContent: jQuery('.entry-content'),
+		timer: 0,
+		startTime: new Date(),
+		totalTime: 0,
+		maxScroll: -1,
+		isScroller: false,
+		beganReading: false,
+		endContent: false,
+		endPage: false
 	}
 
 	nebula.dom.window.on('scroll', function(){
