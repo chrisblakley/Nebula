@@ -834,7 +834,7 @@ function scrollLocation(scrollInfo){
 		scrollInfo.totalTime = (scrollInfo.endTime-scrollInfo.initialScroll)/1000;
 		if ( Math.round(scrollInfo.totalTime) > 0 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime) + ' seconds (since pageload)', {'nonInteraction': 1});
+			ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime) + ' seconds (since initial scroll)', {'nonInteraction': 1});
 			ga('send', 'timing', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime*1000), 'Scrolled from top of page to bottom');
 		}
 

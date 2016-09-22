@@ -2130,7 +2130,6 @@ function nebula_weather($zipcode=null, $data=''){
 			WP_Filesystem();
 			global $wp_filesystem;
 			$weather_json = $wp_filesystem->get_contents('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
-
 			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
 		}
 		$weather_json = json_decode($weather_json);

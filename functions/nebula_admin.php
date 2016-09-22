@@ -104,11 +104,24 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			));
 		}
 
-		/* @TODO "Nebula" 0: Other information to consider under the View/Edit node:
-			- Status (Published, Draft, etc)
-			- Visibility (Public)
-			- Revisions (count)
-		*/
+		//Post status (Publish, Draft, Private, etc)
+		$wp_admin_bar->add_node(array(
+			'parent' => $node_id,
+			'id' => 'nebula-status',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-map-pin" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Status: ' . ucwords(get_post_status()),
+			'href' => get_edit_post_link(),
+			'meta' => array('target' => '_blank')
+		));
+
+		//Count revisions
+		//@TODO "Nebula" 0: This changes... sometimes it's a 1 and sometimes it's a 0... Maybe just remove this?
+		$wp_admin_bar->add_node(array(
+			'parent' => $node_id,
+			'id' => 'nebula-revisions',
+			'title' => '<i class="nebula-admin-fa fa fa-fw fa-history" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Revisions: ' . count(wp_get_post_revisions()),
+			'href' => get_edit_post_link(),
+			'meta' => array('target' => '_blank')
+		));
 
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula',
@@ -117,14 +130,26 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 
-		$scss_last_processed = ( nebula_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula_data('scss_last_processed')) : 'Never';
-		$wp_admin_bar->add_node(array(
-			'parent' => 'nebula',
-			'id' => 'nebula-options-scss',
-			'title' => '<i class="nebula-admin-fa fa fa-fw fa-paint-brush" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Re-process All SCSS Files',
-			'href' => esc_url(add_query_arg('sass', 'true')),
-			'meta' => array('title' => 'Last: ' . $scss_last_processed)
-		));
+		if ( nebula_option('scss') ){
+			$scss_last_processed = ( nebula_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula_data('scss_last_processed')) : 'Never';
+			$wp_admin_bar->add_node(array(
+				'parent' => 'nebula',
+				'id' => 'nebula-options-scss',
+				'title' => '<i class="nebula-admin-fa fa fa-fw fa-paint-brush" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Re-process All SCSS Files',
+				'href' => esc_url(add_query_arg('sass', 'true')),
+				'meta' => array('title' => 'Last: ' . $scss_last_processed)
+			));
+		}
+
+		if ( nebula_option('visitors_db') ){
+			$wp_admin_bar->add_node(array(
+				'parent' => 'nebula',
+				'id' => 'nebula-visitor-db',
+				'title' => '<i class="nebula-admin-fa fa fa-fw fa-database" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula Visitors DB',
+				'href' => get_admin_url() . 'themes.php?page=nebula_visitors_data',
+				'meta' => array('target' => '_blank')
+			));
+		}
 
 		$wp_admin_bar->add_node(array(
 			'parent' => 'nebula',

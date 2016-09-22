@@ -707,10 +707,12 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 
 	//Check for nv_ query parameters
 	if ( !empty($_SERVER['QUERY_STRING']) ){
-		parse_str($_SERVER['QUERY_STRING'], $query_parameters);
-		foreach ( $query_parameters as $key => $value ){
+		foreach ( parse_str($_SERVER['QUERY_STRING']) as $key => $value ){
 			if ( strpos($key, 'nv_') === 0 ){
-				$defaults[sanitize_key(substr($key, 3))] = sanitize_text_field($value);
+				if ( empty($value) ){
+					$value = 'true';
+				}
+				$defaults[sanitize_key(substr($key, 3))] = sanitize_text_field(str_replace('+', ' ', urldecode($value)));
 			}
 		}
 	}
