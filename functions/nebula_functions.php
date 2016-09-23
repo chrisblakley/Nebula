@@ -531,6 +531,7 @@ function nebula_post_author($icon=true, $linked=true, $force=false){
 
 //Post type meta
 function nebula_post_type($icon=true){
+	$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
 	if ( $icon ){
 		global $wp_post_types;
 		$post_type = get_post_type();
@@ -539,7 +540,7 @@ function nebula_post_type($icon=true){
 			$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
 		} elseif ( $post_type == 'page' ){
 			$post_icon_img = '<i class="fa fa-file-text"></i>';
-		} else { //@TODO "Nebula" 0: Test that this works with CPTs:
+		} else {
 			$post_icon = $wp_post_types[$post_type]->menu_icon;
 			if ( !empty($post_icon) ){
 				if ( strpos('dashicons-', $post_icon) >= 0 ){
@@ -1508,7 +1509,7 @@ function nebula_advanced_search(){
 			'modified' => strtotime($post->post_modified),
 			'author' => $author,
 			'title' => $post->post_title,
-			'description' => strip_tags($post->post_content), //@todo: not correct!
+			'description' => strip_tags($post->post_content), //@TODO "Nebula" 0: not correct!
 			'url' => get_the_permalink($post->ID),
 			'categories' => $these_categories,
 			'tags' => $these_tags,

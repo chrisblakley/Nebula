@@ -113,16 +113,6 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 
-		//Count revisions
-		//@TODO "Nebula" 0: This changes... sometimes it's a 1 and sometimes it's a 0... Maybe just remove this?
-		$wp_admin_bar->add_node(array(
-			'parent' => $node_id,
-			'id' => 'nebula-revisions',
-			'title' => '<i class="nebula-admin-fa fa fa-fw fa-history" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Revisions: ' . count(wp_get_post_revisions()),
-			'href' => get_edit_post_link(),
-			'meta' => array('target' => '_blank')
-		));
-
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula',
@@ -741,7 +731,6 @@ function dashboard_current_user(){
 				$job_title = $job_title . ' at ';
 			}
 		}
-
 		if ( !empty($job_title) || !empty($company) ){
 			echo '<li><i class="fa fa-building fa-fw"></i> ' . $job_title . $company . '</li>';
 		}
@@ -762,15 +751,19 @@ function dashboard_current_user(){
 		echo '<li><i class="fa fa-info-circle fa-fw"></i> ID: <strong>' . $user_info->ID . '</strong></li>';
 
 		//Role
-		switch ($user_info->roles[0]){
-		    case 'administrator': $fa_role = 'fa-key'; break;
-		    case 'editor': $fa_role = 'fa-scissors'; break;
-		    case 'author': $fa_role = 'fa-pencil-square'; break;
-		    case 'contributor': $fa_role = 'fa-send'; break;
-		    case 'subscriber': $fa_role = 'fa-ticket'; break;
-		    default: $fa_role = 'fa-user'; break;
+		$fa_role = 'fa-user';
+		$super_role = 'Unknown';
+		if ( !empty($user_info->roles) ){
+			switch ( $user_info->roles[0] ){
+			    case 'administrator': $fa_role = 'fa-key'; break;
+			    case 'editor': $fa_role = 'fa-scissors'; break;
+			    case 'author': $fa_role = 'fa-pencil-square'; break;
+			    case 'contributor': $fa_role = 'fa-send'; break;
+			    case 'subscriber': $fa_role = 'fa-ticket'; break;
+			    default: $fa_role = 'fa-user'; break;
+			}
+			$super_role = ( is_multisite() && is_super_admin() )? 'Super Admin' : $user_info->roles[0];
 		}
-		$super_role = ( is_multisite() && is_super_admin() )? 'Super Admin' : $user_info->roles[0];
 		echo '<li><i class="fa ' . $fa_role . ' fa-fw"></i> Role: <strong class="admin-user-info admin-user-role">' . $super_role . '</strong></li>';
 
 		//Developer
@@ -784,7 +777,8 @@ function dashboard_current_user(){
 		if ( nebula_option('device_detection') ){
 			//Device
 			if ( nebula_is_desktop() ){
-				if ( str_replace('%', '', nebula_get_visitor_data('battery_percentage')) < 100 || nebula_get_visitor_data('battery_mode') === 'Battery' ){
+				$battery_percentage = nebula_get_visitor_data('battery_percentage');
+				if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula_get_visitor_data('battery_mode') === 'Battery' ){
 					echo '<li><i class="fa fa-laptop fa-fw"></i> Device: <strong>Laptop</strong></li>';
 				} else {
 					echo '<li><i class="fa fa-desktop fa-fw"></i> Device: <strong>Desktop</strong></li>';

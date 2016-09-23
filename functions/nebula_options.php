@@ -178,7 +178,7 @@ function nebula_default_options(){
 		'admin_notices' => 'enabled',
 		'author_bios' => 'disabled',
 		'comments' => 'disabled',
-		'device_detection' => 'enabled',
+		'device_detection' => 'disabled',
 		'ip_geolocation' => 'disabled',
 		'adblock_detect' => 'disabled',
 		'domain_blacklisting' => 'enabled',
@@ -199,6 +199,7 @@ function nebula_default_options(){
 		'ga_wpuserid' => 'disabled',
 		'ga_displayfeatures' => 'disabled',
 		'ga_linkid' => 'enabled',
+		'adwords_remarketing_conversion_id' => '',
 		'hostnames' => '',
 		'google_search_console_verification' => '',
 		'facebook_custom_audience_pixel_id' => '',
@@ -293,7 +294,7 @@ function nebula_options_page(){
 ?>
 	<script>
 		jQuery(document).ready(function(){
-			jQuery('a.help').on('click', function(){
+			jQuery('a.help').on('click tap touch', function(){
 				jQuery(this).toggleClass('active').parents('tr').find('p.helper').animate({
 		        	height: 'toggle',
 					opacity: 'toggle'
@@ -399,7 +400,7 @@ function nebula_options_page(){
 			}
 		?>
 
-		<?php if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ): ?>
+		<?php if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true' ): ?>
 			<div class="updated notice is-dismissible">
 				<p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
 				<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
@@ -634,6 +635,8 @@ function nebula_options_page(){
 			<h2 class="mobiletitle">Functions</h2>
 			<hr class="mobiletitle"/>
 
+			<?php $nebula_options_defaults = nebula_default_options(); ?>
+
 			<table class="form-table dependent functions" style="display: none;">
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
@@ -644,11 +647,11 @@ function nebula_options_page(){
 		        	<th scope="row">Prototype Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select id="prototypemodeselect" name="nebula_options[prototype_mode]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['prototype_mode']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['prototype_mode']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['prototype_mode']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>When prototyping, enable this setting. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (<em>Note: If using this setting, you may need to select that same theme for the admin-ajax option too!</em>). <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>When prototyping, enable this setting. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (<em>Note: If using this setting, you may need to select that same theme for the admin-ajax option too!</em>). <em>(Default: <?php echo ucwords($nebula_options_defaults['prototype_mode']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -701,11 +704,11 @@ function nebula_options_page(){
 		        	<th scope="row">Author Bios&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[author_bios]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['author_bios']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['author_bios']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['author_bios']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Allow authors to have bios that show their info (and post archives). This also enables searching by author, and displaying author names on posts. If disabled, the author page attempts to redirect to an About Us page. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Allow authors to have bios that show their info (and post archives). This also enables searching by author, and displaying author names on posts. If disabled, the author page attempts to redirect to an About Us page. <em>(Default: <?php echo ucwords($nebula_options_defaults['author_bios']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -713,11 +716,11 @@ function nebula_options_page(){
 		        	<th scope="row">Comments&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[comments]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['comments']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['comments']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['comments']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Ability to force disable comments. If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles). <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Ability to force disable comments. If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles). <em>(Default: <?php echo ucwords($nebula_options_defaults['comments']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -725,11 +728,11 @@ function nebula_options_page(){
 		        	<th scope="row">Device Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[device_detection]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['device_detection']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['device_detection']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['device_detection']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Detect information about the user's device and browser. Useful for cross-browser support. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Detect information about the user's device and browser. Useful for cross-browser support. <em>(Default: <?php echo ucwords($nebula_options_defaults['device_detection']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -737,11 +740,11 @@ function nebula_options_page(){
 		        	<th scope="row">IP Geolocation&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[ip_geolocation]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['ip_geolocation']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['ip_geolocation']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['ip_geolocation']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Lookup the country, region, and city of the user based on their IP address. This can be used for content as well as analytics (including Visitors Database) <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Lookup the country, region, and city of the user based on their IP address. This can be used for content as well as analytics (including Visitors Database) <em>(Default: <?php echo ucwords($nebula_options_defaults['ip_geolocation']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -749,11 +752,11 @@ function nebula_options_page(){
 		        	<th scope="row">Domain Blacklisting&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[domain_blacklisting]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['domain_blacklisting']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['domain_blacklisting']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['domain_blacklisting']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Block traffic from known spambots and other illegitimate domains. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Block traffic from known spambots and other illegitimate domains. <em>(Default: <?php echo ucwords($nebula_options_defaults['domain_blacklisting']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -761,11 +764,11 @@ function nebula_options_page(){
 		        	<th scope="row">Ad Block Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[adblock_detect]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['adblock_detect']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['adblock_detect']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['adblock_detect']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Detect if visitors are using ad blocking software. To track in Google Analytics, add a dimension index under the "Analytics" tab. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Detect if visitors are using ad blocking software. To track in Google Analytics, add a dimension index under the "Analytics" tab. <em>(Default: <?php echo ucwords($nebula_options_defaults['adblock_detect']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -773,11 +776,11 @@ function nebula_options_page(){
 		        	<th scope="row">Console CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[console_css]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['console_css']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['console_css']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['console_css']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Adds CSS to the browser console. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Adds CSS to the browser console. <em>(Default: <?php echo ucwords($nebula_options_defaults['console_css']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -785,11 +788,11 @@ function nebula_options_page(){
 		        	<th scope="row">Weather Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[weather]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['weather']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['weather']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['weather']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Lookup weather conditions for locations. Can be used for changing content as well as analytics. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Lookup weather conditions for locations. Can be used for changing content as well as analytics. <em>(Default: <?php echo ucwords($nebula_options_defaults['weather']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -804,11 +807,11 @@ function nebula_options_page(){
 		        	<th scope="row">SCSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[scss]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['scss']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['scss']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['scss']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Enable the bundled SCSS compiler. Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong>. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Enable the bundled SCSS compiler. Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong>. <em>(Default: <?php echo ucwords($nebula_options_defaults['scss']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -816,11 +819,11 @@ function nebula_options_page(){
 		        	<th scope="row">Minify CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[minify_css]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['minify_css']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['minify_css']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['minify_css']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Minify the compiled CSS. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Minify the compiled CSS. <em>(Default: <?php echo ucwords($nebula_options_defaults['minify_css']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -828,11 +831,11 @@ function nebula_options_page(){
 		        	<th scope="row">Developer Stylesheets&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[dev_stylesheets]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['dev_stylesheets']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['dev_stylesheets']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['dev_stylesheets']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Combines CSS files within /stylesheets/css/dev/ into /stylesheets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Combines CSS files within /stylesheets/css/dev/ into /stylesheets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint. <em>(Default: <?php echo ucwords($nebula_options_defaults['dev_stylesheets']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -848,11 +851,11 @@ function nebula_options_page(){
 		        	<th scope="row">Nebula Admin Notices&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[admin_notices]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['admin_notices']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['admin_notices']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['admin_notices']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Show Nebula-specific admin notices (Note: This does not toggle WordPress core, or plugin, admin notices). <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Show Nebula-specific admin notices (Note: This does not toggle WordPress core, or plugin, admin notices). <em>(Default: <?php echo ucwords($nebula_options_defaults['admin_notices']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -861,11 +864,11 @@ function nebula_options_page(){
 			        	<th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 						<td>
 							<select name="nebula_options[theme_update_notification]">
-								<option disabled>Default: Enabled</option>
+								<option disabled>Default: <?php echo ucwords($nebula_options_defaults['theme_update_notification']); ?></option>
 								<option value="enabled" <?php selected('enabled', $nebula_options['theme_update_notification']); ?>>Enabled</option>
 								<option value="disabled" <?php selected('disabled', $nebula_options['theme_update_notification']); ?>>Disabled</option>
 							</select>
-							<p class="helper"><small>Enable easy updates to the Nebula theme. <strong>Child theme must be activated to work!</strong> <em>(Default: Enabled)</em></small></p>
+							<p class="helper"><small>Enable easy updates to the Nebula theme. <strong>Child theme must be activated to work!</strong> <em>(Default: <?php echo ucwords($nebula_options_defaults['theme_update_notification']); ?>)</em></small></p>
 						</td>
 			        </tr>
 			    <?php else: ?>
@@ -882,11 +885,11 @@ function nebula_options_page(){
 		        	<th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[wp_core_updates_notify]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['wp_core_updates_notify']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['wp_core_updates_notify']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['wp_core_updates_notify']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Control whether or not the Wordpress Core update notifications show up on the admin pages. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Control whether or not the Wordpress Core update notifications show up on the admin pages. <em>(Default: <?php echo ucwords($nebula_options_defaults['wp_core_updates_notify']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -894,11 +897,11 @@ function nebula_options_page(){
 		        	<th scope="row">Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[plugin_update_warning]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['plugin_update_warning']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['plugin_update_warning']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['plugin_update_warning']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Control whether or not the plugin update warning appears on admin pages. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Control whether or not the plugin update warning appears on admin pages. <em>(Default: <?php echo ucwords($nebula_options_defaults['plugin_update_warning']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -917,11 +920,11 @@ function nebula_options_page(){
 		        	<th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[admin_bar]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['admin_bar']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['admin_bar']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['admin_bar']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <strong>Note:</strong> When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <strong>Note:</strong> When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users. <em>(Default: <?php echo ucwords($nebula_options_defaults['admin_bar']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -929,11 +932,11 @@ function nebula_options_page(){
 		        	<th scope="row">Visitors Database&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[visitors_db]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['visitors_db']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['visitors_db']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['visitors_db']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Adds a table to the database to store visitor usage information. This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank">full marketing automation service</a>. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Adds a table to the database to store visitor usage information. This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank">full marketing automation service</a>. <em>(Default: <?php echo ucwords($nebula_options_defaults['visitors_db']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -941,11 +944,11 @@ function nebula_options_page(){
 		        	<th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[unnecessary_metaboxes]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['unnecessary_metaboxes']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['unnecessary_metaboxes']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['unnecessary_metaboxes']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Remove metaboxes on the Dashboard that are not necessary for most users. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Remove metaboxes on the Dashboard that are not necessary for most users. <em>(Default: <?php echo ucwords($nebula_options_defaults['unnecessary_metaboxes']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -953,12 +956,12 @@ function nebula_options_page(){
 		        	<th scope="row">Nebula Resources Directory&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[resources_directory]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['resources_directory']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['resources_directory']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['resources_directory']); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Controls whether the resources directory is included (Resources directories are found in <strong><?php echo get_stylesheet_directory_uri(); ?>/resources</strong> and <strong><?php echo get_template_directory_uri(); ?>/Nebula-Child/resources</strong>).<br/>
-						Note: If re-enabled, the directory will not re-appear until Nebula-master is updated or the <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/resources" target="_blank">/resources</a> directory is manually uploaded. <em>(Default: Enabled)</em></small></p>
+						Note: If re-enabled, the directory will not re-appear until Nebula-master is updated or the <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/resources" target="_blank">/resources</a> directory is manually uploaded. <em>(Default: <?php echo ucwords($nebula_options_defaults['resources_directory']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -991,11 +994,11 @@ function nebula_options_page(){
 		        	<th scope="row">Use WordPress User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[ga_wpuserid]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['ga_wpuserid']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['ga_wpuserid']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['ga_wpuserid']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Use the WordPress User ID as the Google Analytics User ID. This allows more accurate user reporting. <strong>Note:</strong> Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Use the WordPress User ID as the Google Analytics User ID. This allows more accurate user reporting. <strong>Note:</strong> Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public. <em>(Default: <?php echo ucwords($nebula_options_defaults['ga_wpuserid']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -1003,11 +1006,11 @@ function nebula_options_page(){
 		        	<th scope="row">Display Features&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[ga_displayfeatures]">
-							<option disabled>Default: Disabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['ga_displayfeatures']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['ga_displayfeatures']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['ga_displayfeatures']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to enable Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to enable Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.. <em>(Default: <?php echo ucwords($nebula_options_defaults['ga_displayfeatures']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
@@ -1015,11 +1018,19 @@ function nebula_options_page(){
 		        	<th scope="row">Enhanced Link Attribution (Link ID)&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<select name="nebula_options[ga_linkid]">
-							<option disabled>Default: Enabled</option>
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['ga_linkid']); ?></option>
 							<option value="enabled" <?php selected('enabled', $nebula_options['ga_linkid']); ?>>Enabled</option>
 							<option value="disabled" <?php selected('disabled', $nebula_options['ga_linkid']); ?>>Disabled</option>
 						</select>
-						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin to improve the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. <em>(Default: Enabled)</em></small></p>
+						<p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin to improve the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. <em>(Default: <?php echo ucwords($nebula_options_defaults['ga_linkid']); ?>)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr valign="top">
+		        	<th scope="row">AdWords Remarketing Conversion ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_options[adwords_remarketing_conversion_id]" value="<?php echo $nebula_options['adwords_remarketing_conversion_id']; ?>" placeholder="000000000" />
+						<p class="helper"><small>This conversion ID is used to enable the Google AdWords remarketing tag.</small></p>
 					</td>
 		        </tr>
 
@@ -1046,7 +1057,7 @@ function nebula_options_page(){
 		        	<th scope="row">Facebook Custom Audience Pixel ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input type="text" name="nebula_options[facebook_custom_audience_pixel_id]" value="<?php echo $nebula_options['facebook_custom_audience_pixel_id']; ?>" placeholder="000000000000000" style="width: 295px;"/><br />
-						<p class="helper"><small>Toggle the <a href="https://developers.facebook.com/docs/facebook-pixel" target="_blank">Facebook Custom Audience Pixel</a> tracking. <em>(Default: Disabled)</em></small></p>
+						<p class="helper"><small>Toggle the <a href="https://developers.facebook.com/docs/facebook-pixel" target="_blank">Facebook Custom Audience Pixel</a> tracking.</small></p>
 					</td>
 		        </tr>
 

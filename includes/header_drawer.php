@@ -20,7 +20,7 @@
 	</div><!--/container-->
 <?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) ): ?>
 	<?php global $error_404_exact_match; ?>
-	<div id="header-drawer" class="container-fluid suggestedpage" style="display: <?php echo ( !empty($error_404_exact_match) )? 'block' : 'none' ?>">
+	<div id="header-drawer" class="container-fluid suggestedpage" style="display: <?php echo ( !empty($error_404_exact_match) )? 'block' : 'none'; ?>">
 		<div class="row">
 			<div class="col-md-12">
 				<h3>Did you mean?</h3>

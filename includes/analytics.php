@@ -299,7 +299,7 @@
 	</script>
 	<noscript>
 		<img src="<?php echo ga_UTM_gif(); ?>" width="1" height="1" style="position: absolute; opacity: 0; visibility: hidden;" /><?php //Track pageviews of users who disable JavaScript. ?>
-		<iframe class="hidden" src="<?php echo home_url(); ?>/?nonce=<?php global $nebula; echo $nebula['site']['ajax']['nonce']; ?>&js=false&id=<?php echo $post->ID; ?>" width="0" height="0" style="display: none; position: absolute;"></iframe><?php //Send "JavaScript Disabled" event. ?>
+		<iframe class="hidden" src="<?php echo home_url(); ?>/?nonce=<?php global $nebula; echo $nebula['site']['ajax']['nonce']; ?>&js=false&id=<?php echo $post->ID; ?>" width="0" height="0" style="display: none; position: absolute;"></iframe><?php //Sends "JavaScript Disabled" event. ?>
 	</noscript>
 <?php else: //If Tracking ID is empty: ?>
 	<script>
@@ -310,12 +310,23 @@
 	</script>
 <?php endif; ?>
 
+<?php if ( nebula_option('adwords_remarketing_conversion_id') ): //Google AdWords Remarketing Tag ?>
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		var google_conversion_id = <?php echo nebula_option('adwords_remarketing_conversion_id'); ?>;
+		var google_custom_params = window.google_tag_params;
+		var google_remarketing_only = true;
+		/* ]]> */
+	</script>
+	<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
+	<noscript>
+		<div style="display:inline;">
+			<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/<?php echo nebula_option('adwords_remarketing_conversion_id'); ?>/?value=0&amp;guid=ON&amp;script=0"/>
+		</div>
+	</noscript>
+<?php endif; ?>
 
-<?php if ( nebula_option('facebook_custom_audience_pixel_id') ): ?>
-	<?php
-		$override = apply_filters('pre_nebula_facebook_pixel', false);
-		if ( $override !== false ){echo $override; return;}
-	?>
+<?php if ( nebula_option('facebook_custom_audience_pixel_id') ): //Facebook Custom Audience ?>
 	<script>
 		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;

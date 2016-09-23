@@ -768,6 +768,8 @@ function scrollDepth(){
 			scrollInfo.currentTime = new Date();
 			scrollInfo.initialScroll = scrollInfo.currentTime.getTime();
 			scrollInfo.isScroller = true;
+			scrollInfo.scrollDelay = (scrollInfo.initialScroll-scrollInfo.startTime)/1000;
+			ga('send', 'event', 'Scroll Depth', 'Began Scrolling', Math.round(scrollInfo.scrollDelay) + ' seconds (since pageload)', {'nonInteraction': 1});
 		}
 
 		//Calculate max scroll percent
@@ -2742,10 +2744,21 @@ function millisecondsToString(ms){
 }
 
 //Convert time to relative.
-function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
-	var system_date = new Date(time);
-	var user_date = new Date();
-	var diff = Math.floor((user_date-system_date)/1000);
+//For cross-browser support, timestamp must be passed as a string (not a Date object) in the format: Fri Mar 27 21:40:02 +0000 2016
+function timeAgo(timestamp){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
+	if ( typeof timestamp === 'object' ){
+		console.warn('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016');
+	}
+
+	var postDate = new Date(timestamp);
+	var currentTime = new Date();
+
+	//Browser sanitation
+	if ( jQuery('body').hasClass('internet_explorer') || jQuery('body').hasClass('microsoft_edge') ){
+		postDate = Date.parse(timestamp.replace(/( \+)/, ' UTC$1'));
+	}
+
+	var diff = Math.floor((currentTime-postDate)/1000);
 	if ( diff <= 1 ){ return "just now"; }
 	if ( diff < 20 ){ return diff + " seconds ago"; }
 	if ( diff < 60 ){ return "less than a minute ago"; }
@@ -2756,7 +2769,7 @@ function timeAgo(time){ //http://af-design.com/blog/2009/02/10/twitter-like-time
 	if ( diff <= 129600 ){ return "1 day ago"; }
 	if ( diff < 604800 ){ return Math.round(diff/86400) + " days ago"; }
 	if ( diff <= 777600 ){ return "1 week ago"; }
-	return "on " + time;
+	return "on " + timestamp;
 }
 
 //Check nested objects (boolean)

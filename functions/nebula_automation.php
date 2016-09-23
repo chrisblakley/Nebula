@@ -163,7 +163,7 @@ function nebula_activation(){
 				<strong class="nebula-activated-title">Nebula child theme has been activated.</strong><br />
 				<span class="nebula-activated-description">
 					Initialization can only be run on the parent theme. If menus were created in the parent theme, they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>.<br />
-					<strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>
+					<strong>Next step:</strong> Re-activate Nebula (Parent) to initialize, or configure <a href="themes.php?page=nebula_options">Nebula Options</a>
 				</span>
 			</p>
 		</div>
@@ -173,7 +173,7 @@ function nebula_activation(){
 				<strong class="nebula-activated-title">Nebula has been initialized!</strong><br />
 				<span class="nebula-activated-description">
 					Options have been updated. The home page has been updated and has been set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br />
-					<strong>Next step:</strong> Configure <a href='themes.php?page=nebula_options'>Nebula Options</a>
+					<strong>Next step:</strong> Activate Nebula Child (below), or configure <a href='themes.php?page=nebula_options'>Nebula Options</a>
 				</span>
 			</p>
 		</div>

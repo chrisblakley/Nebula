@@ -26,14 +26,13 @@ function nebula_user_contactmethods($contactmethods){
 add_action('admin_init', 'easy_author_image_init');
 function easy_author_image_init(){
 	global $pagenow;
-	if ( $pagenow == 'media-upload.php' || $pagenow == 'async-upload.php' ){
+	if ( $pagenow === 'media-upload.php' || $pagenow === 'async-upload.php' ){
 		add_filter('gettext', 'q_replace_thickbox_button_text', 1, 3); //Replace the button text for the uploader
 	}
 }
 function q_replace_thickbox_button_text($translated_text, $text, $domain){
 	if ( $text == 'Insert into Post' ){
-		$referer = strpos(wp_get_referer(), 'profile');
-		if ( $referer != '' ){
+		if ( strpos(wp_get_referer(), 'profile') != '' ){
 			return 'Choose this photo.';
 		}
 	}
@@ -55,9 +54,8 @@ function nebula_extra_profile_fields($user){
 			<th>
 				<label for="headshot_button"><span class="description">Headshot</span></label>
 			</th>
-			<?php $buttontext = ( get_user_meta($user->ID, 'headshot_url', true) )? 'Change headshot' : 'Upload new headshot'; ?>
 			<td>
-				<input id="headshot_button" type="button" class="button" value="<?php echo $buttontext; ?>" />
+				<input id="headshot_button" type="button" class="button" value="<?php echo ( get_user_meta($user->ID, 'headshot_url', true) )? 'Change headshot' : 'Upload new headshot';; ?>" />
 				<?php if ( get_user_meta($user->ID, 'headshot_url', true) ): ?>
 					<input id="headshot_remove" type="button" class="button" value="Remove headshot" />
 				<?php endif; ?>
@@ -71,59 +69,59 @@ function nebula_extra_profile_fields($user){
 			<td>
 				<?php if ( get_user_meta($user->ID, 'headshot_url', true) ): ?>
 					<div id="headshot_preview" style="min-height: 100px; max-width: 150px;">
-						<img style="max-width:100%; border-radius: 100px; border: 5px solid #fff; box-shadow: 0px 0px 8px 0 rgba(0,0,0,0.2);" src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
+						<img style="max-width:100%; border-radius: 100px; border: 5px solid #fff; box-shadow: 0 0 8px 0 rgba(0,0,0,0.2);" src="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
 					</div>
 				<?php else: ?>
-					<div id="headshot_preview" style="height: 100px; width: 100px; line-height: 100px; border: 2px solid #CCC; text-align: center; font-size: 5em;">?</div>
+					<div id="headshot_preview" style="height: 100px; width: 100px; line-height: 100px; border: 2px solid #ccc; text-align: center; font-size: 5em;">?</div>
 				<?php endif; ?>
 				<span id="upload_success" style="display:block;"></span>
 
-				<input type="hidden" name="headshot_url" id="headshot_url" value="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" class="regular-text" />
+				<input id="headshot_url" class="regular-text" type="hidden" name="headshot_url" value="<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>" />
 			</td>
 		</tr>
 		<tr>
 			<th><label for="jobtitle">Job Title</label></th>
 			<td>
-				<input type="text" name="jobtitle" id="jobtitle" value="<?php echo esc_attr(get_the_author_meta('jobtitle', $user->ID)); ?>" class="regular-text" /><br />
+				<input id="jobtitle" class="regular-text" type="text" name="jobtitle" value="<?php echo esc_attr(get_the_author_meta('jobtitle', $user->ID)); ?>" /><br />
 			</td>
 		</tr>
 		<tr>
 			<th><label for="jobcompany">Company</label></th>
 			<td>
-				<input type="text" name="jobcompany" id="jobcompany" value="<?php echo esc_attr(get_the_author_meta('jobcompany', $user->ID)); ?>" class="regular-text" /><br />
+				<input id="jobcompany" class="regular-text" type="text" name="jobcompany" value="<?php echo esc_attr(get_the_author_meta('jobcompany', $user->ID)); ?>" /><br />
 			</td>
 		</tr>
 		<tr>
 			<th><label for="jobcompanywebsite">Company Website</label></th>
 			<td>
-				<input type="url" name="jobcompanywebsite" id="jobcompanywebsite" value="<?php echo esc_attr(get_the_author_meta('jobcompanywebsite', $user->ID)); ?>" class="regular-text" placeholder="http://" /><br />
+				<input id="jobcompanywebsite" class="regular-text" type="url" name="jobcompanywebsite" value="<?php echo esc_attr(get_the_author_meta('jobcompanywebsite', $user->ID)); ?>" placeholder="http://" /><br />
 			</td>
 		</tr>
 		<tr>
 			<th><label for="usercity">City</label></th>
 			<td>
-				<input type="text" name="usercity" id="usercity" value="<?php echo esc_attr(get_the_author_meta('usercity', $user->ID)); ?>" class="regular-text" placeholder="City" /><br />
+				<input id="usercity" class="regular-text" type="text" name="usercity" value="<?php echo esc_attr(get_the_author_meta('usercity', $user->ID)); ?>" placeholder="City" /><br />
 			</td>
 		</tr>
 		<tr>
 			<th><label for="userstate">State</label></th>
 			<td>
-				<input type="text" name="userstate" id="userstate" value="<?php echo esc_attr(get_the_author_meta('userstate', $user->ID)); ?>" class="regular-text" placeholder="State" /><br />
+				<input id="userstate" class="regular-text" type="text" name="userstate" value="<?php echo esc_attr(get_the_author_meta('userstate', $user->ID)); ?>" placeholder="State" /><br />
 			</td>
 		</tr>
 		<tr>
 			<th><label for="phoneextension">Phone Number</label></th>
 			<td>
-				<input type="text" name="phonenumber" id="phonenumber" value="<?php echo esc_attr(get_the_author_meta('phonenumber', $user->ID)); ?>" class="regular-text" /><br />
+				<input id="phonenumber" class="regular-text" type="text" name="phonenumber" value="<?php echo esc_attr(get_the_author_meta('phonenumber', $user->ID)); ?>" /><br />
 			</td>
 		</tr>
 	</table>
 <?php }
 
 //Save the field values to the DB
-add_action('personal_options_update', 'save_extra_profile_fields');
-add_action('edit_user_profile_update', 'save_extra_profile_fields');
-function save_extra_profile_fields($user_id){
+add_action('personal_options_update', 'save_nebula_extra_profile_fields');
+add_action('edit_user_profile_update', 'save_nebula_extra_profile_fields');
+function save_nebula_extra_profile_fields($user_id){
 	if ( !current_user_can('edit_user', $user_id) ){
 		return false;
 	}
@@ -136,7 +134,8 @@ function save_extra_profile_fields($user_id){
 	update_user_meta($user_id, 'userstate', sanitize_text_field($_POST['userstate']));
 	update_user_meta($user_id, 'phonenumber', sanitize_text_field($_POST['phonenumber']));
 
-	if ( $user_id == get_current_user_id() ){
+	//If editing own user, update NVDB
+	if ( $user_id === get_current_user_id() ){
 		nebula_update_visitor(array(
 			'job_title' => sanitize_text_field($_POST['jobtitle']),
 			'company' => sanitize_text_field($_POST['jobcompany']),

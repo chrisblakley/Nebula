@@ -23,6 +23,7 @@ function get_flags($atts){
 add_shortcode('div', 'div_shortcode');
 function div_shortcode($atts, $content=''){
 	extract(shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts));
+
 	if ( $content ){
 		$div = '<div class="nebula-div ' . $class . '" style="' . $style . '">' . $content . '</div>';
 	} else {
@@ -95,6 +96,7 @@ add_shortcode('hr', 'divider_shortcode');
 add_shortcode('line', 'divider_shortcode');
 function divider_shortcode($atts){
 	extract(shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts));
+
 	if ( $space ){
 		$above = $space;
 		$below = $space;
@@ -107,6 +109,7 @@ function divider_shortcode($atts){
 add_shortcode('icon', 'icon_shortcode');
 function icon_shortcode($atts){
 	extract(shortcode_atts(array('type' => '', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
+
 	if ( strpos($type, 'fa-') == false ){
 	    $type = 'fa-' . $type;
 	}
@@ -207,7 +210,7 @@ function map_shortcode($atts){
 
 	$return = '<script>
 		jQuery(document).ready(function(){
-			jQuery(".the-map-overlay").on("click", function(){
+			jQuery(".the-map-overlay").on("click tap touch", function(){
 				jQuery(this).removeClass("the-map-overlay");
 			});
 		});

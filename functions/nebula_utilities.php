@@ -706,8 +706,9 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 	//Avoid ternary operators to prevent overwriting existing data (like manual DB entries)
 
 	//Check for nv_ query parameters
-	if ( !empty($_SERVER['QUERY_STRING']) ){
-		foreach ( parse_str($_SERVER['QUERY_STRING']) as $key => $value ){
+	$query_strings = parse_str($_SERVER['QUERY_STRING']);
+	if ( !empty($query_strings) ){
+		foreach ( $query_strings as $key => $value ){
 			if ( strpos($key, 'nv_') === 0 ){
 				if ( empty($value) ){
 					$value = 'true';
@@ -724,7 +725,7 @@ function nebula_visitor_data_update_everytime($defaults=array()){
 		$user = get_userdata(get_current_user_id());
 		if ( !empty($user) ){
 			//Default WordPress user info
-			if ( !empty($user->roles[0]) ){
+			if ( !empty($user->roles) ){
 				$defaults['wp_role'] = sanitize_text_field($user->roles[0]);
 			}
 			if ( !empty($user->user_firstname) ){
@@ -905,7 +906,7 @@ function check_if_known($send_to_hubspot=true){
 //Lookup if this visitor is known
 function is_known(){
 	$known = nebula_get_visitor_data('known');
-	if ( !empty($known) && ($known == 1 || $known == '1') ){ //@TODO "Nebula" 0: Figure out which of these is best
+	if ( !empty($known) && ($known === 1 || $known === '1') ){ //@TODO "Nebula" 0: Figure out which of these is best
 		return true;
 	}
 
@@ -1041,7 +1042,7 @@ function nebula_create_hubspot_properties($columns=null){
 			foreach ( $columns as $column ){
 				$column_label = ucwords(str_replace('_', ' ', $column));
 				if ( !in_array($column, $existing_nebula_properties) ){
-					//Create Nebula ID custom property within the Nebula group
+					//Create custom property within the Nebula group
 					$content = '{
 						"name": "' . $column . '",
 						"label": "' . $column_label . '",
@@ -1167,7 +1168,7 @@ function nebula_poi(){
 				break;
 			}
 		}
-	} elseif ( isset($_GET['poi']) ){ //If POI query string exists //@TODO "Nebula" 0: in main.js strip this query string off the URL somehow?
+	} elseif ( isset($_GET['poi']) ){ //If POI query string exists
 		return str_replace(array('%20', '+'), ' ', $_GET['poi']);
 	}
 
@@ -1261,12 +1262,14 @@ function is_dev($strict=false){
 	//Check if the current user's email domain matches any of the dev email domains from Nebula Options
 	if ( is_user_logged_in() ){
 		$current_user = wp_get_current_user();
-		list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
+		if ( !empty($current_user->user_email) ){
+			list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
-		$devEmails = explode(',', nebula_option('dev_email_domain'));
-		foreach ( $devEmails as $devEmail ){
-			if ( trim($devEmail) == $current_user_domain ){
-				return true;
+			$devEmails = explode(',', nebula_option('dev_email_domain'));
+			foreach ( $devEmails as $devEmail ){
+				if ( trim($devEmail) == $current_user_domain ){
+					return true;
+				}
 			}
 		}
 	}
@@ -1300,13 +1303,15 @@ function is_client($strict=false){
 
 	if ( is_user_logged_in() ){
 		$current_user = wp_get_current_user();
-		list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email); //@TODO "Nebula" 0: If $current_user->user_email is not empty?
+		if ( !empty($current_user->user_email) ){
+			list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
-		//Check if the current user's email domain matches any of the client email domains from Nebula Options
-		$clientEmails = explode(',', nebula_option('client_email_domain'));
-		foreach ( $clientEmails as $clientEmail ){
-			if ( trim($clientEmail) == $current_user_domain ){
-				return true;
+			//Check if the current user's email domain matches any of the client email domains from Nebula Options
+			$clientEmails = explode(',', nebula_option('client_email_domain'));
+			foreach ( $clientEmails as $clientEmail ){
+				if ( trim($clientEmail) == $current_user_domain ){
+					return true;
+				}
 			}
 		}
 	}
@@ -1823,7 +1828,6 @@ function nebula_color_brightness($hex){
 	$override = apply_filters('pre_nebula_color_brightness', false, $hex);
 	if ( $override !== false ){return $override;}
 
-	//@TODO "Nebula" 0: If an rgb value is passed, (create then) run an rgb2hex() function
 	if ( strpos($hex, '#') !== false ){
 		preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
 

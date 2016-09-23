@@ -13,27 +13,20 @@
 
 		<?php do_action('nebula_head_open'); ?>
 
-		<?php //Title tag is handled by WordPress core. ?>
-
 		<meta name="referrer" content="always">
 		<meta name="HandheldFriendly" content="True" />
 		<meta name="MobileOptimized" content="320" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
-
 		<meta class="theme-color" name="theme-color" content="<?php echo nebula_sass_color('primary'); ?>">
 		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula_sass_color('primary'); ?>">
 		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula_sass_color('primary'); ?>">
-
-		<?php get_template_part('includes/metadata'); //All text components of metadata. ?>
+		<?php get_template_part('includes/metadata'); ?>
 
 		<link rel="manifest" href="<?php echo nebula_manifest_json_location(); ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<?php nebula_prerender(); ?>
-
-		<?php //Stylesheets are loaded at the top of functions.php (so they can be registerred and enqueued). ?>
 		<?php wp_head(); ?>
-
 		<?php get_template_part('includes/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>
 	<body <?php body_class(); ?>>
@@ -54,7 +47,7 @@
 										wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
 									}
 								?>
-							</nav><!--/mobilenav-->
+							</nav>
 
 							<form id="mobileheadersearch" class="nebula-search-iconable search" method="get" action="<?php echo home_url('/'); ?>">
 								<?php
