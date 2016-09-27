@@ -5,12 +5,15 @@
 
 if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
-	die('Error 403: Forbidden.');
+	http_response_code(403);
+	die();
 }
 
+//Disable author archives to prevent ?author=1 from showing usernames.
 if ( nebula_option('author_bios', 'disabled') ){
-	header('Location: ' . home_url('/') . '?s=about');
-	die('Error 403: Forbidden.');
+	wp_redirect(home_url('/') . '?s=about', 301);
+	http_response_code(403);
+	die();
 }
 
 do_action('nebula_preheaders');

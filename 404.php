@@ -5,7 +5,8 @@
 
 if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
-	die('Error 403: Forbidden.');
+	http_response_code(403);
+	die();
 }
 
 do_action('nebula_preheaders');
@@ -32,7 +33,7 @@ get_header(); ?>
 
 					<?php echo nebula_search_form(); ?>
 
-					<?php if ( $error_query->have_posts() ): //$error_query is defined in nebula_functions.php ?>
+					<?php if ( !empty($error_query) && $error_query->have_posts() ): //$error_query is defined in nebula_functions.php ?>
 						<div id="error-page-suggestions">
 							<h2>Suggestions</h2>
 							<?php while ( $error_query->have_posts() ): ?>

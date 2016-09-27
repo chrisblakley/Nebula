@@ -51,7 +51,7 @@ if ( is_admin_page() && is_dev(true) || current_user_can('manage_options') ){
 	            'required'  => false,
 	        ),
 	        array(
-	            'name'      => 'W3 Total Cache',
+	            'name'      => 'W3 Total Cache', //@TODO "Nebula" 0: Find a new caching plugin
 	            'slug'      => 'w3-total-cache',
 	            'required'  => false,
 	        ),

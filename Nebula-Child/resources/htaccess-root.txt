@@ -141,13 +141,6 @@ RewriteCond %{QUERY_STRING} GLOBALS(=|[|%[0-9A-Z]{0,2}) [OR]
 RewriteCond %{QUERY_STRING} _REQUEST(=|[|%[0-9A-Z]{0,2})
 RewriteRule ^(.*)$ index.php [F,L]
 
-#Disable author archives to prevent ?author=1 from showing usernames. This sends to the "about" slug; be sure to change if that page does not exist!
-#Remove this or comment it out if planning on using Author archive pages.
-RewriteRule ^author/(.*)$ /about [R,L]
-RewriteCond %{QUERY_STRING} author=\d
-RewriteRule ^ /about? [L,R=301]
-
-
 #Disable directory browsing
 Options All -Indexes
 
