@@ -186,8 +186,10 @@ if ( nebula_option('admin_bar', 'disabled') ){
 	function remove_admin_bar_bump(){
 		remove_action('wp_head', '_admin_bar_bump_cb');
 	}
-	add_action('wp_head', 'mp6_override_toolbar_margin', 11);
-	function mp6_override_toolbar_margin(){
+
+	//Override some styles and add custom functionality
+	add_action('wp_head', 'nebula_admin_bar_style_script_overrides', 11);
+	function nebula_admin_bar_style_script_overrides(){
 		if ( is_admin_bar_showing() ){ ?>
 			<style type="text/css">
 				html {margin-top: 32px !important; transition: margin-top 0.5s linear;}
@@ -210,6 +212,15 @@ if ( nebula_option('admin_bar', 'disabled') ){
 
 				html.admin-bar-inactive {margin-top: 0 !important;}
 			</style>
+
+			<script>
+				//Admin Bar Toggle
+				jQuery(document).on('keydown', function(e){
+					if ( e.altKey && e.which === 65 ){ //Alt+A
+						jQuery('html').toggleClass('admin-bar-inactive');
+					}
+				});
+			</script>
 		<?php }
 	}
 }

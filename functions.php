@@ -82,6 +82,7 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js', 'defer', null, '4.0.0a4', true);
 	nebula_register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js', 'defer', null, '1.10.12', true); //Datatables is called via main.js only as needed.
 	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js', 'defer', null, '1.6.2', true);
+	nebula_register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/1.0.3/autotrack.js', 'async', null, '1.0.3', true);
 	nebula_register_script('performance-timing', get_template_directory_uri() . '/js/libs/performance-timing.js', 'defer', null, null, false);
 	nebula_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', 'defer', array('nebula-bootstrap', 'jquery', 'nebula-jquery_ui'), null, true);
 	nebula_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', null, array('jquery'), null, true);
@@ -259,6 +260,7 @@ function enqueue_nebula_frontend(){
 	wp_enqueue_script('nebula-mmenu');
 	wp_enqueue_script('nebula-headroom'); //Can this be loaded dynamically as needed?
 	wp_enqueue_script('nebula-bootstrap');
+	wp_enqueue_script('nebula-autotrack');
 	wp_enqueue_script('nebula-main');
 
 	//Localized objects (localized to jquery to appear in <head>)

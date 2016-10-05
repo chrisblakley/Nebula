@@ -36,7 +36,7 @@ get_header(); ?>
 					<h1 class="page title">No Results Found</h1>
 					<p>Your search for "<?php echo get_search_query(); ?>" returned 0 results.</p>
 					<script>
-						ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': 1});
+						ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});
 					</script>
 				<?php endif; ?>
 

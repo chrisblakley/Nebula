@@ -10,7 +10,7 @@
 		        }
 		    });
 		}).fail(function(){
-		    ga('send', 'event', 'Error', 'JS Error', 'Google Maps script could not be loaded.', {'nonInteraction': 1});
+		    ga('send', 'event', 'Error', 'JS Error', 'Google Maps script could not be loaded.', {'nonInteraction': true});
 		});
 	});
 

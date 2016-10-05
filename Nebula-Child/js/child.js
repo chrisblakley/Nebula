@@ -50,7 +50,7 @@ jQuery(window).on('resize', function(){
 function supplementalEventTracking(){
 	window.supplementalTrackingCalled = true;
 
-	//In-Depth example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Tip: use deferred selectors if possible.)
+	//In-Depth example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': true, 'dimension1': 'Something', 'metric1': 82} Tip: use deferred selectors if possible.)
 	//nebula.dom.document.on('mousedown', '.selector', function(e){
 	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 	//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);

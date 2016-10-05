@@ -30,46 +30,52 @@
 			//Note: Ecommerce dimensions are added in nebula_ecommerce.php
 		?>
 		gaCustomDimensions = {
-			author: '<?php echo nebula_option('cd_author'); //Hit ?>',
-			businessHours: '<?php echo nebula_option('cd_businesshours'); //Hit ?>',
-			categories: '<?php echo nebula_option('cd_categories'); //Hit ?>',
-			tags: '<?php echo nebula_option('cd_tags'); //Hit ?>',
-			contactMethod: '<?php echo nebula_option('cd_contactmethod'); //Session ?>',
-			formTiming: '<?php echo nebula_option('cd_formtiming'); //Hit ?>',
-			firstInteraction: '<?php echo nebula_option('cd_firstinteraction'); //User ?>',
-			geolocation: '<?php echo nebula_option('cd_geolocation'); //Session ?>',
-			geoAccuracy: '<?php echo nebula_option('cd_geoaccuracy'); //Session ?>',
-			geoName: '<?php echo nebula_option('cd_geoname'); //Session ?>',
-			relativeTime: '<?php echo nebula_option('cd_relativetime'); //Hit ?>',
-			scrollDepth: '<?php echo nebula_option('cd_scrolldepth'); //Hit ?>',
-			maxScroll: '<?php echo nebula_option('cd_maxscroll'); //Hit ?>',
-			sessionID: '<?php echo nebula_option('cd_sessionid'); //Session ?>',
-			poi: '<?php echo nebula_option('cd_notablepoi'); //User ?>',
-			role: '<?php echo nebula_option('cd_role'); //User ?>',
-			timestamp: '<?php echo nebula_option('cd_timestamp'); //Hit ?>',
-			userID: '<?php echo nebula_option('cd_userid'); //User ?>',
-			fbID: '<?php echo nebula_option('cd_fbid'); //User ?>',
-			videoWatcher: '<?php echo nebula_option('cd_videowatcher'); //Session ?>',
-			eventIntent: '<?php echo nebula_option('cd_eventintent'); //Hit ?>',
-			wordCount: '<?php echo nebula_option('cd_wordcount'); //Hit ?>',
-			weather: '<?php echo nebula_option('cd_weather'); //Hit ?>',
-			temperature: '<?php echo nebula_option('cd_temperature'); //Hit ?>',
-			publishYear: '<?php echo nebula_option('cd_publishyear'); //Hit ?>',
-			adBlocker: '<?php echo nebula_option('cd_adblocker'); //Session ?>',
+			author: '<?php echo nebula_option('cd_author'); ?>',
+			businessHours: '<?php echo nebula_option('cd_businesshours'); ?>',
+			categories: '<?php echo nebula_option('cd_categories'); ?>',
+			tags: '<?php echo nebula_option('cd_tags'); ?>',
+			contactMethod: '<?php echo nebula_option('cd_contactmethod'); ?>',
+			formTiming: '<?php echo nebula_option('cd_formtiming'); ?>',
+			firstInteraction: '<?php echo nebula_option('cd_firstinteraction'); ?>',
+			windowType: '<?php echo nebula_option('cd_windowtype'); ?>',
+			geolocation: '<?php echo nebula_option('cd_geolocation'); ?>',
+			geoAccuracy: '<?php echo nebula_option('cd_geoaccuracy'); ?>',
+			geoName: '<?php echo nebula_option('cd_geoname'); ?>',
+			relativeTime: '<?php echo nebula_option('cd_relativetime'); ?>',
+			scrollDepth: '<?php echo nebula_option('cd_scrolldepth'); ?>',
+			maxScroll: '<?php echo nebula_option('cd_maxscroll'); ?>',
+			sessionID: '<?php echo nebula_option('cd_sessionid'); ?>',
+			poi: '<?php echo nebula_option('cd_notablepoi'); ?>',
+			role: '<?php echo nebula_option('cd_role'); ?>',
+			timestamp: '<?php echo nebula_option('cd_timestamp'); ?>',
+			userID: '<?php echo nebula_option('cd_userid'); ?>',
+			fbID: '<?php echo nebula_option('cd_fbid'); ?>',
+			videoWatcher: '<?php echo nebula_option('cd_videowatcher'); ?>',
+			eventIntent: '<?php echo nebula_option('cd_eventintent'); ?>',
+			wordCount: '<?php echo nebula_option('cd_wordcount'); ?>',
+			weather: '<?php echo nebula_option('cd_weather'); ?>',
+			temperature: '<?php echo nebula_option('cd_temperature'); ?>',
+			publishYear: '<?php echo nebula_option('cd_publishyear'); ?>',
+			adBlocker: '<?php echo nebula_option('cd_adblocker'); ?>',
+			mqBreakpoint: '<?php echo nebula_option('cd_mqbreakpoint'); ?>',
+			mqResolution: '<?php echo nebula_option('cd_mqresolution'); ?>',
+			mqOrientation: '<?php echo nebula_option('cd_mqorientation'); ?>',
 		}
 
 		gaCustomMetrics = {
-			formViews: '<?php echo nebula_option('cm_formviews'); //Hit, Integer ?>',
-			formStarts: '<?php echo nebula_option('cm_formstarts'); //Hit, Integer ?>',
-			formSubmissions: '<?php echo nebula_option('cm_formsubmissions'); //Hit, Integer ?>',
-			notableDownloads: '<?php echo nebula_option('cm_notabledownloads'); //Hit, Integer ?>',
-			engagedReaders: '<?php echo nebula_option('cm_engagedreaders'); //Hit, Integer ?>',
-			videoStarts: '<?php echo nebula_option('cm_videostarts'); //Hit, Integer ?>',
-			videoPlaytime: '<?php echo nebula_option('cm_videoplaytime'); //Hit, Time ?>',
-			videoCompletions: '<?php echo nebula_option('cm_videocompletions'); //Hit, Integer ?>',
-			autocompleteSearches: '<?php echo nebula_option('cm_autocompletesearches'); //Hit, Integer ?>',
-			autocompleteSearchClicks: '<?php echo nebula_option('cm_autocompletesearchclicks'); //Hit, Integer ?>',
-			wordCount: '<?php echo nebula_option('cm_wordcount'); //Hit, Integer ?>',
+			formViews: '<?php echo nebula_option('cm_formviews'); ?>',
+			formStarts: '<?php echo nebula_option('cm_formstarts'); ?>',
+			formSubmissions: '<?php echo nebula_option('cm_formsubmissions'); ?>',
+			notableDownloads: '<?php echo nebula_option('cm_notabledownloads'); ?>',
+			engagedReaders: '<?php echo nebula_option('cm_engagedreaders'); ?>',
+			pageVisible: '<?php echo nebula_option('cm_pagevisible'); ?>',
+			pageHidden: '<?php echo nebula_option('cm_pagehidden'); ?>',
+			videoStarts: '<?php echo nebula_option('cm_videostarts'); ?>',
+			videoPlaytime: '<?php echo nebula_option('cm_videoplaytime'); ?>',
+			videoCompletions: '<?php echo nebula_option('cm_videocompletions'); ?>',
+			autocompleteSearches: '<?php echo nebula_option('cm_autocompletesearches'); ?>',
+			autocompleteSearchClicks: '<?php echo nebula_option('cm_autocompletesearchclicks'); ?>',
+			wordCount: '<?php echo nebula_option('cm_wordcount'); ?>',
 		}
 
 		<?php
@@ -282,8 +288,63 @@
 			});
 		<?php endif; ?>
 
+		//Autotrack Page Visibility
+		if ( gaCustomMetrics['pageHidden'] && gaCustomMetrics['pageVisible'] ){
+			ga('require', 'pageVisibilityTracker', {
+				hiddenMetricIndex: parseInt(gaCustomMetrics['pageHidden'].replace('metric', '')),
+				visibleMetricIndex: parseInt(gaCustomMetrics['pageVisible'].replace('metric', '')),
+				fieldsObj: {nonInteraction: true}
+			});
+		} else {
+			ga('require', 'pageVisibilityTracker', {
+				fieldsObj: {nonInteraction: true}
+			});
+		}
+
+		//Autotrack Clean URL
+		ga('require', 'cleanUrlTracker');
+
+		//Autotrack Social Widgets
+		ga('require', 'socialWidgetTracker');
+
+		//Autotrack Media Queries
+		if ( gaCustomDimensions['mqBreakpoint'] || gaCustomDimensions['mqResolution'] || gaCustomDimensions['mqOrientation'] ){
+			ga('require', 'mediaQueryTracker', {
+				definitions: [{
+					name: 'Breakpoint',
+					dimensionIndex: parseInt(gaCustomDimensions['mqBreakpoint'].replace('dimension', '')),
+					items: [
+						{name: 'xs', media: 'all'},
+						{name: 'sm', media: '(min-width: 544px)'},
+						{name: 'md', media: '(min-width: 768px)'},
+						{name: 'lg', media: '(min-width: 992px)'},
+						{name: 'xl', media: '(min-width: 1200px)'}
+					]
+				}, {
+					name: 'Resolution',
+					dimensionIndex: parseInt(gaCustomDimensions['mqResolution'].replace('dimension', '')),
+					items: [
+						{name: '1x', media: 'all'},
+						{name: '1.5x', media: '(min-resolution: 144dpi)'},
+						{name: '2x', media: '(min-resolution: 192dpi)'}
+					]
+				}, {
+					name: 'Orientation',
+					dimensionIndex: parseInt(gaCustomDimensions['mqOrientation'].replace('dimension', '')),
+					items: [
+						{name: 'landscape', media: '(orientation: landscape)'},
+						{name: 'portrait', media: '(orientation: portrait)'}
+					]
+				}],
+				fieldsObj: {nonInteraction: true}
+			});
+		}
+
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
-		ga('send', 'pageview'); <?php //Send pageview along with set dimensions. ?>
+
+		//Send pageview with all custom dimensions and metrics
+		ga('send', 'pageview');
+
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 
 		//Get local time string with timezone offset

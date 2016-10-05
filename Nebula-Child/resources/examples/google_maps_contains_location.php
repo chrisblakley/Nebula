@@ -8,7 +8,7 @@
 		        }
 		    });
 		}).fail(function(){
-		    ga('send', 'event', 'Error', 'JS Error', 'Google Maps Geometry script could not be loaded.', {'nonInteraction': 1});
+		    ga('send', 'event', 'Error', 'JS Error', 'Google Maps Geometry script could not be loaded.', {'nonInteraction': true});
 		});
 
 		jQuery(document).on('geolocationSuccess', function(){

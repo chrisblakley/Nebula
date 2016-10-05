@@ -219,6 +219,7 @@ function nebula_default_options(){
 		'cd_maxscroll' => '',
 		'cd_sessionid' => '',
 		'cd_timestamp' => '',
+		'cd_windowtype' => '',
 		'cd_userid' => '',
 		'cd_fbid' => '',
 		'cd_role' => '',
@@ -231,6 +232,10 @@ function nebula_default_options(){
 		'cd_publishyear' => '',
 		'cd_wordcount' => '',
 		'cd_adblocker' => '',
+		'cd_mqbreakpoint' => '',
+		'cd_mqresolution' => '',
+		'cd_mqorientation' => '',
+
 		'cm_formviews' => '',
 		'cm_formstarts' => '',
 		'cm_formsubmissions' => '',
@@ -241,6 +246,8 @@ function nebula_default_options(){
 		'cm_videocompletions' => '',
 		'cm_autocompletesearches' => '',
 		'cm_autocompletesearchclicks' => '',
+		'cm_pagevisible' => '',
+		'cm_pagehidden' => '',
 		'cm_wordcount' => '',
 
 		//APIs Tab
@@ -1226,6 +1233,14 @@ function nebula_options_page(){
 		        </tr>
 
 				<tr class="short" valign="top">
+		        	<th scope="row">Window Type&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_options[cd_windowtype]" value="<?php echo $nebula_options['cd_windowtype']; ?>" />
+						<p class="helper"><small>Stores the type of window the site is being accessed from (Ex: Iframe or Standalone App). <em>Note: The only records alternate window types (non-standard browser windows).</em></em> <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
 		        	<th scope="row">Geolocation*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_options[cd_geolocation]" value="<?php echo $nebula_options['cd_geolocation']; ?>" />
@@ -1254,6 +1269,30 @@ function nebula_options_page(){
 					<td>
 						<input class="dimension" type="text" name="nebula_options[cd_adblocker]" value="<?php echo $nebula_options['cd_adblocker']; ?>" />
 						<p class="helper"><small>Detects if the user is blocking ads. This can be used even if not intending to serve ads on this site. <em>It is important that this dimension is <strong>not</strong> set to the "hit" scope.</em> <strong>Scope: Session</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Media Query: Breakpoint&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_options[cd_mqbreakpoint]" value="<?php echo $nebula_options['cd_mqbreakpoint']; ?>" />
+						<p class="helper"><small>Detect which media query breakpoint is associated with this hit. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Media Query: Resolution&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_options[cd_mqresolution]" value="<?php echo $nebula_options['cd_mqresolution']; ?>" />
+						<p class="helper"><small>Detect the resolution factor associated with this hit. <strong>Scope: Hit</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Media Query: Orientation&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="dimension" type="text" name="nebula_options[cd_mqorientation]" value="<?php echo $nebula_options['cd_mqorientation']; ?>" />
+						<p class="helper"><small>Detect the device orientation associated with this hit. <strong>Scope: Hit</strong></small></p>
 					</td>
 		        </tr>
 
@@ -1437,6 +1476,22 @@ function nebula_options_page(){
 					<td>
 						<input class="metric" type="text" name="nebula_options[cm_autocompletesearchclicks]" value="<?php echo $nebula_options['cm_autocompletesearchclicks']; ?>" />
 						<p class="helper"><small>Tracks when a user clicks an autocomplete search result. <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Page Visible&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_options[cm_pagevisible]" value="<?php echo $nebula_options['cm_pagevisible']; ?>" />
+						<p class="helper"><small>The amount of time (in seconds) the page was in the visible state (tab/window visible) <strong>Scope: Hit, Format: Time</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Page Hidden&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_options[cm_pagehidden]" value="<?php echo $nebula_options['cm_pagehidden']; ?>" />
+						<p class="helper"><small>The amount of time (in seconds) the page was in the hidden state (tab/window not visible) <strong>Scope: Hit, Format: Time</strong></small></p>
 					</td>
 		        </tr>
 		    </table>

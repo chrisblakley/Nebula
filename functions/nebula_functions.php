@@ -93,7 +93,7 @@ function nebula_set_default_timezone(){
 if ( nebula_option('console_css') ){
 	add_action('wp_head', 'nebula_calling_card');
 	function nebula_calling_card(){
-		if ( nebula_is_desktop() && !nebula_is_browser('ie') && !nebula_is_browser('edge') ){
+		if ( !nebula_option('device_detection') || (nebula_is_desktop() && !nebula_is_browser('ie') && !nebula_is_browser('edge')) ){
 			echo "<script>console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 		}
 	}

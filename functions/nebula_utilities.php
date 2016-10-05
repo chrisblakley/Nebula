@@ -1235,6 +1235,14 @@ function is_admin_page(){
 	return is_admin();
 }
 
+//Format phone numbers into the preferred (315) 478-6700 format.
+function nebula_phone_format($number=false){
+	if ( !empty($number) ){
+		return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
+	}
+	return $number;
+}
+
 //Check if the current IP address matches any of the dev IP address from Nebula Options
 //Passing $strict bypasses IP check, so user must be a dev and logged in.
 //Note: This should not be used for security purposes since IP addresses can be spoofed.

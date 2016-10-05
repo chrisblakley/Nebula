@@ -65,13 +65,6 @@ jQuery(document).ready(function(){
 		initHeadroom();
 	}
 
-	//Admin Bar Toggle
-	jQuery(document).on('keydown', function(e){
-		if ( e.altKey && e.which === 65 ){ //Alt+A
-			jQuery('html').toggleClass('admin-bar-inactive');
-		}
-	});
-
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').val(nebula.user.nid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
@@ -88,13 +81,6 @@ jQuery(window).on('load', function(){
 	if ( !window.nebulaTrackingCalled ){ //If event tracking still hasn't been initialized
 		initEventTracking();
 	}
-
-	//Focus on hero search field on load and hover.
-	jQuery('#nebula-hero-search input').focus().on('mouseover', function(){
-		if ( !jQuery('input:focus').length ){
-			jQuery(this).focus();
-		}
-	});
 
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
@@ -168,11 +154,12 @@ function cacheSelectors(){
 //Detect notable aspects of the way the site was loaded.
 function windowTypeDetection(){
 	//Detect if loaded in an iframe
-	if ( window !== window.parent ){
+	if ( window !== window.top ){
 		nebula.dom.html.addClass('in-iframe');
 		if ( window.parent.location.toString().indexOf('wp-admin') === -1 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Iframe', 'Loaded Within', window.parent.location, {'nonInteraction': 1});
+			ga('set', gaCustomDimensions['windowType'], 'Iframe');
+			ga('send', 'event', 'Iframe', 'Loaded Within: ' + window.parent.location, 'Top: ' + window.top.location, {'nonInteraction': true});
 			nv('send', {'window_type': 'iframe', 'window_parent': window.parent.location});
 		}
 		//Break out of the iframe when link is clicked.
@@ -188,7 +175,8 @@ function windowTypeDetection(){
 		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string (in manifest) is not working, so this detection method doesn't work.
 		nebula.dom.document.trigger('nebula_standalone_app_load');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': 1});
+		ga('set', gaCustomDimensions['windowType'], 'Standalone App');
+		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': true});
 		nv('send', {'window_type': 'Standalone App'});
 	}
 }
@@ -202,25 +190,21 @@ function pageVisibility(){
 	});
 
 	function visibilityChangeActions(){
-		var pageTitle = nebula.dom.document.attr('title');
 		if ( document.visibilityState === 'prerender' ){ //Page was prerendered/prefetched
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Page Visibility', 'Prerendered', pageTitle, {'nonInteraction': 1});
-			nv('increment', 'prerendered');
+			ga('send', 'event', 'Page Visibility', 'Prerendered', 'Page loaded before tab/window was visible', {'nonInteraction': true});
 			pauseAllVideos(false);
 		}
 
 		if ( getPageVisibility() ){ //Page is hidden
 			nebula.dom.document.trigger('nebula_page_hidden');
 			nebula.dom.body.addClass('page-visibility-hidden');
-			nv('increment', 'page_visibility_hidden');
 			pauseAllVideos(false);
 			visFirstHidden = true;
 		} else { //Page is visible
 			if ( visFirstHidden ){
 				nebula.dom.document.trigger('nebula_page_visible');
 				nebula.dom.body.removeClass('page-visibility-hidden');
-				nv('increment', 'page_visibility_visible');
 			}
 		}
 	}
@@ -282,8 +266,8 @@ function gaBlockSend(){
 				function ga(send, event, category, action, label, value, misc){
 					if ( send === 'send' && event === 'event' ){
 						var ni = 0;
-						if ( misc && misc.nonInteraction === 1 ){
-							ni = 1;
+						if ( misc && misc.nonInteraction ){
+							ni = true;
 						}
 
 						jQuery.ajax({
@@ -373,34 +357,6 @@ function facebookConnect(){
 			});
 
 			jQuery(document).trigger('fbinit');
-
-			FB.Event.subscribe('edge.create', function(href, widget){ //Facebook Likes
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Like', 'socialTarget': href, 'page': jQuery(document).attr('title')});
-				ga('send', 'event', 'Social', 'Facebook Like');
-				nv('send', {'fb_like': '1'});
-			});
-
-			FB.Event.subscribe('edge.remove', function(href, widget){ //Facebook Unlikes
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Unlike', 'socialTarget': href, 'page': jQuery(document).attr('title')});
-				ga('send', 'event', 'Social', 'Facebook Unlike');
-				nv('send', {'fb_unlike': '1'});
-			});
-
-			FB.Event.subscribe('message.send', function(href, widget){ //Facebook Send/Share
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Send', 'socialTarget': href, 'page': jQuery(document).attr('title')});
-				ga('send', 'event', 'Social', 'Facebook Share');
-				nv('send', {'fb_share': '1'});
-			});
-
-			FB.Event.subscribe('comment.create', function(href, widget){ //Facebook Comments
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', {'hitType': 'social', 'socialNetwork': 'Facebook', 'socialAction': 'Comment', 'socialTarget': href, 'page': jQuery(document).attr('title')});
-				ga('send', 'event', 'Social', 'Facebook Comment');
-				nv('send', {'fb_comment': '1'});
-			});
 		};
 	} else {
 		jQuery('.facebook-connect').remove();
@@ -489,9 +445,7 @@ function initEventTracking(){
 
 //Google Analytics Universal Analytics Event Trackers
 function eventTracking(){
-	//console.log('inside event tracking function');
-
-	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': 1, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
+	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': true, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
 	//nebula.dom.document.on('mousedown', '.selector', function(e){
 	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 	//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);
@@ -652,12 +606,12 @@ function eventTracking(){
 		if ( copyCount < 13 ){
 			if ( words.length > 8 ){
 				words = words.slice(0, 8).join(' ');
-				ga('send', 'event', 'Copied Text', words.length + ' words', words + '... [' + wordsLength + ' words]');
+				ga('send', 'event', 'Copied Text', words.length + ' words', words + '... [' + wordsLength + ' words]', words.length);
 			} else {
 				if ( selection === '' || selection === ' ' ){
 					ga('send', 'event', 'Copied Text', '[0 words]');
 				} else {
-					ga('send', 'event', 'Copied Text', words.length + ' words', selection);
+					ga('send', 'event', 'Copied Text', words.length + ' words', selection, words.length);
 					nv('increment', 'copied_text');
 				}
 			}
@@ -672,7 +626,7 @@ function eventTracking(){
 	//AJAX Errors
 	nebula.dom.document.ajaxError(function(e, request, settings){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': 1});
+		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': true});
 		ga('send', 'exception', e.result, true);
 		nv('increment', 'ajax_errors');
 	});
@@ -769,7 +723,7 @@ function scrollDepth(){
 			scrollInfo.initialScroll = scrollInfo.currentTime.getTime();
 			scrollInfo.isScroller = true;
 			scrollInfo.scrollDelay = (scrollInfo.initialScroll-scrollInfo.startTime)/1000;
-			ga('send', 'event', 'Scroll Depth', 'Began Scrolling', Math.round(scrollInfo.scrollDelay) + ' seconds (since pageload)', {'nonInteraction': 1});
+			ga('send', 'event', 'Scroll Depth', 'Began Scrolling', Math.round(scrollInfo.scrollDelay) + ' seconds (since pageload)', Math.round(scrollInfo.scrollDelay), {'nonInteraction': true});
 		}
 
 		//Calculate max scroll percent
@@ -806,14 +760,14 @@ function scrollLocation(scrollInfo){
 			scrollInfo.readTime = (scrollInfo.readEndTime-scrollInfo.readStartTime)/1000;
 
 			if ( Math.round(scrollInfo.readTime) > 0 ){
-				scrollInfo.nonInteractionScroll = 1;
+				scrollInfo.nonInteractionScroll = true;
 				if ( scrollInfo.readTime < 8 ){
 					scrollInfo.readerType = 'Previewer';
 				} else if ( scrollInfo.readTime < 30 ){
 					scrollInfo.readerType = 'Scanner';
 				} else {
 					scrollInfo.readerType = 'Reader';
-					scrollInfo.nonInteractionScroll = 0;
+					scrollInfo.nonInteractionScroll = false;
 					ga('set', gaCustomMetrics['engagedReaders'], 1);
 					nv('send', {'engaged_reader': '1'});
 					nebula.dom.document.trigger('nebula_engaged_reader');
@@ -821,7 +775,7 @@ function scrollLocation(scrollInfo){
 
 				ga('set', gaCustomDimensions['scrollDepth'], scrollInfo.readerType);
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Scroll Depth', 'Entry Content', scrollInfo.readerType + ': ' + Math.round(scrollInfo.readTime) + ' seconds (since reading began)', {'nonInteraction': scrollInfo.nonInteractionScroll}); //If the user has read the page, it is not a bounce.
+				ga('send', 'event', 'Scroll Depth', 'Entry Content', scrollInfo.readerType + ': ' + Math.round(scrollInfo.readTime) + ' seconds (since reading began)', Math.round(scrollInfo.readTime), {'nonInteraction': scrollInfo.nonInteractionScroll}); //If the user has read the page, it is not a bounce.
 				ga('send', 'timing', 'Scroll Depth', 'Entry Content', Math.round(scrollInfo.readTime*1000), scrollInfo.readerType + ': Scrolled from top of entry-content to bottom');
 			}
 
@@ -836,7 +790,7 @@ function scrollLocation(scrollInfo){
 		scrollInfo.totalTime = (scrollInfo.endTime-scrollInfo.initialScroll)/1000;
 		if ( Math.round(scrollInfo.totalTime) > 0 ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime) + ' seconds (since initial scroll)', {'nonInteraction': 1});
+			ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime) + ' seconds (since initial scroll)', Math.round(scrollInfo.totalTime), {'nonInteraction': true});
 			ga('send', 'timing', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime*1000), 'Scrolled from top of page to bottom');
 		}
 
@@ -1904,7 +1858,7 @@ function conditionalJSLoading(){
 			chosenSelectOptions();
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': true});
 			nv('increment', 'js_errors');
 		});
 		nebulaLoadCSS(nebula.site.resources.css.chosen);
@@ -1918,7 +1872,7 @@ function conditionalJSLoading(){
 			jQuery(document).trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-            ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': 1});
+            ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': true});
             nv('increment', 'js_errors');
         });
     }
@@ -1927,7 +1881,7 @@ function conditionalJSLoading(){
 	if ( jQuery('[data-toggle="tooltip"]').length ){
 		jQuery.getScript(nebula.site.resources.js.tether).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-            ga('send', 'event', 'Error', 'JS Error', 'tether.min.js could not be loaded', {'nonInteraction': 1});
+            ga('send', 'event', 'Error', 'JS Error', 'tether.min.js could not be loaded', {'nonInteraction': true});
             nv('increment', 'js_errors');
         });
 	}
@@ -1949,7 +1903,7 @@ function nebulaLoadCSS(url){
 		    document.createStyleSheet(url);
 	    } catch(e){
 		    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': 1});
+		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': true});
 		    nv('increment', 'css_errors');
 	    }
 	} else {
@@ -2096,7 +2050,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 		    }); //End Google Maps load
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
 			nv('increment', 'js_errors');
 		});
 	}
@@ -2120,7 +2074,7 @@ function requestPosition(){
 			} //End Google Maps callback
 	    }); //End Google Maps load
 	}).fail(function(){
-		ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': 1});
+		ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
 	});
 }
 
@@ -2207,7 +2161,7 @@ function errorCallback(error){
     nebula.dom.body.addClass('geo-error');
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
     ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': 1});
+    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': true});
     nv('increment', 'js_errors');
 }
 
@@ -2349,11 +2303,11 @@ function errorMitigation(){
 				thisImage.prop('src', fallbackPNG);
 				thisImage.removeClass('svg');
 			}).fail(function() {
-				ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
+				ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': true});
 				nv('increment', 'html_errors');
 			});
 		} else {
-			ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': true});
 			nv('increment', 'html_errors');
 		}
 	});
@@ -2621,6 +2575,7 @@ function eraseCookie(name){
 	createCookie(name, "", -1);
 }
 
+//yolo
 //Time specific events. Unique ID is required. Returns time in milliseconds.
 //Data can be accessed outside of this function via nebulaTimings array.
 function nebulaTimer(uniqueID, action, name){
@@ -3000,7 +2955,7 @@ function onYouTubeIframeAPIReady(e){
 function onPlayerError(e){
 	var videoInfo = e.target.getVideoData();
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	ga('send', 'event', 'Error', 'Youtube API', videoInfo.title + ' (Code: ' + e.data + ')', {'nonInteraction': 1});
+	ga('send', 'event', 'Error', 'Youtube API', videoInfo.title + ' (Code: ' + e.data + ')', {'nonInteraction': true});
 	nv('increment', 'js_errors');
 }
 function onPlayerReady(e){
@@ -3046,7 +3001,7 @@ function onPlayerStateChange(e){
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-				ga('send', 'event', 'Videos', 'Engaged', videoInfo.title, {'nonInteraction': 1});
+				ga('send', 'event', 'Videos', 'Engaged', videoInfo.title, {'nonInteraction': true});
 				nv('append', {'video_engaged': videoInfo.title});
 				videoData[id].engaged = true;
 				nebula.dom.document.trigger('nebula_engaged_video');
@@ -3059,7 +3014,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Finished', videoInfo.title, {'nonInteraction': 1});
+        ga('send', 'event', 'Videos', 'Finished', videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
         ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
         nv('append', {'video_finished': videoInfo.title});
         nebula.dom.document.trigger('nebula_finished_video');
@@ -3069,7 +3024,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Pause', videoInfo.title);
+        ga('send', 'event', 'Videos', 'Pause', videoInfo.title, Math.round(videoData[id].watched));
         ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoInfo.title); //Amount of time watched, not the timestamp of when paused!
         nv('append', {'video_paused': videoInfo.title});
         nebula.dom.document.trigger('nebula_paused_video');
@@ -3083,12 +3038,12 @@ function vimeoControls(){
         jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': 1});
+			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': true});
 			nv('increment', 'js_errors');
 			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/froogaloop.min.js').done(function(){
 				createVimeoPlayers();
 			}).fail(function(){
-				ga('send', 'event', 'Error', 'JS Error', 'froogaloop (local) could not be loaded.', {'nonInteraction': 1});
+				ga('send', 'event', 'Error', 'JS Error', 'froogaloop (local) could not be loaded.', {'nonInteraction': true});
 				nv('increment', 'js_errors');
 			});
 		});
@@ -3167,7 +3122,7 @@ function vimeoControls(){
 
 		if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
 			ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-			ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': 1});
+			ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': true});
 			nv('append', {'video_engaged': videoTitle});
 			videoData[id].engaged = true;
 			nebula.dom.document.trigger('nebula_engaged_video');
@@ -3180,7 +3135,7 @@ function vimeoControls(){
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Videos', 'Pause', videoTitle);
+		ga('send', 'event', 'Videos', 'Pause', videoTitle, Math.round(videoData[id].watched));
 		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
 		nv('append', {'video_paused': videoTitle});
 		nebula.dom.document.trigger('nebula_paused_video');
@@ -3201,7 +3156,7 @@ function vimeoControls(){
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Videos', 'Finished', videoTitle, {'nonInteraction': 1});
+		ga('send', 'event', 'Videos', 'Finished', videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
 		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 		nv('append', {'video_finished': videoTitle});
 		nebula.dom.document.trigger('nebula_finished_video');
