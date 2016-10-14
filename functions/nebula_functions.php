@@ -191,7 +191,7 @@ function nebula_manifest_json(){
 		"type": "image/png",
 		"density": 4.0
 	}],
-	"start_url": "' . home_url() . '?hs=1",
+	"start_url": "' . home_url() . '",
 	"display": "standalone",
 	"orientation": "portrait"
 }';

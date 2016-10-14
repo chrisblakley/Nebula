@@ -2542,7 +2542,6 @@ function nebula_is_bot(){
 
 		if ( $GLOBALS["device_detect"]->isBot() ){ //This might work fine on it's own without the above foreach loop
 			return true;
-			break;
 		}
 	}
 

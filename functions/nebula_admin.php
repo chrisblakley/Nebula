@@ -3,16 +3,16 @@
 //Force expire query transients when posts/pages are saved.
 add_action('save_post', 'nebula_clear_transients');
 function nebula_clear_transients(){
-	//if ( is_plugin_active('transients-manager/transients-manager.php') ){ //@TODO "Nebula" 0: Uncomment this when the delete_transients_with_expirations() in Transients Manager becomes public
-		//$transient_manager = new PW_Transients_Manager();
-		//$transient_manager->delete_transients_with_expirations();
-	//} else {
+	if ( is_plugin_active('transients-manager/transients-manager.php') ){
+		$transient_manager = new PW_Transients_Manager();
+		$transient_manager->delete_transients_with_expirations();
+	} else {
 		delete_transient('nebula_autocomplete_menus'); //Autocomplete Search
 		delete_transient('nebula_autocomplete_categories'); //Autocomplete Search
 		delete_transient('nebula_autocomplete_tags'); //Autocomplete Search
 		delete_transient('nebula_autocomplete_authors'); //Autocomplete Search
 		delete_transient('nebula_everything_query'); //Advanced Search
-	//}
+	}
 }
 
 //Disable auto curly quotes (smart quotes)
@@ -881,7 +881,7 @@ function dashboard_current_user(){
 		}
 	echo '</ul>';
 
-	echo '<p><small><em><a href="profile.php">Manage your user information</a></em></small></p>';
+	echo '<p><small><em><a href="profile.php"><i class="fa fa-fw fa-pencil"></i> Manage your user information</a></em></small></p>';
 }
 
 

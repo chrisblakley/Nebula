@@ -288,6 +288,16 @@
 			});
 		<?php endif; ?>
 
+		//Window Type
+		if ( window !== window.top ){
+			jQuery('html').addClass('in-iframe');
+			ga('set', gaCustomDimensions['windowType'], 'Iframe: ' + window.top.location.href);
+		}
+		if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
+			jQuery('html').addClass('in-standalone-app');
+			ga('set', gaCustomDimensions['windowType'], 'Standalone App');
+		}
+
 		//Autotrack Page Visibility
 		if ( gaCustomMetrics['pageHidden'] && gaCustomMetrics['pageVisible'] ){
 			ga('require', 'pageVisibilityTracker', {

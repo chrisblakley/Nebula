@@ -46,7 +46,6 @@ jQuery(document).ready(function(){
 	svgImgs();
 
 	//Interaction
-	windowTypeDetection();
 	pageVisibility();
 	socialSharing();
 	checkForYoutubeVideos();
@@ -150,36 +149,6 @@ function cacheSelectors(){
 /*==========================
  Detection Functions
  ===========================*/
-
-//Detect notable aspects of the way the site was loaded.
-function windowTypeDetection(){
-	//Detect if loaded in an iframe
-	if ( window !== window.top ){
-		nebula.dom.html.addClass('in-iframe');
-		if ( window.parent.location.toString().indexOf('wp-admin') === -1 ){
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['windowType'], 'Iframe');
-			ga('send', 'event', 'Iframe', 'Loaded Within: ' + window.parent.location, 'Top: ' + window.top.location, {'nonInteraction': true});
-			nv('send', {'window_type': 'iframe', 'window_parent': window.parent.location});
-		}
-		//Break out of the iframe when link is clicked.
-		jQuery('a').each(function(){
-			if ( jQuery(this).attr('href') !== '#' ){
-				jQuery(this).attr('target', '_parent');
-			}
-		});
-	}
-
-	//Detect if loaded from the homescreen ("installed" as an app)
-	if ( navigator.standalone || get('hs') ){
-		//alert('loaded from hs'); //@TODO "Nebula" 0: Query string (in manifest) is not working, so this detection method doesn't work.
-		nebula.dom.document.trigger('nebula_standalone_app_load');
-		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('set', gaCustomDimensions['windowType'], 'Standalone App');
-		ga('send', 'event', 'Standalone', 'Loaded as a standalone app from the home screen.', {'nonInteraction': true});
-		nv('send', {'window_type': 'Standalone App'});
-	}
-}
 
 //Page Visibility
 function pageVisibility(){
@@ -482,18 +451,12 @@ function eventTracking(){
 	nebula.dom.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-		var linkText = jQuery(this).text();
 		var filePath = jQuery(this).attr('href');
 		var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		if ( linkText === '' || linkText.toLowerCase() === 'download' ){
-			ga('send', 'event', 'PDF View', 'File: ' + fileName);
-			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
-			nv('append', {'pdf_view': filename});
-		} else {
-			ga('send', 'event', 'PDF View', 'Text: ' + linkText);
-			nv('append', {'pdf_view': linkText});
-		}
+		ga('send', 'event', 'PDF View', fileName);
+		if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
+		nv('append', {'pdf_view': filename});
 	});
 
 	//Notable Downloads
@@ -504,14 +467,9 @@ function eventTracking(){
 			ga('set', gaCustomMetrics['notableDownloads'], 1);
 			var linkText = jQuery(this).text();
 			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
-			if ( linkText === '' || linkText.toLowerCase() === 'download' ){
-				ga('send', 'event', 'Notable Download', 'File: ' + fileName);
-				if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
-				nv('append', {'notable_download': fileName});
-			} else {
-				ga('send', 'event', 'Notable Download', 'Text: ' + linkText);
-				nv('append', {'notable_download': linkText});
-			}
+			ga('send', 'event', 'Notable Download', 'File: ' + fileName);
+			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
+			nv('append', {'notable_download': fileName});
 		}
 	});
 
@@ -523,7 +481,7 @@ function eventTracking(){
 		if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: searchQuery});}
 	});
 
-	//Use one NV for all internal search
+	//Use one NV for all internal searches
 	nebula.dom.document.on('keyup paste', '#s, input.search', function(e){
 		oThis = jQuery(this);
 		debounce(function(){
@@ -632,27 +590,23 @@ function eventTracking(){
 	});
 
 	//Capture Print Intent
-	printed = 0;
-	var afterPrint = function(){
-		if ( printed === 0 ){
-			printed = 1;
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Print', 'Print');
-			nv('send', {'print': '1'});
-		}
-	};
-	if ( window.matchMedia ){
-		var mediaQueryList = window.matchMedia('print');
-		if ( mediaQueryList.addListener ){
-			mediaQueryList.addListener(function(mql){
-				if ( !mql.matches ){
-					afterPrint();
-				}
-			});
-		}
-	}
-	window.onafterprint = afterPrint;
+	if ( 'matchMedia' in window ){
+        window.matchMedia('print').addListener(function(media){
+        	if ( media.matches ){
+        		sendPrintEvent();
+			}
+        });
+    } else {
+        window.onafterprint = sendPrintEvent();
+    }
+    function sendPrintEvent(){
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('send', 'event', 'Print', 'Print');
+		nv('send', {'print': '1'});
+    }
+
+
 }
 
 //Ecommerce event tracking
@@ -2345,7 +2299,7 @@ function nebulaEqualize(){
 				}
 			}
 		});
-		oThis.find('[class*="col-"]').css('min-height', tallestColumn);
+		oThis.find('[class*="col-"]:not(.no-equalize)').css('min-height', tallestColumn);
 	});
 
 	nebula.dom.document.on('nebula_infinite_finish', function(){
