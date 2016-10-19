@@ -51,7 +51,7 @@ function developerMetaboxes(){
 					jQuery('#searchprogress').removeClass().addClass('fa fa-search fa-fw');
 					jQuery('div.search_results').html(response).addClass('done');
 				},
-				error: function(MLHttpRequest, textStatus, errorThrown){
+				error: function(XMLHttpRequest, textStatus, errorThrown){
 					jQuery("div.search_results").html(errorThrown).addClass('done');
 				},
 				timeout: 60000
@@ -147,7 +147,7 @@ function initializationStuff(){
 						}, 2000);
 					}
 				},
-				error: function(MLHttpRequest, textStatus, errorThrown){
+				error: function(XMLHttpRequest, textStatus, errorThrown){
 					jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
 					jQuery('.nebula-activated-title').html('<i class="fa fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
 					jQuery('.nebula-activated-description').html('An AJAX error has occurred. Attempting standard initialization. <strong>This will reload the page in 2 seconds...</strong>');

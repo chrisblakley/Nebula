@@ -132,6 +132,15 @@
 	@if $group == "xl" {
 		@include widescreen(){& {@content}}
 	}
+
+	//Nebula Extended Viewports
+	@if $group == "xxl" {
+		@media (min-width: 1600px){& {@content}} //This size and larger
+	}
+
+	@if $group == "uw" {
+		@media (min-width: 2048px){& {@content}} //This size and larger
+	}
 }
 
 //.element {@include supports(box-shadow, 2px 2px 2px black);}

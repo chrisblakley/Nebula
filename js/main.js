@@ -812,7 +812,7 @@ function nv(action, data, callback){
 				callback(response);
 			}
 		},
-		error: function(MLHttpRequest, textStatus, errorThrown){
+		error: function(XMLHttpRequest, textStatus, errorThrown){
 			//Error
 		},
 		timeout: 60000
@@ -874,7 +874,7 @@ function hubspot(mode, type, email, properties, callback){ //@todo "Nebula" 0: U
 					callback(response);
 				}
 			},
-			error: function(MLHttpRequest, textStatus, errorThrown){
+			error: function(XMLHttpRequest, textStatus, errorThrown){
 				//Error
 			},
 			timeout: 60000
@@ -986,7 +986,7 @@ function autocompleteSearch(){
 							response(data);
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
 						},
-						error: function(MLHttpRequest, textStatus, errorThrown){
+						error: function(XMLHttpRequest, textStatus, errorThrown){
 							jQuery(document).trigger('nebula_autocomplete_search_error');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							debounce(function(){
@@ -1169,8 +1169,8 @@ function advancedSearchPrep(startingAt, waitingText){
 					haveAllEvents = 1;
 					advancedSearch(startingAt, response);
 				},
-				error: function(MLHttpRequest, textStatus, errorThrown){
-					jQuery('#advanced-search-results').text('Error: ' + MLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
+				error: function(XMLHttpRequest, textStatus, errorThrown){
+					jQuery('#advanced-search-results').text('Error: ' + XMLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
 					haveAllEvents = 0;
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 					ga('send', 'event', 'Error', 'AJAX Error', 'Advanced Search AJAX');
@@ -2329,7 +2329,7 @@ function nebulaScrollTo(element, milliseconds, offset){
 		var offset = ( jQuery('.headroom').length )? jQuery('.headroom').outerHeight() : 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 	}
 
-	//Call this function with a selector to trigger scroll to an element (note: not a selector).
+	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
 	if ( element ){
 		if ( !milliseconds ){
 			var milliseconds = 1000;
@@ -3148,20 +3148,21 @@ function pauseAllVideos(force){
 
 //Helpful animation event listeners
 function animationTriggers(){
-	nebula.dom.document.on('click tap touch', '.nebula-push.click', function(){
-		nebulaAnimate(jQuery(this));
+	//On document ready
+	jQuery('.ready').each(function(){
+		loadAnimate(jQuery(this));
 	});
 
-	nebula.dom.document.ready(function(){
-		jQuery('.ready').each(function(){
-			loadAnimate(jQuery(this));
-		});
-	});
-
+	//On window load
 	nebula.dom.window.on('load', function(){
 		jQuery('.load').each(function(){
 			loadAnimate(jQuery(this));
 		});
+	});
+
+	//On click
+	nebula.dom.document.on('click tap touch', '.nebula-push.click', function(){
+		nebulaAnimate(jQuery(this));
 	});
 }
 

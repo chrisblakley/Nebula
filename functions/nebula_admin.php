@@ -691,6 +691,11 @@ function dashboard_nebula_ataglance(){
 			}
 		}
 
+		//Global Admin Bar
+		if ( nebula_option('admin_bar', 'disabled') ){
+			echo '<li><i class="fa fa-bars fa-fw"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
+		}
+
 		//Nebula Visitors DB
 		if ( nebula_option('visitors_db') ){
 			global $wpdb;
@@ -878,6 +883,11 @@ function dashboard_current_user(){
 		//Multiple locations
 		if ( nebula_user_single_concurrent($user_info->ID) > 1 ){
 			echo '<li><i class="fa fa-users fa-fw"></i> Active in <strong>' . nebula_user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
+		}
+
+		//User Admin Bar
+		if ( !get_user_option('show_admin_bar_front', $user_info->ID) ){
+			echo '<li><i class="fa fa-bars fa-fw"></i> Admin Bar disabled <small>(for just you via <a href="profile.php">User Profile</a>)</small></li>';
 		}
 	echo '</ul>';
 
@@ -1267,8 +1277,9 @@ function dashboard_developer_info(){
 		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong title="' . human_time_diff($latest_file['date']) . ' ago">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
 
 		//SCSS last processed date
-		$scss_last_processed = ( nebula_data('scss_last_processed') )? '<span title="' . human_time_diff(nebula_data('scss_last_processed')) . ' ago"><strong>' . date("F j, Y", nebula_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_data('scss_last_processed')) . '</strong></span>' : '<strong>Never</strong>';
-		echo '<li><i class="fa fa-paint-brush fa-fw"></i> SCSS Last Processed: ' . $scss_last_processed . '</li>';
+		if ( nebula_data('scss_last_processed') ){
+			echo '<li><i class="fa fa-paint-brush fa-fw"></i> Sass Last Processed: <span title="' . human_time_diff(nebula_data('scss_last_processed')) . ' ago"><strong>' . date("F j, Y", nebula_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_data('scss_last_processed')) . '</strong></span></li>';
+		}
 	echo '</ul>';
 
 	//Directory search
@@ -1409,7 +1420,7 @@ function search_theme_files(){
 	}
 	echo '<strong>' . $file_counter . '</strong> file';
 	echo ( $file_counter == 1 )? '.</p>': 's.</p>';
-	exit();
+	wp_die();
 }
 
 //Change default values for the upload media box
@@ -1745,7 +1756,7 @@ function nebula_visitors_data_page(){
 								jQuery('#querycol').val('');
 								jQuery('#queryval').val('');
 							},
-							error: function(MLHttpRequest, textStatus, errorThrown){
+							error: function(XMLHttpRequest, textStatus, errorThrown){
 								jQuery('#querystatus').text('An AJAX error occured.');
 								jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-times');
 							},
@@ -1774,7 +1785,7 @@ function nebula_visitors_data_page(){
 									jQuery('#deletezeroscores').html('Success! Visitor data with score of 0 (or less) have been removed. Refreshing page... <a class="refreshpage" href="#">Manual Refresh</a>');
 									window.location.reload();
 								},
-								error: function(MLHttpRequest, textStatus, errorThrown){
+								error: function(XMLHttpRequest, textStatus, errorThrown){
 									jQuery('#deletezeroscores').html('Error. An AJAX error occured. <a class="refreshpage" href="#">Please refresh and try again.</a>');
 								},
 								timeout: 60000
@@ -1798,7 +1809,7 @@ function nebula_visitors_data_page(){
 								success: function(response){
 									jQuery('#dropnvtable').html('Success! Nebula Visitors table has been dropped from the database. The option has also been disabled. Re-enable it in <a href="themes.php?page=nebula_options">Nebula Options</a>.');
 								},
-								error: function(MLHttpRequest, textStatus, errorThrown){
+								error: function(XMLHttpRequest, textStatus, errorThrown){
 									jQuery('#dropnvtable').html('Error. An AJAX error occured. <a class="refreshpage" href="#">Please refresh and try again.</a>');
 								},
 								timeout: 60000
@@ -1949,7 +1960,7 @@ function nebula_ajax_manual_update_visitor(){
 		array('%d')
 	);
 
-	exit;
+	wp_die();
 }
 
 //Manually delete null and 0 score rows
@@ -1963,7 +1974,7 @@ function nebula_ajax_remove_zero_scores(){
 		$zero_scores = $wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE score <= %d", 0));
 	}
 
-	exit;
+	wp_die();
 }
 
 //Manually delete the entire Nebula Visitor table
@@ -1978,5 +1989,5 @@ function nebula_ajax_drop_nv_table(){
 		nebula_update_option('visitors_db', 'disabled');
 	}
 
-	exit;
+	wp_die();
 }

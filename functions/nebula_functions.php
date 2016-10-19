@@ -887,7 +887,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 
 	if ( $_POST['data'] ){
 		echo $tweets;
-		exit;
+		wp_die();
 	} else {
 		return $tweets;
 	}
@@ -953,7 +953,7 @@ add_action('wp_ajax_nopriv_navigator', 'nebula_ajax_navigator');
 function nebula_ajax_navigator(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	include(get_template_directory() . '/includes/navigator.php');
-	exit();
+	wp_die();
 }
 
 //Replace text on password protected posts to be more minimal
@@ -1442,7 +1442,7 @@ function nebula_autocomplete_search(){
 	$outputArray[] = $suggestion;
 
 	echo json_encode($outputArray, JSON_PRETTY_PRINT);
-	exit;
+	wp_die();
 }
 
 //Advanced Search
@@ -1536,7 +1536,7 @@ function nebula_advanced_search(){
 */
 
 	echo json_encode($output, JSON_PRETTY_PRINT);
-	exit;
+	wp_die();
 }
 
 //Infinite Load
@@ -1652,7 +1652,7 @@ function nebula_infinite_load_query($args=array('post_status' => 'publish', 'sho
 							nv('increment', 'infinite_query_loads');
 							pageNumber++;
 						},
-						error: function(MLHttpRequest, textStatus, errorThrown){
+						error: function(XMLHttpRequest, textStatus, errorThrown){
 							jQuery(document).trigger('nebula_infinite_finish');
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
@@ -1687,7 +1687,7 @@ function nebula_infinite_load(){
     	call_user_func($loop); //Custom loop callback function must be defined in a functions file (not a template file) for this to work.
     }
 
-    exit;
+    wp_die();
 }
 
 //404 page suggestions

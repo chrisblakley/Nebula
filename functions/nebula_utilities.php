@@ -243,7 +243,7 @@ function nebula_ga_event_ajax(){
 	if ( !nebula_is_bot() ){ //Is this conditional preventing this from working at times?
 		ga_send_event(sanitize_text_field($_POST['data'][0]['category']), sanitize_text_field($_POST['data'][0]['action']), sanitize_text_field($_POST['data'][0]['label']), sanitize_text_field($_POST['data'][0]['value']), sanitize_text_field($_POST['data'][0]['ni']));
 	}
-	exit;
+	wp_die();
 }
 
 /*==========================
@@ -424,7 +424,7 @@ function nebula_ajax_get_visitor_data(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	$column = sanitize_text_field($_POST['data']);
 	echo nebula_get_visitor_data($column);
-	exit;
+	wp_die();
 }
 function nebula_get_visitor_data($column){ //@TODO "Nebula" 0: Update to allow multiple datapoints to be accessed in one query.
 	if ( nebula_option('visitors_db') ){
@@ -455,7 +455,7 @@ function nebula_ajax_low_visitor(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	$data = $_POST['data'];
 	echo nebula_vague_visitor($data);
-	exit;
+	wp_die();
 }
 function nebula_vague_visitor($data=array()){
 	if ( nebula_option('visitors_db') ){
@@ -481,7 +481,7 @@ function nebula_ajax_update_visitor(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	$data = $_POST['data'];
 	echo nebula_update_visitor($data);
-	exit;
+	wp_die();
 }
 function nebula_update_visitor($data=array(), $send_to_hubspot=true){ //$data is going to be array(column => value) or an array of arrays
 	if ( nebula_option('visitors_db') ){
@@ -539,7 +539,7 @@ function nebula_ajax_append_visitor(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	$data = $_POST['data']; //json_decode(stripslashes()); but its already an array... why?
 	echo nebula_append_visitor($data);
-	exit;
+	wp_die();
 }
 function nebula_append_visitor($data=array(), $send_to_hubspot=true){ //$data is going to be array(column => value) or an array of arrays
 	if ( nebula_option('visitors_db') ){
@@ -584,7 +584,7 @@ function nebula_ajax_increment_visitor(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 	$data = $_POST['data'];
 	echo nebula_increment_visitor($data);
-	exit;
+	wp_die();
 }
 function nebula_increment_visitor($data){ //Data should be an array of columns to increment
 	if ( nebula_option('visitors_db') ){
@@ -1072,7 +1072,7 @@ function nebula_ajax_send_to_hubspot(){
 	);
 
 	echo nebula_send_to_hubspot($data);
-	exit;
+	wp_die();
 }
 function nebula_send_to_hubspot($data=array()){
 	if ( nebula_option('hubspot_api') ){

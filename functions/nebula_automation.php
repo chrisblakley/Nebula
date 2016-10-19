@@ -235,7 +235,7 @@ function nebula_initialization($standard=null){
 
 		if ( empty($standard) ){ //If AJAX initialization
 			echo 'successful-nebula-init';
-			exit;
+			wp_die();
 		}
 	}
 }
