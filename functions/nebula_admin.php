@@ -1008,7 +1008,7 @@ function skip_extensions(){
 }
 
 //TODO metabox
-if ( is_dev() ){
+if ( nebula_option('todo_manager_metabox', 'enabled') && is_dev() ){
 	add_action('wp_dashboard_setup', 'todo_metabox');
 }
 
@@ -1121,7 +1121,7 @@ function nebula_todo_files($todo_dirpath=null, $child=false){
 
 //Developer Info Metabox
 //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
-if ( is_dev() ){
+if ( nebula_option('dev_info_metabox', 'enabled') && is_dev() ){
 	add_action('wp_dashboard_setup', 'dev_info_metabox');
 }
 

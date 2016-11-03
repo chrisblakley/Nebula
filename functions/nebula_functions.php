@@ -908,6 +908,7 @@ function nebula_excerpt($options=array()){
 		'ellipsis' => false,
 		'url' => false,
 		'more' => 'Read More &raquo;',
+		'strip_shortcodes' => true,
 		'strip_tags' => true,
 	);
 
@@ -919,9 +920,16 @@ function nebula_excerpt($options=array()){
 		$data['text'] = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
 	}
 
+	//Strip Shortcodes
+	if ( $data['strip_shortcodes'] ){
+		$data['text'] = strip_shortcodes($data['text']);
+	} else {
+		$data['text'] = preg_replace('~(?:\[/?)[^/\]]+/?\]~s', ' ', $data['text']);
+	}
+
 	//Strip Tags
 	if ( $data['strip_tags'] ){
-		$data['text'] = strip_tags(strip_shortcodes($data['text']), '');
+		$data['text'] = strip_tags($data['text'], '');
 	}
 
 	//Length

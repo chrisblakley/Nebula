@@ -208,9 +208,10 @@
 			}
 
 			//Don't zoom in too far on only one marker
+			var zoomMod = 5;
 			if ( bounds.getNorthEast().equals(bounds.getSouthWest()) ){
-				var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat()+0.0005, bounds.getNorthEast().lng()+0.0005);
-				var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat()-0.0005, bounds.getNorthEast().lng()-0.0005);
+				var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat()+zoomMod*0.0001, bounds.getNorthEast().lng()+zoomMod*0.0001);
+				var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat()-zoomMod*0.0001, bounds.getNorthEast().lng()-zoomMod*0.0001);
 				bounds.extend(extendPoint1);
 				bounds.extend(extendPoint2);
 			}

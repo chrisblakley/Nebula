@@ -616,6 +616,7 @@ function ecommerceTracking(){
 	nebula.dom.document.on('click tap touch', 'a.add_to_cart', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Ecommerce', 'Add to Cart', jQuery(this).attr('data-product_id'));
+		if ( typeof fbq === 'function' ){fbq('track', 'AddToCart');}
 		nv('send', {'ecommerce_addtocart': jQuery(this).attr('data-product_id')});
 	});
 
@@ -636,6 +637,7 @@ function ecommerceTracking(){
 	nebula.dom.document.on('click tap touch', '.wc-proceed-to-checkout .checkout-button', function(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Ecommerce', 'Proceed to Checkout Button', 'Proceed to Checkout button click');
+		if ( typeof fbq === 'function' ){fbq('track', 'InitiateCheckout');}
 		nv('send', {'ecommerce_checkout': 'Proceed to Checkout'});
 	});
 
@@ -652,6 +654,7 @@ function ecommerceTracking(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebulaTimer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
 		ga('send', 'event', 'Ecommerce', 'Place Order Button', 'Place Order button click (likely exit to payment gateway)');
+		if ( typeof fbq === 'function' ){fbq('track', 'Purchase');}
 		nv('send', {'ecommerce_checkout': 'Placed Order', 'ecommerce_customer': '1'});
 	});
 }

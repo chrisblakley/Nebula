@@ -176,6 +176,8 @@ function nebula_default_options(){
 		'production_theme' => '',
 		'admin_bar' => 'enabled',
 		'admin_notices' => 'enabled',
+		'dev_info_metabox' => 'enabled',
+		'todo_manager_metabox' => 'enabled',
 		'author_bios' => 'disabled',
 		'comments' => 'disabled',
 		'device_detection' => 'disabled',
@@ -956,6 +958,30 @@ function nebula_options_page(){
 							<option value="disabled" <?php selected('disabled', $nebula_options['unnecessary_metaboxes']); ?>>Disabled</option>
 						</select>
 						<p class="helper"><small>Remove metaboxes on the Dashboard that are not necessary for most users. <em>(Default: <?php echo ucwords($nebula_options_defaults['unnecessary_metaboxes']); ?>)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_options[dev_info_metabox]">
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['dev_info_metabox']); ?></option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['dev_info_metabox']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['dev_info_metabox']); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Show theme and server information useful to developers. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['dev_info_metabox']); ?>)</em></small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">TODO Manager&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select name="nebula_options[todo_manager_metabox]">
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?></option>
+							<option value="enabled" <?php selected('enabled', $nebula_options['todo_manager_metabox']); ?>>Enabled</option>
+							<option value="disabled" <?php selected('disabled', $nebula_options['todo_manager_metabox']); ?>>Disabled</option>
+						</select>
+						<p class="helper"><small>Aggregate @TODO comments in code. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?>)</em></small></p>
 					</td>
 		        </tr>
 
