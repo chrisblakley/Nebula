@@ -48,14 +48,20 @@ div.cssbs {position: relative; display: table; height: 150px; min-width: 300px; 
 <div id="container" style="min-width: 310px; height: 400px; margin: 25px auto;"></div>
 
 <?php
-	WP_Filesystem();
-	global $wp_filesystem;
+	$response = wp_remote_get('https://analytics.usa.gov/data/live/browsers.json');
+	$browsers = json_decode(gzdecode($response['body']);
 
-	$browsers = json_decode(gzdecode($wp_filesystem->get_contents('https://analytics.usa.gov/data/live/browsers.json')));
-	$ie = json_decode(gzdecode($wp_filesystem->get_contents('https://analytics.usa.gov/data/live/ie.json')));
-	$devices = json_decode(gzdecode($wp_filesystem->get_contents('https://analytics.usa.gov/data/live/devices.json')));
-	$operating_systems = json_decode(gzdecode($wp_filesystem->get_contents('https://analytics.usa.gov/data/live/os.json')));
-	$windows = json_decode(gzdecode($wp_filesystem->get_contents('https://analytics.usa.gov/data/live/windows.json')));
+	$response = wp_remote_get('https://analytics.usa.gov/data/live/ie.json');
+	$ie = json_decode(gzdecode($response['body']);
+
+	$response = wp_remote_get('https://analytics.usa.gov/data/live/devices.json');
+	$devices = json_decode(gzdecode($response['body']);
+
+	$response = wp_remote_get('https://analytics.usa.gov/data/live/os.json');
+	$operating_systems = json_decode(gzdecode($response['body']);
+
+	$response = wp_remote_get('https://analytics.usa.gov/data/live/windows.json');
+	$windows = json_decode(gzdecode($response['body']);
 
 	//Create market_share array structure
 	$market_share = array(

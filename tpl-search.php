@@ -50,7 +50,7 @@ get_header(); ?>
 									<div class="advanced-search-group">
 										<span class="contact-form-heading">Date Range</span>
 										<div class="form-group">
-											<input id="advanced-search-date-start" class="form-control advanced-search-date" type="text" name="advanced-search-date-start" max="<?php echo date('Y-m-d', strtotime('now')); ?>" placeholder="From"> - <input id="advanced-search-date-end" class="advanced-search-date input" type="text" name="advanced-search-date-end" max="<?php echo date('Y-m-d', strtotime('now')); ?>" placeholder="To">
+											<input id="advanced-search-date-start" class="form-control advanced-search-date" type="text" name="advanced-search-date-start" max="<?php echo date('Y-m-d', time()); ?>" placeholder="From"> - <input id="advanced-search-date-end" class="advanced-search-date input" type="text" name="advanced-search-date-end" max="<?php echo date('Y-m-d', time()); ?>" placeholder="To">
 										</div>
 										<input id="advanced-search-date-start-alt" class="hidden" type="text">
 										<input id="advanced-search-date-end-alt" class="hidden" type="text">

@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.6.2
+	Version: 4.6.18
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -382,18 +382,6 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 #logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 0; text-align: center; box-shadow: none; z-index: 8000; @include prefix((transition: all .5s easing(easeInOutCubic)));
 	img,
 	svg {width: 100%; height: auto; @include prefix((transition: all 0.5s));}
-
-	//When below offset
-	&.headroom--not-top {position: fixed; top: 0; left: 0; width: 100%; padding-top: 0; @include background-color(#f6f6f6, 0.97); @include prefix((backdrop-filter: blur(8px))); box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); z-index: 99999; backface-visibility: hidden;
-		img,
-		svg {@include prefix((transform: scale(0.75), ms webkit);}
-		#primarynav ul {margin-top: 29px; // @include prefix((transform: scale(0.9), ms webkit);
-			li.menu-item {font-size: 12px;}
-		}
-	}
-	&.headroom--below {@include prefix((transform: translateY(-100%), ms webkit);} //When scrolled past the header (custom Nebula extension)
-	&.headroom--pinned,
-	&.headroom--bottom {@include prefix((transform: translateY(0%), ms webkit);} //When scrolling up (or reached the bottom of the page)
 
 	.logocon {display: block; margin: 0 auto; max-width: 360px;}
 	#primarynav {position: relative; display: none; z-index: 1000;

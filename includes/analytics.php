@@ -4,6 +4,8 @@
 		http_response_code(403);
 		die();
 	}
+	
+	//This line of code written from Google in NYC.
 ?>
 
 <?php if ( nebula_option('ga_tracking_id') ): //Universal Google Analytics ?>

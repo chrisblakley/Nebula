@@ -513,11 +513,11 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 	$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
 	$php_timeline = get_transient('nebula_php_timeline');
 	if ( empty($php_timeline) || is_debug() ){
+		$response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
+		$php_timeline = $response['body'];
 
 		WP_Filesystem();
 		global $wp_filesystem;
-		$php_timeline = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
-
 		if ( !empty($php_timeline) ){
 			$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
 			set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
@@ -870,7 +870,7 @@ function dashboard_current_user(){
 		}
 
 		//Weather
-		if ( nebula_weather() ){
+		if ( nebula_option('weather') ){
 			$ip_zip = '';
 			if ( nebula_get_visitor_data('zip_code') ){
 				$ip_zip = nebula_get_visitor_data('zip_code');
@@ -1305,6 +1305,13 @@ function dashboard_developer_info(){
 //Get last modified filename and date from a directory
 function nebula_last_modified($directory=null, $last_date=0, $child=false){
 	global $latest_file;
+	if ( empty($latest_file) ){
+		$latest_file = array(
+			'date' => false,
+			'file' => false,
+			'path' => false,
+		);
+	}
 
 	if ( empty($directory) ){
 		$directory = get_template_directory();

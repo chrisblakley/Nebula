@@ -58,12 +58,6 @@ jQuery(document).ready(function(){
 		initEventTracking();
 	}
 
-	if ( jQuery('.home.page').length ){
-		initHeadroom(jQuery('#herocon'));
-	} else {
-		initHeadroom();
-	}
-
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').val(nebula.user.nid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
@@ -112,12 +106,6 @@ jQuery(window).on('resize', function(){
 		powerFooterWidthDist();
 		nebulaEqualize();
 		mobileSearchPlaceholder();
-
-		if ( jQuery('.home.page').length ){
-			initHeadroom(jQuery('#herocon'));
-		} else {
-			initHeadroom();
-		}
 	}, 500, 'window resize');
 }); //End Window Resize
 
@@ -613,7 +601,7 @@ function eventTracking(){
 //Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
 function ecommerceTracking(){
 	//Add to Cart clicks
-	nebula.dom.document.on('click tap touch', 'a.add_to_cart', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
+	nebula.dom.document.on('click tap touch', 'a.add_to_cart, .single_add_to_cart_button', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Ecommerce', 'Add to Cart', jQuery(this).attr('data-product_id'));
 		if ( typeof fbq === 'function' ){fbq('track', 'AddToCart');}
@@ -2329,7 +2317,7 @@ function powerFooterWidthDist(){
 //Offset must be an integer
 function nebulaScrollTo(element, milliseconds, offset){
 	if ( !offset ){
-		var offset = ( jQuery('.headroom').length )? jQuery('.headroom').outerHeight() : 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+		var offset = 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 	}
 
 	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
@@ -2532,7 +2520,6 @@ function eraseCookie(name){
 	createCookie(name, "", -1);
 }
 
-//yolo
 //Time specific events. Unique ID is required. Returns time in milliseconds.
 //Data can be accessed outside of this function via nebulaTimings array.
 function nebulaTimer(uniqueID, action, name){
@@ -3430,99 +3417,6 @@ function subnavExpanders(){
     jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
     jQuery('.current-menu-item').children('.toplevelvert_expander').click();
 } //end subnavExpanders()
-
-//Affix the logo/navigation when scrolling passed it
-function initHeadroom(headerElement, footerElement, fixedElement){
-	if ( !headerElement ){
-		var headerElement = jQuery('#header-section');
-	}
-
-	if ( !footerElement ){
-		var footerElement = jQuery('#footer-section');
-	}
-
-	if ( !fixedElement ){
-		var fixedElement = jQuery('#logonavcon');
-	}
-
-	if ( once('headroom padding') ){
-		needHeadroomPadding = ( typeof fixedElement.css('position') === 'undefined' || fixedElement.css('position') === 'relative' )? true : false; //If positioned relative, then padding is needed.
-	}
-
-	if ( typeof fixedElement === 'undefined' || !fixedElement.length ){
-		return false;
-	}
-
-	if ( typeof headerElement === 'undefined' || !headerElement.length ){
-		headerElement = nebula.dom.body; //@TODO: If this fallback happens, the padding would need to move to the top.
-	}
-
-	if ( typeof headroom !== 'undefined' || (window.matchMedia && !window.matchMedia("(min-width: 767px)").matches) ){ //If headroom needs to be re-init or if tablet or mobile
-		if ( !window.matchMedia("(min-width: 767px)").matches ){
-			return false;
-		}
-
-		headroom.destroy();
-	}
-
-	var clonedFixedElement = fixedElement.clone().addClass('headroom--not-top').css({position: "absolute", left: "-10000px"}).appendTo('body'); //See the future: Get final height of fixedElement with unknown CSS properties
-	var finalBufferSize = clonedFixedElement.outerHeight();
-	clonedFixedElement.remove();
-
-	window.headroom = new Headroom(fixedElement[0], {
-		offset: fixedElement.offset().top, //Vertical offset in px before element is first unpinned
-		tolerance: 3, //Scroll tolerance in px before state changes
-		classes: {
-			initial: "headroom", //When element is initialised
-			pinned: "headroom--pinned", //When scrolling up
-			unpinned: "headroom--unpinned", //When scrolling down
-			top: "headroom--top", //When above offset
-			notTop: "headroom--not-top" //When below offset
-		},
-		onPin: function(){ //Callback when pinned, 'this' is headroom object
-			nebula.dom.document.removeClass('headroom--unpinned').addClass('headroom--pinned');
-		},
-		onUnpin: function(){ //Callback when unpinned, 'this' is headroom object
-			nebula.dom.document.removeClass('headroom--pinned').addClass('headroom--unpinned');
-		},
-		onTop: function(){ //Callback when above offset, 'this' is headroom object
-			nebula.dom.document.removeClass('headroom--not-top').addClass('headroom--top');
-			if ( needHeadroomPadding ){
-				headerElement.css('padding-bottom', '0');
-			}
-		},
-		onNotTop: function(){ //Callback when below offset, 'this' is headroom object
-			nebula.dom.document.removeClass('headroom--top').addClass('headroom--not-top');
-			if ( needHeadroomPadding ){
-				headerElement.css('padding-bottom', fixedElement.outerHeight()).stop().animate({paddingBottom: finalBufferSize}, 400, "linear"); //Add padding buffer to header and animate (slightly faster than CSS) to finalBufferSize
-			}
-		},
-	});
-	headroom.init();
-
-	//Custom Nebula Headroom extensions
-	nebula.dom.window.on('scroll', function(){
-		var viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
-		var documentHeight = nebula.dom.document.height();
-		var scrollDistance = nebula.dom.document.scrollTop();
-
-		//Add .headroom--below //@TODO "Nebula" 0: Could this be moved into onNotTop?
-		if ( nebula.dom.document.scrollTop() > headerElement.offset().top+headerElement.outerHeight() ){
-			fixedElement.addClass('headroom--below');
-		} else if ( fixedElement.hasClass('headroom--below') ){
-			fixedElement.removeClass('headroom--below');
-		}
-
-		//Add .headroom-bottom
-		if ( viewportBottom >= documentHeight-(footerElement.outerHeight()/2) ){
-			fixedElement.addClass('headroom--bottom');
-		} else if ( fixedElement.hasClass('headroom--bottom') ){
-			fixedElement.removeClass('headroom--bottom');
-		}
-	});
-}
-
-
 
 /*==========================
  Extension Functions

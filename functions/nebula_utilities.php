@@ -138,10 +138,7 @@ function ga_send_data($data){
 	$override = apply_filters('pre_ga_send_data', false, $data);
 	if ( $override !== false ){return $override;}
 
-	$getString = 'https://ssl.google-analytics.com/collect';
-	$getString .= '?payload_data&';
-	$getString .= http_build_query($data);
-	$result = wp_remote_get($getString);
+	$result = wp_remote_get('https://ssl.google-analytics.com/collect?payload_data&' . http_build_query($data));
 	return $result;
 }
 
@@ -385,7 +382,7 @@ function nebula_visitors_create_missing_columns($all_data){
 
 		$needed_columns = array();
 		foreach ( $all_data as $column => $value ){
-			if ( is_null($value) ){
+			if ( empty($value) ){
 				$all_data[$column] = ''; //Convert null values to empty strings.
 			}
 
@@ -664,15 +661,15 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 
 			//Attempt to detect IP Geolocation data using https://freegeoip.net/
 			if ( nebula_option('ip_geolocation') ){
-				WP_Filesystem();
-				global $wp_filesystem;
-				$ip_geo_data = $wp_filesystem->get_contents('http://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
-				$ip_geo_data = json_decode($ip_geo_data);
-				if ( !empty($ip_geo_data) ){
-					$defaults['ip_country'] = sanitize_text_field($ip_geo_data->country_name);
-					$defaults['ip_region'] = sanitize_text_field($ip_geo_data->region_name);
-					$defaults['ip_city'] = sanitize_text_field($ip_geo_data->city);
-					$defaults['ip_zip'] = sanitize_text_field($ip_geo_data->zip_code);
+				$response = wp_remote_get('http://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
+				if ( !is_wp_error($response) ){
+					$ip_geo_data = json_decode($response['body']);
+					if ( !empty($ip_geo_data) ){
+						$defaults['ip_country'] = sanitize_text_field($ip_geo_data->country_name);
+						$defaults['ip_region'] = sanitize_text_field($ip_geo_data->region_name);
+						$defaults['ip_city'] = sanitize_text_field($ip_geo_data->city);
+						$defaults['ip_zip'] = sanitize_text_field($ip_geo_data->zip_code);
+					}
 				}
 			}
 
@@ -974,11 +971,13 @@ function nebula_prep_data_for_hubspot_crm_delivery($data){
  ===========================*/
 
 //Send data to Hubspot CRM via PHP curl
+//@TODO "Nebula" 0: Change this to use either wp_remote_get() or wp_remote_post()
 function nebula_hubspot_curl($url, $content=null){
 	$sep = ( strpos($url, '?') === false )? '?' : '&';
 	$curl = curl_init($url . $sep . 'hapikey=' . nebula_option('hubspot_api'));
 	curl_setopt($curl, CURLOPT_HEADER, false);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
 	if ( !empty($content) ){
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
 		curl_setopt($curl, CURLOPT_POST, true);
@@ -1150,11 +1149,8 @@ function nebula_get_hubspot_contact($vid=null, $property=''){
 		$property = '&property=' . $property;
 	}
 
-	WP_Filesystem();
-	global $wp_filesystem;
-	$contact_data = $wp_filesystem->get_contents('https://api.hubapi.com/contacts/v1/contact/vid/' . $vid . '/profile?hapikey=' . nebula_option('hubspot_api') . $property);
-
-	return json_decode($contact_data, true);
+	$response = wp_remote_get('https://api.hubapi.com/contacts/v1/contact/vid/' . $vid . '/profile?hapikey=' . nebula_option('hubspot_api') . $property);
+	return json_decode($response['body'], true);
 }
 
 //Detect Notable POI
@@ -1689,43 +1685,20 @@ function contains($str, array $arr){
 }
 
 //Check if a website or resource is available
-function nebula_is_available($domain=null){
-	$override = apply_filters('pre_nebula_is_available', false, $domain);
+function nebula_is_available($url=null){
+	$override = apply_filters('pre_nebula_is_available', false, $url);
 	if ( $override !== false ){return $override;}
 
-	if ( empty($domain) || strpos($domain, 'http') != 0 ){
-		trigger_error('Error: Requested domain is either empty or missing acceptable protocol.', E_USER_ERROR);
+	if ( empty($url) || strpos($url, 'http') !== 0 ){
+		trigger_error('Error: Requested URL is either empty or missing acceptable protocol.', E_USER_ERROR);
 		return false;
 	}
 
-	$curl_init = curl_init($domain);
-	$curl_options = array(
-		CURLOPT_RETURNTRANSFER => true, //Return web page
-		CURLOPT_HEADER => true, //Return headers
-		CURLOPT_FOLLOWLOCATION => true, //Follow redirects
-		CURLOPT_CONNECTTIMEOUT => 10, //Timeout on connect
-		CURLOPT_NOBODY => true,
-		CURLOPT_MAXREDIRS => 10, //Stop after 10 redirects
-		CURLOPT_SSL_VERIFYPEER => false, //Disabled SSL cert checks
-	);
-	curl_setopt_array($curl_init, $curl_options);
-	$response = curl_exec($curl_init);
-	$header = curl_getinfo($curl_init);
-	$error = curl_errno($curl_init);
-	$error_message = curl_error($curl_init);
-	curl_close($curl_init);
-
-	if ( $error == 35 ){ //If SSL certificate error, check non SSL domain
-		$http_domain = str_replace('https://', 'http://', $domain);
-		return nebula_is_available($http_domain);
-	}
-
-	if ( !empty($response) && !empty($header) && empty($error) && empty($error_message) ){
-		if ( $header['http_code'] == 0 || $header['http_code'] >= 400 ){
-			return false;
-		}
+	$response = wp_remote_get($url);
+	if ( !is_wp_error($response) && $response['response']['code'] === 200 ){
 		return true;
 	}
+
 	return false;
 }
 

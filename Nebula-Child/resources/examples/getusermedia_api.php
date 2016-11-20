@@ -162,7 +162,7 @@
 			$data = base64_decode($userImage);
 
 			$upload_dir = wp_upload_dir();
-			$file = $upload_dir['basedir'] . '/get_user_media_api_images/' . date('Y-m-d_H-i-s', strtotime('now')) . '_' . uniqid() . '.png';
+			$file = $upload_dir['basedir'] . '/get_user_media_api_images/' . date('Y-m-d_H-i-s', time()) . '_' . uniqid() . '.png';
 			$success = file_put_contents($file, $data);
 
 			exit();

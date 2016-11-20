@@ -521,6 +521,10 @@ get_header(); ?>
 							include_once('examples/hubspot.php');
 						} ?>
 
+						<?php if ( is_page(2993) ){ //Headroom Sticky Header
+							include_once('examples/sticky_header.php');
+						} ?>
+
 						<?php
 						/*==========================
 						 Utilities

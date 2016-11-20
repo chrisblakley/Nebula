@@ -192,15 +192,17 @@ function nebula_get_domain_blacklist(){
 	$domain_blacklist_json_file = get_template_directory() . '/includes/data/domain_blacklist.txt';
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
 	if ( empty($domain_blacklist) || is_debug() ){
-		WP_Filesystem();
-		global $wp_filesystem;
-		$domain_blacklist = $wp_filesystem->get_contents('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt'); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about get_contents())
+		$response = wp_remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
+		$domain_blacklist = $response['body'];
 
-		if ( empty($domain_blacklist) ){
-			$domain_blacklist = $wp_filesystem->get_contents('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt'); //In case piwik is not available (or changes locations).
+		if ( is_wp_error($response) || empty($domain_blacklist) ){
+			$response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt');
+			$domain_blacklist = $response['body'];
 		}
 
-		if ( !empty($domain_blacklist) ){
+		WP_Filesystem();
+		global $wp_filesystem;
+		if ( !is_wp_error($response) && !empty($domain_blacklist) ){
 			$wp_filesystem->put_contents($domain_blacklist_json_file, $domain_blacklist);
 			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60); //1 hour cache
 		} else {

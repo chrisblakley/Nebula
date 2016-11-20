@@ -91,11 +91,8 @@ function nebula_google_font_option(){
 	} elseif ( $nebula_options['google_font_family'] ) {
 		$google_font_family = preg_replace('/ /', '+', $nebula_options['google_font_family']);
 		$google_font_weights = preg_replace('/ /', '', $nebula_options['google_font_weights']);
-		$google_font = 'https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights;
-
-		WP_Filesystem();
-		global $wp_filesystem;
-		$google_font_contents = $wp_filesystem->get_contents($google_font); //@TODO "Nebula" 0: Consider using: FILE_SKIP_EMPTY_LINES (works with file() dunno about get_contents())
+		$response = wp_remote_get('https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights);
+		$google_font_contents = $response['body'];
 
 		if ( $google_font_contents !== false ){
 			return $google_font;

@@ -976,7 +976,7 @@ function nebula_password_form_simplify(){
 }
 
 //Breadcrumbs
-function nebula_breadcrumbs($options=array()){ //yolo
+function nebula_breadcrumbs($options=array()){
 	$override = apply_filters('pre_nebula_breadcrumbs', false);
 	if ( $override !== false ){echo $override; return;}
 
@@ -2060,9 +2060,8 @@ function nebula_ip_location($data=null, $ip=false){
 		}
 
 		if ( empty($_SESSION['nebulageoip']) ){
-			WP_Filesystem();
-			global $wp_filesystem;
-			$ip_geo_data = $wp_filesystem->get_contents('http://freegeoip.net/json/' . $ip);
+			$response = wp_remote_get('http://freegeoip.net/json/' . $ip);
+			$ip_geo_data = $response['body'];
 			$_SESSION['nebulageoip'] = $ip_geo_data;
 		} else {
 			$ip_geo_data = $_SESSION['nebulageoip'];
@@ -2136,9 +2135,9 @@ function nebula_weather($zipcode=null, $data=''){
 		if ( empty($weather_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 			$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
 
-			WP_Filesystem();
-			global $wp_filesystem;
-			$weather_json = $wp_filesystem->get_contents('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
+			$response = wp_remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
+			$weather_json = $response['body'];
+
 			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
 		}
 		$weather_json = json_decode($weather_json);
@@ -2243,13 +2242,14 @@ function video_meta($provider, $id){
 	//Get Transients
 	$video_json = get_transient('nebula_' . $provider . '_' . $id);
 	if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-		WP_Filesystem();
-		global $wp_filesystem;
 		if ( $provider == 'youtube' ){
-			$video_json = $wp_filesystem->get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
+			$response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
+			$video_json = $response['body'];
 		} elseif ( $provider == 'vimeo' ){
-			$video_json = $wp_filesystem->get_contents('http://vimeo.com/api/v2/video/' . $id . '.json');
+			$response = wp_remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
+			$video_json = $response['body'];
 		}
+
 		set_transient('nebula_' . $provider . '_' . $id, $video_json, 60*60); //1 hour expiration
 	}
 	$video_json = json_decode($video_json);

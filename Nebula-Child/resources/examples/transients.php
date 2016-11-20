@@ -6,7 +6,7 @@
 			$the_date_time = get_transient('nebula_transient_example');
 			if ( empty($the_date_time) || is_debug() ){
 				$new_date_time_cache = true;  //This variable is for example purposes only and is NOT NEEDED when using transients normally!
-				$the_date_time = date('l, F j, Y - g:ia', strtotime('now'));
+				$the_date_time = date('l, F j, Y - g:ia', time());
 				set_transient('nebula_transient_example', $the_date_time, 60*10); //10 minute cache
 			}
 		?>
