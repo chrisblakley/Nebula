@@ -293,7 +293,7 @@ function nebula_default_options(){
 }
 
 //Register all Nebula Options as one object.
-add_action('admin_init', 'register_nebula_options');
+//add_action('admin_init', 'register_nebula_options');
 function register_nebula_options(){
 	register_setting('nebula_options', 'nebula_options');
 }
