@@ -193,11 +193,15 @@ function nebula_get_domain_blacklist(){
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
 	if ( empty($domain_blacklist) || is_debug() ){
 		$response = wp_remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
-		$domain_blacklist = $response['body'];
+		if ( !is_wp_error($response) ){
+			$domain_blacklist = $response['body'];
+		}
 
 		if ( is_wp_error($response) || empty($domain_blacklist) ){
 			$response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt');
-			$domain_blacklist = $response['body'];
+			if ( !is_wp_error($response) ){
+				$domain_blacklist = $response['body'];
+			}
 		}
 
 		WP_Filesystem();

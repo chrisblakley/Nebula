@@ -92,10 +92,13 @@ function nebula_google_font_option(){
 		$google_font_family = preg_replace('/ /', '+', $nebula_options['google_font_family']);
 		$google_font_weights = preg_replace('/ /', '', $nebula_options['google_font_weights']);
 		$response = wp_remote_get('https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights);
+		if ( is_wp_error($response) ){
+			return false;
+		}
 		$google_font_contents = $response['body'];
 
 		if ( $google_font_contents !== false ){
-			return $google_font;
+			return $google_font_contents;
 		}
 	}
 
@@ -199,6 +202,7 @@ function nebula_default_options(){
 		'ga_displayfeatures' => 'disabled',
 		'ga_linkid' => 'enabled',
 		'adwords_remarketing_conversion_id' => '',
+		'google_optimize_id' => '',
 		'hostnames' => '',
 		'google_search_console_verification' => '',
 		'facebook_custom_audience_pixel_id' => '',
@@ -467,7 +471,7 @@ function nebula_options_page(){
 		        	<th scope="row">Latest Github Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" name="nebula_options[next_version]" value="<?php echo $nebula_data['next_version']; ?>" readonly />
-						<p class="helper"><small>The latest version available on Github. Re-checks with <a href="/update-core.php">theme update check</a>.</small></p>
+						<p class="helper"><small>The latest version available on Github. Re-checks with <a href="/update-core.php">theme update check</a> <strong>only when Nebula Child is activated</strong>.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
@@ -1061,6 +1065,14 @@ function nebula_options_page(){
 					<td>
 						<input type="text" name="nebula_options[adwords_remarketing_conversion_id]" value="<?php echo $nebula_options['adwords_remarketing_conversion_id']; ?>" placeholder="000000000" />
 						<p class="helper"><small>This conversion ID is used to enable the Google AdWords remarketing tag.</small></p>
+					</td>
+		        </tr>
+
+				<tr class="short" valign="top">
+		        	<th scope="row">Google Optimize ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_options[google_optimize_id]" value="<?php echo $nebula_options['google_optimize_id']; ?>" placeholder="GTM-0000000" />
+						<p class="helper"><small>The ID used by <a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> to enable tests. Entering the ID here will enable both the Google Analytics require tag and the style tag hiding snippet in the head.</small></p>
 					</td>
 		        </tr>
 

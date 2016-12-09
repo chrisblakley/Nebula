@@ -410,29 +410,22 @@ function eventTracking(){
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
-	//External links
+	//Outbound Links
 	nebula.dom.document.on('mousedown touch tap', "a[rel*='external']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
 		var linkText = jQuery(this).text();
 		if ( jQuery.trim(linkText) === '' ){
-			if ( jQuery(this).find('img').attr('alt') ){
-				linkText = jQuery(this).find('img').attr('alt');
-			} else if ( jQuery(this).find('img').length ){
-				var filePath = jQuery(this).attr('src');
-				linkText = jQuery(this).find('img').attr('src').substr(filePath.lastIndexOf("/")+1);
-			} else if ( jQuery(this).find('img').attr('title') ){
-				linkText = jQuery(this).find('img').attr('title');
-			} else {
-				linkText = '(unknown)';
+			linkText = '(Unknown)';
+			if ( jQuery(this).find('img').length ){
+				linkText = '(Image) ' + jQuery(this).find('img').attr('src');
 			}
 		}
 
-		var destinationURL = jQuery(this).attr('href');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'External Link', linkText, destinationURL);
-		nv('increment', 'external_links');
+		ga('send', 'event', 'Outbound Link', linkText, jQuery(this).attr('href'));
+		nv('increment', 'outbound_links');
 	});
 
 	//PDF View/Download

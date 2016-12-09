@@ -57,7 +57,7 @@ function nebula_no_js_event(){
 		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
 		ga_send_event('JavaScript Disabled', $title, $_SERVER['HTTP_USER_AGENT'], null, 1);
 		nebula_update_visitor(array('js_block' => 'true'));
-		header('Location: ' . nebula_prefer_child_directory('/images/no-js.gif') . '?id=' . $_GET['id']); //Redirect and parameters here do nothing (deter false data).
+		header('Location: ' . get_theme_file_uri('/images/no-js.gif') . '?id=' . $_GET['id']); //Redirect and parameters here do nothing (deter false data).
 		die; //Die as a precaution.
 	}
 }
@@ -80,7 +80,6 @@ function nebula_ga_blocked(){
 	//ga_send_event('Google Analytics Blocked', get_the_title($post_id), $_SERVER['HTTP_USER_AGENT']);
 	nebula_increment_visitor('current_session_pageviews');
 }
-
 
 //Set server timezone to match Wordpress
 add_action('init', 'nebula_set_default_timezone', 1);
@@ -161,32 +160,32 @@ function nebula_manifest_json(){
 	"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 	"gcm_sender_id": "' . nebula_option('gcm_sender_id') . '",
 	"icons": [{
-		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-36x36.png",
+		"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-36x36.png",
 		"sizes": "36x36",
 		"type": "image/png",
 		"density": 0.75
 	}, {
-		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-48x48.png",
+		"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-48x48.png",
 		"sizes": "48x48",
 		"type": "image/png",
 		"density": 1.0
 	}, {
-		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-72x72.png",
+		"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-72x72.png",
 		"sizes": "72x72",
 		"type": "image/png",
 		"density": 1.5
 	}, {
-		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-96x96.png",
+		"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-96x96.png",
 		"sizes": "96x96",
 		"type": "image/png",
 		"density": 2.0
 	}, {
-		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-144x144.png",
+		"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-144x144.png",
 		"sizes": "144x144",
 		"type": "image/png",
 		"density": 3.0
 	}, {
-		"src": "' . nebula_prefer_child_directory('/images/meta') . '/android-chrome-192x192.png",
+		"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-192x192.png",
 		"sizes": "192x192",
 		"type": "image/png",
 		"density": 4.0
@@ -207,7 +206,7 @@ function nebula_manifest_json(){
 add_action('wp_loaded', 'nebula_favicon_cache');
 function nebula_favicon_cache(){
 	if ( array_key_exists('favicon', $_GET) ){
-		header('Location: ' . nebula_prefer_child_directory('/images/meta') . '/favicon.ico');
+		header('Location: ' . get_theme_file_uri('/images/meta') . '/favicon.ico');
 	}
 }
 
@@ -226,6 +225,18 @@ function nebula_prerender(){
 	if ( !empty($prerender_url) ){
 		echo '<link id="prerender" rel="prerender prefetch" href="' . $prerender_url . '">';
 	}
+}
+
+//Google Optimize Style Tag
+add_action('nebula_head_open', 'nebula_google_optimize_style');
+function nebula_google_optimize_style(){
+	if ( nebula_option('google_optimize_id') ){ ?>
+		<style>.async-hide { opacity: 0 !important} </style>
+		<script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.end=i=function(){
+		s.className=s.className.replace(RegExp(' ?'+y),'')};(a[n]=a[n]||[]).hide=h;
+		setTimeout(function(){i();h.end=null},c);})(window,document.documentElement,
+		'async-hide','dataLayer',2000,{'<?php echo nebula_option('google_optimize_id'); ?>':true,});</script>
+	<?php }
 }
 
 //Convenience function to return only the URL for specific thumbnail sizes of an ID.
@@ -875,6 +886,10 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 	if ( empty($tweets) || is_debug() ){
 		$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
 		$response = wp_remote_get($feed, $args);
+		if ( is_wp_error($response) ){
+			return false;
+		}
+
 		$tweets = $response['body'];
 
 		if ( !$tweets ){
@@ -953,15 +968,6 @@ function nebula_excerpt($options=array()){
 	}
 
 	return $data['text'];
-}
-
-//Speech recognition AJAX for navigating
-add_action('wp_ajax_navigator', 'nebula_ajax_navigator');
-add_action('wp_ajax_nopriv_navigator', 'nebula_ajax_navigator');
-function nebula_ajax_navigator(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-	include(get_template_directory() . '/includes/navigator.php');
-	wp_die();
 }
 
 //Replace text on password protected posts to be more minimal
@@ -1866,7 +1872,7 @@ function nebula_post_classes($classes){
     global $post;
     global $wp_query;
 
-    if ( $wp_query->current_post == 0 ){ //If first post in a query
+    if ( $wp_query->current_post === 0 ){ //If first post in a query
         $classes[] = 'first-post';
     }
     if ( is_sticky() ){
@@ -1888,6 +1894,11 @@ function nebula_post_classes($classes){
 
 	$classes[] = 'author-id-' . $post->post_author;
 
+	//Remove "hentry" meta class on pages or if Author Bios are disabled
+	if ( is_page() || nebula_option('author_bios', 'disabled') ){
+		$classes = array_diff($classes, array('hentry'));
+	}
+
     return $classes;
 }
 
@@ -1897,14 +1908,14 @@ function wp_get_attachment_url_example($url){
     $http = site_url(false, 'http');
     $https = site_url(false, 'https');
 
-    if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ){
+    if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ){
         return str_replace($http, $https, $url);
     } else {
         return $url;
     }
 }
 
-//Check if the passed time is within business hours.
+//Check if business hours exist in Nebula Options
 function has_business_hours(){
 	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
 		if ( nebula_option('business_hours_' . $weekday . '_enabled') || nebula_option('business_hours_' . $weekday . '_open') || nebula_option('business_hours_' . $weekday . '_close') ){
@@ -1914,9 +1925,11 @@ function has_business_hours(){
 	return false;
 }
 
-function is_business_open($date=null, $general=0){ return business_open($date, $general); }
-function is_business_closed($date=null, $general=0){ return !business_open($date, $general); }
-function business_open($date=null, $general=0){
+//Check if the requested datetime is within business hours.
+//If $general is true this function returns true if the business is open at all on that day
+function is_business_open($date=null, $general=false){ return business_open($date, $general); }
+function is_business_closed($date=null, $general=false){ return !business_open($date, $general); }
+function business_open($date=null, $general=false){
 	$override = apply_filters('pre_business_open', false, $date, $general);
 	if ( $override !== false ){return $override;}
 
@@ -1954,7 +1967,7 @@ function business_open($date=null, $general=0){
 	}
 
 	if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
-		if ( $general == 1 ){
+		if ( !empty($general) ){
 			return true;
 		}
 
@@ -2061,6 +2074,10 @@ function nebula_ip_location($data=null, $ip=false){
 
 		if ( empty($_SESSION['nebulageoip']) ){
 			$response = wp_remote_get('http://freegeoip.net/json/' . $ip);
+			if ( is_wp_error($response) ){
+				return false;
+			}
+
 			$ip_geo_data = $response['body'];
 			$_SESSION['nebulageoip'] = $ip_geo_data;
 		} else {
@@ -2136,8 +2153,11 @@ function nebula_weather($zipcode=null, $data=''){
 			$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
 
 			$response = wp_remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
-			$weather_json = $response['body'];
+			if ( is_wp_error($response) ){
+				return false;
+			}
 
+			$weather_json = $response['body'];
 			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
 		}
 		$weather_json = json_decode($weather_json);
@@ -2244,9 +2264,19 @@ function video_meta($provider, $id){
 	if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		if ( $provider == 'youtube' ){
 			$response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
+			if ( is_wp_error($response) ){
+				$video_metadata['error'] = 'Youtube video is unavailable.';
+				return $video_metadata;
+			}
+
 			$video_json = $response['body'];
 		} elseif ( $provider == 'vimeo' ){
 			$response = wp_remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
+			if ( is_wp_error($response) ){
+				$video_metadata['error'] = 'Vimeo video is unavailable.';
+				return $video_metadata;
+			}
+
 			$video_json = $response['body'];
 		}
 

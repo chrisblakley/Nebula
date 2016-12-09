@@ -6,7 +6,7 @@
 	}
 
 	global $post;
-	$image_meta_directory = nebula_prefer_child_directory('/images/meta');
+	$image_meta_directory = get_theme_file_uri('/images/meta');
 	$cache_query = ( is_debug() )? '?nocache' . mt_rand(1000, 99999) . '=debug' . mt_rand(1000, 99999) : ''; //Add a random query string when debugging to force-clear the cache.
 
 	/*
@@ -66,10 +66,10 @@
 <?php endif; ?>
 
 <?php //Open Graph Thumbnails ?>
-<?php if ( file_exists(nebula_prefer_child_directory('/images/meta', false) . '/og-thumb.png') ): ?>
+<?php if ( file_exists(get_theme_file_path('/images/meta') . '/og-thumb.png') ): ?>
 	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
-<?php for ( $i = 2; file_exists(nebula_prefer_child_directory('/images/meta', false) . '/og-thumb-' . $i . '.png'); $i++ ): //Check for additional Open Graph thumbnail images named "og-thumb-#.png" ?>
+<?php for ( $i = 2; file_exists(get_theme_file_path('/images/meta') . '/og-thumb-' . $i . '.png'); $i++ ): //Check for additional Open Graph thumbnail images named "og-thumb-#.png" ?>
 	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb-<?php echo $i; ?>.png<?php echo $cache_query; ?>" />
 <?php endfor; ?>
 
@@ -111,7 +111,7 @@
 		<meta name="twitter:image" content="<?php echo nebula_get_thumbnail_src($post->ID, 'twitter_small'); ?>?<?php echo uniqid(); ?>" />
 	<?php endif; ?>
 <?php else: ?>
-	<?php if ( file_exists(nebula_prefer_child_directory('/images/meta', false) . '/twitter-card_large.png') ): ?>
+	<?php if ( file_exists(get_theme_file_path('/images/meta') . '/twitter-card_large.png') ): ?>
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:image" content="<?php echo $image_meta_directory; ?>/twitter-card_large.png?<?php echo uniqid(); ?>" />
 	<?php else: ?>
@@ -240,7 +240,7 @@
 			],
 		<?php endif; ?>
 
-		"logo": "<?php echo nebula_prefer_child_directory('/images/logo.png'); ?>"
+		"logo": "<?php echo get_theme_file_uri('/images/logo.png'); ?>"
 	}
 </script>
 
@@ -318,7 +318,7 @@
 			<?php else: ?>
 				"image": {
 					"@type": "ImageObject",
-					"url": "<?php echo nebula_prefer_child_directory('/images/meta/og-thumb.png'); ?>",
+					"url": "<?php echo get_theme_file_uri('/images/meta/og-thumb.png'); ?>",
 					"width": "1200",
 					"height": "600"
 				},
@@ -340,7 +340,7 @@
 				"name": "<?php echo ( nebula_option('site_owner') )? nebula_option('site_owner') : get_bloginfo('name'); ?>",
 				"logo": {
 					"@type": "ImageObject",
-					"url": "<?php echo nebula_prefer_child_directory('/images/logo.png'); ?>"
+					"url": "<?php echo get_theme_file_uri('/images/logo.png'); ?>"
 				}
 			},
 			"description": "<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>"

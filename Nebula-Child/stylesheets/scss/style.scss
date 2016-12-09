@@ -35,7 +35,7 @@ p,
 .picker,
 .alert,
 .tab-nav > li > li > a,
-.tab-nav > li > a {font-family: $font_stack;}
+.tab-nav > li > a {font-family: $font_stack; color: $text_color;}
 
 h1, h2, h3, h4, h5, h6 {color: $text_color;
 	a {color: $primary_color;}

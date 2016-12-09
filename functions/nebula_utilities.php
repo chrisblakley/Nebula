@@ -971,20 +971,24 @@ function nebula_prep_data_for_hubspot_crm_delivery($data){
  ===========================*/
 
 //Send data to Hubspot CRM via PHP curl
-//@TODO "Nebula" 0: Change this to use either wp_remote_get() or wp_remote_post()
 function nebula_hubspot_curl($url, $content=null){
 	$sep = ( strpos($url, '?') === false )? '?' : '&';
-	$curl = curl_init($url . $sep . 'hapikey=' . nebula_option('hubspot_api'));
-	curl_setopt($curl, CURLOPT_HEADER, false);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	$get_url = $url . $sep . 'hapikey=' . nebula_option('hubspot_api');
 
 	if ( !empty($content) ){
-		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-		curl_setopt($curl, CURLOPT_POST, true);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+		$response = wp_remote_post($get_url, array(
+			'headers'  => array('Content-Type' => 'application/json'),
+			'body' => $content,
+		));
+	} else {
+		$response = wp_remote_get($get_url);
 	}
 
-	return curl_exec($curl);
+	if ( !is_wp_error($response) ){
+		return $response['body'];
+	}
+
+	return false;
 }
 
 //Get all existing Hubspot CRM contact properties in the Nebula group
@@ -1150,6 +1154,9 @@ function nebula_get_hubspot_contact($vid=null, $property=''){
 	}
 
 	$response = wp_remote_get('https://api.hubapi.com/contacts/v1/contact/vid/' . $vid . '/profile?hapikey=' . nebula_option('hubspot_api') . $property);
+	if ( is_wp_error($response) ){
+		return false;
+	}
 	return json_decode($response['body'], true);
 }
 
@@ -1702,108 +1709,6 @@ function nebula_is_available($url=null){
 	return false;
 }
 
-//Generate a random integer between two numbers with an exclusion array
-//Call it like: random_number_between_but_not(1, 10, array(5, 6, 7, 8));
-function random_number_between_but_not($min=null, $max=null, $butNot=null){
-	$override = apply_filters('pre_random_number_between_but_not', false, $min, $max, $butNot);
-	if ( $override !== false ){return $override;}
-
-	if ( $min > $max ){ //If min is greater than max, swap variables
-		$tmp = $min;
-		$min = $max;
-		$max = $tmp;
-	}
-	if ( gettype($butNot) == 'array' ){
-		foreach( $butNot as $key => $skip ){
-			if( $skip > $max || $skip < $min ){
-				unset($butNot[$key]);
-			}
-		}
-		if ( count($butNot) == $max-$min+1 ){
-			trigger_error('Error: no number exists between ' . $min .' and ' . $max .'. Check exclusion parameter.', E_USER_ERROR);
-			return false;
-		}
-		while ( in_array(($randnum = rand($min, $max)), $butNot));
-	} else {
-		while (($randnum = rand($min, $max)) == $butNot );
-	}
-	return $randnum;
-}
-
-//Call a placeholder image from Unsplash.it
-function unsplash_it($width=800, $height=600, $raw=false, $specific=false){
-	$override = apply_filters('pre_unsplash_it', false, $width, $height, $raw, $specific);
-	if ( $override !== false ){return $override;}
-
-	$unsplash_total = 920;
-	$skip_list = array(31, 35, 224, 285, 312, 16, 403, 172, 268, 267, 349, 69, 103, 24, 140, 47, 219, 222, 184, 306, 70, 371, 385, 45, 211, 95, 83, 150, 233, 275, 343, 317, 278, 429, 383, 296, 292, 193, 299, 195, 298, 68, 148, 151, 129, 277, 333, 85, 48, 128, 365, 138, 155, 257, 37, 288, 407);
-	if ( !is_int($specific) ){
-		$randID = random_number_between_but_not(0, $unsplash_total, $skip_list); //Update the second number here periodically as more Unsplash.it photos become available.
-	} else {
-		$randID = $specific;
-	}
-
-	//Check if unsplash.it is online
-	if ( !nebula_is_available('https://unsplash.it') ){
-		ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Unsplash.it Not Available');
-		if ( $raw ){
-			return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838');
-		} else {
-			return placehold_it($width, $height, 'Unsplash.it Unavailable', 'ca3838') . '" title="Unsplash.it is not available.';
-		}
-	}
-
-	$image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
-	$check_image = nebula_is_available($image_path); //Ignore errors (because that's what we're looking for)
-
-	$i = 1;
-	$attempts = '';
-	while ( !$check_image ){
-		$attempts = ' [Errors: ' . $i . ']';
-		if ( $specific ){
-			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')');
-			if ( $raw ){
-				return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f');
-			} else {
-				return placehold_it($width, $height, 'ID+' . $randID . '+Not+Found', 'f6b83f') . '" title="Unsplash image with ID ' . $randID . $attempts;
-			}
-		} elseif ( $i >= 5 ){
-			ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Multiple Images Not Found');
-			if ( $raw ){
-				return placehold_it($width, $height, 'Unsplash.it Images Unavailable', 'f6773f');
-			} else {
-				return placehold_it($width, $height, 'Unsplash.it Images Unavailable', 'f6773f') . '" title="Unsplash.it Images Unavailable ' . $attempts;
-			}
-		}
-
-	    $skip_list[] = $randID;
-	    ga_send_event('send', 'event', 'Error', 'Random Unsplash', 'Image Not Found (ID: ' . $randID . ')' . $attempts);
-	    $randID = random_number_between_but_not(0, $unsplash_total, $skip_list);
-	    $image_path = 'https://unsplash.it/' . $width . '/' . $height . '?image=' . $randID;
-	    $check_image = nebula_is_available($image_path);
-	    $i++;
-	}
-
-	if ( $raw ){
-		return $image_path;
-	} else {
-		return $image_path . '" title="Unsplash ID #' . $randID . $attempts;
-	}
-}
-
-//Call a placeholder image from Placehold.it
-function placehold_it($width=800, $height=600, $text=false, $color=false){
-	$override = apply_filters('pre_placehold_it', false, $width, $height, $text, $color);
-	if ( $override !== false ){return $override;}
-
-	if ( nebula_is_available('https://placehold.it') ){
-		$text = ( $text )? '?text=' . str_replace(' ', '+', $text) : '';
-		$color = ( $color )? str_replace('#', '', $color) . '/' : '';
-		return 'https://placehold.it/' . $width . 'x' . $height . '/' . $color . $text;
-	}
-	return get_template_directory_uri() . '/images/x.png'; //Placehold.it is not available.
-}
-
 //Check the brightness of a color. 0=darkest, 255=lightest, 256=false
 function nebula_color_brightness($hex){
 	$override = apply_filters('pre_nebula_color_brightness', false, $hex);
@@ -1865,27 +1770,6 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
 			return false;
     }
 }
-
-//Prefer a child theme directory or file. Not declaring a directory will return the theme directory.
-//nebula_prefer_child_directory('/images/logo.png');
-function nebula_prefer_child_directory($directory='', $uri=true){
-	if ( $directory[0] != '/' ){
-		$directory = '/' . $directory;
-	}
-
-	if ( file_exists(get_stylesheet_directory() . $directory) ){
-		if ( $uri ){
-			return get_stylesheet_directory_uri() . $directory;
-		}
-		return get_stylesheet_directory() . $directory;
-	}
-
-	if ( $uri ){
-		return get_template_directory_uri() . $directory;
-	}
-	return get_template_directory() . $directory;
-}
-
 
 //Get Nebula version information
 function nebula_version($return=false){

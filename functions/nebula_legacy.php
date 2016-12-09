@@ -26,6 +26,26 @@ function nebula_legacy_options(){
 }
 
 
+//Prefer a child theme directory or file. Not declaring a directory will return the theme directory.
+//nebula_prefer_child_directory('/images/logo.png');
+//This was replaced by: get_theme_file_uri() and get_theme_file_path() in WordPress 4.7
+function nebula_prefer_child_directory($directory='', $uri=true){
+	if ( $directory[0] != '/' ){
+		$directory = '/' . $directory;
+	}
+
+	if ( file_exists(get_stylesheet_directory() . $directory) ){
+		if ( $uri ){
+			return get_stylesheet_directory_uri() . $directory;
+		}
+		return get_stylesheet_directory() . $directory;
+	}
+
+	if ( $uri ){
+		return get_template_directory_uri() . $directory;
+	}
+	return get_template_directory() . $directory;
+}
 
 
 //Old Nebula Excerpt that does not use the options array.

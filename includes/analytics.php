@@ -4,7 +4,7 @@
 		http_response_code(403);
 		die();
 	}
-	
+
 	//This line of code written from Google in NYC.
 ?>
 
@@ -351,6 +351,10 @@
 				fieldsObj: {nonInteraction: true}
 			});
 		}
+
+		<?php if ( nebula_option('google_optimize_id') ): //Google Optimize ?>
+			ga('require', '<?php echo nebula_option('google_optimize_id'); ?>');
+		<?php endif; ?>
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 

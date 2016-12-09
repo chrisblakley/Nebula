@@ -26,7 +26,7 @@ add_filter('run_wptexturize', '__return_false');
 add_action('admin_head', 'admin_favicon');
 function admin_favicon(){
 	$cache_buster = ( is_debug() )? '?r' . mt_rand(1000, 99999) : '';
-	echo '<link rel="shortcut icon" href="' . nebula_prefer_child_directory('/images/meta/favicon.ico') . $cache_buster . '" />';
+	echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/images/meta/favicon.ico') . $cache_buster . '" />';
 }
 
 //Add classes to the admin body
@@ -137,6 +137,16 @@ if ( nebula_option('admin_bar', 'disabled') ){
 				'id' => 'nebula-visitor-db',
 				'title' => '<i class="nebula-admin-fa fa fa-fw fa-database" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula Visitors DB',
 				'href' => get_admin_url() . 'themes.php?page=nebula_visitors_data',
+				'meta' => array('target' => '_blank')
+			));
+		}
+
+		if ( nebula_option('google_optimize_id') ){
+			$wp_admin_bar->add_node(array(
+				'parent' => 'nebula',
+				'id' => 'google-optimize',
+				'title' => '<i class="nebula-admin-fa fa fa-fw fa-google" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Google Optimize',
+				'href' => 'https://optimize.google.com/optimize/home/',
 				'meta' => array('target' => '_blank')
 			));
 		}
@@ -450,7 +460,7 @@ if ( nebula_option('admin_notices') ){
 			}
 
 			//Check for "Just Another WordPress Blog" tagline
-			if ( strtolower(get_bloginfo('description')) == 'just another wordpress site' ){
+			if ( strtolower(get_bloginfo('description')) === 'just another wordpress site' ){
 				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!</p></div>';
 			}
 
@@ -463,8 +473,17 @@ if ( nebula_option('admin_notices') ){
 				}
 			}
 
+			//If Prototype mode is disabled, but Multiple Theme plugin is still activated
 			if ( nebula_option('prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
+				echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
+			}
+
+			//If Enhanced Ecommerce Plugin is missing Google Analytics Tracking ID
+			if ( is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
+				$ee_ga_settings = get_option('woocommerce_enhanced_ecommerce_google_analytics_settings');
+				if ( empty($ee_ga_settings['ga_id']) ){
+					echo '<div class="nebula-admin-notice error"><p><a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!</p></div>';
+				}
 			}
 
 			//Check if the parent theme template is correctly referenced
@@ -478,6 +497,11 @@ if ( nebula_option('admin_notices') ){
 			//Check if Relevanssi has built an index for search
 			if ( is_plugin_active('relevanssi/relevanssi.php') && !get_option('relevanssi_indexed') ){
 				echo '<div class="nebula-admin-notice error"><p><a href="options-general.php?page=relevanssi%2Frelevanssi.php">Relevanssi</a> must build an index to search the site. This must be triggered manually.</p></div>';
+			}
+
+			//Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
+			if ( nebula_option('google_optimize_id') ){
+				echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
 			}
 		}
 
@@ -514,7 +538,9 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 	$php_timeline = get_transient('nebula_php_timeline');
 	if ( empty($php_timeline) || is_debug() ){
 		$response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
-		$php_timeline = $response['body'];
+		if ( !is_wp_error($response) ){
+			$php_timeline = $response['body'];
+		}
 
 		WP_Filesystem();
 		global $wp_filesystem;
@@ -584,7 +610,7 @@ if ( nebula_option('unnecessary_metaboxes') ){
 add_action('wp_dashboard_setup', 'nebula_ataglance_metabox');
 function nebula_ataglance_metabox(){
 	global $wp_meta_boxes;
-	wp_add_dashboard_widget('nebula_ataglance', '<img src="' . nebula_prefer_child_directory('/images/meta') . '/favicon-32x32.png" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), 'dashboard_nebula_ataglance');
+	wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_theme_file_uri('/images/meta') . '/favicon-32x32.png" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), 'dashboard_nebula_ataglance');
 }
 function dashboard_nebula_ataglance(){
 	global $wp_version;
@@ -694,6 +720,11 @@ function dashboard_nebula_ataglance(){
 		//Global Admin Bar
 		if ( nebula_option('admin_bar', 'disabled') ){
 			echo '<li><i class="fa fa-bars fa-fw"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
+		}
+
+		//Google Optimize
+		if ( nebula_option('google_optimize_id') ){
+			echo '<li><i class="fa fa-google fa-fw"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> enabled</li>';
 		}
 
 		//Nebula Visitors DB
