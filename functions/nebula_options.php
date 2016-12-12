@@ -292,10 +292,13 @@ function nebula_default_options(){
 	return $nebula_options_defaults;
 }
 
-//Register all Nebula Options as one object.
-//add_action('admin_init', 'register_nebula_options');
+//Register all Nebula Options
+add_action('current_screen', 'register_nebula_options');
 function register_nebula_options(){
-	register_setting('nebula_options', 'nebula_options');
+	$current_screen = get_current_screen();
+	if ( $current_screen->base === 'appearance_page_nebula_options' || $current_screen->base === 'options' ){
+		register_setting('nebula_options', 'nebula_options');
+	}
 }
 
 //Output the options page

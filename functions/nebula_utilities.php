@@ -968,6 +968,14 @@ function nebula_prep_data_for_hubspot_crm_delivery($data){
 
 /*==========================
 	Hubspot CRM Integration Functions
+
+	@TODO "Nebula" 0: Expand this functionality to include Salesforce and Marketo too.
+	https://github.com/chrisblakley/Nebula/issues/1182
+
+	Salesforce Documentation:
+	Marketo Documentation: http://developers.marketo.com/javascript-api/web-personalization/
+		- JavaScript API, so this would be done right from main.js
+		- So, nv() data would probably just make the call to the Marketo function too.
  ===========================*/
 
 //Send data to Hubspot CRM via PHP curl
@@ -976,6 +984,15 @@ function nebula_hubspot_curl($url, $content=null){
 	$get_url = $url . $sep . 'hapikey=' . nebula_option('hubspot_api');
 
 	if ( !empty($content) ){
+		/*
+			@TODO "Nebula" 0: 409 Conflict response happening. Was probably happening with cURL and just never noticed.
+				- Because the fields already exist, Hubspot is responding with "409 Conflict".
+				- This happens ~14 times since each property is sent individually.
+				- I'm pretty sure the data is still transferring just fine.
+				- Query Monitor is going red due to the 400-level response.
+				- This is a Hubspot CRM issue, not WordPress or Nebula (as far as I can tell)
+		*/
+
 		$response = wp_remote_post($get_url, array(
 			'headers'  => array('Content-Type' => 'application/json'),
 			'body' => $content,
