@@ -189,7 +189,7 @@ function nebula_default_options(){
 		'cd_categories' => '',
 		'cd_tags' => '',
 		'cd_contactmethod' => '',
-		'cd_formtimer' => '',
+		'cd_formtiming' => '',
 		'cd_firstinteraction' => '',
 		'cd_geolocation' => '',
 		'cd_geoname' => '',
