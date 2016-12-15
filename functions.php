@@ -46,8 +46,8 @@ add_action('admin_enqueue_scripts', 'register_nebula_styles');
 function register_nebula_styles(){
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 
-	if ( nebula_google_font_option() ){
-		wp_register_style('nebula-google_font', nebula_google_font_option(), array(), null, 'all');
+	if ( nebula_option('google_font_url') ){
+		wp_register_style('nebula-google_font', nebula_option('google_font_url'), array(), null, 'all');
 	}
 	wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
 	wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
@@ -242,7 +242,7 @@ function enqueue_nebula_frontend(){
 	global $nebula;
 
 	//Stylesheets
-	if ( nebula_google_font_option() ){
+	if ( nebula_option('google_font_url') ){
 		wp_enqueue_style('nebula-google_font');
 	}
 	wp_enqueue_style('nebula-bootstrap');

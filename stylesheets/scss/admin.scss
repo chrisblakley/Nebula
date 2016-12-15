@@ -257,6 +257,8 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 
 #footer-upgrade strong.nebula {cursor: help;}
 
+#wpfooter a {text-decoration: none;}
+
 .nebula_admin_notice {
 	a {color: brand(phg); @include prefix((transition: all 0.25s));
 		&:hover {color: brand(phg, 2);}

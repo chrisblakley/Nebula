@@ -908,7 +908,13 @@ function dashboard_current_user(){
 			} elseif ( nebula_ip_location() ){
 				$ip_zip = nebula_ip_location('zip');
 			}
-			echo '<li><i class="fa fa-cloud fa-fw"></i> Weather: <strong>' . nebula_weather($ip_zip, 'temp') . '&deg;F ' . nebula_weather($ip_zip, 'conditions') . '</strong></li>';
+
+			$temperature = nebula_weather($ip_zip, 'temp');
+			if ( !empty($temperature) ){
+				echo '<li><i class="fa fa-cloud fa-fw"></i> Weather: <strong>' . $temperature . '&deg;F ' . nebula_weather($ip_zip, 'conditions') . '</strong></li>';
+			} else {
+				echo '<li><i class="fa fa-cloud fa-fw"></i> Weather: <em>API error for zip code ' . $ip_zip . '.</em></li>';
+			}
 		}
 
 		//Multiple locations

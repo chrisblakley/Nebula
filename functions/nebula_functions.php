@@ -2136,6 +2136,7 @@ function nebula_ip_location($data=null, $ip=false){
 }
 
 //Detect weather for Zip Code (using Yahoo! Weather)
+//https://developer.yahoo.com/weather/
 function nebula_weather($zipcode=null, $data=''){
 	if ( nebula_option('weather') ){
 		$override = apply_filters('pre_nebula_weather', false, $zipcode, $data);
@@ -2158,12 +2159,12 @@ function nebula_weather($zipcode=null, $data=''){
 			}
 
 			$weather_json = $response['body'];
-			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*5); //5 minute expiration
+			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*15); //15 minute expiration
 		}
 		$weather_json = json_decode($weather_json);
 
-		if ( !$weather_json || empty($weather_json) ){
-			trigger_error('A weather error occurred (Forecast for ' . $zipcode . ' may not exist).', E_USER_WARNING);
+		if ( !$weather_json || empty($weather_json) || empty($weather_json->query->results) ){
+			trigger_error('A Yahoo Weather API error occurred. Yahoo may be down, or forecast for ' . $zipcode . ' may not exist.', E_USER_WARNING);
 			return false;
 		} elseif ( $data == '' ){
 			return true;

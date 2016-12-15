@@ -2366,12 +2366,12 @@ function nebulaScrollTo(element, milliseconds, offset){
 
 //Get query string parameters
 function getQueryStrings(){
-	queries = {};
-    var q = document.URL.split('?')[1];
-    if ( q ){
-        q = q.split('&');
-        for ( var i = 0; i < q.length; i++ ){
-            hash = q[i].split('=');
+	var queries = {};
+    var queryString = document.URL.split('?')[1];
+    if ( queryString ){
+        queryStrings = queryString.split('&');
+        for ( var i = 0; i < queryStrings.length; i++ ){
+            hash = queryStrings[i].split('=');
             if ( hash[1] ){
 	            queries[hash[0]] = hash[1];
             } else {
@@ -2379,14 +2379,18 @@ function getQueryStrings(){
             }
         }
 	}
+
+	return queries;
 }
 
 //Search query strings for the passed parameter
-function get(query){
-	if ( !query ){
+function get(parameter){
+	var queries = getQueryStrings();
+
+	if ( !parameter ){
 		return queries;
 	} else {
-		return queries[query];
+		return queries[parameter];
 	}
 	return false;
 }

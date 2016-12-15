@@ -83,28 +83,6 @@ function nebula_full_address($encoded=false){
 	return $full_address;
 }
 
-function nebula_google_font_option(){
-	$nebula_options = get_option('nebula_options');
-
-	if ( $nebula_options['google_font_url'] ){
-		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', $nebula_options['google_font_url']);
-	} elseif ( $nebula_options['google_font_family'] ) {
-		$google_font_family = preg_replace('/ /', '+', $nebula_options['google_font_family']);
-		$google_font_weights = preg_replace('/ /', '', $nebula_options['google_font_weights']);
-		$response = wp_remote_get('https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights);
-		if ( is_wp_error($response) ){
-			return false;
-		}
-		$google_font_contents = $response['body'];
-
-		if ( $google_font_contents !== false ){
-			return $google_font_contents;
-		}
-	}
-
-	return false;
-}
-
 //Prepare default data values
 function nebula_default_data(){
 	$nebula_data_defaults = array(
@@ -254,8 +232,6 @@ function nebula_default_options(){
 		'cm_wordcount' => '',
 
 		//APIs Tab
-		'google_font_family' => '',
-		'google_font_weights' => '',
 		'google_font_url' => '',
 		'gcm_sender_id' => '',
 		'google_server_api_key' => '',
@@ -357,18 +333,7 @@ function nebula_options_page(){
 					var gfContent = gfInputValue.replace(/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/g, '');
 					jQuery('#nebula_google_font_url').val(gfContent);
 				}
-
-				if ( gfInputValue.trim() ){
-					jQuery('#nebula_google_font_family, #nebula_google_font_weights').addClass('override');
-				} else {
-					jQuery('#nebula_google_font_family, #nebula_google_font_weights').removeClass('override');
-				}
 			});
-			if ( jQuery('#nebula_google_font_url').val().trim() ){
-				jQuery('#nebula_google_font_family, #nebula_google_font_weights').addClass('override');
-			} else {
-				jQuery('#nebula_google_font_family, #nebula_google_font_weights').removeClass('override');
-			}
 
 			//Validate custom dimension IDs
 			jQuery('input.dimension').on('blur keyup paste change', function(){
@@ -446,7 +411,7 @@ function nebula_options_page(){
 		        	<th scope="row">Edited Yet?&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 		        	<td>
 						<input type="text" name="nebula_options[edited_yet]" value="true" readonly />
-						<p class="helper"><small>This is pre-set to "true" so that when the user clicks "Save Changes" it becomes stored in the DB. Therefore, this will always say "true" even if it hasn't actually been saved yet!<br/>Has it actually been saved yet? <strong><?php echo ( $nebula_options['edited_yet'] )? 'Yes' : 'No'; ?></strong></small></p>
+						<p class="helper"><small>This is pre-set to "true" so that when the user clicks "Save Changes" it becomes stored in the DB. Therefore, this will always say "true" even if it hasn't actually been saved yet!<br/>Has it <em>actually</em> been saved yet? <strong><?php echo ( $nebula_options['edited_yet'] )? 'Yes' : 'No'; ?></strong></small></p>
 					</td>
 		        </tr>
 		        <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
@@ -1544,9 +1509,8 @@ function nebula_options_page(){
 		        <tr valign="top">
 		        	<th scope="row">Google Font&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
-						<input id="nebula_google_font_family" type="text" name="nebula_options[google_font_family]" value="<?php echo $nebula_options['google_font_family']; ?>" placeholder="Open Sans" /><input id="nebula_google_font_weights" type="text" name="nebula_options[google_font_weights]" value="<?php echo $nebula_options['google_font_weights']; ?>" placeholder="400,800" style="width: 150px;" /><br />
-						or: <input id="nebula_google_font_url" type="text" name="nebula_options[google_font_url]" value="<?php echo $nebula_options['google_font_url']; ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" style="width: 400px;" />
-						<p class="helper"><small>Choose which <a href="https://www.google.com/fonts" target="_blank">Google Font</a> is used by default for this site (weights should be comma-separated). Or, paste the entire font URL. Defaults: Open Sans 400,800</small></p>
+						<input id="nebula_google_font_url" type="text" name="nebula_options[google_font_url]" value="<?php echo $nebula_options['google_font_url']; ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" style="width: 400px;" />
+						<p class="helper"><small>Choose which <a href="https://www.google.com/fonts" target="_blank">Google Font</a> is used by default for this site by pasting the entire font URL. Defaults: Open Sans 400,800</small></p>
 					</td>
 		        </tr>
 
