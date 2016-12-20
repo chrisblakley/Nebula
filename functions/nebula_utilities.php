@@ -2126,10 +2126,10 @@ function nebula_device_detection(){
 
 //Boolean return if the user's device is mobile.
 function nebula_is_mobile(){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_is_mobile', false);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_is_mobile', false);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		if ( $GLOBALS["device_detect"]->isMobile() ){
 			return true;
 		}
@@ -2140,10 +2140,10 @@ function nebula_is_mobile(){
 
 //Boolean return if the user's device is a tablet.
 function nebula_is_tablet(){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_is_tablet', false);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_is_tablet', false);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		if ( $GLOBALS["device_detect"]->isTablet() ){
 			return true;
 		}
@@ -2154,10 +2154,10 @@ function nebula_is_tablet(){
 
 //Boolean return if the user's device is a desktop.
 function nebula_is_desktop(){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_is_desktop', false);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_is_desktop', false);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		if ( $GLOBALS["device_detect"]->isDesktop() ){
 			return true;
 		}
@@ -2168,10 +2168,10 @@ function nebula_is_desktop(){
 
 //Returns the requested information of the operating system of the user's device.
 function nebula_get_os($info='full'){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_get_os', false, $info);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_get_os', false, $info);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		$os = $GLOBALS["device_detect"]->getOs();
 		switch ( strtolower($info) ){
 			case 'full':
@@ -2192,10 +2192,10 @@ function nebula_get_os($info='full'){
 
 //Check to see how the operating system version of the user's device compares to a passed version number.
 function nebula_is_os($os=null, $version=null, $comparison='=='){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		if ( empty($os) ){
 			trigger_error('nebula_is_os requires a parameter of requested operating system.');
 			return false;
@@ -2237,10 +2237,10 @@ function nebula_is_os($os=null, $version=null, $comparison='=='){
 
 //Returns the requested information of the model of the user's device.
 function nebula_get_device($info='model'){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_get_device', false, $info);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_get_device', false, $info);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		$info = str_replace(' ', '', $info);
 		switch ( strtolower($info) ){
 			case 'full':
@@ -2277,10 +2277,10 @@ function nebula_get_device($info='model'){
 //Returns the requested information of the browser being used.
 function nebula_get_client($info){ return get_browser($info); }
 function nebula_get_browser($info='name'){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_get_browser', false, $info);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_get_browser', false, $info);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		$client = $GLOBALS["device_detect"]->getClient();
 		switch ( strtolower($info) ){
 			case 'full':
@@ -2309,10 +2309,10 @@ function nebula_get_browser($info='name'){
 
 //Check to see how the browser version compares to a passed version number.
 function nebula_is_browser($browser=null, $version=null, $comparison='=='){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_is_browser', false, $browser, $version, $comparison);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_is_browser', false, $browser, $version, $comparison);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		if ( empty($browser) ){
 			trigger_error('nebula_is_browser requires a parameter of requested browser.');
 			return false;
@@ -2371,10 +2371,10 @@ function nebula_is_browser($browser=null, $version=null, $comparison='=='){
 
 //Check to see if the rendering engine matches a passed parameter.
 function nebula_is_engine($engine=null){
-	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_is_engine', false, $engine);
-		if ( $override !== false ){return $override;}
+	$override = apply_filters('pre_nebula_is_engine', false, $engine);
+	if ( $override !== false ){return $override;}
 
+	if ( nebula_option('device_detection') ){
 		if ( empty($engine) ){
 			trigger_error('nebula_is_engine requires a parameter of requested engine.');
 			return false;
@@ -2402,20 +2402,20 @@ function nebula_is_engine($engine=null){
 //Check for bot/crawler traffic
 //UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
 function nebula_is_bot(){
+	$override = apply_filters('pre_nebula_is_bot', false);
+	if ( $override !== false ){return $override;}
+
 	if ( nebula_option('device_detection') ){
-		$override = apply_filters('pre_nebula_is_bot', false);
-		if ( $override !== false ){return $override;}
-
-		$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
-		foreach( $bots as $bot ){
-			if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
-				return true;
-				break;
-			}
-		}
-
-		if ( $GLOBALS["device_detect"]->isBot() ){ //This might work fine on it's own without the above foreach loop
+		if ( $GLOBALS["device_detect"]->isBot() ){
 			return true;
+		}
+	}
+
+	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
+	foreach( $bots as $bot ){
+		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
+			return true;
+			break;
 		}
 	}
 

@@ -2297,7 +2297,7 @@ function video_meta($provider, $id){
 		return $video_metadata;
 	} elseif ( $provider == 'youtube' && !empty($video_json->error) ){
 		if ( current_user_can('manage_options') || is_dev() ){
-			$video_metadata['error'] = 'Youtube API Error: ' . $youtube_json->error->message;
+			$video_metadata['error'] = 'Youtube API Error: ' . $video_json->error->message;
 		}
 		return $video_metadata;
 	} elseif ( $provider == 'youtube' && empty($video_json->items) ){

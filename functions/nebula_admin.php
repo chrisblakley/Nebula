@@ -638,7 +638,7 @@ function dashboard_nebula_ataglance(){
 
 		//Child Theme
 		if ( is_child_theme() ){
-			echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active.</li>';
+			echo '<li><i class="fa fa-child fa-fw"></i><a href="themes.php">Child theme</a> active <small>(' . get_option('stylesheet') . ')</small></li>';
 		}
 
 		//Multisite (and Super Admin detection)
@@ -1308,14 +1308,14 @@ function dashboard_developer_info(){
 			}
 			return $install_date;
 		}
-		echo '<li><i class="fa fa-calendar-o fa-fw"></i> Initial Install: ' . initial_install_date() . '</li>';
+		echo '<li><i class="fa fa-calendar-o fa-fw"></i> Installed: ' . initial_install_date() . '</li>';
 
 		$latest_file = nebula_last_modified();
-		echo '<li><i class="fa fa-calendar fa-fw"></i> Last modified: <strong title="' . human_time_diff($latest_file['date']) . ' ago">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
+		echo '<li><i class="fa fa-calendar fa-fw"></i> Modified: <strong title="' . human_time_diff($latest_file['date']) . ' ago">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong> <small title="' . $latest_file['path'] . '" style="cursor: help;">(' . $latest_file['file'] . ')</small></li>';
 
 		//SCSS last processed date
 		if ( nebula_data('scss_last_processed') ){
-			echo '<li><i class="fa fa-paint-brush fa-fw"></i> Sass Last Processed: <span title="' . human_time_diff(nebula_data('scss_last_processed')) . ' ago"><strong>' . date("F j, Y", nebula_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_data('scss_last_processed')) . '</strong></span></li>';
+			echo '<li><i class="fa fa-paint-brush fa-fw"></i> Sass Processed: <span title="' . human_time_diff(nebula_data('scss_last_processed')) . ' ago"><strong>' . date("F j, Y", nebula_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_data('scss_last_processed')) . '</strong></span></li>';
 		}
 	echo '</ul>';
 

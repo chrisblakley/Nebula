@@ -472,6 +472,13 @@ function eventTracking(){
 		}, 1000);
 	});
 
+	//Internal Find
+	nebula.dom.document.on('keydown', function(e){
+		if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){ //Ctrl+F or Cmd+F
+			ga('send', 'event', 'Find on Page', 'Ctrl+F', "User initiated their browser's find tool (with keyboard shortcut)");
+		}
+	});
+
 	//Mailto link tracking
 	nebula.dom.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
@@ -2884,13 +2891,17 @@ function onYouTubeIframeAPIReady(e){
 			jQuery(this).attr('id', youtubeiframeID);
 		}
 
-		players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, {
-			events: {
-				onReady: onPlayerReady,
-				onStateChange: onPlayerStateChange,
-				onError: onPlayerError
-			}
-		});
+		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){
+			players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, {
+				events: {
+					onReady: onPlayerReady,
+					onStateChange: onPlayerStateChange,
+					onError: onPlayerError
+				}
+			});
+		} else {
+			players.youtube[youtubeiframeID] = 'JavaScript API is not enabled for this Youtube video.'; //yolo
+		}
 	});
 	pauseFlag = false;
 }

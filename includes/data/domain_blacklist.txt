@@ -16,6 +16,7 @@
 abc.xyz
 abcdefh.xyz
 abcdeg.xyz
+abclauncher.com
 acads.net
 acunetix-referrer.com
 adcash.com
@@ -75,6 +76,7 @@ brateg.xyz
 break-the-chains.com
 brk-rti.ru
 brothers-smaller.ru
+budilneg.xyz
 budmavtomatika.com.ua
 buketeg.xyz
 bukleteg.xyz
@@ -102,6 +104,7 @@ codysbbq.com
 compliance-alex.xyz
 compliance-alexa.xyz
 compliance-andrew.xyz
+compliance-barak.xyz
 compliance-brian.xyz
 compliance-don.xyz
 compliance-donald.xyz
@@ -456,6 +459,7 @@ wallpaperdesk.info
 web-revenue.xyz
 webmaster-traffic.com
 webmonetizer.net
+website-analytics.online
 website-analyzer.info
 website-speed-check.site
 website-speed-checker.site
