@@ -57,15 +57,6 @@ function nebula_remove_rsd_link(){
 	remove_action('wp_head', 'rsd_link');
 }
 
-/*
-	@TODO "Security" 4: It is advised to create an Intelligence Alert in Google Analytics with the following settings:
-	Name: Possible Brute Force Attack
-	Check both send an email and send a text if possible.
-	Period: Day
-	Alert Conditions:
-		This applies to: Event Action, Contains, Attempted User
-		Alert me when: Total Events, Is greater than, 20 //May need to adjust this number to account for more actual users (depending on how many true logins are expected per day).
-*/
 //Prevent login error messages from giving too much information
 add_filter('login_errors', 'nebula_login_errors');
 function nebula_login_errors($error){
@@ -208,7 +199,7 @@ function nebula_get_domain_blacklist(){
 		global $wp_filesystem;
 		if ( !is_wp_error($response) && !empty($domain_blacklist) ){
 			$wp_filesystem->put_contents($domain_blacklist_json_file, $domain_blacklist);
-			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60); //1 hour cache
+			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60*24); //24 hour cache
 		} else {
 			$domain_blacklist = $wp_filesystem->get_contents($domain_blacklist_json_file);
 		}

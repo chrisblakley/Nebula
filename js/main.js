@@ -410,6 +410,20 @@ function eventTracking(){
 	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
 	//});
 
+	//Btn Clicks
+	nebula.dom.document.on('mousedown touch tap', ".btn", function(e){
+		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+
+		var btnText = jQuery(this).text();
+		if ( jQuery.trim(btnText) === '' ){
+			btnText = '(Unknown)';
+		}
+
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Button Click', btnText, jQuery(this).attr('href'));
+	});
+
 	//Outbound Links
 	nebula.dom.document.on('mousedown touch tap', "a[rel*='external']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
@@ -2291,7 +2305,8 @@ function nebulaEqualize(){
 				}
 			}
 		});
-		oThis.find('[class*="col-"]:not(.no-equalize)').css('min-height', tallestColumn);
+		oThis.attr('data-equalized', tallestColumn).find('[class*="col-"]:not(.no-equalize)').css('min-height', tallestColumn);
+		nebula.dom.document.trigger('nebula_equalized');
 	});
 
 	nebula.dom.document.on('nebula_infinite_finish', function(){
