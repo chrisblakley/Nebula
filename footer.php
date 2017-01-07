@@ -3,8 +3,6 @@
  * Theme Footer
  */
 ?>
-			<hr class="zero" style="margin-top: 30px;"/>
-
 			<div id="footer-section">
 				<?php get_template_part('includes/footer_widgets'); //Footer widget logic. ?>
 

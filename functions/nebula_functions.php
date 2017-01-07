@@ -2072,9 +2072,13 @@ function nebula_ip_location($data=null, $ip=false){
 			}
 		}
 
+		if ( strpos($_SESSION['nebulageoip'], 'Rate limit') === 0 ){
+			return false;
+		}
+
 		if ( empty($_SESSION['nebulageoip']) ){
 			$response = wp_remote_get('http://freegeoip.net/json/' . $ip);
-			if ( is_wp_error($response) ){
+			if ( is_wp_error($response) || strpos($ip_geo_data, 'Rate limit') === 0 ){
 				return false;
 			}
 

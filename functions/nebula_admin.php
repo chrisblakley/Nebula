@@ -897,7 +897,11 @@ function dashboard_current_user(){
 
 		//IP Location
 		if ( nebula_ip_location() ){
-			echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . nebula_ip_location('city') . ', ' . nebula_ip_location('state') . '</strong></li>';
+			if ( nebula_ip_location('city') ){
+				echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . nebula_ip_location('city') . ', ' . nebula_ip_location('state') . '</strong></li>';
+			} else {
+				echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <em>GeoIP error or rate limit exceeded.</em></li>';
+			}
 		}
 
 		//Weather

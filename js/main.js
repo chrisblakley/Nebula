@@ -669,6 +669,7 @@ function scrollDepth(){
 		timer: 0,
 		startTime: new Date(),
 		totalTime: 0,
+		scrollDelay: 0,
 		maxScroll: -1,
 		isScroller: false,
 		beganReading: false,
@@ -898,8 +899,8 @@ function keywordSearch(container, parent, value, filteredClass){
 	if ( !filteredClass ){
 		var filteredClass = 'filtereditem';
 	}
-	jQuery(container).find("*:not(:Contains(" + value + "))").parents(parent).addClass(filteredClass);
-	jQuery(container).find("*:Contains(" + value + ")").parents(parent).removeClass(filteredClass);
+	jQuery(container).find("*:not(:Contains(" + value + "))").closest(parent).addClass(filteredClass);
+	jQuery(container).find("*:Contains(" + value + ")").closest(parent).removeClass(filteredClass);
 }
 
 //Menu Search Replacement
@@ -2028,7 +2029,7 @@ function requestPosition(){
 			    }
 			    var geolocation = nav.geolocation;
 			    if ( geolocation != null ){
-			        geolocation.getCurrentPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //One-time location poll
+			        geolocation.getCurrentPosition(geoSuccessCallback, geoErrorCallback, {enableHighAccuracy: true}); //One-time location poll
 			        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
 			    }
 			} //End Google Maps callback
@@ -2039,7 +2040,7 @@ function requestPosition(){
 }
 
 //Geolocation Success
-function successCallback(position){
+function geoSuccessCallback(position){
 	nebula.session.geolocation = {
         error: false,
         coordinates: { //A value in decimal degrees to an precision of 4 decimal places is precise to 11.132 meters at the equator. A value in decimal degrees to 5 decimal places is precise to 1.1132 meter at the equator.
@@ -2090,7 +2091,7 @@ function successCallback(position){
 }
 
 //Geolocation Error
-function errorCallback(error){
+function geoErrorCallback(error){
     switch (error.code){
         case error.PERMISSION_DENIED:
             geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
@@ -2317,16 +2318,10 @@ function nebulaEqualize(){
 //Power Footer Width Distributor
 function powerFooterWidthDist(){
 	var powerFooterWidth = jQuery('#powerfooter').width();
-	var powerFooterTopLIs = jQuery('#powerfooter ul.menu > li');
-	var topLevelFooterItems = 0;
-	powerFooterTopLIs.each(function(){
-		topLevelFooterItems = topLevelFooterItems+1;
-	});
-	var footerItemWidth = powerFooterWidth/topLevelFooterItems-8;
-	if ( topLevelFooterItems === 0 ){
-		jQuery('.powerfootercon').addClass('hidden');
-	} else {
-		powerFooterTopLIs.css('width', footerItemWidth);
+	var powerFooterTopLIs = jQuery('#powerfooter ul.menu > li:visible').size();
+	var footerItemWidth = powerFooterWidth/powerFooterTopLIs-8;
+	if ( powerFooterTopLIs > 0 ){
+		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
 	}
 }
 

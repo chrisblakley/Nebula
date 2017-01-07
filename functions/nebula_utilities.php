@@ -1352,9 +1352,9 @@ function is_client($strict=false){
 function is_staff($strict=false){
 	if ( is_dev($strict) || is_client($strict) ){
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 //Check if user is using the debug query string.
@@ -1819,7 +1819,7 @@ function nebula_version($return=false){
 		x represents the day of the month.
 	*/
 
-	$nebula_version_year = ( $nebula_version['medium'] <= 5 )? 2012+$nebula_version['large'] : 2012+$nebula_version['large']+1;
+	$nebula_version_year = 2012+$nebula_version['large'];
 	$nebula_months = array('May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April');
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
 	$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
@@ -2135,6 +2135,11 @@ function nebula_is_mobile(){
 		}
 	}
 
+	global $is_iphone;
+	if ( $is_iphone ){
+		return 'true';
+	}
+
 	return false;
 }
 
@@ -2187,6 +2192,19 @@ function nebula_get_os($info='full'){
 				return false;
 				break;
 		}
+	}
+
+	global $is_iphone;
+	switch ( strtolower($info) ){
+		case 'full':
+		case 'name':
+			if ( $is_iphone ){
+				return 'ios';
+			}
+			break;
+		default:
+			return false;
+			break;
 	}
 }
 
@@ -2272,6 +2290,29 @@ function nebula_get_device($info='model'){
 				break;
 		}
 	}
+
+	global $is_iphone;
+	$info = str_replace(' ', '', $info);
+	switch ( strtolower($info) ){
+		case 'brand':
+		case 'brandname':
+		case 'make':
+		case 'model':
+		case 'name':
+		case 'type':
+			if ( $is_iphone ){
+				return 'iphone';
+			}
+			break;
+		case 'formfactor':
+			if ( $is_iphone ){
+				return 'mobile';
+			}
+			break;
+		default:
+			return false;
+			break;
+	}
 }
 
 //Returns the requested information of the browser being used.
@@ -2304,6 +2345,27 @@ function nebula_get_browser($info='name'){
 				return false;
 				break;
 		}
+	}
+
+	global $is_gecko, $is_IE, $is_opera, $is_safari, $is_chrome;
+	switch ( strtolower($info) ){
+		case 'full':
+		case 'name':
+		case 'browser':
+		case 'client':
+			if ( $is_IE ){return 'internet explorer';}
+			elseif ( $is_opera ){return 'opera';}
+			elseif ( $is_safari ){return 'safari';}
+			elseif ( $is_chrome ){return 'chrome';}
+			break;
+		case 'engine':
+			if ( $is_gecko ){return 'gecko';}
+			elseif ( $is_safari ){return 'webkit';}
+			elseif ( $is_IE ){return 'trident';}
+			break;
+		default:
+			return false;
+			break;
 	}
 }
 
