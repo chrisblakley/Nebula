@@ -2,5 +2,6 @@
 sitemap.xml
 sitemap.xml.gz
 wp-config.php
+.DS_Store
 
 *.bak

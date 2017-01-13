@@ -652,9 +652,13 @@ function dashboard_nebula_ataglance(){
 
 		//Post Types
 		foreach ( get_post_types() as $post_type ){
-		    if ( in_array($post_type, array('attachment', 'revision', 'nav_menu_item', 'acf')) ){
+			//Only show post types that show_ui (unless forced with one of the arrays below)
+		    $force_show = array('wpcf7_contact_form'); //These will show even if their show_ui is false.
+		    $force_hide = array('attachment', 'acf'); //These will be skipped even if their show_ui is true.
+		    if ( (!$wp_post_types[$post_type]->show_ui && !in_array($post_type, $force_show)) || in_array($post_type, $force_hide)){
 			    continue;
 		    }
+
 			$count_pages = wp_count_posts($post_type);
 			$labels_plural = ( $count_pages->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
 			switch ( $post_type ){

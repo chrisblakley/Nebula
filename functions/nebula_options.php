@@ -83,6 +83,32 @@ function nebula_full_address($encoded=false){
 	return $full_address;
 }
 
+//Register the requested version of Bootstrap.
+function nebula_bootrap_version($lang=false){
+	if ( nebula_option('bootstrap_version') === 'bootstrap3' ){
+		//Bootstrap 3 (IE8+ Support)
+		if ( $lang === 'css' ){
+			return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
+		} elseif ( $lang === 'js' ){
+			return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', 'defer', null, '3.3.7', true);
+		}
+	} elseif ( nebula_option('bootstrap_version') === 'bootstrap4a5' ){
+		//Bootstrap 4 alpha 5 (IE9+ Support)
+		if ( $lang === 'css' ){
+			return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
+		} elseif ( $lang === 'js' ){
+			return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', null, '4.0.0a5', true);
+		}
+	}
+
+	//Latest (IE10+)
+	if ( $lang === 'css' ){
+		return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css', null, '4.0.0a6', 'all');
+	} elseif ( $lang === 'js' ){
+		return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', 'defer', null, '4.0.0a6', true);
+	}
+}
+
 //Prepare default data values
 function nebula_default_data(){
 	$nebula_data_defaults = array(
@@ -148,6 +174,7 @@ function nebula_default_options(){
 		'instagram_url' => '',
 
 		//Functions Tab
+		'bootstrap_version' => 'latest',
 		'prototype_mode' => 'disabled',
 		'wireframe_theme' => '',
 		'staging_theme' => '',
@@ -616,6 +643,19 @@ function nebula_options_page(){
 			<?php $nebula_options_defaults = nebula_default_options(); ?>
 
 			<table class="form-table dependent functions" style="display: none;">
+				<tr class="short" valign="top">
+		        	<th scope="row">Bootstrap Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<select id="bootstrapversionselect" name="nebula_options[bootstrap_version]">
+							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['bootstrap_version']); ?></option>
+							<option value="latest" <?php selected('latest', $nebula_options['bootstrap_version']); ?>>Latest</option>
+							<option value="bootstrap4a5" <?php selected('bootstrap4a5', $nebula_options['bootstrap_version']); ?>>Bootstrap 4 alpha 5</option>
+							<option value="bootstrap3" <?php selected('bootstrap3', $nebula_options['bootstrap_version']); ?>>Bootstrap 3</option>
+						</select>
+						<p class="helper"><small>Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest only supports IE10+. <em>(Default: <?php echo ucwords($nebula_options_defaults['bootstrap_version']); ?>)</em></small></p>
+					</td>
+		        </tr>
+
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
 						<h3>Prototyping</h3>

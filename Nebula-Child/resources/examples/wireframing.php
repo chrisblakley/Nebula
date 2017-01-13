@@ -123,36 +123,38 @@
 <hr />
 <br /><br />
 
-<!-- Image -->
-<div class="row">
-	<div class="col-md-12">
-		<h2><strong>Image</strong></h2>
-		<p>Placeholder images can be created using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function. The class "nebula-fpo-image" is added to the element.</p>
+<?php if ( 1==2 ): ?>
+	<!-- Image -->
+	<div class="row">
+		<div class="col-md-12">
+			<h2><strong>Image</strong></h2>
+			<p>Placeholder images can be created using the <?php echo do_shortcode('[code]fpo_image()[/code]'); ?> function. The class "nebula-fpo-image" is added to the element.</p>
 
-		<h2>Usage</h2>
-		<?php echo do_shortcode('[pre lang=php]<?php fpo_image($width, $height, $type, $color, $styles, $classes); ?>[/pre]'); ?>
+			<h2>Usage</h2>
+			<?php echo do_shortcode('[pre lang=php]<?php fpo_image($width, $height, $type, $color, $styles, $classes); ?>[/pre]'); ?>
 
-		<h2>Parameters</h2>
-		<p>
-			<strong>$width</strong> (string) (optional) The width of the placeholder image. Default: <em>100%</em><br />
-			<strong>$height</strong> (string) (optional) The height of the placeholder image. Default: <em>250px</em><br />
-			<strong>$type</strong> (string) (optional) The type of placeholder image to use. Options include "none", "photo". Default: <em>"none"</em><br />
-			<strong>$color</strong> (string) (optional) The color of the placeholder image strokes. Default: <em>"#ddd"</em><br />
-			<strong>$styles</strong> (string) (optional) Additional styles to add to the element. Default: <em>None</em><br />
-			<strong>$classes</strong> (string) (optional) Additional classes to add to the element. Default: <em>None</em><br />
-		</p>
+			<h2>Parameters</h2>
+			<p>
+				<strong>$width</strong> (string) (optional) The width of the placeholder image. Default: <em>100%</em><br />
+				<strong>$height</strong> (string) (optional) The height of the placeholder image. Default: <em>250px</em><br />
+				<strong>$type</strong> (string) (optional) The type of placeholder image to use. Options include "none", "photo". Default: <em>"none"</em><br />
+				<strong>$color</strong> (string) (optional) The color of the placeholder image strokes. Default: <em>"#ddd"</em><br />
+				<strong>$styles</strong> (string) (optional) Additional styles to add to the element. Default: <em>None</em><br />
+				<strong>$classes</strong> (string) (optional) Additional classes to add to the element. Default: <em>None</em><br />
+			</p>
 
-		<h2>Examples</h2>
-		<div class="row">
-			<div class="col-md-6">
-				<?php fpo_image(); ?>
-			</div>
-			<div class="col-md-6">
-				<?php fpo_image('unsplash'); ?>
+			<h2>Examples</h2>
+			<div class="row">
+				<div class="col-md-6">
+					<?php fpo_image(); ?>
+				</div>
+				<div class="col-md-6">
+					<?php fpo_image('unsplash'); ?>
+				</div>
 			</div>
 		</div>
-	</div>
-</div><!--/row-->
+	</div><!--/row-->
+<?php endif; ?>
 
 <br /><br />
 <hr />

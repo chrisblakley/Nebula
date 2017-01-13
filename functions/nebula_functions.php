@@ -48,20 +48,6 @@ function addBackPostFeed(){
     echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
 }
 
-//Send event to Google Analytics if JavaScript is disabled
-add_action('init', 'nebula_no_js_event');
-function nebula_no_js_event(){
-	if ( !nebula_is_bot() && isset($_GET['nonce']) && isset($_GET['js']) && $_GET['js'] == 'false' ){
-		if ( !wp_verify_nonce($_GET['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-
-		$title = ( get_the_title($_GET['id']) )? get_the_title($_GET['id']) : '(Unknown)';
-		ga_send_event('JavaScript Disabled', $title, $_SERVER['HTTP_USER_AGENT'], null, 1);
-		nebula_update_visitor(array('js_block' => 'true'));
-		header('Location: ' . get_theme_file_uri('/images/no-js.gif') . '?id=' . $_GET['id']); //Redirect and parameters here do nothing (deter false data).
-		die; //Die as a precaution.
-	}
-}
-
 //Send analytics data if GA is blocked by JavaScript
 add_action('wp_ajax_nebula_ga_blocked', 'nebula_ga_blocked');
 add_action('wp_ajax_nopriv_nebula_ga_blocked', 'nebula_ga_blocked');
@@ -509,6 +495,7 @@ function nebula_meta($meta){
 
 //Date post meta
 function nebula_post_date($icon=true, $linked=true, $day=true){
+	$the_icon = '';
 	if ( $icon ){
 		$the_icon = '<i class="fa fa-calendar-o"></i> ';
 	}
@@ -527,6 +514,7 @@ function nebula_post_date($icon=true, $linked=true, $day=true){
 
 //Author post meta
 function nebula_post_author($icon=true, $linked=true, $force=false){
+	$the_icon = '';
 	if ( $icon ){
 		$the_icon = '<i class="fa fa-user"></i> ';
 	}
@@ -570,6 +558,7 @@ function nebula_post_type($icon=true){
 
 //Categories post meta
 function nebula_post_categories($icon=true){
+	$the_icon = '';
 	if ( $icon ){
 		$the_icon = '<i class="fa fa-bookmark"></i> ';
 	}
@@ -584,6 +573,7 @@ function nebula_post_categories($icon=true){
 function nebula_post_tags($icon=true){
 	$tag_list = get_the_tag_list('', ', ');
 	if ( $tag_list ){
+		$the_icon = '';
 		if ( $icon ){
 			$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
 			$the_icon = '<i class="fa fa-' . $tag_plural . '"></i> ';
@@ -596,6 +586,7 @@ function nebula_post_tags($icon=true){
 //Image dimensions post meta
 function nebula_post_dimensions($icon=true, $linked=true){
 	if ( wp_attachment_is_image() ){
+		$the_icon = '';
 		if ( $icon ){
 			$the_icon = '<i class="fa fa-expand"></i> ';
 		}
@@ -611,6 +602,7 @@ function nebula_post_dimensions($icon=true, $linked=true){
 
 //Image EXIF post meta
 function nebula_post_exif($icon=true){
+	$the_icon = '';
 	if ( $icon ){
 		$the_icon = '<i class="fa fa-camera"></i> ';
 	}
@@ -657,10 +649,9 @@ function nebula_post_comments($icon=true, $linked=true, $empty=true){
 		$comment_icon = 'fa-comments';
 	}
 
+	$the_icon = '';
 	if ( $icon ){
 		$the_icon = '<i class="fa ' . $comment_icon . '"></i> ';
-	} else {
-		$the_icon = '';
 	}
 
 	if ( $linked ){
@@ -885,6 +876,9 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 	$tweets = get_transient('nebula_twitter_' . $username);
 	if ( empty($tweets) || is_debug() ){
 		$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
+		if ( !nebula_is_available($feed) ){
+			return false;
+		}
 		$response = wp_remote_get($feed, $args);
 		if ( is_wp_error($response) ){
 			return false;
@@ -932,6 +926,9 @@ function nebula_excerpt($options=array()){
 	//Establish text
 	if ( empty($data['text']) ){
 		$the_post = ( !empty($data['id']) && is_int($data['id']) )? get_post($data['id']) : get_post(get_the_ID());
+		if ( empty($the_post) ){
+			return false;
+		}
 		$data['text'] = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
 	}
 
@@ -2076,7 +2073,7 @@ function nebula_ip_location($data=null, $ip=false){
 			return false;
 		}
 
-		if ( empty($_SESSION['nebulageoip']) ){
+		if ( empty($_SESSION['nebulageoip']) && nebula_is_available('http://freegeoip.net') ){
 			$response = wp_remote_get('http://freegeoip.net/json/' . $ip);
 			if ( is_wp_error($response) || strpos($ip_geo_data, 'Rate limit') === 0 ){
 				return false;
@@ -2157,6 +2154,9 @@ function nebula_weather($zipcode=null, $data=''){
 		if ( empty($weather_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 			$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
 
+			if ( !nebula_is_available('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json') ){
+				return false;
+			}
 			$response = wp_remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
 			if ( is_wp_error($response) ){
 				return false;
@@ -2268,6 +2268,10 @@ function video_meta($provider, $id){
 	$video_json = get_transient('nebula_' . $provider . '_' . $id);
 	if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		if ( $provider == 'youtube' ){
+			if ( !nebula_is_available('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key')) ){
+				$video_metadata['error'] = 'Youtube video is unavailable.';
+				return $video_metadata;
+			}
 			$response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
 			if ( is_wp_error($response) ){
 				$video_metadata['error'] = 'Youtube video is unavailable.';
@@ -2276,6 +2280,10 @@ function video_meta($provider, $id){
 
 			$video_json = $response['body'];
 		} elseif ( $provider == 'vimeo' ){
+			if ( !nebula_is_available('http://vimeo.com/api/v2/video/' . $id . '.json') ){
+				$video_metadata['error'] = 'Vimeo video is unavailable.';
+				return $video_metadata;
+			}
 			$response = wp_remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
 			if ( is_wp_error($response) ){
 				$video_metadata['error'] = 'Vimeo video is unavailable.';

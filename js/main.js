@@ -46,7 +46,7 @@ jQuery(document).ready(function(){
 	svgImgs();
 
 	//Interaction
-	pageVisibility();
+	initPageVisibility();
 	socialSharing();
 	checkForYoutubeVideos();
 	vimeoControls();
@@ -139,39 +139,39 @@ function cacheSelectors(){
  ===========================*/
 
 //Page Visibility
-function pageVisibility(){
+function initPageVisibility(){
 	visFirstHidden = false;
 	visibilityChangeActions();
 	nebula.dom.document.on('visibilitychange', function(){
 		visibilityChangeActions();
 	});
+}
 
-	function visibilityChangeActions(){
-		if ( document.visibilityState === 'prerender' ){ //Page was prerendered/prefetched
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Page Visibility', 'Prerendered', 'Page loaded before tab/window was visible', {'nonInteraction': true});
-			pauseAllVideos(false);
-		}
-
-		if ( getPageVisibility() ){ //Page is hidden
-			nebula.dom.document.trigger('nebula_page_hidden');
-			nebula.dom.body.addClass('page-visibility-hidden');
-			pauseAllVideos(false);
-			visFirstHidden = true;
-		} else { //Page is visible
-			if ( visFirstHidden ){
-				nebula.dom.document.trigger('nebula_page_visible');
-				nebula.dom.body.removeClass('page-visibility-hidden');
-			}
-		}
+function visibilityChangeActions(){
+	if ( document.visibilityState === 'prerender' ){ //Page was prerendered/prefetched
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Page Visibility', 'Prerendered', 'Page loaded before tab/window was visible', {'nonInteraction': true});
+		pauseAllVideos(false);
 	}
 
-	function getPageVisibility(){
-		if ( typeof document.hidden !== "undefined" ){
-			return document.hidden;
-		} else {
-			return false;
+	if ( getPageVisibility() ){ //Page is hidden
+		nebula.dom.document.trigger('nebula_page_hidden');
+		nebula.dom.body.addClass('page-visibility-hidden');
+		pauseAllVideos(false);
+		visFirstHidden = true;
+	} else { //Page is visible
+		if ( visFirstHidden ){
+			nebula.dom.document.trigger('nebula_page_visible');
+			nebula.dom.body.removeClass('page-visibility-hidden');
 		}
+	}
+}
+
+function getPageVisibility(){
+	if ( typeof document.hidden !== "undefined" ){
+		return document.hidden;
+	} else {
+		return false;
 	}
 }
 
@@ -202,7 +202,7 @@ function gaBlockSend(){
 	if ( typeof gablocked !== 'undefined' && has(nebula, 'user.client') && !nebula.user.client.bot && has(nebula, 'site.options.gaid') && nebula.site.options.gaid !== '' ){
 		setTimeout(function(){
 			if ( gablocked ){
-				jQuery('html').addClass('no-gajs');
+				nebula.dom.html.addClass('no-gajs');
 
 				nv('get', 'ga_block', function(response){ //@TODO "Nebula" 0: also store in cookie or localstorage to save DB query here?
 					if ( !response || response !== '1' ){
@@ -1486,7 +1486,7 @@ function pageSuggestion(){
 			}
 			var path = window.location.pathname;
 			var phrase = decodeURIComponent(jQuery.trim(path.replace(/\/+/g, ' '))) + ' ' + decodeURIComponent(jQuery.trim(queryStrings[0].replace(/\+/g, ' ')));
-			trySearch(phrase);
+			tryGCSESearch(phrase);
 		}
 	}
 
@@ -1506,7 +1506,7 @@ function pageSuggestion(){
 	});
 }
 
-function trySearch(phrase){
+function tryGCSESearch(phrase){
 	if ( nebula.site.options.nebula_cse_id.length && nebula.site.options.nebula_google_browser_api_key.length ){
 		var queryParams = {
 			cx: nebula.site.options.nebula_cse_id,
@@ -1522,14 +1522,14 @@ function trySearch(phrase){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			if ( response.items && response.items.length ){
 				if ( response.items[0].link !== window.location.href ){
-					showSuggestedPage(response.items[0].title, response.items[0].link);
+					showSuggestedGCSEPage(response.items[0].title, response.items[0].link);
 				}
 			}
 		});
 	}
 }
 
-function showSuggestedPage(title, url){
+function showSuggestedGCSEPage(title, url){
 	var hostname = new RegExp(location.host);
 	if ( hostname.test(url) ){
 		jQuery('.gcse-suggestion').attr('href', url).text(title);
@@ -1586,6 +1586,8 @@ function cf7Functions(){
 	if ( !jQuery('.wpcf7-form').length ){
 		return false;
 	}
+
+	//@todo "Nebula" 0: Include an event when a CF7 form is scrolled into view.
 
 	formStarted = [];
 	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(){
@@ -1803,7 +1805,7 @@ function conversionTracker(conversionpage){
 	iframe.style.width = '0px';
 	iframe.style.height = '0px';
 	document.body.appendChild(iframe);
-	iframe.src = nebula.site.directory.template.uri + '/includes/conversion/' + conversionpage;
+	iframe.src = nebula.site.directory.template.uri + '/includes/conversion/' + conversionpage; //@todo "Nebula" 0: Does this need to be updated to support child themes?
 };
 
 
@@ -1849,7 +1851,7 @@ function conditionalJSLoading(){
 
 	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){
 		nebulaLoadCSS(nebula.site.directory.template.uri + '/stylesheets/css/pre.css');
-		nebula_pre();
+		nebulaPre();
 	}
 
 	if ( jQuery('.flag').length ){
@@ -2683,6 +2685,7 @@ function timeAgo(timestamp){ //http://af-design.com/blog/2009/02/10/twitter-like
 	if ( diff <= 129600 ){ return "1 day ago"; }
 	if ( diff < 604800 ){ return Math.round(diff/86400) + " days ago"; }
 	if ( diff <= 777600 ){ return "1 week ago"; }
+
 	return "on " + timestamp;
 }
 
@@ -2709,7 +2712,7 @@ function has(obj, prop){
  ===========================*/
 
 //Functionality for selecting and copying text using Nebula Pre tags.
-function nebula_pre(){
+function nebulaPre(){
 	try { //@TODO "Nebula" 0: Use Modernizr check here instead.
 		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
 			var selectCopyText = 'Copy to clipboard';
@@ -2841,7 +2844,7 @@ function selectText(element, copy, callback){
 }
 
 function copyText(string, callback){
-	jQuery('<div>').attr('id', 'copydiv').text(string).css({'position': 'absolute', 'top': '0', 'left': '-9999px', 'width': '0', 'height': '0', 'opacity': '0', 'color': 'transparent', }).appendTo(jQuery('body'));
+	jQuery('<div>').attr('id', 'copydiv').text(string).css({'position': 'absolute', 'top': '0', 'left': '-9999px', 'width': '0', 'height': '0', 'opacity': '0', 'color': 'transparent'}).appendTo(jQuery('body'));
 	selectText(jQuery('#copydiv'), true, callback);
 	jQuery('#copydiv').remove();
 	return false;
@@ -3277,19 +3280,10 @@ function nebulaVibrate(pattern){
 	if ( typeof pattern !== 'object' ){
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	}
-	if ( checkVibration() ){
+	if ( navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate ){
 		navigator.vibrate(pattern);
 	}
 	return false;
-}
-
-function checkVibration(){
-	Vibration = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
-	if ( !(Vibration) ){
-		return false;
-	} else {
-		return true;
-	}
 }
 
 function moreEvents(bool){

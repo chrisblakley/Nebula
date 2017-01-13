@@ -182,7 +182,7 @@ function nebula_domain_prevention(){
 function nebula_get_domain_blacklist(){
 	$domain_blacklist_json_file = get_template_directory() . '/includes/data/domain_blacklist.txt';
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
-	if ( empty($domain_blacklist) || is_debug() ){
+	if ( empty($domain_blacklist) || is_debug() && nebula_is_available('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt') ){
 		$response = wp_remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
 		if ( !is_wp_error($response) ){
 			$domain_blacklist = $response['body'];

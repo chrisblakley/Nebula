@@ -660,7 +660,7 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 			);
 
 			//Attempt to detect IP Geolocation data using https://freegeoip.net/
-			if ( nebula_option('ip_geolocation') ){
+			if ( nebula_option('ip_geolocation') && nebula_is_available('http://freegeoip.net') ){
 				$response = wp_remote_get('http://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
 				if ( !is_wp_error($response) ){
 					$ip_geo_data = json_decode($response['body']);
@@ -1709,7 +1709,7 @@ function contains($str, array $arr){
 }
 
 //Check if a website or resource is available
-function nebula_is_available($url=null){
+function nebula_is_available($url=null, $nocache=false){
 	$override = apply_filters('pre_nebula_is_available', false, $url);
 	if ( $override !== false ){return $override;}
 
@@ -1718,11 +1718,26 @@ function nebula_is_available($url=null){
 		return false;
 	}
 
-	$response = wp_remote_get($url);
-	if ( !is_wp_error($response) && $response['response']['code'] === 200 ){
-		return true;
+	$hostname = str_replace('.', '_', nebula_url_components('hostname', $url));
+	$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
+
+	if ( !empty($site_available_buffer) && !$nocache ){
+		if ( $site_available_buffer === 'Available' ){
+			return true;
+		}
+
+		return false;
 	}
 
+	if ( empty($site_available_buffer) || $nocache ){
+		$response = wp_remote_get($url);
+		if ( !is_wp_error($response) && $response['response']['code'] === 200 ){
+			set_transient('nebula_site_available_' . $hostname, 'Available', 60*5); //5 minute expiration
+			return true;
+		}
+	}
+
+	set_transient('nebula_site_available_' . $hostname, 'Unavailable', 60*5); //5 minute expiration
 	return false;
 }
 
@@ -1819,7 +1834,7 @@ function nebula_version($return=false){
 		x represents the day of the month.
 	*/
 
-	$nebula_version_year = 2012+$nebula_version['large'];
+	$nebula_version_year = ( $nebula_version['medium'] >= 8 )? 2012+$nebula_version['large']+1 : 2012+$nebula_version['large'];
 	$nebula_months = array('May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April');
 	$nebula_version_month = $nebula_months[$nebula_version['medium']];
 	$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
@@ -2137,7 +2152,7 @@ function nebula_is_mobile(){
 
 	global $is_iphone;
 	if ( $is_iphone ){
-		return 'true';
+		return true;
 	}
 
 	return false;
