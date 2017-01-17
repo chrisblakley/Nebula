@@ -410,13 +410,6 @@ if ( nebula_option('comments', 'disabled') || nebula_option('disqus_shortname') 
 		}
 	}
 } else { //If WP core comments are enabled
-	//Open comments on the front-end
-	add_filter('comments_open', 'enable_comments_status', 20, 2);
-	add_filter('pings_open', 'enable_comments_status', 20, 2);
-	function enable_comments_status(){
-		return true;
-	}
-
 	//Enqueue threaded comments script only as needed
 	add_action('comment_form_before', 'nebula_enqueue_comments_reply');
 	function nebula_enqueue_comments_reply(){
