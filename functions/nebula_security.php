@@ -182,29 +182,41 @@ function nebula_domain_prevention(){
 function nebula_get_domain_blacklist(){
 	$domain_blacklist_json_file = get_template_directory() . '/includes/data/domain_blacklist.txt';
 	$domain_blacklist = get_transient('nebula_domain_blacklist');
-	if ( (empty($domain_blacklist) || is_debug()) && nebula_is_available('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt') ){
+	if ( (empty($domain_blacklist) || is_debug()) && nebula_is_available('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt') ){ //If transient expired or is debug, and if remote resource is available
 		$response = wp_remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
 		if ( !is_wp_error($response) ){
 			$domain_blacklist = $response['body'];
+		} else {
+			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', 60*5); //5 minute expiration
 		}
 
-		if ( is_wp_error($response) || empty($domain_blacklist) ){
+		//If there was an error or empty response, try my Github repo
+		if ( is_wp_error($response) || empty($domain_blacklist) ){ //This does not check availability because it is the same hostname as above.
 			$response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt');
 			if ( !is_wp_error($response) ){
 				$domain_blacklist = $response['body'];
+			} else {
+				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', 60*5); //5 minute expiration
 			}
 		}
 
-		WP_Filesystem();
-		global $wp_filesystem;
+		//If either of the above remote requests received data, update the local file and store the data in a transient for 24 hours
 		if ( !is_wp_error($response) && !empty($domain_blacklist) ){
+			WP_Filesystem();
+			global $wp_filesystem;
 			$wp_filesystem->put_contents($domain_blacklist_json_file, $domain_blacklist);
 			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60*24); //24 hour cache
-		} else {
-			$domain_blacklist = $wp_filesystem->get_contents($domain_blacklist_json_file);
 		}
 	}
 
+	//If neither remote resource worked, get the local file
+	if ( empty($domain_blacklist) ){
+		WP_Filesystem();
+		global $wp_filesystem;
+		$domain_blacklist = $wp_filesystem->get_contents($domain_blacklist_json_file);
+	}
+
+	//If one of the above methods worked, parse the data.
 	if ( !empty($domain_blacklist) ){
 		$blacklisted_domains = array();
 		foreach( explode("\n", $domain_blacklist) as $line ){
