@@ -2,15 +2,6 @@
 
 // Register nebula customizer
 function nebula_customize_register( $wp_customize ) {
-    // Site Logo
-    $wp_customize->add_setting( 'nebula_logo', array( 'default' => null ) );
-    $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'nebula_logo', array(
-        'label'     => __( 'Site Logo' ),
-        'section'   => 'title_tagline',
-        'settings'  => 'nebula_logo',
-        'priority'  => 10
-    ) ) );
-
     // Site Title
     $wp_customize->get_setting( 'blogname' )->transport = 'postMessage';
     $wp_customize->get_control( 'blogname' )->priority = 20;
