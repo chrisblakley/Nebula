@@ -5,6 +5,7 @@ add_action('after_setup_theme', 'nebula_theme_setup');
 function nebula_theme_setup(){
 	//Additions
 	add_theme_support('post-thumbnails');
+	add_theme_support('custom-logo'); //Custom logo support.
 	add_theme_support('title-tag'); //Title tag support allows WordPress core to create the <title> tag.
 	//add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
 	add_theme_support('automatic-feed-links'); //Add default posts and comments RSS feed links to head
