@@ -941,7 +941,7 @@ function autocompleteSearch(){
 
 	jQuery("input#s, input.search").on('keypress paste', function(e){
 		thisSearchInput = jQuery(this);
-		jQuery(document).trigger('nebula_autocomplete_search_start');
+		jQuery(document).trigger('nebula_autocomplete_search_start', thisSearchInput);
 		nebulaTimer('autocompleteSearch', 'start');
 		nebulaTimer('autocompleteResponse', 'start');
 		if ( !thisSearchInput.hasClass('no-autocomplete') && !nebula.dom.html.hasClass('lte-ie8') && jQuery.trim(thisSearchInput.val()).length ){
@@ -971,11 +971,11 @@ function autocompleteSearch(){
 							data: request,
 						},
 						success: function(data){
-							jQuery(document).trigger('nebula_autocomplete_search_success');
+							jQuery(document).trigger('nebula_autocomplete_search_success', data);
 							ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							if ( data ){
-								jQuery(document).trigger('nebula_autocomplete_search_results');
+								jQuery(document).trigger('nebula_autocomplete_search_results', data);
 								nebulaPrerender(data[0].link);
 								jQuery.each(data, function(index, value){
 									value.label = value.label.replace(/&#038;/g, "\&");
@@ -994,7 +994,7 @@ function autocompleteSearch(){
 							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
 						},
 						error: function(XMLHttpRequest, textStatus, errorThrown){
-							jQuery(document).trigger('nebula_autocomplete_search_error');
+							jQuery(document).trigger('nebula_autocomplete_search_error', request.term);
 							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 							debounce(function(){
 								ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
@@ -1009,7 +1009,7 @@ function autocompleteSearch(){
 					event.preventDefault(); //Prevent input value from changing.
 				},
 				select: function(event, ui){
-					jQuery(document).trigger('nebula_autocomplete_search_selected');
+					jQuery(document).trigger('nebula_autocomplete_search_selected', ui);
 					ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
@@ -1965,7 +1965,7 @@ function nebulaAddressAutocomplete(autocompleteInput){
 							nebula.user.address.zip.full = nebula.user.address.zip.code + '-' + nebula.user.address.zip.suffix;
 						}
 
-						nebula.dom.document.trigger('nebula_address_selected');
+						nebula.dom.document.trigger('nebula_address_selected', place);
 						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
 						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 						ga('send', 'event', 'Contact', 'Autocomplete Address', nebula.user.address.city + ', ' + nebula.user.address.state.abbreviation + ' ' + nebula.user.address.zip.code);
@@ -2328,19 +2328,32 @@ function powerFooterWidthDist(){
 }
 
 //Offset must be an integer
-function nebulaScrollTo(element, milliseconds, offset){
+function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
 	if ( !offset ){
 		var offset = 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 	}
 
 	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
 	if ( element ){
-		if ( !milliseconds ){
-			var milliseconds = 1000;
+		var willScroll = true;
+		if ( onlyWhenBelow ){
+			var elementTop = element.offset().top-offset;
+			var viewportTop = jQuery(document).scrollTop();
+			if ( viewportTop-elementTop <= 0 ){
+				willScroll = false;
+			}
 		}
-		jQuery('html, body').animate({
-			scrollTop: element.offset().top-offset
-		}, milliseconds);
+
+		if ( willScroll ){
+			if ( !milliseconds ){
+				var milliseconds = 500;
+			}
+
+			jQuery('html, body').animate({
+				scrollTop: element.offset().top-offset
+			}, milliseconds);
+		}
+
 		return false;
 	}
 
@@ -2913,9 +2926,11 @@ function onYouTubeIframeAPIReady(e){
 				}
 			});
 		} else {
-			players.youtube[youtubeiframeID] = 'JavaScript API is not enabled for this Youtube video.'; //yolo
+			players.youtube[youtubeiframeID] = 'JavaScript API is not enabled for this Youtube video.';
 		}
 	});
+
+	jQuery(document).trigger('nebula_youtube_players_created');
 	pauseFlag = false;
 }
 function onPlayerError(e){
@@ -2955,7 +2970,7 @@ function onPlayerStateChange(e){
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
         ga('send', 'event', 'Videos', 'Play', videoInfo.title);
         nv('append', {'video_play': videoInfo.title});
-        nebula.dom.document.trigger('nebula_playing_video');
+        nebula.dom.document.trigger('nebula_playing_video', videoInfo);
         pauseFlag = true;
 		updateInterval = 500;
 
@@ -2970,7 +2985,7 @@ function onPlayerStateChange(e){
 				ga('send', 'event', 'Videos', 'Engaged', videoInfo.title, {'nonInteraction': true});
 				nv('append', {'video_engaged': videoInfo.title});
 				videoData[id].engaged = true;
-				nebula.dom.document.trigger('nebula_engaged_video');
+				nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
 			}
 		}, updateInterval);
     }
@@ -2983,7 +2998,7 @@ function onPlayerStateChange(e){
         ga('send', 'event', 'Videos', 'Finished', videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
         ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
         nv('append', {'video_finished': videoInfo.title});
-        nebula.dom.document.trigger('nebula_finished_video');
+        nebula.dom.document.trigger('nebula_finished_video', videoInfo);
     } else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
@@ -2993,7 +3008,7 @@ function onPlayerStateChange(e){
         ga('send', 'event', 'Videos', 'Pause', videoInfo.title, Math.round(videoData[id].watched));
         ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoInfo.title); //Amount of time watched, not the timestamp of when paused!
         nv('append', {'video_paused': videoInfo.title});
-        nebula.dom.document.trigger('nebula_paused_video');
+        nebula.dom.document.trigger('nebula_paused_video', videoInfo);
         pauseFlag = false;
     }
 }
@@ -3044,6 +3059,8 @@ function vimeoControls(){
 		if ( typeof videoProgress === 'undefined' ){
 			videoProgress = {};
 		}
+
+		jQuery(document).trigger('nebula_vimeo_players_created', id);
 	}
 
 	function vimeoPlay(data, id){
@@ -3053,7 +3070,7 @@ function vimeoControls(){
 	    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 	    ga('send', 'event', 'Videos', 'Play', videoTitle);
 	    nv('append', {'video_play': videoTitle});
-	    nebula.dom.document.trigger('nebula_playing_video');
+	    nebula.dom.document.trigger('nebula_playing_video', id);
 	}
 
 	function vimeoPlayProgress(data, id){
@@ -3091,7 +3108,7 @@ function vimeoControls(){
 			ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': true});
 			nv('append', {'video_engaged': videoTitle});
 			videoData[id].engaged = true;
-			nebula.dom.document.trigger('nebula_engaged_video');
+			nebula.dom.document.trigger('nebula_engaged_video', id);
 		}
 	}
 
@@ -3104,7 +3121,7 @@ function vimeoControls(){
 		ga('send', 'event', 'Videos', 'Pause', videoTitle, Math.round(videoData[id].watched));
 		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
 		nv('append', {'video_paused': videoTitle});
-		nebula.dom.document.trigger('nebula_paused_video');
+		nebula.dom.document.trigger('nebula_paused_video', id);
 	}
 
 	function vimeoSeek(data, id){
@@ -3113,7 +3130,7 @@ function vimeoControls(){
 	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
 	    nv('append', {'video_seeked': videoTitle});
 	    videoData[id].seeker = true;
-	    nebula.dom.document.trigger('nebula_seeked_video');
+	    nebula.dom.document.trigger('nebula_seeked_video', id);
 	}
 
 	function vimeoFinish(data, id){
@@ -3125,7 +3142,7 @@ function vimeoControls(){
 		ga('send', 'event', 'Videos', 'Finished', videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
 		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 		nv('append', {'video_finished': videoTitle});
-		nebula.dom.document.trigger('nebula_finished_video');
+		nebula.dom.document.trigger('nebula_finished_video', id);
 	}
 }
 

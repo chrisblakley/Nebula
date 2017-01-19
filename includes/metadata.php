@@ -7,7 +7,7 @@
 
 	global $post;
 	$image_meta_directory = get_theme_file_uri('/images/meta');
-	$cache_query = ( is_debug() )? '?nocache' . mt_rand(1000, 99999) . '=debug' . mt_rand(1000, 99999) : ''; //Add a random query string when debugging to force-clear the cache.
+	$cache_query = ( is_debug() )? '?nocache' . mt_rand(1000, mt_getrandmax()) . '=debug' . mt_rand(1000, mt_getrandmax()) : ''; //Add a random query string when debugging to force-clear the cache.
 
 	/*
 		Use http://realfavicongenerator.net to generate metagraphics.

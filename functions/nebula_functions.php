@@ -259,9 +259,66 @@ function nebula_the_author($show_authors=1){
 	}
 }
 
+//Register WordPress Customizer
+add_action('customize_register', 'nebula_customize_register');
+function nebula_customize_register($wp_customize){
+    //Site Title
+    $wp_customize->get_setting('blogname')->transport = 'postMessage';
+    $wp_customize->get_control('blogname')->priority = 20;
+
+    //Partial to site title
+    $wp_customize->selective_refresh->add_partial('blogname', array(
+        'settings' => array('blogname'),
+        'selector' => '#hero-section h1',
+        'container_inclusive' => true,
+    ));
+
+    //Site Description
+    $wp_customize->get_setting('blogdescription')->transport = 'postMessage';
+    $wp_customize->get_control('blogdescription')->priority = 30;
+    $wp_customize->get_control('blogdescription')->label = __('Site Description'); // Changes "Titletag" label to "Site Description"
+
+    //Partial to site description
+    $wp_customize->selective_refresh->add_partial('blogdescription', array(
+        'settings' => array('blogdescription'),
+        'selector' => '#hero-section h2',
+        'container_inclusive' => true,
+    ));
+
+    //Colors section
+    $wp_customize->add_section('colors', array(
+        'title' => 'Colors',
+        'priority' => 40,
+    ));
+
+    //Primary color
+    $wp_customize->add_setting('nebula_primary_color', array('default' => '#0098d7'));
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_primary_color', array(
+        'label' => 'Primary Color',
+        'section' => 'colors',
+        'priority' => 10
+    )));
+
+    //Secondary color
+    $wp_customize->add_setting('nebula_secondary_color', array('default' => '#95d600'));
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_secondary_color', array(
+        'label' => 'Secondary Color',
+        'section' => 'colors',
+        'priority' => 20
+    )));
+
+    //Background color
+    $wp_customize->add_setting('nebula_background_color', array('default' => '#f6f6f6'));
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_background_color', array(
+        'label' => 'Bakcground Color',
+        'section' => 'colors',
+        'priority' => 30
+    )));
+}
+
 //Register Widget Areas
-add_action('widgets_init', 'nebula_widgets_init');
-function nebula_widgets_init(){
+add_action('widgets_init', 'nebula_widgets_register');
+function nebula_widgets_register(){
 	$override = apply_filters('pre_nebula_widgets_init', false);
 	if ( $override !== false ){return;}
 
@@ -2362,10 +2419,16 @@ function video_meta($provider, $id){
 //Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
 add_filter('embed_oembed_html', 'nebula_embed_oembed_html', 9999, 4);
 function nebula_embed_oembed_html($html, $url, $attr, $post_id) {
+	//Enable the JS API for Youtube videos
+	if ( strstr($html, 'youtube.com/embed/') ){
+		$html = str_replace('?feature=oembed', '?feature=oembed&enablejsapi=1', $html);
+	}
+
+	//Force an aspect ratio on certain oEmbeds
 	if ( strpos($html, 'youtube') !== false || strpos($html, 'vimeo') !== false ){
-		return '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-16by9">' . $html . '</div>';
+		$html = '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-16by9">' . $html . '</div>';
 	} elseif ( strpos($html, 'vine') !== false ){
-		return '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-1by1" style="max-width: 710px; max-height: 710px;">' . $html . '</div>';
+		$html = '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-1by1" style="max-width: 710px; max-height: 710px;">' . $html . '</div>';
 	}
 
 	return $html;

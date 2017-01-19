@@ -1942,10 +1942,9 @@ function nebula_render_scss($child=false){
 		$scss->setVariables(array(
 			'template_directory' => '"' . get_template_directory_uri() . '"',
 			'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
-			'__utm-gif' => '"' . ga_UTM_gif() . '"',
-			//Primary Color?
-			//Secondary Color?
-			//Tertiary Color?
+			'primary_color' => get_theme_mod('nebula_primary_color', '#0098d7'), //From Customizer
+			'secondary_color' => get_theme_mod('nebula_secondary_color', '#95d600'), //From Customizer
+			'background_color' => get_theme_mod('nebula_background_color', '#f6f6f6'), //From Customizer
 		));
 
 		//Partials
@@ -2247,7 +2246,6 @@ function nebula_get_os($info='full'){
 }
 
 //Check to see how the operating system version of the user's device compares to a passed version number.
-//@todo: docs start here
 function nebula_is_os($os=null, $version=null, $comparison='=='){
 	$override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
 	if ( $override !== false ){return $override;}

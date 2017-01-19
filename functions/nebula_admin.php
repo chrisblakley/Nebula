@@ -25,7 +25,7 @@ add_filter('run_wptexturize', '__return_false');
 //Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
 add_action('admin_head', 'admin_favicon');
 function admin_favicon(){
-	$cache_buster = ( is_debug() )? '?r' . mt_rand(1000, 99999) : '';
+	$cache_buster = ( is_debug() )? '?r' . mt_rand(1000, mt_getrandmax()) : '';
 	echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/images/meta/favicon.ico') . $cache_buster . '" />';
 }
 
@@ -664,7 +664,8 @@ function dashboard_nebula_ataglance(){
 			$count_posts = get_transient('nebula_count_posts_' . $post_type);
 			if ( empty($count_posts) || is_debug() ){
 				$count_posts = wp_count_posts($post_type);
-				set_transient('nebula_count_posts_' . $post_type, $count_posts, 60*60*8); //8 hour cache
+				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? 60*60*24*7 : 60*60*24; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long.
+				set_transient('nebula_count_posts_' . $post_type, $count_posts, $cache_length);
 			}
 
 			$labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
