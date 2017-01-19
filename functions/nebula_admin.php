@@ -536,10 +536,12 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 
 	$php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
 	$php_timeline = get_transient('nebula_php_timeline');
-	if ( empty($php_timeline) || is_debug() ){
+	if ( (empty($php_timeline) || is_debug()) && nebula_is_available('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json') ){
 		$response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
 		if ( !is_wp_error($response) ){
 			$php_timeline = $response['body'];
+		} else {
+			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', 60*5); //5 minute expiration
 		}
 
 		WP_Filesystem();
@@ -659,8 +661,13 @@ function dashboard_nebula_ataglance(){
 			    continue;
 		    }
 
-			$count_pages = wp_count_posts($post_type);
-			$labels_plural = ( $count_pages->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+			$count_posts = get_transient('nebula_count_posts_' . $post_type);
+			if ( empty($count_posts) || is_debug() ){
+				$count_posts = wp_count_posts($post_type);
+				set_transient('nebula_count_posts_' . $post_type, $count_posts, 60*60*8); //8 hour cache
+			}
+
+			$labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
 			switch ( $post_type ){
 				case ('post'):
 					$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
@@ -684,7 +691,7 @@ function dashboard_nebula_ataglance(){
 					}
 					break;
 			}
-			echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_pages->publish . '</strong> ' . $labels_plural . '</a></li>';
+			echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_posts->publish . '</strong> ' . $labels_plural . '</a></li>';
 		}
 
 		//Revisions
@@ -694,12 +701,20 @@ function dashboard_nebula_ataglance(){
 		echo '<li><i class="fa fa-history fa-fw"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 		//Plugins
-		$all_plugins = get_plugins();
+		$all_plugins = get_transient('nebula_count_plugins');
+		if ( empty($all_plugins) || is_debug() ){
+			$all_plugins = get_plugins();
+			set_transient('nebula_count_plugins', $all_plugins, 60*60*12); //12 hour cache
+		}
 		$active_plugins = get_option('active_plugins', array());
 		echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> Plugins</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 		//Users
-		$user_count = count_users();
+		$user_count = get_transient('nebula_count_users');
+		if ( empty($user_count) || is_debug() ){
+			$user_count = count_users();
+			set_transient('nebula_count_users', $user_count, 60*60*24); //24 hour cache
+		}
 		$users_icon = 'users';
 		$users_plural = 'Users';
 		if ( $user_count['total_users'] === 1 ){
@@ -823,7 +838,12 @@ function dashboard_current_user(){
 		}
 
 		//User's posts
-		echo '<li><i class="fa fa-thumb-tack fa-fw"></i> Your posts: <strong>' . count_user_posts($user_info->ID) . '</strong></li>';
+		$your_posts = get_transient('nebula_count_posts_user_' . $user_info->ID);
+		if ( empty($nebula_size) || is_debug() ){
+			$your_posts = count_user_posts($user_info->ID);
+			set_transient('nebula_count_posts_user_' . $user_info->ID, $your_posts, 60*60*24); //24 hour cache
+		}
+		echo '<li><i class="fa fa-thumb-tack fa-fw"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
 		if ( nebula_option('device_detection') ){
 			//Device
@@ -1243,8 +1263,18 @@ function dashboard_developer_info(){
 
 		//Theme directory size(s)
 		if ( is_child_theme() ){
-			$nebula_parent_size = foldersize(get_template_directory());
-			$nebula_child_size = foldersize(get_stylesheet_directory());
+			$nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
+			if ( empty($nebula_parent_size) || is_debug() ){
+				$nebula_parent_size = foldersize(get_template_directory());
+				set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, 60*60*12); //12 hour cache
+			}
+
+			$nebula_child_size = get_transient('nebula_directory_size_child_theme');
+			if ( empty($nebula_child_size) || is_debug() ){
+				$nebula_child_size = foldersize(get_template_directory());
+				set_transient('nebula_directory_size_child_theme', $nebula_child_size, 60*60*12); //12 hour cache
+			}
+
 			echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
 
 			if ( nebula_option('prototype_mode', 'enabled') ){
@@ -1253,7 +1283,11 @@ function dashboard_developer_info(){
 				echo '<li><i class="fa fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
 			}
 		} else {
-			$nebula_size = foldersize(get_stylesheet_directory());
+			$nebula_size = get_transient('nebula_directory_size_theme');
+			if ( empty($nebula_size) || is_debug() ){
+				$nebula_size = foldersize(get_stylesheet_directory());
+				set_transient('nebula_directory_size_theme', $nebula_size, 60*60*12); //12 hour cache
+			}
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 		}
 
@@ -1271,7 +1305,12 @@ function dashboard_developer_info(){
 
 		//Uploads directory size (and max upload size)
 		$upload_dir = wp_upload_dir();
-		$uploads_size = foldersize($upload_dir['basedir']);
+		$uploads_size = get_transient('nebula_directory_size_uploads');
+		if ( empty($uploads_size) || is_debug() ){
+			$uploads_size = foldersize($upload_dir['basedir']);
+			set_transient('nebula_directory_size_uploads', $uploads_size, 60*60*24); //24 hour cache
+		}
+
 		if ( function_exists('wp_max_upload_size') ){
 			$upload_max = '<small>(Max upload: <strong>' . strval(round((int) wp_max_upload_size()/(1024*1024))) . 'mb</strong>)</small>';
 		} else if ( ini_get('upload_max_filesize') ){

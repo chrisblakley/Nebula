@@ -89,6 +89,10 @@ if ( nebula_option('console_css') ){
 add_action('wp_head', 'nebula_console_warnings');
 function nebula_console_warnings($console_warnings=array()){
 	if ( is_dev() && nebula_option('admin_notices') ){
+		if ( empty($console_warnings) || is_string($console_warnings) ){
+			$console_warnings = array();
+		}
+
 		//If search indexing is disabled
 		if ( get_option('blog_public') == 0 ){
 			if ( is_site_live() ){
@@ -848,21 +852,21 @@ function nebula_pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are 
 //This function can be called with AJAX or as a standard function.
 add_action('wp_ajax_nebula_twitter_cache', 'nebula_twitter_cache');
 add_action('wp_ajax_nopriv_nebula_twitter_cache', 'nebula_twitter_cache');
-function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_tweets=5, $include_retweets=1){
+function nebula_twitter_cache($username='Great_Blakes', $listname=null, $numbertweets=5, $includeretweets=1){
 	if ( $_POST['data'] ){
 		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 		$username = ( $_POST['data']['username'] )? sanitize_text_field($_POST['data']['username']) : 'Great_Blakes';
 		$listname = ( $_POST['data']['listname'] )? sanitize_text_field($_POST['data']['listname']) : null; //Only used for list feeds
-		$number_tweets = ( $_POST['data']['numbertweets'] )? sanitize_text_field($_POST['data']['numbertweets']) : 5;
-		$include_retweets = ( $_POST['data']['includeretweets'] )? sanitize_text_field($_POST['data']['includeretweets']) : 1; //1: Yes, 0: No
+		$numbertweets = ( $_POST['data']['numbertweets'] )? sanitize_text_field($_POST['data']['numbertweets']) : 5;
+		$includeretweets = ( $_POST['data']['includeretweets'] )? sanitize_text_field($_POST['data']['includeretweets']) : 1; //1: Yes, 0: No
 	}
 
 	error_reporting(0); //Prevent PHP errors from being cached.
 
 	if ( $listname ){
-		$feed = 'https://api.twitter.com/1.1/lists/statuses.json?slug=' . $listname . '&owner_screen_name=' . $username . '&count=' . $number_tweets . '&include_rts=' . $include_retweets;
+		$feed = 'https://api.twitter.com/1.1/lists/statuses.json?slug=' . $listname . '&owner_screen_name=' . $username . '&count=' . $numbertweets . '&include_rts=' . $includeretweets;
 	} else {
-		$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $username . '&count=' . $number_tweets . '&include_rts=' . $include_retweets;
+		$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $username . '&count=' . $numbertweets . '&include_rts=' . $includeretweets;
 	}
 
 	$bearer = nebula_option('twitter_bearer_token', '');
@@ -875,6 +879,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $number_
 		}
 		$response = wp_remote_get($feed, $args);
 		if ( is_wp_error($response) ){
+			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $feed)), 'Unavailable', 60*5); //5 minute expiration
 			return false;
 		}
 
@@ -1678,6 +1683,7 @@ add_action('wp_ajax_nebula_infinite_load', 'nebula_infinite_load');
 add_action('wp_ajax_nopriv_nebula_infinite_load', 'nebula_infinite_load');
 function nebula_infinite_load(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
 	$page_number = sanitize_text_field($_POST['page']);
 	$args = $_POST['args'];
 	$args['paged'] = $page_number;
@@ -2063,13 +2069,14 @@ function nebula_ip_location($data=null, $ip=false){
 			}
 		}
 
-		if ( strpos($_SESSION['nebulageoip'], 'Rate limit') === 0 ){
+		if ( !empty($_SESSION['nebulageoip']) && !is_array($_SESSION['nebulageoip']) ){
 			return false;
 		}
 
 		if ( empty($_SESSION['nebulageoip']) && nebula_is_available('http://freegeoip.net') ){
 			$response = wp_remote_get('http://freegeoip.net/json/' . $ip);
-			if ( is_wp_error($response) || strpos($ip_geo_data, 'Rate limit') === 0 ){
+			if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
+				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://freegeoip.net/json/')), 'Unavailable', 60*5); //5 minute expiration
 				return false;
 			}
 
@@ -2149,10 +2156,13 @@ function nebula_weather($zipcode=null, $data=''){
 			$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
 
 			if ( !nebula_is_available('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json') ){
+				trigger_error('A Yahoo Weather API error occurred. Yahoo may be down, or forecast for ' . $zipcode . ' may not exist.', E_USER_WARNING);
 				return false;
 			}
 			$response = wp_remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
 			if ( is_wp_error($response) ){
+				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://query.yahooapis.com/v1/public/yql')), 'Unavailable', 60*5); //5 minute expiration
+				trigger_error('A Yahoo Weather API error occurred. Yahoo may be down, or forecast for ' . $zipcode . ' may not exist.', E_USER_WARNING);
 				return false;
 			}
 
@@ -2168,7 +2178,7 @@ function nebula_weather($zipcode=null, $data=''){
 			return true;
 		}
 
-		switch ( $data ){
+		switch ( str_replace(' ', '', $data) ){
 			case 'json':
 				return $weather_json;
 				break;
@@ -2205,12 +2215,10 @@ function nebula_weather($zipcode=null, $data=''){
 				return $weather_json->query->results->channel->item->lat . ',' . $weather_json->query->results->channel->item->lat;
 				break;
 			case 'windchill':
-			case 'wind chill':
 			case 'chill':
 				return $weather_json->query->results->channel->wind->chill;
 				break;
 			case 'windspeed':
-			case 'wind speed':
 				return $weather_json->query->results->channel->wind->speed;
 				break;
 			case 'sunrise':
@@ -2241,6 +2249,8 @@ function nebula_weather($zipcode=null, $data=''){
 }
 
 //Get metadata from Youtube or Vimeo
+function vimeo_meta($id, $meta=''){return video_meta('vimeo', $id);}
+function youtube_meta($id, $meta=''){return video_meta('youtube', $id);}
 function video_meta($provider, $id){
 	$override = apply_filters('pre_video_meta', false, $provider, $id);
 	if ( $override !== false ){return $override;}
@@ -2268,6 +2278,7 @@ function video_meta($provider, $id){
 			}
 			$response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
 			if ( is_wp_error($response) ){
+				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://www.googleapis.com/youtube/v3/videos')), 'Unavailable', 60*5); //5 minute expiration
 				$video_metadata['error'] = 'Youtube video is unavailable.';
 				return $video_metadata;
 			}
@@ -2345,13 +2356,6 @@ function video_meta($provider, $id){
 	);
 
 	return $video_metadata;
-}
-//Video Meta aliases
-function vimeo_meta($id, $meta=''){
-	return video_meta('vimeo', $id, $meta);
-}
-function youtube_meta($id, $meta=''){
-	return video_meta('youtube', $id, $meta);
 }
 
 //Fix responsive oEmbeds

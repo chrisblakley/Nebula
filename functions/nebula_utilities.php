@@ -243,6 +243,25 @@ function nebula_ga_event_ajax(){
 	wp_die();
 }
 
+//Log Nebula-specific information
+function nebula_log($message, $logfile=false){ //@todo "Nebula" 0: In progress
+	//see if logging option is enabled (make it enabled by default.
+	//use /includes/data/nebula.log in relation to active theme
+	//Logs should include date, time, message, file, IP address, Nebula Session ID
+
+	$time = $_SERVER['REQUEST_TIME'];
+	if ( empty($time) ){
+		$time = time();
+	}
+
+	//IP Address: $_SERVER['REMOTE_ADDR']
+	//Requested file: $_SERVER['REQUEST_URI']
+	//Formatted date: date('Y-m-d H:i:s', $time)
+
+	//concerned about large filesizes? Maybe only keep logs for the last 5000 lines or something?
+	//append to log file.
+}
+
 /*==========================
 	Nebula Visitor Data
  ===========================*/
@@ -670,6 +689,8 @@ function nebula_insert_visitor($data=array(), $send_to_hubspot=true){
 						$defaults['ip_city'] = sanitize_text_field($ip_geo_data->city);
 						$defaults['ip_zip'] = sanitize_text_field($ip_geo_data->zip_code);
 					}
+				} else {
+					set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://freegeoip.net/json/')), 'Unavailable', 60*5); //5 minute expiration
 				}
 			}
 
@@ -1005,6 +1026,7 @@ function nebula_hubspot_curl($url, $content=null){
 		return $response['body'];
 	}
 
+	set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $get_url)), 'Unavailable', 60*5); //5 minute expiration
 	return false;
 }
 
@@ -1172,6 +1194,7 @@ function nebula_get_hubspot_contact($vid=null, $property=''){
 
 	$response = wp_remote_get('https://api.hubapi.com/contacts/v1/contact/vid/' . $vid . '/profile?hapikey=' . nebula_option('hubspot_api') . $property);
 	if ( is_wp_error($response) ){
+		set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://api.hubapi.com/')), 'Unavailable', 60*5); //5 minute expiration
 		return false;
 	}
 	return json_decode($response['body'], true);
@@ -1223,7 +1246,7 @@ function nebula_online_users($return='count'){
 
 	$logged_in_users = nebula_data('users_status');
 	if ( empty($logged_in_users) || !is_array($logged_in_users) ){
-		return ( $return == 'count' )? 0 : false; //If this happens it indicates an error.
+		return ( strtolower($return) == 'count' )? 0 : false; //If this happens it indicates an error.
 	}
 
 	$user_online_count = 0;
@@ -1235,7 +1258,7 @@ function nebula_online_users($return='count'){
 		}
 	}
 
-	return ( $return == 'count' )? $user_online_count : $online_users;
+	return ( strtolower($return) == 'count' )? $user_online_count : $online_users;
 }
 
 //Check how many locations a single user is logged in from.
@@ -1646,11 +1669,11 @@ function word_limit_chars($string, $charlimit, $continue=false){
 }
 
 //Traverse multidimensional arrays
-function in_array_r($needle, $haystack, $strict = true){
+function in_array_r($needle, $haystack, $strict=true){
 	$override = apply_filters('pre_in_array_r', false, $needle, $haystack, $strict);
 	if ( $override !== false ){return $override;}
 
-    foreach ($haystack as $item){
+    foreach ( $haystack as $item ){
         if ( ($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict)) ){
             return true;
         }
@@ -1659,7 +1682,7 @@ function in_array_r($needle, $haystack, $strict = true){
 }
 
 //Recursive Glob
-function glob_r($pattern, $flags = 0){
+function glob_r($pattern, $flags=0){
     $override = apply_filters('pre_glob_r', false, $pattern, $flags);
 	if ( $override !== false ){return $override;}
 
@@ -1720,12 +1743,12 @@ function nebula_is_available($url=null, $nocache=false){
 
 	$hostname = str_replace('.', '_', nebula_url_components('hostname', $url));
 	$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
-
 	if ( !empty($site_available_buffer) && !$nocache ){
 		if ( $site_available_buffer === 'Available' ){
 			return true;
 		}
 
+		set_transient('nebula_site_available_' . $hostname, 'Unavailable', 60*5); //5 minute expiration
 		return false;
 	}
 
@@ -2224,6 +2247,7 @@ function nebula_get_os($info='full'){
 }
 
 //Check to see how the operating system version of the user's device compares to a passed version number.
+//@todo: docs start here
 function nebula_is_os($os=null, $version=null, $comparison='=='){
 	$override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
 	if ( $override !== false ){return $override;}

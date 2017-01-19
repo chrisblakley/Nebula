@@ -513,23 +513,30 @@ function attribute_map($str, $att = null){
 
 //Remove empty <p> tags from Wordpress content (for nested shortcodes)
 function parse_shortcode_content($content){
-   /* Parse nested shortcodes and add formatting. */
-    $content = trim(do_shortcode(shortcode_unautop($content)));
-    /* Remove '' from the start of the string. */
-    if ( substr( $content, 0, 4 ) == '' )
-        $content = substr($content, 4);
-    /* Remove '' from the end of the string. */
-    if ( substr($content, -3, 3 ) == '')
-        $content = substr( $content, 0, -3 );
-    /* Remove any instances of ''. */
-    $content = str_replace(array( '<p></p>'), '', $content);
-    $content = str_replace(array( '<p>  </p>'), '', $content);
-    return $content;
+	$content = trim(do_shortcode(shortcode_unautop($content))); //Parse nested shortcodes and add formatting.
+
+	//Remove '' from the start of the string.
+	if ( substr( $content, 0, 4 ) == '' ){
+		$content = substr($content, 4);
+	}
+
+	//Remove '' from the end of the string.
+	if ( substr($content, -3, 3 ) == ''){
+		$content = substr( $content, 0, -3 );
+	}
+
+	//Remove any instances of ''.
+	$content = str_replace(array('<p></p>'), '', $content);
+	$content = str_replace(array('<p>  </p>'), '', $content);
+
+	return $content;
 }
+
 //Move wpautop filter to AFTER shortcode is processed
+//@TODO "Nebula" 0: The following may be adding a <br> tag after certain plugin functionality.
 remove_filter('the_content', 'wpautop');
 add_filter('the_content', 'wpautop' , 99);
-add_filter('the_content', 'shortcode_unautop',100);
+add_filter('the_content', 'shortcode_unautop', 100);
 
 //Add Nebula Toolbar to TinyMCE
 add_action('admin_init', 'add_shortcode_button');
