@@ -1453,8 +1453,11 @@ function nebula_url_components($segment="all", $url=null){
 
 	//Best way to get the domain so far. Probably a better way by checking against all known TLDs.
 	preg_match("/[a-z0-9\-]{1,63}\.[a-z\.]{2,6}$/", parse_url($url, PHP_URL_HOST), $domain);
-	$sld = substr($domain[0], 0, strpos($domain[0], '.'));
-	$tld = substr($domain[0], strpos($domain[0], '.'));
+
+	if(!empty($domain)) {
+		$sld = substr($domain[0], 0, strpos($domain[0], '.'));
+		$tld = substr($domain[0], strpos($domain[0], '.'));
+	}
 
 	switch ($segment){
 		case ('all'):
@@ -1545,7 +1548,11 @@ function nebula_url_components($segment="all", $url=null){
 			break;
 
 		case ('domain') : //In http://example.com the domain is "example.com"
-			return $domain[0];
+			if(!empty($domain)) {
+				return $domain[0];
+			} else {
+				return $_SERVER['SERVER_NAME'];
+			}
 			break;
 
 		case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"
