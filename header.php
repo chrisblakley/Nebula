@@ -76,7 +76,7 @@
 					</div>
 				<?php endif; ?>
 
-				<div id="logonavcon <?php if ( !empty( get_bloginfo('description') ) && !get_theme_mod('nebula_hide_blogdescription', false) ): ?>has-description<?php endif; ?>>">
+				<div id="logonavcon" <?php if ( !empty( get_bloginfo('description') ) && !get_theme_mod('nebula_hide_blogdescription', false) ): ?>class="has-description"<?php endif; ?>>
 					<div class="container">
 						<div class="row">
 							<div class="col-lg-4">

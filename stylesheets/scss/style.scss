@@ -385,9 +385,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	.logocon {display: block; margin: 0 auto; max-width: 225px;
 		@include media("lg"){margin: 0;}
 	}
-
-	@include media("md"){padding-top: 25px;};
-
+	
 	.custom-logo-link {float: left; margin-right: 8px;}
 
 	#site-title {font-weight: 500; font-size: 2.8rem; line-height: 2.8rem; margin-bottom: 0;}
