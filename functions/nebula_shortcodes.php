@@ -534,9 +534,9 @@ function parse_shortcode_content($content){
 
 //Move wpautop filter to AFTER shortcode is processed
 //@TODO "Nebula" 0: The following may be adding a <br> tag after certain plugin functionality?
-remove_filter('the_content', 'wpautop');
-add_filter('the_content', 'wpautop' , 99);
-add_filter('the_content', 'shortcode_unautop', 100);
+//remove_filter('the_content', 'wpautop');
+//add_filter('the_content', 'wpautop' , 99);
+//add_filter('the_content', 'shortcode_unautop', 100);
 
 //Add Nebula Toolbar to TinyMCE
 add_action('admin_init', 'add_shortcode_button');
