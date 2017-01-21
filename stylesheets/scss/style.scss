@@ -376,9 +376,9 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Logo and primary navigation row
-#logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 25px; text-align: center; box-shadow: none; z-index: 8000; @include prefix((transition: all .5s easing(easeInOutCubic)));
+#logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding: 10px 0; box-shadow: none; z-index: 8000; @include prefix((transition: all .5s easing(easeInOutCubic)));
 	img,
-	svg {width: 100%; height: auto; @include prefix((transition: all 0.5s));
+	svg {width: auto; max-height: 50px; @include prefix((transition: all 0.5s));
 		path {fill: #fff;}
 	}
 
@@ -387,6 +387,14 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	}
 
 	@include media("md"){padding-top: 25px;};
+
+	.custom-logo-link {float: left; margin-right: 8px;}
+
+	#site-title {font-weight: 500; font-size: 2.8rem; line-height: 2.8rem; margin-bottom: 0;}
+
+	&.has-description #site-title {font-size: 2rem; line-height: 2rem;}
+
+	#site-description {font-weight: 300; font-size: 1rem; line-height: 1rem; margin-bottom: 0;}
 }
 
 #primarynav {position: relative; display: none; z-index: 1000;

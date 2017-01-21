@@ -76,15 +76,13 @@
 					</div>
 				<?php endif; ?>
 
-				<div id="logonavcon">
+				<div id="logonavcon <?php if ( !empty( get_bloginfo('description') ) && !get_theme_mod('nebula_hide_blogdescription', false) ): ?>has-description<?php endif; ?>>">
 					<div class="container">
 						<div class="row">
 							<div class="col-lg-4">
-								<a class="logocon" href="<?php echo home_url(); ?>">
-									<?php if ( !empty( get_theme_mod('custom_logo', '') ) ): ?>
-										<?php echo get_custom_logo( get_current_blog_id() ); ?>
-									<?php endif; ?>
-								</a>
+								<?php if ( !empty( get_theme_mod('custom_logo', '') ) ): ?>
+									<?php echo get_custom_logo( get_current_blog_id() ); ?>
+								<?php endif; ?>
 								<?php if ( !empty( get_bloginfo('name') ) && !get_theme_mod('nebula_hide_blogname', false) ): ?>
 									<h1 id="site-title">
 										<a href="<?php echo home_url(); ?>"><?php bloginfo('name'); ?></a>
