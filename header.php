@@ -81,8 +81,18 @@
 						<div class="row">
 							<div class="col-lg-4">
 								<a class="logocon" href="<?php echo home_url(); ?>">
-									<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
+									<?php if ( !empty( get_theme_mod('custom_logo', '') ) ): ?>
+										<?php echo get_custom_logo( get_current_blog_id() ); ?>
+									<?php endif; ?>
 								</a>
+								<?php if ( !empty( get_bloginfo('name') ) && !get_theme_mod('nebula_hide_blogname', false) ): ?>
+									<h1 id="site-title">
+										<a href="<?php echo home_url(); ?>"><?php bloginfo('name'); ?></a>
+									</h1>
+								<?php endif; ?>
+								<?php if ( !empty( get_bloginfo('description') ) && !get_theme_mod('nebula_hide_blogdescription', false) ): ?>
+									<h2 id="site-description"><?php bloginfo('description'); ?></h2>
+								<?php endif; ?>
 							</div><!--/col-->
 							<div class="col-lg-8">
 								<?php if ( has_nav_menu('primary') ): ?>
