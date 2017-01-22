@@ -312,6 +312,7 @@ function nebula_customize_register($wp_customize){
 	//Partial to hero title
 	$wp_customize->selective_refresh->add_partial( 'nebula_footer_text', array(
 		'settings' => array( 'nebula_footer_text' ),
+		'selector' => '.copyright p', // Update selector on update footer
 		'container_inclusive' => false,
 	));
 
