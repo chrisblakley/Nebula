@@ -61,6 +61,10 @@ namespace Nebula {
         public function plugins_templates( $post_templates, $wp_theme, $post, $post_type ) {
             global $nebula_plugins;
 
+            if( !is_array($nebula_plugins) ) {
+                return $post_templates;
+            }
+
             foreach($nebula_plugins as $nebula_plugin => $nebula_plugin_features) {
                 if($nebula_plugin_features['page-templates']) {
                     $files = (array) $this->scandir( $nebula_plugin_features['path'] . 'templates/page-templates', 'php', 1 );
@@ -133,6 +137,10 @@ namespace Nebula {
          */
         public function template_include( $template  ) {
             global $nebula_plugins;
+
+            if( !is_array($nebula_plugins) ) {
+                return $template;
+            }
 
             if( is_child_theme() && substr( $template, 0, strlen(STYLESHEETPATH) ) === STYLESHEETPATH ) {
                 // If template found comes from a child theme, then return

@@ -1478,22 +1478,22 @@ function nebula_url_components($segment="all", $url=null){
 				return $url_components['port'];
 			} else {
 				switch( $url_components['scheme'] ){
-	                case ('http'):
-	                    return 80; //Default for http
-	                    break;
-	                case ('https'):
-	                    return 443; //Default for https
-	                    break;
-	                case ('ftp'):
-	                    return 21; //Default for ftp
-	                    break;
-	                case ('ftps'):
-	                    return 990; //Default for ftps
-	                    break;
-	                default:
-	                    return false;
-	                    break;
-	            }
+					case ('http'):
+						return 80; //Default for http
+						break;
+					case ('https'):
+						return 443; //Default for https
+						break;
+					case ('ftp'):
+						return 21; //Default for ftp
+						break;
+					case ('ftps'):
+						return 990; //Default for ftps
+						break;
+					default:
+						return false;
+						break;
+				}
 			}
 			break;
 
@@ -1582,13 +1582,13 @@ function nebula_url_components($segment="all", $url=null){
 			break;
 
 		case ('extension'): //The extension only (without ".")
-		    if ( contains(basename($url_components['path']), array('.')) ){
-		        $file_parts = explode('.', $url_components['path']);
-		        return $file_parts[1];
-		    } else {
-		        return false;
-		    }
-		    break;
+			if ( contains(basename($url_components['path']), array('.')) ){
+				$file_parts = explode('.', $url_components['path']);
+				return $file_parts[1];
+			} else {
+				return false;
+			}
+			break;
 
 		case ('path'): //Path should be just the path without the filename/extension.
 			if ( contains(basename($url_components['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
@@ -1674,25 +1674,25 @@ function in_array_r($needle, $haystack, $strict=true){
 	$override = apply_filters('pre_in_array_r', false, $needle, $haystack, $strict);
 	if ( $override !== false ){return $override;}
 
-    foreach ( $haystack as $item ){
-        if ( ($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict)) ){
-            return true;
-        }
-    }
-    return false;
+	foreach ( $haystack as $item ){
+		if ( ($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict)) ){
+			return true;
+		}
+	}
+	return false;
 }
 
 //Recursive Glob
 function glob_r($pattern, $flags=0){
-    $override = apply_filters('pre_glob_r', false, $pattern, $flags);
+	$override = apply_filters('pre_glob_r', false, $pattern, $flags);
 	if ( $override !== false ){return $override;}
 
-    $files = glob($pattern, $flags);
-    foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir ){
-        $files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
-    }
+	$files = glob($pattern, $flags);
+	foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir ){
+		$files = array_merge($files, glob_r($dir . '/' . basename($pattern), $flags));
+	}
 
-    return $files;
+	return $files;
 }
 
 //Add up the filesizes of files in a directory (and it's sub-directories)
@@ -1801,30 +1801,30 @@ function nebula_compare_operator($a=null, $b=null, $c='=='){
 	}
 
 	switch ( $c ){
-        case "=":
-        case "==":
-        case "e":
-        	return $a == $b;
-        case ">=":
-        case "=>":
-        case "gte":
-        case "ge":
-        	return $a >= $b;
-        case "<=":
-        case "=<":
-        case "lte":
-        case "le":
-        	return $a <= $b;
-        case ">":
-        case "gt":
-        	return $a > $b;
-        case "<":
-        case "lt":
-        	return $a < $b;
+		case "=":
+		case "==":
+		case "e":
+			return $a == $b;
+		case ">=":
+		case "=>":
+		case "gte":
+		case "ge":
+			return $a >= $b;
+		case "<=":
+		case "=<":
+		case "lte":
+		case "le":
+			return $a <= $b;
+		case ">":
+		case "gt":
+			return $a > $b;
+		case "<":
+		case "lt":
+			return $a < $b;
 		default:
 			trigger_error('nebula_compare_operator does not allow "' . $c . '".');
 			return false;
-    }
+	}
 }
 
 //Get Nebula version information
@@ -1908,7 +1908,7 @@ if ( nebula_option('scss', 'enabled') ){
 	}
 
 	//Render plugins files
-	nebula_render_registered_scss();
+	add_action( 'init', 'nebula_render_registered_scss' );
 }
 function nebula_render_scss($child=false){
 	$override = apply_filters('pre_nebula_render_scss', false, $child);
@@ -2024,7 +2024,7 @@ function nebula_render_scss($child=false){
 
 function nebula_render_registered_scss() {
 	global $nebula_plugins;
-
+	
 	$override = apply_filters('pre_nebula_render_registered_scss', false);
 	if ( $override !== false ){return $override;}
 
@@ -2035,12 +2035,12 @@ function nebula_render_registered_scss() {
 				$compile_all = true;
 			}
 
-			foreach($nebula_plugins as $plugin_stylesheet_path) {
-				if ( is_writable($plugin_stylesheet_path) ) {
+			foreach($nebula_plugins as $nebula_plugin => $nebula_plugin_features) {
+				if ( $nebula_plugin_features['stylesheets'] && is_writable( $nebula_plugin_features['path'] . 'stylesheets' ) ) {
 
 					require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
 					$scss = new \Leafo\ScssPhp\Compiler();
-					$scss->addImportPath($plugin_stylesheet_path . '/scss/partials/');
+					$scss->addImportPath($nebula_plugin_features['path'] . 'stylesheets/scss/partials/');
 
 					if ( nebula_option('minify_css', 'enabled') && !is_debug() ){
 						$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
@@ -2064,7 +2064,7 @@ function nebula_render_registered_scss() {
 
 					//Partials
 					$latest_partial = 0;
-					foreach ( glob($plugin_stylesheet_path . '/scss/partials/*') as $partial_file ){
+					foreach ( glob($nebula_plugin_features['path'] . 'stylesheets/scss/partials/*') as $partial_file ){
 						if ( filemtime($partial_file) > $latest_partial ){
 							$latest_partial = filemtime($partial_file);
 						}
@@ -2077,7 +2077,7 @@ function nebula_render_registered_scss() {
 					}
 
 					//Compile each SCSS file
-					foreach ( glob($plugin_stylesheet_path . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+					foreach ( glob($nebula_plugin_features['path'] . 'stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 						$file_path_info = pathinfo($file);
 
 						if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
@@ -2091,8 +2091,8 @@ function nebula_render_registered_scss() {
 						}
 
 						if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
-							$css_filepath = $plugin_stylesheet_path . '/css/' . $file_path_info['filename'] . '.css'; //For plugins, all css files will come in stylesheets/css directory
-							wp_mkdir_p($plugin_stylesheet_path . '/css'); //Create the /css directory (in case it doesn't exist already).
+							$css_filepath = $nebula_plugin_features['path'] . 'stylesheets/css/' . $file_path_info['filename'] . '.css'; //For plugins, all css files will come in stylesheets/css directory
+							wp_mkdir_p($nebula_plugin_features['path'] . 'stylesheets/css'); //Create the /css directory (in case it doesn't exist already).
 
 							//If style.css has been edited after style.scss, save backup but continue compiling SCSS
 							if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){ //@todo "Nebula" 0: Getting a lot of false positives here
@@ -2229,8 +2229,8 @@ function nebula_sass_color($color='primary', $theme='child'){
 		WP_Filesystem();
 		global $wp_filesystem;
 		$scss_variables = $wp_filesystem->get_contents($variables_file);
- 		set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
- 	}
+		set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
+	}
 
 	switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){
 		case 'primary':
