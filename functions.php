@@ -209,7 +209,9 @@ function register_nebula_scripts(){
 //Start a session
 add_action('init', 'nebula_session_start', 1);
 function nebula_session_start(){
-	session_start();
+	if(!isset($_SESSION)) {
+		session_start();
+	}
 }
 
 //Force clear cache for debugging and load debug scripts
