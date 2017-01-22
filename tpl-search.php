@@ -12,24 +12,33 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-
-
 <?php
 	/*******************
 		NOTE: This template is still in progress!
 	*******************/
 ?>
 
-
-<div id="breadcrumb-section">
-	<div class="container">
+<section id="bigheadingcon">
+	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col-md-12">
-				<?php nebula_breadcrumbs(); ?>
-			</div><!--/col-->
+				<h1 class="page-title"><?php the_title(); ?></h1>
+			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/breadcrumb-section-->
+
+	<div id="breadcrumb-section" class="full inner dark">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<?php nebula_breadcrumbs(); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div><!--/container-->
+	</div><!--/breadcrumb-section-->
+</section>
+
+<?php get_template_part('includes/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">
@@ -37,13 +46,11 @@ get_header(); ?>
 			<div class="col-md-8">
 				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-						<h1 class="page-title"><?php the_title(); ?></h1>
-
 						<div class="entry-content">
 							<?php the_content(); ?>
 						</div><!-- .entry-content -->
 
-						<form method="get" id="advanced-search-form" action="<?php echo esc_url(home_url('/')); ?>">
+						<form id="advanced-search-form" method="get" action="<?php echo esc_url(home_url('/')); ?>">
 							<a id="metatoggle" href="#">Metadata</a>
 							<div id="advanced-search-meta" class="row">
 								<div class="col-md-6 left-side">

@@ -266,22 +266,37 @@ function nebula_customize_register($wp_customize){
     $wp_customize->get_setting('blogname')->transport = 'postMessage';
     $wp_customize->get_control('blogname')->priority = 20;
 
+	$wp_customize->add_setting('nebula_hide_blogname', array('default' => 0));
+	$wp_customize->add_control('nebula_hide_blogname', array(
+		'label' => 'Hide site title',
+		'section' => 'title_tagline',
+		'priority' => 21,
+		'type' => 'checkbox',
+	) );
+
     //Partial to site title
     $wp_customize->selective_refresh->add_partial('blogname', array(
         'settings' => array('blogname'),
-        'selector' => '#hero-section h1',
+        'selector' => '#site-title',
         'container_inclusive' => true,
     ));
 
     //Site Description
     $wp_customize->get_setting('blogdescription')->transport = 'postMessage';
     $wp_customize->get_control('blogdescription')->priority = 30;
-    $wp_customize->get_control('blogdescription')->label = __('Site Description'); // Changes "Titletag" label to "Site Description"
+    $wp_customize->get_control('blogdescription')->label = 'Site Description'; //Changes "Titletag" label to "Site Description"
+	$wp_customize->add_setting('nebula_hide_blogdescription', array('default' => 0));
+	$wp_customize->add_control('nebula_hide_blogdescription', array(
+		'label'     => 'Hide site description',
+		'section'   => 'title_tagline',
+		'priority'  => 31,
+		'type'      => 'checkbox',
+	) );
 
     //Partial to site description
     $wp_customize->selective_refresh->add_partial('blogdescription', array(
         'settings' => array('blogdescription'),
-        'selector' => '#hero-section h2',
+        'selector' => '#site-description',
         'container_inclusive' => true,
     ));
 
@@ -314,6 +329,99 @@ function nebula_customize_register($wp_customize){
         'section' => 'colors',
         'priority' => 30
     )));
+
+	//Hero header in front page
+	$wp_customize->add_setting('nebula_hide_hero', array('default' => 0));
+	$wp_customize->add_control('nebula_hide_hero', array(
+		'label' => 'Hide header',
+		'section' => 'static_front_page',
+		'priority' => 1,
+		'type' => 'checkbox',
+	) );
+
+	//Hero title
+	$wp_customize->add_setting('nebula_hero_title', array('default' => 'Nebula'));
+	$wp_customize->add_control('nebula_hero_title', array(
+		'label' => 'Title',
+		'section' => 'static_front_page',
+		'priority' => 2,
+	) );
+
+	//Partial to hero title
+	$wp_customize->selective_refresh->add_partial('nebula_hero_title', array(
+		'settings' => array('nebula_hero_title'),
+		'selector' => '#hero-section h1',
+		'container_inclusive' => false,
+	));
+
+	//Hero subtitle
+	$wp_customize->add_setting('nebula_hero_subtitle', array('default'  => 'Advanced Starter WordPress Theme for Developers'));
+	$wp_customize->add_control('nebula_hero_subtitle', array(
+		'label' => 'Subtitle',
+		'section' => 'static_front_page',
+		'priority' => 3,
+	) );
+
+	//Partial to hero subtitle
+	$wp_customize->selective_refresh->add_partial('nebula_hero_subtitle', array(
+		'settings' => array('nebula_hero_subtitle'),
+		'selector' => '#hero-section h2',
+		'container_inclusive' => false,
+	));
+
+	//Search in front page
+	$wp_customize->add_setting('nebula_hide_hero_search', array('default' => 0));
+	$wp_customize->add_control('nebula_hide_hero_search', array(
+		'label'  => 'Hide search input',
+		'section' => 'static_front_page',
+		'priority' => 4,
+		'type' => 'checkbox',
+	) );
+
+	//Partial to search in front page
+	$wp_customize->selective_refresh->add_partial('nebula_hide_hero_search', array(
+		'settings' => array('nebula_hide_hero_search'),
+		'selector' => '#hero-section #nebula-hero-formcon',
+		'container_inclusive' => false,
+	));
+
+    //Footer section
+    $wp_customize->add_section('footer', array(
+        'title' => 'Footer',
+        'priority' => 130,
+    ));
+
+    //Footer logo
+    $wp_customize->add_setting('nebula_footer_logo', array('default' => null));
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_footer_logo', array(
+        'label' => 'Footer Logo',
+        'section' => 'footer',
+        'settings' => 'nebula_footer_logo',
+        'priority' => 10
+    ) ) );
+
+    //Partial to footer logo
+    $wp_customize->selective_refresh->add_partial('nebula_footer_logo', array(
+        'settings' => array('nebula_footer_logo'),
+        'selector' => '#footer-section .footerlogo',
+        'container_inclusive' => false,
+    ));
+
+    //Search in footer
+    $wp_customize->add_setting('nebula_hide_footer_search', array('default' => 0));
+    $wp_customize->add_control('nebula_hide_footer_search', array(
+        'label' => 'Hide search input',
+        'section' => 'footer',
+        'priority' => 20,
+        'type' => 'checkbox',
+    ) );
+
+    //Partial to search in footer
+    $wp_customize->selective_refresh->add_partial('nebula_hide_footer_search', array(
+        'settings' => array('nebula_hide_footer_search'),
+        'selector' => '#footer-section .footer-search',
+        'container_inclusive' => false,
+    ));
 }
 
 //Register Widget Areas
@@ -1243,15 +1351,15 @@ function nebula_search_form($placeholder=''){
 	    }
     }
 
-    $form = '<form id="searchform" class="form-inline" role="search" method="get" action="' . home_url('/') . '">
-				<div class="form-group">
-					<div class="input-group">
-						<div class="input-group-addon"><i class="fa fa-search"></i></div>
-						<input id="s" class="form-control form-control-md" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" />
-					</div>
+	$form = '<form id="searchform" class="form-inline" role="search" method="get" action="' . home_url('/') . '">
+				<div class="input-group mb-2 mr-sm-2 mb-sm-0">
+					<div class="input-group-addon"><i class="fa fa-search"></i></div>
+					<input id="s" class="form-control" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '">
 				</div>
-				<input id="searchsubmit" class="btn btn-brand btn-md wp_search_submit" type="submit" value="Search" />
+
+				<button id="searchsubmit" class="btn btn-brand wp_search_submit" type="submit">Submit</button>
 			</form>';
+
     return $form;
 }
 
@@ -1274,12 +1382,15 @@ add_action('wp_ajax_nopriv_nebula_autocomplete_search', 'nebula_autocomplete_sea
 function nebula_autocomplete_search(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
-	ini_set('memory_limit', '256M');
+	ini_set('memory_limit', '256M'); //@todo "Nebula" 0: Ideally this would not be here.
 	$term = sanitize_text_field(trim($_POST['data']['term']));
 	if ( empty($term) ){
 		return false;
 		exit;
 	}
+
+	$types = array('any');
+	$types = json_decode(sanitize_text_field(trim($_POST['types'])));
 
 	//Test for close or exact matches. Use: $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
 	function nebula_close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
@@ -1293,7 +1404,7 @@ function nebula_autocomplete_search(){
 
 	//Standard WP search (does not include custom fields)
 	$query1 = new WP_Query(array(
-	    'post_type' => array('any'),
+	    'post_type' => $types,
 		'post_status' => 'publish',
 		'posts_per_page' => 4,
 		's' => $term,
@@ -1301,7 +1412,7 @@ function nebula_autocomplete_search(){
 
 	//Search custom fields
 	$query2 = new WP_Query(array(
-	    'post_type' => array('any'),
+	    'post_type' => $types,
 		'post_status' => 'publish',
 		'posts_per_page' => 4,
 		'meta_query' => array(

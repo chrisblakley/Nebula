@@ -23,7 +23,7 @@ jQuery(document).ready(function(){
 	//Search
 	wpSearchInput();
 	mobileSearchPlaceholder();
-	autocompleteSearch();
+	initAutocompleteSearch();
 	advancedSearchTriggers();
 	searchValidator();
 	searchTermHighlighter();
@@ -34,7 +34,7 @@ jQuery(document).ready(function(){
 	cf7Functions();
 	cf7LiveValidator();
 	cf7LocalStorage();
-	nebulaAddressAutocomplete('#address-autocomplete');
+	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
 
 	//Helpers
 	addHelperClasses();
@@ -56,6 +56,11 @@ jQuery(document).ready(function(){
 	window.nebulaTrackingCalled = false;
 	if ( typeof ga === 'function' ){ //if GA is defined
 		initEventTracking();
+	}
+
+	//Remove Sass render trigger query
+	if ( get('sass') && !get('persistent') && window.history.replaceState ){
+		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
 	}
 
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').val(nebula.user.nid);
@@ -933,111 +938,128 @@ function searchTriggerOnlyChars(e){
 	}
 }
 
-//Search autocomplete
-function autocompleteSearch(){
-	nebula.dom.document.on('blur', ".nebula-search-iconable input", function(){
+//Enable autocomplete search on WordPress core selectors
+function initAutocompleteSearch(){
+	nebula.dom.document.on('blur', '.nebula-search-iconable input', function(){
 		jQuery('.nebula-search-iconable').removeClass('searching').removeClass('autocompleted');
 	});
 
 	jQuery("input#s, input.search").on('keypress paste', function(e){
-		thisSearchInput = jQuery(this);
-		jQuery(document).trigger('nebula_autocomplete_search_start', thisSearchInput);
-		nebulaTimer('autocompleteSearch', 'start');
-		nebulaTimer('autocompleteResponse', 'start');
-		if ( !thisSearchInput.hasClass('no-autocomplete') && !nebula.dom.html.hasClass('lte-ie8') && jQuery.trim(thisSearchInput.val()).length ){
-			if ( thisSearchInput.parents('form').hasClass('nebula-search-iconable') && jQuery.trim(thisSearchInput.val()).length >= 2 && searchTriggerOnlyChars(e) ){
-				thisSearchInput.parents('form').addClass('searching');
-				setTimeout(function(){
-					thisSearchInput.parents('form').removeClass('searching');
-				}, 10000);
-			} else {
-				thisSearchInput.parents('form').removeClass('searching');
-			}
-
-			thisSearchInput.autocomplete({
-				position: {
-					my: "left top-2px",
-					at: "left bottom",
-					collision: "flip",
-				},
-				source: function(request, response){
-					jQuery.ajax({
-						dataType: 'json',
-						type: "POST",
-						url: nebula.site.ajax.url,
-						data: {
-							nonce: nebula.site.ajax.nonce,
-							action: 'nebula_autocomplete_search',
-							data: request,
-						},
-						success: function(data){
-							jQuery(document).trigger('nebula_autocomplete_search_success', data);
-							ga('set', gaCustomMetrics['autocompleteSearches'], 1);
-							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-							if ( data ){
-								jQuery(document).trigger('nebula_autocomplete_search_results', data);
-								nebulaPrerender(data[0].link);
-								jQuery.each(data, function(index, value){
-									value.label = value.label.replace(/&#038;/g, "\&");
-								});
-								noSearchResults = '';
-							} else {
-								jQuery(document).trigger('nebula_autocomplete_search_no_results');
-								noSearchResults = ' (No Results)';
-							}
-							debounce(function(){
-								ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
-								if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: request.term});}
-							}, 1500, 'autocomplete success buffer');
-							ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'lap')), 'Each search until server results');
-							response(data);
-							thisSearchInput.parents('form').removeClass('searching').addClass('autocompleted');
-						},
-						error: function(XMLHttpRequest, textStatus, errorThrown){
-							jQuery(document).trigger('nebula_autocomplete_search_error', request.term);
-							ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-							debounce(function(){
-								ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
-								nv('increment', 'ajax_error');
-							}, 1500, 'autocomplete error buffer');
-							thisSearchInput.parents('form').removeClass('searching');
-						},
-						timeout: 60000
-					});
-				},
-				focus: function(event, ui){
-					event.preventDefault(); //Prevent input value from changing.
-				},
-				select: function(event, ui){
-					jQuery(document).trigger('nebula_autocomplete_search_selected', ui);
-					ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
-					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-					ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
-		            ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From first initial search until navigation');
-		            if ( typeof ui.item.external !== 'undefined' ){
-						window.open(ui.item.link, '_blank');
-		            } else {
-			            window.location.href = ui.item.link;
-		            }
-		        },
-		        open: function(){
-			        thisSearchInput.parents('form').addClass('autocompleted');
-			        var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
-					heroAutoCompleteDropdown.css('max-width', thisSearchInput.outerWidth());
-		        },
-		        close: function(){
-					thisSearchInput.parents('form').removeClass('autocompleted');
-		        },
-		        minLength: 3,
-		    }).data("ui-autocomplete")._renderItem = function(ul, item){
-			    thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
-			    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
-			    return listItem;
-			};
-			var thisFormIdentifier = thisSearchInput.parents('form').attr('id') || thisSearchInput.parents('form').attr('name') || thisSearchInput.parents('form').attr('class');
-			thisSearchInput.autocomplete("widget").addClass("form-identifier-" + thisFormIdentifier);
-	    }
+		if ( !jQuery(this).hasClass('no-autocomplete') && jQuery.trim(jQuery(this).val()).length && searchTriggerOnlyChars(e) ){
+			autocompleteSearch(jQuery(this));
+		}
 	});
+}
+
+//Run an autocomplete search on a passes element.
+function autocompleteSearch(element, types){
+	if ( typeof element === 'string' ){
+		element = jQuery(element);
+	}
+
+	if ( types && !jQuery.isArray(types) ){
+		console.error('autocompleteSearch requires 2nd parameter to be an array.');
+		return false;
+	}
+
+	jQuery(document).trigger('nebula_autocomplete_search_start', element);
+	nebulaTimer('autocompleteSearch', 'start');
+	nebulaTimer('autocompleteResponse', 'start');
+
+	if ( !nebula.dom.html.hasClass('lte-ie8') && jQuery.trim(element.val()).length ){
+		if ( element.parents('form').hasClass('nebula-search-iconable') && jQuery.trim(element.val()).length >= 2 ){
+			element.parents('form').addClass('searching');
+			setTimeout(function(){
+				element.parents('form').removeClass('searching');
+			}, 10000);
+		} else {
+			element.parents('form').removeClass('searching');
+		}
+
+		element.autocomplete({
+			position: {
+				my: "left top-2px",
+				at: "left bottom",
+				collision: "flip",
+			},
+			source: function(request, response){
+				jQuery.ajax({
+					dataType: 'json',
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_autocomplete_search',
+						data: request,
+						types: JSON.stringify(types)
+					},
+					success: function(data){
+						jQuery(document).trigger('nebula_autocomplete_search_success', data);
+						ga('set', gaCustomMetrics['autocompleteSearches'], 1);
+						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+						if ( data ){
+							jQuery(document).trigger('nebula_autocomplete_search_results', data);
+							nebulaPrerender(data[0].link);
+							jQuery.each(data, function(index, value){
+								value.label = value.label.replace(/&#038;/g, "\&");
+							});
+							noSearchResults = '';
+						} else {
+							jQuery(document).trigger('nebula_autocomplete_search_no_results');
+							noSearchResults = ' (No Results)';
+						}
+						debounce(function(){
+							ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
+							if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: request.term});}
+						}, 1500, 'autocomplete success buffer');
+						ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'lap')), 'Each search until server results');
+						response(data);
+						element.parents('form').removeClass('searching').addClass('autocompleted');
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						jQuery(document).trigger('nebula_autocomplete_search_error', request.term);
+						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+						debounce(function(){
+							ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
+							nv('increment', 'ajax_error');
+						}, 1500, 'autocomplete error buffer');
+						element.parents('form').removeClass('searching');
+					},
+					timeout: 60000
+				});
+			},
+			focus: function(event, ui){
+				event.preventDefault(); //Prevent input value from changing.
+			},
+			select: function(event, ui){
+				jQuery(document).trigger('nebula_autocomplete_search_selected', ui);
+				ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
+	            ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From first initial search until navigation');
+	            if ( typeof ui.item.external !== 'undefined' ){
+					window.open(ui.item.link, '_blank');
+	            } else {
+		            window.location.href = ui.item.link;
+	            }
+	        },
+	        open: function(){
+		        element.parents('form').addClass('autocompleted');
+		        var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
+				heroAutoCompleteDropdown.css('max-width', element.outerWidth());
+	        },
+	        close: function(){
+				element.parents('form').removeClass('autocompleted');
+	        },
+	        minLength: 3,
+	    }).data("ui-autocomplete")._renderItem = function(ul, item){
+		    thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
+		    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
+		    return listItem;
+		};
+		var thisFormIdentifier = element.parents('form').attr('id') || element.parents('form').attr('name') || element.parents('form').attr('class');
+		element.autocomplete("widget").addClass("form-identifier-" + thisFormIdentifier);
+    }
 }
 
 //Advanced Search
@@ -1888,133 +1910,147 @@ function nebulaLoadCSS(url){
 //Places - Address Autocomplete
 //This uses the Google Maps Geocoding API
 //The passed selector must be an input element
-function nebulaAddressAutocomplete(autocompleteInput){
+function nebulaAddressAutocomplete(autocompleteInput, name){
 	if ( jQuery(autocompleteInput).length && jQuery(autocompleteInput).is('input') ){ //If the addressAutocomplete ID exists
-		jQuery.getScript('https://www.google.com/jsapi', function(){
-		    google.load('maps', '3', {
-			    other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
-			    callback: function(){
-					addressAutocomplete = new google.maps.places.Autocomplete(
-						jQuery(autocompleteInput)[0],
-						{types: ['geocode']} //Restrict the search to geographical location types
-					);
+		if ( typeof google != "undefined" && has(google, 'maps') ){
+			googleAddressAutocompleteCallback(autocompleteInput, name);
+		} else {
+			debounce(function(){
+				jQuery.getScript('https://www.google.com/jsapi', function(){
+				    google.load('maps', '3', {
+					    other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
+					    callback: function(){
+							googleAddressAutocompleteCallback(autocompleteInput, name);
+					    }
+				    });
+				}).fail(function(){
+					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+					ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
+					nv('increment', 'js_errors');
+				});
+			}, 100, 'google maps script load');
+		}
+	}
+}
 
-					google.maps.event.addListener(addressAutocomplete, 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
-						place = addressAutocomplete.getPlace(); //Get the place details from the addressAutocomplete object.
+function googleAddressAutocompleteCallback(autocompleteInput, name){
+	if ( !name ){
+		name = 'addressAutocomplete';
+	}
 
-						nebula.user.address = {
-							street: {
-								number: null,
-								name: null,
-								full: null,
-							},
-							city: null,
-							county: null,
-							state: {
-								name: null,
-								abbreviation: null,
-							},
-							country: {
-								name: null,
-								abbreviation: null,
-							},
-							zip: {
-								code: null,
-								suffix: null,
-								full: null,
-							},
-						};
+	window[name] = new google.maps.places.Autocomplete(
+		jQuery(autocompleteInput)[0],
+		{types: ['geocode']} //Restrict the search to geographical location types
+	);
 
-						for ( var i = 0; i < place.address_components.length; i++ ){
-							//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
-							switch ( place.address_components[i].types[0] ){
-								case "street_number":
-									nebula.user.address.street.number = place.address_components[i].short_name; //123
-									break;
-								case "route":
-									nebula.user.address.street.name = place.address_components[i].long_name; //Street Name Rd.
-									break;
-								case "locality":
-									nebula.user.address.city = place.address_components[i].long_name; //Liverpool
-									break;
-								case "administrative_area_level_2":
-									nebula.user.address.county = place.address_components[i].long_name; //Onondaga County
-									break;
-								case "administrative_area_level_1":
-									nebula.user.address.state.name = place.address_components[i].long_name; //New York
-									nebula.user.address.state.abbr = place.address_components[i].short_name; //NY
-									break;
-								case "country":
-									nebula.user.address.country.name = place.address_components[i].long_name; //United States
-									nebula.user.address.country.abbr = place.address_components[i].short_name; //US
-									break;
-								case "postal_code":
-									nebula.user.address.zip.code = place.address_components[i].short_name; //13088
-									break;
-								case "postal_code_suffix":
-									nebula.user.address.zip.suffix = place.address_components[i].short_name; //4725
-									break;
-								default:
-									//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
-							}
-						}
-						if ( has(nebula, 'user.address.street') ){
-							nebula.user.address.street.full = nebula.user.address.street.number + ' ' + nebula.user.address.street.name;
-						}
-						if ( has(nebula, 'user.address.zip') ){
-							nebula.user.address.zip.full = nebula.user.address.zip.code + '-' + nebula.user.address.zip.suffix;
-						}
+	google.maps.event.addListener(window[name], 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
+		place = window[name].getPlace(); //Get the place details from the window[name] object.
 
-						nebula.dom.document.trigger('nebula_address_selected', place);
-						ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
-						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-						ga('send', 'event', 'Contact', 'Autocomplete Address', nebula.user.address.city + ', ' + nebula.user.address.state.abbreviation + ' ' + nebula.user.address.zip.code);
+		nebula.user.address = {
+			street: {
+				number: null,
+				name: null,
+				full: null,
+			},
+			city: null,
+			county: null,
+			state: {
+				name: null,
+				abbreviation: null,
+			},
+			country: {
+				name: null,
+				abbreviation: null,
+			},
+			zip: {
+				code: null,
+				suffix: null,
+				full: null,
+			},
+		};
 
-						//@TODO "Nebula" 0: If errors, consider switching each to (ex:) 'street_number': ( has(nebula, 'user.address.street') )? nebula.user.address.street.number : ''
-						nv('send', {
-							'street_number': nebula.user.address.street.number,
-							'street_name': nebula.user.address.street.name,
-							'street_full': nebula.user.address.street.full,
-							'city': nebula.user.address.city,
-							'county': nebula.user.address.county,
-							'state_name': nebula.user.address.state.name,
-							'state_abbr': nebula.user.address.state.abbr,
-							'country_name': nebula.user.address.country.name,
-							'country_abbr': nebula.user.address.country.abbr,
-							'zip_code': nebula.user.address.zip.code,
-							'zip_suffix': nebula.user.address.zip.suffix,
-							'zip_full': nebula.user.address.zip.full,
-						});
-					});
+		for ( var i = 0; i < place.address_components.length; i++ ){
+			//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
+			switch ( place.address_components[i].types[0] ){
+				case "street_number":
+					nebula.user.address.street.number = place.address_components[i].short_name; //123
+					break;
+				case "route":
+					nebula.user.address.street.name = place.address_components[i].long_name; //Street Name Rd.
+					break;
+				case "locality":
+					nebula.user.address.city = place.address_components[i].long_name; //Liverpool
+					break;
+				case "administrative_area_level_2":
+					nebula.user.address.county = place.address_components[i].long_name; //Onondaga County
+					break;
+				case "administrative_area_level_1":
+					nebula.user.address.state.name = place.address_components[i].long_name; //New York
+					nebula.user.address.state.abbr = place.address_components[i].short_name; //NY
+					break;
+				case "country":
+					nebula.user.address.country.name = place.address_components[i].long_name; //United States
+					nebula.user.address.country.abbr = place.address_components[i].short_name; //US
+					break;
+				case "postal_code":
+					nebula.user.address.zip.code = place.address_components[i].short_name; //13088
+					break;
+				case "postal_code_suffix":
+					nebula.user.address.zip.suffix = place.address_components[i].short_name; //4725
+					break;
+				default:
+					//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
+			}
+		}
+		if ( has(nebula, 'user.address.street') ){
+			nebula.user.address.street.full = nebula.user.address.street.number + ' ' + nebula.user.address.street.name;
+		}
+		if ( has(nebula, 'user.address.zip') ){
+			nebula.user.address.zip.full = nebula.user.address.zip.code + '-' + nebula.user.address.zip.suffix;
+		}
 
-					jQuery(autocompleteInput).on('focus', function(){
-						if ( nebula.site.protocol === 'https' && navigator.geolocation ){
-							navigator.geolocation.getCurrentPosition(function(position){ //Bias to the user's geographical location.
-								var geolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-								var circle = new google.maps.Circle({
-									center: geolocation,
-									radius: position.coords.accuracy
-								});
-								addressAutocomplete.setBounds(circle.getBounds());
-							});
-						}
-					}).on('keydown', function(e){
-						if ( e.which === 13 && jQuery('.pac-container:visible').length ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
-							return false;
-						}
-					});
+		nebula.dom.document.trigger('nebula_address_selected', [place, jQuery(autocompleteInput)]);
+		ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
+		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		ga('send', 'event', 'Contact', 'Autocomplete Address', nebula.user.address.city + ', ' + nebula.user.address.state.abbreviation + ' ' + nebula.user.address.zip.code);
 
-					if ( autocompleteInput === '#address-autocomplete' ){
-						nebula.dom.document.on('nebula_address_selected', function(){
-							//do any default stuff here.
-						});
-					}
-		    	} //End Google Maps callback
-		    }); //End Google Maps load
-		}).fail(function(){
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
-			nv('increment', 'js_errors');
+		//@TODO "Nebula" 0: If errors, consider switching each to (ex:) 'street_number': ( has(nebula, 'user.address.street') )? nebula.user.address.street.number : ''
+		nv('send', {
+			'street_number': nebula.user.address.street.number,
+			'street_name': nebula.user.address.street.name,
+			'street_full': nebula.user.address.street.full,
+			'city': nebula.user.address.city,
+			'county': nebula.user.address.county,
+			'state_name': nebula.user.address.state.name,
+			'state_abbr': nebula.user.address.state.abbr,
+			'country_name': nebula.user.address.country.name,
+			'country_abbr': nebula.user.address.country.abbr,
+			'zip_code': nebula.user.address.zip.code,
+			'zip_suffix': nebula.user.address.zip.suffix,
+			'zip_full': nebula.user.address.zip.full,
+		});
+	});
+
+	jQuery(autocompleteInput).on('focus', function(){
+		if ( nebula.site.protocol === 'https' && navigator.geolocation ){
+			navigator.geolocation.getCurrentPosition(function(position){ //Bias to the user's geographical location.
+				var geolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				var circle = new google.maps.Circle({
+					center: geolocation,
+					radius: position.coords.accuracy
+				});
+				window[name].setBounds(circle.getBounds());
+			});
+		}
+	}).on('keydown', function(e){
+		if ( e.which === 13 && jQuery('.pac-container:visible').length ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
+			return false;
+		}
+	});
+
+	if ( autocompleteInput === '#address-autocomplete' ){
+		nebula.dom.document.on('nebula_address_selected', function(){
+			//do any default stuff here.
 		});
 	}
 }
@@ -2427,6 +2463,29 @@ function get(parameter){
 	return false;
 }
 
+//Remove a parameter from the query string. //yolo
+function removeQueryParameter(key, sourceURL){
+    var rtn = sourceURL.split("?")[0],
+        param,
+        params_arr = [],
+        queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+
+    if ( queryString !== '' ){
+        params_arr = queryString.split("&");
+
+        for ( i = params_arr.length-1; i >= 0; i -= 1 ){
+            param = params_arr[i].split("=")[0];
+            if ( param === key ){
+                params_arr.splice(i, 1);
+            }
+        }
+
+        rtn = rtn + "?" + params_arr.join("&");
+    }
+
+    return rtn;
+}
+
 //Trigger a reflow on an element.
 //This is useful for repeating animations.
 function reflow(selector){
@@ -2717,8 +2776,6 @@ function has(obj, prop){
 
 	return true;
 }
-
-
 
 /*==========================
  Miscellaneous Functions

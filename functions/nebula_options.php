@@ -199,7 +199,6 @@ function nebula_default_options(){
 		'minify_css' => 'disabled',
 		'dev_stylesheets' => 'disabled',
 		'console_css' => 'enabled',
-		'resources_directory' => 'enabled',
 
 		//Analytics Tab
 		'ga_tracking_id' => '',
@@ -993,20 +992,6 @@ function nebula_options_page(){
 						<p class="helper"><small>Aggregate @TODO comments in code. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?>)</em></small></p>
 					</td>
 		        </tr>
-
-		        <tr class="short" valign="top">
-		        	<th scope="row">Nebula Resources Directory&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<select name="nebula_options[resources_directory]">
-							<option disabled>Default: <?php echo ucwords($nebula_options_defaults['resources_directory']); ?></option>
-							<option value="enabled" <?php selected('enabled', $nebula_options['resources_directory']); ?>>Enabled</option>
-							<option value="disabled" <?php selected('disabled', $nebula_options['resources_directory']); ?>>Disabled</option>
-						</select>
-						<p class="helper"><small>Controls whether the resources directory is included (Resources directories are found in <strong><?php echo get_stylesheet_directory_uri(); ?>/resources</strong> and <strong><?php echo get_template_directory_uri(); ?>/Nebula-Child/resources</strong>).<br/>
-						Note: If re-enabled, the directory will not re-appear until Nebula-master is updated or the <a href="https://github.com/chrisblakley/Nebula/tree/master/Nebula-Child/resources" target="_blank">/resources</a> directory is manually uploaded. <em>(Default: <?php echo ucwords($nebula_options_defaults['resources_directory']); ?>)</em></small></p>
-					</td>
-		        </tr>
-
 		    </table>
 
 

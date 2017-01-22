@@ -78,7 +78,8 @@ if ( nebula_option('admin_bar', 'disabled') ){
 		$node_id = ( is_admin_page() )? 'view' : 'edit';
 		$new_content_node = $wp_admin_bar->get_node($node_id);
 		if ( $new_content_node ){
-			$new_content_node->title = ucfirst($node_id) . ' Page <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(ID: ' . get_the_id() . ')</span>';
+			$post_type_object = get_post_type_object(get_post_type());
+			$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_object->labels->singular_name) . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(ID: ' . get_the_id() . ')</span>';
 			$wp_admin_bar->add_node($new_content_node);
 		}
 
@@ -332,30 +333,6 @@ function nebula_theme_update_email(){
 		});
 
 		wp_mail($to, $subject, $message, $headers);
-	}
-}
-
-//Remove the examples directory
-//Note: To re-enable the examples directory, enable the Nebula Examples Directory function, and then update the Nebula theme, or re-upload the examples directory.
-add_action('upgrader_process_complete', 'nebula_remove_examples_directory');
-add_action('admin_init', 'nebula_remove_examples_directory');
-function nebula_remove_examples_directory(){
-	$override = apply_filters('pre_nebula_remove_examples_directory', false);
-	if ( $override !== false ){return;}
-
-	if ( nebula_option('examples_directory', 'disabled') && current_user_can('manage_options') ){
-		if ( file_exists(get_stylesheet_directory() . '/examples') || file_exists(get_template_directory() . '/Nebula-Child/examples') ){
-			WP_Filesystem();
-			global $wp_filesystem;
-
-			if ( file_exists(get_stylesheet_directory() . '/examples') ){
-				$wp_filesystem->rmdir(get_stylesheet_directory() . '/examples', true);
-			}
-
-			if ( file_exists(get_template_directory() . '/Nebula-Child/examples') ){
-				$wp_filesystem->rmdir(get_template_directory() . '/Nebula-Child/examples', true);
-			}
-		}
 	}
 }
 
