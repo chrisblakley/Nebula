@@ -66,8 +66,8 @@ namespace Nebula {
             }
 
             foreach($nebula_plugins as $nebula_plugin => $nebula_plugin_features) {
-                if($nebula_plugin_features['page-templates']) {
-                    $files = (array) $this->scandir( $nebula_plugin_features['path'] . 'templates/page-templates', 'php', 1 );
+                if($nebula_plugin_features['templates']) {
+                    $files = (array) $this->scandir( $nebula_plugin_features['path'] . 'templates', 'php', 1 );
 
                     foreach ( $files as $file => $full_path ) {
                         if ( ! preg_match( '|Template Name:(.*)$|mi', file_get_contents( $full_path ), $header ) ) {

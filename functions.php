@@ -372,7 +372,6 @@ function nebula_register_plugin( $plugin_name, $plugin_dir ) {
 		'path' =>  $plugin_dir,
 		'stylesheets' =>  is_dir( $plugin_dir . 'stylesheets' ),
 		'templates' =>  is_dir( $plugin_dir . 'templates' ),
-		'page-templates' =>  is_dir( $plugin_dir . 'templates/page-templates' ),
 	);
 
 	$nebula_plugins[$plugin_name] = $plugin_features;
