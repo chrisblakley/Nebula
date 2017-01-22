@@ -301,6 +301,20 @@ function nebula_customize_register($wp_customize){
         'container_inclusive' => true,
     ));
 
+	//Footer text
+	$wp_customize->add_setting( 'nebula_footer_text', array( 'default' => '&copy; <strong>Nebula</strong>, all rights reserved.' ) );
+	$wp_customize->add_control( 'nebula_footer_text', array(
+		'label'      => __( 'Footer text' ),
+		'section'    => 'title_tagline',
+		'priority'  => 2,
+	) );
+
+	//Partial to hero title
+	$wp_customize->selective_refresh->add_partial( 'nebula_footer_text', array(
+		'settings' => array( 'nebula_footer_text' ),
+		'container_inclusive' => false,
+	));
+
     //Colors section
     $wp_customize->add_section('colors', array(
         'title' => 'Colors',
@@ -341,7 +355,7 @@ function nebula_customize_register($wp_customize){
 	) );
 
 	//Hero title
-	$wp_customize->add_setting( 'nebula_hero_title', array( 'default'    => 'Nebula' ) );
+	$wp_customize->add_setting( 'nebula_hero_title', array( 'default' => 'Nebula' ) );
 	$wp_customize->add_control( 'nebula_hero_title', array(
 		'label'      => __( 'Title' ),
 		'section'    => 'static_front_page',
@@ -356,7 +370,7 @@ function nebula_customize_register($wp_customize){
 	));
 
 	//Hero subtitle
-	$wp_customize->add_setting( 'nebula_hero_subtitle', array( 'default'    => 'Advanced Starter WordPress Theme for Developers' ) );
+	$wp_customize->add_setting( 'nebula_hero_subtitle', array( 'default' => 'Advanced Starter WordPress Theme for Developers' ) );
 	$wp_customize->add_control( 'nebula_hero_subtitle', array(
 		'label'      => __( 'Subtitle' ),
 		'section'    => 'static_front_page',
@@ -385,44 +399,6 @@ function nebula_customize_register($wp_customize){
 		'selector' => '#hero-section #nebula-hero-formcon',
 		'container_inclusive' => false,
 	));
-
-    //Footer section
-    $wp_customize->add_section('footer', array(
-        'title' => 'Footer',
-        'priority' => 130,
-    ));
-
-    //Footer logo
-    $wp_customize->add_setting( 'nebula_footer_logo', array( 'default' => null ) );
-    $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'nebula_footer_logo', array(
-        'label'     => __( 'Footer Logo' ),
-        'section'   => 'footer',
-        'settings'  => 'nebula_footer_logo',
-        'priority'  => 10
-    ) ) );
-
-    //Partial to footer logo
-    $wp_customize->selective_refresh->add_partial( 'nebula_footer_logo', array(
-        'settings' => array( 'nebula_footer_logo' ),
-        'selector' => '#footer-section .footerlogo',
-        'container_inclusive' => false,
-    ));
-
-    //Search in footer
-    $wp_customize->add_setting( 'nebula_hide_footer_search', array( 'default' => 0 ) );
-    $wp_customize->add_control( 'nebula_hide_footer_search', array(
-        'label'     => __( 'Hide search input' ),
-        'section'   => 'footer',
-        'priority'  => 20,
-        'type'      => 'checkbox',
-    ) );
-
-    //Partial to search in footer
-    $wp_customize->selective_refresh->add_partial( 'nebula_hide_footer_search', array(
-        'settings' => array( 'nebula_hide_footer_search' ),
-        'selector' => '#footer-section .footer-search',
-        'container_inclusive' => false,
-    ));
 }
 
 //Register Widget Areas
