@@ -357,4 +357,27 @@ function nebula_set_content_width(){
     }
 }
 
+require_once('functions/nebula_template_engine.php');
+
+new Nebula\Template_Engine();
+
+function nebula_register_plugin( $plugin_name, $plugin_dir ) {
+	global $nebula_plugins;
+
+	if ( ! is_array( $nebula_plugins ) ) {
+		$nebula_plugins = array();
+	}
+
+	$plugin_features = array(
+		'path' =>  $plugin_dir,
+		'stylesheets' =>  is_dir( $plugin_dir . 'stylesheets' ),
+		'templates' =>  is_dir( $plugin_dir . 'templates' ),
+		'page-templates' =>  is_dir( $plugin_dir . 'templates/page-templates' ),
+	);
+
+	$nebula_plugins[$plugin_name] = $plugin_features;
+
+	return $plugin_features;
+}
+
 //Close functions.php. DO NOT add anything after this closing tag!! ?>
