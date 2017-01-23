@@ -2,6 +2,12 @@
 
 namespace Nebula {
 
+    /**
+     * Class Template_Engine
+     *
+     * @package Nebula\Template_Engine
+     * @author Ruben Garcia
+     */
     class Template_Engine {
 
         public $templates;
@@ -146,15 +152,13 @@ namespace Nebula {
                 // If template found comes from a child theme, then return
                 return $template;
             } else {
-                $plugin_template_paths = apply_filters( 'nebula_register_templates', array() );
-
-                //@TODO "Nebula Template Engine" 0: We need to set a priority system between plugins
-
-                foreach($nebula_plugins as $nebula_plugin => $nebula_plugin_features) {
+                // Search in all registered plugins (in reversed order) template folder to check if template exists
+                foreach(array_reverse($nebula_plugins) as $nebula_plugin => $nebula_plugin_features) {
                     if($nebula_plugin_features['templates']) {
                         foreach ($this->templates as $template_name) {
-                            if (file_exists($nebula_plugin_features['path'] . '/' . $template_name)) {
-                                return $nebula_plugin_features['path'] . '/' . $template_name;
+                            if (file_exists($nebula_plugin_features['path'] . 'templates/' . $template_name)) {
+                                // Returns first template found (last plugin template registered)
+                                return $nebula_plugin_features['path'] . 'templates/' . $template_name;
                             }
                         }
                     }
