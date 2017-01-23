@@ -15,6 +15,7 @@ namespace Nebula {
         public function __construct() {
             $this->templates = array();
 
+            // Default wordpress query templates
             $query_templates = array(
                 'archive',
                 'index',
@@ -34,12 +35,15 @@ namespace Nebula {
                 'attachment',
             );
 
-            foreach($query_templates as $query_template) {
+            // Add filter hook to any query template
+            foreach( $query_templates as $query_template ) {
                 add_filter( $query_template . '_template_hierarchy', array( $this, 'template_hierarchy' ));
             }
 
+            // Add new page templates, probably a TODO to match registered post types
             add_filter( 'theme_page_templates', array( $this, 'plugins_templates' ), 10, 4 );
 
+            // Search for plugin templates
             add_filter( 'template_include', array( $this, 'template_include' ) );
         }
 
@@ -67,12 +71,14 @@ namespace Nebula {
         public function plugins_templates( $post_templates, $wp_theme, $post, $post_type ) {
             global $nebula_plugins;
 
-            if( !is_array($nebula_plugins) ) {
+            if( ! is_array( $nebula_plugins ) ) {
                 return $post_templates;
             }
 
+            $plugins_templates = array();
+
             foreach($nebula_plugins as $nebula_plugin => $nebula_plugin_features) {
-                if($nebula_plugin_features['templates']) {
+                if( $nebula_plugin_features['templates'] ) {
                     $files = (array) $this->scandir( $nebula_plugin_features['path'] . 'templates', 'php', 1 );
 
                     foreach ( $files as $file => $full_path ) {
@@ -87,11 +93,11 @@ namespace Nebula {
 
                         foreach ( $types as $type ) {
                             $type = sanitize_key( $type );
-                            if ( ! isset( $post_templates[ $type ] ) ) {
-                                $post_templates[ $type ] = array();
+                            if ( ! isset( $plugins_templates[ $type ] ) ) {
+                                $plugins_templates[ $type ] = array();
                             }
 
-                            $post_templates[ $type ][ $file ] = _cleanup_header_comment( $header[1] );
+                            $plugins_templates[ $type ][ $file ] = _cleanup_header_comment( $header[1] );
                         }
                     }
 
@@ -99,7 +105,11 @@ namespace Nebula {
                 }
             }
 
-            return $post_templates;
+            if( isset( $plugins_templates[$post_type] ) && ! empty( $plugins_templates[$post_type] ) ) {
+                return array_merge( $post_templates, $plugins_templates[$post_type] );
+            } else {
+                return $post_templates;
+            }
         }
 
         // Function taken from WP_Theme
