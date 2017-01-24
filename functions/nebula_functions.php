@@ -407,12 +407,26 @@ function nebula_customize_register($wp_customize){
         'container_inclusive' => false,
     ));
 
+	//Footer text
+	$wp_customize->add_setting('nebula_footer_text', array('default'  => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula_version('full') . ', <em>all rights reserved</em>.'));
+	$wp_customize->add_control('nebula_footer_text', array(
+		'label' => 'Footer text',
+		'section' => 'footer',
+		'priority' => 20,
+	) );
+
+	$wp_customize->selective_refresh->add_partial('nebula_footer_text', array(
+		'settings' => array('nebula_footer_text'),
+		'selector' => '.copyright span',
+		'container_inclusive' => false,
+	));
+
     //Search in footer
     $wp_customize->add_setting('nebula_hide_footer_search', array('default' => 0));
     $wp_customize->add_control('nebula_hide_footer_search', array(
         'label' => 'Hide search input',
         'section' => 'footer',
-        'priority' => 20,
+        'priority' => 30,
         'type' => 'checkbox',
     ) );
 
