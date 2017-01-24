@@ -1454,8 +1454,10 @@ function nebula_url_components($segment="all", $url=null){
 	//Best way to get the domain so far. Probably a better way by checking against all known TLDs.
 	preg_match("/[a-z0-9\-]{1,63}\.[a-z\.]{2,6}$/", parse_url($url, PHP_URL_HOST), $domain);
 
-	$sld = substr($domain[0], 0, strpos($domain[0], '.'));
-	$tld = substr($domain[0], strpos($domain[0], '.'));
+	if ( !empty($domain) ){
+		$sld = substr($domain[0], 0, strpos($domain[0], '.'));
+		$tld = substr($domain[0], strpos($domain[0], '.'));
+	}
 
 	switch ($segment){
 		case ('all'):
@@ -1916,7 +1918,7 @@ function nebula_render_scss($child=false){
 
 	if ( nebula_option('scss', 'enabled') ){
 		$compile_all = false;
-		if ( isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated']) && is_staff() ){
+		if ( isset($_GET['sass']) || isset($_GET['settings-updated']) && is_staff() ){
 			$compile_all = true;
 		}
 
@@ -1984,7 +1986,7 @@ function nebula_render_scss($child=false){
 				wp_mkdir_p($stylesheets_directory . '/css'); //Create the /css directory (in case it doesn't exist already).
 
 				//If style.css has been edited after style.scss, save backup but continue compiling SCSS
-				if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){ //@todo "Nebula" 0: Getting a lot of false positives here
+				if ( ($child && is_child_theme()) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
 					copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
 					if ( is_dev() || current_user_can('manage_options') ){
 						global $scss_debug_ref;

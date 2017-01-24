@@ -62,38 +62,38 @@
 					</div><!--/row-->
 				</div><!--/topbarcon-->
 
-				<?php if ( has_nav_menu('secondary') ): ?>
-					<div id="secondarynavcon">
+				<div id="navigation-section">
+					<?php if ( has_nav_menu('secondary') ): ?>
+						<div id="secondarynavcon">
+							<div class="container">
+								<div class="row">
+									<div class="col-md-12">
+										<nav id="secondarynav">
+						        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
+						        		</nav>
+									</div><!--/col-->
+								</div><!--/row-->
+							</div><!--/container-->
+						</div>
+					<?php endif; ?>
+
+					<div id="logonavcon" class="<?php echo ( get_bloginfo('description') != '' && !get_theme_mod('nebula_hide_blogdescription', false) )? 'has-description' : ''; ?>">
 						<div class="container">
 							<div class="row">
-								<div class="col-md-12">
-									<nav id="secondarynav">
-					        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
-					        		</nav>
+								<div class="col-lg-4">
+									<a class="logocon" href="<?php echo home_url(); ?>">
+										<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
+									</a>
 								</div><!--/col-->
+								<div class="col-lg-8">
+									<?php if ( has_nav_menu('primary') ): ?>
+										<nav id="primarynav" class="clearfix">
+											<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
+						        		</nav>
+					        		<?php endif; ?>
+					        	</div><!--/col-->
 							</div><!--/row-->
 						</div><!--/container-->
 					</div>
-				<?php endif; ?>
-
-				<div id="logonavcon">
-					<div class="container">
-						<div class="row">
-							<div class="col-lg-4">
-								<a class="logocon" href="<?php echo home_url(); ?>">
-									<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
-								</a>
-							</div><!--/col-->
-							<div class="col-lg-8">
-								<?php if ( has_nav_menu('primary') ): ?>
-									<nav id="primarynav" class="clearfix">
-										<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
-					        		</nav>
-				        		<?php endif; ?>
-				        	</div><!--/col-->
-						</div><!--/row-->
-					</div><!--/container-->
 				</div>
 			</div><!--/header-section-->
-
-			<?php get_template_part('includes/header_drawer'); //Header drawer logic. ?>

@@ -13,24 +13,34 @@ do_action('nebula_preheaders');
 nebula_increment_visitor('page_not_found');
 get_header(); ?>
 
-<div id="breadcrumb-section">
-	<div class="container">
+<section id="bigheadingcon">
+	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col-md-12">
-				<?php nebula_breadcrumbs(); ?>
-			</div><!--/col-->
+				<h1 class="page-title">Not Found</h1>
+				<p>The page you requested could not be found.</p>
+			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/breadcrumb-section-->
+
+	<div id="breadcrumb-section" class="full inner dark">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<?php nebula_breadcrumbs(); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div><!--/container-->
+	</div><!--/breadcrumb-section-->
+</section>
+
+<?php get_template_part('includes/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8">
 				<article id="post-0" class="post error404 not-found">
-					<h1 class="page-title">Not Found</h1>
-					<p>The page you requested could not be found.</p>
-
 					<?php echo nebula_search_form(); ?>
 
 					<?php if ( !empty($error_query) && $error_query->have_posts() ): //$error_query is defined in nebula_functions.php ?>

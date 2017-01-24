@@ -20,24 +20,26 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <section id="bigheadingcon">
-	<div class="container">
+	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col-md-12">
 				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
-			</div><!--/col-->
+			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
+
+	<div id="breadcrumb-section" class="full inner dark">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<?php nebula_breadcrumbs(); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div><!--/container-->
+	</div><!--/breadcrumb-section-->
 </section>
 
-<div id="breadcrumb-section">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<?php nebula_breadcrumbs(); ?>
-			</div><!--/col-->
-		</div><!--/row-->
-	</div><!--/container-->
-</div><!--/breadcrumb-section-->
+<?php get_template_part('includes/nebula_drawer'); ?>
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">

@@ -31,7 +31,7 @@ function nebula_register_script($handle=null, $src=null, $exec=null, $deps=array
 //Note: Not an ideal solution, but works until WP Core updates wp_enqueue_script(); to allow for deferring.
 add_filter('clean_url', 'nebula_defer_async_scripts', 11, 1);
 function nebula_defer_async_scripts($url){
-	if ( strpos($url, '.js?defer') === false && strpos($url, '.js?async') === false && strpos($url, '.js?gumby-debug') === false ){
+	if ( strpos($url, '.js?defer') === false && strpos($url, '.js?async') === false ){
 		return $url;
 	}
 
@@ -39,8 +39,6 @@ function nebula_defer_async_scripts($url){
 		return "$url' defer='defer";
 	} elseif ( strpos($url, '.js?async') ){
 		return "$url' async='async";
-	} elseif ( strpos($url, '.js?gumby-debug') ){
-		return "$url' gumby-debug='true";
 	}
 }
 

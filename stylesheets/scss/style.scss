@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.8.17
+	Version: 4.8.20u
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -37,16 +37,16 @@ ul {list-style-position: inside;
 }
 
 //Typography
-h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.15538em;
+h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.4em; margin-bottom: 0.5em;
 	a {color: $primary_color;}
 }
-h1 {font-size: 36px; font-weight: 800;}
-h2 {font-size: 28px;}
-h3 {font-size: 21px;}
-h4 {font-size: 18px;}
-h5 {font-size: 16px;}
-h6 {font-size: 14px;}
-p, li, dt, dl, div {font-size: 14px; line-height: 1.625em;}
+h1 {/* font-size: 36px;  *//* font-weight: 800; */}
+h2 {/* font-size: 28px; */}
+h3 {/* font-size: 21px; */}
+h4 {/* font-size: 18px; */}
+h5 {/* font-size: 16px; */}
+h6 {/* font-size: 14px; */}
+p, li, dt, dl, div {/* font-size: 14px; */ line-height: 1.625em;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
@@ -65,6 +65,7 @@ a {@include link-colors($primary_color, $secondary_color, $secondary_color, $pri
 }
 input[type="checkbox"]{-webkit-appearance: checkbox;}
 input[type="radio"]{-webkit-appearance: radio;}
+button {cursor: pointer;}
 
 input.nebula-search {max-width: 30px; padding: 0 6px; color: transparent; font-size: 12px; background: #eee url($template_directory + "/images/search.png") no-repeat 6px center; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
 	&:hover {background-color: #fff;}
@@ -91,7 +92,7 @@ form.nebula-search-iconable {position: relative; display: inline-block; margin: 
 		.lte-ie9 &,
 		.ie10 & {background: #eee;}
 	}
-	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 15px; height: 15px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: 14px; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 12px; height: 12px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: 14px; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
 }
 
@@ -259,30 +260,31 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	}
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
 }
-.form-identifier-nebula-hero-search {
+.form-identifier-nebula-hero-search { //Only on front-page hero search
 	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.9;}
 	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 10px; opacity: 0.6;}
 	.external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; font-size: 10px; opacity: 0.4;}
 }
 .ui-autocomplete.ui-widget-content li {position: relative;
-	&:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 23px; margin-right: 3px; text-align: center; font-size: 12px; opacity: 0.5;}
-	&.type-post:before {content: '\f1ea';}
-	&.type-page:before {content: '\f0f6';}
-	&.type-category:before {content: '\f02e';}
-	&.type-tag:before {content: '\f02b';}
-	&.type-menu-item:before {content: '\f0c9';}
-	&.type-event:before {content: '\f073';}
-	&.type-product:before {content: '\f07a';}
-	&.type-attachment:before {content: '\f1c5';}
-	&.file-zip:before {content: '\f1c6';}
-	&.type-user:before {content: '\f007';}
-	&.page-home:before {content: '\f015';}
-	&.sticky-post:before {content: '\f08d';}
+	& a:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 10px; margin-right: 5px; font-size: 10px; text-align: center; opacity: 0.5;}
+	&.type-post a:before {content: '\f1ea';}
+	&.type-page a:before {content: '\f0f6';}
+	&.type-category a:before {content: '\f02e';}
+	&.type-tag a:before {content: '\f02b';}
+	&.type-menu-item a:before {content: '\f0c9';}
+	&.type-event a:before {content: '\f073';}
+	&.type-product a:before {content: '\f07a';}
+	&.type-attachment a:before {content: '\f1c5';}
+	&.file-zip a:before {content: '\f1c6';}
+	&.type-user a:before {content: '\f007';}
+	&.page-home a:before {content: '\f015';}
+	&.sticky-post a:before {content: '\f08d';}
+
 	&.search-link {font-size: 12px; border-top: 1px dotted #ddd;
 		a {opacity: 0.7;}
 	}
-	&.more-results:before {content: '\f002';}
-	&.no-results:before {content: '\00a0';}
+	&.more-results a:before {content: '\f002';}
+	&.no-results a:before {content: '\00a0';}
 }
 
 //jQuery UI Autocomplete
@@ -297,7 +299,9 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	.ui-widget-header li.ui-state-active {margin: 0; font-weight: normal; background: $primary_color; color: #fff; border: none;}
 	.ui-state-hover a,
 	li.ui-state-focus a {@include link-colors(#fff, #fff, #fff, #fff, #fff);}
-	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 90%; @include prefix((transition: none 0.25s));}
+	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; @include prefix((transition: none 0.25s));}
+
+	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {margin: 0; border: none; background: $primary_color;}
 
 	@include mobile("landscape"){left: 0 !important; width: 100% !important;}
 }
@@ -346,14 +350,18 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		&:hover {color: #fff; @include background-color(#fff, 0.4);}
 		&.active {@include background-color(#fff, 0);}
 	}
+
 	@include media("lg"){height: 0;};
 }
 #mobilenav {visibility: hidden; height: 0;
 	&.mm-menu {visibility: visible; height: 100%;}
 }
 
-//Top row that appears at desktop sizes.
-#secondarynavcon {position: relative; max-height: 0; opacity: 0; overflow: hidden; @include background-color($dark_primary_color); z-index: 6000; @include prefix((transition: all 0.5s));
+//Includes Secondary and Primary navigation rows (which also includes the logo)
+#navigation-section {position: absolute; top: 0; left: 0; width: 100%;}
+
+//Top "eyebrow" navigation row that appears at desktop sizes.
+#secondarynavcon {position: relative; max-height: 0; opacity: 0; overflow: hidden; background: rgba(0, 0, 0, 0.5); z-index: 3; @include prefix((transition: all 0.5s));
 	#secondarynav {position: relative; z-index: 2000;
 		ul {float: right; margin: 0;
 			li.menu-item {position: relative; display: inline-block; margin-right: 25px; padding: 0 5px;
@@ -372,11 +380,12 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			}
 		}
 	}
+
 	@include media("lg"){max-height: none; min-height: 30px; opacity: 1;};
 }
 
 //Logo and primary navigation row
-#logonavcon {display: block; position: relative; width: 100%; @include background-color(#f6f6f6); padding-top: 25px; text-align: center; box-shadow: none; z-index: 8000; @include prefix((transition: all .5s easing(easeInOutCubic)));
+#logonavcon {display: block; position: relative; top: 60px; width: 100%; padding-top: 25px; text-align: center; box-shadow: none; z-index: 5; @include prefix((transition: all .5s easing(easeInOutCubic)));
 	img,
 	svg {width: 100%; height: auto; @include prefix((transition: all 0.5s));
 		path {fill: #fff;}
@@ -386,7 +395,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		@include media("lg"){margin: 0;}
 	}
 
-	@include media("md"){padding-top: 25px;};
+	@include media("lg"){top: 0;};
 }
 
 #primarynav {position: relative; display: none; z-index: 1000;
@@ -395,11 +404,12 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
 			&:last-child {margin-right: 0;}
 			.ie7 & {float: left; font-size: 14px;}
-			a {display: block; padding-bottom: 8px;}
+
+			a {display: block; font-size: 14px; margin-bottom: 8px; @include link-colors(#fff, #ccc);} //Margin-bottom to allow cursor roll into sub-menu dropdown
 			ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBackBig), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
 				.no-js & {width: 400px;}
 				li {display: block; margin: 0;
-					a {display: block; padding: 5px;
+					a {display: block; padding: 5px; margin: 0; color: $primary_color;
 						&:hover {background: $primary_color; color: #fff;}
 					}
 					ul.sub-menu {display: none;}
@@ -415,22 +425,25 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Row that contains event specific help: "Did you mean?", "Single result redirection", etc.
-#header-drawer {position: relative; @include background-color(#000, 0.05); z-index: 1000; border-top: 1px solid #ccc; border-bottom: 1px solid #fff; padding-top: 10px; padding-bottom: 15px; text-align: center; font-size: 12px;
-	&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: #fff;}
-	&:after {content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: #ccc;}
-	.close {position: absolute; top: 0; right: 5px; z-index: 500; float: none; text-shadow: none;}
+#nebula-drawer {position: relative; @include background-color(#000, 0.05); z-index: 1000; padding-top: 25px; padding-bottom: 30px;
+	.close {position: absolute; top: 0; right: 0; z-index: 500;}
+	input {width: 200px;}
 }
 
 #suggestedpage {display: none;}
 
 //Homepage Hero
 #hero-section {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url($template_directory + "/images/phg/phg-nebula.jpg") fixed center center; background-size: cover; @include prefix((transition: all 0.5s));
+	.home.page & {padding: 120px 0;
+		@include media("lg"){padding: 250px 0;};
+	}
+
 	.herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, #5B22E8, #FF2362); animation: nebulahero 60s infinite linear; opacity: 0.7; z-index: 0;}
 	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 48px; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
 		@include media("md"){font-size: 60px;};
 		@include media("lg"){font-size: 90px;};
 	}
-	h2 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 18px; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+	h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: 18px; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
 		@include media("md"){font-size: 24px;};
 		@include media("lg"){font-size: 32px;};
 	}
@@ -441,10 +454,17 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	100% {@include prefix((filter: hue-rotate(-360deg)));}
 }
 
-#bigheadingcon {padding-top: 25px; padding-bottom: 15px; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
-	h1, h2, h3, h4, h5, h6, p {color: #fff;}
-	a {color: #fff; text-decoration: underline; white-space: nowrap;
-		&:hover {color: #aaa;}
+#bigheadingcon {padding-top: 120px; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
+	.title-desc-con {margin-top: 65px; margin-bottom: 60px;
+		h1, h2, h3, h4, h5, h6 {color: #fff;}
+
+		.page-title,
+		.entry-title {font-size: 54px; font-weight: normal; margin: 0;}
+		p {color: #fff; font-size: 16px; margin-bottom: 3px;}
+
+		a {color: #fff; text-decoration: underline; white-space: nowrap;
+			&:hover {color: #aaa;}
+		}
 	}
 }
 
@@ -459,16 +479,25 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			&:after {display: none;}
 		}
 	}
-}
 
+	&.inner {border: 0; margin: 0;
+		&:after {display: none;}
+		.nebula-breadcrumbs {border: none;
+			&:after {display: none;}
+		}
+	}
+
+	&.dark {background-color: rgba(0, 0, 0, 0.5); color: #fff;
+		a {@include link-colors(#fff, #aaa); text-decoration: none;}
+	}
+}
 
 
 // ===========================
 // Content
 // ===========================
 
-
-#content-section {position: relative; margin-top: 15px;
+#content-section {position: relative; margin-top: 15px; margin-bottom: 50px;
 	@include media("sm"){margin-top: 30px;};
 }
 
@@ -489,14 +518,21 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	.post-tags {font-style: italic;}
 }
 
+//WordPress WYSIWYG Content
 .entry-content {margin-top: 10px; font-size: 14px;
 	ul {list-style-position: inside; overflow: hidden; padding-left: 20px; list-style: disc;}
 	ol {margin: 0; padding-left: 20px;}
 	img {
-		&.alignnone {margin: 0 0 12px 0;}
+		&.alignnone {margin-left: 0; margin-right: 0;}
 		&.alignleft {display: inline; margin-left: 0; margin-right: 24px;}
 		&.alignright {display: inline; margin-left: 24px; margin-right: 0;}
 		&.aligncenter {clear: both; display: block; margin-left: auto; margin-right: auto;}
+	}
+
+	//Add margin-top to entry content headings (and applicable elements)
+	p, ul, ol, dl, img, form, div, pre { //Only after these elements
+		& + h1, & + h2, & + h3, & + h4, & + h5, & + h6 {margin-top: 2.25em;}
+		& + p img {margin-top: 1.5em; margin-bottom: 1.5em;}
 	}
 }
 
@@ -605,6 +641,8 @@ a.resetfilters {font-size: 12px; color: $danger_color; opacity: 0;
 h2.articles-by {padding-top: 0;}
 .bypostauthor {}
 
+.loop-section article {margin-bottom: 50px;}
+
 //Comments
 li.comment div.comment-meta {display: block;}
 #nebulacommentswrapper {}
@@ -621,7 +659,6 @@ li.comment div.comment-meta {display: block;}
 .xoxo {padding: 0; margin: 0; list-style: none;}
 	.xoxo li.widget-container {margin: 10px 0 30px 0;
 		&:first-child {margin-top: 0;}
-		h3 {font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px;}
 	}
 
 	.xoxo ul.menu {
@@ -680,10 +717,14 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 // Footer
 // ===========================
 
-#footer-section {@include linear-gradient(to bottom, $primary_color, darken($primary_color, 15%)); @include prefix((backdrop-filter: blur(8px)));}
+#footer-section {position: relative; padding: 50px 0 150px 0; background: url($template_directory + "/images/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover;
+	@include media("lg"){padding: 100px 0 300px 0;};
 
-.twitterago {font-size: 12px; text-decoration: underline;}
+	&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, #5b22e8, #ff2362); animation: nebulahero 60s infinite linear; opacity: 0.7; z-index: 0;}
+	&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1;}
+}
 
+//Footer Widgets
 .footerwidgets {padding-top: 20px; padding-bottom: 20px; @include background-color($dark_primary_color);
 	.widget-container {list-style: none;
 		.widget-title {font-size: 16px; text-transform: uppercase; color: #fff; font-weight: 800; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
@@ -693,18 +734,23 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 	}
 }
 
+//Footer Logo
+a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
+
+//Power Footer
 .row.powerfootercon {display: none; padding-top: 20px; margin-bottom: 30px;
 	@include media("lg"){display: block;};
 
 	#powerfooter {position: relative; z-index: 1000;
-		ul {@include clearfix();
+		ul {@include clearfix(); margin-bottom: 25px; z-index: 10;
 			li.menu-item {position: relative; display: inline-block; float: left; margin: 0 5px; padding: 0 10px; width: 180px;
 				&:first-child {margin-left: 0; padding-left: 0;}
 				&:last-child {margin-right: 0; padding-right: 0;}
-				a {display: block; @include link-colors(#fff, #aaa); font-size: 16px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px dotted #fff;}
+
+				a {display: block; @include link-colors(#fff, #aaa); font-size: 21px; font-weight: 800; margin-bottom: 10px;}
 				ul.sub-menu {margin: 0; padding: 5px 0;
-					li {display: block; margin: 0; padding: 0;
-						a {display: block; @include link-colors(#fff, #aaa); font-size: 12px; font-weight: normal; text-transform: none; margin-bottom: 0; border-bottom: none;}
+					li {display: block; margin: 0 0 10px 0; padding: 0;
+						a {display: block; @include link-colors(#fff, #aaa); font-size: 16px; font-weight: normal; margin-bottom: 0;}
 						ul.sub-menu {display: none;}
 					}
 				}
@@ -713,18 +759,23 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 	}
 }
 
-
-div.copyright {padding-top: 15px; @include background-color($dark_primary_color);
-	p {font-size: 12px; color: #fff;}
-	a {@include link-colors(#fff, #ccc);}
-}
-
-a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
-
+//Footer Search
 form.footer-search,
-#footer-section form.nebula-search-iconable {display: none; float: right;
-	@include media("md"){display: inline-block;};
+#footer-section form.nebula-search-iconable {position: relative; display: block; margin: 10px auto 0 auto; width: 150px; z-index: 10;
+	@include media("md"){display: inline-block; margin: 0 0 0 10px; width: auto;};
+
+	&:before {color: rgba(255, 255, 255, 0.75); font-size: 12px;}
+	input {background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
+		&:focus {background: rgba(255, 255, 255, 0.3);}
+	}
 }
+
+//Footer Copyright
+div.copyright {position: relative; padding-top: 20px; text-align: center; color: #fff; z-index: 10;
+	p {font-size: 12px; color: #fff;}
+	a {@include link-colors(#fff, #aaa);}
+}
+
 
 /* Nebula Desktop Helper Styles */
 .disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;

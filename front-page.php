@@ -27,6 +27,8 @@ get_header(); ?>
 	</div><!--/container-->
 </div><!--/hero-section-->
 
+<?php get_template_part('includes/nebula_drawer'); ?>
+
 <div id="content-section">
 	<div class="container">
 		<div class="row">
