@@ -37,11 +37,13 @@ namespace Nebula {
 
             // Add filter hook to any query template
             foreach( $query_templates as $query_template ) {
-                add_filter( $query_template . '_template_hierarchy', array( $this, 'template_hierarchy' ));
+                add_filter( "{$query_template}_template_hierarchy", array( $this, 'template_hierarchy' ));
             }
 
-            // Add new page templates, probably a TODO to match registered post types
-            add_filter( 'theme_page_templates', array( $this, 'plugins_templates' ), 10, 4 );
+            // Add new post type templates
+            foreach ( get_post_types( '', 'names' ) as $post_type ) {
+                add_filter( "theme_{$post_type}_templates", array($this, 'plugins_templates'), 10, 4);
+            }
 
             // Search for plugin templates
             add_filter( 'template_include', array( $this, 'template_include' ) );

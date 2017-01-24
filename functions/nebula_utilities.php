@@ -1909,8 +1909,8 @@ if ( nebula_option('scss', 'enabled') ){
 		add_action('init', 'nebula_render_scss');
 	}
 
-	//Render plugins files
-	add_action( 'init', 'nebula_render_registered_scss' );
+	//Render plugins files (priority set to 99999 to run after all plugin registration)
+	add_action( 'init', 'nebula_render_registered_scss', 99999 );
 }
 function nebula_render_scss($child=false){
 	$override = apply_filters('pre_nebula_render_scss', false, $child);
