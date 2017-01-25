@@ -257,29 +257,30 @@ function nebula_theme_json(){
 	$override = apply_filters('pre_nebula_theme_json', false);
 	if ( $override !== false ){return;}
 
-	if ( nebula_option('theme_update_notification', 'enabled') ){
-		//Make sure the version number is always up-to-date in options.
-		if ( nebula_data('current_version') !== nebula_version('raw') ){
-			nebula_update_data('current_version', nebula_version('raw'));
-			nebula_update_data('current_version_date', nebula_version('date'));
-		}
+	$nebula_data = get_option('nebula_data');
 
+	//Always keep current_version up-to-date.
+	if ( strtotime($nebula_data['current_version_date'])-strtotime(nebula_version('date')) < 0 ){
+		nebula_update_data('current_version', nebula_version('raw'));
+		nebula_update_data('current_version_date', nebula_version('date'));
+	}
+
+	if ( $nebula_data['version_legacy'] === 'false' ){
 		//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 		$remote_version_info = get_option('external_theme_updates-Nebula-master');
-		if ( (strpos(nebula_version('raw'), 'u') || nebula_data('version_legacy') === 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full'))) ){
+		if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full')) ){
 			nebula_update_data('version_legacy', 'true');
 			nebula_update_data('current_version', nebula_version('raw'));
 			nebula_update_data('current_version_date', nebula_version('date'));
 			nebula_update_data('next_version', 'INCOMPATIBLE');
-			nebula_update_option('theme_update_notification', 'disabled');
-		} elseif ( current_user_can('manage_options') && is_child_theme() ){
-			//@TODO "Nebula" 0: does this need to happen every admin pageload?
-			require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
-			$theme_update_checker = new ThemeUpdateChecker(
-				'Nebula-master', //This should be the directory slug of the parent theme.
-				'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
-			);
 		}
+	} elseif ( current_user_can('manage_options') && is_child_theme() ){
+		//@TODO "Nebula" 0: does this need to happen every admin pageload? Maybe add a transient?
+		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
+		$theme_update_checker = new ThemeUpdateChecker(
+			'Nebula-master', //This should be the directory slug of the parent theme.
+			'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
+		);
 	}
 }
 
@@ -294,9 +295,9 @@ function nebula_theme_update_version_store($themeUpdate, $installedVersion){
 		nebula_update_data('version_legacy', 'true');
 	} elseif ( nebula_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
 		nebula_update_data('version_legacy', 'false');
+		nebula_update_data('theme_update_notification', 'disabled');
 	}
 }
-
 //Send an email to the current user and site admin that Nebula has been updated.
 add_action('upgrader_process_complete', 'nebula_theme_update_automation', 10, 2); //Action 'upgrader_post_install' also exists.
 function nebula_theme_update_automation($upgrader_object, $options){
@@ -633,7 +634,7 @@ function dashboard_nebula_ataglance(){
 		foreach ( get_post_types() as $post_type ){
 			//Only show post types that show_ui (unless forced with one of the arrays below)
 		    $force_show = array('wpcf7_contact_form'); //These will show even if their show_ui is false.
-		    $force_hide = array('attachment', 'acf'); //These will be skipped even if their show_ui is true.
+		    $force_hide = array('attachment', 'acf', 'deprecated_log'); //These will be skipped even if their show_ui is true.
 		    if ( (!$wp_post_types[$post_type]->show_ui && !in_array($post_type, $force_show)) || in_array($post_type, $force_hide)){
 			    continue;
 		    }

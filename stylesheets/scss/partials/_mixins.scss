@@ -32,20 +32,21 @@
 	}
 }
 
-//.element a {@include link-backgrounds(red, orange, yellow, green, blue);}
-@mixin link-backgrounds($normal, $hover: false, $active: false, $visited: false, $focus: false){
-	color: $normal;
+//.element a {@include link-bg-colors(red, orange, yellow, green, blue);}
+@mixin link-bg-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
+	background-color: $normal;
+
 	@if $visited {
-		&:visited {background: $visited;}
+		&:visited {background-color: $visited;}
 	}
 	@if $focus {
-		&:focus {background: $focus;}
+		&:focus {background-color: $focus;}
 	}
 	@if $hover {
-		&:hover {background: $hover;}
+		&:hover {background-color: $hover;}
 	}
 	@if $active {
-		&:active {background: $active;}
+		&:active {background-color: $active;}
 	}
 }
 
@@ -54,7 +55,7 @@
     background-color: $color; background-color: rgba($color, $opacity);
 }
 
-//.element {@include linear-gradient(#31B7D7, #EDAC7D);}
+//.element {@include linear-gradient(to bottom, #31B7D7, #EDAC7D);}
 //.element {@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
 @mixin linear-gradient($direction, $colors...){
 	background: nth(nth($colors, 1), 1); background: linear-gradient($direction, $colors);
@@ -62,12 +63,12 @@
 
 //.element {@include widescreen(){background: red;};}
 @mixin ultrawidescreen(){
-	@media only screen and (min-width: 1600px){& {@content}} //This size and larger
+	@media only screen and (min-width: 2048px){& {@content}} //This size and larger
 }
 
 //.element {@include widescreen(){background: red;};}
 @mixin widescreen(){
-	@media only screen and (min-width: 1200px){& {@content}} //This size and larger
+	@media only screen and (min-width: 1600px){& {@content}} //This size and larger
 }
 //.element {@include tablet(){background: red;};}
 //.element {@include tablet(landscape){background: purple;};}
@@ -95,22 +96,22 @@
 //.element {@include media(custom, "only screen and (max-width: 550px)") {background: red;};}
 @mixin media($group, $custom: ""){
 	@if $group == "ultrawidescreen" {
-		@include ultrawidescreen(){& {@content}}
+		@include ultrawidescreen(){& {@content}} //This size and larger
 	}
 	@if $group == "widescreen" {
-		@include widescreen(){& {@content}}
+		@include widescreen(){& {@content}} //This size and larger
 	}
 	@if $group == "tablet_landscape" {
-		@include tablet(landscape){& {@content}}
+		@include tablet(landscape){& {@content}} //This size and smaller
 	}
 	@if $group == "tablet" {
-		@include tablet(){& {@content}}
+		@include tablet(){& {@content}} //This size and smaller
 	}
 	@if $group == "mobile_landscape" {
-		@include mobile(landscape){& {@content}}
+		@include mobile(landscape){& {@content}} //This size and smaller
 	}
 	@if $group == "mobile" {
-		@include mobile(){& {@content}}
+		@include mobile(){& {@content}} //This size and smaller
 	}
 	@if $group == "print" {
 		@include print(){& {@content}}
@@ -130,16 +131,16 @@
 		@media (min-width: 992px){& {@content}} //This size and larger
 	}
 	@if $group == "xl" {
-		@include widescreen(){& {@content}}
+		@media (min-width: 1200px){& {@content}} //This size and larger
 	}
 
 	//Nebula Extended Viewports
 	@if $group == "xxl" {
-		@media (min-width: 1600px){& {@content}} //This size and larger
+		@include widescreen(){& {@content}} //This size and larger
 	}
 
 	@if $group == "uw" {
-		@media (min-width: 2048px){& {@content}} //This size and larger
+		@include ultrawidescreen(){& {@content}} //This size and larger
 	}
 }
 
@@ -170,7 +171,7 @@
 
 //.element {@include zoom(1.5);}
 //.element {@include zoom(0.75, center top);}
-@mixin zoom($zoom: 1, $origin: 0 0){
+@mixin zoom($scale: 1, $origin: 0 0){
 	@include prefix((transform: scale($zoom)));
 	@include prefix((transform-origin: $origin));
 	.ie8 & {zoom: $zoom;}

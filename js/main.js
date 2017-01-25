@@ -32,7 +32,7 @@ jQuery(document).ready(function(){
 
 	//Forms
 	cf7Functions();
-	cf7LiveValidator();
+	nebulaLiveValidator();
 	cf7LocalStorage();
 	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
 
@@ -135,6 +135,7 @@ function cacheSelectors(){
 		},
 		hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
 		ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+		url: /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/,
 	};
 }
 
@@ -299,6 +300,7 @@ function facebookSDK(){
 			var js, fjs = d.getElementsByTagName(s)[0];
 			if (d.getElementById(id)) return;
 			js = d.createElement(s); js.id = id;
+			js.async = true;
 			js.src = "//connect.facebook.net/en_US/all.js";
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
@@ -314,8 +316,6 @@ function facebookConnect(){
 			FB.init({
 				appId: nebula.site.options.facebook_app_id,
 				channelUrl: nebula.site.directory.template.uri + '/includes/channel.php',
-				status: true,
-				xfbml: true
 			});
 
 			jQuery(document).trigger('fbinit');
@@ -1738,81 +1738,131 @@ function cf7LocalStorage(){
     });
 }
 
-//CF7 live (soft) validator
-function cf7LiveValidator(){
-	if ( !jQuery('.wpcf7-form').length ){
+//Form live (soft) validator
+function nebulaLiveValidator(){
+	if ( !jQuery('.nebula-validate').length ){
 		return false;
 	}
 
 	//Standard text inputs
-	jQuery('.wpcf7-text').on('keyup blur', function(e){
+	jQuery('.nebula-validate-text').on('keyup blur', function(e){
 		if ( jQuery.trim(jQuery(this).val()) === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning has-success');
+			applyValidationClasses(jQuery(this), 'reset', false);
 		} else {
-			jQuery(this).parents('.form-group').removeClass('has-danger has-warning').addClass('has-success');
+			applyValidationClasses(jQuery(this), 'success', false);
 		}
 	});
 
-	//Email address inputs
-	jQuery('.wpcf7-email').on('keyup blur', function(e){
-		if ( jQuery(this).val() === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-success has-danger hsa-warning');
-		} else if ( regexPattern.email.test(jQuery(this).val()) ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
-		} else {
-			var warnDanger = ( e.type === 'keyup' )? 'has-warning' : 'has-danger';
-			jQuery(this).parents('.form-group').removeClass('has-success has-warning has-danger').addClass(warnDanger);
-		}
-	});
+	//RegEx input
+	jQuery('.nebula-validate-regex').on('keyup blur', function(e){
+		var pattern = new RegExp(jQuery(this).attr('data-valid-regex'));
 
-	//Phone number inputs
-	jQuery('.wpcf7-text.phone').on('keyup blur', function(e){
-		if ( jQuery(this).val() === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-success has-danger has-warning');
-		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
-		} else {
-			jQuery(this).parents('.form-group').removeClass('has-success').addClass('has-warning');
-		}
-	});
-
-	//Date inputs
-	jQuery('.wpcf7-text.date').on('keyup blur', function(e){
-		if ( jQuery(this).val() === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-success has-danger has-warning');
-		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
-		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
-		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-warning has-danger').addClass('has-success');
-		} else {
-			jQuery(this).parents('.form-group').removeClass('has-success').addClass('has-warning');
-		}
-	});
-
-	//Message textarea
-	jQuery('.wpcf7-textarea').on('keyup blur', function(e){
 		if ( jQuery.trim(jQuery(this).val()) === '' ){
-			jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning has-success');
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( pattern.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
 		} else {
-			if ( e.type === 'blur' ){
-				jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning').addClass('has-success');
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
 			} else {
-				jQuery(this).removeClass('wpcf7-not-valid').parents('.form-group').removeClass('has-danger has-warning has-success'); //Remove green while typing
+				applyValidationClasses(jQuery(this), 'danger', true);
 			}
 		}
 	});
 
-	//CAPTCHA
-	jQuery('.wpcf7-captchar').on('keyup blur', function(e){
-		jQuery(this).removeClass('wpcf7-not-valid');
-		if ( jQuery(this).val().length > 4 ){
-			jQuery(this).parents('.form-group').addClass('has-warning');
+	//URL inputs
+	jQuery('.nebula-validate-url').on('keyup blur', function(e){
+		if ( jQuery.trim(jQuery(this).val()) === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.url.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
 		} else {
-			jQuery(this).parents('.form-group').removeClass('has-warning');
+			applyValidationClasses(jQuery(this), 'warning', true);
 		}
 	});
+
+	//Email address inputs
+	jQuery('.nebula-validate-email').on('keyup blur', function(e){
+		if ( jQuery.trim(jQuery(this).val()) === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.email.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		}
+	});
+
+	//Phone number inputs
+	jQuery('.nebula-validate-phone').on('keyup blur', function(e){
+		if ( jQuery.trim(jQuery(this).val()) === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			applyValidationClasses(jQuery(this), 'warning', true);
+		}
+	});
+
+	//Date inputs
+	jQuery('.nebula-validate-date').on('keyup blur', function(e){
+		if ( jQuery.trim(jQuery(this).val()) === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			applyValidationClasses(jQuery(this), 'warning', false);
+		}
+	});
+
+	//Message textarea
+	jQuery('.nebula-validate-textarea').on('keyup blur', function(e){
+		if ( jQuery.trim(jQuery(this).val()) === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else {
+			if ( e.type === 'blur' ){
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while typing
+			}
+		}
+	});
+}
+
+//Apply Bootstrap appropriate validation classes to appropriate elements
+function applyValidationClasses(element, validation, showFeedback){
+	if ( typeof element === 'string' ){
+		element = jQuery(element);
+	} else if ( typeof element !== 'object' ) {
+		return false;
+	}
+
+	if ( validation === 'success' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-success')
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success');
+	} else if ( validation === 'warning' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-warning')
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning');
+	} else if ( validation === 'danger' || validation === 'error' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-danger')
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
+	} else if ( validation === 'reset' || validation === 'remove' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid')
+			.parents('.form-group').removeClass('has-danger has-warning has-success');
+	}
+
+	if ( validation === 'feedback' || showFeedback ){
+		element.parents('.form-group').find('.form-control-feedback').removeClass('hidden');
+	} else {
+		element.parents('.form-group').find('.form-control-feedback').addClass('hidden');
+	}
 }
 
 //Google AdWords conversion tracking for AJAX forms
@@ -2394,7 +2444,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
 	}
 
 	nebula.dom.document.on('click touch tap', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
-		if ( jQuery(this).hasClass('no-scroll') || jQuery(this).parents('.mm-menu, .carousel').length ){
+		if ( jQuery(this).hasClass('no-scroll') || jQuery(this).parents('.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle]').length ){
 			return false;
 		}
 
@@ -2463,7 +2513,7 @@ function get(parameter){
 	return false;
 }
 
-//Remove a parameter from the query string. //yolo
+//Remove a parameter from the query string.
 function removeQueryParameter(key, sourceURL){
     var rtn = sourceURL.split("?")[0],
         param,
