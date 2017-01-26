@@ -4,6 +4,7 @@
  *
  * @package     Nebula\Scripts
  * @since       1.0.0
+ * @author      Ruben Garcia
  */
 
 // Exit if accessed directly
