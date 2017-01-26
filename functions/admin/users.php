@@ -19,6 +19,16 @@ if( !class_exists( 'Nebula_Admin_Users' ) ) {
     class Nebula_Admin_Users {
 
         public function __construct() {
+            //Update user online status
+            add_action('init', array( $this, 'users_status_init' ) );
+            add_action('admin_init', array( $this, 'users_status_init' ) );
+
+            //Add columns to user listings
+            add_filter('manage_users_columns', array( $this, 'user_columns_head' ) );
+
+            //Custom columns content to user listings
+            add_action('manage_users_custom_column', array( $this, 'user_columns_content' ), 15, 3);
+
             /**********
              WARNING: Custom user meta fields can not have hyphens in them! Use underscores or all one word!
              *********/
@@ -38,6 +48,62 @@ if( !class_exists( 'Nebula_Admin_Users' ) ) {
             //Save the field values to the DB
             add_action('personal_options_update', array( $this, 'save_extra_profile_fields' ) );
             add_action('edit_user_profile_update', array( $this, 'save_extra_profile_fields' ) );
+        }
+
+        //Update user online status
+        public function users_status_init(){
+            if ( is_user_logged_in() ){
+                $logged_in_users = nebula_data('users_status');
+
+                $unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
+                $current_user = wp_get_current_user();
+
+                //@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
+
+                if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
+                    $logged_in_users[$current_user->ID] = array(
+                        'id' => $current_user->ID,
+                        'username' => $current_user->user_login,
+                        'last' => time(),
+                        'unique' => array($unique_id),
+                    );
+                    nebula_update_data('users_status', $logged_in_users);
+                } else {
+                    if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
+                        array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
+                        nebula_update_data('users_status', $logged_in_users);
+                    }
+                }
+            }
+        }
+
+        //Add columns to user listings
+        public function user_columns_head($defaults){
+            $defaults['company'] = 'Company';
+            $defaults['status'] = 'Status';
+            $defaults['id'] = 'ID';
+            return $defaults;
+        }
+
+        //Custom columns content to user listings
+        public function user_columns_content($value='', $column_name, $id){
+            if ( $column_name === 'company' ){
+                return get_the_author_meta('jobcompany', $id);
+            }
+            if ( $column_name === 'status' ){
+                if ( nebula_is_user_online($id) ){
+                    $online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
+                    if ( nebula_user_single_concurrent($id) > 1 ){
+                        $online_now .= '<br/><small>(<strong>' . nebula_user_single_concurrent($id) . '</strong> locations)</small>';
+                    }
+                    return $online_now;
+                } else {
+                    return ( nebula_user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula_user_last_online($id)) . '</em></small>' : '';
+                }
+            }
+            if ( $column_name === 'id' ){
+                return $id;
+            }
         }
 
         //Additional Contact Info fields
