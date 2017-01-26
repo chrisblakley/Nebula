@@ -15,7 +15,6 @@ require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
 //require_once('functions/nebula_widgets.php'); //Nebula Widgets
 require_once('functions/nebula_legacy.php'); //Nebula Legacy (to maximize backwards compatibility)
-//require_once('functions/nebula_inprogress.php'); //Nebula In Progress (Functions currently being developed. Recommended to remain commented out.)
 
 //Include functions for Wireframing and Prototyping
 if ( nebula_option('prototype_mode') ){
@@ -335,11 +334,6 @@ if ( !function_exists('fpo_component') ){ function fpo_component(){ return false
 if ( !function_exists('fpo_component_start') ){ function fpo_component_start(){ return false; } }
 if ( !function_exists('fpo_component_end') ){ function fpo_component_end(){ return false; } }
 
-/*====================================================
- Custom Theme Functions
- Add custom functions for the theme here so that /functions/* files can be easily updated with newer Nebula versions.
- =====================================================*/
-
 //$content_width is a global variable used by WordPress for max image upload sizes and media embeds (in pixels).
 //If the content area is 960px wide, set $content_width = 940; so images and videos will not overflow.
 if ( !isset($content_width) ){
@@ -360,24 +354,22 @@ function nebula_set_content_width(){
 }
 
 require_once('functions/nebula_template_engine.php');
-
 new Nebula\Template_Engine();
 
-function nebula_register_plugin( $plugin_name, $plugin_dir ) {
+function nebula_register_plugin($plugin_name, $plugin_dir){
 	global $nebula_plugins;
 
-	if ( ! is_array( $nebula_plugins ) ) {
+	if ( !is_array($nebula_plugins) ){
 		$nebula_plugins = array();
 	}
 
 	$plugin_features = array(
-		'path' =>  $plugin_dir,
-		'stylesheets' =>  is_dir( $plugin_dir . 'stylesheets' ),
-		'templates' =>  is_dir( $plugin_dir . 'templates' ),
+		'path' => $plugin_dir,
+		'stylesheets' => is_dir($plugin_dir . 'stylesheets'),
+		'templates' => is_dir($plugin_dir . 'templates'),
 	);
 
 	$nebula_plugins[$plugin_name] = $plugin_features;
-
 	return $plugin_features;
 }
 

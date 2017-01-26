@@ -1909,8 +1909,7 @@ if ( nebula_option('scss', 'enabled') ){
 		add_action('init', 'nebula_render_scss');
 	}
 
-	//Render plugins files (priority set to 99999 to run after all plugin registration)
-	add_action( 'init', 'nebula_render_registered_scss', 99999 );
+	add_action('init', 'nebula_render_registered_scss', 99999); //Render registered plugins' Sass files (priority set to 99999 to run after all plugin registration)
 }
 function nebula_render_scss($child=false){
 	$override = apply_filters('pre_nebula_render_scss', false, $child);
@@ -2024,9 +2023,10 @@ function nebula_render_scss($child=false){
 	}
 }
 
-function nebula_render_registered_scss() {
+//@TODO "Nebula" 0: Update this so that it doesn't need to be a separate function than nebula_render_scss()
+function nebula_render_registered_scss(){
 	global $nebula_plugins;
-	
+
 	$override = apply_filters('pre_nebula_render_registered_scss', false);
 	if ( $override !== false ){return $override;}
 
@@ -2037,8 +2037,8 @@ function nebula_render_registered_scss() {
 				$compile_all = true;
 			}
 
-			foreach($nebula_plugins as $nebula_plugin => $nebula_plugin_features) {
-				if ( $nebula_plugin_features['stylesheets'] && is_writable( $nebula_plugin_features['path'] . 'stylesheets' ) ) {
+			foreach ( $nebula_plugins as $nebula_plugin => $nebula_plugin_features ){
+				if ( $nebula_plugin_features['stylesheets'] && is_writable($nebula_plugin_features['path'] . 'stylesheets') ){
 
 					require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
 					$scss = new \Leafo\ScssPhp\Compiler();
@@ -2074,7 +2074,7 @@ function nebula_render_registered_scss() {
 
 					//Combine Developer Stylesheets
 					if ( nebula_option('dev_stylesheets', 'enabled') ){
-						//@TODO "Nebula" 0: Make nebula_combine_dev_stylesheets work with plugins directiories
+						//@TODO "Nebula" 0: Make nebula_combine_dev_stylesheets work with plugins directories
 						//nebula_combine_dev_stylesheets($stylesheets_directory, $stylesheets_directory_uri);
 					}
 

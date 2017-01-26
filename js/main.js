@@ -31,8 +31,8 @@ jQuery(document).ready(function(){
 	pageSuggestion();
 
 	//Forms
-	cf7Functions();
 	nebulaLiveValidator();
+	cf7Functions();
 	cf7LocalStorage();
 	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
 
@@ -128,7 +128,7 @@ function cacheSelectors(){
 	//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
 	window.regexPattern = {
 		email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, //From JS Lint: Expected ']' and instead saw '['.
-		phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/,
+		phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2}|[a-zA-Z]{3})\s*(?:[.-]\s*)?([0-9]{4}|[a-zA-Z]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/,
 		date: {
 			mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
 			ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
@@ -138,7 +138,6 @@ function cacheSelectors(){
 		url: /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/,
 	};
 }
-
 
 /*==========================
  Detection Functions
@@ -1740,24 +1739,30 @@ function cf7LocalStorage(){
 
 //Form live (soft) validator
 function nebulaLiveValidator(){
-	if ( !jQuery('.nebula-validate').length ){
+	if ( !jQuery('.nebula-validate').length ){ //@TODO "Nebula" 0: This isn't necessarily required... Maybe remove this restriction?
 		return false;
 	}
 
-	//Standard text inputs
-	jQuery('.nebula-validate-text').on('keyup blur', function(e){
-		if ( jQuery.trim(jQuery(this).val()) === '' ){
+	//Standard text inputs and select menus
+	jQuery('.nebula-validate-text, .nebula-validate-select').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
-		} else {
+		} else if ( jQuery.trim(jQuery(this).val()).length ){
 			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
 		}
 	});
 
 	//RegEx input
-	jQuery('.nebula-validate-regex').on('keyup blur', function(e){
+	jQuery('.nebula-validate-regex').on('keyup change blur', function(e){
 		var pattern = new RegExp(jQuery(this).attr('data-valid-regex'));
 
-		if ( jQuery.trim(jQuery(this).val()) === '' ){
+		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( pattern.test(jQuery(this).val()) ){
 			applyValidationClasses(jQuery(this), 'success', false);
@@ -1771,19 +1776,23 @@ function nebulaLiveValidator(){
 	});
 
 	//URL inputs
-	jQuery('.nebula-validate-url').on('keyup blur', function(e){
-		if ( jQuery.trim(jQuery(this).val()) === '' ){
+	jQuery('.nebula-validate-url').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.url.test(jQuery(this).val()) ){
 			applyValidationClasses(jQuery(this), 'success', false);
 		} else {
-			applyValidationClasses(jQuery(this), 'warning', true);
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
 		}
 	});
 
 	//Email address inputs
-	jQuery('.nebula-validate-email').on('keyup blur', function(e){
-		if ( jQuery.trim(jQuery(this).val()) === '' ){
+	jQuery('.nebula-validate-email').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.email.test(jQuery(this).val()) ){
 			applyValidationClasses(jQuery(this), 'success', false);
@@ -1797,19 +1806,23 @@ function nebulaLiveValidator(){
 	});
 
 	//Phone number inputs
-	jQuery('.nebula-validate-phone').on('keyup blur', function(e){
-		if ( jQuery.trim(jQuery(this).val()) === '' ){
+	jQuery('.nebula-validate-phone').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
 			applyValidationClasses(jQuery(this), 'success', false);
 		} else {
-			applyValidationClasses(jQuery(this), 'warning', true);
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
 		}
 	});
 
 	//Date inputs
-	jQuery('.nebula-validate-date').on('keyup blur', function(e){
-		if ( jQuery.trim(jQuery(this).val()) === '' ){
+	jQuery('.nebula-validate-date').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
 			applyValidationClasses(jQuery(this), 'success', false);
@@ -1818,20 +1831,35 @@ function nebulaLiveValidator(){
 		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
 			applyValidationClasses(jQuery(this), 'success', false);
 		} else {
-			applyValidationClasses(jQuery(this), 'warning', false);
+			applyValidationClasses(jQuery(this), 'danger', true);
 		}
 	});
 
-	//Message textarea
-	jQuery('.nebula-validate-textarea').on('keyup blur', function(e){
-		if ( jQuery.trim(jQuery(this).val()) === '' ){
+	//Textarea
+	jQuery('.nebula-validate-textarea').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
-		} else {
+		} else if ( jQuery.trim(jQuery(this).val()).length ){
 			if ( e.type === 'blur' ){
 				applyValidationClasses(jQuery(this), 'success', false);
 			} else {
-				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while typing
+				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
 			}
+		} else {
+			if ( e.type === 'blur' ){
+				applyValidationClasses(jQuery(this), 'danger', true);
+			} else {
+				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
+			}
+		}
+	});
+
+	//Checkbox and Radio
+	jQuery('.nebula-validate-checkbox, .nebula-validate-radio').on('change blur', function(e){
+		if ( jQuery(this).parents('.form-group').find('input:checked').length ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else {
+			applyValidationClasses(jQuery(this), 'danger', true);
 		}
 	});
 }
@@ -1844,13 +1872,13 @@ function applyValidationClasses(element, validation, showFeedback){
 		return false;
 	}
 
-	if ( validation === 'success' ){
+	if ( validation === 'success' || validation === 'valid' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-success')
 			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success');
 	} else if ( validation === 'warning' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-warning')
 			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning');
-	} else if ( validation === 'danger' || validation === 'error' ){
+	} else if ( validation === 'danger' || validation === 'error' || validation === 'invalid' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-danger')
 			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
 	} else if ( validation === 'reset' || validation === 'remove' ){

@@ -408,7 +408,7 @@ function nebula_customize_register($wp_customize){
     ));
 
 	//Footer text
-	$wp_customize->add_setting('nebula_footer_text', array('default'  => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula_version('full') . ', <em>all rights reserved</em>.'));
+	$wp_customize->add_setting('nebula_footer_text', array('default' => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula_version('full') . ', <em>all rights reserved</em>.'));
 	$wp_customize->add_control('nebula_footer_text', array(
 		'label' => 'Footer text',
 		'section' => 'footer',
@@ -2560,7 +2560,7 @@ function nebula_embed_oembed_html($html, $url, $attr, $post_id) {
 }
 
 //Footer Widget Counter
-function footerWidgetCounter(){
+function footer_widget_counter(){
 	$footerWidgetCount = 0;
 	if ( is_active_sidebar('First Footer Widget Area') ){
 		$footerWidgetCount++;
