@@ -175,7 +175,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                 $users_plural = 'User';
                 $users_icon = 'user';
             }
-            echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula_online_users('count') . ' currently active)</small></li>';
+            echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula()->utilities->nebula_online_users('count') . ' currently active)</small></li>';
 
             //Comments
             if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){

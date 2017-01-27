@@ -15,8 +15,28 @@ if( !class_exists( 'Nebula_Admin' ) ) {
 
     class Nebula_Admin {
 
+        /**
+         * @var         Nebula_Admin_Dashboard Nebula admin dashboard
+         * @since       1.0.0
+         */
+        public $dashboard;
+
+        /**
+         * @var         Nebula_Admin_Users Nebula admin users
+         * @since       1.0.0
+         */
+        public $users;
+
         public function __construct() {
             global $pagenow;
+
+            // Admin classes
+            require_once NEBULA_DIR . '/functions/admin/dashboard.php';
+            require_once NEBULA_DIR . '/functions/admin/users.php';
+
+            // Initialize admin classes
+            $this->dashboard = new Nebula_Admin_Dashboard();
+            $this->users = new Nebula_Admin_Users();
 
             //Force expire query transients when posts/pages are saved.
             add_action('save_post', array( $this, 'clear_transients' ) );
@@ -156,9 +176,6 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             //Internal Search Keywords Metabox and Custom Field
             add_action('load-post.php', array( $this, 'post_meta_boxes_setup' ) );
             add_action('load-post-new.php', array( $this, 'post_meta_boxes_setup' ) );
-
-            //Add Nebula admin subpages
-            add_action('admin_menu', array( $this, 'admin_sub_menu' ) );
         }
 
         //Force expire query transients when posts/pages are saved.
@@ -217,7 +234,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
         public function admin_bar_menus($wp_admin_bar){
             wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
 
-            $node_id = ( is_admin_page() )? 'view' : 'edit';
+            $node_id = ( is_admin() )? 'view' : 'edit';
             $new_content_node = $wp_admin_bar->get_node($node_id);
             if ( $new_content_node ){
                 $post_type_object = get_post_type_object(get_post_type());
@@ -534,7 +551,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
 
                 //Check if all SCSS files were processed manually.
                 if ( nebula_option('scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
-                    if ( is_dev() || is_client() ){
+                    if ( is_dev() || nebula()->utilities->is_client() ){
                         echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
                     } else {
                         echo '<div class="nebula-admin-notice error"><p>You do not have permissions to manually process all SCSS files.</p></div>';
@@ -644,7 +661,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
 
         //Check if a post slug has a number appended to it (indicating a duplicate post).
         public function unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
-            if ( current_user_can('publish_posts') && is_admin_page() && (headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ){ //Should work with AJAX and without (as long as headers have been sent)
+            if ( current_user_can('publish_posts') && is_admin() && (headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ){ //Should work with AJAX and without (as long as headers have been sent)
                 echo '<script>
                     if ( typeof nebulaUniqueSlugChecker === "function" ) {
                         nebulaUniqueSlugChecker("' . $post_type . '");
@@ -841,11 +858,6 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             } elseif ( $new_meta_value == '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
                 delete_post_meta($post_id, 'nebula_internal_search_keywords', $meta_value);
             }
-        }
-
-        //Nebula admin subpages
-        public function admin_sub_menu(){
-            add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', 'nebula_options_page'); //Nebula Options page
         }
 
     }
