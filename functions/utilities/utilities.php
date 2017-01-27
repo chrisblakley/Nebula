@@ -16,6 +16,12 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
     class Nebula_Utilities {
 
         /**
+         * @var         Nebula_Google_Analytics Nebula google analytics
+         * @since       1.0.0
+         */
+        public $google_analytics;
+
+        /**
          * @var         Nebula_Visitors Nebula visitors
          * @since       1.0.0
          */
@@ -33,48 +39,34 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
          */
         public $device_detection;
 
+        /**
+         * @var         Nebula_Sass Nebula sass
+         * @since       1.0.0
+         */
+        public $sass;
+
         public function __construct() {
             // Utilities classes
-            require_once( __DIR__ . 'visitors.php');
-            require_once( __DIR__ . 'hubspot-crm.php');
-            require_once( __DIR__ . 'device-detection.php');
+            require_once NEBULA_DIR . '/functions/utilities/google-analytics.php';
+            require_once NEBULA_DIR . '/functions/utilities/visitors.php';
+            require_once NEBULA_DIR . '/functions/utilities/hubspot-crm.php';
+            require_once NEBULA_DIR . '/functions/utilities/device-detection.php';
+            require_once NEBULA_DIR . '/functions/utilities/sass.php';
 
-            // TODO: Keep in this structure let us to make calls like nebula()->utilities->visitors->update_visitor();
-            // TODO: If you want use nebula()->visitors->update_visitor(); we need to move this to nebula.php
-
+            // Initialize utilities classes
+            $this->google_analytics = new Nebula_Google_Analytics();
             $this->visitors = new Nebula_Visitors();
             $this->hubspot_crm = new Nebula_Hubspot_CRM();
             $this->device_detection = new Nebula_Device_Detection();
+            $this->sass = new Nebula_Sass();
 
             //Used to detect if plugins are active. Enables use of is_plugin_active($plugin)
             require_once(ABSPATH . 'wp-admin/includes/plugin.php');
             require_once(ABSPATH . 'wp-admin/includes/file.php');
 
-            // TODO: Move into Nebula_Google_Analytics or Nebula_Utilities_Google_Analytics (I prefer Nebula_Google_Analytics)
-
-            //Sends events to Google Analytics via AJAX (used if GA is blocked via JavaScript)
-            add_action('wp_ajax_nebula_ga_event_ajax', array( $this, 'nebula_ga_event_ajax' ) );
-            add_action('wp_ajax_nopriv_nebula_ga_event_ajax', array( $this, 'nebula_ga_event_ajax' ) );
-
             //Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
             //Example: 'key' => 'dates_%_start_date',
             add_filter('posts_where' , array( $this, 'fuzzy_posts_where' ) );
-
-            /*==========================
-                SCSS Compiling
-             ===========================*/
-
-             // TODO: Move into Nebula_Sass or Nebula_Utilities_Sass (I prefer Nebula_Sass)
-             // TODO: Sass class needs a rewrite
-
-            if ( nebula_option('scss', 'enabled') ){
-
-                if ( is_writable(get_template_directory()) ){
-                    add_action('init', array( $this, 'render_scss' ) );
-                }
-
-                add_action('init', array( $this, 'render_registered_scss' ), 99999); //Render registered plugins' Sass files (priority set to 99999 to run after all plugin registration)
-            }
         }
 
         //Generate Session ID
@@ -97,10 +89,10 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                 $session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
             }
 
-            $session_info .= ( nebula_is_bot() )? 'bot.' : '';
+            $session_info .= ( $this->device_detection->is_bot() )? 'bot.' : '';
 
             $wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
-            $ga_cid = ga_parse_cookie();
+            $ga_cid = $this->google_analytics->parse_cookie();
 
             $site_live = '';
             if ( !is_site_live() ){
@@ -108,209 +100,6 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             }
 
             return time() . '.' . $session_info . 's:' . $wp_session_id . '.c:' . $ga_cid . $site_live;
-        }
-
-        //Handle the parsing of the _ga cookie or setting it to a unique identifier
-        public function ga_parse_cookie(){
-            $override = apply_filters('pre_ga_parse_cookie', false);
-            if ( $override !== false ){return $override;}
-
-            if ( isset($_COOKIE['_ga']) ){
-                list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
-                $contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
-                $cid = $contents['cid'];
-            } else {
-                $cid = ga_generate_UUID();
-            }
-            return $cid;
-        }
-
-        //Generate UUID v4 function (needed to generate a CID when one isn't available)
-        public function ga_generate_UUID(){
-            $override = apply_filters('pre_ga_generate_UUID', false);
-            if ( $override !== false ){return $override;}
-
-            return sprintf(
-                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-                mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
-                mt_rand(0, 0xffff), //16 bits for "time_mid"
-                mt_rand(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
-                mt_rand(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
-                mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff) //48 bits for "node"
-            );
-        }
-
-        //Generate Domain Hash
-        public function ga_generate_domain_hash($domain){
-            $override = apply_filters('pre_ga_generate_domain_hash', false, $domain);
-            if ( $override !== false ){return $override;}
-
-            if ( empty($domain) ){
-                $domain = nebula_url_components('domain');
-            }
-
-            $a = 0;
-            for ( $i = strlen($domain)-1; $i >= 0; $i-- ){
-                $ascii = ord($domain[$i]);
-                $a = (($a<<6)&268435455)+$ascii+($ascii<<14);
-                $c = $a&266338304;
-                $a = ( $c != 0 )? $a^($c>>21) : $a;
-            }
-            return $a;
-        }
-
-        //Generate the full path of a Google Analytics __utm.gif with necessary parameters.
-        //https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
-        public function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
-            $override = apply_filters('pre_ga_UTM_gif', false, $user_cookies, $user_parameters);
-            if ( $override !== false ){return $override;}
-
-            //@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
-
-            $domain = nebula_url_components('domain');
-            $cookies = array(
-                'utma' => ga_generate_domain_hash($domain) . '.' . mt_rand(1000000000, 9999999999) . '.' . time() . '.' . time() . '.' . time() . '.1', //Domain Hash . Random ID . Time of First Visit . Time of Last Visit . Time of Current Visit . Session Counter ***Absolutely Required***
-                'utmz' => ga_generate_domain_hash($domain) . '.' . time() . '.1.1.', //Campaign Data (Domain Hash . Time . Counter . Counter)
-                'utmcsr' => '-', //Campaign Source "google"
-                'utmccn' => '-', //Campaign Name "(organic)"
-                'utmcmd' => '-', //Campaign Medium "organic"
-                'utmctr' => '-', //Campaign Terms (for paid search)
-                'utmcct' => '-', //Campaign Content Description
-            );
-            $cookies = array_merge($cookies, $user_cookies);
-
-            $data = array(
-                'utmwv' => '5.3.8', //Tracking code version *** REQUIRED ***
-                'utmac' => nebula_option('ga_tracking_id'), //Account string, appears on all requests *** REQUIRED ***
-                'utmdt' => get_the_title(), //Page title, which is a URL-encoded string *** REQUIRED ***
-                'utmp' => nebula_url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
-                'utmcc' => '__utma=' . $cookies['utma'] . ';+', //Cookie values. This request parameter sends all the cookies requested from the page. *** REQUIRED ***
-
-                'utmhn' => nebula_url_components('hostname'), //Host name, which is a URL-encoded string
-                'utmn' => rand(pow(10, 10-1), pow(10, 10)-1), //Unique ID generated for each GIF request to prevent caching of the GIF image
-                'utms' => '1', //Session requests. Updates every time a __utm.gif request is made. Stops incrementing at 500 (max number of GIF requests per session).
-                'utmul' => str_replace('-', '_', get_bloginfo('language')), //Language encoding for the browser. Some browsers don’t set this, in which case it is set to '-'
-                'utmje' => '0', //Indicates if browser is Java enabled. 1 is true.
-                'utmhid' => mt_rand(1000000000, 9999999999), //A random number used to link the GA GIF request with AdSense
-                'utmr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '-', //Referral, complete URL. If none, it is set to '-'
-                'utmu' => 'q~', //This is a new parameter that contains some internal state that helps improve ga.js
-            );
-            $data = array_merge($data, $user_parameters);
-
-            //Append Campaign Data to the Cookie parameter
-            if ( !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) && !empty($cookies['utmcsr']) ){
-                $data['utmcc'] = '__utma=' . $cookies['utma'] . ';+__utmz=' . $cookies['utmz'] . 'utmcsr=' . $cookies['utmcsr'] . '|utmccn=' . $cookies['utmccn'] . '|utmcmd=' . $cookies['utmcmd'] . '|utmctr=' . $cookies['utmctr'] . '|utmcct=' . $cookies['utmcct'] . ';+';
-            }
-
-            return 'https://ssl.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
-        }
-
-        //Send Data to Google Analytics
-        //https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-        public function ga_send_data($data){
-            $override = apply_filters('pre_ga_send_data', false, $data);
-            if ( $override !== false ){return $override;}
-
-            $result = wp_remote_get('https://ssl.google-analytics.com/collect?payload_data&' . http_build_query($data));
-            return $result;
-        }
-
-        //Send Pageview Function for Server-Side Google Analytics
-        public function ga_send_pageview($hostname=null, $path=null, $title=null, $array=array()){
-            $override = apply_filters('pre_ga_send_pageview', false, $hostname, $path, $title, $array);
-            if ( $override !== false ){return $override;}
-
-            if ( empty($hostname) ){
-                $hostname = nebula_url_components('hostname');
-            }
-
-            if ( empty($path) ){
-                $path = nebula_url_components('path');
-            }
-
-            if ( empty($title) ){
-                $title = get_the_title();
-            }
-
-            //GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-            //GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
-            $data = array(
-                'v' => 1,
-                'tid' => nebula_option('ga_tracking_id'),
-                'cid' => ga_parse_cookie(),
-                't' => 'pageview',
-                'dh' => $hostname, //Document Hostname "gearside.com"
-                'dp' => $path, //Path "/something"
-                'dt' => $title, //Title
-                'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
-            );
-
-            $data = array_merge($data, $array);
-            ga_send_data($data);
-        }
-
-        //Send Event Function for Server-Side Google Analytics
-        public function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
-            $override = apply_filters('pre_ga_send_event', false, $category, $action, $label, $value, $ni, $array);
-            if ( $override !== false ){return $override;}
-
-            //GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-            //GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
-            $data = array(
-                'v' => 1,
-                'tid' => nebula_option('ga_tracking_id'),
-                'cid' => ga_parse_cookie(),
-                't' => 'event',
-                'ec' => $category, //Category (Required)
-                'ea' => $action, //Action (Required)
-                'el' => $label, //Label
-                'ev' => $value, //Value
-                'ni' => $ni, //Non-Interaction
-                'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
-                'dp' => nebula_url_components('path'),
-                'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
-            );
-
-            $data = array_merge($data, $array);
-            ga_send_data($data);
-        }
-
-        //Send custom data to Google Analytics. Must pass an array of data to this function:
-        //ga_send_custom(array('t' => 'event', 'ec' => 'Category Here', 'ea' => 'Action Here', 'el' => 'Label Here'));
-        //https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-        public function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
-            $override = apply_filters('pre_ga_send_custom', false, $array);
-            if ( $override !== false ){return $override;}
-
-            //GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-            //GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
-            $defaults = array(
-                'v' => 1,
-                'tid' => nebula_option('ga_tracking_id'),
-                'cid' => ga_parse_cookie(),
-                't' => '',
-                'ni' => 1,
-                'dh' => nebula_url_components('hostname'), //Document Hostname "gearside.com"
-                'dp' => nebula_url_components('path'),
-                'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
-            );
-
-            $data = array_merge($defaults, $array);
-
-            if ( !empty($data['t']) ){
-                ga_send_data($data);
-            } else {
-                trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
-                return;
-            }
-        }
-
-        public function nebula_ga_event_ajax(){
-            if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-            if ( !nebula_is_bot() ){ //Is this conditional preventing this from working at times?
-                ga_send_event(sanitize_text_field($_POST['data'][0]['category']), sanitize_text_field($_POST['data'][0]['action']), sanitize_text_field($_POST['data'][0]['label']), sanitize_text_field($_POST['data'][0]['value']), sanitize_text_field($_POST['data'][0]['ni']));
-            }
-            wp_die();
         }
 
         //Log Nebula-specific information
@@ -1030,357 +819,84 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             }
         }
 
-        //Render scss files
-        public function render_scss($child=false){
-            $override = apply_filters('pre_nebula_render_scss', false, $child);
-            if ( $override !== false ){return $override;}
-
-            if ( nebula_option('scss', 'enabled') ){
-                $compile_all = false;
-                if ( isset($_GET['sass']) || isset($_GET['settings-updated']) && is_staff() ){
-                    $compile_all = true;
-                }
-
-                $theme_directory = get_template_directory();
-                $theme_directory_uri = get_template_directory_uri();
-                if ( $child ){
-                    $theme_directory = get_stylesheet_directory();
-                    $theme_directory_uri = get_stylesheet_directory_uri();
-                }
-
-                $stylesheets_directory = $theme_directory . '/stylesheets';
-                $stylesheets_directory_uri = $theme_directory_uri . '/stylesheets';
-
-                require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
-                $scss = new \Leafo\ScssPhp\Compiler();
-                $scss->addImportPath($stylesheets_directory . '/scss/partials/');
-
-                if ( nebula_option('minify_css', 'enabled') && !is_debug() ){
-                    $scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
-                } else {
-                    $scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
-                    if ( is_debug() ){
-                        $scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
-                    }
-                }
-
-                //Variables
-                $scss->setVariables(array(
-                    'template_directory' => '"' . get_template_directory_uri() . '"',
-                    'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
-                    'primary_color' => get_theme_mod('nebula_primary_color', '#0098d7'), //From Customizer
-                    'secondary_color' => get_theme_mod('nebula_secondary_color', '#95d600'), //From Customizer
-                    'background_color' => get_theme_mod('nebula_background_color', '#f6f6f6'), //From Customizer
-                ));
-
-                //Partials
-                $latest_partial = 0;
-                foreach ( glob($stylesheets_directory . '/scss/partials/*') as $partial_file ){
-                    if ( filemtime($partial_file) > $latest_partial ){
-                        $latest_partial = filemtime($partial_file);
-                    }
-                }
-
-                //Combine Developer Stylesheets
-                if ( nebula_option('dev_stylesheets', 'enabled') ){
-                    nebula_combine_dev_stylesheets($stylesheets_directory, $stylesheets_directory_uri);
-                }
-
-                //Compile each SCSS file
-                foreach ( glob($stylesheets_directory . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
-                    $file_path_info = pathinfo($file);
-
-                    if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
-                        continue;
-                    }
-                    if ( $file_path_info['filename'] == 'dev' && nebula_option('dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-                        continue;
-                    }
-                    if ( !is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
-                        continue;
-                    }
-
-                    if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
-                        $css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
-                        wp_mkdir_p($stylesheets_directory . '/css'); //Create the /css directory (in case it doesn't exist already).
-
-                        //If style.css has been edited after style.scss, save backup but continue compiling SCSS
-                        if ( ($child && is_child_theme()) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
-                            copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
-                            if ( is_dev() || current_user_can('manage_options') ){
-                                global $scss_debug_ref;
-                                $scss_debug_ref = ( $child )? 'C' : 'P';
-                                $scss_debug_ref .= (nebula_data('scss_last_processed')-filemtime($css_filepath));
-                                add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
-                            }
-                        }
-
-                        if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $compile_all ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
-                            ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
-                            WP_Filesystem();
-                            global $wp_filesystem;
-                            $existing_css_contents = ( file_exists($css_filepath) )? $wp_filesystem->get_contents($css_filepath) : '';
-
-                            if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
-                                $this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
-                                $compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
-                                $enhanced_css = nebula_scss_post_compile($compiled_css); //Compile server-side variables into SCSS
-                                $wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
-                                nebula_update_data('scss_last_processed', time());
-                            }
-                        }
-                    }
-                }
-
-                if ( !$child && is_child_theme() ){ //If not in the second (child) pass, and is a child theme.
-                    nebula_render_scss(true); //Re-run on child theme stylesheets
-                }
-
-                //If SCSS has not been rendered in 1 month, disable the option.
-                if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
-                    nebula_update_option('scss', 'disabled');
-                }
-            }
-        }
-
-        //@TODO "Nebula" 0: Update this so that it doesn't need to be a separate function than nebula_render_scss()
-        public function render_registered_scss(){
-            global $nebula_plugins;
-
-            $override = apply_filters('pre_nebula_render_registered_scss', false);
-            if ( $override !== false ){return $override;}
-
-            if ( nebula_option('scss', 'enabled') ) {
-                if( is_array($nebula_plugins) && !empty($nebula_plugins) ) {
-                    $compile_all = false;
-                    if ( isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated']) && is_staff() ){
-                        $compile_all = true;
-                    }
-
-                    foreach ( $nebula_plugins as $nebula_plugin => $nebula_plugin_features ){
-                        if ( $nebula_plugin_features['stylesheets'] && is_writable($nebula_plugin_features['path'] . 'stylesheets') ){
-
-                            require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
-                            $scss = new \Leafo\ScssPhp\Compiler();
-                            $scss->addImportPath($nebula_plugin_features['path'] . 'stylesheets/scss/partials/');
-
-                            if ( nebula_option('minify_css', 'enabled') && !is_debug() ){
-                                $scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
-                            } else {
-                                $scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
-                                if ( is_debug() ){
-                                    $scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
-                                }
-                            }
-
-                            //Variables
-                            $scss->setVariables(array(
-                                'template_url' => '"' . get_template_directory_uri() . '"',
-                                'template_directory' => '"' . get_template_directory() . '"',
-                                'stylesheet_url' => '"' . get_stylesheet_directory_uri() . '"',
-                                'stylesheet_directory' => '"' . get_stylesheet_directory() . '"',
-                                'primary_color' => get_theme_mod('nebula_primary_color', '#0098d7'), //From Customizer
-                                'secondary_color' => get_theme_mod('nebula_secondary_color', '#95d600'), //From Customizer
-                                'background_color' => get_theme_mod('nebula_background_color', '#f6f6f6'), //From Customizer
-                            ));
-
-                            //Partials
-                            $latest_partial = 0;
-                            foreach ( glob($nebula_plugin_features['path'] . 'stylesheets/scss/partials/*') as $partial_file ){
-                                if ( filemtime($partial_file) > $latest_partial ){
-                                    $latest_partial = filemtime($partial_file);
-                                }
-                            }
-
-                            //Combine Developer Stylesheets
-                            if ( nebula_option('dev_stylesheets', 'enabled') ){
-                                //@TODO "Nebula" 0: Make nebula_combine_dev_stylesheets work with plugins directories
-                                //nebula_combine_dev_stylesheets($stylesheets_directory, $stylesheets_directory_uri);
-                            }
-
-                            //Compile each SCSS file
-                            foreach ( glob($nebula_plugin_features['path'] . 'stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
-                                $file_path_info = pathinfo($file);
-
-                                if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
-                                    continue;
-                                }
-                                if ( $file_path_info['filename'] == 'dev' && nebula_option('dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-                                    continue;
-                                }
-                                if ( !is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
-                                    continue;
-                                }
-
-                                if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
-                                    $css_filepath = $nebula_plugin_features['path'] . 'stylesheets/css/' . $file_path_info['filename'] . '.css'; //For plugins, all css files will come in stylesheets/css directory
-                                    wp_mkdir_p($nebula_plugin_features['path'] . 'stylesheets/css'); //Create the /css directory (in case it doesn't exist already).
-
-                                    //If style.css has been edited after style.scss, save backup but continue compiling SCSS
-                                    if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){ //@todo "Nebula" 0: Getting a lot of false positives here
-                                        copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
-                                        if ( is_dev() || current_user_can('manage_options') ){
-                                            global $scss_debug_ref;
-                                            $scss_debug_ref = 'E'; //P for Parent, C for child and E for plugin (extension)
-                                            $scss_debug_ref .= (nebula_data('scss_last_processed')-filemtime($css_filepath));
-                                            add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
-                                        }
-                                    }
-
-                                    if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $compile_all ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
-                                        ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
-                                        WP_Filesystem();
-                                        global $wp_filesystem;
-                                        $existing_css_contents = ( file_exists($css_filepath) )? $wp_filesystem->get_contents($css_filepath) : '';
-
-                                        if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
-                                            $this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
-                                            $compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
-                                            $enhanced_css = nebula_scss_post_compile($compiled_css); //Compile server-side variables into SCSS
-                                            $wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
-                                            nebula_update_data('scss_last_processed', time());
-                                        }
-                                    }
-                                }
-                            }
-
-                            //If SCSS has not been rendered in 1 month, disable the option.
-                            if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
-                                nebula_update_option('scss', 'disabled');
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //Log Sass .bak note in the browser console
-        public function scss_console_warning(){
-            global $scss_debug_ref;
-            echo '<script>console.warn("Warning: Sass compiling is enabled, but it appears that style.css has been manually updated (Reference: ' . $scss_debug_ref . 's)! A style.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
-        }
-
-        //Combine developer stylesheets
-        public function combine_dev_stylesheets($directory=null, $directory_uri=null){
-            $override = apply_filters('pre_nebula_combine_dev_stylesheets', false, $directory, $directory_uri);
-            if ( $override !== false ){return $override;}
-
-            if ( empty($directory) ){
-                $directory = get_template_directory() . '/stylesheets';
-                $directory_uri = get_template_directory_uri() . "/stylesheets";
-            }
-
-            WP_Filesystem();
-            global $wp_filesystem;
-
-            $file_counter = 0;
-            $automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
-            $dev_stylesheet_files = glob($directory . '/scss/dev/*css');
-            $dev_scss_file = $directory . '/scss/dev.scss';
-
-            if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
-                $wp_filesystem->put_contents($directory . '/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
-            }
-            foreach ( $dev_stylesheet_files as $file ){
-                $file_path_info = pathinfo($file);
-                if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
-                    $file_counter++;
-
-                    //Include partials in dev.scss
-                    if ( $file_counter == 1 ){
-                        $import_partials = '';
-                        $import_partials .= "@import '../../../../Nebula-master/stylesheets/scss/partials/variables';\r\n";
-                        $import_partials .= "@import '../partials/variables';\r\n";
-                        $import_partials .= "@import '../../../../Nebula-master/stylesheets/scss/partials/mixins';\r\n";
-                        $import_partials .= "@import '../../../../Nebula-master/stylesheets/scss/partials/helpers';\r\n";
-
-                        $wp_filesystem->put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
-                    }
-
-                    $this_scss_contents = $wp_filesystem->get_contents($file); //Copy file contents
-                    $empty_scss = ( $this_scss_contents == '' )? ' (empty)' : '';
-                    $dev_scss_contents = $wp_filesystem->get_contents($directory . '/scss/dev.scss');
-
-                    $dev_scss_contents .= "\r\n\r\n\r\n/*! ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . $directory_uri . "/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
-
-                    $wp_filesystem->put_contents($directory . '/scss/dev.scss', $dev_scss_contents);
-                }
-            }
-            if ( $file_counter > 0 ){
-                add_action('wp_enqueue_scripts', function(){
-                    wp_enqueue_style('nebula-dev_styles-parent', get_template_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
-                    wp_enqueue_style('nebula-dev_styles-child', get_stylesheet_directory_uri() . '/stylesheets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
-                });
-            }
-        }
-
-        //Compile server-side variables into SCSS
-        public function scss_post_compile($scss){
-            $override = apply_filters('pre_nebula_scss_post_compile', false, $scss);
-            if ( $override !== false ){return $override;}
-
-            $scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
-            $scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
-            do_action('nebula_scss_post_compile');
-            $scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
-            nebula_update_data('scss_last_processed', time());
-
-            return $scss;
-        }
-
-        //Pull certain colors from .../mixins/_variables.scss
-        public function sass_color($color='primary', $theme='child'){
-            $override = apply_filters('pre_nebula_sass_color', false, $color, $theme);
-            if ( $override !== false ){return $override;}
-
-            if ( is_child_theme() && $theme == 'child' ){
-                $stylesheets_directory = get_stylesheet_directory() . '/stylesheets';
-                $transient_name = 'nebula_scss_child_variables';
-            } else {
-                $stylesheets_directory = get_template_directory() . '/stylesheets';
-                $transient_name = 'nebula_scss_variables';
-            }
-
-            $scss_variables = get_transient($transient_name);
-            if ( empty($scss_variables) || is_debug() ){
-                $variables_file = $stylesheets_directory . '/scss/partials/_variables.scss';
-                if ( !file_exists($variables_file) ){
-                    return false;
-                }
-
-                WP_Filesystem();
-                global $wp_filesystem;
-                $scss_variables = $wp_filesystem->get_contents($variables_file);
-                set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
-            }
-
-            switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){
-                case 'primary':
-                case 'primarycolor':
-                case 'first':
-                case 'main':
-                case 'brand':
-                    $color_search = 'primary_color';
-                    break;
-                case 'secondary':
-                case 'secondarycolor':
-                case 'second':
-                    $color_search = 'secondary_color';
-                    break;
-                case 'tertiary':
-                case 'tertiarycolor':
-                case 'third':
-                    $color_search = 'tertiary_color';
-                    break;
-                default:
-                    return false;
-                    break;
-            }
-
-            preg_match('/\$' . $color_search . ': (\S*)(;| !default;)/', $scss_variables, $matches);
-            return $matches[1];
-        }
-
     }
 
 }// End if class_exists check
+
+//Get Nebula version information
+function nebula_version($return=false){
+    return nebula()->utilities->nebula_version( $return );
+}
+
+//Generate Session ID
+function nebula_session_id(){
+    nebula()->utilities->nebula_session_id();
+}
+
+//Check if a website or resource is available
+function nebula_is_available($url=null, $nocache=false){
+    return nebula()->utilities->nebula_is_available($url, $nocache);
+}
+
+//Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
+function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
+    return nebula()->utilities->requested_url($host="HTTP_HOST");
+}
+
+//Separate a URL into it's components.
+function nebula_url_components($segment="all", $url=null){
+    return nebula()->utilities->url_components($segment, $url);
+}
+
+//Check if a user has been online in the last 10 minutes
+function nebula_is_user_online($id){
+    return nebula()->utilities->nebula_is_user_online($id);
+}
+
+//Check when a user was last online.
+function nebula_user_last_online($id){
+    return nebula()->utilities->nebula_user_last_online($id);
+}
+
+//Get a count of online users, or an array of online user IDs.
+function nebula_online_users($return='count'){
+    return nebula()->utilities->nebula_online_users($return);
+}
+
+//Check how many locations a single user is logged in from.
+function nebula_user_single_concurrent($id){
+    return nebula()->utilities->nebula_user_single_concurrent($id);
+}
+
+//Check if the current IP address matches any of the dev IP address from Nebula Options
+//Passing $strict bypasses IP check, so user must be a dev and logged in.
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_dev($strict=false){
+    return nebula()->utilities->is_dev($strict);
+}
+
+//Check if the current IP address matches any of the client IP address from Nebula Options
+//Passing $strict bypasses IP check, so user must be a client and logged in.
+//Note: This should not be used for security purposes since IP addresses can be spoofed.
+function is_client($strict=false){
+    return nebula()->utilities->is_client($strict);
+}
+
+//Check if the current IP address or logged-in user is a developer or client.
+//Note: This does not account for user role (An admin could return false here). Check role separately.
+function is_staff($strict=false){
+    return nebula()->utilities->is_staff($strict);
+}
+
+//Check if user is using the debug query string.
+//$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
+function is_debug($strict=false){
+    return nebula()->utilities->is_debug($strict);
+}
+
+//Check if the current site is live to the public.
+//Note: This checks if the hostname of the home URL matches any of the valid hostnames.
+//If the Valid Hostnames option is empty, this will return true as it is unknown.
+function is_site_live(){
+    return nebula()->utilities->is_site_live();
+}

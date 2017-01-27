@@ -119,7 +119,7 @@ if( !class_exists( 'Nebula_Security' ) ) {
 
             if ( !nebula_is_bot() ){
                 $incorrect_username = '';
-                if ( contains($error, array('The password you entered for the username')) ){
+                if ( nebula()->utilities->contains($error, array('The password you entered for the username')) ){
                     $incorrect_username_start = strpos($error, 'for the username ')+17;
                     $incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
                     $incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
@@ -186,28 +186,28 @@ if( !class_exists( 'Nebula_Security' ) ) {
                 $blacklisted_domains = $this->get_domain_blacklist();
 
                 if ( count($blacklisted_domains) > 1 ){
-                    if ( isset($_SERVER['HTTP_REFERER']) && contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
+                    if ( isset($_SERVER['HTTP_REFERER']) && nebula()->utilities->contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
                         ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
                         do_action('nebula_spambot_prevention');
                         header('HTTP/1.1 403 Forbidden');
                         die;
                     }
 
-                    if ( isset($_SERVER['REMOTE_HOST']) && contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
+                    if ( isset($_SERVER['REMOTE_HOST']) && nebula()->utilities->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
                         ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
                         do_action('nebula_spambot_prevention');
                         header('HTTP/1.1 403 Forbidden');
                         die;
                     }
 
-                    if ( isset($_SERVER['SERVER_NAME']) && contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
+                    if ( isset($_SERVER['SERVER_NAME']) && nebula()->utilities->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
                         ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
                         do_action('nebula_spambot_prevention');
                         header('HTTP/1.1 403 Forbidden');
                         die;
                     }
 
-                    if ( isset($_SERVER['REMOTE_ADDR']) && contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
+                    if ( isset($_SERVER['REMOTE_ADDR']) && nebula()->utilities->contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
                         ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
                         do_action('nebula_spambot_prevention');
                         header('HTTP/1.1 403 Forbidden');

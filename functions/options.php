@@ -17,7 +17,10 @@ if( !class_exists( 'Nebula_Options' ) ) {
 
         public function __construct() {
             //Register all Nebula Options
-            add_action('current_screen', 'register_options');
+            add_action('current_screen', array( $this, 'register_options' ) );
+
+            //Add Nebula admin subpages
+            add_action('admin_menu', array( $this, 'admin_sub_menu' ) );
 
         }
 
@@ -326,9 +329,13 @@ if( !class_exists( 'Nebula_Options' ) ) {
             }
         }
 
+        //Nebula admin subpages
+        public function admin_sub_menu(){
+            add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', array( $this, 'options_page' ) ); //Nebula Options page
+        }
+
         //Output the options page
         //This is called from nebula_admin.php
-        // TODO: The sub-menu item should be called here!!
         public function options_page(){
             ?>
             <script>

@@ -44,7 +44,7 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             if ( nebula_option('google_font_url') ){
                 wp_register_style('nebula-google_font', nebula_option('google_font_url'), array(), null, 'all');
             }
-            nebula_bootrap_version('css');
+            nebula_bootstrap_version('css');
             wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
             wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.7.8/css/jquery.mmenu.all.css', null, '5.7.8', 'all');
             wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/jquery.dataTables.min.css', null, '1.10.13', 'all'); //Datatables is called via main.js only as needed.
@@ -57,7 +57,7 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             // Scripts
             //Use CDNJS to pull common libraries: http://cdnjs.com/
             //nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-            nebula_bootrap_version('js');
+            nebula_bootstrap_version('js');
             nebula_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/js/libs/modernizr.dev.js', 'defer', null, '3.3.1', false);
             nebula_register_script('nebula-modernizr_local', get_template_directory_uri() . '/js/libs/modernizr.min.js', 'defer', null, '3.3.1', false);
             nebula_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
@@ -166,29 +166,29 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             //User Data
             $this->script_parameters['user'] = array(
                 'ip' => $_SERVER['REMOTE_ADDR'],
-                'nid' => get_nebula_id(),
-                'cid' => ga_parse_cookie(),
+                'nid' => nebula()->utilities->visitors->get_nebula_id(),
+                'cid' => nebula()->utilities->google_analytics->parse_cookie(),
                 'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
-                    'bot' => nebula_is_bot(),
+                    'bot' => nebula()->utilities->device_detection->is_bot(),
                     'remote_addr' => $_SERVER['REMOTE_ADDR'],
                     'device' => array(
-                        'full' => nebula_get_device('full'),
-                        'formfactor' => nebula_get_device('formfactor'),
-                        'brand' => nebula_get_device('brand'),
-                        'model' => nebula_get_device('model'),
-                        'type' => nebula_get_device('type'),
+                        'full' => nebula()->utilities->device_detection->get_device('full'),
+                        'formfactor' => nebula()->utilities->device_detection->get_device('formfactor'),
+                        'brand' => nebula()->utilities->device_detection->get_device('brand'),
+                        'model' => nebula()->utilities->device_detection->get_device('model'),
+                        'type' => nebula()->utilities->device_detection->get_device('type'),
                     ),
                     'os' => array(
-                        'full' => nebula_get_os('full'),
-                        'name' => nebula_get_os('name'),
-                        'version' => nebula_get_os('version'),
+                        'full' => nebula()->utilities->device_detection->get_os('full'),
+                        'name' => nebula()->utilities->device_detection->get_os('name'),
+                        'version' => nebula()->utilities->device_detection->get_os('version'),
                     ),
                     'browser' => array(
-                        'full' => nebula_get_browser('full'),
-                        'name' => nebula_get_browser('name'),
-                        'version' => nebula_get_browser('version'),
-                        'engine' => nebula_get_browser('engine'),
-                        'type' => nebula_get_browser('type'),
+                        'full' => nebula()->utilities->device_detection->get_browser('full'),
+                        'name' => nebula()->utilities->device_detection->get_browser('name'),
+                        'version' => nebula()->utilities->device_detection->get_browser('version'),
+                        'engine' => nebula()->utilities->device_detection->get_browser('engine'),
+                        'type' => nebula()->utilities->device_detection->get_browser('type'),
                     ),
                 ),
             );

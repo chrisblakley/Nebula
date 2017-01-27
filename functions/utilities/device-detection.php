@@ -371,7 +371,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
                         break;
                 }
 
-                $actual_engine = $GLOBALS["device_detect"]->getClient();
+                $actual_browser = $GLOBALS["device_detect"]->getClient();
                 if ( strpos(strtolower($actual_browser['engine']), strtolower($engine)) !== false ){
                     return true;
                 }

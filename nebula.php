@@ -57,6 +57,18 @@ if( !class_exists( 'Nebula' ) ) {
         public $optimization;
 
         /**
+         * @var         Nebula_Options Nebula options
+         * @since       1.0.0
+         */
+        public $options;
+
+        /**
+         * @var         Nebula_Prototyping Nebula prototyping
+         * @since       1.0.0
+         */
+        public $prototyping;
+
+        /**
          * @var         Nebula_Scripts Nebula scripts
          * @since       1.0.0
          */
@@ -79,6 +91,12 @@ if( !class_exists( 'Nebula' ) ) {
          * @since       1.0.0
          */
         public $template_engine;
+
+        /**
+         * @var         Nebula_Utilities Nebula utilities
+         * @since       1.0.0
+         */
+        public $utilities;
 
         /**
          * @var         array Registered plugins
@@ -136,18 +154,22 @@ if( !class_exists( 'Nebula' ) ) {
         private function includes() {
             // Includes classes
             // TODO: Folder should be includes
-            require_once NEBULA_DIR . '/functions/nebula_options.php';
-            require_once NEBULA_DIR . '/functions/nebula_utilities.php';
-            require_once NEBULA_DIR . '/functions/nebula_legacy.php';
-            require_once NEBULA_DIR . '/functions/admin.php';
+            require_once NEBULA_DIR . '/functions/admin/admin.php';
             require_once NEBULA_DIR . '/functions/automation.php';
             require_once NEBULA_DIR . '/functions/ecommerce.php';
             require_once NEBULA_DIR . '/functions/functions.php';
             require_once NEBULA_DIR . '/functions/optimization.php';
+            require_once NEBULA_DIR . '/functions/options.php';
+            require_once NEBULA_DIR . '/functions/prototyping.php';
             require_once NEBULA_DIR . '/functions/scripts.php';
             require_once NEBULA_DIR . '/functions/security.php';
             require_once NEBULA_DIR . '/functions/shortcodes.php';
-            require_once NEBULA_DIR . '/functions/template_engine.php';
+            require_once NEBULA_DIR . '/functions/template-engine.php';
+            require_once NEBULA_DIR . '/functions/template-functions.php';
+            require_once NEBULA_DIR . '/functions/utilities/utilities.php';
+
+            // Compatibility backwards
+            require_once NEBULA_DIR . '/functions/legacy.php';
         }
 
         /**
@@ -168,11 +190,14 @@ if( !class_exists( 'Nebula' ) ) {
 
             self::$instance->plugins = array();
 
+            self::$instance->options = new Nebula_Options();
+            self::$instance->utilities = new Nebula_Utilities();
+
             // Initialize classes
-            if ( is_admin_page() || is_admin_bar_showing() ) {
+            if ( is_admin() || is_admin_bar_showing() ) {
                 self::$instance->admin = new Nebula_Admin();
             }
-            if ( is_admin_page() ) {
+            if ( is_admin() ) {
                 self::$instance->automation = new Nebula_Automation();
             }
             //Include functions for ecommerce websites
@@ -181,6 +206,8 @@ if( !class_exists( 'Nebula' ) ) {
             }
             self::$instance->functions = new Nebula_Functions();
             self::$instance->optimization = new Nebula_Optimization();
+
+            self::$instance->prototyping = new Nebula_Prototyping();
             self::$instance->scripts = new Nebula_Scripts();
             self::$instance->security = new Nebula_Security();
             self::$instance->shortcodes = new Nebula_Shortcodes();
@@ -252,6 +279,7 @@ if( !class_exists( 'Nebula' ) ) {
 function nebula() {
     return Nebula::instance();
 }
+add_action( 'init', 'nebula', 1 );
 
 function nebula_register_plugin( $plugin_name, $plugin_dir ) {
     nebula()->register_plugin( $plugin_name, $plugin_dir );
