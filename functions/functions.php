@@ -1236,27 +1236,27 @@ if( !class_exists( 'Nebula_Functions' ) ) {
             $underscores_and_hyphens = array('_', '-');
 
             //Device
-            $classes[] = strtolower(nebula_get_device('formfactor')); //Form factor (desktop, tablet, mobile)
-            $classes[] = strtolower(nebula_get_device('full')); //Device make and model
-            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('full'))); //Operating System name with version
-            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('name'))); //Operating System name
-            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('full'))); //Browser name and version
-            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
-            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
+            $classes[] = strtolower(nebula()->utilities->device_detection->get_device('formfactor')); //Form factor (desktop, tablet, mobile)
+            $classes[] = strtolower(nebula()->utilities->device_detection->get_device('full')); //Device make and model
+            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_os('full'))); //Operating System name with version
+            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_os('name'))); //Operating System name
+            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_browser('full'))); //Browser name and version
+            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_browser('name'))); //Browser name
+            $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_browser('engine'))); //Rendering engine
 
             //When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
-            if ( nebula_get_browser('name') == 'Chrome Mobile' ){
+            if ( nebula()->utilities->device_detection->get_browser('name') == 'Chrome Mobile' ){
                 $classes[] = 'chrome';
             }
 
             //IE versions outside conditional comments
-            if ( nebula_is_browser('ie') ){
-                if ( nebula_is_browser('ie', '10') ){
+            if ( nebula()->utilities->device_detection->is_browser('ie') ){
+                if ( nebula()->utilities->device_detection->is_browser('ie', '10') ){
                     $classes[] = 'ie';
                     $classes[] = 'ie10';
                     $classes[] = 'lte-ie10';
                     $classes[] = 'lt-ie11';
-                } elseif ( nebula_is_browser('ie', '11') ){
+                } elseif ( nebula()->utilities->device_detection->is_browser('ie', '11') ){
                     $classes[] = 'ie';
                     $classes[] = 'ie11';
                     $classes[] = 'lte-ie11';
