@@ -265,7 +265,7 @@ function nebula_excerpt($options=array()){
 
     //Length
     if ( !empty($data['length']) && is_int($data['length']) ){
-        $limited = string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
+        $limited = nebula()->utilities->string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
         $data['text'] = $limited['text'];
     }
 
@@ -724,56 +724,56 @@ function nebula_relative_time($format=null){
     $override = apply_filters('pre_nebula_relative_time', false, $format);
     if ( $override !== false ){return $override;}
 
-    if ( contains(date('H'), array('00', '01', '02')) ){
+    if ( nebula()->utilities->contains(date('H'), array('00', '01', '02')) ){
         $relative_time = array(
             'description' => array('early', 'night'),
             'standard' => array(0, 1, 2),
             'military' => array(0, 1, 2),
             'ampm' => 'am'
         );
-    } elseif ( contains(date('H'), array('03', '04', '05')) ){
+    } elseif ( nebula()->utilities->contains(date('H'), array('03', '04', '05')) ){
         $relative_time = array(
             'description' => array('late', 'night'),
             'standard' => array(3, 4, 5),
             'military' => array(3, 4, 5),
             'ampm' => 'am'
         );
-    } elseif ( contains(date('H'), array('06', '07', '08')) ){
+    } elseif ( nebula()->utilities->contains(date('H'), array('06', '07', '08')) ){
         $relative_time = array(
             'description' => array('early', 'morning'),
             'standard' => array(6, 7, 8),
             'military' => array(6, 7, 8),
             'ampm' => 'am'
         );
-    } elseif ( contains(date('H'), array('09', '10', '11')) ){
+    } elseif ( nebula()->utilities->contains(date('H'), array('09', '10', '11')) ){
         $relative_time = array(
             'description' => array('late', 'morning'),
             'standard' => array(9, 10, 11),
             'military' => array(9, 10, 11),
             'ampm' => 'am'
         );
-    } elseif ( contains(date('H'), array('12', '13', '14')) ){
+    } elseif ( nebula()->utilities->contains(date('H'), array('12', '13', '14')) ){
         $relative_time = array(
             'description' => array('early', 'afternoon'),
             'standard' => array(12, 1, 2),
             'military' => array(12, 13, 14),
             'ampm' => 'pm'
         );
-    } elseif ( contains(date('H'), array('15', '16', '17')) ){
+    } elseif ( nebula()->utilities->contains(date('H'), array('15', '16', '17')) ){
         $relative_time = array(
             'description' => array('late', 'afternoon'),
             'standard' => array(3, 4, 5),
             'military' => array(15, 16, 17),
             'ampm' => 'pm'
         );
-    } elseif ( contains(date('H'), array('18', '19', '20')) ){
+    } elseif ( nebula()->utilities->contains(date('H'), array('18', '19', '20')) ){
         $relative_time = array(
             'description' => array('early', 'evening'),
             'standard' => array(6, 7, 8),
             'military' => array(18, 19, 20),
             'ampm' => 'pm'
         );
-    } elseif ( contains(date('H'), array('21', '22', '23')) ){
+    } elseif ( nebula()->utilities->contains(date('H'), array('21', '22', '23')) ){
         $relative_time = array(
             'description' => array('late', 'evening'),
             'standard' => array(9, 10, 11),
