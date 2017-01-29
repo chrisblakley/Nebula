@@ -3,6 +3,10 @@
  * Functions
  */
 
+//Uncomment these two lines and remove all code below to enable OOP testing.
+//require_once('nebula.php');
+//nebula();
+
 /*==========================
  Include Nebula Functions
  ===========================*/
