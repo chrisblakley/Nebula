@@ -18,14 +18,14 @@
 		<meta name="MobileOptimized" content="320" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta class="theme-color" name="theme-color" content="<?php echo nebula_sass_color('primary'); ?>">
-		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula_sass_color('primary'); ?>">
-		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula_sass_color('primary'); ?>">
+		<meta class="theme-color" name="theme-color" content="<?php echo nebula()->utilities->sass->sass_color('primary'); ?>">
+		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula()->utilities->sass->sass_color('primary'); ?>">
+		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula()->utilities->sass->sass_color('primary'); ?>">
 		<?php get_template_part('includes/metadata'); ?>
 
-		<link rel="manifest" href="<?php echo nebula_manifest_json_location(); ?>" />
+		<link rel="manifest" href="<?php echo nebula()->functions->manifest_json_location(); ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
-		<?php nebula_prerender(); ?>
+		<?php nebula()->functions->prerender(); ?>
 		<?php wp_head(); ?>
 		<?php get_template_part('includes/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>
