@@ -78,15 +78,15 @@
 <link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
 
-<?php if ( nebula_get_browser('name') == 'Safari' ): //Safari ?>
+<?php if ( nebula()->utilities->device_detection->get_browser('name') == 'Safari' ): //Safari ?>
 	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula_sass_color('primary'); ?>" />
 <?php endif; ?>
 
-<?php if ( nebula_get_os('name') == 'iOS' ): //Apple iOS ?>
+<?php if ( nebula()->utilities->device_detection->get_os('name') == 'iOS' ): //Apple iOS ?>
 	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
 
-<?php if ( nebula_get_os('name') == 'Android' ): //Android/Chrome ?>
+<?php if ( nebula()->utilities->device_detection->get_os('name') == 'Android' ): //Android/Chrome ?>
 <link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
 
@@ -128,7 +128,7 @@
 	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $post->post_author); ?>" />
 <?php endif; ?>
 
-<?php if ( nebula_get_os('name') == 'Windows' ): //Windows Tiles ?>
+<?php if ( nebula()->utilities->device_detection->get_os('name') == 'Windows' ): //Windows Tiles ?>
 	<meta name="application-name" content="<?php echo get_bloginfo('name') ?>" />
 	<meta name="msapplication-TileColor" content="#0098d7" />
 	<meta name="msapplication-square70x70logo" content="<?php echo $image_meta_directory; ?>/mstile-70x70.png<?php echo $cache_query; ?>" />
