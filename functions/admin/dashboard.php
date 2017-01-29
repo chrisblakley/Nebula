@@ -549,7 +549,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                 $todo_dirpath = get_template_directory();
             }
 
-            foreach ( glob_r($todo_dirpath . '/*') as $todo_file ){
+            foreach ( nebula()->utilities->glob_r($todo_dirpath . '/*') as $todo_file ){
                 $todo_counted = false;
                 if ( is_file($todo_file) ){
                     if ( strpos(basename($todo_file), '@todo') !== false ){
@@ -559,7 +559,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                     }
 
                     $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs', 'examples/');
-                    if ( !contains(basename($todo_file), $this->skip_extensions()) && !contains($todo_file, $todo_skipFilenames) ){
+                    if ( !nebula()->utilities->contains(basename($todo_file), $this->skip_extensions()) && !nebula()->utilities->contains($todo_file, $todo_skipFilenames) ){
                         foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
                             if ( stripos($todo_line, '@TODO') !== false ){
                                 $theme = '';
@@ -676,7 +676,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             $php_version_color = 'inherit';
             $php_version_info = '';
             $php_version_cursor = 'normal';
-            $php_version_lifecycle = nebula_php_version_support();
+            $php_version_lifecycle = nebula()->admin->php_version_support(); //yolo
             if ( $php_version_lifecycle['lifecycle'] === 'security' ){
                 $php_version_color = '#ca8038';
                 $php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['security']) . '.';
@@ -702,13 +702,13 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             if ( is_child_theme() ){
                 $nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
                 if ( empty($nebula_parent_size) || is_debug() ){
-                    $nebula_parent_size = foldersize(get_template_directory());
+                    $nebula_parent_size = nebula()->utilities->foldersize(get_template_directory());
                     set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, 60*60*12); //12 hour cache
                 }
 
                 $nebula_child_size = get_transient('nebula_directory_size_child_theme');
                 if ( empty($nebula_child_size) || is_debug() ){
-                    $nebula_child_size = foldersize(get_template_directory());
+                    $nebula_child_size = nebula()->utilities->foldersize(get_template_directory());
                     set_transient('nebula_directory_size_child_theme', $nebula_child_size, 60*60*12); //12 hour cache
                 }
 
@@ -722,7 +722,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             } else {
                 $nebula_size = get_transient('nebula_directory_size_theme');
                 if ( empty($nebula_size) || is_debug() ){
-                    $nebula_size = foldersize(get_stylesheet_directory());
+                    $nebula_size = nebula()->utilities->foldersize(get_stylesheet_directory());
                     set_transient('nebula_directory_size_theme', $nebula_size, 60*60*12); //12 hour cache
                 }
                 echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
@@ -730,12 +730,12 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
 
             if ( nebula_option('prototype_mode', 'enabled') ){
                 if ( nebula_option('wireframe_theme') ){
-                    $nebula_wireframe_size = foldersize(get_theme_root() . '/' . nebula_option('wireframe_theme'));
+                    $nebula_wireframe_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula_option('wireframe_theme'));
                     echo '<li title="' . nebula_option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
                 }
 
                 if ( nebula_option('staging_theme') ){
-                    $nebula_staging_size = foldersize(get_theme_root() . '/' . nebula_option('staging_theme'));
+                    $nebula_staging_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula_option('staging_theme'));
                     echo '<li title="' . nebula_option('staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
                 }
             }
@@ -744,7 +744,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             $upload_dir = wp_upload_dir();
             $uploads_size = get_transient('nebula_directory_size_uploads');
             if ( empty($uploads_size) || is_debug() ){
-                $uploads_size = foldersize($upload_dir['basedir']);
+                $uploads_size = nebula()->utilities->foldersize($upload_dir['basedir']);
                 set_transient('nebula_directory_size_uploads', $uploads_size, 60*60*24); //24 hour cache
             }
 
@@ -840,13 +840,13 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             if ( empty($directory) ){
                 $directory = get_template_directory();
             }
-            $dir = glob_r($directory . '/*');
+            $dir = nebula()->utilities->glob_r($directory . '/*');
             $skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
 
             foreach ( $dir as $file ){
                 if ( is_file($file) ){
                     $mod_date = filemtime($file);
-                    if ( $mod_date > $last_date && !contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
+                    if ( $mod_date > $last_date && !nebula()->utilities->contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
                         $latest_file['date'] = $mod_date;
                         $latest_file['file'] = basename($file);
 
