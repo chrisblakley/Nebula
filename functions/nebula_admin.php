@@ -114,51 +114,53 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 
-		//Ancestor pages
-		$ancestors = get_post_ancestors(get_the_id());
-		if ( !empty($ancestors) ){
-			$wp_admin_bar->add_node(array(
-				'parent' => $node_id,
-				'id' => 'nebula-ancestors',
-				'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-up" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
-			));
-
-			foreach ( $ancestors as $parent ){
+		if ( !empty($post_type_object) ){
+			//Ancestor pages
+			$ancestors = get_post_ancestors(get_the_id());
+			if ( !empty($ancestors) ){
 				$wp_admin_bar->add_node(array(
-					'parent' => 'nebula-ancestors',
-					'id' => 'nebula-parent-' . $parent,
-					'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title($parent),
-					'href' => get_permalink($parent),
+					'parent' => $node_id,
+					'id' => 'nebula-ancestors',
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-up" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
 				));
-			}
-		}
 
-		//Children pages
-		$child_pages = new WP_Query(array(
-			'post_type' => $post_type_object->labels->singular_name,
-			'posts_per_page' => -1,
-			'post_parent' => get_the_id(),
-			'order' => 'ASC',
-			'orderby' => 'menu_order'
-		));
-		if ( $child_pages->have_posts() ){
-			$wp_admin_bar->add_node(array(
-				'parent' => $node_id,
-				'id' => 'nebula-children',
-				'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-down" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+				foreach ( $ancestors as $parent ){
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-ancestors',
+						'id' => 'nebula-parent-' . $parent,
+						'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title($parent),
+						'href' => ( is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
+					));
+				}
+			}
+
+			//Children pages
+			$child_pages = new WP_Query(array(
+				'post_type' => $post_type_object->labels->singular_name,
+				'posts_per_page' => -1,
+				'post_parent' => get_the_id(),
+				'order' => 'ASC',
+				'orderby' => 'menu_order'
 			));
-
-			while ( $child_pages->have_posts() ){
-				$child_pages->the_post();
+			if ( $child_pages->have_posts() ){
 				$wp_admin_bar->add_node(array(
-					'parent' => 'nebula-children',
-					'id' => 'nebula-child-' . get_the_id(),
-					'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
-					'href' => get_permalink(),
+					'parent' => $node_id,
+					'id' => 'nebula-children',
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-down" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
 				));
+
+				while ( $child_pages->have_posts() ){
+					$child_pages->the_post();
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-children',
+						'id' => 'nebula-child-' . get_the_id(),
+						'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
+						'href' => ( is_admin_page() )? get_edit_post_link() : get_permalink(),
+					));
+				}
 			}
+			wp_reset_query();
 		}
-		wp_reset_query();
 
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula',
