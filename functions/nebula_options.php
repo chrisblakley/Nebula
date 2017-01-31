@@ -1075,7 +1075,7 @@ function nebula_options_page(){
 						<input type="text" name="nebula_options[hostnames]" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" />
 						<p class="helper"><small>
 							These help generate regex patterns for Google Analytics filters. It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br />
-							Include this RegEx pattern for a filter/segment <a href="http://gearside.com/nebula/documentation/utilities/domain-regex-generators/" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
+							Include this RegEx pattern for a filter/segment <a href="https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=valid+hostnames%20help" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula_valid_hostname_regex(); ?>" readonly style="width: 50%;" />
 						</small></p>
 					</td>
 		        </tr>
@@ -1224,7 +1224,7 @@ function nebula_options_page(){
 		        	<th scope="row">&raquo; Session ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<input class="dimension" type="text" name="nebula_options[cd_sessionid]" value="<?php echo $nebula_options['cd_sessionid']; ?>" />
-						<p class="helper"><small>ID system so that you can group hits into specific user sessions. This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/documentation/get-started/recommended-services/google-analytics-custom-definitions/nebula-session-id/" target="_blank">Session ID Documentation &raquo;</a> <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
+						<p class="helper"><small>ID system so that you can group hits into specific user sessions. This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=session+id%20help" target="_blank">Session ID Documentation &raquo;</a> <strong>Scope: Session</strong><br /><em>&raquo; This dimension is strongly recommended.</em></small></p>
 					</td>
 		        </tr>
 
@@ -1552,7 +1552,7 @@ function nebula_options_page(){
 		        	<th scope="row">Google Custom Search Engine&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						Engine ID: <input type="text" name="nebula_options[cse_id]" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" /><br />
-						<p class="helper"><small>Google Custom Search Engine (for <a href="http://gearside.com/nebula/documentation/bundled/page-suggestions/" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
+						<p class="helper"><small>Google Custom Search Engine (for <a href="https://gearside.com/nebula/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=gcse+help" target="_blank">page suggestions</a> on 404 and No Search Results pages). <a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</small></p>
 					</td>
 		        </tr>
 
@@ -1597,7 +1597,7 @@ function nebula_options_page(){
 						Consumer Key: <input type="text" name="nebula_options[twitter_consumer_key]" value="<?php echo $nebula_options['twitter_consumer_key']; ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br />
 						Consumer Secret: <input type="text" name="nebula_options[twitter_consumer_secret]" value="<?php echo $nebula_options['twitter_consumer_secret']; ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/><br />
 						Bearer Token: <input type="text" name="nebula_options[twitter_bearer_token]" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" style="width: 296px;"/>
-						<p class="helper"><small>The bearer token is for creating custom Twitter feeds: <a href="http://gearside.com/nebula/documentation/utilities/twitter-bearer-token-generator/" target="_blank">Generate a bearer token here</a></small></p>
+						<p class="helper"><small>The bearer token is for creating custom Twitter feeds: <a href="https://gearside.com/nebula/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=twitter+help" target="_blank">Generate a bearer token here</a></small></p>
 					</td>
 		        </tr>
 
@@ -1681,7 +1681,7 @@ function nebula_options_page(){
 		        	<th scope="row">Notable IPs&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
 					<td>
 						<textarea name="nebula_options[notableiplist]" placeholder="192.168.0.1 Name Here"><?php echo $nebula_options['notableiplist']; ?></textarea>
-						<p class="helper"><small>A list of named IP addresses. Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name. <strong>Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the <strong>Analytics</strong> tab!</strong><br/><strong>Tip:</strong> IP data is sent with <a href="https://gearside.com/nebula/documentation/3rd-party-libraries/contact-form-7-sample-form/" target="_blank">Nebula contact forms</a>!</small></p>
+						<p class="helper"><small>A list of named IP addresses. Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name. <strong>Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the <strong>Analytics</strong> tab!</strong><br/><strong>Tip:</strong> IP data is sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=notable+ips%20help" target="_blank">Nebula contact forms</a>!</small></p>
 					</td>
 		        </tr>
 

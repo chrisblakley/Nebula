@@ -13,7 +13,6 @@ require_once('functions/nebula_security.php'); //Nebula Security
 require_once('functions/nebula_optimization.php'); //Nebula Optimization
 require_once('functions/nebula_functions.php'); //Nebula Functions
 require_once('functions/nebula_shortcodes.php'); //Nebula Shortcodes
-//require_once('functions/nebula_widgets.php'); //Nebula Widgets
 require_once('functions/nebula_legacy.php'); //Nebula Legacy (to maximize backwards compatibility)
 
 //Include functions for Wireframing and Prototyping

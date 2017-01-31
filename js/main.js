@@ -300,7 +300,7 @@ function facebookSDK(){
 			if (d.getElementById(id)) return;
 			js = d.createElement(s); js.id = id;
 			js.async = true;
-			js.src = "//connect.facebook.net/en_US/all.js";
+			js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 	}
@@ -315,6 +315,8 @@ function facebookConnect(){
 			FB.init({
 				appId: nebula.site.options.facebook_app_id,
 				channelUrl: nebula.site.directory.template.uri + '/includes/channel.php',
+				status: true,
+				xfbml: true
 			});
 
 			jQuery(document).trigger('fbinit');
@@ -455,7 +457,7 @@ function eventTracking(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'PDF View', fileName);
 		if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
-		nv('append', {'pdf_view': filename});
+		nv('append', {'pdf_view': fileName});
 	});
 
 	//Notable Downloads
@@ -1874,16 +1876,19 @@ function applyValidationClasses(element, validation, showFeedback){
 
 	if ( validation === 'success' || validation === 'valid' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-success')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success');
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success')
+			.find('.wpcf7-not-valid-tip').remove();
 	} else if ( validation === 'warning' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-warning')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning');
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning')
+			.find('.wpcf7-not-valid-tip').remove();
 	} else if ( validation === 'danger' || validation === 'error' || validation === 'invalid' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-danger')
 			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
 	} else if ( validation === 'reset' || validation === 'remove' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid')
-			.parents('.form-group').removeClass('has-danger has-warning has-success');
+			.parents('.form-group').removeClass('has-danger has-warning has-success')
+			.find('.wpcf7-not-valid-tip').remove();
 	}
 
 	if ( validation === 'feedback' || showFeedback ){

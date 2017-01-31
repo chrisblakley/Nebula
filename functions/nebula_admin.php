@@ -114,10 +114,56 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 
+		//Ancestor pages
+		$ancestors = get_post_ancestors(get_the_id());
+		if ( !empty($ancestors) ){
+			$wp_admin_bar->add_node(array(
+				'parent' => $node_id,
+				'id' => 'nebula-ancestors',
+				'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-up" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
+			));
+
+			foreach ( $ancestors as $parent ){
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-ancestors',
+					'id' => 'nebula-parent-' . $parent,
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title($parent),
+					'href' => get_permalink($parent),
+				));
+			}
+		}
+
+		//Children pages
+		$child_pages = new WP_Query(array(
+			'post_type' => $post_type_object->labels->singular_name,
+			'posts_per_page' => -1,
+			'post_parent' => get_the_id(),
+			'order' => 'ASC',
+			'orderby' => 'menu_order'
+		));
+		if ( $child_pages->have_posts() ){
+			$wp_admin_bar->add_node(array(
+				'parent' => $node_id,
+				'id' => 'nebula-children',
+				'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-down" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+			));
+
+			while ( $child_pages->have_posts() ){
+				$child_pages->the_post();
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-children',
+					'id' => 'nebula-child-' . get_the_id(),
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
+					'href' => get_permalink(),
+				));
+			}
+		}
+		wp_reset_query();
+
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula',
-			'href' => 'https://gearside.com/nebula/',
+			'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=nebula',
 			'meta' => array('target' => '_blank')
 		));
 
@@ -163,7 +209,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'parent' => 'nebula-options',
 			'id' => 'nebula-options-help',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation',
-			'href' => 'https://gearside.com/nebula/documentation/options/',
+			'href' => 'https://gearside.com/nebula/documentation/options/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=help',
 			'meta' => array('target' => '_blank')
 		));
 
@@ -265,7 +311,7 @@ function nebula_theme_json(){
 		nebula_update_data('current_version_date', nebula_version('date'));
 	}
 
-	if ( $nebula_data['version_legacy'] === 'false' ){
+	if ( $nebula_data['version_legacy'] === 'true' ){
 		//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 		$remote_version_info = get_option('external_theme_updates-Nebula-master');
 		if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full')) ){
@@ -614,7 +660,7 @@ function dashboard_nebula_ataglance(){
 		echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 		//Nebula Version
-		echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
+		echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=at+a%20glance&utm_source=version" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
 
 		//Child Theme
 		if ( is_child_theme() ){
@@ -1682,13 +1728,13 @@ add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right(){
 	global $wp_version;
 	$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
-    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula_version('date') . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong class="nebula">' . nebula_version('version') . '</strong>' . $child . '</span>';
+    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula_version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank">Nebula</a> <strong class="nebula">' . nebula_version('version') . '</strong>' . $child . '</span>';
 }
 
 //Internal Search Keywords Metabox and Custom Field
 add_action('load-post.php', 'nebula_post_meta_boxes_setup');
 add_action('load-post-new.php', 'nebula_post_meta_boxes_setup');
-function nebula_add_post_meta_boxes(){
+function nebula_add_post_keywords(){
 	$builtin_types = array('post', 'page', 'attachment');
 	$custom_types = get_post_types(array('_builtin' => false));
 
@@ -1711,7 +1757,7 @@ function nebula_internal_search_keywords_meta_box($object, $box){
 	</div>
 <?php }
 function nebula_post_meta_boxes_setup(){
-	add_action('add_meta_boxes', 'nebula_add_post_meta_boxes');
+	add_action('add_meta_boxes', 'nebula_add_post_keywords');
 	add_action('save_post', 'nebula_save_post_class_meta', 10, 2);
 }
 function nebula_save_post_class_meta($post_id, $post){

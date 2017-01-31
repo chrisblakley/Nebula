@@ -6,7 +6,7 @@ jQuery.noConflict();
 
 jQuery(document).on('ready', function(){
 
-	//Prevent child theme events from sending before the pageview
+	//Prevent child theme events from sending before the pageview. Do not add custom event tracking here- add it where noted below!
 	window.supplementalTrackingCalled = false;
 	if ( typeof ga === 'function' ){ //if GA is defined
 		supplementalEventTracking();
@@ -22,7 +22,8 @@ jQuery(document).on('ready', function(){
 
 jQuery(window).on('load', function(){
 
-	if ( !window.supplementalTrackingCalled ){ //If event tracking in child theme still hasn't been initialized
+	//If event tracking in child theme still hasn't been initialized. Do not add custom event tracking here- add it where noted below!
+	if ( !window.supplementalTrackingCalled ){
 		supplementalEventTracking();
 	}
 
@@ -63,6 +64,6 @@ function supplementalEventTracking(){
 	//	ga('send', 'event', 'Category', 'Action', 'Label');
 	//});
 
-	//Add your event tracking listeners here!
+	//Add your custom event tracking here!
 
 }
