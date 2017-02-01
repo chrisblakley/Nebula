@@ -83,6 +83,19 @@ function nebula_full_address($encoded=false){
 	return $full_address;
 }
 
+//Get the full Twitter URL for a user
+function nebula_twitter_url($username=false){
+	if ( empty($username) ){
+		$username = nebula_option('twitter_username');
+	}
+
+	if ( !empty($username) ){
+		return 'https://twitter.com/' . $username;
+	}
+
+	return false;
+}
+
 //Register the requested version of Bootstrap.
 function nebula_bootrap_version($lang=false){
 	if ( nebula_option('bootstrap_version') === 'bootstrap3' ){

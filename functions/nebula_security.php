@@ -205,7 +205,7 @@ function nebula_get_domain_blacklist(){
 			WP_Filesystem();
 			global $wp_filesystem;
 			$wp_filesystem->put_contents($domain_blacklist_json_file, $domain_blacklist);
-			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60*24); //24 hour cache
+			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60*36); //36 hour cache
 		}
 	}
 

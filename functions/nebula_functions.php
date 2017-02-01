@@ -942,7 +942,7 @@ function nebula_twitter_follow($counts=0, $username=false){
 	}
 ?>
 	<div class="nebula-social-button twitter-follow">
-		<a href="https://twitter.com/<?php echo str_replace('@', '', $username); ?>" class="twitter-follow-button" <?php echo ( $counts != 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>>Follow <?php echo $username; ?></a>
+		<a href="<?php echo nebula_twitter_url($username); ?>" class="twitter-follow-button" <?php echo ( $counts != 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>>Follow <?php echo $username; ?></a>
 		<?php twitter_widget_script(); ?>
 	</div>
 <?php
@@ -1505,7 +1505,7 @@ function nebula_autocomplete_search(){
 	$menus = get_transient('nebula_autocomplete_menus');
 	if ( empty($menus) || is_debug() ){
 		$menus = get_terms('nav_menu');
-		set_transient('nebula_autocomplete_menus', $menus, 60*60); //1 hour cache
+		set_transient('nebula_autocomplete_menus', $menus, 60*60*24); //24 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	foreach($menus as $menu){
 		$menu_items = wp_get_nav_menu_items($menu->term_id);
@@ -1543,7 +1543,7 @@ function nebula_autocomplete_search(){
 	$categories = get_transient('nebula_autocomplete_categories');
 	if ( empty($categories) || is_debug() ){
 		$categories = get_categories();
-		set_transient('nebula_autocomplete_categories', $categories, 60*60); //1 hour cache
+		set_transient('nebula_autocomplete_categories', $categories, 60*60*24); //24 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	foreach ( $categories as $category ){
 		$suggestion = array();
@@ -1566,7 +1566,7 @@ function nebula_autocomplete_search(){
 	$tags = get_transient('nebula_autocomplete_tags');
 	if ( empty($tags) || is_debug() ){
 		$tags = get_tags();
-		set_transient('nebula_autocomplete_tags', $tags, 60*60); //1 hour cache
+		set_transient('nebula_autocomplete_tags', $tags, 60*60*24); //24 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	foreach ( $tags as $tag ){
 		$suggestion = array();
@@ -1590,7 +1590,7 @@ function nebula_autocomplete_search(){
 		$authors = get_transient('nebula_autocomplete_authors');
 		if ( empty($authors) || is_debug() ){
 			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
-			set_transient('nebula_autocomplete_authors', $authors, 60*60); //1 hour cache
+			set_transient('nebula_autocomplete_authors', $authors, 60*60*24*7); //1 week cache. This transient is deleted when a post is updated or Nebula Options are saved.
 		}
 		foreach ( $authors as $author ){
 			$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
@@ -1653,7 +1653,7 @@ function nebula_advanced_search(){
 			'posts_per_page' => -1,
 			'nopaging' => true
 		));
-		set_transient('nebula_everything_query', $everything_query, 60*60); //1 hour cache
+		set_transient('nebula_everything_query', $everything_query, 60*60*48); //48 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	$posts = $everything_query->get_posts();
 
@@ -2349,7 +2349,7 @@ function nebula_weather($zipcode=null, $data=''){
 			}
 
 			$weather_json = $response['body'];
-			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*15); //15 minute expiration
+			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*30); //30 minute expiration
 		}
 		$weather_json = json_decode($weather_json);
 
@@ -2480,7 +2480,7 @@ function video_meta($provider, $id){
 			$video_json = $response['body'];
 		}
 
-		set_transient('nebula_' . $provider . '_' . $id, $video_json, 60*60); //1 hour expiration
+		set_transient('nebula_' . $provider . '_' . $id, $video_json, 60*60*12); //12 hour expiration
 	}
 	$video_json = json_decode($video_json);
 

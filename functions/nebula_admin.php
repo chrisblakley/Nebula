@@ -134,32 +134,35 @@ if ( nebula_option('admin_bar', 'disabled') ){
 				}
 			}
 
-			//Children pages
-			$child_pages = new WP_Query(array(
-				'post_type' => $post_type_object->labels->singular_name,
-				'posts_per_page' => -1,
-				'post_parent' => get_the_id(),
-				'order' => 'ASC',
-				'orderby' => 'menu_order'
-			));
-			if ( $child_pages->have_posts() ){
-				$wp_admin_bar->add_node(array(
-					'parent' => $node_id,
-					'id' => 'nebula-children',
-					'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-down" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+			if ( !is_admin_page() ){ //@todo "Nebula" 0: Remove this conditional when this bug is fixed: https://core.trac.wordpress.org/ticket/18408
+				//Children pages
+				$child_pages = new WP_Query(array(
+					'post_type' => $post_type_object->labels->singular_name,
+					'posts_per_page' => -1,
+					'post_parent' => get_the_id(),
+					'order' => 'ASC',
+					'orderby' => 'menu_order'
 				));
-
-				while ( $child_pages->have_posts() ){
-					$child_pages->the_post();
+				if ( $child_pages->have_posts() ){
 					$wp_admin_bar->add_node(array(
-						'parent' => 'nebula-children',
-						'id' => 'nebula-child-' . get_the_id(),
-						'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
-						'href' => ( is_admin_page() )? get_edit_post_link() : get_permalink(),
+						'parent' => $node_id,
+						'id' => 'nebula-children',
+						'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-down" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
 					));
+
+					while ( $child_pages->have_posts() ){
+						$child_pages->the_post();
+						$wp_admin_bar->add_node(array(
+							'parent' => 'nebula-children',
+							'id' => 'nebula-child-' . get_the_id(),
+							'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
+							'href' => ( is_admin_page() )? get_edit_post_link() : get_permalink(),
+						));
+					}
 				}
+
+				wp_reset_postdata();
 			}
-			wp_reset_query();
 		}
 
 		$wp_admin_bar->add_node(array(
@@ -286,7 +289,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 
 //Disable Wordpress Core update notifications in WP Admin
 if ( nebula_option('wp_core_updates_notify', 'disabled') ){
-	add_filter('pre_site_transient_update_core', create_function('$a', "return null;"));
+	add_filter('pre_site_transient_update_core', '__return_null');
 }
 
 //Show update warning on Wordpress Core/Plugin update admin pages
@@ -731,7 +734,7 @@ function dashboard_nebula_ataglance(){
 		$all_plugins = get_transient('nebula_count_plugins');
 		if ( empty($all_plugins) || is_debug() ){
 			$all_plugins = get_plugins();
-			set_transient('nebula_count_plugins', $all_plugins, 60*60*12); //12 hour cache
+			set_transient('nebula_count_plugins', $all_plugins, 60*60*36); //36 hour cache
 		}
 		$active_plugins = get_option('active_plugins', array());
 		echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> Plugins</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
@@ -740,7 +743,7 @@ function dashboard_nebula_ataglance(){
 		$user_count = get_transient('nebula_count_users');
 		if ( empty($user_count) || is_debug() ){
 			$user_count = count_users();
-			set_transient('nebula_count_users', $user_count, 60*60*24); //24 hour cache
+			set_transient('nebula_count_users', $user_count, 60*60*36); //36 hour cache
 		}
 		$users_icon = 'users';
 		$users_plural = 'Users';
@@ -1047,7 +1050,7 @@ function dashboard_social(){
 		}
 
 		if ( nebula_option('twitter_username') ){
-			echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="https://twitter.com/' . str_replace('@', '', nebula_option('twitter_username')) . '" target="_blank">Twitter</a></li>';
+			echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="' . nebula_twitter_url() . '" target="_blank">Twitter</a></li>';
 		}
 
 		if ( nebula_option('google_plus_url') ){
@@ -1293,13 +1296,13 @@ function dashboard_developer_info(){
 			$nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
 			if ( empty($nebula_parent_size) || is_debug() ){
 				$nebula_parent_size = foldersize(get_template_directory());
-				set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, 60*60*12); //12 hour cache
+				set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, 60*60*24); //24 hour cache
 			}
 
 			$nebula_child_size = get_transient('nebula_directory_size_child_theme');
 			if ( empty($nebula_child_size) || is_debug() ){
 				$nebula_child_size = foldersize(get_template_directory());
-				set_transient('nebula_directory_size_child_theme', $nebula_child_size, 60*60*12); //12 hour cache
+				set_transient('nebula_directory_size_child_theme', $nebula_child_size, 60*60*24); //24 hour cache
 			}
 
 			echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
@@ -1313,7 +1316,7 @@ function dashboard_developer_info(){
 			$nebula_size = get_transient('nebula_directory_size_theme');
 			if ( empty($nebula_size) || is_debug() ){
 				$nebula_size = foldersize(get_stylesheet_directory());
-				set_transient('nebula_directory_size_theme', $nebula_size, 60*60*12); //12 hour cache
+				set_transient('nebula_directory_size_theme', $nebula_size, 60*60*24); //24 hour cache
 			}
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 		}
@@ -1335,7 +1338,7 @@ function dashboard_developer_info(){
 		$uploads_size = get_transient('nebula_directory_size_uploads');
 		if ( empty($uploads_size) || is_debug() ){
 			$uploads_size = foldersize($upload_dir['basedir']);
-			set_transient('nebula_directory_size_uploads', $uploads_size, 60*60*24); //24 hour cache
+			set_transient('nebula_directory_size_uploads', $uploads_size, 60*60*36); //36 hour cache
 		}
 
 		if ( function_exists('wp_max_upload_size') ){

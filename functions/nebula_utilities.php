@@ -2231,7 +2231,7 @@ function nebula_sass_color($color='primary', $theme='child'){
 		WP_Filesystem();
 		global $wp_filesystem;
 		$scss_variables = $wp_filesystem->get_contents($variables_file);
-		set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
+		set_transient($transient_name, $scss_variables, 60*60*12); //12 hour cache
 	}
 
 	switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){

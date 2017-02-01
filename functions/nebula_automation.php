@@ -110,6 +110,11 @@ if ( is_admin_page() && is_dev(true) || current_user_can('manage_options') ){
 	            'slug'      => 'query-monitor',
 	            'required'  => false,
 	        ),
+	        array(
+	            'name'      => '404 to 301',
+	            'slug'      => '404-to-301',
+	            'required'  => false,
+	        ),
 	    );
 
 	    if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){

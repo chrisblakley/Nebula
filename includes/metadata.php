@@ -215,7 +215,7 @@
 			}
 
 			if ( nebula_option('twitter_username') ){
-				$company_same_as .= '"http://www.twitter.com/' . nebula_option('twitter_username') . '",';
+				$company_same_as .= '"' . nebula_twitter_url() . '",';
 			}
 
 			if ( nebula_option('google_plus_url') ){
@@ -266,7 +266,7 @@
 				}
 
 				if ( get_the_author_meta('twitter', $user->ID) ){
-					$person_same_as .= '"http://www.twitter.com/' . get_the_author_meta('twitter', $user->ID) . '",';
+					$person_same_as .= '"' . nebula_twitter_url(get_the_author_meta('twitter', $user->ID)) . '",';
 				}
 
 				if ( get_the_author_meta('googleplus', $user->ID) ){

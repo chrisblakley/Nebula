@@ -75,7 +75,7 @@ get_header(); ?>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('twitter') ): ?>
-					<a class="twitter" href="http://www.twitter.com/<?php echo get_the_author_meta('twitter'); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
+					<a class="twitter" href="<?php echo nebula_twitter_url(get_the_author_meta('twitter')); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('googleplus') ): ?>
