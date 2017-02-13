@@ -66,7 +66,6 @@ if( !class_exists( 'Nebula_Template_Engine' ) ) {
 
         public function post_type_templates() {
             foreach ( get_post_types( '', 'names' ) as $post_type ) {
-                var_dump($post_type);
                 add_filter( "theme_{$post_type}_templates", array($this, 'plugins_templates'), 10, 4);
             }
         }
