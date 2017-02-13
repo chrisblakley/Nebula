@@ -406,3 +406,8 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
     }
 
 }
+
+//Check for bot/crawler traffic
+function nebula_is_bot(){
+    return nebula()->utilities->device_detection->is_bot();
+}

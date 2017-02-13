@@ -286,6 +286,153 @@ function nebula_excerpt($options=array()){
     return $data['text'];
 }
 
+//Breadcrumbs
+function nebula_breadcrumbs($options=array()){
+    $override = apply_filters('pre_nebula_breadcrumbs', false);
+    if ( $override !== false ){echo $override; return;}
+
+    global $post;
+    $defaults = array(
+        'delimiter' => '&rsaquo;', //Delimiter between crumbs
+        'home' => '<i class="fa fa-home"></i>', //Text for the 'Home' link
+        'home_link' => home_url('/'),
+        'current' => true, //Show/Hide the current title in the breadcrumb
+        'before' => '<span class="current">', //Tag before the current crumb
+        'after' => '</span>', //Tag after the current crumb
+        'force' => false //Override the breadcrumbs with an array of specific links
+    );
+
+    $data = array_merge($defaults, $options);
+    $delimiter_html = '<span class="arrow">' . $data['delimiter'] . '</span>';
+
+    if ( !empty($data['force']) ){ //If using forced override
+        echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">';
+
+        foreach ( $data['force'] as $node ){
+            $node_text = ( !empty($node['text']) )? $node['text'] : $node[0];
+            $node_url = false;
+            if ( !empty($node['url']) ){
+                $node_url = $node['url'];
+            } else {
+                if ( !empty($node[1]) ){
+                    $node_url = $node[1];
+                }
+            }
+
+            if ( !empty($node_text) ){
+                if ( !empty($node_url) ){
+                    echo '<a href="' . $node_url . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">';
+                }
+                echo $node_text;
+                if ( !empty($node_url) ){
+                    echo '</a>';
+                }
+                echo ' ' . $delimiter_html . ' ';
+            }
+        }
+
+        if ( !empty($data['current']) ){
+            echo $data['before'] . get_the_title() . $data['after'];
+        }
+
+        echo '</div>';
+    } elseif ( is_home() || is_front_page() ){
+        echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a></div></div>';
+        return false;
+    } else {
+        echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ';
+        if ( is_category() ){
+            $thisCat = get_category(get_query_var('cat'), false);
+            if ( $thisCat->parent != 0 ){
+                echo get_category_parents($thisCat->parent, true, ' ' . $delimiter_html . ' ');
+            }
+            echo $data['before'] . 'Category: ' . single_cat_title('', false) . $data['after'];
+        } elseif ( is_search() ){
+            echo $data['before'] . 'Search results' . $data['after'];
+        } elseif ( is_day() ){
+            echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter_html . ' ';
+            echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('F') . '</a> ' . $delimiter_html . ' ';
+            echo $data['before'] . get_the_time('d') . $data['after'];
+        } elseif ( is_month() ){
+            echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter_html . ' ';
+            echo $data['before'] . get_the_time('F') . $data['after'];
+        } elseif ( is_year() ){
+            echo $data['before'] . get_the_time('Y') . $data['after'];
+        } elseif ( is_single() && !is_attachment() ){
+            if ( get_post_type() != 'post' ){
+                $post_type = get_post_type_object(get_post_type());
+                $slug = $post_type->rewrite;
+                echo '<a href="' . $data['home_link'] . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
+                if ( !empty($data['current']) ){
+                    echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
+                }
+            } else {
+                $cat = get_the_category();
+                if ( !empty($cat) ){
+                    $cat = $cat[0];
+                    $cats = get_category_parents($cat, true, ' ' . $delimiter_html . ' ');
+                    if ( empty($data['current']) ){
+                        $cats = preg_replace("#^(.+)\s" . $delimiter_html . "\s$#", "$1", $cats);
+                    }
+                    echo $cats;
+                    if ( !empty($data['current']) ){
+                        echo $data['before'] . get_the_title() . $data['after'];
+                    }
+                }
+            }
+        } elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ){
+            if ( is_archive() ){ //@TODO "Nebula" 0: Might not be perfect... This may never else out.
+                $userdata = get_user_by('slug', get_query_var('author_name'));
+                echo $data['before'] . $userdata->first_name . ' ' . $userdata->last_name . $data['after'];
+            } else { //What does this one do?
+                $post_type = get_post_type_object(get_post_type());
+                echo $data['before'] . $post_type->labels->singular_name . $data['after'];
+            }
+        } elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
+            if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
+                echo '<a href="' . get_permalink($post->post_parent) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter_html . ' ' . get_the_title();
+            } else {
+                echo get_the_title();
+            }
+        } elseif ( is_page() && !$post->post_parent ){
+            if ( !empty($data['current']) ){
+                echo $data['before'] . get_the_title() . $data['after'];
+            }
+        } elseif ( is_page() && $post->post_parent ){
+            $parent_id = $post->post_parent;
+            $breadcrumbs = array();
+            while ( $parent_id ){
+                $page = get_page($parent_id);
+                $breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($page->ID) . '</a>';
+                $parent_id  = $page->post_parent;
+            }
+            $breadcrumbs = array_reverse($breadcrumbs);
+            for ( $i = 0; $i < count($breadcrumbs); $i++ ){
+                echo $breadcrumbs[$i];
+                if ( $i != count($breadcrumbs)-1 ){
+                    echo ' ' . $delimiter_html . ' ';
+                }
+            }
+            if ( !empty($data['current']) ){
+                echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
+            }
+        } elseif ( is_tag() ){
+            echo $data['before'] . 'Tag: ' . single_tag_title('', false) . $data['after'];
+        } elseif ( is_author() ){
+            global $author;
+            $userdata = get_userdata($author);
+            echo $data['before'] . $userdata->display_name . $data['after'];
+        } elseif ( is_404() ){
+            echo $data['before'] . 'Error 404' . $data['after'];
+        }
+
+        if ( get_query_var('paged') ){
+            echo ' (Page ' . get_query_var('paged') . ')';
+        }
+        echo '</div>';
+    }
+}
+
 //Display Social Buttons
 function nebula_social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
     $override = apply_filters('pre_nebula_social', false, $networks, $counts);
