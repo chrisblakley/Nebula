@@ -124,7 +124,7 @@ if( !class_exists( 'Nebula_Sass' ) ) {
                             if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
                                 $this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
                                 $compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
-                                $enhanced_css = nebula_scss_post_compile($compiled_css); //Compile server-side variables into SCSS
+                                $enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
                                 $wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
                                 nebula_update_data('scss_last_processed', time());
                             }
@@ -145,19 +145,17 @@ if( !class_exists( 'Nebula_Sass' ) ) {
 
         //@TODO "Nebula" 0: Update this so that it doesn't need to be a separate function than nebula_render_scss()
         public function render_registered_scss(){
-            global $nebula_plugins;
-
             $override = apply_filters('pre_nebula_render_registered_scss', false);
             if ( $override !== false ){return $override;}
 
             if ( nebula_option('scss', 'enabled') ) {
-                if( is_array($nebula_plugins) && !empty($nebula_plugins) ) {
+                if( ! empty(nebula()->plugins) ) {
                     $compile_all = false;
                     if ( isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated']) && is_staff() ){
                         $compile_all = true;
                     }
 
-                    foreach ( $nebula_plugins as $nebula_plugin => $nebula_plugin_features ){
+                    foreach ( nebula()->plugins as $nebula_plugin => $nebula_plugin_features ){
                         if ( $nebula_plugin_features['stylesheets'] && is_writable($nebula_plugin_features['path'] . 'stylesheets') ){
 
                             require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
@@ -236,7 +234,7 @@ if( !class_exists( 'Nebula_Sass' ) ) {
                                         if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
                                             $this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
                                             $compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
-                                            $enhanced_css = nebula_scss_post_compile($compiled_css); //Compile server-side variables into SCSS
+                                            $enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
                                             $wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
                                             nebula_update_data('scss_last_processed', time());
                                         }
