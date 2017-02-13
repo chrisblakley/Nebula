@@ -232,7 +232,7 @@ if( !class_exists( 'Nebula_Admin_Users' ) ) {
 
             //If editing own user, update NVDB
             if ( $user_id === get_current_user_id() ){
-                nebula_update_visitor(array(
+                nebula()->utilities->visitors->update_visitor(array(
                     'job_title' => sanitize_text_field($_POST['jobtitle']),
                     'company' => sanitize_text_field($_POST['jobcompany']),
                     'company_website' => sanitize_text_field($_POST['jobcompanywebsite']),
