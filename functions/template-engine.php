@@ -46,9 +46,7 @@ if( !class_exists( 'Nebula_Template_Engine' ) ) {
             }
 
             // Add new post type templates
-            foreach ( get_post_types( '', 'names' ) as $post_type ) {
-                add_filter( "theme_{$post_type}_templates", array($this, 'plugins_templates'), 10, 4);
-            }
+            add_action( 'init',  array( $this, 'post_type_templates' ), 999 );
 
             // Search for plugin templates
             add_filter( 'template_include', array( $this, 'template_include' ) );
@@ -64,6 +62,13 @@ if( !class_exists( 'Nebula_Template_Engine' ) ) {
             $this->templates = $templates;
 
             return $templates;
+        }
+
+        public function post_type_templates() {
+            foreach ( get_post_types( '', 'names' ) as $post_type ) {
+                var_dump($post_type);
+                add_filter( "theme_{$post_type}_templates", array($this, 'plugins_templates'), 10, 4);
+            }
         }
 
         /**
