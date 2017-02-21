@@ -117,11 +117,11 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                 $count_posts = get_transient('nebula_count_posts_' . $post_type);
                 if ( empty($count_posts) || is_debug() ){
                     $count_posts = wp_count_posts($post_type);
-                    $cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? 60*60*24*7 : 60*60*24; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long.
+                    $cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long.
                     set_transient('nebula_count_posts_' . $post_type, $count_posts, $cache_length);
                 }
 
-                $labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+                $labels_plural = ( $count_posts->publish == 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
                 switch ( $post_type ){
                     case ('post'):
                         $post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
@@ -148,30 +148,43 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                 echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_posts->publish . '</strong> ' . $labels_plural . '</a></li>';
             }
 
+            //Last updated
+            $latest_post = get_transient('nebula_latest_post');
+            if ( empty($latest_post) || is_debug() ){
+                $latest_post = new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
+                set_transient('nebula_latest_post', $latest_post, HOUR_IN_SECONDS*12); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+            }
+            while ( $latest_post->have_posts() ){ $latest_post->the_post();
+                echo '<li><i class="fa fa-calendar-o fa-fw"></i> Updated: <strong>' . get_the_modified_date() . '</strong> @ <strong>' . get_the_modified_time() . '</strong>
+                    <small style="display: block; margin-left: 20px;"><i class="fa fa-file-text-o fa-fw"></i> <a href="' . get_permalink() . '">' . nebula_excerpt(array('text' => get_the_title(), 'length' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
+                </li>';
+            }
+            wp_reset_postdata();
+
             //Revisions
             $revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
-            $revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
-            $revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
+            $revision_style = ( $revision_count == 0 )? 'style="color: red;"' : '';
+            $revisions_plural = ( $revision_count == 1 )? 'revision' : 'revisions';
             echo '<li><i class="fa fa-history fa-fw"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
             //Plugins
-            $all_plugins = get_transient('nebula_count_plugins');
+            $all_plugins_plural = ( count($all_plugins) == 1 )? 'Plugin' : 'Plugins';
             if ( empty($all_plugins) || is_debug() ){
                 $all_plugins = get_plugins();
-                set_transient('nebula_count_plugins', $all_plugins, 60*60*12); //12 hour cache
+                set_transient('nebula_count_plugins', $all_plugins, HOUR_IN_SECONDS*36); //12 hour cache
             }
             $active_plugins = get_option('active_plugins', array());
-            echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> Plugins</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
+            echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
             //Users
             $user_count = get_transient('nebula_count_users');
             if ( empty($user_count) || is_debug() ){
                 $user_count = count_users();
-                set_transient('nebula_count_users', $user_count, 60*60*24); //24 hour cache
+                set_transient('nebula_count_users', $user_count, HOUR_IN_SECONDS*36); //24 hour cache
             }
             $users_icon = 'users';
             $users_plural = 'Users';
-            if ( $user_count['total_users'] === 1 ){
+            if ( $user_count['total_users'] == 1 ){
                 $users_plural = 'User';
                 $users_icon = 'user';
             }
@@ -180,7 +193,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             //Comments
             if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){
                 $comments_count = wp_count_comments();
-                $comments_plural = ( $comments_count->approved === 1 )? 'Comment' : 'Comments';
+                $comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
                 echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
             } else {
                 if ( nebula_option('comments', 'disabled') ){
@@ -291,17 +304,17 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
 
             //User's posts
             $your_posts = get_transient('nebula_count_posts_user_' . $user_info->ID);
-            if ( empty($nebula_size) || is_debug() ){
+            if ( empty($your_posts) || is_debug() ){
                 $your_posts = count_user_posts($user_info->ID);
-                set_transient('nebula_count_posts_user_' . $user_info->ID, $your_posts, 60*60*24); //24 hour cache
+                set_transient('nebula_count_posts_user_' . $user_info->ID, $your_posts, DAY_IN_SECONDS); //24 hour cache
             }
             echo '<li><i class="fa fa-thumb-tack fa-fw"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
             if ( nebula_option('device_detection') ){
                 //Device
                 if ( nebula_is_desktop() ){
-                    $battery_percentage = nebula_get_visitor_data('battery_percentage');
-                    if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula_get_visitor_data('battery_mode') === 'Battery' ){
+                    $battery_percentage = nebula_vdb_get_visitor_datapoint('battery_percentage');
+                    if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula_vdb_get_visitor_datapoint('battery_mode') === 'Battery' ){
                         echo '<li><i class="fa fa-laptop fa-fw"></i> Device: <strong>Laptop</strong></li>';
                     } else {
                         echo '<li><i class="fa fa-desktop fa-fw"></i> Device: <strong>Desktop</strong></li>';
@@ -373,8 +386,9 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
 
             //IP Location
             if ( nebula_ip_location() ){
-                if ( nebula_ip_location('city') ){
-                    echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . nebula_ip_location('city') . ', ' . nebula_ip_location('state') . '</strong></li>';
+                $ip_location = nebula_ip_location('all');
+                if ( !empty($ip_location) ){
+                    echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . $ip_location->city . ', ' . $ip_location->region_name . '</strong></li>';
                 } else {
                     echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <em>GeoIP error or rate limit exceeded.</em></li>';
                 }
@@ -383,8 +397,8 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             //Weather
             if ( nebula_option('weather') ){
                 $ip_zip = '';
-                if ( nebula_get_visitor_data('zip_code') ){
-                    $ip_zip = nebula_get_visitor_data('zip_code');
+                if ( nebula_vdb_get_visitor_datapoint('zip_code') ){
+                    $ip_zip = nebula_vdb_get_visitor_datapoint('zip_code');
                 } elseif ( nebula_ip_location() ){
                     $ip_zip = nebula_ip_location('zip');
                 }
@@ -468,7 +482,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             }
 
             if ( nebula_option('twitter_username') ){
-                echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="https://twitter.com/' . str_replace('@', '', nebula_option('twitter_username')) . '" target="_blank">Twitter</a></li>';
+                echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="' . nebula_twitter_url() . '" target="_blank">Twitter</a></li>';
             }
 
             if ( nebula_option('google_plus_url') ){
@@ -563,6 +577,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                         foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
                             if ( stripos($todo_line, '@TODO') !== false ){
                                 $theme = '';
+                                $theme_note = '';
                                 if ( is_child_theme() ){
                                     if ( $child ){
                                         $theme = 'child';
@@ -703,13 +718,13 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                 $nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
                 if ( empty($nebula_parent_size) || is_debug() ){
                     $nebula_parent_size = nebula()->utilities->foldersize(get_template_directory());
-                    set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, 60*60*12); //12 hour cache
+                    set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, DAY_IN_SECONDS); //12 hour cache
                 }
 
                 $nebula_child_size = get_transient('nebula_directory_size_child_theme');
                 if ( empty($nebula_child_size) || is_debug() ){
                     $nebula_child_size = nebula()->utilities->foldersize(get_template_directory());
-                    set_transient('nebula_directory_size_child_theme', $nebula_child_size, 60*60*12); //12 hour cache
+                    set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS); //12 hour cache
                 }
 
                 echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
@@ -723,7 +738,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                 $nebula_size = get_transient('nebula_directory_size_theme');
                 if ( empty($nebula_size) || is_debug() ){
                     $nebula_size = nebula()->utilities->foldersize(get_stylesheet_directory());
-                    set_transient('nebula_directory_size_theme', $nebula_size, 60*60*12); //12 hour cache
+                    set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS); //12 hour cache
                 }
                 echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
             }
@@ -745,7 +760,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             $uploads_size = get_transient('nebula_directory_size_uploads');
             if ( empty($uploads_size) || is_debug() ){
                 $uploads_size = nebula()->utilities->foldersize($upload_dir['basedir']);
-                set_transient('nebula_directory_size_uploads', $uploads_size, 60*60*24); //24 hour cache
+                set_transient('nebula_directory_size_uploads', $uploads_size, HOUR_IN_SECONDS*36); //24 hour cache
             }
 
             if ( function_exists('wp_max_upload_size') ){
