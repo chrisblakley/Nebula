@@ -937,82 +937,95 @@ function nebula_relative_time($format=null){
 }
 
 //Detect location from IP address using https://freegeoip.net/
-function nebula_ip_location($data=null, $ip=false){
+function nebula_ip_location($data=null, $ip_address=false){
     if ( nebula_option('ip_geolocation') ){
-        if ( empty($ip) ){
-            $ip = $_SERVER['REMOTE_ADDR'];
+        if ( empty($ip_address) ){
+            $ip_address = $_SERVER['REMOTE_ADDR'];
 
             if ( empty($data) ){
                 return true; //If passed with no parameters, simply check if Nebula Option is enabled
             }
         }
 
-        if ( !empty($_SESSION['nebulageoip']) && !is_array($_SESSION['nebulageoip']) ){
-            return false;
-        }
-
-        if ( empty($_SESSION['nebulageoip']) && nebula_is_available('http://freegeoip.net') ){
-            $response = wp_remote_get('http://freegeoip.net/json/' . $ip);
-            if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
-                set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://freegeoip.net/json/')), 'Unavailable', 60*5); //5 minute expiration
-                return false;
+        //Check cache first
+        $ip_geo_data = wp_cache_get('nebula_ip_geolocation_' . str_replace('.', '_', $ip_address));
+        if ( empty($ip_geo_data) ){
+            //Check session next
+            if ( !empty($_SESSION['nebula_ip_geolocation']) ){
+                $ip_geo_data = $_SESSION['nebula_ip_geolocation'];
             }
 
-            $ip_geo_data = $response['body'];
-            $_SESSION['nebulageoip'] = $ip_geo_data;
-        } else {
-            $ip_geo_data = $_SESSION['nebulageoip'];
+            //Get new remote data
+            if ( empty($_SESSION['nebula_ip_geolocation']) && nebula_is_available('http://freegeoip.net') ){
+                $response = wp_remote_get('http://freegeoip.net/json/' . $ip_address);
+                if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
+                    set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://freegeoip.net/json/')), 'Unavailable', MINUTE_IN_SECONDS*5);
+                    return false;
+                }
+
+                $ip_geo_data = $response['body'];
+                $_SESSION['nebula_ip_geolocation'] = $ip_geo_data;
+            }
+
+            wp_cache_set('nebula_ip_geolocation_' . str_replace('.', '_', $ip_address), $ip_geo_data); //Cache the result
         }
-        $ip_geo_data = json_decode($ip_geo_data);
 
         if ( !empty($ip_geo_data) ){
-            switch ( str_replace(array(' ', '_', '-'), '', $data) ){
-                case 'country':
-                case 'countryname':
-                    return $ip_geo_data->country_name;
-                    break;
-                case 'countrycode':
-                    return $ip_geo_data->country_code;
-                    break;
-                case 'region':
-                case 'state':
-                case 'regionname':
-                case 'statename':
-                    return $ip_geo_data->region_name;
-                    break;
-                case 'regioncode':
-                case 'statecode':
-                    return $ip_geo_data->country_code;
-                    break;
-                case 'city':
-                    return $ip_geo_data->city;
-                    break;
-                case 'zip':
-                case 'zipcode':
-                    return $ip_geo_data->zip_code;
-                    break;
-                case 'lat':
-                case 'latitude':
-                    return $ip_geo_data->latitude;
-                    break;
-                case 'lng':
-                case 'longitude':
-                    return $ip_geo_data->longitude;
-                    break;
-                case 'geo':
-                case 'coordinates':
-                    return $ip_geo_data->latitude . ',' . $ip_geo_data->longitude;
-                    break;
-                case 'timezone':
-                    return $ip_geo_data->time_zone;
-                    break;
-                default:
-                    return false;
-                    break;
+            $ip_geo_data = json_decode($ip_geo_data);
+            if ( !empty($ip_geo_data) ){
+                switch ( str_replace(array(' ', '_', '-'), '', $data) ){
+                    case 'all':
+                    case 'object':
+                    case 'response':
+                        return $ip_geo_data;
+                    case 'country':
+                    case 'countryname':
+                        return $ip_geo_data->country_name;
+                        break;
+                    case 'countrycode':
+                        return $ip_geo_data->country_code;
+                        break;
+                    case 'region':
+                    case 'state':
+                    case 'regionname':
+                    case 'statename':
+                        return $ip_geo_data->region_name;
+                        break;
+                    case 'regioncode':
+                    case 'statecode':
+                        return $ip_geo_data->country_code;
+                        break;
+                    case 'city':
+                        return $ip_geo_data->city;
+                        break;
+                    case 'zip':
+                    case 'zipcode':
+                        return $ip_geo_data->zip_code;
+                        break;
+                    case 'lat':
+                    case 'latitude':
+                        return $ip_geo_data->latitude;
+                        break;
+                    case 'lng':
+                    case 'longitude':
+                        return $ip_geo_data->longitude;
+                        break;
+                    case 'geo':
+                    case 'coordinates':
+                        return $ip_geo_data->latitude . ',' . $ip_geo_data->longitude;
+                        break;
+                    case 'timezone':
+                        return $ip_geo_data->time_zone;
+                        break;
+                    default:
+                        return false;
+                        break;
+                }
             }
         }
-        return false;
     }
+
+    return false;
 }
 
 //Detect weather for Zip Code (using Yahoo! Weather)
@@ -1039,13 +1052,13 @@ function nebula_weather($zipcode=null, $data=''){
             }
             $response = wp_remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
             if ( is_wp_error($response) ){
-                set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://query.yahooapis.com/v1/public/yql')), 'Unavailable', 60*5); //5 minute expiration
+                set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://query.yahooapis.com/v1/public/yql')), 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
                 trigger_error('A Yahoo Weather API error occurred. Yahoo may be down, or forecast for ' . $zipcode . ' may not exist.', E_USER_WARNING);
                 return false;
             }
 
             $weather_json = $response['body'];
-            set_transient('nebula_weather_' . $zipcode, $weather_json, 60*15); //15 minute expiration
+            set_transient('nebula_weather_' . $zipcode, $weather_json, MINUTE_IN_SECONDS*30); //30 minute expiration
         }
         $weather_json = json_decode($weather_json);
 
@@ -1150,13 +1163,18 @@ function video_meta($provider, $id){
     $video_json = get_transient('nebula_' . $provider . '_' . $id);
     if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
         if ( $provider == 'youtube' ){
+            if ( !nebula_option('google_server_api_key') && is_staff() ){
+                echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';
+                $video_metadata['error'] = 'No Google Youtube Iframe API key.';
+            }
+            
             if ( !nebula_is_available('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key')) ){
                 $video_metadata['error'] = 'Youtube video is unavailable.';
                 return $video_metadata;
             }
             $response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
             if ( is_wp_error($response) ){
-                set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://www.googleapis.com/youtube/v3/videos')), 'Unavailable', 60*5); //5 minute expiration
+                set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://www.googleapis.com/youtube/v3/videos')), 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
                 $video_metadata['error'] = 'Youtube video is unavailable.';
                 return $video_metadata;
             }
@@ -1176,7 +1194,7 @@ function video_meta($provider, $id){
             $video_json = $response['body'];
         }
 
-        set_transient('nebula_' . $provider . '_' . $id, $video_json, 60*60); //1 hour expiration
+        set_transient('nebula_' . $provider . '_' . $id, $video_json, HOUR_IN_SECONDS*12); //1 hour expiration
     }
     $video_json = json_decode($video_json);
 

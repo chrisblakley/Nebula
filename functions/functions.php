@@ -35,10 +35,6 @@ if( !class_exists( 'Nebula_Functions' ) ) {
             //Add the Posts RSS Feed back in
             add_action('wp_head', array( $this, 'add_back_post_feed' ) );
 
-            //Send analytics data if GA is blocked by JavaScript
-            add_action('wp_ajax_nebula_ga_blocked',  array( $this, 'ga_blocked' ) );
-            add_action('wp_ajax_nopriv_nebula_ga_blocked',  array( $this, 'ga_blocked' ) );
-
             //Set server timezone to match Wordpress
             add_action('init', array( $this, 'set_default_timezone' ), 1);
             add_action('admin_init', array( $this, 'set_default_timezone' ), 1);
@@ -205,23 +201,6 @@ if( !class_exists( 'Nebula_Functions' ) ) {
         //Add the Posts RSS Feed back in
         public function add_back_post_feed(){
             echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
-        }
-
-        //Send analytics data if GA is blocked by JavaScript
-        public function ga_blocked(){
-            if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-            $post_id = sanitize_text_field($_POST['data'][0]['id']);
-            $dimension_array = array();
-
-            if ( nebula_option('cd_sessionid') ){
-                $dimension_index = nebula_option('cd_sessionid');
-                $cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
-                $dimension_array['cd' . $cd_number] = nebula_session_id() . '.noga';
-            }
-
-            ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id), $dimension_array);
-            //ga_send_event('Google Analytics Blocked', get_the_title($post_id), $_SERVER['HTTP_USER_AGENT']);
-            nebula_increment_visitor('current_session_pageviews');
         }
 
         //Set server timezone to match Wordpress
@@ -549,7 +528,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
             ));
 
             //Footer text
-            $wp_customize->add_setting('nebula_footer_text', array('default'  => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula_version('full') . ', <em>all rights reserved</em>.'));
+            $wp_customize->add_setting('nebula_footer_text', array('default' => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula_version('full') . ', <em>all rights reserved</em>.'));
             $wp_customize->add_control('nebula_footer_text', array(
                 'label' => 'Footer text',
                 'section' => 'footer',
@@ -775,7 +754,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
                 }
                 $response = wp_remote_get($feed, $args);
                 if ( is_wp_error($response) ){
-                    set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $feed)), 'Unavailable', 60*5); //5 minute expiration
+                    set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $feed)), 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
                     return false;
                 }
 
@@ -786,7 +765,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
                     exit;
                 }
 
-                set_transient('nebula_twitter_' . $username, $tweets, 60*5); //5 minute expiration
+                set_transient('nebula_twitter_' . $username, $tweets, MINUTE_IN_SECONDS*5); //5 minute expiration
             }
 
             if ( $_POST['data'] ){
@@ -965,7 +944,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
             $menus = get_transient('nebula_autocomplete_menus');
             if ( empty($menus) || is_debug() ){
                 $menus = get_terms('nav_menu');
-                set_transient('nebula_autocomplete_menus', $menus, 60*60); //1 hour cache
+                set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
             }
             foreach($menus as $menu){
                 $menu_items = wp_get_nav_menu_items($menu->term_id);
@@ -1003,7 +982,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
             $categories = get_transient('nebula_autocomplete_categories');
             if ( empty($categories) || is_debug() ){
                 $categories = get_categories();
-                set_transient('nebula_autocomplete_categories', $categories, 60*60); //1 hour cache
+                set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
             }
             foreach ( $categories as $category ){
                 $suggestion = array();
@@ -1026,7 +1005,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
             $tags = get_transient('nebula_autocomplete_tags');
             if ( empty($tags) || is_debug() ){
                 $tags = get_tags();
-                set_transient('nebula_autocomplete_tags', $tags, 60*60); //1 hour cache
+                set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
             }
             foreach ( $tags as $tag ){
                 $suggestion = array();
@@ -1050,7 +1029,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
                 $authors = get_transient('nebula_autocomplete_authors');
                 if ( empty($authors) || is_debug() ){
                     $authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
-                    set_transient('nebula_autocomplete_authors', $authors, 60*60); //1 hour cache
+                    set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
                 }
                 foreach ( $authors as $author ){
                     $author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
@@ -1111,7 +1090,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
                     'posts_per_page' => -1,
                     'nopaging' => true
                 ));
-                set_transient('nebula_everything_query', $everything_query, 60*60); //1 hour cache
+                set_transient('nebula_everything_query', $everything_query, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
             }
             $posts = $everything_query->get_posts();
 
@@ -1223,7 +1202,7 @@ if( !class_exists( 'Nebula_Functions' ) ) {
                     relevanssi_do_query($error_query);
                 }
 
-                if ( $slug_keywords == $error_query->posts[0]->post_name ){
+                if ( !empty($error_query->posts) && $slug_keywords == $error_query->posts[0]->post_name ){
                     global $error_404_exact_match;
                     $error_404_exact_match = $error_query->posts[0];
                 }

@@ -375,4 +375,3 @@ function nebula_get_hubspot_contact($vid=null, $property=''){
     }
     return json_decode($response['body'], true);
 }
-
