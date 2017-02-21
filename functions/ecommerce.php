@@ -122,10 +122,10 @@ if( !class_exists( 'Nebula_Ecommerce' ) ) {
                     $products['ecommerce_product_ids'] = $item['product_id'];
                 }
                 $products['ecommerce_order_id'] = $order_id;
-                nebula_append_visitor($products);
+                nebula()->utilities->visitors->append_visitor($products);
 
                 //Update Customer data
-                nebula_update_visitor(array(
+                nebula()->utilities->visitors->update_visitor(array(
                     'wp_role' => 'Customer',
                     'email_address' => $order->billing_email,
                     'first_name' => $order->billing_first_name,
