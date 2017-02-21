@@ -102,25 +102,6 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             return time() . '.' . $session_info . 's:' . $wp_session_id . '.c:' . $ga_cid . $site_live;
         }
 
-        //Log Nebula-specific information
-        public function nebula_log($message, $logfile=false){ //@todo "Nebula" 0: In progress
-            //see if logging option is enabled (make it enabled by default.
-            //use /includes/data/nebula.log in relation to active theme
-            //Logs should include date, time, message, file, IP address, Nebula Session ID
-
-            $time = $_SERVER['REQUEST_TIME'];
-            if ( empty($time) ){
-                $time = time();
-            }
-
-            //IP Address: $_SERVER['REMOTE_ADDR']
-            //Requested file: $_SERVER['REQUEST_URI']
-            //Formatted date: date('Y-m-d H:i:s', $time)
-
-            //concerned about large filesizes? Maybe only keep logs for the last 5000 lines or something?
-            //append to log file.
-        }
-
         //Detect Notable POI
         public function nebula_poi(){
             if ( nebula_option('notableiplist') ){
@@ -197,6 +178,11 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
         //Alias for a less confusing is_admin() function to try to prevent security issues
         public function is_admin_page(){
             return is_admin();
+        }
+
+        //Check if viewing the login page.
+        public function is_login_page(){
+            return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
         }
 
         //Format phone numbers into the preferred (315) 478-6700 format.
@@ -336,6 +322,15 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             return true;
         }
 
+        //If the request was made via AJAX
+        public function is_ajax_request(){
+            if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' ){
+                return true;
+            }
+
+            return false;
+        }
+
         //Valid Hostname Regex
         public function valid_hostname_regex($domains=null){
             $domains = ( $domains )? $domains : array(nebula_url_components('domain'));
@@ -389,7 +384,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                 case ('protocol'): //Protocol and Scheme are aliases and return the same value.
                 case ('scheme'): //Protocol and Scheme are aliases and return the same value.
                 case ('schema'):
-                    if ( $url_components['scheme'] != '' ){
+                    if ( isset($url_components['scheme']) ){
                         return $url_components['scheme'];
                     } else {
                         return false;
@@ -397,7 +392,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                     break;
 
                 case ('port'):
-                    if ( $url_components['port'] ){
+                    if ( isset($url_components['port']) ){
                         return $url_components['port'];
                     } else {
                         switch( $url_components['scheme'] ){
@@ -422,7 +417,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
 
                 case ('user'): //Returns the username from this type of syntax: https://username:password@gearside.com/
                 case ('username'):
-                    if ( $url_components['user'] ){
+                    if ( isset($url_components['user']) ){
                         return $url_components['user'];
                     } else {
                         return false;
@@ -431,7 +426,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
 
                 case ('pass'): //Returns the password from this type of syntax: https://username:password@gearside.com/
                 case ('password'):
-                    if ( $url_components['pass'] ){
+                    if ( isset($url_components['pass']) ){
                         return $url_components['pass'];
                     } else {
                         return false;
@@ -439,7 +434,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                     break;
 
                 case ('authority'):
-                    if ( $url_components['user'] && $url_components['pass'] ){
+                    if ( isset($url_components['user']) && isset($url_components['pass']) ){
                         return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . nebula_url_components('port', $url);
                     } else {
                         return false;
@@ -448,7 +443,9 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
 
                 case ('host'): //In http://something.example.com the host is "something.example.com"
                 case ('hostname'):
-                    return $url_components['host'];
+                    if( isset($url_components['host']) ){
+                        return $url_components['host'];
+                    }
                     break;
 
                 case ('www') :
@@ -475,7 +472,9 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                 case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"
                 case ('base_domain'):
                 case ('origin') :
-                    return $url_components['scheme'] . '://' . $domain[0];
+                    if( isset($url_components['scheme']) ){
+                        return $url_components['scheme'] . '://' . $domain[0];
+                    }
                     break;
 
                 case ('sld') : //In example.com the sld is "example"
@@ -492,7 +491,9 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
 
                 case ('filepath'): //Filepath will be both path and file/extension
                 case ('pathname'):
-                    return $url_components['path'];
+                    if( isset($url_components['path']) ) {
+                        return $url_components['path'];
+                    }
                     break;
 
                 case ('file'): //Filename will be just the filename/extension.
@@ -524,7 +525,9 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                 case ('query'):
                 case ('queries'):
                 case ('search'):
-                    return $url_components['query'];
+                    if( isset($url_components['query']) ){
+                        return $url_components['query'];
+                    }
                     break;
 
                 case ('fragment'):
@@ -533,7 +536,9 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                 case ('hash') :
                 case ('hashtag'):
                 case ('id'):
-                    return $url_components['fragment'];
+                    if( isset($url_components['fragment']) ){
+                        return $url_components['fragment'];
+                    }
                     break;
 
                 default :
@@ -654,6 +659,17 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             return false;
         }
 
+        //Check if a value is a UTC Timestamp
+        public function is_utc_timestamp($timestamp){
+            if ( strlen($timestamp) == 10 ){
+                $timestamp = intval($timestamp);
+                if ( ctype_digit($timestamp) && strtotime(date('d-m-Y H:i:s', $timestamp)) === $timestamp ){
+                    return true;
+                }
+            }
+            return false;
+        }
+
         //Check if a website or resource is available
         public function nebula_is_available($url=null, $nocache=false){
             $override = apply_filters('pre_nebula_is_available', false, $url);
@@ -671,19 +687,19 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                     return true;
                 }
 
-                set_transient('nebula_site_available_' . $hostname, 'Unavailable', 60*5); //5 minute expiration
+                set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
                 return false;
             }
 
             if ( empty($site_available_buffer) || $nocache ){
                 $response = wp_remote_get($url);
                 if ( !is_wp_error($response) && $response['response']['code'] === 200 ){
-                    set_transient('nebula_site_available_' . $hostname, 'Available', 60*5); //5 minute expiration
+                    set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*5); //5 minute expiration
                     return true;
                 }
             }
 
-            set_transient('nebula_site_available_' . $hostname, 'Unavailable', 60*5); //5 minute expiration
+            set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
             return false;
         }
 

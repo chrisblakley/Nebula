@@ -392,7 +392,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
                 }
             }
 
-            $bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http');
+            $bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon');
             foreach( $bots as $bot ){
                 if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
                     return true;

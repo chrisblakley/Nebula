@@ -125,7 +125,7 @@ if( !class_exists( 'Nebula_Ecommerce' ) ) {
                 nebula()->utilities->visitors->append_visitor($products);
 
                 //Update Customer data
-                nebula()->utilities->visitors->update_visitor(array(
+                nebula()->utilities->visitors->update_visitor_data(array(
                     'wp_role' => 'Customer',
                     'email_address' => $order->billing_email,
                     'first_name' => $order->billing_first_name,
