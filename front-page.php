@@ -16,7 +16,7 @@ get_header(); ?>
 	<div class="herobgcolor"></div>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-12">
 				<h1><?php echo get_bloginfo('name'); ?></h1>
 				<?php if ( get_bloginfo('description') != '' ): ?>
 					<h2><?php echo get_bloginfo('description'); ?></h2>

@@ -53,6 +53,8 @@ function register_nebula_styles(){
 	wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css', null, '1.6.2', 'all');
 	wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css', null, '1.12.1', 'all');
 	wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
+	wp_register_style('nebula-pre', get_template_directory_uri() . '/stylesheets/css/pre.css', null, null);
+	wp_register_style('nebula-flags', get_template_directory_uri() . '/stylesheets/css/libs/flags.css', null, null);
 	wp_register_style('nebula-login', get_template_directory_uri() . '/stylesheets/css/login.css', null, null);
 	wp_register_style('nebula-admin', get_template_directory_uri() . '/stylesheets/css/admin.css', null, null);
 }
@@ -77,7 +79,7 @@ function register_nebula_scripts(){
 	nebula_register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js', 'defer', null, '1.4.0', true); //This is not enqueued or dependent because it is called via main.js only as needed.
 	nebula_register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js', 'defer', null, '1.10.13', true); //Datatables is called via main.js only as needed.
 	nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js', 'defer', null, '1.6.2', true);
-	nebula_register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/1.1.0/autotrack.js', 'async', null, '1.1.0', true);
+	nebula_register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.0.1/autotrack.js', 'async', null, '1.1.0', true);
 	nebula_register_script('performance-timing', get_template_directory_uri() . '/js/libs/performance-timing.js', 'defer', null, null, false);
 	nebula_register_script('nebula-main', get_template_directory_uri() . '/js/main.js', 'defer', array('nebula-bootstrap', 'jquery', 'nebula-jquery_ui'), null, true);
 	nebula_register_script('nebula-login', get_template_directory_uri() . '/js/login.js', null, array('jquery'), null, true);
@@ -177,7 +179,7 @@ function register_nebula_scripts(){
 	//User Data
 	$nebula['user'] = array(
 		'ip' => $_SERVER['REMOTE_ADDR'],
-		'nid' => get_nebula_id(),
+		'nid' => nebula_vdb_get_appropriate_nebula_id(),
 		'cid' => ga_parse_cookie(),
 		'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 			'bot' => nebula_is_bot(),
@@ -313,6 +315,8 @@ function enqueue_nebula_admin(){
 
 	//Nebula Visitors Data page
 	if ( $current_screen->base === 'appearance_page_nebula_visitors_data' ){
+		wp_enqueue_style('nebula-bootstrap');
+		wp_enqueue_style('nebula-pre');
 		wp_enqueue_style('nebula-datatables');
 		wp_enqueue_script('nebula-datatables');
 	}

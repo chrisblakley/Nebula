@@ -21,7 +21,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-12">
 				<h1 class="page-title"><?php the_title(); ?></h1>
 			</div><!--/cols-->
 		</div><!--/row-->
@@ -30,7 +30,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-12">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -112,7 +112,7 @@ get_header(); ?>
 								</div><!--/col-->
 							</div><!--/row-->
 							<div class="row">
-								<div class="col-md-12">
+								<div class="col-12">
 									<span class="contact-form-heading">Keyword Filter</span>
 									<div class="form-group" style="margin-bottom: 0;">
 										<input type="text" name="s" id="s" class="form-control no-autocomplete advanced-search-keyword" placeholder="Keyword filter" />

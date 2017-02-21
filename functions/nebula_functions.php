@@ -49,25 +49,6 @@ function addBackPostFeed(){
     echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
 }
 
-//Send analytics data if GA is blocked by JavaScript
-add_action('wp_ajax_nebula_ga_blocked', 'nebula_ga_blocked');
-add_action('wp_ajax_nopriv_nebula_ga_blocked', 'nebula_ga_blocked');
-function nebula_ga_blocked(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-	$post_id = sanitize_text_field($_POST['data'][0]['id']);
-	$dimension_array = array();
-
-	if ( nebula_option('cd_sessionid') ){
-		$dimension_index = nebula_option('cd_sessionid');
-		$cd_number = substr($dimension_index, strpos($dimension_index, "dimension")+9);
-		$dimension_array['cd' . $cd_number] = nebula_session_id() . '.noga';
-	}
-
-	ga_send_pageview(nebula_url_components('hostname'), nebula_url_components('path', get_permalink($post_id)), get_the_title($post_id), $dimension_array);
-	//ga_send_event('Google Analytics Blocked', get_the_title($post_id), $_SERVER['HTTP_USER_AGENT']);
-	nebula_increment_visitor('current_session_pageviews');
-}
-
 //Set server timezone to match Wordpress
 add_action('init', 'nebula_set_default_timezone', 1);
 add_action('admin_init', 'nebula_set_default_timezone', 1);
@@ -1058,7 +1039,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $numbert
 		}
 		$response = wp_remote_get($feed, $args);
 		if ( is_wp_error($response) ){
-			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $feed)), 'Unavailable', 60*5); //5 minute expiration
+			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $feed)), 'Unavailable', MINUTE_IN_SECONDS*5);
 			return false;
 		}
 
@@ -1069,7 +1050,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $numbert
 			exit;
 		}
 
-		set_transient('nebula_twitter_' . $username, $tweets, 60*5); //5 minute expiration
+		set_transient('nebula_twitter_' . $username, $tweets, MINUTE_IN_SECONDS*5);
 	}
 
 	if ( $_POST['data'] ){
@@ -1505,7 +1486,7 @@ function nebula_autocomplete_search(){
 	$menus = get_transient('nebula_autocomplete_menus');
 	if ( empty($menus) || is_debug() ){
 		$menus = get_terms('nav_menu');
-		set_transient('nebula_autocomplete_menus', $menus, 60*60*24); //24 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
+		set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	foreach($menus as $menu){
 		$menu_items = wp_get_nav_menu_items($menu->term_id);
@@ -1543,7 +1524,7 @@ function nebula_autocomplete_search(){
 	$categories = get_transient('nebula_autocomplete_categories');
 	if ( empty($categories) || is_debug() ){
 		$categories = get_categories();
-		set_transient('nebula_autocomplete_categories', $categories, 60*60*24); //24 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
+		set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	foreach ( $categories as $category ){
 		$suggestion = array();
@@ -1566,7 +1547,7 @@ function nebula_autocomplete_search(){
 	$tags = get_transient('nebula_autocomplete_tags');
 	if ( empty($tags) || is_debug() ){
 		$tags = get_tags();
-		set_transient('nebula_autocomplete_tags', $tags, 60*60*24); //24 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
+		set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	foreach ( $tags as $tag ){
 		$suggestion = array();
@@ -1590,7 +1571,7 @@ function nebula_autocomplete_search(){
 		$authors = get_transient('nebula_autocomplete_authors');
 		if ( empty($authors) || is_debug() ){
 			$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
-			set_transient('nebula_autocomplete_authors', $authors, 60*60*24*7); //1 week cache. This transient is deleted when a post is updated or Nebula Options are saved.
+			set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 		}
 		foreach ( $authors as $author ){
 			$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
@@ -1653,7 +1634,7 @@ function nebula_advanced_search(){
 			'posts_per_page' => -1,
 			'nopaging' => true
 		));
-		set_transient('nebula_everything_query', $everything_query, 60*60*48); //48 hour cache. This transient is deleted when a post is updated or Nebula Options are saved.
+		set_transient('nebula_everything_query', $everything_query, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 	}
 	$posts = $everything_query->get_posts();
 
@@ -1897,7 +1878,7 @@ function nebula_404_internal_suggestions(){
 			relevanssi_do_query($error_query);
 		}
 
-		if ( $slug_keywords == $error_query->posts[0]->post_name ){
+		if ( !empty($error_query->posts) && $slug_keywords == $error_query->posts[0]->post_name ){
 			global $error_404_exact_match;
 			$error_404_exact_match = $error_query->posts[0];
 		}
@@ -2241,82 +2222,95 @@ function nebula_relative_time($format=null){
 }
 
 //Detect location from IP address using https://freegeoip.net/
-function nebula_ip_location($data=null, $ip=false){
+function nebula_ip_location($data=null, $ip_address=false){
 	if ( nebula_option('ip_geolocation') ){
-		if ( empty($ip) ){
-			$ip = $_SERVER['REMOTE_ADDR'];
+		if ( empty($ip_address) ){
+			$ip_address = $_SERVER['REMOTE_ADDR'];
 
 			if ( empty($data) ){
 				return true; //If passed with no parameters, simply check if Nebula Option is enabled
 			}
 		}
 
-		if ( !empty($_SESSION['nebulageoip']) && !is_array($_SESSION['nebulageoip']) ){
-			return false;
-		}
-
-		if ( empty($_SESSION['nebulageoip']) && nebula_is_available('http://freegeoip.net') ){
-			$response = wp_remote_get('http://freegeoip.net/json/' . $ip);
-			if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
-				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://freegeoip.net/json/')), 'Unavailable', 60*5); //5 minute expiration
-				return false;
+		//Check cache first
+		$ip_geo_data = wp_cache_get('nebula_ip_geolocation_' . str_replace('.', '_', $ip_address));
+		if ( empty($ip_geo_data) ){
+			//Check session next
+			if ( !empty($_SESSION['nebula_ip_geolocation']) ){
+				$ip_geo_data = $_SESSION['nebula_ip_geolocation'];
 			}
 
-			$ip_geo_data = $response['body'];
-			$_SESSION['nebulageoip'] = $ip_geo_data;
-		} else {
-			$ip_geo_data = $_SESSION['nebulageoip'];
+			//Get new remote data
+			if ( empty($_SESSION['nebula_ip_geolocation']) && nebula_is_available('http://freegeoip.net') ){
+				$response = wp_remote_get('http://freegeoip.net/json/' . $ip_address);
+				if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
+					set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://freegeoip.net/json/')), 'Unavailable', MINUTE_IN_SECONDS*5);
+					return false;
+				}
+
+				$ip_geo_data = $response['body'];
+				$_SESSION['nebula_ip_geolocation'] = $ip_geo_data;
+			}
+
+			wp_cache_set('nebula_ip_geolocation_' . str_replace('.', '_', $ip_address), $ip_geo_data); //Cache the result
 		}
-		$ip_geo_data = json_decode($ip_geo_data);
 
 		if ( !empty($ip_geo_data) ){
-			switch ( str_replace(array(' ', '_', '-'), '', $data) ){
-				case 'country':
-				case 'countryname':
-					return $ip_geo_data->country_name;
-					break;
-				case 'countrycode':
-					return $ip_geo_data->country_code;
-					break;
-				case 'region':
-				case 'state':
-				case 'regionname':
-				case 'statename':
-					return $ip_geo_data->region_name;
-					break;
-				case 'regioncode':
-				case 'statecode':
-					return $ip_geo_data->country_code;
-					break;
-				case 'city':
-					return $ip_geo_data->city;
-					break;
-				case 'zip':
-				case 'zipcode':
-					return $ip_geo_data->zip_code;
-					break;
-				case 'lat':
-				case 'latitude':
-					return $ip_geo_data->latitude;
-					break;
-				case 'lng':
-				case 'longitude':
-					return $ip_geo_data->longitude;
-					break;
-				case 'geo':
-				case 'coordinates':
-					return $ip_geo_data->latitude . ',' . $ip_geo_data->longitude;
-					break;
-				case 'timezone':
-					return $ip_geo_data->time_zone;
-					break;
-				default:
-					return false;
-					break;
+			$ip_geo_data = json_decode($ip_geo_data);
+			if ( !empty($ip_geo_data) ){
+				switch ( str_replace(array(' ', '_', '-'), '', $data) ){
+					case 'all':
+					case 'object':
+					case 'response':
+						return $ip_geo_data;
+					case 'country':
+					case 'countryname':
+						return $ip_geo_data->country_name;
+						break;
+					case 'countrycode':
+						return $ip_geo_data->country_code;
+						break;
+					case 'region':
+					case 'state':
+					case 'regionname':
+					case 'statename':
+						return $ip_geo_data->region_name;
+						break;
+					case 'regioncode':
+					case 'statecode':
+						return $ip_geo_data->country_code;
+						break;
+					case 'city':
+						return $ip_geo_data->city;
+						break;
+					case 'zip':
+					case 'zipcode':
+						return $ip_geo_data->zip_code;
+						break;
+					case 'lat':
+					case 'latitude':
+						return $ip_geo_data->latitude;
+						break;
+					case 'lng':
+					case 'longitude':
+						return $ip_geo_data->longitude;
+						break;
+					case 'geo':
+					case 'coordinates':
+						return $ip_geo_data->latitude . ',' . $ip_geo_data->longitude;
+						break;
+					case 'timezone':
+						return $ip_geo_data->time_zone;
+						break;
+					default:
+						return false;
+						break;
+				}
 			}
 		}
-		return false;
 	}
+
+	return false;
 }
 
 //Detect weather for Zip Code (using Yahoo! Weather)
@@ -2343,13 +2337,13 @@ function nebula_weather($zipcode=null, $data=''){
 			}
 			$response = wp_remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
 			if ( is_wp_error($response) ){
-				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://query.yahooapis.com/v1/public/yql')), 'Unavailable', 60*5); //5 minute expiration
+				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://query.yahooapis.com/v1/public/yql')), 'Unavailable', MINUTE_IN_SECONDS*5);
 				trigger_error('A Yahoo Weather API error occurred. Yahoo may be down, or forecast for ' . $zipcode . ' may not exist.', E_USER_WARNING);
 				return false;
 			}
 
 			$weather_json = $response['body'];
-			set_transient('nebula_weather_' . $zipcode, $weather_json, 60*30); //30 minute expiration
+			set_transient('nebula_weather_' . $zipcode, $weather_json, MINUTE_IN_SECONDS*30);
 		}
 		$weather_json = json_decode($weather_json);
 
@@ -2454,13 +2448,18 @@ function video_meta($provider, $id){
 	$video_json = get_transient('nebula_' . $provider . '_' . $id);
 	if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 		if ( $provider == 'youtube' ){
+			if ( !nebula_option('google_server_api_key') && is_staff() ){
+				echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';
+				$video_metadata['error'] = 'No Google Youtube Iframe API key.';
+			}
+
 			if ( !nebula_is_available('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key')) ){
 				$video_metadata['error'] = 'Youtube video is unavailable.';
 				return $video_metadata;
 			}
 			$response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
 			if ( is_wp_error($response) ){
-				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://www.googleapis.com/youtube/v3/videos')), 'Unavailable', 60*5); //5 minute expiration
+				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://www.googleapis.com/youtube/v3/videos')), 'Unavailable', MINUTE_IN_SECONDS*5);
 				$video_metadata['error'] = 'Youtube video is unavailable.';
 				return $video_metadata;
 			}
@@ -2480,7 +2479,7 @@ function video_meta($provider, $id){
 			$video_json = $response['body'];
 		}
 
-		set_transient('nebula_' . $provider . '_' . $id, $video_json, 60*60*12); //12 hour expiration
+		set_transient('nebula_' . $provider . '_' . $id, $video_json, HOUR_IN_SECONDS*12);
 	}
 	$video_json = json_decode($video_json);
 

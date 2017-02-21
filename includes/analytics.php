@@ -8,7 +8,7 @@
 
 <?php if ( nebula_option('ga_tracking_id') ): //Universal Google Analytics ?>
 	<script>
-		<?php //@TODO "Analytics" 5: Admin > View Settings - Turn on Site Search Tracking and enter "s,rs" in the Query Parameter input field! ?>
+		window.GAready = false;
 
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -16,6 +16,13 @@
 		})(window,document,'script','//www.google-analytics.com/<?php echo ( is_debug(1) )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
 
 		ga('create', '<?php echo nebula_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula_option('ga_wpuserid', 'enabled') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
+
+		ga(function(){
+			window.GAready = true;
+			if ( typeof initEventTracking === 'function' ){
+				initEventTracking();
+			}
+		});
 
 		<?php if ( nebula_option('ga_displayfeatures', 'enabled') ): ?>
 			ga('require', 'displayfeatures');
@@ -43,7 +50,6 @@
 			geoName: '<?php echo nebula_option('cd_geoname'); ?>',
 			relativeTime: '<?php echo nebula_option('cd_relativetime'); ?>',
 			scrollDepth: '<?php echo nebula_option('cd_scrolldepth'); ?>',
-			maxScroll: '<?php echo nebula_option('cd_maxscroll'); ?>',
 			sessionID: '<?php echo nebula_option('cd_sessionid'); ?>',
 			poi: '<?php echo nebula_option('cd_notablepoi'); ?>',
 			role: '<?php echo nebula_option('cd_role'); ?>',
@@ -76,6 +82,7 @@
 			autocompleteSearches: '<?php echo nebula_option('cm_autocompletesearches'); ?>',
 			autocompleteSearchClicks: '<?php echo nebula_option('cm_autocompletesearchclicks'); ?>',
 			wordCount: '<?php echo nebula_option('cm_wordcount'); ?>',
+			maxScroll: '<?php echo nebula_option('cm_maxscroll'); ?>',
 		}
 
 		<?php
@@ -238,7 +245,7 @@
 
 			//First visit timestamp
 			if ( nebula_option('cd_firstinteraction') ){
-				$first_session = nebula_get_visitor_data('first_session');
+				$first_session = nebula_vdb_get_visitor_datapoint('first_session');
 				if ( !empty($first_session) ){
 					echo 'ga("set", gaCustomDimensions["firstInteraction"], "' . time() . '");';
 				}
@@ -349,6 +356,17 @@
 				fieldsObj: {nonInteraction: true}
 			});
 		}
+
+		//Autotrack Max Scroll
+		ga('require', 'maxScrollTracker', {
+			maxScrollMetricIndex: parseInt(gaCustomMetrics['maxScroll'].replace('metric', '')),
+			hitFilter: function(model){
+				if ( model.get('eventLabel') > 65 ){
+					//model.set('nonInteraction', true, true); //This would consider the session a non-bounce.
+				}
+
+			},
+		});
 
 		<?php if ( nebula_option('google_optimize_id') ): //Google Optimize ?>
 			ga('require', '<?php echo nebula_option('google_optimize_id'); ?>');

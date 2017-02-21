@@ -13,18 +13,19 @@
 
 namespace DeviceDetector;
 
-require_once (dirname(__FILE__) . '/Cache/Cache.php');
-require_once (dirname(__FILE__) . '/Cache/StaticCache.php');
-require_once (dirname(__FILE__) . '/Parser/ParserAbstract.php');
-require_once (dirname(__FILE__) . '/Parser/Bot.php');
-require_once (dirname(__FILE__) . '/Parser/OperatingSystem.php');
-require_once (dirname(__FILE__) . '/Parser/VendorFragment.php');
-require_once (dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php');
-require_once (dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php');
-require_once (dirname(__FILE__) . '/Parser/Client/Browser.php');
-//require_once (dirname(__FILE__) . '/Parser/Client/Browser/Engine.php');
-require_once (dirname(__FILE__) . '/Yaml/Parser.php');
-require_once (dirname(__FILE__) . '/Yaml/Spyc.php');
+require_once(dirname(__FILE__) . '/Cache/Cache.php');
+require_once(dirname(__FILE__) . '/Cache/StaticCache.php');
+require_once(dirname(__FILE__) . '/Parser/ParserAbstract.php');
+require_once(dirname(__FILE__) . '/Parser/Bot.php');
+require_once(dirname(__FILE__) . '/Parser/OperatingSystem.php');
+require_once(dirname(__FILE__) . '/Parser/VendorFragment.php');
+require_once(dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php');
+require_once(dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php');
+require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine.php');
+require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine/Version.php');
+require_once(dirname(__FILE__) . '/Parser/Client/Browser.php');
+require_once(dirname(__FILE__) . '/Yaml/Parser.php');
+require_once(dirname(__FILE__) . '/Yaml/Spyc.php');
 require_once(realpath(dirname(__FILE__) . '/..') . '/spyc.php');
 
 /***********
@@ -72,7 +73,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.7.0';
+    const VERSION = '3.7.5';
 
     /**
      * Holds all registered client types
@@ -252,7 +253,12 @@ class DeviceDetector
      */
     public function addClientParser($parser)
     {
-        require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');
+	    require_once(dirname(__FILE__) . '/Parser/Client/FeedReader.php');
+		require_once(dirname(__FILE__) . '/Parser/Client/MobileApp.php');
+		require_once(dirname(__FILE__) . '/Parser/Client/MediaPlayer.php');
+		require_once(dirname(__FILE__) . '/Parser/Client/PIM.php');
+		require_once(dirname(__FILE__) . '/Parser/Client/Browser.php');
+		require_once(dirname(__FILE__) . '/Parser/Client/Library.php');
 
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Client\\' . $parser)) {
             $className = 'DeviceDetector\\Parser\\Client\\' . $parser;
@@ -279,7 +285,12 @@ class DeviceDetector
      */
     public function addDeviceParser($parser)
     {
-        require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php');
+	    require_once(dirname(__FILE__) . '/Parser/Device/HbbTv.php');
+		require_once(dirname(__FILE__) . '/Parser/Device/Console.php');
+		require_once(dirname(__FILE__) . '/Parser/Device/CarBrowser.php');
+		require_once(dirname(__FILE__) . '/Parser/Device/Camera.php');
+		require_once(dirname(__FILE__) . '/Parser/Device/PortableMediaPlayer.php');
+		require_once(dirname(__FILE__) . '/Parser/Device/Mobile.php');
 
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Device\\' . $parser)) {
             $className = 'DeviceDetector\\Parser\\Device\\' . $parser;

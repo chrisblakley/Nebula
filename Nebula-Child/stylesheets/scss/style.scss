@@ -43,6 +43,8 @@ h1, h2, h3, h4, h5, h6 {color: $text_color;
 
 a {@include link-colors($primary_color, $secondary_color, $primary_color, $primary_color, $secondary_color);}
 
+.herobgcolor {animation: none;}
+
 .xoxo {
 	ul li.current-menu-item {
 		.sub-menu {

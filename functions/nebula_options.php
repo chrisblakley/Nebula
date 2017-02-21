@@ -236,7 +236,6 @@ function nebula_default_options(){
 		'cd_notablepoi' => '',
 		'cd_relativetime' => '',
 		'cd_scrolldepth' => '',
-		'cd_maxscroll' => '',
 		'cd_sessionid' => '',
 		'cd_timestamp' => '',
 		'cd_windowtype' => '',
@@ -269,6 +268,7 @@ function nebula_default_options(){
 		'cm_pagevisible' => '',
 		'cm_pagehidden' => '',
 		'cm_wordcount' => '',
+		'cm_maxscroll' => '',
 
 		//APIs Tab
 		'google_font_url' => '',
@@ -1171,14 +1171,6 @@ function nebula_options_page(){
 					</td>
 		        </tr>
 
-				<tr class="short" valign="top">
-		        	<th scope="row">Max Scroll Percent&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-					<td>
-						<input class="dimension" type="text" name="nebula_options[cd_maxscroll]" value="<?php echo $nebula_options['cd_maxscroll']; ?>" />
-						<p class="helper"><small>Calculates the maximum scroll percent the user reached before triggering an event. <em>This dimension is tied to events, so pageviews will not have data (use the Top Event report).</em> <strong>Scope: Hit</strong></small></p>
-					</td>
-		        </tr>
-
 				<tr valign="top">
 					<td colspan="2" style="padding-left: 0; padding-right: 0;">
 						<h3>Business Data</h3>
@@ -1457,6 +1449,14 @@ function nebula_options_page(){
 					<td>
 						<input class="metric" type="text" name="nebula_options[cm_engagedreaders]" value="<?php echo $nebula_options['cm_engagedreaders']; ?>" />
 						<p class="helper"><small>Counts when a user has completed reading an article (and is not determined to be a "scanner"). <strong>Scope: Hit, Format: Integer</strong></small></p>
+					</td>
+		        </tr>
+
+		        <tr class="short" valign="top">
+		        	<th scope="row">Max Scroll Percentage&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input class="metric" type="text" name="nebula_options[cm_maxscroll]" value="<?php echo $nebula_options['cm_maxscroll']; ?>" />
+						<p class="helper"><small>Calculates the maximum scroll percentage the user reached per page. Use a calculated Metric in Google Analytics called "Avg. Max Scroll Percentage" of <code>{{Max Scroll Percentage}}/(100*{{Unique Pageviews}})</code> to show Average Max Scroll Percentage per page. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Referral Source", etc. <strong>Scope: Hit, Format: Integer</strong></small></p>
 					</td>
 		        </tr>
 

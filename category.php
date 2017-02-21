@@ -15,7 +15,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-12">
 				<h1 class="page-title"><i class="fa fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 				<?php echo category_description(); ?>
 			</div><!--/cols-->
@@ -25,7 +25,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-12">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->

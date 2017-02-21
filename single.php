@@ -20,7 +20,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-12">
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 				<div class="entry-meta">
 					<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
@@ -32,7 +32,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-12">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -61,14 +61,14 @@ get_header(); ?>
 
 							<div class="row prevnextcon">
 								<?php if ( get_previous_post_link() ): ?>
-									<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col-md-12'; ?> prev-link-con">
+									<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col-12'; ?> prev-link-con">
 										<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
 			                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
 									</div><!--/col-->
 								<?php endif; ?>
 
 								<?php if ( get_next_post_link() ): ?>
-									<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col-md-12'; ?> next-link-con">
+									<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col-12'; ?> next-link-con">
 										<p class="prevnext-post-heading next-post-heading">Next Post</p>
 			                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
 									</div><!--/col-->

@@ -37,7 +37,7 @@
 
 				<div id="mobilebarcon">
 					<div class="row mobilenavcon">
-						<div class="col-md-12">
+						<div class="col-12">
 							<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
 							<nav id="mobilenav">
 								<?php
@@ -67,7 +67,7 @@
 						<div id="secondarynavcon">
 							<div class="container">
 								<div class="row">
-									<div class="col-md-12">
+									<div class="col-12">
 										<nav id="secondarynav">
 						        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
 						        		</nav>
@@ -80,12 +80,12 @@
 					<div id="logonavcon" class="<?php echo ( get_bloginfo('description') != '' && !get_theme_mod('nebula_hide_blogdescription', false) )? 'has-description' : ''; ?>">
 						<div class="container">
 							<div class="row">
-								<div class="col-lg-4">
+								<div class="col-md-4">
 									<a class="logocon" href="<?php echo home_url(); ?>">
 										<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
 									</a>
 								</div><!--/col-->
-								<div class="col-lg-8">
+								<div class="col-md-8">
 									<?php if ( has_nav_menu('primary') ): ?>
 										<nav id="primarynav" class="clearfix">
 											<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>

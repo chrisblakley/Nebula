@@ -106,6 +106,9 @@ body:not(.wp-admin) {
 .aligncenter, .align-center {display: block; margin: 0 auto;}
 .alignleft, .align-left {float: left;}
 .alignright, .align-right {float: right;}
+.text-left {text-align: left;}
+.text-center {text-align: center;}
+.text-right {text-align: right;}
 .wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
 .wp-caption-text {}
 

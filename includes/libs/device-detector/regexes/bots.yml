@@ -69,6 +69,14 @@
     name: 'Apple Inc'
     url: 'http://www.apple.com'
 
+- regex: 'Castro 2, Episode Duration Lookup'
+  name: 'Castro 2'
+  category: 'Service Agent'
+  url: 'http://supertop.co/castro/'
+  producer: 
+    name: 'Supertop'
+    url: 'http://supertop.co'
+
 - regex: 'Curious George'
   name: 'Analytics SEO Crawler'
   category: 'Crawler'
@@ -93,8 +101,8 @@
     name: 'Ask Jeeves Inc.'
     url: 'http://www.ask.com'
 
-- regex: 'Backlink-Ceck\.de'
-  name: 'Backlink-Ceck.de'
+- regex: 'Backlink-Check\.de'
+  name: 'Backlink-Check.de'
   category: 'Crawler'
   url: 'http://www.backlink-check.de/bot.html'
   producer:
@@ -244,6 +252,14 @@
   producer:
     name: ''
     url: ''
+
+- regex: 'Dataprovider'
+  name: 'Dataprovider'
+  category: 'Crawler'
+  url: ''
+  producer:
+    name: 'Dataprovider B.V.'
+    url: 'https://www.dataprovider.com/'
 
 - regex: 'Daum(oa)?[ /][0-9]'
   name: 'Daum'
@@ -540,6 +556,14 @@
     name: 'Meanpath'
     url: 'http://www.meanpath.com'
 
+- regex: 'MetaJobBot'
+  name: 'MetaJobBot'
+  category: 'Crawler'
+  url: 'http://www.metajob.at/the/crawler'
+  producer:
+    name: 'MetaJob'
+    url: 'http://www.metajob.at'
+
 - regex: 'MixrankBot'
   name: 'Mixrank Bot'
   category: 'Crawler'
@@ -572,7 +596,7 @@
     name: 'Jaroslav Kuboš'
     url: ''
 
-- regex: 'Netcraft Web Server Survey'
+- regex: 'Netcraft (Web Server Survey|SSL Server Survey)'
   name: 'Netcraft Survey Bot'
   category: 'Search bot'
   url: ''
@@ -692,6 +716,14 @@
     name: 'QueryEye Inc.'
     url: 'http://queryeye.com'
 
+- regex: 'Qwantify'
+  name: 'Qwantify'
+  category: 'Crawler'
+  url: 'https://www.qwant.com/'
+  producer:
+    name: 'Qwant Corporation'
+    url: 'https://www.qwant.com/'
+
 - regex: 'Rainmeter'
   name: 'Rainmeter'
   category: 'Crawler'
@@ -720,6 +752,14 @@
   producer:
     name: 'Roihunter a.s.'
     url: 'http://roihunter.com/'
+
+- regex: 'SafeDNSBot'
+  name: 'SafeDNSBot'
+  category: 'Crawler'
+  url: 'https://www.safedns.com/searchbot'
+  producer:
+    name: 'SafeDNS, Inc.'
+    url: 'https://www.safedns.com/'
 
 - regex: 'Scrapy'
   name: 'Scrapy'
@@ -813,6 +853,14 @@
   producer:
     name: 'SISTRIX GmbH'
     url: 'http://www.sistrix.de'
+
+- regex: 'sixy.ch'
+  name: 'Sixy.ch'
+  category: 'Site Monitor'
+  url: 'http://sixy.ch'
+  producer:
+    name: 'Manuel Kasper'
+    url: 'https://neon1.net/'
 
 - regex: 'Slackbot|Slack-ImgProxy'
   name: 'Slackbot'
@@ -1058,7 +1106,7 @@
     name: 'Yahoo! Inc.'
     url: 'http://www.yahoo.com'
 
-- regex: 'Yandex(Bot|Images|Antivirus|Direct|Blogs|Favicons|ImageResizer|News(links)?|Metrika|\.Gazeta Bot)|YaDirectFetcher'
+- regex: 'Yandex(SpravBot|ScreenshotBot|MobileBot|AccessibilityBot|ForDomain|Vertis|Market|Catalog|Calendar|Sitelinks|AdNet|Pagechecker|Webmaster|Media|Video|Bot|Images|Antivirus|Direct|Blogs|Favicons|ImageResizer|News(links)?|Metrika|\.Gazeta Bot)|YaDirectFetcher'
   name: 'Yandex Bot'
   category: 'Search bot'
   url: 'http://www.yandex.com/bots'
@@ -1167,6 +1215,14 @@
     name: 'Monitor.Us'
     url: 'http://www.monitor.us'
 
+- regex: 'Catchpoint( bot)?'
+  name: 'Catchpoint'
+  category: 'Site Monitor'
+  url: ''
+  producer:
+    name: 'Catchpoint Systems'
+    url: 'http://www.catchpoint.com/'
+
 - regex: 'Zao/'
   name: 'Zao'
   category: 'Crawler'
@@ -1222,7 +1278,7 @@
 - regex: 'Server Density Service Monitoring.*'
   name: 'Server Density'
 
-- regex: '(A6-Indexer|nuhk|TsolCrawler|Yammybot|Openbot|Gulper Web Bot|grub-client|Download Demon|SearchExpress|Microsoft URL Control|borg|altavista|teoma|blitzbot|oegp|furlbot|http%20client|polybot|htdig|mogimogi|larbin|scrubby|searchsight|seekbot|semanticdiscovery|snappy|vortex(?! Build)|zeal|fast-webcrawler|converacrawler|dataparksearch|findlinks|BrowserMob|HttpMonitor|ThumbShotsBot|URL2PNG|ZooShot|GomezA|Catchpoint bot|Google SketchUp|Read%20Later|Minimo|RackspaceBot)'
+- regex: '(A6-Indexer|nuhk|TsolCrawler|Yammybot|Openbot|Gulper Web Bot|grub-client|Download Demon|SearchExpress|Microsoft URL Control|borg|altavista|teoma|blitzbot|oegp|furlbot|http%20client|polybot|htdig|mogimogi|larbin|scrubby|searchsight|seekbot|semanticdiscovery|snappy|vortex(?! Build)|zeal|fast-webcrawler|converacrawler|dataparksearch|findlinks|BrowserMob|HttpMonitor|ThumbShotsBot|URL2PNG|ZooShot|GomezA|Google SketchUp|Read%20Later|Minimo|RackspaceBot)'
   name: 'Generic Bot'
 
 # Generic detections

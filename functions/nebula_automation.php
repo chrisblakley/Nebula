@@ -274,7 +274,7 @@ function nebula_initialization_email_prev_settings(){
 	wp_mail($to, $subject, $message, $headers, $attachments);
 	unlink($options_backup_file);
 
-	set_transient('nebula_email_admin_timeout', 'true', 900); //15 minute expiration
+	set_transient('nebula_email_admin_timeout', 'true', MINUTE_IN_SECONDS*15);
 }
 
 //Create Homepage
