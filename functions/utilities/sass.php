@@ -17,44 +17,89 @@ if( !class_exists( 'Nebula_Sass' ) ) {
 
         public function __construct() {
             /*==========================
-                SCSS Compiling
+                Nebula Sass Compiling
+
+                Add directories to be checked for .scss files by using the filter "nebula_scss_locations". Example:
+                add_filter('nebula_scss_locations', 'my_plugin_scss_files');
+                function my_plugin_scss_files($scss_locations){
+                    $scss_locations['my_plugin'] = array(
+                        'directory' => plugin_dir_path(__FILE__),
+                        'uri' => plugin_dir_url(__FILE__),
+                        'imports' => plugin_dir_path(__FILE__) . '/scss/partials/'
+                    );
+                    return $scss_locations;
+                }
              ===========================*/
 
-            if ( nebula_option('scss', 'enabled') ){
+            add_action('init', array( $this, 'scss_controller' ) );
+        }
 
-                if ( is_writable(get_template_directory()) ){
-                    add_action('init', array( $this, 'render_scss' ) );
+        public function scss_controller(){
+            if ( !is_writable(get_template_directory()) ){
+                trigger_error('The template directory is not writable. Can not compile Sass files!', E_USER_NOTICE);
+                return false;
+            }
+
+            if ( nebula_option('scss', 'enabled') ){
+                $scss_locations = array(
+                    'parent' => array(
+                        'directory' => get_template_directory(),
+                        'uri' => get_template_directory_uri(),
+                        'imports' => get_template_directory() . '/stylesheets/scss/partials/'
+                    )
+                );
+
+                if ( is_child_theme() ){
+                    $scss_locations['child'] = array(
+                        'directory' => get_stylesheet_directory(),
+                        'uri' => get_stylesheet_directory_uri(),
+                        'imports' => get_stylesheet_directory() . '/stylesheets/scss/partials/'
+                    );
                 }
 
-                add_action('init', array( $this, 'render_registered_scss' ), 99999); //Render registered plugins' Sass files (priority set to 99999 to run after all plugin registration)
+                //Allow for additional Sass locations to be included. Imports can be an array of directories.
+                $additional_scss_loactions = apply_filters('nebula_scss_locations', array());
+                $all_scss_locations = array_merge($scss_locations, $additional_scss_loactions);
+
+                //Check if all Sass files should be rendered
+                $force_all = false;
+                if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && is_staff() ){
+                    $force_all = true;
+                }
+
+                //Find and render .scss files at each location
+                foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
+                    $this->render_scss($scss_location_name, $scss_location_paths, $force_all);
+                }
+
+                //If SCSS has not been rendered in 1 month, disable the option.
+                if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
+                    nebula_update_option('scss', 'disabled');
+                }
+            } elseif ( is_dev() && !is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
+                trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
             }
         }
 
         //Render scss files
         public function render_scss($child=false){
-            $override = apply_filters('pre_nebula_render_scss', false, $child);
+            $override = apply_filters('pre_nebula_render_scss', false, $location_name, $location_paths, $force_all);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('scss', 'enabled') ){
-                $compile_all = false;
-                if ( isset($_GET['sass']) || isset($_GET['settings-updated']) && is_staff() ){
-                    $compile_all = true;
-                }
-
-                $theme_directory = get_template_directory();
-                $theme_directory_uri = get_template_directory_uri();
-                if ( $child ){
-                    $theme_directory = get_stylesheet_directory();
-                    $theme_directory_uri = get_stylesheet_directory_uri();
-                }
-
-                $stylesheets_directory = $theme_directory . '/stylesheets';
-                $stylesheets_directory_uri = $theme_directory_uri . '/stylesheets';
-
+            if ( nebula_option('scss', 'enabled') && !empty($location_name) && !empty($location_paths) ){
+                //Require SCSSPHP
                 require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
                 $scss = new \Leafo\ScssPhp\Compiler();
-                $scss->addImportPath($stylesheets_directory . '/scss/partials/');
 
+                //Register import directories
+                if ( !is_array($location_paths['imports']) ){
+                    $location_paths['imports'] = array($location_paths['imports']);
+                }
+                foreach ( $location_paths['imports'] as $imports_directory ){
+                    $scss->addImportPath($imports_directory);
+                }
+
+                //Set compiling options
                 if ( nebula_option('minify_css', 'enabled') && !is_debug() ){
                     $scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
                 } else {
@@ -65,186 +110,73 @@ if( !class_exists( 'Nebula_Sass' ) ) {
                 }
 
                 //Variables
-                $scss->setVariables(array(
+                $nebula_scss_variables = array(
                     'template_directory' => '"' . get_template_directory_uri() . '"',
                     'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
+                    'this_directory' => '"' . $location_paths['uri'] . '"',
                     'primary_color' => get_theme_mod('nebula_primary_color', '#0098d7'), //From Customizer
                     'secondary_color' => get_theme_mod('nebula_secondary_color', '#95d600'), //From Customizer
                     'background_color' => get_theme_mod('nebula_background_color', '#f6f6f6'), //From Customizer
-                ));
+                );
+                $additional_scss_variables = apply_filters('nebula_scss_variables', array());
+                $all_scss_variables = array_merge($nebula_scss_variables, $additional_scss_variables);
+                $scss->setVariables($nebula_scss_variables);
 
-                //Partials
-                $latest_partial = 0;
-                foreach ( glob($stylesheets_directory . '/scss/partials/*') as $partial_file ){
-                    if ( filemtime($partial_file) > $latest_partial ){
-                        $latest_partial = filemtime($partial_file);
+                //Imports/Partials (find the last modified time)
+                $latest_import = 0;
+                foreach ( glob($imports_directory . '*') as $import_file ){
+                    if ( filemtime($import_file) > $latest_import ){
+                        $latest_import = filemtime($import_file);
                     }
                 }
 
                 //Combine Developer Stylesheets
                 if ( nebula_option('dev_stylesheets', 'enabled') ){
-                    nebula_combine_dev_stylesheets($stylesheets_directory, $stylesheets_directory_uri);
+                    $this->combine_dev_stylesheets($location_paths['directory'] . '/stylesheets', $location_paths['uri'] . '/stylesheets');
                 }
 
                 //Compile each SCSS file
-                foreach ( glob($stylesheets_directory . '/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+                foreach ( glob($location_paths['directory'] . '/stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
                     $file_path_info = pathinfo($file);
 
-                    if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
-                        continue;
-                    }
-                    if ( $file_path_info['filename'] == 'dev' && nebula_option('dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-                        continue;
-                    }
-                    if ( !is_admin() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
+                    //Skip file conditions
+                    $is_wireframing_file = $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
+                    $is_dev_file = $file_path_info['filename'] == 'dev' && nebula_option('dev_stylesheets', 'disabled'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
+                    $is_admin_file = !is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
+                    if ( $is_wireframing_file || $is_dev_file || $is_admin_file ){
                         continue;
                     }
 
-                    if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
-                        $css_filepath = ( $file_path_info['filename'] == 'style' )? $theme_directory . '/style.css': $stylesheets_directory . '/css/' . $file_path_info['filename'] . '.css';
-                        wp_mkdir_p($stylesheets_directory . '/css'); //Create the /css directory (in case it doesn't exist already).
+                    //If file exists, and has .scss extension, and doesn't begin with "_".
+                    if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){
+                        $css_filepath = ( $file_path_info['filename'] == 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/stylesheets/css/' . $file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /stylesheets directory.
+                        wp_mkdir_p($location_paths['directory'] . '/stylesheets/css'); //Create the /css directory (in case it doesn't exist already).
 
                         //If style.css has been edited after style.scss, save backup but continue compiling SCSS
-                        if ( ($child && is_child_theme()) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
+                        if ( (is_child_theme() && $location_name != 'parent' ) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
                             copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
                             if ( is_dev() || current_user_can('manage_options') ){
                                 global $scss_debug_ref;
-                                $scss_debug_ref = ( $child )? 'C' : 'P';
+                                $scss_debug_ref = $location_name . ':';
                                 $scss_debug_ref .= (nebula_data('scss_last_processed')-filemtime($css_filepath));
-                                add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
+                                add_action('wp_head', array( $this, 'scss_console_warning' ) ); //Call the console error note
                             }
                         }
 
-                        if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $compile_all ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
+                        //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
+                        if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_import > filemtime($css_filepath) || is_debug() || $force_all ){
                             ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
                             WP_Filesystem();
                             global $wp_filesystem;
                             $existing_css_contents = ( file_exists($css_filepath) )? $wp_filesystem->get_contents($css_filepath) : '';
 
-                            if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
+                            //If the correlating .css file doesn't contain a comment to prevent overwriting
+                            if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){
                                 $this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
                                 $compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
                                 $enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
                                 $wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
                                 nebula_update_data('scss_last_processed', time());
-                            }
-                        }
-                    }
-                }
-
-                if ( !$child && is_child_theme() ){ //If not in the second (child) pass, and is a child theme.
-                    nebula_render_scss(true); //Re-run on child theme stylesheets
-                }
-
-                //If SCSS has not been rendered in 1 month, disable the option.
-                if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
-                    nebula_update_option('scss', 'disabled');
-                }
-            }
-        }
-
-        //@TODO "Nebula" 0: Update this so that it doesn't need to be a separate function than nebula_render_scss()
-        public function render_registered_scss(){
-            $override = apply_filters('pre_nebula_render_registered_scss', false);
-            if ( $override !== false ){return $override;}
-
-            if ( nebula_option('scss', 'enabled') ) {
-                if( ! empty(nebula()->plugins) ) {
-                    $compile_all = false;
-                    if ( isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated']) && is_staff() ){
-                        $compile_all = true;
-                    }
-
-                    foreach ( nebula()->plugins as $nebula_plugin => $nebula_plugin_features ){
-                        if ( $nebula_plugin_features['stylesheets'] && is_writable($nebula_plugin_features['path'] . 'stylesheets') ){
-
-                            require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
-                            $scss = new \Leafo\ScssPhp\Compiler();
-                            $scss->addImportPath($nebula_plugin_features['path'] . 'stylesheets/scss/partials/');
-
-                            if ( nebula_option('minify_css', 'enabled') && !is_debug() ){
-                                $scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
-                            } else {
-                                $scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
-                                if ( is_debug() ){
-                                    $scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
-                                }
-                            }
-
-                            //Variables
-                            $scss->setVariables(array(
-                                'template_url' => '"' . get_template_directory_uri() . '"',
-                                'template_directory' => '"' . get_template_directory() . '"',
-                                'stylesheet_url' => '"' . get_stylesheet_directory_uri() . '"',
-                                'stylesheet_directory' => '"' . get_stylesheet_directory() . '"',
-                                'primary_color' => get_theme_mod('nebula_primary_color', '#0098d7'), //From Customizer
-                                'secondary_color' => get_theme_mod('nebula_secondary_color', '#95d600'), //From Customizer
-                                'background_color' => get_theme_mod('nebula_background_color', '#f6f6f6'), //From Customizer
-                            ));
-
-                            //Partials
-                            $latest_partial = 0;
-                            foreach ( glob($nebula_plugin_features['path'] . 'stylesheets/scss/partials/*') as $partial_file ){
-                                if ( filemtime($partial_file) > $latest_partial ){
-                                    $latest_partial = filemtime($partial_file);
-                                }
-                            }
-
-                            //Combine Developer Stylesheets
-                            if ( nebula_option('dev_stylesheets', 'enabled') ){
-                                //@TODO "Nebula" 0: Make nebula_combine_dev_stylesheets work with plugins directories
-                                //nebula_combine_dev_stylesheets($stylesheets_directory, $stylesheets_directory_uri);
-                            }
-
-                            //Compile each SCSS file
-                            foreach ( glob($nebula_plugin_features['path'] . 'stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
-                                $file_path_info = pathinfo($file);
-
-                                if ( $file_path_info['filename'] == 'wireframing' && nebula_option('prototype_mode', 'disabled') ){ //If file is wireframing.scss but wireframing functionality is disabled, skip file.
-                                    continue;
-                                }
-                                if ( $file_path_info['filename'] == 'dev' && nebula_option('dev_stylesheets', 'disabled') ){ //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-                                    continue;
-                                }
-                                if ( !is_admin() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')) ){ //If viewing front-end, skip WP admin files.
-                                    continue;
-                                }
-
-                                if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){ //If file exists, and has .scss extension, and doesn't begin with "_".
-                                    $css_filepath = $nebula_plugin_features['path'] . 'stylesheets/css/' . $file_path_info['filename'] . '.css'; //For plugins, all css files will come in stylesheets/css directory
-                                    wp_mkdir_p($nebula_plugin_features['path'] . 'stylesheets/css'); //Create the /css directory (in case it doesn't exist already).
-
-                                    //If style.css has been edited after style.scss, save backup but continue compiling SCSS
-                                    if ( ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < 0) ){ //@todo "Nebula" 0: Getting a lot of false positives here
-                                        copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
-                                        if ( is_dev() || current_user_can('manage_options') ){
-                                            global $scss_debug_ref;
-                                            $scss_debug_ref = 'E'; //P for Parent, C for child and E for plugin (extension)
-                                            $scss_debug_ref .= (nebula_data('scss_last_processed')-filemtime($css_filepath));
-                                            add_action('wp_head', 'nebula_scss_console_warning'); //Call the console error note
-                                        }
-                                    }
-
-                                    if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_partial > filemtime($css_filepath) || is_debug() || $compile_all ){ //If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
-                                        ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
-                                        WP_Filesystem();
-                                        global $wp_filesystem;
-                                        $existing_css_contents = ( file_exists($css_filepath) )? $wp_filesystem->get_contents($css_filepath) : '';
-
-                                        if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //If the correlating .css file doesn't contain a comment to prevent overwriting
-                                            $this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
-                                            $compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
-                                            $enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
-                                            $wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
-                                            nebula_update_data('scss_last_processed', time());
-                                        }
-                                    }
-                                }
-                            }
-
-                            //If SCSS has not been rendered in 1 month, disable the option.
-                            if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
-                                nebula_update_option('scss', 'disabled');
                             }
                         }
                     }
@@ -264,8 +196,8 @@ if( !class_exists( 'Nebula_Sass' ) ) {
             if ( $override !== false ){return $override;}
 
             if ( empty($directory) ){
-                $directory = get_template_directory() . '/stylesheets';
-                $directory_uri = get_template_directory_uri() . "/stylesheets";
+                trigger_error('Dev stylesheet directories must be specified for files to be combined.', E_USER_NOTICE);
+                return false;
             }
 
             WP_Filesystem();
@@ -284,7 +216,7 @@ if( !class_exists( 'Nebula_Sass' ) ) {
                 if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
                     $file_counter++;
 
-                    //Include partials in dev.scss
+                    //Include partials in dev.scss //@todo "Nebula" 0: Find a way to prevent hard-coding these partial files. Maybe tap into the $location_paths['imports'] from above (need a specific order other than alphabetical?)?
                     if ( $file_counter == 1 ){
                         $import_partials = '';
                         $import_partials .= "@import '../../../../Nebula-master/stylesheets/scss/partials/variables';\r\n";
@@ -349,7 +281,7 @@ if( !class_exists( 'Nebula_Sass' ) ) {
                 WP_Filesystem();
                 global $wp_filesystem;
                 $scss_variables = $wp_filesystem->get_contents($variables_file);
-                set_transient($transient_name, $scss_variables, 60*60); //1 hour cache
+                set_transient($transient_name, $scss_variables, HOUR_IN_SECONDS*12); //1 hour cache
             }
 
             switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){
