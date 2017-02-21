@@ -247,6 +247,51 @@ function nebula_ga_event_ajax(){
 	Nebula Visitor Data
  ===========================*/
 
+//Create Users Table with minimal default columns.
+add_action('admin_init', 'nebula_vdb_create_tables');
+function nebula_vdb_create_tables(){
+	if ( is_admin_page() && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
+		global $wpdb;
+
+		$visitors_table = $wpdb->query("SHOW TABLES LIKE 'nebula_visitors'"); //DB Query here
+		if ( empty($visitors_table) ){
+			$create_primary_table = $wpdb->query("CREATE TABLE nebula_visitors (
+				id INT(11) NOT NULL AUTO_INCREMENT,
+				nebula_id VARCHAR(255),
+				ga_cid TINYTEXT NOT NULL,
+				ip_address TINYTEXT NOT NULL,
+				user_agent TEXT NOT NULL,
+				fingerprint LONGTEXT,
+				nebula_session_id TEXT NOT NULL,
+				notable_poi TINYTEXT,
+				email_address TINYTEXT,
+				is_known BOOLEAN NOT NULL,
+				last_seen_on INT(11) NOT NULL,
+				last_modified_on INT(11) NOT NULL,
+				most_identifiable TINYTEXT,
+				lead_score INT(6),
+				notes LONGTEXT,
+				PRIMARY KEY (id),
+				UNIQUE (nebula_id)
+			) ENGINE = InnoDB;"); //DB Query here
+
+			//Create the data table
+				//Must have unique combination of nebula_id and label
+				//References the nebula_id from the primary table, so if a row is deleted from there it deletes all rows with the same nebula_id here.
+			$create_data_table = $wpdb->query("CREATE TABLE nebula_visitors_data (
+				id INT(11) NOT NULL AUTO_INCREMENT,
+				nebula_id VARCHAR(255),
+				label VARCHAR(255),
+				value LONGTEXT,
+				PRIMARY KEY (id),
+				UNIQUE (nebula_id, label),
+				CONSTRAINT fk_nebula_visitors_nebula_id FOREIGN KEY (nebula_id) REFERENCES nebula_visitors (nebula_id) ON DELETE CASCADE
+			)
+			ENGINE = InnoDB;"); //DB Query here
+		}
+	}
+}
+
 //The controller for Nebula Visitors DB process.
 //Triggering at get_header allows for template_redirects to happen before fingerprinting (prevents false multipageviews)
 add_action('get_header', 'nebula_vdb_controller', 11);
@@ -258,13 +303,8 @@ function nebula_vdb_controller(){
 		return false; //Don't add bots to the DB
 	}
 
-	//Create the NVDB Tables
-	if ( is_admin_page() && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
-		nebula_vdb_create_tables();
-	}
-
 	//Only run on front-end
-	if ( !is_admin_page() && !is_login_page() ){
+	if ( !is_admin_page() && !is_login_page() ){ //get_header does not trigger on admin pages, but just to be safe.
 		$returning_visitor = nebula_vdb_is_returning_visitor();
 		$nebula_id = nebula_vdb_get_appropriate_nebula_id($returning_visitor);
 
@@ -306,50 +346,6 @@ function nebula_vdb_controller(){
 		}
 
 		nebula_vdb_remove_expired();
-	}
-}
-
-
-
-//Create Users Table with minimal default columns.
-function nebula_vdb_create_tables(){
-	global $wpdb;
-
-	$visitors_table = $wpdb->query("SHOW TABLES LIKE 'nebula_visitors'"); //DB Query here
-	if ( empty($visitors_table) ){
-		$create_primary_table = $wpdb->query("CREATE TABLE nebula_visitors (
-			id INT(11) NOT NULL AUTO_INCREMENT,
-			nebula_id VARCHAR(255),
-			ga_cid TINYTEXT NOT NULL,
-			ip_address TINYTEXT NOT NULL,
-			user_agent TEXT NOT NULL,
-			fingerprint LONGTEXT,
-			nebula_session_id TEXT NOT NULL,
-			notable_poi TINYTEXT,
-			email_address TINYTEXT,
-			is_known BOOLEAN NOT NULL,
-			last_seen_on INT(11) NOT NULL,
-			last_modified_on INT(11) NOT NULL,
-			most_identifiable TINYTEXT,
-			lead_score INT(6),
-			notes LONGTEXT,
-			PRIMARY KEY (id),
-			UNIQUE (nebula_id)
-		) ENGINE = InnoDB;"); //DB Query here
-
-		//Create the data table
-			//Must have unique combination of nebula_id and label
-			//References the nebula_id from the primary table, so if a row is deleted from there it deletes all rows with the same nebula_id here.
-		$create_data_table = $wpdb->query("CREATE TABLE nebula_visitors_data (
-			id INT(11) NOT NULL AUTO_INCREMENT,
-			nebula_id VARCHAR(255),
-			label VARCHAR(255),
-			value LONGTEXT,
-			PRIMARY KEY (id),
-			UNIQUE (nebula_id, label),
-			CONSTRAINT fk_nebula_visitors_nebula_id FOREIGN KEY (nebula_id) REFERENCES nebula_visitors (nebula_id) ON DELETE CASCADE
-		)
-		ENGINE = InnoDB;"); //DB Query here
 	}
 }
 
@@ -1412,7 +1408,7 @@ function nebula_vdb_calculate_scores($data=null, $storage_type=false, $alt_nebul
 /*
 	add_filter('nebula_vdb_demographic_points', 'project_demo_points');
 	function project_demo_points($array){
-	    $array['notable_poi'] = 500;
+	    $array['city'] = array('/syracuse/', 10); //If city is Syracuse
 	    $array['email_address'] = 500;
 	    return $array;
 	}
@@ -1420,7 +1416,7 @@ function nebula_vdb_calculate_scores($data=null, $storage_type=false, $alt_nebul
 function nebula_vdb_calculate_demographic_score($data){
 	if ( !empty($data) ){
 		//label => points (If label exists in DB its value is not empty)
-		//label => array(match => points) (Match can be string or RegEx)
+		//label => array(regex => points)
 		$default_demographic_points = array(
 			'notable_poi' => 100,
 			'full_name' => 75,
@@ -1451,7 +1447,7 @@ function nebula_vdb_calculate_demographic_score($data){
 /*
 	add_filter('nebula_vdb_behavior_points', 'project_behavior_points');
 	function project_behavior_points($array){
-	    $array['ordered_accessory'] = 100;
+	    $array['last_page_viewed'] = array('/sign-up/', 20); //Visited sign-up page
 	    $array['ordered_warranty'] = 500;
 	    return $array;
 	}
@@ -1459,7 +1455,7 @@ function nebula_vdb_calculate_demographic_score($data){
 function nebula_vdb_calculate_behavior_score($data){
 	if ( !empty($data) ){
 		//label => points (if label exists and value is not empty)
-		//label => array(match => points)
+		//label => array(regex => points)
 		$default_behavior_points = array(
 			'acquisition_keywords' => 5,
 			'utm_campaign' => 5,
@@ -1470,7 +1466,7 @@ function nebula_vdb_calculate_behavior_score($data){
 			'contact_method' => 75,
 			'ecommerce_addtocart' => 35,
 			'ecommerce_checkout' => 50,
-			'is_ecommerce_customer' => 100,
+			'is_customer' => 100,
 			'engaged_reader' => 5,
 			'contact_funnel' => 10,
 			'copied_text' => 3,
@@ -1515,7 +1511,7 @@ function nebula_vdb_points_adder($data, $points){
 					$value = implode(',', $value); //Convert it to a single comma-separated string
 				}
 
-				if ( trim($value) == $points[$label][0] || (strpos($points[$label][0], '/') === 0 && preg_match($points[$label][0], trim($value))) ){
+				if ( strtolower(trim($value)) == strtolower($points[$label][0]) || (strpos($points[$label][0], '/') === 0 && preg_match(strtolower($points[$label][0]), strtolower(trim($value)))) ){ //Check for an exact match before RegEx, or if is RegEx (begins with "/" and RegEx matches
 					$score += $points[$label][1];
 				}
 			} elseif ( !empty($value) ){ //Just checking if the data exists
@@ -1697,7 +1693,7 @@ function nebula_vdb_remove_expired($force=false){
 			global $wpdb;
 
 			//Remove visitors who haven't been modified in the last 90 days and are not known
-			$expiration_time = time()-(MONTH_IN_SECONDS*6); //6 months ago
+			$expiration_length = time()-(MONTH_IN_SECONDS*6); //6 months ago
 			$removed_visitors = $wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE last_modified_on < %d AND is_known = %s AND lead_score < %d", $expiration_length, '0', 100)); //DB Query here
 
 			//How to recalculate scores for all users without looping through every single one?
@@ -1744,7 +1740,11 @@ function nebula_vdb_is_known($data=false, $alt_nebula_id=false){
 }
 
 //Detect Notable POI
-function nebula_poi(){
+function nebula_poi($ip=null){
+	if ( empty($ip) ){
+		$ip = $_SERVER['REMOTE_ADDR'];
+	}
+
 	if ( nebula_option('notableiplist') ){
 		$notable_ip_lines = explode("\n", nebula_option('notableiplist'));
 		foreach ( $notable_ip_lines as $line ){
@@ -1756,6 +1756,15 @@ function nebula_poi(){
 		}
 	} elseif ( isset($_GET['poi']) ){ //If POI query string exists
 		return str_replace(array('%20', '+'), ' ', $_GET['poi']);
+	}
+
+	return false;
+}
+
+//Look up a notable POI for a specific IP address
+function get_nebula_poi($ip=false){
+	if ( !empty($ip) ){
+		return nebula_poi($ip);
 	}
 
 	return false;

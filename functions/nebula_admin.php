@@ -418,35 +418,6 @@ function new_wp_login_title(){
     return get_option('blogname');
 }
 
-//Update user online status
-add_action('init', 'nebula_users_status_init');
-add_action('admin_init', 'nebula_users_status_init');
-function nebula_users_status_init(){
-	if ( is_user_logged_in() ){
-		$logged_in_users = nebula_data('users_status');
-
-		$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
-		$current_user = wp_get_current_user();
-
-		//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
-
-		if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
-			$logged_in_users[$current_user->ID] = array(
-				'id' => $current_user->ID,
-				'username' => $current_user->user_login,
-				'last' => time(),
-				'unique' => array($unique_id),
-			);
-			nebula_update_data('users_status', $logged_in_users);
-		} else {
-			if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
-				array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
-				nebula_update_data('users_status', $logged_in_users);
-			}
-		}
-	}
-}
-
 //Nebula Admin Notices
 if ( nebula_option('admin_notices') ){
 	add_action('admin_notices', 'nebula_admin_notices');
@@ -1020,6 +991,10 @@ function dashboard_administrative(){
 			echo '<li><i class="fa fa-gears fa-fw"></i> <a href="' . nebula_option('cpanel_url') . '" target="_blank">Server Control Panel</a></li>';
 		}
 
+		if ( nebula_option('phpmyadmin') ){
+			echo '<li><i class="fa fa-database fa-fw"></i> <a href="' . nebula_option('phpmyadmin') . '" target="_blank">phpMyAdmin</a></li>';
+		}
+
 		if ( nebula_option('hosting_url') ){
 			echo '<li><i class="fa fa-hdd-o fa-fw"></i> <a href="' . nebula_option('hosting_url') . '" target="_blank">Hosting</a></li>';
 		}
@@ -1573,11 +1548,43 @@ function custom_media_display_settings(){
 	//update_option('image_default_size', 'large');
 }
 
+//Update user online status
+add_action('init', 'nebula_users_status_init');
+add_action('admin_init', 'nebula_users_status_init');
+function nebula_users_status_init(){
+	if ( is_user_logged_in() ){
+		$logged_in_users = nebula_data('users_status');
+
+		$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
+		$current_user = wp_get_current_user();
+
+		//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
+
+		if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
+			$logged_in_users[$current_user->ID] = array(
+				'id' => $current_user->ID,
+				'username' => $current_user->user_login,
+				'last' => time(),
+				'ip' => $_SERVER['REMOTE_ADDR'],
+				'unique' => array($unique_id),
+			);
+			nebula_update_data('users_status', $logged_in_users);
+		} else {
+			if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
+				array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
+				nebula_update_data('users_status', $logged_in_users);
+			}
+		}
+	}
+}
+
 //Add columns to user listings
 add_filter('manage_users_columns', 'nebula_user_columns_head');
 function nebula_user_columns_head($defaults){
     $defaults['company'] = 'Company';
+    $defaults['registered'] = 'Registered';
     $defaults['status'] = 'Status';
+    $defaults['ip'] = 'Last IP';
     $defaults['id'] = 'ID';
     return $defaults;
 }
@@ -1586,6 +1593,12 @@ function nebula_user_columns_content($value='', $column_name, $id){
     if ( $column_name === 'company' ){
 		return get_the_author_meta('jobcompany', $id);
 	}
+
+    if ( $column_name === 'registered' ){
+		$user_data = get_userdata($id);
+		return date('F j, Y', strtotime($user_data->user_registered));
+	}
+
     if ( $column_name === 'status' ){
 		if ( nebula_is_user_online($id) ){
 			$online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
@@ -1597,6 +1610,19 @@ function nebula_user_columns_content($value='', $column_name, $id){
 			return ( nebula_user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula_user_last_online($id)) . '</em></small>' : '';
 		}
 	}
+
+	if ( $column_name === 'ip' ){
+		$logged_in_users = nebula_data('users_status');
+		$last_ip = $logged_in_users[$id]['ip'];
+
+		$notable_poi = get_nebula_poi($logged_in_users[$id]['ip']);
+		if ( !empty($notable_poi) ){
+			$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
+		}
+
+		return $last_ip;
+	}
+
 	if ( $column_name === 'id' ){
 		return $id;
 	}

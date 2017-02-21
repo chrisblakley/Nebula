@@ -295,6 +295,7 @@ function nebula_default_options(){
 		'client_email_domain' => '',
 		'notableiplist' => '',
 		'cpanel_url' => '',
+		'phpmyadmin' => '',
 		'hosting_url' => '',
 		'registrar_url' => '',
 		'ga_url' => '',
@@ -1715,6 +1716,13 @@ function nebula_options_page(){
 						?>
 						<input type="text" name="nebula_options[cpanel_url]" value="<?php echo $nebula_options['cpanel_url']; ?>" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" />
 						<p class="helper"><small>Link to the control panel of the hosting account. cPanel on this domain would be <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a>.</small></p>
+					</td>
+		        </tr>
+		        <tr class="short" valign="top">
+		        	<th scope="row">phpMyAdmin&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+					<td>
+						<input type="text" name="nebula_options[phpmyadmin]" value="<?php echo $nebula_options['phpmyadmin']; ?>" />
+						<p class="helper"><small>Link to phpMyAdmin for faster access without needing to go through cPanel.</small></p>
 					</td>
 		        </tr>
 		        <tr class="short" valign="top">

@@ -649,7 +649,7 @@ function ecommerceTracking(){
 		ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebulaTimer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
 		ga('send', 'event', 'Ecommerce', 'Place Order Button', 'Place Order button click (likely exit to payment gateway)');
 		if ( typeof fbq === 'function' ){fbq('track', 'Purchase');}
-		nv('send', {'ecommerce_checkout': 'Placed Order', 'is_ecommerce_customer': 1});
+		nv('send', {'ecommerce_checkout': 'Placed Order', 'is_customer': 1});
 	});
 }
 
