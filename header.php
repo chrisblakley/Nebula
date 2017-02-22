@@ -21,13 +21,13 @@
 		<meta class="theme-color" name="theme-color" content="<?php echo nebula_sass_color('primary'); ?>">
 		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula_sass_color('primary'); ?>">
 		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula_sass_color('primary'); ?>">
-		<?php get_template_part('includes/metadata'); ?>
+		<?php get_template_part('inc/metadata'); ?>
 
 		<link rel="manifest" href="<?php echo nebula_manifest_json_location(); ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<?php nebula_prerender(); ?>
 		<?php wp_head(); ?>
-		<?php get_template_part('includes/analytics'); //Google Analytics and other analytics trackers. ?>
+		<?php get_template_part('inc/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="body-wrapper">
@@ -82,7 +82,7 @@
 							<div class="row">
 								<div class="col-md-4">
 									<a class="logocon" href="<?php echo home_url(); ?>">
-										<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
+										<img class="svg" src="<?php echo get_template_directory_uri(); ?>/assets/img/logo.svg" alt="<?php bloginfo('name'); ?>"/>
 									</a>
 								</div><!--/col-->
 								<div class="col-md-8">

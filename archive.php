@@ -45,7 +45,7 @@ get_header(); ?>
 	</div><!--/breadcrumb-section-->
 </section>
 
-<?php get_template_part('includes/nebula_drawer'); ?>
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">

@@ -4,7 +4,7 @@
  */
 ?>
 			<div id="footer-section">
-				<?php get_template_part('includes/footer_widgets'); //Footer widget logic. ?>
+				<?php get_template_part('inc/footer_widgets'); //Footer widget logic. ?>
 
 				<div class="container">
 					<div class="row powerfootercon">

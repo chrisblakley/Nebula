@@ -1,17 +1,16 @@
 <?php
-	/**
-	 * The template for displaying all pages.
-	 */
+/**
+ * Template Name: Full Width
+ */
 
-	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
-		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
-		http_response_code(403);
-		die();
-	}
+if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
+	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+	http_response_code(403);
+	die();
+}
 
-	do_action('nebula_preheaders');
-	get_header();
-?>
+do_action('nebula_preheaders');
+get_header(); ?>
 
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
@@ -38,12 +37,12 @@
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-12">
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-						<?php if ( has_post_thumbnail() ): ?>
-							<?php the_post_thumbnail(); ?>
-						<?php endif; ?>
+						<div class="entry-social">
+							<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
+						</div>
 
 						<div class="entry-content">
 							<?php the_content(); ?>
@@ -52,9 +51,6 @@
 
 					<?php comments_template(); ?>
 				<?php endwhile; ?>
-			</div><!--/col-->
-			<div class="col-md-3 offset-md-1">
-				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->

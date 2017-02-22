@@ -39,7 +39,7 @@ get_header(); ?>
 	</div><!--/breadcrumb-section-->
 </section>
 
-<?php get_template_part('includes/nebula_drawer'); ?>
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">
