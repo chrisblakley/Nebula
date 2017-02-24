@@ -15,7 +15,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-12">
+			<div class="col">
 				<?php if ( have_posts() ): ?>
 					<h1 class="page-title">Search Results</h1>
 					<p>
@@ -49,7 +49,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-12">
+				<div class="col">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -60,7 +60,7 @@ get_header(); ?>
 <div id="breadcrumb-section" class="full">
 	<div class="container">
 		<div class="row">
-			<div class="col-12">
+			<div class="col">
 				<?php nebula_breadcrumbs(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

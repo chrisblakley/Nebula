@@ -377,6 +377,7 @@ function initEventTracking(){
 			}
 		}
 
+		cacheSelectors(); //Make sure selectors are cached (since this function can be called from outside this file).
 		eventTracking();
 		scrollDepth();
 

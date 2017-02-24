@@ -1039,7 +1039,7 @@ function nebula_twitter_cache($username='Great_Blakes', $listname=null, $numbert
 		}
 		$response = wp_remote_get($feed, $args);
 		if ( is_wp_error($response) ){
-			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $feed)), 'Unavailable', MINUTE_IN_SECONDS*5);
+			nebula_set_unavailable($feed);
 			return false;
 		}
 
@@ -1888,142 +1888,146 @@ function nebula_404_internal_suggestions(){
 //Add custom body classes
 add_filter('body_class', 'nebula_body_classes');
 function nebula_body_classes($classes){
-	$spaces_and_dots = array(' ', '.');
-	$underscores_and_hyphens = array('_', '-');
+	if ( !nebula_is_ajax_request() ){
+		$spaces_and_dots = array(' ', '.');
+		$underscores_and_hyphens = array('_', '-');
 
-	//Device
-	$classes[] = strtolower(nebula_get_device('formfactor')); //Form factor (desktop, tablet, mobile)
-	$classes[] = strtolower(nebula_get_device('full')); //Device make and model
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('full'))); //Operating System name with version
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('name'))); //Operating System name
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('full'))); //Browser name and version
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
-	$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
+		//Device
+		$classes[] = strtolower(nebula_get_device('formfactor')); //Form factor (desktop, tablet, mobile)
+		$classes[] = strtolower(nebula_get_device('full')); //Device make and model
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('full'))); //Operating System name with version
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_os('name'))); //Operating System name
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('full'))); //Browser name and version
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('name'))); //Browser name
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula_get_browser('engine'))); //Rendering engine
 
-	//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
-	if ( nebula_get_browser('name') == 'Chrome Mobile' ){
-		$classes[] = 'chrome';
-	}
-
-	//IE versions outside conditional comments
-	if ( nebula_is_browser('ie') ){
-		if ( nebula_is_browser('ie', '10') ){
-			$classes[] = 'ie';
-			$classes[] = 'ie10';
-			$classes[] = 'lte-ie10';
-			$classes[] = 'lt-ie11';
-		} elseif ( nebula_is_browser('ie', '11') ){
-			$classes[] = 'ie';
-			$classes[] = 'ie11';
-			$classes[] = 'lte-ie11';
+		//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
+		if ( nebula_get_browser('name') == 'Chrome Mobile' ){
+			$classes[] = 'chrome';
 		}
-	}
 
-	//User Information
-	$current_user = wp_get_current_user();
-	if ( is_user_logged_in() ){
-		$classes[] = 'user-logged-in';
-		$classes[] = 'user-' . $current_user->user_login;
-		$user_info = get_userdata(get_current_user_id());
-		if ( !empty($user_info->roles) ){
-			$classes[] = 'user-role-' . $user_info->roles[0];
-		} else {
-			$classes[] = 'user-role-unknown';
-		}
-	} else {
-		$classes[] = 'user-not-logged-in';
-	}
-
-	//Post Information
-	if ( !is_search() && !is_archive() && !is_front_page() ){
-		global $post;
-		$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-		$parents = get_post_ancestors($post->ID);
-		foreach ( $parents as $parent ){
-			if ( !empty($parent) ){
-				$classes[] = 'ancestor-id-' . $parent;
+		//IE versions outside conditional comments
+		if ( nebula_is_browser('ie') ){
+			if ( nebula_is_browser('ie', '10') ){
+				$classes[] = 'ie';
+				$classes[] = 'ie10';
+				$classes[] = 'lte-ie10';
+				$classes[] = 'lt-ie11';
+			} elseif ( nebula_is_browser('ie', '11') ){
+				$classes[] = 'ie';
+				$classes[] = 'ie11';
+				$classes[] = 'lte-ie11';
 			}
 		}
-		foreach ( $segments as $segment ){
-			if ( !empty($segment) ){
-				$classes[] = 'ancestor-of-' . $segment;
-			}
-		}
-		foreach ( get_the_category($post->ID) as $category ){
-			$classes[] = 'cat-id-' . $category->cat_ID;
-		}
-	}
-	$nebula_theme_info = wp_get_theme();
-	$classes[] = 'nebula';
-	$classes[] = 'nebula_' . str_replace('.', '-', nebula_version('full'));
 
-	$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
-	if ( is_rtl() ){
-		$classes[] = 'lang-dir-rtl';
-	}
-
-	//Time of Day
-	if ( has_business_hours() ){
-		$classes[] = ( business_open() )? 'business-open' : 'business-closed';
-	}
-
-	$relative_time = nebula_relative_time('description');
-	foreach( $relative_time as $relative_desc ){
-		$classes[] = 'time-' . $relative_desc;
-	}
-	if ( date('H') >= 12 ){
-		$classes[] = 'time-pm';
-	} else {
-		$classes[] = 'time-am';
-	}
-
-	if ( nebula_option('latitude') && nebula_option('longitude') ){
-		$lat = nebula_option('latitude');
-		$lng = nebula_option('longitude');
-		$gmt = intval(get_option('gmt_offset'));
-		$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
-		global $sunrise, $sunset;
-		$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
-		$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
-		$length_of_daylight = $sunset-$sunrise;
-		$length_of_darkness = 86400-$length_of_daylight;
-
-		if ( time() >= $sunrise && time() <= $sunset ){
-			$classes[] = 'time-daylight';
-			if ( strtotime('now') < $sunrise+($length_of_daylight/2) ){
-				$classes[] = 'time-waxing-gibbous'; //Before solar noon
-				$classes[] = ( strtotime('now') < ($length_of_daylight/4)+$sunrise )? 'time-narrow' : 'time-wide';
+		//User Information
+		$current_user = wp_get_current_user();
+		if ( is_user_logged_in() ){
+			$classes[] = 'user-logged-in';
+			$classes[] = 'user-' . $current_user->user_login;
+			$user_info = get_userdata(get_current_user_id());
+			if ( !empty($user_info->roles) ){
+				$classes[] = 'user-role-' . $user_info->roles[0];
 			} else {
-				$classes[] = 'time-waning-gibbous'; //After solar noon
-				$classes[] = ( strtotime('now') < ((3*$sunset)+$sunrise)/4 )? 'time-wide' : 'time-narrow';
+				$classes[] = 'user-role-unknown';
 			}
 		} else {
-			$classes[] = 'time-darkness';
-			$previous_sunset_modifier = ( date('H') < 12 )? 86400 : 0; //Times are in UTC, so if it is after actual midnight (before noon) we need to use the sunset minus 1 day in formulas
-			$solar_midnight = (($sunset-$previous_sunset_modifier)+($length_of_darkness/2)); //Calculate the appropriate solar midnight (either yesterday's or tomorrow's) [see above]
-			if ( strtotime('now') < $solar_midnight ){
-				$classes[] = 'time-waning-crescent'; //Before solar midnight
-				$classes[] = ( strtotime('now') < ($length_of_darkness/4)+($sunset-$previous_sunset_modifier) )? 'time-wide' : 'time-narrow';
+			$classes[] = 'user-not-logged-in';
+		}
+
+		//Post Information
+		if ( !is_404() && !is_search() && !is_archive() && !is_front_page() ){
+			global $post;
+			if ( isset($post->ID) ){
+				$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+				$parents = get_post_ancestors($post->ID);
+				foreach ( $parents as $parent ){
+					if ( !empty($parent) ){
+						$classes[] = 'ancestor-id-' . $parent;
+					}
+				}
+				foreach ( $segments as $segment ){
+					if ( !empty($segment) ){
+						$classes[] = 'ancestor-of-' . $segment;
+					}
+				}
+				foreach ( get_the_category($post->ID) as $category ){
+					$classes[] = 'cat-id-' . $category->cat_ID;
+				}
+			}
+		}
+		$nebula_theme_info = wp_get_theme();
+		$classes[] = 'nebula';
+		$classes[] = 'nebula_' . str_replace('.', '-', nebula_version('full'));
+
+		$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
+		if ( is_rtl() ){
+			$classes[] = 'lang-dir-rtl';
+		}
+
+		//Time of Day
+		if ( has_business_hours() ){
+			$classes[] = ( business_open() )? 'business-open' : 'business-closed';
+		}
+
+		$relative_time = nebula_relative_time('description');
+		foreach( $relative_time as $relative_desc ){
+			$classes[] = 'time-' . $relative_desc;
+		}
+		if ( date('H') >= 12 ){
+			$classes[] = 'time-pm';
+		} else {
+			$classes[] = 'time-am';
+		}
+
+		if ( nebula_option('latitude') && nebula_option('longitude') ){
+			$lat = nebula_option('latitude');
+			$lng = nebula_option('longitude');
+			$gmt = intval(get_option('gmt_offset'));
+			$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
+			global $sunrise, $sunset;
+			$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+			$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+			$length_of_daylight = $sunset-$sunrise;
+			$length_of_darkness = 86400-$length_of_daylight;
+
+			if ( time() >= $sunrise && time() <= $sunset ){
+				$classes[] = 'time-daylight';
+				if ( strtotime('now') < $sunrise+($length_of_daylight/2) ){
+					$classes[] = 'time-waxing-gibbous'; //Before solar noon
+					$classes[] = ( strtotime('now') < ($length_of_daylight/4)+$sunrise )? 'time-narrow' : 'time-wide';
+				} else {
+					$classes[] = 'time-waning-gibbous'; //After solar noon
+					$classes[] = ( strtotime('now') < ((3*$sunset)+$sunrise)/4 )? 'time-wide' : 'time-narrow';
+				}
 			} else {
-				$classes[] = 'time-waxing-crescent'; //After solar midnight
-				$classes[] = ( strtotime('now') < ($sunrise+$solar_midnight)/2 )? 'time-narrow' : 'time-wide';
+				$classes[] = 'time-darkness';
+				$previous_sunset_modifier = ( date('H') < 12 )? 86400 : 0; //Times are in UTC, so if it is after actual midnight (before noon) we need to use the sunset minus 1 day in formulas
+				$solar_midnight = (($sunset-$previous_sunset_modifier)+($length_of_darkness/2)); //Calculate the appropriate solar midnight (either yesterday's or tomorrow's) [see above]
+				if ( strtotime('now') < $solar_midnight ){
+					$classes[] = 'time-waning-crescent'; //Before solar midnight
+					$classes[] = ( strtotime('now') < ($length_of_darkness/4)+($sunset-$previous_sunset_modifier) )? 'time-wide' : 'time-narrow';
+				} else {
+					$classes[] = 'time-waxing-crescent'; //After solar midnight
+					$classes[] = ( strtotime('now') < ($sunrise+$solar_midnight)/2 )? 'time-narrow' : 'time-wide';
+				}
+			}
+
+			$sunrise_sunset_length = 35; //Length of sunrise/sunset in minutes.
+			if ( strtotime('now') >= $sunrise-(60*$sunrise_sunset_length) && strtotime('now') <= $sunrise+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunrise
+				$classes[] = 'time-sunrise';
+			}
+			if ( strtotime('now') >= $sunset-(60*$sunrise_sunset_length) && strtotime('now') <= $sunset+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunset
+				$classes[] = 'time-sunset';
 			}
 		}
 
-		$sunrise_sunset_length = 35; //Length of sunrise/sunset in minutes.
-		if ( strtotime('now') >= $sunrise-(60*$sunrise_sunset_length) && strtotime('now') <= $sunrise+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunrise
-			$classes[] = 'time-sunrise';
-		}
-		if ( strtotime('now') >= $sunset-(60*$sunrise_sunset_length) && strtotime('now') <= $sunset+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunset
-			$classes[] = 'time-sunset';
-		}
-	}
+		$classes[] = 'date-day-' . strtolower(date('l'));
+		$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
+		$classes[] = 'date-month-' . strtolower(date('F'));
 
-	$classes[] = 'date-day-' . strtolower(date('l'));
-	$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
-	$classes[] = 'date-month-' . strtolower(date('F'));
-
-    return $classes;
+	    return $classes;
+    }
 }
 
 //Add additional classes to post wrappers
@@ -2102,11 +2106,17 @@ function business_open($date=null, $general=false){
 
 	$businessHours = array();
 	foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
-		$businessHours[$weekday] = array(
-			'enabled' => nebula_option('business_hours_' . $weekday . '_enabled'),
-			'open' => nebula_option('business_hours_' . $weekday . '_open'),
-			'close' => nebula_option('business_hours_' . $weekday . '_close')
-		);
+		if ( isset($businessHours[$weekday]) ){
+			$businessHours[$weekday] = array(
+				'enabled' => nebula_option('business_hours_' . $weekday . '_enabled'),
+				'open' => nebula_option('business_hours_' . $weekday . '_open'),
+				'close' => nebula_option('business_hours_' . $weekday . '_close')
+			);
+		}
+	}
+
+	if ( empty($businessHours) ){
+		return false;
 	}
 
 	$days_off = array_filter(explode(', ', nebula_option('business_hours_closed')));
@@ -2223,7 +2233,7 @@ function nebula_relative_time($format=null){
 
 //Detect location from IP address using https://freegeoip.net/
 function nebula_ip_location($data=null, $ip_address=false){
-	if ( nebula_option('ip_geolocation') ){
+	if ( nebula_option('ip_geolocation') && !nebula_is_ajax_request() ){
 		if ( empty($ip_address) ){
 			$ip_address = $_SERVER['REMOTE_ADDR'];
 
@@ -2244,7 +2254,7 @@ function nebula_ip_location($data=null, $ip_address=false){
 			if ( empty($_SESSION['nebula_ip_geolocation']) && nebula_is_available('http://freegeoip.net') ){
 				$response = wp_remote_get('http://freegeoip.net/json/' . $ip_address);
 				if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
-					set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://freegeoip.net/json/')), 'Unavailable', MINUTE_IN_SECONDS*5);
+					nebula_set_unavailable('http://freegeoip.net');
 					return false;
 				}
 
@@ -2316,7 +2326,7 @@ function nebula_ip_location($data=null, $ip_address=false){
 //Detect weather for Zip Code (using Yahoo! Weather)
 //https://developer.yahoo.com/weather/
 function nebula_weather($zipcode=null, $data=''){
-	if ( nebula_option('weather') ){
+	if ( nebula_option('weather') && !nebula_is_ajax_request() ){
 		$override = apply_filters('pre_nebula_weather', false, $zipcode, $data);
 		if ( $override !== false ){return $override;}
 
@@ -2337,7 +2347,7 @@ function nebula_weather($zipcode=null, $data=''){
 			}
 			$response = wp_remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
 			if ( is_wp_error($response) ){
-				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'http://query.yahooapis.com/v1/public/yql')), 'Unavailable', MINUTE_IN_SECONDS*5);
+				nebula_set_unavailable('http://query.yahooapis.com/v1/public/yql');
 				trigger_error('A Yahoo Weather API error occurred. Yahoo may be down, or forecast for ' . $zipcode . ' may not exist.', E_USER_WARNING);
 				return false;
 			}
@@ -2459,7 +2469,7 @@ function video_meta($provider, $id){
 			}
 			$response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key'));
 			if ( is_wp_error($response) ){
-				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://www.googleapis.com/youtube/v3/videos')), 'Unavailable', MINUTE_IN_SECONDS*5);
+				nebula_set_unavailable('https://www.googleapis.com/youtube/v3/videos');
 				$video_metadata['error'] = 'Youtube video is unavailable.';
 				return $video_metadata;
 			}

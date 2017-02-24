@@ -115,7 +115,7 @@ th#id {width: 50px;}
 	.todoresults_title {margin-bottom: 0;
 		.todo_help_icon {float: right; font-size: 10px;}
 	}
-	.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 324px; resize: vertical;
+	.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 350px; resize: vertical;
 		.todofilewrap {margin-bottom: 10px;
 			&.todo-theme-parent {display: none;}
 
@@ -224,8 +224,20 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 			}
 		}
 
+		tbody {
+			td {font-size: 11px;}
+		}
+
 		.known {color: #5cb85c;}
 		.you td {font-style: italic; font-weight: 600;}
+
+		td[data-similar="traits"] {display: none;}
+		tr:not(.selected){
+			td.ip_address.similar-datapoint {color: orange;}
+			td.user_agent.similar-datapoint {color: orange;}
+			td.fingerprint.similar-datapoint {color: orange;}
+		}
+
 
 		.hide_column {display: none;}
 		.ajaxrow {cursor: pointer;}

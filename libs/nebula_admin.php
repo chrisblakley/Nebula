@@ -540,9 +540,9 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 	if ( (empty($php_timeline) || is_debug()) && nebula_is_available('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json') ){
 		$response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json');
 		if ( !is_wp_error($response) ){
-			$php_timeline = $response['body'];
+			$php_timeline = ( strpos($response['body'], '404') === false )? $response['body'] : false;
 		} else {
-			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', MINUTE_IN_SECONDS*5);
+			nebula_set_unavailable('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json');
 		}
 
 		WP_Filesystem();
@@ -1856,7 +1856,7 @@ function nebula_visitors_data_page(){
 	if ( !empty($all_visitors_data) ): ?>
 		<script>
 			jQuery(window).on('load', function(){
-				jQuery('#visitors_data').DataTable({
+				visitorDatatable = jQuery('#visitors_data').DataTable({
 					"aaSorting": [[12, "desc"]], //Default sort (column number)
 					"aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
 					"iDisplayLength": 20, //Default entries shown (Does NOT need to match aLengthMenu).
@@ -1873,7 +1873,7 @@ function nebula_visitors_data_page(){
 						/* GA CID */  			{"bVisible": false},
 						/* IP Address */ 		{},
 						/* User Agent */  		{},
-						/* Fingerprint */  		{"bVisible": false},
+						/* Fingerprint */  		{className: "hide_column"},
 						/* Nebula Session ID */	{"bVisible": false},
 						/* Notable POI */  		{},
 						/* Email Address */ 	{"bVisible": false},
@@ -1883,17 +1883,27 @@ function nebula_visitors_data_page(){
 						/* Most Identifiable */	{},
 						/* Lead Score */		{},
 						/* Notes */  			{},
+						/* Similar Traits */	{className: "hide_column"},
 					]
 				});
 
 				jQuery(document).on('click tap touch', '.dataTables_wrapper tbody td', function(){
 					if ( jQuery(this).closest('tr').hasClass('selected') ){
 						jQuery('.dataTables_wrapper tbody tr.selected').removeClass('selected');
+						jQuery('#visitors_data td[data-similar="traits"]').removeClass().text('');
+						jQuery('#visitors_data td.ip_address').removeClass('similar-datapoint');
+						jQuery('#visitors_data td.user_agent').removeClass('similar-datapoint');
+						jQuery('#visitors_data td.fingerprint').removeClass('similar-datapoint');
 
 						jQuery('#user-details').html('<p class="select-a-visitor">Select a visitor on the left to view details.</p>');
 						jQuery('#user-details-filter-con').css('opacity', '0');
 					} else {
 						jQuery('.dataTables_wrapper tbody tr').removeClass('selected');
+						jQuery('#visitors_data td[data-similar="traits"]').removeClass().text('');
+						jQuery('#visitors_data td.ip_address').removeClass('similar-datapoint');
+						jQuery('#visitors_data td.user_agent').removeClass('similar-datapoint');
+						jQuery('#visitors_data td.fingerprint').removeClass('similar-datapoint');
+
 						jQuery(this).closest('tr').addClass('selected');
 
 						jQuery('#user-details').html('<p><i class="fa fa-spinner fa-spin"></i> Loading details for that user...</p>');
@@ -1909,6 +1919,11 @@ function nebula_visitors_data_page(){
 							success: function(response){
 								jQuery('#user-details').html(response);
 								jQuery('#user-details-filter-con').css('opacity', '1');
+								findSimilarVisitors();
+
+								visitorDatatable.rows().every(function(){
+								    this.invalidate(); //invalidate the data DataTables has cached for this row
+								});
 							},
 							error: function(XMLHttpRequest, textStatus, errorThrown){
 								//Error
@@ -1918,6 +1933,39 @@ function nebula_visitors_data_page(){
 					}
 				});
 			});
+
+			function findSimilarVisitors(){
+				var oldLength = visitorDatatable.page.len();
+				var oldPage = visitorDatatable.page();
+				visitorDatatable.page.len(-1).draw();
+
+				highlightSimilarDatapoints('all_ip_addresses', 'ip_address');
+				highlightSimilarDatapoints('user_agent', 'user_agent');
+				highlightSimilarDatapoints('fingerprint', 'fingerprint');
+
+				visitorDatatable.page.len(oldLength).draw(); //Reset the visible rows to what it was before.
+				visitorDatatable.page(oldPage).draw('page');
+			}
+
+			function highlightSimilarDatapoints(detailLabel, tdClass){
+				var detailData = new Array();
+				jQuery('.detail-label[data-label="' + detailLabel + '"]').closest('.detail-con').find('.user-data-value').each(function(){
+					detailData.push(jQuery.trim(jQuery(this).text()));
+				});
+
+				//Search through the data
+				jQuery('#visitors_data td.' + tdClass).each(function(){
+					if ( jQuery.inArray(jQuery.trim(jQuery(this).text()), detailData) !== -1 ){
+						jQuery(this).addClass('similar-datapoint');
+						jQuery(this).closest('tr').find('td[data-similar="traits"]').addClass('similar-' + tdClass);
+					} else {
+						jQuery(this).removeClass('similar-datapoint');
+						jQuery(this).closest('tr').find('td[data-similar="traits"]').removeClass('similar-' + tdClass);
+					}
+
+					jQuery(this).closest('tr').find('td[data-similar="traits"]').text(jQuery(this).closest('tr').find('td[data-similar="traits"]').attr('class'));
+				});
+			}
 
 			//Filter details
 			jQuery(document).on('keyup', '#user-details-filter', function(){
@@ -2023,27 +2071,38 @@ function nebula_visitors_data_page(){
 			});
 
 			//Find similar users
-			jQuery(document).on('click tap touch', '.similar-visitors-con .btn', function(){
-				jQuery.ajax({
-					type: "POST",
-					url: nebula.site.ajax.url,
-					data: {
-						nonce: nebula.site.ajax.nonce,
-						action: 'nebula_ajax_similar_visitors',
-						similar: jQuery(this).attr('data-similar'),
-						nid: jQuery(this).attr('data-nid'),
-					},
-					success: function(response){
-						//Success
-						console.debug(response);
-					},
-					error: function(XMLHttpRequest, textStatus, errorThrown){
-						//Error
-					},
-					timeout: 60000
-				});
+			jQuery(document).on('click tap touch', '.btn.find-similar', function(){
+				var similarData = jQuery(this).attr('data-similar');
+
+				if ( similarData == 'ip' ){
+					similarSearch = 'similar-ip_address';
+				} else if ( similarData == 'ua' ){
+					similarSearch = 'similar-user_agent';
+				} else if ( similarData == 'ipua' ){
+					similarSearch = 'similar-ip_address similar-user_agent';
+				} else if ( similarData == 'fp' ){
+					similarSearch = 'similar-fingerprint';
+				} else {
+					similarSearch = 'similar-';
+				}
+
+				visitorDatatable.search(similarSearch).draw();
+
+				jQuery('html, body').animate({
+					scrollTop: Math.floor(jQuery('#visitors_data_wrapper').offset().top)-200
+				}, 500);
 
 				return false;
+			});
+
+			jQuery(document).on('click tap touch', '.reset-similar', function(){
+				visitorDatatable.search('').draw();
+
+				jQuery('html, body').animate({
+					scrollTop: Math.floor(jQuery('#visitors_data_wrapper').offset().top)-200
+				}, 500);
+
+				return false
 			});
 
 			//Delete individual visitor from the DB
@@ -2181,6 +2240,7 @@ function nebula_visitors_data_page(){
 											?>
 										</td>
 									<?php endforeach; ?>
+									<td>Similar Traits</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -2210,13 +2270,14 @@ function nebula_visitors_data_page(){
 															if ( is_utc_timestamp($value) ){
 																echo date('F j, Y @ g:ia', intval($value)); //For Last Modified timestamp
 															} else {
-																echo sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
+																echo sanitize_text_field($value);
 															}
 														?>
 													</div>
 												<?php endif; ?>
 											</td>
 										<?php endforeach; ?>
+										<td data-similar="traits"></td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -2305,6 +2366,12 @@ function nebula_visitor_admin_detail(){
 						<p><i class="fa fa-fw fa-sticky-note" style="color: #f7dd00;"></i> <?php echo $organized_data['notes']; ?></p>
 					</div>
 				<?php endif; ?>
+
+				<div class="similar-visitors-con" style="margin-bottom: 30px;">
+					<h4>Find similar visitors</h4>
+					<p><a class="btn btn-brand find-similar" data-similar="ip" href="#">IP Address</a> <a class="btn btn-brand find-similar" data-similar="ua" href="#">User Agent</a> <a class="btn btn-brand find-similar" data-similar="ipua" href="#">IP and User Agent</a> <a class="btn btn-brand find-similar" data-similar="fp" href="#">Fingerprint</a> <a class="btn btn-secondary reset-similar" href="#">Reset</a></p>
+				</div>
+
 
 				<?php if ( !empty($organized_data['photo']) ): ?>
 					<p><img src="<?php echo ( is_array($organized_data['photo']) )? end($organized_data['photo']) : $organized_data['photo']; ?>" style="width: 100%;" /></p>
@@ -2403,12 +2470,6 @@ function nebula_visitor_admin_detail(){
 				</div>
 			</div>
 
-			<div class="similar-visitors-con" style="margin-top: 30px;">
-				<h4>Find similar visitors</h4>
-				<p><small>Note: These run queries, but don't update anything on this page yet...</small></p>
-				<a class="btn btn-brand" data-similar="ip" data-nid="<?php echo $organized_data['nebula_id']; ?>" href="#">IP Address</a> <a class="btn btn-brand" data-similar="ip_useragent" data-nid="<?php echo $organized_data['nebula_id']; ?>" href="#">IP and User Agent</a></p>
-			</div>
-
 			<div class="useful-queries" style="margin-top: 30px;">
 				<h4>Useful Queries</h4>
 				<p><small>These queries can be pasted into phpMyAdmin to facilitate more advanced customization.</small></p>
@@ -2473,35 +2534,6 @@ function nebula_ajax_manual_update_visitor(){
 		echo 'error';
 	} else {
 		echo 'success';
-	}
-
-	wp_die();
-}
-
-//Find similar visitors by IP or IP and User Agent
-add_action('wp_ajax_nebula_ajax_similar_visitors', 'nebula_ajax_similar_visitors');
-add_action('wp_ajax_nopriv_nebula_ajax_similar_visitors', 'nebula_ajax_similar_visitors');
-function nebula_ajax_similar_visitors(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-
-	$all_visitor_data = nebula_vdb_get_all_visitor_data('any', sanitize_text_field($_POST['nid']));
-	$ip_address = $all_visitor_data['ip_address'];
-	$user_agent = $all_visitor_data['user_agent'];
-
-	$query = "SELECT DISTINCT(nebula_visitors.nebula_id), nebula_visitors.* FROM nebula_visitors_data JOIN nebula_visitors ON nebula_visitors.nebula_id = nebula_visitors_data.nebula_id WHERE (nebula_visitors_data.label = 'all_ip_addresses' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%') OR (nebula_visitors_data.label = 'ip_address' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%')";
-	if ( $_POST['similar'] == 'ip_useragent' ){
-		$query = "SELECT DISTINCT(nebula_visitors.nebula_id), nebula_visitors.* FROM nebula_visitors_data JOIN nebula_visitors ON nebula_visitors.nebula_id = nebula_visitors_data.nebula_id WHERE ((nebula_visitors_data.label = 'all_ip_addresses' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%') OR (nebula_visitors_data.label = 'ip_address' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%')) AND nebula_visitors.user_agent = '" . $user_agent . "'";
-	}
-
-	global $wpdb;
-	$similar_visitors = $wpdb->get_results($query);
-
-	if ( $similar_visitors === false ){
-		echo 'error';
-	} else {
-		echo "success:\r\n";
-		var_export( $similar_visitors );
-		//@todo "Nebula" 0: loop through result object and put it into the main datatable... somehow...
 	}
 
 	wp_die();

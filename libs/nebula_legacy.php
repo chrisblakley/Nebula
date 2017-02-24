@@ -146,13 +146,17 @@ function nebula_google_font_option(){
 	} elseif ( $nebula_options['google_font_family'] ) {
 		$google_font_family = preg_replace('/ /', '+', $nebula_options['google_font_family']);
 		$google_font_weights = preg_replace('/ /', '', $nebula_options['google_font_weights']);
-		$response = wp_remote_get('https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights);
-		if ( is_wp_error($response) ){
-			return false;
-		}
-		$google_font_contents = $response['body'];
-		if ( $google_font_contents !== false ){
-			return $google_font_contents;
+
+		if ( nebula_is_available('https://fonts.googleapis.com') ){
+			$response = wp_remote_get('https://fonts.googleapis.com/css?family=' . $google_font_family . ':' . $google_font_weights);
+			if ( is_wp_error($response) ){
+				nebula_set_unavailable('https://fonts.googleapis.com');
+				return false;
+			}
+			$google_font_contents = $response['body'];
+			if ( $google_font_contents !== false ){
+				return $google_font_contents;
+			}
 		}
 	}
 	return false;
@@ -202,7 +206,7 @@ function nebula_hubspot_curl($url, $content=null){
 		return $response['body'];
 	}
 
-	set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $get_url)), 'Unavailable', MINUTE_IN_SECONDS*5);
+	nebula_set_unavailable($get_url);
 	return false;
 }
 
@@ -370,7 +374,7 @@ function nebula_get_hubspot_contact($vid=null, $property=''){
 
 	$response = wp_remote_get('https://api.hubapi.com/contacts/v1/contact/vid/' . $vid . '/profile?hapikey=' . nebula_option('hubspot_api') . $property);
 	if ( is_wp_error($response) ){
-		set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://api.hubapi.com/')), 'Unavailable', MINUTE_IN_SECONDS*5);
+		nebula_set_unavailable('https://api.hubapi.com/contacts');
 		return false;
 	}
 	return json_decode($response['body'], true);

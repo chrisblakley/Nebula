@@ -37,7 +37,7 @@
 
 				<div id="mobilebarcon">
 					<div class="row mobilenavcon">
-						<div class="col-12">
+						<div class="col">
 							<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
 							<nav id="mobilenav">
 								<?php
@@ -67,7 +67,7 @@
 						<div id="secondarynavcon">
 							<div class="container">
 								<div class="row">
-									<div class="col-12">
+									<div class="col">
 										<nav id="secondarynav">
 						        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
 						        		</nav>

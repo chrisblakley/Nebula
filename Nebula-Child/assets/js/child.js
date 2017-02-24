@@ -7,8 +7,7 @@ jQuery.noConflict();
 jQuery(document).on('ready', function(){
 
 	//Prevent child theme events from sending before the pageview. Do not add custom event tracking here- add it where noted below!
-	window.supplementalTrackingCalled = false;
-	if ( typeof ga === 'function' ){ //if GA is defined
+	if ( isGoogleAnalyticsReady() ){
 		supplementalEventTracking();
 	}
 
@@ -22,10 +21,7 @@ jQuery(document).on('ready', function(){
 
 jQuery(window).on('load', function(){
 
-	//If event tracking in child theme still hasn't been initialized. Do not add custom event tracking here- add it where noted below!
-	if ( !window.supplementalTrackingCalled ){
-		supplementalEventTracking();
-	}
+	supplementalEventTracking();
 
 }); //End Window Load
 
@@ -49,21 +45,21 @@ jQuery(window).on('resize', function(){
 
 //Child theme event tracking.
 function supplementalEventTracking(){
-	window.supplementalTrackingCalled = true;
+	once(function(){
+		//In-Depth example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': true, 'dimension1': 'Something', 'metric1': 82} Tip: use deferred selectors if possible.)
+		//nebula.dom.document.on('mousedown', '.selector', function(e){
+		//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+		//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+		//	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+		//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
+		//});
 
-	//In-Depth example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': true, 'dimension1': 'Something', 'metric1': 82} Tip: use deferred selectors if possible.)
-	//nebula.dom.document.on('mousedown', '.selector', function(e){
-	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-	//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-	//	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
-	//});
+		//Simple example:
+		//nebula.dom.document.on('click touch tap', '.selector', function(){
+		//	ga('send', 'event', 'Category', 'Action', 'Label');
+		//});
 
-	//Simple example:
-	//nebula.dom.document.on('click touch tap', '.selector', function(){
-	//	ga('send', 'event', 'Category', 'Action', 'Label');
-	//});
+		//Add your custom event tracking here!
 
-	//Add your custom event tracking here!
-
+	}, 'supplemental event tracking');
 }

@@ -187,7 +187,7 @@ function nebula_get_domain_blacklist(){
 		if ( !is_wp_error($response) ){
 			$domain_blacklist = $response['body'];
 		} else {
-			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', MINUTE_IN_SECONDS*5);
+			nebula_set_unavailable('https://raw.githubusercontent.com');
 		}
 
 		//If there was an error or empty response, try my Github repo
@@ -196,7 +196,7 @@ function nebula_get_domain_blacklist(){
 			if ( !is_wp_error($response) ){
 				$domain_blacklist = $response['body'];
 			} else {
-				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', MINUTE_IN_SECONDS*5);
+				nebula_set_unavailable('https://raw.githubusercontent.com');
 			}
 		}
 

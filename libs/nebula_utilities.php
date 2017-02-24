@@ -560,9 +560,8 @@ function nebula_vdb_is_returning_visitor(){
 	if ( nebula_option('visitors_db') ){
 		global $wpdb;
 
-		//Check for an old visitor with the same fingerprint
-		//@TODO "Nebula" 0: I don't think the server-side fingerprint alone is unique enough to push this live... Really needs the JS detections to work, but I can't think of a way that isn't AJAX JS or a second pageview to match against it...
-		$unique_new_visitor = $wpdb->get_results($wpdb->prepare("SELECT ga_cid FROM nebula_visitors WHERE (ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND user_agent = '" . sanitize_text_field($_SERVER['HTTP_USER_AGENT']) . "') OR fingerprint LIKE '%" . sanitize_text_field(nebula_vdb_fingerprint()) . "%'")); //DB Query here
+		//Check for an old visitor with the same fingerprint. Server-side fingerprint is not unique enough to use without IP address (at least for now).
+		$unique_new_visitor = $wpdb->get_results("SELECT ga_cid FROM nebula_visitors WHERE ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND fingerprint LIKE '%" . sanitize_text_field(nebula_vdb_fingerprint()) . "%'"); //DB Query here
 		if ( !empty($unique_new_visitor) ){
 
 			//@TODO "Nebula" 0: This uses the first result... We want to find a user that is known, or that has a GA CID, else highest score.
@@ -1353,7 +1352,7 @@ function nebula_vdb_fingerprint($data=null){
 		$fingerprint .= ( !empty($_SERVER['HTTP_ACCEPT']) )? nebula_smash_text($_SERVER['HTTP_ACCEPT']) : '';
 		$fingerprint .= ( !empty($_SERVER['HTTP_ACCEPT_ENCODING']) )? nebula_smash_text($_SERVER['HTTP_ACCEPT_ENCODING']) : '';
 		$fingerprint .= ( !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) )? nebula_smash_text($_SERVER['HTTP_ACCEPT_LANGUAGE']) : '';
-		$fingerprint .= nebula_ip_location('timezone');
+		$fingerprint .= nebula_smash_text(nebula_ip_location('timezone'));
 
 		return $fingerprint;
 	} else { //Use provided $data (so AJAX doesn't alter server-side detections)
@@ -2319,8 +2318,9 @@ function is_utc_timestamp($timestamp){
 	return false;
 }
 
-//Check if a website or resource is available
-function nebula_is_available($url=null, $nocache=false){
+//Check if a website or resource is available by looking up the transient by hostname.
+//Note: This function does not actually check the remote resource (for optimization purposes)!
+function nebula_is_available($url=null){
 	$override = apply_filters('pre_nebula_is_available', false, $url);
 	if ( $override !== false ){return $override;}
 
@@ -2329,26 +2329,21 @@ function nebula_is_available($url=null, $nocache=false){
 		return false;
 	}
 
-	$hostname = str_replace('.', '_', nebula_url_components('hostname', $url));
-	$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
-	if ( !empty($site_available_buffer) && !$nocache ){
-		if ( $site_available_buffer === 'Available' ){
-			return true;
-		}
-
-		set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*5);
+	$hostname_availability_transient = get_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $url)));
+	if ( !empty($hostname_availability_transient) && $hostname_availability_transient === 'Unavailable' ){
 		return false;
 	}
 
-	if ( empty($site_available_buffer) || $nocache ){
-		$response = wp_remote_get($url);
-		if ( !is_wp_error($response) && $response['response']['code'] === 200 ){
-			set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*5);
-			return true;
-		}
+	return true;
+}
+
+//Set a transient saying a hostname is unavailable
+function nebula_set_unavailable($url=false){
+	if ( !empty($url) ){
+		set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $url)), 'Unavailable', MINUTE_IN_SECONDS*10);
+		return true;
 	}
 
-	set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
 	return false;
 }
 
@@ -2507,40 +2502,42 @@ function nebula_scss_controller(){
 	}
 
 	if ( nebula_option('scss', 'enabled') ){
-		$scss_locations = array(
-			'parent' => array(
-				'directory' => get_template_directory(),
-				'uri' => get_template_directory_uri(),
-				'imports' => get_template_directory() . '/assets/scss/partials/'
-			)
-		);
-
-		if ( is_child_theme() ){
-			$scss_locations['child'] = array(
-				'directory' => get_stylesheet_directory(),
-				'uri' => get_stylesheet_directory_uri(),
-				'imports' => get_stylesheet_directory() . '/assets/scss/partials/'
+		if ( !nebula_is_ajax_request() ){
+			$scss_locations = array(
+				'parent' => array(
+					'directory' => get_template_directory(),
+					'uri' => get_template_directory_uri(),
+					'imports' => get_template_directory() . '/assets/scss/partials/'
+				)
 			);
-		}
 
-		//Allow for additional Sass locations to be included. Imports can be an array of directories.
-		$additional_scss_loactions = apply_filters('nebula_scss_locations', array());
-		$all_scss_locations = array_merge($scss_locations, $additional_scss_loactions);
+			if ( is_child_theme() ){
+				$scss_locations['child'] = array(
+					'directory' => get_stylesheet_directory(),
+					'uri' => get_stylesheet_directory_uri(),
+					'imports' => get_stylesheet_directory() . '/assets/scss/partials/'
+				);
+			}
 
-		//Check if all Sass files should be rendered
-		$force_all = false;
-		if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && is_staff() ){
-			$force_all = true;
-		}
+			//Allow for additional Sass locations to be included. Imports can be an array of directories.
+			$additional_scss_loactions = apply_filters('nebula_scss_locations', array());
+			$all_scss_locations = array_merge($scss_locations, $additional_scss_loactions);
 
-		//Find and render .scss files at each location
-		foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
-			nebula_render_scss($scss_location_name, $scss_location_paths, $force_all);
-		}
+			//Check if all Sass files should be rendered
+			$force_all = false;
+			if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && is_staff() ){
+				$force_all = true;
+			}
 
-		//If SCSS has not been rendered in 1 month, disable the option.
-		if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
-			nebula_update_option('scss', 'disabled');
+			//Find and render .scss files at each location
+			foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
+				nebula_render_scss($scss_location_name, $scss_location_paths, $force_all);
+			}
+
+			//If SCSS has not been rendered in 1 month, disable the option.
+			if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
+				nebula_update_option('scss', 'disabled');
+			}
 		}
 	} elseif ( is_dev() && !is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
 		trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);

@@ -22,7 +22,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-12">
+			<div class="col">
 				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
 			</div><!--/cols-->
 		</div><!--/row-->
@@ -31,7 +31,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-12">
+				<div class="col">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -52,7 +52,7 @@ get_header(); ?>
 		</div><!--/col-->
 		<div class="col-md-10">
 	<?php else : ?>
-		<div class="col-12">
+		<div class="col">
 	<?php endif; ?>
 
 			<h2 class="author-name">

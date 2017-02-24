@@ -15,7 +15,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-12">
+			<div class="col">
 				<h1 class="entry-title">
 					<?php if ( wp_attachment_is_image() ): ?>
 						<i class="archiveicon fa fa-photo"></i>
@@ -29,7 +29,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-12">
+				<div class="col">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -42,7 +42,7 @@ get_header(); ?>
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-12">
+			<div class="col">
 				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-meta">

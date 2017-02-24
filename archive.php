@@ -15,7 +15,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-12">
+			<div class="col">
 				<?php if ( have_posts() ){ the_post(); } //Queue the first post, then reset before running the loop. ?>
 				<h1 class="page-title">
 					<?php if ( is_day() ): ?>
@@ -37,7 +37,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-12">
+				<div class="col">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->

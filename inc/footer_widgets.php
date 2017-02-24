@@ -6,59 +6,59 @@
 	}
 ?>
 
-<?php if ( footer_widget_counter() != 0 ) : //If no active footer widgets, then this section does not generate. ?>
+<?php if ( footer_widget_counter() != 0 ): //If no active footer widgets, then this section does not generate. ?>
 	<div class="container footerwidgets">
 		<div class="row">
 			<?php if ( footerWidgetCounter() == 4 ): ?>
-				<div class="col-3">
+				<div class="col">
 					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('First Footer Widget Area') ): ?>
 						<?php //First Footer Widget Area ?>
 					<?php endif; ?>
 				</div><!--/col-->
-				<div class="col-3">
+				<div class="col">
 					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Second Footer Widget Area') ): ?>
 						<?php //Second Footer Widget Area ?>
 					<?php endif; ?>
 				</div><!--/col-->
-				<div class="col-3">
+				<div class="col">
 					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Third Footer Widget Area') ): ?>
 						<?php //Third Footer Widget Area ?>
 					<?php endif; ?>
 				</div><!--/col-->
-				<div class="col-3">
+				<div class="col">
 					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Fourth Footer Widget Area') ): ?>
 						<?php //Fourth Footer Widget Area ?>
 					<?php endif; ?>
 				</div><!--/col-->
 			<?php elseif ( footerWidgetCounter() == 3 ): ?>
-				<div class="col-3">
+				<div class="col">
 					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds. ?>
 					<?php endif; ?>
 				</div><!--/col-->
-				<div class="col-3">
+				<div class="col">
 					<?php if ( dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds. ?>
 					<?php endif; ?>
 				</div><!--/col-->
-				<div class="col-6">
+				<div class="col">
 					<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds. ?>
 					<?php endif; ?>
 				</div><!--/col-->
 			<?php elseif ( footerWidgetCounter() == 2 ): ?>
-				<div class="col-6">
+				<div class="col">
 					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds (between 1-3). ?>
 					<?php endif; ?>
 				</div><!--/col-->
-				<div class="col-6">
+				<div class="col">
 					<?php if ( dynamic_sidebar('Fourth Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds (between 4-2). ?>
 					<?php endif; ?>
 				</div><!--/col-->
-			<?php else : //1 Active Widget ?>
-				<div class="col-12">
+			<?php else: //1 Active Widget ?>
+				<div class="col">
 					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') || dynamic_sidebar('Fourth Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds. ?>
 					<?php endif; ?>
