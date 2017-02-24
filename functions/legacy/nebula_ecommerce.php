@@ -85,7 +85,7 @@ function nebula_woocommerce_order_data($order_id){
 		    $products['ecommerce_product_ids'] = $item['product_id'];
 		}
 		$products['ecommerce_order_id'] = $order_id;
-		nebula_append_visitor($products);
+		nebula_vdb_append_visitor_data($products);
 
 		//Update Customer data
 		nebula_update_visitor(array(

@@ -110,6 +110,11 @@ if ( is_admin_page() && is_dev(true) || current_user_can('manage_options') ){
 	            'slug'      => 'query-monitor',
 	            'required'  => false,
 	        ),
+	        array(
+	            'name'      => '404 to 301',
+	            'slug'      => '404-to-301',
+	            'required'  => false,
+	        ),
 	    );
 
 	    if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
@@ -269,7 +274,7 @@ function nebula_initialization_email_prev_settings(){
 	wp_mail($to, $subject, $message, $headers, $attachments);
 	unlink($options_backup_file);
 
-	set_transient('nebula_email_admin_timeout', 'true', 900); //15 minute expiration
+	set_transient('nebula_email_admin_timeout', 'true', MINUTE_IN_SECONDS*15);
 }
 
 //Create Homepage

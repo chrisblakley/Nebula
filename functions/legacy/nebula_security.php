@@ -187,7 +187,7 @@ function nebula_get_domain_blacklist(){
 		if ( !is_wp_error($response) ){
 			$domain_blacklist = $response['body'];
 		} else {
-			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', 60*5); //5 minute expiration
+			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', MINUTE_IN_SECONDS*5);
 		}
 
 		//If there was an error or empty response, try my Github repo
@@ -196,7 +196,7 @@ function nebula_get_domain_blacklist(){
 			if ( !is_wp_error($response) ){
 				$domain_blacklist = $response['body'];
 			} else {
-				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', 60*5); //5 minute expiration
+				set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', MINUTE_IN_SECONDS*5);
 			}
 		}
 
@@ -205,7 +205,7 @@ function nebula_get_domain_blacklist(){
 			WP_Filesystem();
 			global $wp_filesystem;
 			$wp_filesystem->put_contents($domain_blacklist_json_file, $domain_blacklist);
-			set_transient('nebula_domain_blacklist', $domain_blacklist, 60*60*24); //24 hour cache
+			set_transient('nebula_domain_blacklist', $domain_blacklist, HOUR_IN_SECONDS*36);
 		}
 	}
 
@@ -224,15 +224,16 @@ function nebula_get_domain_blacklist(){
 				$blacklisted_domains[] = $line;
 			}
 		}
-
-		//Additional blacklisted domains //@TODO "Nebula" 0: Make this an add_filter so extra domains can be passed to it.
-		$additional_blacklisted_domains = array(
-			//'secureserver.net',
-		);
-
-		return array_merge($blacklisted_domains, $additional_blacklisted_domains);
+	} else {
+		ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
 	}
 
-	ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
-	return false;
+	//Add manual and user-added blacklisted domains
+	$manual_nebula_blacklisted_domains = array(
+		'bitcoinpile.com',
+	);
+	$additional_blacklisted_domains = apply_filters('nebula_blacklisted_domains', array());
+	$all_blacklisted_domains = array_merge($manual_nebula_blacklisted_domains, $additional_blacklisted_domains);
+
+	return array_merge($blacklisted_domains, $all_blacklisted_domains);
 }

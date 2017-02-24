@@ -12,6 +12,7 @@ function nebula_clear_transients(){
 		delete_transient('nebula_autocomplete_tags'); //Autocomplete Search
 		delete_transient('nebula_autocomplete_authors'); //Autocomplete Search
 		delete_transient('nebula_everything_query'); //Advanced Search
+		delete_transient('nebula_latest_post'); //Latest update
 	}
 }
 
@@ -114,10 +115,61 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'meta' => array('target' => '_blank')
 		));
 
+		if ( !empty($post_type_object) ){
+			//Ancestor pages
+			$ancestors = get_post_ancestors(get_the_id());
+			if ( !empty($ancestors) ){
+				$wp_admin_bar->add_node(array(
+					'parent' => $node_id,
+					'id' => 'nebula-ancestors',
+					'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-up" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
+				));
+
+				foreach ( $ancestors as $parent ){
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-ancestors',
+						'id' => 'nebula-parent-' . $parent,
+						'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title($parent),
+						'href' => ( is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
+					));
+				}
+			}
+
+			if ( !is_admin_page() ){ //@todo "Nebula" 0: Remove this conditional when this bug is fixed: https://core.trac.wordpress.org/ticket/18408
+				//Children pages
+				$child_pages = new WP_Query(array(
+					'post_type' => $post_type_object->labels->singular_name,
+					'posts_per_page' => -1,
+					'post_parent' => get_the_id(),
+					'order' => 'ASC',
+					'orderby' => 'menu_order'
+				));
+				if ( $child_pages->have_posts() ){
+					$wp_admin_bar->add_node(array(
+						'parent' => $node_id,
+						'id' => 'nebula-children',
+						'title' => '<i class="nebula-admin-fa fa fa-fw fa-level-down" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+					));
+
+					while ( $child_pages->have_posts() ){
+						$child_pages->the_post();
+						$wp_admin_bar->add_node(array(
+							'parent' => 'nebula-children',
+							'id' => 'nebula-child-' . get_the_id(),
+							'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
+							'href' => ( is_admin_page() )? get_edit_post_link() : get_permalink(),
+						));
+					}
+				}
+
+				wp_reset_postdata();
+			}
+		}
+
 		$wp_admin_bar->add_node(array(
 			'id' => 'nebula',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula',
-			'href' => 'https://gearside.com/nebula/',
+			'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=nebula',
 			'meta' => array('target' => '_blank')
 		));
 
@@ -163,7 +215,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 			'parent' => 'nebula-options',
 			'id' => 'nebula-options-help',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation',
-			'href' => 'https://gearside.com/nebula/documentation/options/',
+			'href' => 'https://gearside.com/nebula/documentation/options/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=help',
 			'meta' => array('target' => '_blank')
 		));
 
@@ -238,7 +290,7 @@ if ( nebula_option('admin_bar', 'disabled') ){
 
 //Disable Wordpress Core update notifications in WP Admin
 if ( nebula_option('wp_core_updates_notify', 'disabled') ){
-	add_filter('pre_site_transient_update_core', create_function('$a', "return null;"));
+	add_filter('pre_site_transient_update_core', '__return_null');
 }
 
 //Show update warning on Wordpress Core/Plugin update admin pages
@@ -257,29 +309,30 @@ function nebula_theme_json(){
 	$override = apply_filters('pre_nebula_theme_json', false);
 	if ( $override !== false ){return;}
 
-	if ( nebula_option('theme_update_notification', 'enabled') ){
-		//Make sure the version number is always up-to-date in options.
-		if ( nebula_data('current_version') !== nebula_version('raw') ){
-			nebula_update_data('current_version', nebula_version('raw'));
-			nebula_update_data('current_version_date', nebula_version('date'));
-		}
+	$nebula_data = get_option('nebula_data');
 
+	//Always keep current_version up-to-date.
+	if ( strtotime($nebula_data['current_version_date'])-strtotime(nebula_version('date')) < 0 ){
+		nebula_update_data('current_version', nebula_version('raw'));
+		nebula_update_data('current_version_date', nebula_version('date'));
+	}
+
+	if ( $nebula_data['version_legacy'] === 'true' ){
 		//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 		$remote_version_info = get_option('external_theme_updates-Nebula-master');
-		if ( (strpos(nebula_version('raw'), 'u') || nebula_data('version_legacy') === 'true') || (!empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full'))) ){
+		if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula_version('full')) ){
 			nebula_update_data('version_legacy', 'true');
 			nebula_update_data('current_version', nebula_version('raw'));
 			nebula_update_data('current_version_date', nebula_version('date'));
 			nebula_update_data('next_version', 'INCOMPATIBLE');
-			nebula_update_option('theme_update_notification', 'disabled');
-		} elseif ( current_user_can('manage_options') && is_child_theme() ){
-			//@TODO "Nebula" 0: does this need to happen every admin pageload?
-			require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
-			$theme_update_checker = new ThemeUpdateChecker(
-				'Nebula-master', //This should be the directory slug of the parent theme.
-				'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
-			);
 		}
+	} elseif ( current_user_can('manage_options') && is_child_theme() ){
+		//@TODO "Nebula" 0: does this need to happen every admin pageload? Maybe add a transient?
+		require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
+		$theme_update_checker = new ThemeUpdateChecker(
+			'Nebula-master', //This should be the directory slug of the parent theme.
+			'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
+		);
 	}
 }
 
@@ -294,9 +347,9 @@ function nebula_theme_update_version_store($themeUpdate, $installedVersion){
 		nebula_update_data('version_legacy', 'true');
 	} elseif ( nebula_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
 		nebula_update_data('version_legacy', 'false');
+		nebula_update_data('theme_update_notification', 'disabled');
 	}
 }
-
 //Send an email to the current user and site admin that Nebula has been updated.
 add_action('upgrader_process_complete', 'nebula_theme_update_automation', 10, 2); //Action 'upgrader_post_install' also exists.
 function nebula_theme_update_automation($upgrader_object, $options){
@@ -518,14 +571,14 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 		if ( !is_wp_error($response) ){
 			$php_timeline = $response['body'];
 		} else {
-			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', 60*5); //5 minute expiration
+			set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', 'https://raw.githubusercontent.com/')), 'Unavailable', MINUTE_IN_SECONDS*5);
 		}
 
 		WP_Filesystem();
 		global $wp_filesystem;
 		if ( !empty($php_timeline) ){
 			$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
-			set_transient('nebula_php_timeline', $php_timeline, 60*60*24*30); //1 month cache
+			set_transient('nebula_php_timeline', $php_timeline, YEAR_IN_SECONDS/12);
 		} else {
 			$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file);
 		}
@@ -555,7 +608,7 @@ function nebula_php_version_support($php_version=PHP_VERSION){
 //Check if a post slug has a number appended to it (indicating a duplicate post).
 //add_filter('wp_unique_post_slug', 'nebula_unique_slug_warning_ajax', 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! is_admin_page() does not prevent that...
 function nebula_unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
-	if ( current_user_can('publish_posts') && is_admin_page() && (headers_sent() || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ){ //Should work with AJAX and without (as long as headers have been sent)
+	if ( current_user_can('publish_posts') && is_admin_page() && (headers_sent() || nebula_is_ajax_request()) ){ //Should work with AJAX and without (as long as headers have been sent)
 		echo '<script>
 			if ( typeof nebulaUniqueSlugChecker === "function" ){
 				nebulaUniqueSlugChecker("' . $post_type . '");
@@ -613,7 +666,7 @@ function dashboard_nebula_ataglance(){
 		echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 		//Nebula Version
-		echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
+		echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=at+a%20glance&utm_source=version" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
 
 		//Child Theme
 		if ( is_child_theme() ){
@@ -633,7 +686,7 @@ function dashboard_nebula_ataglance(){
 		foreach ( get_post_types() as $post_type ){
 			//Only show post types that show_ui (unless forced with one of the arrays below)
 		    $force_show = array('wpcf7_contact_form'); //These will show even if their show_ui is false.
-		    $force_hide = array('attachment', 'acf'); //These will be skipped even if their show_ui is true.
+		    $force_hide = array('attachment', 'acf', 'deprecated_log'); //These will be skipped even if their show_ui is true.
 		    if ( (!$wp_post_types[$post_type]->show_ui && !in_array($post_type, $force_show)) || in_array($post_type, $force_hide)){
 			    continue;
 		    }
@@ -641,11 +694,11 @@ function dashboard_nebula_ataglance(){
 			$count_posts = get_transient('nebula_count_posts_' . $post_type);
 			if ( empty($count_posts) || is_debug() ){
 				$count_posts = wp_count_posts($post_type);
-				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? 60*60*24*7 : 60*60*24; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long.
+				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long.
 				set_transient('nebula_count_posts_' . $post_type, $count_posts, $cache_length);
 			}
 
-			$labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+			$labels_plural = ( $count_posts->publish == 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
 			switch ( $post_type ){
 				case ('post'):
 					$post_icon_img = '<i class="fa fa-thumb-tack fa-fw"></i>';
@@ -672,30 +725,44 @@ function dashboard_nebula_ataglance(){
 			echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_posts->publish . '</strong> ' . $labels_plural . '</a></li>';
 		}
 
+		//Last updated
+		$latest_post = get_transient('nebula_latest_post');
+		if ( empty($latest_post) || is_debug() ){
+			$latest_post = new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
+			set_transient('nebula_latest_post', $latest_post, HOUR_IN_SECONDS*12); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+		}
+		while ( $latest_post->have_posts() ){ $latest_post->the_post();
+			echo '<li><i class="fa fa-calendar-o fa-fw"></i> Updated: <strong>' . get_the_modified_date() . '</strong> @ <strong>' . get_the_modified_time() . '</strong>
+				<small style="display: block; margin-left: 20px;"><i class="fa fa-file-text-o fa-fw"></i> <a href="' . get_permalink() . '">' . nebula_excerpt(array('text' => get_the_title(), 'length' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
+			</li>';
+		}
+		wp_reset_postdata();
+
 		//Revisions
 		$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
-		$revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
-		$revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
+		$revision_style = ( $revision_count == 0 )? 'style="color: red;"' : '';
+		$revisions_plural = ( $revision_count == 1 )? 'revision' : 'revisions';
 		echo '<li><i class="fa fa-history fa-fw"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 		//Plugins
 		$all_plugins = get_transient('nebula_count_plugins');
 		if ( empty($all_plugins) || is_debug() ){
 			$all_plugins = get_plugins();
-			set_transient('nebula_count_plugins', $all_plugins, 60*60*12); //12 hour cache
+			set_transient('nebula_count_plugins', $all_plugins, HOUR_IN_SECONDS*36);
 		}
+		$all_plugins_plural = ( count($all_plugins) == 1 )? 'Plugin' : 'Plugins';
 		$active_plugins = get_option('active_plugins', array());
-		echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> Plugins</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
+		echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 		//Users
 		$user_count = get_transient('nebula_count_users');
 		if ( empty($user_count) || is_debug() ){
 			$user_count = count_users();
-			set_transient('nebula_count_users', $user_count, 60*60*24); //24 hour cache
+			set_transient('nebula_count_users', $user_count, HOUR_IN_SECONDS*36);
 		}
 		$users_icon = 'users';
 		$users_plural = 'Users';
-		if ( $user_count['total_users'] === 1 ){
+		if ( $user_count['total_users'] == 1 ){
 			$users_plural = 'User';
 			$users_icon = 'user';
 		}
@@ -704,7 +771,7 @@ function dashboard_nebula_ataglance(){
 		//Comments
 		if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){
 			$comments_count = wp_count_comments();
-			$comments_plural = ( $comments_count->approved === 1 )? 'Comment' : 'Comments';
+			$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
 			echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
 		} else {
 			if ( nebula_option('comments', 'disabled') ){
@@ -817,17 +884,17 @@ function dashboard_current_user(){
 
 		//User's posts
 		$your_posts = get_transient('nebula_count_posts_user_' . $user_info->ID);
-		if ( empty($nebula_size) || is_debug() ){
+		if ( empty($your_posts) || is_debug() ){
 			$your_posts = count_user_posts($user_info->ID);
-			set_transient('nebula_count_posts_user_' . $user_info->ID, $your_posts, 60*60*24); //24 hour cache
+			set_transient('nebula_count_posts_user_' . $user_info->ID, $your_posts, DAY_IN_SECONDS);
 		}
 		echo '<li><i class="fa fa-thumb-tack fa-fw"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
 		if ( nebula_option('device_detection') ){
 			//Device
 			if ( nebula_is_desktop() ){
-				$battery_percentage = nebula_get_visitor_data('battery_percentage');
-				if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula_get_visitor_data('battery_mode') === 'Battery' ){
+				$battery_percentage = nebula_vdb_get_visitor_datapoint('battery_percentage');
+				if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula_vdb_get_visitor_datapoint('battery_mode') === 'Battery' ){
 					echo '<li><i class="fa fa-laptop fa-fw"></i> Device: <strong>Laptop</strong></li>';
 				} else {
 					echo '<li><i class="fa fa-desktop fa-fw"></i> Device: <strong>Desktop</strong></li>';
@@ -899,8 +966,9 @@ function dashboard_current_user(){
 
 		//IP Location
 		if ( nebula_ip_location() ){
-			if ( nebula_ip_location('city') ){
-				echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . nebula_ip_location('city') . ', ' . nebula_ip_location('state') . '</strong></li>';
+			$ip_location = nebula_ip_location('all');
+			if ( !empty($ip_location) ){
+				echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . $ip_location->city . ', ' . $ip_location->region_name . '</strong></li>';
 			} else {
 				echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <em>GeoIP error or rate limit exceeded.</em></li>';
 			}
@@ -909,8 +977,8 @@ function dashboard_current_user(){
 		//Weather
 		if ( nebula_option('weather') ){
 			$ip_zip = '';
-			if ( nebula_get_visitor_data('zip_code') ){
-				$ip_zip = nebula_get_visitor_data('zip_code');
+			if ( nebula_vdb_get_visitor_datapoint('zip_code') ){
+				$ip_zip = nebula_vdb_get_visitor_datapoint('zip_code');
 			} elseif ( nebula_ip_location() ){
 				$ip_zip = nebula_ip_location('zip');
 			}
@@ -998,7 +1066,7 @@ function dashboard_social(){
 		}
 
 		if ( nebula_option('twitter_username') ){
-			echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="https://twitter.com/' . str_replace('@', '', nebula_option('twitter_username')) . '" target="_blank">Twitter</a></li>';
+			echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="' . nebula_twitter_url() . '" target="_blank">Twitter</a></li>';
 		}
 
 		if ( nebula_option('google_plus_url') ){
@@ -1099,6 +1167,7 @@ function nebula_todo_files($todo_dirpath=null, $child=false){
 			    foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
 			        if ( stripos($todo_line, '@TODO') !== false ){
 						$theme = '';
+						$theme_note = '';
 						if ( is_child_theme() ){
 							if ( $child ){
 								$theme = 'child';
@@ -1244,13 +1313,13 @@ function dashboard_developer_info(){
 			$nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
 			if ( empty($nebula_parent_size) || is_debug() ){
 				$nebula_parent_size = foldersize(get_template_directory());
-				set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, 60*60*12); //12 hour cache
+				set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, DAY_IN_SECONDS);
 			}
 
 			$nebula_child_size = get_transient('nebula_directory_size_child_theme');
 			if ( empty($nebula_child_size) || is_debug() ){
 				$nebula_child_size = foldersize(get_template_directory());
-				set_transient('nebula_directory_size_child_theme', $nebula_child_size, 60*60*12); //12 hour cache
+				set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS);
 			}
 
 			echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
@@ -1264,7 +1333,7 @@ function dashboard_developer_info(){
 			$nebula_size = get_transient('nebula_directory_size_theme');
 			if ( empty($nebula_size) || is_debug() ){
 				$nebula_size = foldersize(get_stylesheet_directory());
-				set_transient('nebula_directory_size_theme', $nebula_size, 60*60*12); //12 hour cache
+				set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS);
 			}
 			echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 		}
@@ -1286,7 +1355,7 @@ function dashboard_developer_info(){
 		$uploads_size = get_transient('nebula_directory_size_uploads');
 		if ( empty($uploads_size) || is_debug() ){
 			$uploads_size = foldersize($upload_dir['basedir']);
-			set_transient('nebula_directory_size_uploads', $uploads_size, 60*60*24); //24 hour cache
+			set_transient('nebula_directory_size_uploads', $uploads_size, HOUR_IN_SECONDS*36);
 		}
 
 		if ( function_exists('wp_max_upload_size') ){
@@ -1681,13 +1750,13 @@ add_filter('update_footer', 'change_admin_footer_right', 11);
 function change_admin_footer_right(){
 	global $wp_version;
 	$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
-    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula_version('date') . '"><a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong class="nebula">' . nebula_version('version') . '</strong>' . $child . '</span>';
+    return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula_version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank">Nebula</a> <strong class="nebula">' . nebula_version('version') . '</strong>' . $child . '</span>';
 }
 
 //Internal Search Keywords Metabox and Custom Field
 add_action('load-post.php', 'nebula_post_meta_boxes_setup');
 add_action('load-post-new.php', 'nebula_post_meta_boxes_setup');
-function nebula_add_post_meta_boxes(){
+function nebula_add_post_keywords(){
 	$builtin_types = array('post', 'page', 'attachment');
 	$custom_types = get_post_types(array('_builtin' => false));
 
@@ -1710,7 +1779,7 @@ function nebula_internal_search_keywords_meta_box($object, $box){
 	</div>
 <?php }
 function nebula_post_meta_boxes_setup(){
-	add_action('add_meta_boxes', 'nebula_add_post_meta_boxes');
+	add_action('add_meta_boxes', 'nebula_add_post_keywords');
 	add_action('save_post', 'nebula_save_post_class_meta', 10, 2);
 }
 function nebula_save_post_class_meta($post_id, $post){
@@ -1744,322 +1813,747 @@ function nebula_admin_sub_menu(){
 	}
 }
 
+/*==========================
+	Nebula Visitor Admin Page
+ ===========================*/
+
 //The Nebula Visitors Data page output
 function nebula_visitors_data_page(){
 	global $wpdb;
-	$all_visitors_data_head = $wpdb->get_results("SHOW columns FROM nebula_visitors");
+	$all_visitors_data_head = $wpdb->get_results("SHOW columns FROM nebula_visitors"); //Get the column names from the primary table
 	$all_visitors_data_head = (array) $all_visitors_data_head;
-	$all_visitors_data = $wpdb->get_results("SELECT * FROM nebula_visitors");
+	$all_visitors_data = $wpdb->get_results("SELECT * FROM nebula_visitors"); //Get all data from the data table
 	$all_visitors_data = (array) $all_visitors_data;
 
 	if ( !empty($all_visitors_data) ): ?>
 		<script>
 			jQuery(window).on('load', function(){
 				jQuery('#visitors_data').DataTable({
-					"aaSorting": [[0, "desc"]], //Default sort (column number)
-					"aLengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
-					"iDisplayLength": 25, //Default entries shown (Does NOT need to match aLengthMenu).
+					"aaSorting": [[12, "desc"]], //Default sort (column number)
+					"aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]], //"Show X entries" dropdown. Values, Text
+					"iDisplayLength": 20, //Default entries shown (Does NOT need to match aLengthMenu).
 					"scrollX": true,
 					"scrollY": '65vh',
 					"scrollCollapse": true,
 					//"paging": false
+					"oLanguage": {"Filter": ""}, //"Search:" label text.
+					"aoColumns": [ //Column Options. Change column comments to headers for easy reference.
+						/* Seen UTC */			{"bVisible": false},
+						/* Modified UTC */		{"bVisible": false},
+						/* ID */  				{"bVisible": false},
+						/* Nebula ID */  		{className: "hide_column"},
+						/* GA CID */  			{"bVisible": false},
+						/* IP Address */ 		{},
+						/* User Agent */  		{},
+						/* Fingerprint */  		{"bVisible": false},
+						/* Nebula Session ID */	{"bVisible": false},
+						/* Notable POI */  		{},
+						/* Email Address */ 	{"bVisible": false},
+						/* Is Known */ 			{"bVisible": false},
+						/* Last Seen On */ 		{"iDataSort": 0},
+						/* Last Modified On */ 	{"iDataSort": 1, "bVisible": false},
+						/* Most Identifiable */	{},
+						/* Lead Score */		{},
+						/* Notes */  			{},
+					]
 				});
-
-				jQuery('.dataTables_filter input').attr('placeholder', 'Filter');
 
 				jQuery(document).on('click tap touch', '.dataTables_wrapper tbody td', function(){
-					jQuery(this).parents('tr').toggleClass('selected');
+					if ( jQuery(this).closest('tr').hasClass('selected') ){
+						jQuery('.dataTables_wrapper tbody tr.selected').removeClass('selected');
 
-					if ( jQuery(this).parents('tr').hasClass('selected') ){
-						if ( jQuery(this).attr('data-column') === 'id' || jQuery(this).attr('data-column') === 'nebula_id' || jQuery(this).attr('data-column') === 'ga_cid' || jQuery(this).attr('data-column') === 'score' ){
-							jQuery('#querystatus').html('This column is protected.');
-						} else {
-							jQuery('.activecell').removeClass('activecell');
-							jQuery(this).addClass('activecell');
-							jQuery('#queryid').val(jQuery(this).parents('tr').find('td[data-column="id"]').text());
-							jQuery('#querycol').val(jQuery(this).attr('data-column'));
-							jQuery('#queryval').val(jQuery(this).text());
-							jQuery('#querystatus').html('');
-						}
+						jQuery('#user-details').html('<p class="select-a-visitor">Select a visitor on the left to view details.</p>');
+						jQuery('#user-details-filter-con').css('opacity', '0');
 					} else {
-						jQuery(this).removeClass('activecell');
-						jQuery('#queryid').val('');
-						jQuery('#querycol').val('');
-						jQuery('#queryval').val('');
-					}
-					jQuery('#queryprog').removeClass();
-				});
+						jQuery('.dataTables_wrapper tbody tr').removeClass('selected');
+						jQuery(this).closest('tr').addClass('selected');
 
-				jQuery(document).on('click tap touch', '.refreshpage', function(){
-					window.location.reload();
-					return false;
-				});
-
-				jQuery('#runquery').on('click tap touch', function(){
-					if ( jQuery('#queryid').val() !== '' && jQuery('#querycol').val() !== '' ){
-						if ( jQuery('#querycol').val() === 'id' || jQuery('#querycol').val() === 'nebula_id' || jQuery('#querycol').val() === 'ga_cid' ){
-							jQuery('#querystatus').html('This column is protected.');
-							return false;
-						}
-
-						jQuery('#querystatus').html('');
-						jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-spinner fa-spin');
+						jQuery('#user-details').html('<p><i class="fa fa-spinner fa-spin"></i> Loading details for that user...</p>');
 
 						jQuery.ajax({
 							type: "POST",
 							url: nebula.site.ajax.url,
 							data: {
 								nonce: nebula.site.ajax.nonce,
-								action: 'nebula_ajax_manual_update_visitor',
-								id: jQuery('#queryid').val(),
-								col: jQuery('#querycol').val(),
-								val: jQuery('#queryval').val(),
+								action: 'nebula_visitor_admin_detail',
+								data: jQuery.trim(jQuery(this).closest('tr').find('.nebula_id').text()),
 							},
 							success: function(response){
-								jQuery('#querystatus').html('Success! Updated table value visualized- <a class="refreshpage" href="#">refresh this page</a> to see actual updated data (and updated score).');
-								jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-check');
-								setTimeout(function(){
-									jQuery('#queryprog').removeClass();
-								}, 1500);
-
-								jQuery('.activecell').text(jQuery('#queryval').val());
-
-								jQuery('#queryid').val('');
-								jQuery('#querycol').val('');
-								jQuery('#queryval').val('');
+								jQuery('#user-details').html(response);
+								jQuery('#user-details-filter-con').css('opacity', '1');
 							},
 							error: function(XMLHttpRequest, textStatus, errorThrown){
-								jQuery('#querystatus').text('An AJAX error occured.');
-								jQuery('#queryprog').removeClass().addClass('fa fa-fw fa-times');
+								//Error
 							},
 							timeout: 60000
 						});
-					} else {
-						jQuery('#querystatus').html('ID and Column are required.');
 					}
+				});
+			});
 
-					return false;
+			//Filter details
+			jQuery(document).on('keyup', '#user-details-filter', function(){
+				keywordSearch('.detail-loop-container', '.detail-con', jQuery.trim(jQuery(this).val()));
+			});
+
+			//Change value to input field for manual updating
+			jQuery(document).on('click tap touch', 'a.edit-this-user-data', function(){
+				var currentActualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('.user-data-value').attr('data-actual'));
+				var currentVisualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('.user-data-value').text());
+
+				jQuery(this).closest('.user-data-value-con').html('<p class="user-data-value form-inline"><input id="user-data-old-value" type="hidden" value="' + currentVisualValue + '" data-actual="' + currentActualValue + '" /><input id="user-data-editing" class="form-control form-control-sm" type="text" value="' + currentActualValue + '" />&nbsp;<a class="btn btn-sm btn-brand update-user-data-btn" href="#">Update</a>&nbsp;<a class="btn btn-sm btn-danger update-user-data-cancel" href="#">Cancel</a>&nbsp;<i class="ajax-update-spinner fa fa-spinner fa-spin"></i><br/><small class="user-date-editing-note" style="display: block; width: 100%;">Edited values may get overwritten.</small></p>');
+
+				return false;
+			});
+
+			//Cancel editing
+			jQuery(document).on('click tap touch', '.update-user-data-cancel', function(){
+				var oldVisualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('#user-data-old-value').val());
+				var oldActualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('#user-data-old-value').attr('data-actual'));
+
+				jQuery(this).closest('.user-data-value-con').html('<span class="user-data-value" data-actual="' + oldActualValue + '">' + oldVisualValue + '</span>&nbsp;<a class="edit-this-user-data" href="#"><i class="fa fa-pencil"></i></a>');
+				return false;
+			});
+
+			//Add new data
+			jQuery(document).on('click tap touch', '#user-detail-add-new-data', function(){
+				oThis = jQuery(this);
+				var newLabel = jQuery('#new-user-data-label').val();
+				var newValue = jQuery('#new-user-data-value').val();
+				var safeLabel = newLabel.toLowerCase().replace(/([^a-z\s])/g, '').replace(/(\s)/g, '_');
+				var humanLabel = safeLabel.replace(/(_)/g, ' ');
+
+				oThis.closest('.new-data-con').find('.ajax-update-spinner').fadeIn();
+				jQuery.ajax({
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ajax_manual_update_visitor',
+						nid: jQuery('#detail-results').attr('data-nid'),
+						label: safeLabel,
+						value: newValue,
+					},
+					success: function(response){
+						//Success
+
+						oThis.closest('.new-data-con').find('.ajax-update-spinner').hide();
+						if ( response == 'success' ){
+							//Append to list
+							jQuery('.detail-loop-container').append('<div class="row detail-con"><div class="col-4"><p class="detail-label" data-label="' + safeLabel + '"><strong class="human-label">' + humanLabel + '</strong></p></div><div class="col-8"><p class="user-data-value-con"><span class="user-data-value" data-actual="' + newValue + '">' + newValue + '</span>&nbsp;<a class="edit-this-user-data" href="#"><i class="fa fa-pencil"></i></a></p></div></div>');
+
+							jQuery('#new-user-data-label').val('');
+							jQuery('#new-user-data-value').val('');
+						} else {
+							//There was a database error.
+						}
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						//Error
+						oThis.closest('.new-data-con').find('.ajax-update-spinner').hide();
+					},
+					timeout: 60000
 				});
 
-				<?php if ( current_user_can('manage_options') ): ?>
-					jQuery('#deletezeroscores a').on('click tap touch', function(){
-						if ( confirm("Are you sure you want to remove all scores of 0 (or less)? This can not be undone.") ){
-							jQuery('#deletezeroscores').html('<i class="fa fa-fw fa-spin fa-spinner"></i> Removing scores of 0 (or less)...');
+				return false;
+			});
 
-							jQuery.ajax({
-								type: "POST",
-								url: nebula.site.ajax.url,
-								data: {
-									nonce: nebula.site.ajax.nonce,
-									action: 'nebula_ajax_remove_zero_scores',
-								},
-								success: function(response){
-									jQuery('#deletezeroscores').html('Success! Visitor data with score of 0 (or less) have been removed. Refreshing page... <a class="refreshpage" href="#">Manual Refresh</a>');
-									window.location.reload();
-								},
-								error: function(XMLHttpRequest, textStatus, errorThrown){
-									jQuery('#deletezeroscores').html('Error. An AJAX error occured. <a class="refreshpage" href="#">Please refresh and try again.</a>');
-								},
-								timeout: 60000
-							});
+			//Send updated detail value to DB
+			jQuery(document).on('click tap touch', '.update-user-data-btn', function(){
+				oThis = jQuery(this);
+				var newValue = jQuery.trim(oThis.closest('.user-data-value-con').find('#user-data-editing').val());
+
+				oThis.closest('.user-data-value-con').find('.ajax-update-spinner').fadeIn();
+				jQuery.ajax({
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ajax_manual_update_visitor',
+						nid: jQuery('#detail-results').attr('data-nid'),
+						label: oThis.closest('.detail-con').find('.detail-label').attr('data-label'),
+						value: newValue,
+					},
+					success: function(response){
+						//Success
+						oThis.closest('.user-data-value-con').find('.ajax-update-spinner').hide();
+						if ( response == 'success' ){
+							oThis.closest('.user-data-value-con').html('<span class="user-data-value">' + newValue + '</span>&nbsp;<a class="edit-this-user-data" href="#"><i class="fa fa-pencil"></i></a>');
+						} else {
+							oThis.closest('.user-data-value-con').find('.user-date-editing-note').text('There was a database error.');
 						}
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						//Error
+						oThis.closest('.user-data-value-con').find('.ajax-update-spinner').hide();
+						oThis.closest('.user-data-value-con').find('.user-date-editing-note').html('An AJAX error occurred:<br>' + textStatus + ' - ' + errorThrown);
+					},
+					timeout: 60000
+				});
 
-						return false;
+				return false;
+			});
+
+			//Find similar users
+			jQuery(document).on('click tap touch', '.similar-visitors-con .btn', function(){
+				jQuery.ajax({
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ajax_similar_visitors',
+						similar: jQuery(this).attr('data-similar'),
+						nid: jQuery(this).attr('data-nid'),
+					},
+					success: function(response){
+						//Success
+						console.debug(response);
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						//Error
+					},
+					timeout: 60000
+				});
+
+				return false;
+			});
+
+			//Delete individual visitor from the DB
+			jQuery(document).on('click tap touch', '#delete-this-user-data', function(){
+				if ( confirm("Are you sure you want to delete this user data? This can not be undone.") ){
+					jQuery('.delete-this-visitor-icon').removeClass('fa-trash').addClass('fa-spin fa-spinner');
+					jQuery.ajax({
+						type: "POST",
+						url: nebula.site.ajax.url,
+						data: {
+							nonce: nebula.site.ajax.nonce,
+							action: 'nebula_ajax_manual_delete_visitor',
+							nid: jQuery('#detail-results').attr('data-nid'),
+						},
+						success: function(response){
+							//Success
+							console.debug(response);
+
+							if ( response == 'success' ){
+								window.location.reload();
+							}
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown){
+							//Error
+						},
+						timeout: 60000
 					});
+				}
 
-					jQuery('#dropnvtable a').on('click tap touch', function(){
-						if ( confirm("Are you sure you want to delete the entire Nebula Visitors table? This can not be undone.") ){
-							jQuery('#dropnvtable').html('<i class="fa fa-fw fa-spin fa-spinner"></i> Deleting Nebula Visitors Table...');
+				return false;
+			});
 
-							jQuery.ajax({
-								type: "POST",
-								url: nebula.site.ajax.url,
-								data: {
-									nonce: nebula.site.ajax.nonce,
-									action: 'nebula_ajax_drop_nv_table',
-								},
-								success: function(response){
-									jQuery('#dropnvtable').html('Success! Nebula Visitors table has been dropped from the database. The option has also been disabled. Re-enable it in <a href="themes.php?page=nebula_options">Nebula Options</a>.');
-								},
-								error: function(XMLHttpRequest, textStatus, errorThrown){
-									jQuery('#dropnvtable').html('Error. An AJAX error occured. <a class="refreshpage" href="#">Please refresh and try again.</a>');
-								},
-								timeout: 60000
-							});
+			//Remove expired visitors
+			jQuery(document).on('click tap touch', '#delete-expired-visitors', function(){
+				jQuery('.remove-expired-visitors-icon').removeClass('fa-trash').addClass('fa-spin fa-spinner');
+				jQuery.ajax({
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ajax_manual_remove_expired',
+					},
+					success: function(response){
+						//Success
+						if ( response == 'success' ){
+							window.location.reload();
 						}
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						//Error
+					},
+					timeout: 60000
+				});
 
-						return false;
+				return false;
+			});
+
+			//Remove 0 score visitors
+			jQuery(document).on('click tap touch', '#delete-noscore-visitors', function(){
+				jQuery('.remove-noscore-visitors-icon').removeClass('fa-trash').addClass('fa-spin fa-spinner');
+				jQuery.ajax({
+					type: "POST",
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ajax_manual_remove_noscore',
+					},
+					success: function(response){
+						//Success
+						if ( response == 'success' ){
+							window.location.reload();
+						}
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						//Error
+					},
+					timeout: 60000
+				});
+
+				return false;
+			});
+
+			//Delete and disable Nebula Visitors DB
+			jQuery(document).on('click tap touch', '#delete-everything-and-disable', function(){
+				if ( confirm("Are you sure you want to delete all visitor data and disable this feature? This can not be undone.") ){
+					jQuery('.delete-all-data-icon').removeClass('fa-bomb').addClass('fa-spin fa-spinner');
+					jQuery.ajax({
+						type: "POST",
+						url: nebula.site.ajax.url,
+						data: {
+							nonce: nebula.site.ajax.nonce,
+							action: 'nebula_ajax_drop_nv_table',
+						},
+						success: function(response){
+							//Success
+							window.location = response;
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown){
+							//Error
+						},
+						timeout: 60000
 					});
-				<?php endif; ?>
+				}
+
+				return false;
 			});
 		</script>
 
 		<div id="nebula-visitor-data" class="wrap">
-			<h2>Nebula Visitors Data</h2>
-			<?php
-				if ( !current_user_can('manage_options') && !is_dev() ){
-					wp_die('You do not have sufficient permissions to access this page.');
-				}
-			?>
+			<div class="row">
+				<div class="col-12">
+					<h2>Nebula Visitors Data</h2>
+					<?php
+						if ( !current_user_can('manage_options') && !is_dev() ){
+							wp_die('You do not have sufficient permissions to access this page.');
+						}
+					?>
 
-			<p>Visitor data can be sorted and filtered here. Lines in <em>italics</em> are your data. Green lines are "known" visitors who have identified themselves. If your Hubspot CRM API key is added to <a href="themes.php?page=nebula_options" target="_blank">Nebula Options</a>, known visitors' data is automatically updated there. To modify data, click the cell to be updated and complete the form below the table. Use the Notes column to make notes about users (this column can not be accessed for retargeting!)</p>
-			<p>Data will expire 30 days after the visitors' "Last Modified Date" unless the score is 100 or greater. Scores of 0 (or less) can be deleted manually by clicking the corresponding link at the bottom of this page.</p>
-
-			<div class="dataTables_wrapper">
-				<table id="visitors_data" class="display compact" cellspacing="0" width="100%">
-					<thead>
-						<tr>
-							<?php foreach ( $all_visitors_data_head as $column_name ): ?>
-								<td>
-									<?php
-										$column_name = (array) $column_name;
-										echo ucwords(str_replace('_', ' ', $column_name['Field']));
-									?>
-								</td>
-							<?php endforeach; ?>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ( $all_visitors_data as $visitor_data ): ?>
-							<?php
-								$visitor_data = (array) $visitor_data;
-								$row_class = '';
-								if ( $visitor_data['nebula_id'] === get_nebula_id() ){
-									$row_class .= 'you ';
-								}
-
-								if ( $visitor_data['known'] == '1' ){
-									$row_class .= 'known ';
-								}
-							?>
-							<tr class="<?php echo $row_class; ?>">
-								<?php foreach ( $visitor_data as $column => $value ): ?>
-									<?php
-										$cell_title = '';
-										$cell_class = '';
-										$date_columns = array('create_date', 'last_modified_date', 'current_session');
-										if ( in_array($column, $date_columns) ){
-											$cell_title = date('l, F j, Y - g:i:sa', $value);
-											$cell_class = 'moreinfo';
-											$value = $value . ' (' . date('F j, Y - g:i:sa', $value) . ')';
-										}
-
-										if ( $value == '0' ){
-											$cell_class = 'zerovalue';
-										}
-									?>
-									<td class="<?php echo $cell_class; ?>" title="<?php echo $cell_title; ?>" data-column="<?php echo $column; ?>"><?php echo sanitize_text_field(mb_strimwidth($value, 0, 153, '...')); ?></td>
-								<?php endforeach; ?>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
+					<p>Lines in <em><strong>bold italic</strong></em> are your data. <span style="color: #5cb85c;">Green</span> lines are "known" visitors who have been identified.</p>
+				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-8">
+					<div class="dataTables_wrapper">
+						<table id="visitors_data" class="display compact" cellspacing="0" width="100%">
+							<thead>
+								<tr>
+									<td>Seen (UTC)</td>
+									<td>Modified (UTC)</td>
+									<?php foreach ( $all_visitors_data_head as $column_name ): ?>
+										<td>
+											<?php
+												$column_name = (array) $column_name;
+												echo ucwords(str_replace('_', ' ', $column_name['Field'])); //what is this?
+											?>
+										</td>
+									<?php endforeach; ?>
+								</tr>
+							</thead>
+							<tbody>
+								<?php $your_nebula_id = nebula_vdb_get_appropriate_nebula_id(); ?>
+								<?php foreach ( $all_visitors_data as $visitor_data ): ?>
+									<?php
+										$visitor_data = (array) $visitor_data;
+										$row_class = '';
+										if ( $visitor_data['nebula_id'] === $your_nebula_id ){
+											$row_class .= 'you ';
+										}
 
-			<div id="modify-visitor-form">
-				<h2>Modify Visitor Data</h2>
-				<p>Click a cell in the table to modify that visitor data. Some columns are protected, and others may revert when that visitor returns to the website (for example: Nebula Session ID, User Agent, and others will be re-stored each new visit).</p>
+										if ( $visitor_data['is_known'] == '1' ){
+											$row_class .= 'known ';
+										}
+									?>
+									<tr class="ajaxrow <?php echo $row_class; ?>">
+										<td><?php echo $visitor_data['last_seen_on']; ?></td>
+										<td><?php echo $visitor_data['last_modified_on']; ?></td>
+										<?php foreach ( $visitor_data as $column => $value ): ?>
+											<td class="<?php echo $column; ?>">
+												<?php if ( $column == 'notes' && !empty($value) ): ?>
+													<div><i class="fa fa-sticky-note" title="<?php echo sanitize_text_field(trim($value)); ?>" style="color: #f7dd00;"></i></div>
+												<?php else: ?>
+													<div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
+														<?php
+															if ( is_utc_timestamp($value) ){
+																echo date('F j, Y @ g:ia', intval($value)); //For Last Modified timestamp
+															} else {
+																echo sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
+															}
+														?>
+													</div>
+												<?php endif; ?>
+											</td>
+										<?php endforeach; ?>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+					<div id="dangerous-stuff">
+						<div class="row">
+							<div class="col-7">
+								<p><i class="delete-all-data-icon fa fa-bomb"></i> <a id="delete-everything-and-disable" class="danger-link" href="#">Delete all data and disable Nebula Visitor DB</a></p>
+							</div>
+							<div class="col-5">
+								<p class="text-right"><i class="remove-expired-visitors-icon fa fa-trash"></i> <a id="delete-expired-visitors" class="danger-link" href="#">Remove expired visitors</a></p>
+								<p class="text-right"><i class="remove-noscore-visitors-icon fa fa-trash"></i> <a id="delete-noscore-visitors" class="danger-link" href="#">Remove visitors with a score of 0 (or less)</a></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div id="user-details-filter-con" class="text-right">Filter: <input id="user-details-filter" class="form-control" type="text" /></div>
 
-				<table>
-					<tr class="label-cell">
-						<td class="id-col">ID</td>
-						<td class="col-col">Column</td>
-						<td class="val-col">Value</td>
-						<td class="run-col"></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="id-col"><input id="queryid" type="text" /></td>
-						<td class="col-col"><input id="querycol" type="text" /></td>
-						<td class="val-col"><input id="queryval" type="text" /></td>
-						<td class="run-col"><input id="runquery" class="button button-primary" type="submit" name="submit" value="Update Data"></td>
-						<td><i id="queryprog" class="fa fa-fw"></i></td>
-					</tr>
-				</table>
+					<div id="user-details-con">
+						<div class="user-title-bar">
+							<p><i class="fa fa-id-card"></i> <strong>Visitor Details</strong></p>
+						</div>
 
-				<p id="querystatus"></p>
-
-				<?php if ( current_user_can('manage_options') ): ?>
-					<div id="deletezeroscores" class="action-warning"><a class="danger" href="#"><i class="fa fa-fw fa-warning"></i> Delete Scores of 0 (or less).</a></div>
-				<?php endif; ?>
-
-				<?php if ( current_user_can('manage_options') ): ?>
-					<div id="dropnvtable" class="action-warning"><a class="danger" href="#"><i class="fa fa-fw fa-warning"></i> Delete entire Nebula Visitors table and disable Visitors Database option.</a></div>
-				<?php endif; ?>
+						<div id="user-details"><p class="select-a-visitor">Select a visitor on the left to view details.</p></div>
+					</div>
+				</div>
 			</div>
 		</div>
 	<?php else: ?>
 		<div class="wrap">
 			<h2>Nebula Visitors Data</h2>
-			<p>
-				<strong>Nebula Visitors table is empty or does not exist!</strong><br/>
-				To create the table, simply save the <a href="themes.php?page=nebula_options">Nebula Options</a> (and be sure that "Visitor Database" is enabled under the Functions tab).
-			</p>
+			<p><strong>Nebula Visitors table is empty!</strong><br/>Wait for new visitors, or even <a href="<?php echo home_url('/'); ?>" target="_blank">visit your website yourself</a> then refresh this page for data to appear.</p>
+
+<!--
+			<div id="dangerous-stuff">
+				<p><i class="delete-all-data-icon fa fa-bomb"></i> <a id="delete-everything-and-disable" class="danger-link" href="#">Delete all data and disable Nebula Visitor DB</a></p>
+			</div>
+-->
 		</div>
 	<?php endif;
 }
 
-//Manually update visitor data
+//Get details for user
+add_action('wp_ajax_nebula_visitor_admin_detail', 'nebula_visitor_admin_detail');
+add_action('wp_ajax_nopriv_nebula_visitor_admin_detail', 'nebula_visitor_admin_detail');
+function nebula_visitor_admin_detail(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+	nebula_vdb_update_visitor_data(false, true, sanitize_text_field($_POST['data'])); //Update the score withou otherwise affecting data.
+
+	global $wpdb;
+	$this_user_data = $wpdb->get_results("SELECT id, label, value FROM nebula_visitors_data WHERE nebula_id = '" . sanitize_text_field($_POST['data']) . "' ORDER BY id");
+	if ( empty($this_user_data) ){
+		echo '<p>Data was not found for this user...</p>';
+	}
+
+	$organized_data = array();
+	foreach ( $this_user_data as $index => $value ){
+		$label = $this_user_data[$index]->label;
+
+		$unserialized_value = $this_user_data[$index]->value;
+		if ( is_serialized($unserialized_value) ){
+			$unserialized_value = unserialize($unserialized_value);
+		}
+		$organized_data[$label] = $unserialized_value;
+	}
+	?>
+		<div id="detail-results" data-nid="<?php echo sanitize_text_field($_POST['data']); ?>">
+			<div>
+				<?php if ( $organized_data['nebula_id'] == nebula_vdb_get_appropriate_nebula_id() ): ?>
+					<div class="visitor-notice-item">
+						<p><i class="fa fa-fw fa-smile-o" style="color: blue;"></i> This visitor is you!</p>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( !empty($organized_data['notices']) ): ?>
+					<div class="visitor-notice-item">
+						<p><i class="fa fa-fw fa-exclamation-triangle" style="color: orange;"></i> Display notices here</p>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( !empty($organized_data['notes']) ): ?>
+					<div class="visitor-notice-item">
+						<p><i class="fa fa-fw fa-sticky-note" style="color: #f7dd00;"></i> <?php echo $organized_data['notes']; ?></p>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( !empty($organized_data['photo']) ): ?>
+					<p><img src="<?php echo ( is_array($organized_data['photo']) )? end($organized_data['photo']) : $organized_data['photo']; ?>" style="width: 100%;" /></p>
+				<?php endif; ?>
+			</div>
+
+			<div style="margin-bottom: 30px;">
+				<h3 class="text-center">Lead Score: <strong><?php echo $organized_data['lead_score']; ?></strong></h3>
+				<table id="score-legend">
+					<tr>
+						<td style="color: #5cb85c;">Demographic</td>
+						<td style="color: #0275d8;">Behavior</td>
+						<td style="color: #f0ad4e;">Modifier</td>
+					</tr>
+				</table>
+				<div class="progress">
+					<div class="progress-bar bg-success" role="progressbar" style="width: <?php echo ($organized_data['demographic_score']/$organized_data['lead_score'])*100; ?>%;" aria-valuenow="<?php echo $organized_data['demographic_score']; ?>" aria-valuemin="0" aria-valuemax="<?php echo $organized_data['lead_score']; ?>"><?php echo $organized_data['demographic_score']; ?></div>
+					<div class="progress-bar bg-brand" role="progressbar" style="width: <?php echo ($organized_data['behavior_score']/$organized_data['lead_score'])*100; ?>%;" aria-valuenow="<?php echo $organized_data['behavior_score']; ?>" aria-valuemin="0" aria-valuemax="<?php echo $organized_data['lead_score']; ?>"><?php echo $organized_data['behavior_score']; ?></div>
+					<div class="progress-bar bg-warning" role="progressbar" style="width: <?php echo ($organized_data['score_mod']/$organized_data['lead_score'])*100; ?>%;" aria-valuenow="<?php echo $organized_data['score_mod']; ?>" aria-valuemin="0" aria-valuemax="<?php echo $organized_data['lead_score']; ?>"><?php echo $organized_data['score_mod']; ?></div>
+				</div>
+			</div>
+
+			<div class="detail-loop-container">
+				<?
+					foreach ( $this_user_data as $index => $value ):
+						$unserialized_value = $this_user_data[$index]->value;
+						if ( is_serialized($unserialized_value) ){
+							$unserialized_value = unserialize($unserialized_value);
+						}
+				?>
+					<div class="row detail-con">
+						<div class="col-4">
+							<p class="detail-label" data-label="<?php echo $this_user_data[$index]->label; ?>">
+								<strong class="human-label"><?php echo str_replace('_', ' ', $this_user_data[$index]->label); ?></strong>
+								<div class="hidden"><?php echo $this_user_data[$index]->label; ?></div>
+							</p>
+						</div>
+						<div class="col-8">
+							<div class="user-data-value-con">
+								<?php if ( is_array($unserialized_value) && count($unserialized_value) == 1 ){ //Convert single array datapoints to strings
+									$unserialized_value = implode('', $unserialized_value);
+								}
+
+								if ( is_array($unserialized_value) ): ?>
+									<ol start="0">
+										<?php foreach ( $unserialized_value as $value ): ?>
+											<li class="user-data-value" data-actual="<?php echo htmlspecialchars($value); ?>">
+												<span>
+													<?php
+														if ( is_utc_timestamp($value) ){
+															echo date('l, F j, Y @ g:ia', intval($value));
+														} else {
+															echo htmlspecialchars($value);
+														}
+													?>
+												</span>
+											</li>
+										<?php endforeach; ?>
+									</ol>
+								<?php else: ?>
+									<span class="user-data-value" data-actual="<?php echo htmlspecialchars($unserialized_value); ?>">
+										<?php
+											if ( is_utc_timestamp($unserialized_value) ){
+												echo date('l, F j, Y @ g:ia', $unserialized_value);
+											} else {
+												echo htmlspecialchars($unserialized_value);
+											}
+										?>
+									</span>
+									<?php if ( !nebula_vdb_is_protected_label($this_user_data[$index]->label) ): ?>
+										&nbsp;<a class="edit-this-user-data" href="#"><i class="fa fa-pencil"></i></a>
+									<?php endif; ?>
+								<?php endif; ?>
+							</div>
+						</div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+
+			<div id="detail-new-row">
+				<p>
+					<h4>Add New</h4>
+					<p><small>Avoid using special characters in the label.</small></p>
+				</p>
+				<div class="row new-data-con">
+					<div class="col-4">
+						<div class="form-inline">
+							<input id="new-user-data-label" class="form-control" type="text" placeholder="Label" />
+						</div>
+					</div>
+					<div class="col-8">
+						<div class="form-inline">
+							<input id="new-user-data-value" class="form-control" type="text" placeholder="Value" />&nbsp;<a id="user-detail-add-new-data" class="btn btn-brand" href="#">Add</a>&nbsp;<i class="ajax-update-spinner fa fa-spinner fa-spin"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="similar-visitors-con" style="margin-top: 30px;">
+				<h4>Find similar visitors</h4>
+				<p><small>Note: These run queries, but don't update anything on this page yet...</small></p>
+				<a class="btn btn-brand" data-similar="ip" data-nid="<?php echo $organized_data['nebula_id']; ?>" href="#">IP Address</a> <a class="btn btn-brand" data-similar="ip_useragent" data-nid="<?php echo $organized_data['nebula_id']; ?>" href="#">IP and User Agent</a></p>
+			</div>
+
+			<div class="useful-queries" style="margin-top: 30px;">
+				<h4>Useful Queries</h4>
+				<p><small>These queries can be pasted into phpMyAdmin to facilitate more advanced customization.</small></p>
+				<div>
+					<strong>Select this user</strong><br/>
+					<div class="nebula-code-con clearfix mysql">
+						<pre class="nebula-code mysql">SELECT * FROM nebula_visitors_data
+WHERE nebula_id = '<?php echo $organized_data['nebula_id']; ?>'</pre>
+					</div>
+				</div>
+				<div>
+					<strong>Select similar users by IP</strong><br/><?php //@TODO "Nebula" 0: Can't edit user_agent with this query... ?>
+					<div class="nebula-code-con clearfix mysql">
+						<pre class="nebula-code mysql">SELECT DISTINCT(nebula_visitors.nebula_id), nebula_visitors.*
+FROM nebula_visitors_data JOIN nebula_visitors ON nebula_visitors.nebula_id = nebula_visitors_data.nebula_id
+WHERE (nebula_visitors_data.label = 'all_ip_addresses' AND nebula_visitors_data.value = '<?php echo $organized_data['ip_address']; ?>') OR (nebula_visitors_data.label = 'ip_address' AND nebula_visitors_data.value = '<?php echo $organized_data['ip_address']; ?>')</pre>
+					</div>
+				</div>
+				<div>
+					<strong>Select similar users by IP + User Agent</strong><br/><?php //@TODO "Nebula" 0: Can't edit user_agent with this query... ?>
+					<div class="nebula-code-con clearfix mysql">
+						<pre class="nebula-code mysql">SELECT DISTINCT(nebula_visitors.nebula_id), nebula_visitors.*
+FROM nebula_visitors_data JOIN nebula_visitors ON nebula_visitors.nebula_id = nebula_visitors_data.nebula_id
+WHERE ((nebula_visitors_data.label = 'all_ip_addresses' AND nebula_visitors_data.value = '<?php echo $organized_data['ip_address']; ?>') OR (nebula_visitors_data.label = 'ip_address' AND nebula_visitors_data.value = '<?php echo $organized_data['ip_address']; ?>'))
+AND nebula_visitors.user_agent = '<?php echo $organized_data['user_agent']; ?>'</pre>
+					</div>
+				</div>
+				<div>
+					<strong>Select similar users by Fingerprint</strong><br/><?php //@TODO "Nebula" 0: Can't edit user_agent with this query... ?>
+					<div class="nebula-code-con clearfix mysql">
+						<pre class="nebula-code mysql">SELECT DISTINCT(nebula_visitors.nebula_id), nebula_visitors.*
+FROM nebula_visitors_data JOIN nebula_visitors ON nebula_visitors.nebula_id = nebula_visitors_data.nebula_id
+WHERE nebula_visitors.fingerprint = '<?php echo $organized_data['fingerprint']; ?>'</pre>
+					</div>
+				</div>
+			</div>
+
+			<div id="dangerous-stuff">
+				<p class="text-right"><i class="delete-this-visitor-icon fa fa-trash"></i> <a id="delete-this-user-data" class="danger-link" href="#">Delete this visitor</a></p>
+			</div>
+		</div>
+	<?php
+	wp_die();
+}
+
+//Manually update data from the admin interface
 add_action('wp_ajax_nebula_ajax_manual_update_visitor', 'nebula_ajax_manual_update_visitor');
 add_action('wp_ajax_nopriv_nebula_ajax_manual_update_visitor', 'nebula_ajax_manual_update_visitor');
 function nebula_ajax_manual_update_visitor(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-	$id = absint(intval($_POST['id']));
-	$col = sanitize_key($_POST['col']);
-	$val = sanitize_text_field($_POST['val']);
 
-	$protected_columns = array('id', 'nebula_id', 'ga_cid', 'score');
-	if ( in_array($col, $protected_columns) ){
-		return false;
-		exit;
+	$nebula_id = sanitize_text_field($_POST['nid']);
+	$label = sanitize_text_field(strtolower(preg_replace(array('/([^a-zA-Z_])/', '/(\s)/'), array('', '_'), $_POST['label'])));
+	$value = sanitize_text_field($_POST['value']);
+
+	if ( nebula_vdb_is_protected_label($label) ){
+		wp_die('That is a protected label.');
+	}
+
+	$manual_update = nebula_vdb_update_visitor_data(array($label => $value), true, $nebula_id);
+	if ( $manual_update === false ){
+		echo 'error';
+	} else {
+		echo 'success';
+	}
+
+	wp_die();
+}
+
+//Find similar visitors by IP or IP and User Agent
+add_action('wp_ajax_nebula_ajax_similar_visitors', 'nebula_ajax_similar_visitors');
+add_action('wp_ajax_nopriv_nebula_ajax_similar_visitors', 'nebula_ajax_similar_visitors');
+function nebula_ajax_similar_visitors(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+	$all_visitor_data = nebula_vdb_get_all_visitor_data('any', sanitize_text_field($_POST['nid']));
+	$ip_address = $all_visitor_data['ip_address'];
+	$user_agent = $all_visitor_data['user_agent'];
+
+	$query = "SELECT DISTINCT(nebula_visitors.nebula_id), nebula_visitors.* FROM nebula_visitors_data JOIN nebula_visitors ON nebula_visitors.nebula_id = nebula_visitors_data.nebula_id WHERE (nebula_visitors_data.label = 'all_ip_addresses' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%') OR (nebula_visitors_data.label = 'ip_address' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%')";
+	if ( $_POST['similar'] == 'ip_useragent' ){
+		$query = "SELECT DISTINCT(nebula_visitors.nebula_id), nebula_visitors.* FROM nebula_visitors_data JOIN nebula_visitors ON nebula_visitors.nebula_id = nebula_visitors_data.nebula_id WHERE ((nebula_visitors_data.label = 'all_ip_addresses' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%') OR (nebula_visitors_data.label = 'ip_address' AND nebula_visitors_data.value LIKE '%" . $ip_address . "%')) AND nebula_visitors.user_agent = '" . $user_agent . "'";
 	}
 
 	global $wpdb;
-	$manual_update = $wpdb->update(
-		'nebula_visitors',
-		array($col => $val),
-		array('id' => $id),
-		array('%s'),
-		array('%d')
-	);
+	$similar_visitors = $wpdb->get_results($query);
 
-	//recalculate the score after the update
-	$update_score = $wpdb->update(
-		'nebula_visitors',
-		array('score' => nebula_calculate_visitor_score($id)),
-		array('id' => $id),
-		array('%d'),
-		array('%d')
-	);
-
-	wp_die();
-}
-
-//Manually delete null and 0 score rows
-add_action('wp_ajax_nebula_ajax_remove_zero_scores', 'nebula_ajax_remove_zero_scores');
-add_action('wp_ajax_nopriv_nebula_ajax_remove_zero_scores', 'nebula_ajax_remove_zero_scores');
-function nebula_ajax_remove_zero_scores(){
-	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-
-	if ( current_user_can('manage_options') ){
-		global $wpdb;
-		$zero_scores = $wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE score <= %d", 0));
+	if ( $similar_visitors === false ){
+		echo 'error';
+	} else {
+		echo "success:\r\n";
+		var_export( $similar_visitors );
+		//@todo "Nebula" 0: loop through result object and put it into the main datatable... somehow...
 	}
 
 	wp_die();
 }
 
-//Manually delete the entire Nebula Visitor table
+//Manually delete user from the admin interface
+add_action('wp_ajax_nebula_ajax_manual_delete_visitor', 'nebula_ajax_manual_delete_visitor');
+add_action('wp_ajax_nopriv_nebula_ajax_manual_delete_visitor', 'nebula_ajax_manual_delete_visitor');
+function nebula_ajax_manual_delete_visitor(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+	if ( !current_user_can('manage_options') ){
+		wp_die('You do not have permissions to remove visitor data.');
+	}
+
+	$nebula_id = sanitize_text_field($_POST['nid']);
+
+	global $wpdb;
+	$manual_delete = $wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE nebula_id = %s", $nebula_id)); //Associated data in nebula_visitors_data will cascade delete
+
+	if ( $manual_delete === false ){
+		echo 'error';
+	} else {
+		echo 'success';
+	}
+
+	wp_die();
+}
+
+
+//Manually remove expired visitors from the admin interface
+add_action('wp_ajax_nebula_ajax_manual_remove_expired', 'nebula_ajax_manual_remove_expired');
+add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_expired', 'nebula_ajax_manual_remove_expired');
+function nebula_ajax_manual_remove_expired(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+	$manual_remove_expired = nebula_vdb_remove_expired(true);
+
+	if ( $manual_remove_expired === false ){
+		echo 'error';
+	} else {
+		echo 'success';
+	}
+
+	wp_die();
+}
+
+//Manually remove visitors with a Lead Score of 0 (or less)
+add_action('wp_ajax_nebula_ajax_manual_remove_noscore', 'nebula_ajax_manual_remove_noscore');
+add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_noscore', 'nebula_ajax_manual_remove_noscore');
+function nebula_ajax_manual_remove_noscore(){
+	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+	global $wpdb;
+	$manual_delete = $wpdb->query($wpdb->prepare("DELETE FROM nebula_visitors WHERE lead_score <= %d", 0)); //Associated data in nebula_visitors_data will cascade delete
+
+	if ( $manual_delete === false ){
+		echo 'error';
+	} else {
+		echo 'success';
+	}
+
+	wp_die();
+}
+
+
+//Manually delete the entire Nebula Visitor tables
 add_action('wp_ajax_nebula_ajax_drop_nv_table', 'nebula_ajax_drop_nv_table');
 add_action('wp_ajax_nopriv_nebula_ajax_drop_nv_table', 'nebula_ajax_drop_nv_table');
 function nebula_ajax_drop_nv_table(){
 	if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-
-	if ( current_user_can('manage_options') ){
-		global $wpdb;
-		$remove_nv_table = $wpdb->query("DROP TABLE nebula_visitors");
-		nebula_update_option('visitors_db', 'disabled');
+	if ( !current_user_can('manage_options') ){
+		wp_die('You do not have permissions to do that.');
 	}
+
+	global $wpdb;
+	$remove_nv_table = $wpdb->query("DROP TABLE nebula_visitors_data");
+	$remove_nv_table = $wpdb->query("DROP TABLE nebula_visitors");
+	nebula_update_option('visitors_db', 'disabled');
+
+	echo admin_url();
 
 	wp_die();
 }

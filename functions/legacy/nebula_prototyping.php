@@ -105,7 +105,7 @@ if ( nebula_option('prototype_mode', 'enabled') ){
 			'parent' => 'nebula-prototype',
 			'id' => 'nebula-prototype-help',
 			'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
-			'href' => 'https://gearside.com/nebula/documentation/custom-functionality/prototype-mode/',
+			'href' => 'https://gearside.com/nebula/functions/fpo/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=prototyping+help',
 			'meta' => array('target' => '_blank')
 		));
 
