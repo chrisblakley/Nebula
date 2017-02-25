@@ -4,11 +4,11 @@
  */
 ?>
 			<div id="footer-section">
-				<?php get_template_part('includes/footer_widgets'); //Footer widget logic. ?>
+				<?php get_template_part('inc/footer_widgets'); //Footer widget logic. ?>
 
 				<div class="container">
 					<div class="row powerfootercon">
-						<div class="col-sm-12">
+						<div class="col">
 							<?php if ( get_theme_mod('nebula_footer_logo', false) ): ?>
 								<a class="footerlogo" href="<?php echo home_url('/'); ?>"><img src="<?php echo get_theme_mod('nebula_footer_logo', ''); ?>" /></a>
 							<?php endif; ?>
@@ -21,7 +21,7 @@
 						</div><!--/columns-->
 					</div><!--/row-->
 					<div class="row copyright">
-						<div class="col-sm-12">
+						<div class="col">
 							&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url(); ?>"><strong>Nebula</strong></a> <?php echo nebula_version('full'); ?>, <em>all rights reserved</em>.
 
 							<form class="nebula-search-iconable search footer-search" method="get" action="<?php echo home_url('/'); ?>">

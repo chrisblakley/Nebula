@@ -10,13 +10,13 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 }
 
 do_action('nebula_preheaders');
-nebula_increment_visitor('page_not_found');
+nebula_vdb_increment_visitor_data('page_not_found');
 get_header(); ?>
 
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col">
 				<h1 class="page-title">Not Found</h1>
 				<p>The page you requested could not be found.</p>
 			</div><!--/cols-->
@@ -26,7 +26,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -34,7 +34,7 @@ get_header(); ?>
 	</div><!--/breadcrumb-section-->
 </section>
 
-<?php get_template_part('includes/nebula_drawer'); ?>
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">

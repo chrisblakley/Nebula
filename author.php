@@ -22,7 +22,7 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col">
 				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
 			</div><!--/cols-->
 		</div><!--/row-->
@@ -31,7 +31,7 @@ get_header(); ?>
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col">
 					<?php nebula_breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -39,7 +39,7 @@ get_header(); ?>
 	</div><!--/breadcrumb-section-->
 </section>
 
-<?php get_template_part('includes/nebula_drawer'); ?>
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">
@@ -52,7 +52,7 @@ get_header(); ?>
 		</div><!--/col-->
 		<div class="col-md-10">
 	<?php else : ?>
-		<div class="col-md-12">
+		<div class="col">
 	<?php endif; ?>
 
 			<h2 class="author-name">
@@ -75,7 +75,7 @@ get_header(); ?>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('twitter') ): ?>
-					<a class="twitter" href="http://www.twitter.com/<?php echo get_the_author_meta('twitter'); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
+					<a class="twitter" href="<?php echo nebula_twitter_url(get_the_author_meta('twitter')); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('googleplus') ): ?>

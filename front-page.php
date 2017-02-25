@@ -16,7 +16,7 @@ get_header(); ?>
 	<div class="herobgcolor"></div>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col">
 				<h1><?php echo get_bloginfo('name'); ?></h1>
 				<?php if ( get_bloginfo('description') != '' ): ?>
 					<h2><?php echo get_bloginfo('description'); ?></h2>
@@ -27,7 +27,7 @@ get_header(); ?>
 	</div><!--/container-->
 </div><!--/hero-section-->
 
-<?php get_template_part('includes/nebula_drawer'); ?>
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">

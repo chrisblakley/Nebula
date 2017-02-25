@@ -154,22 +154,22 @@ if( !class_exists( 'Nebula' ) ) {
         private function includes() {
             // Includes classes
             // TODO: Folder should be includes
-            require_once NEBULA_DIR . '/functions/admin/admin.php';
-            require_once NEBULA_DIR . '/functions/automation.php';
-            require_once NEBULA_DIR . '/functions/ecommerce.php';
-            require_once NEBULA_DIR . '/functions/functions.php';
-            require_once NEBULA_DIR . '/functions/optimization.php';
-            require_once NEBULA_DIR . '/functions/options.php';
-            require_once NEBULA_DIR . '/functions/prototyping.php';
-            require_once NEBULA_DIR . '/functions/scripts.php';
-            require_once NEBULA_DIR . '/functions/security.php';
-            require_once NEBULA_DIR . '/functions/shortcodes.php';
-            require_once NEBULA_DIR . '/functions/template-engine.php';
-            require_once NEBULA_DIR . '/functions/template-functions.php';
-            require_once NEBULA_DIR . '/functions/utilities/utilities.php';
+            require_once NEBULA_DIR . '/libs/admin/admin.php';
+            require_once NEBULA_DIR . '/libs/automation.php';
+            require_once NEBULA_DIR . '/libs/ecommerce.php';
+            require_once NEBULA_DIR . '/libs/functions.php';
+            require_once NEBULA_DIR . '/libs/optimization.php';
+            require_once NEBULA_DIR . '/libs/options.php';
+            require_once NEBULA_DIR . '/libs/prototyping.php';
+            require_once NEBULA_DIR . '/libs/scripts.php';
+            require_once NEBULA_DIR . '/libs/security.php';
+            require_once NEBULA_DIR . '/libs/shortcodes.php';
+            require_once NEBULA_DIR . '/libs/template-engine.php';
+            require_once NEBULA_DIR . '/libs/template-functions.php';
+            require_once NEBULA_DIR . '/libs/utilities/utilities.php';
 
             // Compatibility backwards
-            require_once NEBULA_DIR . '/functions/legacy.php';
+            require_once NEBULA_DIR . '/libs/legacy.php';
         }
 
         /**
