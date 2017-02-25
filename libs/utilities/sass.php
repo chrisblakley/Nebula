@@ -316,6 +316,6 @@ if( !class_exists( 'Nebula_Sass' ) ) {
 }// End if class_exists check
 
 //Pull certain colors from .../mixins/_variables.scss
-function sass_color($color='primary', $theme='child'){
+function nebula_sass_color($color='primary', $theme='child'){
     return nebula()->utilities->sass->sass_color( $return );
 }
