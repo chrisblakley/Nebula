@@ -169,7 +169,7 @@ if( !class_exists( 'Nebula' ) ) {
             require_once NEBULA_DIR . '/libs/utilities/utilities.php';
 
             // Compatibility backwards
-            require_once NEBULA_DIR . '/libs/legacy.php';
+            require_once NEBULA_DIR . '/libs/legacy/legacy.php';
         }
 
         /**
