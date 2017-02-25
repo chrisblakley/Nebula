@@ -105,10 +105,10 @@
 	Header set Cache-Control "max-age=29030400, public"
 </FilesMatch>
 
-# 30 Days
-<FilesMatch "\.(png|gif|swf|jpg|jpeg|svg|woff|mp3|css|php|html|js)$">
-Header set Cache-Control "max-age=2592000, public"
-</FilesMatch>
+#1 WEEK
+#<FilesMatch "\.(png|gif|swf|jpg|jpeg|svg|woff|mp3|css|php|html|js)$">
+#	Header set Cache-Control "max-age=604800, public"
+#</FilesMatch>
 
 #2 DAYS
 <FilesMatch "\.(xml|txt)$">

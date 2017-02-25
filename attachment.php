@@ -12,39 +12,29 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<section id="bigheadingcon">
-	<div class="container title-desc-con">
+<div id="breadcrumb-section">
+	<div class="container">
 		<div class="row">
-			<div class="col">
-				<h1 class="entry-title">
-					<?php if ( wp_attachment_is_image() ): ?>
-						<i class="archiveicon fa fa-photo"></i>
-					<?php endif; ?>
-					<?php the_title(); ?>
-				</h1>
-			</div><!--/cols-->
+			<div class="col-md-12">
+				<?php nebula_breadcrumbs(); ?>
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-
-	<div id="breadcrumb-section" class="full inner dark">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
-				</div><!--/col-->
-			</div><!--/row-->
-		</div><!--/container-->
-	</div><!--/breadcrumb-section-->
-</section>
-
-<?php get_template_part('inc/nebula_drawer'); ?>
+</div><!--/breadcrumb-section-->
 
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col">
+			<div class="col-md-12">
 				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+						<h1 class="entry-title">
+							<?php if ( wp_attachment_is_image() ): ?>
+								<i class="archiveicon fa fa-photo"></i>
+							<?php endif; ?>
+							<?php the_title(); ?>
+						</h1>
+
 						<div class="entry-meta">
 							<?php nebula_meta('on'); ?> <?php nebula_meta('dimensions'); ?> <?php nebula_meta('exif'); ?>
 						</div>

@@ -10,12 +10,13 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 }
 
 do_action('nebula_preheaders');
+nebula_increment_visitor('no_search_results');
 get_header(); ?>
 
 <section id="bigheadingcon">
-	<div class="container title-desc-con">
+	<div class="container">
 		<div class="row">
-			<div class="col">
+			<div class="col-md-12">
 				<?php if ( have_posts() ): ?>
 					<h1 class="page-title">Search Results</h1>
 					<p>
@@ -37,37 +38,23 @@ get_header(); ?>
 					<script>
 						ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});
 					</script>
-					<?php nebula_vdb_append_visitor_data(array('no_search_results' => get_search_query()), false); ?>
 				<?php endif; ?>
 
-				<?php nebula_vdb_append_visitor_data(array('internal_search' => get_search_query())); ?>
 				<?php echo nebula_search_form(); ?>
-			</div><!--/cols-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-
-	<div id="breadcrumb-section" class="full inner dark">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
-				</div><!--/col-->
-			</div><!--/row-->
-		</div><!--/container-->
-	</div><!--/breadcrumb-section-->
 </section>
 
 <div id="breadcrumb-section" class="full">
 	<div class="container">
 		<div class="row">
-			<div class="col">
+			<div class="col-md-12">
 				<?php nebula_breadcrumbs(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </div><!--/breadcrumb-section-->
-
-<?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">

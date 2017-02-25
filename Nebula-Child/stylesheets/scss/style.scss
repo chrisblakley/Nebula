@@ -1,0 +1,54 @@
+/*!
+	Theme Name:   Nebula Child
+	Theme URI:    http://gearside.com/nebula
+	Description:  Nebula child theme
+	Author:       Pinckney Hugo Group
+	Author URI:   http://www.pinckneyhugo.com
+	Template:     Nebula-master
+	Version:      1.0.0
+	License:      GNU General Public License v2 or later
+	License URI:  http://www.gnu.org/licenses/gpl-2.0.html
+	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, responsive-layout, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready, black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light
+	Text Domain:  twenty-fifteen-child
+*/
+
+//@TODO "Wordpress" 1: Change the Theme Name (above) to be the client/project and the year! Make sure the Template matches the Nebula parent theme directory name.
+//@TODO "Launch" 1: Replace /screenshot.png with an actual screenshot of the developed website (using the existing file dimensions).
+
+//Import partials
+@import '../../../../Nebula-master/stylesheets/scss/partials/variables';
+@import 'variables'; //Child theme variables
+@import '../../../../Nebula-master/stylesheets/scss/partials/mixins';
+@import '../../../../Nebula-master/stylesheets/scss/partials/helpers';
+@import '../../../../Nebula-master/stylesheets/scss/partials/animations';
+
+::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
+::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
+
+//Default font override
+h1, h2, h3, h4, h5, h6,
+body,
+p,
+.btn, .skiplink,
+.field input, .field input[type="*"], .field textarea,
+.prepend .adjoined, .append .adjoined,
+.picker,
+.alert,
+.tab-nav > li > li > a,
+.tab-nav > li > a {font-family: $font_stack;}
+
+h1, h2, h3, h4, h5, h6 {color: $text_color;
+	a {color: $primary_color;}
+}
+
+a {@include link-colors($primary_color, $secondary_color, $primary_color, $primary_color, $secondary_color);}
+
+.xoxo {
+	ul li.current-menu-item {
+		.sub-menu {
+			ul li {border-left: 1px solid $secondary_color;
+				a {@include link-colors($primary_color, $secondary_color);}
+			}
+		}
+	}
+}

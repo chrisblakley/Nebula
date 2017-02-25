@@ -100,10 +100,3 @@ add_filter('auto_update_plugin', '__return_true' );
 add_filter('auto_update_theme', '__return_true' );
 
 define('FS_METHOD', 'direct'); //Force Direct Install
-
-
-/*==========================
- Plugins
- ===========================*/
-
-define('QM_HIDE_SELF', true); //Query Monitor: Ignore inner workings of QM in reports

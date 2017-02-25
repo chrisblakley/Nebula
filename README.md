@@ -19,9 +19,9 @@ Child themes allow customization without crippling the original theme. This mean
 - Make sure the "Template:" setting at the top of the child theme's style.css (or stylesheets/scss/style.scss if using SASS) matches the template directory of the parent theme!
 
 ##Additional Guides
-- *[Setup Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=setup+guide)*
-- *[Testing Checklist](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=testing+checklist)*
-- *[Launch Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=launch+checklist)*
+- *[Setup Guide](https://gearside.com/nebula/documentation/get-started/)*
+- *[Testing Checklist](https://gearside.com/nebula/documentation/get-started/testing-checklist/)*
+- *[Launch Guide](https://gearside.com/nebula/documentation/get-started/launch-checklist/)*
 
 ##Documentation
-Full documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=full+documentation) including custom functionality as well as examples of useful snippets.
+Full documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula) including custom functionality as well as examples of useful snippets.
