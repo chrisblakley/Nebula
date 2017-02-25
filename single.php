@@ -17,15 +17,30 @@ if ( get_post_format() ){
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div id="breadcrumb-section">
-	<div class="container">
+<section id="bigheadingcon">
+	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
-				<?php nebula_breadcrumbs(); ?>
-			</div><!--/col-->
+			<div class="col">
+				<h1 class="entry-title"><?php the_title(); ?></h1>
+				<div class="entry-meta">
+					<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
+				</div>
+			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/breadcrumb-section-->
+
+	<div id="breadcrumb-section" class="full inner dark">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<?php nebula_breadcrumbs(); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div><!--/container-->
+	</div><!--/breadcrumb-section-->
+</section>
+
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">
@@ -37,12 +52,6 @@ get_header(); ?>
 							<?php the_post_thumbnail(); ?>
 						<?php endif; ?>
 
-						<h1 class="entry-title"><?php the_title(); ?></h1>
-
-						<div class="entry-meta">
-							<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
-						</div>
-
 						<div class="entry-social">
 							<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
 						</div>
@@ -52,14 +61,14 @@ get_header(); ?>
 
 							<div class="row prevnextcon">
 								<?php if ( get_previous_post_link() ): ?>
-									<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col-md-12'; ?> prev-link-con">
+									<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col'; ?> prev-link-con">
 										<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
 			                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
 									</div><!--/col-->
 								<?php endif; ?>
 
 								<?php if ( get_next_post_link() ): ?>
-									<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col-md-12'; ?> next-link-con">
+									<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col'; ?> next-link-con">
 										<p class="prevnext-post-heading next-post-heading">Next Post</p>
 			                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
 									</div><!--/col-->

@@ -13,9 +13,9 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <section id="bigheadingcon">
-	<div class="container">
+	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col">
 				<?php if ( have_posts() ){ the_post(); } //Queue the first post, then reset before running the loop. ?>
 				<h1 class="page-title">
 					<?php if ( is_day() ): ?>
@@ -30,20 +30,22 @@ get_header(); ?>
 					<?php endif; ?>
 				</h1>
 				<?php rewind_posts(); //Reset the queue before running the loop. ?>
-			</div><!--/col-->
+			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
+
+	<div id="breadcrumb-section" class="full inner dark">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<?php nebula_breadcrumbs(); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div><!--/container-->
+	</div><!--/breadcrumb-section-->
 </section>
 
-<div id="breadcrumb-section">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<?php nebula_breadcrumbs(); ?>
-			</div><!--/col-->
-		</div><!--/row-->
-	</div><!--/container-->
-</div><!--/breadcrumb-section-->
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">

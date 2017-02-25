@@ -4,7 +4,7 @@
  */
 
 //nebula_child.php depends on the nebula_options.php functions, so it must be required first.
-require_once(get_template_directory() . '/functions/nebula_options.php'); //Nebula Options
+require_once(get_template_directory() . '/libs/nebula_options.php'); //Nebula Options
 
 
 /*==========================
@@ -25,7 +25,7 @@ require_once(get_template_directory() . '/functions/nebula_options.php'); //Nebu
  add_filter('pre_nebula_whatever', '__return_empty_string');
  ===========================*/
 
-require_once(get_stylesheet_directory() . '/functions/nebula_child.php'); //Nebula Child
+require_once(get_stylesheet_directory() . '/libs/nebula_child.php'); //Nebula Child
 
 
 /*==========================
@@ -58,8 +58,8 @@ add_action('admin_enqueue_scripts', 'register_nebula_child_styles');
 function register_nebula_child_styles(){
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), null, 'all');
-	wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/stylesheets/css/login.css', array('nebula-login'), null, 'all');
-	wp_register_style('nebula-admin-child', get_stylesheet_directory_uri() . '/stylesheets/css/admin.css', array('nebula-admin'), null, 'all');
+	wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), null, 'all');
+	wp_register_style('nebula-admin-child', get_stylesheet_directory_uri() . '/assets/css/admin.css', array('nebula-admin'), null, 'all');
 }
 
 
@@ -73,7 +73,7 @@ add_action('admin_enqueue_scripts', 'register_nebula_child_scripts');
 function register_nebula_child_scripts(){
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
 	//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-	nebula_register_script('nebula-child', get_stylesheet_directory_uri() . '/js/child.js', 'defer', array('jquery', 'nebula-jquery_ui', 'nebula-main'), null, true); //main.js in the parent Nebula theme is defined as a dependant here.
+	nebula_register_script('nebula-child', get_stylesheet_directory_uri() . '/assets/js/child.js', 'defer', array('jquery', 'nebula-jquery_ui', 'nebula-main'), null, true); //main.js in the parent Nebula theme is defined as a dependant here.
 }
 
 
@@ -98,7 +98,7 @@ function enqueue_nebula_child_frontend(){
 add_action('login_enqueue_scripts', 'enqueue_nebula_child_login', 327);
 function enqueue_nebula_child_login(){
 	//Stylesheets
-	if ( file_exists(get_stylesheet_directory() . '/stylesheets/css/login.css') ){
+	if ( file_exists(get_stylesheet_directory() . '/assets/css/login.css') ){
 		wp_enqueue_style('nebula-login-child');
 	}
 }
@@ -111,7 +111,7 @@ function enqueue_nebula_child_login(){
 add_action('admin_enqueue_scripts', 'enqueue_nebula_child_admin', 327);
 function enqueue_nebula_child_admin(){
 	//Stylesheets
-	if ( file_exists(get_stylesheet_directory() . '/stylesheets/css/admin.css') ){
+	if ( file_exists(get_stylesheet_directory() . '/assets/css/admin.css') ){
 		wp_enqueue_style('nebula-admin-child');
 	}
 }

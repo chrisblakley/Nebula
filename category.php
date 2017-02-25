@@ -13,25 +13,27 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <section id="bigheadingcon">
-	<div class="container">
+	<div class="container title-desc-con">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col">
 				<h1 class="page-title"><i class="fa fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 				<?php echo category_description(); ?>
-			</div><!--/col-->
+			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
+
+	<div id="breadcrumb-section" class="full inner dark">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<?php nebula_breadcrumbs(); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div><!--/container-->
+	</div><!--/breadcrumb-section-->
 </section>
 
-<div id="breadcrumb-section" class="full">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<?php nebula_breadcrumbs(); ?>
-			</div><!--/col-->
-		</div><!--/row-->
-	</div><!--/container-->
-</div><!--/breadcrumb-section-->
+<?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">

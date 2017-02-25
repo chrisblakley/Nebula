@@ -18,16 +18,16 @@
 		<meta name="MobileOptimized" content="320" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta class="theme-color" name="theme-color" content="<?php echo nebula_sass_color('primary'); ?>">
-		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula_sass_color('primary'); ?>">
-		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula_sass_color('primary'); ?>">
-		<?php get_template_part('includes/metadata'); ?>
+		<meta class="theme-color" name="theme-color" content="<?php echo sass_color('primary'); ?>">
+		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo sass_color('primary'); ?>">
+		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo sass_color('primary'); ?>">
+		<?php get_template_part('inc/metadata'); ?>
 
 		<link rel="manifest" href="<?php echo nebula_manifest_json_location(); ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<?php nebula_prerender(); ?>
 		<?php wp_head(); ?>
-		<?php get_template_part('includes/analytics'); //Google Analytics and other analytics trackers. ?>
+		<?php get_template_part('inc/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="body-wrapper">
@@ -37,7 +37,7 @@
 
 				<div id="mobilebarcon">
 					<div class="row mobilenavcon">
-						<div class="col-md-12">
+						<div class="col">
 							<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
 							<nav id="mobilenav">
 								<?php
@@ -62,54 +62,38 @@
 					</div><!--/row-->
 				</div><!--/topbarcon-->
 
-				<?php if ( has_nav_menu('secondary') ): ?>
-					<div id="secondarynavcon">
+				<div id="navigation-section">
+					<?php if ( has_nav_menu('secondary') ): ?>
+						<div id="secondarynavcon">
+							<div class="container">
+								<div class="row">
+									<div class="col">
+										<nav id="secondarynav">
+						        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
+						        		</nav>
+									</div><!--/col-->
+								</div><!--/row-->
+							</div><!--/container-->
+						</div>
+					<?php endif; ?>
+
+					<div id="logonavcon" class="<?php echo ( get_bloginfo('description') != '' && !get_theme_mod('nebula_hide_blogdescription', false) )? 'has-description' : ''; ?>">
 						<div class="container">
 							<div class="row">
-								<div class="col-md-12">
-									<nav id="secondarynav">
-					        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
-					        		</nav>
+								<div class="col-md-4">
+									<a class="logocon" href="<?php echo home_url(); ?>">
+										<img class="svg" src="<?php echo get_template_directory_uri(); ?>/assets/img/logo.svg" alt="<?php bloginfo('name'); ?>"/>
+									</a>
 								</div><!--/col-->
+								<div class="col-md-8">
+									<?php if ( has_nav_menu('primary') ): ?>
+										<nav id="primarynav" class="clearfix">
+											<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
+						        		</nav>
+					        		<?php endif; ?>
+					        	</div><!--/col-->
 							</div><!--/row-->
 						</div><!--/container-->
 					</div>
-				<?php endif; ?>
-
-				<div id="logonavcon" <?php if ( !empty( get_bloginfo('description') ) && !get_theme_mod('nebula_hide_blogdescription', false) ): ?>class="has-description"<?php endif; ?>>
-					<div class="container">
-						<div class="row">
-							<div class="col-lg-4">
-								<?php if ( !empty( get_theme_mod('custom_logo', '') )
-									|| ( !empty( get_bloginfo('name') ) && !get_theme_mod('nebula_hide_blogname', false) )
-									|| ( !empty( get_bloginfo('description') ) && !get_theme_mod('nebula_hide_blogdescription', false) ) ): ?>
-									<?php if ( !empty( get_theme_mod('custom_logo', '') ) ): ?>
-										<?php echo get_custom_logo( get_current_blog_id() ); ?>
-									<?php endif; ?>
-									<?php if ( !empty( get_bloginfo('name') ) && !get_theme_mod('nebula_hide_blogname', false) ): ?>
-										<h1 id="site-title">
-											<a href="<?php echo home_url(); ?>"><?php bloginfo('name'); ?></a>
-										</h1>
-									<?php endif; ?>
-									<?php if ( !empty( get_bloginfo('description') ) && !get_theme_mod('nebula_hide_blogdescription', false) ): ?>
-										<h2 id="site-description"><?php bloginfo('description'); ?></h2>
-									<?php endif; ?>
-								<?php else: ?>
-									<a class="logocon" href="<?php echo home_url(); ?>">
-										<img class="svg" src="<?php echo get_template_directory_uri(); ?>/images/logo.svg" alt="<?php bloginfo('name'); ?>"/>
-									</a>
-								<?php endif; ?>
-							</div><!--/col-->
-							<div class="col-lg-8">
-								<?php if ( has_nav_menu('primary') ): ?>
-									<nav id="primarynav" class="clearfix">
-										<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
-					        		</nav>
-				        		<?php endif; ?>
-				        	</div><!--/col-->
-						</div><!--/row-->
-					</div><!--/container-->
 				</div>
 			</div><!--/header-section-->
-
-			<?php get_template_part('includes/header_drawer'); //Header drawer logic. ?>
