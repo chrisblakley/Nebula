@@ -391,13 +391,15 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
                 }
             }
 
-            $bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda');
-            foreach( $bots as $bot ){
-                if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
-                    return true;
-                    break;
-                }
-            }
+	$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda');
+	$additional_bot_regex = apply_filters('nebula_bot_regex', array());
+	$all_bot_regex = array_merge($bot_regex, $additional_bot_regex);
+	foreach( $all_bot_regex as $bot_regex ){
+		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot_regex) !== false ){
+			return true;
+			break;
+		}
+	}
 
             return false;
         }
