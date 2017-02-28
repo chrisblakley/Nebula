@@ -453,7 +453,9 @@ if( !class_exists( 'Nebula_Utilities' ) ) { //@todo: will need to change these t
                     break;
 
                 case ('domain') : //In http://example.com the domain is "example.com"
-                    return $domain[0];
+                    if( isset($domain[0]) ) {
+                        return $domain[0];
+                    }
                     break;
 
                 case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"

@@ -580,8 +580,8 @@ if( !class_exists( 'Nebula_Visitors' ) ) {
                     </div>
 
                     <div class="detail-loop-container">
+                        <?php foreach ( $this_user_data as $index => $value ): ?>
                         <?
-                            foreach ( $this_user_data as $index => $value ):
                                 $unserialized_value = $this_user_data[$index]->value;
                                 if ( is_serialized($unserialized_value) ){
                                     $unserialized_value = unserialize($unserialized_value);
