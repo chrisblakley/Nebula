@@ -13,12 +13,44 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula' ) ) {
 
+	require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    require_once(ABSPATH . 'wp-admin/includes/file.php');
+
+	require_once get_template_directory() . '/libs/admin/admin.php';
+    require_once get_template_directory() . '/libs/automation.php';
+    require_once get_template_directory() . '/libs/ecommerce.php';
+    require_once get_template_directory() . '/libs/functions.php';
+    require_once get_template_directory() . '/libs/optimization.php';
+    require_once get_template_directory() . '/libs/options.php';
+    require_once get_template_directory() . '/libs/prototyping.php';
+    require_once get_template_directory() . '/libs/scripts.php';
+    require_once get_template_directory() . '/libs/security.php';
+    require_once get_template_directory() . '/libs/shortcodes.php';
+    require_once get_template_directory() . '/libs/template-engine.php';
+    require_once get_template_directory() . '/libs/template-functions.php';
+    require_once get_template_directory() . '/libs/utilities/utilities.php';
+
+    // Compatibility backwards
+    require_once get_template_directory() . '/libs/legacy/legacy.php';
+
     /**
      * Main Plugin_Name class
      *
      * @since       1.0.0
      */
     class Nebula {
+		use Nebula_Utilities;
+		use Nebula_Admin;
+		use Nebula_Functions;
+		use Nebula_Automation;
+		use Nebula_Ecommerce;
+		use Nebula_Optimization;
+		use Nebula_Options;
+		use Nebula_Prototyping;
+		use Nebula_Scripts;
+		use Nebula_Security;
+		use Nebula_Shortcodes;
+		use Nebula_Template_Engine;
 
         /**
          * @var         Nebula $instance The one true Plugin_Name
@@ -153,11 +185,12 @@ if( !class_exists( 'Nebula' ) ) {
          */
         private function includes() {
             // Includes classes
-            // TODO: Folder should be includes
+/*
+			//Note: had to move these up so the traits could use them.
             require_once NEBULA_DIR . '/libs/admin/admin.php';
             require_once NEBULA_DIR . '/libs/automation.php';
             require_once NEBULA_DIR . '/libs/ecommerce.php';
-            require_once NEBULA_DIR . '/libs/functions.php';
+            //require_once NEBULA_DIR . '/libs/functions.php';
             require_once NEBULA_DIR . '/libs/optimization.php';
             require_once NEBULA_DIR . '/libs/options.php';
             require_once NEBULA_DIR . '/libs/prototyping.php';
@@ -170,6 +203,7 @@ if( !class_exists( 'Nebula' ) ) {
 
             // Compatibility backwards
             require_once NEBULA_DIR . '/libs/legacy/legacy.php';
+*/
         }
 
         /**
@@ -188,6 +222,8 @@ if( !class_exists( 'Nebula' ) ) {
                 $content_width = 710;
             }
 
+/*
+			//Commented this out because the traits call these now.
             self::$instance->plugins = array();
 
             self::$instance->options = new Nebula_Options();
@@ -212,6 +248,7 @@ if( !class_exists( 'Nebula' ) ) {
             self::$instance->security = new Nebula_Security();
             self::$instance->shortcodes = new Nebula_Shortcodes();
             self::$instance->template_engine = new Nebula_Template_Engine();
+*/
         }
 
 
@@ -242,7 +279,7 @@ if( !class_exists( 'Nebula' ) ) {
 
             global $content_width;
 
-            if ( is_page_template('tpl-fullwidth.php') ){
+            if ( is_page_template('fullwidth.php') ){
                 $content_width = 1040;
             }
         }
@@ -265,7 +302,6 @@ if( !class_exists( 'Nebula' ) ) {
 
             return $plugin_features;
         }
-
     }
 
 } // End if class_exists check

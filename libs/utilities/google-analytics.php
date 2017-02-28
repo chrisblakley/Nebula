@@ -13,13 +13,15 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Google_Analytics' ) ) {
 
-    class Nebula_Google_Analytics {
+    trait Nebula_Google_Analytics {
 
+/*
         public function __construct() {
             //Sends events to Google Analytics via AJAX (used if GA is blocked via JavaScript)
             add_action('wp_ajax_nebula_ga_event_ajax', array( $this, 'event_ajax' ) );
             add_action('wp_ajax_nopriv_nebula_ga_event_ajax', array( $this, 'event_ajax' ) );
         }
+*/
 
         //Handle the parsing of the _ga cookie or setting it to a unique identifier
         public function parse_cookie(){

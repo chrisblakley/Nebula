@@ -17,17 +17,16 @@ use DeviceDetector\DeviceDetector;
 
 if( !class_exists( 'Nebula_Device_Detection' ) ) {
 
-    class Nebula_Device_Detection {
+    trait Nebula_Device_Detection {
 
+/*
+		//Temporarily commented out
         public function __construct() {
-            /*==========================
-             User Agent Parsing Functions/Helpers
-             ===========================*/
-
             //Device Detection - https://github.com/piwik/device-detector
             //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
             add_action('init', array( $this, 'detect' ) );
         }
+*/
 
         /*==========================
          User Agent Parsing Functions/Helpers
@@ -35,7 +34,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
 
         // TODO: If we creates the class Nebula_Device_Detection, this method should be detect()
         public function detect(){
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php'); // TODO: If we move classes to includes, includes/libs should go on libs
                 $GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
                 $GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
@@ -48,7 +47,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_is_mobile', false);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 if ( $GLOBALS["device_detect"]->isMobile() ){
                     return true;
                 }
@@ -67,7 +66,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_is_tablet', false);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 if ( $GLOBALS["device_detect"]->isTablet() ){
                     return true;
                 }
@@ -81,7 +80,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_is_desktop', false);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 if ( $GLOBALS["device_detect"]->isDesktop() ){
                     return true;
                 }
@@ -95,7 +94,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_get_os', false, $info);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 $os = $GLOBALS["device_detect"]->getOs();
                 switch ( strtolower($info) ){
                     case 'full':
@@ -132,7 +131,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_is_os', false, $os, $version, $comparison);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 if ( empty($os) ){
                     trigger_error('nebula_is_os requires a parameter of requested operating system.');
                     return false;
@@ -177,7 +176,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_get_device', false, $info);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 $info = str_replace(' ', '', $info);
                 switch ( strtolower($info) ){
                     case 'full':
@@ -240,7 +239,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_get_browser', false, $info);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 $client = $GLOBALS["device_detect"]->getClient();
                 switch ( strtolower($info) ){
                     case 'full':
@@ -293,7 +292,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_is_browser', false, $browser, $version, $comparison);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 if ( empty($browser) ){
                     trigger_error('nebula_is_browser requires a parameter of requested browser.');
                     return false;
@@ -355,7 +354,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_is_engine', false, $engine);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 if ( empty($engine) ){
                     trigger_error('nebula_is_engine requires a parameter of requested engine.');
                     return false;
@@ -386,7 +385,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
             $override = apply_filters('pre_nebula_is_bot', false);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 if ( $GLOBALS["device_detect"]->isBot() ){
                     return true;
                 }
@@ -407,7 +406,10 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
 
 }
 
+//Removing these in the future:
+
 //Check for bot/crawler traffic
+/*
 function nebula_is_bot(){
     return nebula()->utilities->device_detection->is_bot();
 }
@@ -421,3 +423,4 @@ function nebula_get_browser($info='name'){
 function nebula_get_os($info='name'){
     return nebula()->utilities->device_detection->get_os($info);
 }
+*/

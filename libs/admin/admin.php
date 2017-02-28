@@ -13,7 +13,12 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Admin' ) ) {
 
-    class Nebula_Admin {
+	require_once get_template_directory() . '/libs/admin/dashboard.php';
+    require_once get_template_directory() . '/libs/admin/users.php';
+
+    trait Nebula_Admin {
+		use Nebula_Admin_Dashboard;
+		use Nebula_Admin_Users;
 
         /**
          * @var         Nebula_Admin_Dashboard Nebula admin dashboard
@@ -27,6 +32,8 @@ if( !class_exists( 'Nebula_Admin' ) ) {
          */
         public $users;
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             global $pagenow;
 
@@ -54,7 +61,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             add_filter('admin_body_class', array( $this, 'admin_body_classes' ) );
 
             //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-            if ( nebula_option('admin_bar', 'disabled') ){
+            if ( nebula()->option('admin_bar', 'disabled') ){
                 show_admin_bar(false);
 
                 add_action('wp_print_scripts', array( $this, 'dequeue_admin_bar' ), 9999);
@@ -75,12 +82,12 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             }
 
             //Disable Wordpress Core update notifications in WP Admin
-            if ( nebula_option('wp_core_updates_notify', 'disabled') ){
+            if ( nebula()->option('wp_core_updates_notify', 'disabled') ){
                 add_filter('pre_site_transient_update_core', '__return_null');
             }
 
             //Show update warning on Wordpress Core/Plugin update admin pages
-            if ( nebula_option('plugin_update_warning') ){
+            if ( nebula()->option('plugin_update_warning') ){
                 if ( $pagenow === 'plugins.php' || $pagenow === 'update-core.php' ){
                     add_action('admin_notices', array( $this, 'update_warning' ) );
                 }
@@ -111,7 +118,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             add_filter('login_headertitle', array( $this, 'new_wp_login_title' ) );
 
             //Nebula Admin Notices
-            if ( nebula_option('admin_notices') ){
+            if ( nebula()->option('admin_notices') ){
                 add_action('admin_notices',  array( $this, 'admin_notices' ) );
             }
 
@@ -177,6 +184,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             add_action('load-post.php', array( $this, 'post_meta_boxes_setup' ) );
             add_action('load-post-new.php', array( $this, 'post_meta_boxes_setup' ) );
         }
+*/
 
         //Force expire query transients when posts/pages are saved.
         public function clear_transients(){
@@ -332,7 +340,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 'meta' => array('target' => '_blank')
             ));
 
-            if ( nebula_option('scss') ){
+            if ( nebula()->option('scss') ){
                 $scss_last_processed = ( nebula_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula_data('scss_last_processed')) : 'Never';
                 $wp_admin_bar->add_node(array(
                     'parent' => 'nebula',
@@ -343,7 +351,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 ));
             }
 
-            if ( nebula_option('visitors_db') ){
+            if ( nebula()->option('visitors_db') ){
                 $wp_admin_bar->add_node(array(
                     'parent' => 'nebula',
                     'id' => 'nebula-visitor-db',
@@ -353,7 +361,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 ));
             }
 
-            if ( nebula_option('google_optimize_id') ){
+            if ( nebula()->option('google_optimize_id') ){
                 $wp_admin_bar->add_node(array(
                     'parent' => 'nebula',
                     'id' => 'google-optimize',
@@ -517,7 +525,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 $to = $current_user->user_email;
 
                 //Carbon copy the admin if update was done by another user.
-                $admin_user_email = nebula_option('contact_email', nebula_option('admin_email'));
+                $admin_user_email = nebula()->option('contact_email', nebula()->option('admin_email'));
                 if ( !empty($admin_user_email) && $admin_user_email !== $current_user->user_email ){
                     $headers[] = 'Cc: ' . $admin_user_email;
                 }
@@ -542,7 +550,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
         //Custom login screen
         public function login_ga(){
             if ( empty($_POST['signed_request']) ){
-                echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . nebula_option('ga_tracking_id') . "', 'auto');</script>";
+                echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . nebula()->option('ga_tracking_id') . "', 'auto');</script>";
             }
         }
 
@@ -587,7 +595,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 }
 
                 //Check for Google Analytics Tracking ID
-                if ( !nebula_option('ga_tracking_id') ){
+                if ( !nebula()->option('ga_tracking_id') ){
                     echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
                 }
 
@@ -602,7 +610,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 }
 
                 //Check if all SCSS files were processed manually.
-                if ( nebula_option('scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
+                if ( nebula()->option('scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
                     if ( is_dev() || nebula()->utilities->is_client() ){
                         echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
                     } else {
@@ -611,7 +619,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 }
 
                 //If Prototype mode is disabled, but Multiple Theme plugin is still activated
-                if ( nebula_option('prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+                if ( nebula()->option('prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
                     echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
                 }
 
@@ -637,7 +645,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 }
 
                 //Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
-                if ( nebula_option('google_optimize_id') ){
+                if ( nebula()->option('google_optimize_id') ){
                     echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
                 }
             }

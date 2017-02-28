@@ -13,26 +13,16 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Automation' ) ) {
 
-    class Nebula_Automation {
+    trait Nebula_Automation {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             global $pagenow;
 
             //Detect and prompt install of Recommended and Optional plugins using TGMPA
             //Configuration Documentation: http://tgmpluginactivation.com/configuration/
             if ( is_admin() && is_dev(true) || current_user_can('manage_options') ) {
-                /*
-                    Until there is support for Required, Recommended, AND Optional plugins:
-                    When updating the class file (in the /includes/libs/ directory, be sure to edit the text on the following function to be 'Recommended' and 'Optional' in the installation table:
-
-                    protected function get_plugin_advise_type_text( $required ) {
-                        if ( true === $required ) {
-                            return __( 'Recommended', 'tgmpa' ); //Changed by Chris Blakley for Nebula
-                        }
-
-                        return __( 'Optional', 'tgmpa' ); //Changed by Chris Blakley for Nebula
-                    }
-                */
                 require_once(get_template_directory() . '/includes/libs/class-tgm-plugin-activation.php');
 
                 add_action('tgmpa_register', array( $this, 'register_required_plugins' ) );
@@ -50,6 +40,7 @@ if( !class_exists( 'Nebula_Automation' ) ) {
 
             //add_action('admin_init', array( $this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
         }
+*/
 
         public function register_required_plugins(){
             $plugins = array(
@@ -275,7 +266,7 @@ if( !class_exists( 'Nebula_Automation' ) ) {
             $to = $current_user->user_email;
 
             //Carbon copy the admin if reset was done by another user.
-            $admin_user_email = nebula_option('contact_email', nebula_option('admin_email'));
+            $admin_user_email = nebula()->option('contact_email', nebula()->option('admin_email'));
             if ( $admin_user_email != $current_user->user_email ){
                 $headers[] = 'Cc: ' . $admin_user_email;
             }

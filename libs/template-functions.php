@@ -10,6 +10,19 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
+
+
+
+
+
+//@todo: Move these to /libs/functions.php and remove prefixes.
+//Eventually we can split up that file into smaller groups if needed (like social, post meta, etc)
+
+
+
+
+
+
 //Print the PHG logo as text with or without hover animation.
 if ( !function_exists('pinckneyhugogroup') ){
     function pinckney_hugo_group($anim){ pinckneyhugogroup($anim); }
@@ -265,7 +278,7 @@ function nebula_excerpt($options=array()){
 
     //Length
     if ( !empty($data['length']) && is_int($data['length']) ){
-        $limited = nebula()->utilities->string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
+        $limited = nebula()->string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
         $data['text'] = $limited['text'];
     }
 
@@ -1167,7 +1180,7 @@ function video_meta($provider, $id){
                 echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';
                 $video_metadata['error'] = 'No Google Youtube Iframe API key.';
             }
-            
+
             if ( !nebula_is_available('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula_option('google_server_api_key')) ){
                 $video_metadata['error'] = 'Youtube video is unavailable.';
                 return $video_metadata;

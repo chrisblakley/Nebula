@@ -16,8 +16,10 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Admin_Users' ) ) {
 
-    class Nebula_Admin_Users {
+    trait Nebula_Admin_Users {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             //Update user online status
             add_action('init', array( $this, 'users_status_init' ) );
@@ -28,10 +30,6 @@ if( !class_exists( 'Nebula_Admin_Users' ) ) {
 
             //Custom columns content to user listings
             add_action('manage_users_custom_column', array( $this, 'user_columns_content' ), 15, 3);
-
-            /**********
-             WARNING: Custom user meta fields can not have hyphens in them! Use underscores or all one word!
-             *********/
 
             //Additional Contact Info fields
             add_filter('user_contactmethods', array( $this, 'user_contact_methods' ) );
@@ -49,6 +47,7 @@ if( !class_exists( 'Nebula_Admin_Users' ) ) {
             add_action('personal_options_update', array( $this, 'save_extra_profile_fields' ) );
             add_action('edit_user_profile_update', array( $this, 'save_extra_profile_fields' ) );
         }
+*/
 
         //Update user online status
         public function users_status_init(){

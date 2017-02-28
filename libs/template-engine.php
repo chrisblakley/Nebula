@@ -13,10 +13,12 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Template_Engine' ) ) {
 
-    class Nebula_Template_Engine {
+    trait Nebula_Template_Engine {
 
         public $templates;
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             $this->templates = array();
 
@@ -51,6 +53,7 @@ if( !class_exists( 'Nebula_Template_Engine' ) ) {
             // Search for plugin templates
             add_filter( 'template_include', array( $this, 'template_include' ) );
         }
+*/
 
         /**
          * Stores last wordpress searched templates into $this->templates

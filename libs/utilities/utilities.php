@@ -11,9 +11,18 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Utilities' ) ) {
+if( !class_exists( 'Nebula_Utilities' ) ) { //@todo: will need to change these to trait_exists()
 
-    class Nebula_Utilities {
+	require_once get_template_directory() . '/libs/utilities/google-analytics.php';
+    require_once get_template_directory() . '/libs/utilities/visitors.php';
+    require_once get_template_directory() . '/libs/utilities/device-detection.php';
+    require_once get_template_directory() . '/libs/utilities/sass.php';
+
+    trait Nebula_Utilities {
+		use Nebula_Google_Analytics;
+		use Nebula_Visitors;
+		use Nebula_Device_Detection;
+		use Nebula_Sass;
 
         /**
          * @var         Nebula_Google_Analytics Nebula google analytics
@@ -39,36 +48,22 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
          */
         public $sass;
 
+/*
         public function __construct() {
-            // Utilities classes
-            require_once NEBULA_DIR . '/libs/utilities/google-analytics.php';
-            require_once NEBULA_DIR . '/libs/utilities/visitors.php';
-            require_once NEBULA_DIR . '/libs/utilities/device-detection.php';
-            require_once NEBULA_DIR . '/libs/utilities/sass.php';
-
-            // Initialize utilities classes
-            $this->google_analytics = new Nebula_Google_Analytics();
-            $this->visitors = new Nebula_Visitors();
-            $this->device_detection = new Nebula_Device_Detection();
-            $this->sass = new Nebula_Sass();
-
-            //Used to detect if plugins are active. Enables use of is_plugin_active($plugin)
-            require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-            require_once(ABSPATH . 'wp-admin/includes/file.php');
-
             //Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
             //Example: 'key' => 'dates_%_start_date',
             add_filter('posts_where' , array( $this, 'fuzzy_posts_where' ) );
         }
+*/
 
         //Generate Session ID
-        public function nebula_session_id(){
-            $session_info = ( is_debug() )? 'dbg.' : '';
-            $session_info .= ( nebula_option('prototype_mode', 'enabled') )? 'prt.' : '';
+        public function session_id(){
+            $session_info = ( nebula()->is_debug() )? 'dbg.' : '';
+            $session_info .= ( nebula()->option('prototype_mode', 'enabled') )? 'prt.' : '';
 
-            if ( is_client() ){
+            if ( nebula()->is_client() ){
                 $session_info .= 'cli.';
-            } elseif ( is_dev() ){
+            } elseif ( nebula()->is_dev() ){
                 $session_info .= 'dev.';
             }
 
@@ -81,13 +76,13 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                 $session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
             }
 
-            $session_info .= ( $this->device_detection->is_bot() )? 'bot.' : '';
+            $session_info .= ( $this->is_bot() )? 'bot.' : '';
 
-            $wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
-            $ga_cid = $this->google_analytics->parse_cookie();
+            $wp_session_id = ( nebula()->session_id() )? nebula()->session_id() : '!' . uniqid();
+            $ga_cid = $this->parse_cookie();
 
             $site_live = '';
-            if ( !is_site_live() ){
+            if ( !nebula()->is_site_live() ){
                 $site_live = '.n';
             }
 
@@ -96,8 +91,8 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
 
         //Detect Notable POI
         public function nebula_poi(){
-            if ( nebula_option('notableiplist') ){
-                $notable_ip_lines = explode("\n", nebula_option('notableiplist'));
+            if ( nebula()->option('notableiplist') ){
+                $notable_ip_lines = explode("\n", nebula()->option('notableiplist'));
                 foreach ( $notable_ip_lines as $line ){
                     $ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
                     if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $_SERVER['REMOTE_ADDR'])) || $ip_info[0] == $_SERVER['REMOTE_ADDR'] ){ //If regex pattern and matches IP, or if direct match
@@ -193,7 +188,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             if ( $override !== false ){return $override;}
 
             if ( empty($strict) ){
-                $devIPs = explode(',', nebula_option('dev_ip'));
+                $devIPs = explode(',', nebula()->option('dev_ip'));
                 if ( !empty($devIPs) ){
                     foreach ( $devIPs as $devIP ){
                         $devIP = trim($devIP);
@@ -215,7 +210,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                 if ( !empty($current_user->user_email) ){
                     list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
-                    $devEmails = explode(',', nebula_option('dev_email_domain'));
+                    $devEmails = explode(',', nebula()->option('dev_email_domain'));
                     foreach ( $devEmails as $devEmail ){
                         if ( trim($devEmail) == $current_user_domain ){
                             return true;
@@ -235,7 +230,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             if ( $override !== false ){return $override;}
 
             if ( empty($strict) ){
-                $clientIPs = explode(',', nebula_option('client_ip'));
+                $clientIPs = explode(',', nebula()->option('client_ip'));
                 if ( !empty($clientIPs) ){
                     foreach ( $clientIPs as $clientIP ){
                         $clientIP = trim($clientIP);
@@ -257,7 +252,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
                     list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
                     //Check if the current user's email domain matches any of the client email domains from Nebula Options
-                    $clientEmails = explode(',', nebula_option('client_email_domain'));
+                    $clientEmails = explode(',', nebula()->option('client_email_domain'));
                     foreach ( $clientEmails as $clientEmail ){
                         if ( trim($clientEmail) == $current_user_domain ){
                             return true;
@@ -305,8 +300,8 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             $override = apply_filters('pre_is_site_live', false);
             if ( $override !== false ){return $override;}
 
-            if ( nebula_option('hostnames') ){
-                if ( strpos(nebula_option('hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
+            if ( nebula()->option('hostnames') ){
+                if ( strpos(nebula()->option('hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
                     return true;
                 }
                 return false;
@@ -326,7 +321,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
         //Valid Hostname Regex
         public function valid_hostname_regex($domains=null){
             $domains = ( $domains )? $domains : array(nebula_url_components('domain'));
-            $settingsdomains = ( nebula_option('hostnames') )? explode(',', nebula_option('hostnames')) : array(nebula_url_components('domain'));
+            $settingsdomains = ( nebula()->option('hostnames') )? explode(',', nebula()->option('hostnames')) : array(nebula_url_components('domain'));
             $fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
             $fulldomains = preg_filter('/^/', '.*', $fulldomains);
             $fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
@@ -350,7 +345,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
             if ( $override !== false ){return $override;}
 
             if ( !$url ){
-                $url = nebula_requested_url();
+                $url = nebula()->requested_url();
             }
 
             $url_components = parse_url($url);
@@ -758,7 +753,7 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
         }
 
         //Get Nebula version information
-        public function nebula_version($return=false){
+        public function version($return=false){
             $override = apply_filters('pre_nebula_version', false, $return);
             if ( $override !== false ){return $override;}
 
@@ -831,6 +826,9 @@ if( !class_exists( 'Nebula_Utilities' ) ) {
 
 }// End if class_exists check
 
+//Removing these in the future:
+
+/*
 //Get Nebula version information
 function nebula_version($return=false){
     return nebula()->utilities->nebula_version( $return );
@@ -918,3 +916,4 @@ function is_debug($strict=false){
 function is_site_live(){
     return nebula()->utilities->is_site_live();
 }
+*/

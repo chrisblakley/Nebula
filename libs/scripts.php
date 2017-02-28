@@ -12,10 +12,11 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Scripts' ) ) {
 
-    class Nebula_Scripts {
+    trait Nebula_Scripts {
 
         public $script_parameters;
 
+		//I left this in for now, but we'll want to figure out a different way to do this if we can't use __construct within traits without conflicts.
         public function __construct() {
             // Register scripts
             add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
@@ -41,10 +42,10 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
         public function register_scripts() {
             // Stylesheets
             //wp_register_style($handle, $src, $dependencies, $version, $media);
-            if ( nebula_option('google_font_url') ){
-                wp_register_style('nebula-google_font', nebula_option('google_font_url'), array(), null, 'all');
+            if ( nebula()->option('google_font_url') ){
+                wp_register_style('nebula-google_font', nebula()->option('google_font_url'), array(), null, 'all');
             }
-            nebula_bootstrap_version('css');
+            nebula()->bootstrap_version('css');
             wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
             wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.7.8/css/jquery.mmenu.all.css', null, '5.7.8', 'all');
             wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/jquery.dataTables.min.css', null, '1.10.13', 'all'); //Datatables is called via main.js only as needed.
@@ -57,7 +58,7 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             // Scripts
             //Use CDNJS to pull common libraries: http://cdnjs.com/
             //nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-            nebula_bootstrap_version('js');
+            nebula()->bootstrap_version('js');
             nebula_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.3.1', false);
             nebula_register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
             nebula_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
@@ -107,8 +108,8 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
                         ),
                     ),
                     'home_url' => home_url(),
-                    'domain' => nebula_url_components('domain'),
-                    'protocol' => nebula_url_components('protocol'),
+                    'domain' => nebula()->url_components('domain'),
+                    'protocol' => nebula()->url_components('protocol'),
                     'language' => get_bloginfo('language'),
                     'ajax' => array(
                         'url' => admin_url('admin-ajax.php'),
@@ -117,20 +118,20 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
                     'upload_dir' => $upload_dir['baseurl'],
                     'ecommerce' => false,
                     'options' => array(
-                        'gaid' => nebula_option('ga_tracking_id'),
-                        'nebula_cse_id' => nebula_option('cse_id'),
-                        'nebula_google_browser_api_key' => nebula_option('google_browser_api_key'),
-                        'facebook_url' => nebula_option('facebook_url'),
-                        'facebook_app_id' => nebula_option('facebook_app_id'),
-                        'twitter_url' => nebula_option('twitter_url'),
-                        'google_plus_url' => nebula_option('google_plus_url'),
-                        'linkedin_url' => nebula_option('linkedin_url'),
-                        'youtube_url' => nebula_option('youtube_url'),
-                        'instagram_url' => nebula_option('instagram_url'),
+                        'gaid' => nebula()->option('ga_tracking_id'),
+                        'nebula_cse_id' => nebula()->option('cse_id'),
+                        'nebula_google_browser_api_key' => nebula()->option('google_browser_api_key'),
+                        'facebook_url' => nebula()->option('facebook_url'),
+                        'facebook_app_id' => nebula()->option('facebook_app_id'),
+                        'twitter_url' => nebula()->option('twitter_url'),
+                        'google_plus_url' => nebula()->option('google_plus_url'),
+                        'linkedin_url' => nebula()->option('linkedin_url'),
+                        'youtube_url' => nebula()->option('youtube_url'),
+                        'instagram_url' => nebula()->option('instagram_url'),
                         'manage_options' => current_user_can('manage_options'),
-                        'debug' => is_debug(),
-                        'visitors_db' => nebula_option('visitors_db'),
-                        'hubspot_api' => ( nebula_option('hubspot_api') )? true : false,
+                        'debug' => nebula()->is_debug(),
+                        'visitors_db' => nebula()->option('visitors_db'),
+                        'hubspot_api' => ( nebula()->option('hubspot_api') )? true : false,
                     ),
                     'resources' => array(
                         'css' => $nebula_styles,
@@ -153,7 +154,7 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             } else {
                 $this->script_parameters['session'] = array(
                     'ip' => $_SERVER['REMOTE_ADDR'],
-                    'id' => nebula_session_id(),
+                    'id' => nebula()->session_id(),
                     'flags' => array(
                         'adblock' => false,
                         'gablock' => false,
@@ -202,7 +203,7 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
          */
         function enqueue_scripts( $hook ) {
             //Stylesheets
-            if ( nebula_option('google_font_url') ){
+            if ( nebula()->option('google_font_url') ){
                 wp_enqueue_style('nebula-google_font');
             }
             wp_enqueue_style('nebula-bootstrap');

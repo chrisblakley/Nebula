@@ -3138,7 +3138,7 @@ function nebula_is_bot(){
 		}
 	}
 
-	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon');
+	$bots = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda');
 	foreach( $bots as $bot ){
 		if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot) !== false ){
 			return true;

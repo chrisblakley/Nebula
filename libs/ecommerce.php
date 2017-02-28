@@ -15,8 +15,10 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Ecommerce' ) ) {
 
-    class Nebula_Ecommerce {
+    trait Nebula_Ecommerce {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             //Declare support for WooCommerce
             add_action('after_setup_theme', array( $this, 'theme_setup_ecommerce' ) );
@@ -47,6 +49,7 @@ if( !class_exists( 'Nebula_Ecommerce' ) ) {
             //JSON-LD for Products
             add_action('nebula_metadata_end', array( $this, 'json_ld_ecommerce' ) );
         }
+*/
 
         //Declare support for WooCommerce
         public function theme_setup_ecommerce(){
@@ -83,8 +86,8 @@ if( !class_exists( 'Nebula_Ecommerce' ) ) {
         //Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
         public function woo_custom_dimensions(){
             //Set custom dimension for if the cart is empty or full
-            if ( nebula_option('cd_woocart') ){
-                echo 'gaCustomDimensions.wooCart = "' . nebula_option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
+            if ( nebula()->option('cd_woocart') ){
+                echo 'gaCustomDimensions.wooCart = "' . nebula()->option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
                 $cart_text = ( WC()->cart->get_cart_contents_count() >= 1 )? 'Full Cart (' . WC()->cart->get_cart_contents_count() . ')' : 'Empty Cart';
                 echo 'ga("set", gaCustomDimensions["wooCart"], "' . $cart_text . '");';
             }
@@ -96,8 +99,8 @@ if( !class_exists( 'Nebula_Ecommerce' ) ) {
 
             //Set custom dimension and send event on order received page.
             if ( is_order_received_page() ){
-                if ( nebula_option('cd_woocustomer') ){
-                    echo 'gaCustomDimensions.wooCustomer = "' . nebula_option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
+                if ( nebula()->option('cd_woocustomer') ){
+                    echo 'gaCustomDimensions.wooCustomer = "' . nebula()->option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
                     echo 'ga("set", gaCustomDimensions["wooCustomer"], "Order Received");';
                 }
                 echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
@@ -112,7 +115,7 @@ if( !class_exists( 'Nebula_Ecommerce' ) ) {
 
         //Checkout visitor data
         public function woocommerce_order_data($order_id){
-            if ( nebula_option('visitors_db') ){
+            if ( nebula()->option('visitors_db') ){
                 $order = new WC_Order($order_id);
 
                 //Append order ID and product IDs
@@ -176,7 +179,7 @@ if( !class_exists( 'Nebula_Ecommerce' ) ) {
 						"availability": "<?php echo ( $product->is_in_stock() )? 'http://schema.org/InStock' : 'http://schema.org/OutOfStock'; ?>",
 						"seller": {
 							"@type": "<?php echo $company_type; ?>",
-							"name": "<?php echo ( nebula_option('site_owner') )? nebula_option('site_owner') : get_bloginfo('name'); ?>"
+							"name": "<?php echo ( nebula()->option('site_owner') )? nebula()->option('site_owner') : get_bloginfo('name'); ?>"
 						}
 					}
 				}

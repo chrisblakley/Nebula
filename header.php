@@ -1,4 +1,4 @@
-<?php $debug_class = ( is_debug() )? 'debug' : ''; ?>
+<?php $debug_class = ( nebula()->is_debug() )? 'debug' : ''; ?>
 <!doctype html>
 <!--[if lt IE 7]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie6 lt-ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
 <!--[if IE 7]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie ie7 lte-ie7 lt-ie8 lte-ie8 lt-ie9 lte-ie9 lt-ie10"><![endif]-->
@@ -18,14 +18,14 @@
 		<meta name="MobileOptimized" content="320" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta class="theme-color" name="theme-color" content="<?php echo nebula_sass_color('primary'); ?>">
-		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula_sass_color('primary'); ?>">
-		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula_sass_color('primary'); ?>">
+		<meta class="theme-color" name="theme-color" content="<?php echo nebula()->sass_color('primary'); ?>">
+		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula()->sass_color('primary'); ?>">
+		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula()->sass_color('primary'); ?>">
 		<?php get_template_part('inc/metadata'); ?>
 
-		<link rel="manifest" href="<?php echo nebula_manifest_json_location(); ?>" />
+		<link rel="manifest" href="<?php echo nebula()->manifest_json_location(); ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
-		<?php nebula_prerender(); ?>
+		<?php nebula()->prerender(); ?>
 		<?php wp_head(); ?>
 		<?php get_template_part('inc/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>

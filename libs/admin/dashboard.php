@@ -13,11 +13,13 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
 
-    class Nebula_Admin_Dashboard {
+    trait Nebula_Admin_Dashboard {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             //Remove unnecessary Dashboard metaboxes
-            if ( nebula_option('unnecessary_metaboxes') ){
+            if ( nebula()->option('unnecessary_metaboxes') ){
                 add_action('wp_dashboard_setup', array( $this, 'remove_dashboard_metaboxes' ));
             }
 
@@ -39,16 +41,17 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             add_action('wp_dashboard_setup', array( $this, 'phg_metabox' ) );
 
             //TODO manager metabox
-            if ( nebula_option('todo_manager_metabox', 'enabled') && is_dev() ){
+            if ( nebula()->option('todo_manager_metabox', 'enabled') && is_dev() ){
                 add_action('wp_dashboard_setup', array( $this, 'todo_metabox' ) );
             }
 
             //Developer Info Metabox
             //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
-            if ( nebula_option('dev_info_metabox', 'enabled') && is_dev() ){
+            if ( nebula()->option('dev_info_metabox', 'enabled') && is_dev() ){
                 add_action('wp_dashboard_setup', array( $this, 'dev_info_metabox' ) );
             }
         }
+*/
 
         //Remove unnecessary Dashboard metaboxes
         public function remove_dashboard_metaboxes(){
@@ -75,7 +78,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             echo '<li><i class="fa fa-globe fa-fw"></i> <a href="' . home_url('/') . '" target="_blank">' . home_url() . '</a></li>';
 
             //Address
-            if ( nebula_option('street_address') ){
+            if ( nebula()->option('street_address') ){
                 echo '<li><i class="fa fa-map-marker fa-fw"></i> <a href="https://www.google.com/maps/place/' . nebula_full_address(1) . '" target="_blank">' . nebula_full_address() . '</a></li>';
             }
 
@@ -191,30 +194,30 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula()->utilities->nebula_online_users('count') . ' currently active)</small></li>';
 
             //Comments
-            if ( nebula_option('comments', 'enabled') && nebula_option('disqus_shortname') == '' ){
+            if ( nebula()->option('comments', 'enabled') && nebula()->option('disqus_shortname') == '' ){
                 $comments_count = wp_count_comments();
                 $comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
                 echo '<li><i class="fa fa-comments-o fa-fw"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
             } else {
-                if ( nebula_option('comments', 'disabled') ){
+                if ( nebula()->option('comments', 'disabled') ){
                     echo '<li><i class="fa fa-comments-o fa-fw"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
                 } else {
-                    echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . nebula_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
+                    echo '<li><i class="fa fa-comments-o fa-fw"></i> Using <a href="https://' . nebula()->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
                 }
             }
 
             //Global Admin Bar
-            if ( nebula_option('admin_bar', 'disabled') ){
+            if ( nebula()->option('admin_bar', 'disabled') ){
                 echo '<li><i class="fa fa-bars fa-fw"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small></li>';
             }
 
             //Google Optimize
-            if ( nebula_option('google_optimize_id') ){
+            if ( nebula()->option('google_optimize_id') ){
                 echo '<li><i class="fa fa-google fa-fw"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> enabled</li>';
             }
 
             //Nebula Visitors DB
-            if ( nebula_option('visitors_db') ){
+            if ( nebula()->option('visitors_db') ){
                 global $wpdb;
                 echo '<li><i class="fa fa-database fa-fw"></i> <a href="themes.php?page=nebula_visitors_data">Nebula Visitors DB</a> has <strong>' . $wpdb->get_var("select count(*) from nebula_visitors") . '</strong> rows.</li>';
             }
@@ -310,7 +313,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             }
             echo '<li><i class="fa fa-thumb-tack fa-fw"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
-            if ( nebula_option('device_detection') ){
+            if ( nebula()->option('device_detection') ){
                 //Device
                 if ( nebula_is_desktop() ){
                     $battery_percentage = nebula_vdb_get_visitor_datapoint('battery_percentage');
@@ -395,7 +398,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             }
 
             //Weather
-            if ( nebula_option('weather') ){
+            if ( nebula()->option('weather') ){
                 $ip_zip = '';
                 if ( nebula_vdb_get_visitor_datapoint('zip_code') ){
                     $ip_zip = nebula_vdb_get_visitor_datapoint('zip_code');
@@ -433,36 +436,36 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
         //Administrative metabox content
         public function dashboard_administrative(){
             echo '<ul>';
-            if ( nebula_option('cpanel_url') ){
-                echo '<li><i class="fa fa-gears fa-fw"></i> <a href="' . nebula_option('cpanel_url') . '" target="_blank">Server Control Panel</a></li>';
+            if ( nebula()->option('cpanel_url') ){
+                echo '<li><i class="fa fa-gears fa-fw"></i> <a href="' . nebula()->option('cpanel_url') . '" target="_blank">Server Control Panel</a></li>';
             }
 
-            if ( nebula_option('hosting_url') ){
-                echo '<li><i class="fa fa-hdd-o fa-fw"></i> <a href="' . nebula_option('hosting_url') . '" target="_blank">Hosting</a></li>';
+            if ( nebula()->option('hosting_url') ){
+                echo '<li><i class="fa fa-hdd-o fa-fw"></i> <a href="' . nebula()->option('hosting_url') . '" target="_blank">Hosting</a></li>';
             }
 
-            if ( nebula_option('registrar_url') ){
-                echo '<li><i class="fa fa-globe fa-fw"></i> <a href="' . nebula_option('registrar_url') . '" target="_blank">Domain Registrar</a></li>';
+            if ( nebula()->option('registrar_url') ){
+                echo '<li><i class="fa fa-globe fa-fw"></i> <a href="' . nebula()->option('registrar_url') . '" target="_blank">Domain Registrar</a></li>';
             }
 
-            if ( nebula_option('ga_url') ){
-                echo '<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="' . nebula_option('ga_url') . '" target="_blank">Google Analytics</a></li>';
+            if ( nebula()->option('ga_url') ){
+                echo '<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="' . nebula()->option('ga_url') . '" target="_blank">Google Analytics</a></li>';
             }
 
-            if ( nebula_option('google_search_console_url') ){
-                echo '<li><i class="fa fa-google fa-fw"></i> <a href="' . nebula_option('google_search_console_url') . '" target="_blank">Google Search Console</a></li>';
+            if ( nebula()->option('google_search_console_url') ){
+                echo '<li><i class="fa fa-google fa-fw"></i> <a href="' . nebula()->option('google_search_console_url') . '" target="_blank">Google Search Console</a></li>';
             }
 
-            if ( nebula_option('google_adsense_url') ){
-                echo '<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="' . nebula_option('google_adsense_url') . '" target="_blank">Google AdSense</a></li>';
+            if ( nebula()->option('google_adsense_url') ){
+                echo '<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="' . nebula()->option('google_adsense_url') . '" target="_blank">Google AdSense</a></li>';
             }
 
-            if ( nebula_option('google_adwords_url') ){
-                echo '<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="' . nebula_option('google_adwords_url') . '" target="_blank">Google AdWords</a></li>';
+            if ( nebula()->option('google_adwords_url') ){
+                echo '<li><i class="fa fa-bar-chart-o fa-fw"></i> <a href="' . nebula()->option('google_adwords_url') . '" target="_blank">Google AdWords</a></li>';
             }
 
-            if ( nebula_option('mention_url') ){
-                echo '<li><i class="fa fa-star fa-fw"></i> <a href="' . nebula_option('mention_url') . '" target="_blank">Mention</a></li>';
+            if ( nebula()->option('mention_url') ){
+                echo '<li><i class="fa fa-star fa-fw"></i> <a href="' . nebula()->option('mention_url') . '" target="_blank">Mention</a></li>';
             }
             echo '</ul>';
 
@@ -477,32 +480,32 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
         //Social metabox content
         public function dashboard_social(){
             echo '<ul>';
-            if ( nebula_option('facebook_url') ){
-                echo '<li><i class="fa fa-facebook-square fa-fw"></i> <a href="' . nebula_option('facebook_url') . '" target="_blank">Facebook</a></li>';
+            if ( nebula()->option('facebook_url') ){
+                echo '<li><i class="fa fa-facebook-square fa-fw"></i> <a href="' . nebula()->option('facebook_url') . '" target="_blank">Facebook</a></li>';
             }
 
-            if ( nebula_option('twitter_username') ){
+            if ( nebula()->option('twitter_username') ){
                 echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="' . nebula_twitter_url() . '" target="_blank">Twitter</a></li>';
             }
 
-            if ( nebula_option('google_plus_url') ){
-                echo '<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="' . nebula_option('google_plus_url') . '" target="_blank">Google+</a></li>';
+            if ( nebula()->option('google_plus_url') ){
+                echo '<li><i class="fa fa-google-plus-square fa-fw"></i> <a href="' . nebula()->option('google_plus_url') . '" target="_blank">Google+</a></li>';
             }
 
-            if ( nebula_option('linkedin_url') ){
-                echo '<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="' . nebula_option('linkedin_url') . '" target="_blank">LinkedIn</a></li>';
+            if ( nebula()->option('linkedin_url') ){
+                echo '<li><i class="fa fa-linkedin-square fa-fw"></i> <a href="' . nebula()->option('linkedin_url') . '" target="_blank">LinkedIn</a></li>';
             }
 
-            if ( nebula_option('youtube_url') ){
-                echo '<li><i class="fa fa-youtube-square fa-fw"></i> <a href="' . nebula_option('youtube_url') . '" target="_blank">Youtube</a></li>';
+            if ( nebula()->option('youtube_url') ){
+                echo '<li><i class="fa fa-youtube-square fa-fw"></i> <a href="' . nebula()->option('youtube_url') . '" target="_blank">Youtube</a></li>';
             }
 
-            if ( nebula_option('instagram_url') ){
-                echo '<li><i class="fa fa-instagram fa-fw"></i> <a href="' . nebula_option('instagram_url') . '" target="_blank">Instagram</a></li>';
+            if ( nebula()->option('instagram_url') ){
+                echo '<li><i class="fa fa-instagram fa-fw"></i> <a href="' . nebula()->option('instagram_url') . '" target="_blank">Instagram</a></li>';
             }
 
-            if ( nebula_option('disqus_shortname') ){
-                echo '<li><i class="fa fa-comments-o fa-fw"></i> <a href="https://' . nebula_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus</a></li>';
+            if ( nebula()->option('disqus_shortname') ){
+                echo '<li><i class="fa fa-comments-o fa-fw"></i> <a href="https://' . nebula()->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus</a></li>';
             }
             echo '</ul>';
 
@@ -729,7 +732,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
 
                 echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
 
-                if ( nebula_option('prototype_mode', 'enabled') ){
+                if ( nebula()->option('prototype_mode', 'enabled') ){
                     echo '<li><i class="fa fa-flag-checkered"></i> Production directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
                 } else {
                     echo '<li><i class="fa fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
@@ -743,15 +746,15 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
                 echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
             }
 
-            if ( nebula_option('prototype_mode', 'enabled') ){
-                if ( nebula_option('wireframe_theme') ){
-                    $nebula_wireframe_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula_option('wireframe_theme'));
-                    echo '<li title="' . nebula_option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
+            if ( nebula()->option('prototype_mode', 'enabled') ){
+                if ( nebula()->option('wireframe_theme') ){
+                    $nebula_wireframe_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula()->option('wireframe_theme'));
+                    echo '<li title="' . nebula()->option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
                 }
 
-                if ( nebula_option('staging_theme') ){
-                    $nebula_staging_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula_option('staging_theme'));
-                    echo '<li title="' . nebula_option('staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
+                if ( nebula()->option('staging_theme') ){
+                    $nebula_staging_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula()->option('staging_theme'));
+                    echo '<li title="' . nebula()->option('staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
                 }
             }
 
@@ -802,7 +805,7 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
 
             //Initial installation date
             function initial_install_date(){
-                $nebula_initialized = nebula_option('initialized');
+                $nebula_initialized = nebula()->option('initialized');
                 if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
                     $install_date = '<span title="' . human_time_diff($nebula_initialized) . ' ago" style="cursor: help;"><strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong></span>';
                 } else { //Use the last modified time of the admin page itself
@@ -823,12 +826,12 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
 
             //Directory search
             echo '<i id="searchprogress" class="fa fa-search fa-fw"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
-            if ( nebula_option('prototype_mode', 'enabled') ){
+            if ( nebula()->option('prototype_mode', 'enabled') ){
                 echo '<option value="production">Production</option>';
-                if ( nebula_option('staging_theme') ){
+                if ( nebula()->option('staging_theme') ){
                     echo '<option value="staging">Staging</option>';
                 }
-                if ( nebula_option('wireframe_theme') ){
+                if ( nebula()->option('wireframe_theme') ){
                     echo '<option value="wireframe">Wireframe</option>';
                 }
                 echo '<option value="parent">Parent Theme</option>';
@@ -907,12 +910,12 @@ if( !class_exists( 'Nebula_Admin_Dashboard' ) ) {
             } elseif ( $_POST['data'][0]['directory'] === 'child' ){
                 $dirpath = get_stylesheet_directory();
             } elseif ( $_POST['data'][0]['directory'] === 'wireframe' ){
-                $dirpath = get_theme_root() . '/' . nebula_option('wireframe_theme');
+                $dirpath = get_theme_root() . '/' . nebula()->option('wireframe_theme');
             } elseif ( $_POST['data'][0]['directory'] === 'staging' ){
-                $dirpath = get_theme_root() . '/' . nebula_option('staging_theme');
+                $dirpath = get_theme_root() . '/' . nebula()->option('staging_theme');
             } elseif ( $_POST['data'][0]['directory'] === 'production' ){
-                if ( nebula_option('production_theme') ){
-                    $dirpath = get_theme_root() . '/' . nebula_option('production_theme');
+                if ( nebula()->option('production_theme') ){
+                    $dirpath = get_theme_root() . '/' . nebula()->option('production_theme');
                 } else {
                     $dirpath = get_stylesheet_directory();
                 }

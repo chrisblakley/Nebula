@@ -13,19 +13,12 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Prototyping' ) ) {
 
-    class Nebula_Prototyping {
+    trait Nebula_Prototyping {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
-            /*
-                A wireframing element is composed of a component which contains one or more fpo elements.
-                For example:
-                <?php fpo_component('Component Name'); ?>
-                <?php fpo_component_start('Component Name'); ?>
-                <p>This is an example FPO element. Elements inside of the component can be whatever HTML/PHP/JS that is needed!</p>
-                <?php fpo_component_end(); ?>
-            */
-
-            if ( nebula_option('prototype_mode', 'enabled') ){
+            if ( nebula()->option('prototype_mode', 'enabled') ){
                 add_action('wp_enqueue_scripts', array( $this, 'enqueue_nebula_wireframing' ) );
 
                 //Set up redirects based on the ?phase query.
@@ -34,14 +27,14 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
 
                     $mt_settings['query'] = array(
                         'phase' => array(
-                            'wireframe' => nebula_option('wireframe_theme'), //Wireframe Theme
-                            'staging' => nebula_option('staging_theme'), //Staging Theme
-                            'production' => nebula_option('production_theme') //Production Theme
+                            'wireframe' => nebula()->option('wireframe_theme'), //Wireframe Theme
+                            'staging' => nebula()->option('staging_theme'), //Staging Theme
+                            'production' => nebula()->option('production_theme') //Production Theme
                         )
                     );
 
-                    $mt_settings['current'] = nebula_option('production_theme'); //"Everything Else" theme
-                    $mt_settings['ajax_all'] = ( nebula_option('staging_theme') )? nebula_option('staging_theme') : nebula_option('production_theme'); //Theme for AJAX functions. Staging (if exists) or Production
+                    $mt_settings['current'] = nebula()->option('production_theme'); //"Everything Else" theme
+                    $mt_settings['ajax_all'] = ( nebula()->option('staging_theme') )? nebula()->option('staging_theme') : nebula()->option('production_theme'); //Theme for AJAX functions. Staging (if exists) or Production
                     $mt_settings['remember'] = array('query' => array('phase' => array('wireframe' => true, 'staging' => true)));
                     $mt_settings['override'] = array('query' => array('phase' => array('production' => true)));
                     update_option('jr_mt_settings', $mt_settings);
@@ -54,6 +47,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
                 add_action('admin_bar_menu', array( $this, 'admin_bar_nebula_wireframing' ), 900);
             }
         }
+*/
 
         public function enqueue_nebula_wireframing(){
             wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
@@ -97,7 +91,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
             if ( nebula_dev_phase() ){
                 $permalink = ( is_admin_page() )? home_url() : get_permalink();
 
-                if ( nebula_dev_phase() != 'wireframe' && nebula_option('wireframe_theme') ){
+                if ( nebula_dev_phase() != 'wireframe' && nebula()->option('wireframe_theme') ){
                     $wp_admin_bar->add_node(array(
                         'parent' => 'nebula-prototype',
                         'id' => 'nebula-wireframe-activate',
@@ -106,7 +100,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
                     ));
                 }
 
-                if ( nebula_dev_phase() != 'staging' && nebula_option('staging_theme') ){
+                if ( nebula_dev_phase() != 'staging' && nebula()->option('staging_theme') ){
                     $wp_admin_bar->add_node(array(
                         'parent' => 'nebula-prototype',
                         'id' => 'nebula-staging-activate',
@@ -155,7 +149,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
 
         //Top header for each component
         public function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
-            if ( nebula_option('prototype_mode', 'disabled') ){
+            if ( nebula()->option('prototype_mode', 'disabled') ){
                 return false;
             }
 
@@ -180,7 +174,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
 
         //Top header for each component (with opening .fpo div)
         public function fpo_component_start($component='Component', $icon='fa-cube'){
-            if ( nebula_option('prototype_mode', 'disabled') ){
+            if ( nebula()->option('prototype_mode', 'disabled') ){
                 return false;
             }
             fpo_component($component, $icon, '');
@@ -189,7 +183,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
 
         //Closes .fpo div (from fpo_component_start)
         public function fpo_component_end(){
-            if ( nebula_option('prototype_mode', 'disabled') ){
+            if ( nebula()->option('prototype_mode', 'disabled') ){
                 return false;
             }
             echo '</div><!-- /fpo -->';
@@ -197,7 +191,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
 
         //Create a placeholder box as an FPO element
         public function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg='#ddd', $icon='', $styles='', $classes=''){
-            if ( nebula_option('prototype_mode', 'disabled') ){
+            if ( nebula()->option('prototype_mode', 'disabled') ){
                 return false;
             }
 
@@ -242,7 +236,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
         //Placeholder background image
         /* <div class="row" style="<?php fpo_bg_image(); ?>"> */
         public function fpo_bg_image($type='none', $color='#aaa'){
-            if ( nebula_option('prototype_mode', 'disabled') ){
+            if ( nebula()->option('prototype_mode', 'disabled') ){
                 return false;
             }
 
@@ -264,7 +258,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
 
         //Placeholder image... Consider deprecating this function
         public function fpo_image($width='100%', $height='200px', $type='none', $color='#000', $styles='', $classes=''){
-            if ( nebula_option('prototype_mode', 'disabled') ){
+            if ( nebula()->option('prototype_mode', 'disabled') ){
                 return false;
             }
 
@@ -306,7 +300,7 @@ if( !class_exists( 'Nebula_Prototyping' ) ) {
         }
 
         public function fpo_text($text=''){
-            if ( nebula_option('prototype_mode', 'disabled') ){
+            if ( nebula()->option('prototype_mode', 'disabled') ){
                 return false;
             }
 

@@ -13,8 +13,9 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Options' ) ) {
 
-    class Nebula_Options {
+    trait Nebula_Options {
 
+/*
         public function __construct() {
             //Register all Nebula Options
             add_action('current_screen', array( $this, 'register_options' ) );
@@ -23,6 +24,7 @@ if( !class_exists( 'Nebula_Options' ) ) {
             add_action('admin_menu', array( $this, 'admin_sub_menu' ) );
 
         }
+*/
 
         /*==========================
          Global Nebula Options Conditional Functions
@@ -34,6 +36,7 @@ if( !class_exists( 'Nebula_Options' ) ) {
         //Dropdowns: $operand is what to check against (typically 'enabled' or 'disabled').
         //Texts: $operand is the default value to return if option is false.
         // TODO: This function should be get() -  nebula()->options->get();
+        	//I'm cool with renaming this given the scope- I'm thinking of using nebula()->get_option() since we'll be using traits
         public function option($option, $operand=false){
             $nebula_options = get_option('nebula_options');
             $requested_dropdown = in_array(strtolower($operand), array('enabled', 'disabled'));
@@ -113,7 +116,7 @@ if( !class_exists( 'Nebula_Options' ) ) {
         //Get the full Twitter URL for a user
         public function twitter_url($username=false){
             if ( empty($username) ){
-                $username = nebula_option('twitter_username');
+                $username = nebula()->option('twitter_username');
             }
 
             if ( !empty($username) ){
@@ -125,14 +128,14 @@ if( !class_exists( 'Nebula_Options' ) ) {
 
         //Register the requested version of Bootstrap.
         public function bootstrap_version($lang=false){
-            if ( nebula_option('bootstrap_version') === 'bootstrap3' ){
+            if ( nebula()->option('bootstrap_version') === 'bootstrap3' ){
                 //Bootstrap 3 (IE8+ Support)
                 if ( $lang === 'css' ){
                     return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
                 } elseif ( $lang === 'js' ){
                     return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', 'defer', null, '3.3.7', true);
                 }
-            } elseif ( nebula_option('bootstrap_version') === 'bootstrap4a5' ){
+            } elseif ( nebula()->option('bootstrap_version') === 'bootstrap4a5' ){
                 //Bootstrap 4 alpha 5 (IE9+ Support)
                 if ( $lang === 'css' ){
                     return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
@@ -547,7 +550,7 @@ if( !class_exists( 'Nebula_Options' ) ) {
                         <tr class="short" valign="top">
                             <th scope="row">Site Owner&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="text" name="nebula_options[site_owner]" value="<?php echo nebula_option('site_owner'); ?>" placeholder="<?php echo bloginfo('name'); ?>" />
+                                <input type="text" name="nebula_options[site_owner]" value="<?php echo nebula()->option('site_owner'); ?>" placeholder="<?php echo bloginfo('name'); ?>" />
                                 <p class="helper"><small>The name of the company (or person) who this website is for. This is used when using nebula_the_author(0) with author names disabled.</small></p>
                             </td>
                         </tr>
@@ -1823,6 +1826,8 @@ if( !class_exists( 'Nebula_Options' ) ) {
 
 }// End if class_exists check
 
+//Removing these in the future:
+
 /*==========================
  Global Nebula Options Conditional Functions
  Options are for customizing Nebula functionality to the needs of each project.
@@ -1832,7 +1837,8 @@ if( !class_exists( 'Nebula_Options' ) ) {
 //If the desired option is an enabled/disabled dropdown check against that, else check for the option and return the default.
 //Dropdowns: $operand is what to check against (typically 'enabled' or 'disabled').
 //Texts: $operand is the default value to return if option is false.
-function nebula_option($option, $operand=false){
+/*
+function nebula()->option($option, $operand=false){
     return nebula()->options->option($option, $operand);
 }
 
@@ -1850,12 +1856,14 @@ function nebula_data($option){
 function nebula_update_data($option, $value){
     nebula()->options->update_data($option, $value);
 }
+*/
 
 /*==========================
  Specific Options Functions
  When using in templates these simplify the syntax to be less confusing.
  ===========================*/
 
+/*
 function nebula_full_address($encoded=false){
     return nebula()->options->full_address($encoded);
 }
@@ -1879,3 +1887,4 @@ function nebula_default_data(){
 function nebula_default_options(){
     return nebula()->options->default_options();
 }
+*/

@@ -13,15 +13,13 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Shortcodes' ) ) {
 
-    class Nebula_Shortcodes {
+    trait Nebula_Shortcodes {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             //Div
             add_shortcode('div', array( $this, 'div_shortcode' ) );
-
-            /*==========================
-                Bootstrap Grid Shortcodes
-             ===========================*/
 
             //Container
             if ( !shortcode_exists('container') ){
@@ -115,6 +113,7 @@ if( !class_exists( 'Nebula_Shortcodes' ) ) {
             //Add Nebula Toolbar to TinyMCE
             add_action('admin_init', array( $this, 'add_shortcode_button' ) );
         }
+*/
 
         //Get flags where a parameter is declared in $atts that exists without a declared value
         /* Usage:
@@ -245,7 +244,7 @@ if( !class_exists( 'Nebula_Shortcodes' ) ) {
             }
 
             if ( empty($key) ){
-                $key = nebula_option('google_browser_api_key');
+                $key = nebula()->option('google_browser_api_key');
             }
             if ( !empty($q) ){
                 $q = str_replace(' ', '+', $q);

@@ -13,8 +13,10 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Security' ) ) {
 
-    class Nebula_Security {
+    trait Nebula_Security {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             //Disable the file editor
             define('DISALLOW_FILE_EDIT', true);
@@ -65,6 +67,7 @@ if( !class_exists( 'Nebula_Security' ) ) {
             //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
             add_action('wp_loaded', array( $this, 'domain_prevention' ) );
         }
+*/
 
         //Log template direct access attempts
         public function log_direct_access_attempts(){
@@ -182,7 +185,7 @@ if( !class_exists( 'Nebula_Security' ) ) {
 
         //Check referrer for known spambots and blacklisted domains
         public function domain_prevention(){
-            if ( nebula_option('domain_blacklisting') ){
+            if ( nebula()->option('domain_blacklisting') ){
                 $blacklisted_domains = $this->get_domain_blacklist();
 
                 if ( count($blacklisted_domains) > 1 ){

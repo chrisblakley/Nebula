@@ -13,8 +13,10 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 if( !class_exists( 'Nebula_Optimization' ) ) {
 
-    class Nebula_Optimization {
+    trait Nebula_Optimization {
 
+/*
+		//Temporarily commented this out
         public function __construct() {
             //Control which scripts use defer/async using a query string.
             //Note: Not an ideal solution, but works until WP Core updates wp_enqueue_script(); to allow for deferring.
@@ -50,6 +52,7 @@ if( !class_exists( 'Nebula_Optimization' ) ) {
 
             add_filter('tiny_mce_plugins', array( $this, 'disable_emojicons_tinymce' ) ); //Remove TinyMCE Emojis too
         }
+*/
 
         //Control which scripts use defer/async using a query string.
         public function defer_async_scripts($url){
@@ -182,7 +185,7 @@ if( !class_exists( 'Nebula_Optimization' ) ) {
         }
 
         public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
-            if ( !is_debug() ){
+            if ( !nebula()->is_debug() ){
                 $path = ( !empty($exec) )? $src . '?' . $exec : $src;
             } else {
                 $path = $src;
@@ -194,9 +197,12 @@ if( !class_exists( 'Nebula_Optimization' ) ) {
 
 }// End if class_exists check
 
+
+//Removing these in the future:
+
 //Extend registering scripts to include async/defer executions (used by the nebula_defer_async_scripts() funtion)
 function nebula_register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
-    nebula()->optimization->register_script( $handle, $src, $exec, $deps, $ver, $in_footer );
+    nebula()->register_script( $handle, $src, $exec, $deps, $ver, $in_footer );
 }
 
 //Disable PHP Magic Quotes.

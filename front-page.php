@@ -29,6 +29,22 @@ get_header(); ?>
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
+
+
+
+<?php
+
+
+
+	echo nebula()->url_components('domain', 'http://www.something.com/whatever');
+
+
+?>
+
+
+
+
+
 <div id="content-section">
 	<div class="container">
 		<div class="row">
