@@ -224,7 +224,7 @@ if( !class_exists( 'Nebula_Security' ) ) {
 
         //Return an array of blacklisted domains from Piwik (or the latest Nebula on Github)
         public function get_domain_blacklist(){
-            $domain_blacklist_json_file = get_template_directory() . '/includes/data/domain_blacklist.txt';
+            $domain_blacklist_json_file = get_template_directory() . '/inc/data/domain_blacklist.txt';
             $domain_blacklist = get_transient('nebula_domain_blacklist');
             if ( (empty($domain_blacklist) || is_debug()) && nebula_is_available('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt') ){ //If transient expired or is debug, and if remote resource is available
                 $response = wp_remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');

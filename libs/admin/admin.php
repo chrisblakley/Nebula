@@ -481,7 +481,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
                 }
             } elseif ( current_user_can('manage_options') && is_child_theme() ){
                 //@TODO "Nebula" 0: does this need to happen every admin pageload? Maybe add a transient?
-                require(get_template_directory() . '/includes/libs/theme-update-checker.php'); //Initialize the update checker library.
+                require(get_template_directory() . '/inc/vendor/theme-update-checker.php'); //Initialize the update checker library.
                 $theme_update_checker = new ThemeUpdateChecker(
                     'Nebula-master', //This should be the directory slug of the parent theme.
                     'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
@@ -678,7 +678,7 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             $override = apply_filters('pre_nebula_php_version_support', false, $php_version);
             if ( $override !== false ){return $override;}
 
-            $php_timeline_json_file = get_template_directory() . '/includes/data/php_timeline.json';
+            $php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
             $php_timeline = get_transient('nebula_php_timeline');
             if ( (empty($php_timeline) || is_debug()) && nebula_is_available('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json') ){
                 $response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');

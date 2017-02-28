@@ -278,7 +278,7 @@ if( !class_exists( 'Nebula_Automation' ) ) {
             $sql = "SELECT * FROM $wpdb->options";
             $result = mysqli_query($connection, $sql);
 
-            $options_backup_file = get_template_directory() . '/includes/data/options_backup_' . date('Y-m-d\TH:i:s') . '.csv';
+            $options_backup_file = get_template_directory() . '/inc/data/options_backup_' . date('Y-m-d\TH:i:s') . '.csv';
             $fp = fopen($options_backup_file, 'w');
             while ( $row = mysqli_fetch_assoc($result) ){
                 fputcsv($fp, $row);

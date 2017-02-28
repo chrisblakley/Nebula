@@ -261,7 +261,7 @@ trait Nebula_Functions {
 
     //Manifest JSON file location
     public function manifest_json_location(){
-        return get_template_directory() . '/includes/manifest.json';
+        return get_template_directory() . '/inc/manifest.json';
     }
 
     //Create/Write a manifest JSON file

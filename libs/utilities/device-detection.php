@@ -35,7 +35,7 @@ if( !class_exists( 'Nebula_Device_Detection' ) ) {
         // TODO: If we creates the class Nebula_Device_Detection, this method should be detect()
         public function detect(){
             if ( nebula()->option('device_detection') ){
-                require_once(get_template_directory() . '/includes/libs/device-detector/DeviceDetector.php'); // TODO: If we move classes to includes, includes/libs should go on libs
+                require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php'); // TODO: If we move classes to includes, includes/libs should go on libs
                 $GLOBALS["device_detect"] = new DeviceDetector($_SERVER['HTTP_USER_AGENT']);
                 $GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
                 $GLOBALS["device_detect"]->parse();

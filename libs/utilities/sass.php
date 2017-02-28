@@ -88,7 +88,7 @@ if( !class_exists( 'Nebula_Sass' ) ) {
 
             if ( nebula()->option('scss', 'enabled') && !empty($location_name) && !empty($location_paths) ){
                 //Require SCSSPHP
-                require_once(get_template_directory() . '/includes/libs/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
+                require_once(get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
                 $scss = new \Leafo\ScssPhp\Compiler();
 
                 //Register import directories
