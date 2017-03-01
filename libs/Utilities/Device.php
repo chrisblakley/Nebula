@@ -11,13 +11,11 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-use DeviceDetector\DeviceDetector;
-
 // TODO: This class could be Nebula_Device or Nebula_Device_Info?
 
-if( !class_exists( 'Nebula_Device_Detection' ) ) {
+if( !class_exists( 'Device' ) ) {
 
-    trait Nebula_Device_Detection {
+    trait Device {
 
 /*
 		//Temporarily commented out

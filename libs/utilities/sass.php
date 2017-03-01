@@ -11,9 +11,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Sass' ) ) {
+if( !class_exists( 'Sass' ) ) {
 
-    trait Nebula_Sass {
+    trait Sass {
 
 		//Temporarily commented out
         //public function __construct() {

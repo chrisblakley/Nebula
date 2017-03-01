@@ -14,9 +14,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Admin_Users' ) ) {
+if( !class_exists( 'Users' ) ) {
 
-    trait Nebula_Admin_Users {
+    trait Users {
 
 /*
 		//Temporarily commented this out

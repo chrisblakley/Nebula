@@ -11,9 +11,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Automation' ) ) {
+if( !trait_exists( 'Automation' ) ) {
 
-    trait Nebula_Automation {
+    trait Automation {
 
 /*
 		//Temporarily commented this out

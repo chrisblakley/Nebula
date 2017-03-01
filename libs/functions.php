@@ -11,7 +11,7 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-trait Nebula_Functions {
+trait Functions {
 
     //Social buttons vars
     public $twitter_widget_loaded;

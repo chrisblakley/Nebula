@@ -11,9 +11,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Optimization' ) ) {
+if( !class_exists( 'Optimization' ) ) {
 
-    trait Nebula_Optimization {
+    trait Optimization {
 
 /*
 		//Temporarily commented this out

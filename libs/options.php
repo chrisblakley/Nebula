@@ -11,9 +11,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Options' ) ) {
+if( !class_exists( 'Options' ) ) {
 
-    trait Nebula_Options {
+    trait Options {
 
 /*
         public function __construct() {

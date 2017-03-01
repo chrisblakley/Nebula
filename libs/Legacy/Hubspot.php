@@ -8,12 +8,14 @@
  * @contributor Ruben Garcia
  */
 
+namespace Nebula;
+
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Hubspot_CRM' ) ) {
+if( !class_exists( 'Hubspot' ) ) {
 
-    class Nebula_Hubspot_CRM {
+    class Hubspot {
 
         public function __construct() {
             /*==========================

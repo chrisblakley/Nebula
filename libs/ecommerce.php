@@ -13,9 +13,9 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 //Recommended WooCommerce Google Analytics Plugin: https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/
 
-if( !class_exists( 'Nebula_Ecommerce' ) ) {
+if( !class_exists( 'Ecommerce' ) ) {
 
-    trait Nebula_Ecommerce {
+    trait Ecommerce {
 
 /*
 		//Temporarily commented this out

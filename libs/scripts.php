@@ -10,9 +10,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Scripts' ) ) {
+if( !class_exists( 'Scripts' ) ) {
 
-    trait Nebula_Scripts {
+    trait Scripts {
 
         public $script_parameters;
 
@@ -51,9 +51,9 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/jquery.dataTables.min.css', null, '1.10.13', 'all'); //Datatables is called via main.js only as needed.
             wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css', null, '1.6.2', 'all');
             wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css', null, '1.12.1', 'all');
-            wp_register_style('nebula-main', NEBULA_URL . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
-            wp_register_style('nebula-login', NEBULA_URL . '/assets/css/login.css', null, null);
-            wp_register_style('nebula-admin', NEBULA_URL . '/assets/css/admin.css', null, null);
+            wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
+            wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, null);
+            wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, null);
 
             // Scripts
             //Use CDNJS to pull common libraries: http://cdnjs.com/
@@ -94,7 +94,8 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             }
 
             //Be careful changing the following array as many JS functions use this data!
-            $this->script_parameters = array(
+            $brain = array();
+            $brain = array(
                 'site' => array(
                     'name' => get_bloginfo('name'),
                     'directory' => array(
@@ -148,48 +149,34 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
                 'dom' => null,
             );
 
-            //Check for session data
-            if ( isset($_SESSION['nebulaSession']) && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
-                $this->script_parameters['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
-            } else {
-                $this->script_parameters['session'] = array(
-                    'ip' => $_SERVER['REMOTE_ADDR'],
-                    'id' => nebula()->session_id(),
-                    'flags' => array(
-                        'adblock' => false,
-                        'gablock' => false,
-                    ),
-                );
-            }
-
             $user_info = get_userdata(get_current_user_id());
 
             //User Data
-            $this->script_parameters['user'] = array(
+            $brain['user'] = array(
                 'ip' => $_SERVER['REMOTE_ADDR'],
-                'nid' => nebula()->utilities->visitors->get_nebula_id(),
-                'cid' => nebula()->utilities->google_analytics->parse_cookie(),
+                'nid' => nebula()->get_nebula_id(),
+                'cid' => nebula()->parse_cookie(),
                 'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
-                    'bot' => nebula()->utilities->device_detection->is_bot(),
+                    'bot' => nebula()->is_bot(),
                     'remote_addr' => $_SERVER['REMOTE_ADDR'],
                     'device' => array(
-                        'full' => nebula()->utilities->device_detection->get_device('full'),
-                        'formfactor' => nebula()->utilities->device_detection->get_device('formfactor'),
-                        'brand' => nebula()->utilities->device_detection->get_device('brand'),
-                        'model' => nebula()->utilities->device_detection->get_device('model'),
-                        'type' => nebula()->utilities->device_detection->get_device('type'),
+                        'full' => nebula()->get_device('full'),
+                        'formfactor' => nebula()->get_device('formfactor'),
+                        'brand' => nebula()->get_device('brand'),
+                        'model' => nebula()->get_device('model'),
+                        'type' => nebula()->get_device('type'),
                     ),
                     'os' => array(
-                        'full' => nebula()->utilities->device_detection->get_os('full'),
-                        'name' => nebula()->utilities->device_detection->get_os('name'),
-                        'version' => nebula()->utilities->device_detection->get_os('version'),
+                        'full' => nebula()->get_os('full'),
+                        'name' => nebula()->get_os('name'),
+                        'version' => nebula()->get_os('version'),
                     ),
                     'browser' => array(
-                        'full' => nebula()->utilities->device_detection->get_browser('full'),
-                        'name' => nebula()->utilities->device_detection->get_browser('name'),
-                        'version' => nebula()->utilities->device_detection->get_browser('version'),
-                        'engine' => nebula()->utilities->device_detection->get_browser('engine'),
-                        'type' => nebula()->utilities->device_detection->get_browser('type'),
+                        'full' => nebula()->get_browser('full'),
+                        'name' => nebula()->get_browser('name'),
+                        'version' => nebula()->get_browser('version'),
+                        'engine' => nebula()->get_browser('engine'),
+                        'type' => nebula()->get_browser('type'),
                     ),
                 ),
             );
@@ -226,7 +213,7 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             wp_localize_script('jquery', 'nebula', $this->script_parameters);
 
             //Conditionals
-            if ( is_debug() ){ //When ?debug query string is used
+            if ( nebula()->is_debug() ){ //When ?debug query string is used
                 wp_enqueue_script('nebula-performance_timing');
                 //wp_enqueue_script('nebula-mmenu_debugger');
             }
@@ -286,7 +273,7 @@ if( !class_exists( 'Nebula_Scripts' ) ) {
             }
 
             //Localized objects (localized to jquery to appear in <head>)
-            wp_localize_script('jquery', 'nebula', $this->script_parameters);
+            //wp_localize_script('jquery', 'nebula', $this->script_parameters);
         }
 
     }

@@ -11,9 +11,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Google_Analytics' ) ) {
+if( !trait_exists( 'Analytics' ) ) {
 
-    trait Nebula_Google_Analytics {
+    trait Analytics {
 
 /*
         public function __construct() {

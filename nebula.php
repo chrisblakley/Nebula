@@ -9,29 +9,47 @@
  */
 
 // Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ exit; }
 
-if( !class_exists( 'Nebula' ) ) {
+if ( !class_exists('Nebula') ){
 
 	require_once(ABSPATH . 'wp-admin/includes/plugin.php');
     require_once(ABSPATH . 'wp-admin/includes/file.php');
 
-	require_once get_template_directory() . '/libs/admin/admin.php';
-    require_once get_template_directory() . '/libs/automation.php';
-    require_once get_template_directory() . '/libs/ecommerce.php';
-    require_once get_template_directory() . '/libs/functions.php';
-    require_once get_template_directory() . '/libs/optimization.php';
-    require_once get_template_directory() . '/libs/options.php';
-    require_once get_template_directory() . '/libs/prototyping.php';
-    require_once get_template_directory() . '/libs/scripts.php';
-    require_once get_template_directory() . '/libs/security.php';
-    require_once get_template_directory() . '/libs/shortcodes.php';
-    require_once get_template_directory() . '/libs/template-engine.php';
-    require_once get_template_directory() . '/libs/template-functions.php';
-    require_once get_template_directory() . '/libs/utilities/utilities.php';
+	//Require Nebula libraries
+/*
+	require_once get_template_directory() . '/libs/template-engine.php';
+	require_once get_template_directory() . '/libs/scripts.php';
+	require_once get_template_directory() . '/libs/options.php';
+	require_once get_template_directory() . '/libs/utilities/utilities.php';
+	require_once get_template_directory() . '/libs/security.php';
+	require_once get_template_directory() . '/libs/optimization.php';
+	require_once get_template_directory() . '/libs/functions.php';
+	require_once get_template_directory() . '/libs/shortcodes.php';
 
-    // Compatibility backwards
+    //Backwards compatibility
     require_once get_template_directory() . '/libs/legacy/legacy.php';
+
+	require_once get_template_directory() . '/libs/admin/admin.php'; //Only require this on admin pages or if admin bar is showing...
+
+    require_once get_template_directory() . '/libs/ecommerce.php'; //Only require this if WooCommerce is active...
+
+    require_once get_template_directory() . '/libs/prototyping.php'; //Only require this if nebula option "prototype_mode" is enabled...
+*/
+
+    require_once get_template_directory() . '/libs/TemplateFunctions.php'; //@todo: Eventually remove this requirement.
+
+
+
+	spl_autoload_register(function($name){ //@todo: is it possible to use this autoloader alone instead of having another one in /Utilities.php and another in /Admin.php? This could also solve the bug where it attempts to load non-existent files...
+		$filepath = get_template_directory() . '/libs/' . $name . '.php';
+
+		if ( file_exists($filepath) ){
+			require_once $filepath;
+		}
+	});
+
+
 
     /**
      * Main Plugin_Name class
@@ -39,18 +57,26 @@ if( !class_exists( 'Nebula' ) ) {
      * @since       1.0.0
      */
     class Nebula {
-		use Nebula_Utilities;
-		use Nebula_Admin;
-		use Nebula_Functions;
-		use Nebula_Automation;
-		use Nebula_Ecommerce;
-		use Nebula_Optimization;
-		use Nebula_Options;
-		use Nebula_Prototyping;
-		use Nebula_Scripts;
-		use Nebula_Security;
-		use Nebula_Shortcodes;
-		use Nebula_Template_Engine;
+		use TemplateEngine;
+		use Scripts;
+		use Options;
+		use Utilities;
+		use Security;
+		use Optimization;
+		use Functions;
+		use Shortcodes;
+
+
+		use Admin; //Only on admin pages or if admin bar is showing...
+
+		use Ecommerce; //Only if WooCommerce is active...
+
+
+		use Prototyping; //Only if nebula option "prototype_mode" is enabled...
+
+
+
+
 
         /**
          * @var         Nebula $instance The one true Plugin_Name
@@ -148,7 +174,6 @@ if( !class_exists( 'Nebula' ) ) {
             if( !self::$instance ) {
                 self::$instance = new Nebula();
                 self::$instance->constants();
-                self::$instance->includes();
                 self::$instance->variables();
                 self::$instance->hooks();
             }
@@ -175,37 +200,6 @@ if( !class_exists( 'Nebula' ) ) {
             define( 'NEBULA_URL', get_template_directory_uri() );
         }
 
-
-        /**
-         * Include necessary files
-         *
-         * @access      private
-         * @since       1.0.0
-         * @return      void
-         */
-        private function includes() {
-            // Includes classes
-/*
-			//Note: had to move these up so the traits could use them.
-            require_once NEBULA_DIR . '/libs/admin/admin.php';
-            require_once NEBULA_DIR . '/libs/automation.php';
-            require_once NEBULA_DIR . '/libs/ecommerce.php';
-            //require_once NEBULA_DIR . '/libs/functions.php';
-            require_once NEBULA_DIR . '/libs/optimization.php';
-            require_once NEBULA_DIR . '/libs/options.php';
-            require_once NEBULA_DIR . '/libs/prototyping.php';
-            require_once NEBULA_DIR . '/libs/scripts.php';
-            require_once NEBULA_DIR . '/libs/security.php';
-            require_once NEBULA_DIR . '/libs/shortcodes.php';
-            require_once NEBULA_DIR . '/libs/template-engine.php';
-            require_once NEBULA_DIR . '/libs/template-functions.php';
-            require_once NEBULA_DIR . '/libs/utilities/utilities.php';
-
-            // Compatibility backwards
-            require_once NEBULA_DIR . '/libs/legacy/legacy.php';
-*/
-        }
-
         /**
          * Set variables
          *
@@ -221,36 +215,7 @@ if( !class_exists( 'Nebula' ) ) {
             if ( !isset($content_width) ){
                 $content_width = 710;
             }
-
-/*
-			//Commented this out because the traits call these now.
-            self::$instance->plugins = array();
-
-            self::$instance->options = new Nebula_Options();
-            self::$instance->utilities = new Nebula_Utilities();
-
-            // Initialize classes
-            if ( is_admin() || is_admin_bar_showing() ) {
-                self::$instance->admin = new Nebula_Admin();
-            }
-            if ( is_admin() ) {
-                self::$instance->automation = new Nebula_Automation();
-            }
-            //Include functions for ecommerce websites
-            if ( is_plugin_active('woocommerce/woocommerce.php') ) {
-                self::$instance->ecommerce = new Nebula_Ecommerce(); // TODO: Should go in a Woocommerce plugin integration
-            }
-            self::$instance->functions = new Nebula_Functions();
-            self::$instance->optimization = new Nebula_Optimization();
-
-            self::$instance->prototyping = new Nebula_Prototyping();
-            self::$instance->scripts = new Nebula_Scripts();
-            self::$instance->security = new Nebula_Security();
-            self::$instance->shortcodes = new Nebula_Shortcodes();
-            self::$instance->template_engine = new Nebula_Template_Engine();
-*/
         }
-
 
         /**
          * Run action and filter hooks
@@ -312,11 +277,17 @@ if( !class_exists( 'Nebula' ) ) {
  * @since       1.0.0
  * @return      Nebula The one true Nebula
  */
-function nebula() {
+add_action('init', 'nebula', 1);
+function nebula(){
     return Nebula::instance();
 }
-add_action( 'init', 'nebula', 1 );
 
+
+
+//Commenting this out along with the others- it can be called via nebula()->register_plugin() directly.
+
+/*
 function nebula_register_plugin( $plugin_name, $plugin_dir ) {
     nebula()->register_plugin( $plugin_name, $plugin_dir );
 }
+*/

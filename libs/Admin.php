@@ -11,14 +11,33 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Admin' ) ) {
 
-	require_once get_template_directory() . '/libs/admin/dashboard.php';
-    require_once get_template_directory() . '/libs/admin/users.php';
 
-    trait Nebula_Admin {
-		use Nebula_Admin_Dashboard;
-		use Nebula_Admin_Users;
+spl_autoload_register(function($name){
+	//echo "***(admin)*** loading: " . $name . "<br>";
+
+	$filepath = get_template_directory() . '/libs/Admin/' . $name . '.php';
+	if ( file_exists($filepath) ){
+		require_once $filepath;
+	} else {
+		//echo "++++++ this file does not exist: " . $filepath . "<br><br>";
+	}
+});
+
+
+
+if( !class_exists( 'Admin' ) ) {
+
+	//Only require these on actual admin pages (not also for admin bar)
+	//require_once get_template_directory() . '/libs/admin/automation.php';
+	//require_once get_template_directory() . '/libs/admin/dashboard.php';
+    //require_once get_template_directory() . '/libs/admin/users.php';
+
+    trait Admin {
+		//Only use these on actual admin pages (not also for admin bar)
+		use Automation;
+		use Dashboard;
+		use Users;
 
         /**
          * @var         Nebula_Admin_Dashboard Nebula admin dashboard
@@ -38,8 +57,8 @@ if( !class_exists( 'Nebula_Admin' ) ) {
             global $pagenow;
 
             // Admin classes
-            require_once NEBULA_DIR . '/libs/admin/dashboard.php';
-            require_once NEBULA_DIR . '/libs/admin/users.php';
+            require_once get_template_directory() . '/libs/admin/dashboard.php';
+            require_once get_template_directory() . '/libs/admin/users.php';
 
             // Initialize admin classes
             $this->dashboard = new Nebula_Admin_Dashboard();

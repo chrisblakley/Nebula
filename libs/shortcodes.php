@@ -11,9 +11,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Shortcodes' ) ) {
+if( !class_exists( 'Shortcodes' ) ) {
 
-    trait Nebula_Shortcodes {
+    trait Shortcodes {
 
 /*
 		//Temporarily commented this out

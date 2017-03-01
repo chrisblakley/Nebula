@@ -11,9 +11,9 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Template_Engine' ) ) {
+if( !class_exists( 'TemplateEngine' ) ) {
 
-    trait Nebula_Template_Engine {
+    trait TemplateEngine {
 
         public $templates;
 

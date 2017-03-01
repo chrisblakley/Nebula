@@ -8,21 +8,33 @@
  * @contributor Ruben Garcia
  */
 
+spl_autoload_register(function($name){ //@todo: since this one is created before the admin autoloader, this one attempts to load the Admin traits too. Not a problem now because there are only 3, but this could become a big issue.
+	//echo "***(utils)*** loading: " . $name . "<br>";
+
+	$filepath = get_template_directory() . '/libs/Utilities/' . $name . '.php';
+	if ( file_exists($filepath) ){
+		require_once $filepath;
+	} else {
+		//echo "++++++ this file does not exist: " . $filepath . "<br><br>";
+	}
+});
+
+
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Nebula_Utilities' ) ) { //@todo: will need to change these to trait_exists()
+if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait_exists()
 
-	require_once get_template_directory() . '/libs/utilities/google-analytics.php';
-    require_once get_template_directory() . '/libs/utilities/visitors.php';
-    require_once get_template_directory() . '/libs/utilities/device-detection.php';
-    require_once get_template_directory() . '/libs/utilities/sass.php';
+	//require_once get_template_directory() . '/libs/utilities/Analytics.php';
+    //require_once get_template_directory() . '/libs/utilities/visitors.php';
+    //require_once get_template_directory() . '/libs/utilities/device.php';
+    //require_once get_template_directory() . '/libs/utilities/sass.php';
 
-    trait Nebula_Utilities {
-		use Nebula_Google_Analytics;
-		use Nebula_Visitors;
-		use Nebula_Device_Detection;
-		use Nebula_Sass;
+    trait Utilities {
+		use Analytics;
+		use Visitors;
+		use Device;
+		use Sass;
 
         /**
          * @var         Nebula_Google_Analytics Nebula google analytics
