@@ -2561,7 +2561,7 @@ function reflow(selector){
 }
 
 //Handle repeated animations in a single function.
-function nebulaAnimate(selector, animationClass){
+function nebulaAnimate(selector, newAnimationClasses, oldAnimationClasses){
 	if ( typeof selector === 'string' ){
 		var element = jQuery(selector);
 	} else if ( typeof selector === 'object' ) {
@@ -2570,13 +2570,17 @@ function nebulaAnimate(selector, animationClass){
 		return false;
 	}
 
-	if ( typeof animationClass === 'undefined' ){
-		animationClass = 'animate';
+	if ( typeof newAnimationClasses === 'undefined' ){
+		newAnimationClasses = 'animate';
 	}
 
-	element.removeClass(animationClass);
+	if ( typeof oldAnimationClasses === 'undefined' ){
+		oldAnimationClasses = '';
+	}
+
+	element.removeClass(newAnimationClasses).removeClass(oldAnimationClasses);
 	reflow(element);
-	element.addClass(animationClass);
+	element.addClass(newAnimationClasses + ' animate');
 }
 
 //Allows something to be called once per pageload.
