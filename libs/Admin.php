@@ -11,27 +11,12 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-
-
-spl_autoload_register(function($name){
-	//echo "***(admin)*** loading: " . $name . "<br>";
-
-	$filepath = get_template_directory() . '/libs/Admin/' . $name . '.php';
-	if ( file_exists($filepath) ){
-		require_once $filepath;
-	} else {
-		//echo "++++++ this file does not exist: " . $filepath . "<br><br>";
-	}
-});
-
-
-
-if( !class_exists( 'Admin' ) ) {
+if( !trait_exists( 'Admin' ) ) {
 
 	//Only require these on actual admin pages (not also for admin bar)
-	//require_once get_template_directory() . '/libs/admin/automation.php';
-	//require_once get_template_directory() . '/libs/admin/dashboard.php';
-    //require_once get_template_directory() . '/libs/admin/users.php';
+	require_once get_template_directory() . '/libs/Admin/Automation.php';
+	require_once get_template_directory() . '/libs/Admin/Dashboard.php';
+    require_once get_template_directory() . '/libs/Admin/Users.php';
 
     trait Admin {
 		//Only use these on actual admin pages (not also for admin bar)

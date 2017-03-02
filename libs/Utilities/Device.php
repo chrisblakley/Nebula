@@ -11,9 +11,7 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-// TODO: This class could be Nebula_Device or Nebula_Device_Info?
-
-if( !class_exists( 'Device' ) ) {
+if( !trait_exists( 'Device' ) ) {
 
     trait Device {
 

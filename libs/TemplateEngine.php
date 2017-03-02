@@ -11,7 +11,7 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'TemplateEngine' ) ) {
+if( !trait_exists( 'TemplateEngine' ) ) {
 
     trait TemplateEngine {
 

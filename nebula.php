@@ -17,39 +17,24 @@ if ( !class_exists('Nebula') ){
     require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 	//Require Nebula libraries
-/*
-	require_once get_template_directory() . '/libs/template-engine.php';
-	require_once get_template_directory() . '/libs/scripts.php';
-	require_once get_template_directory() . '/libs/options.php';
-	require_once get_template_directory() . '/libs/utilities/utilities.php';
-	require_once get_template_directory() . '/libs/security.php';
-	require_once get_template_directory() . '/libs/optimization.php';
-	require_once get_template_directory() . '/libs/functions.php';
-	require_once get_template_directory() . '/libs/shortcodes.php';
+	require_once get_template_directory() . '/libs/TemplateEngine.php';
+	require_once get_template_directory() . '/libs/Scripts.php';
+	require_once get_template_directory() . '/libs/Options.php';
+	require_once get_template_directory() . '/libs/Utilities.php';
+	require_once get_template_directory() . '/libs/Security.php';
+	require_once get_template_directory() . '/libs/Optimization.php';
+	require_once get_template_directory() . '/libs/Functions.php';
+	require_once get_template_directory() . '/libs/Shortcodes.php';
 
     //Backwards compatibility
-    require_once get_template_directory() . '/libs/legacy/legacy.php';
-
-	require_once get_template_directory() . '/libs/admin/admin.php'; //Only require this on admin pages or if admin bar is showing...
-
-    require_once get_template_directory() . '/libs/ecommerce.php'; //Only require this if WooCommerce is active...
-
-    require_once get_template_directory() . '/libs/prototyping.php'; //Only require this if nebula option "prototype_mode" is enabled...
-*/
-
-    require_once get_template_directory() . '/libs/TemplateFunctions.php'; //@todo: Eventually remove this requirement.
+    require_once get_template_directory() . '/libs/Legacy.php';
 
 
+	require_once get_template_directory() . '/libs/Admin.php'; //Only require this on admin pages or if admin bar is showing...
 
-	spl_autoload_register(function($name){ //@todo: is it possible to use this autoloader alone instead of having another one in /Utilities.php and another in /Admin.php? This could also solve the bug where it attempts to load non-existent files...
-		$filepath = get_template_directory() . '/libs/' . $name . '.php';
+    require_once get_template_directory() . '/libs/Ecommerce.php'; //Only require this if WooCommerce is active...
 
-		if ( file_exists($filepath) ){
-			require_once $filepath;
-		}
-	});
-
-
+    require_once get_template_directory() . '/libs/Prototyping.php'; //Only require this if nebula option "prototype_mode" is enabled...
 
     /**
      * Main Plugin_Name class
@@ -66,11 +51,9 @@ if ( !class_exists('Nebula') ){
 		use Functions;
 		use Shortcodes;
 
-
 		use Admin; //Only on admin pages or if admin bar is showing...
 
 		use Ecommerce; //Only if WooCommerce is active...
-
 
 		use Prototyping; //Only if nebula option "prototype_mode" is enabled...
 

@@ -14,7 +14,7 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Users' ) ) {
+if( !trait_exists( 'Users' ) ) {
 
     trait Users {
 

@@ -11,7 +11,7 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Optimization' ) ) {
+if( !trait_exists( 'Optimization' ) ) {
 
     trait Optimization {
 

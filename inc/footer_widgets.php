@@ -6,7 +6,7 @@
 	}
 ?>
 
-<?php if ( footer_widget_counter() != 0 ): //If no active footer widgets, then this section does not generate. ?>
+<?php if ( nebula()->footer_widget_counter() != 0 ): //If no active footer widgets, then this section does not generate. ?>
 	<div class="container footerwidgets">
 		<div class="row">
 			<?php if ( footerWidgetCounter() == 4 ): ?>

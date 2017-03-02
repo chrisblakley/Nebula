@@ -8,27 +8,15 @@
  * @contributor Ruben Garcia
  */
 
-spl_autoload_register(function($name){ //@todo: since this one is created before the admin autoloader, this one attempts to load the Admin traits too. Not a problem now because there are only 3, but this could become a big issue.
-	//echo "***(utils)*** loading: " . $name . "<br>";
-
-	$filepath = get_template_directory() . '/libs/Utilities/' . $name . '.php';
-	if ( file_exists($filepath) ){
-		require_once $filepath;
-	} else {
-		//echo "++++++ this file does not exist: " . $filepath . "<br><br>";
-	}
-});
-
-
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
 if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait_exists()
 
-	//require_once get_template_directory() . '/libs/utilities/Analytics.php';
-    //require_once get_template_directory() . '/libs/utilities/visitors.php';
-    //require_once get_template_directory() . '/libs/utilities/device.php';
-    //require_once get_template_directory() . '/libs/utilities/sass.php';
+	require_once get_template_directory() . '/libs/Utilities/Analytics.php';
+    require_once get_template_directory() . '/libs/Utilities/Visitors.php';
+    require_once get_template_directory() . '/libs/Utilities/Device.php';
+    require_once get_template_directory() . '/libs/Utilities/Sass.php';
 
     trait Utilities {
 		use Analytics;

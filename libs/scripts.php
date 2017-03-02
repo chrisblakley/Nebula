@@ -10,11 +10,11 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Scripts' ) ) {
+if( !trait_exists( 'Scripts' ) ) {
 
     trait Scripts {
 
-        public $script_parameters;
+        public $brain;
 
 		//I left this in for now, but we'll want to figure out a different way to do this if we can't use __construct within traits without conflicts.
         public function __construct() {
@@ -94,8 +94,7 @@ if( !class_exists( 'Scripts' ) ) {
             }
 
             //Be careful changing the following array as many JS functions use this data!
-            $brain = array();
-            $brain = array(
+            $this->brain = array(
                 'site' => array(
                     'name' => get_bloginfo('name'),
                     'directory' => array(
@@ -152,7 +151,7 @@ if( !class_exists( 'Scripts' ) ) {
             $user_info = get_userdata(get_current_user_id());
 
             //User Data
-            $brain['user'] = array(
+            $this->brain['user'] = array(
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'nid' => nebula()->get_nebula_id(),
                 'cid' => nebula()->parse_cookie(),
@@ -210,7 +209,7 @@ if( !class_exists( 'Scripts' ) ) {
             wp_enqueue_script('nebula-main');
 
             //Localized objects (localized to jquery to appear in <head>)
-            wp_localize_script('jquery', 'nebula', $this->script_parameters);
+            wp_localize_script('jquery', 'nebula', $this->brain);
 
             //Conditionals
             if ( nebula()->is_debug() ){ //When ?debug query string is used
@@ -273,7 +272,7 @@ if( !class_exists( 'Scripts' ) ) {
             }
 
             //Localized objects (localized to jquery to appear in <head>)
-            //wp_localize_script('jquery', 'nebula', $this->script_parameters);
+            wp_localize_script('jquery', 'nebula', $this->brain);
         }
 
     }

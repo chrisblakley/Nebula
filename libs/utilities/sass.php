@@ -11,7 +11,7 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Sass' ) ) {
+if( !trait_exists( 'Sass' ) ) {
 
     trait Sass {
 

@@ -13,9 +13,9 @@ namespace Nebula;
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Hubspot' ) ) {
+if( !trait_exists( 'Hubspot' ) ) {
 
-    class Hubspot {
+    trait Hubspot {
 
         public function __construct() {
             /*==========================

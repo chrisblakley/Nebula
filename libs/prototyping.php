@@ -11,7 +11,7 @@
 // Exit if accessed directly
 if( !defined( 'ABSPATH' ) ) exit;
 
-if( !class_exists( 'Prototyping' ) ) {
+if( !trait_exists( 'Prototyping' ) ) {
 
     trait Prototyping {
 

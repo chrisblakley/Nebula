@@ -26,7 +26,7 @@
 <?php endif; ?>
 
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): //If Yoast SEO is not active ?>
-	<meta name="description" content="<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
+	<meta name="description" content="<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
 <?php endif; ?>
 
@@ -35,7 +35,7 @@
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
-	<meta property="og:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
+	<meta property="og:description" content="<?php echo nebula()->excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 	<meta property="og:url" content="<?php the_permalink(); ?>" />
 	<meta property="og:site_name" content="<?php echo get_bloginfo('name'); ?>" />
 
@@ -58,9 +58,9 @@
 
 	<?php if ( !empty($post) && has_post_thumbnail($post->ID) ): ?>
 		<?php if ( get_the_post_thumbnail($post->ID, 'open_graph_large') ): ?>
-			<meta property="og:image" content="<?php echo nebula_get_thumbnail_src($post->ID, 'open_graph_large'); ?>" />
+			<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_large'); ?>" />
 		<?php else: ?>
-			<meta property="og:image" content="<?php echo nebula_get_thumbnail_src($post->ID, 'open_graph_small'); ?>" />
+			<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_small'); ?>" />
 		<?php endif; ?>
 	<?php endif; ?>
 <?php endif; ?>
@@ -79,7 +79,7 @@
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
 
 <?php if ( nebula()->get_browser('name') == 'Safari' ): //Safari ?>
-	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula_sass_color('primary'); ?>" />
+	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />
 <?php endif; ?>
 
 <?php if ( nebula()->get_os('name') == 'iOS' ): //Apple iOS ?>
@@ -105,10 +105,10 @@
 <?php if ( !empty($post) && has_post_thumbnail($post->ID) ): ?>
 	<?php if ( get_the_post_thumbnail($post->ID, 'twitter_large') ): ?>
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:image" content="<?php echo nebula_get_thumbnail_src($post->ID, 'twitter_large'); ?>?<?php echo uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_large'); ?>?<?php echo uniqid(); ?>" />
 	<?php else: ?>
 		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:image" content="<?php echo nebula_get_thumbnail_src($post->ID, 'twitter_small'); ?>?<?php echo uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_small'); ?>?<?php echo uniqid(); ?>" />
 	<?php endif; ?>
 <?php else: ?>
 	<?php if ( file_exists(get_theme_file_path('/assets/img/meta') . '/twitter-card_large.png') ): ?>
@@ -120,7 +120,7 @@
 	<?php endif; ?>
 <?php endif; ?>
 <meta name="twitter:title" content="<?php the_title(); ?>" />
-<meta name="twitter:description" content="<?php echo nebula_excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
+<meta name="twitter:description" content="<?php echo nebula()->excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 <?php if ( nebula()->option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula()->option('twitter_user'); ?>" />
 <?php endif; ?>
@@ -215,7 +215,7 @@
 			}
 
 			if ( nebula()->option('twitter_username') ){
-				$company_same_as .= '"' . nebula_twitter_url() . '",';
+				$company_same_as .= '"' . nebula()->twitter_url() . '",';
 			}
 
 			if ( nebula()->option('google_plus_url') ){
@@ -266,7 +266,7 @@
 				}
 
 				if ( get_the_author_meta('twitter', $user->ID) ){
-					$person_same_as .= '"' . nebula_twitter_url(get_the_author_meta('twitter', $user->ID)) . '",';
+					$person_same_as .= '"' . nebula()->twitter_url(get_the_author_meta('twitter', $user->ID)) . '",';
 				}
 
 				if ( get_the_author_meta('googleplus', $user->ID) ){
@@ -343,7 +343,7 @@
 					"url": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>"
 				}
 			},
-			"description": "<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>"
+			"description": "<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>"
 		}
 	</script>
 <?php endif; ?>

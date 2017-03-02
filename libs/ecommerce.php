@@ -13,7 +13,7 @@ if( !defined( 'ABSPATH' ) ) exit;
 
 //Recommended WooCommerce Google Analytics Plugin: https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/
 
-if( !class_exists( 'Ecommerce' ) ) {
+if( !trait_exists( 'Ecommerce' ) ) {
 
     trait Ecommerce {
 

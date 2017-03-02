@@ -21,29 +21,13 @@ get_header(); ?>
 				<?php if ( get_bloginfo('description') != '' ): ?>
 					<h2><?php echo get_bloginfo('description'); ?></h2>
 				<?php endif; ?>
-				<?php echo nebula_hero_search(); ?>
+				<?php echo nebula()->hero_search(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </div><!--/hero-section-->
 
 <?php get_template_part('inc/nebula_drawer'); ?>
-
-
-
-
-<?php
-
-
-
-	echo nebula()->url_components('domain', 'http://www.something.com/whatever');
-
-
-?>
-
-
-
-
 
 <div id="content-section">
 	<div class="container">
