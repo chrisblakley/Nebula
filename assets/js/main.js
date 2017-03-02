@@ -2570,17 +2570,15 @@ function nebulaAnimate(selector, newAnimationClasses, oldAnimationClasses){
 		return false;
 	}
 
-	if ( typeof newAnimationClasses === 'undefined' ){
-		newAnimationClasses = 'animate';
+	newAnimationClasses += ' animate';
+	element.removeClass(newAnimationClasses); //Remove classes first so they can be re-added.
+
+	if ( oldAnimationClasses ){
+		element.removeClass(oldAnimationClasses); //Remove conflicting animation classes.
 	}
 
-	if ( typeof oldAnimationClasses === 'undefined' ){
-		oldAnimationClasses = '';
-	}
-
-	element.removeClass(newAnimationClasses).removeClass(oldAnimationClasses);
-	reflow(element);
-	element.addClass(newAnimationClasses + ' animate');
+	reflow(element); //Refresh the element so it can be animated again.
+	element.addClass(newAnimationClasses); //Animate the element.
 }
 
 //Allows something to be called once per pageload.
