@@ -15,9 +15,8 @@ if( !trait_exists( 'Prototyping' ) ) {
 
     trait Prototyping {
 
-/*
 		//Temporarily commented this out
-        public function __construct() {
+        public function hooks() {
             if ( nebula()->option('prototype_mode', 'enabled') ){
                 add_action('wp_enqueue_scripts', array( $this, 'enqueue_nebula_wireframing' ) );
 
@@ -47,11 +46,10 @@ if( !trait_exists( 'Prototyping' ) ) {
                 add_action('admin_bar_menu', array( $this, 'admin_bar_nebula_wireframing' ), 900);
             }
         }
-*/
 
         public function enqueue_nebula_wireframing(){
             wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
-            nebula_register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', 'defer', array('nebula-main'), null, true);
+            nebula()->register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', 'defer', array('nebula-main'), null, true);
 
             wp_enqueue_style('nebula-wireframing');
             wp_enqueue_script('nebula-wireframing');
@@ -61,9 +59,9 @@ if( !trait_exists( 'Prototyping' ) ) {
         public function wireframing_body_classes($classes){
             $classes[] = 'nebula-wireframing';
 
-            if ( nebula_dev_phase() == 'wireframe' ){
+            if ( nebula()->dev_phase() == 'wireframe' ){
                 $classes[] = 'nebula-wireframing-wireframe';
-            } elseif ( nebula_dev_phase() == 'staging' ){
+            } elseif ( nebula()->dev_phase() == 'staging' ){
                 $classes[] = 'nebula-wireframing-staging';
             } else {
                 $classes[] = 'nebula-wireframing-production';
@@ -74,9 +72,9 @@ if( !trait_exists( 'Prototyping' ) ) {
 
         //Add a link to Nebula Wireframing on the Admin Bar
         public function admin_bar_nebula_wireframing($wp_admin_bar){
-            if ( nebula_dev_phase() == 'wireframe' ){
+            if ( nebula()->dev_phase() == 'wireframe' ){
                 $wireframe_menu_title = ( !is_admin_page() )? ' (Wireframe)' : '';
-            } elseif ( nebula_dev_phase() == 'staging' ){
+            } elseif ( nebula()->dev_phase() == 'staging' ){
                 $wireframe_menu_title = ( !is_admin_page() )? ' (Staging)' : '';
             } else {
                 $wireframe_menu_title = ( !is_admin_page() )? ' (Production)' : '';
@@ -88,10 +86,10 @@ if( !trait_exists( 'Prototyping' ) ) {
                 'href' => get_admin_url() . 'themes.php?page=nebula_options'
             ));
 
-            if ( nebula_dev_phase() ){
+            if ( nebula()->dev_phase() ){
                 $permalink = ( is_admin_page() )? home_url() : get_permalink();
 
-                if ( nebula_dev_phase() != 'wireframe' && nebula()->option('wireframe_theme') ){
+                if ( nebula()->dev_phase() != 'wireframe' && nebula()->option('wireframe_theme') ){
                     $wp_admin_bar->add_node(array(
                         'parent' => 'nebula-prototype',
                         'id' => 'nebula-wireframe-activate',
@@ -100,7 +98,7 @@ if( !trait_exists( 'Prototyping' ) ) {
                     ));
                 }
 
-                if ( nebula_dev_phase() != 'staging' && nebula()->option('staging_theme') ){
+                if ( nebula()->dev_phase() != 'staging' && nebula()->option('staging_theme') ){
                     $wp_admin_bar->add_node(array(
                         'parent' => 'nebula-prototype',
                         'id' => 'nebula-staging-activate',
@@ -109,7 +107,7 @@ if( !trait_exists( 'Prototyping' ) ) {
                     ));
                 }
 
-                if ( (nebula_dev_phase() != 'production' || is_admin_page()) ){
+                if ( (nebula()->dev_phase() != 'production' || is_admin_page()) ){
                     $wp_admin_bar->add_node(array(
                         'parent' => 'nebula-prototype',
                         'id' => 'nebula-production-activate',
@@ -197,7 +195,7 @@ if( !trait_exists( 'Prototyping' ) ) {
 
             $safe_title = strtolower(str_replace(' ', '-', $title));
 
-            if ( nebula_color_brightness($bg) < 128 ){
+            if ( nebula()->color_brightness($bg) < 128 ){
                 $text_hex = '#fff';
                 $text_rgb = '255';
             } else {
@@ -308,4 +306,4 @@ if( !trait_exists( 'Prototyping' ) ) {
         }
 
     }
-}// End if class_exists check
+}

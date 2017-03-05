@@ -15,8 +15,7 @@ if( !trait_exists( 'Options' ) ) {
 
     trait Options {
 
-/*
-        public function __construct() {
+        public function hooks() {
             //Register all Nebula Options
             add_action('current_screen', array( $this, 'register_options' ) );
 
@@ -24,7 +23,6 @@ if( !trait_exists( 'Options' ) ) {
             add_action('admin_menu', array( $this, 'admin_sub_menu' ) );
 
         }
-*/
 
         /*==========================
          Global Nebula Options Conditional Functions
@@ -35,8 +33,7 @@ if( !trait_exists( 'Options' ) ) {
         //If the desired option is an enabled/disabled dropdown check against that, else check for the option and return the default.
         //Dropdowns: $operand is what to check against (typically 'enabled' or 'disabled').
         //Texts: $operand is the default value to return if option is false.
-        // TODO: This function should be get() -  nebula()->options->get();
-        	//I'm cool with renaming this given the scope- I'm thinking of using nebula()->get_option() since we'll be using traits
+        	//@todo: change to nebula()->get_option() since we'll be using traits
         public function option($option, $operand=false){
             $nebula_options = get_option('nebula_options');
             $requested_dropdown = in_array(strtolower($operand), array('enabled', 'disabled'));
@@ -140,7 +137,7 @@ if( !trait_exists( 'Options' ) ) {
                 if ( $lang === 'css' ){
                     return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
                 } elseif ( $lang === 'js' ){
-                    return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', null, '4.0.0a5', true);
+                    return nebula()->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', null, '4.0.0a5', true);
                 }
             }
 
@@ -148,7 +145,7 @@ if( !trait_exists( 'Options' ) ) {
             if ( $lang === 'css' ){
                 return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css', null, '4.0.0a6', 'all');
             } elseif ( $lang === 'js' ){
-                return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', 'defer', null, '4.0.0a6', true);
+                return nebula()->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', 'defer', null, '4.0.0a6', true);
             }
         }
 
@@ -158,8 +155,8 @@ if( !trait_exists( 'Options' ) ) {
                 'initialized' => '',
                 'scss_last_processed' => 0,
                 'next_version' => '',
-                'current_version' => nebula_version('raw'),
-                'current_version_date' => nebula_version('date'),
+                'current_version' => nebula()->version('raw'),
+                'current_version_date' => nebula()->version('date'),
                 'version_legacy' => 'false',
                 'users_status' => '',
             );
@@ -491,14 +488,14 @@ if( !trait_exists( 'Options' ) ) {
                             <th scope="row">Current Version Number&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
                                 <input type="text" value="<?php echo $nebula_data['current_version']; ?>" readonly />
-                                <p class="helper"><small>This is the Nebula version number when it was last saved. It should match: <strong><?php echo nebula_version('raw'); ?></strong></small></p>
+                                <p class="helper"><small>This is the Nebula version number when it was last saved. It should match: <strong><?php echo nebula()->version('raw'); ?></strong></small></p>
                             </td>
                         </tr>
                         <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
                             <th scope="row">Last Version Date&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
                                 <input type="text" value="<?php echo $nebula_data['current_version_date']; ?>" readonly />
-                                <p class="helper"><small>This is the Nebula version date when it was last saved. It should match: <strong><?php echo nebula_version('date'); ?></strong></small></p>
+                                <p class="helper"><small>This is the Nebula version date when it was last saved. It should match: <strong><?php echo nebula()->version('date'); ?></strong></small></p>
                             </td>
                         </tr>
                         <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
@@ -518,7 +515,7 @@ if( !trait_exists( 'Options' ) ) {
                         <tr class="short hidden" valign="top" style="display: none; visibility: hidden; opacity: 0;">
                             <th scope="row">Online Users&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="text" value="<?php echo nebula_online_users(); ?>" readonly />
+                                <input type="text" value="<?php echo nebula()->online_users(); ?>" readonly />
                                 <p class="helper"><small>Currently online and last seen times of logged in users. A value of 1 or greater indicates it is working.</small></p>
                             </td>
                         </tr>
@@ -686,7 +683,7 @@ if( !trait_exists( 'Options' ) ) {
                     <h2 class="mobiletitle">Functions</h2>
                     <hr class="mobiletitle"/>
 
-                    <?php $nebula_options_defaults = nebula_default_options(); ?>
+                    <?php $nebula_options_defaults = nebula()->default_options(); ?>
 
                     <table class="form-table dependent functions" style="display: none;">
                         <tr class="short" valign="top">
@@ -1119,7 +1116,7 @@ if( !trait_exists( 'Options' ) ) {
                         <tr valign="top">
                             <th scope="row">Valid Hostnames&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="text" name="nebula_options[hostnames]" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo nebula_url_components('domain'); ?>" />
+                                <input type="text" name="nebula_options[hostnames]" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo nebula()->url_components('domain'); ?>" />
                                 <p class="helper"><small>
                                         These help generate regex patterns for Google Analytics filters. It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)!<br />
                                         Include this RegEx pattern for a filter/segment <a href="https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=valid+hostnames%20help" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula()->utilities->valid_hostname_regex(); ?>" readonly style="width: 50%;" />
@@ -1824,67 +1821,4 @@ if( !trait_exists( 'Options' ) ) {
 
     }
 
-}// End if class_exists check
-
-//Removing these in the future:
-
-/*==========================
- Global Nebula Options Conditional Functions
- Options are for customizing Nebula functionality to the needs of each project.
- Data is for values that are used by Nebula functionality to check for reference and conditions.
- ===========================*/
-
-//If the desired option is an enabled/disabled dropdown check against that, else check for the option and return the default.
-//Dropdowns: $operand is what to check against (typically 'enabled' or 'disabled').
-//Texts: $operand is the default value to return if option is false.
-/*
-function nebula()->option($option, $operand=false){
-    return nebula()->options->option($option, $operand);
 }
-
-//Update Nebula options outside of the Nebula Options page
-function nebula_update_option($option, $value){
-    nebula()->options->update_option($option, $value);
-}
-
-//Retrieve non-option Nebula data
-function nebula_data($option){
-    return nebula()->options->data($option);
-}
-
-//Update data outside of the Nebula Options page
-function nebula_update_data($option, $value){
-    nebula()->options->update_data($option, $value);
-}
-*/
-
-/*==========================
- Specific Options Functions
- When using in templates these simplify the syntax to be less confusing.
- ===========================*/
-
-/*
-function nebula_full_address($encoded=false){
-    return nebula()->options->full_address($encoded);
-}
-
-//Get the full Twitter URL for a user
-function nebula_twitter_url($username=false){
-    return nebula()->options->twitter_url($username);
-}
-
-//Register the requested version of Bootstrap.
-function nebula_bootstrap_version($lang=false){
-    return nebula()->options->bootstrap_version($lang);
-}
-
-//Prepare default data values
-function nebula_default_data(){
-    return nebula()->options->default_data();
-}
-
-//Prepare default option values
-function nebula_default_options(){
-    return nebula()->options->default_options();
-}
-*/

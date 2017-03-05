@@ -15,9 +15,8 @@ if( !trait_exists( 'Visitors' ) ) {
 
     trait Visitors {
 
-/*
 		//Commented out temporarily:
-        public function __construct() {
+        public function hooks() {
 
 			//Nebula Visitor Admin Page
 
@@ -88,7 +87,6 @@ if( !trait_exists( 'Visitors' ) ) {
             add_action('wp_ajax_nebula_vdb_ajax_increment_visitor', array( $this, 'ajax_increment_visitor' ) );
             add_action('wp_ajax_nopriv_nebula_vdb_ajax_increment_visitor', array( $this, 'ajax_increment_visitor' ) );
         }
-*/
 
         /*==========================
             Nebula Visitor Admin Page
@@ -819,7 +817,7 @@ if( !trait_exists( 'Visitors' ) ) {
             global $wpdb;
             $remove_nv_table = $wpdb->query("DROP TABLE nebula_visitors_data");
             $remove_nv_table = $wpdb->query("DROP TABLE nebula_visitors");
-            nebula_update_option('visitors_db', 'disabled');
+            nebula()->update_option('visitors_db', 'disabled');
 
             echo admin_url();
 
@@ -836,7 +834,7 @@ if( !trait_exists( 'Visitors' ) ) {
             $override = apply_filters('pre_nebula_vdb_controller', false);
             if ( $override !== false ){return $override;}
 
-            if ( !nebula()->option('visitors_db') || nebula_is_ajax_request() || nebula_is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
+            if ( !nebula()->option('visitors_db') || nebula()->is_ajax_request() || nebula()->is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
                 return false; //Don't add bots to the DB
             }
 
@@ -935,7 +933,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
         //Check if the Nebula ID exists on load and generate/store a new one if it does not.
         public function check_nebula_id(){
-            if ( nebula()->utilities->device_detection->is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
+            if ( nebula()->is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
                 return false; //Don't add bots to the DB
             }
 
@@ -1013,7 +1011,7 @@ if( !trait_exists( 'Visitors' ) ) {
             if ( !empty($force) ){
                 $_COOKIE['nid'] = $force;
             } else {
-                $_COOKIE['nid'] = nebula_version('full') . '.' . bin2hex(openssl_random_pseudo_bytes(5)) . '.' . uniqid(); //Update to random_bytes() when moving to PHP7
+                $_COOKIE['nid'] = nebula()->version('full') . '.' . bin2hex(openssl_random_pseudo_bytes(5)) . '.' . uniqid(); //Update to random_bytes() when moving to PHP7
             }
 
             $nid_expiration = strtotime('January 1, 2035'); //Note: Do not let this cookie expire past 2038 or it instantly expires.
@@ -1034,9 +1032,9 @@ if( !trait_exists( 'Visitors' ) ) {
         }
 
         //Create necessary columns by comparing passed data to existing columns
-        public function nebula_visitors_create_missing_columns($all_data){
+        public function visitors_create_missing_columns($all_data){
             if ( nebula()->option('visitors_db') ){
-                $existing_columns = nebula_visitors_existing_columns(); //Returns an array of current table column names
+                $existing_columns = nebula()->visitors_existing_columns(); //Returns an array of current table column names
 
                 $needed_columns = array();
                 foreach ( $all_data as $column => $value ){
@@ -1111,9 +1109,9 @@ if( !trait_exists( 'Visitors' ) ) {
                     $batch_update_data = $this->increment_visitor_data(array('current_session_pageviews', 'total_pageviews'), false);
 
                     $batch_update_data = $this->append_visitor_data(array(
-                        'last_page_viewed' => nebula_url_components('all'),
+                        'last_page_viewed' => nebula()->url_components('all'),
                         'all_ip_addresses' => sanitize_text_field($_SERVER['REMOTE_ADDR']),
-                        'all_notable_pois' => nebula_poi(),
+                        'all_notable_pois' => nebula()->poi(),
                         'acquisition_channel' => $this->detect_acquisition_channel(),
                         'referrer' => ( $this->is_external_referrer() )? $_SERVER['HTTP_REFERER'] : '',
                     ), false);
@@ -1153,7 +1151,7 @@ if( !trait_exists( 'Visitors' ) ) {
             }
 
             if ( $this->is_external_referrer() ){
-                $hostname = nebula_url_components('host', $_SERVER['HTTP_REFERER']);
+                $hostname = nebula()->url_components('host', $_SERVER['HTTP_REFERER']);
 
                 //Check Email
                 if ( $this->is_email_referrer($_SERVER['HTTP_REFERER']) ){
@@ -1178,7 +1176,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
         //Check if referrer is an email app
         public function is_email_referrer($referrer=false){
-            if ( nebula_url_components('protocol', $referrer) == 'android-app' ){ //Gmail App on Android
+            if ( nebula()->url_components('protocol', $referrer) == 'android-app' ){ //Gmail App on Android
                 return true;
             }
 
@@ -1191,7 +1189,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
         //Check if hostname is a social network
         public function is_social_network($url){
-            $sld = nebula_url_components('sld', $url);
+            $sld = nebula()->url_components('sld', $url);
 
             $social_hostnames = array('facebook.com', 'twitter.com', 't.co', 'linkedin.com', 'reddit.com', 'plus.google.com', 'pinterest.com', 'tumblr.com', 'digg.com', 'stumbleupon.com', 'yelp.com');
             foreach ( $social_hostnames as $social_hostname ){
@@ -1205,7 +1203,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
         //Check if hostname is a seach engine
         public function is_search_engine($url){
-            $sld = nebula_url_components('sld', $url);
+            $sld = nebula()->url_components('sld', $url);
 
             $search_engine_hostnames = array('google.com', 'bing.com', 'yahoo.com', 'baidu.com', 'aol.com', 'ask.com', 'excite.com', 'duckduckgo.com', 'yandex.com', 'lycos.com', 'chacha.com');
             foreach ( $search_engine_hostnames as $search_engine_hostname ){
@@ -1219,7 +1217,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
         //Check for external referrer
         public function is_external_referrer(){
-            if ( !empty($_SERVER['HTTP_REFERER']) && nebula_url_components('domain', $_SERVER['HTTP_REFERER']) != nebula_url_components('domain') ){
+            if ( !empty($_SERVER['HTTP_REFERER']) && nebula()->url_components('domain', $_SERVER['HTTP_REFERER']) != nebula()->url_components('domain') ){
                 return true;
             }
 
@@ -1362,7 +1360,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
                 //Get data from Database
                 if ( $storage_type != 'cache' ){
-                    $nebula_id = ( !empty($alt_nebula_id) )? $alt_nebula_id : nebula_vdb_get_appropriate_nebula_id();
+                    $nebula_id = ( !empty($alt_nebula_id) )? $alt_nebula_id : nebula()->vdb_get_appropriate_nebula_id();
 
                     global $wpdb;
                     $all_visitor_db_data = $wpdb->get_results("SELECT id, label, value FROM nebula_visitors_data WHERE nebula_id = '" . sanitize_text_field($nebula_id) . "' ORDER BY id"); //DB Query here
@@ -1412,7 +1410,7 @@ if( !trait_exists( 'Visitors' ) ) {
         //Check if the page was refreshed
         public function is_page_refresh(){
             $last_page_viewed = $this->get_visitor_datapoint('last_page_viewed');
-            if ( $last_page_viewed == nebula_url_components('all') ){
+            if ( $last_page_viewed == nebula()->url_components('all') ){
                 return true;
             }
 
@@ -1492,7 +1490,7 @@ if( !trait_exists( 'Visitors' ) ) {
                 }
 
                 if ( !empty($data_to_send) ){
-                    nebula_update_visitor($data_to_send);
+                    nebula()->update_visitor($data_to_send);
                 }
             }
             return false;
@@ -1659,7 +1657,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
                 //Add data here to append everytime (if different than prior)
                 //IP Geolocation
-                $ip_geolocation = nebula_ip_location('all');
+                $ip_geolocation = nebula()->ip_location('all');
                 if ( !empty($ip_geolocation) ){
                     $data['ip_geo'] = sanitize_text_field($ip_geolocation->city) . ', ' . sanitize_text_field($ip_geolocation->region_name) . ' ' . sanitize_text_field($ip_geolocation->zip_code) . ', ' . sanitize_text_field($ip_geolocation->country_name) . ' (' . sanitize_text_field($_SERVER['REMOTE_ADDR']) . ')';
                 }
@@ -1802,8 +1800,8 @@ if( !trait_exists( 'Visitors' ) ) {
                     'is_known' => '0',
                     'ip_address' => sanitize_text_field($_SERVER['REMOTE_ADDR']),
                     'all_ip_addresses' => sanitize_text_field($_SERVER['REMOTE_ADDR']),
-                    'notable_poi' => nebula_poi(),
-                    'all_notable_pois' => nebula_poi(),
+                    'notable_poi' => nebula()->poi(),
+                    'all_notable_pois' => nebula()->poi(),
                     'created_on' => time(),
                     'lead_score' => 0,
                     'demographic_score' => 0,
@@ -1820,19 +1818,19 @@ if( !trait_exists( 'Visitors' ) ) {
                     'prev_session_on' => round(time()/60)*60, //Rounded to the nearest minute
                     'last_session_id' => session_id(),
                     'last_seen_on' => round(time()/60)*60, //Rounded to the nearest minute
-                    'nebula_session_id' => nebula_session_id(),
+                    'nebula_session_id' => nebula()->session_id(),
                     'current_session_on' => round(time()/60)*60, //Rounded to the nearest minute
                     'current_session_duration' => 0,
                     'current_session_pageviews' => 1,
                     'total_pageviews' => 1,
-                    'landing_page' => nebula_url_components('all'),
-                    'last_page_viewed' => nebula_url_components('all'),
+                    'landing_page' => nebula()->url_components('all'),
+                    'last_page_viewed' => nebula()->url_components('all'),
                     'notes' => '',
                     'notices' => '',
                 );
 
                 //Attempt to detect IP Geolocation data using https://freegeoip.net/
-                $ip_geolocation = nebula_ip_location('all');
+                $ip_geolocation = nebula()->ip_location('all');
                 if ( !empty($ip_geolocation) ){
                     $defaults['ip_country'] = sanitize_text_field($ip_geolocation->country_name);
                     $defaults['ip_region'] = sanitize_text_field($ip_geolocation->region_name);
@@ -1972,9 +1970,9 @@ if( !trait_exists( 'Visitors' ) ) {
                 }
 
                 $defaults['ga_cid'] = ga_parse_cookie();
-                $defaults['notable_poi'] = nebula_poi();
+                $defaults['notable_poi'] = nebula()->poi();
                 $defaults['last_modified_on'] = time();
-                $defaults['nebula_session_id'] = nebula_session_id();
+                $defaults['nebula_session_id'] = nebula()->session_id();
 
                 if ( is_staff() ){
                     $defaults['is_staff'] = '1';
@@ -2062,7 +2060,7 @@ if( !trait_exists( 'Visitors' ) ) {
                 }
 
                 //Request information
-                if ( !nebula_is_ajax_request() ){
+                if ( !nebula()->is_ajax_request() ){
                     $defaults['http_accept'] = $_SERVER['HTTP_ACCEPT'];
                     $defaults['http_encoding'] = $_SERVER['HTTP_ACCEPT_ENCODING'];
                     $defaults['http_language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -2070,19 +2068,19 @@ if( !trait_exists( 'Visitors' ) ) {
 
                 //Device information
                 $defaults['user_agent'] = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
-                $defaults['device_form_factor'] = ( nebula_get_device('formfactor') )? nebula_get_device('formfactor') : 'Unknown';
-                $defaults['device_full'] = ( nebula_get_device('full') )? nebula_get_device('full') : 'Unknown';
-                $defaults['device_brand'] = ( nebula_get_device('brand') )? nebula_get_device('brand') : 'Unknown';
-                $defaults['device_model'] = ( nebula_get_device('model') )? nebula_get_device('model') : 'Unknown';
-                $defaults['device_type'] = ( nebula_get_device('type') )? nebula_get_device('type') : 'Unknown';
-                $defaults['os_full'] = ( nebula_get_os('full') )? nebula_get_os('full') : 'Unknown';
-                $defaults['os_name'] = ( nebula_get_os('name') )? nebula_get_os('name') : 'Unknown';
-                $defaults['os_version'] = ( nebula_get_os('version') )? nebula_get_os('version') : 'Unknown';
-                $defaults['browser_full'] = ( nebula_get_browser('full') )? nebula_get_browser('full') : 'Unknown';
-                $defaults['browser_name'] = ( nebula_get_browser('name') )? nebula_get_browser('name') : 'Unknown';
-                $defaults['browser_version'] = ( nebula_get_browser('version') )? nebula_get_browser('version') : 'Unknown';
-                $defaults['browser_engine'] = ( nebula_get_browser('engine') )? nebula_get_browser('engine') : 'Unknown';
-                $defaults['browser_type'] = ( nebula_get_browser('type') )? nebula_get_browser('type') : 'Unknown';
+                $defaults['device_form_factor'] = ( nebula()->get_device('formfactor') )? nebula()->get_device('formfactor') : 'Unknown';
+                $defaults['device_full'] = ( nebula()->get_device('full') )? nebula()->get_device('full') : 'Unknown';
+                $defaults['device_brand'] = ( nebula()->get_device('brand') )? nebula()->get_device('brand') : 'Unknown';
+                $defaults['device_model'] = ( nebula()->get_device('model') )? nebula()->get_device('model') : 'Unknown';
+                $defaults['device_type'] = ( nebula()->get_device('type') )? nebula()->get_device('type') : 'Unknown';
+                $defaults['os_full'] = ( nebula()->get_os('full') )? nebula()->get_os('full') : 'Unknown';
+                $defaults['os_name'] = ( nebula()->get_os('name') )? nebula()->get_os('name') : 'Unknown';
+                $defaults['os_version'] = ( nebula()->get_os('version') )? nebula()->get_os('version') : 'Unknown';
+                $defaults['browser_full'] = ( nebula()->get_browser('full') )? nebula()->get_browser('full') : 'Unknown';
+                $defaults['browser_name'] = ( nebula()->get_browser('name') )? nebula()->get_browser('name') : 'Unknown';
+                $defaults['browser_version'] = ( nebula()->get_browser('version') )? nebula()->get_browser('version') : 'Unknown';
+                $defaults['browser_engine'] = ( nebula()->get_browser('engine') )? nebula()->get_browser('engine') : 'Unknown';
+                $defaults['browser_type'] = ( nebula()->get_browser('type') )? nebula()->get_browser('type') : 'Unknown';
 
                 //Information based on other visitor data
                 $defaults['most_identifiable'] = $this->most_identifiable_label($defaults, false);
@@ -2108,7 +2106,7 @@ if( !trait_exists( 'Visitors' ) ) {
                 $fingerprint .= ( !empty($_SERVER['HTTP_ACCEPT']) )? $this->smash_text($_SERVER['HTTP_ACCEPT']) : '';
                 $fingerprint .= ( !empty($_SERVER['HTTP_ACCEPT_ENCODING']) )? $this->smash_text($_SERVER['HTTP_ACCEPT_ENCODING']) : '';
                 $fingerprint .= ( !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) )? $this->smash_text($_SERVER['HTTP_ACCEPT_LANGUAGE']) : '';
-                $fingerprint .= nebula_ip_location('timezone');
+                $fingerprint .= nebula()->ip_location('timezone');
 
                 return $fingerprint;
             } else { //Use provided $data (so AJAX doesn't alter server-side detections)
@@ -2443,7 +2441,7 @@ if( !trait_exists( 'Visitors' ) ) {
             if ( nebula()->option('visitors_db') ){
 
                 $nebula_visitor_remove_expired = get_transient('nebula_visitor_db_remove_expired');
-                if ( empty($nebula_visitor_remove_expired) || !empty($force) || is_debug() ){
+                if ( empty($nebula_visitor_remove_expired) || !empty($force) || nebula()->is_debug() ){
                     global $wpdb;
 
                     //Remove visitors who haven't been modified in the last 90 days and are not known
@@ -2508,12 +2506,12 @@ if( !trait_exists( 'Visitors' ) ) {
                 $known_visitor = $wpdb->get_results("SELECT * FROM nebula_visitors WHERE nebula_id LIKE '" . $nebula_id . "' AND (email_address REGEXP '.+@.+\..+' OR hubspot_vid REGEXP '^\d+$')");
                 if ( !empty($known_visitor) ){
                     if ( !is_known() ){
-                        nebula_update_visitor(array('known' => '1')); //Update to known visitor (if previously unknown)
+                        nebula()->update_visitor(array('known' => '1')); //Update to known visitor (if previously unknown)
                     }
 
                     $known_visitor_data = (array) $known_visitor[0];
                     if ( !empty($send_to_hubspot) ){
-                        nebula_prep_data_for_hubspot_crm_delivery($known_visitor_data);
+                        nebula()->prep_data_for_hubspot_crm_delivery($known_visitor_data);
                     }
                     return true;
                 }
@@ -2574,10 +2572,10 @@ if( !trait_exists( 'Visitors' ) ) {
                     );
                 }
 
-                nebula_send_to_hubspot($data_for_hubspot);
+                nebula()->send_to_hubspot($data_for_hubspot);
             }
         }
 
     }
 
-}// End if class_exists check
+}

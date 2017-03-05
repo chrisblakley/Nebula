@@ -16,7 +16,7 @@ if( !trait_exists( 'Sass' ) ) {
     trait Sass {
 
 		//Temporarily commented out
-        //public function __construct() {
+        public function hooks() {
 			/*==========================
                 Nebula Sass Compiling
                 Add directories to be checked for .scss files by using the filter "nebula_scss_locations". Example:
@@ -31,8 +31,8 @@ if( !trait_exists( 'Sass' ) ) {
                 }
              ===========================*/
 
-        //    add_action('init', array( $this, 'scss_controller' ) );
-        //}
+            add_action('init', array( $this, 'scss_controller' ) );
+        }
 
         public function scss_controller(){
             if ( !is_writable(get_template_directory()) ){
@@ -73,8 +73,8 @@ if( !trait_exists( 'Sass' ) ) {
                 }
 
                 //If SCSS has not been rendered in 1 month, disable the option.
-                if ( time()-nebula_data('scss_last_processed') >= 2592000 ){
-                    nebula_update_option('scss', 'disabled');
+                if ( time()-nebula()->data('scss_last_processed') >= 2592000 ){
+                    nebula()->update_option('scss', 'disabled');
                 }
             } elseif ( is_dev() && !is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
                 trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
@@ -153,12 +153,12 @@ if( !trait_exists( 'Sass' ) ) {
                         wp_mkdir_p($location_paths['directory'] . '/stylesheets/css'); //Create the /css directory (in case it doesn't exist already).
 
                         //If style.css has been edited after style.scss, save backup but continue compiling SCSS
-                        if ( (is_child_theme() && $location_name != 'parent' ) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula_data('scss_last_processed') != '0' && nebula_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
+                        if ( (is_child_theme() && $location_name != 'parent' ) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula()->data('scss_last_processed') != '0' && nebula()->data('scss_last_processed')-filemtime($css_filepath) < -30) ){
                             copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
                             if ( is_dev() || current_user_can('manage_options') ){
                                 global $scss_debug_ref;
                                 $scss_debug_ref = $location_name . ':';
-                                $scss_debug_ref .= (nebula_data('scss_last_processed')-filemtime($css_filepath));
+                                $scss_debug_ref .= (nebula()->data('scss_last_processed')-filemtime($css_filepath));
                                 add_action('wp_head', array( $this, 'scss_console_warning' ) ); //Call the console error note
                             }
                         }
@@ -176,7 +176,7 @@ if( !trait_exists( 'Sass' ) ) {
                                 $compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
                                 $enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
                                 $wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
-                                nebula_update_data('scss_last_processed', time());
+                                nebula()->update_data('scss_last_processed', time());
                             }
                         }
                     }
@@ -253,7 +253,7 @@ if( !trait_exists( 'Sass' ) ) {
             $scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
             do_action('nebula_scss_post_compile');
             $scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
-            nebula_update_data('scss_last_processed', time());
+            nebula()->update_data('scss_last_processed', time());
 
             return $scss;
         }
@@ -313,11 +313,4 @@ if( !trait_exists( 'Sass' ) ) {
 
     }
 
-}// End if class_exists check
-
-/*
-//Pull certain colors from .../mixins/_variables.scss
-function nebula_sass_color($color='primary', $theme='child'){
-    return nebula()->utilities->sass->sass_color( $return );
 }
-*/

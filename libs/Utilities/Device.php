@@ -15,14 +15,12 @@ if( !trait_exists( 'Device' ) ) {
 
     trait Device {
 
-/*
 		//Temporarily commented out
-        public function __construct() {
+        public function hooks() {
             //Device Detection - https://github.com/piwik/device-detector
             //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
             add_action('init', array( $this, 'detect' ) );
         }
-*/
 
         /*==========================
          User Agent Parsing Functions/Helpers
@@ -147,9 +145,9 @@ if( !trait_exists( 'Device' ) ) {
                 $version_parts = explode('.', $version);
                 if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
                     if ( !empty($version) ){
-                        if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
+                        if ( nebula()->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
                             if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
-                                if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
+                                if ( nebula()->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
                                     return true;
                                 } else {
                                     return false;
@@ -192,9 +190,9 @@ if( !trait_exists( 'Device' ) ) {
                         return $GLOBALS["device_detect"]->getDeviceName();
                         break;
                     case 'formfactor':
-                        if ( nebula_is_mobile() ){
+                        if ( nebula()->is_mobile() ){
                             return 'mobile';
-                        } elseif ( nebula_is_tablet() ){
+                        } elseif ( nebula()->is_tablet() ){
                             return 'tablet';
                         } else {
                             return 'desktop';
@@ -325,9 +323,9 @@ if( !trait_exists( 'Device' ) ) {
                 $version_parts = explode('.', $version);
                 if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
                     if ( !empty($version) ){
-                        if ( nebula_compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
+                        if ( nebula()->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
                             if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
-                                if ( nebula_compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
+                                if ( nebula()->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
                                     return true;
                                 } else {
                                     return false;
@@ -403,22 +401,3 @@ if( !trait_exists( 'Device' ) ) {
     }
 
 }
-
-//Removing these in the future:
-
-//Check for bot/crawler traffic
-/*
-function nebula_is_bot(){
-    return nebula()->utilities->device_detection->is_bot();
-}
-
-//Check for bot/crawler traffic
-function nebula_get_browser($info='name'){
-    return nebula()->utilities->device_detection->get_browser($info);
-}
-
-//Returns the requested information of the operating system of the user's device.
-function nebula_get_os($info='name'){
-    return nebula()->utilities->device_detection->get_os($info);
-}
-*/

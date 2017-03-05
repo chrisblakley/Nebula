@@ -18,9 +18,8 @@ if( !trait_exists( 'Users' ) ) {
 
     trait Users {
 
-/*
 		//Temporarily commented this out
-        public function __construct() {
+        public function hooks() {
             //Update user online status
             add_action('init', array( $this, 'users_status_init' ) );
             add_action('admin_init', array( $this, 'users_status_init' ) );
@@ -47,12 +46,11 @@ if( !trait_exists( 'Users' ) ) {
             add_action('personal_options_update', array( $this, 'save_extra_profile_fields' ) );
             add_action('edit_user_profile_update', array( $this, 'save_extra_profile_fields' ) );
         }
-*/
 
         //Update user online status
         public function users_status_init(){
             if ( is_user_logged_in() ){
-                $logged_in_users = nebula_data('users_status');
+                $logged_in_users = nebula()->data('users_status');
 
                 $unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
                 $current_user = wp_get_current_user();
@@ -66,11 +64,11 @@ if( !trait_exists( 'Users' ) ) {
                         'last' => time(),
                         'unique' => array($unique_id),
                     );
-                    nebula_update_data('users_status', $logged_in_users);
+                    nebula()->update_data('users_status', $logged_in_users);
                 } else {
                     if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
                         array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
-                        nebula_update_data('users_status', $logged_in_users);
+                        nebula()->update_data('users_status', $logged_in_users);
                     }
                 }
             }
@@ -90,14 +88,14 @@ if( !trait_exists( 'Users' ) ) {
                 return get_the_author_meta('jobcompany', $id);
             }
             if ( $column_name === 'status' ){
-                if ( nebula_is_user_online($id) ){
+                if ( nebula()->is_user_online($id) ){
                     $online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
-                    if ( nebula_user_single_concurrent($id) > 1 ){
-                        $online_now .= '<br/><small>(<strong>' . nebula_user_single_concurrent($id) . '</strong> locations)</small>';
+                    if ( nebula()->user_single_concurrent($id) > 1 ){
+                        $online_now .= '<br/><small>(<strong>' . nebula()->user_single_concurrent($id) . '</strong> locations)</small>';
                     }
                     return $online_now;
                 } else {
-                    return ( nebula_user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula_user_last_online($id)) . '</em></small>' : '';
+                    return ( nebula()->user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula()->user_last_online($id)) . '</em></small>' : '';
                 }
             }
             if ( $column_name === 'id' ){
@@ -231,7 +229,7 @@ if( !trait_exists( 'Users' ) ) {
 
             //If editing own user, update NVDB
             if ( $user_id === get_current_user_id() ){
-                nebula()->utilities->visitors->update_visitor(array(
+                nebula()->update_visitor(array(
                     'job_title' => sanitize_text_field($_POST['jobtitle']),
                     'company' => sanitize_text_field($_POST['jobcompany']),
                     'company_website' => sanitize_text_field($_POST['jobcompanywebsite']),
@@ -244,4 +242,4 @@ if( !trait_exists( 'Users' ) ) {
 
     }
 
-}// End if class_exists check
+}

@@ -14,12 +14,9 @@ if( !defined( 'ABSPATH' ) ) exit;
 if( !trait_exists( 'TemplateEngine' ) ) {
 
     trait TemplateEngine {
-
         public $templates;
 
-/*
-		//Temporarily commented this out
-        public function __construct() {
+        public function hooks(){
             $this->templates = array();
 
             // Default wordpress query templates
@@ -53,7 +50,6 @@ if( !trait_exists( 'TemplateEngine' ) ) {
             // Search for plugin templates
             add_filter( 'template_include', array( $this, 'template_include' ) );
         }
-*/
 
         /**
          * Stores last wordpress searched templates into $this->templates
@@ -165,7 +161,7 @@ if( !trait_exists( 'TemplateEngine' ) ) {
                 return $template;
             } else {
                 // Search in all registered plugins (in reversed order) template folder to check if template exists
-                foreach(array_reverse(nebula()->plugins) as $nebula_plugin => $nebula_plugin_features) {
+                foreach(array_reverse(nebula()->plugins) as $nebula_plugin => $nebula_plugin_features) { //@todo: Warning: array_reverse() expects parameter 1 to be array, null given
                     if($nebula_plugin_features['templates']) {
                         foreach ($this->templates as $template_name) {
                             if (file_exists($nebula_plugin_features['path'] . 'templates/' . $template_name)) {

@@ -19,7 +19,7 @@ trait Functions {
     public $linkedin_widget_loaded;
     public $pinterest_widget_loaded;
 
-    public function old_construct() {
+    public function hooks() {
         global $pagenow;
 
         $this->twitter_widget_loaded = false;
@@ -47,7 +47,7 @@ trait Functions {
 
         //Create/Write a manifest JSON file
         if ( is_writable(get_template_directory()) ){
-            if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-(60*60*24)) || is_debug() ){ //@todo: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
+            if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-(60*60*24)) || nebula()->is_debug() ){ //@todo: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
                 add_action('init', array( $this, 'manifest_json' ) );
                 add_action('admin_init', array( $this, 'manifest_json' ) );
             }
@@ -208,28 +208,28 @@ trait Functions {
 
     //Add the Nebula note to the browser console (if enabled)
     public function calling_card(){
-        if ( !nebula()->option('device_detection') || (nebula_is_desktop() && !nebula_is_browser('ie') && !nebula_is_browser('edge')) ){
+        if ( !nebula()->option('device_detection') || (nebula()->is_desktop() && !nebula()->is_browser('ie') && !nebula()->is_browser('edge')) ){
             echo "<script>console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
         }
     }
 
     //Check for warnings and send them to the console.
     public function console_warnings($console_warnings=array()){
-        if ( is_dev() && nebula()->option('admin_notices') ){
+        if ( nebula()->is_dev() && nebula()->option('admin_notices') ){
             if ( empty($console_warnings) || is_string($console_warnings) ){
                 $console_warnings = array();
             }
 
             //If search indexing is disabled
             if ( get_option('blog_public') == 0 ){
-                if ( is_site_live() ){
+                if ( nebula()->is_site_live() ){
                     $console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
                 } elseif ( nebula()->option('prototype_mode', 'disabled') ){
                     $console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
                 }
             }
 
-            if ( is_site_live() && nebula()->option('prototype_mode', 'enabled') ){
+            if ( nebula()->is_site_live() && nebula()->option('prototype_mode', 'enabled') ){
                 $console_warnings[] = array('warn', 'Prototype Mode is enabled!');
             }
 
@@ -563,9 +563,9 @@ trait Functions {
 	}
 
 	//Use this instead of the_excerpt(); and get_the_excerpt(); to have better control over the excerpt.
-	//Inside the loop (or outside the loop for current post/page): nebula_excerpt(array('length' => 20, 'ellipsis' => true));
-	//Outside the loop: nebula_excerpt(array('id' => 572, 'length' => 20, 'ellipsis' => true));
-	//Custom text: nebula_excerpt(array('text' => 'Lorem ipsum <strong>dolor</strong> sit amet.', 'more' => 'Continue &raquo;', 'length' => 3, 'ellipsis' => true, 'strip_tags' => true));
+	//Inside the loop (or outside the loop for current post/page): nebula()->excerpt(array('length' => 20, 'ellipsis' => true));
+	//Outside the loop: nebula()->excerpt(array('id' => 572, 'length' => 20, 'ellipsis' => true));
+	//Custom text: nebula()->excerpt(array('text' => 'Lorem ipsum <strong>dolor</strong> sit amet.', 'more' => 'Continue &raquo;', 'length' => 3, 'ellipsis' => true, 'strip_tags' => true));
 	public function excerpt($options=array()){
 	    $override = apply_filters('pre_nebula_excerpt', false, $options);
 	    if ( $override !== false ){return $override;}
@@ -721,10 +721,10 @@ trait Functions {
 	    $override = apply_filters('pre_nebula_twitter_follow', false, $counts, $username);
 	    if ( $override !== false ){echo $override; return;}
 
-	    if ( empty($username) && !nebula_option('twitter_username') ){
+	    if ( empty($username) && !nebula()->option('twitter_username') ){
 	        return false;
-	    } elseif ( empty($username) && nebula_option('twitter_username') ){
-	        $username = nebula_option('twitter_username');
+	    } elseif ( empty($username) && nebula()->option('twitter_username') ){
+	        $username = nebula()->option('twitter_username');
 	    } elseif ( strpos($username, '@') === false ){
 	        $username = '@' . $username;
 	    }
@@ -1115,7 +1115,7 @@ trait Functions {
 	}
 
 	//Infinite Load
-	// Ajax call handle in nebula()->functions->infinite_load();
+	// Ajax call handle in nebula()->infinite_load();
 	public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
 	    $override = apply_filters('pre_nebula_infinite_load_query', false);
 	    if ( $override !== false ){return;}
@@ -1809,7 +1809,7 @@ trait Functions {
         ));
 
         //Footer text
-        $wp_customize->add_setting('nebula_footer_text', array('default' => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula_version('full') . ', <em>all rights reserved</em>.'));
+        $wp_customize->add_setting('nebula_footer_text', array('default' => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula()->version('full') . ', <em>all rights reserved</em>.'));
         $wp_customize->add_control('nebula_footer_text', array(
             'label' => 'Footer text',
             'section' => 'footer',
@@ -2028,14 +2028,14 @@ trait Functions {
         $bearer = nebula()->option('twitter_bearer_token', '');
 
         $tweets = get_transient('nebula_twitter_' . $username);
-        if ( empty($tweets) || is_debug() ){
+        if ( empty($tweets) || nebula()->is_debug() ){
             $args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
-            if ( !nebula_is_available($feed) ){
+            if ( !nebula()->is_available($feed) ){
                 return false;
             }
             $response = wp_remote_get($feed, $args);
             if ( is_wp_error($response) ){
-                set_transient('nebula_site_available_' . str_replace('.', '_', nebula_url_components('hostname', $feed)), 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
+                set_transient('nebula_site_available_' . str_replace('.', '_', nebula()->url_components('hostname', $feed)), 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
                 return false;
             }
 
@@ -2127,7 +2127,7 @@ trait Functions {
         $types = json_decode(sanitize_text_field(trim($_POST['types'])));
 
         //Test for close or exact matches. Use: $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-        function nebula_close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
+        function close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
             if ( $rating > $exact_threshold ){
                 return ' exact-match';
             } elseif ( $rating > $close_threshold ){
@@ -2182,7 +2182,7 @@ trait Functions {
                 } elseif ( is_sticky() ){ //@TODO "Nebula" 0: If sticky post. is_sticky() does not work here?
                     $suggestion['classes'] .= ' sticky-post';
                 }
-                $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+                $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
                 $suggestions[] = $suggestion;
             }
         }
@@ -2203,7 +2203,7 @@ trait Functions {
                 if ( $suggestion['similarity'] >= 50 ){
                     $suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
                     $suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
-                    $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+                    $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
                     if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
                         $suggestion['link'] = get_attachment_link($attachment->ID);
                     } else {
@@ -2223,7 +2223,7 @@ trait Functions {
 
         //Find menu items
         $menus = get_transient('nebula_autocomplete_menus');
-        if ( empty($menus) || is_debug() ){
+        if ( empty($menus) || nebula()->is_debug() ){
             $menus = get_terms('nav_menu');
             set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
         }
@@ -2247,11 +2247,11 @@ trait Functions {
                     if ( $path_parts['extension'] ){
                         $suggestion['classes'] .= ' file-' . $path_parts['extension'];
                         $suggestion['external'] = true;
-                    } elseif ( !strpos($suggestion['link'], nebula_url_components('domain')) ){
+                    } elseif ( !strpos($suggestion['link'], nebula()->url_components('domain')) ){
                         $suggestion['classes'] .= ' external-link';
                         $suggestion['external'] = true;
                     }
-                    $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+                    $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
                     $suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
                     $suggestions[] = $suggestion;
                     break;
@@ -2261,7 +2261,7 @@ trait Functions {
 
         //Find categories
         $categories = get_transient('nebula_autocomplete_categories');
-        if ( empty($categories) || is_debug() ){
+        if ( empty($categories) || nebula()->is_debug() ){
             $categories = get_categories();
             set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
         }
@@ -2273,7 +2273,7 @@ trait Functions {
                 $suggestion['label'] = $category->name;
                 $suggestion['link'] = get_category_link($category->term_id);
                 $suggestion['classes'] = 'type-category';
-                $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+                $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
                 $suggestions[] = $suggestion;
                 $cat_count++;
             }
@@ -2284,7 +2284,7 @@ trait Functions {
 
         //Find tags
         $tags = get_transient('nebula_autocomplete_tags');
-        if ( empty($tags) || is_debug() ){
+        if ( empty($tags) || nebula()->is_debug() ){
             $tags = get_tags();
             set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
         }
@@ -2296,7 +2296,7 @@ trait Functions {
                 $suggestion['label'] = $tag->name;
                 $suggestion['link'] = get_tag_link($tag->term_id);
                 $suggestion['classes'] = 'type-tag';
-                $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+                $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
                 $suggestions[] = $suggestion;
                 $tag_count++;
             }
@@ -2308,7 +2308,7 @@ trait Functions {
         //Find authors (if author bios are enabled)
         if ( nebula()->option('author_bios', 'enabled') ){
             $authors = get_transient('nebula_autocomplete_authors');
-            if ( empty($authors) || is_debug() ){
+            if ( empty($authors) || nebula()->is_debug() ){
                 $authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
                 set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
             }
@@ -2319,7 +2319,7 @@ trait Functions {
                     $suggestion['label'] = $author_name;
                     $suggestion['link'] = 'http://google.com/';
                     $suggestion['classes'] = 'type-user';
-                    $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
+                    $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
                     $suggestion['similarity'] = ''; //todo: save similarity to array too
                     $suggestions[] = $suggestion;
                     break;
@@ -2474,7 +2474,7 @@ trait Functions {
     public function internal_suggestions(){
         if ( is_404() ){
             global $slug_keywords;
-            $slug_keywords = array_filter(explode('/', nebula_url_components('filepath')));
+            $slug_keywords = array_filter(explode('/', nebula()->url_components('filepath')));
             $slug_keywords = end($slug_keywords);
 
             global $error_query;
@@ -2496,27 +2496,27 @@ trait Functions {
         $underscores_and_hyphens = array('_', '-');
 
         //Device
-        $classes[] = strtolower(nebula()->utilities->device_detection->get_device('formfactor')); //Form factor (desktop, tablet, mobile)
-        $classes[] = strtolower(nebula()->utilities->device_detection->get_device('full')); //Device make and model
-        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_os('full'))); //Operating System name with version
-        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_os('name'))); //Operating System name
-        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_browser('full'))); //Browser name and version
-        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_browser('name'))); //Browser name
-        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->utilities->device_detection->get_browser('engine'))); //Rendering engine
+        $classes[] = strtolower(nebula()->get_device('formfactor')); //Form factor (desktop, tablet, mobile)
+        $classes[] = strtolower(nebula()->get_device('full')); //Device make and model
+        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_os('full'))); //Operating System name with version
+        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_os('name'))); //Operating System name
+        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_browser('full'))); //Browser name and version
+        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_browser('name'))); //Browser name
+        $classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_browser('engine'))); //Rendering engine
 
         //When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
-        if ( nebula()->utilities->device_detection->get_browser('name') == 'Chrome Mobile' ){
+        if ( nebula()->get_browser('name') == 'Chrome Mobile' ){
             $classes[] = 'chrome';
         }
 
         //IE versions outside conditional comments
-        if ( nebula()->utilities->device_detection->is_browser('ie') ){
-            if ( nebula()->utilities->device_detection->is_browser('ie', '10') ){
+        if ( nebula()->is_browser('ie') ){
+            if ( nebula()->is_browser('ie', '10') ){
                 $classes[] = 'ie';
                 $classes[] = 'ie10';
                 $classes[] = 'lte-ie10';
                 $classes[] = 'lt-ie11';
-            } elseif ( nebula()->utilities->device_detection->is_browser('ie', '11') ){
+            } elseif ( nebula()->is_browser('ie', '11') ){
                 $classes[] = 'ie';
                 $classes[] = 'ie11';
                 $classes[] = 'lte-ie11';
@@ -2559,7 +2559,7 @@ trait Functions {
         }
         $nebula_theme_info = wp_get_theme();
         $classes[] = 'nebula';
-        $classes[] = 'nebula_' . str_replace('.', '-', nebula_version('full'));
+        $classes[] = 'nebula_' . str_replace('.', '-', nebula()->version('full'));
 
         $classes[] = 'lang-' . strtolower(get_bloginfo('language'));
         if ( is_rtl() ){
@@ -2567,11 +2567,11 @@ trait Functions {
         }
 
         //Time of Day
-        if ( has_business_hours() ){
-            $classes[] = ( business_open() )? 'business-open' : 'business-closed';
+        if ( nebula()->has_business_hours() ){
+            $classes[] = ( nebula()->business_open() )? 'business-open' : 'business-closed';
         }
 
-        $relative_time = nebula_relative_time('description');
+        $relative_time = nebula()->relative_time('description');
         foreach( $relative_time as $relative_desc ){
             $classes[] = 'time-' . $relative_desc;
         }
@@ -2696,42 +2696,3 @@ trait Functions {
     }
 
 }
-
-//Removing these in the future:
-
-/*
-function nebula_manifest_json_location(){
-    return nebula()->functions->manifest_json_location();
-}
-
-function nebula_prerender(){
-    return nebula()->functions->prerender();
-}
-
-//Convenience function to return only the URL for specific thumbnail sizes of an ID.
-//Example: nebula_get_thumbnail_src(get_the_post_thumbnail($post->ID, 'twitter_large'))
-//Example: nebula_get_thumbnail_src($post->ID, 'twitter_large');
-function nebula_get_thumbnail_src($id=null, $size='full'){
-    nebula()->functions->get_thumbnail_src( $id, $size );
-}
-
-//Determine if the author should be the Company Name or the specific author's name.
-function nebula_the_author($show_authors=1){
-    nebula()->functions->the_author( $show_authors );
-}
-
-//Print the PHG logo as text with or without hover animation.
-if ( !function_exists('pinckneyhugogroup') ){
-    function pinckney_hugo_group($anim){ pinckneyhugogroup($anim); }
-    function phg($anim){ pinckneyhugogroup($anim); }
-    function pinckneyhugogroup($anim=false, $white=false){
-        if ( $anim ){
-            $anim = 'anim';
-        }
-        if ( $white ){
-            $white = 'anim';
-        }
-        return '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
-    }
-}
-*/

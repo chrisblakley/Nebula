@@ -25,126 +25,31 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Optimization.php';
 	require_once get_template_directory() . '/libs/Functions.php';
 	require_once get_template_directory() . '/libs/Shortcodes.php';
-
-    //Backwards compatibility
-    require_once get_template_directory() . '/libs/Legacy.php';
-
-
-	require_once get_template_directory() . '/libs/Admin.php'; //Only require this on admin pages or if admin bar is showing...
-
-    require_once get_template_directory() . '/libs/Ecommerce.php'; //Only require this if WooCommerce is active...
-
-    require_once get_template_directory() . '/libs/Prototyping.php'; //Only require this if nebula option "prototype_mode" is enabled...
+	require_once get_template_directory() . '/libs/Admin.php';
+    require_once get_template_directory() . '/libs/Ecommerce.php';
+    require_once get_template_directory() . '/libs/Prototyping.php';
+    require_once get_template_directory() . '/libs/Legacy.php'; //Backwards compatibility (Limited)
 
     /**
-     * Main Plugin_Name class
+     * Main Nebula class
      *
      * @since       1.0.0
      */
     class Nebula {
-		use TemplateEngine;
-		use Scripts;
-		use Options;
-		use Utilities;
-		use Security;
-		use Optimization;
-		use Functions;
-		use Shortcodes;
+		use TemplateEngine { TemplateEngine::hooks as TemplateEngineHooks;}
+		use Scripts { Scripts::hooks as ScriptHooks; }
+		use Options { Options::hooks as OptionsHooks; }
+		use Utilities { Utilities::hooks as UtilitiesHooks; }
+		use Security { Security::hooks as SecurityHooks; }
+		use Optimization { Optimization::hooks as OptimizationHooks; }
+		use Functions { Functions::hooks as FunctionsHooks; }
+		use Shortcodes { Shortcodes::hooks as ShortcodesHooks; }
+		use Admin { Admin::hooks as AdminHooks; }
+		use Ecommerce { Ecommerce::hooks as EcommerceHooks; }
+		use Prototyping { Prototyping::hooks as PrototypingHooks; }
 
-		use Admin; //Only on admin pages or if admin bar is showing...
-
-		use Ecommerce; //Only if WooCommerce is active...
-
-		use Prototyping; //Only if nebula option "prototype_mode" is enabled...
-
-
-
-
-
-        /**
-         * @var         Nebula $instance The one true Plugin_Name
-         * @since       1.0.0
-         */
         private static $instance;
-
-        /**
-         * @var         Nebula_Admin Nebula admin
-         * @since       1.0.0
-         */
-        public $admin;
-
-        /**
-         * @var         Nebula_Automation Nebula automation
-         * @since       1.0.0
-         */
-        public $automation;
-
-        /**
-         * @var         Nebula_Ecommerce Nebula ecommerce
-         * @since       1.0.0
-         */
-        public $ecommerce;
-
-        /**
-         * @var         Nebula_Functions Nebula functions
-         * @since       1.0.0
-         */
-        public $functions;
-
-        /**
-         * @var         Nebula_Optimization Nebula optimization
-         * @since       1.0.0
-         */
-        public $optimization;
-
-        /**
-         * @var         Nebula_Options Nebula options
-         * @since       1.0.0
-         */
-        public $options;
-
-        /**
-         * @var         Nebula_Prototyping Nebula prototyping
-         * @since       1.0.0
-         */
-        public $prototyping;
-
-        /**
-         * @var         Nebula_Scripts Nebula scripts
-         * @since       1.0.0
-         */
-        public $scripts;
-
-        /**
-         * @var         Nebula_Security Nebula security
-         * @since       1.0.0
-         */
-        public $security;
-
-        /**
-         * @var         Nebula_Shortcodes Nebula shortcodes
-         * @since       1.0.0
-         */
-        public $shortcodes;
-
-        /**
-         * @var         Nebula_Template_Engine Nebula template engine
-         * @since       1.0.0
-         */
-        public $template_engine;
-
-        /**
-         * @var         Nebula_Utilities Nebula utilities
-         * @since       1.0.0
-         */
-        public $utilities;
-
-        /**
-         * @var         array Registered plugins
-         * @since       1.0.0
-         */
         public $plugins;
-
 
         /**
          * Get active instance
@@ -163,7 +68,6 @@ if ( !class_exists('Nebula') ){
 
             return self::$instance;
         }
-
 
         /**
          * Setup plugin constants
@@ -213,6 +117,26 @@ if ( !class_exists('Nebula') ){
 
             //Adjust the content width when the full width page template is being used
             add_action('template_redirect', array( $this, 'set_content_width' ) );
+
+            $this->TemplateEngineHooks(); // Register TemplateEngine hooks
+            $this->ScriptHooks(); // Register Script hooks
+            $this->OptionsHooks(); // Register Options hooks
+            $this->SecurityHooks(); // Register Security hooks
+            $this->OptimizationHooks(); // Register Optimization hooks
+            $this->FunctionsHooks(); // Register Functions hooks
+            $this->ShortcodesHooks(); // Register Shortcodes hooks
+
+			if ( nebula()->is_admin_page() || is_admin_bar_showing() ){
+            	$this->AdminHooks(); // Register Admin hooks
+			}
+
+			if ( is_plugin_active('woocommerce/woocommerce.php') ){
+            	$this->EcommerceHooks(); // Register Ecommerce hooks
+			}
+
+			if ( nebula()->option('prototype_mode') ){
+            	$this->PrototypingHooks(); // Register Prototyping hooks
+			}
         }
 
         public function session_start(){
@@ -252,7 +176,7 @@ if ( !class_exists('Nebula') ){
         }
     }
 
-} // End if class_exists check
+}
 
 /**
  * The main function responsible for returning Nebula instance
@@ -264,13 +188,3 @@ add_action('init', 'nebula', 1);
 function nebula(){
     return Nebula::instance();
 }
-
-
-
-//Commenting this out along with the others- it can be called via nebula()->register_plugin() directly.
-
-/*
-function nebula_register_plugin( $plugin_name, $plugin_dir ) {
-    nebula()->register_plugin( $plugin_name, $plugin_dir );
-}
-*/

@@ -15,9 +15,8 @@ if( !trait_exists( 'Optimization' ) ) {
 
     trait Optimization {
 
-/*
 		//Temporarily commented this out
-        public function __construct() {
+        public function hooks() {
             //Control which scripts use defer/async using a query string.
             //Note: Not an ideal solution, but works until WP Core updates wp_enqueue_script(); to allow for deferring.
             add_filter('clean_url', array( $this, 'defer_async_scripts' ), 11, 1);
@@ -52,7 +51,6 @@ if( !trait_exists( 'Optimization' ) ) {
 
             add_filter('tiny_mce_plugins', array( $this, 'disable_emojicons_tinymce' ) ); //Remove TinyMCE Emojis too
         }
-*/
 
         //Control which scripts use defer/async using a query string.
         public function defer_async_scripts($url){
@@ -195,15 +193,8 @@ if( !trait_exists( 'Optimization' ) ) {
 
     }
 
-}// End if class_exists check
-
-
-//Removing these in the future:
-
-//Extend registering scripts to include async/defer executions (used by the nebula_defer_async_scripts() funtion)
-function nebula_register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
-    nebula()->register_script( $handle, $src, $exec, $deps, $ver, $in_footer );
 }
+
 
 //Disable PHP Magic Quotes.
 //Note: Even in PHP5.4+ and if get_magic_quotes_gpc() is false, this may STILL be needed. I don't know why.

@@ -19,42 +19,21 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
     require_once get_template_directory() . '/libs/Utilities/Sass.php';
 
     trait Utilities {
-		use Analytics;
-		use Visitors;
-		use Device;
-		use Sass;
+		use Analytics { Analytics::hooks as AnalyticsHooks;}
+		use Visitors { Visitors::hooks as VisitorsHooks;}
+		use Device { Device::hooks as DeviceHooks;}
+		use Sass { Sass::hooks as SassHooks;}
 
-        /**
-         * @var         Nebula_Google_Analytics Nebula google analytics
-         * @since       1.0.0
-         */
-        public $google_analytics;
-
-        /**
-         * @var         Nebula_Visitors Nebula visitors
-         * @since       1.0.0
-         */
-        public $visitors;
-
-        /**
-         * @var         Nebula_Device_Detection Nebula device detection
-         * @since       1.0.0
-         */
-        public $device_detection;
-
-        /**
-         * @var         Nebula_Sass Nebula sass
-         * @since       1.0.0
-         */
-        public $sass;
-
-/*
-        public function __construct() {
+        public function hooks() {
             //Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
             //Example: 'key' => 'dates_%_start_date',
             add_filter('posts_where' , array( $this, 'fuzzy_posts_where' ) );
+
+            $this->AnalyticsHooks(); // Register Analytics hooks
+            $this->VisitorsHooks(); // Register Visitors hooks
+            $this->DeviceHooks(); // Register Device hooks
+            $this->SassHooks(); // Register Sass hooks
         }
-*/
 
         //Generate Session ID
         public function session_id(){
@@ -90,7 +69,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         }
 
         //Detect Notable POI
-        public function nebula_poi(){
+        public function poi(){
             if ( nebula()->option('notableiplist') ){
                 $notable_ip_lines = explode("\n", nebula()->option('notableiplist'));
                 foreach ( $notable_ip_lines as $line ){
@@ -108,20 +87,20 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         }
 
         //Check if a user has been online in the last 10 minutes
-        public function nebula_is_user_online($id){
+        public function is_user_online($id){
             $override = apply_filters('pre_nebula_is_user_online', false, $id);
             if ( $override !== false ){return $override;}
 
-            $logged_in_users = nebula_data('users_status');
+            $logged_in_users = nebula()->data('users_status');
             return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
         }
 
         //Check when a user was last online.
-        public function nebula_user_last_online($id){
+        public function user_last_online($id){
             $override = apply_filters('pre_nebula_user_last_online', false, $id);
             if ( $override !== false ){return $override;}
 
-            $logged_in_users = nebula_data('users_status');
+            $logged_in_users = nebula()->data('users_status');
             if ( isset($logged_in_users[$id]['last']) ){
                 return $logged_in_users[$id]['last'];
             }
@@ -129,11 +108,11 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         }
 
         //Get a count of online users, or an array of online user IDs.
-        public function nebula_online_users($return='count'){
+        public function online_users($return='count'){
             $override = apply_filters('pre_nebula_online_users', false, $return);
             if ( $override !== false ){return $override;}
 
-            $logged_in_users = nebula_data('users_status');
+            $logged_in_users = nebula()->data('users_status');
             if ( empty($logged_in_users) || !is_array($logged_in_users) ){
                 return ( strtolower($return) == 'count' )? 0 : false; //If this happens it indicates an error.
             }
@@ -151,11 +130,11 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         }
 
         //Check how many locations a single user is logged in from.
-        public function nebula_user_single_concurrent($id){
+        public function user_single_concurrent($id){
             $override = apply_filters('pre_nebula_user_single_concurrent', false, $id);
             if ( $override !== false ){return $override;}
 
-            $logged_in_users = nebula_data('users_status');
+            $logged_in_users = nebula()->data('users_status');
             if ( isset($logged_in_users[$id]['unique']) ){
                 return count($logged_in_users[$id]['unique']);
             }
@@ -173,7 +152,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         }
 
         //Format phone numbers into the preferred (315) 478-6700 format.
-        public function nebula_phone_format($number=false){
+        public function phone_format($number=false){
             if ( !empty($number) ){
                 return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
             }
@@ -301,7 +280,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
             if ( $override !== false ){return $override;}
 
             if ( nebula()->option('hostnames') ){
-                if ( strpos(nebula()->option('hostnames'), nebula_url_components('hostname', home_url())) >= 0 ){
+                if ( strpos(nebula()->option('hostnames'), nebula()->url_components('hostname', home_url())) >= 0 ){
                     return true;
                 }
                 return false;
@@ -320,8 +299,8 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
 
         //Valid Hostname Regex
         public function valid_hostname_regex($domains=null){
-            $domains = ( $domains )? $domains : array(nebula_url_components('domain'));
-            $settingsdomains = ( nebula()->option('hostnames') )? explode(',', nebula()->option('hostnames')) : array(nebula_url_components('domain'));
+            $domains = ( $domains )? $domains : array(nebula()->url_components('domain'));
+            $settingsdomains = ( nebula()->option('hostnames') )? explode(',', nebula()->option('hostnames')) : array(nebula()->url_components('domain'));
             $fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
             $fulldomains = preg_filter('/^/', '.*', $fulldomains);
             $fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
@@ -422,7 +401,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
 
                 case ('authority'):
                     if ( isset($url_components['user']) && isset($url_components['pass']) ){
-                        return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . nebula_url_components('port', $url);
+                        return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . nebula()->url_components('port', $url);
                     } else {
                         return false;
                     }
@@ -669,11 +648,11 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
 		}
 
 		return false;
-	}	
+	}
 
 
         //Check if a website or resource is available
-        public function nebula_is_available($url=null, $nocache=false){
+        public function is_available($url=null, $nocache=false){
             $override = apply_filters('pre_nebula_is_available', false, $url);
             if ( $override !== false ){return $override;}
 
@@ -682,7 +661,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
                 return false;
             }
 
-            $hostname = str_replace('.', '_', nebula_url_components('hostname', $url));
+            $hostname = str_replace('.', '_', nebula()->url_components('hostname', $url));
             $site_available_buffer = get_transient('nebula_site_available_' . $hostname);
             if ( !empty($site_available_buffer) && !$nocache ){
                 if ( $site_available_buffer === 'Available' ){
@@ -706,7 +685,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         }
 
         //Check the brightness of a color. 0=darkest, 255=lightest, 256=false
-        public function nebula_color_brightness($hex){
+        public function color_brightness($hex){
             $override = apply_filters('pre_nebula_color_brightness', false, $hex);
             if ( $override !== false ){return $override;}
 
@@ -731,7 +710,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         }
 
         //Compare values using passed parameters
-        public function nebula_compare_operator($a=null, $b=null, $c='=='){
+        public function compare_operator($a=null, $b=null, $c='=='){
             $override = apply_filters('pre_nebula_compare_operator', false, $a, $b, $c);
             if ( $override !== false ){return $override;}
 
@@ -839,96 +818,4 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
 
     }
 
-}// End if class_exists check
-
-//Removing these in the future:
-
-/*
-//Get Nebula version information
-function nebula_version($return=false){
-    return nebula()->utilities->nebula_version( $return );
 }
-
-//Generate Session ID
-function nebula_session_id(){
-    nebula()->utilities->nebula_session_id();
-}
-
-//Check if a website or resource is available
-function nebula_is_available($url=null, $nocache=false){
-    return nebula()->utilities->nebula_is_available($url, $nocache);
-}
-
-//Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
-function nebula_requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
-    return nebula()->utilities->requested_url($host="HTTP_HOST");
-}
-
-//Separate a URL into it's components.
-function nebula_url_components($segment="all", $url=null){
-    return nebula()->utilities->url_components($segment, $url);
-}
-
-//Check if a user has been online in the last 10 minutes
-function nebula_is_user_online($id){
-    return nebula()->utilities->nebula_is_user_online($id);
-}
-
-//Check when a user was last online.
-function nebula_user_last_online($id){
-    return nebula()->utilities->nebula_user_last_online($id);
-}
-
-//Get a count of online users, or an array of online user IDs.
-function nebula_online_users($return='count'){
-    return nebula()->utilities->nebula_online_users($return);
-}
-
-//Check how many locations a single user is logged in from.
-function nebula_user_single_concurrent($id){
-    return nebula()->utilities->nebula_user_single_concurrent($id);
-}
-
-//Alias for a less confusing is_admin() function to try to prevent security issues
-function is_admin_page(){
-    return nebula()->utilities->is_admin_page();
-}
-
-//Check if viewing the login page.
-function is_login_page(){
-    return nebula()->utilities->is_login_page();
-}
-
-//Check if the current IP address matches any of the dev IP address from Nebula Options
-//Passing $strict bypasses IP check, so user must be a dev and logged in.
-//Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_dev($strict=false){
-    return nebula()->utilities->is_dev($strict);
-}
-
-//Check if the current IP address matches any of the client IP address from Nebula Options
-//Passing $strict bypasses IP check, so user must be a client and logged in.
-//Note: This should not be used for security purposes since IP addresses can be spoofed.
-function is_client($strict=false){
-    return nebula()->utilities->is_client($strict);
-}
-
-//Check if the current IP address or logged-in user is a developer or client.
-//Note: This does not account for user role (An admin could return false here). Check role separately.
-function is_staff($strict=false){
-    return nebula()->utilities->is_staff($strict);
-}
-
-//Check if user is using the debug query string.
-//$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
-function is_debug($strict=false){
-    return nebula()->utilities->is_debug($strict);
-}
-
-//Check if the current site is live to the public.
-//Note: This checks if the hostname of the home URL matches any of the valid hostnames.
-//If the Valid Hostnames option is empty, this will return true as it is unknown.
-function is_site_live(){
-    return nebula()->utilities->is_site_live();
-}
-*/

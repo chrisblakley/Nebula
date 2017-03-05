@@ -15,9 +15,8 @@ if( !trait_exists( 'Dashboard' ) ) {
 
     trait Dashboard {
 
-/*
 		//Temporarily commented this out
-        public function __construct() {
+        public function hooks() {
             //Remove unnecessary Dashboard metaboxes
             if ( nebula()->option('unnecessary_metaboxes') ){
                 add_action('wp_dashboard_setup', array( $this, 'remove_dashboard_metaboxes' ));
@@ -41,17 +40,16 @@ if( !trait_exists( 'Dashboard' ) ) {
             add_action('wp_dashboard_setup', array( $this, 'phg_metabox' ) );
 
             //TODO manager metabox
-            if ( nebula()->option('todo_manager_metabox', 'enabled') && is_dev() ){
+            if ( nebula()->option('todo_manager_metabox', 'enabled') && nebula()->is_dev() ){
                 add_action('wp_dashboard_setup', array( $this, 'todo_metabox' ) );
             }
 
             //Developer Info Metabox
             //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
-            if ( nebula()->option('dev_info_metabox', 'enabled') && is_dev() ){
+            if ( nebula()->option('dev_info_metabox', 'enabled') && nebula()->is_dev() ){
                 add_action('wp_dashboard_setup', array( $this, 'dev_info_metabox' ) );
             }
         }
-*/
 
         //Remove unnecessary Dashboard metaboxes
         public function remove_dashboard_metaboxes(){
@@ -79,7 +77,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             //Address
             if ( nebula()->option('street_address') ){
-                echo '<li><i class="fa fa-map-marker fa-fw"></i> <a href="https://www.google.com/maps/place/' . nebula_full_address(1) . '" target="_blank">' . nebula_full_address() . '</a></li>';
+                echo '<li><i class="fa fa-map-marker fa-fw"></i> <a href="https://www.google.com/maps/place/' . nebula()->full_address(1) . '" target="_blank">' . nebula()->full_address() . '</a></li>';
             }
 
             //Open/Closed
@@ -92,7 +90,7 @@ if( !trait_exists( 'Dashboard' ) ) {
             echo '<li><i class="fa fa-wordpress fa-fw"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
             //Nebula Version
-            echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula_version('version') . '</strong> <small title="' . human_time_diff(nebula_version('utc')) . ' ago">(Committed: ' . nebula_version('date') . ')</small></li>';
+            echo '<li><i class="fa fa-star fa-fw"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula()->version('version') . '</strong> <small title="' . human_time_diff(nebula()->version('utc')) . ' ago">(Committed: ' . nebula()->version('date') . ')</small></li>';
 
             //Child Theme
             if ( is_child_theme() ){
@@ -118,7 +116,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                 }
 
                 $count_posts = get_transient('nebula_count_posts_' . $post_type);
-                if ( empty($count_posts) || is_debug() ){
+                if ( empty($count_posts) || nebula()->is_debug() ){
                     $count_posts = wp_count_posts($post_type);
                     $cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long.
                     set_transient('nebula_count_posts_' . $post_type, $count_posts, $cache_length);
@@ -153,13 +151,13 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             //Last updated
             $latest_post = get_transient('nebula_latest_post');
-            if ( empty($latest_post) || is_debug() ){
+            if ( empty($latest_post) || nebula()->is_debug() ){
                 $latest_post = new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
                 set_transient('nebula_latest_post', $latest_post, HOUR_IN_SECONDS*12); //This transient is deleted when posts are added/updated, so this could be infinitely long.
             }
             while ( $latest_post->have_posts() ){ $latest_post->the_post();
                 echo '<li><i class="fa fa-calendar-o fa-fw"></i> Updated: <strong>' . get_the_modified_date() . '</strong> @ <strong>' . get_the_modified_time() . '</strong>
-                    <small style="display: block; margin-left: 20px;"><i class="fa fa-file-text-o fa-fw"></i> <a href="' . get_permalink() . '">' . nebula_excerpt(array('text' => get_the_title(), 'length' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
+                    <small style="display: block; margin-left: 20px;"><i class="fa fa-file-text-o fa-fw"></i> <a href="' . get_permalink() . '">' . nebula()->excerpt(array('text' => get_the_title(), 'length' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
                 </li>';
             }
             wp_reset_postdata();
@@ -172,7 +170,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             //Plugins
             $all_plugins_plural = ( count($all_plugins) == 1 )? 'Plugin' : 'Plugins';
-            if ( empty($all_plugins) || is_debug() ){
+            if ( empty($all_plugins) || nebula()->is_debug() ){
                 $all_plugins = get_plugins();
                 set_transient('nebula_count_plugins', $all_plugins, HOUR_IN_SECONDS*36); //12 hour cache
             }
@@ -181,7 +179,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             //Users
             $user_count = get_transient('nebula_count_users');
-            if ( empty($user_count) || is_debug() ){
+            if ( empty($user_count) || nebula()->is_debug() ){
                 $user_count = count_users();
                 set_transient('nebula_count_users', $user_count, HOUR_IN_SECONDS*36); //24 hour cache
             }
@@ -191,7 +189,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                 $users_plural = 'User';
                 $users_icon = 'user';
             }
-            echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula()->utilities->nebula_online_users('count') . ' currently active)</small></li>';
+            echo '<li><i class="fa fa-' . $users_icon . ' fa-fw"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula()->online_users('count') . ' currently active)</small></li>';
 
             //Comments
             if ( nebula()->option('comments', 'enabled') && nebula()->option('disqus_shortname') == '' ){
@@ -307,7 +305,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             //User's posts
             $your_posts = get_transient('nebula_count_posts_user_' . $user_info->ID);
-            if ( empty($your_posts) || is_debug() ){
+            if ( empty($your_posts) || nebula()->is_debug() ){
                 $your_posts = count_user_posts($user_info->ID);
                 set_transient('nebula_count_posts_user_' . $user_info->ID, $your_posts, DAY_IN_SECONDS); //24 hour cache
             }
@@ -315,21 +313,21 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             if ( nebula()->option('device_detection') ){
                 //Device
-                if ( nebula_is_desktop() ){
-                    $battery_percentage = nebula_vdb_get_visitor_datapoint('battery_percentage');
-                    if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula_vdb_get_visitor_datapoint('battery_mode') === 'Battery' ){
+                if ( nebula()->is_desktop() ){
+                    $battery_percentage = nebula()->vdb_get_visitor_datapoint('battery_percentage');
+                    if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula()->vdb_get_visitor_datapoint('battery_mode') === 'Battery' ){
                         echo '<li><i class="fa fa-laptop fa-fw"></i> Device: <strong>Laptop</strong></li>';
                     } else {
                         echo '<li><i class="fa fa-desktop fa-fw"></i> Device: <strong>Desktop</strong></li>';
                     }
-                } elseif ( nebula_is_tablet() ){
-                    echo '<li><i class="fa fa-tablet fa-fw"></i> Device: <strong>' . nebula_get_device('full') . ' (Tablet)</strong></li>';
+                } elseif ( nebula()->is_tablet() ){
+                    echo '<li><i class="fa fa-tablet fa-fw"></i> Device: <strong>' . nebula()->get_device('full') . ' (Tablet)</strong></li>';
                 } else {
-                    echo '<li><i class="fa fa-mobile fa-fw"></i> Device: <strong>' . nebula_get_device('full') . ' (Mobile)</strong></li>';
+                    echo '<li><i class="fa fa-mobile fa-fw"></i> Device: <strong>' . nebula()->get_device('full') . ' (Mobile)</strong></li>';
                 }
 
                 //Operating System
-                switch ( strtolower(nebula_get_os('name')) ){
+                switch ( strtolower(nebula()->get_os('name')) ){
                     case 'windows':
                         $os_icon = 'fa-windows';
                         break;
@@ -347,10 +345,10 @@ if( !trait_exists( 'Dashboard' ) ) {
                         $os_icon = 'fa-picture-o';
                         break;
                 }
-                echo '<li><i class="fa ' . $os_icon . ' fa-fw"></i> OS: <strong>' . nebula_get_os('full') . '</strong></li>';
+                echo '<li><i class="fa ' . $os_icon . ' fa-fw"></i> OS: <strong>' . nebula()->get_os('full') . '</strong></li>';
 
                 //Browser
-                switch ( str_replace(array('mobile', ' '), '', strtolower(nebula_get_browser('name'))) ){
+                switch ( str_replace(array('mobile', ' '), '', strtolower(nebula()->get_browser('name'))) ){
                     case 'edge':
                         $browser_icon = 'fa-edge';
                         break;
@@ -374,7 +372,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                         $browser_icon = 'fa-globe';
                         break;
                 }
-                echo '<li><i class="fa ' . $browser_icon . ' fa-fw"></i> Browser: <strong>' . nebula_get_browser('full') . '</strong></li>';
+                echo '<li><i class="fa ' . $browser_icon . ' fa-fw"></i> Browser: <strong>' . nebula()->get_browser('full') . '</strong></li>';
             }
 
             //IP Address
@@ -388,8 +386,8 @@ if( !trait_exists( 'Dashboard' ) ) {
             echo '</li>';
 
             //IP Location
-            if ( nebula_ip_location() ){
-                $ip_location = nebula_ip_location('all');
+            if ( nebula()->ip_location() ){
+                $ip_location = nebula()->ip_location('all');
                 if ( !empty($ip_location) ){
                     echo '<li><i class="fa fa-location-arrow fa-fw"></i> IP Location: <strong>' . $ip_location->city . ', ' . $ip_location->region_name . '</strong></li>';
                 } else {
@@ -400,23 +398,23 @@ if( !trait_exists( 'Dashboard' ) ) {
             //Weather
             if ( nebula()->option('weather') ){
                 $ip_zip = '';
-                if ( nebula_vdb_get_visitor_datapoint('zip_code') ){
-                    $ip_zip = nebula_vdb_get_visitor_datapoint('zip_code');
-                } elseif ( nebula_ip_location() ){
-                    $ip_zip = nebula_ip_location('zip');
+                if ( nebula()->vdb_get_visitor_datapoint('zip_code') ){
+                    $ip_zip = nebula()->vdb_get_visitor_datapoint('zip_code');
+                } elseif ( nebula()->ip_location() ){
+                    $ip_zip = nebula()->ip_location('zip');
                 }
 
-                $temperature = nebula_weather($ip_zip, 'temp');
+                $temperature = nebula()->weather($ip_zip, 'temp');
                 if ( !empty($temperature) ){
-                    echo '<li><i class="fa fa-cloud fa-fw"></i> Weather: <strong>' . $temperature . '&deg;F ' . nebula_weather($ip_zip, 'conditions') . '</strong></li>';
+                    echo '<li><i class="fa fa-cloud fa-fw"></i> Weather: <strong>' . $temperature . '&deg;F ' . nebula()->weather($ip_zip, 'conditions') . '</strong></li>';
                 } else {
                     echo '<li><i class="fa fa-cloud fa-fw"></i> Weather: <em>API error for zip code ' . $ip_zip . '.</em></li>';
                 }
             }
 
             //Multiple locations
-            if ( nebula_user_single_concurrent($user_info->ID) > 1 ){
-                echo '<li><i class="fa fa-users fa-fw"></i> Active in <strong>' . nebula_user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
+            if ( nebula()->user_single_concurrent($user_info->ID) > 1 ){
+                echo '<li><i class="fa fa-users fa-fw"></i> Active in <strong>' . nebula()->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
             }
 
             //User Admin Bar
@@ -485,7 +483,7 @@ if( !trait_exists( 'Dashboard' ) ) {
             }
 
             if ( nebula()->option('twitter_username') ){
-                echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="' . nebula_twitter_url() . '" target="_blank">Twitter</a></li>';
+                echo '<li><i class="fa fa-twitter-square fa-fw"></i> <a href="' . nebula()->twitter_url() . '" target="_blank">Twitter</a></li>';
             }
 
             if ( nebula()->option('google_plus_url') ){
@@ -566,7 +564,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                 $todo_dirpath = get_template_directory();
             }
 
-            foreach ( nebula()->utilities->glob_r($todo_dirpath . '/*') as $todo_file ){
+            foreach ( nebula()->glob_r($todo_dirpath . '/*') as $todo_file ){
                 $todo_counted = false;
                 if ( is_file($todo_file) ){
                     if ( strpos(basename($todo_file), '@todo') !== false ){
@@ -576,7 +574,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                     }
 
                     $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs', 'examples/');
-                    if ( !nebula()->utilities->contains(basename($todo_file), $this->skip_extensions()) && !nebula()->utilities->contains($todo_file, $todo_skipFilenames) ){
+                    if ( !nebula()->contains(basename($todo_file), $this->skip_extensions()) && !nebula()->contains($todo_file, $todo_skipFilenames) ){
                         foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
                             if ( stripos($todo_line, '@TODO') !== false ){
                                 $theme = '';
@@ -654,7 +652,7 @@ if( !trait_exists( 'Dashboard' ) ) {
             echo '<ul class="serverdetections">';
 
             //Domain
-            echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula_url_components('domain') . '</strong></li>';
+            echo '<li><i class="fa fa-info-circle fa-fw"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula()->url_components('domain') . '</strong></li>';
 
             //Host
             function top_domain_name($url){
@@ -694,7 +692,7 @@ if( !trait_exists( 'Dashboard' ) ) {
             $php_version_color = 'inherit';
             $php_version_info = '';
             $php_version_cursor = 'normal';
-            $php_version_lifecycle = nebula()->admin->php_version_support(); //yolo
+            $php_version_lifecycle = nebula()->php_version_support(); //yolo
             if ( $php_version_lifecycle['lifecycle'] === 'security' ){
                 $php_version_color = '#ca8038';
                 $php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['security']) . '.';
@@ -719,14 +717,14 @@ if( !trait_exists( 'Dashboard' ) ) {
             //Theme directory size(s)
             if ( is_child_theme() ){
                 $nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
-                if ( empty($nebula_parent_size) || is_debug() ){
-                    $nebula_parent_size = nebula()->utilities->foldersize(get_template_directory());
+                if ( empty($nebula_parent_size) || nebula()->is_debug() ){
+                    $nebula_parent_size = nebula()->foldersize(get_template_directory());
                     set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, DAY_IN_SECONDS); //12 hour cache
                 }
 
                 $nebula_child_size = get_transient('nebula_directory_size_child_theme');
-                if ( empty($nebula_child_size) || is_debug() ){
-                    $nebula_child_size = nebula()->utilities->foldersize(get_template_directory());
+                if ( empty($nebula_child_size) || nebula()->is_debug() ){
+                    $nebula_child_size = nebula()->foldersize(get_template_directory());
                     set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS); //12 hour cache
                 }
 
@@ -739,8 +737,8 @@ if( !trait_exists( 'Dashboard' ) ) {
                 }
             } else {
                 $nebula_size = get_transient('nebula_directory_size_theme');
-                if ( empty($nebula_size) || is_debug() ){
-                    $nebula_size = nebula()->utilities->foldersize(get_stylesheet_directory());
+                if ( empty($nebula_size) || nebula()->is_debug() ){
+                    $nebula_size = nebula()->foldersize(get_stylesheet_directory());
                     set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS); //12 hour cache
                 }
                 echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
@@ -748,12 +746,12 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             if ( nebula()->option('prototype_mode', 'enabled') ){
                 if ( nebula()->option('wireframe_theme') ){
-                    $nebula_wireframe_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula()->option('wireframe_theme'));
+                    $nebula_wireframe_size = nebula()->foldersize(get_theme_root() . '/' . nebula()->option('wireframe_theme'));
                     echo '<li title="' . nebula()->option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
                 }
 
                 if ( nebula()->option('staging_theme') ){
-                    $nebula_staging_size = nebula()->utilities->foldersize(get_theme_root() . '/' . nebula()->option('staging_theme'));
+                    $nebula_staging_size = nebula()->foldersize(get_theme_root() . '/' . nebula()->option('staging_theme'));
                     echo '<li title="' . nebula()->option('staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
                 }
             }
@@ -761,8 +759,8 @@ if( !trait_exists( 'Dashboard' ) ) {
             //Uploads directory size (and max upload size)
             $upload_dir = wp_upload_dir();
             $uploads_size = get_transient('nebula_directory_size_uploads');
-            if ( empty($uploads_size) || is_debug() ){
-                $uploads_size = nebula()->utilities->foldersize($upload_dir['basedir']);
+            if ( empty($uploads_size) || nebula()->is_debug() ){
+                $uploads_size = nebula()->foldersize($upload_dir['basedir']);
                 set_transient('nebula_directory_size_uploads', $uploads_size, HOUR_IN_SECONDS*36); //24 hour cache
             }
 
@@ -820,7 +818,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             //SCSS last processed date
             if ( nebula_data('scss_last_processed') ){
-                echo '<li><i class="fa fa-paint-brush fa-fw"></i> Sass Processed: <span title="' . human_time_diff(nebula_data('scss_last_processed')) . ' ago" style="cursor: help;"><strong>' . date("F j, Y", nebula_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula_data('scss_last_processed')) . '</strong></span></li>';
+                echo '<li><i class="fa fa-paint-brush fa-fw"></i> Sass Processed: <span title="' . human_time_diff(nebula()->data('scss_last_processed')) . ' ago" style="cursor: help;"><strong>' . date("F j, Y", nebula()->data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula()->data('scss_last_processed')) . '</strong></span></li>';
             }
             echo '</ul>';
 
@@ -858,13 +856,13 @@ if( !trait_exists( 'Dashboard' ) ) {
             if ( empty($directory) ){
                 $directory = get_template_directory();
             }
-            $dir = nebula()->utilities->glob_r($directory . '/*');
+            $dir = nebula()->glob_r($directory . '/*');
             $skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
 
             foreach ( $dir as $file ){
                 if ( is_file($file) ){
                     $mod_date = filemtime($file);
-                    if ( $mod_date > $last_date && !nebula()->utilities->contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
+                    if ( $mod_date > $last_date && !nebula()->contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
                         $latest_file['date'] = $mod_date;
                         $latest_file['file'] = basename($file);
 
@@ -972,4 +970,4 @@ if( !trait_exists( 'Dashboard' ) ) {
 
     }
 
-}// End if class_exists check
+}

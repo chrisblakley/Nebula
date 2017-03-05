@@ -13,11 +13,9 @@ if( !defined( 'ABSPATH' ) ) exit;
 if( !trait_exists( 'Scripts' ) ) {
 
     trait Scripts {
-
         public $brain;
 
-		//I left this in for now, but we'll want to figure out a different way to do this if we can't use __construct within traits without conflicts.
-        public function __construct() {
+        public function hooks(){
             // Register scripts
             add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
             add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
@@ -59,20 +57,20 @@ if( !trait_exists( 'Scripts' ) ) {
             //Use CDNJS to pull common libraries: http://cdnjs.com/
             //nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
             nebula()->bootstrap_version('js');
-            nebula_register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.3.1', false);
-            nebula_register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
-            nebula_register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
-            nebula_register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
-            nebula_register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.7.8/js/jquery.mmenu.all.min.js', 'defer', null, '5.7.8', true);
-            nebula_register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true);
-            nebula_register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js', 'defer', null, '1.4.0', true); //This is not enqueued or dependent because it is called via main.js only as needed.
-            nebula_register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js', 'defer', null, '1.10.13', true); //Datatables is called via main.js only as needed.
-            nebula_register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js', 'defer', null, '1.6.2', true);
-            nebula_register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/1.1.0/autotrack.js', 'async', null, '1.1.0', true);
-            nebula_register_script('performance-timing', get_template_directory_uri() . '/assets/js/libs/performance-timing.js', 'defer', null, null, false);
-            nebula_register_script('nebula-main', get_template_directory_uri() . '/assets/js/main.js', 'defer', array('nebula-bootstrap', 'jquery', 'nebula-jquery_ui'), null, true);
-            nebula_register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery'), null, true);
-            nebula_register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', 'defer', null, null, true);
+            nebula()->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.3.1', false);
+            nebula()->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
+            nebula()->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
+            nebula()->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
+            nebula()->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/5.7.8/js/jquery.mmenu.all.min.js', 'defer', null, '5.7.8', true);
+            nebula()->register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true);
+            nebula()->register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js', 'defer', null, '1.4.0', true); //This is not enqueued or dependent because it is called via main.js only as needed.
+            nebula()->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js', 'defer', null, '1.10.13', true); //Datatables is called via main.js only as needed.
+            nebula()->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js', 'defer', null, '1.6.2', true);
+            nebula()->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/1.1.0/autotrack.js', 'async', null, '1.1.0', true);
+            nebula()->register_script('performance-timing', get_template_directory_uri() . '/assets/js/libs/performance-timing.js', 'defer', null, null, false);
+            nebula()->register_script('nebula-main', get_template_directory_uri() . '/assets/js/main.js', 'defer', array('nebula-bootstrap', 'jquery', 'nebula-jquery_ui'), null, true);
+            nebula()->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery'), null, true);
+            nebula()->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', 'defer', null, null, true);
 
             global $wp_scripts, $wp_styles, $upload_dir;
             $upload_dir = wp_upload_dir();
@@ -233,8 +231,8 @@ if( !trait_exists( 'Scripts' ) ) {
             //Stylesheets
             wp_enqueue_style('nebula-login');
             echo '<style>
-                    div#login h1 a {background: url(' . nebula_prefer_child_directory('/images/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
-                        .svg div#login h1 a {background: url(' . nebula_prefer_child_directory('/images/logo.svg') . ') center center no-repeat; background-size: contain;}
+                    div#login h1 a {background: url(' . nebula()->prefer_child_directory('/images/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
+                        .svg div#login h1 a {background: url(' . nebula()->prefer_child_directory('/images/logo.svg') . ') center center no-repeat; background-size: contain;}
                 </style>';
 
             //Scripts
@@ -277,4 +275,4 @@ if( !trait_exists( 'Scripts' ) ) {
 
     }
 
-}// End if class_exists check
+}

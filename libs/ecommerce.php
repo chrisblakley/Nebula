@@ -17,9 +17,8 @@ if( !trait_exists( 'Ecommerce' ) ) {
 
     trait Ecommerce {
 
-/*
 		//Temporarily commented this out
-        public function __construct() {
+        public function hooks() {
             //Declare support for WooCommerce
             add_action('after_setup_theme', array( $this, 'theme_setup_ecommerce' ) );
 
@@ -49,7 +48,6 @@ if( !trait_exists( 'Ecommerce' ) ) {
             //JSON-LD for Products
             add_action('nebula_metadata_end', array( $this, 'json_ld_ecommerce' ) );
         }
-*/
 
         //Declare support for WooCommerce
         public function theme_setup_ecommerce(){
@@ -109,7 +107,7 @@ if( !trait_exists( 'Ecommerce' ) ) {
         }
 
         //Remove WooCommerce Breadcrumbs
-        public function nebula_remove_woo_breadcrumbs() {
+        public function remove_woo_breadcrumbs() {
             remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0);
         }
 
@@ -125,10 +123,10 @@ if( !trait_exists( 'Ecommerce' ) ) {
                     $products['ecommerce_product_ids'] = $item['product_id'];
                 }
                 $products['ecommerce_order_id'] = $order_id;
-                nebula()->utilities->visitors->append_visitor($products);
+                nebula()->append_visitor($products);
 
                 //Update Customer data
-                nebula()->utilities->visitors->update_visitor_data(array(
+                nebula()->update_visitor_data(array(
                     'wp_role' => 'Customer',
                     'email_address' => $order->billing_email,
                     'first_name' => $order->billing_first_name,
@@ -149,7 +147,7 @@ if( !trait_exists( 'Ecommerce' ) ) {
             $override = apply_filters('pre_nebula_json_ld_ecommerce', false);
             if ( $override !== false ){echo $override; return;}
 
-            if ( is_product() ){ //if is product
+            if ( function_exists('is_product') && is_product() ){ //if is product
                 global $post;
                 $product = new WC_Product($post->ID);
 
@@ -169,7 +167,7 @@ if( !trait_exists( 'Ecommerce' ) ) {
 						"height": "<?php echo $post_thumbnail_meta[2]; ?>"
 					},
 
-					"description": "<?php echo nebula_excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false)); ?>",
+					"description": "<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false)); ?>",
 
 					"offers": {
 						"@type": "Offer",
@@ -190,4 +188,4 @@ if( !trait_exists( 'Ecommerce' ) ) {
 
     }
 
-}// End if class_exists check
+}

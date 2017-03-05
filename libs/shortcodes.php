@@ -15,9 +15,8 @@ if( !trait_exists( 'Shortcodes' ) ) {
 
     trait Shortcodes {
 
-/*
 		//Temporarily commented this out
-        public function __construct() {
+        public function hooks() {
             //Div
             add_shortcode('div', array( $this, 'div_shortcode' ) );
 
@@ -113,7 +112,6 @@ if( !trait_exists( 'Shortcodes' ) ) {
             //Add Nebula Toolbar to TinyMCE
             add_action('admin_init', array( $this, 'add_shortcode_button' ) );
         }
-*/
 
         //Get flags where a parameter is declared in $atts that exists without a declared value
         /* Usage:

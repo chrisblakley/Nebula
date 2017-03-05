@@ -15,15 +15,14 @@ if( !trait_exists( 'Automation' ) ) {
 
     trait Automation {
 
-/*
 		//Temporarily commented this out
-        public function __construct() {
+        public function hooks() {
             global $pagenow;
 
             //Detect and prompt install of Recommended and Optional plugins using TGMPA
             //Configuration Documentation: http://tgmpluginactivation.com/configuration/
-            if ( is_admin() && is_dev(true) || current_user_can('manage_options') ) {
-                require_once(get_template_directory() . '/includes/libs/class-tgm-plugin-activation.php');
+            if ( is_admin() && nebula()->is_dev(true) || current_user_can('manage_options') ) {
+                require_once(get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php');
 
                 add_action('tgmpa_register', array( $this, 'register_required_plugins' ) );
             }
@@ -40,7 +39,6 @@ if( !trait_exists( 'Automation' ) ) {
 
             //add_action('admin_init', array( $this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
         }
-*/
 
         public function register_required_plugins(){
             $plugins = array(
@@ -202,7 +200,7 @@ if( !trait_exists( 'Automation' ) ) {
                     </p>
                 </div>
             <?php else: ?>
-                <?php nebula_render_scss('all'); //Re-render all SCSS files. ?>
+                <?php nebula()->render_scss('all'); //Re-render all SCSS files. ?>
 
                 <?php if ( $this->is_initialized_before() ): ?>
                     <div id='nebula-activate-success' class='updated'>
@@ -241,11 +239,11 @@ if( !trait_exists( 'Automation' ) ) {
                 $this->initialization_delete_plugins();
                 $this->initialization_deactivate_widgets();
 
-                if ( !nebula_data('initialized') ){
-                    nebula_update_data('initialized', time());
+                if ( !nebula()->data('initialized') ){
+                    nebula()->update_data('initialized', time());
                 }
 
-                nebula_render_scss('all'); //Re-render all SCSS files.
+                nebula()->render_scss('all'); //Re-render all SCSS files.
 
                 if ( empty($standard) ){ //If AJAX initialization
                     echo 'successful-nebula-init';
@@ -257,7 +255,7 @@ if( !trait_exists( 'Automation' ) ) {
         //Send a list of existing settings to the user's email (to test, trigger the function on admin_init)
         public function initialization_email_prev_settings(){
             $email_admin_timeout = get_transient('nebula_email_admin_timeout');
-            if ( !empty($email_admin_timeout) || !nebula_is_initialized_before() ){
+            if ( !empty($email_admin_timeout) || !nebula()->is_initialized_before() ){
                 return;
             }
 
@@ -322,11 +320,11 @@ if( !trait_exists( 'Automation' ) ) {
             global $wp_rewrite;
 
             //Update Nebula default data
-            $nebula_data_defaults = nebula_default_data();
+            $nebula_data_defaults = nebula()->default_data();
             update_option('nebula_data', $nebula_data_defaults);
 
             //Update Nebula default options
-            $nebula_options_defaults = nebula_default_options();
+            $nebula_options_defaults = nebula()->default_options();
             update_option('nebula_options', $nebula_options_defaults);
 
             //Update certain Wordpress Core options
@@ -365,7 +363,7 @@ if( !trait_exists( 'Automation' ) ) {
         }
 
         public function is_initialized_before(){
-            $nebula_initialized_option = nebula_data('initialized');
+            $nebula_initialized_option = nebula()->data('initialized');
 
             if ( empty($nebula_initialized_option) ){
                 return false;
@@ -380,27 +378,27 @@ if( !trait_exists( 'Automation' ) ) {
             if ( 1==2 ){
                 $force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
                 if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
-                    nebula_update_data('initialized', strtotime($force_date));
+                    nebula()->update_data('initialized', strtotime($force_date));
                     return false;
                 }
             } else {
-                if ( !nebula_is_initialized_before() ){
-                    nebula_update_data('initialized', date('U'));
+                if ( !nebula()->is_initialized_before() ){
+                    nebula()->update_data('initialized', date('U'));
                 }
             }
 
             //Re-allow remote Nebula version updates. Ideally this would be detected automatically and this condition would not be needed.
             if ( 1==2 ){
-                nebula_update_data('version_legacy', 'false');
-                nebula_update_data('scss_last_processed', 0);
-                nebula_update_data('next_version', '');
-                nebula_update_data('current_version', nebula_version('raw'));
-                nebula_update_data('current_version_date', nebula_version('date'));
-                nebula_update_data('theme_update_notification', 'enabled');
+                nebula()->update_data('version_legacy', 'false');
+                nebula()->update_data('scss_last_processed', 0);
+                nebula()->update_data('next_version', '');
+                nebula()->update_data('current_version', nebula()->version('raw'));
+                nebula()->update_data('current_version_date', nebula()->version('date'));
+                nebula()->update_data('theme_update_notification', 'enabled');
                 update_option('external_theme_updates-Nebula-master', '');
             }
         }
 
     }
 
-}// End if class_exists check
+}
