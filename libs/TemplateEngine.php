@@ -81,9 +81,9 @@ if( !trait_exists( 'TemplateEngine' ) ) {
         public function plugins_templates( $post_templates, $wp_theme, $post, $post_type ) {
             $plugins_templates = array();
 
-            foreach(nebula()->plugins as $nebula_plugin => $nebula_plugin_features) {
-                if( $nebula_plugin_features['templates'] ) {
-                    $files = (array) $this->scandir( $nebula_plugin_features['path'] . 'templates', 'php', 1 );
+            foreach( nebula()->plugins as $plugin_name => $plugin_features ) {
+                if( isset( $plugin_features['templates'] ) && is_array( $plugin_features['templates'] ) ) {
+                    $files = (array) $this->scandir( $plugin_features['templates'], 'php', 1 );
 
                     foreach ( $files as $file => $full_path ) {
                         if ( ! preg_match( '|Template Name:(.*)$|mi', file_get_contents( $full_path ), $header ) ) {
@@ -105,7 +105,7 @@ if( !trait_exists( 'TemplateEngine' ) ) {
                         }
                     }
 
-                    //@TODO "Nebula Template Engine" 0: Caching found plugin templates
+                    //@TODO "Nebula Template Engine" 0: Caching plugin templates
                 }
             }
 

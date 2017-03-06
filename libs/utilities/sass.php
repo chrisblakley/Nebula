@@ -41,6 +41,7 @@ if( !trait_exists( 'Sass' ) ) {
             }
 
             if ( nebula()->option('scss', 'enabled') ){
+                // Nebula scss locations
                 $scss_locations = array(
                     'parent' => array(
                         'directory' => get_template_directory(),
@@ -49,12 +50,24 @@ if( !trait_exists( 'Sass' ) ) {
                     )
                 );
 
+                // Child theme scss locations
                 if ( is_child_theme() ){
                     $scss_locations['child'] = array(
                         'directory' => get_stylesheet_directory(),
                         'uri' => get_stylesheet_directory_uri(),
                         'imports' => get_stylesheet_directory() . '/stylesheets/scss/partials/'
                     );
+                }
+
+                // Registered plugins scss locations
+                foreach( nebula()->plugins as $plugin_name => $plugin_features ) {
+                    if( isset( $plugin_features['scss'] ) && is_array( $plugin_features['scss'] ) ) {
+                        $scss_locations[$plugin_name] = array(
+                            'directory' => $plugin_features['scss']['directory'],
+                            'uri' => $plugin_features['scss']['uri'],
+                            'imports' => $plugin_features['scss']['imports']
+                        );
+                    }
                 }
 
                 //Allow for additional Sass locations to be included. Imports can be an array of directories.
