@@ -1283,7 +1283,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
                 //Check for an old visitor with the same fingerprint
                 //@TODO "Nebula" 0: I don't think the server-side fingerprint alone is unique enough to push this live... Really needs the JS detections to work, but I can't think of a way that isn't AJAX JS or a second pageview to match against it...
-                $unique_new_visitor = $wpdb->get_results($wpdb->prepare("SELECT ga_cid FROM nebula_visitors WHERE (ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND user_agent = '" . sanitize_text_field($_SERVER['HTTP_USER_AGENT']) . "') OR fingerprint LIKE '%" . sanitize_text_field($this->fingerprint()) . "%'")); //DB Query here
+                $unique_new_visitor = $wpdb->get_results("SELECT ga_cid FROM nebula_visitors WHERE (ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND user_agent = '" . sanitize_text_field($_SERVER['HTTP_USER_AGENT']) . "') OR fingerprint LIKE '%" . sanitize_text_field($this->fingerprint()) . "%'"); //DB Query here
                 if ( !empty($unique_new_visitor) ){
 
                     //@TODO "Nebula" 0: This uses the first result... We want to find a user that is known, or that has a GA CID, else highest score.
