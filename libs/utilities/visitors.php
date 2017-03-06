@@ -1839,11 +1839,13 @@ if( !trait_exists( 'Visitors' ) ) {
                     $defaults['ip_time_zone'] = sanitize_text_field($ip_geolocation->time_zone);
                     $defaults['ip_geo'] = sanitize_text_field($ip_geolocation->city) . ', ' . sanitize_text_field($ip_geolocation->region_name) . ' ' . sanitize_text_field($ip_geolocation->zip_code) . ', ' . sanitize_text_field($ip_geolocation->country_name) . ' (' . sanitize_text_field($_SERVER['REMOTE_ADDR']) . ')';
 
-                    $local_time = new DateTime('now', new DateTimeZone($ip_geolocation->time_zone));
-                    if ( !empty($local_time) ){
-                        $defaults['ip_time_zone_offset'] = $local_time->format('P');
-                        $defaults['ip_local_time'] = $local_time->format('l, F j, Y @ g:ia');
-                    }
+                    if ( !empty($ip_geolocation->time_zone) ){
+				$local_time = new DateTime('now', new DateTimeZone($ip_geolocation->time_zone));
+				if ( !empty($local_time) ){
+					$defaults['ip_time_zone_offset'] = $local_time->format('P');
+					$defaults['ip_local_time'] = $local_time->format('l, F j, Y @ g:ia');
+				}
+			}
                 }
 
                 $all_data = $this->update_data_everytime($defaults); //Add any passed data
