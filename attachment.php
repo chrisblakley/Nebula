@@ -30,7 +30,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -46,16 +46,16 @@ get_header(); ?>
 				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-meta">
-							<?php nebula_meta('on'); ?> <?php nebula_meta('dimensions'); ?> <?php nebula_meta('exif'); ?>
+							<?php nebula()->meta('on'); ?> <?php nebula()->meta('dimensions'); ?> <?php nebula()->meta('exif'); ?>
 						</div>
 
 						<div class="entry-social">
 							<span class="nebulasocialcon">
 				        		<?php
 					        		if ( is_dev() ) {
-						        		nebula_meta('social', 1);
+						        		nebula()->meta('social', 1);
 					        		} else {
-						        		nebula_meta('social', 0);
+						        		nebula()->meta('social', 0);
 					        		}
 					        	?>
 				        	</span>
@@ -101,7 +101,7 @@ get_header(); ?>
 
 							<div class="entry-caption">
 								<?php if ( !empty($post->post_excerpt) ): ?>
-									<?php echo nebula_excerpt(); ?>
+									<?php echo nebula()->excerpt(); ?>
 								<?php endif; ?>
 							</div>
 

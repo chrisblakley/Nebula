@@ -37,11 +37,11 @@ get_header(); ?>
 					<script>
 						ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});
 					</script>
-					<?php nebula_vdb_append_visitor_data(array('no_search_results' => get_search_query()), false); ?>
+					<?php nebula()->append_visitor_data(array('no_search_results' => get_search_query()), false); ?>
 				<?php endif; ?>
 
-				<?php nebula_vdb_append_visitor_data(array('internal_search' => get_search_query())); ?>
-				<?php echo nebula_search_form(); ?>
+				<?php nebula()->append_visitor_data(array('internal_search' => get_search_query())); ?>
+				<?php echo nebula()->search_form(); ?>
 			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -50,7 +50,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -61,7 +61,7 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<?php nebula_breadcrumbs(); ?>
+				<?php nebula()->breadcrumbs(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->

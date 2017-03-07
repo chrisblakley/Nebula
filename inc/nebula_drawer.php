@@ -6,7 +6,7 @@
 					<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 
 					<h5>Your search returned only one result. You have been automatically redirected.</h5>
-					<?php echo nebula_search_form(); ?>
+					<?php echo nebula()->search_form(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -18,7 +18,7 @@
 				<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 				<div class="col-md-12">
 					<h5>Your search was invalid. Please try again.</h5>
-					<?php echo nebula_search_form(); ?>
+					<?php echo nebula()->search_form(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->

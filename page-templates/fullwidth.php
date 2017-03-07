@@ -25,7 +25,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -41,7 +41,7 @@ get_header(); ?>
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-social">
-							<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
+							<?php nebula()->social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
 						</div>
 
 						<div class="entry-content">

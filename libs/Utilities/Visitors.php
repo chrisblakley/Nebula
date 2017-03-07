@@ -409,7 +409,7 @@ if( !trait_exists( 'Visitors' ) ) {
                         <div class="col-12">
                             <h2>Nebula Visitors Data</h2>
                             <?php
-                                if ( !current_user_can('manage_options') && !is_dev() ){
+                                if ( !current_user_can('manage_options') && !nebula()->is_dev() ){
                                     wp_die('You do not have sufficient permissions to access this page.');
                                 }
                             ?>
@@ -839,7 +839,7 @@ if( !trait_exists( 'Visitors' ) ) {
             }
 
             //Create the NVDB Tables
-            if ( nebula()->is_admin_page() && isset($_GET['settings-updated']) && is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
+            if ( nebula()->is_admin_page() && isset($_GET['settings-updated']) && nebula()->is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
                 $this->create_tables();
             }
 

@@ -873,7 +873,7 @@ trait Functions {
 
 	    //Check for errors
 	    if ( empty($video_json) ){
-	        if ( current_user_can('manage_options') || is_dev() ){
+	        if ( current_user_can('manage_options') || nebula()->is_dev() ){
 	            if ( $provider == 'youtube' ){
 	                $video_metadata['error'] = 'A Youtube Data API error occurred. Make sure the Youtube Data API is enabled in the Google Developer Console and the server key is saved in Nebula Options.';
 	            } else {
@@ -1162,7 +1162,7 @@ trait Functions {
 	            } elseif ( locate_template($loop . '.php') ){
 	                get_template_part($loop);
 	            } else {
-	                if ( is_dev() ){
+	                if ( nebula()->is_dev() ){
 	                    echo '<strong>Warning:</strong> The custom loop template or function ' . $loop . ' does not exist! Falling back to loop.php.';
 	                }
 	                get_template_part('loop');
@@ -2080,7 +2080,7 @@ trait Functions {
     public function redirect_empty_search($query){
         global $wp_query;
         if ( isset($_GET['s']) && $wp_query->query && !array_key_exists('invalid', $_GET) ){
-            if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !is_admin_page() ){
+            if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !nebula()->is_admin_page() ){
                 ga_send_event('Internal Search', 'Invalid', '(Empty query)');
                 header('Location: ' . home_url('/') . 'search/?invalid');
                 exit;

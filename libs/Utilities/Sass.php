@@ -89,7 +89,7 @@ if( !trait_exists( 'Sass' ) ) {
                 if ( time()-nebula()->data('scss_last_processed') >= 2592000 ){
                     nebula()->update_option('scss', 'disabled');
                 }
-            } elseif ( is_dev() && !is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
+            } elseif ( nebula()->is_dev() && !nebula()->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
                 trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
             }
         }
@@ -155,7 +155,7 @@ if( !trait_exists( 'Sass' ) ) {
                     //Skip file conditions
                     $is_wireframing_file = $file_path_info['filename'] == 'wireframing' && nebula()->option('prototype_mode', 'disabled'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
                     $is_dev_file = $file_path_info['filename'] == 'dev' && nebula()->option('dev_stylesheets', 'disabled'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-                    $is_admin_file = !is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
+                    $is_admin_file = !nebula()->is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
                     if ( $is_wireframing_file || $is_dev_file || $is_admin_file ){
                         continue;
                     }
@@ -168,7 +168,7 @@ if( !trait_exists( 'Sass' ) ) {
                         //If style.css has been edited after style.scss, save backup but continue compiling SCSS
                         if ( (is_child_theme() && $location_name != 'parent' ) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula()->data('scss_last_processed') != '0' && nebula()->data('scss_last_processed')-filemtime($css_filepath) < -30) ){
                             copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
-                            if ( is_dev() || current_user_can('manage_options') ){
+                            if ( nebula()->is_dev() || current_user_can('manage_options') ){
                                 global $scss_debug_ref;
                                 $scss_debug_ref = $location_name . ':';
                                 $scss_debug_ref .= (nebula()->data('scss_last_processed')-filemtime($css_filepath));

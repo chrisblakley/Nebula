@@ -10,7 +10,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 }
 
 //Disable author archives to prevent ?author=1 from showing usernames.
-if ( nebula_option('author_bios', 'disabled') ){
+if ( nebula()->option('author_bios', 'disabled') ){
 	wp_redirect(home_url('/') . '?s=about', 301);
 	http_response_code(403);
 	die();
@@ -32,7 +32,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -75,7 +75,7 @@ get_header(); ?>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('twitter') ): ?>
-					<a class="twitter" href="<?php echo nebula_twitter_url(get_the_author_meta('twitter')); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
+					<a class="twitter" href="<?php echo nebula()->twitter_url(get_the_author_meta('twitter')); ?>" target="_blank" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('googleplus') ): ?>

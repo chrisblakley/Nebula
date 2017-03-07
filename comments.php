@@ -1,10 +1,10 @@
 <?php if ( nebula()->option('comments', 'enabled') ): ?>
 	<div id="nebulacommentswrapper">
-		<?php if ( nebula_option('disqus_shortname') ): ?>
+		<?php if ( nebula()->option('disqus_shortname') ): ?>
 			<div id="disqus_thread"></div>
 			<script type="text/javascript">
 				<?php //Note this is a manual implementation of Disqus; we are NOT using the WordPress plugin for implementation. ?>
-				var disqus_shortname = '<?php echo nebula_option('disqus_shortname', ''); ?>';
+				var disqus_shortname = '<?php echo nebula()->option('disqus_shortname', ''); ?>';
 				var disqus_identifier = '<?php echo 'the-id-' . get_the_id(); ?>';
 				var disqus_title = '<?php the_title(); ?>';
 				var disqus_url = '<?php the_permalink(); ?>';

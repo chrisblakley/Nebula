@@ -38,7 +38,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->

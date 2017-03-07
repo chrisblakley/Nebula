@@ -111,7 +111,7 @@ if( !trait_exists( 'Admin' ) ) {
             }
 
             //Check if a post slug has a number appended to it (indicating a duplicate post).
-            //add_filter('wp_unique_post_slug', array( $this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! is_admin_page() does not prevent that...
+            //add_filter('wp_unique_post_slug', array( $this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
 
             //Search theme or plugin files via Developer Information Metabox
             add_action('wp_ajax_search_theme_files', array( $this, 'search_theme_files' ) );
@@ -284,7 +284,7 @@ if( !trait_exists( 'Admin' ) ) {
                             'parent' => 'nebula-ancestors',
                             'id' => 'nebula-parent-' . $parent,
                             'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title($parent),
-                            'href' => ( is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
+                            'href' => ( nebula()->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
                         ));
                     }
                 }
@@ -311,7 +311,7 @@ if( !trait_exists( 'Admin' ) ) {
                                 'parent' => 'nebula-children',
                                 'id' => 'nebula-child-' . get_the_id(),
                                 'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
-                                'href' => ( is_admin_page() )? get_edit_post_link() : get_permalink(),
+                                'href' => ( nebula()->is_admin_page() )? get_edit_post_link() : get_permalink(),
                             ));
                         }
                     }
@@ -553,7 +553,7 @@ if( !trait_exists( 'Admin' ) ) {
 
         //Nebula Admin Notices
         public function admin_notices(){
-            if ( current_user_can('manage_options') || is_dev() ){
+            if ( current_user_can('manage_options') || nebula()->is_dev() ){
                 //Check PHP version
                 $php_version_lifecycle = $this->php_version_support();
                 if ( $php_version_lifecycle['lifecycle'] === 'security' ){
@@ -598,7 +598,7 @@ if( !trait_exists( 'Admin' ) ) {
 
                 //Check if all SCSS files were processed manually.
                 if ( nebula()->option('scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
-                    if ( is_dev() || nebula()->is_client() ){
+                    if ( nebula()->is_dev() || nebula()->is_client() ){
                         echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
                     } else {
                         echo '<div class="nebula-admin-notice error"><p>You do not have permissions to manually process all SCSS files.</p></div>';
@@ -708,7 +708,7 @@ if( !trait_exists( 'Admin' ) ) {
 
         //Check if a post slug has a number appended to it (indicating a duplicate post).
         public function unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
-            if ( current_user_can('publish_posts') && is_admin_page() && (headers_sent() || nebula()->is_ajax_request()) ){ //Should work with AJAX and without (as long as headers have been sent)
+            if ( current_user_can('publish_posts') && nebula()->is_admin_page() && (headers_sent() || nebula()->is_ajax_request()) ){ //Should work with AJAX and without (as long as headers have been sent)
                 echo '<script>
                     if ( typeof nebulaUniqueSlugChecker === "function" ){
                         nebulaUniqueSlugChecker("' . $post_type . '");

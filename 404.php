@@ -27,7 +27,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -41,9 +41,9 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-md-8">
 				<article id="post-0" class="post error404 not-found">
-					<?php echo nebula_search_form(); ?>
+					<?php echo nebula()->search_form(); ?>
 
-					<?php if ( !empty($error_query) && $error_query->have_posts() ): //$error_query is defined in nebula_functions.php ?>
+					<?php if ( !empty($error_query) && $error_query->have_posts() ): //$error_query is defined in libs/Functions.php ?>
 						<div id="error-page-suggestions">
 							<h2>Suggestions</h2>
 							<?php while ( $error_query->have_posts() ): ?>

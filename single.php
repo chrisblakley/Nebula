@@ -23,7 +23,7 @@ get_header(); ?>
 			<div class="col">
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 				<div class="entry-meta">
-					<?php nebula_meta('on'); ?> <?php nebula_meta('by', 0); ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
+					<?php nebula()->meta('on'); ?> <?php nebula()->meta('by', 0); ?> <?php nebula()->meta('cat'); ?> <?php nebula()->meta('tags'); ?>
 				</div>
 			</div><!--/cols-->
 		</div><!--/row-->
@@ -33,7 +33,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -53,7 +53,7 @@ get_header(); ?>
 						<?php endif; ?>
 
 						<div class="entry-social">
-							<?php nebula_social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), is_dev()); ?>
+							<?php nebula()->social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), nebula()->is_dev()); ?>
 						</div>
 
 						<div class="entry-content">

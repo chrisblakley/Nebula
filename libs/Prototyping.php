@@ -73,11 +73,11 @@ if( !trait_exists( 'Prototyping' ) ) {
         //Add a link to Nebula Wireframing on the Admin Bar
         public function admin_bar_nebula_wireframing($wp_admin_bar){
             if ( nebula()->dev_phase() == 'wireframe' ){
-                $wireframe_menu_title = ( !is_admin_page() )? ' (Wireframe)' : '';
+                $wireframe_menu_title = ( !nebula()->is_admin_page() )? ' (Wireframe)' : '';
             } elseif ( nebula()->dev_phase() == 'staging' ){
-                $wireframe_menu_title = ( !is_admin_page() )? ' (Staging)' : '';
+                $wireframe_menu_title = ( !nebula()->is_admin_page() )? ' (Staging)' : '';
             } else {
-                $wireframe_menu_title = ( !is_admin_page() )? ' (Production)' : '';
+                $wireframe_menu_title = ( !nebula()->is_admin_page() )? ' (Production)' : '';
             }
 
             $wp_admin_bar->add_node(array(
@@ -87,7 +87,7 @@ if( !trait_exists( 'Prototyping' ) ) {
             ));
 
             if ( nebula()->dev_phase() ){
-                $permalink = ( is_admin_page() )? home_url() : get_permalink();
+                $permalink = ( nebula()->is_admin_page() )? home_url() : get_permalink();
 
                 if ( nebula()->dev_phase() != 'wireframe' && nebula()->option('wireframe_theme') ){
                     $wp_admin_bar->add_node(array(
@@ -107,7 +107,7 @@ if( !trait_exists( 'Prototyping' ) ) {
                     ));
                 }
 
-                if ( (nebula()->dev_phase() != 'production' || is_admin_page()) ){
+                if ( (nebula()->dev_phase() != 'production' || nebula()->is_admin_page()) ){
                     $wp_admin_bar->add_node(array(
                         'parent' => 'nebula-prototype',
                         'id' => 'nebula-production-activate',

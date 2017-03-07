@@ -6,9 +6,8 @@
 
 
 //Renamed function (5/10/2016)
-function the_breadcrumb(){
-    nebula_breadcrumbs();
-}
+function nebula_breadcrumbs(){ nebula()->breadcrumb(); }
+function the_breadcrumb(){ nebula()->breadcrumbs(); }
 
 
 //Update old options to new options

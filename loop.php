@@ -10,7 +10,7 @@
 			<h2 class="entry-title">Not Found</h2>
 			<div class="entry-summary">
 				<p>No results were found for the requested archive.</p>
-				<?php echo nebula_search_form(); ?>
+				<?php echo nebula()->search_form(); ?>
 			</div>
 		</article>
 	<?php else: //Begin the loop. ?>
@@ -24,11 +24,11 @@
 
 				<div class="entry-meta">
 					<?php if ( is_search() ): ?>
-						<?php //nebula_meta('type') . ' '; //Enable this to show post types in search results. ?>
+						<?php //nebula()->meta('type') . ' '; //Enable this to show post types in search results. ?>
 					<?php endif; ?>
 
 					<?php if ( !in_array("page", get_post_class()) ): ?>
-						<?php nebula_meta('on'); ?> <?php if ( nebula_option('author_bios', 'enabled') && !is_author() ){ nebula_meta('by'); } ?> <?php nebula_meta('cat'); ?> <?php nebula_meta('tags'); ?>
+						<?php nebula()->meta('on'); ?> <?php if ( nebula()->option('author_bios', 'enabled') && !is_author() ){ nebula()->meta('by'); } ?> <?php nebula()->meta('cat'); ?> <?php nebula()->meta('tags'); ?>
 					<?php endif; ?>
 				</div>
 
@@ -38,7 +38,7 @@
 					</div>
 				<?php else: ?>
 					<div class="entry-summary">
-						<?php echo nebula_excerpt(array('length' => 35)); ?>
+						<?php echo nebula()->excerpt(array('length' => 35)); ?>
 					</div>
 				<?php endif; ?>
 			</article>

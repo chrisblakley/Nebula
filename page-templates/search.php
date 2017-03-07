@@ -31,7 +31,7 @@ get_header(); ?>
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php nebula_breadcrumbs(); ?>
+					<?php nebula()->breadcrumbs(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
@@ -85,7 +85,7 @@ get_header(); ?>
 								</div><!--/col-->
 								<div class="col-md-6 right-side">
 									<div class="advanced-search-group">
-										<?php if ( nebula_option('author_bios', 'enabled') ): ?>
+										<?php if ( nebula()->option('author_bios', 'enabled') ): ?>
 											<span class="contact-form-heading">Post Author</span>
 											<select id="advanced-search-author" class="chosen-select" data-placeholder="Select author...">
 												<option></option>

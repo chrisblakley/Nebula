@@ -443,7 +443,7 @@ if( !trait_exists( 'Options' ) ) {
             <div class="wrap">
                 <h2>Nebula Options</h2>
                 <?php
-                if ( !current_user_can('manage_options') && !is_dev() ){
+                if ( !current_user_can('manage_options') && !nebula()->is_dev() ){
                     wp_die('You do not have sufficient permissions to access this page.');
                 }
                 ?>
