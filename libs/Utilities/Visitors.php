@@ -459,7 +459,7 @@ if( !trait_exists( 'Visitors' ) ) {
                                                         <?php else: ?>
                                                             <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
                                                                 <?php
-                                                                    if ( is_utc_timestamp($value) ){
+                                                                    if ( nebula()->is_utc_timestamp($value) ){
                                                                         echo date('F j, Y @ g:ia', intval($value)); //For Last Modified timestamp
                                                                     } else {
                                                                         echo sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
@@ -975,7 +975,7 @@ if( !trait_exists( 'Visitors' ) ) {
                     }
                 } else {
                     //Check if new session or another pageview in same session
-                    if ( session_id() != $last_session_id ){ //New session
+                    if ( nebula()->nebula_session_id() != $last_session_id ){ //New session
                         $update_data = array(
                             'first_session' => '0',
                             'current_session' => time(),
@@ -1400,7 +1400,7 @@ if( !trait_exists( 'Visitors' ) ) {
 
             //Check if last session ID matches current session ID
             $last_session_id = $this->get_visitor_datapoint('last_session_id');
-            if ( $last_session_id == session_id() ){
+            if ( $last_session_id == nebula()->nebula_session_id() ){
                 return true;
             }
 
@@ -1816,9 +1816,9 @@ if( !trait_exists( 'Visitors' ) ) {
                     'is_returning_user' => '0',
                     'session_count' => 1,
                     'prev_session_on' => round(time()/60)*60, //Rounded to the nearest minute
-                    'last_session_id' => session_id(),
+                    'last_session_id' => nebula()->nebula_session_id(),
                     'last_seen_on' => round(time()/60)*60, //Rounded to the nearest minute
-                    'nebula_session_id' => nebula()->session_id(),
+                    'nebula_session_id' => nebula()->nebula_session_id(),
                     'current_session_on' => round(time()/60)*60, //Rounded to the nearest minute
                     'current_session_duration' => 0,
                     'current_session_pageviews' => 1,
@@ -1974,9 +1974,9 @@ if( !trait_exists( 'Visitors' ) ) {
                 $defaults['ga_cid'] = nebula()->ga_parse_cookie();
                 $defaults['notable_poi'] = nebula()->poi();
                 $defaults['last_modified_on'] = time();
-                $defaults['nebula_session_id'] = nebula()->session_id();
+                $defaults['nebula_session_id'] = nebula()->nebula_session_id();
 
-                if ( is_staff() ){
+                if ( nebula()->is_staff() ){
                     $defaults['is_staff'] = '1';
                 }
 

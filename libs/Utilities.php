@@ -35,8 +35,8 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
             $this->SassHooks(); // Register Sass hooks
         }
 
-        //Generate Session ID
-        public function session_id(){
+        //Generate Nebula Session ID
+        public function nebula_session_id(){
             $session_info = ( nebula()->is_debug() )? 'dbg.' : '';
             $session_info .= ( nebula()->option('prototype_mode', 'enabled') )? 'prt.' : '';
 
@@ -57,8 +57,8 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
 
             $session_info .= ( $this->is_bot() )? 'bot.' : '';
 
-            $wp_session_id = ( nebula()->session_id() )? nebula()->session_id() : '!' . uniqid();
-            $ga_cid = $this->parse_cookie();
+            $wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
+            $ga_cid = $this->ga_parse_cookie();
 
             $site_live = '';
             if ( !nebula()->is_site_live() ){
@@ -466,7 +466,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
 
                 case ('file'): //Filename will be just the filename/extension.
                 case ('filename'):
-                    if ( contains(basename($url_components['path']), array('.')) ){
+                    if ( nebula()->contains(basename($url_components['path']), array('.')) ){
                         return basename($url_components['path']);
                     } else {
                         return false;
@@ -474,7 +474,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
                     break;
 
                 case ('extension'): //The extension only (without ".")
-                    if ( contains(basename($url_components['path']), array('.')) ){
+                    if ( nebula()->contains(basename($url_components['path']), array('.')) ){
                         $file_parts = explode('.', $url_components['path']);
                         return $file_parts[1];
                     } else {
@@ -483,7 +483,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
                     break;
 
                 case ('path'): //Path should be just the path without the filename/extension.
-                    if ( contains(basename($url_components['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
+                    if ( nebula()->contains(basename($url_components['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
                         return str_replace(basename($url_components['path']), '', $url_components['path']);
                     } else {
                         return $url_components['path'];

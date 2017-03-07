@@ -49,6 +49,8 @@ if( !trait_exists( 'Scripts' ) ) {
             wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/jquery.dataTables.min.css', null, '1.10.13', 'all'); //Datatables is called via main.js only as needed.
             wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css', null, '1.6.2', 'all');
             wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css', null, '1.12.1', 'all');
+            wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, null);
+            wp_register_style('nebula-flags', get_template_directory_uri() . '/assets/css/flags.css', null, null);
             wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
             wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, null);
             wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, null);

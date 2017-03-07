@@ -31,13 +31,13 @@ if( !trait_exists( 'Analytics' ) ) {
                 $contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
                 $cid = $contents['cid'];
             } else {
-                $cid = $this->generate_UUID();
+                $cid = $this->ga_generate_UUID();
             }
             return $cid;
         }
 
         //Generate UUID v4 function (needed to generate a CID when one isn't available)
-        public function generate_UUID(){
+        public function ga_generate_UUID(){
             $override = apply_filters('pre_ga_generate_UUID', false);
             if ( $override !== false ){return $override;}
 
@@ -52,7 +52,7 @@ if( !trait_exists( 'Analytics' ) ) {
         }
 
         //Generate Domain Hash
-        public function generate_domain_hash($domain){
+        public function ga_generate_domain_hash($domain){
             $override = apply_filters('pre_ga_generate_domain_hash', false, $domain);
             if ( $override !== false ){return $override;}
 
@@ -72,7 +72,7 @@ if( !trait_exists( 'Analytics' ) ) {
 
         //Generate the full path of a Google Analytics __utm.gif with necessary parameters.
         //https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
-        public function UTM_gif($user_cookies=array(), $user_parameters=array()){
+        public function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
             $override = apply_filters('pre_ga_UTM_gif', false, $user_cookies, $user_parameters);
             if ( $override !== false ){return $override;}
 
@@ -118,7 +118,7 @@ if( !trait_exists( 'Analytics' ) ) {
 
         //Send Data to Google Analytics
         //https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-        public function send_data($data){
+        public function ga_send_data($data){
             $override = apply_filters('pre_ga_send_data', false, $data);
             if ( $override !== false ){return $override;}
 
@@ -127,7 +127,7 @@ if( !trait_exists( 'Analytics' ) ) {
         }
 
         //Send Pageview Function for Server-Side Google Analytics
-        public function send_pageview($hostname=null, $path=null, $title=null, $array=array()){
+        public function ga_send_pageview($hostname=null, $path=null, $title=null, $array=array()){
             $override = apply_filters('pre_ga_send_pageview', false, $hostname, $path, $title, $array);
             if ( $override !== false ){return $override;}
 
@@ -157,11 +157,11 @@ if( !trait_exists( 'Analytics' ) ) {
             );
 
             $data = array_merge($data, $array);
-            $this->send_data($data);
+            $this->ga_send_data($data);
         }
 
         //Send Event Function for Server-Side Google Analytics
-        public function send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
+        public function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
             $override = apply_filters('pre_ga_send_event', false, $category, $action, $label, $value, $ni, $array);
             if ( $override !== false ){return $override;}
 
@@ -170,7 +170,7 @@ if( !trait_exists( 'Analytics' ) ) {
             $data = array(
                 'v' => 1,
                 'tid' => nebula()->option('ga_tracking_id'),
-                'cid' => $this->parse_cookie(),
+                'cid' => $this->ga_parse_cookie(),
                 't' => 'event',
                 'ec' => $category, //Category (Required)
                 'ea' => $action, //Action (Required)
@@ -183,13 +183,13 @@ if( !trait_exists( 'Analytics' ) ) {
             );
 
             $data = array_merge($data, $array);
-            $this->send_data($data);
+            $this->ga_send_data($data);
         }
 
         //Send custom data to Google Analytics. Must pass an array of data to this function:
         //ga_send_custom(array('t' => 'event', 'ec' => 'Category Here', 'ea' => 'Action Here', 'el' => 'Label Here'));
         //https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-        public function send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
+        public function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
             $override = apply_filters('pre_ga_send_custom', false, $array);
             if ( $override !== false ){return $override;}
 
@@ -209,17 +209,17 @@ if( !trait_exists( 'Analytics' ) ) {
             $data = array_merge($defaults, $array);
 
             if ( !empty($data['t']) ){
-                $this->send_data($data);
+                $this->ga_send_data($data);
             } else {
                 trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
                 return;
             }
         }
 
-        public function event_ajax(){
+        public function ga_event_ajax(){
             if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
             if ( !nebula()->is_bot() ){ //Is this conditional preventing this from working at times?
-                $this->send_event(sanitize_text_field($_POST['data'][0]['category']), sanitize_text_field($_POST['data'][0]['action']), sanitize_text_field($_POST['data'][0]['label']), sanitize_text_field($_POST['data'][0]['value']), sanitize_text_field($_POST['data'][0]['ni']));
+                $this->ga_send_event(sanitize_text_field($_POST['data'][0]['category']), sanitize_text_field($_POST['data'][0]['action']), sanitize_text_field($_POST['data'][0]['label']), sanitize_text_field($_POST['data'][0]['value']), sanitize_text_field($_POST['data'][0]['ni']));
             }
             wp_die();
         }

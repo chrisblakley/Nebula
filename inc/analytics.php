@@ -226,12 +226,10 @@
 			//Session ID
 
 			//@TODO: DOESN'T LIKE SOMETHING HERE. CAUSING MEMORY LEAK AND TIMEOUT!!!!!!!!!!!!
-/*
 			if ( nebula()->option('cd_sessionid') ){
-				echo 'nebula.session.id = "' . nebula()->session_id() . '";';
+				echo 'nebula.session.id = "' . nebula()->nebula_session_id() . '";';
 				echo 'ga("set", gaCustomDimensions["sessionID"], nebula.session.id);';
 			}
-*/
 
 			//WordPress User ID
 			if ( is_user_logged_in() ){
