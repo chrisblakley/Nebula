@@ -21,7 +21,7 @@ get_header(); ?>
 				<?php if ( get_bloginfo('description') != '' ): ?>
 					<h2><?php echo get_bloginfo('description'); ?></h2>
 				<?php endif; ?>
-				<?php echo nebula_hero_search(); ?>
+				<?php echo nebula()->hero_search(); ?>
 			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->

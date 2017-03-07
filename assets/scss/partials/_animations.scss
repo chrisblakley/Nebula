@@ -263,12 +263,28 @@
 	100% {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); opacity: 0; pointer-events: none;}
 }
 
-//Depress and return
+//Depress and return (Small)
+//Built-in animation trigger on click by adding class "click".
+.nebula-tap.animate {@include prefix((animation: nebula-tap .4s easing(easeOutBack)), webkit moz);}
+@include keyframes(nebula-tap){
+    0% {transform: scale3d(1, 1, 1);}
+    50% {transform: scale3d(0.90, 0.90, 0.90);}
+}
+
+//Depress and return (Large)
 //Built-in animation trigger on click by adding class "click".
 .nebula-push.animate {@include prefix((animation: nebula-push .4s easing(easeOutBack)), webkit moz);}
 @include keyframes(nebula-push){
     0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(0.95, 0.95, 0.95);}
+    50% {transform: scale3d(0.80, 0.80, 0.80);}
+}
+
+//Depress and return (Large)
+//Built-in animation trigger on click by adding class "click".
+.nebula-shove.animate {@include prefix((animation: nebula-shove .4s easing(easeOutBack)), webkit moz);}
+@include keyframes(nebula-shove){
+    0% {transform: scale3d(1, 1, 1);}
+    50% {transform: scale3d(0.60, 0.60, 0.60);}
 }
 
 //Shake left and right
