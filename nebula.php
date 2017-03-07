@@ -85,7 +85,7 @@ if ( !class_exists('Nebula') ){
          */
         private function constants() {
             // Nebula version
-            define( 'NEBULA_VER', '1.0.0' );
+            define( 'NEBULA_VER', '1.0.0' ); //@todo: use nebula()->version('full');
 
             // Nebula path
             define( 'NEBULA_DIR', get_template_directory() );

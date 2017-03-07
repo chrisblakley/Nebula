@@ -574,7 +574,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                         $todo_counted = true;
                     }
 
-                    $todo_skipFilenames = array('README.md', 'nebula_admin.php', 'error_log', 'includes/libs', 'examples/');
+                    $todo_skipFilenames = array('README.md', 'Admin/Dashboard.php', 'error_log', 'inc/vendor', 'js/vendor', 'examples/', 'procedural/nebula_');
                     if ( !nebula()->contains(basename($todo_file), $this->skip_extensions()) && !nebula()->contains($todo_file, $todo_skipFilenames) ){
                         foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
                             if ( stripos($todo_line, '@TODO') !== false ){

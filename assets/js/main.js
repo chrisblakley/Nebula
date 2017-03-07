@@ -1600,7 +1600,7 @@ function cf7Functions(){
 		nv('append', {'abandoned_form': formID}); //Temporarily prep this value and remove on successful submission
 
 		//Individual form field timings
-		if ( typeof nebulaTimings[formID].lap[nebulaTimings[formID].laps-1] !== 'undefined' ){
+		if ( typeof nebulaTimings[formID] !== 'undefined' && typeof nebulaTimings[formID].lap[nebulaTimings[formID].laps-1] !== 'undefined' ){
 			var labelText = '';
 			if ( jQuery(this).parent('.label') ){
 				labelText = jQuery(this).parent('.label').text();

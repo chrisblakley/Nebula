@@ -126,8 +126,8 @@ trait Functions {
         add_action('template_redirect', array( $this, 'redirect_single_post' ) );
 
         //Autocomplete Search AJAX.
-        add_action('wp_ajax_nebula_autocomplete_search', array( $this, 'autocomplete_search' ) );
-        add_action('wp_ajax_nopriv_nebula_autocomplete_search', array( $this, 'autocomplete_search' ) );
+        add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
+        add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 
         //Advanced Search
         add_action('wp_ajax_nebula_advanced_search', array( $this, 'advanced_search' ) );
@@ -2126,16 +2126,6 @@ trait Functions {
         $types = array('any');
         $types = json_decode(sanitize_text_field(trim($_POST['types'])));
 
-        //Test for close or exact matches. Use: $suggestion['classes'] .= nebula_close_or_exact($suggestion['similarity']);
-        function close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
-            if ( $rating > $exact_threshold ){
-                return ' exact-match';
-            } elseif ( $rating > $close_threshold ){
-                return ' close-match';
-            }
-            return '';
-        }
-
         //Standard WP search (does not include custom fields)
         $query1 = new WP_Query(array(
             'post_type' => $types,
@@ -2356,6 +2346,16 @@ trait Functions {
         echo json_encode($outputArray, JSON_PRETTY_PRINT);
         wp_die();
     }
+
+	//Test for close or exact matches. Use: $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']); //Rename this function
+	public function close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
+		if ( $rating > $exact_threshold ){
+			return ' exact-match';
+		} elseif ( $rating > $close_threshold ){
+			return ' close-match';
+		}
+			return '';
+		}
 
     //Advanced Search
     public function advanced_search(){

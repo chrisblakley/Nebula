@@ -148,6 +148,20 @@ if( !trait_exists( 'Scripts' ) ) {
                 'dom' => null,
             );
 
+			//Check for session data
+			if ( isset($_SESSION['nebulaSession']) && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
+				$this->brain['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
+			} else {
+				$this->brain['session'] = array(
+					'ip' => $_SERVER['REMOTE_ADDR'],
+					'id' => nebula()->nebula_session_id(),
+					'flags' => array(
+						'adblock' => false,
+						'gablock' => false,
+					),
+				);
+			}
+
             $user_info = get_userdata(get_current_user_id());
 
             //User Data
