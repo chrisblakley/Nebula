@@ -152,7 +152,7 @@ if( !trait_exists( 'Scripts' ) ) {
             $this->brain['user'] = array(
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'nid' => nebula()->get_nebula_id(),
-                'cid' => nebula()->parse_cookie(),
+                'cid' => nebula()->ga_parse_cookie(),
                 'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
                     'bot' => nebula()->is_bot(),
                     'remote_addr' => $_SERVER['REMOTE_ADDR'],
@@ -231,8 +231,8 @@ if( !trait_exists( 'Scripts' ) ) {
             //Stylesheets
             wp_enqueue_style('nebula-login');
             echo '<style>
-                    div#login h1 a {background: url(' . nebula()->prefer_child_directory('/images/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
-                        .svg div#login h1 a {background: url(' . nebula()->prefer_child_directory('/images/logo.svg') . ') center center no-repeat; background-size: contain;}
+                    div#login h1 a {background: url(' . get_theme_file_uri('/images/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
+                        .svg div#login h1 a {background: url(' . get_theme_file_uri('/images/logo.svg') . ') center center no-repeat; background-size: contain;}
                 </style>';
 
             //Scripts

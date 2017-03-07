@@ -76,7 +76,7 @@ if( !trait_exists( 'Sass' ) ) {
 
                 //Check if all Sass files should be rendered
                 $force_all = false;
-                if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && is_staff() ){
+                if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && nebula()->is_staff() ){
                     $force_all = true;
                 }
 
@@ -96,7 +96,7 @@ if( !trait_exists( 'Sass' ) ) {
 
         //Render scss files
         public function render_scss($child=false){
-            $override = apply_filters('pre_nebula_render_scss', false, $location_name, $location_paths, $force_all);
+            $override = apply_filters('pre_nebula_render_scss', false, $child);
             if ( $override !== false ){return $override;}
 
             if ( nebula()->option('scss', 'enabled') && !empty($location_name) && !empty($location_paths) ){

@@ -128,6 +128,7 @@ if ( !class_exists('Nebula') ){
             $this->TemplateEngineHooks(); // Register TemplateEngine hooks
             $this->ScriptHooks(); // Register Script hooks
             $this->OptionsHooks(); // Register Options hooks
+            $this->UtilitiesHooks(); // Register Utilities hooks
             $this->SecurityHooks(); // Register Security hooks
             $this->OptimizationHooks(); // Register Optimization hooks
             $this->FunctionsHooks(); // Register Functions hooks

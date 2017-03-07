@@ -22,7 +22,7 @@ if( !trait_exists( 'Analytics' ) ) {
         }
 
         //Handle the parsing of the _ga cookie or setting it to a unique identifier
-        public function parse_cookie(){
+        public function ga_parse_cookie(){
             $override = apply_filters('pre_ga_parse_cookie', false);
             if ( $override !== false ){return $override;}
 

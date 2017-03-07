@@ -4,8 +4,13 @@
  */
 
 //nebula_child.php depends on the nebula_options.php functions, so it must be required first.
-require_once(get_template_directory() . '/libs/nebula_options.php'); //Nebula Options
+//require_once(get_template_directory() . '/libs/nebula_options.php'); //Nebula Options
 
+
+if ( !class_exists('Nebula') ){
+	require_once(get_template_directory() . '/nebula.php');
+	nebula();
+}
 
 /*==========================
  Child Theme Functions
@@ -72,8 +77,8 @@ add_action('login_enqueue_scripts', 'register_nebula_child_scripts');
 add_action('admin_enqueue_scripts', 'register_nebula_child_scripts');
 function register_nebula_child_scripts(){
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
-	//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-	nebula_register_script('nebula-child', get_stylesheet_directory_uri() . '/assets/js/child.js', 'defer', array('jquery', 'nebula-jquery_ui', 'nebula-main'), null, true); //main.js in the parent Nebula theme is defined as a dependant here.
+	//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
+	nebula()->register_script('nebula-child', get_stylesheet_directory_uri() . '/assets/js/child.js', 'defer', array('jquery', 'nebula-jquery_ui', 'nebula-main'), null, true); //main.js in the parent Nebula theme is defined as a dependant here.
 }
 
 

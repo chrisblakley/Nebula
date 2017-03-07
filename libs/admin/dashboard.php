@@ -81,8 +81,8 @@ if( !trait_exists( 'Dashboard' ) ) {
             }
 
             //Open/Closed
-            if ( has_business_hours() ){
-                $open_closed = ( business_open() )? '<strong style="color: green;">Open</strong>' : '<strong>Closed</strong>';
+            if ( nebula()->has_business_hours() ){
+                $open_closed = ( nebula()->business_open() )? '<strong style="color: green;">Open</strong>' : '<strong>Closed</strong>';
                 echo '<li><i class="fa fa-clock-o fa-fw"></i> Currently ' . $open_closed . '</li>';
             }
 
@@ -168,14 +168,15 @@ if( !trait_exists( 'Dashboard' ) ) {
             $revisions_plural = ( $revision_count == 1 )? 'revision' : 'revisions';
             echo '<li><i class="fa fa-history fa-fw"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
-            //Plugins
-            $all_plugins_plural = ( count($all_plugins) == 1 )? 'Plugin' : 'Plugins';
-            if ( empty($all_plugins) || nebula()->is_debug() ){
-                $all_plugins = get_plugins();
-                set_transient('nebula_count_plugins', $all_plugins, HOUR_IN_SECONDS*36); //12 hour cache
-            }
-            $active_plugins = get_option('active_plugins', array());
-            echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
+			//Plugins
+			$all_plugins = get_transient('nebula_count_plugins');
+			if ( empty($all_plugins) || nebula()->is_debug() ){
+				$all_plugins = get_plugins();
+				set_transient('nebula_count_plugins', $all_plugins, HOUR_IN_SECONDS*36);
+			}
+			$all_plugins_plural = ( count($all_plugins) == 1 )? 'Plugin' : 'Plugins';
+			$active_plugins = get_option('active_plugins', array());
+			echo '<li><i class="fa fa-plug fa-fw"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
             //Users
             $user_count = get_transient('nebula_count_users');
@@ -224,7 +225,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             do_action('nebula_ataglance');
 
-            echo '<p><em>Designed and Developed by ' . pinckneyhugogroup(1) . '</em></p>';
+            echo '<p><em>Designed and Developed by ' . nebula()->pinckneyhugogroup(1) . '</em></p>';
         }
 
         //Current User metabox
@@ -299,7 +300,7 @@ if( !trait_exists( 'Dashboard' ) ) {
             echo '<li><i class="fa ' . $fa_role . ' fa-fw"></i> Role: <strong class="admin-user-info admin-user-role">' . $super_role . '</strong></li>';
 
             //Developer
-            if ( is_dev() ){
+            if ( nebula()->is_dev() ){
                 echo '<li><i class="fa fa-gears fa-fw"></i> <strong>Developer</strong></li>';
             }
 
@@ -314,8 +315,8 @@ if( !trait_exists( 'Dashboard' ) ) {
             if ( nebula()->option('device_detection') ){
                 //Device
                 if ( nebula()->is_desktop() ){
-                    $battery_percentage = nebula()->vdb_get_visitor_datapoint('battery_percentage');
-                    if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula()->vdb_get_visitor_datapoint('battery_mode') === 'Battery' ){
+                    $battery_percentage = nebula()->get_visitor_datapoint('battery_percentage');
+                    if ( (!empty($battery_percentage) && str_replace('%', '', $battery_percentage) < 100) || nebula()->get_visitor_datapoint('battery_mode') === 'Battery' ){
                         echo '<li><i class="fa fa-laptop fa-fw"></i> Device: <strong>Laptop</strong></li>';
                     } else {
                         echo '<li><i class="fa fa-desktop fa-fw"></i> Device: <strong>Desktop</strong></li>';
@@ -521,7 +522,7 @@ if( !trait_exists( 'Dashboard' ) ) {
         public function dashboard_phg(){
             echo '<a href="http://pinckneyhugo.com" target="_blank"><img src="' . get_template_directory_uri() . '/images/phg/phg-building.jpg" style="width: 100%;" /></a>';
             echo '<ul>';
-            echo '<li>' . pinckneyhugogroup() . '</li>';
+            echo '<li>' . nebula()->pinckneyhugogroup() . '</li>';
             echo '<li><i class="fa fa-map-marker fa-fw"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a></li>';
             echo '<li><i class="fa fa-phone fa-fw"></i> (315) 478-6700</li>';
             echo '</ul>';
@@ -817,7 +818,7 @@ if( !trait_exists( 'Dashboard' ) ) {
             echo '<li><i class="fa fa-calendar fa-fw"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <strong title="' . human_time_diff($latest_file['date']) . ' ago" style="cursor: help;">' . date("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong></li>';
 
             //SCSS last processed date
-            if ( nebula_data('scss_last_processed') ){
+            if ( nebula()->data('scss_last_processed') ){
                 echo '<li><i class="fa fa-paint-brush fa-fw"></i> Sass Processed: <span title="' . human_time_diff(nebula()->data('scss_last_processed')) . ' ago" style="cursor: help;"><strong>' . date("F j, Y", nebula()->data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", nebula()->data('scss_last_processed')) . '</strong></span></li>';
             }
             echo '</ul>';

@@ -13,7 +13,7 @@
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/<?php echo ( is_debug(1) )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
+		})(window,document,'script','//www.google-analytics.com/<?php echo ( nebula()->is_debug(1) )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
 
 		ga('create', '<?php echo nebula()->option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->option('ga_wpuserid', 'enabled') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
 
@@ -162,7 +162,7 @@
 			}
 
 			//Business Open/Closed
-			if ( business_open() ){
+			if ( nebula()->business_open() ){
 				$business_open = 'During Business Hours';
 				echo 'nebula.user.client.businessopen = true;';
 			} else {
@@ -175,7 +175,7 @@
 
 			//Relative time ("Late Morning", "Early Evening")
 			if ( nebula()->option('cd_relativetime') ){
-				$relative_time = nebula_relative_time();
+				$relative_time = nebula()->relative_time();
 				$time_description = implode(' ', $relative_time['description']);
 				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
 				echo 'ga("set", gaCustomDimensions["relativeTime"], "' . ucwords($time_description) . ' (' . $time_range . ')");';
@@ -212,9 +212,9 @@
 				}
 
 				$staff = '';
-				if ( is_dev() ){
+				if ( nebula()->is_dev() ){
 					$staff = ' (Developer)';
-				} elseif ( is_client() ){
+				} elseif ( nebula()->is_client() ){
 					$staff = ' (Client)';
 				}
 
@@ -224,10 +224,14 @@
 			}
 
 			//Session ID
+
+			//@TODO: DOESN'T LIKE SOMETHING HERE. CAUSING MEMORY LEAK AND TIMEOUT!!!!!!!!!!!!
+/*
 			if ( nebula()->option('cd_sessionid') ){
-				echo 'nebula.session.id = "' . nebula_session_id() . '";';
+				echo 'nebula.session.id = "' . nebula()->session_id() . '";';
 				echo 'ga("set", gaCustomDimensions["sessionID"], nebula.session.id);';
 			}
+*/
 
 			//WordPress User ID
 			if ( is_user_logged_in() ){
@@ -245,7 +249,7 @@
 
 			//First visit timestamp
 			if ( nebula()->option('cd_firstinteraction') ){
-				$first_session = nebula_vdb_get_visitor_datapoint('first_session');
+				$first_session = nebula()->get_visitor_datapoint('first_session');
 				if ( !empty($first_session) ){
 					echo 'ga("set", gaCustomDimensions["firstInteraction"], "' . time() . '");';
 				}
@@ -253,11 +257,11 @@
 
 			//Weather Conditions
 			if ( nebula()->option('cd_weather') ){
-				echo 'ga("set", gaCustomDimensions["weather"], "' . nebula_weather('conditions') . '");';
+				echo 'ga("set", gaCustomDimensions["weather"], "' . nebula()->weather('conditions') . '");';
 			}
 			//Temperature Range
 			if ( nebula()->option('cd_temperature') ){
-				$temp_round = floor(nebula_weather('temperature')/5)*5;
+				$temp_round = floor(nebula()->weather('temperature')/5)*5;
 				$temp_round_celcius = round(($temp_round-32)/1.8);
 				$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F (' . strval($temp_round_celcius) . '°C - ' . strval($temp_round_celcius+2) . '°C)';
 				echo 'ga("set", gaCustomDimensions["temperature"], "' . $temp_range . '");';
@@ -265,7 +269,7 @@
 
 			//Notable POI (IP Addresses)
 			if ( nebula()->option('cd_notablepoi') ){
-				echo 'ga("set", gaCustomDimensions["poi"], "' . nebula_poi() . '");';
+				echo 'ga("set", gaCustomDimensions["poi"], "' . nebula()->poi() . '");';
 			}
 		?>
 
@@ -275,7 +279,7 @@
 			}
 		<?php endif; ?>
 
-		<?php if ( !nebula_is_bot() && ( nebula()->option('adblock_detect') || nebula()->option('cd_adblocker') ) ): //Detect Ad Blockers. ?>
+		<?php if ( !nebula()->is_bot() && ( nebula()->option('adblock_detect') || nebula()->option('cd_adblocker') ) ): //Detect Ad Blockers. ?>
 			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
 				adBlockUser = 'No Ad Blocker';
 				if ( nebula.session.flags ){

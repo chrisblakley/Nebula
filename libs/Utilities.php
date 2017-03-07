@@ -246,7 +246,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
         //Check if the current IP address or logged-in user is a developer or client.
         //Note: This does not account for user role (An admin could return false here). Check role separately.
         public function is_staff($strict=false){
-            if ( is_dev($strict) || is_client($strict) ){
+            if ( nebula()->is_dev($strict) || nebula()->is_client($strict) ){
                 return true;
             }
 
@@ -262,7 +262,7 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
             $very_strict = ( $strict > 1 )? $strict : false;
             if ( array_key_exists('debug', $_GET) ){
                 if ( !empty($strict) ){
-                    if ( is_dev($very_strict) || is_client($very_strict) ){
+                    if ( nebula()->is_dev($very_strict) || nebula()->is_client($very_strict) ){
                         return true;
                     }
                     return false;
