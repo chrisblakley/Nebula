@@ -296,7 +296,7 @@
 	</script>
 <?php endif; ?>
 
-<?php if ( is_singular('post') ): //@todo: but not products ?>
+<?php if ( is_singular('post') ): //@todo "Nebula" 0: but not products ?>
 	<script type="application/ld+json">
 		{
 			"@context": "http://schema.org/",

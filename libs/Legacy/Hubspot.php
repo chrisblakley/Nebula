@@ -8,16 +8,11 @@
  * @contributor Ruben Garcia
  */
 
-namespace Nebula;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
-
-if( !trait_exists( 'Hubspot' ) ) {
-
+if ( !trait_exists('Hubspot') ){
     trait Hubspot {
-
-        public function __construct() {
+        public function hooks(){
             /*==========================
                 Hubspot CRM Integration Functions
 
@@ -33,8 +28,8 @@ if( !trait_exists( 'Hubspot' ) ) {
             // TODO: Move into Nebula_Hubspot_CRM or Nebula_Utilities_Hubspot_CRM (I prefer move this to an external plugin)
 
             //Create/Update Contact in Hubspot CRM
-            add_action('wp_ajax_nebula_ajax_send_to_hubspot', array( $this, 'ajax_send_to_hubspot' ) );
-            add_action('wp_ajax_nopriv_nebula_ajax_send_to_hubspot', array( $this, 'ajax_send_to_hubspot' ) );
+            add_action('wp_ajax_nebula_ajax_send_to_hubspot', array($this, 'ajax_send_to_hubspot'));
+            add_action('wp_ajax_nopriv_nebula_ajax_send_to_hubspot', array($this, 'ajax_send_to_hubspot'));
         }
 
         //Send data to Hubspot CRM via PHP curl

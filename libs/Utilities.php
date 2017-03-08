@@ -8,11 +8,9 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait_exists()
-
+if ( !trait_exists('Utilities') ){
 	require_once get_template_directory() . '/libs/Utilities/Analytics.php';
     require_once get_template_directory() . '/libs/Utilities/Visitors.php';
     require_once get_template_directory() . '/libs/Utilities/Device.php';
@@ -24,10 +22,10 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
 		use Device { Device::hooks as DeviceHooks;}
 		use Sass { Sass::hooks as SassHooks;}
 
-        public function hooks() {
+        public function hooks(){
             //Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
             //Example: 'key' => 'dates_%_start_date',
-            add_filter('posts_where' , array( $this, 'fuzzy_posts_where' ) );
+            add_filter('posts_where' , array($this, 'fuzzy_posts_where'));
 
             $this->AnalyticsHooks(); // Register Analytics hooks
             $this->VisitorsHooks(); // Register Visitors hooks
@@ -752,6 +750,13 @@ if( !trait_exists( 'Utilities' ) ) { //@todo: will need to change these to trait
             if ( $override !== false ){return $override;}
 
             $nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme();
+
+
+/*
+			var_dump($nebula_theme_info['Version']);
+			echo "<br>";
+*/
+
 
             $nebula_version_split = explode('.', preg_replace('/[a-zA-Z]/', '', $nebula_theme_info->get('Version')));
             $nebula_version = array(

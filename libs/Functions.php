@@ -8,8 +8,7 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 trait Functions {
 
@@ -19,7 +18,7 @@ trait Functions {
     public $linkedin_widget_loaded;
     public $pinterest_widget_loaded;
 
-    public function hooks() {
+    public function hooks(){
         global $pagenow;
 
         $this->twitter_widget_loaded = false;
@@ -28,130 +27,130 @@ trait Functions {
         $this->pinterest_widget_loaded = false;
 
         //Prep custom theme support
-        add_action('after_setup_theme', array( $this, 'theme_setup' ) );
+        add_action('after_setup_theme', array($this, 'theme_setup'));
 
         //Add the Posts RSS Feed back in
-        add_action('wp_head', array( $this, 'add_back_post_feed' ) );
+        add_action('wp_head', array($this, 'add_back_post_feed'));
 
         //Set server timezone to match Wordpress
-        add_action('init', array( $this, 'set_default_timezone' ), 1);
-        add_action('admin_init', array( $this, 'set_default_timezone' ), 1);
+        add_action('init', array($this, 'set_default_timezone'), 1);
+        add_action('admin_init', array($this, 'set_default_timezone'), 1);
 
         //Add the Nebula note to the browser console (if enabled)
         if ( nebula()->option('console_css') ) {
-            add_action('wp_head', array( $this, 'calling_card' ) );
+            add_action('wp_head', array($this, 'calling_card'));
         }
 
         //Check for warnings and send them to the console.
-        add_action('wp_head', array( $this, 'console_warnings' ) );
+        add_action('wp_head', array($this, 'console_warnings'));
 
         //Create/Write a manifest JSON file
         if ( is_writable(get_template_directory()) ){
-            if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-(60*60*24)) || nebula()->is_debug() ){ //@todo: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
-                add_action('init', array( $this, 'manifest_json' ) );
-                add_action('admin_init', array( $this, 'manifest_json' ) );
+            if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-(60*60*24)) || nebula()->is_debug() ){ //@todo "Nebula" 0: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
+                add_action('init', array($this, 'manifest_json'));
+                add_action('admin_init', array($this, 'manifest_json'));
             }
         }
 
         //Redirect to favicon to force-clear the cached version when ?favicon is added.
-        add_action('wp_loaded', array( $this, 'favicon_cache' ) );
+        add_action('wp_loaded', array($this, 'favicon_cache'));
 
         //Google Optimize Style Tag
-        add_action('nebula_head_open', array( $this, 'google_optimize_style' ) );
+        add_action('nebula_head_open', array($this, 'google_optimize_style'));
 
         //Register WordPress Customizer
-        add_action('customize_register', array( $this, 'customize_register' ) );
+        add_action('customize_register', array($this, 'customize_register'));
 
         //Register Widget Areas
-        add_action('widgets_init', array( $this, 'widgets_register' ) );
+        add_action('widgets_init', array($this, 'widgets_register'));
 
         //Register the Navigation Menus
-        add_action('after_setup_theme', array( $this, 'nav_menu_locations' ) );
+        add_action('after_setup_theme', array($this, 'nav_menu_locations'));
 
         if ( nebula()->option('comments', 'disabled') || nebula()->option('disqus_shortname') ) { //If WP core comments are disabled -or- if Disqus is enabled
             //Remove the Activity metabox
-            add_action('wp_dashboard_setup', array( $this, 'remove_activity_metabox' ) );
+            add_action('wp_dashboard_setup', array($this, 'remove_activity_metabox'));
 
             //Remove Comments column
-            add_filter('manage_posts_columns', array( $this, 'remove_pages_count_columns' ) );
-            add_filter('manage_pages_columns', array( $this, 'remove_pages_count_columns' ) );
-            add_filter('manage_media_columns', array( $this, 'remove_pages_count_columns' ) );
+            add_filter('manage_posts_columns', array($this, 'remove_pages_count_columns'));
+            add_filter('manage_pages_columns', array($this, 'remove_pages_count_columns'));
+            add_filter('manage_media_columns', array($this, 'remove_pages_count_columns'));
 
             //Close comments on the front-end
-            add_filter('comments_open', array( $this, 'disable_comments_status' ), 20, 2);
-            add_filter('pings_open', array( $this, 'disable_comments_status' ), 20, 2);
+            add_filter('comments_open', array($this, 'disable_comments_status' ), 20, 2);
+            add_filter('pings_open', array($this, 'disable_comments_status' ), 20, 2);
 
             //Remove comments menu from Admin Bar
             if ( nebula()->option('admin_bar', 'enabled') ){
-                add_action('admin_bar_menu', array( $this, 'admin_bar_remove_comments' ), 900);
+                add_action('admin_bar_menu', array($this, 'admin_bar_remove_comments' ), 900);
             }
 
             //Remove comments metabox and comments
-            add_action('admin_menu', array( $this, 'disable_comments_admin' ) );
-            add_filter('admin_head', array( $this, 'hide_ataglance_comment_counts' ) );
+            add_action('admin_menu', array($this, 'disable_comments_admin'));
+            add_filter('admin_head', array($this, 'hide_ataglance_comment_counts'));
 
             //Disable support for comments in post types, Redirect any user trying to access comments page
-            add_action('admin_init', array( $this, 'disable_comments_admin_menu_redirect' ) );
+            add_action('admin_init', array($this, 'disable_comments_admin_menu_redirect'));
 
             //Link to Disqus on comments page (if using Disqus)
             if ( $pagenow == 'edit-comments.php' && nebula()->option('disqus_shortname') ){
-                add_action('admin_notices', array( $this, 'disqus_link' ) );
+                add_action('admin_notices', array($this, 'disqus_link'));
             }
         } else { //If WP core comments are enabled
             //Enqueue threaded comments script only as needed
-            add_action('comment_form_before', array( $this, 'enqueue_comments_reply' ) );
+            add_action('comment_form_before', array($this, 'enqueue_comments_reply'));
         }
 
         //Disable support for trackbacks in post types
-        add_action('admin_init', array( $this, 'disable_trackbacks' ) );
+        add_action('admin_init', array($this, 'disable_trackbacks'));
 
         //Prefill form fields with comment author cookie
-        add_action('wp_head', array( $this, 'comment_author_cookie' ) );
+        add_action('wp_head', array($this, 'comment_author_cookie'));
 
         //Twitter cached feed
         //This function can be called with AJAX or as a standard function.
-        add_action('wp_ajax_nebula_twitter_cache', array( $this, 'twitter_cache' ) );
-        add_action('wp_ajax_nopriv_nebula_twitter_cache', array( $this, 'twitter_cache' ) );
+        add_action('wp_ajax_nebula_twitter_cache', array($this, 'twitter_cache'));
+        add_action('wp_ajax_nopriv_nebula_twitter_cache', array($this, 'twitter_cache'));
 
         //Replace text on password protected posts to be more minimal
-        add_filter('the_password_form', array( $this, 'password_form_simplify' ) );
+        add_filter('the_password_form', array($this, 'password_form_simplify'));
 
         //Always get custom fields with post queries
-        add_filter('the_posts', array( $this, 'always_get_post_custom' ) );
+        add_filter('the_posts', array($this, 'always_get_post_custom'));
 
         //Prevent empty search query error (Show all results instead)
-        add_action('pre_get_posts', array( $this, 'redirect_empty_search' ) );
+        add_action('pre_get_posts', array($this, 'redirect_empty_search'));
 
         //Redirect if only single search result
-        add_action('template_redirect', array( $this, 'redirect_single_post' ) );
+        add_action('template_redirect', array($this, 'redirect_single_post'));
 
         //Autocomplete Search AJAX.
         add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
         add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 
         //Advanced Search
-        add_action('wp_ajax_nebula_advanced_search', array( $this, 'advanced_search' ) );
-        add_action('wp_ajax_nopriv_nebula_advanced_search', array( $this, 'advanced_search' ) );
+        add_action('wp_ajax_nebula_advanced_search', array($this, 'advanced_search'));
+        add_action('wp_ajax_nopriv_nebula_advanced_search', array($this, 'advanced_search'));
 
         //Infinite Load AJAX Call
-        add_action('wp_ajax_nebula_infinite_load', array( $this, 'infinite_load' ) );
-        add_action('wp_ajax_nopriv_nebula_infinite_load', array( $this, 'infinite_load' ) );
+        add_action('wp_ajax_nebula_infinite_load', array($this, 'infinite_load'));
+        add_action('wp_ajax_nopriv_nebula_infinite_load', array($this, 'infinite_load'));
 
         //404 page suggestions
-        add_action('wp', array( $this, 'internal_suggestions' ) );
+        add_action('wp', array($this, 'internal_suggestions'));
 
         //Add custom body classes
-        add_filter('body_class', array( $this, 'body_classes' ) );
+        add_filter('body_class', array($this, 'body_classes'));
 
         //Add additional classes to post wrappers
-        add_filter('post_class', array( $this, 'post_classes' ) );
+        add_filter('post_class', array($this, 'post_classes'));
 
         //Make sure attachment URLs match the protocol (to prevent mixed content warnings).
-        add_filter('wp_get_attachment_url', array( $this, 'wp_get_attachment_url_force_protocol' ) );
+        add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
 
         //Fix responsive oEmbeds
         //Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
-        add_filter('embed_oembed_html', array( $this, 'embed_oembed_html' ), 9999, 4);
+        add_filter('embed_oembed_html', array($this, 'embed_oembed_html' ), 9999, 4);
     }
 
     //Prep custom theme support
@@ -2116,7 +2115,8 @@ trait Functions {
     public function autocomplete_search(){
         if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
-        ini_set('memory_limit', '256M'); //@todo "Nebula" 0: Ideally this would not be here.
+		ini_set('memory_limit', '256M'); //@TODO "Nebula" 0: Ideally this would not be here.
+
         $term = sanitize_text_field(trim($_POST['data']['term']));
         if ( empty($term) ){
             return false;
@@ -2431,14 +2431,14 @@ trait Functions {
             );
         } //END $posts foreach
 
-        //@TODO: if going to sort by text:
+        //@TODO "Nebula" 0: if going to sort by text:
         /*
             usort($output, function($a, $b){
                 return strcmp($a['title'], $b['title']);
             });
         */
 
-        //@TODO: If going to sort by number:
+        //@TODO "Nebula" 0: If going to sort by number:
         /*
             usort($output, function($a, $b){
                 return $a['posted'] - $b['posted'];

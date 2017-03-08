@@ -8,48 +8,46 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Optimization' ) ) {
-
+if ( !trait_exists('Optimization') ){
     trait Optimization {
 
 		//Temporarily commented this out
-        public function hooks() {
+        public function hooks(){
             //Control which scripts use defer/async using a query string.
             //Note: Not an ideal solution, but works until WP Core updates wp_enqueue_script(); to allow for deferring.
-            add_filter('clean_url', array( $this, 'defer_async_scripts' ), 11, 1);
+            add_filter('clean_url', array($this, 'defer_async_scripts'), 11, 1);
 
             //Defer and Async specific scripts. This only works with registered/enqueued scripts!
-            add_filter('script_loader_tag', array( $this, 'defer_async_additional_scripts' ), 10);
+            add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
 
             //Remove version query strings from registered/enqueued styles/scripts (to allow caching)
-            add_filter('script_loader_src', array( $this, 'remove_script_version' ), 15, 1);
-            add_filter('style_loader_src', array( $this, 'remove_script_version' ), 15, 1);
+            add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
+            add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
 
             //Dequeue certain scripts
             //Important: Add a reason in comments to help future updates: Plugin Name - Reason
-            add_action('wp_print_scripts', array( $this, 'dequeues' ), 9999);
-            add_action('wp_print_styles', array( $this, 'dequeues' ), 9999);
+            add_action('wp_print_scripts', array($this, 'dequeues'), 9999);
+            add_action('wp_print_styles', array($this, 'dequeues'), 9999);
 
             //Remove jQuery Migrate, but keep jQuery
-            add_filter('wp_default_scripts', array( $this, 'remove_jquery_migrate' ) );
+            add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 
             //Override needing the Tether library for Bootstrap. If Tether is needed, it is dynamically loaded via main.js.
-            add_action('wp_enqueue_scripts', array( $this, 'override_bootstrap_tether' ) );
+            add_action('wp_enqueue_scripts', array($this, 'override_bootstrap_tether'));
 
             //Force settings within plugins
-            add_action('admin_init', array( $this, 'plugin_force_settings' ) );
+            add_action('admin_init', array($this, 'plugin_force_settings'));
 
             //Override existing functions (typcially from plugins)
             //Please add a comment with the reason for the override!
-            add_action('wp_print_scripts', array( $this, 'remove_actions' ), 9999);
+            add_action('wp_print_scripts', array($this, 'remove_actions'), 9999);
 
             //Disable Emojis
-            add_action('init', array( $this, 'disable_wp_emojicons' ) );
+            add_action('init', array($this, 'disable_wp_emojicons'));
 
-            add_filter('tiny_mce_plugins', array( $this, 'disable_emojicons_tinymce' ) ); //Remove TinyMCE Emojis too
+            add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
         }
 
         //Control which scripts use defer/async using a query string.

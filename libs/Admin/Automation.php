@@ -8,15 +8,13 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Automation' ) ) {
-
+if ( !trait_exists('Automation') ){
     trait Automation {
-
-		//Temporarily commented this out
         public function hooks() {
+            //may want to only trigger this if Nebula is the active theme...
+
             global $pagenow;
 
             //Detect and prompt install of Recommended and Optional plugins using TGMPA
@@ -24,20 +22,20 @@ if( !trait_exists( 'Automation' ) ) {
             if ( is_admin() && nebula()->is_dev(true) || current_user_can('manage_options') ) {
                 require_once(get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php');
 
-                add_action('tgmpa_register', array( $this, 'register_required_plugins' ) );
+                add_action('tgmpa_register', array($this, 'register_required_plugins'));
             }
 
             //When Nebula has been activated
-            add_action('after_switch_theme', array( $this, 'activation_notice' ) );
+            add_action('after_switch_theme', array($this, 'activation_notice'));
 
             if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or if initializing the theme without AJAX
-                add_action('admin_notices', array( $this, 'activation' ) );
+                add_action('admin_notices', array($this, 'activation'));
             }
 
             //Nebula Initialization (Triggered by either AJAX or manually)
-            add_action('wp_ajax_nebula_initialization', array( $this, 'initialization' ) );
+            add_action('wp_ajax_nebula_initialization', array($this, 'initialization'));
 
-            //add_action('admin_init', array( $this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
+            //add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
         }
 
         public function register_required_plugins(){
@@ -57,11 +55,14 @@ if( !trait_exists( 'Automation' ) ) {
                     'slug'      => 'contact-form-7',
                     'required'  => true,
                 ),
+/*
+				//Commented out until it is back on WordPress.org
                 array(
                     'name'      => 'Contact Form DB',
                     'slug'      => 'contact-form-7-to-database-extension',
                     'required'  => true,
                 ),
+*/
                 array(
                     'name'      => 'Advanced Custom Fields',
                     'slug'      => 'advanced-custom-fields',
@@ -272,6 +273,7 @@ if( !trait_exists( 'Automation' ) ) {
             $subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
             $message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
 
+			//@todo "Nebula" 0: Use WPDB here!
             $connection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
             $sql = "SELECT * FROM $wpdb->options";
             $result = mysqli_query($connection, $sql);

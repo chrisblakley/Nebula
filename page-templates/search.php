@@ -128,7 +128,7 @@ get_header(); ?>
 						<div id="advanced-search-indicator"></div>
 						<div id="advanced-search-results"></div>
 
-						<!-- @TODO: These should be hidden by default -->
+						<!-- @TODO "Nebula" 0: These should be hidden by default -->
 						<div class="row">
 							<div class="col-md-6">
 								<a id="load-prev-events" class="more-or-prev-events primary btn no-prev-events" href="#">&laquo; Previous results</a>

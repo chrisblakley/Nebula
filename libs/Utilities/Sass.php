@@ -8,15 +8,11 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Sass' ) ) {
-
+if ( !trait_exists('Sass') ){
     trait Sass {
-
-		//Temporarily commented out
-        public function hooks() {
+        public function hooks(){
 			/*==========================
                 Nebula Sass Compiling
                 Add directories to be checked for .scss files by using the filter "nebula_scss_locations". Example:
@@ -31,7 +27,7 @@ if( !trait_exists( 'Sass' ) ) {
                 }
              ===========================*/
 
-            add_action('init', array( $this, 'scss_controller' ) );
+            add_action('init', array($this, 'scss_controller'));
         }
 
         public function scss_controller(){
@@ -46,7 +42,7 @@ if( !trait_exists( 'Sass' ) ) {
                     'parent' => array(
                         'directory' => get_template_directory(),
                         'uri' => get_template_directory_uri(),
-                        'imports' => get_template_directory() . '/stylesheets/scss/partials/'
+                        'imports' => get_template_directory() . '/assets/scss/partials/'
                     )
                 );
 
@@ -55,13 +51,13 @@ if( !trait_exists( 'Sass' ) ) {
                     $scss_locations['child'] = array(
                         'directory' => get_stylesheet_directory(),
                         'uri' => get_stylesheet_directory_uri(),
-                        'imports' => get_stylesheet_directory() . '/stylesheets/scss/partials/'
+                        'imports' => get_stylesheet_directory() . '/assets/scss/partials/'
                     );
                 }
 
                 // Registered plugins scss locations
-                foreach( nebula()->plugins as $plugin_name => $plugin_features ) {
-                    if( isset( $plugin_features['scss'] ) && is_array( $plugin_features['scss'] ) ) {
+                foreach ( nebula()->plugins as $plugin_name => $plugin_features ){
+                    if ( isset($plugin_features['scss']) && is_array($plugin_features['scss']) ){
                         $scss_locations[$plugin_name] = array(
                             'directory' => $plugin_features['scss']['directory'],
                             'uri' => $plugin_features['scss']['uri'],
@@ -95,8 +91,8 @@ if( !trait_exists( 'Sass' ) ) {
         }
 
         //Render scss files
-        public function render_scss($child=false){
-            $override = apply_filters('pre_nebula_render_scss', false, $child);
+        public function render_scss($location_name=false, $location_paths=false, $force_all=false){
+            $override = apply_filters('pre_nebula_render_scss', false, $location_name, $location_paths, $force_all);
             if ( $override !== false ){return $override;}
 
             if ( nebula()->option('scss', 'enabled') && !empty($location_name) && !empty($location_paths) ){
@@ -145,25 +141,27 @@ if( !trait_exists( 'Sass' ) ) {
 
                 //Combine Developer Stylesheets
                 if ( nebula()->option('dev_stylesheets', 'enabled') ){
-                    $this->combine_dev_stylesheets($location_paths['directory'] . '/stylesheets', $location_paths['uri'] . '/stylesheets');
+                    $this->combine_dev_stylesheets($location_paths['directory'] . '/assets', $location_paths['uri'] . '/assets');
                 }
 
                 //Compile each SCSS file
-                foreach ( glob($location_paths['directory'] . '/stylesheets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+                foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
                     $file_path_info = pathinfo($file);
 
-                    //Skip file conditions
-                    $is_wireframing_file = $file_path_info['filename'] == 'wireframing' && nebula()->option('prototype_mode', 'disabled'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
-                    $is_dev_file = $file_path_info['filename'] == 'dev' && nebula()->option('dev_stylesheets', 'disabled'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-                    $is_admin_file = !nebula()->is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
-                    if ( $is_wireframing_file || $is_dev_file || $is_admin_file ){
-                        continue;
+                    //Skip file conditions (only if not forcing all)
+                    if ( empty($force_all) ){
+	                    $is_wireframing_file = $file_path_info['filename'] == 'wireframing' && nebula()->option('prototype_mode', 'disabled'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
+	                    $is_dev_file = $file_path_info['filename'] == 'dev' && nebula()->option('dev_stylesheets', 'disabled'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
+	                    $is_admin_file = !nebula()->is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
+	                    if ( $is_wireframing_file || $is_dev_file || $is_admin_file ){
+	                        continue;
+	                    }
                     }
 
                     //If file exists, and has .scss extension, and doesn't begin with "_".
                     if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){
-                        $css_filepath = ( $file_path_info['filename'] == 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/stylesheets/css/' . $file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /stylesheets directory.
-                        wp_mkdir_p($location_paths['directory'] . '/stylesheets/css'); //Create the /css directory (in case it doesn't exist already).
+                        $css_filepath = ( $file_path_info['filename'] == 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/assets/css/' . $file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /assets/scss directory.
+                        wp_mkdir_p($location_paths['directory'] . '/assets/css'); //Create the /css directory (in case it doesn't exist already).
 
                         //If style.css has been edited after style.scss, save backup but continue compiling SCSS
                         if ( (is_child_theme() && $location_name != 'parent' ) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && nebula()->data('scss_last_processed') != '0' && nebula()->data('scss_last_processed')-filemtime($css_filepath) < -30) ){
@@ -172,7 +170,7 @@ if( !trait_exists( 'Sass' ) ) {
                                 global $scss_debug_ref;
                                 $scss_debug_ref = $location_name . ':';
                                 $scss_debug_ref .= (nebula()->data('scss_last_processed')-filemtime($css_filepath));
-                                add_action('wp_head', array( $this, 'scss_console_warning' ) ); //Call the console error note
+                                add_action('wp_head', array($this, 'scss_console_warning')); //Call the console error note
                             }
                         }
 
@@ -200,7 +198,7 @@ if( !trait_exists( 'Sass' ) ) {
         //Log Sass .bak note in the browser console
         public function scss_console_warning(){
             global $scss_debug_ref;
-            echo '<script>console.warn("Warning: Sass compiling is enabled, but it appears that style.css has been manually updated (Reference: ' . $scss_debug_ref . 's)! A style.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /stylesheets/scss directory!");</script>';
+            echo '<script>console.warn("Warning: Sass compiling is enabled, but it appears that style.css has been manually updated (Reference: ' . $scss_debug_ref . 's)! A style.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /assets/scss directory!");</script>';
         }
 
         //Combine developer stylesheets
@@ -222,7 +220,7 @@ if( !trait_exists( 'Sass' ) ) {
             $dev_scss_file = $directory . '/scss/dev.scss';
 
             if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
-                $wp_filesystem->put_contents($directory . '/scss/dev.scss', $automation_warning); //Empty /stylesheets/scss/dev.scss
+                $wp_filesystem->put_contents($directory . '/scss/dev.scss', $automation_warning); //Empty /assets/scss/dev.scss
             }
             foreach ( $dev_stylesheet_files as $file ){
                 $file_path_info = pathinfo($file);

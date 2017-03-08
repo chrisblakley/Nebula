@@ -8,17 +8,14 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Analytics' ) ) {
-
+if ( !trait_exists('Analytics') ){
     trait Analytics {
-
-        public function hooks() {
+        public function hooks(){
             //Sends events to Google Analytics via AJAX (used if GA is blocked via JavaScript)
-            add_action('wp_ajax_nebula_ga_event_ajax', array( $this, 'event_ajax' ) );
-            add_action('wp_ajax_nopriv_nebula_ga_event_ajax', array( $this, 'event_ajax' ) );
+            add_action('wp_ajax_nebula_ga_event_ajax', array($this, 'event_ajax'));
+            add_action('wp_ajax_nopriv_nebula_ga_event_ajax', array($this, 'event_ajax'));
         }
 
         //Handle the parsing of the _ga cookie or setting it to a unique identifier

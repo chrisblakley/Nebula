@@ -7,28 +7,26 @@
  * @author      Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Scripts' ) ) {
-
+if ( !trait_exists('Scripts') ){
     trait Scripts {
         public $brain;
 
         public function hooks(){
-            // Register scripts
-            add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
-            add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-            add_action( 'login_enqueue_scripts', array( $this, 'register_scripts' ) );
+            //Register scripts
+            add_action( 'wp_enqueue_scripts', array($this, 'register_scripts'));
+            add_action( 'admin_enqueue_scripts', array($this, 'register_scripts'));
+            add_action( 'login_enqueue_scripts', array($this, 'register_scripts'));
 
-            // Enqueue frontend scripts
-            add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+            //Enqueue frontend scripts
+            add_action( 'wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 
-            // Enqueue login scripts
-            add_action( 'login_enqueue_scripts', array( $this, 'login_enqueue_scripts' ) );
+            //Enqueue login scripts
+            add_action( 'login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 
-            // Enqueue admin scripts
-            add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+            //Enqueue admin scripts
+            add_action( 'admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
         }
 
         /**

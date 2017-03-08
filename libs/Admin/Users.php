@@ -8,43 +8,36 @@
  * @contributor Ruben Garcia
  */
 
-// TODO: Best approach should be move all admin files to admin/*.php instead to mantains in functions/includes (probably we will have admin/admin.php, admin/dashboard.php and admin/users.php) to take all of them in same folder
-// TODO: I see some functions related with users in admin.php they should go here
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
-
-if( !trait_exists( 'Users' ) ) {
-
+if ( !trait_exists('Users') ){
     trait Users {
-
-		//Temporarily commented this out
-        public function hooks() {
+        public function hooks(){
             //Update user online status
-            add_action('init', array( $this, 'users_status_init' ) );
-            add_action('admin_init', array( $this, 'users_status_init' ) );
+            add_action('init', array($this, 'users_status_init'));
+            add_action('admin_init', array($this, 'users_status_init'));
 
             //Add columns to user listings
-            add_filter('manage_users_columns', array( $this, 'user_columns_head' ) );
+            add_filter('manage_users_columns', array($this, 'user_columns_head'));
 
             //Custom columns content to user listings
-            add_action('manage_users_custom_column', array( $this, 'user_columns_content' ), 15, 3);
+            add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);
 
             //Additional Contact Info fields
-            add_filter('user_contactmethods', array( $this, 'user_contact_methods' ) );
+            add_filter('user_contactmethods', array($this, 'user_contact_methods'));
 
             //Custom User headshot
-            add_action('admin_init', array( $this, 'easy_author_image_init' ) );
+            add_action('admin_init', array($this, 'easy_author_image_init'));
 
             //Show the fields in the user admin page
             if ( !current_user_can( 'subscriber' ) && !current_user_can( 'contributor' ) ){
-                add_action('show_user_profile', array( $this, 'extra_profile_fields' ) );
-                add_action('edit_user_profile', array( $this, 'extra_profile_fields' ) );
+                add_action('show_user_profile', array($this, 'extra_profile_fields'));
+                add_action('edit_user_profile', array($this, 'extra_profile_fields'));
             }
 
             //Save the field values to the DB
-            add_action('personal_options_update', array( $this, 'save_extra_profile_fields' ) );
-            add_action('edit_user_profile_update', array( $this, 'save_extra_profile_fields' ) );
+            add_action('personal_options_update', array($this, 'save_extra_profile_fields'));
+            add_action('edit_user_profile_update', array($this, 'save_extra_profile_fields'));
         }
 
         //Update user online status
@@ -124,7 +117,7 @@ if( !trait_exists( 'Users' ) ) {
         public function easy_author_image_init(){
             global $pagenow;
             if ( $pagenow === 'media-upload.php' || $pagenow === 'async-upload.php' ){
-                add_filter('gettext', array( $this, 'q_replace_thickbox_button_text' ), 1, 3); //Replace the button text for the uploader
+                add_filter('gettext', array($this, 'q_replace_thickbox_button_text' ), 1, 3); //Replace the button text for the uploader
             }
         }
 

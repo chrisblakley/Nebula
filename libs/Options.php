@@ -8,20 +8,16 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Options' ) ) {
-
+if ( !trait_exists('Options') ){
     trait Options {
-
-        public function hooks() {
+        public function hooks(){
             //Register all Nebula Options
-            add_action('current_screen', array( $this, 'register_options' ) );
+            add_action('current_screen', array($this, 'register_options'));
 
             //Add Nebula admin subpages
-            add_action('admin_menu', array( $this, 'admin_sub_menu' ) );
-
+            add_action('admin_menu', array($this, 'admin_sub_menu'));
         }
 
         /*==========================
@@ -33,7 +29,7 @@ if( !trait_exists( 'Options' ) ) {
         //If the desired option is an enabled/disabled dropdown check against that, else check for the option and return the default.
         //Dropdowns: $operand is what to check against (typically 'enabled' or 'disabled').
         //Texts: $operand is the default value to return if option is false.
-        	//@todo: change to nebula()->get_option() since we'll be using traits
+        	//@todo "Nebula" 0: change to nebula()->get_option() since we'll be using traits?
         public function option($option, $operand=false){
             $nebula_options = get_option('nebula_options');
             $requested_dropdown = in_array(strtolower($operand), array('enabled', 'disabled'));
@@ -344,7 +340,7 @@ if( !trait_exists( 'Options' ) ) {
 
         //Nebula admin subpages
         public function admin_sub_menu(){
-            add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', array( $this, 'options_page' ) ); //Nebula Options page
+            add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', array($this, 'options_page')); //Nebula Options page
         }
 
         //Output the options page
@@ -1033,7 +1029,7 @@ if( !trait_exists( 'Options' ) ) {
                                     <option value="enabled" <?php selected('enabled', $nebula_options['todo_manager_metabox']); ?>>Enabled</option>
                                     <option value="disabled" <?php selected('disabled', $nebula_options['todo_manager_metabox']); ?>>Disabled</option>
                                 </select>
-                                <p class="helper"><small>Aggregate @TODO comments in code. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?>)</em></small></p>
+                                <p class="helper"><small>Aggregate todo comments in code. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?>)</em></small></p>
                             </td>
                         </tr>
                     </table>

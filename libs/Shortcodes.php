@@ -8,100 +8,96 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Shortcodes' ) ) {
-
+if ( !trait_exists('Shortcodes') ){
     trait Shortcodes {
-
-		//Temporarily commented this out
         public function hooks() {
             //Div
-            add_shortcode('div', array( $this, 'div_shortcode' ) );
+            add_shortcode('div', array($this, 'div_shortcode'));
 
             //Container
             if ( !shortcode_exists('container') ){
-                add_shortcode('container', array( $this, 'container_shortcode' ) );
+                add_shortcode('container', array($this, 'container_shortcode'));
             }
-            add_shortcode('bootstrap_container', array( $this, 'container_shortcode' ) );
+            add_shortcode('bootstrap_container', array($this, 'container_shortcode'));
 
             //Row
             if ( !shortcode_exists('row') ){
-                add_shortcode('row', array( $this, 'row_shortcode' ) );
+                add_shortcode('row', array($this, 'row_shortcode'));
             }
-            add_shortcode('bootstrap_row', array( $this, 'row_shortcode' ) );
+            add_shortcode('bootstrap_row', array($this, 'row_shortcode'));
 
             //Columns
             if ( !shortcode_exists('columns') && !shortcode_exists('column') && !shortcode_exists('cols') && !shortcode_exists('col') ){
-                add_shortcode('column', array( $this, 'column_shortcode' ) );
-                add_shortcode('columns', array( $this, 'column_shortcode' ) );
-                add_shortcode('col', array( $this, 'column_shortcode' ) );
-                add_shortcode('cols', array( $this, 'column_shortcode' ) );
+                add_shortcode('column', array($this, 'column_shortcode'));
+                add_shortcode('columns', array($this, 'column_shortcode'));
+                add_shortcode('col', array($this, 'column_shortcode'));
+                add_shortcode('cols', array($this, 'column_shortcode'));
             }
-            add_shortcode('bootstrap_column', array( $this, 'column_shortcode' ) );
-            add_shortcode('bootstrap_columns', array( $this, 'column_shortcode' ) );
-            add_shortcode('bootstrap_col', array( $this, 'column_shortcode' ) );
-            add_shortcode('bootstrap_cols', array( $this, 'column_shortcode' ) );
+            add_shortcode('bootstrap_column', array($this, 'column_shortcode'));
+            add_shortcode('bootstrap_columns', array($this, 'column_shortcode'));
+            add_shortcode('bootstrap_col', array($this, 'column_shortcode'));
+            add_shortcode('bootstrap_cols', array($this, 'column_shortcode'));
 
             //Divider
-            add_shortcode('divider', array( $this, 'divider_shortcode' ) );
-            add_shortcode('hr', array( $this, 'divider_shortcode' ) );
-            add_shortcode('line', array( $this, 'divider_shortcode' ) );
+            add_shortcode('divider', array($this, 'divider_shortcode'));
+            add_shortcode('hr', array($this, 'divider_shortcode'));
+            add_shortcode('line', array($this, 'divider_shortcode'));
 
             //Icon
-            add_shortcode('icon', array( $this, 'icon_shortcode' ) );
+            add_shortcode('icon', array($this, 'icon_shortcode'));
 
             //Button
-            add_shortcode('button', array( $this, 'button_shortcode' ) );
+            add_shortcode('button', array($this, 'button_shortcode'));
 
             //Space (aka Gap)
-            add_shortcode('space', array( $this, 'space_shortcode' ) );
-            add_shortcode('gap', array( $this, 'space_shortcode' ) );
+            add_shortcode('space', array($this, 'space_shortcode'));
+            add_shortcode('gap', array($this, 'space_shortcode'));
 
             //Clear (aka Clearfix)
-            add_shortcode('clear', array( $this, 'clear_shortcode' ) );
-            add_shortcode('clearfix', array( $this, 'clear_shortcode' ) );
+            add_shortcode('clear', array($this, 'clear_shortcode'));
+            add_shortcode('clearfix', array($this, 'clear_shortcode'));
 
             //Map
-            add_shortcode('map', array( $this, 'map_shortcode' ) );
+            add_shortcode('map', array($this, 'map_shortcode'));
 
             //Vimeo
-            add_shortcode('vimeo', array( $this, 'vimeo_shortcode' ) );
+            add_shortcode('vimeo', array($this, 'vimeo_shortcode'));
 
             //Youtube
-            add_shortcode('youtube', array( $this, 'youtube_shortcode' ) );
+            add_shortcode('youtube', array($this, 'youtube_shortcode'));
 
             //Code
-            add_shortcode('code', array( $this, 'code_shortcode' ) );
+            add_shortcode('code', array($this, 'code_shortcode'));
 
             //Pre
             //To preserve indentation, use the Preformatted style in the WYSIWYG and wrap that in this [pre] shortcode (make sure the shortcode is not in the <pre> tag)
-            add_shortcode('pre', array( $this, 'pre_shortcode' ) );
+            add_shortcode('pre', array($this, 'pre_shortcode'));
 
             //Gist embedding
-            add_shortcode('gist', array( $this, 'gist_shortcode' ) );
+            add_shortcode('gist', array($this, 'gist_shortcode'));
 
             //Github embedding
-            add_shortcode('github', array( $this, 'github_shortcode' ) );
+            add_shortcode('github', array($this, 'github_shortcode'));
 
             //Accordion
             $GLOBALS['accordion'] = 0; // TODO: Change to a class var
-            add_shortcode('accordion', array( $this, 'accordion_shortcode' ) );
+            add_shortcode('accordion', array($this, 'accordion_shortcode'));
 
             //Accordion_Item
-            add_shortcode('accordion_item', array( $this, 'accordion_item_shortcode' ) );
+            add_shortcode('accordion_item', array($this, 'accordion_item_shortcode'));
 
             //Tooltip
-            add_shortcode('tooltip', array( $this, 'tooltip_shortcode' ) );
+            add_shortcode('tooltip', array($this, 'tooltip_shortcode'));
 
             //Slider
-            add_shortcode('carousel', array( $this, 'slider_shortcode' ) );
-            add_shortcode('slider', array( $this, 'slider_shortcode' ) );
+            add_shortcode('carousel', array($this, 'slider_shortcode'));
+            add_shortcode('slider', array($this, 'slider_shortcode'));
 
             //Slide
-            add_shortcode('carousel_item', array( $this, 'slide_shortcode' ) );
-            add_shortcode('slide', array( $this, 'slide_shortcode' ) );
+            add_shortcode('carousel_item', array($this, 'slide_shortcode'));
+            add_shortcode('slide', array($this, 'slide_shortcode'));
 
             //Move wpautop filter to AFTER shortcode is processed
             //@TODO "Nebula" 0: The following may be adding a <br> tag after certain plugin functionality?
@@ -110,7 +106,7 @@ if( !trait_exists( 'Shortcodes' ) ) {
             //add_filter('the_content', 'shortcode_unautop', 100);
 
             //Add Nebula Toolbar to TinyMCE
-            add_action('admin_init', array( $this, 'add_shortcode_button' ) );
+            add_action('admin_init', array($this, 'add_shortcode_button'));
         }
 
         //Get flags where a parameter is declared in $atts that exists without a declared value
@@ -550,8 +546,8 @@ if( !trait_exists( 'Shortcodes' ) ) {
 
         public function add_shortcode_button(){
             if ( current_user_can('edit_posts') ||  current_user_can('edit_pages') ){
-                add_filter('mce_external_plugins', array( $this, 'add_shortcode_plugin' ) );
-                add_filter('mce_buttons_3', array( $this, 'register_shortcode_button' ) );
+                add_filter('mce_external_plugins', array($this, 'add_shortcode_plugin'));
+                add_filter('mce_buttons_3', array($this, 'register_shortcode_button'));
             }
 
         }

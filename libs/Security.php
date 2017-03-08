@@ -8,63 +8,59 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Security' ) ) {
-
+if ( !trait_exists('Security') ){
     trait Security {
-
-		//Temporarily commented this out
         public function hooks() {
             //Disable the file editor
             define('DISALLOW_FILE_EDIT', true);
 
             //Log template direct access attempts
-            add_action('wp_loaded', array( $this, 'log_direct_access_attempts' ) );
+            add_action('wp_loaded', array($this, 'log_direct_access_attempts'));
 
             //Prevent known bot/brute-force query strings.
             //This is less for security and more for preventing garbage data in Google Analytics reports.
-            add_action('wp_loaded', array( $this, 'prevent_bad_query_strings' ) );
+            add_action('wp_loaded', array($this, 'prevent_bad_query_strings'));
 
             //Disable Pingbacks to prevent security issues
             //Disable X-Pingback HTTP Header.
-            add_filter('wp_headers', array( $this, 'remove_x_pingback' ) , 11, 2);
+            add_filter('wp_headers', array($this, 'remove_x_pingback'), 11, 2);
 
             //Hijack pingback_url for get_bloginfo (<link rel="pingback" />).
-            add_filter('bloginfo_url', array( $this, 'hijack_pingback_url' ) , 11, 2);
+            add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
 
             //Disable XMLRPC
             add_filter('xmlrpc_enabled', '__return_false');
             remove_action('wp_head', 'rsd_link');
             remove_action('wp_head', 'wlwmanifest_link');
-            add_filter('pre_option_enable_xmlrpc', array( $this, 'disable_xmlrpc' ) );
+            add_filter('pre_option_enable_xmlrpc', array($this, 'disable_xmlrpc'));
 
             //Remove rsd_link from filters (<link rel="EditURI" />).
-            add_action('wp', array( $this, 'remove_rsd_link' ) , 9);
+            add_action('wp', array($this, 'remove_rsd_link'), 9);
 
             //Prevent login error messages from giving too much information
-            add_filter('login_errors', array( $this, 'login_errors' ) );
+            add_filter('login_errors', array($this, 'login_errors'));
 
             //Remove Wordpress version info from head and feeds
-            add_filter('the_generator', array( $this, 'complete_version_removal' ) );
+            add_filter('the_generator', array($this, 'complete_version_removal'));
 
             //Remove WordPress version from any enqueued scripts
-            add_filter('style_loader_src', array( $this, 'at_remove_wp_ver_css_js' ), 9999);
-            add_filter('script_loader_src', array( $this, 'at_remove_wp_ver_css_js' ), 9999);
+            add_filter('style_loader_src', array($this, 'at_remove_wp_ver_css_js' ), 9999);
+            add_filter('script_loader_src', array($this, 'at_remove_wp_ver_css_js' ), 9999);
 
             //Check referrer in order to comment
-            add_action('check_comment_flood', array( $this, 'check_referrer' ) );
+            add_action('check_comment_flood', array($this, 'check_referrer'));
 
             //Track Notable Bots
-            add_action('wp_footer', array( $this, 'track_notable_bots' ) );
+            add_action('wp_footer', array($this, 'track_notable_bots'));
 
             //Check referrer for known spambots and blacklisted domains
             //Traffic will be sent a 403 Forbidden error and never be able to see the site.
             //Be sure to enable Bot Filtering in your Google Analytics account (GA Admin > View Settings > Bot Filtering).
             //Sometimes spambots target sites without actually visiting. Discovering these and filtering them using GA is important too!
             //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
-            add_action('wp_loaded', array( $this, 'domain_prevention' ) );
+            add_action('wp_loaded', array($this, 'domain_prevention'));
         }
 
         //Log template direct access attempts

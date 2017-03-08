@@ -8,17 +8,13 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Prototyping' ) ) {
-
+if ( !trait_exists('Prototyping') ){
     trait Prototyping {
-
-		//Temporarily commented this out
-        public function hooks() {
+        public function hooks(){
             if ( nebula()->option('prototype_mode', 'enabled') ){
-                add_action('wp_enqueue_scripts', array( $this, 'enqueue_nebula_wireframing' ) );
+                add_action('wp_enqueue_scripts', array($this, 'enqueue_nebula_wireframing'));
 
                 //Set up redirects based on the ?phase query.
                 if ( is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
@@ -40,10 +36,10 @@ if( !trait_exists( 'Prototyping' ) ) {
                 }
 
                 //Add wireframing body class
-                add_filter('body_class', array( $this, 'wireframing_body_classes' ) );
+                add_filter('body_class', array($this, 'wireframing_body_classes'));
 
                 //Add a link to Nebula Wireframing on the Admin Bar
-                add_action('admin_bar_menu', array( $this, 'admin_bar_nebula_wireframing' ), 900);
+                add_action('admin_bar_menu', array($this, 'admin_bar_nebula_wireframing'), 900);
             }
         }
 

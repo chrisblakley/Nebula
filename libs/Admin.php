@@ -8,12 +8,9 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Admin' ) ) {
-
-	//Only require these on actual admin pages (not also for admin bar)
+if ( !trait_exists('Admin') ){
 	require_once get_template_directory() . '/libs/Admin/Automation.php';
 	require_once get_template_directory() . '/libs/Admin/Dashboard.php';
     require_once get_template_directory() . '/libs/Admin/Users.php';
@@ -23,8 +20,7 @@ if( !trait_exists( 'Admin' ) ) {
 		use Dashboard { Dashboard::hooks as DashboardHooks;}
 		use Users { Users::hooks as UsersHooks;}
 
-		//Temporarily commented this out
-        public function hooks() {
+        public function hooks(){
             global $pagenow;
 
 			if ( nebula()->is_admin_page() ){
@@ -34,7 +30,7 @@ if( !trait_exists( 'Admin' ) ) {
 			}
 
             //Force expire query transients when posts/pages are saved.
-            add_action('save_post', array( $this, 'clear_transients' ) );
+            add_action('save_post', array($this, 'clear_transients'));
 
             //Disable auto curly quotes (smart quotes)
             remove_filter('the_content', 'wptexturize');
@@ -43,30 +39,30 @@ if( !trait_exists( 'Admin' ) ) {
             add_filter('run_wptexturize', '__return_false');
 
             //Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
-            add_action('admin_head', array( $this, 'admin_favicon' ) );
+            add_action('admin_head', array($this, 'admin_favicon'));
 
             //Add classes to the admin body
-            add_filter('admin_body_class', array( $this, 'admin_body_classes' ) );
+            add_filter('admin_body_class', array($this, 'admin_body_classes'));
 
             //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
             if ( nebula()->option('admin_bar', 'disabled') ){
                 show_admin_bar(false);
 
-                add_action('wp_print_scripts', array( $this, 'dequeue_admin_bar' ), 9999);
-                add_action('wp_print_styles', array( $this, 'dequeue_admin_bar' ), 9999);
-                add_action('init', array( $this, 'admin_only_features' ) ); //TODO "Nebula" 0: Possible to remove and add directly remove action here
-                add_filter('wp_head', array( $this, 'remove_admin_bar_style_frontend' ), 99);
+                add_action('wp_print_scripts', array($this, 'dequeue_admin_bar'), 9999);
+                add_action('wp_print_styles', array($this, 'dequeue_admin_bar'), 9999);
+                add_action('init', array($this, 'admin_only_features')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
+                add_filter('wp_head', array($this, 'remove_admin_bar_style_frontend'), 99);
             } else {
-                add_action('wp_before_admin_bar_render', array( $this, 'remove_admin_bar_logo' ), 0);
+                add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_logo'), 0);
 
                 //Create custom menus within the WordPress Admin Bar
-                add_action('admin_bar_menu',  array( $this, 'admin_bar_menus' ), 800);
+                add_action('admin_bar_menu',  array($this, 'admin_bar_menus'), 800);
 
                 //Remove core WP admin bar head CSS and add our own
-                add_action('get_header',  array( $this, 'remove_admin_bar_bump' ) ); //TODO "Nebula" 0: Possible to remove and add directly remove action here
+                add_action('get_header',  array($this, 'remove_admin_bar_bump')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
 
                 //Override some styles and add custom functionality
-                add_action('wp_head', array( $this, 'admin_bar_style_script_overrides' ), 11);
+                add_action('wp_head', array($this, 'admin_bar_style_script_overrides'), 11);
             }
 
             //Disable Wordpress Core update notifications in WP Admin
@@ -77,100 +73,96 @@ if( !trait_exists( 'Admin' ) ) {
             //Show update warning on Wordpress Core/Plugin update admin pages
             if ( nebula()->option('plugin_update_warning') ){
                 if ( $pagenow === 'plugins.php' || $pagenow === 'update-core.php' ){
-                    add_action('admin_notices', array( $this, 'update_warning' ) );
+                    add_action('admin_notices', array($this, 'update_warning'));
                 }
             }
 
             //Nebula Theme Update Checker
-            add_action('admin_init', array( $this, 'theme_json' ) );
+            add_action('admin_init', array($this, 'theme_json'));
 
             //When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
-            add_action('nebula_theme_update_check', array( $this, 'theme_update_version_store' ), 10, 2);
+            add_action('nebula_theme_update_check', array($this, 'theme_update_version_store'), 10, 2);
 
             //Send an email to the current user and site admin that Nebula has been updated.
-            add_action('upgrader_process_complete', array( $this, 'theme_update_automation' ), 10, 2); //Action 'upgrader_post_install' also exists.
+            add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
 
             //Control session time (for the "Remember Me" checkbox)
-            add_filter('auth_cookie_expiration', array( $this, 'session_expire' ) );
+            add_filter('auth_cookie_expiration', array($this, 'session_expire'));
 
             //Disable the logged-in monitoring modal
             remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
 
             //Custom login screen
-            add_action('login_head', array( $this, 'login_ga' ) );
+            add_action('login_head', array($this, 'login_ga'));
 
             //Change link of login logo to live site
-            add_filter('login_headerurl', array( $this, 'custom_login_header_url' ) );
+            add_filter('login_headerurl', array($this, 'custom_login_header_url'));
 
             //Change alt of login image
-            add_filter('login_headertitle', array( $this, 'new_wp_login_title' ) );
+            add_filter('login_headertitle', array($this, 'new_wp_login_title'));
 
             //Nebula Admin Notices
             if ( nebula()->option('admin_notices') ){
-                add_action('admin_notices',  array( $this, 'admin_notices' ) );
+                add_action('admin_notices',  array($this, 'admin_notices'));
             }
 
             //Check if a post slug has a number appended to it (indicating a duplicate post).
-            //add_filter('wp_unique_post_slug', array( $this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
-
-            //Search theme or plugin files via Developer Information Metabox
-            add_action('wp_ajax_search_theme_files', array( $this, 'search_theme_files' ) );
-            add_action('wp_ajax_nopriv_search_theme_files', array( $this, 'search_theme_files' ) );
+            //add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
 
             //Change default values for the upload media box
             //These can also be changed by navigating to .../wp-admin/options.php
-            add_action('after_setup_theme', array( $this, 'custom_media_display_settings' ) );
+            add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
 
             //Add ID column on post/page listings
-            add_filter('manage_posts_columns', array( $this, 'id_columns_head' ) );
-            add_filter('manage_pages_columns', array( $this, 'id_columns_head' ) );
+            add_filter('manage_posts_columns', array($this, 'id_columns_head'));
+            add_filter('manage_pages_columns', array($this, 'id_columns_head'));
 
             //ID column content on post/page listings
-            add_action('manage_posts_custom_column', array( $this, 'id_columns_content' ) , 15, 3);
-            add_action('manage_pages_custom_column', array( $this, 'id_columns_content' ) , 15, 3);
+            add_action('manage_posts_custom_column', array($this, 'id_columns_content') , 15, 3);
+            add_action('manage_pages_custom_column', array($this, 'id_columns_content') , 15, 3);
 
             //Remove most Yoast SEO columns
             $post_types = get_post_types(array('public' => true), 'names');
             if ( is_array($post_types) && $post_types !== array() ){
                 foreach ( $post_types as $post_type ){
-                    add_filter('manage_edit-' . $post_type . '_columns', array( $this, 'remove_yoast_columns' ) ); //@TODO "Nebula" 0: This does not always work.
+                    add_filter('manage_edit-' . $post_type . '_columns', array($this, 'remove_yoast_columns')); //@TODO "Nebula" 0: This does not always work.
                 }
             }
 
             //Duplicate post
-            add_action('admin_action_duplicate_post_as_draft', array( $this, 'duplicate_post_as_draft' ) );
+            add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
 
             //Add the duplicate link to action list for post_row_actions (This works for custom post types too).
             //Additional post types with the following: add_filter('{post type name}_row_actions', 'rd_duplicate_post_link', 10, 2);
-            add_filter('post_row_actions', array( $this, 'rd_duplicate_post_link' ), 10, 2);
-            add_filter('page_row_actions', array( $this, 'rd_duplicate_post_link' ), 10, 2);
+            add_filter('post_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
+            add_filter('page_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
 
             //Show File URL column on Media Library listings
-            add_filter('manage_media_columns', array( $this, 'muc_column' ) );
+            add_filter('manage_media_columns', array($this, 'muc_column'));
 
-            add_action('manage_media_custom_column', array( $this, 'muc_value' ), 10, 2);
+            add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
 
             //Enable editor style for the TinyMCE WYSIWYG editor.
             add_editor_style('stylesheets/css/tinymce.css');
 
             //Enable All Settings page for only Developers who are Admins
             if ( nebula()->is_dev(true) && current_user_can('manage_options') ){
-                add_action('admin_menu', array( $this, 'all_settings_link' ) );
+                add_action('admin_menu', array($this, 'all_settings_link'));
             }
 
             //Clear caches when plugins are activated if W3 Total Cache is active
-            add_action('admin_init', array( $this, 'clear_all_w3_caches' ) );
+            add_action('admin_init', array($this, 'clear_all_w3_caches'));
 
             //Admin Footer Enhancements
             //Left Side
-            add_filter('admin_footer_text', array( $this, 'change_admin_footer_left' ) );
+            add_filter('admin_footer_text', array($this, 'change_admin_footer_left'));
 
             //Right Side
-            add_filter('update_footer', array( $this, 'change_admin_footer_right' ), 11);
+            add_filter('update_footer', array($this, 'change_admin_footer_right'), 11);
 
             //Internal Search Keywords Metabox and Custom Field
-            add_action('load-post.php', array( $this, 'post_meta_boxes_setup' ) );
-            add_action('load-post-new.php', array( $this, 'post_meta_boxes_setup' ) );
+            add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
+            add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
         }
 
         //Force expire query transients when posts/pages are saved.
@@ -191,7 +183,7 @@ if( !trait_exists( 'Admin' ) ) {
         //Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
         public function admin_favicon(){
             $cache_buster = ( nebula()->is_debug() )? '?r' . mt_rand(1000, mt_getrandmax()) : '';
-            echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/images/meta/favicon.ico') . $cache_buster . '" />';
+            echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/assets/img/meta/favicon.ico') . $cache_buster . '" />';
         }
 
         //Add classes to the admin body
@@ -471,7 +463,7 @@ if( !trait_exists( 'Admin' ) ) {
                 require(get_template_directory() . '/inc/vendor/theme-update-checker.php'); //Initialize the update checker library.
                 $theme_update_checker = new ThemeUpdateChecker(
                     'Nebula-master', //This should be the directory slug of the parent theme.
-                    'https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/nebula_theme.json'
+                    'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json' //Note: This file is updated via a plugin, not Nebula itself.
                 );
             }
         }
@@ -686,23 +678,25 @@ if( !trait_exists( 'Admin' ) ) {
             }
 
             $php_timeline = json_decode($php_timeline);
-            foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
-                if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
-                    $output = array();
-                    if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
-                        $output['lifecycle'] = 'active';
-                    } elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
-                        $output['lifecycle'] = 'security';
-                    } elseif ( time() >= strtotime($php_timeline_dates->end) ) {
-                        $output['lifecycle'] = 'end';
-                    } else {
-                        $output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
-                    }
-                    $output['security'] = strtotime($php_timeline_dates->security);
-                    $output['end'] = strtotime($php_timeline_dates->end);
-                    return $output;
-                    break;
-                }
+            if ( !empty($php_timeline) ){
+	            foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
+	                if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
+	                    $output = array();
+	                    if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
+	                        $output['lifecycle'] = 'active';
+	                    } elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
+	                        $output['lifecycle'] = 'security';
+	                    } elseif ( time() >= strtotime($php_timeline_dates->end) ) {
+	                        $output['lifecycle'] = 'end';
+	                    } else {
+	                        $output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
+	                    }
+	                    $output['security'] = strtotime($php_timeline_dates->security);
+	                    $output['end'] = strtotime($php_timeline_dates->end);
+	                    return $output;
+	                    break;
+	                }
+	            }
             }
         }
 
@@ -855,8 +849,8 @@ if( !trait_exists( 'Admin' ) ) {
         }
 
         public function post_meta_boxes_setup(){
-            add_action('add_meta_boxes', array( $this, 'add_post_keywords' ) );
-            add_action('save_post', array( $this, 'save_post_class_meta' ), 10, 2);
+            add_action('add_meta_boxes', array($this, 'add_post_keywords'));
+            add_action('save_post', array($this, 'save_post_class_meta' ), 10, 2);
         }
 
         //Internal Search Keywords Metabox and Custom Field
@@ -865,12 +859,12 @@ if( !trait_exists( 'Admin' ) ) {
             $custom_types = get_post_types(array('_builtin' => false));
 
             foreach ( $builtin_types as $builtin_type ){
-                add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array( $this, 'internal_search_keywords_meta_box' ), $builtin_type, 'side', 'default');
+                add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array($this, 'internal_search_keywords_meta_box' ), $builtin_type, 'side', 'default');
             }
 
             foreach( $custom_types as $custom_type ){
                 if ( !in_array($custom_type, array('acf', 'wpcf7_contact_form')) ){
-                    add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array( $this, 'internal_search_keywords_meta_box' ), $custom_type, 'side', 'default');
+                    add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array($this, 'internal_search_keywords_meta_box' ), $custom_type, 'side', 'default');
                 }
             }
         }

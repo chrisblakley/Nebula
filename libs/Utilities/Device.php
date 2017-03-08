@@ -8,18 +8,13 @@
  * @contributor Ruben Garcia
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Device' ) ) {
-
+if ( !trait_exists('Device') ){
     trait Device {
-
-		//Temporarily commented out
-        public function hooks() {
+        public function hooks(){
             //Device Detection - https://github.com/piwik/device-detector
-            //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
-            add_action('init', array( $this, 'detect' ) );
+            add_action('init', array($this, 'detect'));
         }
 
         /*==========================
@@ -29,7 +24,7 @@ if( !trait_exists( 'Device' ) ) {
         // TODO: If we creates the class Nebula_Device_Detection, this method should be detect()
         public function detect(){
             if ( nebula()->option('device_detection') ){
-	                require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php');
+	                require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php'); //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
 	                $GLOBALS["device_detect"] = new DeviceDetector\DeviceDetector($_SERVER['HTTP_USER_AGENT']);
 	                $GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
 	                $GLOBALS["device_detect"]->parse();

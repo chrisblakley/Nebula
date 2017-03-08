@@ -9,46 +9,47 @@
  */
 
 // Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if( !trait_exists( 'Dashboard' ) ) {
-
+if ( !trait_exists('Dashboard') ){
     trait Dashboard {
-
-		//Temporarily commented this out
-        public function hooks() {
+        public function hooks(){
             //Remove unnecessary Dashboard metaboxes
             if ( nebula()->option('unnecessary_metaboxes') ){
-                add_action('wp_dashboard_setup', array( $this, 'remove_dashboard_metaboxes' ));
+                add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes' ));
             }
 
             //WordPress Information metabox ("At a Glance" replacement)
-            add_action('wp_dashboard_setup', array( $this, 'ataglance_metabox' ));
+            add_action('wp_dashboard_setup', array($this, 'ataglance_metabox' ));
 
             //Current User metabox
-            add_action('wp_dashboard_setup', array( $this, 'current_user_metabox' ) );
+            add_action('wp_dashboard_setup', array($this, 'current_user_metabox'));
 
             //Administrative metabox
             if ( current_user_can('manage_options') ){
-                add_action('wp_dashboard_setup', array( $this, 'administrative_metabox' ) );
+                add_action('wp_dashboard_setup', array($this, 'administrative_metabox'));
             }
 
             //Social metabox
-            add_action('wp_dashboard_setup', array( $this, 'social_metabox' ) );
+            add_action('wp_dashboard_setup', array($this, 'social_metabox'));
 
             //Pinckney Hugo Group metabox
-            add_action('wp_dashboard_setup', array( $this, 'phg_metabox' ) );
+            add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
 
             //TODO manager metabox
             if ( nebula()->option('todo_manager_metabox', 'enabled') && nebula()->is_dev() ){
-                add_action('wp_dashboard_setup', array( $this, 'todo_metabox' ) );
+                add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
             }
 
             //Developer Info Metabox
             //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
             if ( nebula()->option('dev_info_metabox', 'enabled') && nebula()->is_dev() ){
-                add_action('wp_dashboard_setup', array( $this, 'dev_info_metabox' ) );
+                add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
             }
+
+            //Search theme or plugin files via Developer Information Metabox
+            add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
+            add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
         }
 
         //Remove unnecessary Dashboard metaboxes
@@ -65,7 +66,7 @@ if( !trait_exists( 'Dashboard' ) ) {
         //WordPress Information metabox ("At a Glance" replacement)
         public function ataglance_metabox(){
             global $wp_meta_boxes;
-            wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_theme_file_uri('/images/meta') . '/favicon-32x32.png" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), array( $this, 'dashboard_nebula_ataglance' ) );
+            wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
         }
 
         public function dashboard_nebula_ataglance(){
@@ -240,7 +241,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                 $headshot_html = '<i class="fa fa-user fa-fw"></i>&nbsp;';
             }
 
-            wp_add_dashboard_widget('nebula_current_user', $headshot_html . $user_info->display_name, array( $this, 'dashboard_current_user' ) );
+            wp_add_dashboard_widget('nebula_current_user', $headshot_html . $user_info->display_name, array($this, 'dashboard_current_user'));
         }
 
         public function dashboard_current_user(){
@@ -379,7 +380,7 @@ if( !trait_exists( 'Dashboard' ) ) {
             //IP Address
             echo '<li>';
             if ( $_SERVER['REMOTE_ADDR'] === '72.43.235.106' ){
-                echo '<img src="' . get_template_directory_uri() . '/images/phg/phg-symbol.png" style="max-width: 14px;" />';
+                echo '<img src="' . get_template_directory_uri() . '/assets/img/phg/phg-symbol.png" style="max-width: 14px;" />';
             } else {
                 echo '<i class="fa fa-globe fa-fw"></i>';
             }
@@ -429,7 +430,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
         //Administrative metabox
         public function administrative_metabox(){
-            wp_add_dashboard_widget('nebula_administrative', 'Administrative', array( $this, 'dashboard_administrative' ) );
+            wp_add_dashboard_widget('nebula_administrative', 'Administrative', array($this, 'dashboard_administrative'));
         }
 
         //Administrative metabox content
@@ -473,7 +474,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
         //Social metabox
         public function social_metabox(){
-            wp_add_dashboard_widget('nebula_social', 'Social', array( $this, 'dashboard_social' ) );
+            wp_add_dashboard_widget('nebula_social', 'Social', array($this, 'dashboard_social'));
         }
 
         //Social metabox content
@@ -515,12 +516,12 @@ if( !trait_exists( 'Dashboard' ) ) {
 
         //Pinckney Hugo Group metabox
         public function phg_metabox(){
-            wp_add_dashboard_widget('nebula_phg', 'Pinckney Hugo Group', array( $this, 'dashboard_phg' ) );
+            wp_add_dashboard_widget('nebula_phg', 'Pinckney Hugo Group', array($this, 'dashboard_phg'));
         }
 
         //Pinckney Hugo Group metabox content
         public function dashboard_phg(){
-            echo '<a href="http://pinckneyhugo.com" target="_blank"><img src="' . get_template_directory_uri() . '/images/phg/phg-building.jpg" style="width: 100%;" /></a>';
+            echo '<a href="http://pinckneyhugo.com" target="_blank"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" /></a>';
             echo '<ul>';
             echo '<li>' . nebula()->pinckneyhugogroup() . '</li>';
             echo '<li><i class="fa fa-map-marker fa-fw"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a></li>';
@@ -535,7 +536,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
         //TODO metabox
         public function todo_metabox(){
-            wp_add_dashboard_widget('todo_manager', 'To-Do Manager', array( $this, 'todo_metabox_content' ) );
+            wp_add_dashboard_widget('todo_manager', 'To-Do Manager', array($this, 'todo_metabox_content'));
         }
 
         //TODO metabox content
@@ -644,7 +645,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
         //Developer Info Metabox
         public function dev_info_metabox(){
-            wp_add_dashboard_widget('phg_developer_info', 'Developer Information', array( $this, 'dashboard_developer_info' ) );
+            wp_add_dashboard_widget('phg_developer_info', 'Developer Information', array($this, 'dashboard_developer_info'));
         }
 
         //Developer Info Metabox content
@@ -932,7 +933,7 @@ if( !trait_exists( 'Dashboard' ) ) {
 
             $file_counter = 0;
             $instance_counter = 0;
-            foreach ( glob_r($dirpath . '/*') as $file ){
+            foreach ( nebula()->glob_r($dirpath . '/*') as $file ){
                 $counted = 0;
                 if ( is_file($file) ){
                     if ( strpos(basename($file), $searchTerm) !== false ){
@@ -942,7 +943,7 @@ if( !trait_exists( 'Dashboard' ) ) {
                     }
 
                     $skipFilenames = array('error_log');
-                    if ( !contains(basename($file), $this->skip_extensions()) && !contains(basename($file), $skipFilenames) ){
+                    if ( !nebula()->contains(basename($file), $this->skip_extensions()) && !nebula()->contains(basename($file), $skipFilenames) ){
                         foreach ( file($file) as $lineNumber => $line ){
                             if ( stripos(stripslashes($line), $searchTerm) !== false ){
                                 $actualLineNumber = $lineNumber+1;
