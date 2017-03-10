@@ -487,7 +487,7 @@ if ( !trait_exists('Admin') ){
             $override = apply_filters('pre_nebula_theme_update_automation', false);
             if ( $override !== false ){return;}
 
-            if ( $options['type'] === 'theme' && in_array_r('Nebula-master', $options['themes']) ){
+            if ( $options['type'] === 'theme' && nebula()->in_array_r('Nebula-master', $options['themes']) ){
                 $this->theme_update_email(); //Send email with update information
                 nebula()->update_data('version_legacy', 'false');
             }
@@ -659,8 +659,8 @@ if ( !trait_exists('Admin') ){
 
             $php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
             $php_timeline = get_transient('nebula_php_timeline');
-            if ( (empty($php_timeline) || nebula()->is_debug()) && nebula()->is_available('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json') ){
-                $response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/php_timeline.json');
+            if ( (empty($php_timeline) || nebula()->is_debug()) && nebula()->is_available('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json') ){
+                $response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json');
                 if ( !is_wp_error($response) ){
                     $php_timeline = $response['body'];
                 } else {

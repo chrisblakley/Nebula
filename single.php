@@ -23,7 +23,7 @@ get_header(); ?>
 			<div class="col">
 				<h1 class="entry-title"><?php the_title(); ?></h1>
 				<div class="entry-meta">
-					<?php nebula()->meta('on'); ?> <?php nebula()->meta('by', 0); ?> <?php nebula()->meta('cat'); ?> <?php nebula()->meta('tags'); ?>
+					<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 				</div>
 			</div><!--/cols-->
 		</div><!--/row-->

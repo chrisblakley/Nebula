@@ -46,7 +46,7 @@ get_header(); ?>
 				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-meta">
-							<?php nebula()->meta('on'); ?> <?php nebula()->meta('dimensions'); ?> <?php nebula()->meta('exif'); ?>
+							<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('dimensions'); ?> <?php nebula()->post_meta('exif'); ?>
 						</div>
 
 						<div class="entry-social">

@@ -42,16 +42,18 @@ if ( !trait_exists('Sass') ){
                     'parent' => array(
                         'directory' => get_template_directory(),
                         'uri' => get_template_directory_uri(),
-                        'imports' => get_template_directory() . '/assets/scss/partials/'
+                        'imports' => array(get_template_directory() . '/assets/scss/partials/')
                     )
                 );
 
                 // Child theme scss locations
                 if ( is_child_theme() ){
+                    $scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/';
+
                     $scss_locations['child'] = array(
                         'directory' => get_stylesheet_directory(),
                         'uri' => get_stylesheet_directory_uri(),
-                        'imports' => get_stylesheet_directory() . '/assets/scss/partials/'
+                        'imports' => array(get_stylesheet_directory() . '/assets/scss/partials/')
                     );
                 }
 
@@ -123,9 +125,14 @@ if ( !trait_exists('Sass') ){
                     'template_directory' => '"' . get_template_directory_uri() . '"',
                     'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
                     'this_directory' => '"' . $location_paths['uri'] . '"',
-                    'primary_color' => get_theme_mod('nebula_primary_color', '#0098d7'), //From Customizer
-                    'secondary_color' => get_theme_mod('nebula_secondary_color', '#95d600'), //From Customizer
-                    'background_color' => get_theme_mod('nebula_background_color', '#f6f6f6'), //From Customizer
+                    'primary_color' => get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')), //From Customizer or child theme Sass variable
+                    'secondary_color' => get_theme_mod('nebula_secondary_color', nebula()->sass_color('secondary')), //From Customizer or child theme Sass variable
+                    'background_color' => get_theme_mod('nebula_background_color', nebula()->sass_color('background')), //From Customizer or child theme Sass variable
+
+                    //@todo "Nebula" 0: Having difficulty reseting the Customizer... Once it's used, it'll never fall back to the 2nd parameter above. Below works, but doesn't use the Customizer...
+                    //'primary_color' => nebula()->sass_color('primary'),
+                    //'secondary_color' => nebula()->sass_color('secondary'),
+                    //'background_color' => nebula()->sass_color('background'),
                 );
                 $additional_scss_variables = apply_filters('nebula_scss_variables', array());
                 $all_scss_variables = array_merge($nebula_scss_variables, $additional_scss_variables);
@@ -312,6 +319,11 @@ if ( !trait_exists('Sass') ){
                 case 'tertiarycolor':
                 case 'third':
                     $color_search = 'tertiary_color';
+                    break;
+                case 'background':
+                case 'backgroundcolor':
+                case 'bg':
+                    $color_search = 'background_color';
                     break;
                 default:
                     return false;

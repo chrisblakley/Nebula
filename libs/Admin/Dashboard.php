@@ -575,7 +575,7 @@ if ( !trait_exists('Dashboard') ){
                         $todo_counted = true;
                     }
 
-                    $todo_skipFilenames = array('README.md', 'Admin/Dashboard.php', 'error_log', 'inc/vendor', 'js/vendor', 'examples/', 'procedural/nebula_');
+                    $todo_skipFilenames = array('README.md', 'Admin/Dashboard.php', 'debug_log', 'error_log', 'inc/vendor', 'js/vendor', 'resources/', 'procedural/nebula_');
                     if ( !nebula()->contains(basename($todo_file), $this->skip_extensions()) && !nebula()->contains($todo_file, $todo_skipFilenames) ){
                         foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
                             if ( stripos($todo_line, '@TODO') !== false ){
@@ -694,10 +694,10 @@ if ( !trait_exists('Dashboard') ){
             $php_version_color = 'inherit';
             $php_version_info = '';
             $php_version_cursor = 'normal';
-            $php_version_lifecycle = nebula()->php_version_support(); //yolo
+            $php_version_lifecycle = nebula()->php_version_support();
             if ( $php_version_lifecycle['lifecycle'] === 'security' ){
                 $php_version_color = '#ca8038';
-                $php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['security']) . '.';
+                $php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
                 $php_version_cursor = 'help';
             } elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
                 $php_version_color = '#ca3838';

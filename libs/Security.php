@@ -230,7 +230,7 @@ if ( !trait_exists('Security') ){
 
                 //If there was an error or empty response, try my Github repo
                 if ( is_wp_error($response) || empty($domain_blacklist) ){ //This does not check availability because it is the same hostname as above.
-                    $response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/includes/data/domain_blacklist.txt');
+                    $response = wp_remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/domain_blacklist.txt');
                     if ( !is_wp_error($response) ){
                         $domain_blacklist = $response['body'];
                     } else {

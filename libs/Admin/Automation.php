@@ -168,13 +168,13 @@ if ( !trait_exists('Automation') ){
         }
 
         public function activation_notice(){
-            add_action('admin_notices', 'activation');
+            add_action('admin_notices', array($this, 'activation'));
         }
 
         public function activation(){
             wp_remote_get('https://gearside.com/nebula/usage/index.php?r=' . home_url());
 
-            $is_standard_initialization = ( isset($_GET['nebula-initialization']) )? true : false; //Detect if non-AJAX initialization is needed.
+            $is_standard_initialization = isset($_GET['nebula-initialization']); //Detect if non-AJAX initialization is needed.
             if ( $is_standard_initialization ){
                 //@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
                 $this->initialization(true);

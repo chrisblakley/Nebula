@@ -28,7 +28,7 @@
 					<?php endif; ?>
 
 					<?php if ( !in_array("page", get_post_class()) ): ?>
-						<?php nebula()->meta('on'); ?> <?php if ( nebula()->option('author_bios', 'enabled') && !is_author() ){ nebula()->meta('by'); } ?> <?php nebula()->meta('cat'); ?> <?php nebula()->meta('tags'); ?>
+						<?php nebula()->post_meta('on'); ?> <?php if ( nebula()->option('author_bios', 'enabled') && !is_author() ){ nebula()->post_meta('by'); } ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 					<?php endif; ?>
 				</div>
 
