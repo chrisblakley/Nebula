@@ -13,6 +13,9 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Visitors') ){
     trait Visitors {
         public function hooks(){
+            // Register table names in $wpdb global
+            add_action('init', array($this, 'register_table_names'));
+
             //Nebula Visitor Admin Page
             if ( nebula()->option('visitors_db') ){
                 //Add Visitors menu in admin
@@ -83,6 +86,16 @@ if ( !trait_exists('Visitors') ){
             add_action('wp_ajax_nopriv_nebula_vdb_ajax_increment_visitor', array($this, 'ajax_increment_visitor'));
         }
 
+        // Register table names in $wpdb global
+        public function register_table_names() {
+            global $wpdb;
+
+            if ( ! isset( $wpdb->nebula_visitors ) || ! isset( $wpdb->nebula_visitors_data ) ) {
+                $wpdb->nebula_visitors = $wpdb->prefix . 'nebula_visitors';
+                $wpdb->nebula_visitors_data = $wpdb->prefix . 'nebula_visitors_data';
+            }
+        }
+
         /*==========================
             Nebula Visitor Admin Page
          ===========================*/
@@ -96,11 +109,9 @@ if ( !trait_exists('Visitors') ){
         public function admin_page(){
             global $wpdb;
 
-            $visitors_table_name = $this->visitors_table_name();
-
-            $all_visitors_data_head = $wpdb->get_results("SHOW columns FROM $visitors_table_name"); //Get the column names from the primary table
+            $all_visitors_data_head = $wpdb->get_results("SHOW columns FROM $wpdb->nebula_visitors"); //Get the column names from the primary table
             $all_visitors_data_head = (array) $all_visitors_data_head;
-            $all_visitors_data = $wpdb->get_results("SELECT * FROM $visitors_table_name"); //Get all data from the data table
+            $all_visitors_data = $wpdb->get_results("SELECT * FROM $wpdb->nebula_visitors"); //Get all data from the data table
             $all_visitors_data = (array) $all_visitors_data;
 
             if ( !empty($all_visitors_data) ): ?>
@@ -519,9 +530,9 @@ if ( !trait_exists('Visitors') ){
 
             global $wpdb;
 
-            $visitors_data_table_name = $this->visitors_data_table_name();
+            $wpdb->nebula_visitors_data = $this->visitors_data_table_name();
 
-            $this_user_data = $wpdb->get_results("SELECT id, label, value FROM $visitors_data_table_name WHERE nebula_id = '" . sanitize_text_field($_POST['data']) . "' ORDER BY id");
+            $this_user_data = $wpdb->get_results("SELECT id, label, value FROM $wpdb->nebula_visitors_data WHERE nebula_id = '" . sanitize_text_field($_POST['data']) . "' ORDER BY id");
             if ( empty($this_user_data) ){
                 echo '<p>Data was not found for this user...</p>';
             }
@@ -731,19 +742,17 @@ if ( !trait_exists('Visitors') ){
         public function ajax_similar_visitors(){
             if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
+            global $wpdb;
+
             $all_visitor_data = $this->get_all_visitor_data('any', sanitize_text_field($_POST['nid']));
             $ip_address = $all_visitor_data['ip_address'];
             $user_agent = $all_visitor_data['user_agent'];
 
-            $visitors_table_name = $this->visitors_table_name();
-            $visitors_data_table_name = $this->visitors_data_table_name();
-
-            $query = "SELECT DISTINCT($visitors_table_name.nebula_id), $visitors_table_name.* FROM $visitors_data_table_name JOIN $visitors_table_name ON $visitors_table_name.nebula_id = $visitors_data_table_name.nebula_id WHERE ($visitors_data_table_name.label = 'all_ip_addresses' AND $visitors_data_table_name.value LIKE '%" . $ip_address . "%') OR ($visitors_data_table_name.label = 'ip_address' AND $visitors_data_table_name.value LIKE '%" . $ip_address . "%')";
+            $query = "SELECT DISTINCT($wpdb->nebula_visitors.nebula_id), $wpdb->nebula_visitors.* FROM $wpdb->nebula_visitors_data JOIN $wpdb->nebula_visitors ON $wpdb->nebula_visitors.nebula_id = $wpdb->nebula_visitors_data.nebula_id WHERE ($wpdb->nebula_visitors_data.label = 'all_ip_addresses' AND $wpdb->nebula_visitors_data.value LIKE '%" . $ip_address . "%') OR ($wpdb->nebula_visitors_data.label = 'ip_address' AND $wpdb->nebula_visitors_data.value LIKE '%" . $ip_address . "%')";
             if ( $_POST['similar'] == 'ip_useragent' ){
-                $query = "SELECT DISTINCT($visitors_table_name.nebula_id), $visitors_table_name.* FROM $visitors_data_table_name JOIN $visitors_table_name ON $visitors_table_name.nebula_id = $visitors_data_table_name.nebula_id WHERE (($visitors_data_table_name.label = 'all_ip_addresses' AND $visitors_data_table_name.value LIKE '%" . $ip_address . "%') OR ($visitors_data_table_name.label = 'ip_address' AND $visitors_data_table_name.value LIKE '%" . $ip_address . "%')) AND $visitors_table_name.user_agent = '" . $user_agent . "'";
+                $query = "SELECT DISTINCT($wpdb->nebula_visitors.nebula_id), $wpdb->nebula_visitors.* FROM $wpdb->nebula_visitors_data JOIN $wpdb->nebula_visitors ON $wpdb->nebula_visitors.nebula_id = $wpdb->nebula_visitors_data.nebula_id WHERE (($wpdb->nebula_visitors_data.label = 'all_ip_addresses' AND $wpdb->nebula_visitors_data.value LIKE '%" . $ip_address . "%') OR ($wpdb->nebula_visitors_data.label = 'ip_address' AND $wpdb->nebula_visitors_data.value LIKE '%" . $ip_address . "%')) AND $wpdb->nebula_visitors.user_agent = '" . $user_agent . "'";
             }
 
-            global $wpdb;
             $similar_visitors = $wpdb->get_results($query);
 
             if ( $similar_visitors === false ){
@@ -768,9 +777,7 @@ if ( !trait_exists('Visitors') ){
 
             global $wpdb;
 
-            $visitors_table_name = $this->visitors_table_name();
-
-            $manual_delete = $wpdb->query($wpdb->prepare("DELETE FROM $visitors_table_name WHERE nebula_id = %s", $nebula_id)); //Associated data in nebula_visitors_data will cascade delete
+            $manual_delete = $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->nebula_visitors WHERE nebula_id = %s", $nebula_id)); //Associated data in nebula_visitors_data will cascade delete
 
             if ( $manual_delete === false ){
                 echo 'error';
@@ -803,9 +810,7 @@ if ( !trait_exists('Visitors') ){
 
             global $wpdb;
 
-            $visitors_table_name = $this->visitors_table_name();
-
-            $manual_delete = $wpdb->query($wpdb->prepare("DELETE FROM $visitors_table_name WHERE lead_score <= %d", 0)); //Associated data in nebula_visitors_data will cascade delete
+            $manual_delete = $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->nebula_visitors WHERE lead_score <= %d", 0)); //Associated data in nebula_visitors_data will cascade delete
 
             if ( $manual_delete === false ){
                 echo 'error';
@@ -826,11 +831,8 @@ if ( !trait_exists('Visitors') ){
 
             global $wpdb;
 
-            $visitors_table_name = $this->visitors_table_name();
-            $visitors_data_table_name = $this->visitors_data_table_name();
-
-            $remove_nv_table = $wpdb->query("DROP TABLE $visitors_data_table_name");
-            $remove_nv_table = $wpdb->query("DROP TABLE $visitors_table_name");
+            $remove_nv_table = $wpdb->query("DROP TABLE $wpdb->nebula_visitors_data");
+            $remove_nv_table = $wpdb->query("DROP TABLE $wpdb->nebula_visitors");
             nebula()->update_option('visitors_db', 'disabled');
 
             echo admin_url();
@@ -898,18 +900,6 @@ if ( !trait_exists('Visitors') ){
             }
         }
 
-        public function visitors_table_name() {
-            global $wpdb;
-
-            return apply_filters( 'nebula_visitors_table_name', $wpdb->prefix . 'nebula_visitors' );
-        }
-
-        public function visitors_data_table_name() {
-            global $wpdb;
-
-            return apply_filters( 'nebula_visitors_data_table_name', $wpdb->prefix . 'nebula_visitors_data' );
-        }
-
         //Create Users Table with minimal default columns.
         public function create_tables(){
             //Create the NVDB Tables
@@ -919,14 +909,11 @@ if ( !trait_exists('Visitors') ){
 
             global $wpdb;
 
-            $visitors_table_name = $this->visitors_table_name();
-            $visitors_data_table_name = $this->visitors_data_table_name();
-
-            $visitors_table = $wpdb->query("SHOW TABLES LIKE '$visitors_table_name'"); //DB Query here
+            $visitors_table = $wpdb->query("SHOW TABLES LIKE '$wpdb->nebula_visitors'"); //DB Query here
             if ( empty($visitors_table) ){
                 require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
-                $create_primary_table_sql = "CREATE TABLE $visitors_table_name (
+                $create_primary_table_sql = "CREATE TABLE $wpdb->nebula_visitors (
                     id INT(11) NOT NULL AUTO_INCREMENT,
                     nebula_id VARCHAR(255),
                     ga_cid TINYTEXT NOT NULL,
@@ -951,14 +938,14 @@ if ( !trait_exists('Visitors') ){
                 //Create the data table
                     //Must have unique combination of nebula_id and label
                     //References the nebula_id from the primary table, so if a row is deleted from there it deletes all rows with the same nebula_id here.
-                $create_data_table_sql = "CREATE TABLE $visitors_data_table_name (
+                $create_data_table_sql = "CREATE TABLE $wpdb->nebula_visitors_data (
                     id INT(11) NOT NULL AUTO_INCREMENT,
                     nebula_id VARCHAR(255),
                     label VARCHAR(255),
                     value LONGTEXT,
                     PRIMARY KEY (id),
                     UNIQUE (nebula_id, label),
-                    CONSTRAINT fk_nebula_visitors_nebula_id FOREIGN KEY (nebula_id) REFERENCES $visitors_table_name (nebula_id) ON DELETE CASCADE
+                    CONSTRAINT fk_nebula_visitors_nebula_id FOREIGN KEY (nebula_id) REFERENCES $wpdb->nebula_visitors (nebula_id) ON DELETE CASCADE
                 )
                 ENGINE = InnoDB;"; //DB Query here
 
@@ -984,16 +971,13 @@ if ( !trait_exists('Visitors') ){
         //Check if this visitor is new or returning using several factors
         public function new_or_returning_visitor(){
             if ( nebula()->option('visitors_db') ){
-
-                $visitors_table_name = $this->visitors_table_name();
-
                 $last_session_id = nebula()->get_visitor_data('last_session_id'); //Check if this returning visitor exists in the DB (in case they were removed)
 
                 if ( empty($last_session_id) ){ //If the nebula_id is not in the DB already, treat it as a new user
                     //Prevent duplicates for users blocking cookies or Google Analytics
                     if ( strpos(nebula()->ga_parse_cookie(), '-') !== false ){ //If GA CID was generated by Nebula
                         global $wpdb;
-                        $unique_new_visitor = $wpdb->get_results("SELECT * FROM $visitors_table_name WHERE ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND user_agent = '" . sanitize_text_field($_SERVER['HTTP_USER_AGENT']) . "'");
+                        $unique_new_visitor = $wpdb->get_results("SELECT * FROM $wpdb->nebula_visitors WHERE ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND user_agent = '" . sanitize_text_field($_SERVER['HTTP_USER_AGENT']) . "'");
                         if ( !empty($unique_new_visitor) ){
                             $unique_new_visitor = (array) $unique_new_visitor[0];
                             if ( strpos($unique_new_visitor['ga_cid'], '-') !== false ){ //If that GA CID was also generated by Nebula
@@ -1060,9 +1044,7 @@ if ( !trait_exists('Visitors') ){
                 if ( empty($force) ){
                     global $wpdb;
 
-                    $visitors_table_name = $this->visitors_table_name();
-
-                    $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM $visitors_table_name WHERE ga_cid = '%s'", ga_parse_cookie())); //Check if the ga_cid exists, and if so use THAT nebula_id again
+                    $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM $wpdb->nebula_visitors WHERE ga_cid = '%s'", ga_parse_cookie())); //Check if the ga_cid exists, and if so use THAT nebula_id again
                     if ( !empty($nebula_id_from_matching_ga_cid) ){
                         $_COOKIE['nid'] = reset($nebula_id_from_matching_ga_cid[0]);
                         setcookie('nid', $_COOKIE['nid'], $nid_expiration, COOKIEPATH, COOKIE_DOMAIN); //Update the Nebula ID cookie
@@ -1092,9 +1074,7 @@ if ( !trait_exists('Visitors') ){
                 if ( !empty($needed_columns) ){
                     global $wpdb;
 
-                    $visitors_table_name = $this->visitors_table_name();
-
-                    $alter_query = "ALTER TABLE $visitors_table_name ";
+                    $alter_query = "ALTER TABLE $wpdb->nebula_visitors ";
                     foreach ( $needed_columns as $column_name ){
                         $column_name = sanitize_key($column_name);
 
@@ -1325,11 +1305,9 @@ if ( !trait_exists('Visitors') ){
             if ( nebula()->option('visitors_db') ){
                 global $wpdb;
 
-                $visitors_table_name = $this->visitors_table_name();
-
                 //Check for an old visitor with the same fingerprint
                 //@TODO "Nebula" 0: I don't think the server-side fingerprint alone is unique enough to push this live... Really needs the JS detections to work, but I can't think of a way that isn't AJAX JS or a second pageview to match against it...
-                $unique_new_visitor = $wpdb->get_results("SELECT ga_cid FROM $visitors_table_name WHERE (ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND user_agent = '" . sanitize_text_field($_SERVER['HTTP_USER_AGENT']) . "') OR fingerprint LIKE '%" . sanitize_text_field($this->fingerprint()) . "%'"); //DB Query here
+                $unique_new_visitor = $wpdb->get_results("SELECT ga_cid FROM $wpdb->nebula_visitors WHERE (ip_address = '" . sanitize_text_field($_SERVER['REMOTE_ADDR']) . "' AND user_agent = '" . sanitize_text_field($_SERVER['HTTP_USER_AGENT']) . "') OR fingerprint LIKE '%" . sanitize_text_field($this->fingerprint()) . "%'"); //DB Query here
                 if ( !empty($unique_new_visitor) ){
 
                     //@TODO "Nebula" 0: This uses the first result... We want to find a user that is known, or that has a GA CID, else highest score.
@@ -1376,9 +1354,7 @@ if ( !trait_exists('Visitors') ){
             if ( nebula()->option('visitors_db') ){
                 global $wpdb;
 
-                $visitors_table_name = $this->visitors_table_name();
-
-                $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM $visitors_table_name WHERE ga_cid = '%s'", ga_parse_cookie())); //DB Query here.
+                $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM $wpdb->nebula_visitors WHERE ga_cid = '%s'", ga_parse_cookie())); //DB Query here.
                 if ( !empty($nebula_id_from_matching_ga_cid) ){
                     return reset($nebula_id_from_matching_ga_cid[0]);
                 }
@@ -1413,9 +1389,9 @@ if ( !trait_exists('Visitors') ){
 
                     global $wpdb;
 
-                    $visitors_data_table_name = $this->visitors_data_table_name();
+                    $wpdb->nebula_visitors_data = $this->visitors_data_table_name();
 
-                    $all_visitor_db_data = $wpdb->get_results("SELECT id, label, value FROM $visitors_data_table_name WHERE nebula_id = '" . sanitize_text_field($nebula_id) . "' ORDER BY id"); //DB Query here
+                    $all_visitor_db_data = $wpdb->get_results("SELECT id, label, value FROM $wpdb->nebula_visitors_data WHERE nebula_id = '" . sanitize_text_field($nebula_id) . "' ORDER BY id"); //DB Query here
 
                     if ( $all_visitor_db_data ){
                         //Re-organize the data
@@ -1513,9 +1489,7 @@ if ( !trait_exists('Visitors') ){
                 if ( !empty($nebula_id) && !empty($column) ){
                     global $wpdb;
 
-                    $visitors_table_name = $this->visitors_table_name();
-
-                    $requested_data = $wpdb->get_results($wpdb->prepare("SELECT " . $column . " FROM $visitors_table_name WHERE nebula_id = '%s'", $nebula_id));
+                    $requested_data = $wpdb->get_results($wpdb->prepare("SELECT " . $column . " FROM $wpdb->nebula_visitors WHERE nebula_id = '%s'", $nebula_id));
 
                     if ( !empty($requested_data) && !empty($requested_data[0]) && strtolower(reset($requested_data[0])) != 'null' ){
                         return reset($requested_data[0]); //@TODO "Nebula" 0: update so this could return multiple values
@@ -1623,11 +1597,8 @@ if ( !trait_exists('Visitors') ){
 
                 global $wpdb;
 
-                $visitors_table_name = $this->visitors_table_name();
-                $visitors_data_table_name = $this->visitors_data_table_name();
-
                 //Update Primary table first
-                $updated_primary_table = $wpdb->update($visitors_table_name, $this->prep_primary_table_for_db($all_data), array('nebula_id' => $nebula_id)); //DB Query here
+                $updated_primary_table = $wpdb->update($wpdb->nebula_visitors, $this->prep_primary_table_for_db($all_data), array('nebula_id' => $nebula_id)); //DB Query here
 
                 //Insert new rows first
                 $old_visitor_data = wp_cache_get('nebula_visitor_old');
@@ -1668,7 +1639,7 @@ if ( !trait_exists('Visitors') ){
                 }
 
                 //Update existing rows
-                $update_query = "UPDATE $visitors_data_table_name SET value = CASE";
+                $update_query = "UPDATE $wpdb->nebula_visitors_data SET value = CASE";
                 foreach ( $updated_data as $label => $value ){
                     $update_query .= " WHEN label = '" . $label . "' THEN '" . $value . "'";
                 }
@@ -1968,10 +1939,7 @@ if ( !trait_exists('Visitors') ){
 
                 global $wpdb;
 
-                $visitors_table_name = $this->visitors_table_name();
-                $visitors_data_table_name = $this->visitors_data_table_name();
-
-                $inserted_primary_table = $wpdb->replace($visitors_table_name, $prepped_primary_data); //Insert a row with all the default (and passed) sanitized values. DB Query here
+                $inserted_primary_table = $wpdb->replace($wpdb->nebula_visitors, $prepped_primary_data); //Insert a row with all the default (and passed) sanitized values. DB Query here
 
                 //Data table prep
                 $nebula_id = ( !empty($alt_nebula_id) )? $alt_nebula_id : $this->get_appropriate_nebula_id();
@@ -1990,7 +1958,7 @@ if ( !trait_exists('Visitors') ){
                 }
 
                 //Build rows
-                $built_insert_query = "INSERT IGNORE INTO $visitors_data_table_name (nebula_id, label, value) VALUES";
+                $built_insert_query = "INSERT IGNORE INTO $wpdb->nebula_visitors_data (nebula_id, label, value) VALUES";
                 foreach ( $built_values as $row ){
                     $built_insert_query .= " (" . implode(',', $row) . "),";
                 }
@@ -2477,17 +2445,15 @@ if ( !trait_exists('Visitors') ){
         //Check if this visitor is similar to a known visitor
         public function similar_to_known($specific=false, $storage_type=false, $alt_nebula_id=false){
             if ( nebula()->option('visitors_db') ){
+                global $wpdb;
+
                 $all_visitor_data = $this->get_all_visitor_data($storage_type, $alt_nebula_id);
 
-                $visitors_table_name = $this->visitors_table_name();
-                $visitors_data_table_name = $this->visitors_data_table_name();
-
-                $query = "SELECT DISTINCT($visitors_table_name.nebula_id), $visitors_table_name.* FROM $visitors_data_table_name JOIN $visitors_table_name ON $visitors_table_name.nebula_id = $visitors_data_table_name.nebula_id WHERE $visitors_table_name.is_known = '1' AND (($visitors_data_table_name.label = 'ip_address' AND $visitors_data_table_name.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "') OR ($visitors_data_table_name.label = 'all_ip_addresses' AND $visitors_data_table_name.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "'))";
+                $query = "SELECT DISTINCT($wpdb->nebula_visitors.nebula_id), $wpdb->nebula_visitors.* FROM $wpdb->nebula_visitors_data JOIN $wpdb->nebula_visitors ON $wpdb->nebula_visitors.nebula_id = $wpdb->nebula_visitors_data.nebula_id WHERE $wpdb->nebula_visitors.is_known = '1' AND (($wpdb->nebula_visitors_data.label = 'ip_address' AND $wpdb->nebula_visitors_data.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "') OR ($wpdb->nebula_visitors_data.label = 'all_ip_addresses' AND $wpdb->nebula_visitors_data.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "'))";
                 if ( !empty($specific) ){
-                    $query = "SELECT DISTINCT($visitors_table_name.nebula_id), $visitors_table_name.* FROM $visitors_data_table_name JOIN $visitors_table_name ON $visitors_table_name.nebula_id = $visitors_data_table_name.nebula_id WHERE $visitors_table_name.is_known = '1' AND (($visitors_data_table_name.label = 'ip_address' AND $visitors_data_table_name.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "') OR ($visitors_data_table_name.label = 'all_ip_addresses' AND $visitors_data_table_name.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "')) AND $visitors_table_name.user_agent = '" . sanitize_text_field($all_visitor_data['user_agent']) . "'";
+                    $query = "SELECT DISTINCT($wpdb->nebula_visitors.nebula_id), $wpdb->nebula_visitors.* FROM $wpdb->nebula_visitors_data JOIN $wpdb->nebula_visitors ON $wpdb->nebula_visitors.nebula_id = $wpdb->nebula_visitors_data.nebula_id WHERE $wpdb->nebula_visitors.is_known = '1' AND (($wpdb->nebula_visitors_data.label = 'ip_address' AND $wpdb->nebula_visitors_data.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "') OR ($wpdb->nebula_visitors_data.label = 'all_ip_addresses' AND $wpdb->nebula_visitors_data.value = '" . sanitize_text_field($all_visitor_data['ip_address']) . "')) AND $wpdb->nebula_visitors.user_agent = '" . sanitize_text_field($all_visitor_data['user_agent']) . "'";
                 }
 
-                global $wpdb;
                 $similar_known_visitors = $wpdb->get_results($query); //DB Query here
 
                 if ( empty($similar_known_visitors) ){
@@ -2511,11 +2477,9 @@ if ( !trait_exists('Visitors') ){
                 if ( empty($nebula_visitor_remove_expired) || !empty($force) || nebula()->is_debug() ){
                     global $wpdb;
 
-                    $visitors_table_name = $this->visitors_table_name();
-
                     //Remove visitors who haven't been modified in the last 90 days and are not known
                     $expiration_time = time()-(MONTH_IN_SECONDS*6); //6 months ago
-                    $removed_visitors = $wpdb->query($wpdb->prepare("DELETE FROM $visitors_table_name WHERE last_modified_on < %d AND is_known = %s AND lead_score < %d", $expiration_length, '0', 100)); //DB Query here
+                    $removed_visitors = $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->nebula_visitors WHERE last_modified_on < %d AND is_known = %s AND lead_score < %d", $expiration_time, '0', 100)); //DB Query here
 
                     //How to recalculate scores for all users without looping through every single one?
 
@@ -2564,9 +2528,7 @@ if ( !trait_exists('Visitors') ){
         public function visitors_existing_columns(){
             global $wpdb;
 
-            $visitors_table_name = $this->visitors_table_name();
-
-            return $wpdb->get_col("SHOW COLUMNS FROM $visitors_table_name", 0); //Returns an array of current table column names
+            return $wpdb->get_col("SHOW COLUMNS FROM $wpdb->nebula_visitors", 0); //Returns an array of current table column names
         }
 
         //Query email address or Hubspot VID to see if the user is known
@@ -2574,13 +2536,11 @@ if ( !trait_exists('Visitors') ){
             if ( nebula()->option('visitors_db') ){
                 global $wpdb;
 
-                $visitors_table_name = $this->visitors_table_name();
-
                 $nebula_id = get_nebula_id();
 
-                $known_visitor = $wpdb->get_results("SELECT * FROM $visitors_table_name WHERE nebula_id LIKE '" . $nebula_id . "' AND (email_address REGEXP '.+@.+\..+' OR hubspot_vid REGEXP '^\d+$')");
+                $known_visitor = $wpdb->get_results("SELECT * FROM $wpdb->nebula_visitors WHERE nebula_id LIKE '" . $nebula_id . "' AND (email_address REGEXP '.+@.+\..+' OR hubspot_vid REGEXP '^\d+$')");
                 if ( !empty($known_visitor) ){
-                    if ( !is_known() ){
+                    if ( !$this->is_known() ){
                         nebula()->update_visitor(array('known' => '1')); //Update to known visitor (if previously unknown)
                     }
 
