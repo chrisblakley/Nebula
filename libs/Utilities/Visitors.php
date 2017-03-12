@@ -530,8 +530,6 @@ if ( !trait_exists('Visitors') ){
 
             global $wpdb;
 
-            $wpdb->nebula_visitors_data = $this->visitors_data_table_name();
-
             $this_user_data = $wpdb->get_results("SELECT id, label, value FROM $wpdb->nebula_visitors_data WHERE nebula_id = '" . sanitize_text_field($_POST['data']) . "' ORDER BY id");
             if ( empty($this_user_data) ){
                 echo '<p>Data was not found for this user...</p>';
@@ -1388,9 +1386,7 @@ if ( !trait_exists('Visitors') ){
                     $nebula_id = ( !empty($alt_nebula_id) )? $alt_nebula_id : nebula()->get_appropriate_nebula_id();
 
                     global $wpdb;
-
-                    $wpdb->nebula_visitors_data = $this->visitors_data_table_name();
-
+                    
                     $all_visitor_db_data = $wpdb->get_results("SELECT id, label, value FROM $wpdb->nebula_visitors_data WHERE nebula_id = '" . sanitize_text_field($nebula_id) . "' ORDER BY id"); //DB Query here
 
                     if ( $all_visitor_db_data ){
