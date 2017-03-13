@@ -701,7 +701,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Prototype Mode&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" id="prototypemodeselect" name="nebula_options[prototype_mode]" value="1" <?php checked( '1', $nebula_options['prototype_mode'] ); ?>/>
+                                <input type="radio" id="prototype_mode_enable" name="nebula_options[prototype_mode]" value="1" <?php checked( '1', isset($nebula_options['prototype_mode']) ? $nebula_options['prototype_mode'] : $nebula_options_defaults['prototype_mode'] ); ?>/>
+                                <label for="prototype_mode_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="prototype_mode_disable" name="nebula_options[prototype_mode]" name="nebula_options[prototype_mode]" value="0" <?php checked( '0', isset($nebula_options['prototype_mode']) ? $nebula_options['prototype_mode'] : $nebula_options_defaults['prototype_mode'] ); ?>/>
+                                <label for="prototype_mode_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>When prototyping, enable this setting. Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (<em>Note: If using this setting, you may need to select that same theme for the admin-ajax option too!</em>). <em>(Default: <?php echo ucwords($nebula_options_defaults['prototype_mode']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -754,7 +757,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Author Bios&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[author_bios]" value="1" <?php checked( '1', $nebula_options['author_bios'] ); ?>/>
+                                <input type="radio" id="author_bios_enable" name="nebula_options[author_bios]" value="1" <?php checked( '1', isset($nebula_options['author_bios']) ? $nebula_options['author_bios'] : $nebula_options_defaults['author_bios'] ); ?>/>
+                                <label for="author_bios_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="author_bios_disable" name="nebula_options[author_bios]" value="0" <?php checked( '0', isset($nebula_options['author_bios']) ? $nebula_options['author_bios'] : $nebula_options_defaults['author_bios'] ); ?>/>
+                                <label for="author_bios_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Allow authors to have bios that show their info (and post archives). This also enables searching by author, and displaying author names on posts. If disabled, the author page attempts to redirect to an About Us page. <em>(Default: <?php echo ucwords($nebula_options_defaults['author_bios']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -762,7 +768,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Comments&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[comments]" value="1" <?php checked( '1', $nebula_options['comments'] ); ?>/>
+                                <input type="radio" id="comments_enable" name="nebula_options[comments]" value="1" <?php checked( '1', isset($nebula_options['comments']) ? $nebula_options['comments'] : $nebula_options_defaults['comments'] ); ?>/>
+                                <label for="comments_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="comments_disable" name="nebula_options[comments]" value="0" <?php checked( '0', isset($nebula_options['comments']) ? $nebula_options['comments'] : $nebula_options_defaults['comments'] ); ?>/>
+                                <label for="comments_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Ability to force disable comments. If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles). <em>(Default: <?php echo ucwords($nebula_options_defaults['comments']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -770,7 +779,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Device Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[device_detection]" value="1" <?php checked( '1', $nebula_options['device_detection'] ); ?>/>
+                                <input type="radio" id="device_detection_enable" name="nebula_options[device_detection]" value="1" <?php checked( '1', isset($nebula_options['device_detection']) ? $nebula_options['device_detection'] : $nebula_options_defaults['device_detection'] ); ?>/>
+                                <label for="device_detection_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="device_detection_disable" name="nebula_options[device_detection]" value="0" <?php checked( '0', isset($nebula_options['device_detection']) ? $nebula_options['device_detection'] : $nebula_options_defaults['device_detection'] ); ?>/>
+                                <label for="device_detection_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Detect information about the user's device and browser. Useful for cross-browser support. <em>(Default: <?php echo ucwords($nebula_options_defaults['device_detection']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -778,7 +790,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">IP Geolocation&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[ip_geolocation]" value="1" <?php checked( '1', $nebula_options['ip_geolocation'] ); ?>/>
+                                <input type="radio" id="ip_geolocation_enable" name="nebula_options[ip_geolocation]" value="1" <?php checked( '1', isset($nebula_options['ip_geolocation']) ? $nebula_options['ip_geolocation'] : $nebula_options_defaults['ip_geolocation'] ); ?>/>
+                                <label for="ip_geolocation_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="ip_geolocation_disable" name="nebula_options[ip_geolocation]" value="0" <?php checked( '0', isset($nebula_options['ip_geolocation']) ? $nebula_options['ip_geolocation'] : $nebula_options_defaults['ip_geolocation'] ); ?>/>
+                                <label for="ip_geolocation_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Lookup the country, region, and city of the user based on their IP address. This can be used for content as well as analytics (including Visitors Database) <em>(Default: <?php echo ucwords($nebula_options_defaults['ip_geolocation']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -786,7 +801,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Domain Blacklisting&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[domain_blacklisting]" value="1" <?php checked( '1', $nebula_options['domain_blacklisting'] ); ?>/>
+                                <input type="radio" id="domain_blacklisting_enable" name="nebula_options[domain_blacklisting]" value="1" <?php checked( '1', isset($nebula_options['domain_blacklisting']) ? $nebula_options['domain_blacklisting'] : $nebula_options_defaults['domain_blacklisting'] ); ?>/>
+                                <label for="domain_blacklisting_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="domain_blacklisting_disable" name="nebula_options[domain_blacklisting]" value="0" <?php checked( '0', isset($nebula_options['domain_blacklisting']) ? $nebula_options['domain_blacklisting'] : $nebula_options_defaults['domain_blacklisting'] ); ?>/>
+                                <label for="domain_blacklisting_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Block traffic from known spambots and other illegitimate domains. <em>(Default: <?php echo ucwords($nebula_options_defaults['domain_blacklisting']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -794,7 +812,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Ad Block Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[adblock_detect]" value="1" <?php checked( '1', $nebula_options['adblock_detect'] ); ?>/>
+                                <input type="radio" id="adblock_detect_enable" name="nebula_options[adblock_detect]" value="1" <?php checked( '1', isset($nebula_options['adblock_detect']) ? $nebula_options['adblock_detect'] : $nebula_options_defaults['adblock_detect'] ); ?>/>
+                                <label for="adblock_detect_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="adblock_detect_disable" name="nebula_options[adblock_detect]" value="0" <?php checked( '0', isset($nebula_options['adblock_detect']) ? $nebula_options['adblock_detect'] : $nebula_options_defaults['adblock_detect'] ); ?>/>
+                                <label for="adblock_detect_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Detect if visitors are using ad blocking software. To track in Google Analytics, add a dimension index under the "Analytics" tab. <em>(Default: <?php echo ucwords($nebula_options_defaults['adblock_detect']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -802,7 +823,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Console CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[console_css]" value="1" <?php checked( '1', $nebula_options['console_css'] ); ?>/>
+                                <input type="radio" id="console_css_enable" name="nebula_options[console_css]" value="1" <?php checked( '1', isset($nebula_options['console_css']) ? $nebula_options['console_css'] : $nebula_options_defaults['console_css'] ); ?>/>
+                                <label for="console_css_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="console_css_disable" name="nebula_options[console_css]" value="0" <?php checked( '0', isset($nebula_options['console_css']) ? $nebula_options['console_css'] : $nebula_options_defaults['console_css'] ); ?>/>
+                                <label for="console_css_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Adds CSS to the browser console. <em>(Default: <?php echo ucwords($nebula_options_defaults['console_css']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -810,7 +834,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Weather Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[weather]" value="1" <?php checked( '1', $nebula_options['weather'] ); ?>/>
+                                <input type="radio" id="weather_enable" name="nebula_options[weather]" value="1" <?php checked( '1', isset($nebula_options['weather']) ? $nebula_options['weather'] : $nebula_options_defaults['weather'] ); ?>/>
+                                <label for="weather_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="weather_disable" name="nebula_options[weather]" value="0" <?php checked( '0', isset($nebula_options['weather']) ? $nebula_options['weather'] : $nebula_options_defaults['weather'] ); ?>/>
+                                <label for="weather_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Lookup weather conditions for locations. Can be used for changing content as well as analytics. <em>(Default: <?php echo ucwords($nebula_options_defaults['weather']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -825,7 +852,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">SCSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[scss]" value="1" <?php checked( '1', $nebula_options['scss'] ); ?>/>
+                                <input type="radio" id="scss_enable" name="nebula_options[scss]" value="1" <?php checked( '1', isset($nebula_options['scss']) ? $nebula_options['scss'] : $nebula_options_defaults['scss'] ); ?>/>
+                                <label for="scss_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="scss_disable" name="nebula_options[scss]" value="0" <?php checked( '0', isset($nebula_options['scss']) ? $nebula_options['scss'] : $nebula_options_defaults['scss'] ); ?>/>
+                                <label for="scss_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Enable the bundled SCSS compiler. Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong>. <em>(Default: <?php echo ucwords($nebula_options_defaults['scss']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -833,7 +863,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Minify CSS&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[minify_css]" value="1" <?php checked( '1', $nebula_options['minify_css'] ); ?>/>
+                                <input type="radio" id="minify_css_enable" name="nebula_options[minify_css]" value="1" <?php checked( '1', isset($nebula_options['minify_css']) ? $nebula_options['minify_css'] : $nebula_options_defaults['minify_css'] ); ?>/>
+                                <label for="minify_css_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="minify_css_disable" name="nebula_options[minify_css]" value="0" <?php checked( '0', isset($nebula_options['minify_css']) ? $nebula_options['minify_css'] : $nebula_options_defaults['minify_css'] ); ?>/>
+                                <label for="minify_css_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Minify the compiled CSS. <em>(Default: <?php echo ucwords($nebula_options_defaults['minify_css']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -841,7 +874,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Developer Stylesheets&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[dev_stylesheets]" value="1" <?php checked( '1', $nebula_options['dev_stylesheets'] ); ?>/>
+                                <input type="radio" id="dev_stylesheets_enable" name="nebula_options[dev_stylesheets]" value="1" <?php checked( '1', isset($nebula_options['dev_stylesheets']) ? $nebula_options['dev_stylesheets'] : $nebula_options_defaults['dev_stylesheets'] ); ?>/>
+                                <label for="dev_stylesheets_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="dev_stylesheets_disable" name="nebula_options[dev_stylesheets]" value="0" <?php checked( '0', isset($nebula_options['dev_stylesheets']) ? $nebula_options['dev_stylesheets'] : $nebula_options_defaults['dev_stylesheets'] ); ?>/>
+                                <label for="dev_stylesheets_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Combines CSS files within /stylesheets/css/dev/ into /stylesheets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint. <em>(Default: <?php echo ucwords($nebula_options_defaults['dev_stylesheets']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -857,7 +893,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Nebula Admin Notices&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[admin_notices]" value="1" <?php checked( '1', $nebula_options['admin_notices'] ); ?>/>
+                                <input type="radio" id="admin_notices_enable" name="nebula_options[admin_notices]" value="1" <?php checked( '1', isset($nebula_options['admin_notices']) ? $nebula_options['admin_notices'] : $nebula_options_defaults['admin_notices'] ); ?>/>
+                                <label for="admin_notices_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="admin_notices_disable" name="nebula_options[admin_notices]" value="0" <?php checked( '0', isset($nebula_options['admin_notices']) ? $nebula_options['admin_notices'] : $nebula_options_defaults['admin_notices'] ); ?>/>
+                                <label for="admin_notices_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Show Nebula-specific admin notices (Note: This does not toggle WordPress core, or plugin, admin notices). <em>(Default: <?php echo ucwords($nebula_options_defaults['admin_notices']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -866,7 +905,10 @@ if ( !trait_exists('Options') ){
                             <tr class="short" valign="top">
                                 <th scope="row">Nebula Theme Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                                 <td>
-                                    <input type="checkbox" name="nebula_options[theme_update_notification]" value="1" <?php checked( '1', $nebula_options['theme_update_notification'] ); ?>/>
+                                    <input type="radio" id="theme_update_notification_enable" name="nebula_options[theme_update_notification]" value="1" <?php checked( '1', isset($nebula_options['theme_update_notification']) ? $nebula_options['theme_update_notification'] : $nebula_options_defaults['theme_update_notification'] ); ?>/>
+                                    <label for="theme_update_notification_enable"><?php _e( 'Enable' ); ?></label>
+                                    <input type="radio" id="theme_update_notification_disable" name="nebula_options[theme_update_notification]" value="0" <?php checked( '0', isset($nebula_options['theme_update_notification']) ? $nebula_options['theme_update_notification'] : $nebula_options_defaults['theme_update_notification'] ); ?>/>
+                                    <label for="theme_update_notification_disable"><?php _e( 'Disable' ); ?></label>
                                     <p class="helper"><small>Enable easy updates to the Nebula theme. <strong>Child theme must be activated to work!</strong> <em>(Default: <?php echo ucwords($nebula_options_defaults['theme_update_notification']); ?>)</em></small></p>
                                 </td>
                             </tr>
@@ -883,7 +925,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Wordpress Core Update Notification&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[wp_core_updates_notify]" value="1" <?php checked( '1', $nebula_options['wp_core_updates_notify'] ); ?>/>
+                                <input type="radio" id="wp_core_updates_notify_enable" name="nebula_options[wp_core_updates_notify]" value="1" <?php checked( '1', isset($nebula_options['wp_core_updates_notify']) ? $nebula_options['wp_core_updates_notify'] : $nebula_options_defaults['wp_core_updates_notify'] ); ?>/>
+                                <label for="wp_core_updates_notify_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="wp_core_updates_notify_disable" name="nebula_options[wp_core_updates_notify]" value="0" <?php checked( '0', isset($nebula_options['wp_core_updates_notify']) ? $nebula_options['wp_core_updates_notify'] : $nebula_options_defaults['wp_core_updates_notify'] ); ?>/>
+                                <label for="wp_core_updates_notify_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Control whether or not the Wordpress Core update notifications show up on the admin pages. <em>(Default: <?php echo ucwords($nebula_options_defaults['wp_core_updates_notify']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -891,7 +936,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Plugin Update Warning&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[plugin_update_warning]" value="1" <?php checked( '1', $nebula_options['plugin_update_warning'] ); ?>/>
+                                <input type="radio" id="plugin_update_warning_enable" name="nebula_options[plugin_update_warning]" value="1" <?php checked( '1', isset($nebula_options['plugin_update_warning']) ? $nebula_options['plugin_update_warning'] : $nebula_options_defaults['plugin_update_warning'] ); ?>/>
+                                <label for="plugin_update_warning_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="plugin_update_warning_disable" name="nebula_options[plugin_update_warning]" value="0" <?php checked( '0', isset($nebula_options['plugin_update_warning']) ? $nebula_options['plugin_update_warning'] : $nebula_options_defaults['plugin_update_warning'] ); ?>/>
+                                <label for="plugin_update_warning_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Control whether or not the plugin update warning appears on admin pages. <em>(Default: <?php echo ucwords($nebula_options_defaults['plugin_update_warning']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -910,7 +958,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Admin Bar&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[admin_bar]" value="1" <?php checked( '1', $nebula_options['admin_bar'] ); ?>/>
+                                <input type="radio" id="admin_bar_enable" name="nebula_options[admin_bar]" value="1" <?php checked( '1', isset($nebula_options['admin_bar']) ? $nebula_options['admin_bar'] : $nebula_options_defaults['admin_bar'] ); ?>/>
+                                <label for="admin_bar_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="admin_bar_disable" name="nebula_options[admin_bar]" value="0" <?php checked( '0', isset($nebula_options['admin_bar']) ? $nebula_options['admin_bar'] : $nebula_options_defaults['admin_bar'] ); ?>/>
+                                <label for="admin_bar_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Control the Wordpress Admin bar globally on the frontend for all users. <strong>Note:</strong> When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users. <em>(Default: <?php echo ucwords($nebula_options_defaults['admin_bar']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -918,7 +969,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Visitors Database&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[visitors_db]" value="1" <?php checked( '1', $nebula_options['visitors_db'] ); ?>/>
+                                <input type="radio" id="visitors_db_enable" name="nebula_options[visitors_db]" value="1" <?php checked( '1', isset($nebula_options['visitors_db']) ? $nebula_options['visitors_db'] : $nebula_options_defaults['visitors_db'] ); ?>/>
+                                <label for="visitors_db_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="visitors_db_disable" name="nebula_options[visitors_db]" value="0" <?php checked( '0', isset($nebula_options['visitors_db']) ? $nebula_options['visitors_db'] : $nebula_options_defaults['visitors_db'] ); ?>/>
+                                <label for="visitors_db_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Adds a table to the database to store visitor usage information. This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank">full marketing automation service</a>. <em>(Default: <?php echo ucwords($nebula_options_defaults['visitors_db']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -926,7 +980,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Remove Unnecessary Metaboxes&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[unnecessary_metaboxes]" value="1" <?php checked( '1', $nebula_options['unnecessary_metaboxes'] ); ?>/>
+                                <input type="radio" id="unnecessary_metaboxes_enable" name="nebula_options[unnecessary_metaboxes]" value="1" <?php checked( '1', isset($nebula_options['unnecessary_metaboxes']) ? $nebula_options['unnecessary_metaboxes'] : $nebula_options_defaults['unnecessary_metaboxes'] ); ?>/>
+                                <label for="unnecessary_metaboxes_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="unnecessary_metaboxes_disable" name="nebula_options[unnecessary_metaboxes]" value="0" <?php checked( '0', isset($nebula_options['unnecessary_metaboxes']) ? $nebula_options['unnecessary_metaboxes'] : $nebula_options_defaults['unnecessary_metaboxes'] ); ?>/>
+                                <label for="unnecessary_metaboxes_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Remove metaboxes on the Dashboard that are not necessary for most users. <em>(Default: <?php echo ucwords($nebula_options_defaults['unnecessary_metaboxes']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -934,7 +991,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Developer Info Metabox&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[dev_info_metabox]" value="1" <?php checked( '1', $nebula_options['dev_info_metabox'] ); ?>/>
+                                <input type="radio" id="dev_info_metabox_enable" name="nebula_options[dev_info_metabox]" value="1" <?php checked( '1', isset($nebula_options['dev_info_metabox']) ? $nebula_options['dev_info_metabox'] : $nebula_options_defaults['dev_info_metabox'] ); ?>/>
+                                <label for="dev_info_metabox_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="dev_info_metabox_disable" name="nebula_options[dev_info_metabox]" value="0" <?php checked( '0', isset($nebula_options['dev_info_metabox']) ? $nebula_options['dev_info_metabox'] : $nebula_options_defaults['dev_info_metabox'] ); ?>/>
+                                <label for="dev_info_metabox_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Show theme and server information useful to developers. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['dev_info_metabox']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -942,7 +1002,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">TODO Manager&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[todo_manager_metabox]" value="1" <?php checked( '1', $nebula_options['todo_manager_metabox'] ); ?>/>
+                                <input type="radio" id="todo_manager_metabox_enable" name="nebula_options[todo_manager_metabox]" value="1" <?php checked( '1', isset($nebula_options['todo_manager_metabox']) ? $nebula_options['todo_manager_metabox'] : $nebula_options_defaults['todo_manager_metabox'] ); ?>/>
+                                <label for="todo_manager_metabox_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="todo_manager_metabox_disable" name="nebula_options[todo_manager_metabox]" value="0" <?php checked( '0', isset($nebula_options['todo_manager_metabox']) ? $nebula_options['todo_manager_metabox'] : $nebula_options_defaults['todo_manager_metabox'] ); ?>/>
+                                <label for="todo_manager_metabox_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Aggregate todo comments in code. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -974,7 +1037,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Use WordPress User ID&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[ga_wpuserid]" value="1" <?php checked( '1', $nebula_options['ga_wpuserid'] ); ?>/>
+                                <input type="radio" id="ga_wpuserid_enable" name="nebula_options[ga_wpuserid]" value="1" <?php checked( '1', isset($nebula_options['ga_wpuserid']) ? $nebula_options['ga_wpuserid'] : $nebula_options_defaults['ga_wpuserid'] ); ?>/>
+                                <label for="ga_wpuserid_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="ga_wpuserid_disable" name="nebula_options[ga_wpuserid]" value="0" <?php checked( '0', isset($nebula_options['ga_wpuserid']) ? $nebula_options['ga_wpuserid'] : $nebula_options_defaults['ga_wpuserid'] ); ?>/>
+                                <label for="ga_wpuserid_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Use the WordPress User ID as the Google Analytics User ID. This allows more accurate user reporting. <strong>Note:</strong> Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public. <em>(Default: <?php echo ucwords($nebula_options_defaults['ga_wpuserid']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -982,7 +1048,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Display Features&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[ga_displayfeatures]" value="1" <?php checked( '1', $nebula_options['ga_displayfeatures'] ); ?>/>
+                                <input type="radio" id="ga_displayfeatures_enable" name="nebula_options[ga_displayfeatures]" value="1" <?php checked( '1', isset($nebula_options['ga_displayfeatures']) ? $nebula_options['ga_displayfeatures'] : $nebula_options_defaults['ga_displayfeatures'] ); ?>/>
+                                <label for="ga_displayfeatures_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="ga_displayfeatures_disable" name="nebula_options[ga_displayfeatures]" value="0" <?php checked( '0', isset($nebula_options['ga_displayfeatures']) ? $nebula_options['ga_displayfeatures'] : $nebula_options_defaults['ga_displayfeatures'] ); ?>/>
+                                <label for="ga_displayfeatures_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag to enable Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.. <em>(Default: <?php echo ucwords($nebula_options_defaults['ga_displayfeatures']); ?>)</em></small></p>
                             </td>
                         </tr>
@@ -990,7 +1059,10 @@ if ( !trait_exists('Options') ){
                         <tr class="short" valign="top">
                             <th scope="row">Enhanced Link Attribution (Link ID)&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="checkbox" name="nebula_options[ga_linkid]" value="1" <?php checked( '1', $nebula_options['ga_linkid'] ); ?>/>
+                                <input type="radio" id="ga_linkid_enable" name="nebula_options[ga_linkid]" value="1" <?php checked( '1', isset($nebula_options['ga_linkid']) ? $nebula_options['ga_linkid'] : $nebula_options_defaults['ga_linkid'] ); ?>/>
+                                <label for="ga_linkid_enable"><?php _e( 'Enable' ); ?></label>
+                                <input type="radio" id="ga_linkid_disable" name="nebula_options[ga_linkid]" value="0" <?php checked( '0', isset($nebula_options['ga_linkid']) ? $nebula_options['ga_linkid'] : $nebula_options_defaults['ga_linkid'] ); ?>/>
+                                <label for="ga_linkid_disable"><?php _e( 'Disable' ); ?></label>
                                 <p class="helper"><small>Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin to improve the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. <em>(Default: <?php echo ucwords($nebula_options_defaults['ga_linkid']); ?>)</em></small></p>
                             </td>
                         </tr>
