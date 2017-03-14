@@ -370,11 +370,13 @@ if ( !trait_exists('Options') ){
                     });
 
                     wireframeModeToggle();
-                    jQuery('#prototypemodeselect').on('change', function(){
+
+                    jQuery('#prototype_mode_enable, #prototype_mode_disable').on('change', function(){
                         wireframeModeToggle();
                     });
+
                     function wireframeModeToggle(){
-                        if ( jQuery('#prototypemodeselect').is(':checked') ){
+                        if ( jQuery('#prototype_mode_enable').is(':checked') ){
                             jQuery('.wireframerequired').css('opacity', '1').find('select').css('pointer-events', 'all');
                         } else {
                             jQuery('.wireframerequired').css('opacity', '0.5').find('select').css('pointer-events', 'none');
@@ -401,7 +403,7 @@ if ( !trait_exists('Options') ){
 
                     //Validate custom dimension IDs
                     jQuery('input.dimension').on('blur keyup paste change', function(){
-                        var usedDimensions = new Array();
+                        var usedDimensions = [];
                         jQuery('input.dimension').not(this).each(function(){
                             if ( jQuery(this).val().match(/^dimension([0-9]{1,3})$/i) && jQuery(this).val() != '' ){
                                 usedDimensions.push(jQuery(this).val());
@@ -417,7 +419,7 @@ if ( !trait_exists('Options') ){
 
                     //Validate custom metric IDs
                     jQuery('input.metric').on('blur keyup paste change', function(){
-                        var usedMetrics = new Array();
+                        var usedMetrics = [];
                         jQuery('input.metric').not(this).each(function(){
                             if ( jQuery(this).val().match(/^metric([0-9]{1,3})$/i) && jQuery(this).val() != '' ){
                                 usedMetrics.push(jQuery(this).val());
