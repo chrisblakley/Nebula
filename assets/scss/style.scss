@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.10.8
+	Version: 4.10.13
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -438,7 +438,6 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		@include media("lg"){padding: 250px 0;};
 	}
 
-	.herobgcolor {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, #5B22E8, #FF2362); animation: nebulahero 60s infinite linear; opacity: 0.7; z-index: 0;}
 	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 48px; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
 		@include media("md"){font-size: 60px;};
 		@include media("lg"){font-size: 90px;};
@@ -449,6 +448,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	}
 }
 
+.nebula-color-overlay {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, #5B22E8, #FF2362); animation: nebulahero 60s infinite linear; opacity: 0.7; z-index: 0;}
 @keyframes nebulahero {
 	0% {@include prefix((filter: hue-rotate(0deg)));}
 	100% {@include prefix((filter: hue-rotate(-360deg)));}
