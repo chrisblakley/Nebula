@@ -518,6 +518,9 @@ if ( !trait_exists('Options') ){
                     </table>
 
                     <h2 class="nav-tab-wrapper">
+
+                        <?php do_action( 'nebula_options_nav_tabs_before' ); ?>
+
                         <a id="metadata" class="nav-tab nav-tab-active" href="#">Metadata</a>
                         <a id="functions" class="nav-tab nav-tab-inactive" href="#">Functions</a>
                         <a id="analytics" class="nav-tab nav-tab-inactive" href="#">
@@ -528,12 +531,19 @@ if ( !trait_exists('Options') ){
                         </a>
                         <a id="apis" class="nav-tab nav-tab-inactive" href="#">APIs</a>
                         <a id="administration" class="nav-tab nav-tab-inactive" href="#">Administration</a>
+
+                        <?php do_action( 'nebula_options_nav_tabs_after' ); ?>
                     </h2>
+
+                    <?php do_action( 'nebula_options_before' ); ?>
 
                     <h2 class="mobiletitle">Metadata</h2>
                     <hr class="mobiletitle"/>
 
                     <table class="form-table dependent metadata">
+
+                        <?php do_action( 'nebula_options_metadata_fields_top' ); ?>
+
                         <tr valign="top">
                             <td colspan="2" style="padding-left: 0; padding-right: 0;">
                                 <h3>Site Information</h3>
@@ -672,6 +682,9 @@ if ( !trait_exists('Options') ){
                                 <p class="helper"><small>The URL of the associated Instagram page.</small></p>
                             </td>
                         </tr>
+
+                        <?php do_action( 'nebula_options_metadata_fields_bottom' ); ?>
+
                     </table>
 
 
@@ -682,6 +695,9 @@ if ( !trait_exists('Options') ){
                     <?php $nebula_options_defaults = nebula()->default_options(); ?>
 
                     <table class="form-table dependent functions" style="display: none;">
+
+                        <?php do_action( 'nebula_options_functions_fields_top' ); ?>
+
                         <tr class="short" valign="top">
                             <th scope="row">Bootstrap Version&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
@@ -946,11 +962,6 @@ if ( !trait_exists('Options') ){
                             </td>
                         </tr>
 
-
-
-
-
-
                         <tr valign="top">
                             <td colspan="2" style="padding-left: 0; padding-right: 0;">
                                 <h3>Admin References</h3>
@@ -1011,6 +1022,9 @@ if ( !trait_exists('Options') ){
                                 <p class="helper"><small>Aggregate todo comments in code. Note: Developer information must be added to Administrative tab to appear (if enabled). <em>(Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?>)</em></small></p>
                             </td>
                         </tr>
+
+                        <?php do_action( 'nebula_options_functions_fields_bottom' ); ?>
+
                     </table>
 
 
@@ -1018,6 +1032,8 @@ if ( !trait_exists('Options') ){
                     <hr class="mobiletitle"/>
 
                     <table class="form-table dependent analytics" style="display: none;">
+
+                        <?php do_action( 'nebula_options_analytics_fields_top' ); ?>
 
                         <tr valign="top">
                             <th scope="row">
@@ -1538,6 +1554,9 @@ if ( !trait_exists('Options') ){
                                 <p class="helper"><small>The amount of time (in seconds) the page was in the hidden state (tab/window not visible) <strong>Scope: Hit, Format: Time</strong></small></p>
                             </td>
                         </tr>
+
+                        <?php do_action( 'nebula_options_analytics_fields_bottom' ); ?>
+
                     </table>
 
 
@@ -1546,6 +1565,8 @@ if ( !trait_exists('Options') ){
                     <hr class="mobiletitle"/>
 
                     <table class="form-table dependent apis" style="display: none;">
+
+                        <?php do_action( 'nebula_options_apis_fields_top' ); ?>
 
                         <tr valign="top">
                             <th scope="row">Google Font&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
@@ -1638,6 +1659,8 @@ if ( !trait_exists('Options') ){
                             </tr>
                         <?php endif; ?>
 
+                        <?php do_action( 'nebula_options_apis_fields_bottom' ); ?>
+
                     </table>
 
 
@@ -1647,6 +1670,9 @@ if ( !trait_exists('Options') ){
                     <hr class="mobiletitle"/>
 
                     <table class="form-table dependent administration" style="display: none;">
+
+                        <?php do_action( 'nebula_options_administration_fields_top' ); ?>
+
                         <tr valign="top">
                             <td colspan="2" style="padding-left: 0; padding-right: 0;">
                                 <h3>Staff and Notable Users</h3>
@@ -1779,11 +1805,12 @@ if ( !trait_exists('Options') ){
                                 <p class="helper"><small>This area can be used to keep notes. It is not used anywhere on the front-end.</small></p>
                             </td>
                         </tr>
+
+                        <?php do_action( 'nebula_options_administration_fields_bottom' ); ?>
+
                     </table>
 
-                    <?php if (1==2) : //Examples of different field types ?>
-                        <input type="checkbox" name="some_other_option" value="<?php echo $nebula_options['some_other_option_check']; ?>" <?php checked('1', $nebula_options['some_other_option_check']); ?> />
-                    <?php endif; ?>
+                    <?php do_action( 'nebula_options_after' ); ?>
 
                     <?php submit_button(); ?>
                 </form>
