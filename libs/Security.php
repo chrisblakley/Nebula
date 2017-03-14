@@ -123,9 +123,9 @@ if ( !trait_exists('Security') ){
                 }
 
                 if ( !empty($incorrect_username) ){
-                    ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
+                    nebula()->ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
                 } else {
-                    ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
+                    nebula()->ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
                 }
 
                 $error = 'Login Error.';

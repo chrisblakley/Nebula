@@ -219,7 +219,7 @@ if ( !trait_exists('Dashboard') ){
             //Nebula Visitors DB
             if ( nebula()->option('visitors_db') ){
                 global $wpdb;
-                echo '<li><i class="fa fa-database fa-fw"></i> <a href="themes.php?page=nebula_visitors_data">Nebula Visitors DB</a> has <strong>' . $wpdb->get_var("select count(*) from nebula_visitors") . '</strong> rows.</li>';
+                echo '<li><i class="fa fa-database fa-fw"></i> <a href="themes.php?page=nebula_visitors_data">Nebula Visitors DB</a> has <strong>' . $wpdb->get_var("select count(*) from " . $wpdb->prefix . 'nebula_visitors') . '</strong> rows.</li>';
             }
 
             echo '</ul>';
