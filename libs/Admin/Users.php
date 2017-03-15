@@ -53,9 +53,10 @@ if ( !trait_exists('Users') ){
                 if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
                     $logged_in_users[$current_user->ID] = array(
                         'id' => $current_user->ID,
-                        'username' => $current_user->user_login,
-                        'last' => time(),
-                        'unique' => array($unique_id),
+						'username' => $current_user->user_login,
+						'last' => time(),
+						'ip' => $_SERVER['REMOTE_ADDR'],
+						'unique' => array($unique_id),
                     );
                     nebula()->update_data('users_status', $logged_in_users);
                 } else {
@@ -69,31 +70,107 @@ if ( !trait_exists('Users') ){
 
         //Add columns to user listings
         public function user_columns_head($defaults){
-            $defaults['company'] = 'Company';
-            $defaults['status'] = 'Status';
-            $defaults['id'] = 'ID';
-            return $defaults;
+		    $defaults['company'] = 'Company';
+		    $defaults['registered'] = 'Registered';
+		    $defaults['status'] = 'Status';
+		    $defaults['ip'] = 'Last IP';
+		    $defaults['id'] = 'ID';
+		    return $defaults;
         }
 
         //Custom columns content to user listings
         public function user_columns_content($value='', $column_name, $id){
-            if ( $column_name === 'company' ){
-                return get_the_author_meta('jobcompany', $id);
+		    if ( $column_name === 'company' ){
+				return get_the_author_meta('jobcompany', $id);
+			}
+
+		    if ( $column_name === 'registered' ){
+				$user_data = get_userdata($id);
+				return date('F j, Y', strtotime($user_data->user_registered));
+			}
+
+		    if ( $column_name === 'status' ){
+				if ( nebula()->is_user_online($id) ){
+					$online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
+					if ( nebula()->user_single_concurrent($id) > 1 ){
+						$online_now .= '<br/><small>(<strong>' . nebula()->user_single_concurrent($id) . '</strong> locations)</small>';
+					}
+					return $online_now;
+				} else {
+					return ( nebula()->user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula()->user_last_online($id)) . '</em></small>' : '';
+				}
+			}
+
+			if ( $column_name === 'ip' ){
+				$logged_in_users = nebula()->data('users_status');
+				$last_ip = $logged_in_users[$id]['ip'];
+
+				$notable_poi = nebula()->poi($last_ip);
+				if ( !empty($notable_poi) ){
+					$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
+				}
+
+				return $last_ip;
+			}
+
+			if ( $column_name === 'id' ){
+				return $id;
+			}
+        }
+
+        //Check if a user has been online in the last 10 minutes
+        public function is_user_online($id){
+            $override = apply_filters('pre_nebula_is_user_online', false, $id);
+            if ( $override !== false ){return $override;}
+
+            $logged_in_users = nebula()->data('users_status');
+            return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
+        }
+
+        //Check when a user was last online.
+        public function user_last_online($id){
+            $override = apply_filters('pre_nebula_user_last_online', false, $id);
+            if ( $override !== false ){return $override;}
+
+            $logged_in_users = nebula()->data('users_status');
+            if ( isset($logged_in_users[$id]['last']) ){
+                return $logged_in_users[$id]['last'];
             }
-            if ( $column_name === 'status' ){
-                if ( nebula()->is_user_online($id) ){
-                    $online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
-                    if ( nebula()->user_single_concurrent($id) > 1 ){
-                        $online_now .= '<br/><small>(<strong>' . nebula()->user_single_concurrent($id) . '</strong> locations)</small>';
-                    }
-                    return $online_now;
-                } else {
-                    return ( nebula()->user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula()->user_last_online($id)) . '</em></small>' : '';
+            return false;
+        }
+
+        //Get a count of online users, or an array of online user IDs.
+        public function online_users($return='count'){
+            $override = apply_filters('pre_nebula_online_users', false, $return);
+            if ( $override !== false ){return $override;}
+
+            $logged_in_users = nebula()->data('users_status');
+            if ( empty($logged_in_users) || !is_array($logged_in_users) ){
+                return ( strtolower($return) == 'count' )? 0 : false; //If this happens it indicates an error.
+            }
+
+            $user_online_count = 0;
+            $online_users = array();
+            foreach ( $logged_in_users as $user ){
+                if ( !empty($user['username']) && isset($user['last']) && $user['last'] > time()-600 ){
+                    $online_users[] = $user;
+                    $user_online_count++;
                 }
             }
-            if ( $column_name === 'id' ){
-                return $id;
+
+            return ( strtolower($return) == 'count' )? $user_online_count : $online_users;
+        }
+
+        //Check how many locations a single user is logged in from.
+        public function user_single_concurrent($id){
+            $override = apply_filters('pre_nebula_user_single_concurrent', false, $id);
+            if ( $override !== false ){return $override;}
+
+            $logged_in_users = nebula()->data('users_status');
+            if ( isset($logged_in_users[$id]['unique']) ){
+                return count($logged_in_users[$id]['unique']);
             }
+            return 0;
         }
 
         //Additional Contact Info fields

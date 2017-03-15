@@ -66,78 +66,28 @@ if ( !trait_exists('Utilities') ){
             return time() . '.' . $session_info . 's:' . $wp_session_id . '.c:' . $ga_cid . $site_live;
         }
 
-        //Detect Notable POI
-        public function poi(){
-            if ( nebula()->option('notableiplist') ){
-                $notable_ip_lines = explode("\n", nebula()->option('notableiplist'));
-                foreach ( $notable_ip_lines as $line ){
-                    $ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
-                    if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $_SERVER['REMOTE_ADDR'])) || $ip_info[0] == $_SERVER['REMOTE_ADDR'] ){ //If regex pattern and matches IP, or if direct match
-                        return str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]);
-                        break;
-                    }
-                }
-            } elseif ( isset($_GET['poi']) ){ //If POI query string exists
-                return str_replace(array('%20', '+'), ' ', $_GET['poi']);
-            }
+		//Detect Notable POI
+		public function poi($ip=null){
+			if ( empty($ip) ){
+				$ip = $_SERVER['REMOTE_ADDR'];
+			}
 
-            return false;
-        }
+			if ( nebula()->option('notableiplist') ){
+				$notable_ip_lines = explode("\n", nebula()->option('notableiplist'));
+				foreach ( $notable_ip_lines as $line ){
+					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
+					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $ip)) || $ip_info[0] == $ip ){ //If regex pattern and matches IP, or if direct match
+						return str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]);
+						break;
+					}
+				}
+			} elseif ( isset($_GET['poi']) ){ //If POI query string exists
+				return str_replace(array('%20', '+'), ' ', $_GET['poi']);
+			}
 
-        //Check if a user has been online in the last 10 minutes
-        public function is_user_online($id){
-            $override = apply_filters('pre_nebula_is_user_online', false, $id);
-            if ( $override !== false ){return $override;}
+			return false;
+		}
 
-            $logged_in_users = nebula()->data('users_status');
-            return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
-        }
-
-        //Check when a user was last online.
-        public function user_last_online($id){
-            $override = apply_filters('pre_nebula_user_last_online', false, $id);
-            if ( $override !== false ){return $override;}
-
-            $logged_in_users = nebula()->data('users_status');
-            if ( isset($logged_in_users[$id]['last']) ){
-                return $logged_in_users[$id]['last'];
-            }
-            return false;
-        }
-
-        //Get a count of online users, or an array of online user IDs.
-        public function online_users($return='count'){
-            $override = apply_filters('pre_nebula_online_users', false, $return);
-            if ( $override !== false ){return $override;}
-
-            $logged_in_users = nebula()->data('users_status');
-            if ( empty($logged_in_users) || !is_array($logged_in_users) ){
-                return ( strtolower($return) == 'count' )? 0 : false; //If this happens it indicates an error.
-            }
-
-            $user_online_count = 0;
-            $online_users = array();
-            foreach ( $logged_in_users as $user ){
-                if ( !empty($user['username']) && isset($user['last']) && $user['last'] > time()-600 ){
-                    $online_users[] = $user;
-                    $user_online_count++;
-                }
-            }
-
-            return ( strtolower($return) == 'count' )? $user_online_count : $online_users;
-        }
-
-        //Check how many locations a single user is logged in from.
-        public function user_single_concurrent($id){
-            $override = apply_filters('pre_nebula_user_single_concurrent', false, $id);
-            if ( $override !== false ){return $override;}
-
-            $logged_in_users = nebula()->data('users_status');
-            if ( isset($logged_in_users[$id]['unique']) ){
-                return count($logged_in_users[$id]['unique']);
-            }
-            return 0;
-        }
 
         //Alias for a less confusing is_admin() function to try to prevent security issues
         public function is_admin_page(){

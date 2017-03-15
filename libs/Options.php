@@ -69,7 +69,7 @@ if ( !trait_exists('Options') ){
         }
 
         //Retrieve non-option Nebula data
-        // TODO: This function should be get_data() -  nebula()->options->get_data();
+        //TODO "Nebula" 0: This function should be get_data()
         public function data($option){
             $nebula_data = get_option('nebula_data');
             if ( empty($nebula_data[$option]) ){
