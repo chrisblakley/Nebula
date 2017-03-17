@@ -362,7 +362,7 @@ if ( !trait_exists('Shortcodes') ){
             if ( empty($lang) && !empty($language) ){
                 $lang = $language;
             }
-            $vislang = visibleLanguage($lang);
+            $vislang = $this->visible_language($lang);
 
             $return = '<div class="nebula-code-con clearfix ' . strtolower($lang) . '"><span class="nebula-code codetitle ' . strtolower($lang) . '">' . $vislang . '</span>' . $pre_tag_open . $content . $pre_tag_close . '</div>';
 
@@ -380,7 +380,7 @@ if ( !trait_exists('Shortcodes') ){
             if ( empty($lang) && !empty($language) ){
                 $lang = $language;
             }
-            $vislang = visibleLanguage($lang);
+            $vislang = $this->visible_language($lang);
 
             if ( $file ){
                 $file = '?file=' . $file;

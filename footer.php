@@ -4,6 +4,8 @@
  */
 ?>
 			<div id="footer-section">
+				<div class="nebula-color-overlay"></div>
+
 				<?php get_template_part('inc/footer_widgets'); //Footer widget logic. ?>
 
 				<div class="container">

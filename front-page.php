@@ -13,7 +13,8 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <div id="hero-section" class="nebulashadow inner-top inner-bottom">
-	<div class="herobgcolor"></div>
+	<div class="nebula-color-overlay"></div>
+
 	<div class="container">
 		<div class="row">
 			<div class="col">
