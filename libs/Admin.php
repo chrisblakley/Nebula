@@ -143,7 +143,7 @@ if ( !trait_exists('Admin') ){
             add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
 
             //Enable editor style for the TinyMCE WYSIWYG editor.
-            add_editor_style('stylesheets/css/tinymce.css');
+            add_editor_style('assets/css/tinymce.css');
 
             //Enable All Settings page for only Developers who are Admins
             if ( nebula()->is_dev(true) && current_user_can('manage_options') ){

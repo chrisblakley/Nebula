@@ -558,7 +558,7 @@ if ( !trait_exists('Shortcodes') ){
         }
 
         public function add_shortcode_plugin($plugin_array){
-            $plugin_array['nebulatoolbar'] = get_template_directory_uri() . '/js/shortcodes.js';
+            $plugin_array['nebulatoolbar'] = get_template_directory_uri() . '/assets/js/shortcodes.js';
             return $plugin_array;
         }
 
