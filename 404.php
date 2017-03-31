@@ -10,7 +10,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 }
 
 do_action('nebula_preheaders');
-nebula_vdb_increment_visitor_data('page_not_found');
+nebula()->increment_visitor_data('page_not_found');
 get_header(); ?>
 
 <section id="bigheadingcon">

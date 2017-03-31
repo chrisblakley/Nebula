@@ -272,6 +272,8 @@ if ( !trait_exists('Scripts') ){
 
             //Nebula Visitors Data page
             if ( $current_screen->base === 'appearance_page_nebula_visitors_data' ){
+                wp_enqueue_style('nebula-bootstrap');
+                wp_enqueue_style('nebula-pre');
                 wp_enqueue_style('nebula-datatables');
                 wp_enqueue_script('nebula-datatables');
             }
