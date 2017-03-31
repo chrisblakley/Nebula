@@ -1,7 +1,7 @@
-//Copy this file to the child theme for customized colors.
-
 @import 'variables';
 @import 'mixins';
+
+.wp-core-ui .button-primary {box-shadow: 0 1px 0 $primary_color; text-shadow: 0 -1px 1px $primary_color, 1px 0 1px $primary_color, 0 1px 1px $primary_color, -1px 0 1px $primary_color;}
 
 a {color: $primary_color !important; @include prefix((transition: all 0.25s)); text-decoration: none;
 	&:hover {color: $secondary_color !important; text-decoration: underline;}

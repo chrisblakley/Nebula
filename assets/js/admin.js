@@ -1,5 +1,7 @@
 jQuery.noConflict();
-jQuery(document).on('ready', function(){
+
+//Document Ready
+jQuery(function(){
 
 	userHeadshotFields();
 	initializationStuff();

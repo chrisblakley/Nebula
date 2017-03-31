@@ -4,7 +4,7 @@ jQuery.noConflict();
  DOM Ready
  ===========================*/
 
-jQuery(document).ready(function(){
+jQuery(function(){
 	//Utilities
 	getQueryStrings();
 	cacheSelectors();
@@ -415,17 +415,8 @@ function eventTracking(){
 	nebula.dom.document.on('mousedown touch tap', "a[rel*='external']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-
-		var linkText = jQuery(this).text();
-		if ( jQuery.trim(linkText) === '' ){
-			linkText = '(Unknown)';
-			if ( jQuery(this).find('img').length ){
-				linkText = '(Image) ' + jQuery(this).find('img').attr('src');
-			}
-		}
-
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Outbound Link', linkText, jQuery(this).attr('href'));
+		ga('send', 'event', 'Outbound Link', 'Click', jQuery(this).attr('href'));
 		nv('append', {'outbound_links': jQuery(this).attr('href')});
 	});
 
@@ -433,10 +424,9 @@ function eventTracking(){
 	nebula.dom.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-		var filePath = jQuery(this).attr('href');
-		var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
+		var fileName = filePath.substr(jQuery(this).attr('href').lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'PDF View', fileName);
+		ga('send', 'event', 'PDF View', 'View', fileName);
 		if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
 		nv('append', {'pdf_view': fileName});
 	});
@@ -449,7 +439,7 @@ function eventTracking(){
 			ga('set', gaCustomMetrics['notableDownloads'], 1);
 			var linkText = jQuery(this).text();
 			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
-			ga('send', 'event', 'Notable Download', 'File: ' + fileName);
+			ga('send', 'event', 'Notable Download', 'Download', fileName);
 			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
 			nv('append', {'notable_download': fileName});
 		}
@@ -476,7 +466,7 @@ function eventTracking(){
 	//Internal Find
 	nebula.dom.document.on('keydown', function(e){
 		if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){ //Ctrl+F or Cmd+F
-			ga('send', 'event', 'Find on Page', 'Ctrl+F', "User initiated their browser's find tool (with keyboard shortcut)");
+			ga('send', 'event', 'Find on Page', 'Ctrl+F', "User initiated their browser's find tool (with keyboard shortcut)", {'nonInteraction': true}); //Non-interaction because they are not taking explicit action with the webpage
 		}
 	});
 
@@ -487,7 +477,7 @@ function eventTracking(){
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Mailto', 'Email: ' + emailAddress);
+		ga('send', 'event', 'Mailto', 'Click', emailAddress);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
 		nv('append', {'contact_method': 'mailto', 'contacted_email': emailAddress});
 	});
@@ -499,7 +489,7 @@ function eventTracking(){
 		var phoneNumber = jQuery(this).attr('href').replace('tel:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Click-to-Call', 'Phone Number: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call', 'Call', phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
 		nv('append', {'contact_method': 'click-to-call', 'contacted_phone': phoneNumber});
 	});
@@ -511,7 +501,7 @@ function eventTracking(){
 		var phoneNumber = jQuery(this).attr('href').replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Click-to-Call', 'SMS to: ' + phoneNumber);
+		ga('send', 'event', 'Click-to-Call', 'SMS', phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
 		nv('append', {'contact_method': 'sms', 'contacted_sms': phoneNumber});
 	});
@@ -575,9 +565,9 @@ function eventTracking(){
 	//AJAX Errors
 	nebula.dom.document.ajaxError(function(e, jqXHR, settings, exception){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': true});
+		//ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': true});
 		ga('send', 'exception', e.result, true);
-		nv('append', {'ajax_errors': e + ' - ' + jqXHR.status + ': ' + exception + ' (' + jqXHR.responseText + ') on: ' + settings.url}); //Figure out which of these is the most informative
+		//nv('append', {'ajax_errors': e + ' - ' + jqXHR.status + ': ' + exception + ' (' + jqXHR.responseText + ') on: ' + settings.url}); //Figure out which of these is the most informative
 	});
 
 	//Capture Print Intent
@@ -1591,7 +1581,7 @@ function cf7Functions(){
 		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomMetrics['formStarts'], 1);
-			ga('send', 'event', 'CF7 Form', 'Started Form', 'Began filling out form ID: ' + formID);
+			ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + jQuery(this).attr('id') + ')');
 			nv('increment', 'contact_funnel_started');
 			formStarted[formID] = true;
 		}
@@ -3146,7 +3136,7 @@ function onYouTubeIframeAPIReady(e){
 		}
 
 		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){
-			players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, {
+			players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, { //YT.Player parameter must match the iframe ID!
 				events: {
 					'onReady': onPlayerReady,
 					'onStateChange': onPlayerStateChange,
@@ -3176,6 +3166,7 @@ function onPlayerReady(e){
 	var id = videoInfo.video_id;
 	videoData[id] = {
 		'platform': 'youtube', //The platform the video is hosted using.
+		'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
 		'player': players.youtube[id], //The player ID of this video. Can access the API here.
 		'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
 		'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
@@ -3381,17 +3372,15 @@ function pauseAllVideos(force){
 
 	//Pause Youtube Videos
 	jQuery('iframe.youtube').each(function(){
-		youtubeiframeID = jQuery(this).attr('id');
-		if ( (force || !jQuery(this).hasClass('ignore-visibility')) && players.youtube[youtubeiframeID].getPlayerState() === 1 ){
-			players.youtube[youtubeiframeID].pauseVideo();
+		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
+			players.youtube[jQuery(this).attr('id')].pauseVideo();
 		}
 	});
 
 	//Pause Vimeo Videos
 	jQuery('iframe.vimeo').each(function(){
-		vimeoiframeID = jQuery(this).attr('id');
 		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
-			players.vimeo[vimeoiframeID].api('pause');
+			players.vimeo[jQuery(this).attr('id')].api('pause');
 		}
 	});
 }

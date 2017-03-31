@@ -1023,7 +1023,7 @@ if ( !trait_exists('Visitors') ){
                 if ( empty($force) ){
                     global $wpdb;
 
-                    $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM " . $wpdb->nebula_visitors . " WHERE ga_cid = '%s'", ga_parse_cookie())); //Check if the ga_cid exists, and if so use THAT nebula_id again
+                    $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM " . $wpdb->nebula_visitors . " WHERE ga_cid = '%s'", nebula()->ga_parse_cookie())); //Check if the ga_cid exists, and if so use THAT nebula_id again
                     if ( !empty($nebula_id_from_matching_ga_cid) ){
                         $_COOKIE['nid'] = reset($nebula_id_from_matching_ga_cid[0]);
                         setcookie('nid', $_COOKIE['nid'], $nid_expiration, COOKIEPATH, COOKIE_DOMAIN); //Update the Nebula ID cookie
@@ -1333,7 +1333,7 @@ if ( !trait_exists('Visitors') ){
             if ( nebula()->option('visitors_db') ){
                 global $wpdb;
 
-                $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM " . $wpdb->nebula_visitors . " WHERE ga_cid = '%s'", ga_parse_cookie())); //DB Query here.
+                $nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM " . $wpdb->nebula_visitors . " WHERE ga_cid = '%s'", nebula()->ga_parse_cookie())); //DB Query here.
                 if ( !empty($nebula_id_from_matching_ga_cid) ){
                     return reset($nebula_id_from_matching_ga_cid[0]);
                 }
@@ -1378,7 +1378,7 @@ if ( !trait_exists('Visitors') ){
 
                             $unserialized_value = $all_visitor_db_data[$index]->value;
                             if ( is_serialized($unserialized_value) ){
-                                $unserialized_value = unserialize($unserialized_value);
+                                $unserialized_value = unserialize($unserialized_value); //Notice: unserialize(): Error at offset 257 of 359 bytes (sometimes happens)
                             }
                             $organized_data[$label] = $unserialized_value;
                         }
@@ -1431,23 +1431,30 @@ if ( !trait_exists('Visitors') ){
         }
 
         //Get a single datapoint from the Nebula Visitors DB
-        public function get_visitor_datapoint($key, $return_all=false, $alt_nebula_id=false){
+        public function get_visitor_datapoint($keys, $return_all=false, $alt_nebula_id=false){
             if ( nebula()->option('visitors_db') ){
-                if ( $key == 'notes' ){
+                if ( !is_array($keys) ){
+	                $keys = array($keys);
+                }
+
+				//Do not allow the return of visitor notes
+                if ( in_array('notes', $keys) ){
                     return false;
                 }
 
                 $all_visitor_data = $this->get_all_visitor_data('any', $alt_nebula_id);
-                if ( isset($all_visitor_data) && !empty($all_visitor_data[$key]) ){
-                    if ( is_array($all_visitor_data[$key]) ){ //If this datapoint is an array (for appended data)
-                        if ( $return_all ){ //If requesting all datapoints
-                            return $all_visitor_data[$key];
-                        }
+                foreach ( $keys as $key ){
+	                if ( isset($all_visitor_data) && !empty($all_visitor_data[$key]) ){
+	                    if ( is_array($all_visitor_data[$key]) ){ //If this datapoint is an array (for appended data)
+	                        if ( $return_all ){ //If requesting all datapoints
+	                            return $all_visitor_data[$key];
+	                        }
 
-                        return end($all_visitor_data[$key]); //Otherwise, return only the last datapoint
-                    }
+	                        return end($all_visitor_data[$key]); //Otherwise, return only the last datapoint
+	                    }
 
-                    return $all_visitor_data[$key];
+	                    return $all_visitor_data[$key];
+	                }
                 }
             }
 

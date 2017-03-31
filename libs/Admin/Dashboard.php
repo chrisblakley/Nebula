@@ -400,8 +400,8 @@ if ( !trait_exists('Dashboard') ){
             //Weather
             if ( nebula()->option('weather') ){
                 $ip_zip = '';
-                if ( nebula()->vdb_get_visitor_datapoint('zip_code') ){
-                    $ip_zip = nebula()->vdb_get_visitor_datapoint('zip_code');
+                if ( nebula()->get_visitor_datapoint('zip_code') ){
+                    $ip_zip = nebula()->get_visitor_datapoint('zip_code');
                 } elseif ( nebula()->ip_location() ){
                     $ip_zip = nebula()->ip_location('zip');
                 }

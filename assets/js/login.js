@@ -1,5 +1,7 @@
 jQuery.noConflict();
-jQuery(document).on('ready', function(){
+
+//Document Ready
+jQuery(function(){
 	//Check for SVG support (without Modernizr)
 	if ( typeof SVGRect !== 'undefined' ){
 		jQuery('html').addClass('svg');
