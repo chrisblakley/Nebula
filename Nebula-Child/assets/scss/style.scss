@@ -25,17 +25,13 @@
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 
-//Default font override
-h1, h2, h3, h4, h5, h6,
-body,
-p,
-.btn, .skiplink,
-.field input, .field input[type="*"], .field textarea,
-.prepend .adjoined, .append .adjoined,
-.picker,
-.alert,
-.tab-nav > li > li > a,
-.tab-nav > li > a {font-family: $font_stack;}
+//Change font size here with media queries.
+html {
+	@include media("sm"){}
+	@include media("md"){}
+	@include media("lg"){}
+	@include media("xl"){}
+}
 
 h1, h2, h3, h4, h5, h6 {color: $text_color;
 	a {color: $primary_color;}

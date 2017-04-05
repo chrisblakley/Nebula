@@ -199,7 +199,7 @@ if ( !trait_exists('Scripts') ){
          * @since       1.0.0
          * @return      void
          */
-        function enqueue_scripts( $hook ) {
+        function enqueue_scripts($hook){
             //Stylesheets
             if ( nebula()->option('google_font_url') ){
                 wp_enqueue_style('nebula-google_font');
@@ -213,8 +213,12 @@ if ( !trait_exists('Scripts') ){
             //Scripts
             wp_enqueue_script('jquery');
             wp_enqueue_script('nebula-jquery_ui');
-            //wp_enqueue_script('nebula-modernizr_dev');
-            wp_enqueue_script('nebula-modernizr_local'); //@todo "Nebula" 0: Switch this back to CDN when version 3 is on CDNJS
+
+            if ( nebula()->option('device_detection') ){
+            	//wp_enqueue_script('nebula-modernizr_dev');
+            	wp_enqueue_script('nebula-modernizr_local'); //@todo "Nebula" 0: Switch this back to CDN when version 3 is on CDNJS
+            }
+
             wp_enqueue_script('nebula-mmenu');
             wp_enqueue_script('nebula-bootstrap');
             wp_enqueue_script('nebula-autotrack');

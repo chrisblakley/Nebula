@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.10.31
+	Version: 4.11.1
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -40,13 +40,7 @@ ul {list-style-position: inside;
 h1, h2, h3, h4, h5, h6 {color: $text_color; line-height: 1.4em; margin-bottom: 0.5em;
 	a {color: $primary_color;}
 }
-h1 {/* font-size: 36px;  *//* font-weight: 800; */}
-h2 {/* font-size: 28px; */}
-h3 {/* font-size: 21px; */}
-h4 {/* font-size: 18px; */}
-h5 {/* font-size: 16px; */}
-h6 {/* font-size: 14px; */}
-p, li, dt, dl, div {/* font-size: 14px; */ line-height: 1.625em;}
+p, li, dt, dl, div {line-height: 1.625em;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
@@ -174,11 +168,6 @@ div.nebula-button {margin-bottom: 10px;}
 // ===========================
 // Specific library feature modifications
 // ===========================
-
-//Default font override
-h1, h2, h3, h4, h5, h6,
-body,
-p {font-family: $font_stack;}
 
 abbr, acronym {cursor: pointer; border-bottom: none; color: inherit;}
 

@@ -5,6 +5,8 @@ jQuery.noConflict();
  ===========================*/
 
 jQuery(function(){
+	jQuery('html').removeClass('no-js').addClass('js');
+
 	//Utilities
 	getQueryStrings();
 	cacheSelectors();

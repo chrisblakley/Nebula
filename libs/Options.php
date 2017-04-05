@@ -782,14 +782,14 @@ if ( !trait_exists('Options') ){
                         </tr>
 
                         <tr class="short" valign="top">
-                            <th scope="row">Device Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+                            <th scope="row">Browser/Device Detection&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
                                 <select name="nebula_options[device_detection]">
                                     <option disabled>Default: <?php echo ucwords($nebula_options_defaults['device_detection']); ?></option>
                                     <option value="enabled" <?php selected('enabled', $nebula_options['device_detection']); ?>>Enabled</option>
                                     <option value="disabled" <?php selected('disabled', $nebula_options['device_detection']); ?>>Disabled</option>
                                 </select>
-                                <p class="helper"><small>Detect information about the user's device and browser. Useful for cross-browser support. <em>(Default: <?php echo ucwords($nebula_options_defaults['device_detection']); ?>)</em></small></p>
+                                <p class="helper"><small>Detect information about the user's device and browser. Useful for cross-browser support. This also controls the modernizr.js library. <em>(Default: <?php echo ucwords($nebula_options_defaults['device_detection']); ?>)</em></small></p>
                             </td>
                         </tr>
 

@@ -2,7 +2,7 @@
 @import 'mixins';
 @import 'helpers'; //Requires mixins
 
-body#tinymce.wp-editor {background: $background_color; font-family: $font_stack; font-size: 14px; color: $text_color;
+body#tinymce.wp-editor {background: $background_color; color: $text_color;
 	a {color: $primary_color; text-decoration: none;
 		&:hover {color: $secondary_color;}
 	}
