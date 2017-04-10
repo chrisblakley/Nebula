@@ -161,7 +161,7 @@
 //Maintain a responsive aspect ratio
 //.element {@include ratio(16, 9);}
 @mixin ratio($x, $y, $pseudo: false){
-	$padding: unquote(($y/$x) * 100 + '%');
+	$padding: unquote(($y/$x)*100 + '%');
 	@if $pseudo {
 		&:before {content: ''; display: block; position: relative; width: 100%; padding-top: $padding;}
 	} @else {
@@ -279,6 +279,12 @@
 // ===========================
 // Functions
 // ===========================
+
+//.example {font-size: rem(14px);}
+@function rem($size){
+	$remSize: $size/16px;
+	@return #{$remSize}rem;
+}
 
 //.example {color: brand(facebook);}
 //.example {color: brand(flickr, secondary);}
