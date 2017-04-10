@@ -209,7 +209,7 @@ function isGoogleAnalyticsReady(){
 //Detect Battery Level
 function nebulaBattery(){
 	nebula.user.client.device.battery = false;
-	if ( Modernizr.batteryapi ){
+	if ( typeof Modernizr != 'undefined' && has(Modernizr, 'batteryapi') ){
 		navigator.getBattery().then(function(battery){
 			nebulaBatteryData(battery);
 			jQuery(battery).on('chargingchange levelchange', function(){
@@ -347,6 +347,9 @@ function socialSharing(){
 //Call the event tracking functions (since it needs to happen twice).
 function initEventTracking(){
 	once(function(){
+		timeAtLoad = new Date().getTime()/1000; //yolo
+		nebulaTimer('time_on_page', 'start');
+
 		nvData = {
 			'is_js_enabled': '1',
 			'screen': window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)',
@@ -589,9 +592,10 @@ function eventTracking(){
 		nv('append', {'print': window.location});
     }
 
-	//Increment exits (but more importantly duration). No jQuery here for fastest response.
+	//Page Unload
 	window.onbeforeunload = function(){
-	    nv('increment', 'page_exits');
+	    ga('send', 'timing', 'Time on Page', 'Unload after ' + Math.round(nebulaTimer('time_on_page', 'end')/1000) + ' seconds', nebulaTimer('time_on_page', 'end'), 'Seconds since DOM ready until window unload.'); //Time on Page
+	    nv('increment', 'page_exits'); //Increment exits (but more importantly updates duration)
 	}
 }
 
@@ -2446,7 +2450,8 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
 	}
 
 	nebula.dom.document.on('click touch tap', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
-		if ( jQuery(this).hasClass('no-scroll') || jQuery(this).parents('.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle]').length ){
+		var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle]';
+		if ( jQuery(this).is(avoid) || jQuery(this).parents(avoid).length ){
 			return false;
 		}
 
@@ -2815,8 +2820,8 @@ function timeAgo(timestamp){ //http://af-design.com/blog/2009/02/10/twitter-like
 	return "on " + timestamp;
 }
 
-//Check nested objects (boolean)
-//has(nebula, 'user.client.remote_addr');
+//Check nested objects (boolean). Note: This function can not check if the object itself exists.
+//has(nebula, 'user.client.remote_addr'); //Ex: object nebula must exist first (check for it separately)
 function has(obj, prop){
 	var parts = prop.split('.');
 	for ( var i = 0, l = parts.length; i < l; i++ ){

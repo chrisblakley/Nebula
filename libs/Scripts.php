@@ -249,9 +249,9 @@ if ( !trait_exists('Scripts') ){
             //Stylesheets
             wp_enqueue_style('nebula-login');
             echo '<style>
-                    div#login h1 a {background: url(' . get_theme_file_uri('/images/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
-                        .svg div#login h1 a {background: url(' . get_theme_file_uri('/images/logo.svg') . ') center center no-repeat; background-size: contain;}
-                </style>';
+    div#login h1 a {background: url(' . get_theme_file_uri('/assets/img/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
+        .svg div#login h1 a {background: url(' . get_theme_file_uri('/assets/img/logo.svg') . ') center center no-repeat; background-size: contain;}
+</style>';
 
             //Scripts
             wp_enqueue_script('jquery');

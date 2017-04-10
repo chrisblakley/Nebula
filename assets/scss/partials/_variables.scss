@@ -4,7 +4,6 @@
 
 //$primary_color: #0098d7 !default; //The default primary color is set via libs/Utilities/Sass.php. Override it using either child _variables.scss or WP Customizer
 //$secondary_color: #95d600 !default; //The default secondary color is set via libs/Utilities/Sass.php. Override it using either child _variables.scss or WP Customizer
-//$text_color: #292b2c !default;
 //$background_color: #f6f6f6 !default; //The default background color is set via libs/Utilities/Sass.php. Override it using either child _variables.scss or WP Customizer
 
 $dark_primary_color: darken(desaturate($primary_color, 95%), 20%);

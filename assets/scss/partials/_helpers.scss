@@ -73,6 +73,7 @@
 	.nebula-vmiddle,
 	.valign > div {position: relative; top: 50%; @include prefix((transform: translateY(-50%)));}
 
+.filtereditem {display: none;}
 
 // ===========================
 // Generic Helpers
@@ -133,7 +134,7 @@ body:not(.wp-admin) {
 // ===========================
 
 //@include file_icon(doc docx, f1c2, #2b5797);
-@mixin file_icon($filetypes, $unicode: f016, $color: $text_color, $specific: false){
+@mixin file_icon($filetypes, $unicode: f016, $color: #292b2c, $specific: false){
 	@each $filetype in $filetypes {
 		@if $specific {
 			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
