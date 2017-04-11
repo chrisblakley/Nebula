@@ -19,7 +19,7 @@ img, a.logocon {@include prefix((filter: none));}
 		}
 	}
 	.component-comment-drawer {display: none; background: #eee; border: 1px solid #bbb; border-top: none; padding: 0 10px 1px 10px;
-		.comment-header {display: block; font-size: 12; color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 4px;}
+		.comment-header {display: block; font-size: rem(12px); color: #222; text-transform: uppercase; border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 4px;}
 		p {font-size: 12;}
 	}
 }

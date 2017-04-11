@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.11.9
+	Version: 4.11.10
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -19,7 +19,7 @@
 // PHG Custom Styles
 // ===========================
 
-html {height: auto; font-size: 16px;} //Declare font-size in px here only. Use rem everywhere else.
+html {height: auto; font-size: 16px;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
 body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;}
 button, input, select, textarea {font-size: rem(14px);}
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25);}
@@ -61,10 +61,10 @@ input[type="checkbox"]{-webkit-appearance: checkbox;}
 input[type="radio"]{-webkit-appearance: radio;}
 button {cursor: pointer;}
 
-input.nebula-search {max-width: 30px; padding: 0 6px; color: transparent; font-size: 0.75rem; background: #eee url($template_directory + "/assets/img/search.png") no-repeat 6px center; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+input.nebula-search {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); background: #eee url($template_directory + "/assets/img/search.png") no-repeat 6px center; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
 	&:hover {background-color: #fff;}
-	&:focus {max-width: 210px; padding-left: 25px; background-color: #fff; cursor: auto;}
-	&.open {max-width: 100%; padding-left: 25px; background-color: #fff; cursor: auto;}
+	&:focus {max-width: 210px; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
+	&.open {max-width: 100%; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
 	&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), .5);}
 	.svg & {background: #eee url($template_directory + "/assets/img/search.svg") no-repeat 6px center; background-size: auto 80%;}
 }
@@ -86,7 +86,7 @@ form.nebula-search-iconable {position: relative; display: inline-block; margin: 
 		.lte-ie9 &,
 		.ie10 & {background: #eee;}
 	}
-	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 12px; height: 12px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: 0.875rem; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 12px; height: 12px; pointer-events: none; font: normal normal normal 14px/1 FontAwesome; font-size: rem(14px); text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
 }
 
@@ -132,14 +132,14 @@ div.nebula-button {margin-bottom: 10px;}
 
 	#googlemap img {max-width: none;} //Prevents glitchy UI within embedded Google maps
 
-.facebook-connect-con {font-size: 0.75rem;
+.facebook-connect-con {font-size: rem(12px);
 	i,
 	a {@include link-colors(brand(facebook), darken(brand(facebook), 15%)); color: brand(facebook);}
 }
 
 //Infinite Load
 .infinite-start-note {margin: 30px 0;
-	a {font-size: 1.125rem;}
+	a {font-size: rem(18px);}
 }
 
 .loadmorecon {position: relative; text-align: center; margin: 50px 0;
@@ -157,7 +157,7 @@ div.nebula-button {margin-bottom: 10px;}
 		&:after {content: ''; opacity: 0; pointer-events: none;}
 	}
 
-	.infinite-load-more {position: relative; font-size: 1.125rem; padding: 10px;
+	.infinite-load-more {position: relative; font-size: rem(18px); padding: 10px;
 		&:after {content: '\f078'; font-family: "FontAwesome"; position: absolute; bottom: -10px; left: 0; width: 100%; display: block; text-align: center; transition: bottom 0.25s ease;}
 		&:hover:after {bottom: -13px;}
 	}
@@ -190,7 +190,7 @@ html .btn {max-width: 100%; white-space: normal;}
 }
 
 //Form Styles
-h3.comment-reply-title {font-size: 0.75rem;}
+h3.comment-reply-title {font-size: rem(12px);}
 
 .logged-in-as {margin: 0;}
 
@@ -199,17 +199,17 @@ h3.comment-reply-title {font-size: 0.75rem;}
 
 p.contact-form-name,
 p.comment-form-author {
-	input {font-size: 0.75rem;}
+	input {font-size: rem(12px);}
 }
 
 p.contact-form-email,
 p.comment-form-email {
-	input {font-size: 0.75rem;}
+	input {font-size: rem(12px);}
 }
 
 p.contact-form-message,
 p.comment-form-comment {margin: 0;
-	textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: 0.75rem;}
+	textarea {height: auto; min-height: 42px; max-height: 599px; width: 100%; font-size: rem(12px);}
 }
 	.no-js p.comment-form-comment textarea {min-height: 150px;}
 
@@ -222,8 +222,8 @@ p.form-submit {}
 	.screen-reader-response {display: none;}
 
 .wpcf7-not-valid-tip {color: $danger_color;}
-.wpcf7-validation-errors {font-size: 0.875rem; color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
-.wpcf7-mail-sent-ok {font-size: 0.875rem; color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
+.wpcf7-validation-errors {font-size: rem(14px); color: $danger_color; width: 100% !important; margin: 0 !important; background: #f0c5c5; border: 1px solid $danger_color !important; border-radius: 4px;} //Font size needs !important
+.wpcf7-mail-sent-ok {font-size: rem(14px); color: $success_color; width: 100% !important; margin: 0 !important; background: #efe; border: 1px solid $success_color !important; border-radius: 4px;} //Font size needs !important
 
 .debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;} //Font size and line height needs !important
 
@@ -243,19 +243,19 @@ input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @inclu
 //jQuery UI Autocomplete Hero Search
 div#nebula-hero-formcon {text-align: center; display: none; @include media("lg"){display: block;};}
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
-	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: 1rem; line-height: 16px;}
-	input {display: block; width: 100%; font-size: 1.125rem; line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
+	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: rem(16px); line-height: 16px;}
+	input {display: block; width: 100%; font-size: rem(18px); line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
 		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 	}
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
 }
 .form-identifier-nebula-hero-search { //Only on front-page hero search
-	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 0.625rem; opacity: 0.9;}
-	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: 0.625rem; opacity: 0.6;}
-	.external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; font-size: 0.625rem; opacity: 0.4;}
+	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: rem(10px); opacity: 0.9;}
+	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: rem(10px); opacity: 0.6;}
+	.external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
 }
 .ui-autocomplete.ui-widget-content li {position: relative;
-	& a:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 10px; margin-right: 5px; font-size: 0.625rem; text-align: center; opacity: 0.5;}
+	& a:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
 	&.type-post a:before {content: '\f1ea';}
 	&.type-page a:before {content: '\f0f6';}
 	&.type-category a:before {content: '\f02e';}
@@ -269,7 +269,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	&.page-home a:before {content: '\f015';}
 	&.sticky-post a:before {content: '\f08d';}
 
-	&.search-link {font-size: 0.75rem; border-top: 1px dotted #ddd;
+	&.search-link {font-size: rem(12px); border-top: 1px dotted #ddd;
 		a {opacity: 0.7;}
 	}
 	&.more-results a:before {content: '\f002';}
@@ -278,7 +278,7 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 
 //jQuery UI Autocomplete
 .ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
-	.ui-menu .ui-menu-item {font-size: 0.75rem; padding: 3px 5px;}
+	.ui-menu .ui-menu-item {font-size: rem(12px); padding: 3px 5px;}
 	.ui-state-hover,
 	.ui-widget-content .ui-state-hover,
 	.ui-widget-header .ui-state-hover,
@@ -308,8 +308,8 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 #error-page-suggestions {margin-top: 50px;
-	h2 {font-size: 1.3125rem;}
-	.suggestion-title {font-size: 1rem; line-height: 28px;}
+	h2 {font-size: rem(21px);}
+	.suggestion-title {font-size: rem(16px); line-height: 28px;}
 }
 
 // ===========================
@@ -324,18 +324,18 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 //Top row that appears at mobile sizes.
 #mobilebarcon {position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; @include prefix((transition: all 0.5s));
-	a {font-size: 2rem; @include link-colors(#fff, #ccc); text-decoration: underline;}
+	a {font-size: rem(32px); @include link-colors(#fff, #ccc); text-decoration: underline;}
 	.mobilenavcon {display: block;
 		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 74%; height: 42px;
-			input {width: 100%; color: #fff; font-size: 1.125rem; padding-left: 24px; line-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
+			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 24px; line-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
 			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
-			.borderimage &:before {color: #fff; font-size: 1.1875rem; width: 19px; height: 19px; top: 12px; left: 0;}
+			.borderimage &:before {color: #fff; font-size: rem(19px); width: 19px; height: 19px; top: 12px; left: 0;}
 		}
 	}
-	a.mobilenavtrigger {position: relative; font-size: 1.5rem; padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; @include background-color(#fff, 0.25); z-index: 99999;
+	a.mobilenavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; @include background-color(#fff, 0.25); z-index: 99999;
 		&:hover {color: #fff; @include background-color(#fff, 0.4);}
 		&.active {@include background-color(#fff, 0);}
 	}
@@ -355,16 +355,16 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		ul {float: right; margin: 0;
 			li.menu-item {position: relative; display: inline-block; margin-right: 25px; padding: 0 5px;
 				&:last-child {margin-right: 0;}
-				a {display: block; @include link-colors(#fff, #ccc); font-size: 0.6875rem; line-height: 30px;}
+				a {display: block; @include link-colors(#fff, #ccc); font-size: rem(11px); line-height: 30px;}
 				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05); @include prefix((transition: opacity 0.25s));
 					li.menu-item {display: block; margin-right: auto; padding: 0;
-						a {display: block; font-size: 0.6875rem;}
+						a {display: block; font-size: rem(11px);}
 					}
 				}
 				&:hover ul.sub-menu {left: 5px; opacity: 1;}
 
-				&.nebula-search {font-size: 0.875rem;
-					input {height: 22px; font-size: 0.6875rem; line-height: 22px;}
+				&.nebula-search {font-size: rem(14px);
+					input {height: 22px; font-size: rem(11px); line-height: 22px;}
 				}
 			}
 		}
@@ -392,9 +392,9 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		&:first-child {float: right;}
 		li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
 			&:last-child {margin-right: 0;}
-			.ie7 & {float: left; font-size: 0.875rem;}
+			.ie7 & {float: left; font-size: rem(14px);}
 
-			a {display: block; font-size: 0.875rem; margin-bottom: 8px; @include link-colors(#fff, #ccc);} //Margin-bottom to allow cursor roll into sub-menu dropdown
+			a {display: block; font-size: rem(14px); margin-bottom: 8px; @include link-colors(#fff, #ccc);} //Margin-bottom to allow cursor roll into sub-menu dropdown
 			ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBackBig), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
 				.no-js & {width: 400px;}
 				li {display: block; margin: 0;
@@ -427,13 +427,13 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		@include media("lg"){padding: 250px 0;};
 	}
 
-	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: 3rem; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
-		@include media("md"){font-size: 3.75rem;};
-		@include media("lg"){font-size: 5.625rem;};
+	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
+		@include media("md"){font-size: rem(60px);};
+		@include media("lg"){font-size: rem(90px);};
 	}
-	h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: 1.125rem; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
-		@include media("md"){font-size: 1.5rem;};
-		@include media("lg"){font-size: 2rem;};
+	h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: rem(18px); font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+		@include media("md"){font-size: rem(24px);};
+		@include media("lg"){font-size: rem(32px);};
 	}
 }
 
@@ -450,11 +450,11 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		h1, h2, h3, h4, h5, h6 {color: #fff;}
 
 		.page-title,
-		.entry-title {font-size: 1.625rem; font-weight: normal; margin: 0;
-			@include media("md"){font-size: 3.375rem;};
+		.entry-title {font-size: rem(26px); font-weight: normal; margin: 0;
+			@include media("md"){font-size: rem(54px);};
 		}
 		p {color: #fff; font-size: 14px; margin-bottom: 3px;
-			@include media("md"){font-size: 1rem;};
+			@include media("md"){font-size: rem(16px);};
 		}
 
 		a {color: #fff; text-decoration: underline; white-space: nowrap;
@@ -464,7 +464,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 #breadcrumb-section {position: relative; margin-bottom: 30px; z-index: 1;
-	.nebula-breadcrumbs {position: relative; padding: 3px 0; border-bottom: 1px solid #fff; font-size: 0.625rem;
+	.nebula-breadcrumbs {position: relative; padding: 3px 0; border-bottom: 1px solid #fff; font-size: rem(10px);
 		&:after {content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: #ccc;}
 	}
 
@@ -498,12 +498,12 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 .row.multi-column-query {margin-bottom: 30px;}
 
-.sticky-title i {font-size: 1.25rem;}
+.sticky-title i {font-size: rem(20px);}
 
 .page-title,
 .entry-title {padding-top: 0; margin-top: 0;}
 
-.entry-meta {font-size: 0.75rem; margin-bottom: 3px;
+.entry-meta {font-size: rem(12px); margin-bottom: 3px;
 	i {margin-right: 2px; color: #aaa;}
 	.meta-item {display: inline-block; margin-right: 10px;
 		a {color: #444;
@@ -514,7 +514,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //WordPress WYSIWYG Content
-.entry-content {margin-top: 10px; font-size: 0.875rem;
+.entry-content {margin-top: 10px; font-size: rem(14px);
 	ul {list-style-position: inside; overflow: hidden; padding-left: 20px; list-style: disc;}
 	ol {margin: 0; padding-left: 20px;}
 	img {
@@ -536,10 +536,10 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 .prevnextcon {margin-top: 50px; margin-bottom: 30px;}
 	.prev-link-con {text-align: left;}
 	.next-link-con {text-align: right;}
-		.prevnext-post-heading {font-size: 0.5625rem; text-transform: uppercase; font-weight: 800; margin: 0; padding: 0;}
+		.prevnext-post-heading {font-size: rem(9px); text-transform: uppercase; font-weight: 800; margin: 0; padding: 0;}
 			.prev-post-heading {}
 			.next-post-heading {}
-		.prevnext-post-link {font-size: 0.75rem;}
+		.prevnext-post-link {font-size: rem(12px);}
 			.prev-post-link {}
 			.next-post-link {}
 
@@ -584,7 +584,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;
 		#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
 	.right-side .advanced-search-group {margin-bottom: 10px;}
 
-	#advanced-search-form .advanced-search-keyword {width: 100%; font-size: 1.5rem; line-height: 1.625em; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
+	#advanced-search-form .advanced-search-keyword {width: 100%; font-size: rem(24px); line-height: 1.625em; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
 
 .advanced-search-result {border-bottom: 1px dotted #ccc; padding-bottom: 10px; margin-top: 5px;}
 	.post-date-time {margin-bottom: 5px;}
@@ -597,7 +597,7 @@ div.wp-pagination {float: right; margin-bottom: 20px;
 	&.no-prev-events {pointer-events: none; opacity: 0.3;}
 }
 
-a.resetfilters {font-size: 0.75rem; color: $danger_color; opacity: 0;
+a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 	&:hover {color: darken($danger_color, 15%);}
 	&.active {opacity: 1;}
 }
@@ -615,10 +615,10 @@ a.resetfilters {font-size: 0.75rem; color: $danger_color; opacity: 0;
 	.author-location {display: block; white-space: nowrap; text-align: center;
 		@include media("md"){text-align: left; display: inline-block;}
 	}
-	.author-social {display: block; margin-top: 17px; margin-bottom: 20px; font-size: 1.5rem; text-align: center;
-		@include media("md"){display: inline-block; margin-bottom: 0; float: right; font-size: 0.75rem;};
+	.author-social {display: block; margin-top: 17px; margin-bottom: 20px; font-size: rem(24px); text-align: center;
+		@include media("md"){display: inline-block; margin-bottom: 0; float: right; font-size: rem(12px);};
 	}
-	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: 0.75rem;
+	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: rem(12px);
 		i {margin-right: 2px;}
 	}
 	.author-jobtitle {display: block; text-align: center; margin-bottom: 15px;
@@ -644,7 +644,7 @@ li.comment div.comment-meta {display: block;}
 	#disqus_thread {margin-top: 20px;}
 
 //Misc. WP Core styles
-.gallery-caption {font-size: 0.75rem;}
+.gallery-caption {font-size: rem(12px);}
 
 
 // ===========================
@@ -673,17 +673,17 @@ li.comment div.comment-meta {display: block;}
 	li.widget_categories ul li:before {content: '\f02e'; font-family: 'FontAwesome'; margin-right: 4px;}
 
 	//Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list.
-	.xoxo .tagcloud a {display: inline-block; margin: 6px 3px 0 0; padding: 1px 8px; border-radius: 5px; @include background-color($primary_color, 0.1); color: $primary_color; font-size: 0.875rem; //Font size needs !important
+	.xoxo .tagcloud a {display: inline-block; margin: 6px 3px 0 0; padding: 1px 8px; border-radius: 5px; @include background-color($primary_color, 0.1); color: $primary_color; font-size: rem(14px); //Font size needs !important
 		&:hover {@include background-color($primary_color, 0.25); color: $primary_color;}
 	}
 
 //Nebula expandable sidebar subnav style defaults
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;
-	i {font-size: 1.125rem; display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
+	i {font-size: rem(18px); display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
 	&.closed i {@include prefix((transform: rotate(0deg)));}
 }
 
-.xoxo form.search input[type="text"] {width: 77% !important; font-size: 0.75rem; line-height: 24px; height: auto !important; vertical-align: top;} //Font size and line height needs !important
+.xoxo form.search input[type="text"] {width: 77% !important; font-size: rem(12px); line-height: 24px; height: auto !important; vertical-align: top;} //Font size and line height needs !important
 
 //Offcanvas Mmenu Modifications
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
@@ -721,9 +721,9 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 //Footer Widgets
 .footerwidgets {padding-top: 20px; padding-bottom: 20px; @include background-color($dark_primary_color);
 	.widget-container {list-style: none;
-		.widget-title {font-size: 1rem; text-transform: uppercase; color: #fff; font-weight: 800; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
+		.widget-title {font-size: rem(16px); text-transform: uppercase; color: #fff; font-weight: 800; border-bottom: 1px dotted #fff; margin-bottom: 10px;}
 		.textwidget,
-		ul li {font-size: 0.75rem; color: #fff;}
+		ul li {font-size: rem(12px); color: #fff;}
 		a {@include link-colors(#fff, #aaa);}
 	}
 }
@@ -741,10 +741,10 @@ a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 				&:first-child {margin-left: 0; padding-left: 0;}
 				&:last-child {margin-right: 0; padding-right: 0;}
 
-				a {display: block; @include link-colors(#fff, #aaa); font-size: 1.3125rem; font-weight: 800; margin-bottom: 10px;}
+				a {display: block; @include link-colors(#fff, #aaa); font-size: rem(21px); font-weight: 800; margin-bottom: 10px;}
 				ul.sub-menu {margin: 0; padding: 5px 0;
 					li {display: block; margin: 0 0 10px 0; padding: 0;
-						a {display: block; @include link-colors(#fff, #aaa); font-size: 1rem; font-weight: normal; margin-bottom: 0;}
+						a {display: block; @include link-colors(#fff, #aaa); font-size: rem(16px); font-weight: normal; margin-bottom: 0;}
 						ul.sub-menu {display: none;}
 					}
 				}
@@ -758,7 +758,7 @@ form.footer-search,
 #footer-section form.nebula-search-iconable {position: relative; display: block; margin: 10px auto 0 auto; width: 150px; z-index: 10;
 	@include media("md"){display: inline-block; margin: 0 0 0 10px; width: auto;};
 
-	&:before {color: rgba(255, 255, 255, 0.75); font-size: 0.75rem;}
+	&:before {color: rgba(255, 255, 255, 0.75); font-size: rem(12px);}
 	input {background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
 		&:focus {background: rgba(255, 255, 255, 0.3);}
 	}
@@ -766,7 +766,7 @@ form.footer-search,
 
 //Footer Copyright
 div.copyright {position: relative; padding-top: 20px; text-align: center; color: #fff; z-index: 10;
-	p {font-size: 0.75rem; color: #fff;}
+	p {font-size: rem(12px); color: #fff;}
 	a {@include link-colors(#fff, #aaa);}
 }
 
@@ -801,9 +801,9 @@ div.copyright {position: relative; padding-top: 20px; text-align: center; color:
 }
 
 .gist {
-	.line-numbers {font-size: 0.75rem;}
+	.line-numbers {font-size: rem(12px);}
 	.file-data pre,
-	.line-data {font-size: 0.75rem;}
+	.line-data {font-size: rem(12px);}
 }
 
 .nebula-youtube {margin-bottom: 15px;}
@@ -811,8 +811,8 @@ div.copyright {position: relative; padding-top: 20px; text-align: center; color:
 
 .accordion {position: relative; margin-top: 10px; margin-bottom: 10px;}
 .accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; @include prefix((transition: border-color 0.3s ease));
-	.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: 1.25rem; color: #2c3e50; background-color: #fafafa; cursor: pointer;
-		&:before {content: "\f067"; font-family: "FontAwesome"; position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: 0.75rem; @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
+	.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: rem(20px); color: #2c3e50; background-color: #fafafa; cursor: pointer;
+		&:before {content: "\f067"; font-family: "FontAwesome"; position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: rem(12px); @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
 	}
 
 	&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; @include prefix((transform: rotate(0)));}
