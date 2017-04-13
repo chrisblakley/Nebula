@@ -576,28 +576,27 @@ if ( !trait_exists('Utilities') ){
         }
 
         //Check if a value is a UTC Timestamp
-	//This function only validates UTC timestamps between April 26, 1970 and May 18, 2033 to avoid conflicts (like phone numbers).
-	public function is_utc_timestamp($timestamp){
-		//If the timestamp contains any non-digit
-		if ( preg_match('/\D/i', $timestamp) ){
-			return false;
-		}
-
-		//If the timestamp is greater than May 18, 2033
-		if ( strlen($timestamp) == 10 && substr($timestamp, 0, 1) > 1 ){
-			return false;
-		}
-
-		if ( strlen($timestamp) >= 8 && strlen($timestamp) <= 10 ){
-			$timestamp = intval($timestamp);
-			if ( ctype_digit($timestamp) && strtotime(date('d-m-Y H:i:s', $timestamp)) === $timestamp ){
-				return true;
+		//This function only validates UTC timestamps between April 26, 1970 and May 18, 2033 to avoid conflicts (like phone numbers).
+		public function is_utc_timestamp($timestamp){
+			//If the timestamp contains any non-digit
+			if ( preg_match('/\D/i', $timestamp) ){
+				return false;
 			}
+
+			//If the timestamp is greater than May 18, 2033
+			if ( strlen($timestamp) == 10 && substr($timestamp, 0, 1) > 1 ){
+				return false;
+			}
+
+			if ( strlen($timestamp) >= 8 && strlen($timestamp) <= 10 ){
+				$timestamp = intval($timestamp);
+				if ( ctype_digit($timestamp) && strtotime(date('d-m-Y H:i:s', $timestamp)) === $timestamp ){
+					return true;
+				}
+			}
+
+			return false;
 		}
-
-		return false;
-	}
-
 
         //Check if a website or resource is available
         public function is_available($url=null, $nocache=false){

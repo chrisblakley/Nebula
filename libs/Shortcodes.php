@@ -341,7 +341,7 @@ if ( !trait_exists('Shortcodes') ){
             extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'force' => false, 'br' => false, 'class' => '', 'style' => ''), $atts));
 
             if ( empty($GLOBALS['pre']) ){
-                echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
+                echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
                 $GLOBALS['pre'] = 1;
             }
 
@@ -373,7 +373,7 @@ if ( !trait_exists('Shortcodes') ){
             extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts));
 
             if ( empty($GLOBALS['pre']) ){
-                echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
+                echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
                 $GLOBALS['pre'] = 1;
             }
 
@@ -404,7 +404,7 @@ if ( !trait_exists('Shortcodes') ){
                 $file_contents = $wp_filesystem->get_contents($file);
 
                 if ( empty($GLOBALS['pre']) ){
-                    echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/stylesheets/css/pre.css" />';
+                    echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
                     $GLOBALS['pre'] = 1;
                 }
 

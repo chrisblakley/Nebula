@@ -740,6 +740,24 @@ function scrollLocation(scrollInfo){
 	}
 }
 
+function isInView(element){
+	if ( typeof element === 'string' ){
+		element = jQuery(element);
+	}
+
+	var elementTop = element.offset().top;
+	var elementBottom = element.offset().top+element.innerHeight();
+
+	var windowTop = jQuery(document).scrollTop();
+	var windowBottom = jQuery(document).scrollTop()+jQuery(window).height();
+
+	if ( !nebula.dom.body.hasClass('page-visibility-hidden') && ((elementTop >= windowTop && elementTop < windowBottom) || (elementBottom >= windowTop && elementBottom < windowBottom) || (elementTop < windowTop && elementBottom > windowBottom)) ){
+		return true;
+	}
+
+	return false;
+}
+
 //Interface with the nv data
 function nv(action, data, callback){
 	if ( !nebula.site.options.visitors_db ){
@@ -2370,7 +2388,7 @@ function errorMitigation(){
 
 //Convert img tags with class .svg to raw SVG elements
 function svgImgs(){
-	if ( nebula.dom.body.hasClass('chrome') || nebula.dom.body.hasClass('firefox') ){ //Currently only supporting these- can remove conditional eventually
+	if ( jQuery('.inlinesvg').length || nebula.dom.body.hasClass('chrome') || nebula.dom.body.hasClass('firefox') ){ //Currently only supporting these- can remove conditional eventually
 		jQuery('img.svg').each(function(){
 	        var oThis = jQuery(this);
 
@@ -2379,6 +2397,7 @@ function svgImgs(){
 		            var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
 		            theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
 		            theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+		            theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
 		            theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
 		            oThis.replaceWith(theSVG); //Replace image with new SVG
 		        }, 'xml');
@@ -3038,7 +3057,7 @@ function nebulaHTML5VideoTracking(){
 				if ( !videoData[id] ){
 					videoData[id] = {
 						'platform': 'html5', //The platform the video is hosted using.
-						'player': id, //The player ID of this video. Can access the API here. Units: Seconds
+						'player': id, //The player ID of this video. Can access the API here.
 						'current': this.currentTime, //The current position of the video. Units: Seconds
 						'duration': this.duration, //The total duration of the video. Units: Seconds
 						'percent': 0, //The percent of the current position. Multiply by 100 for actual percent.
@@ -3051,6 +3070,9 @@ function nebulaHTML5VideoTracking(){
 
 				autoplayNonInteraction = false;
 				playAction = 'Play';
+				if ( !isInView(jQuery('#' + id)) ){
+					playAction = 'Play (Not In View)';
+				}
 				if ( oThis.is('[autoplay]') ){
 					autoplayNonInteraction = true;
 					playAction = 'Autoplay';
@@ -3066,7 +3088,6 @@ function nebulaHTML5VideoTracking(){
 		        nebula.dom.document.trigger('nebula_playing_video', id);
 			});
 
-
 			oThis.on('timeupdate', function(){
 				videoData[id].current = this.currentTime;
 				videoData[id].percent = videoData[id].current*100/videoData[id].duration; //Determine watched percent by adding current percents to an array, then count the array!
@@ -3080,7 +3101,13 @@ function nebulaHTML5VideoTracking(){
 
 				if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
 					ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-					ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': true});
+
+					engagedAction = 'Engaged';
+					if ( !isInView(jQuery('#' + id)) ){
+						engagedAction = 'Engaged (Not In View)';
+					}
+					ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
+
 					nv('append', {'video_engaged': videoTitle});
 					videoData[id].engaged = true;
 					nebula.dom.document.trigger('nebula_engaged_video', id);
@@ -3115,7 +3142,13 @@ function nebulaHTML5VideoTracking(){
 				ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 				ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Videos', 'Finished', videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
+
+				finishedAction = 'Finished';
+				if ( !isInView(jQuery('#' + id)) ){
+					finishedAction = 'Finished (Not In View)';
+				}
+				ga('send', 'event', 'Videos', finishedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
+
 				ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 				nv('append', {'video_finished': videoTitle});
 				nebula.dom.document.trigger('nebula_finished_video', id);
@@ -3194,7 +3227,13 @@ function onPlayerStateChange(e){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
         ga('set', gaCustomDimensions['videoWatcher'], 'Started');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Play', videoInfo.title);
+
+        playAction = 'Play';
+		if ( !isInView(jQuery(videoData[id].iframe)) ){
+			playAction = 'Play (Not In View)';
+		}
+        ga('send', 'event', 'Videos', playAction, videoInfo.title);
+
         nv('append', {'video_play': videoInfo.title});
         nebula.dom.document.trigger('nebula_playing_video', videoInfo);
         pauseFlag = true;
@@ -3208,7 +3247,13 @@ function onPlayerStateChange(e){
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-				ga('send', 'event', 'Videos', 'Engaged', videoInfo.title, {'nonInteraction': true});
+
+				engagedAction = 'Engaged';
+				if ( !isInView(jQuery(videoData[id].iframe)) ){
+					engagedAction = 'Engaged (Not In View)';
+				}
+				ga('send', 'event', 'Videos', engagedAction, videoInfo.title, {'nonInteraction': true});
+
 				nv('append', {'video_engaged': videoInfo.title});
 				videoData[id].engaged = true;
 				nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
@@ -3221,7 +3266,13 @@ function onPlayerStateChange(e){
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
         ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Finished', videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
+
+        finishedAction = 'Finished';
+		if ( !isInView(jQuery(videoData[id].iframe)) ){
+			finishedAction = 'Finished (Not In View)';
+		}
+        ga('send', 'event', 'Videos', finishedAction, videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
+
         ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
         nv('append', {'video_finished': videoInfo.title});
         nebula.dom.document.trigger('nebula_finished_video', videoInfo);
@@ -3287,7 +3338,13 @@ function nebulaVimeoTracking(){
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 	    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	    ga('send', 'event', 'Videos', 'Play', videoTitle);
+
+	    playAction = 'Play';
+		if ( !isInView(jQuery('#' + id)) ){
+			playAction = 'Play (Not In View)';
+		}
+	    ga('send', 'event', 'Videos', playAction, videoTitle);
+
 	    nv('append', {'video_play': videoTitle});
 	    nebula.dom.document.trigger('nebula_playing_video', id);
 	}
@@ -3298,7 +3355,7 @@ function nebulaVimeoTracking(){
 		if ( typeof videoData[id] === 'undefined' ){
 		    videoData[id] = {
 				'platform': 'vimeo', //The platform the video is hosted using.
-				'player': players.vimeo[id], //The player ID of this video. Can access the API here. Units: Seconds
+				'player': players.vimeo[id], //The player ID of this video. Can access the API here.
 				'duration': data.duration, //The total duration of the video. Units: Seconds
 				'current': data.seconds, //The current position of the video. Units: Seconds
 				'percent': data.percent, //The percent of the current position. Multiply by 100 for actual percent.
@@ -3324,7 +3381,13 @@ function nebulaVimeoTracking(){
 
 		if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
 			ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-			ga('send', 'event', 'Videos', 'Engaged', videoTitle, {'nonInteraction': true});
+
+			engagedAction = 'Engaged';
+			if ( !isInView(jQuery(players.vimeo[id])) ){
+				engagedAction = 'Engaged (Not In View)';
+			}
+			ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
+
 			nv('append', {'video_engaged': videoTitle});
 			videoData[id].engaged = true;
 			nebula.dom.document.trigger('nebula_engaged_video', id);
@@ -3358,7 +3421,13 @@ function nebulaVimeoTracking(){
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Videos', 'Finished', videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
+
+		finishedAction = 'Finished';
+		if ( !isInView(jQuery(players.vimeo[id])) ){
+			finishedAction = 'Finished (Not In View)';
+		}
+		ga('send', 'event', 'Videos', finishedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
+
 		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 		nv('append', {'video_finished': videoTitle});
 		nebula.dom.document.trigger('nebula_finished_video', id);

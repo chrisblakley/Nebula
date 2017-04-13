@@ -844,7 +844,9 @@ trait Functions {
 	                $video_metadata['error'] = 'Youtube video is unavailable.';
 	                return $video_metadata;
 	            }
+
 	            $response = wp_remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula()->option('google_server_api_key'));
+
 	            if ( is_wp_error($response) ){
 	                set_transient('nebula_site_available_' . str_replace('.', '_', nebula()->url_components('hostname', 'https://www.googleapis.com/youtube/v3/videos')), 'Unavailable', MINUTE_IN_SECONDS*5); //5 minute expiration
 	                $video_metadata['error'] = 'Youtube video is unavailable.';
@@ -853,11 +855,13 @@ trait Functions {
 
 	            $video_json = $response['body'];
 	        } elseif ( $provider == 'vimeo' ){
-	            if ( !nebula()->is_available('http://vimeo.com/api/v2/video/' . $id . '.json') ){
+	            if ( !nebula()->is_available('http://vimeo.com') ){
 	                $video_metadata['error'] = 'Vimeo video is unavailable.';
 	                return $video_metadata;
 	            }
+
 	            $response = wp_remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
+
 	            if ( is_wp_error($response) ){
 	                $video_metadata['error'] = 'Vimeo video is unavailable.';
 	                return $video_metadata;
@@ -898,7 +902,7 @@ trait Functions {
 	    if ( $provider == 'youtube' ){
 	        $video_metadata['raw'] = $video_json->items[0];
 	        $video_metadata['title'] = $video_json->items[0]->snippet->title;
-	        $video_metadata['safetitle'] = str_replace(array(" ", "'", '"'), array("-", "", ""), $video_json->items[0]->snippet->title);
+	        $video_metadata['safetitle'] = preg_replace('/(\W)/i', '', $video_json->items[0]->snippet->title);
 	        $video_metadata['description'] = $video_json->items[0]->snippet->description;
 	        $video_metadata['thumbnail'] = $video_json->items[0]->snippet->thumbnails->high->url;
 	        $video_metadata['author'] = $video_json->items[0]->snippet->channelTitle;
@@ -910,7 +914,7 @@ trait Functions {
 	    } elseif ( $provider == 'vimeo' ){
 	        $video_metadata['raw'] = $video_json[0];
 	        $video_metadata['title'] = $video_json[0]->title;
-	        $video_metadata['safetitle'] = str_replace(array(" ", "'", '"'), array("-", "", ""), $video_json[0]->title);
+	        $video_metadata['safetitle'] = preg_replace('/(\W)/i', '', $video_json[0]->title);
 	        $video_metadata['description'] = $video_json[0]->description;
 	        $video_metadata['thumbnail'] = $video_json[0]->thumbnail_large;
 	        $video_metadata['author'] = $video_json[0]->user_name;
