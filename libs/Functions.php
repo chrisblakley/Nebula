@@ -107,6 +107,9 @@ trait Functions {
         //Prefill form fields with comment author cookie
         add_action('wp_head', array($this, 'comment_author_cookie'));
 
+		//Set the post/page template to a variable
+		add_action('template_include', array($this, 'define_current_template'), 1000);
+
         //Twitter cached feed
         //This function can be called with AJAX or as a standard function.
         add_action('wp_ajax_nebula_twitter_cache', array($this, 'twitter_cache'));
@@ -364,6 +367,12 @@ trait Functions {
 
         }
     }
+
+	//Sets the current post/page template to a variable.
+	function define_current_template($template){
+		$GLOBALS['current_theme_template'] = str_replace(ABSPATH . 'wp-content', '', $template);
+		return $template;
+	}
 
 	//Show different meta data information about the post. Typically used inside the loop.
 	//Example: post_meta('by');

@@ -431,7 +431,7 @@ function eventTracking(){
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var fileName = filePath.substr(jQuery(this).attr('href').lastIndexOf("/")+1);
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'PDF View', 'View', fileName);
+		ga('send', 'event', 'Download', 'PDF', fileName);
 		if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
 		nv('append', {'pdf_view': fileName});
 	});
@@ -444,7 +444,7 @@ function eventTracking(){
 			ga('set', gaCustomMetrics['notableDownloads'], 1);
 			var linkText = jQuery(this).text();
 			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
-			ga('send', 'event', 'Notable Download', 'Download', fileName);
+			ga('send', 'event', 'Download', 'Notable', fileName);
 			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
 			nv('append', {'notable_download': fileName});
 		}
@@ -482,7 +482,7 @@ function eventTracking(){
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Mailto', 'Click', emailAddress);
+		ga('send', 'event', 'Contact', 'Mailto', emailAddress);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
 		nv('append', {'contact_method': 'mailto', 'contacted_email': emailAddress});
 	});
@@ -494,7 +494,7 @@ function eventTracking(){
 		var phoneNumber = jQuery(this).attr('href').replace('tel:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Click-to-Call', 'Call', phoneNumber);
+		ga('send', 'event', 'Contact', 'Click-to-Call', phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
 		nv('append', {'contact_method': 'click-to-call', 'contacted_phone': phoneNumber});
 	});
@@ -506,7 +506,7 @@ function eventTracking(){
 		var phoneNumber = jQuery(this).attr('href').replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Click-to-Call', 'SMS', phoneNumber);
+		ga('send', 'event', 'Contact', 'SMS', phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
 		nv('append', {'contact_method': 'sms', 'contacted_sms': phoneNumber});
 	});
@@ -536,13 +536,13 @@ function eventTracking(){
 		if ( regexPattern.email.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Copied email: ' + emailPhone);
-			nv('append', {'contact_method': 'Email (copied)', 'contacted_email': emailPhone});
+			ga('send', 'event', 'Contact', 'Email (Copied)' + emailPhone);
+			nv('append', {'contact_method': 'Email (Copied)', 'contacted_email': emailPhone});
 		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Click-to-Call', 'Copied phone: ' + emailPhone);
-			nv('append', {'contact_method': 'Phone (copied)', 'contacted_phone': emailPhone});
+			ga('send', 'event', 'Contact', 'Phone (Copied)' + emailPhone);
+			nv('append', {'contact_method': 'Phone (Copied)', 'contacted_phone': emailPhone});
 		}
 
 		if ( copyCount < 13 ){
@@ -1910,6 +1910,21 @@ function conversionTracker(conversionpage){
 
 //Conditional JS Library Loading
 function conditionalJSLoading(){
+	//Load the Google Maps API if 'googlemap' class exists
+	if ( jQuery('.googlemap').length ){
+		if ( typeof google == "undefined" || !has(google, 'maps') ){ //If the API has not already been called
+			jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+			    google.load('maps', '3', {
+			        callback: function(){
+			        	jQuery(document).trigger('nebula_google_maps_api_loaded');
+			        }
+			    });
+			}).fail(function(){
+			    ga('send', 'event', 'Error', 'JS Error', 'Google Maps JS API script could not be loaded.', {'nonInteraction': true});
+			});
+		}
+	}
+
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').length ){
 		jQuery.getScript(nebula.site.resources.js.chosen).done(function(){

@@ -8,7 +8,6 @@ jQuery(function(){
 	}
 
 	jQuery('#lostpasswordform').submit(function(){
-		var resetUser = jQuery('#user_login').val();
-		ga('send', 'event', 'Password Reset', 'User: ' + resetUser);
+		ga('send', 'event', 'Security Precaution', 'Password Reset', jQuery('#user_login').val());
 	});
 }); //End Document Ready

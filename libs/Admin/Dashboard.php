@@ -548,18 +548,18 @@ if ( !trait_exists('Dashboard') ){
             $todo_file_counter = 0;
             $todo_instance_counter = 0;
 
-            $this->search_files();
+            $this->todo_search_files();
 
             echo '</div><!--/todo_results-->';
             echo '<p>Found <strong>' . $todo_file_counter . ' files</strong> with <strong>' . $todo_instance_counter . ' @todo comments</strong>.</p>';
         }
 
-        public function search_files($todo_dirpath=null, $child=false){
+        public function todo_search_files($todo_dirpath=null, $child=false){
             global $todo_file_counter, $todo_instance_counter;
             $todo_last_filename = false;
 
             if ( is_child_theme() && !$child ){
-                $this->search_files(get_stylesheet_directory(), true);
+                $this->todo_search_files(get_stylesheet_directory(), true);
             }
 
             if ( empty($todo_dirpath) ){

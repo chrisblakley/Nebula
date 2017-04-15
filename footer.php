@@ -22,9 +22,9 @@
 							<?php endif; ?>
 						</div><!--/columns-->
 					</div><!--/row-->
-					<div class="row copyright">
+					<div class="row copyright-con">
 						<div class="col">
-							&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url(); ?>"><strong>Nebula</strong></a> <?php echo nebula()->version('full'); ?>, <em>all rights reserved</em>.
+							<p class="copyright">&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url(); ?>"><strong>Nebula</strong></a> <?php echo nebula()->version('full'); ?>, <em>all rights reserved</em>.</p>
 
 							<form class="nebula-search-iconable search footer-search" method="get" action="<?php echo home_url('/'); ?>">
 								<input class="nebula-search open input search" type="search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech />

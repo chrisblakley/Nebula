@@ -66,7 +66,7 @@ if ( !trait_exists('Scripts') ){
             nebula()->register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js', 'defer', null, '1.4.0', true); //This is not enqueued or dependent because it is called via main.js only as needed.
             nebula()->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js', 'defer', null, '1.10.13', true); //Datatables is called via main.js only as needed.
             nebula()->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js', 'defer', null, '1.6.2', true);
-            nebula()->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.1.0/autotrack.js', 'async', null, '2.1.0', true);
+            nebula()->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.3.2/autotrack.js', 'async', null, '2.3.2', true);
             nebula()->register_script('performance-timing', get_template_directory_uri() . '/assets/js/libs/performance-timing.js', 'defer', null, null, false);
             nebula()->register_script('nebula-main', get_template_directory_uri() . '/assets/js/main.js', 'defer', array('nebula-bootstrap', 'jquery', 'nebula-jquery_ui'), null, true);
             nebula()->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery'), null, true);

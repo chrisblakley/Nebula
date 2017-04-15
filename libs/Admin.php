@@ -261,6 +261,15 @@ if ( !trait_exists('Admin') ){
                 'meta' => array('target' => '_blank')
             ));
 
+            //Theme template file
+			$wp_admin_bar->add_node(array(
+                'parent' => $node_id,
+                'id' => 'nebula-template',
+                'title' => '<i class="nebula-admin-fa fa fa-fw fa-object-group" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Template: ' . basename($GLOBALS['current_theme_template']) . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . dirname($GLOBALS['current_theme_template']) . ')</span>',
+                'href' => get_edit_post_link(),
+                'meta' => array('target' => '_blank')
+            ));
+
             if ( !empty($post_type_object) ){
                 //Ancestor pages
                 $ancestors = get_post_ancestors(get_the_id());

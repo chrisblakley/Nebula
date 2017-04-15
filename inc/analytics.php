@@ -322,7 +322,21 @@
 		ga('require', 'cleanUrlTracker');
 
 		//Autotrack Social Widgets
-		ga('require', 'socialWidgetTracker');
+		ga('require', 'socialWidgetTracker', {
+			hitFilter: function(model) {
+				model.set('hitType', 'event'); //Change the hit type from `social` to `event`.
+
+				//Map the social values to event values.
+				model.set('eventCategory', model.get('socialNetwork'));
+				model.set('eventAction', model.get('socialAction'));
+				model.set('eventLabel', model.get('socialTarget'));
+
+				//Unset the social values.
+				model.set('socialNetwork', null);
+				model.set('socialAction', null);
+				model.set('socialTarget', null);
+			}
+		});
 
 		//Autotrack Media Queries
 		if ( gaCustomDimensions['mqBreakpoint'] || gaCustomDimensions['mqResolution'] || gaCustomDimensions['mqOrientation'] ){
@@ -362,7 +376,7 @@
 			maxScrollMetricIndex: parseInt(gaCustomMetrics['maxScroll'].replace('metric', '')),
 			hitFilter: function(model){
 				if ( model.get('eventLabel') > 65 ){
-					//model.set('nonInteraction', true, true); //This would consider the session a non-bounce.
+					model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
 				}
 
 			},
