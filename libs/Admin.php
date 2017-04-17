@@ -29,6 +29,10 @@ if ( !trait_exists('Admin') ){
 				$this->UsersHooks(); // Register Users hooks
 			}
 
+			//Enable editor style for the TinyMCE WYSIWYG editor.
+            add_editor_style(nebula()->bootstrap('reboot'));
+            add_editor_style('assets/css/tinymce.css');
+
             //Force expire query transients when posts/pages are saved.
             add_action('save_post', array($this, 'clear_transients'));
 
@@ -141,9 +145,6 @@ if ( !trait_exists('Admin') ){
             add_filter('manage_media_columns', array($this, 'muc_column'));
 
             add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
-
-            //Enable editor style for the TinyMCE WYSIWYG editor.
-            add_editor_style('assets/css/tinymce.css');
 
             //Enable All Settings page for only Developers who are Admins
             if ( nebula()->is_dev(true) && current_user_can('manage_options') ){
@@ -262,13 +263,15 @@ if ( !trait_exists('Admin') ){
             ));
 
             //Theme template file
-			$wp_admin_bar->add_node(array(
-                'parent' => $node_id,
-                'id' => 'nebula-template',
-                'title' => '<i class="nebula-admin-fa fa fa-fw fa-object-group" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Template: ' . basename($GLOBALS['current_theme_template']) . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . dirname($GLOBALS['current_theme_template']) . ')</span>',
-                'href' => get_edit_post_link(),
-                'meta' => array('target' => '_blank')
-            ));
+            if ( !empty($GLOBALS['current_theme_template']) ){
+				$wp_admin_bar->add_node(array(
+	                'parent' => $node_id,
+	                'id' => 'nebula-template',
+	                'title' => '<i class="nebula-admin-fa fa fa-fw fa-object-group" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Template: ' . basename($GLOBALS['current_theme_template']) . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . dirname($GLOBALS['current_theme_template']) . ')</span>',
+	                'href' => get_edit_post_link(),
+	                'meta' => array('target' => '_blank')
+	            ));
+            }
 
             if ( !empty($post_type_object) ){
                 //Ancestor pages

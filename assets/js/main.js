@@ -233,7 +233,7 @@ function nebulaBatteryData(battery){
 		'battery_mode': nebula.user.client.device.battery.mode,
 		'battery_percentage': nebula.user.client.device.battery.percentage,
 	});
-	jQuery(document).trigger('batteryChange');
+	nebula.dom.document.trigger('batteryChange');
 }
 
 //Detect Network Connection
@@ -288,7 +288,7 @@ function facebookConnect(){
 				xfbml: true
 			});
 
-			jQuery(document).trigger('fbinit');
+			nebula.dom.document.trigger('fbinit');
 		};
 	} else {
 		jQuery('.facebook-connect').remove();
@@ -748,8 +748,8 @@ function isInView(element){
 	var elementTop = element.offset().top;
 	var elementBottom = element.offset().top+element.innerHeight();
 
-	var windowTop = jQuery(document).scrollTop();
-	var windowBottom = jQuery(document).scrollTop()+jQuery(window).height();
+	var windowTop = nebula.dom.document.scrollTop();
+	var windowBottom = nebula.dom.document.scrollTop()+nebula.dom.window.height();
 
 	if ( !nebula.dom.body.hasClass('page-visibility-hidden') && ((elementTop >= windowTop && elementTop < windowBottom) || (elementBottom >= windowTop && elementBottom < windowBottom) || (elementTop < windowTop && elementBottom > windowBottom)) ){
 		return true;
@@ -867,7 +867,7 @@ function hubspot(mode, type, email, properties, callback){ //@todo "Nebula" 0: U
 					nebula.user.vid = response.vid;
 					nv('send', {'hubspot_vid': response.vid});
 				}
-				jQuery(document).trigger('nebula_hubspot_sent');
+				nebula.dom.document.trigger('nebula_hubspot_sent');
 
 				if ( callback ){
 					callback(response);
@@ -931,7 +931,7 @@ function initAutocompleteSearch(){
 		jQuery('.nebula-search-iconable').removeClass('searching').removeClass('autocompleted');
 	});
 
-	jQuery("input#s, input.search").on('keypress paste', function(e){
+	jQuery("input#s, input.search").on('keyup paste', function(e){
 		if ( !jQuery(this).hasClass('no-autocomplete') && jQuery.trim(jQuery(this).val()).length && searchTriggerOnlyChars(e) ){
 			autocompleteSearch(jQuery(this));
 		}
@@ -949,7 +949,7 @@ function autocompleteSearch(element, types){
 		return false;
 	}
 
-	jQuery(document).trigger('nebula_autocomplete_search_start', element);
+	nebula.dom.document.trigger('nebula_autocomplete_search_start', element);
 	nebulaTimer('autocompleteSearch', 'start');
 	nebulaTimer('autocompleteResponse', 'start');
 
@@ -981,18 +981,18 @@ function autocompleteSearch(element, types){
 						types: JSON.stringify(types)
 					},
 					success: function(data){
-						jQuery(document).trigger('nebula_autocomplete_search_success', data);
+						nebula.dom.document.trigger('nebula_autocomplete_search_success', data);
 						ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 						if ( data ){
-							jQuery(document).trigger('nebula_autocomplete_search_results', data);
+							nebula.dom.document.trigger('nebula_autocomplete_search_results', data);
 							nebulaPrerender(data[0].link);
 							jQuery.each(data, function(index, value){
 								value.label = value.label.replace(/&#038;/g, "\&");
 							});
 							noSearchResults = '';
 						} else {
-							jQuery(document).trigger('nebula_autocomplete_search_no_results');
+							nebula.dom.document.trigger('nebula_autocomplete_search_no_results');
 							noSearchResults = ' (No Results)';
 						}
 						debounce(function(){
@@ -1004,7 +1004,7 @@ function autocompleteSearch(element, types){
 						element.parents('form').removeClass('searching').addClass('autocompleted');
 					},
 					error: function(XMLHttpRequest, textStatus, errorThrown){
-						jQuery(document).trigger('nebula_autocomplete_search_error', request.term);
+						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
 						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 						debounce(function(){
 							ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
@@ -1019,7 +1019,7 @@ function autocompleteSearch(element, types){
 				event.preventDefault(); //Prevent input value from changing.
 			},
 			select: function(event, ui){
-				jQuery(document).trigger('nebula_autocomplete_search_selected', ui);
+				nebula.dom.document.trigger('nebula_autocomplete_search_selected', ui);
 				ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 				ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
@@ -1916,7 +1916,7 @@ function conditionalJSLoading(){
 			jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
 			    google.load('maps', '3', {
 			        callback: function(){
-			        	jQuery(document).trigger('nebula_google_maps_api_loaded');
+			        	nebula.dom.document.trigger('nebula_google_maps_api_loaded');
 			        }
 			    });
 			}).fail(function(){
@@ -1942,7 +1942,7 @@ function conditionalJSLoading(){
         jQuery.getScript(nebula.site.resources.js.datatables).done(function(){
             nebulaLoadCSS(nebula.site.resources.css.datatables);
 			dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in child.js (or elsewhere)
-			jQuery(document).trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
+			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
             ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': true});
@@ -2464,7 +2464,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
 		var willScroll = true;
 		if ( onlyWhenBelow ){
 			var elementTop = element.offset().top-offset;
-			var viewportTop = jQuery(document).scrollTop();
+			var viewportTop = nebula.dom.document.scrollTop();
 			if ( viewportTop-elementTop <= 0 ){
 				willScroll = false;
 			}
@@ -3203,7 +3203,7 @@ function onYouTubeIframeAPIReady(e){
 		}
 	});
 
-	jQuery(document).trigger('nebula_youtube_players_created');
+	nebula.dom.document.trigger('nebula_youtube_players_created');
 	pauseFlag = false;
 }
 function onPlayerError(e){
@@ -3339,7 +3339,7 @@ function nebulaVimeoTracking(){
 			    players.vimeo[id].addEvent('finish', vimeoFinish);
 			    players.vimeo[id].addEvent('playProgress', vimeoPlayProgress);
 
-			    jQuery(document).trigger('nebula_vimeo_players_created', id);
+			    nebula.dom.document.trigger('nebula_vimeo_players_created', id);
 			});
 		});
 

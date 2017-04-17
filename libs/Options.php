@@ -119,29 +119,41 @@ if ( !trait_exists('Options') ){
             return false;
         }
 
-        //Register the requested version of Bootstrap.
-        public function bootstrap_version($lang=false){
+        //Register or return the requested Bootstrap file.
+        public function bootstrap($file=false){
             if ( nebula()->option('bootstrap_version') === 'bootstrap3' ){
                 //Bootstrap 3 (IE8+ Support)
-                if ( $lang === 'css' ){
+                if ( $file === 'css' ){
                     return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
-                } elseif ( $lang === 'js' ){
+                } elseif ( $file === 'js' ){
                     return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', 'defer', null, '3.3.7', true);
+                } elseif ( $file === 'reboot' ){
+	            	return false;
+	            } else {
+	                return 'v3';
                 }
             } elseif ( nebula()->option('bootstrap_version') === 'bootstrap4a5' ){
                 //Bootstrap 4 alpha 5 (IE9+ Support)
-                if ( $lang === 'css' ){
+                if ( $file === 'css' ){
                     return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
-                } elseif ( $lang === 'js' ){
+                } elseif ( $file === 'js' ){
                     return nebula()->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', null, '4.0.0a5', true);
+                } elseif ( $file === 'reboot' ){
+	            	return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap-reboot.min.css';
+	            } else {
+	                return 'v4a5';
                 }
             }
 
             //Latest (IE10+)
-            if ( $lang === 'css' ){
+            if ( $file === 'css' ){
                 return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css', null, '4.0.0a6', 'all');
-            } elseif ( $lang === 'js' ){
+            } elseif ( $file === 'js' ){
                 return nebula()->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', 'defer', null, '4.0.0a6', true);
+            } elseif ( $file === 'reboot' ){
+	            return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap-reboot.min.css';
+	        } else {
+                return 'latest';
             }
         }
 

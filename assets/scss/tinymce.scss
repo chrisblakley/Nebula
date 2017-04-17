@@ -1,8 +1,10 @@
+//Bootstrap Reboot is applied to the TinyMCE editor first.
+
 @import 'variables';
 @import 'mixins';
 @import 'helpers'; //Requires mixins
 
-body#tinymce.wp-editor {background: $background_color; color: #292b2c;
+body#tinymce.wp-editor {background: $background_color; font-size: 16px; padding: 20px !important;
 	a {color: $primary_color; text-decoration: none;
 		&:hover {color: $secondary_color;}
 	}

@@ -104,6 +104,8 @@ body:not(.wp-admin) {
 	.filtered {display: none;}
 }
 
+.sticky {position: sticky; top: 0;} //Sticky requires a top value. Default is set to 0 here.
+
 .aligncenter, .align-center {display: block; margin: 0 auto;}
 .alignleft, .align-left {float: left;}
 .alignright, .align-right {float: right;}
