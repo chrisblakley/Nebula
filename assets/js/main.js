@@ -58,8 +58,6 @@ jQuery(function(){
 		initEventTracking();
 	}
 
-	//@todo "Nebula" 0: double check we can send data to nv() using query strings like ?nv_first_name=Chris and even encode it like
-
 	//Remove Sass render trigger query
 	if ( get('sass') && !get('persistent') && window.history.replaceState ){
 		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
@@ -1596,7 +1594,13 @@ function cf7Functions(){
 		return false;
 	}
 
-	//@todo "Nebula" 0: Include an event when a CF7 form is scrolled into view.
+	//Track CF7 forms when they scroll into view (Autotrack). Currently not possible to change category/action/label for just these impressions.
+	jQuery('form.wpcf7-form').each(function(){
+		ga('impressionTracker:observeElements', [{
+			'id': jQuery(this).closest('.wpcf7').attr('id'),
+			'threshold': 0.25
+		}]);
+	});
 
 	formStarted = [];
 	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(){
@@ -1628,7 +1632,10 @@ function cf7Functions(){
 	});
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
-	nebula.dom.document.on('wpcf7:invalid', function(e){
+	nebula.dom.document.on('wpcf7invalid', function(e){
+		console.log('old invalid');
+		console.debug(e.target.id);
+		console.debug(e);
 		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-spam');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
@@ -1638,8 +1645,15 @@ function cf7Functions(){
 		nv('append', {'form_submission_error': 'Validation (' + e.target.id + ')'});
 	});
 
+	//General HTML5 validation errors
+	jQuery('.wpcf7-form input').on('invalid', function(){ //Would it be more useful to capture all inputs (rather than just CF7)? How would we categorize this in GA?
+		debounce(function(){
+			ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'General HTML5 validation error');
+		}, 50, 'invalid form');
+	});
+
 	//CF7 Spam (CF7 AJAX response after spam detection)
-	nebula.dom.document.on('wpcf7:spam', function(e){
+	nebula.dom.document.on('wpcf7spam', function(e){
 		var formTime = nebulaTimer(e.target.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
@@ -1649,7 +1663,7 @@ function cf7Functions(){
 	});
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
-	nebula.dom.document.on('wpcf7:mailfailed', function(e){
+	nebula.dom.document.on('wpcf7mailfailed', function(e){
 		var formTime = nebulaTimer(e.target.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Failed)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
@@ -1659,7 +1673,7 @@ function cf7Functions(){
 	});
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
-	nebula.dom.document.on('wpcf7:mailsent', function(e){
+	nebula.dom.document.on('wpcf7mailsent', function(e){
 		var formTime = nebulaTimer(e.target.id, 'end');
 		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
@@ -1681,7 +1695,7 @@ function cf7Functions(){
 	});
 
 	//CF7 Submit (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
-	nebula.dom.document.on('wpcf7:submit', function(e){
+	nebula.dom.document.on('wpcf7submit', function(e){
 		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-attempt');
 		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Attempt)');
@@ -3155,18 +3169,18 @@ function nebulaHTML5VideoTracking(){
 			oThis.on('ended', function(){
 				ga('set', gaCustomMetrics['videoCompletions'], 1);
 				ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
-				ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
+				ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
-				finishedAction = 'Finished';
+				endedAction = 'Ended';
 				if ( !isInView(jQuery('#' + id)) ){
-					finishedAction = 'Finished (Not In View)';
+					endedAction = 'Ended (Not In View)';
 				}
-				ga('send', 'event', 'Videos', finishedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
+				ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
 
-				ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
-				nv('append', {'video_finished': videoTitle});
-				nebula.dom.document.trigger('nebula_finished_video', id);
+				ga('send', 'timing', 'Videos', 'Ended', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
+				nv('append', {'video_ended': videoTitle});
+				nebula.dom.document.trigger('nebula_ended_video', id);
 			});
 		});
 	}
@@ -3279,18 +3293,18 @@ function onPlayerStateChange(e){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoCompletions'], 1);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
-        ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
+        ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
-        finishedAction = 'Finished';
+        endedAction = 'Ended';
 		if ( !isInView(jQuery(videoData[id].iframe)) ){
-			finishedAction = 'Finished (Not In View)';
+			endedAction = 'Ended (Not In View)';
 		}
-        ga('send', 'event', 'Videos', finishedAction, videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
+        ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
 
-        ga('send', 'timing', 'Videos', 'Finished', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
-        nv('append', {'video_finished': videoInfo.title});
-        nebula.dom.document.trigger('nebula_finished_video', videoInfo);
+        ga('send', 'timing', 'Videos', 'Ended', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
+        nv('append', {'video_ended': videoInfo.title});
+        nebula.dom.document.trigger('nebula_ended_video', videoInfo);
     } else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
         clearTimeout(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
@@ -3434,18 +3448,18 @@ function nebulaVimeoTracking(){
 		var videoTitle = id.replace(/-/g, ' ');
 		ga('set', gaCustomMetrics['videoCompletions'], 1);
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
-		ga('set', gaCustomDimensions['videoWatcher'], 'Finished');
+		ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
-		finishedAction = 'Finished';
+		endedAction = 'Ended';
 		if ( !isInView(jQuery(players.vimeo[id])) ){
-			finishedAction = 'Finished (Not In View)';
+			endedAction = 'Ended (Not In View)';
 		}
-		ga('send', 'event', 'Videos', finishedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
+		ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
 
-		ga('send', 'timing', 'Videos', 'Finished', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
-		nv('append', {'video_finished': videoTitle});
-		nebula.dom.document.trigger('nebula_finished_video', id);
+		ga('send', 'timing', 'Videos', 'Ended', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
+		nv('append', {'video_ended': videoTitle});
+		nebula.dom.document.trigger('nebula_ended_video', id);
 	}
 }
 

@@ -371,6 +371,9 @@
 			});
 		}
 
+		//Autotrack Impressions (Scroll into view)
+		ga('require', 'impressionTracker'); //Elements are detected in main.js (or child.js)
+
 		//Autotrack Max Scroll
 		ga('require', 'maxScrollTracker', {
 			maxScrollMetricIndex: parseInt(gaCustomMetrics['maxScroll'].replace('metric', '')),
@@ -388,8 +391,7 @@
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
-		//Send pageview with all custom dimensions and metrics
-		ga('send', 'pageview');
+		ga('send', 'pageview'); //Send pageview with all custom dimensions and metrics
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 
@@ -438,8 +440,19 @@
 		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 		document,'script','//connect.facebook.net/en_US/fbevents.js');
 
-		fbq('init', '<?php echo nebula()->option('facebook_custom_audience_pixel_id'); ?>');
+		<?php if ( nebula()->option('visitors_db') ): ?>
+			fbq('init', '<?php echo nebula()->option('facebook_custom_audience_pixel_id'); ?>', {
+				em: '<?php echo nebula()->get_visitor_datapoint('email_address'); ?>',
+				fn: '<?php echo nebula()->get_visitor_datapoint('first_name'); ?>',
+				ln: '<?php echo nebula()->get_visitor_datapoint('last_name'); ?>',
+			});
+		<?php else: ?>
+			fbq('init', '<?php echo nebula()->option('facebook_custom_audience_pixel_id'); ?>');
+		<?php endif; ?>
+
 		fbq('track', 'PageView');
+
+		<?php do_action('nebula_fbq_after_track_pageview'); //Hook into for adding more Facebook custom audience tracking. ?>
 	</script>
 	<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?php echo nebula()->option('facebook_custom_audience_pixel_id'); ?>&ev=PageView&noscript=1"/></noscript>
 <?php endif; ?>

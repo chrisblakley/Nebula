@@ -30,10 +30,10 @@ if ( !trait_exists('Ecommerce') ){
             add_action('admin_notices', array($this, 'woocommerce_admin_notices'));
 
             //Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
-            add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_dimensions'));
+            add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
 
             //Set dimensions and send events after the Google Analytics pageview is sent
-            add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_events'));
+            add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
 
             //Remove WooCommerce Breadcrumbs
             //add_action('init', array($this, 'remove_woo_breadcrumbs'));
@@ -78,7 +78,7 @@ if ( !trait_exists('Ecommerce') ){
         }
 
         //Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
-        public function woo_custom_dimensions(){
+        public function woo_custom_ga_dimensions(){
             //Set custom dimension for if the cart is empty or full
             if ( nebula()->option('cd_woocart') ){
                 echo 'gaCustomDimensions.wooCart = "' . nebula()->option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
@@ -88,7 +88,7 @@ if ( !trait_exists('Ecommerce') ){
         }
 
         //Set dimensions and send events after the Google Analytics pageview is sent
-        public function woo_custom_events(){
+        public function woo_custom_ga_events(){
             echo 'nebula.site.ecommerce = true;'; //Set the ecommerce setting to true
 
             //Set custom dimension and send event on order received page.
