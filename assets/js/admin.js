@@ -17,7 +17,7 @@ jQuery(function(){
 	});
 
 	if ( !jQuery('li#menu-comments').is(':visible') ){
-		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options">Nebula Options</a>)</small>.');
+		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options?tab=functions&option=comments">Nebula Options</a>)</small>.');
 	}
 
 	businessHoursCheck();

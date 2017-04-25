@@ -609,7 +609,7 @@ if ( !trait_exists('Visitors') ){
                                                 <?php foreach ( $unserialized_value as $value ): ?>
                                                     <li class="user-data-value" data-actual="<?php echo htmlspecialchars($value); ?>">
                                                         <span>
-                                                            <?php
+                                                            <?php //@todo "Nebula" 0: Add <i class="flag flag-us"></i> if the datapoint is country
                                                                 if ( nebula()->is_utc_timestamp($value) ){
                                                                     echo date('l, F j, Y @ g:ia', intval($value));
                                                                 } else {

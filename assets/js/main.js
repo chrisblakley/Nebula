@@ -2352,7 +2352,7 @@ function placeLookup(placeID){
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function addHelperClasses(){
-	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external'); //Add rel attributes to external links
+	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links
 
 	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').parents('a').addClass('no-icon');
@@ -2468,13 +2468,17 @@ function powerFooterWidthDist(){
 }
 
 //Offset must be an integer
-function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
+function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 	if ( !offset ){
 		var offset = 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 	}
 
 	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
 	if ( element ){
+		if ( typeof element === 'string' ){
+			element = jQuery(element);
+		}
+
 		var willScroll = true;
 		if ( onlyWhenBelow ){
 			var elementTop = element.offset().top-offset;
@@ -2491,7 +2495,9 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
 
 			jQuery('html, body').animate({
 				scrollTop: element.offset().top-offset
-			}, milliseconds);
+			}, milliseconds, function(){
+				callback();
+			});
 		}
 
 		return false;

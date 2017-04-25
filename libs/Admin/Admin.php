@@ -587,7 +587,7 @@ if ( !trait_exists('Admin') ){
 
                 //Check for Google Analytics Tracking ID
                 if ( !nebula()->option('ga_tracking_id') ){
-                    echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Google Analytics tracking ID</a> is currently not set!</p></div>';
+                    echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options?tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!</p></div>';
                 }
 
                 //Check for "Discourage searching engines..." setting
@@ -611,7 +611,7 @@ if ( !trait_exists('Admin') ){
 
                 //If Prototype mode is disabled, but Multiple Theme plugin is still activated
                 if ( nebula()->option('prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-                    echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
+                    echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options?tab=functions&option=prototype_mode">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
                 }
 
                 //If Enhanced Ecommerce Plugin is missing Google Analytics Tracking ID
@@ -637,7 +637,7 @@ if ( !trait_exists('Admin') ){
 
                 //Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
                 if ( nebula()->option('google_optimize_id') ){
-                    echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
+                    echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options?tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
                 }
             }
 
@@ -861,21 +861,22 @@ if ( !trait_exists('Admin') ){
         }
 
         public function post_meta_boxes_setup(){
-            add_action('add_meta_boxes', array($this, 'add_post_keywords'));
+            add_action('add_meta_boxes', array($this, 'add_internal_post_keywords'));
             add_action('save_post', array($this, 'save_post_class_meta' ), 10, 2);
         }
 
         //Internal Search Keywords Metabox and Custom Field
-        public function add_post_keywords(){
+        public function add_internal_post_keywords(){
             $builtin_types = array('post', 'page', 'attachment');
             $custom_types = get_post_types(array('_builtin' => false));
+			$avoid_types = array('acf', 'acf-field-group', 'wpcf7_contact_form');
 
             foreach ( $builtin_types as $builtin_type ){
                 add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array($this, 'internal_search_keywords_meta_box' ), $builtin_type, 'side', 'default');
             }
 
             foreach( $custom_types as $custom_type ){
-                if ( !in_array($custom_type, array('acf', 'wpcf7_contact_form')) ){
+                if ( !in_array($custom_type, $avoid_types) ){
                     add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array($this, 'internal_search_keywords_meta_box' ), $custom_type, 'side', 'default');
                 }
             }
@@ -884,6 +885,9 @@ if ( !trait_exists('Admin') ){
         //Internal Search Keywords Metabox content
         function internal_search_keywords_meta_box($object, $box){
             wp_nonce_field(basename(__FILE__), 'nebula_internal_search_keywords_nonce');
+
+            var_dump( get_post_type() );
+
             ?>
             <div>
                 <p style="font-size: 12px; color: #444;">Use plurals since parts of words will return in search results (unless plural has a different spelling than singular; then add both).</p>

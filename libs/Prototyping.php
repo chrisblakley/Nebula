@@ -79,7 +79,7 @@ if ( !trait_exists('Prototyping') ){
             $wp_admin_bar->add_node(array(
                 'id' => 'nebula-prototype',
                 'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Prototype' . $wireframe_menu_title,
-                'href' => get_admin_url() . 'themes.php?page=nebula_options'
+                'href' => get_admin_url() . 'themes.php?page=nebula_options?tab=functions&option=prototype_mode'
             ));
 
             if ( nebula()->dev_phase() ){

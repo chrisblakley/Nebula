@@ -177,6 +177,7 @@ if ( !trait_exists('Options') ){
                 'edited_yet' => 'false',
 
                 //Metadata Tab
+                'business_type' => '',
                 'site_owner' => '',
                 'contact_email' => '',
                 'phone_number' => '',
@@ -215,11 +216,12 @@ if ( !trait_exists('Options') ){
                 'facebook_admin_ids' => '',
                 'facebook_app_secret' => '',
                 'facebook_access_token' => '',
-                'google_plus_url' => '',
                 'twitter_username' => '',
                 'linkedin_url' => '',
                 'youtube_url' => '',
                 'instagram_url' => '',
+                'pinterest_url' => '',
+                'google_plus_url' => '',
 
                 //Functions Tab
                 'bootstrap_version' => 'latest',
@@ -332,10 +334,8 @@ if ( !trait_exists('Options') ){
                 'cpanel_url' => '',
                 'hosting_url' => '',
                 'registrar_url' => '',
-                'ga_url' => '',
-                'google_search_console_url' => '',
                 'google_adsense_url' => '',
-                'google_adwords_url' => '',
+                'amazon_associates_url' => '',
                 'mention_url' => '',
                 'notes' => '',
             );
@@ -552,6 +552,13 @@ if ( !trait_exists('Options') ){
                             </td>
                         </tr>
 
+						<tr class="short" valign="top">
+                            <th scope="row">Business Type&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+                            <td>
+                                <input type="text" name="nebula_options[business_type]" value="<?php echo nebula()->option('business_type'); ?>" placeholder="Organization" />
+                                <p class="helper"><small>This schema is used for Structured Data. <a href="https://schema.org/LocalBusiness" target="_blank">Use this reference under "More specific Types"</a> (click through to get the most specific possible). If you are unsure, you can use Organization, Corporation, EducationalOrganization, GovernmentOrganization, LocalBusiness, MedicalOrganization, NGO, PerformingGroup, or SportsOrganization. Details set using <a href="https://www.google.com/business/" target="_blank">Google My Business</a> will not be overwritten by Structured Data, so it is recommended to sign up and use Google My Business.</small></p>
+                            </td>
+                        </tr>
                         <tr class="short" valign="top">
                             <th scope="row">Site Owner&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
@@ -604,7 +611,7 @@ if ( !trait_exists('Options') ){
                                 <input type="text" name="nebula_options[region]" value="<?php echo $nebula_options['region']; ?>" placeholder="NY"  style="width: 70px;" />
                                 <input type="text" name="nebula_options[postal_code]" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204"  style="width: 70px;" />
                                 <input type="text" name="nebula_options[country_name]" value="<?php echo $nebula_options['country_name']; ?>" placeholder="USA"  style="width: 70px;" />
-                                <p class="helper"><small>The address of the location (or headquarters if multiple locations).</small></p>
+                                <p class="helper"><small>The address of the location (or headquarters if multiple locations). Use <a href="https://gearside.com/nebula/functions/full_address/" target="_blank"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</small></p>
                             </td>
                         </tr>
 
@@ -649,13 +656,7 @@ if ( !trait_exists('Options') ){
                                 <p class="helper"><small>The URL (and optional page ID and admin IDs) of the associated Facebook page.</small></p>
                             </td>
                         </tr>
-                        <tr class="short" valign="top">
-                            <th scope="row">Google+ URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-                            <td>
-                                <input type="text" name="nebula_options[google_plus_url]" value="<?php echo $nebula_options['google_plus_url']; ?>" placeholder="https://plus.google.com/106644717328415684498/about" style="width: 358px;"/>
-                                <p class="helper"><small>The URL of the associated Google+ page. It is important to register with <a href="http://www.google.com/business/" target="_blank">Google Business</a> for the geolocation benefits (among other things)!</small></p>
-                            </td>
-                        </tr>
+
                         <tr class="short" valign="top">
                             <th scope="row">Twitter Username&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
@@ -682,6 +683,20 @@ if ( !trait_exists('Options') ){
                             <td>
                                 <input type="text" name="nebula_options[instagram_url]" value="<?php echo $nebula_options['instagram_url']; ?>" placeholder="https://www.instagram.com/pinckneyhugo" style="width: 358px;"/>
                                 <p class="helper"><small>The URL of the associated Instagram page.</small></p>
+                            </td>
+                        </tr>
+                        <tr class="short" valign="top">
+                            <th scope="row">Pinterest URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+                            <td>
+                                <input type="text" name="nebula_options[pinterest_url]" value="<?php echo $nebula_options['pinterest_url']; ?>" placeholder="https://www.pinterest.com/pinckneyhugo" style="width: 358px;"/>
+                                <p class="helper"><small>The URL of the associated Pinterest page.</small></p>
+                            </td>
+                        </tr>
+                        <tr class="short" valign="top">
+                            <th scope="row">Google+ URL&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+                            <td>
+                                <input type="text" name="nebula_options[google_plus_url]" value="<?php echo $nebula_options['google_plus_url']; ?>" placeholder="https://plus.google.com/106644717328415684498/about" style="width: 358px;"/>
+                                <p class="helper"><small>The URL of the associated Google+ page. It is important to register with <a href="http://www.google.com/business/" target="_blank">Google Business</a> for the geolocation benefits (among other things)!</small></p>
                             </td>
                         </tr>
                     </table>
@@ -1774,20 +1789,6 @@ if ( !trait_exists('Options') ){
                             </td>
                         </tr>
                         <tr class="short" valign="top">
-                            <th scope="row">Google Analytics&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-                            <td>
-                                <input type="text" name="nebula_options[ga_url]" value="<?php echo $nebula_options['ga_url']; ?>" placeholder="http://www.google.com/analytics/..." />
-                                <p class="helper"><small>Link directly to this project's <a href="http://www.google.com/analytics/" target="_blank">Google Analytics</a> report.</small></p>
-                            </td>
-                        </tr>
-                        <tr class="short" valign="top">
-                            <th scope="row">Google Search Console&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
-                            <td>
-                                <input type="text" name="nebula_options[google_search_console_url]" value="<?php echo $nebula_options['google_search_console_url']; ?>" placeholder="https://www.google.com/webmasters/tools/..." />
-                                <p class="helper"><small>Direct link to this project's <a href="https://www.google.com/webmasters/tools/" target="_blank">Google Search Console</a>.</small></p>
-                            </td>
-                        </tr>
-                        <tr class="short" valign="top">
                             <th scope="row">Google AdSense&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
                                 <input type="text" name="nebula_options[google_adsense_url]" value="<?php echo $nebula_options['google_adsense_url']; ?>" placeholder="https://www.google.com/adsense/app" />
@@ -1795,10 +1796,10 @@ if ( !trait_exists('Options') ){
                             </td>
                         </tr>
                         <tr class="short" valign="top">
-                            <th scope="row">Google AdWords&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+                            <th scope="row">Amazon Associates&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input type="text" name="nebula_options[google_adwords_url]" value="<?php echo $nebula_options['google_adwords_url']; ?>" placeholder="https://www.google.com/adwords/" />
-                                <p class="helper"><small>Direct link to this project's <a href="https://www.google.com/adwords/" target="_blank">Google AdWords</a> account.</small></p>
+                                <input type="text" name="nebula_options[amazon_associates_url]" value="<?php echo $nebula_options['amazon_associates_url']; ?>" placeholder="https://affiliate-program.amazon.com/home" />
+                                <p class="helper"><small>Direct link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank">Amazon Associates</a> account.</small></p>
                             </td>
                         </tr>
                         <tr class="short" valign="top">

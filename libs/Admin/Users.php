@@ -183,10 +183,11 @@ if ( !trait_exists('Users') ){
             unset($contact_methods['jabber']);
             $contact_methods['facebook'] = 'Facebook Username';
             $contact_methods['twitter'] = 'Twitter Username <small>(Without @)</small>';
-            $contact_methods['googleplus'] = 'Google+ Username <small>(Without +)</small>';
             $contact_methods['linkedin'] = 'LinkedIn ID';
             $contact_methods['youtube'] = 'YouTube Channel ID';
             $contact_methods['instagram'] = 'Instagram Username';
+            $contact_methods['pinterest'] = 'Pinterest Username';
+            $contact_methods['googleplus'] = 'Google+ Username <small>(Without +)</small>';
             return $contact_methods;
         }
 

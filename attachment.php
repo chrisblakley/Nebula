@@ -43,7 +43,7 @@ get_header(); ?>
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-meta">
 							<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('dimensions'); ?> <?php nebula()->post_meta('exif'); ?>
@@ -52,10 +52,10 @@ get_header(); ?>
 						<div class="entry-social">
 							<span class="nebulasocialcon">
 				        		<?php
-					        		if ( is_dev() ) {
-						        		nebula()->meta('social', 1);
+					        		if ( nebula()->is_dev() ) {
+						        		nebula()->post_meta('social', 1);
 					        		} else {
-						        		nebula()->meta('social', 0);
+						        		nebula()->post_meta('social', 0);
 					        		}
 					        	?>
 				        	</span>

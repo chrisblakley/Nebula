@@ -9,7 +9,7 @@
 <?php if ( nebula()->footer_widget_counter() != 0 ): //If no active footer widgets, then this section does not generate. ?>
 	<div class="container footerwidgets">
 		<div class="row">
-			<?php if ( footerWidgetCounter() == 4 ): ?>
+			<?php if ( nebula()->footer_widget_counter() == 4 ): ?>
 				<div class="col">
 					<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('First Footer Widget Area') ): ?>
 						<?php //First Footer Widget Area ?>
@@ -30,7 +30,7 @@
 						<?php //Fourth Footer Widget Area ?>
 					<?php endif; ?>
 				</div><!--/col-->
-			<?php elseif ( footerWidgetCounter() == 3 ): ?>
+			<?php elseif ( nebula()->footer_widget_counter() == 3 ): ?>
 				<div class="col">
 					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds. ?>
@@ -46,7 +46,7 @@
 						<?php //Outputs the first active widget area it finds. ?>
 					<?php endif; ?>
 				</div><!--/col-->
-			<?php elseif ( footerWidgetCounter() == 2 ): ?>
+			<?php elseif ( nebula()->footer_widget_counter() == 2 ): ?>
 				<div class="col">
 					<?php if ( dynamic_sidebar('First Footer Widget Area') || dynamic_sidebar('Second Footer Widget Area') || dynamic_sidebar('Third Footer Widget Area') ): ?>
 						<?php //Outputs the first active widget area it finds (between 1-3). ?>

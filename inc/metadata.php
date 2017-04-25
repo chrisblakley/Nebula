@@ -152,7 +152,7 @@
 	//JSON-LD Examples: http://jsonld.com/
 	//Google Structured Data Testing Tool: https://search.google.com/structured-data/testing-tool
 
-	$company_type = 'LocalBusiness'; //@TODO "Nebula" 0: Consider a Nebula Option for this type (LocalBusiness (default), Organization, etc)
+	$company_type = ( nebula()->option('business_type') )? nebula()->option('business_type') : 'LocalBusiness';
 ?>
 <script type="application/ld+json">
 	{
@@ -168,13 +168,18 @@
 			"postalCode": "<?php echo nebula()->option('postal_code'); ?>",
 			"addressCountry": "<?php echo nebula()->option('country_name'); ?>"
 		},
+		"telephone": "+<?php echo nebula()->option('phone_number'); ?>",
 
-		<?php if ( $company_type == 'LocalBusiness' ): ?>
+		<?php if ( nebula()->option('latitude') ): ?>
 			"geo": {
 				"@type": "GeoCoordinates",
-				"latitude": <?php echo nebula()->option('latitude'); ?>,
-				"longitude": <?php echo nebula()->option('longitude'); ?>
+				"latitude": "<?php echo nebula()->option('latitude'); ?>",
+				"longitude": "<?php echo nebula()->option('longitude'); ?>"
 			},
+			"hasMap": "https://www.google.com/maps/place/<?php echo nebula()->option('latitude'); ?>,<?php echo nebula()->option('longitude'); ?>",
+		<?php endif; ?>
+
+		<?php if ( $company_type !== 'Organization' && $company_type !== 'Corporation' ): ?>
 			<?php
 				$opening_hours_specification = '';
 				foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
@@ -218,10 +223,6 @@
 				$company_same_as .= '"' . nebula()->twitter_url() . '",';
 			}
 
-			if ( nebula()->option('google_plus_url') ){
-				$company_same_as .= '"' . nebula()->option('google_plus_url') . '",';
-			}
-
 			if ( nebula()->option('linkedin_url') ){
 				$company_same_as .= '"' . nebula()->option('linkedin_url') . '",';
 			}
@@ -233,6 +234,14 @@
 			if ( nebula()->option('instagram_url') ){
 				$company_same_as .= '"' . nebula()->option('instagram_url') . '",';
 			}
+
+			if ( nebula()->option('pinterest_url') ){
+				$company_same_as .= '"' . nebula()->option('pinterest_url') . '",';
+			}
+
+			if ( nebula()->option('google_plus_url') ){
+				$company_same_as .= '"' . nebula()->option('google_plus_url') . '",';
+			}
 		?>
 		<?php if ( !empty($company_same_as) ): ?>
 			"sameAs": [
@@ -240,6 +249,11 @@
 			],
 		<?php endif; ?>
 
+		<?php if ( $company_type === 'LocalBusiness' ): ?>
+			"priceRange": "",
+		<?php endif; ?>
+
+		"image": "<?php echo get_theme_file_uri('/assets/img/meta/og-thumb.png'); ?>",
 		"logo": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>"
 	}
 </script>
@@ -269,9 +283,7 @@
 					$person_same_as .= '"' . nebula()->twitter_url(get_the_author_meta('twitter', $user->ID)) . '",';
 				}
 
-				if ( get_the_author_meta('googleplus', $user->ID) ){
-					$person_same_as .= '"https://plus.google.com/+' . get_the_author_meta('googleplus', $user->ID) . '",';
-				}
+
 
 				if ( get_the_author_meta('linkedin', $user->ID) ){
 					$person_same_as .= '"https://www.linkedin.com/profile/view?id=' . get_the_author_meta('linkedin', $user->ID) . '",';
@@ -283,6 +295,14 @@
 
 				if ( get_the_author_meta('instagram', $user->ID) ){
 					$person_same_as .= '"http://instagram.com/' . get_the_author_meta('instagram', $user->ID) . '",';
+				}
+
+				if ( get_the_author_meta('pinterest', $user->ID) ){
+					$person_same_as .= '"https://pinterest.com/' . get_the_author_meta('pinterest', $user->ID) . '",';
+				}
+
+				if ( get_the_author_meta('googleplus', $user->ID) ){
+					$person_same_as .= '"https://plus.google.com/+' . get_the_author_meta('googleplus', $user->ID) . '",';
 				}
 			?>
 			<?php if ( !empty($person_same_as) ): ?>

@@ -13,9 +13,6 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Security') ){
     trait Security {
         public function hooks() {
-            //Disable the file editor
-            define('DISALLOW_FILE_EDIT', true);
-
             //Log template direct access attempts
             add_action('wp_loaded', array($this, 'log_direct_access_attempts'));
 
@@ -61,6 +58,11 @@ if ( !trait_exists('Security') ){
             //Sometimes spambots target sites without actually visiting. Discovering these and filtering them using GA is important too!
             //Learn more: http://gearside.com/stop-spambots-like-semalt-buttons-website-darodar-others/
             add_action('wp_loaded', array($this, 'domain_prevention'));
+
+			//Disable the file editor for non-developers
+            if ( !nebula()->is_dev() ){
+            	define('DISALLOW_FILE_EDIT', true);
+			}
         }
 
         //Log template direct access attempts

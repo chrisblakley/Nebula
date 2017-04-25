@@ -271,6 +271,10 @@ if ( !trait_exists('Scripts') ){
             wp_enqueue_style('nebula-admin');
             wp_enqueue_style('nebula-font_awesome');
 
+			if ( nebula()->ip_location() ){
+				wp_enqueue_style('nebula-flags');
+			}
+
             //Scripts
             wp_enqueue_script('nebula-admin');
 

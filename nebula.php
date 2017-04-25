@@ -19,16 +19,16 @@ if ( !class_exists('Nebula') ){
 	//Require Nebula libraries
 	require_once get_template_directory() . '/libs/TemplateEngine.php';
 	require_once get_template_directory() . '/libs/Scripts.php';
-	require_once get_template_directory() . '/libs/Options.php';
-	require_once get_template_directory() . '/libs/Utilities.php';
+	require_once get_template_directory() . '/libs/Options/Options.php';
+	require_once get_template_directory() . '/libs/Utilities/Utilities.php';
 	require_once get_template_directory() . '/libs/Security.php';
 	require_once get_template_directory() . '/libs/Optimization.php';
 	require_once get_template_directory() . '/libs/Functions.php';
 	require_once get_template_directory() . '/libs/Shortcodes.php';
-	require_once get_template_directory() . '/libs/Admin.php';
+	require_once get_template_directory() . '/libs/Admin/Admin.php';
     require_once get_template_directory() . '/libs/Ecommerce.php';
     require_once get_template_directory() . '/libs/Prototyping.php';
-    require_once get_template_directory() . '/libs/Legacy.php'; //Backwards compatibility (Limited)
+    require_once get_template_directory() . '/libs/Legacy/Legacy.php'; //Backwards compatibility (Limited)
 
     /**
      * Main Nebula class

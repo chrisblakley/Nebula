@@ -147,7 +147,7 @@ if ( !trait_exists('Ecommerce') ){
                 global $post;
                 $product = new WC_Product($post->ID);
 
-                $company_type = 'LocalBusiness'; //@TODO "Nebula" 0: Consider a Nebula Option for this type (LocalBusiness (default), Organization, etc)
+				$company_type = ( nebula()->option('business_type') )? nebula()->option('business_type') : 'LocalBusiness';
                 ?>
                 <script type="application/ld+json">
 				{
@@ -173,7 +173,20 @@ if ( !trait_exists('Ecommerce') ){
 						"availability": "<?php echo ( $product->is_in_stock() )? 'http://schema.org/InStock' : 'http://schema.org/OutOfStock'; ?>",
 						"seller": {
 							"@type": "<?php echo $company_type; ?>",
-							"name": "<?php echo ( nebula()->option('site_owner') )? nebula()->option('site_owner') : get_bloginfo('name'); ?>"
+							"name": "<?php echo ( nebula_option('site_owner') )? nebula_option('site_owner') : get_bloginfo('name'); ?>",
+							"image": "<?php echo get_theme_file_uri('/images/logo.png'); ?>",
+							"telephone": "+<?php echo nebula_option('phone_number'); ?>",
+							<?php if ( $company_type === 'LocalBusiness' ): ?>
+								"priceRange": "",
+							<?php endif; ?>
+							"address": {
+								"@type": "PostalAddress",
+								"streetAddress": "<?php echo nebula_option('street_address'); ?>",
+								"addressLocality": "<?php echo nebula_option('locality'); ?>",
+								"addressRegion": "<?php echo nebula_option('region'); ?>",
+								"postalCode": "<?php echo nebula_option('postal_code'); ?>",
+								"addressCountry": "<?php echo nebula_option('country_name'); ?>"
+							}
 						}
 					}
 				}
