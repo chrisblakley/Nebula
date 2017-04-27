@@ -1,4 +1,0 @@
-[24-Apr-2017 15:17:01 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function do_action() in /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/libs/Options/Interface.php:99
-Stack trace:
-#0 {main}
-  thrown in /home3/cblakley/public_html/nebula/wp-content/themes/Nebula-master/libs/Options/Interface.php on line 99

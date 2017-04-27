@@ -956,7 +956,7 @@ if ( !trait_exists('Visitors') ){
 
         //Generate a new Nebula ID
         public function generate_nebula_id(){
-            return nebula_version('full') . '.' . bin2hex(openssl_random_pseudo_bytes(5)) . '.' . uniqid(); //Update to random_bytes() when moving to PHP7
+            return nebula()->version('full') . '.' . bin2hex(openssl_random_pseudo_bytes(5)) . '.' . uniqid(); //Update to random_bytes() when moving to PHP7
         }
 
         //Create necessary columns by comparing passed data to existing columns

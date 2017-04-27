@@ -489,6 +489,7 @@ if ( !trait_exists('Dashboard') ){
 
             do_action('nebula_administrative_metabox');
             echo '</ul>';
+            echo '<p><small><em>Manage administrative links in <strong><a href="themes.php?page=nebula_options?tab=administration">Nebula Options</a></strong>.</em></small></p>';
 
 			echo '<h3>Social</h3>';
 			echo '<ul>';
@@ -522,8 +523,7 @@ if ( !trait_exists('Dashboard') ){
 
             do_action('nebula_social_metabox');
             echo '</ul>';
-
-            echo '<p><small><em>Manage administrative links in <strong><a href="themes.php?page=nebula_options?tab=administration">Nebula Options</a></strong>.</em></small></p>';
+			echo '<p><small><em>Manage social links in <strong><a href="themes.php?page=nebula_options?filter=social">Nebula Options</a></strong>.</em></small></p>';
         }
 
         //Pinckney Hugo Group metabox

@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 4.11.22
+	Version: 5.0.0
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -86,7 +86,7 @@ form.nebula-search-iconable {position: relative; display: inline-block; margin: 
 		.lte-ie9 &,
 		.ie10 & {background: #eee;}
 	}
-	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: 4px; left: 7px; width: 12px; height: 12px; pointer-events: none; font-family: "FontAwesome"; font-size: rem(12px); line-height: rem(20px); text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: rem(9px); left: 7px; pointer-events: none; font-family: "FontAwesome"; font-size: rem(12px); line-height: 100%; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
 }
 
@@ -243,8 +243,8 @@ input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @inclu
 //jQuery UI Autocomplete Hero Search
 div#nebula-hero-formcon {text-align: center; display: none; @include media("lg"){display: block;};}
 form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
-	&:before {top: 9px; left: 10px; width: 16px; height: 16px; font-size: rem(16px); line-height: 16px;}
-	input {display: block; width: 100%; font-size: rem(18px); line-height: 23px; padding: 5px 6px 5px 30px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
+	&:before {left: 10px; font-size: rem(16px);}
+	input {display: block; width: 100%; font-size: rem(18px); line-height: 23px; padding: 5px 6px 5px 32px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
 		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 	}
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}

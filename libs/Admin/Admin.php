@@ -885,9 +885,6 @@ if ( !trait_exists('Admin') ){
         //Internal Search Keywords Metabox content
         function internal_search_keywords_meta_box($object, $box){
             wp_nonce_field(basename(__FILE__), 'nebula_internal_search_keywords_nonce');
-
-            var_dump( get_post_type() );
-
             ?>
             <div>
                 <p style="font-size: 12px; color: #444;">Use plurals since parts of words will return in search results (unless plural has a different spelling than singular; then add both).</p>

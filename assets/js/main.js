@@ -207,7 +207,8 @@ function isGoogleAnalyticsReady(){
 //Detect Battery Level
 function nebulaBattery(){
 	nebula.user.client.device.battery = false;
-	if ( typeof Modernizr != 'undefined' && has(Modernizr, 'batteryapi') ){
+
+	if ( has(navigator, 'getBattery') ){
 		navigator.getBattery().then(function(battery){
 			nebulaBatteryData(battery);
 			jQuery(battery).on('chargingchange levelchange', function(){
@@ -412,15 +413,6 @@ function eventTracking(){
 
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Button Click', btnText, jQuery(this).attr('href'));
-	});
-
-	//Outbound Links
-	nebula.dom.document.on('mousedown touch tap', "a[rel*='external']", function(e){
-		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Outbound Link', 'Click', jQuery(this).attr('href'));
-		nv('append', {'outbound_links': jQuery(this).attr('href')});
 	});
 
 	//PDF View/Download
@@ -1595,9 +1587,9 @@ function cf7Functions(){
 	}
 
 	//Track CF7 forms when they scroll into view (Autotrack). Currently not possible to change category/action/label for just these impressions.
-	jQuery('form.wpcf7-form').each(function(){
+	jQuery('form').each(function(){
 		ga('impressionTracker:observeElements', [{
-			'id': jQuery(this).closest('.wpcf7').attr('id'),
+			'id': jQuery(this).closest('.wpcf7').attr('id') || jQuery(this).attr('id'),
 			'threshold': 0.25
 		}]);
 	});
@@ -1606,7 +1598,7 @@ function cf7Functions(){
 	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(){
 		formID = jQuery(this).parents('div.wpcf7').attr('id');
 
-		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
+		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomMetrics['formStarts'], 1);
 			ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + jQuery(this).attr('id') + ')');
@@ -1675,7 +1667,7 @@ function cf7Functions(){
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
 	nebula.dom.document.on('wpcf7mailsent', function(e){
 		var formTime = nebulaTimer(e.target.id, 'end');
-		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length ){
+		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
 		}
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Success)');
@@ -1745,10 +1737,6 @@ function cf7LocalStorage(){
 
 //Form live (soft) validator
 function nebulaLiveValidator(){
-	if ( !jQuery('.nebula-validate').length ){ //@TODO "Nebula" 0: This isn't necessarily required... Maybe remove this restriction?
-		return false;
-	}
-
 	//Standard text inputs and select menus
 	jQuery('.nebula-validate-text, .nebula-validate-select').on('keyup change blur', function(e){
 		if ( jQuery(this).val() === '' ){
@@ -2896,7 +2884,7 @@ function has(obj, prop){
 
 //Functionality for selecting and copying text using Nebula Pre tags.
 function nebulaPre(){
-	try { //@TODO "Nebula" 0: Use Modernizr check here instead.
+	try {
 		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
 			var selectCopyText = 'Copy to clipboard';
 		} else if ( document.body.createTextRange || window.getSelection ){
@@ -3081,7 +3069,7 @@ function nebulaVideoTracking(){
 
 //Native HTML5 Video Tracking
 function nebulaHTML5VideoTracking(){
-	if ( jQuery('video').is(':visible').length ){ //@TODO "Nebula" 0: Better detection for Modernizr's video polyfill?
+	if ( jQuery('video').is(':visible').length ){
 		jQuery('video').each(function(){
 			var oThis = jQuery(this);
 			var id = oThis.attr('id');

@@ -69,7 +69,8 @@
 		}
 
 		gaCustomMetrics = {
-			formViews: '<?php echo nebula()->option('cm_formviews'); ?>',
+			formPageviews: '<?php echo nebula()->option('cm_formpageviews'); ?>',
+			formImpressions: '<?php echo nebula()->option('cm_formimpressions'); ?>',
 			formStarts: '<?php echo nebula()->option('cm_formstarts'); ?>',
 			formSubmissions: '<?php echo nebula()->option('cm_formsubmissions'); ?>',
 			notableDownloads: '<?php echo nebula()->option('cm_notabledownloads'); ?>',
@@ -269,9 +270,9 @@
 			}
 		?>
 
-		<?php if ( nebula()->option('cm_formviews') ): //Notable Form Views (to calculate against submissions) ?>
-			if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length ){
-				ga('set', gaCustomMetrics['formViews'], 1);
+		<?php if ( nebula()->option('cm_formpageviews') ): //Notable Form Views (to calculate against submissions) ?>
+			if ( !jQuery('form').find('input[name=s]').length && !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('form').parents('.ignore-form').length ){
+				ga('set', gaCustomMetrics['formPageviews'], 1);
 			}
 		<?php endif; ?>
 
@@ -372,7 +373,15 @@
 		}
 
 		//Autotrack Impressions (Scroll into view)
-		ga('require', 'impressionTracker'); //Elements are detected in main.js (or child.js)
+		ga('require', 'impressionTracker', {
+			hitFilter: function(model, element){
+				if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
+					if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
+						ga('set', gaCustomMetrics['formImpressions'], 1);
+					}
+				}
+			}
+		}); //Elements are detected in main.js (or child.js)
 
 		//Autotrack Max Scroll
 		ga('require', 'maxScrollTracker', {
@@ -383,6 +392,11 @@
 				}
 
 			},
+		});
+
+		//Autotrack Outbound Links
+		ga('require', 'outboundLinkTracker', {
+			events: ['click', 'auxclick', 'contextmenu']
 		});
 
 		<?php if ( nebula()->option('google_optimize_id') ): //Google Optimize ?>

@@ -1101,10 +1101,10 @@ trait Functions {
 	        }
 	    }
 
-	    $form = '<form id="searchform" class="form-inline" role="search" method="get" action="' . home_url('/') . '">
+	    $form = '<form id="searchform" class="form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
 					<div class="input-group mb-2 mr-sm-2 mb-sm-0">
 						<div class="input-group-addon"><i class="fa fa-search"></i></div>
-						<input id="s" class="form-control" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '">
+						<input id="s" class="form-control ignore-form" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '">
 					</div>
 
 					<button id="searchsubmit" class="btn btn-brand wp_search_submit" type="submit">Submit</button>
@@ -1119,8 +1119,8 @@ trait Functions {
 	    if ( $override !== false ){echo $override; return;}
 
 	    $form = '<div id="nebula-hero-formcon">
-				<form id="nebula-hero-search" class="nebula-search-iconable search" method="get" action="' . home_url('/') . '">
-					<input type="search" class="nebula-search open input search nofade" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
+				<form id="nebula-hero-search" class="nebula-search-iconable search ignore-form" method="get" action="' . home_url('/') . '">
+					<input type="search" class="nebula-search open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" x-webkit-speech />
 				</form>
 			</div>';
 	    return $form;
@@ -2071,9 +2071,9 @@ trait Functions {
 
     //Replace text on password protected posts to be more minimal
     public function password_form_simplify(){
-        $output  = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">';
+        $output  = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">';
         $output .= '<span>Password: </span>';
-        $output .= '<input name="post_password" type="password" size="20" />';
+        $output .= '<input type="password" class="ignore-form" name="post_password" size="20" />';
         $output .= '<input type="submit" name="Submit" value="Go" />';
         $output .= '</form>';
         return $output;

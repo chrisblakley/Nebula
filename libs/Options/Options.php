@@ -292,7 +292,8 @@ if ( !trait_exists('Options') ){
                 'cd_mqresolution' => '',
                 'cd_mqorientation' => '',
 
-                'cm_formviews' => '',
+                'cm_formpageviews' => '',
+                'cm_formimpressions' => '',
                 'cm_formstarts' => '',
                 'cm_formsubmissions' => '',
                 'cm_notabledownloads' => '',
@@ -1475,10 +1476,18 @@ if ( !trait_exists('Options') ){
                         </tr>
 
                         <tr class="short" valign="top">
-                            <th scope="row">Form Views*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+                            <th scope="row">Form Pageviews*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
                             <td>
-                                <input class="metric" type="text" name="nebula_options[cm_formviews]" value="<?php echo $nebula_options['cm_formviews']; ?>" />
+                                <input class="metric" type="text" name="nebula_options[cm_formpageviews]" value="<?php echo $nebula_options['cm_formpageviews']; ?>" />
                                 <p class="helper"><small>Tracks when a user views a page containing a form. <em>To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</em> <strong>Scope: Hit, Format: Integer</strong></small></p>
+                            </td>
+                        </tr>
+
+                        <tr class="short" valign="top">
+                            <th scope="row">Form Impressions*&nbsp;<a class="help" href="#" tabindex="-1"><i class="fa fa-question-circle"></i></a></th>
+                            <td>
+                                <input class="metric" type="text" name="nebula_options[cm_formimpressions]" value="<?php echo $nebula_options['cm_formimpressions']; ?>" />
+                                <p class="helper"><small>Tracks when a form is in view as the user scrolls. <em>To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</em> <strong>Scope: Hit, Format: Integer</strong></small></p>
                             </td>
                         </tr>
 

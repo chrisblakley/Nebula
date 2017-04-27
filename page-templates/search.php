@@ -50,7 +50,7 @@ get_header(); ?>
 							<?php the_content(); ?>
 						</div><!-- .entry-content -->
 
-						<form id="advanced-search-form" method="get" action="<?php echo esc_url(home_url('/')); ?>">
+						<form id="advanced-search-form" class="ignore-form" method="get" action="<?php echo esc_url(home_url('/')); ?>">
 							<a id="metatoggle" href="#">Metadata</a>
 							<div id="advanced-search-meta" class="row">
 								<div class="col-md-6 left-side">
@@ -115,7 +115,7 @@ get_header(); ?>
 								<div class="col">
 									<span class="contact-form-heading">Keyword Filter</span>
 									<div class="form-group" style="margin-bottom: 0;">
-										<input type="text" name="s" id="s" class="form-control no-autocomplete advanced-search-keyword" placeholder="Keyword filter" />
+										<input type="text" name="s" id="s" class="form-control no-autocomplete advanced-search-keyword ignore-form" placeholder="Keyword filter" />
 									</div>
 									<input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" style="float: right; position: absolute; left: -9999px;" />
 								</div><!--/col-->

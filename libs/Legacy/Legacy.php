@@ -6,7 +6,7 @@
 
 
 //Renamed function (5/10/2016)
-function nebula_breadcrumbs(){ nebula()->breadcrumb(); }
+function nebula_breadcrumbs(){ nebula()->breadcrumbs(); }
 function the_breadcrumb(){ nebula()->breadcrumbs(); }
 
 

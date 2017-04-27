@@ -6,9 +6,14 @@
 		$active_tab = strtolower($_GET['tab']);
 	}
 
-	$direct_option = '';
+	$direct_option = false;
 	if ( !empty($_GET['option']) ){
-		$direct_option = strtolower($_GET['option']);
+		$direct_option = $_GET['option'];
+	}
+
+	$pre_filter = false;
+	if ( !empty($_GET['filter']) ){
+		$pre_filter = $_GET['filter'];
 	}
 
 	$serverProtocol = 'http://';
@@ -50,6 +55,7 @@
 
 	.input-group {transition: opacity 0.25s;}
 	.inactive {opacity: 0.4;}
+		.inactive .nav-item,
 		.inactive input,
 		.inactive label {pointer-events: none;}
 
@@ -57,6 +63,9 @@
 		.toggle-more-help:hover {color: #0098d7;}
 	.nebula-help-text {margin: .25rem 0 0 0;}
 		.nebula-help-text.more-help {display: none;}
+
+	.direct-link {margin-left: 5px; color: #666;}
+		.direct-link:hover {color: #0098d7;}
 
 	.important-empty label {color: #d9534f; font-weight: bold;}
 		.important-warning {font-weight: normal; margin: .25rem 0 0 0;}
@@ -84,8 +93,6 @@
 	.highlight {padding: 10px 15px; background: #fcf8e3; border: 1px dotted #faf2cc;}
 </style>
 
-<!-- @todo: add nebula validation regex to some fields -->
-
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-3">
@@ -106,7 +113,7 @@
 
 				<div class="input-group">
 					<div class="input-group-addon"><i class="fa fa-fw fa-search"></i></div>
-					<input type="text" id="nebula-option-filter" class="form-control" placeholder="Filter options">
+					<input type="text" id="nebula-option-filter" class="form-control" value="<?php echo $pre_filter; ?>" placeholder="Filter options" />
 				</div>
 				<p id="reset-filter" class="hidden"><a class="btn btn-danger" href="#"><i class="fa fa-fw fa-times"></i> Reset Filter</a></p>
 
@@ -148,8 +155,8 @@
 							<h3>Site Information</h3>
 
 							<div class="form-group">
-								<label for="example_option">Site Owner</label>
-								<input type="text" id="example_option" class="form-control" placeholder="Nebula" />
+								<label for="site_owner">Site Owner</label>
+								<input type="text" name="nebula_options[site_owner]" id="site_owner" class="form-control" value="<?php //echo nebula()->option('site_owner'); //@todo: uncomment ?>" placeholder="<?php //echo bloginfo('name'); //@todo: uncomment ?>" />
 								<p class="nebula-help-text short-help form-text text-muted">The name of the company (or person) who this website is for.</p>
 								<p class="nebula-help-text more-help form-text text-muted">This is used when using nebula()->the_author(0) with author names disabled.</p>
 								<p class="option-keywords">recommended seo</p>
@@ -159,7 +166,7 @@
 								<label for="example_option">Contact Email</label>
 								<div class="input-group">
 									<div class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></div>
-									<input type="email" id="inlineFormInputGroup2" class="form-control" placeholder="chris@gearside.com">
+									<input type="email" id="inlineFormInputGroup2" class="form-control nebula-validate-email" placeholder="chris@gearside.com">
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The main contact email address.</p>
 								<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
@@ -171,8 +178,8 @@
 							<h3>Business Information</h3>
 
 							<div class="form-group">
-								<label for="example_option">Business Type</label>
-								<input type="text" id="example_option" class="form-control" placeholder="LocalBusiness" />
+								<label for="business_type">Business Type</label>
+								<input type="text" name="nebula_options[business_type]" id="business_type" class="form-control" value="<?php //echo nebula()->option('business_type'); //@todo: uncomment ?>" placeholder="LocalBusiness" />
 								<p class="nebula-help-text short-help form-text text-muted">This schema is used for Structured Data.</p>
 								<p class="nebula-help-text more-help form-text text-muted"><a href="https://schema.org/LocalBusiness" target="_blank">Use this reference under "More specific Types"</a> (click through to get the most specific possible). If you are unsure, you can use Organization, Corporation, EducationalOrganization, GovernmentOrganization, LocalBusiness, MedicalOrganization, NGO, PerformingGroup, or SportsOrganization. Details set using <a href="https://www.google.com/business/" target="_blank">Google My Business</a> will not be overwritten by Structured Data, so it is recommended to sign up and use Google My Business.</p>
 								<p class="option-keywords">schema.org json-ld linked data structured data knowledge graph recommended seo</p>
@@ -182,7 +189,7 @@
 								<label for="example_option">Phone Number</label>
 								<div class="input-group">
 									<div class="input-group-addon"><i class="fa fa-fw fa-phone"></i></div>
-									<input type="tel" id="inlineFormInputGroup2" class="form-control" placeholder="1-315-478-6700">
+									<input type="tel" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" placeholder="1-315-478-6700">
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</p>
 								<p class="option-keywords">recommended seo</p>
@@ -192,7 +199,7 @@
 								<label for="example_option">Fax Number</label>
 								<div class="input-group">
 									<div class="input-group-addon"><i class="fa fa-fw fa-fax"></i></div>
-									<input type="tel" id="inlineFormInputGroup2" class="form-control" placeholder="1-315-426-1392">
+									<input type="tel" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" placeholder="1-315-426-1392">
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The fax number used for Open Graph data. Use the format: "1-315-426-1392".</p>
 								<p class="option-keywords"></p>
@@ -205,13 +212,13 @@
 									<div class="col-sm-6">
 										<div class="input-group mb-2">
 											<div class="input-group-addon">Latitude</div>
-											<input type="text" id="inlineFormInputGroup" class="form-control" placeholder="43.0536854">
+											<input type="text" id="inlineFormInputGroup" class="form-control nebula-validate-regex" data-valid-regex="^-?\d+(.\d+)?$" placeholder="43.0536854">
 										</div>
 									</div><!--/col-->
 									<div class="col-sm-6">
 										<div class="input-group">
 											<div class="input-group-addon">Longitude</div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="-76.0536854">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="^-?\d+(.\d+)?$" placeholder="-76.0536854">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -251,6 +258,8 @@
 							<div class="form-group">
 								<label for="example_option">Business Hours</label>
 
+								<?php $time_regex = '^([0-1]?[0-9]:\d{2}\s?[ap]m)|([0-2]?[0-9]:\d{2})$'; ?>
+
 								<div class="row non-filter mb-2">
 									<div class="col-3">
 										<input type="checkbox" id="switch5" /><label for="switch5">Sunday</label>
@@ -258,13 +267,13 @@
 									<div class="col">
 										<div class="input-group" dependent-of="switch5">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="8:00am">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="8:00am">
 										</div>
 									</div><!--/col-->
 									<div class="col">
 										<div class="input-group" dependent-of="switch5">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="5:30pm">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="5:30pm">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -276,13 +285,13 @@
 									<div class="col">
 										<div class="input-group" dependent-of="switch4">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="8:00am">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="8:00am">
 										</div>
 									</div><!--/col-->
 									<div class="col">
 										<div class="input-group" dependent-of="switch4">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="5:30pm">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="5:30pm">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -294,13 +303,13 @@
 									<div class="col">
 										<div class="input-group" dependent-of="switch6">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="8:00am">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="8:00am">
 										</div>
 									</div><!--/col-->
 									<div class="col">
 										<div class="input-group" dependent-of="switch6">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="5:30pm">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="5:30pm">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -312,13 +321,13 @@
 									<div class="col">
 										<div class="input-group" dependent-of="switch7">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="8:00am">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="8:00am">
 										</div>
 									</div><!--/col-->
 									<div class="col">
 										<div class="input-group" dependent-of="switch7">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="5:30pm">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="5:30pm">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -330,13 +339,13 @@
 									<div class="col">
 										<div class="input-group" dependent-of="switch8">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="8:00am">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="8:00am">
 										</div>
 									</div><!--/col-->
 									<div class="col">
 										<div class="input-group" dependent-of="switch8">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="5:30pm">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="5:30pm">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -348,13 +357,13 @@
 									<div class="col">
 										<div class="input-group" dependent-of="switch9">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="8:00am">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="8:00am">
 										</div>
 									</div><!--/col-->
 									<div class="col">
 										<div class="input-group" dependent-of="switch9">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="5:30pm">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="5:30pm">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -366,13 +375,13 @@
 									<div class="col">
 										<div class="input-group" dependent-of="switch10">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="8:00am">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="8:00am">
 										</div>
 									</div><!--/col-->
 									<div class="col">
 										<div class="input-group" dependent-of="switch10">
 											<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
-											<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="5:30pm">
+											<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" placeholder="5:30pm">
 										</div>
 									</div><!--/col-->
 								</div><!--/row-->
@@ -399,7 +408,7 @@
 								<label for="facebookurl">Facebook</label>
 								<div class="input-group">
 									<div class="input-group-addon"><span><i class="fa fa-fw fa-facebook"></i> URL</span></div>
-									<input type="text" id="facebookurl" class="form-control" placeholder="https://www.facebook.com/PinckneyHugo">
+									<input type="text" id="facebookurl" class="form-control nebula-validate-url" placeholder="https://www.facebook.com/PinckneyHugo">
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The full URL of your Facebook page.</p>
 								<p class="option-keywords">social seo</p>
@@ -437,7 +446,7 @@
 								<label for="example_option">LinkedIn</label>
 								<div class="input-group">
 									<div class="input-group-addon"><span><i class="fa fa-fw fa-linkedin"></i> URL</span></div>
-									<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" />
+									<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-url" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" />
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The full URL of your LinkedIn profile.</p>
 								<p class="option-keywords">social seo</p>
@@ -447,7 +456,7 @@
 								<label for="example_option">Youtube</label>
 								<div class="input-group">
 									<div class="input-group-addon"><span><i class="fa fa-fw fa-youtube"></i> URL</span></div>
-									<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="https://www.youtube.com/user/pinckneyhugo">
+									<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-url" placeholder="https://www.youtube.com/user/pinckneyhugo">
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The full URL of your Youtube channel.</p>
 								<p class="option-keywords">social seo</p>
@@ -457,7 +466,7 @@
 								<label for="example_option">Instagram</label>
 								<div class="input-group">
 									<div class="input-group-addon"><span><i class="fa fa-fw fa-instagram"></i> URL</span></div>
-									<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="https://www.instagram.com/pinckneyhugo">
+									<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-url" placeholder="https://www.instagram.com/pinckneyhugo">
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The full URL of your Instagram profile.</p>
 								<p class="option-keywords">social seo</p>
@@ -467,7 +476,7 @@
 								<label for="example_option">Pinterest</label>
 								<div class="input-group">
 									<div class="input-group-addon"><span><i class="fa fa-fw fa-pinterest"></i> URL</span></div>
-									<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="https://www.instagram.com/pinckneyhugo">
+									<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-url" placeholder="https://www.pinterest.com/pinckneyhugo">
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile.</p>
 								<p class="option-keywords">social seo</p>
@@ -477,7 +486,7 @@
 								<label for="example_option">Google+</label>
 								<div class="input-group">
 									<div class="input-group-addon"><span><i class="fa fa-fw fa-google-plus"></i> URL</span></div>
-									<input type="text" id="inlineFormInputGroup2" class="form-control" placeholder="https://plus.google.com/123456789" />
+									<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-url" placeholder="https://plus.google.com/123456789" />
 								</div>
 								<p class="nebula-help-text short-help form-text text-muted">The full URL of your Google+ page.</p>
 								<p class="option-keywords">social seo</p>
@@ -510,8 +519,8 @@
 					<div class="col-xl-8">
 						<div class="option-group">
 							<div class="form-group">
-								<label for="exampleSelect2">Bootstrap Version</label>
-								<select id="exampleSelect2" class="form-control">
+								<label for="exampleSelect1">Bootstrap Version</label>
+								<select id="exampleSelect1" class="form-control">
 									<option>Latest (IE10+)</option>
 									<option>Bootstrap 4 alpha 5 (IE9+)</option>
 									<option>Bootstrap 3 (IE8+)</option>
@@ -586,7 +595,7 @@
 							<div class="form-group">
 								<input type="checkbox" id="switch20" /><label for="switch20">Sass</label>
 								<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: Disabled)</p>
-								<p class="nebula-help-text more-help form-text text-muted">Save Nebula Options to manually process all SCSS files. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong></p>
+								<p class="nebula-help-text more-help form-text text-muted">Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong></p>
 								<p class="option-keywords">moderate page speed impact</p>
 							</div>
 
@@ -668,7 +677,7 @@
 							</div>
 
 							<div class="form-group">
-								<input type="checkbox" id="switch25" /><label for="switch25">Plugin Warning</label>
+								<input type="checkbox" id="switch26" /><label for="switch26">Plugin Warning</label>
 								<p class="nebula-help-text short-help form-text text-muted">Control whether or not the plugin update warning appears on admin pages. (Default: Enabled)</p>
 								<p class="option-keywords">discretionary</p>
 							</div>
@@ -696,8 +705,8 @@
 							</div>
 
 							<div class="form-group" dependent-of="switch11">
-								<label for="exampleSelect2">Staging Theme</label>
-								<select id="exampleSelect2" class="form-control">
+								<label for="exampleSelect3">Staging Theme</label>
+								<select id="exampleSelect3" class="form-control">
 									<option>None</option>
 									<option>Theme Name</option>
 									<option>Theme Name</option>
@@ -707,8 +716,8 @@
 							</div>
 
 							<div class="form-group" dependent-of="switch11">
-								<label for="exampleSelect2">Production (Live) Theme</label>
-								<select id="exampleSelect2" class="form-control">
+								<label for="exampleSelect4">Production (Live) Theme</label>
+								<select id="exampleSelect4" class="form-control">
 									<option>None</option>
 									<option>Theme Name</option>
 									<option>Theme Name</option>
@@ -747,7 +756,7 @@
 						<div class="option-group">
 							<div class="form-group important-option">
 								<label for="gatrackingid">Google Analytics Tracking ID</label>
-								<input type="text" id="gatrackingid" class="form-control" placeholder="UA-00000000-1" />
+								<input type="text" id="gatrackingid" class="form-control nebula-validate-regex" data-valid-regex="ua-\d+-\d+" placeholder="UA-00000000-1" />
 								<p class="nebula-help-text short-help form-text text-muted">This will add the tracking number to the appropriate locations.</p>
 								<p class="option-keywords">remote resource recommended minor page speed impact</p>
 							</div>
@@ -818,13 +827,15 @@
 							<h3>Custom Dimensions</h3>
 							<p class="text-muted">These are optional dimensions that can be passed into Google Analytics which allows for 20 custom dimensions (or 200 for Google Analytics Premium). To set these up, define the Custom Dimension in the Google Analytics property, then paste the dimension index string ("dimension1", "dimension12", etc.) into the appropriate input field below. The scope for each dimension is noted in their respective help sections. Dimensions that require additional code are marked with a *.</p>
 
+							<?php $dimension_regex = '^dimension([0-9]{1,3})$'; ?>
+
 							<div class="option-sub-group">
 								<h4>Post Data</h4>
 
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Author</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
 									<p class="option-keywords"></p>
@@ -833,7 +844,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Categories</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
 									<p class="option-keywords"></p>
@@ -842,7 +853,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Tags</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sends a string of all the post's tags to the pageview hit. Scope: Hit</p>
 									<p class="option-keywords"></p>
@@ -851,7 +862,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Word Count</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sends word count range for single posts. Scope: Hit</p>
 									<p class="option-keywords"></p>
@@ -860,7 +871,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Publish Year</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sends the year the post was published. Scope: Hit</p>
 									<p class="option-keywords"></p>
@@ -869,7 +880,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Scroll Depth</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Information tied to the event such as "Scanner" or "Reader". Scope: Hit</p>
 									<p class="nebula-help-text more-help form-text text-muted">This dimension is tied to events, so pageviews will not have data (use the Top Event report).</p>
@@ -883,7 +894,7 @@
 								<div class="form-group" dependent-or="switch4 switch5 switch6 switch7 switch8 switch9 switch10">
 									<div class="input-group">
 										<div class="input-group-addon">Business Hours</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="dependent-note hidden">This option is dependent on Business Hours (Metadata tab).</p>
 									<p class="nebula-help-text short-help form-text text-muted">Passes "During Business Hours", or "Non-Business Hours". Scope: Hit</p>
@@ -893,7 +904,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Relative Time</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sends the relative time (Ex: "Late Morning", "Early Evening", etc.) based on the business timezone (via WordPress settings). Scope: Hit</p>
 									<p class="option-keywords"></p>
@@ -902,7 +913,7 @@
 								<div class="form-group" dependent-of="switch19">
 									<div class="input-group">
 										<div class="input-group-addon">Weather</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
 									<p class="nebula-help-text short-help form-text text-muted">Sends the current weather conditions (at the business location) as a dimension. Scope: Hit</p>
@@ -912,7 +923,7 @@
 								<div class="form-group" dependent-of="switch19">
 									<div class="input-group">
 										<div class="input-group-addon">Temperature</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
 									<p class="nebula-help-text short-help form-text text-muted">Sends temperature ranges (at the business location) in 5&deg;F intervals. Scope: Hit</p>
@@ -926,7 +937,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Role</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sends the current user's role (as well as staff affiliation if available) for associated users. Scope: User</p>
 									<p class="nebula-help-text more-help form-text text-muted">Session ID does contain this information, but this is explicitly more human readable (and scoped to the user).</p>
@@ -936,7 +947,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Session ID</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
 									<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=session+id%20help" target="_blank">Session ID Documentation &raquo;</a></p>
@@ -946,7 +957,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">User ID</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">If allowing visitors to sign up to create WordPress accounts, this will send user IDs to Google Analytics. Scope: User</p>
 									<p class="nebula-help-text more-help form-text text-muted">User IDs are also passed in the Session ID, but this scope is tied more specifically to the user (it can often capture data even when they are not currently logged in).</p>
@@ -956,7 +967,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Facebook ID</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Send Facebook ID to Google Analytics when using Facebook Connect API. Scope: User</p>
 									<p class="nebula-help-text more-help form-text text-muted">Add the ID to this URL to view it: <code>https://www.facebook.com/app_scoped_user_id/</code></p>
@@ -966,7 +977,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Local Timestamp</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Adds a timestamp (in the user's local time) with timezone offset. Scope: Hit</p>
 									<p class="nebula-help-text more-help form-text text-muted">Ex: "1449332547 (2015/12/05 11:22:26.886 UTC-05:00)". Can be compared to the server time stored in the Session ID.</p>
@@ -976,7 +987,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">First Interaction</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Stores a timestamp for the first time the user visited the site. Scope: User</p>
 									<p class="option-keywords"></p>
@@ -985,7 +996,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Window Type</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Stores the type of window the site is being accessed from (Ex: Iframe or Standalone App). Scope: Hit</p>
 									<p class="nebula-help-text more-help form-text text-muted">This only records alternate window types (non-standard browser windows).</p>
@@ -995,7 +1006,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Geolocation</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Allows latitude and longitude coordinates to be sent after being detected. Scope: Session</p>
 									<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work! </p>
@@ -1005,7 +1016,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Geolocation Accuracy</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Allows geolocation accuracy to be sent after being detected. Scope: Session</p>
 									<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work!</p>
@@ -1015,7 +1026,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Geolocation Name</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Allows named location information to be sent after being detected using map polygons. Scope: Session</p>
 									<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work!</p>
@@ -1025,7 +1036,7 @@
 								<div class="form-group" dependent-of="switch17">
 									<div class="input-group">
 										<div class="input-group-addon">Ad Blocker</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="dependent-note hidden">This option is dependent on Ad Block Detection being enabled.</p>
 									<p class="nebula-help-text short-help form-text text-muted">Detects if the user is blocking ads. Scope: Session</p>
@@ -1036,7 +1047,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Media Query: Breakpoint</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Detect which media query breakpoint is associated with this hit. Scope: Hit</p>
 									<p class="option-keywords">autotrack</p>
@@ -1045,7 +1056,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Media Query: Resolution</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Detect the resolution factor associated with this hit. Scope: Hit</p>
 									<p class="option-keywords">autotrack</p>
@@ -1054,7 +1065,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Media Query: Orientation</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Detect the device orientation associated with this hit. Scope: Hit</p>
 									<p class="option-keywords">autotrack</p>
@@ -1063,7 +1074,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Notable POI</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Stores named locations when detected. Scope: User</p>
 									<p class="nebula-help-text more-help form-text text-muted">Stores named IP addresses (from the Administration tab). Also passes data using the ?poi query string (useful for email marketing using personalization within links). Also sends value of input fields with class "nebula-poi" on form submits (when applicable).</p>
@@ -1077,7 +1088,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Event Intent</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Log whether the event was true, or just a possible intention. Scope: Hit</p>
 									<p class="option-keywords">recommended</p>
@@ -1086,7 +1097,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Contact Method</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">If the user triggers a contact event, the method of contact is stored here. Scope: Session</p>
 									<p class="option-keywords"></p>
@@ -1095,7 +1106,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Form Timing</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sends form timings along with the each submission. Scope: Hit</p>
 									<p class="nebula-help-text more-help form-text text-muted">Timings are automatically sent to Google Analytics in Nebula, but are sampled in the User Timings report. Data will be in milliseconds.</p>
@@ -1105,7 +1116,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Video Watcher</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when videos are started and finished. Scope: Session</p>
 									<p class="option-keywords"></p>
@@ -1114,7 +1125,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Ecommerce Cart</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">If the user has any product(s) in their cart. Scope: Hit</p>
 									<p class="option-keywords">ecommerce woocommerce</p>
@@ -1123,7 +1134,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Ecommerce Customer</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when a user completes the checkout process in WooCommerce. Scope: User</p>
 									<p class="nebula-help-text more-help form-text text-muted">Appears in Google Analytics as "Order Received".</p>
@@ -1138,13 +1149,15 @@
 							<h3>Custom Metrics</h3>
 							<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in Calculated Metrics formulas.</p>
 
+							<?php $metric_regex = '^metric([0-9]{1,3})$'; ?>
+
 							<div class="option-sub-group">
 								<h4>Conversion Data</h4>
 
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Notable Downloads</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a user downloads a notable file. Scope: Hit, Format: Integer</p>
 									<p class="nebula-help-text short-help form-text text-muted">To use, add the class "notable" to either the or its parent.</p>
@@ -1153,38 +1166,48 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon">Form Views</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<div class="input-group-addon">Form Page Views</div>
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a user views a page containing a form. Scope: Hit, Format: Integer</p>
-									<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</p>
+									<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
+									<p class="option-keywords"></p>
+								</div>
+
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-addon">Form Impressions</div>
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
+									</div>
+									<p class="nebula-help-text short-help form-text text-muted">Tracks when a form is in view as the user scrolls. Scope: Hit, Format: Integer</p>
+									<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
 									<p class="option-keywords"></p>
 								</div>
 
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Form Starts</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins entering a form. Scope: Hit, Format: Integer</p>
-									<p class="nebula-help-text short-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</p>
+									<p class="nebula-help-text short-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
 									<p class="option-keywords"></p>
 								</div>
 
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Form Submissions</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a user submits a form. Scope: Hit, Format: Integer</p>
-									<p class="nebula-help-text short-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form or somewhere inside it.</p>
+									<p class="nebula-help-text short-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
 									<p class="option-keywords"></p>
 								</div>
 
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Engaged Readers</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Counts when a user has completed reading an article (and is not determined to be a "scanner"). Scope: Hit, Format: Integer</p>
 									<p class="option-keywords"></p>
@@ -1193,7 +1216,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Max Scroll Percent</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Calculates the maximum scroll percentage the user reached per page. Scope: Hit, Format: Integer</p>
 									<p class="nebula-help-text short-help form-text text-muted">Use a calculated Metric in Google Analytics called "Avg. Max Scroll Percentage" of {{Max Scroll Percentage}}/(100*{{Unique Pageviews}}) to show Average Max Scroll Percentage per page. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Referral Source", etc.</p>
@@ -1207,7 +1230,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Video Starts</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins playing a video. Scope: Hit, Format: Integer</p>
 									<p class="option-keywords"></p>
@@ -1216,7 +1239,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Video Play Time</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks playing duration when a user pauses or completes a video. Scope: Hit, Format: Time</p>
 									<p class="option-keywords"></p>
@@ -1225,7 +1248,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Video Completions</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a user completes playing a video. Scope: Hit, Format: Integer</p>
 									<p class="option-keywords"></p>
@@ -1238,7 +1261,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Word Count</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Sends word count for single posts. Scope: Hit, Format: Integer</p>
 									<p class="option-keywords"></p>
@@ -1247,7 +1270,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Autocomplete Searches</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a set of autocomplete search results is returned to the user (count is the search, not the result quantity). Scope: Hit, Format: Integer</p>
 									<p class="option-keywords"></p>
@@ -1256,7 +1279,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Autocomplete Search Clicks</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">Tracks when a user clicks an autocomplete search result. Scope: Hit, Format: Integer</p>
 									<p class="option-keywords"></p>
@@ -1265,7 +1288,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Page Visible</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the visible state (tab/window visible) Scope: Hit, Format: Time</p>
 									<p class="option-keywords">autotrack</p>
@@ -1274,7 +1297,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">Page Hidden</div>
-										<input type="text" id="inlineFormInputGroup2" class="form-control">
+										<input type="text" id="inlineFormInputGroup2" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the hidden state (tab/window not visible) Scope: Hit, Format: Time</p>
 									<p class="option-keywords">autotrack</p>
@@ -1549,11 +1572,11 @@
 					</div><!--/col-->
 					<div class="col-xl-8">
 						<div class="option-group">
-							<h3>Useful Links</h3>
+							<h3>Dashboard Reference Links</h3>
 
 							<div class="form-group">
 								<label for="example_option">Server Control Panel</label>
-								<input type="text" id="example_option" class="form-control" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" />
+								<input type="text" id="example_option" class="form-control nebula-validate-url" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" />
 								<p class="nebula-help-text short-help form-text text-muted">Link to the control panel of the hosting account.</p>
 								<p class="nebula-help-text more-help form-text text-muted">cPanel on this domain would be: <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a></p>
 								<p class="option-keywords"></p>
@@ -1561,7 +1584,7 @@
 
 							<div class="form-group">
 								<label for="example_option">Hosting</label>
-								<input type="text" id="example_option" class="form-control" placeholder="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>/" />
+								<input type="text" id="example_option" class="form-control nebula-validate-url" placeholder="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>/" />
 								<p class="nebula-help-text short-help form-text text-muted">Link to the server host for easy access to support and other information.</p>
 								<p class="nebula-help-text more-help form-text text-muted">Server detected as <a href="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>" target="_blank">http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?></a></p>
 								<p class="option-keywords"></p>
@@ -1569,30 +1592,30 @@
 
 							<div class="form-group">
 								<label for="example_option">Domain Registrar</label>
-								<input type="text" id="example_option" class="form-control" />
+								<input type="text" id="example_option" class="form-control nebula-validate-url" />
 								<p class="nebula-help-text short-help form-text text-muted">Link to the domain registrar used for access to pointers, forwarding, and other information.</p>
 								<p class="option-keywords"></p>
 							</div>
 
-							<div class="form-group"><!-- @todo: make this a toggle? The label would need to be more clear... -->
-								<label for="example_option">Google AdSense</label>
-								<input type="text" id="example_option" class="form-control" placeholder="https://www.google.com/adsense/app" />
-								<p class="nebula-help-text short-help form-text text-muted">Direct link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account.</p>
-								<p class="option-keywords">ads</p>
+							<div class="form-group">
+								<input type="checkbox" id="switch45" /><label for="switch18">Google AdSense</label>
+								<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account. (Default: Disabled)</p>
+								<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
+								<p class="option-keywords">discretionary</p>
 							</div>
 
-							<div class="form-group"><!-- @todo: make this a toggle? The label would need to be more clear... -->
-								<label for="example_option">Amazon Associates</label>
-								<input type="text" id="example_option" class="form-control" placeholder="https://affiliate-program.amazon.com/home" />
-								<p class="nebula-help-text short-help form-text text-muted">Direct link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank">Amazon Associates</a> account.</p>
-								<p class="option-keywords">amazon affiliates ads</p>
+							<div class="form-group">
+								<input type="checkbox" id="switch46" /><label for="switch18">Amazon Associates</label>
+								<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank">Amazon Associates</a> account. (Default: Disabled)</p>
+								<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
+								<p class="option-keywords">discretionary</p>
 							</div>
 
-							<div class="form-group"><!-- @todo: make this a toggle? The label would need to be more clear... -->
-								<label for="example_option">Mention</label>
-								<input type="text" id="example_option" class="form-control" placeholder="https://web.mention.com/" />
-								<p class="nebula-help-text short-help form-text text-muted">Direct link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account.</p>
-								<p class="option-keywords"></p>
+							<div class="form-group">
+								<input type="checkbox" id="switch46" /><label for="switch18">Mention</label>
+								<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account. (Default: Disabled)</p>
+								<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
+								<p class="option-keywords">discretionary</p>
 							</div>
 
 							<div class="form-group">
@@ -1724,6 +1747,7 @@
 <script>
 	jQuery(function(){
 		checkWindowHeightForStickyNav();
+		nebulaLiveValidator();
 
 		//If there are no active tabs on load (like if wrong ?tab= parameter was used)
 		if ( !jQuery('#options-navigation li a.active').length ){
@@ -1738,12 +1762,16 @@
 			}, 500);
 		});
 
-		if ( jQuery('#<?php echo $direct_option; ?>').length ){
-			jQuery('#<?php echo $direct_option; ?>').closest('.form-group').addClass('highlight'); //@todo: change to JS get() for &option= parameter?
-			jQuery('html, body').animate({
-				scrollTop: jQuery('#<?php echo $direct_option; ?>').offset().top-35
-			}, 500);
-		}
+		<?php if ( $direct_option ): ?>
+			if ( jQuery('#<?php echo $direct_option; ?>').length ){
+				jQuery('#<?php echo $direct_option; ?>').closest('.form-group').addClass('highlight'); //@todo: change to JS get() for &option= parameter?
+				jQuery('html, body').animate({
+					scrollTop: jQuery('#<?php echo $direct_option; ?>').offset().top-35
+				}, 500);
+			}
+		<?php endif; ?>
+
+		jQuery('#nebula-option-filter').trigger('keyup').focus(); //Trigger if a ?filter= parameter is used.
 
 		checkDependents(); //Check all dependents
 		checkImportants();
@@ -1753,8 +1781,14 @@
 		});
 
 		jQuery('.short-help').each(function(){
+			//Direct Link icons
+			var thisTab = jQuery(this).closest('.tab-pane').attr('id');
+			var thisOption = jQuery(this).closest('.form-group').find('.form-control').attr('id');
+			jQuery(this).append('<a class="direct-link" href="<?php echo strstr($_SERVER['REQUEST_URI'], '?', true) ?: $_SERVER['REQUEST_URI']; //@todo: replace this with wordpress get page url (without query strings) ?>?tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option"><i class="fa fa-fw fa-link"></i></a>');
+
+			//More Help expander icons
 			if ( jQuery(this).parent().find('.more-help').length ){
-				jQuery(this).append('<a class="toggle-more-help" href="#"><i class="fa fa-fw fa-question-circle"></i></a>');
+				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information"><i class="fa fa-fw fa-question-circle"></i></a>');
 			}
 		});
 
@@ -1930,7 +1964,28 @@
 	});
 
 
+
+
+
+
+
+
+
 	//Remove these functions after moving to WP:
+
+	//Regex Patterns
+	//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
+	window.regexPattern = {
+		email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, //From JS Lint: Expected ']' and instead saw '['.
+		phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/, //To allow letters, you'll need to convert them to their corresponding number before matching this RegEx.
+		date: {
+			mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
+			ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
+		},
+		hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
+		ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+		url: /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/,
+	};
 
 
 	function keywordSearch(container, parent, value, filteredClass){
@@ -1948,36 +2003,190 @@
 
 
 	//Offset must be an integer
-function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
-	if ( !offset ){
-		var offset = 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
-	}
-
-	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
-	if ( element ){
-		var willScroll = true;
-		if ( onlyWhenBelow ){
-			var elementTop = element.offset().top-offset;
-			var viewportTop = nebula.dom.document.scrollTop();
-			if ( viewportTop-elementTop <= 0 ){
-				willScroll = false;
-			}
+	function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
+		if ( !offset ){
+			var offset = 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 		}
 
-		if ( willScroll ){
-			if ( !milliseconds ){
-				var milliseconds = 500;
+		//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
+		if ( element ){
+			var willScroll = true;
+			if ( onlyWhenBelow ){
+				var elementTop = element.offset().top-offset;
+				var viewportTop = nebula.dom.document.scrollTop();
+				if ( viewportTop-elementTop <= 0 ){
+					willScroll = false;
+				}
 			}
 
-			jQuery('html, body').animate({
-				scrollTop: element.offset().top-offset
-			}, milliseconds, function(){
-				//callback
-			});
+			if ( willScroll ){
+				if ( !milliseconds ){
+					var milliseconds = 500;
+				}
+
+				jQuery('html, body').animate({
+					scrollTop: element.offset().top-offset
+				}, milliseconds, function(){
+					//callback
+				});
+			}
+
+			return false;
+		}
+	}
+
+	function nebulaLiveValidator(){
+		//Standard text inputs and select menus
+		jQuery('.nebula-validate-text, .nebula-validate-select').on('keyup change blur', function(e){
+			if ( jQuery(this).val() === '' ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else if ( jQuery.trim(jQuery(this).val()).length ){
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				if ( e.type === 'keyup' ){
+					applyValidationClasses(jQuery(this), 'warning', false);
+				} else {
+					applyValidationClasses(jQuery(this), 'danger', true);
+				}
+			}
+		});
+
+		//RegEx input
+		jQuery('.nebula-validate-regex').on('keyup change blur', function(e){
+			var pattern = new RegExp(jQuery(this).attr('data-valid-regex'));
+
+			if ( jQuery(this).val() === '' ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else if ( pattern.test(jQuery(this).val()) ){
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				if ( e.type === 'keyup' ){
+					applyValidationClasses(jQuery(this), 'warning', false);
+				} else {
+					applyValidationClasses(jQuery(this), 'danger', true);
+				}
+			}
+		});
+
+		//URL inputs
+		jQuery('.nebula-validate-url').on('keyup change blur', function(e){
+			if ( jQuery(this).val() === '' ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else if ( regexPattern.url.test(jQuery(this).val()) ){
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				if ( e.type === 'keyup' ){
+					applyValidationClasses(jQuery(this), 'warning', false);
+				} else {
+					applyValidationClasses(jQuery(this), 'danger', true);
+				}
+			}
+		});
+
+		//Email address inputs
+		jQuery('.nebula-validate-email').on('keyup change blur', function(e){
+			if ( jQuery(this).val() === '' ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else if ( regexPattern.email.test(jQuery(this).val()) ){
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				if ( e.type === 'keyup' ){
+					applyValidationClasses(jQuery(this), 'warning', false);
+				} else {
+					applyValidationClasses(jQuery(this), 'danger', true);
+				}
+			}
+		});
+
+		//Phone number inputs
+		jQuery('.nebula-validate-phone').on('keyup change blur', function(e){
+			if ( jQuery(this).val() === '' ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else if ( regexPattern.phone.test(jQuery(this).val()) ){
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				if ( e.type === 'keyup' ){
+					applyValidationClasses(jQuery(this), 'warning', false);
+				} else {
+					applyValidationClasses(jQuery(this), 'danger', true);
+				}
+			}
+		});
+
+		//Date inputs
+		jQuery('.nebula-validate-date').on('keyup change blur', function(e){
+			if ( jQuery(this).val() === '' ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		});
+
+		//Textarea
+		jQuery('.nebula-validate-textarea').on('keyup change blur', function(e){
+			if ( jQuery(this).val() === '' ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else if ( jQuery.trim(jQuery(this).val()).length ){
+				if ( e.type === 'blur' ){
+					applyValidationClasses(jQuery(this), 'success', false);
+				} else {
+					applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
+				}
+			} else {
+				if ( e.type === 'blur' ){
+					applyValidationClasses(jQuery(this), 'danger', true);
+				} else {
+					applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
+				}
+			}
+		});
+
+		//Checkbox and Radio
+		jQuery('.nebula-validate-checkbox, .nebula-validate-radio').on('change blur', function(e){
+			if ( jQuery(this).parents('.form-group').find('input:checked').length ){
+				applyValidationClasses(jQuery(this), 'reset', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		});
+	}
+
+	//Apply Bootstrap appropriate validation classes to appropriate elements
+	function applyValidationClasses(element, validation, showFeedback){
+		if ( typeof element === 'string' ){
+			element = jQuery(element);
+		} else if ( typeof element !== 'object' ) {
+			return false;
 		}
 
-		return false;
+		if ( validation === 'success' || validation === 'valid' ){
+			element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-success')
+				.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success')
+				.find('.wpcf7-not-valid-tip').remove();
+		} else if ( validation === 'warning' ){
+			element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-warning')
+				.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning')
+				.find('.wpcf7-not-valid-tip').remove();
+		} else if ( validation === 'danger' || validation === 'error' || validation === 'invalid' ){
+			element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-danger')
+				.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
+		} else if ( validation === 'reset' || validation === 'remove' ){
+			element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid')
+				.parents('.form-group').removeClass('has-danger has-warning has-success')
+				.find('.wpcf7-not-valid-tip').remove();
+		}
+
+		if ( validation === 'feedback' || showFeedback ){
+			element.parents('.form-group').find('.form-control-feedback').removeClass('hidden');
+		} else {
+			element.parents('.form-group').find('.form-control-feedback').addClass('hidden');
+		}
 	}
-}
 
 </script>
