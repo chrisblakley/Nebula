@@ -49,14 +49,14 @@ if ( !trait_exists('Admin') ){
             add_filter('admin_body_class', array($this, 'admin_body_classes'));
 
             //Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-            if ( nebula()->option('admin_bar', 'disabled') ){
+            if ( !nebula()->option('admin_bar') ){ //If Admin Bar is disabled
                 show_admin_bar(false);
 
                 add_action('wp_print_scripts', array($this, 'dequeue_admin_bar'), 9999);
                 add_action('wp_print_styles', array($this, 'dequeue_admin_bar'), 9999);
                 add_action('init', array($this, 'admin_only_features')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
                 add_filter('wp_head', array($this, 'remove_admin_bar_style_frontend'), 99);
-            } else {
+            } else { //Else the admin bar is enabled
                 add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_logo'), 0);
 
                 //Create custom menus within the WordPress Admin Bar
@@ -70,7 +70,7 @@ if ( !trait_exists('Admin') ){
             }
 
             //Disable Wordpress Core update notifications in WP Admin
-            if ( nebula()->option('wp_core_updates_notify', 'disabled') ){
+            if ( !nebula()->option('wp_core_updates_notify') ){
                 add_filter('pre_site_transient_update_core', '__return_null');
             }
 
@@ -324,12 +324,55 @@ if ( !trait_exists('Admin') ){
                 }
             }
 
+			//Check for important warnings for the Admin Bar
+			$nebula_warning_icon = '';
+			if ( nebula()->option('admin_notices') ){
+				if ( !nebula()->option('ga_tracking_id') ){
+				    $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+				    $nebula_warning_description = 'Google Analytics tracking ID is currently not set!';
+				    $nebula_warning_href = 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id';
+				}
+
+				//Check for "Discourage searching engines..." setting
+				if ( get_option('blog_public') == 0 ){
+				    $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+				    $nebula_warning_description = 'Search Engine Visibility is currently disabled!';
+				    $nebula_warning_href = 'options-reading.php';
+				}
+
+				//Check Prototype Mode
+				if ( !nebula()->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				    $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+				    $nebula_warning_description = 'Prototype Mode is disabled, but Multiple Theme plugin is still active.';
+				    $nebula_warning_href = 'plugins.php';
+				}
+
+				//Check Enhanced Ecommerce GA Tracking ID
+				if ( is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
+				    $ee_ga_settings = get_option('woocommerce_enhanced_ecommerce_google_analytics_settings');
+				    if ( empty($ee_ga_settings['ga_id']) ){
+				        $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+					    $nebula_warning_description = 'WooCommerce Enhanced Ecommerce is missing a Google Analytics ID!';
+					    $nebula_warning_href = 'admin.php?page=wc-settings&tab=integration';
+				    }
+				}
+			}
+
             $wp_admin_bar->add_node(array(
                 'id' => 'nebula',
-                'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula',
+                'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula' . $nebula_warning_icon,
                 'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=nebula',
                 'meta' => array('target' => '_blank')
             ));
+
+			if ( !empty($nebula_warning_icon) ){
+				$wp_admin_bar->add_node(array(
+                    'parent' => 'nebula',
+                    'id' => 'nebula-warning',
+                    'title' => '<i class="nebula-admin-fa fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . $nebula_warning_description,
+                    'href' => get_admin_url() . $nebula_warning_href,
+                ));
+			}
 
             if ( nebula()->option('scss') ){
                 $scss_last_processed = ( nebula()->data('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula()->data('scss_last_processed')) : 'Never';
@@ -587,7 +630,7 @@ if ( !trait_exists('Admin') ){
 
                 //Check for Google Analytics Tracking ID
                 if ( !nebula()->option('ga_tracking_id') ){
-                    echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options?tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!</p></div>';
+                    echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!</p></div>';
                 }
 
                 //Check for "Discourage searching engines..." setting
@@ -601,7 +644,7 @@ if ( !trait_exists('Admin') ){
                 }
 
                 //Check if all SCSS files were processed manually.
-                if ( nebula()->option('scss', 'enabled') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
+                if ( nebula()->option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
                     if ( nebula()->is_dev() || nebula()->is_client() ){
                         echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
                     } else {
@@ -610,8 +653,8 @@ if ( !trait_exists('Admin') ){
                 }
 
                 //If Prototype mode is disabled, but Multiple Theme plugin is still activated
-                if ( nebula()->option('prototype_mode', 'disabled') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-                    echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options?tab=functions&option=prototype_mode">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
+                if ( !nebula()->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+                    echo '<div class="nebula-admin-notice error"><p><a href="plugins.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
                 }
 
                 //If Enhanced Ecommerce Plugin is missing Google Analytics Tracking ID
@@ -637,7 +680,7 @@ if ( !trait_exists('Admin') ){
 
                 //Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
                 if ( nebula()->option('google_optimize_id') ){
-                    echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options?tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
+                    echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
                 }
             }
 

@@ -17,15 +17,63 @@ jQuery(function(){
 	});
 
 	if ( !jQuery('li#menu-comments').is(':visible') ){
-		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options?tab=functions&option=comments">Nebula Options</a>)</small>.');
+		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small>.');
 	}
 
-	businessHoursCheck();
-	jQuery('.businessday input[type="checkbox"]').on('click tap touch', function(){
-		businessHoursCheck();
-	});
+	//If Nebula Options Page
+	if ( window.location.href.indexOf('themes.php?page=nebula_options') > 0 ){
 
+		checkWindowHeightForStickyNav();
+		nebulaLiveValidator();
+
+		//If there are no active tabs on load (like if wrong ?tab= parameter was used)
+		if ( !jQuery('#options-navigation li a.active').length ){
+			jQuery('#options-navigation').find('li:first-child a').addClass('active');
+			jQuery('#nebula-options-section').find('.tab-pane:first-child').addClass('active');
+		}
+
+		//Scroll to the top when changing tabs
+		jQuery('a.nav-link').on('shown.bs.tab', function(){
+			jQuery('html, body').animate({
+				scrollTop: jQuery('#nebula-options-section').offset().top-1000
+			}, 500);
+		});
+
+		jQuery('#nebula-option-filter').trigger('keyup').focus(); //Trigger if a ?filter= parameter is used.
+
+		checkDependents(); //Check all dependents
+		checkImportants();
+		jQuery('input').on('keyup change', function(){
+			console.log('input keyup or change');
+			checkDependents(jQuery(this));
+			checkImportants();
+		});
+
+		jQuery('.short-help').each(function(){
+			//Direct Link icons
+			var thisTab = jQuery(this).closest('.tab-pane').attr('id');
+			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id');
+			jQuery(this).append('<a class="direct-link" href="themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option"><i class="fa fa-fw fa-link"></i></a>');
+
+			//More Help expander icons
+			if ( jQuery(this).parent().find('.more-help').length ){
+				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information"><i class="fa fa-fw fa-question-circle"></i></a>');
+			}
+		});
+
+		jQuery(document).on('click touch tap', '.toggle-more-help', function(){
+			jQuery(this).closest('.form-group, .multi-form-group').find('.more-help').slideToggle();
+			return false;
+		});
+	}
 }); //End Document Ready
+
+jQuery(window).resize(function() {
+	//If Nebula Options Page
+	if ( window.location.href.indexOf('themes.php?page=nebula_options') > 0 ){
+		checkWindowHeightForStickyNav();
+	}
+});
 
 //Developer Metaboxe functions
 function developerMetaboxes(){
@@ -210,17 +258,6 @@ function userHeadshotFields(){
 	}
 }
 
-//Check business hours for open checkbox
-function businessHoursCheck(){
-	jQuery('.businessday input[type="checkbox"]').each(function(){
-		if ( jQuery(this).prop('checked') ){
-			jQuery(this).parents('.businessday').removeClass('closed');
-		} else {
-			jQuery(this).parents('.businessday').addClass('closed');
-		}
-	});
-}
-
 //Notify for possible duplicate post slug
 function nebulaUniqueSlugChecker(postType){
 	if ( !postType ){
@@ -293,3 +330,379 @@ function keywordSearch(container, parent, value, filteredClass){
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
 jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
+
+
+//Nebula Options Functions
+
+//Make sure the sticky nav is shorter than the viewport height.
+function checkWindowHeightForStickyNav(){
+	if ( window.innerHeight > jQuery('#stickynav').outerHeight() ){
+		jQuery('#stickynav').addClass('sticky');
+	} else {
+		jQuery('#stickynav').removeClass('sticky');
+	}
+}
+
+function checkImportants(){
+	jQuery('.important-option').each(function(){
+		if ( !isCheckedOrHasValue(jQuery(this).find('input')) ){
+			if ( !jQuery(this).find('.important-warning').length ){ //If the warning isn't already showing
+				jQuery(this).addClass('important-empty').find('label').append('<p class="important-warning">It is highly recommended this option is used!</p>');
+			}
+		} else {
+			jQuery(this).removeClass('important-empty');
+			jQuery(this).find('.important-warning').remove();
+		}
+	});
+
+	jQuery('.tab-pane').each(function(){
+		if ( jQuery(this).find('.important-empty').length ){
+			if ( !jQuery('.nav-link[href$=' + jQuery(this).attr('id') + '] .empty-important-tab-warn').length ){ //If the warning isn't already showing
+				jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').append('<i class="fa fa-fw fa-exclamation-triangle empty-important-tab-warn"></i>');
+			}
+		} else {
+			jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').find('.empty-important-tab-warn').remove();
+		}
+	});
+}
+
+//Use the attribute dependent-of="" with the id of the dependent checkbox
+function checkDependents(inputObject){
+	if ( inputObject ){ //Check a single option's dependents
+		if ( isCheckedOrHasValue(inputObject) ){
+			jQuery('[dependent-of=' + inputObject.attr('id') + ']').removeClass('inactive').find('.dependent-note').addClass('hidden');
+			jQuery('[dependent-or~=' + inputObject.attr('id') + ']').removeClass('inactive').find('.dependent-note').addClass('hidden');
+
+			//The dependent-and attribute must have ALL checked
+			jQuery('[dependent-and~=' + inputObject.attr('id') + ']').each(function(){
+				var oThis = jQuery(this);
+				var dependentOrs = jQuery(this).attr('dependent-and').split(' ');
+				var totalDependents = dependentAnds.length;
+				var dependentsChecked = 0;
+				jQuery.each(dependentAnds, function(){
+					if ( isCheckedOrHasValue(jQuery('#' + this)) ){
+						dependentsChecked++;
+					}
+				});
+
+				if ( dependentsChecked == totalDependents ){
+					oThis.removeClass('inactive').find('.dependent-note').addClass('hidden');
+				}
+			});
+		} else {
+			jQuery('[dependent-of=' + inputObject.attr('id') + ']').addClass('inactive').find('.dependent-note').removeClass('hidden');
+			jQuery('[dependent-and~=' + inputObject.attr('id') + ']').addClass('inactive').find('.dependent-note').removeClass('hidden');
+
+			//The dependent-or attribute can have ANY checked
+			jQuery('[dependent-or~=' + inputObject.attr('id') + ']').each(function(){
+				var oThis = jQuery(this);
+				var dependentOrs = jQuery(this).attr('dependent-or').split(' ');
+				var totalDependents = dependentOrs.length;
+				var dependentsUnchecked = 0;
+				jQuery.each(dependentOrs, function(){
+					if ( !isCheckedOrHasValue(jQuery('#' + this)) ){
+						dependentsUnchecked++;
+					}
+				});
+
+				if ( dependentsUnchecked == totalDependents ){
+					oThis.addClass('inactive').find('.dependent-note').removeClass('hidden');
+				}
+			});
+		}
+	} else { //Check all dependencies
+		jQuery('input, textarea').each(function(){
+			checkDependents(jQuery(this));
+			jQuery(this).trigger('blur'); //Trigger validation on all inputs
+		});
+	}
+}
+
+
+
+
+function isCheckedOrHasValue(inputObject){
+	if ( inputObject.is('[type=checkbox]:checked') ){
+		return true;
+	}
+
+	if ( !inputObject.is('[type=checkbox]') && inputObject.val().length > 0 ){
+		return true;
+	}
+
+	return false;
+}
+
+
+
+//Option filter
+jQuery('#nebula-option-filter').on('keyup change focus blur', function(){
+	if ( jQuery(this).val().length > 0 ){
+		jQuery('#reset-filter').removeClass('hidden');
+
+		jQuery('#options-navigation').addClass('inactive').find('li a.active').removeClass('active');
+
+		jQuery('.tab-pane').addClass('active');
+
+		keywordSearch('#nebula-options-section', '.form-group', jQuery(this).val());
+
+		jQuery('.option-group, .option-sub-group').each(function(){
+			if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
+				jQuery(this).removeClass('filtereditem');
+			} else {
+				jQuery(this).addClass('filtereditem');
+			}
+		});
+
+		jQuery('#nebula-options-section div[class^=col]').each(function(){
+			if ( !jQuery(this).parents('.title-row, .save-row, .non-filter').length ){
+				if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
+					jQuery(this).removeClass('filtereditem');
+				} else {
+					jQuery(this).addClass('filtereditem');
+				}
+			}
+		});
+
+		jQuery('.tab-pane').each(function(){
+			if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
+				jQuery(this).removeClass('filtereditem');
+				jQuery(this).find('.title-row').removeClass('filtereditem');
+			} else {
+				jQuery(this).addClass('filtereditem');
+				jQuery(this).find('.title-row').addClass('filtereditem');
+			}
+		});
+	} else {
+		jQuery('#reset-filter').addClass('hidden');
+
+		jQuery('#options-navigation').removeClass('inactive');
+
+		if ( !jQuery('#options-navigation li a.active').length ){
+			jQuery('#options-navigation').find('li:first-child a').addClass('active');
+		}
+
+		jQuery('.filtereditem').removeClass('filtereditem');
+	}
+});
+
+jQuery('#reset-filter a').on('click touch tap', function(){
+	jQuery('#nebula-option-filter').val('').trigger('keyup');
+	return false;
+});
+
+jQuery('#preset-filters a').on('click touch tap', function(){
+	jQuery('#nebula-option-filter').val(jQuery(this).attr('filter-text')).trigger('keyup');
+	return false;
+});
+
+
+
+
+
+
+
+
+
+//Functions pulled from main.js for various admin usages (mostly Nebula Options)
+
+//Regex Patterns
+//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
+window.regexPattern = {
+	email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, //From JS Lint: Expected ']' and instead saw '['.
+	phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/, //To allow letters, you'll need to convert them to their corresponding number before matching this RegEx.
+	date: {
+		mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
+		ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
+	},
+	hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
+	ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+	url: /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/,
+};
+
+//Offset must be an integer
+function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
+	if ( !offset ){
+		var offset = 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+	}
+
+	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
+	if ( element ){
+		var willScroll = true;
+		if ( onlyWhenBelow ){
+			var elementTop = element.offset().top-offset;
+			var viewportTop = nebula.dom.document.scrollTop();
+			if ( viewportTop-elementTop <= 0 ){
+				willScroll = false;
+			}
+		}
+
+		if ( willScroll ){
+			if ( !milliseconds ){
+				var milliseconds = 500;
+			}
+
+			jQuery('html, body').animate({
+				scrollTop: element.offset().top-offset
+			}, milliseconds, function(){
+				//callback
+			});
+		}
+
+		return false;
+	}
+}
+
+function nebulaLiveValidator(){
+	//Standard text inputs and select menus
+	jQuery('.nebula-validate-text, .nebula-validate-select').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( jQuery.trim(jQuery(this).val()).length ){
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		}
+	});
+
+	//RegEx input
+	jQuery('.nebula-validate-regex').on('keyup change blur', function(e){
+		var pattern = new RegExp(jQuery(this).attr('data-valid-regex'));
+
+		if ( jQuery(this).val() === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( pattern.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		}
+	});
+
+	//URL inputs
+	jQuery('.nebula-validate-url').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.url.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		}
+	});
+
+	//Email address inputs
+	jQuery('.nebula-validate-email').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.email.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		}
+	});
+
+	//Phone number inputs
+	jQuery('.nebula-validate-phone').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			if ( e.type === 'keyup' ){
+				applyValidationClasses(jQuery(this), 'warning', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'danger', true);
+			}
+		}
+	});
+
+	//Date inputs
+	jQuery('.nebula-validate-date').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
+			applyValidationClasses(jQuery(this), 'success', false);
+		} else {
+			applyValidationClasses(jQuery(this), 'danger', true);
+		}
+	});
+
+	//Textarea
+	jQuery('.nebula-validate-textarea').on('keyup change blur', function(e){
+		if ( jQuery(this).val() === '' ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else if ( jQuery.trim(jQuery(this).val()).length ){
+			if ( e.type === 'blur' ){
+				applyValidationClasses(jQuery(this), 'success', false);
+			} else {
+				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
+			}
+		} else {
+			if ( e.type === 'blur' ){
+				applyValidationClasses(jQuery(this), 'danger', true);
+			} else {
+				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
+			}
+		}
+	});
+
+	//Checkbox and Radio
+	jQuery('.nebula-validate-checkbox, .nebula-validate-radio').on('change blur', function(e){
+		if ( jQuery(this).parents('.form-group').find('input:checked').length ){
+			applyValidationClasses(jQuery(this), 'reset', false);
+		} else {
+			applyValidationClasses(jQuery(this), 'danger', true);
+		}
+	});
+}
+
+//Apply Bootstrap appropriate validation classes to appropriate elements
+function applyValidationClasses(element, validation, showFeedback){
+	if ( typeof element === 'string' ){
+		element = jQuery(element);
+	} else if ( typeof element !== 'object' ) {
+		return false;
+	}
+
+	if ( validation === 'success' || validation === 'valid' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-success')
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success')
+			.find('.wpcf7-not-valid-tip').remove();
+	} else if ( validation === 'warning' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-warning')
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning')
+			.find('.wpcf7-not-valid-tip').remove();
+	} else if ( validation === 'danger' || validation === 'error' || validation === 'invalid' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-danger')
+			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
+	} else if ( validation === 'reset' || validation === 'remove' ){
+		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid')
+			.parents('.form-group').removeClass('has-danger has-warning has-success')
+			.find('.wpcf7-not-valid-tip').remove();
+	}
+
+	if ( validation === 'feedback' || showFeedback ){
+		element.parents('.form-group').find('.form-control-feedback').removeClass('hidden');
+	} else {
+		element.parents('.form-group').find('.form-control-feedback').addClass('hidden');
+	}
+}

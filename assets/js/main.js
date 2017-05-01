@@ -526,13 +526,13 @@ function eventTracking(){
 		if ( regexPattern.email.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Email (Copied)' + emailPhone);
-			nv('append', {'contact_method': 'Email (Copied)', 'contacted_email': emailPhone});
+			ga('send', 'event', 'Contact', 'Email' + emailPhone);
+			nv('append', {'contact_method': 'Email', 'contacted_email': emailPhone});
 		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Phone (Copied)' + emailPhone);
-			nv('append', {'contact_method': 'Phone (Copied)', 'contacted_phone': emailPhone});
+			ga('send', 'event', 'Contact', 'Phone' + emailPhone);
+			nv('append', {'contact_method': 'Phone', 'contacted_phone': emailPhone});
 		}
 
 		if ( copyCount < 13 ){
@@ -1362,7 +1362,7 @@ function postSearch(posts){
 }
 
 function wpSearchInput(){
-	jQuery('#post-0 #s, #header-drawer #s, .search-results #s').focus(); //Automatically focus on specific search inputs
+	jQuery('#post-0 #s, #nebula-drawer #s, .search-results #s').focus(); //Automatically focus on specific search inputs
 
 	//Set search value as placeholder
 	var searchVal = get('s') || jQuery('#s').val();
@@ -1466,10 +1466,10 @@ function singleResultDrawer(){
 		jQuery('#searchform input#s').val(theSearchTerm);
 	}
 
-	nebula.dom.document.on('click touch tap', '#header-drawer .close', function(){
+	nebula.dom.document.on('click touch tap', '#nebula-drawer .close', function(){
 		var permalink = jQuery(this).attr('href');
 		history.replaceState(null, document.title, permalink);
-		jQuery('#header-drawer').slideUp();
+		jQuery('#nebula-drawer').slideUp();
 		return false;
 	});
 }
@@ -1495,7 +1495,7 @@ function pageSuggestion(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
 		if ( jQuery(this).hasClass('internal-suggestion') ){
-			var suggestionType = 'internal';
+			var suggestionType = 'Internal';
 		} else {
 			var suggestionType = 'GCSE';
 		}
@@ -1532,7 +1532,7 @@ function showSuggestedGCSEPage(title, url){
 	var hostname = new RegExp(location.host);
 	if ( hostname.test(url) ){
 		jQuery('.gcse-suggestion').attr('href', url).text(title);
-		jQuery('#header-drawer.suggestedpage').slideDown();
+		jQuery('#nebula-drawer.suggestedpage').slideDown();
 		nebulaPrerender(url);
 	}
 }
@@ -2148,24 +2148,30 @@ function googleAddressAutocompleteCallback(autocompleteInput, name){
 
 //Request Geolocation
 function requestPosition(){
-    jQuery.getScript('https://www.google.com/jsapi', function(){
-	    google.load('maps', '3', {
-		    other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
-		    callback: function(){
-		        var nav = null;
-			    if (nav === null){
-			        nav = window.navigator;
-			    }
-			    var geolocation = nav.geolocation;
-			    if ( geolocation != null ){
-			        geolocation.getCurrentPosition(geoSuccessCallback, geoErrorCallback, {enableHighAccuracy: true}); //One-time location poll
-			        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
-			    }
-			} //End Google Maps callback
-	    }); //End Google Maps load
-	}).fail(function(){
-		ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
-	});
+	if ( typeof google != "undefined" && has(google, 'maps') ){
+		jQuery.getScript('https://www.google.com/jsapi', function(){
+			google.load('maps', '3', {
+				other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
+				callback: getCurrentPosition()
+			}); //End Google Maps load
+		}).fail(function(){
+			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
+		});
+	} else {
+		getCurrentPosition();
+	}
+}
+
+function getCurrentPosition(){
+	var nav = null;
+    if (nav === null){
+        nav = window.navigator;
+    }
+    var geolocation = nav.geolocation;
+    if ( geolocation != null ){
+        geolocation.getCurrentPosition(geoSuccessCallback, geoErrorCallback, {enableHighAccuracy: true}); //One-time location poll
+        //geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
+    }
 }
 
 //Geolocation Success
@@ -3471,15 +3477,25 @@ function pauseAllVideos(force){
 
 	//Pause Youtube Videos
 	jQuery('iframe.youtube').each(function(){
-		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
-			players.youtube[jQuery(this).attr('id')].pauseVideo();
+		youtubeiframeID = jQuery(this).attr('id');
+		if ( !(youtubeiframeID in players.youtube) ){
+			return false;
+		}
+
+		if ( (force || !jQuery(this).hasClass('ignore-visibility')) && players.youtube[youtubeiframeID].getPlayerState() === 1 ){
+			players.youtube[youtubeiframeID].pauseVideo();
 		}
 	});
 
 	//Pause Vimeo Videos
 	jQuery('iframe.vimeo').each(function(){
+		vimeoiframeID = jQuery(this).attr('id');
+		if ( !(vimeoiframeID in players.vimeo) ){
+			return false;
+		}
+
 		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
-			players.vimeo[jQuery(this).attr('id')].api('pause');
+			players.vimeo[vimeoiframeID].api('pause');
 		}
 	});
 }

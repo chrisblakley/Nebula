@@ -36,7 +36,7 @@ if ( !trait_exists('Utilities') ){
         //Generate Nebula Session ID
         public function nebula_session_id(){
             $session_info = ( nebula()->is_debug() )? 'dbg.' : '';
-            $session_info .= ( nebula()->option('prototype_mode', 'enabled') )? 'prt.' : '';
+            $session_info .= ( nebula()->option('prototype_mode') )? 'prt.' : '';
 
             if ( nebula()->is_client() ){
                 $session_info .= 'cli.';

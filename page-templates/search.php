@@ -85,7 +85,7 @@ get_header(); ?>
 								</div><!--/col-->
 								<div class="col-md-6 right-side">
 									<div class="advanced-search-group">
-										<?php if ( nebula()->option('author_bios', 'enabled') ): ?>
+										<?php if ( nebula()->option('author_bios') ): ?>
 											<span class="contact-form-heading">Post Author</span>
 											<select id="advanced-search-author" class="chosen-select" data-placeholder="Select author...">
 												<option></option>

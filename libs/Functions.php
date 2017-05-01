@@ -67,7 +67,7 @@ trait Functions {
         //Register the Navigation Menus
         add_action('after_setup_theme', array($this, 'nav_menu_locations'));
 
-        if ( nebula()->option('comments', 'disabled') || nebula()->option('disqus_shortname') ) { //If WP core comments are disabled -or- if Disqus is enabled
+        if ( !nebula()->option('comments') || nebula()->option('disqus_shortname') ) { //If WP core comments are disabled -or- if Disqus is enabled
             //Remove the Activity metabox
             add_action('wp_dashboard_setup', array($this, 'remove_activity_metabox'));
 
@@ -81,7 +81,7 @@ trait Functions {
             add_filter('pings_open', array($this, 'disable_comments_status' ), 20, 2);
 
             //Remove comments menu from Admin Bar
-            if ( nebula()->option('admin_bar', 'enabled') ){
+            if ( nebula()->option('admin_bar') ){
                 add_action('admin_bar_menu', array($this, 'admin_bar_remove_comments' ), 900);
             }
 
@@ -226,12 +226,12 @@ trait Functions {
             if ( get_option('blog_public') == 0 ){
                 if ( nebula()->is_site_live() ){
                     $console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
-                } elseif ( nebula()->option('prototype_mode', 'disabled') ){
+                } elseif ( !nebula()->option('prototype_mode') ){
                     $console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
                 }
             }
 
-            if ( nebula()->is_site_live() && nebula()->option('prototype_mode', 'enabled') ){
+            if ( nebula()->is_site_live() && nebula()->option('prototype_mode') ){
                 $console_warnings[] = array('warn', 'Prototype Mode is enabled!');
             }
 
@@ -427,7 +427,7 @@ trait Functions {
 	        $the_icon = '<i class="fa fa-user"></i> ';
 	    }
 
-	    if ( nebula()->option('author_bios', 'enabled') || $force ){
+	    if ( nebula()->option('author_bios') || $force ){
 	        if ( $linked && !$force ){
 	            return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $the_icon . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
 	        } else {
@@ -1666,7 +1666,7 @@ trait Functions {
         $override = apply_filters('pre_nebula_the_author', false, $show_authors);
         if ( $override !== false ){return $override;}
 
-        if ( !is_single() || $show_authors == 0 || nebula()->option('author_bios', 'disabled') ){
+        if ( !is_single() || $show_authors == 0 || !nebula()->option('author_bios') ){
             return nebula()->option('site_owner', get_bloginfo('name'));
         } else {
             return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
@@ -2309,7 +2309,7 @@ trait Functions {
         }
 
         //Find authors (if author bios are enabled)
-        if ( nebula()->option('author_bios', 'enabled') ){
+        if ( nebula()->option('author_bios') ){
             $authors = get_transient('nebula_autocomplete_authors');
             if ( empty($authors) || nebula()->is_debug() ){
                 $authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
@@ -2390,7 +2390,7 @@ trait Functions {
 
         foreach ( $posts as $post ){
             $author = null;
-            if ( nebula()->option('author_bios', 'enabled') ){ //&& $post->post_type != 'page' ?
+            if ( nebula()->option('author_bios') ){ //&& $post->post_type != 'page' ?
                 $author = array(
                     'id' => $post->post_author,
                     'name' => array(
@@ -2671,7 +2671,7 @@ trait Functions {
         $classes[] = 'author-id-' . $post->post_author;
 
         //Remove "hentry" meta class on pages or if Author Bios are disabled
-        if ( is_page() || nebula()->option('author_bios', 'disabled') ){
+        if ( is_page() || !nebula()->option('author_bios') ){
             $classes = array_diff($classes, array('hentry'));
         }
 

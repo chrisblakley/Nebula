@@ -278,6 +278,14 @@ if ( !trait_exists('Scripts') ){
             //Scripts
             wp_enqueue_script('nebula-admin');
 
+			//Nebula Options page
+			$current_screen = get_current_screen();
+            if ( $current_screen->base === 'appearance_page_nebula_options' || $current_screen->base === 'options' ){
+				wp_enqueue_style('nebula-bootstrap');
+				nebula()->override_bootstrap_tether();
+				wp_enqueue_script('nebula-bootstrap');
+			}
+
             //Nebula Visitors Data page
             if ( $current_screen->base === 'appearance_page_nebula_visitors_data' ){
                 wp_enqueue_style('nebula-bootstrap');

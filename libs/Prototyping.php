@@ -13,7 +13,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Prototyping') ){
     trait Prototyping {
         public function hooks(){
-            if ( nebula()->option('prototype_mode', 'enabled') ){
+            if ( nebula()->option('prototype_mode') ){
                 add_action('wp_enqueue_scripts', array($this, 'enqueue_nebula_wireframing'));
 
                 //Set up redirects based on the ?phase query.
@@ -79,7 +79,7 @@ if ( !trait_exists('Prototyping') ){
             $wp_admin_bar->add_node(array(
                 'id' => 'nebula-prototype',
                 'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Prototype' . $wireframe_menu_title,
-                'href' => get_admin_url() . 'themes.php?page=nebula_options?tab=functions&option=prototype_mode'
+                'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=prototype_mode'
             ));
 
             if ( nebula()->dev_phase() ){
@@ -143,7 +143,7 @@ if ( !trait_exists('Prototyping') ){
 
         //Top header for each component
         public function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
-            if ( nebula()->option('prototype_mode', 'disabled') ){
+            if ( !nebula()->option('prototype_mode') ){
                 return false;
             }
 
@@ -168,7 +168,7 @@ if ( !trait_exists('Prototyping') ){
 
         //Top header for each component (with opening .fpo div)
         public function fpo_component_start($component='Component', $icon='fa-cube'){
-            if ( nebula()->option('prototype_mode', 'disabled') ){
+            if ( !nebula()->option('prototype_mode') ){
                 return false;
             }
             fpo_component($component, $icon, '');
@@ -177,7 +177,7 @@ if ( !trait_exists('Prototyping') ){
 
         //Closes .fpo div (from fpo_component_start)
         public function fpo_component_end(){
-            if ( nebula()->option('prototype_mode', 'disabled') ){
+            if ( !nebula()->option('prototype_mode') ){
                 return false;
             }
             echo '</div><!-- /fpo -->';
@@ -185,7 +185,7 @@ if ( !trait_exists('Prototyping') ){
 
         //Create a placeholder box as an FPO element
         public function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg='#ddd', $icon='', $styles='', $classes=''){
-            if ( nebula()->option('prototype_mode', 'disabled') ){
+            if ( !nebula()->option('prototype_mode') ){
                 return false;
             }
 
@@ -230,7 +230,7 @@ if ( !trait_exists('Prototyping') ){
         //Placeholder background image
         /* <div class="row" style="<?php fpo_bg_image(); ?>"> */
         public function fpo_bg_image($type='none', $color='#aaa'){
-            if ( nebula()->option('prototype_mode', 'disabled') ){
+            if ( !nebula()->option('prototype_mode') ){
                 return false;
             }
 
@@ -252,7 +252,7 @@ if ( !trait_exists('Prototyping') ){
 
         //Placeholder image... Consider deprecating this function
         public function fpo_image($width='100%', $height='200px', $type='none', $color='#000', $styles='', $classes=''){
-            if ( nebula()->option('prototype_mode', 'disabled') ){
+            if ( !nebula()->option('prototype_mode') ){
                 return false;
             }
 
@@ -294,7 +294,7 @@ if ( !trait_exists('Prototyping') ){
         }
 
         public function fpo_text($text=''){
-            if ( nebula()->option('prototype_mode', 'disabled') ){
+            if ( !nebula()->option('prototype_mode') ){
                 return false;
             }
 

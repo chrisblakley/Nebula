@@ -34,13 +34,13 @@ if ( !trait_exists('Dashboard') ){
             add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
 
             //TODO manager metabox
-            if ( nebula()->option('todo_manager_metabox', 'enabled') && nebula()->is_dev() ){
+            if ( nebula()->option('todo_manager_metabox') && nebula()->is_dev() ){
                 add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
             }
 
             //Developer Info Metabox
             //If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
-            if ( nebula()->option('dev_info_metabox', 'enabled') && nebula()->is_dev() ){
+            if ( nebula()->option('dev_info_metabox') && nebula()->is_dev() ){
                 add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
             }
 
@@ -191,21 +191,21 @@ if ( !trait_exists('Dashboard') ){
             echo '<li><i class="fa fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . nebula()->online_users('count') . ' currently active)</small></li>';
 
             //Comments
-            if ( nebula()->option('comments', 'enabled') && nebula()->option('disqus_shortname') == '' ){
+            if ( nebula()->option('comments') && nebula()->option('disqus_shortname') == '' ){
                 $comments_count = wp_count_comments();
                 $comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
                 echo '<li><i class="fa fa-fw fa-comments-o"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
             } else {
-                if ( nebula()->option('comments', 'disabled') ){
-                    echo '<li><i class="fa fa-fw fa-comments-o"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options?tab=functions&option=comments">Nebula Options</a>)</small></li>';
+                if ( !nebula()->option('comments') ){
+                    echo '<li><i class="fa fa-fw fa-comments-o"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small></li>';
                 } else {
                     echo '<li><i class="fa fa-fw fa-comments-o"></i> Using <a href="https://' . nebula()->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
                 }
             }
 
             //Global Admin Bar
-            if ( nebula()->option('admin_bar', 'disabled') ){
-                echo '<li><i class="fa fa-fw fa-bars"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options?tab=functions&option=admin_bar">Nebula Options</a>)</small></li>';
+            if ( !nebula()->option('admin_bar') ){
+                echo '<li><i class="fa fa-fw fa-bars"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options&tab=functions&option=admin_bar">Nebula Options</a>)</small></li>';
             }
 
             //Nebula Visitors DB
@@ -339,7 +339,7 @@ if ( !trait_exists('Dashboard') ){
                         $os_icon = 'fa-picture-o';
                         break;
                 }
-                echo '<li><i class="fa fa-fw' . $os_icon . '"></i> OS: <strong>' . nebula()->get_os('full') . '</strong></li>';
+                echo '<li><i class="fa fa-fw ' . $os_icon . '"></i> OS: <strong>' . nebula()->get_os('full') . '</strong></li>';
 
                 //Browser
                 switch ( str_replace(array('mobile', ' '), '', strtolower(nebula()->get_browser('name'))) ){
@@ -366,7 +366,7 @@ if ( !trait_exists('Dashboard') ){
                         $browser_icon = 'fa-globe';
                         break;
                 }
-                echo '<li><i class="fa fa-fw' . $browser_icon . '"></i> Browser: <strong>' . nebula()->get_browser('full') . '</strong></li>';
+                echo '<li><i class="fa fa-fw ' . $browser_icon . '"></i> Browser: <strong>' . nebula()->get_browser('full') . '</strong></li>';
             }
 
             //IP Address
@@ -489,7 +489,7 @@ if ( !trait_exists('Dashboard') ){
 
             do_action('nebula_administrative_metabox');
             echo '</ul>';
-            echo '<p><small><em>Manage administrative links in <strong><a href="themes.php?page=nebula_options?tab=administration">Nebula Options</a></strong>.</em></small></p>';
+            echo '<p><small><em>Manage administrative links in <strong><a href="themes.php?page=nebula_options&tab=administration">Nebula Options</a></strong>.</em></small></p>';
 
 			echo '<h3>Social</h3>';
 			echo '<ul>';
@@ -523,7 +523,7 @@ if ( !trait_exists('Dashboard') ){
 
             do_action('nebula_social_metabox');
             echo '</ul>';
-			echo '<p><small><em>Manage social links in <strong><a href="themes.php?page=nebula_options?filter=social">Nebula Options</a></strong>.</em></small></p>';
+			echo '<p><small><em>Manage social links in <strong><a href="themes.php?page=nebula_options&filter=social">Nebula Options</a></strong>.</em></small></p>';
         }
 
         //Pinckney Hugo Group metabox
@@ -744,7 +744,7 @@ if ( !trait_exists('Dashboard') ){
 
                 echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
 
-                if ( nebula()->option('prototype_mode', 'enabled') ){
+                if ( nebula()->option('prototype_mode') ){
                     echo '<li><i class="fa fa-flag-checkered"></i> Production directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
                 } else {
                     echo '<li><i class="fa fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
@@ -758,7 +758,7 @@ if ( !trait_exists('Dashboard') ){
                 echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
             }
 
-            if ( nebula()->option('prototype_mode', 'enabled') ){
+            if ( nebula()->option('prototype_mode') ){
                 if ( nebula()->option('wireframe_theme') ){
                     $nebula_wireframe_size = nebula()->foldersize(get_theme_root() . '/' . nebula()->option('wireframe_theme'));
                     echo '<li title="' . nebula()->option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
@@ -838,7 +838,7 @@ if ( !trait_exists('Dashboard') ){
 
             //Directory search
             echo '<i id="searchprogress" class="fa fa-fw fa-search"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
-            if ( nebula()->option('prototype_mode', 'enabled') ){
+            if ( nebula()->option('prototype_mode') ){
                 echo '<option value="production">Production</option>';
                 if ( nebula()->option('staging_theme') ){
                     echo '<option value="staging">Staging</option>';

@@ -124,7 +124,7 @@
 <?php if ( nebula()->option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula()->option('twitter_user'); ?>" />
 <?php endif; ?>
-<?php if ( nebula()->option('author_bios', 'enabled') && !empty($post) && get_the_author_meta('twitter', $post->post_author) ): ?>
+<?php if ( nebula()->option('author_bios') && !empty($post) && get_the_author_meta('twitter', $post->post_author) ): ?>
 	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $post->post_author); ?>" />
 <?php endif; ?>
 
@@ -258,7 +258,7 @@
 	}
 </script>
 
-<?php if ( is_author() && nebula()->option('author_bios', 'enabled') ): ?>
+<?php if ( is_author() && nebula()->option('author_bios') ): ?>
 	<script type="application/ld+json">
 		{
 			"@context": "http://schema.org/",
@@ -347,7 +347,7 @@
 			"datePublished": "<?php echo get_the_date('c'); ?>",
 			"dateModified": "<?php echo get_the_modified_date('c'); ?>",
 			"author": {
-				<?php if ( nebula()->option('author_bios', 'enabled') ): ?>
+				<?php if ( nebula()->option('author_bios') ): ?>
 					"@type": "Person",
 					"name": "<?php echo the_author_meta('display_name', $post->post_author); ?>"
 				<?php else: ?>
