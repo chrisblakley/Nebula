@@ -328,21 +328,21 @@ if ( !trait_exists('Admin') ){
 			$nebula_warning_icon = '';
 			if ( nebula()->option('admin_notices') ){
 				if ( !nebula()->option('ga_tracking_id') ){
-				    $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+				    $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: ' . $danger_color . '; margin-left: 5px;"></i>';
 				    $nebula_warning_description = 'Google Analytics tracking ID is currently not set!';
 				    $nebula_warning_href = 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id';
 				}
 
 				//Check for "Discourage searching engines..." setting
 				if ( get_option('blog_public') == 0 ){
-				    $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+				    $nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle"></i>';
 				    $nebula_warning_description = 'Search Engine Visibility is currently disabled!';
 				    $nebula_warning_href = 'options-reading.php';
 				}
 
 				//Check Prototype Mode
 				if ( !nebula()->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-				    $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+				    $nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle"></i>';
 				    $nebula_warning_description = 'Prototype Mode is disabled, but Multiple Theme plugin is still active.';
 				    $nebula_warning_href = 'plugins.php';
 				}
@@ -351,7 +351,7 @@ if ( !trait_exists('Admin') ){
 				if ( is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
 				    $ee_ga_settings = get_option('woocommerce_enhanced_ecommerce_google_analytics_settings');
 				    if ( empty($ee_ga_settings['ga_id']) ){
-				        $nebula_warning_icon = '<i class="fa fa-fw fa-exclamation-triangle"></i>';
+				        $nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle"></i>';
 					    $nebula_warning_description = 'WooCommerce Enhanced Ecommerce is missing a Google Analytics ID!';
 					    $nebula_warning_href = 'admin.php?page=wc-settings&tab=integration';
 				    }
@@ -369,7 +369,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
                     'parent' => 'nebula',
                     'id' => 'nebula-warning',
-                    'title' => '<i class="nebula-admin-fa fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . $nebula_warning_description,
+                    'title' => '<i class="nebula-admin-fa fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: ' . $danger_color . '; margin-right: 5px;"></i> ' . $nebula_warning_description,
                     'href' => get_admin_url() . $nebula_warning_href,
                 ));
 			}

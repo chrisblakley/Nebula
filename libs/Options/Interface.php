@@ -922,6 +922,16 @@
 
 										<div class="form-group">
 											<div class="input-group">
+												<div class="input-group-addon">Query String</div>
+												<input type="text" name="nebula_options[cd_querystring]" id="cd_querystring" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_querystring']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Moves the query string from the "page" dimension for cleaner URLs. Scope: Hit</p>
+											<p class="nebula-help-text more-help form-text text-muted">This cleans up page reports by consolidating page paths. Query strings can be shown by using a custom dimension.</p>
+											<p class="option-keywords">autotrack recommended</p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
 												<div class="input-group-addon">Media Query: Breakpoint</div>
 												<input type="text" name="nebula_options[cd_mqbreakpoint]" id="cd_mqbreakpoint" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqbreakpoint']; ?>" />
 											</div>
@@ -967,7 +977,7 @@
 												<input type="text" name="nebula_options[cd_eventintent]" id="cd_eventintent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_eventintent']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Log whether the event was true, or just a possible intention. Scope: Hit</p>
-											<p class="option-keywords">recommended</p>
+											<p class="option-keywords"></p>
 										</div>
 
 										<div class="form-group">

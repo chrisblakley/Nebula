@@ -57,16 +57,6 @@ get_header(); ?>
 	</div><!--/breadcrumb-section-->
 </section>
 
-<div id="breadcrumb-section" class="full">
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<?php nebula()->breadcrumbs(); ?>
-			</div><!--/col-->
-		</div><!--/row-->
-	</div><!--/container-->
-</div><!--/breadcrumb-section-->
-
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">

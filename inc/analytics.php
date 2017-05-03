@@ -63,6 +63,7 @@
 			temperature: '<?php echo nebula()->option('cd_temperature'); ?>',
 			publishYear: '<?php echo nebula()->option('cd_publishyear'); ?>',
 			adBlocker: '<?php echo nebula()->option('cd_adblocker'); ?>',
+			queryString: '<?php echo nebula()->option('cd_querystring'); ?>',
 			mqBreakpoint: '<?php echo nebula()->option('cd_mqbreakpoint'); ?>',
 			mqResolution: '<?php echo nebula()->option('cd_mqresolution'); ?>',
 			mqOrientation: '<?php echo nebula()->option('cd_mqorientation'); ?>',
@@ -320,7 +321,13 @@
 		}
 
 		//Autotrack Clean URL
-		ga('require', 'cleanUrlTracker');
+		var queryStringDimension = parseInt(gaCustomDimensions['queryString'].replace('dimension', ''));
+		ga('require', 'cleanUrlTracker', {
+			stripQuery: ( queryStringDimension )? true : false,
+			queryDimensionIndex: parseInt(gaCustomDimensions['queryString'].replace('dimension', '')),
+			indexFilename: 'index.php',
+			trailingSlash: 'remove'
+		});
 
 		//Autotrack Social Widgets
 		ga('require', 'socialWidgetTracker', {
