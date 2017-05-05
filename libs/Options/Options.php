@@ -332,6 +332,25 @@ if ( !trait_exists('Options') ){
             return $nebula_options_defaults;
         }
 
+        //Get the "user friendly" default value for a Nebula Option
+		public function user_friendly_default($option){
+			$nebula_options_defaults = nebula()->default_options();
+
+			if ( $nebula_options_defaults[$option] === '' ){
+				return 'None';
+			}
+
+			if ( empty($nebula_options_defaults[$option]) ){
+				return 'Off';
+			}
+
+			if ( $nebula_options_defaults[$option] === 1 ){
+				return 'On';
+			}
+
+			return ucwords($nebula_options_defaults[$option]);
+		}
+
         //Register all Nebula Options
         public function register_options(){
             $current_screen = get_current_screen();

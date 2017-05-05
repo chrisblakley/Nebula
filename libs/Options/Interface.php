@@ -41,12 +41,10 @@
 
 	<form method="post" action="options.php">
 		<?php
-			//register_setting('nebula_options', 'nebula_options');
 			settings_fields('nebula_options'); //This must be inside the <form> tag!
 			do_settings_sections('nebula_options');
 			$nebula_data = get_option('nebula_data');
 			$nebula_options = get_option('nebula_options');
-			$nebula_options_defaults = nebula()->default_options();
 		?>
 
 		<div id="all-nebula-options" class="container-fluid">
@@ -396,7 +394,7 @@
 											<option value="bootstrap4a5" <?php selected('bootstrap4a5', $nebula_options['bootstrap_version']); ?>>Bootstrap 4 alpha 5 (IE9+)</option>
 											<option value="bootstrap3" <?php selected('bootstrap3', $nebula_options['bootstrap_version']); ?>>Bootstrap 3 (IE8+)</option>
 										</select>
-										<p class="nebula-help-text short-help form-text text-muted">Which Bootstrap version to use. (Default: <?php echo ucwords($nebula_options_defaults['bootstrap_version']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Which Bootstrap version to use. (Default: <?php echo nebula()->user_friendly_default('bootstrap_version'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest supports IE10+.</p>
 										<p class="option-keywords">internet explorer old support</p>
 									</div>
@@ -407,54 +405,54 @@
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[author_bios]" id="author_bios" value="1" <?php checked('1', !empty($nebula_options['author_bios'])); ?> /><label for="author_bios">Author Bios</label>
-										<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo ucwords($nebula_options_defaults['author_bios']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo nebula()->user_friendly_default('author_bios'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This also enables searching by author, and displaying author names on posts. If disabled, the author page attempts to redirect to an About Us page.</p>
 										<p class="option-keywords">seo</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[comments]" id="comments" value="1" <?php checked('1', !empty($nebula_options['comments'])); ?> /><label for="comments">Comments</label>
-										<p class="nebula-help-text short-help form-text text-muted">Ability to force disable comments. (Default: <?php echo ucwords($nebula_options_defaults['comments']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Ability to force disable comments. (Default: <?php echo nebula()->user_friendly_default('comments'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles).</p>
 										<p class="option-keywords"></p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[device_detection]" id="device_detection" value="1" <?php checked('1', !empty($nebula_options['device_detection'])); ?> /><label for="device_detection">Browser/Device Detection</label>
-										<p class="nebula-help-text short-help form-text text-muted">Detect information about the user's device and browser. (Default: <?php echo ucwords($nebula_options_defaults['device_detection']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Detect information about the user's device and browser. (Default: <?php echo nebula()->user_friendly_default('device_detection'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Useful for cross-browser support. This also controls the modernizr.js library.</p>
 										<p class="option-keywords">remote resource moderate page speed impact</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[ip_geolocation]" id="ip_geolocation" value="1" <?php checked('1', !empty($nebula_options['ip_geolocation'])); ?> /><label for="ip_geolocation">IP Geolocation</label>
-										<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address. (Default: <?php echo ucwords($nebula_options_defaults['ip_geolocation']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address. (Default: <?php echo nebula()->user_friendly_default('ip_geolocation'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This can be used for content as well as analytics (including Visitors Database)</p>
 										<p class="option-keywords">location remote resource minor page speed impact</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[domain_blacklisting]" id="domain_blacklisting" value="1" <?php checked('1', !empty($nebula_options['domain_blacklisting'])); ?> /><label for="domain_blacklisting">Domain Blacklisting</label>
-										<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo ucwords($nebula_options_defaults['domain_blacklisting']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo nebula()->user_friendly_default('domain_blacklisting'); ?>)</p>
 										<p class="option-keywords">security remote resource recommended minor page speed impact</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[adblock_detect]" id="adblock_detect" value="1" <?php checked('1', !empty($nebula_options['adblock_detect'])); ?> /><label for="adblock_detect">Ad Block Detection</label>
-										<p class="nebula-help-text short-help form-text text-muted">Detect if visitors are using ad blocking software.(Default: <?php echo ucwords($nebula_options_defaults['adblock_detect']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Detect if visitors are using ad blocking software.(Default: <?php echo nebula()->user_friendly_default('adblock_detect'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">To track in Google Analytics, add a dimension index under the "Analytics" tab.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[console_css]" id="console_css" value="1" <?php checked('1', !empty($nebula_options['console_css'])); ?> /><label for="console_css">Console CSS</label>
-										<p class="nebula-help-text short-help form-text text-muted">Adds CSS to the browser console. (Default: <?php echo ucwords($nebula_options_defaults['console_css']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Adds CSS to the browser console. (Default: <?php echo nebula()->user_friendly_default('console_css'); ?>)</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[weather]" id="weather" value="1" <?php checked('1', !empty($nebula_options['weather'])); ?> /><label for="weather">Weather Detection</label>
-										<p class="nebula-help-text short-help form-text text-muted">Lookup weather conditions for locations. (Default: <?php echo ucwords($nebula_options_defaults['weather']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Lookup weather conditions for locations. (Default: <?php echo nebula()->user_friendly_default('weather'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Can be used for changing content as well as analytics.</p>
 										<p class="option-keywords">location remote resource major page speed impact</p>
 									</div>
@@ -465,7 +463,7 @@
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
-										<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo ucwords($nebula_options_defaults['scss']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo nebula()->user_friendly_default('scss'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong></p>
 										<p class="option-keywords">moderate page speed impact</p>
 									</div>
@@ -473,13 +471,13 @@
 									<div class="form-group" dependent-of="scss">
 										<input type="checkbox" name="nebula_options[minify_css]" id="minify_css" value="1" <?php checked('1', !empty($nebula_options['minify_css'])); ?> /><label for="minify_css">Minify CSS</label>
 										<p class="dependent-note hidden">This option is dependent on Sass (above).</p>
-										<p class="nebula-help-text short-help form-text text-muted">Minify the compiled CSS. (Default: <?php echo ucwords($nebula_options_defaults['minify_css']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Minify the compiled CSS. (Default: <?php echo nebula()->user_friendly_default('minify_css'); ?>)</p>
 										<p class="option-keywords">recommended</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[dev_stylesheets]" id="dev_stylesheets" value="1" <?php checked('1', !empty($nebula_options['dev_stylesheets'])); ?> /><label for="dev_stylesheets">Developer Stylesheets</label>
-										<p class="nebula-help-text short-help form-text text-muted">Allows multiple developers to work on stylesheets simultaneously. (Default: <?php echo ucwords($nebula_options_defaults['dev_stylesheets']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Allows multiple developers to work on stylesheets simultaneously. (Default: <?php echo nebula()->user_friendly_default('dev_stylesheets'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Combines CSS files within /assets/css/dev/ into /assets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint.</p>
 										<p class="option-keywords">minor page speed impact</p>
 									</div>
@@ -491,35 +489,35 @@
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[admin_bar]" id="admin_bar" value="1" <?php checked('1', !empty($nebula_options['admin_bar'])); ?> /><label for="admin_bar">Admin Bar</label>
-										<p class="nebula-help-text short-help form-text text-muted">Control the Wordpress Admin bar globally on the frontend for all users. (Default: <?php echo ucwords($nebula_options_defaults['admin_bar']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Control the Wordpress Admin bar globally on the frontend for all users. (Default: <?php echo nebula()->user_friendly_default('admin_bar'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Note: When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users.</p>
 										<p class="option-keywords"></p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[visitors_db]" id="visitors_db" value="1" <?php checked('1', !empty($nebula_options['visitors_db'])); ?> /><label for="visitors_db">Visitors Database</label>
-										<p class="nebula-help-text short-help form-text text-muted">Adds a table to the database to store visitor usage information. (Default: <?php echo ucwords($nebula_options_defaults['visitors_db']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Adds a table to the database to store visitor usage information. (Default: <?php echo nebula()->user_friendly_default('visitors_db'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank">full marketing automation service</a>.</p>
 										<p class="option-keywords">moderate page speed impact discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[unnecessary_metaboxes]" id="unnecessary_metaboxes" value="1" <?php checked('1', !empty($nebula_options['unnecessary_metaboxes'])); ?> /><label for="unnecessary_metaboxes">Remove Unnecessary Metaboxes</label>
-										<p class="nebula-help-text short-help form-text text-muted">Remove metaboxes on the Dashboard that are not necessary for most users. (Default: <?php echo ucwords($nebula_options_defaults['unnecessary_metaboxes']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Remove metaboxes on the Dashboard that are not necessary for most users. (Default: <?php echo nebula()->user_friendly_default('unnecessary_metaboxes'); ?>)</p>
 										<p class="option-keywords">recommended</p>
 									</div>
 
 									<div class="form-group" dependent-or="developer_email_domains developer_ips">
 										<input type="checkbox" name="nebula_options[dev_info_metabox]" id="dev_info_metabox" value="1" <?php checked('1', !empty($nebula_options['dev_info_metabox'])); ?> /><label for="dev_info_metabox">Developer Info Metabox</label>
 										<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
-										<p class="nebula-help-text short-help form-text text-muted">Show theme and server information useful to developers. (Default: <?php echo ucwords($nebula_options_defaults['dev_info_metabox']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Show theme and server information useful to developers. (Default: <?php echo nebula()->user_friendly_default('dev_info_metabox'); ?>)</p>
 										<p class="option-keywords">recommended</p>
 									</div>
 
 									<div class="form-group" dependent-or="developer_email_domains developer_ips">
 										<input type="checkbox" name="nebula_options[todo_manager_metabox]" id="todo_manager_metabox" value="1" <?php checked('1', !empty($nebula_options['todo_manager_metabox'])); ?> /><label for="todo_manager_metabox">Todo Manager</label>
 										<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
-										<p class="nebula-help-text short-help form-text text-muted">Aggregate todo comments in code. (Default: <?php echo ucwords($nebula_options_defaults['todo_manager_metabox']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Aggregate todo comments in code. (Default: <?php echo nebula()->user_friendly_default('todo_manager_metabox'); ?>)</p>
 										<p class="option-keywords"></p>
 									</div>
 								</div><!-- /option-group -->
@@ -529,27 +527,27 @@
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[admin_notices]" id="admin_notices" value="1" <?php checked('1', !empty($nebula_options['admin_notices'])); ?> /><label for="admin_notices">Nebula Admin Notifications</label>
-										<p class="nebula-help-text short-help form-text text-muted">Show Nebula-specific admin notices (Default: <?php echo ucwords($nebula_options_defaults['admin_notices']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Show Nebula-specific admin notices (Default: <?php echo nebula()->user_friendly_default('admin_notices'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Note: This does not toggle WordPress core, or plugin, admin notices.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[theme_update_notification]" id="theme_update_notification" value="1" <?php checked('1', !empty($nebula_options['theme_update_notification'])); ?> /><label for="theme_update_notification">Nebula Theme Update Notification</label><!-- @todo: this needs a conditional around it (from the old options) -->
-										<p class="nebula-help-text short-help form-text text-muted">Enable easy updates to the Nebula theme. (Default: <?php echo ucwords($nebula_options_defaults['theme_update_notification']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Enable easy updates to the Nebula theme. (Default: <?php echo nebula()->user_friendly_default('theme_update_notification'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>Child theme must be activated to work!</strong></p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[wp_core_updates_notify]" id="wp_core_updates_notify" value="1" <?php checked('1', !empty($nebula_options['wp_core_updates_notify'])); ?> /><label for="wp_core_updates_notify">WordPress Core Update Notification</label>
-										<p class="nebula-help-text short-help form-text text-muted">Control whether or not the Wordpress Core update notifications show up on the admin pages. (Default: <?php echo ucwords($nebula_options_defaults['wp_core_updates_notify']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Control whether or not the Wordpress Core update notifications show up on the admin pages. (Default: <?php echo nebula()->user_friendly_default('wp_core_updates_notify'); ?>)</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[plugin_update_warning]" id="plugin_update_warning" value="1" <?php checked('1', !empty($nebula_options['plugin_update_warning'])); ?> /><label for="plugin_update_warning">Plugin Warning</label>
-										<p class="nebula-help-text short-help form-text text-muted">Control whether or not the plugin update warning appears on admin pages. (Default: <?php echo ucwords($nebula_options_defaults['plugin_update_warning']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Control whether or not the plugin update warning appears on admin pages. (Default: <?php echo nebula()->user_friendly_default('plugin_update_warning'); ?>)</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 								</div><!-- /option-group -->
@@ -561,7 +559,7 @@
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[prototype_mode]" id="prototype_mode" value="1" <?php checked('1', !empty($nebula_options['prototype_mode'])); ?> /><label for="prototype_mode">Prototype Mode</label>
-										<p class="nebula-help-text short-help form-text text-muted">When prototyping, enable this setting. (Default: <?php echo ucwords($nebula_options_defaults['prototype_mode']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">When prototyping, enable this setting. (Default: <?php echo nebula()->user_friendly_default('prototype_mode'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (Note: If using this setting, you may need to select that same theme for the admin-ajax option too!).</p>
 										<p class="option-keywords"></p>
 									</div>
@@ -639,21 +637,21 @@
 
 									<div class="form-group" dependent-of="gatrackingid">
 										<input type="checkbox" name="nebula_options[ga_wpuserid]" id="ga_wpuserid" value="1" <?php checked('1', !empty($nebula_options['ga_wpuserid'])); ?> /><label for="ga_wpuserid">Use WordPress User ID</label>
-										<p class="nebula-help-text short-help form-text text-muted">Use the WordPress User ID as the Google Analytics User ID. (Default: <?php echo ucwords($nebula_options_defaults['ga_wpuserid']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Use the WordPress User ID as the Google Analytics User ID. (Default: <?php echo nebula()->user_friendly_default('ga_wpuserid'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This allows more accurate user reporting. Note: Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public.</p>
 										<p class="option-keywords"></p>
 									</div>
 
 									<div class="form-group" dependent-of="gatrackingid">
 										<input type="checkbox" name="nebula_options[ga_displayfeatures]" id="ga_displayfeatures" value="1" <?php checked('1', !empty($nebula_options['ga_displayfeatures'])); ?> /><label for="ga_displayfeatures">Display Features</label>
-										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag. (Default: <?php echo ucwords($nebula_options_defaults['ga_displayfeatures']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag. (Default: <?php echo nebula()->user_friendly_default('ga_displayfeatures'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This enables Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.</p>
 										<p class="option-keywords"></p>
 									</div>
 
 									<div class="form-group" dependent-of="gatrackingid">
 										<input type="checkbox" name="nebula_options[ga_linkid]" id="ga_linkid" value="1" <?php checked('1', !empty($nebula_options['ga_linkid'])); ?> /><label for="ga_linkid">Enhanced Link Attribution (Link ID)</label>
-										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. (Default: <?php echo ucwords($nebula_options_defaults['ga_linkid']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. (Default: <?php echo nebula()->user_friendly_default('ga_linkid'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs.</p>
 										<p class="option-keywords">minor page speed impact</p>
 									</div>
@@ -1492,21 +1490,21 @@
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[google_adsense_url]" id="google_adsense_url" value="1" <?php checked('1', !empty($nebula_options['google_adsense_url'])); ?> /><label for="google_adsense_url">Google AdSense</label>
-										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account. (Default: <?php echo ucwords($nebula_options_defaults['google_adsense_url']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account. (Default: <?php echo nebula()->user_friendly_default('google_adsense_url'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[amazon_associates_url]" id="amazon_associates_url" value="1" <?php checked('1', !empty($nebula_options['amazon_associates_url'])); ?> /><label for="amazon_associates_url">Amazon Associates</label>
-										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank">Amazon Associates</a> account. (Default: <?php echo ucwords($nebula_options_defaults['amazon_associates_url']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank">Amazon Associates</a> account. (Default: <?php echo nebula()->user_friendly_default('amazon_associates_url'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[mention_url]" id="mention_url" value="1" <?php checked('1', !empty($nebula_options['mention_url'])); ?> /><label for="mention_url">Mention</label>
-										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account. (Default: <?php echo ucwords($nebula_options_defaults['mention_url']); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account. (Default: <?php echo nebula()->user_friendly_default('mention_url'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>

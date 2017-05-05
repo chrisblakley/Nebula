@@ -43,7 +43,11 @@ if ( !trait_exists('Scripts') ){
             }
             nebula()->bootstrap('css');
             wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
-            wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.0.2/jquery.mmenu.all.css', null, '6.0.2', 'all');
+
+
+            wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.0.2/jquery.mmenu.all.css', null, '6.0.2', 'all'); //@todo "Nebula" 0: This is causing a weird slowdown on the homepage on WebPageTest.org when testing using the Oregon server... Not a huge issue, but curious: https://github.com/chrisblakley/Nebula/issues/1313
+
+
             wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/css/jquery.dataTables.min.css', null, '1.10.15', 'all'); //Datatables is called via main.js only as needed.
             wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.min.css', null, '1.7.0', 'all');
             wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css', null, '1.12.1', 'all');
@@ -61,7 +65,7 @@ if ( !trait_exists('Scripts') ){
             nebula()->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
             nebula()->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
             nebula()->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
-            nebula()->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.0.2/jquery.mmenu.all.min.js', 'defer', null, '5.7.8', true);
+            nebula()->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.0.2/jquery.mmenu.all.min.js', 'defer', null, '6.0.2', true);
             nebula()->register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true);
             nebula()->register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js', 'defer', null, '1.4.0', true); //This is not enqueued or dependent because it is called via main.js only as needed.
             nebula()->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/js/jquery.dataTables.min.js', 'defer', null, '1.10.15', true); //Datatables is called via main.js only as needed.
@@ -202,7 +206,7 @@ if ( !trait_exists('Scripts') ){
         function enqueue_scripts($hook){
             //Stylesheets
             if ( nebula()->option('google_font_url') ){
-                wp_enqueue_style('nebula-google_font');
+            	wp_enqueue_style('nebula-google_font');
             }
             wp_enqueue_style('nebula-bootstrap');
             wp_enqueue_style('nebula-mmenu');
