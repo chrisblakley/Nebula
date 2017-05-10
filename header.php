@@ -49,14 +49,14 @@
 								?>
 							</nav>
 
-							<form id="mobileheadersearch" class="nebula-search-iconable search" method="get" action="<?php echo home_url('/'); ?>">
+							<form id="mobileheadersearch" class="nebula-search search" method="get" action="<?php echo home_url('/'); ?>">
 								<?php
 									if ( !empty($_GET['s']) || !empty($_GET['rs']) ) {
 										$current_search = ( !empty($_GET['s']) )? $_GET['s'] : $_GET['rs'];
 									}
 									$header_search_placeholder = ( isset($current_search) )? $current_search : 'What are you looking for?' ;
 								?>
-								<input class="nebula-search open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
+								<input class="open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" role="search" x-webkit-speech />
 							</form>
 						</div><!--/col-->
 					</div><!--/row-->

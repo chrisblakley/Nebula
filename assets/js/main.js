@@ -63,6 +63,8 @@ jQuery(function(){
 		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
 	}
 
+	lastWidth = jQuery(window).width(); //Prep resize detection
+
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').val(nebula.user.nid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
@@ -105,9 +107,13 @@ jQuery(window).on('load', function(){
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
-		powerFooterWidthDist();
-		nebulaEqualize();
-		mobileSearchPlaceholder();
+		if ( jQuery(window).width() != lastWidth ){ //If the width actually changed
+			lastWidth = jQuery(window).width();
+
+			powerFooterWidthDist();
+			nebulaEqualize();
+			mobileSearchPlaceholder();
+		}
 	}, 500, 'window resize');
 }); //End Window Resize
 
@@ -393,14 +399,6 @@ function initEventTracking(){
 
 //Google Analytics Universal Analytics Event Trackers
 function eventTracking(){
-	//Example Event Tracker (Category and Action are required. If including a Value, it should be a rational number and not a string. Value could be an object of parameters like {'nonInteraction': true, 'dimension1': 'Something', 'metric1': 82} Use deferred selectors.)
-	//nebula.dom.document.on('mousedown', '.selector', function(e){
-	//  eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-	//	ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-	//	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	//	ga('send', 'event', 'Category', 'Action', 'Label', Value, {'object_name_here': object_value_here}); //Object names include 'hitCallback', 'nonInteraction', and others
-	//});
-
 	//Btn Clicks
 	nebula.dom.document.on('mousedown touch tap', ".btn", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
@@ -887,11 +885,11 @@ function keywordSearch(container, parent, value, filteredClass){
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search-iconable" method="get" action="' + nebula.site.home_url + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
-	jQuery('li.nebula-search input, input.nebula-search').on('focus', function(){
+	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search" method="get" action="' + nebula.site.home_url + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
+	jQuery('li.nebula-search input').on('focus', function(){
 		jQuery(this).addClass('focus active');
 	});
-	jQuery('li.nebula-search input, input.nebula-search').on('blur', function(){
+	jQuery('li.nebula-search input').on('blur', function(){
 		if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
 			jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
 		} else {
@@ -917,11 +915,11 @@ function searchTriggerOnlyChars(e){
 
 //Enable autocomplete search on WordPress core selectors
 function initAutocompleteSearch(){
-	nebula.dom.document.on('blur', '.nebula-search-iconable input', function(){
-		jQuery('.nebula-search-iconable').removeClass('searching').removeClass('autocompleted');
+	nebula.dom.document.on('blur', '.nebula-search input', function(){
+		jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
 	});
 
-	jQuery("input#s, input.search").on('keyup paste', function(e){
+	jQuery('input#s, input.search').on('keyup paste change', function(e){
 		if ( !jQuery(this).hasClass('no-autocomplete') && jQuery.trim(jQuery(this).val()).length && searchTriggerOnlyChars(e) ){
 			autocompleteSearch(jQuery(this));
 		}
@@ -943,14 +941,19 @@ function autocompleteSearch(element, types){
 	nebulaTimer('autocompleteSearch', 'start');
 	nebulaTimer('autocompleteResponse', 'start');
 
-	if ( !nebula.dom.html.hasClass('lte-ie8') && jQuery.trim(element.val()).length ){
-		if ( element.parents('form').hasClass('nebula-search-iconable') && jQuery.trim(element.val()).length >= 2 ){
-			element.parents('form').addClass('searching');
+	if ( jQuery.trim(element.val()).length ){
+		if ( jQuery.trim(element.val()).length >= 2 ){
+			//Add "searching" class for custom Nebula styled forms
+			element.closest('form').addClass('searching');
 			setTimeout(function(){
-				element.parents('form').removeClass('searching');
+				element.closest('form').removeClass('searching');
 			}, 10000);
+
+			//Swap magnifying glass on Bootstrap input-group
+			element.closest('.input-group').find('i.fa-search').removeClass('fa-search').addClass('fa-spin fa-spinner');
 		} else {
-			element.parents('form').removeClass('searching');
+			element.closest('form').removeClass('searching');
+			element.closest('.input-group').find('i.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 		}
 
 		element.autocomplete({
@@ -985,13 +988,16 @@ function autocompleteSearch(element, types){
 							nebula.dom.document.trigger('nebula_autocomplete_search_no_results');
 							noSearchResults = ' (No Results)';
 						}
+
 						debounce(function(){
 							ga('send', 'event', 'Internal Search', 'Autocomplete Search' + noSearchResults, request.term);
 							if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: request.term});}
 						}, 1500, 'autocomplete success buffer');
+
 						ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebulaTimer('autocompleteSearch', 'lap')), 'Each search until server results');
 						response(data);
-						element.parents('form').removeClass('searching').addClass('autocompleted');
+						element.closest('form').removeClass('searching').addClass('autocompleted');
+						element.closest('.input-group').find('i.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 					},
 					error: function(XMLHttpRequest, textStatus, errorThrown){
 						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
@@ -1000,7 +1006,8 @@ function autocompleteSearch(element, types){
 							ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
 							nv('append', {'ajax_error': 'Autocomplete Search'});
 						}, 1500, 'autocomplete error buffer');
-						element.parents('form').removeClass('searching');
+						element.closest('form').removeClass('searching');
+						element.closest('.input-group').find('i.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 					},
 					timeout: 60000
 				});
@@ -1021,12 +1028,12 @@ function autocompleteSearch(element, types){
 	            }
 	        },
 	        open: function(){
-		        element.parents('form').addClass('autocompleted');
+		        element.closest('form').addClass('autocompleted');
 		        var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
 				heroAutoCompleteDropdown.css('max-width', element.outerWidth());
 	        },
 	        close: function(){
-				element.parents('form').removeClass('autocompleted');
+				element.closest('form').removeClass('autocompleted');
 	        },
 	        minLength: 3,
 	    }).data("ui-autocomplete")._renderItem = function(ul, item){
@@ -1034,7 +1041,7 @@ function autocompleteSearch(element, types){
 		    var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
 		    return listItem;
 		};
-		var thisFormIdentifier = element.parents('form').attr('id') || element.parents('form').attr('name') || element.parents('form').attr('class');
+		var thisFormIdentifier = element.closest('form').attr('id') || element.closest('form').attr('name') || element.closest('form').attr('class');
 		element.autocomplete("widget").addClass("form-identifier-" + thisFormIdentifier);
     }
 }
@@ -1368,7 +1375,7 @@ function wpSearchInput(){
 	var searchVal = get('s') || jQuery('#s').val();
 	if ( searchVal ){
 		jQuery('#s').attr('placeholder', searchVal);
-		jQuery('.nebula-search').attr('placeholder', searchVal);
+		jQuery('.nebula-search input').attr('placeholder', searchVal);
 	}
 }
 
@@ -1386,42 +1393,39 @@ function mobileSearchPlaceholder(){
 
 //Search Validator
 function searchValidator(){
-	if ( !nebula.dom.html.hasClass('lte-ie8') ){
-		jQuery('.lt-ie9 form.search .btn.submit').val('Search');
-		jQuery('.input.search').each(function(){
-			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
-				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
-			} else {
-				jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
-				jQuery(this).parent().find('.input.search').removeClass('focusError');
-			}
-		});
-		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
-			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
-			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
-				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
-				jQuery(this).parent().find('.btn.submit').val('Go');
-			} else {
-				jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-				jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', thisPlaceholder);
-				jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-			}
-			if ( e.type === 'paste' ){
-				jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-				jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
-				jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-			}
-		})
-		jQuery('form.search').submit(function(){
-			if ( jQuery(this).find('.input.search').val() === '' || jQuery.trim(jQuery(this).find('.input.search').val()).length === 0 ){
-				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
-				jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
-				return false;
-			} else {
-				return true;
-			}
-		});
-	}
+	jQuery('.input.search').each(function(){
+		if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
+		} else {
+			jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
+			jQuery(this).parent().find('.input.search').removeClass('focusError');
+		}
+	});
+	jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
+		thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
+		if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
+			jQuery(this).parent().find('.btn.submit').val('Go');
+		} else {
+			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
+			jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', thisPlaceholder);
+			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
+		}
+		if ( e.type === 'paste' ){
+			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
+			jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
+			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
+		}
+	})
+	jQuery('form.search').submit(function(){
+		if ( jQuery(this).find('.input.search').val() === '' || jQuery.trim(jQuery(this).find('.input.search').val()).length === 0 ){
+			jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
+			jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
+			return false;
+		} else {
+			return true;
+		}
+	});
 }
 
 //Highlight search terms
@@ -1596,7 +1600,7 @@ function cf7Functions(){
 
 	formStarted = [];
 	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(){
-		formID = jQuery(this).parents('div.wpcf7').attr('id');
+		formID = jQuery(this).closest('div.wpcf7').attr('id');
 
 		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
@@ -1625,9 +1629,6 @@ function cf7Functions(){
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7invalid', function(e){
-		console.log('old invalid');
-		console.debug(e.target.id);
-		console.debug(e);
 		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-spam');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
@@ -1850,7 +1851,7 @@ function nebulaLiveValidator(){
 
 	//Checkbox and Radio
 	jQuery('.nebula-validate-checkbox, .nebula-validate-radio').on('change blur', function(e){
-		if ( jQuery(this).parents('.form-group').find('input:checked').length ){
+		if ( jQuery(this).closest('.form-group').find('input:checked').length ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else {
 			applyValidationClasses(jQuery(this), 'danger', true);
@@ -1868,25 +1869,25 @@ function applyValidationClasses(element, validation, showFeedback){
 
 	if ( validation === 'success' || validation === 'valid' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-success')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success')
+			.closest('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success')
 			.find('.wpcf7-not-valid-tip').remove();
 	} else if ( validation === 'warning' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-warning')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning')
+			.closest('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning')
 			.find('.wpcf7-not-valid-tip').remove();
 	} else if ( validation === 'danger' || validation === 'error' || validation === 'invalid' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-danger')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
+			.closest('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
 	} else if ( validation === 'reset' || validation === 'remove' ){
 		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid')
-			.parents('.form-group').removeClass('has-danger has-warning has-success')
+			.closest('.form-group').removeClass('has-danger has-warning has-success')
 			.find('.wpcf7-not-valid-tip').remove();
 	}
 
 	if ( validation === 'feedback' || showFeedback ){
-		element.parents('.form-group').find('.form-control-feedback').removeClass('hidden');
+		element.closest('.form-group').find('.form-control-feedback').removeClass('hidden');
 	} else {
-		element.parents('.form-group').find('.form-control-feedback').addClass('hidden');
+		element.closest('.form-group').find('.form-control-feedback').addClass('hidden');
 	}
 }
 
@@ -2349,7 +2350,7 @@ function addHelperClasses(){
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links
 
 	//Remove filetype icons from images within <a> tags and buttons.
-	jQuery('a img').parents('a').addClass('no-icon');
+	jQuery('a img').closest('a').addClass('no-icon');
 	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
 }
 
@@ -2505,8 +2506,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){
-			var target = jQuery(this.hash);
-			target = ( target.length )? target : jQuery('[name=' + this.hash.slice(1) +']');
+			var target = jQuery(this.hash) || jQuery('[name=' + this.hash.slice(1) +']');
 			if ( target.length ){ //If target exists
 				var nOffset = Math.floor(target.offset().top-offset+pOffset);
 				jQuery('html, body').animate({
@@ -2520,7 +2520,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 	nebula.dom.document.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( jQuery(this).attr('scrollto') ){
-			var scrollElement = jQuery(this).attr('scrollto');
+			var scrollElement = jQuery(this).attr('scroll-to');
 			if ( scrollElement !== '' ){
 				jQuery('html, body').animate({
 					scrollTop: Math.floor(jQuery(scrollElement).offset().top-offset+pOffset)
@@ -2626,6 +2626,38 @@ function nebulaAnimate(selector, newAnimationClasses, oldAnimationClasses){
 	element.addClass(newAnimationClasses); //Animate the element.
 }
 
+//Helpful animation event listeners
+function animationTriggers(){
+	//On document ready
+	jQuery('.ready').each(function(){
+		loadAnimate(jQuery(this));
+	});
+
+	//On window load
+	nebula.dom.window.on('load', function(){
+		jQuery('.load').each(function(){
+			loadAnimate(jQuery(this));
+		});
+	});
+
+	//On click
+	nebula.dom.document.on('click tap touch', '.click, [nebula-click]', function(){
+		var animationClass = jQuery(this).attr('nebula-click') || '';
+		nebulaAnimate(jQuery(this), animationClass);
+	});
+}
+
+function loadAnimate(oThis){
+	animationDelay = oThis.attr('nebula-delay');
+	if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
+		nebulaAnimate(oThis, 'load-animate');
+	} else {
+		setTimeout(function(){
+			nebulaAnimate(oThis, 'load-animate');
+		}, animationDelay);
+	}
+}
+
 //Allows something to be called once per pageload.
 //Call without self-executing parenthesis in the parameter! Ex: once(customFunction, 'test example');
 //To add parameters, use an array as the 2nd parameter. Ex: once(customFunction, ['parameter1', 'parameter2'], 'test example');
@@ -2637,8 +2669,8 @@ function once(fn, args, unique){
 
 	if ( typeof fn === 'function' ){ //If the first parameter is a function
 		if ( typeof args === 'string' ){ //If no parameters
-			args = [];
 			unique = args;
+			args = [];
 		}
 
 		if ( typeof onces[unique] === 'undefined' || !onces[unique] ){
@@ -2911,7 +2943,7 @@ function nebulaPre(){
 		if ( !jQuery(this).parent('.nebula-code-con').length ){
 			lang = jQuery.trim(jQuery(this).attr('class').replace('nebula-code', ''));
 			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con clearfix ' + lang.toLowerCase() + '"></div>');
-			jQuery(this).parents('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
+			jQuery(this).closest('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}
 	});
 
@@ -2924,7 +2956,7 @@ function nebulaPre(){
 	    oThis = jQuery(this);
 
 	    if ( jQuery(this).text() === 'Copy to clipboard' ){
-		    selectText(jQuery(this).parents('.nebula-code-con').find('pre'), 'copy', function(success){
+		    selectText(jQuery(this).closest('.nebula-code-con').find('pre'), 'copy', function(success){
 			    if ( success ){
 				    oThis.text('Copied!').removeClass('error').addClass('success');
 				    setTimeout(function(){
@@ -2941,7 +2973,7 @@ function nebulaPre(){
 			    }
 		    });
 	    } else {
-		    selectText(jQuery(this).parents('.nebula-code-con').find('pre'), function(success){
+		    selectText(jQuery(this).closest('.nebula-code-con').find('pre'), function(success){
 			    if ( success ){
 				    oThis.text('Selected!').removeClass('error').addClass('success');
 				    setTimeout(function(){
@@ -3075,43 +3107,50 @@ function nebulaVideoTracking(){
 
 //Native HTML5 Video Tracking
 function nebulaHTML5VideoTracking(){
-	if ( jQuery('video').is(':visible').length ){
+	if ( jQuery('video:visible').length ){
 		jQuery('video').each(function(){
 			var oThis = jQuery(this);
 			var id = oThis.attr('id');
-			var videoTitle = oThis.attr('title') || oThis.attr('id') || 'Unknown';
+			var videoTitle = oThis.attr('title') || oThis.attr('id') || false;
+
+			if ( !videoTitle ){
+				return false; //An ID or title is required to track HTML5 videos
+			}
+
 			players.html5[id] = oThis; //This is just for reference. It isn't used like it is for Youtube and Vimeo.
 
+			if ( !videoData[id] ){
+				videoData[id] = {
+					'platform': 'html5', //The platform the video is hosted using.
+					'player': id, //The player ID of this video. Can access the API here.
+					'autoplay': false, //Will be overwritten if it is an autoplay video.
+					'current': this.currentTime, //The current position of the video. Units: Seconds
+					'duration': this.duration, //The total duration of the video. Units: Seconds
+					'percent': 0, //The percent of the current position. Multiply by 100 for actual percent.
+					'seeker': false, //Whether the viewer has seeked through the video at least once.
+					'seen': [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+					'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+					'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+				};
+			}
+
 			oThis.on('play', function(){
-				if ( !videoData[id] ){
-					videoData[id] = {
-						'platform': 'html5', //The platform the video is hosted using.
-						'player': id, //The player ID of this video. Can access the API here.
-						'current': this.currentTime, //The current position of the video. Units: Seconds
-						'duration': this.duration, //The total duration of the video. Units: Seconds
-						'percent': 0, //The percent of the current position. Multiply by 100 for actual percent.
-						'seeker': false, //Whether the viewer has seeked through the video at least once.
-						'seen': [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
-						'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-						'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-					};
+				playAction = 'Play';
+				if ( !isInView(oThis) ){
+					playAction += ' (Not In View)';
 				}
 
-				autoplayNonInteraction = false;
-				playAction = 'Play';
-				if ( !isInView(jQuery('#' + id)) ){
-					playAction = 'Play (Not In View)';
-				}
+				//Detect if has autoplay attribute
 				if ( oThis.is('[autoplay]') ){
-					autoplayNonInteraction = true;
-					playAction = 'Autoplay';
+					videoData[id].autoplay = true;
+					playAction += ' (Autoplay)';
 				}
 
 				ga('set', gaCustomMetrics['videoStarts'], 1);
 		        ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 		        ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		        ga('send', 'event', 'Videos', playAction, videoTitle, {'nonInteraction': autoplayNonInteraction});
-		        if ( !autoplayNonInteraction ){
+		        ga('send', 'event', 'Videos', playAction, videoTitle, {'nonInteraction': videoData[id].autoplay});
+		        if ( !videoData[id].autoplay ){
 			        nv('append', {'video_play': videoTitle});
 		        }
 		        nebula.dom.document.trigger('nebula_playing_video', id);
@@ -3129,17 +3168,19 @@ function nebulaHTML5VideoTracking(){
 				videoData[id].watched = (videoData[id].seen.length/100)*videoData[id].duration; //Roughly calculate time watched based on percent seen
 
 				if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
-					ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+					if ( isInView(oThis) ){
+						ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
 
-					engagedAction = 'Engaged';
-					if ( !isInView(jQuery('#' + id)) ){
-						engagedAction = 'Engaged (Not In View)';
+						engagedAction = 'Engaged';
+						if ( videoData[id].autoplay ){
+							engagedAction += ' (Autoplay)';
+						}
+
+						ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
+						nv('append', {'video_engaged': videoTitle});
+						videoData[id].engaged = true;
+						nebula.dom.document.trigger('nebula_engaged_video', id);
 					}
-					ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
-
-					nv('append', {'video_engaged': videoTitle});
-					videoData[id].engaged = true;
-					nebula.dom.document.trigger('nebula_engaged_video', id);
 				}
 			});
 
@@ -3155,11 +3196,26 @@ function nebulaHTML5VideoTracking(){
 			});
 
 			oThis.on('seeked', function(){
-			    ga('set', gaCustomDimensions['videoWatcher'], 'Seeker');
-			    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
-			    nv('append', {'video_seeked': videoTitle});
-			    videoData[id].seeker = true;
-			    nebula.dom.document.trigger('nebula_seeked_video', id);
+				if ( videoData[id].current == 0 && oThis.is('[loop]') ){ //If the video is set to loop and is starting again
+					endedAction = 'Ended (Looped)';
+					if ( !isInView(oThis) ){
+						endedAction += ' (Not In View)';
+					}
+
+					if ( videoData[id].autoplay ){
+						endedAction += ' (Autoplay)';
+					}
+
+					ga('send', 'event', 'Videos', endedAction, videoTitle, {'nonInteraction': true});
+				} else { //Otherwise, the user seeked
+					debounce(function(){
+						ga('set', gaCustomDimensions['videoWatcher'], 'Seeker');
+						ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + videoData[id].current.toFixed(0) + ']');
+						nv('append', {'video_seeked': videoTitle});
+						videoData[id].seeker = true;
+						nebula.dom.document.trigger('nebula_seeked_video', id);
+					}, 250, 'video seeking')
+				}
 			});
 
 			oThis.on('volumechange', function(){
@@ -3173,9 +3229,14 @@ function nebulaHTML5VideoTracking(){
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
 				endedAction = 'Ended';
-				if ( !isInView(jQuery('#' + id)) ){
-					endedAction = 'Ended (Not In View)';
+				if ( !isInView(oThis) ){
+					endedAction += ' (Not In View)';
 				}
+
+				if ( videoData[id].autoplay ){
+					endedAction += ' (Autoplay)';
+				}
+
 				ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
 
 				ga('send', 'timing', 'Videos', 'Ended', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
@@ -3237,6 +3298,7 @@ function onPlayerReady(e){
 		'platform': 'youtube', //The platform the video is hosted using.
 		'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
 		'player': players.youtube[id], //The player ID of this video. Can access the API here.
+		'autoplay': jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
 		'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
 		'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
 		'percent': e.target.getCurrentTime()/e.target.getDuration(), //The percent of the current position. Multiply by 100 for actual percent.
@@ -3259,8 +3321,13 @@ function onPlayerStateChange(e){
 
         playAction = 'Play';
 		if ( !isInView(jQuery(videoData[id].iframe)) ){
-			playAction = 'Play (Not In View)';
+			playAction += ' (Not In View)';
 		}
+
+		if ( videoData[id].autoplay ){
+			playAction += ' (Autoplay)';
+		}
+
         ga('send', 'event', 'Videos', playAction, videoInfo.title);
 
         nv('append', {'video_play': videoInfo.title});
@@ -3275,17 +3342,19 @@ function onPlayerStateChange(e){
 			videoData[id].watchedPercent = (videoData[id].watched)/videoData[id].duration;
 
 			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
-				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+				if ( isInView(jQuery(videoData[id].iframe)) ){
+					ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
 
-				engagedAction = 'Engaged';
-				if ( !isInView(jQuery(videoData[id].iframe)) ){
-					engagedAction = 'Engaged (Not In View)';
+					engagedAction = 'Engaged';
+					if ( videoData[id].autoplay ){
+						engagedAction += ' (Autoplay)';
+					}
+					ga('send', 'event', 'Videos', engagedAction, videoInfo.title, {'nonInteraction': true});
+
+					nv('append', {'video_engaged': videoInfo.title});
+					videoData[id].engaged = true;
+					nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
 				}
-				ga('send', 'event', 'Videos', engagedAction, videoInfo.title, {'nonInteraction': true});
-
-				nv('append', {'video_engaged': videoInfo.title});
-				videoData[id].engaged = true;
-				nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
 			}
 		}, updateInterval);
     }
@@ -3298,8 +3367,13 @@ function onPlayerStateChange(e){
 
         endedAction = 'Ended';
 		if ( !isInView(jQuery(videoData[id].iframe)) ){
-			endedAction = 'Ended (Not In View)';
+			endedAction += ' (Not In View)';
 		}
+
+		if ( videoData[id].autoplay ){
+			endedAction += ' (Autoplay)';
+		}
+
         ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
 
         ga('send', 'timing', 'Videos', 'Ended', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
@@ -3370,8 +3444,13 @@ function nebulaVimeoTracking(){
 
 	    playAction = 'Play';
 		if ( !isInView(jQuery('#' + id)) ){
-			playAction = 'Play (Not In View)';
+			playAction += ' (Not In View)';
 		}
+
+		if ( jQuery(players.vimeo[id].element).attr('src').indexOf('autoplay=1') > 0 ){
+			playAction += ' (Autoplay)';
+		}
+
 	    ga('send', 'event', 'Videos', playAction, videoTitle);
 
 	    nv('append', {'video_play': videoTitle});
@@ -3380,11 +3459,11 @@ function nebulaVimeoTracking(){
 
 	function vimeoPlayProgress(data, id){
 		var videoTitle = id.replace(/-/g, ' ');
-
 		if ( typeof videoData[id] === 'undefined' ){
 		    videoData[id] = {
 				'platform': 'vimeo', //The platform the video is hosted using.
 				'player': players.vimeo[id], //The player ID of this video. Can access the API here.
+				'autoplay': jQuery(players.vimeo[id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
 				'duration': data.duration, //The total duration of the video. Units: Seconds
 				'current': data.seconds, //The current position of the video. Units: Seconds
 				'percent': data.percent, //The percent of the current position. Multiply by 100 for actual percent.
@@ -3409,17 +3488,19 @@ function nebulaVimeoTracking(){
 	    }
 
 		if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
-			ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+			if ( isInView(jQuery(players.vimeo[id].element)) ){
+				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
 
-			engagedAction = 'Engaged';
-			if ( !isInView(jQuery(players.vimeo[id])) ){
-				engagedAction = 'Engaged (Not In View)';
+				engagedAction = 'Engaged';
+				if ( videoData[id].autoplay ){
+					engagedAction += ' (Autoplay)';
+				}
+				ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
+
+				nv('append', {'video_engaged': videoTitle});
+				videoData[id].engaged = true;
+				nebula.dom.document.trigger('nebula_engaged_video', id);
 			}
-			ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
-
-			nv('append', {'video_engaged': videoTitle});
-			videoData[id].engaged = true;
-			nebula.dom.document.trigger('nebula_engaged_video', id);
 		}
 	}
 
@@ -3453,8 +3534,13 @@ function nebulaVimeoTracking(){
 
 		endedAction = 'Ended';
 		if ( !isInView(jQuery(players.vimeo[id])) ){
-			endedAction = 'Ended (Not In View)';
+			endedAction += ' (Not In View)';
 		}
+
+		if ( videoData[id].autoplay ){
+			endedAction += ' (Autoplay)';
+		}
+
 		ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
 
 		ga('send', 'timing', 'Videos', 'Ended', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
@@ -3498,37 +3584,6 @@ function pauseAllVideos(force){
 			players.vimeo[vimeoiframeID].api('pause');
 		}
 	});
-}
-
-//Helpful animation event listeners
-function animationTriggers(){
-	//On document ready
-	jQuery('.ready').each(function(){
-		loadAnimate(jQuery(this));
-	});
-
-	//On window load
-	nebula.dom.window.on('load', function(){
-		jQuery('.load').each(function(){
-			loadAnimate(jQuery(this));
-		});
-	});
-
-	//On click
-	nebula.dom.document.on('click tap touch', '.nebula-push.click', function(){
-		nebulaAnimate(jQuery(this));
-	});
-}
-
-function loadAnimate(oThis){
-	animationDelay = oThis.attr('data-delay');
-	if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
-		nebulaAnimate(oThis, 'load-animate');
-	} else {
-		setTimeout(function(){
-			nebulaAnimate(oThis, 'load-animate');
-		}, animationDelay);
-	}
 }
 
 //Create desktop notifications
@@ -3717,7 +3772,7 @@ function mmenus(){
 			if ( mobileNav.length ){
 				mobileNav.data('mmenu').bind('opening', function(){
 					//When mmenu has started opening
-					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').parents('.mobilenavtrigger').addClass('active');
+					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').closest('.mobilenavtrigger').addClass('active');
 					nebulaTimer('mmenu', 'start');
 				}).bind('opened', function(){
 					//After mmenu has finished opening
@@ -3725,7 +3780,7 @@ function mmenus(){
 					history.pushState(null, document.title, location);
 				}).bind('closing', function(){
 					//When mmenu has started closing
-					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').parents('.mobilenavtrigger').removeClass('active');
+					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').closest('.mobilenavtrigger').removeClass('active');
 					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until closing mmenu');
 				}).bind('closed', function(){
 					//After mmenu has finished closing

@@ -14,7 +14,6 @@
 
 		<li class="widget-container">
 			<?php if ( has_nav_menu('sidebar') ): ?>
-				<h3>Features</h3>
 				<?php
 					wp_nav_menu();
 					//wp_nav_menu(array('theme_location' => 'sidebar'));

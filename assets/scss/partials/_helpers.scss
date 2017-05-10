@@ -76,6 +76,17 @@
 .filtereditem {display: none;}
 
 // ===========================
+// Bootstrap Helpers
+// ===========================
+
+.btn {cursor: pointer;}
+	.btn-primary:focus,
+	.btn-success:focus,
+	.btn-info:focus,
+	.btn-warning:focus,
+	.btn-danger:focus {color: #fff;}
+
+// ===========================
 // Generic Helpers
 // ===========================
 

@@ -1,4 +1,4 @@
-<?php //if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly ?>
+<?php if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly ?>
 
 <?php
 	$active_tab = 'metadata';
@@ -1228,18 +1228,18 @@
 									<label for="google_browser_api_key">Google Public API</label>
 
 									<div class="input-group">
-										<div class="input-group-addon">Browser Key</div>
+										<div class="input-group-addon">HTTP Restricted</div>
 										<input type="text" name="nebula_options[google_browser_api_key]" id="google_browser_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_browser_api_key']; ?>" />
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon">Server Key</div>
+										<div class="input-group-addon">IP Restricted</div>
 										<input type="text" name="nebula_options[google_server_api_key]" id="google_server_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_server_api_key']; ?>" />
 									</div>
 
 									<p class="nebula-help-text short-help form-text text-muted">API keys from the <a href="https://console.developers.google.com/project" target="_blank">Google Developers Console</a>.</p>
-									<p class="nebula-help-text more-help form-text text-muted">In the Developers Console make a new project (if you don't have one yet). Under "Credentials" create a new key. Your current server IP address is <code><?php echo $_SERVER['SERVER_ADDR']; ?></code> (for server key whitelisting). Do not use the Server Key in JavaScript or any client-side code!</p>
+									<p class="nebula-help-text more-help form-text text-muted">In the Developers Console make a new project (if you don't have one yet). Under "Credentials" create a new key. Your current server IP address is <code><?php echo $_SERVER['SERVER_ADDR']; ?></code> (for IP restricting). Do not use an IP restricted key in JavaScript or any client-side code! Use HTTP referrer restrictions for browser keys.</p>
 									<p class="option-keywords"></p>
 								</div>
 

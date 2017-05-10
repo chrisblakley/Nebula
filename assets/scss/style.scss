@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.0.3
+	Version: 5.0.7
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -22,8 +22,8 @@
 html {height: auto; font-size: 16px;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
 body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;}
 button, input, select, textarea {font-size: rem(14px);}
-::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25);}
-::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25);}
+::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
+::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
 
 img,
 svg {vertical-align: middle; max-width: 100%; height: auto;
@@ -44,9 +44,10 @@ p, li, dt, dl, div {line-height: 1.625em;}
 span {font-size: inherit;}
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
-a {@include link-colors($primary_color, $secondary_color, $secondary_color, $primary_color, $secondary_color); @include prefix((transition: all 0.25s));
+a:not(.btn) {@include link-colors($primary_color, $secondary_color, $primary_color, $primary_color, $primary_color); @include prefix((transition: all 0.25s));
 	&:hover,
-	&:focus {text-decoration: none; outline: none;}
+	&:focus,
+	&:active {text-decoration: none; outline: none;}
 }
 
 .screen-reader-text {clip: rect(1px, 1px, 1px, 1px); position: absolute !important; height: 1px; width: 1px; overflow: hidden;}
@@ -61,36 +62,30 @@ input[type="checkbox"]{-webkit-appearance: checkbox;}
 input[type="radio"]{-webkit-appearance: radio;}
 button {cursor: pointer;}
 
-input.nebula-search {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: #eee url($template_directory + "/assets/img/search.png") no-repeat 6px center; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
-	&:hover {background-color: #fff;}
-	&:focus {max-width: 210px; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
-	&.open {max-width: 100%; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
-	&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), .5);}
-	.svg & {background: #eee url($template_directory + "/assets/img/search.svg") no-repeat 6px center; background-size: auto 80%;}
-}
-	//Note: Can not use nested SCSS selectors on placeholder pseudos!
-	input.nebula-search::-webkit-search-decoration,
-	input.nebula-search::-webkit-search-cancel-button {display: none;}
+form.nebula-search {position: relative; display: inline-block; margin: 0;
+	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+		&:hover {background-color: #fff;}
+		&:focus {max-width: 210px; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
+		&.open {max-width: 100%; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
+		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), .5);}
 
-	input.nebula-search:-moz-placeholder {color: transparent;}
-	input.nebula-search:-ms-input-placeholder {color: transparent;}
-	input.nebula-search::-webkit-input-placeholder {color: transparent;}
+		&::-webkit-search-decoration,
+		&::-webkit-search-cancel-button {display: none;}
 
-	input.nebula-search:focus:-moz-placeholder, input.nebula-search.open:-moz-placeholder {color: #aaa;}
-	input.nebula-search:focus:-ms-input-placeholder, input.nebula-search.open:-ms-input-placeholder {color: #aaa;}
-	input.nebula-search:focus::-webkit-input-placeholder, input.nebula-search.open::-webkit-input-placeholder {color: #aaa;}
+		&:-moz-placeholder {color: transparent;}
+		&:-ms-input-placeholder {color: transparent;}
+		&::-webkit-input-placeholder {color: transparent;}
 
-//@TODO "Nebula" 0: Consider making this the default for .nebula-search
-form.nebula-search-iconable {position: relative; display: inline-block; margin: 0;
-	input.nebula-search {background: #eee;
-		.lte-ie9 &,
-		.ie10 & {background: #eee;}
+		&:focus:-moz-placeholder, &.open:-moz-placeholder {color: #aaa;}
+		&:focus:-ms-input-placeholder, &.open:-ms-input-placeholder {color: #aaa;}
+		&:focus::-webkit-input-placeholder, &.open::-webkit-input-placeholder {color: #aaa;}
 	}
-	.borderimage &:before {content: '\f002'; display: inline-block; position: absolute; top: rem(9px); left: 7px; pointer-events: none; font-family: "FontAwesome"; font-size: rem(12px); line-height: 100%; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
-	.borderimage &.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
+
+	&:before {content: '\f002'; display: inline-block; position: absolute; top: rem(9px); left: 7px; pointer-events: none; font-family: "FontAwesome"; font-size: rem(12px); line-height: 100%; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	&.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
 }
 
-.nebula_the_excerpt, .nebula_custom_excerpt {white-space: nowrap;}
+.nebula_the_excerpt {white-space: nowrap;}
 #wp_search_submit {color: #292b2c !important;
 	&:hover {color: #000 !important;}
 }
@@ -227,35 +222,53 @@ p.form-submit {}
 
 .debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;} //Font size and line height needs !important
 
-//Fade placeholders on focus
+//Lighten placeholders and fade them on focus
 //Note: Can not use nested SCSS selectors on placeholder pseudos!
 $placeholder_color: rgba(153, 153, 153, 0.9);
 $placeholder_color_focus: rgba(153, 153, 153, 0) !important;
-input::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), webkit);}
-input:-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);} /* Eventually remove this line. */
-input::-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);}
-input:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), ms);}
-	input:not(.nofade):focus::-webkit-input-placeholder {color: $placeholder_color_focus;}
-	input:not(.nofade):focus:-moz-placeholder {color: $placeholder_color_focus;} /* Eventually remove this line. */
-	input:not(.nofade):focus::-moz-placeholder {color: $placeholder_color_focus;}
-	input:not(.nofade):focus:-ms-input-placeholder {color: $placeholder_color_focus;}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), webkit);}
+input:-moz-placeholder,
+textarea:-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);} /* Eventually remove this line. */
+input::-moz-placeholder,
+textarea::-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), ms);}
+	input:not(.nofade):focus::-webkit-input-placeholder,
+	textarea:not(.nofade):focus::-webkit-input-placeholder {color: $placeholder_color_focus;}
+	input:not(.nofade):focus:-moz-placeholder,
+	textarea:not(.nofade):focus:-moz-placeholder {color: $placeholder_color_focus;} /* Eventually remove this line. */
+	input:not(.nofade):focus::-moz-placeholder,
+	textarea:not(.nofade):focus::-moz-placeholder {color: $placeholder_color_focus;}
+	input:not(.nofade):focus:-ms-input-placeholder,
+	textarea:not(.nofade):focus:-ms-input-placeholder {color: $placeholder_color_focus;}
+
+::-ms-clear {display: none;} //Hide the IE clear "X"
+::-ms-reveal {display: none;} //Hide the IE password reveal button
 
 //jQuery UI Autocomplete Hero Search
 div#nebula-hero-formcon {text-align: center; display: none; @include media("lg"){display: block;};}
-form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
-	&:before {left: 10px; font-size: rem(16px);}
-	input {display: block; width: 100%; font-size: rem(18px); line-height: 23px; padding: 5px 6px 5px 32px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
-		&.active {@include background-color(#fff, 0.95); box-shadow: 0 0 25px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
+
+form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
+	&:before {content: '\f002'; display: inline-block; position: absolute; top: rem(10px); left: 13px; pointer-events: none; font-family: "FontAwesome"; font-size: rem(16px); line-height: 100%; color: #292b2c; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
+	&.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
+
+	input {display: block; width: 100%; font-size: rem(18px); padding-left: 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
+		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 	}
+
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
 }
+
 .form-identifier-nebula-hero-search { //Only on front-page hero search
-	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: rem(10px); opacity: 0.9;}
-	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #DAA520; font-size: rem(10px); opacity: 0.6;}
+	.exact-match:after {content: '\f005'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #daa520; font-size: rem(10px); opacity: 0.9;}
+	.close-match:after {content: '\f123'; position: absolute; top: 3px; right: 13px; font-family: "FontAwesome"; color: #daa520; font-size: rem(10px); opacity: 0.6;}
 	.external-link a:after {content: '\f08e'; font-family: "FontAwesome"; margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
 }
 .ui-autocomplete.ui-widget-content li {position: relative;
-	& a:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
+	& a {@include link-colors(#292b2c, #292b2c, #292b2c, #292b2c, #292b2c);
+		&:before {content: '\f105'; font-family: "FontAwesome"; float: left; width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
+	}
 	&.type-post a:before {content: '\f1ea';}
 	&.type-page a:before {content: '\f0f6';}
 	&.type-category a:before {content: '\f02e';}
@@ -287,7 +300,8 @@ form#nebula-hero-search {position: relative; margin: 0; width: 100%; max-width: 
 	.ui-widget-header li.ui-state-focus,
 	.ui-widget-header li.ui-state-active {margin: 0; font-weight: normal; background: $primary_color; color: #fff; border: none;}
 	.ui-state-hover a,
-	li.ui-state-focus a {@include link-colors(#fff, #fff, #fff, #fff, #fff);}
+	li.ui-state-focus a,
+	a.ui-state-active {color: #fff;}
 	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; @include prefix((transition: none 0.25s));}
 
 	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {margin: 0; border: none; background: $primary_color;}
@@ -316,10 +330,10 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 // Header
 // ===========================
 
-//Using borderimage instead of pointerevents so avoid the full dev version of Modernizr. Need to trigger on IE11+
+//Shade body when Mmenu Opens
 #body-wrapper {
-	.borderimage &:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color(#000, 0); z-index: 99995; pointer-events: none; @include prefix((transition: all 0.5s));}
-	.borderimage.mm-opening &:before {@include background-color(#000, 0.7);}
+	&:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color(#000, 0); z-index: 99995; pointer-events: none; @include prefix((transition: all 0.5s));}
+	.mm-opening &:before {@include background-color(#000, 0.7);}
 }
 
 //Top row that appears at mobile sizes.
@@ -392,7 +406,6 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		&:first-child {float: right;}
 		li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
 			&:last-child {margin-right: 0;}
-			.ie7 & {float: left; font-size: rem(14px);}
 
 			a {display: block; font-size: rem(14px); margin-bottom: 8px; @include link-colors(#fff, #ccc);} //Margin-bottom to allow cursor roll into sub-menu dropdown
 			ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBackBig), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
@@ -755,7 +768,7 @@ a.footerlogo img {float: left; width: 36px; height: 36px; margin: 2px 8px 0 0;}
 
 //Footer Search
 form.footer-search,
-#footer-section form.nebula-search-iconable {position: relative; display: block; margin: 10px auto 0 auto; width: 150px; z-index: 10;
+#footer-section form.nebula-search {position: relative; display: block; margin: 10px auto 0 auto; width: 150px; z-index: 10;
 	@include media("md"){display: inline-block; margin: 0 0 0 10px; width: auto;};
 
 	&:before {color: rgba(255, 255, 255, 0.75);}
@@ -795,8 +808,6 @@ form.footer-search,
 .ttip {cursor: text;
 	&:before,
 	&:after {bottom: 0%; @include prefix((transition: all 0.25s));}
-	.ie &:before,
-	.ie &:after,
 	&:hover:after,
 	&:hover:before {bottom: 101%; @include prefix((transition: all 0.25s));}
 }

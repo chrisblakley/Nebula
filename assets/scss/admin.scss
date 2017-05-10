@@ -340,9 +340,12 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 	}
 
 	//Lighten input placeholder text
-	input:-moz-placeholder {color: #ddd;}
-	input:-ms-input-placeholder {color: #ddd;}
-	input::-webkit-input-placeholder {color: #ddd;}
+	input:-moz-placeholder,
+	textarea:-moz-placeholder {color: #ddd;}
+	input:-ms-input-placeholder,
+	textarea:-ms-input-placeholder {color: #ddd;}
+	input::-webkit-input-placeholder,
+	textarea::-webkit-input-placeholder {color: #ddd;}
 
 	.toggle-more-help {margin-left: 5px; color: #666;
 		&:hover {color: #0098d7;}

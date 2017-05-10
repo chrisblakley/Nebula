@@ -29,7 +29,7 @@
 		pre.nebula-code.#{$language},
 		.nebula-code-con.#{$language} pre,
 		.nebula-code.#{$language} .gist-file {border: 1px solid $color; border-left: 5px solid $color;}
-			.nebula-code.#{$language}::selection {background: lighten($color, 50%); background: rgba(lighten($color, 20%), 0.25);} //::Selection does not work with SASS parent selectors
+			.nebula-code.#{$language}::selection {background: lighten($color, 50%); background: rgba(lighten($color, 15%), 0.3);} //::Selection does not work with SASS parent selectors
 	}
 }
 
