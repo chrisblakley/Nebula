@@ -26,6 +26,7 @@
 		<link rel="manifest" href="<?php echo nebula()->manifest_json_location(); ?>" />
 		<link rel="profile" href="http://gmpg.org/xfn/11" />
 		<?php nebula()->prerender(); ?>
+
 		<?php wp_head(); ?>
 		<?php get_template_part('inc/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>

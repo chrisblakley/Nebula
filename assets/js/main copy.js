@@ -1,3 +1,4 @@
+console.log('main.js');
 jQuery.noConflict();
 
 /*==========================
@@ -5,6 +6,8 @@ jQuery.noConflict();
  ===========================*/
 
 jQuery(function(){
+	console.log('main doc ready');
+
 	jQuery('html').removeClass('no-js').addClass('js'); //In case Modernizr is not being used
 
 	//Utilities
@@ -3761,7 +3764,7 @@ function mmenus(){
 				//Configuration
 				offCanvas: {
 					pageSelector: "#body-wrapper"
-				},
+				}
 				classNames: {
 					selected: "current-menu-item"
 				},

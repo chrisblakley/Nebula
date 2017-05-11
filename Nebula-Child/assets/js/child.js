@@ -4,7 +4,7 @@ jQuery.noConflict();
  DOM Ready (After main.js is loaded)
  ===========================*/
 
-jQuery(document).on('ready', function(){
+jQuery(function(){
 
 	//Prevent child theme events from sending before the pageview. Do not add custom event tracking here- add it where noted below!
 	if ( isGoogleAnalyticsReady() ){
