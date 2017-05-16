@@ -37,7 +37,7 @@ get_header(); ?>
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col">
+			<div class="col" role="main">
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-social">

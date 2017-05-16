@@ -139,14 +139,14 @@ get_header(); ?>
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-md-8" role="main">
 				<?php
 					rewind_posts();
 					get_template_part('loop', 'author');
 					wp_pagenavi();
 				?>
 			</div><!--/col-->
-			<div class="col-md-3 offset-md-1">
+			<div class="col-md-3 offset-md-1" role="complementary">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

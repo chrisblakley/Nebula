@@ -53,11 +53,11 @@ jQuery(function(){
 			//Direct Link icons
 			var thisTab = jQuery(this).closest('.tab-pane').attr('id');
 			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id');
-			jQuery(this).append('<a class="direct-link" href="themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option"><i class="fa fa-fw fa-link"></i></a>');
+			jQuery(this).append('<a class="direct-link" href="themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option" tabindex="-1"><i class="fa fa-fw fa-link"></i></a>');
 
 			//More Help expander icons
 			if ( jQuery(this).parent().find('.more-help').length ){
-				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information"><i class="fa fa-fw fa-question-circle"></i></a>');
+				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information" tabindex="-1"><i class="fa fa-fw fa-question-circle"></i></a>');
 			}
 		});
 

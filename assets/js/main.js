@@ -65,7 +65,7 @@ jQuery(function(){
 
 	lastWidth = jQuery(window).width(); //Prep resize detection
 
-	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').val(nebula.user.nid);
+	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.user.nid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
 
@@ -185,18 +185,22 @@ function getPageVisibility(){
 
 //Sub-menu viewport overflow detector
 function overflowDetector(){
-    jQuery('#primarynav .menu > .menu-item').hover(function(){
-    	var viewportWidth = nebula.dom.window.width();
-    	var submenuLeft = jQuery(this).offset().left;
-    	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-    	if ( submenuRight > viewportWidth ){
-			jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
-    	} else {
-			jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
-    	}
-    }, function(){
-	    	jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
+    jQuery('#primarynav .menu > .menu-item').on({
+		'mouseenter focus': function(){
+			var viewportWidth = nebula.dom.window.width();
+	    	var submenuLeft = jQuery(this).offset().left;
+	    	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
+	    	if ( submenuRight > viewportWidth ){
+				jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
+	    	} else {
+				jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
+	    	}
+		},
+		'mouseleave': function(){
+			jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
+		}
     });
+
 }
 
 //Check if Google Analytics is ready
@@ -352,7 +356,7 @@ function socialSharing(){
 //Call the event tracking functions (since it needs to happen twice).
 function initEventTracking(){
 	once(function(){
-		timeAtLoad = new Date().getTime()/1000; //yolo
+		timeAtLoad = new Date().getTime()/1000;
 		nebulaTimer('time_on_page', 'start');
 
 		nvData = {
@@ -582,6 +586,16 @@ function eventTracking(){
 
 	//Page Unload
 	window.onbeforeunload = function(){
+		//Check form abandonment object/array
+		if ( typeof formStarted !== 'undefined' ){
+			jQuery.each(formStarted, function(key, value){
+				if ( value === true ){
+					ga('send', 'event', 'CF7 Form', 'Abandon', key, {'nonInteraction': true});
+					return false;
+				}
+			});
+		}
+
 	    ga('send', 'timing', 'Time on Page', 'Unload after ' + Math.round(nebulaTimer('time_on_page', 'end')/1000) + ' seconds', nebulaTimer('time_on_page', 'end'), 'Seconds since DOM ready until window unload.'); //Time on Page
 	    nv('increment', 'page_exits'); //Increment exits (but more importantly updates duration)
 	}
@@ -1549,25 +1563,28 @@ function nebulaPrerenderListeners(){
 	}
 
 	//Internal link hovers
-	jQuery('a').hover(function(){
-		var oThis = jQuery(this);
-		if ( oThis.attr('href') !== jQuery('link#prerender').attr('href') && oThis.attr('target') !== '_blank' ){
-			var hoverLength = 500;
-			if ( jQuery('link#prerender').length ){ //If prerender already exists, extend the hover time needed to update
-				hoverLength = 1000;
-			}
-
-			hoverTimer = setTimeout(function(){
-				if ( oThis.is(":hover") ){
-					nebulaPrerender(oThis.attr('href'));
+	jQuery('a').on({
+		'mouseenter focus': function(){
+			var oThis = jQuery(this);
+			if ( oThis.attr('href') !== jQuery('link#prerender').attr('href') && oThis.attr('target') !== '_blank' ){
+				var hoverLength = 500;
+				if ( jQuery('link#prerender').length ){ //If prerender already exists, extend the hover time needed to update
+					hoverLength = 1000;
 				}
-			}, hoverLength);
+
+				hoverTimer = setTimeout(function(){
+					if ( oThis.is(":hover") ){
+						nebulaPrerender(oThis.attr('href'));
+					}
+				}, hoverLength);
+			}
+		},
+		'mouseleave': function(){
+			if ( typeof hoverTimer !== 'undefined' ){
+				clearTimeout(hoverTimer);
+			}
 		}
-	}, function(){
-		if ( typeof hoverTimer !== 'undefined' ){
-			clearTimeout(hoverTimer);
-		}
-	});
+    });
 }
 
 //Actually prerender a URL
@@ -1591,15 +1608,15 @@ function cf7Functions(){
 	}
 
 	//Track CF7 forms when they scroll into view (Autotrack). Currently not possible to change category/action/label for just these impressions.
-	jQuery('form').each(function(){
+	jQuery('.wpcf7-form').each(function(){
 		ga('impressionTracker:observeElements', [{
 			'id': jQuery(this).closest('.wpcf7').attr('id') || jQuery(this).attr('id'),
 			'threshold': 0.25
 		}]);
 	});
 
-	formStarted = [];
-	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(){
+	formStarted = {};
+	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(e){
 		formID = jQuery(this).closest('div.wpcf7').attr('id');
 
 		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
@@ -2570,23 +2587,28 @@ function get(parameter){
 
 //Remove a parameter from the query string.
 function removeQueryParameter(key, sourceURL){
-    var rtn = sourceURL.split("?")[0],
+    var rtn = sourceURL.split('?')[0],
         param,
         params_arr = [],
-        queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+        queryString = (sourceURL.indexOf('?') !== -1) ? sourceURL.split('?')[1] : '';
 
     if ( queryString !== '' ){
-        params_arr = queryString.split("&");
+        params_arr = queryString.split('&');
 
         for ( i = params_arr.length-1; i >= 0; i -= 1 ){
-            param = params_arr[i].split("=")[0];
+            param = params_arr[i].split('=')[0];
             if ( param === key ){
                 params_arr.splice(i, 1);
             }
         }
 
-        rtn = rtn + "?" + params_arr.join("&");
+        rtn = rtn + '?' + params_arr.join('&');
     }
+
+	//Check if it is empty after parameter removal
+	if ( rtn.split('?')[1] === '' ){
+		return rtn.split("?")[0]; //Return the URL without a query
+	}
 
     return rtn;
 }

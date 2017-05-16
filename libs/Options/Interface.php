@@ -635,21 +635,21 @@
 										<p class="option-keywords">remote resource recommended minor page speed impact</p>
 									</div>
 
-									<div class="form-group" dependent-of="gatrackingid">
+									<div class="form-group" dependent-of="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_wpuserid]" id="ga_wpuserid" value="1" <?php checked('1', !empty($nebula_options['ga_wpuserid'])); ?> /><label for="ga_wpuserid">Use WordPress User ID</label>
 										<p class="nebula-help-text short-help form-text text-muted">Use the WordPress User ID as the Google Analytics User ID. (Default: <?php echo nebula()->user_friendly_default('ga_wpuserid'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This allows more accurate user reporting. Note: Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public.</p>
 										<p class="option-keywords"></p>
 									</div>
 
-									<div class="form-group" dependent-of="gatrackingid">
+									<div class="form-group" dependent-of="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_displayfeatures]" id="ga_displayfeatures" value="1" <?php checked('1', !empty($nebula_options['ga_displayfeatures'])); ?> /><label for="ga_displayfeatures">Display Features</label>
 										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag. (Default: <?php echo nebula()->user_friendly_default('ga_displayfeatures'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This enables Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.</p>
 										<p class="option-keywords"></p>
 									</div>
 
-									<div class="form-group" dependent-of="gatrackingid">
+									<div class="form-group" dependent-of="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_linkid]" id="ga_linkid" value="1" <?php checked('1', !empty($nebula_options['ga_linkid'])); ?> /><label for="ga_linkid">Enhanced Link Attribution (Link ID)</label>
 										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. (Default: <?php echo nebula()->user_friendly_default('ga_linkid'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs.</p>
@@ -1045,16 +1045,6 @@
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user downloads a notable file. Scope: Hit, Format: Integer</p>
 											<p class="nebula-help-text short-help form-text text-muted">To use, add the class "notable" to either the or its parent.</p>
-											<p class="option-keywords"></p>
-										</div>
-
-										<div class="form-group">
-											<div class="input-group">
-												<div class="input-group-addon">Form Page Views</div>
-												<input type="text" name="nebula_options[cm_formpageviews]" id="cm_formpageviews" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formpageviews']; ?>" />
-											</div>
-											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user views a page containing a form. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
 											<p class="option-keywords"></p>
 										</div>
 
@@ -1548,8 +1538,10 @@
 									<div class="option-group">
 										<div class="form-group">
 											<label for="example_option">First Nebula Activation</label>
-											<input type="text" id="example_option" class="form-control" readonly />
-											<p class="nebula-help-text short-help form-text text-muted">The date when the Nebula theme was first activated.</p>
+											<input type="text" id="first_activation" class="form-control" value="<?php echo $nebula_data['first_activation']; ?>" readonly />
+											<p class="nebula-help-text short-help form-text text-muted">
+												First activated on: <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['first_activation']); ?></strong> (<?php echo $years_ago = number_format((time()-$nebula_data['first_activation'])/31622400, 2); ?> <?php echo ( $years_ago == 1 )? 'year' : 'years'; ?> ago)
+											</p>
 											<p class="option-keywords">readonly</p>
 										</div>
 

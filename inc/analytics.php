@@ -70,7 +70,6 @@
 		}
 
 		gaCustomMetrics = {
-			formPageviews: '<?php echo nebula()->option('cm_formpageviews'); ?>',
 			formImpressions: '<?php echo nebula()->option('cm_formimpressions'); ?>',
 			formStarts: '<?php echo nebula()->option('cm_formstarts'); ?>',
 			formSubmissions: '<?php echo nebula()->option('cm_formsubmissions'); ?>',
@@ -271,32 +270,6 @@
 			}
 		?>
 
-		<?php if ( nebula()->option('cm_formpageviews') ): //Notable Form Views (to calculate against submissions) ?>
-			if ( !jQuery('form').find('input[name=s]').length && !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('form').parents('.ignore-form').length ){
-				ga('set', gaCustomMetrics['formPageviews'], 1);
-			}
-		<?php endif; ?>
-
-		<?php if ( !nebula()->is_bot() && ( nebula()->option('adblock_detect') || nebula()->option('cd_adblocker') ) ): //Detect Ad Blockers. ?>
-			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
-				adBlockUser = 'No Ad Blocker';
-				if ( nebula.session.flags ){
-					nebula.session.flags.adblock = 'false';
-				}
-			}).fail(function(){ <?php //Ad Blocker Detected ?>
-				jQuery('html').addClass('ad-blocker');
-				adBlockUser = 'Ad Blocker Detected';
-				<?php if ( nebula()->option('cd_adblocker') ): //Scope: Session ?>
-					ga('set', gaCustomDimensions['adBlocker'], adBlockUser); <?php //Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
-				<?php endif; ?>
-
-				if ( nebula.session.flags && nebula.session.flags.adblock !== 'true' ){
-					ga('send', 'event', adBlockUser, 'This user is using ad blocking software.'); //Might need to move this into main.js and check against the below flag
-					nebula.session.flags.adblock = 'true';
-				}
-			});
-		<?php endif; ?>
-
 		//Window Type
 		if ( window !== window.top ){
 			jQuery('html').addClass('in-iframe');
@@ -415,6 +388,24 @@
 		ga('send', 'pageview'); //Send pageview with all custom dimensions and metrics
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
+
+		<?php if ( !nebula()->is_bot() && ( nebula()->option('adblock_detect') ) ): //Detect Ad Blockers (After pageview because asynchronous- uses GA event). ?>
+			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
+				if ( nebula.session.flags ){
+					nebula.session.flags.adblock = 'false';
+				}
+			}).fail(function(){ <?php //Ad Blocker Detected ?>
+				jQuery('html').addClass('ad-blocker');
+				<?php if ( nebula()->option('cd_adblocker') ): //Scope: Session ?>
+					ga('set', gaCustomDimensions['adBlocker'], 'Ad Blocker Detected'); <?php //Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
+				<?php endif; ?>
+
+				if ( nebula.session.flags && nebula.session.flags.adblock !== 'true' ){
+					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.'); //Uses an event because it is asynchronous!
+					nebula.session.flags.adblock = 'true';
+				}
+			});
+		<?php endif; ?>
 
 		//Get local time string with timezone offset
 		function localTimestamp(){

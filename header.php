@@ -32,7 +32,7 @@
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="body-wrapper">
-			<div id="header-section">
+			<div id="header-section" role="banner">
 				<div id="fb-root"></div>
 				<?php do_action('nebula_body_open'); ?>
 
@@ -40,7 +40,7 @@
 					<div class="row mobilenavcon">
 						<div class="col">
 							<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
-							<nav id="mobilenav">
+							<nav id="mobilenav" role="navigation">
 								<?php
 									if ( has_nav_menu('mobile') ){
 										wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
@@ -69,7 +69,7 @@
 							<div class="container">
 								<div class="row">
 									<div class="col">
-										<nav id="secondarynav">
+										<nav id="secondarynav" role="navigation">
 						        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
 						        		</nav>
 									</div><!--/col-->

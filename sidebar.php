@@ -14,10 +14,12 @@
 
 		<li class="widget-container">
 			<?php if ( has_nav_menu('sidebar') ): ?>
-				<?php
-					wp_nav_menu();
-					//wp_nav_menu(array('theme_location' => 'sidebar'));
-				?>
+				<nav id="sidebarnav" role="navigation">
+					<?php
+						wp_nav_menu();
+						//wp_nav_menu(array('theme_location' => 'sidebar'));
+					?>
+				</nav>
 			<?php endif; ?>
 		</li>
 

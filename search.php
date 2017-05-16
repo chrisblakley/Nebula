@@ -62,7 +62,7 @@ get_header(); ?>
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-md-8" role="main">
 				<?php if ( have_posts() ): ?>
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>
@@ -88,7 +88,7 @@ get_header(); ?>
 					<p>No search results.</p>
 				<?php endif; ?>
 			</div><!--/col-->
-			<div class="col-md-3 offset-md-1">
+			<div class="col-md-3 offset-md-1" role="complementary">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

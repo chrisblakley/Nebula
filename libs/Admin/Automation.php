@@ -161,10 +161,15 @@ if ( !trait_exists('Automation') ){
 		public function activation(){
 			wp_remote_get('https://gearside.com/nebula/usage/index.php?r=' . home_url());
 
-			$is_standard_initialization = isset($_GET['nebula-initialization']); //Detect if non-AJAX initialization is needed.
-			if ( $is_standard_initialization ){
-				//@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
-				$this->initialization(true);
+			//Run express initialization (Nebula Options only)
+			if ( !$this->is_initialized_before() ){
+				$this->express_automation();
+				nebula()->update_data('first_activation', time());
+			}
+
+			$is_ajax_initialization = !isset($_GET['nebula-initialization']); //Detect if non-AJAX initialization is needed. If this $_GET is true, it is not AJAX.
+			if ( !$is_ajax_initialization ){
+				$this->initialization(false); //@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
 			}
 			?>
 			<?php if ( is_child_theme() ): ?>
@@ -177,7 +182,7 @@ if ( !trait_exists('Automation') ){
 						</span>
 					</p>
 				</div>
-			<?php elseif ( $is_standard_initialization && current_user_can('manage_options') ): ?>
+			<?php elseif ( !$is_ajax_initialization && current_user_can('manage_options') ): ?>
 				<div id='nebula-activate-success' class='updated'>
 					<p>
 						<strong class="nebula-activated-title">Nebula has been initialized!</strong><br />
@@ -215,17 +220,17 @@ if ( !trait_exists('Automation') ){
 				<?php endif; ?>
 			<?php endif; ?>
 			<?php
+
+			nebula()->update_data('initialized', time());
 			return;
 		}
 
-		//Nebula Initialization (Triggered by either AJAX or manually)
-		public function initialization($standard=null){
+		//Nebula Full Initialization (Triggered by either AJAX or manually)
+		public function initialization($ajax=true){
 			if ( current_user_can('manage_options') ){
+				$this->express_automation();
+				$this->full_automation();
 				$this->initialization_email_prev_settings();
-				$this->initialization_create_homepage();
-				$this->initialization_default_settings();
-				$this->initialization_delete_plugins();
-				$this->initialization_deactivate_widgets();
 
 				if ( !nebula()->get_data('initialized') ){
 					nebula()->update_data('initialized', time());
@@ -233,17 +238,30 @@ if ( !trait_exists('Automation') ){
 
 				nebula()->render_scss('all'); //Re-render all SCSS files.
 
-				if ( empty($standard) ){ //If AJAX initialization
-					echo 'successful-nebula-init';
+				if ( !empty($ajax) ){ //If AJAX initialization
+					echo 'successful-nebula-init'; //AJAX listens for this string to determine sucess.
 					wp_die();
 				}
 			}
 		}
 
+		//Automatically set default Nebula options on first Nebula activation
+		public function express_automation(){
+			$this->initialization_nebula_defaults();
+		}
+
+		//Manually update all preferred Nebula and WP Core settings
+		public function full_automation(){
+			$this->initialization_wp_core_preferred_settings();
+			$this->initialization_create_homepage();
+			$this->initialization_delete_plugins();
+			$this->initialization_deactivate_widgets();
+		}
+
 		//Send a list of existing settings to the user's email (to test, trigger the function on admin_init)
 		public function initialization_email_prev_settings(){
 			$email_admin_timeout = get_transient('nebula_email_admin_timeout');
-			if ( !empty($email_admin_timeout) || !nebula()->is_initialized_before() ){
+			if ( !empty($email_admin_timeout) || !$this->is_initialized_before() ){
 				return;
 			}
 
@@ -305,9 +323,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		//Nebula preferred default Wordpress settings
-		public function initialization_default_settings(){
-			global $wp_rewrite;
-
+		public function initialization_nebula_defaults(){
 			//Update Nebula default data
 			$nebula_data_defaults = nebula()->default_data();
 			update_option('nebula_data', $nebula_data_defaults);
@@ -315,6 +331,10 @@ if ( !trait_exists('Automation') ){
 			//Update Nebula default options
 			$nebula_options_defaults = nebula()->default_options();
 			update_option('nebula_options', $nebula_options_defaults);
+		}
+
+		public function initialization_wp_core_preferred_settings(){
+			global $wp_rewrite;
 
 			//Update certain Wordpress Core options
 			update_option('blogdescription', ''); //Empty the site tagline

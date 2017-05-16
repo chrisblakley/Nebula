@@ -13,7 +13,6 @@
 */
 
 //@TODO "Wordpress" 1: Change the Theme Name (above) to be the client/project and the year! Make sure the Template matches the Nebula parent theme directory name.
-//@TODO "Launch" 1: Replace /screenshot.png with an actual screenshot of the developed website (using the existing file dimensions).
 
 //Import partials
 @import '../../../../Nebula-master/assets/scss/partials/variables';
@@ -37,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {color: $text_color;
 	a {color: $primary_color;}
 }
 
-a:not(.btn) {@include link-colors($primary_color, $secondary_color, $primary_color, $primary_color, $primary_color);}
+a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%), $primary_color, $secondary_color);}
 
 .herobgcolor {animation: none;}
 
@@ -45,7 +44,7 @@ a:not(.btn) {@include link-colors($primary_color, $secondary_color, $primary_col
 	ul li.current-menu-item {
 		.sub-menu {
 			ul li {border-left: 1px solid $secondary_color;
-				a {@include link-colors($primary_color, $secondary_color);}
+				a {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%), $primary_color, $secondary_color);}
 			}
 		}
 	}

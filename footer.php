@@ -3,7 +3,7 @@
  * Theme Footer
  */
 ?>
-			<div id="footer-section">
+			<div id="footer-section" role="contentinfo">
 				<div class="nebula-color-overlay"></div>
 
 				<?php get_template_part('inc/footer_widgets'); //Footer widget logic. ?>
@@ -16,7 +16,7 @@
 							<?php endif; ?>
 
 							<?php if ( has_nav_menu('footer') ): ?>
-								<nav id="powerfooter">
+								<nav id="powerfooter" role="navigation">
 									<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2')); ?>
 								</nav>
 							<?php endif; ?>

@@ -1099,7 +1099,7 @@ trait Functions {
 
 		$form = '<div id="nebula-hero-formcon">
 				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '">
-					<input type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" role="search" x-webkit-speech />
+					<input type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" role="search" tabindex="0" x-webkit-speech />
 				</form>
 			</div>';
 		return $form;
@@ -2639,7 +2639,7 @@ trait Functions {
 	public function embed_oembed_html($html, $url, $attr, $post_id) {
 		//Enable the JS API for Youtube videos
 		if ( strstr($html, 'youtube.com/embed/') ){
-			$html = str_replace('?feature=oembed', '?feature=oembed&enablejsapi=1', $html);
+			$html = str_replace('feature=oembed', 'feature=oembed&enablejsapi=1', $html);
 		}
 
 		//Force an aspect ratio on certain oEmbeds

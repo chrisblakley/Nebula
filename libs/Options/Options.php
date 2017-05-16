@@ -138,6 +138,7 @@ if ( !trait_exists('Options') ){
 		//Prepare default data values
 		public function default_data(){
 			$nebula_data_defaults = array(
+				'first_activation' => '',
 				'initialized' => '',
 				'scss_last_processed' => 0,
 				'next_version' => '',
@@ -271,7 +272,6 @@ if ( !trait_exists('Options') ){
 				'cd_mqresolution' => '',
 				'cd_mqorientation' => '',
 
-				'cm_formpageviews' => '',
 				'cm_formimpressions' => '',
 				'cm_formstarts' => '',
 				'cm_formsubmissions' => '',
