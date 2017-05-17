@@ -1083,7 +1083,7 @@ trait Functions {
 		$form = '<form id="searchform" class="form-group form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
 					<div class="input-group mb-2 mr-sm-2 mb-sm-0">
 						<div class="input-group-addon"><i class="fa fa-search"></i></div>
-						<input id="s" class="form-control form-control-lg ignore-form" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" role="search" />
+						<input id="s" class="form-control ignore-form" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" role="search" />
 					</div>
 
 					<button id="searchsubmit" class="btn btn-brand wp_search_submit" type="submit">Submit</button>

@@ -42,7 +42,6 @@ jQuery(function(){
 	addHelperClasses();
 	initBootstrapFunctions();
 	errorMitigation();
-	powerFooterWidthDist();
 	nebulaEqualize();
 	nebulaScrollTo();
 	svgImgs();
@@ -65,7 +64,7 @@ jQuery(function(){
 
 	lastWidth = jQuery(window).width(); //Prep resize detection
 
-	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.user.nid);
+	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.user.cid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
 
@@ -110,7 +109,6 @@ jQuery(window).on('resize', function(){
 		if ( jQuery(window).width() != lastWidth ){ //If the width actually changed
 			lastWidth = jQuery(window).width();
 
-			powerFooterWidthDist();
 			nebulaEqualize();
 			mobileSearchPlaceholder();
 		}
@@ -372,7 +370,11 @@ function initEventTracking(){
 
 		if ( typeof window.ga === 'function' ){
 			window.ga(function(tracker){
-				nebula.dom.document.trigger('nebula_ga_available');
+				nebula.dom.document.trigger('nebula_ga_available', tracker);
+				nebula.user.cid = tracker.get('clientId');
+
+				jQuery('form .debuginfo').val(nebula.user.cid);
+
 				nvData.ga_cid = tracker.get('clientId');
 				nvData.is_ga_blocked = 0;
 				nv('send', nvData);
@@ -460,10 +462,17 @@ function eventTracking(){
 		}, 2000);
 	});
 
-	//Internal Find
+	//Keyboard Shortcut (Non-interaction because they are not taking explicit action with the webpage)
 	nebula.dom.document.on('keydown', function(e){
-		if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){ //Ctrl+F or Cmd+F
-			ga('send', 'event', 'Find on Page', 'Ctrl+F', "User initiated their browser's find tool (with keyboard shortcut)", {'nonInteraction': true}); //Non-interaction because they are not taking explicit action with the webpage
+		//Ctrl+F or Cmd+F (Find)
+		if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){
+			ga('send', 'event', 'Find on Page', 'Ctrl+F', "User initiated their browser's find tool (with keyboard shortcut)", {'nonInteraction': true});
+		}
+
+		//Ctrl+D or Cmd+D (Bookmark)
+		if ( (e.ctrlKey || e.metaKey) && e.which === 68 ){ //Ctrl+D
+			history.replaceState(null, document.title, window.location.href + '?utm_source=Bookmark');
+			ga('send', 'event', 'Bookmark', 'Ctrl+D', "User bookmarked the page (with keyboard shortcut)", {'nonInteraction': true});
 		}
 	});
 
@@ -2467,16 +2476,6 @@ function nebulaEqualize(){
 	nebula.dom.document.on('nebula_infinite_finish', function(){
 		nebulaEqualize();
 	});
-}
-
-//Power Footer Width Distributor
-function powerFooterWidthDist(){
-	var powerFooterWidth = jQuery('#powerfooter').width();
-	var powerFooterTopLIs = jQuery('#powerfooter ul.menu > li:visible').size();
-	var footerItemWidth = powerFooterWidth/powerFooterTopLIs-8;
-	if ( powerFooterTopLIs > 0 ){
-		jQuery('#powerfooter ul.menu > li').css('width', footerItemWidth);
-	}
 }
 
 //Offset must be an integer
