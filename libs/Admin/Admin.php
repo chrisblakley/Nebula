@@ -230,7 +230,7 @@ if ( !trait_exists('Admin') ){
 				'id' => 'nebula-created',
 				'title' => '<i class="nebula-admin-fa fa fa-fw fa-calendar-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Created: ' . get_the_date() . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . get_the_author() . ')</span>',
 				'href' => get_edit_post_link(),
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			//Add modified date under View/Edit node
@@ -241,7 +241,7 @@ if ( !trait_exists('Admin') ){
 					'id' => 'nebula-modified',
 					'title' => '<i class="nebula-admin-fa fa fa-fw fa-clock-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Modified: ' . get_the_modified_date() . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . $manage_author . ')</span>',
 					'href' => get_edit_post_link(),
-					'meta' => array('target' => '_blank')
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
 			}
 
@@ -251,7 +251,7 @@ if ( !trait_exists('Admin') ){
 				'id' => 'nebula-status',
 				'title' => '<i class="nebula-admin-fa fa fa-fw fa-map-pin" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Status: ' . ucwords(get_post_status()),
 				'href' => get_edit_post_link(),
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			//Theme template file
@@ -261,7 +261,7 @@ if ( !trait_exists('Admin') ){
 					'id' => 'nebula-template',
 					'title' => '<i class="nebula-admin-fa fa fa-fw fa-object-group" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Template: ' . basename($GLOBALS['current_theme_template']) . ' <span class="nebula-admin-light" style="font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6);">(' . dirname($GLOBALS['current_theme_template']) . ')</span>',
 					'href' => get_edit_post_link(),
-					'meta' => array('target' => '_blank')
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
 			}
 
@@ -354,7 +354,7 @@ if ( !trait_exists('Admin') ){
 				'id' => 'nebula',
 				'title' => '<i class="nebula-admin-fa fa fa-fw fa-star" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula' . $nebula_warning_icon,
 				'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=nebula',
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			if ( !empty($nebula_warning_icon) ){
@@ -383,7 +383,7 @@ if ( !trait_exists('Admin') ){
 					'id' => 'nebula-visitor-db',
 					'title' => '<i class="nebula-admin-fa fa fa-fw fa-database" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula Visitors DB',
 					'href' => get_admin_url() . 'themes.php?page=nebula_visitors_data',
-					'meta' => array('target' => '_blank')
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
 			}
 
@@ -393,7 +393,7 @@ if ( !trait_exists('Admin') ){
 					'id' => 'google-optimize',
 					'title' => '<i class="nebula-admin-fa fa fa-fw fa-google" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Google Optimize',
 					'href' => 'https://optimize.google.com/optimize/home/',
-					'meta' => array('target' => '_blank')
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
 			}
 
@@ -409,7 +409,7 @@ if ( !trait_exists('Admin') ){
 				'id' => 'nebula-options-help',
 				'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation',
 				'href' => 'https://gearside.com/nebula/documentation/options/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=help',
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			$wp_admin_bar->add_node(array(
@@ -417,7 +417,7 @@ if ( !trait_exists('Admin') ){
 				'id' => 'nebula-github',
 				'title' => '<i class="nebula-admin-fa fa fa-fw fa-github" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Nebula Github',
 				'href' => 'https://github.com/chrisblakley/Nebula',
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			$wp_admin_bar->add_node(array(
@@ -425,7 +425,7 @@ if ( !trait_exists('Admin') ){
 				'id' => 'nebula-github-issues',
 				'title' => 'Issues',
 				'href' => 'https://github.com/chrisblakley/Nebula/issues',
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			$wp_admin_bar->add_node(array(
@@ -433,7 +433,7 @@ if ( !trait_exists('Admin') ){
 				'id' => 'nebula-github-changelog',
 				'title' => 'Changelog',
 				'href' => 'https://github.com/chrisblakley/Nebula/commits/master',
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 		}
 
@@ -557,7 +557,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
-				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
 
 				//Set the content type to text/html for the email.
 				add_filter('wp_mail_content_type', function($content_type){
@@ -597,10 +597,10 @@ if ( !trait_exists('Admin') ){
 				$php_version_lifecycle = $this->php_version_support();
 				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
 					if ( $php_version_lifecycle['end']-time() < 2592000 ){ //1 month
-						echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong title="In ' . human_time_diff($php_version_lifecycle['end']) . '">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+						echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong title="In ' . human_time_diff($php_version_lifecycle['end']) . '">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">PHP Version Support &raquo;</a></p></div>';
 					}
 				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-					echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong title="' . human_time_diff($php_version_lifecycle['end']) . ' ago">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank">PHP Version Support &raquo;</a></p></div>';
+					echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong title="' . human_time_diff($php_version_lifecycle['end']) . ' ago">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">PHP Version Support &raquo;</a></p></div>';
 				}
 
 				//Check for hard Debug Mode
@@ -661,7 +661,7 @@ if ( !trait_exists('Admin') ){
 				if ( is_child_theme() ){
 					$active_theme = wp_get_theme();
 					if ( !file_exists(dirname(get_stylesheet_directory()) . '/' . $active_theme->get('Template')) ){
-						echo '<div class="nebula-admin-notice error"><p>A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em></p></div>';
+						echo '<div class="nebula-admin-notice error"><p>A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em></p></div>';
 					}
 				}
 
@@ -672,7 +672,7 @@ if ( !trait_exists('Admin') ){
 
 				//Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
 				if ( nebula()->option('google_optimize_id') ){
-					echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
+					echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
 				}
 			}
 
@@ -883,14 +883,14 @@ if ( !trait_exists('Admin') ){
 
 		//Admin footer left side
 		public function change_admin_footer_left(){
-			return nebula()->pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
+			return nebula()->pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
 		}
 
 		//Admin footer right side
 		public function change_admin_footer_right(){
 			global $wp_version;
 			$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
-			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula()->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank">Nebula</a> <strong class="nebula">' . nebula()->version('version') . '</strong>' . $child . '</span>';
+			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula()->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula">' . nebula()->version('version') . '</strong>' . $child . '</span>';
 		}
 
 		public function post_meta_boxes_setup(){

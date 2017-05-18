@@ -110,7 +110,7 @@ if ( !trait_exists('Prototyping') ){
 				'id' => 'nebula-prototype-help',
 				'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
 				'href' => 'https://gearside.com/nebula/functions/fpo/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=prototyping+help',
-				'meta' => array('target' => '_blank')
+				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			$wp_admin_bar->remove_menu('wpseo-menu'); //SEO menu not important during prototyping

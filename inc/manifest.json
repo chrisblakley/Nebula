@@ -1,6 +1,9 @@
 {
 			"short_name": "Nebula",
 			"name": "Nebula: Advanced Starter WordPress Theme for Developers",
+			"description": "Advanced Starter WordPress Theme for Developers",
+			"theme_color": "#0098d7",
+			"background_color": "#fff",
 			"gcm_sender_id": "",
 			"icons": [{
 				"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/images/meta/android-chrome-36x36.png",
@@ -33,7 +36,7 @@
 				"type": "image/png",
 				"density": 4.0
 			}],
-			"start_url": "https://gearside.com/nebula",
+			"start_url": "https://gearside.com/nebula?utm_source=homescreen",
 			"display": "standalone",
 			"orientation": "portrait"
 		}

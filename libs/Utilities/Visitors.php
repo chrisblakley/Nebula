@@ -499,7 +499,7 @@ if ( !trait_exists('Visitors') ){
 			<?php else: ?>
 				<div class="wrap">
 					<h2>Nebula Visitors Data</h2>
-					<p><strong>Nebula Visitors table is empty!</strong><br/>Wait for new visitors, or even <a href="<?php echo home_url('/'); ?>" target="_blank">visit your website yourself</a> then refresh this page for data to appear.</p>
+					<p><strong>Nebula Visitors table is empty!</strong><br/>Wait for new visitors, or even <a href="<?php echo home_url('/'); ?>" target="_blank" rel="noopener">visit your website yourself</a> then refresh this page for data to appear.</p>
 
 		<!--
 					<div id="dangerous-stuff">

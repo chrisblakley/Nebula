@@ -63,11 +63,11 @@ if ( !trait_exists('Dashboard') ){
 			global $wp_post_types;
 
 			echo '<ul>';
-			echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank">' . home_url() . '</a></li>';
+			echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener">' . home_url() . '</a></li>';
 
 			//Address
 			if ( nebula()->option('street_address') ){
-				echo '<li><i class="fa fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/' . nebula()->full_address(1) . '" target="_blank">' . nebula()->full_address() . '</a></li>';
+				echo '<li><i class="fa fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/' . nebula()->full_address(1) . '" target="_blank" rel="noopener">' . nebula()->full_address() . '</a></li>';
 			}
 
 			//Open/Closed
@@ -77,10 +77,10 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//WordPress Version
-			echo '<li><i class="fa fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank">WordPress</a> <strong>' . $wp_version . '</strong></li>';
+			echo '<li><i class="fa fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="fa fa-fw fa-star"></i> <a href="https://gearside.com/nebula" target="_blank">Nebula</a> <strong>' . nebula()->version('version') . '</strong> <small title="' . human_time_diff(nebula()->version('utc')) . ' ago">(Committed: ' . nebula()->version('date') . ')</small></li>';
+			echo '<li><i class="fa fa-fw fa-star"></i> <a href="https://gearside.com/nebula" target="_blank" rel="noopener">Nebula</a> <strong>' . nebula()->version('version') . '</strong> <small title="' . human_time_diff(nebula()->version('utc')) . ' ago">(Committed: ' . nebula()->version('date') . ')</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -191,7 +191,7 @@ if ( !trait_exists('Dashboard') ){
 				if ( !nebula()->option('comments') ){
 					echo '<li><i class="fa fa-fw fa-comments-o"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small></li>';
 				} else {
-					echo '<li><i class="fa fa-fw fa-comments-o"></i> Using <a href="https://' . nebula()->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus comment system</a>.</li>';
+					echo '<li><i class="fa fa-fw fa-comments-o"></i> Using <a href="https://' . nebula()->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener">Disqus comment system</a>.</li>';
 				}
 			}
 
@@ -237,7 +237,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( get_the_author_meta('jobcompany', $user_info->ID) ){
 				$company = get_the_author_meta('jobcompany', $user_info->ID);
 				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
-					$company = '<a href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '" target="_blank">' . $company . '</a>';
+					$company = '<a href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '" target="_blank" rel="noopener">' . $company . '</a>';
 				}
 			}
 
@@ -368,7 +368,7 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				echo '<i class="fa fa-fw fa-globe"></i>';
 			}
-			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $_SERVER["REMOTE_ADDR"] . '" target="_blank"><strong class="admin-user-info admin-user-ip">' . $_SERVER["REMOTE_ADDR"] . '</strong></a>';
+			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $_SERVER["REMOTE_ADDR"] . '" target="_blank" rel="noopener"><strong class="admin-user-info admin-user-ip">' . $_SERVER["REMOTE_ADDR"] . '</strong></a>';
 			echo '</li>';
 
 			//IP Location
@@ -422,61 +422,61 @@ if ( !trait_exists('Dashboard') ){
 		public function dashboard_administrative(){
 			echo '<ul>';
 			if ( nebula()->option('hosting_url') ){
-				echo '<li><i class="fa fa-fw fa-hdd-o"></i> <a href="' . nebula()->option('hosting_url') . '" target="_blank">Hosting</a></li>';
+				echo '<li><i class="fa fa-fw fa-hdd-o"></i> <a href="' . nebula()->option('hosting_url') . '" target="_blank" rel="noopener">Hosting</a></li>';
 			}
 
 			if ( nebula()->option('cpanel_url') ){
-				echo '<li><i class="fa fa-fw fa-gears"></i> <a href="' . nebula()->option('cpanel_url') . '" target="_blank">Server Control Panel</a></li>';
+				echo '<li><i class="fa fa-fw fa-gears"></i> <a href="' . nebula()->option('cpanel_url') . '" target="_blank" rel="noopener">Server Control Panel</a></li>';
 			}
 
 			if ( nebula()->option('registrar_url') ){
-				echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . nebula()->option('registrar_url') . '" target="_blank">Domain Registrar</a></li>';
+				echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . nebula()->option('registrar_url') . '" target="_blank" rel="noopener">Domain Registrar</a></li>';
 			}
 
 			if ( nebula()->option('ga_tracking_id') ){
-				echo '<li><i class="fa fa-fw fa-area-chart"></i> <a href="https://analytics.google.com/analytics/web/" target="_blank">Google Analytics</a></li>';
+				echo '<li><i class="fa fa-fw fa-area-chart"></i> <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener">Google Analytics</a></li>';
 			}
 
 			if ( nebula()->option('google_optimize_id') ){
-				echo '<li><i class="fa fa-fw fa-pie-chart"></i> <a href="https://optimize.google.com/optimize/home" target="_blank">Google Optimize</a></li>';
+				echo '<li><i class="fa fa-fw fa-pie-chart"></i> <a href="https://optimize.google.com/optimize/home" target="_blank" rel="noopener">Google Optimize</a></li>';
 			}
 
 			//if ( nebula()->option('google_search_console_verification') ){
-				echo '<li><i class="fa fa-fw fa-google"></i> <a href="https://www.google.com/webmasters/tools/home" target="_blank">Google Search Console</a></li>';
+				echo '<li><i class="fa fa-fw fa-google"></i> <a href="https://www.google.com/webmasters/tools/home" target="_blank" rel="noopener">Google Search Console</a></li>';
 			//}
 
 			if ( nebula()->option('adwords_remarketing_conversion_id') ){
-				echo '<li><i class="fa fa-fw fa-search-plus"></i> <a href="https://adwords.google.com/home/" target="_blank">Google AdWords</a></li>';
+				echo '<li><i class="fa fa-fw fa-search-plus"></i> <a href="https://adwords.google.com/home/" target="_blank" rel="noopener">Google AdWords</a></li>';
 			}
 
 			if ( nebula()->option('facebook_custom_audience_pixel_id') ){
-				echo '<li><i class="fa fa-fw fa-facebook-official"></i> <a href="https://www.facebook.com/ads/manager/account/campaigns" target="_blank">Facebook Ads Manager</a></li>';
+				echo '<li><i class="fa fa-fw fa-facebook-official"></i> <a href="https://www.facebook.com/ads/manager/account/campaigns" target="_blank" rel="noopener">Facebook Ads Manager</a></li>';
 			}
 
 			if ( nebula()->option('google_adsense_url') ){
-				echo '<li><i class="fa fa-fw fa-money"></i> <a href="https://www.google.com/adsense" target="_blank">Google AdSense</a></li>';
+				echo '<li><i class="fa fa-fw fa-money"></i> <a href="https://www.google.com/adsense" target="_blank" rel="noopener">Google AdSense</a></li>';
 			}
 
 			if ( nebula()->option('amazon_associates_url') ){
-				echo '<li><i class="fa fa-fw fa-amazon"></i> <a href="https://affiliate-program.amazon.com/home" target="_blank">Amazon Associates</a></li>';
+				echo '<li><i class="fa fa-fw fa-amazon"></i> <a href="https://affiliate-program.amazon.com/home" target="_blank" rel="noopener">Amazon Associates</a></li>';
 			}
 
-			echo '<li><i class="fa fa-fw fa-building"></i> <a href="https://www.google.com/business/" target="_blank">Google My Business</a></li>';
+			echo '<li><i class="fa fa-fw fa-building"></i> <a href="https://www.google.com/business/" target="_blank" rel="noopener">Google My Business</a></li>';
 
 			if ( nebula()->option('google_server_api_key') || nebula()->option('google_browser_api_key') ){
-				echo '<li><i class="fa fa-fw fa-code"></i> <a href="https://console.developers.google.com/iam-admin/projects" target="_blank">Google APIs</a></li>';
+				echo '<li><i class="fa fa-fw fa-code"></i> <a href="https://console.developers.google.com/iam-admin/projects" target="_blank" rel="noopener">Google APIs</a></li>';
 			}
 
 			if ( nebula()->option('cse_id') ){
-				echo '<li><i class="fa fa-fw fa-search"></i> <a href="https://cse.google.com/cse/all" target="_blank">Google Custom Search</a></li>';
+				echo '<li><i class="fa fa-fw fa-search"></i> <a href="https://cse.google.com/cse/all" target="_blank" rel="noopener">Google Custom Search</a></li>';
 			}
 
 			if ( nebula()->option('hubspot_api') || nebula()->option('hubspot_portal') ){
-				echo '<li><i class="fa fa-fw fa-users"></i> <a href="https://app.hubspot.com/reports-dashboard/' . nebula()->option('hubspot_portal') . '" target="_blank">Hubspot</a></li>';
+				echo '<li><i class="fa fa-fw fa-users"></i> <a href="https://app.hubspot.com/reports-dashboard/' . nebula()->option('hubspot_portal') . '" target="_blank" rel="noopener">Hubspot</a></li>';
 			}
 
 			if ( nebula()->option('mention_url') ){
-				echo '<li><i class="fa fa-fw fa-star"></i> <a href="https://web.mention.com" target="_blank">Mention</a></li>';
+				echo '<li><i class="fa fa-fw fa-star"></i> <a href="https://web.mention.com" target="_blank" rel="noopener">Mention</a></li>';
 			}
 
 			do_action('nebula_administrative_metabox');
@@ -486,31 +486,31 @@ if ( !trait_exists('Dashboard') ){
 			echo '<h3>Social</h3>';
 			echo '<ul>';
 			if ( nebula()->option('facebook_url') ){
-				echo '<li><i class="fa fa-fw fa-facebook-square"></i> <a href="' . nebula()->option('facebook_url') . '" target="_blank">Facebook</a></li>';
+				echo '<li><i class="fa fa-fw fa-facebook-square"></i> <a href="' . nebula()->option('facebook_url') . '" target="_blank" rel="noopener">Facebook</a></li>';
 			}
 
 			if ( nebula()->option('twitter_username') ){
-				echo '<li><i class="fa fa-fw fa-twitter-square"></i> <a href="' . nebula()->twitter_url() . '" target="_blank">Twitter</a></li>';
+				echo '<li><i class="fa fa-fw fa-twitter-square"></i> <a href="' . nebula()->twitter_url() . '" target="_blank" rel="noopener">Twitter</a></li>';
 			}
 
 			if ( nebula()->option('linkedin_url') ){
-				echo '<li><i class="fa fa-fw fa-linkedin-square"></i> <a href="' . nebula()->option('linkedin_url') . '" target="_blank">LinkedIn</a></li>';
+				echo '<li><i class="fa fa-fw fa-linkedin-square"></i> <a href="' . nebula()->option('linkedin_url') . '" target="_blank" rel="noopener">LinkedIn</a></li>';
 			}
 
 			if ( nebula()->option('youtube_url') ){
-				echo '<li><i class="fa fa-fw fa-youtube-square"></i> <a href="' . nebula()->option('youtube_url') . '" target="_blank">Youtube</a></li>';
+				echo '<li><i class="fa fa-fw fa-youtube-square"></i> <a href="' . nebula()->option('youtube_url') . '" target="_blank" rel="noopener">Youtube</a></li>';
 			}
 
 			if ( nebula()->option('instagram_url') ){
-				echo '<li><i class="fa fa-fw fa-instagram"></i> <a href="' . nebula()->option('instagram_url') . '" target="_blank">Instagram</a></li>';
+				echo '<li><i class="fa fa-fw fa-instagram"></i> <a href="' . nebula()->option('instagram_url') . '" target="_blank" rel="noopener">Instagram</a></li>';
 			}
 
 			if ( nebula()->option('google_plus_url') ){
-				echo '<li><i class="fa fa-fw fa-google-plus-square"></i> <a href="' . nebula()->option('google_plus_url') . '" target="_blank">Google+</a></li>';
+				echo '<li><i class="fa fa-fw fa-google-plus-square"></i> <a href="' . nebula()->option('google_plus_url') . '" target="_blank" rel="noopener">Google+</a></li>';
 			}
 
 			if ( nebula()->option('disqus_shortname') ){
-				echo '<li><i class="fa fa-fw fa-comments-o"></i> <a href="https://' . nebula()->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank">Disqus</a></li>';
+				echo '<li><i class="fa fa-fw fa-comments-o"></i> <a href="https://' . nebula()->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener">Disqus</a></li>';
 			}
 
 			do_action('nebula_social_metabox');
@@ -525,10 +525,10 @@ if ( !trait_exists('Dashboard') ){
 
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
-			echo '<a href="http://pinckneyhugo.com" target="_blank"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" /></a>';
+			echo '<a href="http://pinckneyhugo.com" target="_blank" rel="noopener"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" /></a>';
 			echo '<ul>';
 			echo '<li>' . nebula()->pinckneyhugogroup() . '</li>';
-			echo '<li><i class="fa fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank">760 West Genesee Street, Syracuse, NY 13204</a></li>';
+			echo '<li><i class="fa fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a></li>';
 			echo '<li><i class="fa fa-fw fa-phone"></i> (315) 478-6700</li>';
 			echo '</ul>';
 		}
@@ -546,7 +546,7 @@ if ( !trait_exists('Dashboard') ){
 		//TODO metabox content
 		public function todo_metabox_content(){
 			do_action('nebula_todo_manager');
-			echo '<p class="todoresults_title"><strong>Active @todo Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p><div class="todo_results">';
+			echo '<p class="todoresults_title"><strong>Active @todo Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank" rel="noopener"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p><div class="todo_results">';
 
 			global $todo_file_counter, $todo_instance_counter;
 			$todo_file_counter = 0;
@@ -658,7 +658,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul class="serverdetections">';
 
 			//Domain
-			echo '<li><i class="fa fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" title="WHOIS Lookup">Domain</a>: <strong>' . nebula()->url_components('domain') . '</strong></li>';
+			echo '<li><i class="fa fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" rel="noopener" title="WHOIS Lookup">Domain</a>: <strong>' . nebula()->url_components('domain') . '</strong></li>';
 
 			//Host
 			function top_domain_name($url){
@@ -682,7 +682,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443 ){
 				$secureServer = '<small class="secured-connection"><i class="fa fa-fw fa-lock"></i>Secured Connection</small>';
 			}
-			echo '<li><i class="fa fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fa fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank" rel="noopener">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
 
 			//Server operating system
 			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
@@ -805,7 +805,7 @@ if ( !trait_exists('Dashboard') ){
 					jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
 				}
 			</script>';
-			echo '<li><i class="fa fa-fw fa-clock-o"></i> Browser load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
+			echo '<li><i class="fa fa-fw fa-clock-o"></i> Browser load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
 
 			//Initial installation date
 			function initial_install_date(){

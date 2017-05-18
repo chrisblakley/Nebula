@@ -135,7 +135,7 @@
 										<label for="business_type">Business Type</label>
 										<input type="text" name="nebula_options[business_type]" id="business_type" class="form-control nebula-validate-text" value="<?php echo nebula()->option('business_type'); ?>" placeholder="LocalBusiness" />
 										<p class="nebula-help-text short-help form-text text-muted">This schema is used for Structured Data.</p>
-										<p class="nebula-help-text more-help form-text text-muted"><a href="https://schema.org/LocalBusiness" target="_blank">Use this reference under "More specific Types"</a> (click through to get the most specific possible). If you are unsure, you can use Organization, Corporation, EducationalOrganization, GovernmentOrganization, LocalBusiness, MedicalOrganization, NGO, PerformingGroup, or SportsOrganization. Details set using <a href="https://www.google.com/business/" target="_blank">Google My Business</a> will not be overwritten by Structured Data, so it is recommended to sign up and use Google My Business.</p>
+										<p class="nebula-help-text more-help form-text text-muted"><a href="https://schema.org/LocalBusiness" target="_blank" rel="noopener">Use this reference under "More specific Types"</a> (click through to get the most specific possible). If you are unsure, you can use Organization, Corporation, EducationalOrganization, GovernmentOrganization, LocalBusiness, MedicalOrganization, NGO, PerformingGroup, or SportsOrganization. Details set using <a href="https://www.google.com/business/" target="_blank" rel="noopener">Google My Business</a> will not be overwritten by Structured Data, so it is recommended to sign up and use Google My Business.</p>
 										<p class="option-keywords">schema.org json-ld linked data structured data knowledge graph recommended seo</p>
 									</div>
 
@@ -219,7 +219,7 @@
 										</div>
 
 										<p class="nebula-help-text short-help form-text text-muted">The address of the location (or headquarters if multiple locations).</p>
-										<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://gearside.com/nebula/functions/full_address/" target="_blank"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
+										<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://gearside.com/nebula/functions/full_address/" target="_blank" rel="noopener"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
 										<p class="option-keywords">location recommended seo</p>
 									</div>
 
@@ -264,7 +264,7 @@
 										<textarea name="nebula_options[business_hours_closed]" id="business_hours_closed" class="form-control nebula-validate-textarea" rows="3"><?php echo $nebula_options['business_hours_closed']; ?></textarea>
 										<p class="dependent-note hidden">This option is dependent on Business Hours (above).</p>
 										<p class="nebula-help-text short-help form-text text-muted">Comma-separated list of special days the business is closed (like holidays).</p>
-										<p class="nebula-help-text more-help form-text text-muted">These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank">Here is a good reference for holiday occurrences.</a>. Note: This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</p>
+										<p class="nebula-help-text more-help form-text text-muted">These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank" rel="noopener">Here is a good reference for holiday occurrences.</a>. Note: This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</p>
 										<p class="option-keywords">seo</p>
 									</div>
 								</div><!-- /option-group -->
@@ -497,7 +497,7 @@
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[visitors_db]" id="visitors_db" value="1" <?php checked('1', !empty($nebula_options['visitors_db'])); ?> /><label for="visitors_db">Visitors Database</label>
 										<p class="nebula-help-text short-help form-text text-muted">Adds a table to the database to store visitor usage information. (Default: <?php echo nebula()->user_friendly_default('visitors_db'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank">full marketing automation service</a>.</p>
+										<p class="nebula-help-text more-help form-text text-muted">This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank" rel="noopener">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank" rel="noopener">full marketing automation service</a>.</p>
 										<p class="option-keywords">moderate page speed impact discretionary</p>
 									</div>
 
@@ -644,15 +644,15 @@
 
 									<div class="form-group" dependent-of="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_displayfeatures]" id="ga_displayfeatures" value="1" <?php checked('1', !empty($nebula_options['ga_displayfeatures'])); ?> /><label for="ga_displayfeatures">Display Features</label>
-										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank">Google display features</a> in the analytics tag. (Default: <?php echo nebula()->user_friendly_default('ga_displayfeatures'); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank" rel="noopener">Google display features</a> in the analytics tag. (Default: <?php echo nebula()->user_friendly_default('ga_displayfeatures'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This enables Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.</p>
 										<p class="option-keywords"></p>
 									</div>
 
 									<div class="form-group" dependent-of="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_linkid]" id="ga_linkid" value="1" <?php checked('1', !empty($nebula_options['ga_linkid'])); ?> /><label for="ga_linkid">Enhanced Link Attribution (Link ID)</label>
-										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. Be sure to enable it in Google Analytics too! (Default: <?php echo nebula()->user_friendly_default('ga_linkid'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. Use the <a href="https://chrome.google.com/webstore/detail/page-analytics-by-google/fnbdnhhicmebfgdgglcdacdapkcihcoh" target="_blank">Page Analytics by Google</a> Chrome extension to view the page overlay.</p>
+										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank" rel="noopener">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. Be sure to enable it in Google Analytics too! (Default: <?php echo nebula()->user_friendly_default('ga_linkid'); ?>)</p>
+										<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. Use the <a href="https://chrome.google.com/webstore/detail/page-analytics-by-google/fnbdnhhicmebfgdgglcdacdapkcihcoh" target="_blank" rel="noopener">Page Analytics by Google</a> Chrome extension to view the page overlay.</p>
 										<p class="option-keywords">minor page speed impact</p>
 									</div>
 
@@ -666,7 +666,7 @@
 									<div class="form-group">
 										<label for="google_optimize_id">Google Optimize ID</label>
 										<input type="text" name="nebula_options[google_optimize_id]" id="google_optimize_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_optimize_id']; ?>" placeholder="GTM-0000000" />
-										<p class="nebula-help-text short-help form-text text-muted">The ID used by <a href="https://optimize.google.com/optimize/home/" target="_blank">Google Optimize</a> to enable tests.</p>
+										<p class="nebula-help-text short-help form-text text-muted">The ID used by <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> to enable tests.</p>
 										<p class="nebula-help-text more-help form-text text-muted">Entering the ID here will enable both the Google Analytics require tag and the style tag hiding snippet in the head.</p>
 										<p class="option-keywords">remote resource minor page speed impact</p>
 									</div>
@@ -675,14 +675,14 @@
 										<label for="hostnames">Valid Hostnames</label>
 										<input type="text" name="nebula_options[hostnames]" id="hostnames" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo nebula()->url_components('domain'); ?>" />
 										<p class="nebula-help-text short-help form-text text-muted">These help generate regex patterns for Google Analytics filters.</p>
-										<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=valid+hostnames%20help" target="_blank">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula()->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
+										<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=valid+hostnames%20help" target="_blank" rel="noopener">(Learn how to use this)</a>: <input type="text" value="<?php echo nebula()->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
 										<p class="option-keywords"></p>
 									</div>
 
 									<div class="form-group">
 										<label for="google_search_console_verification">Google Search Console Verification</label>
 										<input type="text" name="nebula_options[google_search_console_verification]" id="google_search_console_verification" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_search_console_verification']; ?>" placeholder="AAAAAA..." />
-										<p class="nebula-help-text short-help form-text text-muted">This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank">Google Search Console</a>.</p>
+										<p class="nebula-help-text short-help form-text text-muted">This is the code provided using the "HTML Tag" option from <a href="https://www.google.com/webmasters/verification/" target="_blank" rel="noopener">Google Search Console</a>.</p>
 										<p class="nebula-help-text more-help form-text text-muted">Only use the "content" code- not the entire meta tag. Go ahead and paste the entire tag in, the value should be fixed automatically for you!</p>
 										<p class="option-keywords">recommended seo</p>
 									</div>
@@ -690,7 +690,7 @@
 									<div class="form-group">
 										<label for="facebook_custom_audience_pixel_id">Facebook Custom Audience Pixel ID</label>
 										<input type="text" name="nebula_options[facebook_custom_audience_pixel_id]" id="facebook_custom_audience_pixel_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_custom_audience_pixel_id']; ?>" placeholder="000000000000000" />
-										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.facebook.com/docs/facebook-pixel" target="_blank">Facebook Custom Audience Pixel</a> tracking.</p>
+										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.facebook.com/docs/facebook-pixel" target="_blank" rel="noopener">Facebook Custom Audience Pixel</a> tracking.</p>
 										<p class="option-keywords">remote resource minor page speed impact</p>
 									</div>
 								</div><!-- /option-group -->
@@ -824,7 +824,7 @@
 												<input type="text" name="nebula_options[cd_sessionid]" id="cd_sessionid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_sessionid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
-											<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=session+id%20help" target="_blank">Session ID Documentation &raquo;</a></p>
+											<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=session+id%20help" target="_blank" rel="noopener">Session ID Documentation &raquo;</a></p>
 											<p class="option-keywords">recommended</p>
 										</div>
 
@@ -1209,7 +1209,7 @@
 								<div class="form-group">
 									<label for="google_font_url">Google Font</label>
 									<input type="text" name="nebula_options[google_font_url]" id="google_font_url" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_font_url']; ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" />
-									<p class="nebula-help-text short-help form-text text-muted">Choose which <a href="https://www.google.com/fonts" target="_blank">Google Font</a> is used by default for this site by pasting the entire font URL.</p>
+									<p class="nebula-help-text short-help form-text text-muted">Choose which <a href="https://www.google.com/fonts" target="_blank" rel="noopener">Google Font</a> is used by default for this site by pasting the entire font URL.</p>
 									<p class="nebula-help-text more-help form-text text-muted">The default font uses the native system font of the user's device.</p>
 									<p class="option-keywords">remote resource minor page speed impact</p>
 								</div>
@@ -1228,7 +1228,7 @@
 										<input type="text" name="nebula_options[google_server_api_key]" id="google_server_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_server_api_key']; ?>" />
 									</div>
 
-									<p class="nebula-help-text short-help form-text text-muted">API keys from the <a href="https://console.developers.google.com/project" target="_blank">Google Developers Console</a>.</p>
+									<p class="nebula-help-text short-help form-text text-muted">API keys from the <a href="https://console.developers.google.com/project" target="_blank" rel="noopener">Google Developers Console</a>.</p>
 									<p class="nebula-help-text more-help form-text text-muted">In the Developers Console make a new project (if you don't have one yet). Under "Credentials" create a new key. Your current server IP address is <code><?php echo $_SERVER['SERVER_ADDR']; ?></code> (for IP restricting). Do not use an IP restricted key in JavaScript or any client-side code! Use HTTP referrer restrictions for browser keys.</p>
 									<p class="option-keywords"></p>
 								</div>
@@ -1239,7 +1239,7 @@
 										<div class="input-group-addon">Engine ID</div>
 										<input type="text" name="nebula_options[cse_id]" id="cse_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" />
 									</div>
-									<p class="nebula-help-text short-help form-text text-muted">For <a href="https://gearside.com/nebula/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=gcse+help" target="_blank">page suggestions</a> on 404 and No Search Results pages.</p>
+									<p class="nebula-help-text short-help form-text text-muted">For <a href="https://gearside.com/nebula/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=gcse+help" target="_blank" rel="noopener">page suggestions</a> on 404 and No Search Results pages.</p>
 									<p class="nebula-help-text more-help form-text text-muted"><a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</p>
 									<p class="option-keywords">remote resource minor page speed impact</p>
 								</div>
@@ -1247,7 +1247,7 @@
 								<div class="form-group hidden">
 									<label for="gcm_sender_id">Google Cloud Messaging Sender ID</label>
 									<input type="text" name="nebula_options[gcm_sender_id]" id="gcm_sender_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['gcm_sender_id']; ?>" placeholder="000000000000" />
-									<p class="nebula-help-text short-help form-text text-muted">The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank">Developers Console</a>.</p>
+									<p class="nebula-help-text short-help form-text text-muted">The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank" rel="noopener">Developers Console</a>.</p>
 									<p class="nebula-help-text more-help form-text text-muted">This is the "Project number" within the project box on the Dashboard. Do not include parenthesis or the "#" symbol. This is used for push notifications. <strong>*Note: This feature is still in development and not currently active!</strong></p>
 									<p class="option-keywords"></p>
 								</div>
@@ -1276,7 +1276,7 @@
 									<label for="disqus_shortname">Disqus Shortname</label>
 									<input type="text" name="nebula_options[disqus_shortname]" id="disqus_shortname" class="form-control nebula-validate-text" value="<?php echo $nebula_options['disqus_shortname']; ?>" />
 									<p class="nebula-help-text short-help form-text text-muted">Enter your Disqus shortname here.</p>
-									<p class="nebula-help-text more-help form-text text-muted"><a href="https://disqus.com/admin/create/" target="_blank">Sign-up for an account here</a>. In your Disqus account settings (where you will find your shortname), please uncheck the "Discovery" box.</p>
+									<p class="nebula-help-text more-help form-text text-muted"><a href="https://disqus.com/admin/create/" target="_blank" rel="noopener">Sign-up for an account here</a>. In your Disqus account settings (where you will find your shortname), please uncheck the "Discovery" box.</p>
 									<p class="option-keywords">social remote resource moderate page speed impact comments</p>
 								</div>
 
@@ -1287,7 +1287,7 @@
 										<input type="text" name="nebula_options[facebook_app_id]" id="facebook_app_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_id']; ?>" placeholder="000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The App ID of the associated Facebook page/app.</p>
-									<p class="nebula-help-text more-help form-text text-muted">This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></p>
+									<p class="nebula-help-text more-help form-text text-muted">This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank" rel="noopener">Get a Facebook App ID &amp; Access Token &raquo;</a></p>
 									<p class="option-keywords">social remote resource</p>
 								</div>
 
@@ -1297,7 +1297,7 @@
 										<input type="text" name="nebula_options[facebook_app_secret]" id="facebook_app_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_secret']; ?>" placeholder="00000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The App Secret of the associated Facebook page/app.</p>
-									<p class="nebula-help-text more-help form-text text-muted">This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></p>
+									<p class="nebula-help-text more-help form-text text-muted">This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank" rel="noopener">Get a Facebook App ID &amp; Access Token &raquo;</a></p>
 									<p class="option-keywords">social remote resource</p>
 								</div>
 
@@ -1307,7 +1307,7 @@
 										<input type="text" name="nebula_options[facebook_access_token]" id="facebook_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_access_token']; ?>" placeholder="000000000000000|000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The Access Token of the associated Facebook page/app.</p>
-									<p class="nebula-help-text more-help form-text text-muted">This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank">Get a Facebook App ID &amp; Access Token &raquo;</a></p>
+									<p class="nebula-help-text more-help form-text text-muted">This is used to query the Facebook Graph API. <a href="http://smashballoon.com/custom-facebook-feed/access-token/" target="_blank" rel="noopener">Get a Facebook App ID &amp; Access Token &raquo;</a></p>
 									<p class="option-keywords">social remote resource</p>
 								</div>
 
@@ -1335,7 +1335,7 @@
 										<div class="input-group-addon"><span><i class="fa fa-fw fa-twitter"></i> Bearer Token</span></div>
 										<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
-									<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://gearside.com/nebula/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=twitter+help" target="_blank">Generate a bearer token here</a></p>
+									<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://gearside.com/nebula/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=twitter+help" target="_blank" rel="noopener">Generate a bearer token here</a></p>
 									<p class="option-keywords">social remote resource</p>
 								</div>
 
@@ -1446,7 +1446,7 @@
 										<label for="notableiplist">Notable IPs</label>
 										<textarea name="nebula_options[notableiplist]" id="notableiplist" class="form-control nebula-validate-textarea" rows="6" placeholder="192.168.0.1 Name Here"><?php echo $nebula_options['notableiplist']; ?></textarea>
 										<p class="nebula-help-text short-help form-text text-muted">A list of named IP addresses. Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name.</p>
-										<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab! Tip: IP data is sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=notable+ips%20help" target="_blank">Nebula contact forms</a>!</p>
+										<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab! Tip: IP data is sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=notable+ips%20help" target="_blank" rel="noopener">Nebula contact forms</a>!</p>
 										<p class="option-keywords">recommended</p>
 									</div>
 								</div>
@@ -1459,7 +1459,7 @@
 										<label for="cpanel_url">Server Control Panel</label>
 										<input type="text" name="nebula_options[cpanel_url]" id="cpanel_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['cpanel_url']; ?>" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" />
 										<p class="nebula-help-text short-help form-text text-muted">Link to the control panel of the hosting account.</p>
-										<p class="nebula-help-text more-help form-text text-muted">cPanel on this domain would be: <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a></p>
+										<p class="nebula-help-text more-help form-text text-muted">cPanel on this domain would be: <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank" rel="noopener"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a></p>
 										<p class="option-keywords"></p>
 									</div>
 
@@ -1467,7 +1467,7 @@
 										<label for="hosting_url">Hosting</label>
 										<input type="text" name="nebula_options[hosting_url]" id="hosting_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['hosting_url']; ?>" placeholder="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>/" />
 										<p class="nebula-help-text short-help form-text text-muted">Link to the server host for easy access to support and other information.</p>
-										<p class="nebula-help-text more-help form-text text-muted">Server detected as <a href="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>" target="_blank">http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?></a></p>
+										<p class="nebula-help-text more-help form-text text-muted">Server detected as <a href="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>" target="_blank" rel="noopener">http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?></a></p>
 										<p class="option-keywords"></p>
 									</div>
 
@@ -1480,21 +1480,21 @@
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[google_adsense_url]" id="google_adsense_url" value="1" <?php checked('1', !empty($nebula_options['google_adsense_url'])); ?> /><label for="google_adsense_url">Google AdSense</label>
-										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank">Google AdSense</a> account. (Default: <?php echo nebula()->user_friendly_default('google_adsense_url'); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank" rel="noopener">Google AdSense</a> account. (Default: <?php echo nebula()->user_friendly_default('google_adsense_url'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[amazon_associates_url]" id="amazon_associates_url" value="1" <?php checked('1', !empty($nebula_options['amazon_associates_url'])); ?> /><label for="amazon_associates_url">Amazon Associates</label>
-										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank">Amazon Associates</a> account. (Default: <?php echo nebula()->user_friendly_default('amazon_associates_url'); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank" rel="noopener">Amazon Associates</a> account. (Default: <?php echo nebula()->user_friendly_default('amazon_associates_url'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[mention_url]" id="mention_url" value="1" <?php checked('1', !empty($nebula_options['mention_url'])); ?> /><label for="mention_url">Mention</label>
-										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://mention.com/" target="_blank">Mention</a> account. (Default: <?php echo nebula()->user_friendly_default('mention_url'); ?>)</p>
+										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://mention.com/" target="_blank" rel="noopener">Mention</a> account. (Default: <?php echo nebula()->user_friendly_default('mention_url'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>

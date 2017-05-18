@@ -38,7 +38,7 @@ trait Functions {
 
 		//Create/Write a manifest JSON file
 		if ( is_writable(get_template_directory()) ){
-			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-(60*60*24)) || nebula()->is_debug() ){ //@todo "Nebula" 0: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
+			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || nebula()->is_debug() ){ //@todo "Nebula" 0: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
 				add_action('init', array($this, 'manifest_json'));
 				add_action('admin_init', array($this, 'manifest_json'));
 			}
@@ -254,7 +254,11 @@ trait Functions {
 	}
 
 	//Manifest JSON file location
-	public function manifest_json_location(){
+	public function manifest_json_location($uri=true){
+		if ( $uri ){
+			return get_template_directory_uri() . '/inc/manifest.json';
+		}
+
 		return get_template_directory() . '/inc/manifest.json';
 	}
 
@@ -266,6 +270,9 @@ trait Functions {
 		$manifest_json = '{
 			"short_name": "' . get_bloginfo('name') . '",
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
+			"description": "' . get_bloginfo('description') . '",
+			"theme_color": "' . nebula()->sass_color('primary') . '",
+			"background_color": "#fff",
 			"gcm_sender_id": "' . nebula()->option('gcm_sender_id') . '",
 			"icons": [{
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-36x36.png",
@@ -298,16 +305,14 @@ trait Functions {
 				"type": "image/png",
 				"density": 4.0
 			}],
-			"start_url": "' . home_url() . '",
+			"start_url": "' . home_url() . '?utm_source=homescreen",
 			"display": "standalone",
 			"orientation": "portrait"
 		}';
 
-		//@TODO "Nebula" 0: "start_url" with a query string is not working. Manifest is confirmed working, just not the query string.
-
 		WP_Filesystem();
 		global $wp_filesystem;
-		$wp_filesystem->put_contents($this->manifest_json_location(), $manifest_json);
+		$wp_filesystem->put_contents($this->manifest_json_location(false), $manifest_json);
 	}
 
 	//Redirect to favicon to force-clear the cached version when ?favicon is added.
@@ -1605,7 +1610,7 @@ trait Functions {
 		if ( $white ){
 			$white = 'anim';
 		}
-		return '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
+		return '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank" rel="noopener"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
 	}
 
 	//Determine if the author should be the Company Name or the specific author's name.
@@ -1933,7 +1938,7 @@ trait Functions {
 
 	//Link to Disqus on comments page (if using Disqus)
 	public function disqus_link(){
-		echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . nebula()->option('disqus_shortname') . ".disqus.com/admin/moderate' target='_blank'>View the comment listings on Disqus &raquo;</a></p></div>";
+		echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . nebula()->option('disqus_shortname') . ".disqus.com/admin/moderate' target='_blank' rel='noopener'>View the comment listings on Disqus &raquo;</a></p></div>";
 	}
 
 	//Enqueue threaded comments script only as needed
