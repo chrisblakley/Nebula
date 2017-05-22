@@ -21,6 +21,22 @@
 	*/
 ?>
 
+<?php //These must be the first three tags! ?>
+<meta charset="<?php bloginfo('charset'); ?>" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<?php do_action('nebula_head_open'); ?>
+
+<meta name="referrer" content="always">
+<meta name="HandheldFriendly" content="True" />
+<meta name="MobileOptimized" content="320" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta class="theme-color" name="theme-color" content="<?php echo nebula()->sass_color('primary'); ?>">
+<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula()->sass_color('primary'); ?>">
+<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula()->sass_color('primary'); ?>">
+
 <?php if ( nebula()->option('google_search_console_verification') ): ?>
 	<meta name="google-site-verification" content="<?php echo nebula()->option('google_search_console_verification'); ?>" />
 <?php endif; ?>
@@ -145,6 +161,11 @@
 <meta name="ICBM" content="<?php echo nebula()->option('latitude'); ?>, <?php echo nebula()->option('longitude'); ?>" />
 <meta property="place:location:latitude" content="<?php echo nebula()->option('latitude'); ?>" />
 <meta property="place:location:longitude" content="<?php echo nebula()->option('longitude'); ?>" />
+
+<link rel="manifest" href="<?php echo nebula()->manifest_json_location(); //Manifest for progressive web app data ?>" />
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+
+<?php nebula()->prebrowsing(); //Prefetch, preconnect, and prerender tags ?>
 
 <?php
 	//JSON-LD Structured Data

@@ -11,32 +11,21 @@ jQuery(function(){
 	getQueryStrings();
 	cacheSelectors();
 	conditionalJSLoading();
-	nebulaBattery();
-	nebulaNetworkConnection();
 
 	//Navigation
 	mmenus();
-	dropdownWidthController();
-	overflowDetector();
 	subnavExpanders();
 	nebulaPrerenderListeners();
 	menuSearchReplacement();
 
 	//Search
-	wpSearchInput();
-	mobileSearchPlaceholder();
-	initAutocompleteSearch();
-	advancedSearchTriggers();
-	searchValidator();
-	searchTermHighlighter();
 	singleResultDrawer();
 	pageSuggestion();
 
 	//Forms
-	nebulaLiveValidator();
-	cf7Functions();
+	nebulaLiveValidator(); //move to window load?
+	cf7Functions(); //move to window load?
 	cf7LocalStorage();
-	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
 
 	//Helpers
 	addHelperClasses();
@@ -62,8 +51,6 @@ jQuery(function(){
 		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
 	}
 
-	lastWidth = jQuery(window).width(); //Prep resize detection
-
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.user.cid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
@@ -73,10 +60,30 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
+	initEventTracking();
+
+	//Navigation
+	dropdownWidthController(); //move to window load?
+	overflowDetector();
+
+	//Search
+	wpSearchInput();
+	mobileSearchPlaceholder(); //move to window load?
+	initAutocompleteSearch(); //move to window load?
+	advancedSearchTriggers(); //move to window load?
+	searchValidator(); //move to window load?
+	searchTermHighlighter(); //move to window load?
+
+	//Forms
+	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete'); //move to window load?
 
 	facebookSDK();
 	facebookConnect();
-	initEventTracking();
+
+	nebulaBattery();
+	nebulaNetworkConnection();
+
+	lastWidth = jQuery(window).width(); //Prep resize detection (Is this causing a forced reflow?) //move to window load?
 
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
@@ -106,7 +113,7 @@ jQuery(window).on('load', function(){
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
-		if ( jQuery(window).width() != lastWidth ){ //If the width actually changed
+		if ( typeof lastWidth !== 'undefined' && jQuery(window).width() != lastWidth ){ //If the width actually changed
 			lastWidth = jQuery(window).width();
 
 			nebulaEqualize();
@@ -154,7 +161,7 @@ function initPageVisibility(){
 }
 
 function visibilityChangeActions(){
-	if ( document.visibilityState === 'prerender' ){ //Page was prerendered/prefetched
+	if ( document.visibilityState === 'prerender' ){ //Page was prerendered
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Page Visibility', 'Prerendered', 'Page loaded before tab/window was visible', {'nonInteraction': true});
 		pauseAllVideos(false);
@@ -1602,7 +1609,7 @@ function nebulaPrerender(url){
 		if ( jQuery('link#prerender').length ){
 			jQuery('link#prerender').attr('href', url); //Update prerender link
 		} else {
-			jQuery('head').append('<link id="prerender" rel="prerender prefetch" href="' + url + '>'); //Create new prerender link
+			jQuery('head').append('<link id="prerender" rel="prerender" href="' + url + ' />'); //Create new prerender link
 		}
 	}
 }
@@ -1616,6 +1623,13 @@ function cf7Functions(){
 		return false;
 	}
 
+	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
+	jQuery('.wpcf7-form input[type=submit]').each(function(){
+		if ( !jQuery(this).hasClass('no-button') ){
+			jQuery('.wpcf7-form input[type=submit]').replaceWith('<button id="submit" type="submit" class="' + jQuery('.wpcf7-form input[type=submit]').attr('class') + '">' + jQuery('.wpcf7-form input[type=submit]').val() + '</button>');
+		}
+	});
+
 	//Track CF7 forms when they scroll into view (Autotrack). Currently not possible to change category/action/label for just these impressions.
 	jQuery('.wpcf7-form').each(function(){
 		ga('impressionTracker:observeElements', [{
@@ -1625,7 +1639,7 @@ function cf7Functions(){
 	});
 
 	formStarted = {};
-	jQuery('.wpcf7-form input, .wpcf7-form textarea').on('focus', function(e){
+	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		formID = jQuery(this).closest('div.wpcf7').attr('id');
 
 		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
@@ -1653,6 +1667,10 @@ function cf7Functions(){
 		}
 	});
 
+	nebula.dom.document.on('submit', 'form.wpcf7-form', function(){
+		jQuery(this).find('button#submit').addClass('active');
+	});
+
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7invalid', function(e){
 		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-spam');
@@ -1673,6 +1691,8 @@ function cf7Functions(){
 
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
+		console.debug(nebulaTimings);
+
 		var formTime = nebulaTimer(e.target.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
@@ -1693,6 +1713,8 @@ function cf7Functions(){
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
 	nebula.dom.document.on('wpcf7mailsent', function(e){
+		formStarted[e.target.id] = false; //Reset abandonment tracker for this form.
+
 		var formTime = nebulaTimer(e.target.id, 'end');
 		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
@@ -1722,6 +1744,8 @@ function cf7Functions(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
+
+		jQuery('#' + e.target.id).find('button#submit').removeClass('active');
 	});
 }
 
@@ -2507,7 +2531,9 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 			jQuery('html, body').animate({
 				scrollTop: element.offset().top-offset
 			}, milliseconds, function(){
-				callback();
+				if ( callback ){
+					callback();
+				}
 			});
 		}
 
@@ -3650,12 +3676,12 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 
 		instance = new Notification(title, message); //Trigger the notification //@TODO "Nebula" 0: This will be deprecated soon. Update to the service worker.
 
-		if ( typeof clickCallback !== "undefined" ){
+		if ( clickCallback ){
 			instance.onclick = function(){
 				clickCallback();
 			};
 		}
-		if ( typeof showCallback !== "undefined" ){
+		if ( showCallback ){
             instance.onshow = function(e){
                 showCallback();
             };
@@ -3666,12 +3692,12 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
                 }, 20000);
             }
         }
-		if ( typeof closeCallback !== "undefined" ){
+		if ( closeCallback ){
 			instance.onclose = function(){
 				closeCallback();
 			};
 		}
-		if ( typeof errorCallback !== "undefined" ){
+		if ( errorCallback ){
 			instance.onerror = function(){
 				errorCallback();
 			};

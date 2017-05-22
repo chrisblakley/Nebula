@@ -801,7 +801,9 @@ if ( !trait_exists('Dashboard') ){
 					var afterLoad = (new Date()).getTime();
 					var result = (afterLoad - beforeLoad)/1000;
 					jQuery(".loadtime").html(result + " seconds");
-					if ( result > 5 ){ jQuery(".slowicon").addClass("fa-warning"); }
+					if ( result > 3 ){
+						jQuery(".slowicon").addClass("fa-warning");
+					}
 					jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
 				}
 			</script>';

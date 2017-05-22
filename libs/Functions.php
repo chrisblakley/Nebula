@@ -268,8 +268,8 @@ trait Functions {
 		if ( $override !== false ){return;}
 
 		$manifest_json = '{
-			"short_name": "' . get_bloginfo('name') . '",
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
+			"short_name": "' . get_bloginfo('name') . '",
 			"description": "' . get_bloginfo('description') . '",
 			"theme_color": "' . nebula()->sass_color('primary') . '",
 			"background_color": "#fff",
@@ -277,37 +277,41 @@ trait Functions {
 			"icons": [{
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-36x36.png",
 				"sizes": "36x36",
-				"type": "image/png",
-				"density": 0.75
+				"type": "image/png"
 			}, {
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-48x48.png",
 				"sizes": "48x48",
-				"type": "image/png",
-				"density": 1.0
+				"type": "image/png"
 			}, {
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-72x72.png",
 				"sizes": "72x72",
-				"type": "image/png",
-				"density": 1.5
+				"type": "image/png"
 			}, {
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-96x96.png",
 				"sizes": "96x96",
-				"type": "image/png",
-				"density": 2.0
+				"type": "image/png"
 			}, {
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-144x144.png",
 				"sizes": "144x144",
-				"type": "image/png",
-				"density": 3.0
+				"type": "image/png"
 			}, {
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-192x192.png",
 				"sizes": "192x192",
-				"type": "image/png",
-				"density": 4.0
+				"type": "image/png"
+			}, {
+				"src": "' . get_theme_file_uri('/images/meta') . '/chrome-512x512.png",
+				"sizes": "512x512",
+				"type": "image/png"
+			}, {
+				"src": "' . get_theme_file_uri('/images/meta') . '/og-thumb.png",
+				"sizes": "1200x600",
+				"type": "image/png"
 			}],
+			"Scope": "/",
 			"start_url": "' . home_url() . '?utm_source=homescreen",
 			"display": "standalone",
-			"orientation": "portrait"
+			"orientation": "portrait",
+			"splash_pages": null
 		}';
 
 		WP_Filesystem();
@@ -319,23 +323,6 @@ trait Functions {
 	public function favicon_cache(){
 		if ( array_key_exists('favicon', $_GET) ){
 			header('Location: ' . get_theme_file_uri('/images/meta') . '/favicon.ico');
-		}
-	}
-
-	//Determing if a page should be prepped using prerender/prefetch (Can be updated w/ JS).
-	//If an eligible page is determined after load, use the JavaScript nebulaPrerender(url) function.
-	//Use the Audience > User Flow report in Google Analytics for better predictions.
-	public function prerender(){
-		$override = apply_filters('pre_nebula_prerender', false);
-		if ( $override !== false ){return $override;}
-
-		$prerender_url = false;
-		if ( is_404() ){
-			$prerender_url = home_url('/');
-		}
-
-		if ( !empty($prerender_url) ){
-			echo '<link id="prerender" rel="prerender prefetch" href="' . $prerender_url . '">';
 		}
 	}
 

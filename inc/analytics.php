@@ -7,6 +7,8 @@
 ?>
 
 <?php if ( nebula()->option('ga_tracking_id') ): //Universal Google Analytics ?>
+	<link rel="prefetch" href="//www.google-analytics.com/analytics.js" />
+
 	<script>
 		window.GAready = false;
 
@@ -287,10 +289,6 @@
 				visibleMetricIndex: parseInt(gaCustomMetrics['pageVisible'].replace('metric', '')),
 				fieldsObj: {nonInteraction: true}
 			});
-		} else {
-			ga('require', 'pageVisibilityTracker', {
-				fieldsObj: {nonInteraction: true}
-			});
 		}
 
 		//Autotrack Clean URL
@@ -367,10 +365,7 @@
 		ga('require', 'maxScrollTracker', {
 			maxScrollMetricIndex: parseInt(gaCustomMetrics['maxScroll'].replace('metric', '')),
 			hitFilter: function(model){
-				if ( model.get('eventLabel') > 65 ){
-					model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
-				}
-
+				model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
 			},
 		});
 
@@ -390,6 +385,8 @@
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 
 		<?php if ( !nebula()->is_bot() && ( nebula()->option('adblock_detect') ) ): //Detect Ad Blockers (After pageview because asynchronous- uses GA event). ?>
+			jQuery.ajaxSetup({cache: true});
+
 			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
 				if ( nebula.session.flags ){
 					nebula.session.flags.adblock = 'false';
@@ -429,6 +426,8 @@
 <?php endif; ?>
 
 <?php if ( nebula()->option('adwords_remarketing_conversion_id') ): //Google AdWords Remarketing Tag ?>
+	<link rel="prefetch" href="//www.googleadservices.com/pagead/conversion.js" />
+
 	<script type="text/javascript">
 		/* <![CDATA[ */
 		var google_conversion_id = <?php echo nebula()->option('adwords_remarketing_conversion_id'); ?>;
@@ -445,6 +444,8 @@
 <?php endif; ?>
 
 <?php if ( nebula()->option('facebook_custom_audience_pixel_id') ): //Facebook Custom Audience ?>
+	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
+
 	<script>
 		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;

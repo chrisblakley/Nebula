@@ -267,8 +267,8 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			$return = '<script>
-						jQuery(document).ready(function(){
-							jQuery(".the-map-overlay").on("click tap touch", public function(){
+						jQuery(window).on("load", function(){
+							jQuery(".the-map-overlay").on("click tap touch", function(){
 								jQuery(this).removeClass("the-map-overlay");
 							});
 						});

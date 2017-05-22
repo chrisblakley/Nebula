@@ -203,7 +203,7 @@ if ( !trait_exists('Scripts') ){
 
 			if ( nebula()->option('device_detection') ){
 				//wp_enqueue_script('nebula-modernizr_dev');
-				wp_enqueue_script('nebula-modernizr_local'); //@todo "Nebula" 0: Switch this back to CDN when version 3 is on CDNJS
+				//wp_enqueue_script('nebula-modernizr_local'); //@todo "Nebula" 0: Switch this back to CDN when version 3 is on CDNJS
 			}
 
 			wp_enqueue_script('nebula-mmenu');

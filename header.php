@@ -7,26 +7,7 @@
 <!--[if IEMobile]><html <?php language_attributes(); ?> class="<?php echo $debug_class; ?> no-js ie iem7" dir="ltr"><![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class=" <?php echo $debug_class; ?> no-js"><!--<![endif]-->
 	<head>
-		<meta charset="<?php bloginfo('charset'); ?>" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-
-		<?php do_action('nebula_head_open'); ?>
-
-		<meta name="referrer" content="always">
-		<meta name="HandheldFriendly" content="True" />
-		<meta name="MobileOptimized" content="320" />
-		<meta name="mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta class="theme-color" name="theme-color" content="<?php echo nebula()->sass_color('primary'); ?>">
-		<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula()->sass_color('primary'); ?>">
-		<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula()->sass_color('primary'); ?>">
-		<?php get_template_part('inc/metadata'); ?>
-
-		<link rel="manifest" href="<?php echo nebula()->manifest_json_location(); ?>" />
-		<link rel="profile" href="http://gmpg.org/xfn/11" />
-		<?php nebula()->prerender(); ?>
-
+		<?php get_template_part('inc/metadata'); //Do not place tags above this. ?>
 		<?php wp_head(); ?>
 		<?php get_template_part('inc/analytics'); //Google Analytics and other analytics trackers. ?>
 	</head>

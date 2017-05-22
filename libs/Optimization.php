@@ -38,6 +38,7 @@ if ( !trait_exists('Optimization') ){
 
 			//Disable Emojis
 			add_action('init', array($this, 'disable_wp_emojicons'));
+			add_filter('wp_resource_hints', array($this, 'remove_emoji_prefetch'), 10, 2); //Remove dns-prefetch for emojis
 
 			add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
 		}
@@ -117,6 +118,76 @@ if ( !trait_exists('Optimization') ){
 			echo '<script>window.Tether = function(){}</script>'; //Must be a function to bypass Bootstrap check.
 		}
 
+		//Determing if a page should be prepped using prefetch, preconnect, or prerender.
+			//DNS-Prefetch = Resolve the DNS only to a domain.
+			//Preconnect = Resolve both DNS and TCP to a domain.
+			//Prefetch = Fully request a single resource and store it in cache until needed.
+			//Prerender = Render an entire page (useful for comment next page navigation). Use Audience > User Flow report in Google Analytics for better predictions.
+
+			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
+
+			//To hook into the arrays use:
+			/*
+				add_filter('nebula_preconnect', 'my_preconnects');
+				function my_preconnects($array){
+					$array[] = '//example.com';
+					return $array;
+				}
+			*/
+		public function prebrowsing(){
+			$override = apply_filters('pre_nebula_prebrowsing', false);
+			if ( $override !== false ){return $override;}
+
+			//DNS-Prefetch & Preconnect
+			$default_preconnects = array();
+
+			//Weather
+			if ( nebula()->option('weather') ){
+				$default_preconnects[] = '//query.yahooapis.com';
+			}
+
+			//GCSE on 404 pages
+			if ( is_404() && nebula()->get_option('cse_id') ){
+				$default_preconnects[] = '//www.googleapis.com';
+			}
+
+			//Disqus commenting
+			if ( is_single() && nebula()->get_option('comments') && nebula()->get_option('disqus_shortname') ){
+				$default_preconnects[] = '//' . nebula()->get_option('disqus_shortname') . '.disqus.com';
+			}
+
+			//Hubspot CRM for Nebula Visitors DB
+			if ( nebula()->get_option('visitors_db') && nebula()->get_option('hubspot_api') ){
+				$default_preconnects[] = '//api.hubapi.com';
+			}
+
+			$custom_preconnects = apply_filters('nebula_preconnect', $default_preconnects);
+			$preconnects = array_merge($custom_preconnects, array('//cdnjs.cloudflare.com'));
+			foreach ( $preconnects as $preconnect ){
+				echo '<link rel="dns-prefetch preconnect" href="' . $preconnect . '" />';
+			}
+
+			//Prefetch
+			$default_prefetches = array();
+			$custom_prefetches = apply_filters('nebula_prefetches', $default_prefetches);
+			$prefetches = array_merge($custom_prefetches, array());
+			foreach ( $prefetches as $prefetch ){
+				echo '<link rel="prefetch" href="' . $prefetch . '" />';
+			}
+
+			//Prerender
+			//If an eligible page is determined after load, use the JavaScript nebulaPrerender(url) function.
+			$prerender = false;
+			if ( is_404() ){
+				$prerender = ( !empty($error_404_exact_match) )? $error_404_exact_match : home_url('/');
+			}
+
+			if ( !empty($prerender) ){
+				echo '<link id="prerender" rel="prerender" href="' . $prerender . '" />';
+			}
+		}
+
+
 		//Force settings within plugins
 		public function plugin_force_settings(){
 			$override = apply_filters('pre_nebula_plugin_force_settings', false);
@@ -162,6 +233,15 @@ if ( !trait_exists('Optimization') ){
 			remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
 			remove_filter('the_content_feed', 'wp_staticize_emoji');
 			remove_filter('comment_text_rss', 'wp_staticize_emoji');
+		}
+
+		public function remove_emoji_prefetch($hints, $relation_type){
+			if ( 'dns-prefetch' === $relation_type ) {
+				$matches = preg_grep('/emoji/', $hints);
+				return array_diff( $hints, $matches );
+			}
+
+			return $hints;
 		}
 
 		public function disable_emojicons_tinymce($plugins){
