@@ -163,6 +163,7 @@ trait Functions {
 		header('Developed-with-Nebula: https://gearside.com/nebula'); //Nebula header
 
 		//Add new image sizes
+		add_image_size('square', 512, 512, 1);
 		add_image_size('open_graph_large', 1200, 630, 1);
 		add_image_size('open_graph_small', 600, 315, 1);
 		add_image_size('twitter_large', 280, 150, 1);
@@ -787,7 +788,7 @@ trait Functions {
 		if ( $override !== false ){echo $override; return;}
 
 		if ( has_post_thumbnail() ){
-			$featured_image = get_the_post_thumbnail();
+			$featured_image = $this->get_thumbnail_src(get_the_post_thumbnail($post->ID, 'full'));
 		} else {
 			$featured_image = get_template_directory_uri() . '/images/meta/og-thumb.png'; //@TODO "Nebula" 0: This should probably be a square? Check the recommended dimensions.
 		}
@@ -1075,6 +1076,7 @@ trait Functions {
 		$form = '<form id="searchform" class="form-group form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
 					<div class="input-group mb-2 mr-sm-2 mb-sm-0">
 						<div class="input-group-addon"><i class="fa fa-search"></i></div>
+						<label class="sr-only" for="s">Search</label>
 						<input id="s" class="form-control ignore-form" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" role="search" />
 					</div>
 
@@ -1091,7 +1093,8 @@ trait Functions {
 
 		$form = '<div id="nebula-hero-formcon">
 				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '">
-					<input type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" role="search" tabindex="0" x-webkit-speech />
+					<label class="sr-only" for="nebula-hero-search-input">Autocomplete Search</label>
+					<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" role="search" tabindex="0" x-webkit-speech />
 				</form>
 			</div>';
 		return $form;
@@ -1294,9 +1297,13 @@ trait Functions {
 	}
 
 	//If the business is open, return the time that the business closes today
-	public function business_open_until(){
+	public function business_open_until($day){
+		if ( empty($day) ){
+			$day = strtolower(date('l'));
+		}
+
 		if ( nebula()->is_business_open() ){
-			return nebula()->option('business_hours_' . $weekday . '_close');
+			return nebula()->option('business_hours_' . $day . '_close');
 		}
 
 		return false;

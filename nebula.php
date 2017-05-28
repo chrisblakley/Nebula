@@ -20,7 +20,7 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Admin/Admin.php';
 	require_once get_template_directory() . '/libs/Ecommerce.php';
 	require_once get_template_directory() . '/libs/Prototyping.php';
-	require_once get_template_directory() . '/libs/Legacy/Legacy.php'; //Backwards compatibility (Limited)
+	require_once get_template_directory() . '/libs/Legacy/Legacy.php'; //Backwards compatibility
 
 	//Main Nebula class
 	class Nebula {
@@ -35,6 +35,7 @@ if ( !class_exists('Nebula') ){
 		use Admin { Admin::hooks as AdminHooks; }
 		use Ecommerce { Ecommerce::hooks as EcommerceHooks; }
 		use Prototyping { Prototyping::hooks as PrototypingHooks; }
+		use Legacy { Legacy::hooks as LegacyHooks; }
 
 		private static $instance;
 		public $plugins = array();

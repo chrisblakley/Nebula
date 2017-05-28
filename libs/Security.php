@@ -4,7 +4,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Security') ){
 	trait Security {
-		public function hooks() {
+		public function hooks(){
 			//Log template direct access attempts
 			add_action('wp_loaded', array($this, 'log_direct_access_attempts'));
 

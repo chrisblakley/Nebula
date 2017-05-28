@@ -27,15 +27,17 @@
 							<p class="copyright">&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url(); ?>"><strong>Nebula</strong></a> <?php echo nebula()->version('full'); ?>, <em>all rights reserved</em>.</p>
 
 							<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>">
-								<input class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" role="search" x-webkit-speech />
+								<label class="sr-only" for="nebula-footer-search">Search</label>
+								<input id="nebula-footer-search" class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" role="search" x-webkit-speech />
 							</form>
 						</div><!--/col-->
 					</div><!--/row-->
 				</div><!--/container-->
+
+				<?php do_action('nebula_footer'); ?>
 			</div>
 
 			<?php wp_footer(); ?>
-			<?php do_action('nebula_footer'); ?>
 		</div><!--/body-wrapper-->
 	</body>
 </html>

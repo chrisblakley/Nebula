@@ -14,6 +14,9 @@ if ( !trait_exists('Optimization') ){
 			//Defer and Async specific scripts. This only works with registered/enqueued scripts!
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
 
+			//Preload enqueued style resources
+			add_filter('style_loader_tag', array($this, 'preload_enqueued_styles'), 10);
+
 			//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
@@ -82,6 +85,11 @@ if ( !trait_exists('Optimization') ){
 			return $tag;
 		}
 
+		//Preload enqueued style resources
+		public function preload_enqueued_styles($tag){
+			return str_replace("rel='stylesheet'", "rel='stylesheet preload prefetch'", $tag);
+		}
+
 		//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
 		public function remove_script_version($src){
 			return remove_query_arg('ver', $src);
@@ -122,6 +130,7 @@ if ( !trait_exists('Optimization') ){
 			//DNS-Prefetch = Resolve the DNS only to a domain.
 			//Preconnect = Resolve both DNS and TCP to a domain.
 			//Prefetch = Fully request a single resource and store it in cache until needed.
+			//Preload = Utilize HTTP/2 Push to send multiple specific resources before they are requested.
 			//Prerender = Render an entire page (useful for comment next page navigation). Use Audience > User Flow report in Google Analytics for better predictions.
 
 			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
@@ -172,7 +181,7 @@ if ( !trait_exists('Optimization') ){
 			$custom_prefetches = apply_filters('nebula_prefetches', $default_prefetches);
 			$prefetches = array_merge($custom_prefetches, array());
 			foreach ( $prefetches as $prefetch ){
-				echo '<link rel="prefetch" href="' . $prefetch . '" />';
+				echo '<link rel="preload prefetch" href="' . $prefetch . '" />';
 			}
 
 			//Prerender

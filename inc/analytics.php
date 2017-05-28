@@ -19,13 +19,6 @@
 
 		ga('create', '<?php echo nebula()->option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
 
-		ga(function(){
-			window.GAready = true;
-			if ( typeof initEventTracking === 'function' ){
-				initEventTracking();
-			}
-		});
-
 		<?php if ( nebula()->option('ga_displayfeatures') ): ?>
 			ga('require', 'displayfeatures');
 		<?php endif; ?>
@@ -381,6 +374,14 @@
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
 		ga('send', 'pageview'); //Send pageview with all custom dimensions and metrics
+
+		//Initialize event tracking listeners
+		ga(function(){
+			window.GAready = true;
+			if ( typeof initEventTracking === 'function' ){
+				initEventTracking();
+			}
+		});
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 

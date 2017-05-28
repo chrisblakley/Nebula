@@ -90,9 +90,9 @@
 <?php endfor; ?>
 
 <?php //Favicons ?>
-<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon preload prefetch" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
+<link rel="shortcut icon preload prefetch" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon preload prefetch" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
 
 <?php if ( nebula()->get_browser('name') == 'Safari' ): //Safari ?>
 	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />
@@ -103,7 +103,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->get_os('name') == 'Android' ): //Android/Chrome ?>
-<link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
+<link rel="icon preload prefetch" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
 
 <?php //Facebook Metadata ?>

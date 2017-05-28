@@ -1,7 +1,24 @@
 <?php
 
 /*==========================
- This file includes functions that help backwards compatibility for previous versions.
+ This file includes functions that provide limited backwards compatibility for previous versions.
+ ===========================*/
+
+if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
+
+if ( !trait_exists('Legacy') ){
+	trait Legacy {
+		public function hooks(){
+
+		}
+
+		//Renamed function
+		public function prerender(){ $this->prebrowsing(); }
+	}
+}
+
+/*==========================
+ Procedural Functions
  ===========================*/
 
 
@@ -9,6 +26,9 @@
 function nebula_breadcrumbs(){ nebula()->breadcrumbs(); }
 function the_breadcrumb(){ nebula()->breadcrumbs(); }
 
+function is_dev($strict=false){ nebula()->is_dev($strict); }
+function is_client($strict=false){ nebula()->is_client($strict); }
+function is_staff($strict=false){ nebula()->is_staff($strict); }
 
 //Update old options to new options
 add_action('admin_init', 'nebula_legacy_options');

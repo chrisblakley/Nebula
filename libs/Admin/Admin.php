@@ -537,6 +537,7 @@ if ( !trait_exists('Admin') ){
 			if ( $options['type'] === 'theme' && nebula()->in_array_r('Nebula-master', $options['themes']) ){
 				$this->theme_update_email(); //Send email with update information
 				nebula()->update_data('version_legacy', 'false');
+				nebula()->render_scss(false, false, true); //Force render all Sass
 			}
 		}
 
@@ -551,7 +552,7 @@ if ( !trait_exists('Admin') ){
 				$to = $current_user->user_email;
 
 				//Carbon copy the admin if update was done by another user.
-				$admin_user_email = nebula()->option('contact_email', nebula()->option('admin_email'));
+				$admin_user_email = nebula()->get_option('notification_email', nebula()->get_option('admin_email'));
 				if ( !empty($admin_user_email) && $admin_user_email !== $current_user->user_email ){
 					$headers[] = 'Cc: ' . $admin_user_email;
 				}

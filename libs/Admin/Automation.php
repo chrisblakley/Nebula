@@ -270,7 +270,7 @@ if ( !trait_exists('Automation') ){
 			$to = $current_user->user_email;
 
 			//Carbon copy the admin if reset was done by another user.
-			$admin_user_email = nebula()->option('contact_email', nebula()->option('admin_email'));
+			$admin_user_email = nebula()->option('notification_email', nebula()->option('admin_email'));
 			if ( $admin_user_email != $current_user->user_email ){
 				$headers[] = 'Cc: ' . $admin_user_email;
 			}

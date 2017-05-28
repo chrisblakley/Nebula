@@ -122,9 +122,20 @@
 											<div class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></div>
 											<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
 										</div>
-										<p class="nebula-help-text short-help form-text text-muted">The main contact email address.</p>
+										<p class="nebula-help-text short-help form-text text-muted">The main contact email address (visible in the frontend and in metadata).</p>
 										<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
 										<p class="option-keywords">recommended seo</p>
+									</div>
+
+									<div class="form-group">
+										<label for="notification_email">Notification Email</label>
+										<div class="input-group">
+											<div class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></div>
+											<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
+										</div>
+										<p class="nebula-help-text short-help form-text text-muted">The email address for Nebula notifications.</p>
+										<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
+										<p class="option-keywords"></p>
 									</div>
 								</div><!-- /option-group -->
 

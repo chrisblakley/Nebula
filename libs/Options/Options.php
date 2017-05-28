@@ -159,6 +159,7 @@ if ( !trait_exists('Options') ){
 				'business_type' => '',
 				'site_owner' => '',
 				'contact_email' => '',
+				'notification_email' => '',
 				'phone_number' => '',
 				'fax_number' => '',
 				'latitude' => '',

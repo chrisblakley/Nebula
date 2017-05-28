@@ -10,7 +10,7 @@
  */
 
 /*
-	Note: This library has been modified for use with Nebula. The added line is commented below.
+	Note: This library has been modified for use with Nebula. The added do_action('nebula_theme_update_check') line is commented below.
 */
 
 if ( !class_exists('ThemeUpdateChecker') ):

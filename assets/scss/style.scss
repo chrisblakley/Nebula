@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.0.20
+	Version: 5.0.24
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -19,7 +19,7 @@
 // PHG Custom Styles
 // ===========================
 
-html {height: auto; font-size: 16px;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
+html {height: auto; font-size: 16px; overflow-x: hidden;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
 body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;}
 button, input, select, textarea {font-size: rem(14px);}
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
@@ -81,6 +81,7 @@ form.nebula-search {position: relative; display: inline-block; margin: 0;
 		&:focus::-webkit-input-placeholder, &.open::-webkit-input-placeholder {color: #aaa;}
 	}
 
+	//yolo
 	&:before {content: '\f002'; display: inline-block; position: absolute; top: rem(9px); left: 7px; pointer-events: none; font-family: "FontAwesome"; font-size: rem(12px); line-height: 100%; text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transform: translate(0, 0);}
 	&.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
 }
@@ -205,22 +206,19 @@ h3.comment-reply-title {font-size: rem(12px);}
 
 .wpcf7-not-valid-tip {color: $danger_color;}
 
-.wpcf7-response-output {width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 25px 10px 15px 10px;
+.wpcf7-response-output {position: relative; width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 0;
 	&:before {content: ""; display: none; text-align: center; font-family: "FontAwesome"; font-size: rem(36px); margin-bottom: 15px;}
-}
-.wpcf7-validation-errors {color: $danger_color; background: rgba($danger_color, 0.1); border: 1px solid $danger_color;
-	&:before {content: "\f057"; display: block; color: $danger_color;}
-}
-.wpcf7-spam-blocked {color: $danger_color; background: rgba($danger_color, 0.1); border: 1px solid $danger_color;
-	&:before {content: "\f05e"; display: block; color: $danger_color;}
-}
-.wpcf7-mail-sent-ok {color: $success_color; background: rgba($success_color, 0.1); border: 1px solid $success_color;
-	&:before {content: "\f00c"; display: block; color: $success_color;}
-}
 
-
-
-
+	&.wpcf7-validation-errors {color: $danger_color; background: rgba(mix($danger_color, #fff, 25%), 0.8); border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
+		&:before {content: "\f057"; display: block; color: $danger_color;}
+	}
+	&.wpcf7-spam-blocked {color: $danger_color; background: rgba(mix($danger_color, #fff, 25%), 0.8); border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
+		&:before {content: "\f05e"; display: block; color: $danger_color;}
+	}
+	&.wpcf7-mail-sent-ok {color: $success_color; background: rgba(mix($success_color, #fff, 25%), 0.8); border: 1px solid $success_color; padding: 25px 10px 15px 10px;
+		&:before {content: "\f00c"; display: block; color: $success_color;}
+	}
+}
 
 //Lighten placeholders and fade them on focus
 //Note: Can not use nested SCSS selectors on placeholder pseudos!
@@ -346,7 +344,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
-			.borderimage &:before {color: #fff; font-size: rem(19px); width: 19px; height: 19px; top: 12px; left: 0;}
+			&:before {color: #fff; font-size: rem(18px); width: 19px; height: 19px; top: 12px; left: 0;}
 		}
 	}
 	a.mobilenavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; color: #fff; @include background-color(#fff, 0.25); z-index: 99999;

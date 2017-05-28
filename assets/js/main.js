@@ -915,7 +915,8 @@ function keywordSearch(container, parent, value, filteredClass){
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search" method="get" action="' + nebula.site.home_url + '/"><input type="search" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
+	var randomMenuSearchID = Math.floor((Math.random()*100)+1);
+	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search" method="get" action="' + nebula.site.home_url + '/"><label class="sr-only" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
 	jQuery('li.nebula-search input').on('focus', function(){
 		jQuery(this).addClass('focus active');
 	});
@@ -1669,6 +1670,10 @@ function cf7Functions(){
 
 	nebula.dom.document.on('submit', 'form.wpcf7-form', function(){
 		jQuery(this).find('button#submit').addClass('active');
+
+		if ( !jQuery.trim(jQuery('form .debuginfo').val()).length ){
+			jQuery('form .debuginfo').val(nebula.user.cid);
+		}
 	});
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
@@ -1691,8 +1696,6 @@ function cf7Functions(){
 
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
-		console.debug(nebulaTimings);
-
 		var formTime = nebulaTimer(e.target.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
@@ -1724,7 +1727,7 @@ function cf7Functions(){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + e.target.id + ')', Math.round(formTime), 'Initial form focus until valid submit');
 		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + e.target.id);
-		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)',});}
+		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
 		nv('increment', 'contact_funnel_submit_success');
 		nv('append', {'form_submission_success': e.target.id});
 		nv('remove', {'abandoned_form': e.target.id});
@@ -1733,6 +1736,10 @@ function cf7Functions(){
 		jQuery('#' + e.target.id + ' .wpcf7-textarea, #' + e.target.id + ' .wpcf7-text').each(function(){
 			localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 		});
+
+		setTimeout(function(){
+			jQuery('form .debuginfo').val(nebula.user.cid); //Re-prep form for another submission
+		}, 1);
 	});
 
 	//CF7 Submit (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
