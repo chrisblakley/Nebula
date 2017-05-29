@@ -23,7 +23,7 @@ if ( !trait_exists('Scripts') ){
 		}
 
 		//Register scripts
-		public function register_scripts() {
+		public function register_scripts(){
 			// Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
 			if ( nebula()->option('google_font_url') ){
@@ -31,11 +31,7 @@ if ( !trait_exists('Scripts') ){
 			}
 			nebula()->bootstrap('css');
 			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
-
-
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.0.2/jquery.mmenu.all.css', null, '6.0.2', 'all'); //@todo "Nebula" 0: This is causing a weird slowdown on the homepage on WebPageTest.org when testing using the Oregon server... Not a huge issue, but curious: https://github.com/chrisblakley/Nebula/issues/1313
-
-
 			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/css/jquery.dataTables.min.css', null, '1.10.15', 'all'); //Datatables is called via main.js only as needed.
 			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.min.css', null, '1.7.0', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css', null, '1.12.1', 'all');

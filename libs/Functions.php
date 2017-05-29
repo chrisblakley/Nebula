@@ -18,6 +18,9 @@ trait Functions {
 		$this->linkedin_widget_loaded = false;
 		$this->pinterest_widget_loaded = false;
 
+		//Start output buffering so headers can be sent later for HTTP2 Server Push
+		add_action('init', array($this, 'nebula_http2_ob_start'));
+
 		//Prep custom theme support
 		add_action('after_setup_theme', array($this, 'theme_setup'));
 
@@ -29,7 +32,7 @@ trait Functions {
 		add_action('admin_init', array($this, 'set_default_timezone'), 1);
 
 		//Add the Nebula note to the browser console (if enabled)
-		if ( nebula()->option('console_css') ) {
+		if ( $this->option('console_css') ) {
 			add_action('wp_head', array($this, 'calling_card'));
 		}
 
@@ -38,7 +41,7 @@ trait Functions {
 
 		//Create/Write a manifest JSON file
 		if ( is_writable(get_template_directory()) ){
-			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || nebula()->is_debug() ){ //@todo "Nebula" 0: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
+			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){ //@todo "Nebula" 0: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
 				add_action('init', array($this, 'manifest_json'));
 				add_action('admin_init', array($this, 'manifest_json'));
 			}
@@ -59,7 +62,7 @@ trait Functions {
 		//Register the Navigation Menus
 		add_action('after_setup_theme', array($this, 'nav_menu_locations'));
 
-		if ( !nebula()->option('comments') || nebula()->option('disqus_shortname') ) { //If WP core comments are disabled -or- if Disqus is enabled
+		if ( !$this->option('comments') || $this->option('disqus_shortname') ) { //If WP core comments are disabled -or- if Disqus is enabled
 			//Remove the Activity metabox
 			add_action('wp_dashboard_setup', array($this, 'remove_activity_metabox'));
 
@@ -73,7 +76,7 @@ trait Functions {
 			add_filter('pings_open', array($this, 'disable_comments_status' ), 20, 2);
 
 			//Remove comments menu from Admin Bar
-			if ( nebula()->option('admin_bar') ){
+			if ( $this->option('admin_bar') ){
 				add_action('admin_bar_menu', array($this, 'admin_bar_remove_comments' ), 900);
 			}
 
@@ -85,7 +88,7 @@ trait Functions {
 			add_action('admin_init', array($this, 'disable_comments_admin_menu_redirect'));
 
 			//Link to Disqus on comments page (if using Disqus)
-			if ( $pagenow == 'edit-comments.php' && nebula()->option('disqus_shortname') ){
+			if ( $pagenow == 'edit-comments.php' && $this->option('disqus_shortname') ){
 				add_action('admin_notices', array($this, 'disqus_link'));
 			}
 		} else { //If WP core comments are enabled
@@ -148,6 +151,11 @@ trait Functions {
 		add_filter('embed_oembed_html', array($this, 'embed_oembed_html' ), 9999, 4);
 	}
 
+	//Start output buffering so headers can be sent later for HTTP2 Server Push
+	public function nebula_http2_ob_start(){
+	    ob_start();
+	}
+
 	//Prep custom theme support
 	public function theme_setup(){
 		//Additions
@@ -203,33 +211,33 @@ trait Functions {
 
 	//Add the Nebula note to the browser console (if enabled)
 	public function calling_card(){
-		if ( !nebula()->option('device_detection') || (nebula()->is_desktop() && !nebula()->is_browser('ie') && !nebula()->is_browser('edge')) ){
+		if ( !$this->option('device_detection') || ($this->is_desktop() && !$this->is_browser('ie') && !$this->is_browser('edge')) ){
 			echo "<script>console.log('%c Created using Nebula ', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 		}
 	}
 
 	//Check for warnings and send them to the console.
 	public function console_warnings($console_warnings=array()){
-		if ( nebula()->is_dev() && nebula()->option('admin_notices') ){
+		if ( $this->is_dev() && $this->option('admin_notices') ){
 			if ( empty($console_warnings) || is_string($console_warnings) ){
 				$console_warnings = array();
 			}
 
 			//If search indexing is disabled
 			if ( get_option('blog_public') == 0 ){
-				if ( nebula()->is_site_live() ){
+				if ( $this->is_site_live() ){
 					$console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
-				} elseif ( !nebula()->option('prototype_mode') ){
+				} elseif ( !$this->option('prototype_mode') ){
 					$console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
 				}
 			}
 
-			if ( nebula()->is_site_live() && nebula()->option('prototype_mode') ){
+			if ( $this->is_site_live() && $this->option('prototype_mode') ){
 				$console_warnings[] = array('warn', 'Prototype Mode is enabled!');
 			}
 
 			//If no Google Analytics tracking ID
-			if ( !nebula()->option('ga_tracking_id') ){
+			if ( !$this->option('ga_tracking_id') ){
 				$console_warnings[] = array('error', 'No Google Analytics tracking ID!');
 			}
 
@@ -272,9 +280,9 @@ trait Functions {
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
 			"description": "' . get_bloginfo('description') . '",
-			"theme_color": "' . nebula()->sass_color('primary') . '",
+			"theme_color": "' . $this->sass_color('primary') . '",
 			"background_color": "#fff",
-			"gcm_sender_id": "' . nebula()->option('gcm_sender_id') . '",
+			"gcm_sender_id": "' . $this->option('gcm_sender_id') . '",
 			"icons": [{
 				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-36x36.png",
 				"sizes": "36x36",
@@ -329,12 +337,12 @@ trait Functions {
 
 	//Google Optimize Style Tag
 	public function google_optimize_style(){
-		if ( nebula()->option('google_optimize_id') ){ ?>
+		if ( $this->option('google_optimize_id') ){ ?>
 			<style>.async-hide { opacity: 0 !important} </style>
 			<script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.end=i=function(){
 			s.className=s.className.replace(RegExp(' ?'+y),'')};(a[n]=a[n]||[]).hide=h;
 			setTimeout(function(){i();h.end=null},c);})(window,document.documentElement,
-			'async-hide','dataLayer',2000,{'<?php echo nebula()->option('google_optimize_id'); ?>':true,});</script>
+			'async-hide','dataLayer',2000,{'<?php echo $this->option('google_optimize_id'); ?>':true,});</script>
 		<?php }
 	}
 
@@ -366,23 +374,23 @@ trait Functions {
 		if ( $override !== false ){echo $override; return;}
 
 		if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
-			echo nebula()->post_date();
+			echo $this->post_date();
 		} elseif ( $meta == 'author' || $meta == 'by' ){
-			echo  nebula()->post_author();
+			echo  $this->post_author();
 		} elseif ( $meta == 'type' || $meta == 'cpt' || $meta == 'post_type' ){
-			echo  nebula()->post_type();
+			echo  $this->post_type();
 		} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
-			echo  nebula()->post_categories();
+			echo  $this->post_categories();
 		} elseif ( $meta == 'tags' || $meta == 'tag' ){
-			echo  nebula()->post_tags();
+			echo  $this->post_tags();
 		} elseif ( $meta == 'dimensions' || $meta == 'size' ){
-			echo  nebula()->post_dimensions();
+			echo  $this->post_dimensions();
 		} elseif ( $meta == 'exif' || $meta == 'camera' ){
-			echo  nebula()->post_exif();
+			echo  $this->post_exif();
 		} elseif ( $meta == 'comments' || $meta == 'comment' ){
-			echo  nebula()->post_comments();
+			echo  $this->post_comments();
 		} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ){
-			 nebula()->social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
+			 $this->social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
 		}
 	}
 
@@ -412,7 +420,7 @@ trait Functions {
 			$the_icon = '<i class="fa fa-user"></i> ';
 		}
 
-		if ( nebula()->option('author_bios') || $force ){
+		if ( $this->option('author_bios') || $force ){
 			if ( $linked && !$force ){
 				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $the_icon . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
 			} else {
@@ -599,7 +607,7 @@ trait Functions {
 
 		//Length
 		if ( !empty($data['length']) && is_int($data['length']) ){
-			$limited = nebula()->string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
+			$limited = $this->string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
 			$data['text'] = $limited['text'];
 		}
 
@@ -639,27 +647,27 @@ trait Functions {
 		foreach ( $networks as $network ){
 			//Facebook
 			if ( in_array($network, array('facebook', 'fb')) ){
-				nebula()->facebook_share($counts);
+				$this->facebook_share($counts);
 			}
 
 			//Twitter
 			if ( in_array($network, array('twitter')) ){
-				nebula()->twitter_tweet($counts);
+				$this->twitter_tweet($counts);
 			}
 
 			//Google+
 			if ( in_array($network, array('google_plus', 'google', 'googleplus', 'google+', 'g+', 'gplus', 'g_plus', 'google plus', 'google-plus', 'g-plus')) ){
-				nebula()->google_plus($counts);
+				$this->google_plus($counts);
 			}
 
 			//LinkedIn
 			if ( in_array($network, array('linkedin', 'li', 'linked-in', 'linked_in')) ){
-				nebula()->linkedin_share($counts);
+				$this->linkedin_share($counts);
 			}
 
 			//Pinterest
 			if ( in_array($network, array('pinterest', 'pin')) ){
-				nebula()->pinterest_pin($counts);
+				$this->pinterest_pin($counts);
 			}
 		}
 		echo '</div><!-- /sharing-links -->';
@@ -705,7 +713,7 @@ trait Functions {
 		?>
 		<div class="nebula-social-button twitter-tweet">
 			<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 )? '': 'data-count="none"'; ?>>Tweet</a>
-			<?php nebula()->twitter_widget_script(); ?>
+			<?php $this->twitter_widget_script(); ?>
 		</div>
 		<?php
 	}
@@ -714,17 +722,17 @@ trait Functions {
 		$override = apply_filters('pre_nebula_twitter_follow', false, $counts, $username);
 		if ( $override !== false ){echo $override; return;}
 
-		if ( empty($username) && !nebula()->option('twitter_username') ){
+		if ( empty($username) && !$this->option('twitter_username') ){
 			return false;
-		} elseif ( empty($username) && nebula()->option('twitter_username') ){
-			$username = nebula()->option('twitter_username');
+		} elseif ( empty($username) && $this->option('twitter_username') ){
+			$username = $this->option('twitter_username');
 		} elseif ( strpos($username, '@') === false ){
 			$username = '@' . $username;
 		}
 		?>
 		<div class="nebula-social-button twitter-follow">
 			<a href="https://twitter.com/<?php echo str_replace('@', '', $username); ?>" class="twitter-follow-button" <?php echo ( $counts != 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>>Follow <?php echo $username; ?></a>
-			<?php nebula()->twitter_widget_script(); ?>
+			<?php $this->twitter_widget_script(); ?>
 		</div>
 		<?php
 	}
@@ -757,7 +765,7 @@ trait Functions {
 		if ( $override !== false ){echo $override; return;}
 		?>
 		<div class="nebula-social-button linkedin-share">
-			<?php nebula()->linkedin_widget_script(); ?>
+			<?php $this->linkedin_widget_script(); ?>
 			<script type="IN/Share" <?php echo ( $counts != 0 )? 'data-counter="right"' : ''; ?>></script>
 		</div>
 		<?php
@@ -768,7 +776,7 @@ trait Functions {
 		if ( $override !== false ){echo $override; return;}
 		?>
 		<div class="nebula-social-button linkedin-follow">
-			<?php nebula()->linkedin_widget_script(); ?>
+			<?php $this->linkedin_widget_script(); ?>
 			<script type="IN/FollowCompany" data-id="1337" <?php echo ( $counts != 0 )? 'data-counter="right"' : ''; ?>></script>
 		</div>
 		<?php
@@ -806,14 +814,14 @@ trait Functions {
 	}
 
 	//Get metadata from Youtube or Vimeo
-	public function vimeo_meta($id, $meta=''){return nebula()->video_meta('vimeo', $id);}
-	public function youtube_meta($id, $meta=''){return nebula()->video_meta('youtube', $id);}
+	public function vimeo_meta($id, $meta=''){return $this->video_meta('vimeo', $id);}
+	public function youtube_meta($id, $meta=''){return $this->video_meta('youtube', $id);}
 	public function video_meta($provider, $id){
 		$override = apply_filters('pre_video_meta', false, $provider, $id);
 		if ( $override !== false ){return $override;}
 
 		$video_metadata = array(
-			'origin' => nebula()->url_components('basedomain'),
+			'origin' => $this->url_components('basedomain'),
 			'id' => $id,
 			'error' => false
 		);
@@ -829,12 +837,12 @@ trait Functions {
 		$video_json = get_transient('nebula_' . $provider . '_' . $id);
 		if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 			if ( $provider == 'youtube' ){
-				if ( !nebula()->option('google_server_api_key') && nebula()->is_staff() ){
+				if ( !$this->option('google_server_api_key') && $this->is_staff() ){
 					echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';
 					$video_metadata['error'] = 'No Google Youtube Iframe API key.';
 				}
 
-				$response = nebula()->remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . nebula()->option('google_server_api_key'));
+				$response = $this->remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . $this->option('google_server_api_key'));
 				if ( is_wp_error($response) ){
 					$video_metadata['error'] = 'Youtube video is unavailable.';
 					return $video_metadata;
@@ -842,7 +850,7 @@ trait Functions {
 
 				$video_json = $response['body'];
 			} elseif ( $provider == 'vimeo' ){
-				$response = nebula()->remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
+				$response = $this->remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
 				if ( is_wp_error($response) ){
 					$video_metadata['error'] = 'Vimeo video is unavailable.';
 					return $video_metadata;
@@ -857,7 +865,7 @@ trait Functions {
 
 		//Check for errors
 		if ( empty($video_json) ){
-			if ( current_user_can('manage_options') || nebula()->is_dev() ){
+			if ( current_user_can('manage_options') || $this->is_dev() ){
 				if ( $provider == 'youtube' ){
 					$video_metadata['error'] = 'A Youtube Data API error occurred. Make sure the Youtube Data API is enabled in the Google Developer Console and the server key is saved in Nebula Options.';
 				} else {
@@ -866,12 +874,12 @@ trait Functions {
 			}
 			return $video_metadata;
 		} elseif ( $provider == 'youtube' && !empty($video_json->error) ){
-			if ( current_user_can('manage_options') || nebula()->is_dev() ){
+			if ( current_user_can('manage_options') || $this->is_dev() ){
 				$video_metadata['error'] = 'Youtube API Error: ' . $video_json->error->message;
 			}
 			return $video_metadata;
 		} elseif ( $provider == 'youtube' && empty($video_json->items) ){
-			if ( current_user_can('manage_options') || nebula()->is_dev() ){
+			if ( current_user_can('manage_options') || $this->is_dev() ){
 				$video_metadata['error'] = 'A Youtube video with ID ' . $id . ' does not exist.';
 			}
 			return $video_metadata;
@@ -1148,7 +1156,7 @@ trait Functions {
 				} elseif ( locate_template($loop . '.php') ){
 					get_template_part($loop);
 				} else {
-					if ( nebula()->is_dev() ){
+					if ( $this->is_dev() ){
 						echo '<strong>Warning:</strong> The custom loop template or function ' . $loop . ' does not exist! Falling back to loop.php.';
 					}
 					get_template_part('loop');
@@ -1233,7 +1241,7 @@ trait Functions {
 	//Check if business hours exist in Nebula Options
 	public function has_business_hours(){
 		foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
-			if ( nebula()->option('business_hours_' . $weekday . '_enabled') || nebula()->option('business_hours_' . $weekday . '_open') || nebula()->option('business_hours_' . $weekday . '_close') ){
+			if ( $this->option('business_hours_' . $weekday . '_enabled') || $this->option('business_hours_' . $weekday . '_open') || $this->option('business_hours_' . $weekday . '_close') ){
 				return true;
 			}
 		}
@@ -1242,8 +1250,8 @@ trait Functions {
 
 	//Check if the requested datetime is within business hours.
 	//If $general is true this function returns true if the business is open at all on that day
-	public function is_business_open($date=null, $general=false){ return nebula()->business_open($date, $general); }
-	public function is_business_closed($date=null, $general=false){ return !nebula()->business_open($date, $general); }
+	public function is_business_open($date=null, $general=false){ return $this->business_open($date, $general); }
+	public function is_business_closed($date=null, $general=false){ return !$this->business_open($date, $general); }
 	public function business_open($date=null, $general=false){
 		$override = apply_filters('pre_business_open', false, $date, $general);
 		if ( $override !== false ){return $override;}
@@ -1258,13 +1266,13 @@ trait Functions {
 		$businessHours = array();
 		foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
 			$businessHours[$weekday] = array(
-				'enabled' => nebula()->option('business_hours_' . $weekday . '_enabled'),
-				'open' => nebula()->option('business_hours_' . $weekday . '_open'),
-				'close' => nebula()->option('business_hours_' . $weekday . '_close')
+				'enabled' => $this->option('business_hours_' . $weekday . '_enabled'),
+				'open' => $this->option('business_hours_' . $weekday . '_open'),
+				'close' => $this->option('business_hours_' . $weekday . '_close')
 			);
 		}
 
-		$days_off = array_filter(explode(', ', nebula()->option('business_hours_closed')));
+		$days_off = array_filter(explode(', ', $this->option('business_hours_closed')));
 		if ( !empty($days_off) ){
 			foreach ( $days_off as $key => $day_off ){
 				$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
@@ -1302,8 +1310,8 @@ trait Functions {
 			$day = strtolower(date('l'));
 		}
 
-		if ( nebula()->is_business_open() ){
-			return nebula()->option('business_hours_' . $day . '_close');
+		if ( $this->is_business_open() ){
+			return $this->option('business_hours_' . $day . '_close');
 		}
 
 		return false;
@@ -1314,56 +1322,56 @@ trait Functions {
 		$override = apply_filters('pre_nebula_relative_time', false, $format);
 		if ( $override !== false ){return $override;}
 
-		if ( nebula()->contains(date('H'), array('00', '01', '02')) ){
+		if ( $this->contains(date('H'), array('00', '01', '02')) ){
 			$relative_time = array(
 				'description' => array('early', 'night'),
 				'standard' => array(0, 1, 2),
 				'military' => array(0, 1, 2),
 				'ampm' => 'am'
 			);
-		} elseif ( nebula()->contains(date('H'), array('03', '04', '05')) ){
+		} elseif ( $this->contains(date('H'), array('03', '04', '05')) ){
 			$relative_time = array(
 				'description' => array('late', 'night'),
 				'standard' => array(3, 4, 5),
 				'military' => array(3, 4, 5),
 				'ampm' => 'am'
 			);
-		} elseif ( nebula()->contains(date('H'), array('06', '07', '08')) ){
+		} elseif ( $this->contains(date('H'), array('06', '07', '08')) ){
 			$relative_time = array(
 				'description' => array('early', 'morning'),
 				'standard' => array(6, 7, 8),
 				'military' => array(6, 7, 8),
 				'ampm' => 'am'
 			);
-		} elseif ( nebula()->contains(date('H'), array('09', '10', '11')) ){
+		} elseif ( $this->contains(date('H'), array('09', '10', '11')) ){
 			$relative_time = array(
 				'description' => array('late', 'morning'),
 				'standard' => array(9, 10, 11),
 				'military' => array(9, 10, 11),
 				'ampm' => 'am'
 			);
-		} elseif ( nebula()->contains(date('H'), array('12', '13', '14')) ){
+		} elseif ( $this->contains(date('H'), array('12', '13', '14')) ){
 			$relative_time = array(
 				'description' => array('early', 'afternoon'),
 				'standard' => array(12, 1, 2),
 				'military' => array(12, 13, 14),
 				'ampm' => 'pm'
 			);
-		} elseif ( nebula()->contains(date('H'), array('15', '16', '17')) ){
+		} elseif ( $this->contains(date('H'), array('15', '16', '17')) ){
 			$relative_time = array(
 				'description' => array('late', 'afternoon'),
 				'standard' => array(3, 4, 5),
 				'military' => array(15, 16, 17),
 				'ampm' => 'pm'
 			);
-		} elseif ( nebula()->contains(date('H'), array('18', '19', '20')) ){
+		} elseif ( $this->contains(date('H'), array('18', '19', '20')) ){
 			$relative_time = array(
 				'description' => array('early', 'evening'),
 				'standard' => array(6, 7, 8),
 				'military' => array(18, 19, 20),
 				'ampm' => 'pm'
 			);
-		} elseif ( nebula()->contains(date('H'), array('21', '22', '23')) ){
+		} elseif ( $this->contains(date('H'), array('21', '22', '23')) ){
 			$relative_time = array(
 				'description' => array('late', 'evening'),
 				'standard' => array(9, 10, 11),
@@ -1381,7 +1389,7 @@ trait Functions {
 
 	//Detect location from IP address using https://freegeoip.net/
 	public function ip_location($data=null, $ip_address=false){
-		if ( nebula()->option('ip_geolocation') ){
+		if ( $this->option('ip_geolocation') ){
 			if ( empty($ip_address) ){
 				$ip_address = $_SERVER['REMOTE_ADDR'];
 
@@ -1400,7 +1408,7 @@ trait Functions {
 
 				//Get new remote data
 				if ( empty($_SESSION['nebula_ip_geolocation']) ){
-					$response = nebula()->remote_get('http://freegeoip.net/json/' . $ip_address);
+					$response = $this->remote_get('http://freegeoip.net/json/' . $ip_address);
 					if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
 						return false;
 					}
@@ -1473,22 +1481,22 @@ trait Functions {
 	//Detect weather for Zip Code (using Yahoo! Weather)
 	//https://developer.yahoo.com/weather/
 	public function weather($zipcode=null, $data=''){
-		if ( nebula()->option('weather') ){
+		if ( $this->option('weather') ){
 			$override = apply_filters('pre_nebula_weather', false, $zipcode, $data);
 			if ( $override !== false ){return $override;}
 
 			if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
 				$data = $zipcode;
-				$zipcode = nebula()->option('postal_code', '13204');
+				$zipcode = $this->option('postal_code', '13204');
 			} elseif ( empty($zipcode) ){
-				$zipcode = nebula()->option('postal_code', '13204');
+				$zipcode = $this->option('postal_code', '13204');
 			}
 
 			$weather_json = get_transient('nebula_weather_' . $zipcode);
 			if ( empty($weather_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 				$yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=' . $zipcode . ')';
 
-				$response = nebula()->remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
+				$response = $this->remote_get('http://query.yahooapis.com/v1/public/yql?q=' . urlencode($yql_query) . '&format=json');
 				if ( is_wp_error($response) ){
 					trigger_error('A Yahoo Weather API error occurred. Yahoo may be down, or forecast for ' . $zipcode . ' may not exist.', E_USER_WARNING);
 					return false;
@@ -1595,8 +1603,8 @@ trait Functions {
 	}
 
 	//Print the PHG logo as text with or without hover animation.
-	public function pinckney_hugo_group($anim){ nebula()->pinckneyhugogroup($anim); }
-	public function phg($anim){ nebula()->pinckneyhugogroup($anim); }
+	public function pinckney_hugo_group($anim){ $this->pinckneyhugogroup($anim); }
+	public function phg($anim){ $this->pinckneyhugogroup($anim); }
 	public function pinckneyhugogroup($anim=false, $white=false){
 		if ( $anim ){
 			$anim = 'anim';
@@ -1612,8 +1620,8 @@ trait Functions {
 		$override = apply_filters('pre_nebula_the_author', false, $show_authors);
 		if ( $override !== false ){return $override;}
 
-		if ( !is_single() || $show_authors == 0 || !nebula()->option('author_bios') ){
-			return nebula()->option('site_owner', get_bloginfo('name'));
+		if ( !is_single() || $show_authors == 0 || !$this->option('author_bios') ){
+			return $this->option('site_owner', get_bloginfo('name'));
 		} else {
 			return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 		}
@@ -1767,7 +1775,7 @@ trait Functions {
 		));
 
 		//Footer text
-		$wp_customize->add_setting('nebula_footer_text', array('default' => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . nebula()->version('full') . ', <em>all rights reserved</em>.'));
+		$wp_customize->add_setting('nebula_footer_text', array('default' => '&amp;copy; ' . date('Y') . ' <a href="' . home_url() . '"><strong>Nebula</strong></a> ' . $this->version('full') . ', <em>all rights reserved</em>.'));
 		$wp_customize->add_control('nebula_footer_text', array(
 			'label' => 'Footer text',
 			'section' => 'footer',
@@ -1932,7 +1940,7 @@ trait Functions {
 
 	//Link to Disqus on comments page (if using Disqus)
 	public function disqus_link(){
-		echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . nebula()->option('disqus_shortname') . ".disqus.com/admin/moderate' target='_blank' rel='noopener'>View the comment listings on Disqus &raquo;</a></p></div>";
+		echo "<div class='nebula_admin_notice notice notice-info'><p>You are using the Disqus commenting system. <a href='https://" . $this->option('disqus_shortname') . ".disqus.com/admin/moderate' target='_blank' rel='noopener'>View the comment listings on Disqus &raquo;</a></p></div>";
 	}
 
 	//Enqueue threaded comments script only as needed
@@ -1983,13 +1991,13 @@ trait Functions {
 			$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $username . '&count=' . $numbertweets . '&include_rts=' . $includeretweets;
 		}
 
-		$bearer = nebula()->option('twitter_bearer_token', '');
+		$bearer = $this->option('twitter_bearer_token', '');
 
 		$tweets = get_transient('nebula_twitter_' . $username);
-		if ( empty($tweets) || nebula()->is_debug() ){
+		if ( empty($tweets) || $this->is_debug() ){
 			$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
 
-			$response = nebula()->remote_get($feed, $args);
+			$response = $this->remote_get($feed, $args);
 			if ( is_wp_error($response) ){
 				return false;
 			}
@@ -2035,7 +2043,7 @@ trait Functions {
 	public function redirect_empty_search($query){
 		global $wp_query;
 		if ( isset($_GET['s']) && $wp_query->query && !array_key_exists('invalid', $_GET) ){
-			if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !nebula()->is_admin_page() ){
+			if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !$this->is_admin_page() ){
 				ga_send_event('Internal Search', 'Invalid', '(Empty query)');
 				header('Location: ' . home_url('/') . 'search/?invalid');
 				exit;
@@ -2053,13 +2061,13 @@ trait Functions {
 				if ( isset($_GET['s']) ){
 					//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
 					if ( $wp_query->posts['0']->ID != 1 && get_permalink($wp_query->posts['0']->ID) != home_url() . '/' ){
-						nebula()->ga_send_event('Internal Search', 'Single Result Redirect', $_GET['s']);
+						$this->ga_send_event('Internal Search', 'Single Result Redirect', $_GET['s']);
 						$_GET['s'] = str_replace(' ', '+', $_GET['s']);
 						wp_redirect(get_permalink($wp_query->posts['0']->ID ) . '?rs=' . $_GET['s']);
 						exit;
 					}
 				} else {
-					nebula()->ga_send_event('Internal Search', 'Single Result Redirect');
+					$this->ga_send_event('Internal Search', 'Single Result Redirect');
 					wp_redirect(get_permalink($wp_query->posts['0']->ID) . '?rs');
 					exit;
 				}
@@ -2128,7 +2136,7 @@ trait Functions {
 				} elseif ( is_sticky() ){ //@TODO "Nebula" 0: If sticky post. is_sticky() does not work here?
 					$suggestion['classes'] .= ' sticky-post';
 				}
-				$suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
+				$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 				$suggestions[] = $suggestion;
 			}
 		}
@@ -2149,7 +2157,7 @@ trait Functions {
 				if ( $suggestion['similarity'] >= 50 ){
 					$suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
 					$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
-					$suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
+					$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 					if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
 						$suggestion['link'] = get_attachment_link($attachment->ID);
 					} else {
@@ -2169,7 +2177,7 @@ trait Functions {
 
 		//Find menu items
 		$menus = get_transient('nebula_autocomplete_menus');
-		if ( empty($menus) || nebula()->is_debug() ){
+		if ( empty($menus) || $this->is_debug() ){
 			$menus = get_terms('nav_menu');
 			set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 		}
@@ -2193,11 +2201,11 @@ trait Functions {
 					if ( $path_parts['extension'] ){
 						$suggestion['classes'] .= ' file-' . $path_parts['extension'];
 						$suggestion['external'] = true;
-					} elseif ( !strpos($suggestion['link'], nebula()->url_components('domain')) ){
+					} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){
 						$suggestion['classes'] .= ' external-link';
 						$suggestion['external'] = true;
 					}
-					$suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
+					$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 					$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
 					$suggestions[] = $suggestion;
 					break;
@@ -2207,7 +2215,7 @@ trait Functions {
 
 		//Find categories
 		$categories = get_transient('nebula_autocomplete_categories');
-		if ( empty($categories) || nebula()->is_debug() ){
+		if ( empty($categories) || $this->is_debug() ){
 			$categories = get_categories();
 			set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 		}
@@ -2219,7 +2227,7 @@ trait Functions {
 				$suggestion['label'] = $category->name;
 				$suggestion['link'] = get_category_link($category->term_id);
 				$suggestion['classes'] = 'type-category';
-				$suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
+				$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 				$suggestions[] = $suggestion;
 				$cat_count++;
 			}
@@ -2230,7 +2238,7 @@ trait Functions {
 
 		//Find tags
 		$tags = get_transient('nebula_autocomplete_tags');
-		if ( empty($tags) || nebula()->is_debug() ){
+		if ( empty($tags) || $this->is_debug() ){
 			$tags = get_tags();
 			set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 		}
@@ -2242,7 +2250,7 @@ trait Functions {
 				$suggestion['label'] = $tag->name;
 				$suggestion['link'] = get_tag_link($tag->term_id);
 				$suggestion['classes'] = 'type-tag';
-				$suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
+				$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 				$suggestions[] = $suggestion;
 				$tag_count++;
 			}
@@ -2252,9 +2260,9 @@ trait Functions {
 		}
 
 		//Find authors (if author bios are enabled)
-		if ( nebula()->option('author_bios') ){
+		if ( $this->option('author_bios') ){
 			$authors = get_transient('nebula_autocomplete_authors');
-			if ( empty($authors) || nebula()->is_debug() ){
+			if ( empty($authors) || $this->is_debug() ){
 				$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
 				set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 			}
@@ -2265,7 +2273,7 @@ trait Functions {
 					$suggestion['label'] = $author_name;
 					$suggestion['link'] = 'http://google.com/';
 					$suggestion['classes'] = 'type-user';
-					$suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']);
+					$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 					$suggestion['similarity'] = ''; //todo: save similarity to array too
 					$suggestions[] = $suggestion;
 					break;
@@ -2303,7 +2311,7 @@ trait Functions {
 		wp_die();
 	}
 
-	//Test for close or exact matches. Use: $suggestion['classes'] .= nebula()->close_or_exact($suggestion['similarity']); //Rename this function
+	//Test for close or exact matches. Use: $suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']); //Rename this function
 	public function close_or_exact($rating=0, $close_threshold=80, $exact_threshold=95){
 		if ( $rating > $exact_threshold ){
 			return ' exact-match';
@@ -2333,7 +2341,7 @@ trait Functions {
 
 		foreach ( $posts as $post ){
 			$author = null;
-			if ( nebula()->option('author_bios') ){ //&& $post->post_type != 'page' ?
+			if ( $this->option('author_bios') ){ //&& $post->post_type != 'page' ?
 				$author = array(
 					'id' => $post->post_author,
 					'name' => array(
@@ -2430,7 +2438,7 @@ trait Functions {
 	public function internal_suggestions(){
 		if ( is_404() ){
 			global $slug_keywords;
-			$slug_keywords = array_filter(explode('/', nebula()->url_components('filepath')));
+			$slug_keywords = array_filter(explode('/', $this->url_components('filepath')));
 			$slug_keywords = end($slug_keywords);
 
 			global $error_query;
@@ -2452,27 +2460,27 @@ trait Functions {
 		$underscores_and_hyphens = array('_', '-');
 
 		//Device
-		$classes[] = strtolower(nebula()->get_device('formfactor')); //Form factor (desktop, tablet, mobile)
-		$classes[] = strtolower(nebula()->get_device('full')); //Device make and model
-		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_os('full'))); //Operating System name with version
-		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_os('name'))); //Operating System name
-		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_browser('full'))); //Browser name and version
-		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_browser('name'))); //Browser name
-		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, nebula()->get_browser('engine'))); //Rendering engine
+		$classes[] = strtolower($this->get_device('formfactor')); //Form factor (desktop, tablet, mobile)
+		$classes[] = strtolower($this->get_device('full')); //Device make and model
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_os('full'))); //Operating System name with version
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_os('name'))); //Operating System name
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('full'))); //Browser name and version
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('name'))); //Browser name
+		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('engine'))); //Rendering engine
 
 		//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
-		if ( nebula()->get_browser('name') == 'Chrome Mobile' ){
+		if ( $this->get_browser('name') == 'Chrome Mobile' ){
 			$classes[] = 'chrome';
 		}
 
 		//IE versions outside conditional comments
-		if ( nebula()->is_browser('ie') ){
-			if ( nebula()->is_browser('ie', '10') ){
+		if ( $this->is_browser('ie') ){
+			if ( $this->is_browser('ie', '10') ){
 				$classes[] = 'ie';
 				$classes[] = 'ie10';
 				$classes[] = 'lte-ie10';
 				$classes[] = 'lt-ie11';
-			} elseif ( nebula()->is_browser('ie', '11') ){
+			} elseif ( $this->is_browser('ie', '11') ){
 				$classes[] = 'ie';
 				$classes[] = 'ie11';
 				$classes[] = 'lte-ie11';
@@ -2515,7 +2523,7 @@ trait Functions {
 		}
 		$nebula_theme_info = wp_get_theme();
 		$classes[] = 'nebula';
-		$classes[] = 'nebula_' . str_replace('.', '-', nebula()->version('full'));
+		$classes[] = 'nebula_' . str_replace('.', '-', $this->version('full'));
 
 		$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
 		if ( is_rtl() ){
@@ -2523,11 +2531,11 @@ trait Functions {
 		}
 
 		//Time of Day
-		if ( nebula()->has_business_hours() ){
-			$classes[] = ( nebula()->business_open() )? 'business-open' : 'business-closed';
+		if ( $this->has_business_hours() ){
+			$classes[] = ( $this->business_open() )? 'business-open' : 'business-closed';
 		}
 
-		$relative_time = nebula()->relative_time('description');
+		$relative_time = $this->relative_time('description');
 		foreach( $relative_time as $relative_desc ){
 			$classes[] = 'time-' . $relative_desc;
 		}
@@ -2537,9 +2545,9 @@ trait Functions {
 			$classes[] = 'time-am';
 		}
 
-		if ( nebula()->option('latitude') && nebula()->option('longitude') ){
-			$lat = nebula()->option('latitude');
-			$lng = nebula()->option('longitude');
+		if ( $this->option('latitude') && $this->option('longitude') ){
+			$lat = $this->option('latitude');
+			$lng = $this->option('longitude');
 			$gmt = intval(get_option('gmt_offset'));
 			$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
 			global $sunrise, $sunset;
@@ -2614,7 +2622,7 @@ trait Functions {
 		$classes[] = 'author-id-' . $post->post_author;
 
 		//Remove "hentry" meta class on pages or if Author Bios are disabled
-		if ( is_page() || !nebula()->option('author_bios') ){
+		if ( is_page() || !$this->option('author_bios') ){
 			$classes = array_diff($classes, array('hentry'));
 		}
 
@@ -2626,7 +2634,7 @@ trait Functions {
 		$http = site_url(false, 'http');
 		$https = site_url(false, 'https');
 
-		if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ){
+		if ( $this->isset_as($_SERVER['HTTPS'], 'on') ){
 			return str_replace($http, $https, $url);
 		} else {
 			return $url;

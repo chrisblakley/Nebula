@@ -89,10 +89,17 @@
 	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb-<?php echo $i; ?>.png<?php echo $cache_query; ?>" />
 <?php endfor; ?>
 
-<?php //Favicons ?>
-<link rel="shortcut icon preload prefetch" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
-<link rel="shortcut icon preload prefetch" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
-<link rel="shortcut icon preload prefetch" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
+<?php
+	//Favicons
+
+	//HTTP2 Server Push (currently triggering violations for not being used after preloading...)
+	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon.ico>; rel=preload; as=image', false);
+	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-16x16.png>; rel=preload; as=image', false);
+	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-32x32.png>; rel=preload; as=image', false);
+?>
+<link rel="shortcut icon prefetch" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
+<link rel="shortcut icon prefetch" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon prefetch" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
 
 <?php if ( nebula()->get_browser('name') == 'Safari' ): //Safari ?>
 	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />

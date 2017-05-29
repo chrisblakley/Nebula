@@ -1,7 +1,6 @@
 <?php
 
-// Exit if accessed directly
-if ( !defined('ABSPATH') ){ exit; }
+if ( !defined('ABSPATH') ){ exit; } //Exit if accessed directly
 
 if ( !class_exists('Nebula') ){
 
@@ -20,6 +19,7 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Admin/Admin.php';
 	require_once get_template_directory() . '/libs/Ecommerce.php';
 	require_once get_template_directory() . '/libs/Prototyping.php';
+	require_once get_template_directory() . '/libs/Aliases.php';
 	require_once get_template_directory() . '/libs/Legacy/Legacy.php'; //Backwards compatibility
 
 	//Main Nebula class

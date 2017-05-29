@@ -340,7 +340,7 @@ if ( !trait_exists('Utilities') ){
 					break;
 
 				case ('authority'):
-					if ( isset($url_components['user']) && isset($url_components['pass']) ){
+					if ( isset($url_components['user'], $url_components['pass']) ){
 						return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . nebula()->url_components('port', $url);
 					} else {
 						return false;
@@ -502,6 +502,19 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 			return $newString;
+		}
+
+		//Check if a parameter is set and that it matches
+		public function isset_as($var=false, $match=''){
+			if ( empty($match) ){
+				return false;
+			}
+
+			if ( isset($var) && $var === $match ){
+				return true;
+			}
+
+			return false;
 		}
 
 		//Traverse multidimensional arrays

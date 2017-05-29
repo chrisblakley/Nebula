@@ -66,6 +66,10 @@ if ( !trait_exists('Device') ){
 				}
 			}
 
+			if ( !wp_is_mobile() ){ //This does a basic check for mobile or tablet devices.
+				return true;
+			}
+
 			return false;
 		}
 

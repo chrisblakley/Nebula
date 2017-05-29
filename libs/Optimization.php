@@ -17,6 +17,10 @@ if ( !trait_exists('Optimization') ){
 			//Preload enqueued style resources
 			add_filter('style_loader_tag', array($this, 'preload_enqueued_styles'), 10);
 
+			//Use HTTP2 Server Push to push multiple CSS and JS resources at once
+			add_filter('style_loader_src', array($this, 'nebula_http2_link_preload_header'), 99, 1);
+			add_filter('script_loader_src', array($this, 'nebula_http2_link_preload_header'), 99, 1);
+
 			//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
@@ -53,9 +57,9 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			if ( strpos($url, '.js?defer') ){
-				return "$url' defer='defer";
+				return str_replace('.js?defer', '.js', $url) . "' defer='defer"; //Add the defer attribute while removing the query string
 			} elseif ( strpos($url, '.js?async') ){
-				return "$url' async='async";
+				return str_replace('.js?async', '.js', $url) . "' async='async"; //Add the async attribute while removing the query string
 			}
 		}
 
@@ -83,11 +87,6 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			return $tag;
-		}
-
-		//Preload enqueued style resources
-		public function preload_enqueued_styles($tag){
-			return str_replace("rel='stylesheet'", "rel='stylesheet preload prefetch'", $tag);
 		}
 
 		//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
@@ -126,11 +125,25 @@ if ( !trait_exists('Optimization') ){
 			echo '<script>window.Tether = function(){}</script>'; //Must be a function to bypass Bootstrap check.
 		}
 
+		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
+		public function nebula_http2_link_preload_header($src){
+				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If it is a local resource
+					$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
+					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '?'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push
+				}
+
+		    return $src;
+		}
+
+		//Preload enqueued style resources
+		public function preload_enqueued_styles($tag){
+			return str_replace("rel='stylesheet'", "rel='stylesheet prefetch'", $tag);
+		}
+
 		//Determing if a page should be prepped using prefetch, preconnect, or prerender.
 			//DNS-Prefetch = Resolve the DNS only to a domain.
 			//Preconnect = Resolve both DNS and TCP to a domain.
 			//Prefetch = Fully request a single resource and store it in cache until needed.
-			//Preload = Utilize HTTP/2 Push to send multiple specific resources before they are requested.
 			//Prerender = Render an entire page (useful for comment next page navigation). Use Audience > User Flow report in Google Analytics for better predictions.
 
 			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
@@ -151,22 +164,22 @@ if ( !trait_exists('Optimization') ){
 			$default_preconnects = array();
 
 			//Weather
-			if ( nebula()->option('weather') ){
+			if ( $this->option('weather') ){
 				$default_preconnects[] = '//query.yahooapis.com';
 			}
 
 			//GCSE on 404 pages
-			if ( is_404() && nebula()->get_option('cse_id') ){
+			if ( is_404() && $this->get_option('cse_id') ){
 				$default_preconnects[] = '//www.googleapis.com';
 			}
 
 			//Disqus commenting
-			if ( is_single() && nebula()->get_option('comments') && nebula()->get_option('disqus_shortname') ){
-				$default_preconnects[] = '//' . nebula()->get_option('disqus_shortname') . '.disqus.com';
+			if ( is_single() && $this->get_option('comments') && $this->get_option('disqus_shortname') ){
+				$default_preconnects[] = '//' . $this->get_option('disqus_shortname') . '.disqus.com';
 			}
 
 			//Hubspot CRM for Nebula Visitors DB
-			if ( nebula()->get_option('visitors_db') && nebula()->get_option('hubspot_api') ){
+			if ( $this->get_option('visitors_db') && $this->get_option('hubspot_api') ){
 				$default_preconnects[] = '//api.hubapi.com';
 			}
 
@@ -262,7 +275,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
-			if ( !nebula()->is_debug() ){
+			if ( !$this->is_debug() ){
 				$path = ( !empty($exec) )? $src . '?' . $exec : $src;
 			} else {
 				$path = $src;

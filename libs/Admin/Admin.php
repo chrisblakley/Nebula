@@ -790,7 +790,7 @@ if ( !trait_exists('Admin') ){
 		//Duplicate post
 		public function duplicate_post_as_draft(){
 			global $wpdb;
-			if ( !(isset($_GET['post']) || isset($_POST['post'])  || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'duplicate_post_as_draft')) ){
+			if ( !(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'duplicate_post_as_draft')) ){
 				wp_die('No post to duplicate has been supplied!');
 			}
 
@@ -875,7 +875,7 @@ if ( !trait_exists('Admin') ){
 		//Clear caches when plugins are activated if W3 Total Cache is active
 		public function clear_all_w3_caches(){
 			include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-			if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_GET['activate']) && $_GET['activate'] === 'true' ){
+			if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && $this->isset_as($_SERVER['activate'], 'true') ){
 				if ( function_exists('w3tc_pgcache_flush') ){
 					w3tc_pgcache_flush();
 				}

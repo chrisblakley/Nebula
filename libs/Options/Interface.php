@@ -32,7 +32,7 @@
 		}
 	?>
 
-	<?php if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true' ): ?>
+	<?php if ( $this->isset_as($_GET['settings-updated'], 'true') ): ?>
 	    <div class="updated notice is-dismissible">
 	        <p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
 	        <button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
