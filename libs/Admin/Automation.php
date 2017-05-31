@@ -11,7 +11,7 @@ if ( !trait_exists('Automation') ){
 
 			//Detect and prompt install of Recommended and Optional plugins using TGMPA
 			//Configuration Documentation: http://tgmpluginactivation.com/configuration/
-			if ( is_admin() && nebula()->is_dev(true) || current_user_can('manage_options') ){
+			if ( is_admin() && $this->is_dev(true) || current_user_can('manage_options') ){
 				require_once(get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php');
 
 				add_action('tgmpa_register', array($this, 'register_required_plugins'));
@@ -164,7 +164,7 @@ if ( !trait_exists('Automation') ){
 			//Run express initialization (Nebula Options only)
 			if ( !$this->is_initialized_before() ){
 				$this->express_automation();
-				nebula()->update_data('first_activation', time());
+				$this->update_data('first_activation', time());
 			}
 
 			$is_ajax_initialization = !isset($_GET['nebula-initialization']); //Detect if non-AJAX initialization is needed. If this $_GET is true, it is not AJAX.
@@ -193,7 +193,7 @@ if ( !trait_exists('Automation') ){
 					</p>
 				</div>
 			<?php else: ?>
-				<?php nebula()->render_scss('all'); //Re-render all SCSS files. ?>
+				<?php $this->render_scss('all'); //Re-render all SCSS files. ?>
 
 				<?php if ( $this->is_initialized_before() ): ?>
 					<div id='nebula-activate-success' class='updated'>
@@ -221,7 +221,7 @@ if ( !trait_exists('Automation') ){
 			<?php endif; ?>
 			<?php
 
-			nebula()->update_data('initialized', time());
+			$this->update_data('initialized', time());
 			return;
 		}
 
@@ -232,11 +232,11 @@ if ( !trait_exists('Automation') ){
 				$this->full_automation();
 				$this->initialization_email_prev_settings();
 
-				if ( !nebula()->get_data('initialized') ){
-					nebula()->update_data('initialized', time());
+				if ( !$this->get_data('initialized') ){
+					$this->update_data('initialized', time());
 				}
 
-				nebula()->render_scss('all'); //Re-render all SCSS files.
+				$this->render_scss('all'); //Re-render all SCSS files.
 
 				if ( !empty($ajax) ){ //If AJAX initialization
 					echo 'successful-nebula-init'; //AJAX listens for this string to determine sucess.
@@ -270,7 +270,7 @@ if ( !trait_exists('Automation') ){
 			$to = $current_user->user_email;
 
 			//Carbon copy the admin if reset was done by another user.
-			$admin_user_email = nebula()->option('notification_email', nebula()->option('admin_email'));
+			$admin_user_email = $this->option('notification_email', $this->option('admin_email'));
 			if ( $admin_user_email != $current_user->user_email ){
 				$headers[] = 'Cc: ' . $admin_user_email;
 			}
@@ -325,11 +325,11 @@ if ( !trait_exists('Automation') ){
 		//Nebula preferred default Wordpress settings
 		public function initialization_nebula_defaults(){
 			//Update Nebula default data
-			$nebula_data_defaults = nebula()->default_data();
+			$nebula_data_defaults = $this->default_data();
 			update_option('nebula_data', $nebula_data_defaults);
 
 			//Update Nebula default options
-			$nebula_options_defaults = nebula()->default_options();
+			$nebula_options_defaults = $this->default_options();
 			update_option('nebula_options', $nebula_options_defaults);
 		}
 
@@ -372,7 +372,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function is_initialized_before(){
-			$nebula_initialized_option = nebula()->get_data('initialized');
+			$nebula_initialized_option = $this->get_data('initialized');
 
 			if ( empty($nebula_initialized_option) ){
 				return false;
@@ -387,23 +387,23 @@ if ( !trait_exists('Automation') ){
 			if ( 1==2 ){
 				$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
 				if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
-					nebula()->update_data('initialized', strtotime($force_date));
+					$this->update_data('initialized', strtotime($force_date));
 					return false;
 				}
 			} else {
-				if ( !nebula()->is_initialized_before() ){
-					nebula()->update_data('initialized', date('U'));
+				if ( !$this->is_initialized_before() ){
+					$this->update_data('initialized', date('U'));
 				}
 			}
 
 			//Re-allow remote Nebula version updates. Ideally this would be detected automatically and this condition would not be needed.
 			if ( 1==2 ){
-				nebula()->update_data('version_legacy', 'false');
-				nebula()->update_data('scss_last_processed', 0);
-				nebula()->update_data('next_version', '');
-				nebula()->update_data('current_version', nebula()->version('raw'));
-				nebula()->update_data('current_version_date', nebula()->version('date'));
-				nebula()->update_data('theme_update_notification', 'enabled');
+				$this->update_data('version_legacy', 'false');
+				$this->update_data('scss_last_processed', 0);
+				$this->update_data('next_version', '');
+				$this->update_data('current_version', $this->version('raw'));
+				$this->update_data('current_version_date', $this->version('date'));
+				$this->update_data('theme_update_notification', 'enabled');
 				update_option('external_theme_updates-Nebula-master', '');
 			}
 		}

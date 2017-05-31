@@ -15,14 +15,14 @@ if ( !trait_exists('Admin') ){
 		public function hooks(){
 			global $pagenow;
 
-			if ( nebula()->is_admin_page() ){
+			if ( $this->is_admin_page() ){
 				$this->AutomationHooks(); // Register Automation hooks
 				$this->DashboardHooks(); // Register Dashboard hooks
 				$this->UsersHooks(); // Register Users hooks
 			}
 
 			//Enable editor style for the TinyMCE WYSIWYG editor.
-			add_editor_style(nebula()->bootstrap('reboot'));
+			add_editor_style($this->bootstrap('reboot'));
 			add_editor_style('assets/css/tinymce.css');
 
 			//Force expire query transients when posts/pages are saved.
@@ -41,7 +41,7 @@ if ( !trait_exists('Admin') ){
 			add_filter('admin_body_class', array($this, 'admin_body_classes'));
 
 			//Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-			if ( !nebula()->option('admin_bar') ){ //If Admin Bar is disabled
+			if ( !$this->option('admin_bar') ){ //If Admin Bar is disabled
 				show_admin_bar(false);
 
 				add_action('wp_print_scripts', array($this, 'dequeue_admin_bar'), 9999);
@@ -62,12 +62,12 @@ if ( !trait_exists('Admin') ){
 			}
 
 			//Disable Wordpress Core update notifications in WP Admin
-			if ( !nebula()->option('wp_core_updates_notify') ){
+			if ( !$this->option('wp_core_updates_notify') ){
 				add_filter('pre_site_transient_update_core', '__return_null');
 			}
 
 			//Show update warning on Wordpress Core/Plugin update admin pages
-			if ( nebula()->option('plugin_update_warning') ){
+			if ( $this->option('plugin_update_warning') ){
 				if ( $pagenow === 'plugins.php' || $pagenow === 'update-core.php' ){
 					add_action('admin_notices', array($this, 'update_warning'));
 				}
@@ -98,7 +98,7 @@ if ( !trait_exists('Admin') ){
 			add_filter('login_headertitle', array($this, 'new_wp_login_title'));
 
 			//Nebula Admin Notices
-			if ( nebula()->option('admin_notices') ){
+			if ( $this->option('admin_notices') ){
 				add_action('admin_notices',  array($this, 'admin_notices'));
 			}
 
@@ -139,7 +139,7 @@ if ( !trait_exists('Admin') ){
 			add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
 
 			//Enable All Settings page for only Developers who are Admins
-			if ( nebula()->is_dev(true) && current_user_can('manage_options') ){
+			if ( $this->is_dev(true) && current_user_can('manage_options') ){
 				add_action('admin_menu', array($this, 'all_settings_link'));
 			}
 
@@ -175,7 +175,7 @@ if ( !trait_exists('Admin') ){
 
 		//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
 		public function admin_favicon(){
-			$cache_buster = ( nebula()->is_debug() )? '?r' . mt_rand(1000, mt_getrandmax()) : '';
+			$cache_buster = ( $this->is_debug() )? '?r' . mt_rand(1000, mt_getrandmax()) : '';
 			echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/assets/img/meta/favicon.ico') . $cache_buster . '" />';
 		}
 
@@ -215,7 +215,7 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_menus($wp_admin_bar){
 			wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
 
-			$node_id = ( nebula()->is_admin_page() )? 'view' : 'edit';
+			$node_id = ( $this->is_admin_page() )? 'view' : 'edit';
 			$new_content_node = $wp_admin_bar->get_node($node_id);
 			if ( $new_content_node ){
 				$post_type_object = get_post_type_object(get_post_type());
@@ -280,12 +280,12 @@ if ( !trait_exists('Admin') ){
 							'parent' => 'nebula-ancestors',
 							'id' => 'nebula-parent-' . $parent,
 							'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title($parent),
-							'href' => ( nebula()->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
+							'href' => ( $this->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
 						));
 					}
 				}
 
-				if ( !nebula()->is_admin_page() ){ //@todo "Nebula" 0: Remove this conditional when this bug is fixed: https://core.trac.wordpress.org/ticket/18408
+				if ( !$this->is_admin_page() ){ //@todo "Nebula" 0: Remove this conditional when this bug is fixed: https://core.trac.wordpress.org/ticket/18408
 					//Children pages
 					$child_pages = new WP_Query(array(
 						'post_type' => $post_type_object->labels->singular_name,
@@ -307,7 +307,7 @@ if ( !trait_exists('Admin') ){
 								'parent' => 'nebula-children',
 								'id' => 'nebula-child-' . get_the_id(),
 								'title' => '<i class="nebula-admin-fa fa fa-fw fa-file-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> ' . get_the_title(),
-								'href' => ( nebula()->is_admin_page() )? get_edit_post_link() : get_permalink(),
+								'href' => ( $this->is_admin_page() )? get_edit_post_link() : get_permalink(),
 							));
 						}
 					}
@@ -318,8 +318,8 @@ if ( !trait_exists('Admin') ){
 
 			//Check for important warnings for the Admin Bar
 			$nebula_warning_icon = '';
-			if ( nebula()->option('admin_notices') ){
-				if ( !nebula()->option('ga_tracking_id') ){
+			if ( $this->option('admin_notices') ){
+				if ( !$this->option('ga_tracking_id') ){
 					$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
 					$nebula_warning_description = 'Google Analytics tracking ID is currently not set!';
 					$nebula_warning_href = 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id';
@@ -333,7 +333,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check Prototype Mode
-				if ( !nebula()->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				if ( !$this->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 					$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
 					$nebula_warning_description = 'Prototype Mode is disabled, but Multiple Theme plugin is still active.';
 					$nebula_warning_href = 'plugins.php';
@@ -366,8 +366,8 @@ if ( !trait_exists('Admin') ){
 				));
 			}
 
-			if ( nebula()->option('scss') ){
-				$scss_last_processed = ( nebula()->get_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', nebula()->get_data('scss_last_processed')) : 'Never';
+			if ( $this->option('scss') ){
+				$scss_last_processed = ( $this->get_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', $this->get_data('scss_last_processed')) : 'Never';
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-options-scss',
@@ -377,7 +377,7 @@ if ( !trait_exists('Admin') ){
 				));
 			}
 
-			if ( nebula()->option('visitors_db') ){
+			if ( $this->option('visitors_db') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-visitor-db',
@@ -387,7 +387,7 @@ if ( !trait_exists('Admin') ){
 				));
 			}
 
-			if ( nebula()->option('google_optimize_id') ){
+			if ( $this->option('google_optimize_id') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'google-optimize',
@@ -491,19 +491,19 @@ if ( !trait_exists('Admin') ){
 			$nebula_data = get_option('nebula_data');
 
 			//Always keep current_version up-to-date.
-			if ( strtotime($nebula_data['current_version_date'])-strtotime(nebula()->version('date')) < 0 ){
-				nebula()->update_data('current_version', nebula()->version('raw'));
-				nebula()->update_data('current_version_date', nebula()->version('date'));
+			if ( strtotime($nebula_data['current_version_date'])-strtotime($this->version('date')) < 0 ){
+				$this->update_data('current_version', $this->version('raw'));
+				$this->update_data('current_version_date', $this->version('date'));
 			}
 
 			if ( $nebula_data['version_legacy'] === 'true' ){
 				//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 				$remote_version_info = get_option('external_theme_updates-Nebula-master');
-				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', nebula()->version('full')) ){
-					nebula()->update_data('version_legacy', 'true');
-					nebula()->update_data('current_version', nebula()->version('raw'));
-					nebula()->update_data('current_version_date', nebula()->version('date'));
-					nebula()->update_data('next_version', 'INCOMPATIBLE');
+				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', $this->version('full')) ){
+					$this->update_data('version_legacy', 'true');
+					$this->update_data('current_version', $this->version('raw'));
+					$this->update_data('current_version_date', $this->version('date'));
+					$this->update_data('next_version', 'INCOMPATIBLE');
 				}
 			} elseif ( current_user_can('manage_options') && is_child_theme() ){
 				//@TODO "Nebula" 0: does this need to happen every admin pageload? Maybe add a transient?
@@ -517,15 +517,15 @@ if ( !trait_exists('Admin') ){
 
 		//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
 		public function theme_update_version_store($themeUpdate, $installedVersion){
-			nebula()->update_data('next_version', $themeUpdate->version);
-			nebula()->update_data('current_version', nebula()->version('full'));
-			nebula()->update_data('current_version_date', nebula()->version('date'));
+			$this->update_data('next_version', $themeUpdate->version);
+			$this->update_data('current_version', $this->version('full'));
+			$this->update_data('current_version_date', $this->version('date'));
 
-			if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) !== str_replace('u', '', nebula()->version('full')) ){ //If Github version has "u", disable automated updates.
-				nebula()->update_data('version_legacy', 'true');
-			} elseif ( nebula()->get_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
-				nebula()->update_data('version_legacy', 'false');
-				nebula()->update_data('theme_update_notification', 'disabled');
+			if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) !== str_replace('u', '', $this->version('full')) ){ //If Github version has "u", disable automated updates.
+				$this->update_data('version_legacy', 'true');
+			} elseif ( $this->get_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
+				$this->update_data('version_legacy', 'false');
+				$this->update_data('theme_update_notification', 'disabled');
 			}
 		}
 
@@ -534,25 +534,25 @@ if ( !trait_exists('Admin') ){
 			$override = apply_filters('pre_nebula_theme_update_automation', false);
 			if ( $override !== false ){return;}
 
-			if ( $options['type'] === 'theme' && nebula()->in_array_r('Nebula-master', $options['themes']) ){
-				$this->theme_update_email(); //Send email with update information
-				nebula()->update_data('version_legacy', 'false');
-				nebula()->render_scss(false, false, true); //Force render all Sass
+			if ( $options['type'] === 'theme' && $this->in_array_r('Nebula-master', $options['themes']) ){
+				$prev_version = $this->get_data('current_version');
+				$prev_version_commit_date = $this->get_data('current_version_date');
+				$new_version = $this->get_data('next_version');
+
+				$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
+				$this->update_data('version_legacy', 'false');
+				$this->render_scss(false, false, true); //Force render all Sass
 			}
 		}
 
-		public function theme_update_email(){
-			$prev_version = nebula()->get_data('current_version');
-			$prev_version_commit_date = nebula()->get_data('current_version_date');
-			$new_version = nebula()->get_data('next_version');
-
+		public function theme_update_email($prev_version, $prev_version_commit_date, $new_version){
 			if ( $prev_version !== $new_version ){
 				global $wpdb;
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
 
 				//Carbon copy the admin if update was done by another user.
-				$admin_user_email = nebula()->get_option('notification_email', nebula()->get_option('admin_email'));
+				$admin_user_email = $this->get_option('notification_email', $this->get_option('admin_email'));
 				if ( !empty($admin_user_email) && $admin_user_email !== $current_user->user_email ){
 					$headers[] = 'Cc: ' . $admin_user_email;
 				}
@@ -577,7 +577,7 @@ if ( !trait_exists('Admin') ){
 		//Custom login screen
 		public function login_ga(){
 			if ( empty($_POST['signed_request']) ){
-				echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . nebula()->option('ga_tracking_id') . "', 'auto');</script>";
+				echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $this->option('ga_tracking_id') . "', 'auto');</script>";
 			}
 		}
 
@@ -593,7 +593,7 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula Admin Notices
 		public function admin_notices(){
-			if ( current_user_can('manage_options') || nebula()->is_dev() ){
+			if ( current_user_can('manage_options') || $this->is_dev() ){
 				//Check PHP version
 				$php_version_lifecycle = $this->php_version_support();
 				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
@@ -622,7 +622,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check for Google Analytics Tracking ID
-				if ( !nebula()->option('ga_tracking_id') ){
+				if ( !$this->option('ga_tracking_id') ){
 					echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!</p></div>';
 				}
 
@@ -637,8 +637,8 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check if all SCSS files were processed manually.
-				if ( nebula()->option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
-					if ( nebula()->is_dev() || nebula()->is_client() ){
+				if ( $this->option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
+					if ( $this->is_dev() || $this->is_client() ){
 						echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
 					} else {
 						echo '<div class="nebula-admin-notice error"><p>You do not have permissions to manually process all SCSS files.</p></div>';
@@ -646,7 +646,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//If Prototype mode is disabled, but Multiple Theme plugin is still activated
-				if ( !nebula()->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				if ( !$this->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 					echo '<div class="nebula-admin-notice error"><p><a href="plugins.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
 				}
 
@@ -672,7 +672,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
-				if ( nebula()->option('google_optimize_id') ){
+				if ( $this->option('google_optimize_id') ){
 					echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
 				}
 			}
@@ -707,8 +707,8 @@ if ( !trait_exists('Admin') ){
 
 			$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
 			$php_timeline = get_transient('nebula_php_timeline');
-			if ( (empty($php_timeline) || nebula()->is_debug()) ){
-				$response = nebula()->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json');
+			if ( (empty($php_timeline) || $this->is_debug()) ){
+				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json');
 				if ( !is_wp_error($response) ){
 					$php_timeline = $response['body'];
 				}
@@ -748,7 +748,7 @@ if ( !trait_exists('Admin') ){
 
 		//Check if a post slug has a number appended to it (indicating a duplicate post).
 		public function unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
-			if ( current_user_can('publish_posts') && nebula()->is_admin_page() && (headers_sent() || nebula()->is_ajax_request()) ){ //Should work with AJAX and without (as long as headers have been sent)
+			if ( current_user_can('publish_posts') && $this->is_admin_page() && (headers_sent() || $this->is_ajax_request()) ){ //Should work with AJAX and without (as long as headers have been sent)
 				echo '<script>
 					if ( typeof nebulaUniqueSlugChecker === "function" ){
 						nebulaUniqueSlugChecker("' . $post_type . '");
@@ -884,14 +884,14 @@ if ( !trait_exists('Admin') ){
 
 		//Admin footer left side
 		public function change_admin_footer_left(){
-			return nebula()->pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
+			return $this->pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
 		}
 
 		//Admin footer right side
 		public function change_admin_footer_right(){
 			global $wp_version;
 			$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
-			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . nebula()->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula">' . nebula()->version('version') . '</strong>' . $child . '</span>';
+			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . $this->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula">' . $this->version('version') . '</strong>' . $child . '</span>';
 		}
 
 		public function post_meta_boxes_setup(){
