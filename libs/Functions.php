@@ -72,8 +72,8 @@ trait Functions {
 			add_filter('manage_media_columns', array($this, 'remove_pages_count_columns'));
 
 			//Close comments on the front-end
-			add_filter('comments_open', array($this, '__return_false'), 20, 2);
-			add_filter('pings_open', array($this, '__return_false'), 20, 2);
+			add_filter('comments_open', '__return_false', 20, 2);
+			add_filter('pings_open', '__return_false', 20, 2);
 
 			//Remove comments menu from Admin Bar
 			if ( $this->option('admin_bar') ){
