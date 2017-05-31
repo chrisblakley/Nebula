@@ -48,6 +48,8 @@ if ( !trait_exists('Optimization') ){
 			add_filter('wp_resource_hints', array($this, 'remove_emoji_prefetch'), 10, 2); //Remove dns-prefetch for emojis
 
 			add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
+
+			add_filter('wpcf7_load_css', '__return_false'); //Disable CF7 CSS resources (in favor of Bootstrap and Nebula overrides)
 		}
 
 		//Control which scripts use defer/async using a query string.
@@ -127,7 +129,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		public function nebula_http2_link_preload_header($src){
-				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If it is a local resource
+				if ( !$this->is_admin_page() && strpos($src, $this->url_components('sld')) > 0 ){ //If it is a local resource (and not in the admin section)
 					$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '?'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push
 				}
@@ -233,13 +235,14 @@ if ( !trait_exists('Optimization') ){
 
 		//Override existing functions (typcially from plugins)
 		public function remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
-			if ( is_admin() ){ //WP Admin
+			if ( $this->is_admin_page() ){ //WP Admin
 				if ( is_plugin_active('event-espresso/espresso.php') ){
 					remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 					remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
 				}
 			} else { //Frontend
 				//remove_action('wpseo_head', 'debug_marker', 2 ); //Remove Yoast comment [not working] (not sure if second comment could be removed without modifying class-frontend.php)
+
 			}
 		}
 

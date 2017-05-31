@@ -607,6 +607,8 @@ function eventTracking(){
 			jQuery.each(formStarted, function(key, value){
 				if ( value === true ){
 					ga('send', 'event', 'CF7 Form', 'Abandon', key, {'nonInteraction': true});
+					var formTime = nebulaTimer(key, 'end');
+					ga('send', 'timing', 'CF7 Form', 'Form Abandon (ID: ' + key + ')', Math.round(formTime), 'Initial form focus until window unload (without successful submit)');
 					return false;
 				}
 			});
@@ -1796,7 +1798,7 @@ function cf7LocalStorage(){
 //Form live (soft) validator
 function nebulaLiveValidator(){
 	//Standard text inputs and select menus
-	jQuery('.nebula-validate-text, .nebula-validate-select').on('keyup change blur', function(e){
+	nebula.dom.document.on('keyup change blur', '.nebula-validate-text, .nebula-validate-select', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( jQuery.trim(jQuery(this).val()).length ){
@@ -1811,9 +1813,8 @@ function nebulaLiveValidator(){
 	});
 
 	//RegEx input
-	jQuery('.nebula-validate-regex').on('keyup change blur', function(e){
+	nebula.dom.document.on('keyup change blur', '.nebula-validate-regex', function(e){
 		var pattern = new RegExp(jQuery(this).attr('data-valid-regex'), 'i');
-
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( pattern.test(jQuery(this).val()) ){
@@ -1828,7 +1829,7 @@ function nebulaLiveValidator(){
 	});
 
 	//URL inputs
-	jQuery('.nebula-validate-url').on('keyup change blur', function(e){
+	nebula.dom.document.on('keyup change blur', '.nebula-validate-url', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.url.test(jQuery(this).val()) ){
@@ -1843,7 +1844,7 @@ function nebulaLiveValidator(){
 	});
 
 	//Email address inputs
-	jQuery('.nebula-validate-email').on('keyup change blur', function(e){
+	nebula.dom.document.on('keyup change blur', '.nebula-validate-email', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.email.test(jQuery(this).val()) ){
@@ -1858,7 +1859,7 @@ function nebulaLiveValidator(){
 	});
 
 	//Phone number inputs
-	jQuery('.nebula-validate-phone').on('keyup change blur', function(e){
+	nebula.dom.document.on('keyup change blur', '.nebula-validate-phone', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
@@ -1873,7 +1874,7 @@ function nebulaLiveValidator(){
 	});
 
 	//Date inputs
-	jQuery('.nebula-validate-date').on('keyup change blur', function(e){
+	nebula.dom.document.on('keyup change blur', '.nebula-validate-date', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
@@ -1888,7 +1889,7 @@ function nebulaLiveValidator(){
 	});
 
 	//Textarea
-	jQuery('.nebula-validate-textarea').on('keyup change blur', function(e){
+	nebula.dom.document.on('keyup change blur', '.nebula-validate-textarea', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( jQuery.trim(jQuery(this).val()).length ){
@@ -1907,7 +1908,7 @@ function nebulaLiveValidator(){
 	});
 
 	//Checkbox and Radio
-	jQuery('.nebula-validate-checkbox, .nebula-validate-radio').on('change blur', function(e){
+	nebula.dom.document.on('change blur', '.nebula-validate-checkbox, .nebula-validate-radio', function(e){
 		if ( jQuery(this).closest('.form-group').find('input:checked').length ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else {

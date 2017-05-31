@@ -122,11 +122,11 @@ if ( !trait_exists('Prototyping') ){
 				return false;
 			}
 
-			if ( $this->isset_as($_GET['phase'], 'wireframe') ){
+			if ( isset($_SERVER['phase']) && $_SERVER['phase'] == 'wireframe' ){
 				return 'wireframe';
 			}
 
-			if ( $this->isset_as($_GET['phase'], 'staging') ){
+			if ( isset($_SERVER['phase']) && $_SERVER['phase'] == 'staging' ){
 				return 'staging';
 			}
 

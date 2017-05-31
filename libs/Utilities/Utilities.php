@@ -504,19 +504,6 @@ if ( !trait_exists('Utilities') ){
 			return $newString;
 		}
 
-		//Check if a parameter is set and that it matches
-		public function isset_as($var=false, $match=''){
-			if ( empty($match) ){
-				return false;
-			}
-
-			if ( isset($var) && $var === $match ){
-				return true;
-			}
-
-			return false;
-		}
-
 		//Traverse multidimensional arrays
 		public function in_array_r($needle, $haystack, $strict=true){
 			$override = apply_filters('pre_in_array_r', false, $needle, $haystack, $strict);

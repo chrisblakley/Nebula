@@ -66,14 +66,14 @@ trait Functions {
 			//Remove the Activity metabox
 			add_action('wp_dashboard_setup', array($this, 'remove_activity_metabox'));
 
-			//Remove Comments column
+			//Remove Comments admin listing column
 			add_filter('manage_posts_columns', array($this, 'remove_pages_count_columns'));
 			add_filter('manage_pages_columns', array($this, 'remove_pages_count_columns'));
 			add_filter('manage_media_columns', array($this, 'remove_pages_count_columns'));
 
 			//Close comments on the front-end
-			add_filter('comments_open', array($this, 'disable_comments_status' ), 20, 2);
-			add_filter('pings_open', array($this, 'disable_comments_status' ), 20, 2);
+			add_filter('comments_open', array($this, '__return_false'), 20, 2);
+			add_filter('pings_open', array($this, '__return_false'), 20, 2);
 
 			//Remove comments menu from Admin Bar
 			if ( $this->option('admin_bar') ){
@@ -84,8 +84,8 @@ trait Functions {
 			add_action('admin_menu', array($this, 'disable_comments_admin'));
 			add_filter('admin_head', array($this, 'hide_ataglance_comment_counts'));
 
-			//Disable support for comments in post types, Redirect any user trying to access comments page
-			add_action('admin_init', array($this, 'disable_comments_admin_menu_redirect'));
+			//Disable support for comments in post types
+			add_action('admin_init', array($this, 'remove_comments_post_type_support'));
 
 			//Link to Disqus on comments page (if using Disqus)
 			if ( $pagenow == 'edit-comments.php' && $this->option('disqus_shortname') ){
@@ -153,7 +153,9 @@ trait Functions {
 
 	//Start output buffering so headers can be sent later for HTTP2 Server Push
 	public function nebula_http2_ob_start(){
-	    ob_start();
+	    if ( !$this->is_admin_page() ){
+	    	ob_start();
+	    }
 	}
 
 	//Prep custom theme support
@@ -1902,11 +1904,6 @@ trait Functions {
 		return $defaults;
 	}
 
-	//Close comments on the front-end
-	public function disable_comments_status(){
-		return false;
-	}
-
 	//Remove comments menu from Admin Bar
 	public function admin_bar_remove_comments($wp_admin_bar){
 		$wp_admin_bar->remove_menu('comments');
@@ -1915,22 +1912,15 @@ trait Functions {
 	//Remove comments metabox and comments
 	public function disable_comments_admin(){
 		remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
-		remove_menu_page('edit-comments.php');
-		remove_submenu_page('options-general.php', 'options-discussion.php');
+		//Note: Do not remove the Discussion settings page. The comment blacklist is still used for other things like CF7 forms.
 	}
 
 	public function hide_ataglance_comment_counts(){
 		echo '<style>li.comment-count, li.comment-mod-count {display: none;}</style>'; //Hide comment counts in "At a Glance" metabox
 	}
 
-	//Disable support for comments in post types, Redirect any user trying to access comments page
-	public function disable_comments_admin_menu_redirect(){
-		global $pagenow;
-		if ( $pagenow === 'edit-comments.php' || $pagenow === 'options-discussion.php' ){
-			wp_redirect(admin_url());
-			exit;
-		}
-
+	//Disable support for comments in post types
+	public function remove_comments_post_type_support(){
 		foreach ( get_post_types() as $post_type ){
 			if ( post_type_supports($post_type, 'comments') ){
 				remove_post_type_support($post_type, 'comments');
@@ -2634,7 +2624,7 @@ trait Functions {
 		$http = site_url(false, 'http');
 		$https = site_url(false, 'https');
 
-		if ( $this->isset_as($_SERVER['HTTPS'], 'on') ){
+		if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ){
 			return str_replace($http, $https, $url);
 		} else {
 			return $url;
