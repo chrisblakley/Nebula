@@ -72,8 +72,8 @@ if ( !trait_exists('Ecommerce') ){
 		//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
 		public function woo_custom_ga_dimensions(){
 			//Set custom dimension for if the cart is empty or full
-			if ( nebula()->option('cd_woocart') ){
-				echo 'gaCustomDimensions.wooCart = "' . nebula()->option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
+			if ( $this->option('cd_woocart') ){
+				echo 'gaCustomDimensions.wooCart = "' . $this->option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
 				$cart_text = ( WC()->cart->get_cart_contents_count() >= 1 )? 'Full Cart (' . WC()->cart->get_cart_contents_count() . ')' : 'Empty Cart';
 				echo 'ga("set", gaCustomDimensions["wooCart"], "' . $cart_text . '");';
 			}
@@ -85,8 +85,8 @@ if ( !trait_exists('Ecommerce') ){
 
 			//Set custom dimension and send event on order received page.
 			if ( is_order_received_page() ){
-				if ( nebula()->option('cd_woocustomer') ){
-					echo 'gaCustomDimensions.wooCustomer = "' . nebula()->option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
+				if ( $this->option('cd_woocustomer') ){
+					echo 'gaCustomDimensions.wooCustomer = "' . $this->option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
 					echo 'ga("set", gaCustomDimensions["wooCustomer"], "Order Received");';
 				}
 				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
@@ -101,7 +101,7 @@ if ( !trait_exists('Ecommerce') ){
 
 		//Checkout visitor data
 		public function woocommerce_order_data($order_id){
-			if ( nebula()->option('visitors_db') ){
+			if ( $this->option('visitors_db') ){
 				$order = new WC_Order($order_id);
 
 				//Append order ID and product IDs
@@ -111,10 +111,10 @@ if ( !trait_exists('Ecommerce') ){
 					$products['ecommerce_product_ids'] = $item['product_id'];
 				}
 				$products['ecommerce_order_id'] = $order_id;
-				nebula()->append_visitor($products);
+				$this->append_visitor($products);
 
 				//Update Customer data
-				nebula()->update_visitor_data(array(
+				$this->update_visitor_data(array(
 					'wp_role' => 'Customer',
 					'email_address' => $order->billing_email,
 					'first_name' => $order->billing_first_name,
@@ -139,7 +139,7 @@ if ( !trait_exists('Ecommerce') ){
 				global $post;
 				$product = new WC_Product($post->ID);
 
-				$company_type = ( nebula()->option('business_type') )? nebula()->option('business_type') : 'LocalBusiness';
+				$company_type = ( $this->option('business_type') )? $this->option('business_type') : 'LocalBusiness';
 				?>
 				<script type="application/ld+json">
 					{
@@ -155,7 +155,7 @@ if ( !trait_exists('Ecommerce') ){
 							"height": "<?php echo $post_thumbnail_meta[2]; ?>"
 						},
 
-						"description": "<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false)); ?>",
+						"description": "<?php echo $this->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false)); ?>",
 
 						"offers": {
 							"@type": "Offer",
@@ -166,7 +166,7 @@ if ( !trait_exists('Ecommerce') ){
 							"seller": {
 								"@type": "<?php echo $company_type; ?>",
 								"name": "<?php echo ( nebula_option('site_owner') )? nebula_option('site_owner') : get_bloginfo('name'); ?>",
-								"image": "<?php echo get_theme_file_uri('/images/logo.png'); ?>",
+								"image": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>",
 								"telephone": "+<?php echo nebula_option('phone_number'); ?>",
 								<?php if ( $company_type === 'LocalBusiness' ): ?>
 									"priceRange": "",

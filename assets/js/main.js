@@ -223,7 +223,7 @@ function isGoogleAnalyticsReady(){
 function nebulaBattery(){
 	nebula.user.client.device.battery = false;
 
-	if ( has(navigator, 'getBattery') ){
+	if ( 'getBattery' in navigator ){
 		navigator.getBattery().then(function(battery){
 			nebulaBatteryData(battery);
 			jQuery(battery).on('chargingchange levelchange', function(){
@@ -319,38 +319,70 @@ function tweetLinks(tweet){
 
 //Social sharing buttons
 function socialSharing(){
-    var encloc = encodeURI(window.location);
+    var encloc = encodeURI(window.location.href);
     var enctitle = encodeURI(document.title);
+
+    //Facebook
     jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Facebook');
 		nv('append', {'fb_share': encloc});
     });
+
+    //Twitter
     jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Twitter');
 		nv('append', {'twitter_share': encloc});
     });
+
+    //Google+
     jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Google+');
 		nv('append', {'gplus_share': encloc});
     });
+
+	//LinkedIn
     jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'LinkedIn');
 		nv('append', {'li_share': encloc});
     });
+
+	//Pinterest
     jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Pinterest');
 		nv('append', {'pin_share': encloc});
     });
+
+	//Email
     jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
 	    ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 	    ga('send', 'event', 'Social', 'Share', 'Email');
 		nv('append', {'email_share': encloc});
     });
+
+	//Web Share API
+	if ( 'share' in navigator ){
+		nebula.dom.document.on('click tap touch', '.webshare', function(){
+			oThis = jQuery(this);
+
+			navigator.share({
+				title: document.title,
+				text: nebula.post.excerpt,
+				url: window.location.href
+			}).then(function(){
+				ga('send', 'event', 'Social', 'Share', 'Web Share API');
+				oThis.addClass('success');
+			});
+
+			return false;
+		});
+	} else {
+		jQuery('.webshare').addClass('hidden');
+	}
 }
 
 
@@ -417,7 +449,7 @@ function eventTracking(){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
-		var btnText = jQuery(this).text();
+		var btnText = jQuery(this).val() || jQuery(this).text();
 		if ( jQuery.trim(btnText) === '' ){
 			btnText = '(Unknown)';
 		}
@@ -544,12 +576,12 @@ function eventTracking(){
 		if ( regexPattern.email.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Email' + emailPhone);
+			ga('send', 'event', 'Contact', 'Email (Copied): ' + emailPhone);
 			nv('append', {'contact_method': 'Email', 'contacted_email': emailPhone});
 		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Phone' + emailPhone);
+			ga('send', 'event', 'Contact', 'Phone (Copied): ' + emailPhone);
 			nv('append', {'contact_method': 'Phone', 'contacted_phone': emailPhone});
 		}
 
@@ -1793,6 +1825,16 @@ function cf7LocalStorage(){
 			}
 	    });
     });
+
+    //Clear localstorage when AJAX submit fails (but submit still succeeds)
+    if ( window.location.hash.indexOf('wpcf7') > 0 ){
+	    if ( jQuery(window.location.hash + ' .wpcf7-mail-sent-ok').length ){
+		    jQuery(window.location.hash + ' .wpcf7-textarea, ' + window.location.hash + ' .wpcf7-text').each(function(){
+				localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
+				jQuery(this).val('');
+			});
+	    }
+    }
 }
 
 //Form live (soft) validator
@@ -2470,22 +2512,20 @@ function errorMitigation(){
 
 //Convert img tags with class .svg to raw SVG elements
 function svgImgs(){
-	if ( jQuery('.inlinesvg').length || nebula.dom.body.hasClass('chrome') || nebula.dom.body.hasClass('firefox') ){ //Currently only supporting these- can remove conditional eventually
-		jQuery('img.svg').each(function(){
-	        var oThis = jQuery(this);
+	jQuery('img.svg').each(function(){
+        var oThis = jQuery(this);
 
-			if ( oThis.attr('src').indexOf('.svg') >= 1 ){
-		        jQuery.get(oThis.attr('src'), function(data){
-		            var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
-		            theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
-		            theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
-		            theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
-		            theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
-		            oThis.replaceWith(theSVG); //Replace image with new SVG
-		        }, 'xml');
-	        }
-	    });
-	}
+		if ( oThis.attr('src').indexOf('.svg') >= 1 ){
+	        jQuery.get(oThis.attr('src'), function(data){
+	            var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
+	            theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
+	            theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+	            theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
+	            theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
+	            oThis.replaceWith(theSVG); //Replace image with new SVG
+	        }, 'xml');
+        }
+    });
 }
 
 //Column height equalizer
@@ -3190,6 +3230,21 @@ function nebulaHTML5VideoTracking(){
 			}
 
 			oThis.on('play', function(){
+				if ( 'mediaSession' in navigator && oThis.attr('title') ){
+					navigator.mediaSession.metadata = new MediaMetadata({
+						title: oThis.attr('title'),
+						artist: oThis.attr('artist') || '',
+						album: oThis.attr('album') || '',
+/*
+						artwork: [{
+							src: 'https://dummyimage.com/512x512',
+							sizes: '512x512',
+							type: 'image/png'
+						}]
+*/
+					});
+				}
+
 				playAction = 'Play';
 				if ( !isInView(oThis) ){
 					playAction += ' (Not In View)';
@@ -3620,6 +3675,13 @@ function pauseAllVideos(force){
 	if ( typeof force === 'null' ){
 		force = false;
 	}
+
+	//Pause HTML5 Videos
+	jQuery('video').each(function(){
+		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
+			jQuery(this)[0].pause();
+		}
+	});
 
 	//Pause Youtube Videos
 	jQuery('iframe.youtube').each(function(){

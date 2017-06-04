@@ -41,8 +41,8 @@
 	<meta name="google-site-verification" content="<?php echo nebula()->option('google_search_console_verification'); ?>" />
 <?php endif; ?>
 
+<meta name="description" content="<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); //Yoast appears to not use meta description... Move it back into the below conditional when Yoast brings it back ?>" />
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): //If Yoast SEO is not active ?>
-	<meta name="description" content="<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
 <?php endif; ?>
 
@@ -97,9 +97,9 @@
 	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-16x16.png>; rel=preload; as=image', false);
 	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-32x32.png>; rel=preload; as=image', false);
 ?>
-<link rel="shortcut icon prefetch" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
-<link rel="shortcut icon prefetch" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
-<link rel="shortcut icon prefetch" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
 
 <?php if ( nebula()->get_browser('name') == 'Safari' ): //Safari ?>
 	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />

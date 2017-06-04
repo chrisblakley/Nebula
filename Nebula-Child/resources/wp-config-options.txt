@@ -1,6 +1,7 @@
 /*==========================
  Additional WP Config options
  Original credit: https://gist.github.com/bhubbard/8428583
+ More info: http://wpengineer.com/2382/wordpress-constants-overview/
  ===========================*/
 
 //DB Repair - /wp-admin/maint/repair.php
@@ -86,7 +87,7 @@ define('WP_CACHE', true); //WordPress Cache
 //Compression
 define('COMPRESS_CSS', true);
 define('COMPRESS_SCRIPTS', true);
-define('CONCATENATE_SCRIPTS', true);
+define('CONCATENATE_SCRIPTS', true); //This combines resources on the WP admin. It is true by default. Changing to false can help debugging admin scripts.
 define('ENFORCE_GZIP', true);
 
 

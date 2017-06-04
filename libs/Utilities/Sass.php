@@ -66,13 +66,14 @@ if ( !trait_exists('Sass') ){
 
 				//Check if all Sass files should be rendered
 				$force_all = false;
-				if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated'])) && nebula()->is_staff() ){
+				if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated']) || $this->get_data('need_sass_compile') === 'true') && nebula()->is_staff() ){
 					$force_all = true;
 				}
 
 				//Find and render .scss files at each location
 				foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
 					$this->render_scss($scss_location_name, $scss_location_paths, $force_all);
+					$this->update_data('need_sass_compile', 'false');
 				}
 
 				//If SCSS has not been rendered in 1 month, disable the option.

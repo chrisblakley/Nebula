@@ -27,12 +27,12 @@ if ( !trait_exists('Utilities') ){
 
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
-			$session_info = ( nebula()->is_debug() )? 'dbg.' : '';
-			$session_info .= ( nebula()->option('prototype_mode') )? 'prt.' : '';
+			$session_info = ( $this->is_debug() )? 'dbg.' : '';
+			$session_info .= ( $this->option('prototype_mode') )? 'prt.' : '';
 
-			if ( nebula()->is_client() ){
+			if ( $this->is_client() ){
 				$session_info .= 'cli.';
-			} elseif ( nebula()->is_dev() ){
+			} elseif ( $this->is_dev() ){
 				$session_info .= 'dev.';
 			}
 
@@ -51,7 +51,7 @@ if ( !trait_exists('Utilities') ){
 			$ga_cid = $this->ga_parse_cookie();
 
 			$site_live = '';
-			if ( !nebula()->is_site_live() ){
+			if ( !$this->is_site_live() ){
 				$site_live = '.n';
 			}
 
@@ -64,8 +64,8 @@ if ( !trait_exists('Utilities') ){
 				$ip = $_SERVER['REMOTE_ADDR'];
 			}
 
-			if ( nebula()->option('notableiplist') ){
-				$notable_ip_lines = explode("\n", nebula()->option('notableiplist'));
+			if ( $this->option('notableiplist') ){
+				$notable_ip_lines = explode("\n", $this->option('notableiplist'));
 				foreach ( $notable_ip_lines as $line ){
 					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
 					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $ip)) || $ip_info[0] == $ip ){ //If regex pattern and matches IP, or if direct match
@@ -107,7 +107,7 @@ if ( !trait_exists('Utilities') ){
 			if ( $override !== false ){return $override;}
 
 			if ( empty($strict) ){
-				$devIPs = explode(',', nebula()->option('dev_ip'));
+				$devIPs = explode(',', $this->option('dev_ip'));
 				if ( !empty($devIPs) ){
 					foreach ( $devIPs as $devIP ){
 						$devIP = trim($devIP);
@@ -129,7 +129,7 @@ if ( !trait_exists('Utilities') ){
 				if ( !empty($current_user->user_email) ){
 					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
-					$devEmails = explode(',', nebula()->option('dev_email_domain'));
+					$devEmails = explode(',', $this->option('dev_email_domain'));
 					foreach ( $devEmails as $devEmail ){
 						if ( trim($devEmail) == $current_user_domain ){
 							return true;
@@ -149,7 +149,7 @@ if ( !trait_exists('Utilities') ){
 			if ( $override !== false ){return $override;}
 
 			if ( empty($strict) ){
-				$clientIPs = explode(',', nebula()->option('client_ip'));
+				$clientIPs = explode(',', $this->option('client_ip'));
 				if ( !empty($clientIPs) ){
 					foreach ( $clientIPs as $clientIP ){
 						$clientIP = trim($clientIP);
@@ -171,7 +171,7 @@ if ( !trait_exists('Utilities') ){
 					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
 					//Check if the current user's email domain matches any of the client email domains from Nebula Options
-					$clientEmails = explode(',', nebula()->option('client_email_domain'));
+					$clientEmails = explode(',', $this->option('client_email_domain'));
 					foreach ( $clientEmails as $clientEmail ){
 						if ( trim($clientEmail) == $current_user_domain ){
 							return true;
@@ -186,7 +186,7 @@ if ( !trait_exists('Utilities') ){
 		//Check if the current IP address or logged-in user is a developer or client.
 		//Note: This does not account for user role (An admin could return false here). Check role separately.
 		public function is_staff($strict=false){
-			if ( nebula()->is_dev($strict) || nebula()->is_client($strict) ){
+			if ( $this->is_dev($strict) || $this->is_client($strict) ){
 				return true;
 			}
 
@@ -202,7 +202,7 @@ if ( !trait_exists('Utilities') ){
 			$very_strict = ( $strict > 1 )? $strict : false;
 			if ( array_key_exists('debug', $_GET) ){
 				if ( !empty($strict) ){
-					if ( nebula()->is_dev($very_strict) || nebula()->is_client($very_strict) ){
+					if ( $this->is_dev($very_strict) || $this->is_client($very_strict) ){
 						return true;
 					}
 					return false;
@@ -219,8 +219,8 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_is_site_live', false);
 			if ( $override !== false ){return $override;}
 
-			if ( nebula()->option('hostnames') ){
-				if ( strpos(nebula()->option('hostnames'), nebula()->url_components('hostname', home_url())) >= 0 ){
+			if ( $this->option('hostnames') ){
+				if ( strpos($this->option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){
 					return true;
 				}
 				return false;
@@ -239,8 +239,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Valid Hostname Regex
 		public function valid_hostname_regex($domains=null){
-			$domains = ( $domains )? $domains : array(nebula()->url_components('domain'));
-			$settingsdomains = ( nebula()->option('hostnames') )? explode(',', nebula()->option('hostnames')) : array(nebula()->url_components('domain'));
+			$domains = ( $domains )? $domains : array($this->url_components('domain'));
+			$settingsdomains = ( $this->option('hostnames') )? explode(',', $this->option('hostnames')) : array($this->url_components('domain'));
 			$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 			$fulldomains = preg_filter('/^/', '.*', $fulldomains);
 			$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
@@ -263,8 +263,16 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_nebula_url_components', false, $segment, $url);
 			if ( $override !== false ){return $override;}
 
+			//If URL is not passed, get the current page URL.
 			if ( !$url ){
-				$url = nebula()->requested_url();
+				$url = $this->requested_url();
+			}
+
+			//If it is not a valid URL, treat it as a relative path
+			$relative = false;
+			if ( !filter_var($url, FILTER_VALIDATE_URL) ){
+				$relative = true;
+				$url = 'http://example.com' . $url; //Prepend it with a temporary protocol, SLD, and TLD so it can be parsed (and removed later).
 			}
 
 			$url_components = parse_url($url);
@@ -284,12 +292,16 @@ if ( !trait_exists('Utilities') ){
 			switch ($segment){
 				case ('all'):
 				case ('href'):
-					return $url;
+					return str_replace('http://example.com', '', $url);
 					break;
 
 				case ('protocol'): //Protocol and Scheme are aliases and return the same value.
 				case ('scheme'): //Protocol and Scheme are aliases and return the same value.
 				case ('schema'):
+					if ( $relative ){
+						return false;
+					}
+
 					if ( isset($url_components['scheme']) ){
 						return $url_components['scheme'];
 					} else {
@@ -298,6 +310,10 @@ if ( !trait_exists('Utilities') ){
 					break;
 
 				case ('port'):
+					if ( $relative ){
+						return false;
+					}
+
 					if ( isset($url_components['port']) ){
 						return $url_components['port'];
 					} else {
@@ -323,6 +339,10 @@ if ( !trait_exists('Utilities') ){
 
 				case ('user'): //Returns the username from this type of syntax: https://username:password@gearside.com/
 				case ('username'):
+					if ( $relative ){
+						return false;
+					}
+
 					if ( isset($url_components['user']) ){
 						return $url_components['user'];
 					} else {
@@ -332,6 +352,10 @@ if ( !trait_exists('Utilities') ){
 
 				case ('pass'): //Returns the password from this type of syntax: https://username:password@gearside.com/
 				case ('password'):
+					if ( $relative ){
+						return false;
+					}
+
 					if ( isset($url_components['pass']) ){
 						return $url_components['pass'];
 					} else {
@@ -340,8 +364,12 @@ if ( !trait_exists('Utilities') ){
 					break;
 
 				case ('authority'):
+					if ( $relative ){
+						return false;
+					}
+
 					if ( isset($url_components['user'], $url_components['pass']) ){
-						return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . nebula()->url_components('port', $url);
+						return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . $this->url_components('port', $url);
 					} else {
 						return false;
 					}
@@ -349,12 +377,20 @@ if ( !trait_exists('Utilities') ){
 
 				case ('host'): //In http://something.example.com the host is "something.example.com"
 				case ('hostname'):
-					if( isset($url_components['host']) ){
+					if ( $relative ){
+						return false;
+					}
+
+					if ( isset($url_components['host']) ){
 						return $url_components['host'];
 					}
 					break;
 
 				case ('www') :
+					if ( $relative ){
+						return false;
+					}
+
 					if ( $host[0] == 'www' ){
 						return 'www';
 					} else {
@@ -364,6 +400,10 @@ if ( !trait_exists('Utilities') ){
 
 				case ('subdomain'):
 				case ('sub_domain'):
+					if ( $relative ){
+						return false;
+					}
+
 					if ( $host[0] != 'www' && $host[0] != $sld ){
 						return $host[0];
 					} else {
@@ -372,6 +412,10 @@ if ( !trait_exists('Utilities') ){
 					break;
 
 				case ('domain') : //In http://example.com the domain is "example.com"
+					if ( $relative ){
+						return false;
+					}
+
 					if( isset($domain[0]) ) {
 						return $domain[0];
 					}
@@ -380,6 +424,10 @@ if ( !trait_exists('Utilities') ){
 				case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"
 				case ('base_domain'):
 				case ('origin') :
+					if ( $relative ){
+						return false;
+					}
+
 					if( isset($url_components['scheme']) ){
 						return $url_components['scheme'] . '://' . $domain[0];
 					}
@@ -388,12 +436,20 @@ if ( !trait_exists('Utilities') ){
 				case ('sld') : //In example.com the sld is "example"
 				case ('second_level_domain'):
 				case ('second-level_domain'):
+					if ( $relative ){
+						return false;
+					}
+
 					return $sld;
 					break;
 
 				case ('tld') : //In example.com the tld is ".com"
 				case ('top_level_domain'):
 				case ('top-level_domain'):
+					if ( $relative ){
+						return false;
+					}
+
 					return $tld;
 					break;
 
@@ -406,15 +462,17 @@ if ( !trait_exists('Utilities') ){
 
 				case ('file'): //Filename will be just the filename/extension.
 				case ('filename'):
-					if ( nebula()->contains(basename($url_components['path']), array('.')) ){
+					if ( $this->contains(basename($url_components['path']), array('.')) ){
 						return basename($url_components['path']);
 					} else {
 						return false;
 					}
 					break;
 
+				case ('type'):
+				case ('filetype'):
 				case ('extension'): //The extension only (without ".")
-					if ( nebula()->contains(basename($url_components['path']), array('.')) ){
+					if ( $this->contains(basename($url_components['path']), array('.')) ){
 						$file_parts = explode('.', $url_components['path']);
 						return $file_parts[1];
 					} else {
@@ -423,7 +481,7 @@ if ( !trait_exists('Utilities') ){
 					break;
 
 				case ('path'): //Path should be just the path without the filename/extension.
-					if ( nebula()->contains(basename($url_components['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
+					if ( $this->contains(basename($url_components['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
 						return str_replace(basename($url_components['path']), '', $url_components['path']);
 					} else {
 						return $url_components['path'];
@@ -600,7 +658,7 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
-			$hostname = str_replace('.', '_', nebula()->url_components('hostname', $url));
+			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
 			if ( !empty($site_available_buffer) && !$nocache ){
@@ -635,10 +693,10 @@ if ( !trait_exists('Utilities') ){
 				return new WP_Error('broke', 'Requested URL is either empty or missing acceptable protocol.');
 			}
 
-			$hostname = str_replace('.', '_', nebula()->url_components('hostname', $url));
+			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			//Check if the resource was unavailable in the last 10 minutes
-			if ( !nebula()->is_available($url, false, true) ){
+			if ( !$this->is_available($url, false, true) ){
 				return new WP_Error('unavailable', 'This resource was unavailable within the last 10 minutes.');
 			}
 

@@ -52,7 +52,7 @@ if ( !trait_exists('Security') ){
 			add_action('wp_loaded', array($this, 'domain_prevention'));
 
 			//Disable the file editor for non-developers
-			if ( !nebula()->is_dev() ){
+			if ( !$this->is_dev() ){
 				define('DISALLOW_FILE_EDIT', true);
 			}
 		}
@@ -60,7 +60,7 @@ if ( !trait_exists('Security') ){
 		//Log template direct access attempts
 		public function log_direct_access_attempts(){
 			if ( array_key_exists('ndaat', $_GET) ){
-				ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . $_GET['ndaat']);
+				$this->ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . $_GET['ndaat']);
 				header('Location: ' . home_url('/'));
 				die('Error 403: Forbidden.');
 			}
@@ -108,18 +108,18 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_nebula_login_errors', false, $error);
 			if ( $override !== false ){return $override;}
 
-			if ( !nebula()->is_bot() ){
+			if ( !$this->is_bot() ){
 				$incorrect_username = '';
-				if ( nebula()->contains($error, array('The password you entered for the username')) ){
+				if ( $this->contains($error, array('The password you entered for the username')) ){
 					$incorrect_username_start = strpos($error, 'for the username ')+17;
 					$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
 					$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
 				}
 
 				if ( !empty($incorrect_username) ){
-					nebula()->ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
+					$this->ga_send_event('Login Error', 'Attempted User: ' . $incorrect_username, 'IP: ' . $_SERVER['REMOTE_ADDR']);
 				} else {
-					nebula()->ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
+					$this->ga_send_event('Login Error', strip_tags($error), 'IP: ' . $_SERVER['REMOTE_ADDR']);
 				}
 
 				$error = 'Login Error.';
@@ -158,54 +158,54 @@ if ( !trait_exists('Security') ){
 
 			//Google Page Speed
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
-				if ( nebula()->url_components('extension') != 'js' ){
+				if ( $this->url_components('extension') != 'js' ){
 					global $post;
-					ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0);
+					$this->ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0);
 				}
 			}
 
 			//Internet Archive Wayback Machine
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
 				global $post;
-				ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0);
+				$this->ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0);
 			}
 		}
 
 		//Check referrer for known spambots and blacklisted domains
 		public function domain_prevention(){
-			if ( nebula()->option('domain_blacklisting') ){
+			if ( $this->option('domain_blacklisting') ){
 				$blacklisted_domains = $this->get_domain_blacklist();
 
 				if ( count($blacklisted_domains) > 1 ){
-					if ( isset($_SERVER['HTTP_REFERER']) && nebula()->contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
-						ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 
-					if ( isset($_SERVER['REMOTE_HOST']) && nebula()->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
-						ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 
-					if ( isset($_SERVER['SERVER_NAME']) && nebula()->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
-						ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 
-					if ( isset($_SERVER['REMOTE_ADDR']) && nebula()->contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
-						ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
+					if ( isset($_SERVER['REMOTE_ADDR']) && $this->contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 				} else {
-					ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
+					$this->ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
 				}
 			}
 		}
@@ -214,15 +214,15 @@ if ( !trait_exists('Security') ){
 		public function get_domain_blacklist(){
 			$domain_blacklist_json_file = get_template_directory() . '/inc/data/domain_blacklist.txt';
 			$domain_blacklist = get_transient('nebula_domain_blacklist');
-			if ( empty($domain_blacklist) || nebula()->is_debug() ){ //If transient expired or is debug
-				$response = nebula()->remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
+			if ( empty($domain_blacklist) || $this->is_debug() ){ //If transient expired or is debug
+				$response = $this->remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
 				if ( !is_wp_error($response) ){
 					$domain_blacklist = $response['body'];
 				}
 
 				//If there was an error or empty response, try my Github repo
 				if ( is_wp_error($response) || empty($domain_blacklist) ){ //This does not check availability because it is the same hostname as above.
-					$response = nebula()->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/domain_blacklist.txt');
+					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/domain_blacklist.txt');
 					if ( !is_wp_error($response) ){
 						$domain_blacklist = $response['body'];
 					}
@@ -253,7 +253,7 @@ if ( !trait_exists('Security') ){
 					}
 				}
 			} else {
-				ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
+				$this->ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
 			}
 
 			//Add manual and user-added blacklisted domains

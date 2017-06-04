@@ -541,7 +541,7 @@ if ( !trait_exists('Admin') ){
 
 				$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
 				$this->update_data('version_legacy', 'false');
-				$this->render_scss(false, false, true); //Force render all Sass
+				$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
 			}
 		}
 

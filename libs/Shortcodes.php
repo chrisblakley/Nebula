@@ -230,7 +230,7 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			if ( empty($key) ){
-				$key = nebula()->option('google_browser_api_key');
+				$key = $this->option('google_browser_api_key');
 			}
 			if ( !empty($q) ){
 				$q = str_replace(' ', '+', $q);
@@ -289,7 +289,7 @@ if ( !trait_exists('Shortcodes') ){
 			} else {
 				$vimeo .= '<iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '" width="' . $width . ' height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
-				if ( nebula()->is_dev() ){
+				if ( $this->is_dev() ){
 					$vimeo .= '<script>console.warn("' . $vimeo_data['error'] . ' (via Vimeo shortcode)");</script>';
 				}
 			}
@@ -314,7 +314,7 @@ if ( !trait_exists('Shortcodes') ){
 			} else {
 				$youtube .= '<iframe class="no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility . '" width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $id . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe>';
 
-				if ( nebula()->is_dev() ){
+				if ( $this->is_dev() ){
 					$youtube .= '<script>console.warn("(' . $youtube_data['error'] . ' (via Youtube shortcode)");</script>';
 				}
 			}

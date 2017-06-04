@@ -191,7 +191,7 @@ if ( !trait_exists('Hubspot') ){
                         if ( strpos($response, 'error') != false ){ //There was an error
                             return false;
                         } elseif ( is_string($response) && $response == '' ){ //This API reponse is simply a 200 when it succeeds (empty string).
-                            nebula()->utilities->visitors->update_visitor(array('hubspot_vid' => $hubspot_vid), false); //Update visitor withour re-sending to Hubspot CRM
+                            $this->update_visitor(array('hubspot_vid' => $hubspot_vid), false); //Update visitor withour re-sending to Hubspot CRM
                             return $hubspot_vid;
                         }
                     } else {
@@ -200,7 +200,7 @@ if ( !trait_exists('Hubspot') ){
                             return false;
                         } else {
                             $response = (array) json_decode($response);
-                            nebula()->utilities->visitors->update_visitor(array('hubspot_vid' => $response['vid']), false); //Update visitor withour re-sending to Hubspot CRM
+                            $this->update_visitor(array('hubspot_vid' => $response['vid']), false); //Update visitor withour re-sending to Hubspot CRM
                             return $response['vid'];
                         }
                     }
@@ -214,7 +214,7 @@ if ( !trait_exists('Hubspot') ){
         //Set this to a variable to avoid multiple calls, then parse it like this: $hubspot_data['properties']['firstname']['value']
         public function get_hubspot_contact($vid=null, $property=''){
             if ( empty($vid) ){
-                $vid = nebula()->utilities->visitors->get_visitor_data('hubspot_vid');
+                $vid = $this->get_visitor_data('hubspot_vid');
                 if ( empty($vid) ){
                     return false;
                 }

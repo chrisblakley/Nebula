@@ -44,7 +44,6 @@ jQuery(function(){
 		checkDependents(); //Check all dependents
 		checkImportants();
 		jQuery('input').on('keyup change', function(){
-			console.log('input keyup or change');
 			checkDependents(jQuery(this));
 			checkImportants();
 		});

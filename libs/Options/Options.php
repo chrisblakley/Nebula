@@ -87,7 +87,7 @@ if ( !trait_exists('Options') ){
 		//Get the full Twitter URL for a user
 		public function twitter_url($username=false){
 			if ( empty($username) ){
-				$username = nebula()->option('twitter_username');
+				$username = $this->option('twitter_username');
 			}
 
 			if ( !empty($username) ){
@@ -99,7 +99,7 @@ if ( !trait_exists('Options') ){
 
 		//Register or return the requested Bootstrap file.
 		public function bootstrap($file=false){
-			if ( nebula()->option('bootstrap_version') === 'bootstrap3' ){
+			if ( $this->option('bootstrap_version') === 'bootstrap3' ){
 				//Bootstrap 3 (IE8+ Support)
 				if ( $file === 'css' ){
 					return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
@@ -110,12 +110,12 @@ if ( !trait_exists('Options') ){
 				} else {
 					return 'v3';
 				}
-			} elseif ( nebula()->option('bootstrap_version') === 'bootstrap4a5' ){
+			} elseif ( $this->option('bootstrap_version') === 'bootstrap4a5' ){
 				//Bootstrap 4 alpha 5 (IE9+ Support)
 				if ( $file === 'css' ){
 					return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
 				} elseif ( $file === 'js' ){
-					return nebula()->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', null, '4.0.0a5', true);
+					return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', null, '4.0.0a5', true);
 				} elseif ( $file === 'reboot' ){
 					return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap-reboot.min.css';
 				} else {
@@ -127,7 +127,7 @@ if ( !trait_exists('Options') ){
 			if ( $file === 'css' ){
 				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css', null, '4.0.0a6', 'all');
 			} elseif ( $file === 'js' ){
-				return nebula()->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', 'defer', null, '4.0.0a6', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', 'defer', null, '4.0.0a6', true);
 			} elseif ( $file === 'reboot' ){
 				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap-reboot.min.css';
 			} else {
@@ -142,8 +142,8 @@ if ( !trait_exists('Options') ){
 				'initialized' => '',
 				'scss_last_processed' => 0,
 				'next_version' => '',
-				'current_version' => nebula()->version('raw'),
-				'current_version_date' => nebula()->version('date'),
+				'current_version' => $this->version('raw'),
+				'current_version_date' => $this->version('date'),
 				'version_legacy' => 'false',
 				'users_status' => '',
 			);
@@ -325,7 +325,7 @@ if ( !trait_exists('Options') ){
 
 		//Get the "user friendly" default value for a Nebula Option
 		public function user_friendly_default($option){
-			$nebula_options_defaults = nebula()->default_options();
+			$nebula_options_defaults = $this->default_options();
 
 			if ( $nebula_options_defaults[$option] === '' ){
 				return 'None';

@@ -14,9 +14,6 @@ if ( !trait_exists('Optimization') ){
 			//Defer and Async specific scripts. This only works with registered/enqueued scripts!
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
 
-			//Preload enqueued style resources
-			add_filter('style_loader_tag', array($this, 'preload_enqueued_styles'), 10);
-
 			//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 			add_filter('style_loader_src', array($this, 'nebula_http2_link_preload_header'), 99, 1);
 			add_filter('script_loader_src', array($this, 'nebula_http2_link_preload_header'), 99, 1);
@@ -129,17 +126,14 @@ if ( !trait_exists('Optimization') ){
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		public function nebula_http2_link_preload_header($src){
+			if ( !$this->get_browser() == 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
 				if ( !$this->is_admin_page() && strpos($src, $this->url_components('sld')) > 0 ){ //If it is a local resource (and not in the admin section)
 					$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '?'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push
 				}
+			}
 
 		    return $src;
-		}
-
-		//Preload enqueued style resources
-		public function preload_enqueued_styles($tag){
-			return str_replace("rel='stylesheet'", "rel='stylesheet prefetch'", $tag);
 		}
 
 		//Determing if a page should be prepped using prefetch, preconnect, or prerender.
@@ -186,9 +180,9 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			$custom_preconnects = apply_filters('nebula_preconnect', $default_preconnects);
-			$preconnects = array_merge($custom_preconnects, array('//cdnjs.cloudflare.com'));
+			$preconnects = array_merge($custom_preconnects, array()); //'//cdnjs.cloudflare.com'
 			foreach ( $preconnects as $preconnect ){
-				echo '<link rel="dns-prefetch preconnect" href="' . $preconnect . '" />';
+				echo '<link rel="preconnect" href="' . $preconnect . '" />';
 			}
 
 			//Prefetch
@@ -196,7 +190,7 @@ if ( !trait_exists('Optimization') ){
 			$custom_prefetches = apply_filters('nebula_prefetches', $default_prefetches);
 			$prefetches = array_merge($custom_prefetches, array());
 			foreach ( $prefetches as $prefetch ){
-				echo '<link rel="preload prefetch" href="' . $prefetch . '" />';
+				echo '<link rel="prefetch" href="' . $prefetch . '" />';
 			}
 
 			//Prerender

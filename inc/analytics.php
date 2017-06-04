@@ -7,7 +7,7 @@
 ?>
 
 <?php if ( nebula()->option('ga_tracking_id') ): //Universal Google Analytics ?>
-	<link rel="prefetch" href="//www.google-analytics.com/analytics.js" />
+	<link rel="dns-prefetch" href="//www.google-analytics.com" />
 
 	<script>
 		window.GAready = false;

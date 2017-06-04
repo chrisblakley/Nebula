@@ -58,7 +58,7 @@ if ( !trait_exists('TemplateEngine') ){
 		public function plugins_templates($post_templates, $wp_theme, $post, $post_type){
 			$plugins_templates = array();
 
-			foreach ( nebula()->plugins as $plugin_name => $plugin_features ){
+			foreach ( $this->plugins as $plugin_name => $plugin_features ){
 				if ( isset($plugin_features['templates']) && is_array($plugin_features['templates']) ){
 					$files = (array) $this->scandir( $plugin_features['templates'], 'php', 1 );
 
@@ -138,7 +138,7 @@ if ( !trait_exists('TemplateEngine') ){
 				return $template;
 			} else {
 				//Search in all registered plugins (in reversed order) template folder to check if template exists
-				foreach ( array_reverse(nebula()->plugins) as $nebula_plugin => $nebula_plugin_features ){
+				foreach ( array_reverse($this->plugins) as $nebula_plugin => $nebula_plugin_features ){
 					if ( $nebula_plugin_features['templates'] ){
 						foreach ( $this->templates as $template_name ){
 							if ( file_exists($nebula_plugin_features['path'] . 'templates/' . $template_name) ){

@@ -40,12 +40,12 @@ trait Functions {
 		add_action('wp_head', array($this, 'console_warnings'));
 
 		//Create/Write a manifest JSON file
-		if ( is_writable(get_template_directory()) ){
-			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){ //@todo "Nebula" 0: filemtime(nebula_manifest_json_location()) isn't changing after writing file...
+		//if ( is_writable(get_template_directory()) ){
+			//if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){ //yolo uncomment this
 				add_action('init', array($this, 'manifest_json'));
 				add_action('admin_init', array($this, 'manifest_json'));
-			}
-		}
+			//}
+		//}
 
 		//Redirect to favicon to force-clear the cached version when ?favicon is added.
 		add_action('wp_loaded', array($this, 'favicon_cache'));
@@ -285,55 +285,36 @@ trait Functions {
 			"theme_color": "' . $this->sass_color('primary') . '",
 			"background_color": "#fff",
 			"gcm_sender_id": "' . $this->option('gcm_sender_id') . '",
-			"icons": [{
-				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-36x36.png",
-				"sizes": "36x36",
-				"type": "image/png"
-			}, {
-				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-48x48.png",
-				"sizes": "48x48",
-				"type": "image/png"
-			}, {
-				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-72x72.png",
-				"sizes": "72x72",
-				"type": "image/png"
-			}, {
-				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-96x96.png",
-				"sizes": "96x96",
-				"type": "image/png"
-			}, {
-				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-144x144.png",
-				"sizes": "144x144",
-				"type": "image/png"
-			}, {
-				"src": "' . get_theme_file_uri('/images/meta') . '/android-chrome-192x192.png",
-				"sizes": "192x192",
-				"type": "image/png"
-			}, {
-				"src": "' . get_theme_file_uri('/images/meta') . '/chrome-512x512.png",
-				"sizes": "512x512",
-				"type": "image/png"
-			}, {
-				"src": "' . get_theme_file_uri('/images/meta') . '/og-thumb.png",
-				"sizes": "1200x600",
-				"type": "image/png"
-			}],
 			"Scope": "/",
 			"start_url": "' . home_url() . '?utm_source=homescreen",
 			"display": "standalone",
 			"orientation": "portrait",
-			"splash_pages": null
-		}';
+			"splash_pages": null,
+			"icons": [';
+
+		//Loop through all meta images
+		$files = glob(get_theme_file_path('/assets/img/meta') . '/*.png');
+		foreach ( $files as $file ){
+			$filename = $this->url_components('filename', $file);
+			$dimensions = getimagesize($file);
+			$manifest_json .= '{
+				"src": "' . get_theme_file_uri('/assets/img/meta') . '/' . $filename . '",
+				"sizes": "' . $dimensions[0] . 'x' . $dimensions[1] . '",
+				"type": "image/png"
+			}, ';
+		}
+
+		$manifest_json = rtrim($manifest_json,', ') . ']}';
 
 		WP_Filesystem();
 		global $wp_filesystem;
 		$wp_filesystem->put_contents($this->manifest_json_location(false), $manifest_json);
 	}
 
-	//Redirect to favicon to force-clear the cached version when ?favicon is added.
+	//Redirect to favicon to force-clear the cached version when ?favicon is added to the URL.
 	public function favicon_cache(){
 		if ( array_key_exists('favicon', $_GET) ){
-			header('Location: ' . get_theme_file_uri('/images/meta') . '/favicon.ico');
+			header('Location: ' . get_theme_file_uri('/assets/img/meta') . '/favicon.ico');
 		}
 	}
 
@@ -595,6 +576,10 @@ trait Functions {
 			$data['text'] = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
 		}
 
+		//Strip Newlines
+		$data['text'] = str_replace(array("\r\n", "\r", "\n"), " ", $data['text']); //Replace newline characters (keep double quotes)
+		$data['text'] = preg_replace('/\s+/', ' ', $data['text']); //Replace multiple spaces with single space
+
 		//Strip Shortcodes
 		if ( $data['strip_shortcodes'] ){
 			$data['text'] = strip_shortcodes($data['text']);
@@ -800,7 +785,7 @@ trait Functions {
 		if ( has_post_thumbnail() ){
 			$featured_image = $this->get_thumbnail_src(get_the_post_thumbnail($post->ID, 'full'));
 		} else {
-			$featured_image = get_template_directory_uri() . '/images/meta/og-thumb.png'; //@TODO "Nebula" 0: This should probably be a square? Check the recommended dimensions.
+			$featured_image = get_template_directory_uri() . '/assets/img/meta/og-thumb.png'; //@TODO "Nebula" 0: This should probably be a square? Check the recommended dimensions.
 		}
 		?>
 		<div class="nebula-social-button pinterest-pin">
