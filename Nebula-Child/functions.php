@@ -78,7 +78,7 @@ add_action('admin_enqueue_scripts', 'register_nebula_child_scripts');
 function register_nebula_child_scripts(){
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
 	//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-	nebula()->register_script('nebula-child', get_stylesheet_directory_uri() . '/assets/js/child.js', 'defer', array('jquery', 'nebula-jquery_ui', 'nebula-main'), null, true); //main.js in the parent Nebula theme is defined as a dependant here.
+	nebula()->register_script('nebula-child', get_stylesheet_directory_uri() . '/assets/js/child.js', 'defer', array('jquery-core', 'nebula-jquery_ui', 'nebula-main'), null, true); //main.js in the parent Nebula theme is defined as a dependant here.
 }
 
 
