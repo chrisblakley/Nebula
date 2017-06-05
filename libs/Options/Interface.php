@@ -32,7 +32,7 @@
 		}
 	?>
 
-	<?php if ( isset($_SERVER['settings-updated']) && $_SERVER['settings-updated'] == 'true' ): ?>
+	<?php if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ): ?>
 	    <div class="updated notice is-dismissible">
 	        <p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
 	        <button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
@@ -398,6 +398,17 @@
 						<div class="row">
 							<div class="col-xl-8">
 								<div class="option-group">
+									<div class="form-group">
+										<label for="bootstrap_version">jQuery Version</label>
+										<select name="nebula_options[jquery_version]" id="jquery_version" class="form-control nebula-validate-select">
+											<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_version']); ?>>WordPress</option>
+											<option value="latest" <?php selected('latest', $nebula_options['jquery_version']); ?>>Latest</option>
+										</select>
+										<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use. (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
+										<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions. If you notice JavaScript bugs, try changing this back to the version bundled with WordPress.</p>
+										<p class="option-keywords">internet explorer old support plugins minor page speed impact</p>
+									</div>
+
 									<div class="form-group">
 										<label for="bootstrap_version">Bootstrap Version</label>
 										<select name="nebula_options[bootstrap_version]" id="bootstrap_version" class="form-control nebula-validate-select">

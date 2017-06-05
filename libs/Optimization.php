@@ -126,7 +126,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		public function nebula_http2_link_preload_header($src){
-			if ( !$this->get_browser() == 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
+			if ( $this->get_browser() != 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
 				if ( !$this->is_admin_page() && strpos($src, $this->url_components('sld')) > 0 ){ //If it is a local resource (and not in the admin section)
 					$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '?'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push

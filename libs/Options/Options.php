@@ -97,6 +97,17 @@ if ( !trait_exists('Options') ){
 			return false;
 		}
 
+		//Register the requested jQuery file
+		public function jquery(){
+			if ( $this->option('jquery_version') !== 'wordpress' && !$this->is_admin_page() ){
+				wp_deregister_script('jquery-core');
+
+				if ( $this->option('jquery_version') === 'latest' ){
+					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', null, null, '3.2.1', false);
+				}
+			}
+		}
+
 		//Register or return the requested Bootstrap file.
 		public function bootstrap($file=false){
 			if ( $this->option('bootstrap_version') === 'bootstrap3' ){
@@ -104,7 +115,7 @@ if ( !trait_exists('Options') ){
 				if ( $file === 'css' ){
 					return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
 				} elseif ( $file === 'js' ){
-					return nebula_register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', 'defer', null, '3.3.7', true);
+					return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', 'defer', null, '3.3.7', true);
 				} elseif ( $file === 'reboot' ){
 					return false;
 				} else {
@@ -204,6 +215,7 @@ if ( !trait_exists('Options') ){
 				'google_plus_url' => '',
 
 				//Functions Tab
+				'jquery_version' => 'wordpress',
 				'bootstrap_version' => 'latest',
 				'prototype_mode' => 0,
 				'wireframe_theme' => '',
