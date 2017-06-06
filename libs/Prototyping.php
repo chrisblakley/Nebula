@@ -36,11 +36,13 @@ if ( !trait_exists('Prototyping') ){
 		}
 
 		public function enqueue_nebula_wireframing(){
-			wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
-			$this->register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', 'defer', array('nebula-main'), null, true);
+			if ( $this->dev_phase() == 'wireframe' ){
+				wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
+				$this->register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', 'defer', array('nebula-main'), null, true);
 
-			wp_enqueue_style('nebula-wireframing');
-			wp_enqueue_script('nebula-wireframing');
+				wp_enqueue_style('nebula-wireframing');
+				wp_enqueue_script('nebula-wireframing');
+			}
 		}
 
 		//Add wireframing body class
@@ -122,11 +124,11 @@ if ( !trait_exists('Prototyping') ){
 				return false;
 			}
 
-			if ( isset($_SERVER['phase']) && $_SERVER['phase'] == 'wireframe' ){
+			if ( isset($_GET['phase']) && $_GET['phase'] == 'wireframe' ){
 				return 'wireframe';
 			}
 
-			if ( isset($_SERVER['phase']) && $_SERVER['phase'] == 'staging' ){
+			if ( isset($_GET['phase']) && $_GET['phase'] == 'staging' ){
 				return 'staging';
 			}
 

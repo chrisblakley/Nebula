@@ -506,12 +506,13 @@ if ( !trait_exists('Admin') ){
 					$this->update_data('next_version', 'INCOMPATIBLE');
 				}
 			} elseif ( current_user_can('manage_options') && is_child_theme() ){
-				//@TODO "Nebula" 0: does this need to happen every admin pageload? Maybe add a transient?
-				require(get_template_directory() . '/inc/vendor/theme-update-checker.php'); //Initialize the update checker library.
-				$theme_update_checker = new ThemeUpdateChecker(
-					'Nebula-master', //This should be the directory slug of the parent theme.
-					'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json' //Note: This file is updated via a plugin, not Nebula itself.
-				);
+				include(get_template_directory() . '/inc/vendor/theme-update-checker.php'); //Initialize the update checker library.
+				if ( class_exists('ThemeUpdateChecker') ){
+					$theme_update_checker = new ThemeUpdateChecker(
+						'Nebula-master', //This should be the directory slug of the parent theme.
+						'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json' //Note: This file is updated via a plugin, not Nebula itself.
+					);
+				}
 			}
 		}
 

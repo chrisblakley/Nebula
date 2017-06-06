@@ -235,7 +235,7 @@ trait Functions {
 			}
 
 			if ( $this->is_site_live() && $this->option('prototype_mode') ){
-				$console_warnings[] = array('warn', 'Prototype Mode is enabled!');
+				$console_warnings[] = array('warn', 'Prototype Mode is enabled (' . ucwords($this->dev_phase()) . ')!');
 			}
 
 			//If no Google Analytics tracking ID

@@ -15,8 +15,8 @@ if ( !trait_exists('Optimization') ){
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
 
 			//Use HTTP2 Server Push to push multiple CSS and JS resources at once
-			add_filter('style_loader_src', array($this, 'nebula_http2_link_preload_header'), 99, 1);
-			add_filter('script_loader_src', array($this, 'nebula_http2_link_preload_header'), 99, 1);
+			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1);
+			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1);
 
 			//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
@@ -88,48 +88,15 @@ if ( !trait_exists('Optimization') ){
 			return $tag;
 		}
 
-		//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
-		public function remove_script_version($src){
-			return remove_query_arg('ver', $src);
-		}
-
-		//Dequeue certain scripts
-		public function dequeues(){
-			$override = apply_filters('pre_nebula_dequeues', false);
-			if ( $override !== false ){return $override;}
-
-			if ( !is_admin() ){
-				//Styles
-				wp_deregister_style('contact-form-7'); //Contact Form 7 - Not sure specifically what it is styling, so removing it unless we decide we need it.
-				wp_dequeue_style('contact-form-7');
-
-				//Page specific dequeues
-				if ( is_front_page() ){
-					wp_deregister_style('thickbox'); //WP Core Thickbox - Override if thickbox type gallery IS used on the homepage.
-					wp_deregister_script('thickbox'); //WP Thickbox - Override if thickbox type gallery IS used on the homepage.
-				}
-			}
-		}
-
-		//Remove jQuery Migrate, but keep jQuery
-		public function remove_jquery_migrate($scripts){
-			if ( !is_admin() ){
-				$scripts->remove('jquery');
-				$scripts->add('jquery', false, array('jquery-core'), null);
-			}
-		}
-
-		//Override needing the Tether library for Bootstrap. If Tether is needed, it is dynamically loaded via main.js.
-		public function override_bootstrap_tether(){
-			echo '<script>window.Tether = function(){}</script>'; //Must be a function to bypass Bootstrap check.
-		}
-
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
-		public function nebula_http2_link_preload_header($src){
-			if ( $this->get_browser() != 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
-				if ( !$this->is_admin_page() && strpos($src, $this->url_components('sld')) > 0 ){ //If it is a local resource (and not in the admin section)
-					$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
-					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '?'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push
+		//@todo "Nebula" 0: Need to test this more before determining if its saving any time or not. On paper, it should speed up initial view, but can't cache resources for repeat view.
+		public function http2_server_push_header($src){
+			if ( !$this->is_admin_page() && 1==2 ){ //If not in the admin section
+				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
+				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If local file
+					if ( $this->get_browser() != 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
+						header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '?'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push
+					}
 				}
 			}
 
@@ -139,7 +106,8 @@ if ( !trait_exists('Optimization') ){
 		//Determing if a page should be prepped using prefetch, preconnect, or prerender.
 			//DNS-Prefetch = Resolve the DNS only to a domain.
 			//Preconnect = Resolve both DNS and TCP to a domain.
-			//Prefetch = Fully request a single resource and store it in cache until needed.
+			//Prefetch = Fully request a single resource and store it in cache until needed. Do not combine with preload!
+			//Preload = Fully request a single resource before it is needed. Do not combine with prefetch!
 			//Prerender = Render an entire page (useful for comment next page navigation). Use Audience > User Flow report in Google Analytics for better predictions.
 
 			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
@@ -179,8 +147,9 @@ if ( !trait_exists('Optimization') ){
 				$default_preconnects[] = '//api.hubapi.com';
 			}
 
+			//Preconnect
 			$custom_preconnects = apply_filters('nebula_preconnect', $default_preconnects);
-			$preconnects = array_merge($custom_preconnects, array()); //'//cdnjs.cloudflare.com'
+			$preconnects = array_merge($custom_preconnects, array());
 			foreach ( $preconnects as $preconnect ){
 				echo '<link rel="preconnect" href="' . $preconnect . '" />';
 			}
@@ -205,6 +174,41 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
+		//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
+		public function remove_script_version($src){
+			return remove_query_arg('ver', $src);
+		}
+
+		//Dequeue certain scripts
+		public function dequeues(){
+			$override = apply_filters('pre_nebula_dequeues', false);
+			if ( $override !== false ){return $override;}
+
+			if ( !is_admin() ){
+				//Removing CF7 styles in favor of Bootstrap + Nebula
+				wp_deregister_style('contact-form-7');
+				wp_dequeue_style('contact-form-7');
+
+				//Page specific dequeues
+				if ( is_front_page() ){
+					wp_deregister_style('thickbox'); //WP Core Thickbox - Override if thickbox type gallery IS used on the homepage.
+					wp_deregister_script('thickbox'); //WP Thickbox - Override if thickbox type gallery IS used on the homepage.
+				}
+			}
+		}
+
+		//Remove jQuery Migrate, but keep jQuery
+		public function remove_jquery_migrate($scripts){
+			if ( !is_admin() ){
+				$scripts->remove('jquery');
+				$scripts->add('jquery', false, array('jquery-core'), null);
+			}
+		}
+
+		//Override needing the Tether library for Bootstrap. If Tether is needed, it is dynamically loaded via main.js.
+		public function override_bootstrap_tether(){
+			echo '<script>window.Tether = function(){}</script>'; //Must be a function to bypass Bootstrap check.
+		}
 
 		//Force settings within plugins
 		public function plugin_force_settings(){

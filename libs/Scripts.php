@@ -26,20 +26,20 @@ if ( !trait_exists('Scripts') ){
 		public function register_scripts(){
 			// Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
+			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.0/jquery.mmenu.all.css', null, '6.1.0', 'all'); //@todo "Nebula" 0: This is causing a weird slowdown on the homepage on WebPageTest.org when testing using the Oregon server... Not a huge issue, but curious: https://github.com/chrisblakley/Nebula/issues/1313
+			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
+			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, null);
+			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, null);
 			if ( $this->option('google_font_url') ){
 				wp_register_style('nebula-google_font', $this->option('google_font_url'), array(), null, 'all');
 			}
 			$this->bootstrap('css');
 			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
-			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.0/jquery.mmenu.all.css', null, '6.1.0', 'all'); //@todo "Nebula" 0: This is causing a weird slowdown on the homepage on WebPageTest.org when testing using the Oregon server... Not a huge issue, but curious: https://github.com/chrisblakley/Nebula/issues/1313
 			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/css/jquery.dataTables.min.css', null, '1.10.15', 'all'); //Datatables is called via main.js only as needed.
 			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.min.css', null, '1.7.0', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, null);
 			wp_register_style('nebula-flags', get_template_directory_uri() . '/assets/css/flags.css', null, null);
-			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
-			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, null);
-			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, null);
 
 			// Scripts
 			//Use CDNJS to pull common libraries: http://cdnjs.com/
@@ -186,14 +186,14 @@ if ( !trait_exists('Scripts') ){
 		//Enqueue frontend scripts
 		function enqueue_scripts($hook){
 			//Stylesheets
+			wp_enqueue_style('nebula-bootstrap');
+			wp_enqueue_style('nebula-mmenu');
+			wp_enqueue_style('nebula-main');
+			wp_enqueue_style('nebula-font_awesome');
 			if ( $this->option('google_font_url') ){
 				wp_enqueue_style('nebula-google_font');
 			}
-			wp_enqueue_style('nebula-bootstrap');
-			wp_enqueue_style('nebula-mmenu');
 			wp_enqueue_style('nebula-jquery_ui');
-			wp_enqueue_style('nebula-font_awesome');
-			wp_enqueue_style('nebula-main');
 
 			//Scripts
 			wp_enqueue_script('jquery-core');

@@ -377,7 +377,9 @@
 
 		//Initialize event tracking listeners
 		ga(function(){
-			window.GAready = true;
+			window.GAready = true; //Set a global boolean variable
+			document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)
+
 			if ( typeof initEventTracking === 'function' ){
 				initEventTracking();
 			}
