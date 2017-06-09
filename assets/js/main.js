@@ -445,7 +445,7 @@ function initEventTracking(){
 //Google Analytics Universal Analytics Event Trackers
 function eventTracking(){
 	//Btn Clicks
-	nebula.dom.document.on('mousedown touch tap', ".btn", function(e){
+	nebula.dom.document.on('mousedown touch tap', "button, .btn", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
@@ -456,6 +456,14 @@ function eventTracking(){
 
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 		ga('send', 'event', 'Button Click', btnText, jQuery(this).attr('href'));
+	});
+
+	//Generic Form Submissions
+	//This event will be a duplicate if proper event tracking is setup on each form, but serves as a safety net.
+	//It is not recommended to use this event for goal tracking unless absolutely necessary!
+	nebula.dom.document.on('submit', 'form', function(){
+		var formID = jQuery(this).attr('id') || 'Unknown ID';
+		ga('send', 'event', 'Generic Form', 'Submit', formID);
 	});
 
 	//PDF View/Download

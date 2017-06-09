@@ -11,6 +11,7 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/TemplateEngine.php';
 	require_once get_template_directory() . '/libs/Scripts.php';
 	require_once get_template_directory() . '/libs/Options/Options.php';
+	require_once get_template_directory() . '/libs/Options/Customizer.php';
 	require_once get_template_directory() . '/libs/Utilities/Utilities.php';
 	require_once get_template_directory() . '/libs/Security.php';
 	require_once get_template_directory() . '/libs/Optimization.php';
@@ -27,6 +28,7 @@ if ( !class_exists('Nebula') ){
 		use TemplateEngine { TemplateEngine::hooks as TemplateEngineHooks;}
 		use Scripts { Scripts::hooks as ScriptHooks; }
 		use Options { Options::hooks as OptionsHooks; }
+		use Customizer { Customizer::hooks as CustomizerHooks; }
 		use Utilities { Utilities::hooks as UtilitiesHooks; }
 		use Security { Security::hooks as SecurityHooks; }
 		use Optimization { Optimization::hooks as OptimizationHooks; }
@@ -73,10 +75,10 @@ if ( !class_exists('Nebula') ){
 		//Run action and filter hooks
 		private function hooks(){
 			//Start a session
-			add_action('init', array( $this, 'session_start' ), 1);
+			add_action('init', array($this, 'session_start'), 1);
 
 			//Adjust the content width when the full width page template is being used
-			add_action('template_redirect', array( $this, 'set_content_width' ) );
+			add_action('template_redirect', array($this, 'set_content_width'));
 
 			$this->TemplateEngineHooks(); // Register TemplateEngine hooks
 			$this->ScriptHooks(); // Register Script hooks
@@ -84,6 +86,7 @@ if ( !class_exists('Nebula') ){
 			$this->UtilitiesHooks(); // Register Utilities hooks
 			$this->SecurityHooks(); // Register Security hooks
 			$this->OptimizationHooks(); // Register Optimization hooks
+			$this->CustomizerHooks(); //Register Customizer hooks
 			$this->FunctionsHooks(); // Register Functions hooks
 			$this->ShortcodesHooks(); // Register Shortcodes hooks
 

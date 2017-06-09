@@ -12,21 +12,29 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<div id="hero-section" class="nebulashadow inner-top inner-bottom">
-	<div class="nebula-color-overlay"></div>
+<?php if ( !get_theme_mod('nebula_hide_hero') ): ?>
+	<div id="hero-section" class="nebulashadow inner-top inner-bottom">
+		<div class="nebula-color-overlay"></div>
 
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<h1><?php echo get_bloginfo('name'); ?></h1>
-				<?php if ( get_bloginfo('description') != '' ): ?>
-					<h2><?php echo get_bloginfo('description'); ?></h2>
-				<?php endif; ?>
-				<?php echo nebula()->hero_search(); ?>
-			</div><!--/col-->
-		</div><!--/row-->
-	</div><!--/container-->
-</div><!--/hero-section-->
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<?php if ( get_bloginfo('name') && !get_theme_mod('nebula_hide_blogname') ): ?>
+						<h1><?php echo get_bloginfo('name'); ?></h1>
+					<?php endif; ?>
+
+					<?php if ( get_bloginfo('description') != '' && !get_theme_mod('nebula_hide_blogdescription') ): ?>
+						<h2><?php echo get_bloginfo('description'); ?></h2>
+					<?php endif; ?>
+
+					<?php if ( !get_theme_mod('nebula_hide_hero_search') ): ?>
+						<?php echo nebula()->hero_search(); ?>
+					<?php endif; ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div><!--/container-->
+	</div><!--/hero-section-->
+<?php endif; ?>
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
