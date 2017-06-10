@@ -1684,16 +1684,17 @@ function cf7Functions(){
 	formStarted = {};
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		formID = jQuery(this).closest('div.wpcf7').attr('id');
+		thisField = jQuery(this).attr('name') || jQuery(this).attr('id') || 'Unknown';
 
 		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 			ga('set', gaCustomMetrics['formStarts'], 1);
-			ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + jQuery(this).attr('id') + ')');
+			ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + thisField + ')');
 			nv('increment', 'contact_funnel_started');
 			formStarted[formID] = true;
 		}
 
-		nebulaTimer(formID, 'start', jQuery(this).attr('name'));
+		nebulaTimer(formID, 'start', thisField);
 		nv('append', {'abandoned_form': formID}); //Temporarily prep this value and remove on successful submission
 
 		//Individual form field timings
@@ -1720,13 +1721,13 @@ function cf7Functions(){
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7invalid', function(e){
-		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-spam');
+		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-spam');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
-		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.target.id);
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.detail.contactFormId);
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 		nv('increment', 'contact_funnel_submit_invalid');
-		nv('append', {'form_submission_error': 'Validation (' + e.target.id + ')'});
+		nv('append', {'form_submission_error': 'Validation (' + e.detail.contactFormId + ')'});
 	});
 
 	//General HTML5 validation errors
@@ -1738,44 +1739,44 @@ function cf7Functions(){
 
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
-		var formTime = nebulaTimer(e.target.id, 'end');
+		var formTime = nebulaTimer(e.detail.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
-		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.target.id);
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.detail.contactFormId);
 		nv('increment', 'contact_funnel_submit_spam');
-		nv('append', {'form_submission_error': 'Spam (' + e.target.id + ')'});
+		nv('append', {'form_submission_error': 'Spam (' + e.detail.contactFormId + ')'});
 	});
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7mailfailed', function(e){
-		var formTime = nebulaTimer(e.target.id, 'end');
+		var formTime = nebulaTimer(e.detail.id, 'end');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Failed)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
-		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.target.id);
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.detail.contactFormId);
 		nv('increment', 'contact_funnel_submit_failed');
-		nv('append', {'form_submission_error': 'Failed (' + e.target.id + ')'});
+		nv('append', {'form_submission_error': 'Failed (' + e.detail.contactFormId + ')'});
 	});
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
 	nebula.dom.document.on('wpcf7mailsent', function(e){
-		formStarted[e.target.id] = false; //Reset abandonment tracker for this form.
+		formStarted[e.detail.id] = false; //Reset abandonment tracker for this form.
 
-		var formTime = nebulaTimer(e.target.id, 'end');
-		if ( !jQuery('#' + e.target.id).hasClass('.ignore-form') && !jQuery('#' + e.target.id).find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length ){
+		var formTime = nebulaTimer(e.detail.id, 'end');
+		if ( !jQuery('#' + e.detail.id).hasClass('.ignore-form') && !jQuery('#' + e.detail.id).find('.ignore-form').length && !jQuery('#' + e.detail.id).parents('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
 		}
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Success)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + e.target.id + ')', Math.round(formTime), 'Initial form focus until valid submit');
-		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + e.target.id);
+		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + e.detail.contactFormId + ')', Math.round(formTime), 'Initial form focus until valid submit');
+		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + e.detail.contactFormId);
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
 		nv('increment', 'contact_funnel_submit_success');
-		nv('append', {'form_submission_success': e.target.id});
-		nv('remove', {'abandoned_form': e.target.id});
+		nv('append', {'form_submission_success': e.detail.contactFormId});
+		nv('remove', {'abandoned_form': e.detail.contactFormId});
 
 		//Clear localstorage on submit success
-		jQuery('#' + e.target.id + ' .wpcf7-textarea, #' + e.target.id + ' .wpcf7-text').each(function(){
+		jQuery('#' + e.detail.id + ' .wpcf7-textarea, #' + e.detail.id + ' .wpcf7-text').each(function(){
 			localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 		});
 
@@ -1786,15 +1787,15 @@ function cf7Functions(){
 
 	//CF7 Submit (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
 	nebula.dom.document.on('wpcf7submit', function(e){
-		var formTime = nebulaTimer(e.target.id, 'lap', 'wpcf7-submit-attempt');
+		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
 		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Attempt)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.target.id].laps + ' inputs)');
+		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.target.id); //This event is required for the notable form metric!
+		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.detail.contactFormId); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
 
-		jQuery('#' + e.target.id).find('button#submit').removeClass('active');
+		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
 	});
 }
 
@@ -3234,6 +3235,7 @@ function nebulaHTML5VideoTracking(){
 					'seen': [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
 					'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
 					'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+					'pausedYet': false, //If this video has been paused yet by the user.
 				};
 			}
 
@@ -3267,7 +3269,7 @@ function nebulaHTML5VideoTracking(){
 				ga('set', gaCustomMetrics['videoStarts'], 1);
 		        ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 		        ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		        ga('send', 'event', 'Videos', playAction, videoTitle, {'nonInteraction': videoData[id].autoplay});
+		        ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(videoData[id].current), {'nonInteraction': videoData[id].autoplay});
 		        if ( !videoData[id].autoplay ){
 			        nv('append', {'video_play': videoTitle});
 		        }
@@ -3294,7 +3296,7 @@ function nebulaHTML5VideoTracking(){
 							engagedAction += ' (Autoplay)';
 						}
 
-						ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
+						ga('send', 'event', 'Videos', engagedAction, videoTitle, Math.round(videoData[id].current), {'nonInteraction': true});
 						nv('append', {'video_engaged': videoTitle});
 						videoData[id].engaged = true;
 						nebula.dom.document.trigger('nebula_engaged_video', id);
@@ -3307,8 +3309,14 @@ function nebulaHTML5VideoTracking(){
 				ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 				ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
 				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Videos', 'Pause', videoTitle, Math.round(videoData[id].watched));
-				ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
+
+				if ( !videoData[id].pausedYet ){
+					ga('send', 'event', 'Videos', 'First Pause', videoTitle, Math.round(videoData[id].current));
+					videoData[id].pausedYet = true;
+				}
+
+				ga('send', 'event', 'Videos', 'Paused', videoTitle, Math.round(videoData[id].current));
+				ga('send', 'timing', 'Videos', 'Paused', Math.round(videoData[id].current*1000), videoTitle);
 				nv('append', {'video_paused': videoTitle});
 				nebula.dom.document.trigger('nebula_paused_video', id);
 			});
@@ -3360,9 +3368,9 @@ function nebulaHTML5VideoTracking(){
 					endedAction += ' (Autoplay)';
 				}
 
-				ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
+				ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(videoData[id].current), {'nonInteraction': true});
 
-				ga('send', 'timing', 'Videos', 'Ended', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
+				ga('send', 'timing', 'Videos', 'Ended', Math.round(videoData[id].current*1000), videoTitle);
 				nv('append', {'video_ended': videoTitle});
 				nebula.dom.document.trigger('nebula_ended_video', id);
 			});
@@ -3396,12 +3404,26 @@ function onYouTubeIframeAPIReady(e){
 					'onError': onPlayerError
 				}
 			});
+
+			nebula.dom.document.trigger('nebula_youtube_players_created');
 		} else {
-			players.youtube[youtubeiframeID] = 'JavaScript API is not enabled for this Youtube video.';
+			console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, add it to the iframe.');
+
+			//JS API not enabled for this video. Reload the iframe with the correct parameter.
+			jQuery(this).attr('src', jQuery(this).attr('src') + '&enablejsapi=1').on('load', function(){
+				players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, { //YT.Player parameter must match the iframe ID!
+					events: {
+						'onReady': onPlayerReady,
+						'onStateChange': onPlayerStateChange,
+						'onError': onPlayerError
+					}
+				});
+
+				nebula.dom.document.trigger('nebula_youtube_players_created');
+			});
 		}
 	});
 
-	nebula.dom.document.trigger('nebula_youtube_players_created');
 	pauseFlag = false;
 }
 function onPlayerError(e){
@@ -3416,11 +3438,10 @@ function onPlayerReady(e){
 	}
 
 	var videoInfo = e.target.getVideoData();
-	var id = videoInfo.video_id;
-	videoData[id] = {
+	videoData[videoInfo.video_id] = {
 		'platform': 'youtube', //The platform the video is hosted using.
 		'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
-		'player': players.youtube[id], //The player ID of this video. Can access the API here.
+		'player': players.youtube[videoInfo.video_id], //The player ID of this video. Can access the API here.
 		'autoplay': jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
 		'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
 		'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
@@ -3428,6 +3449,7 @@ function onPlayerReady(e){
 		'engaged': false, //Whether the viewer has watched enough of the video to be considered engaged.
 		'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
 		'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+		'pausedYet': false, //If this video has been paused yet by the user.
 	};
 }
 function onPlayerStateChange(e){
@@ -3451,7 +3473,7 @@ function onPlayerStateChange(e){
 			playAction += ' (Autoplay)';
 		}
 
-        ga('send', 'event', 'Videos', playAction, videoInfo.title);
+        ga('send', 'event', 'Videos', playAction, videoInfo.title, Math.round(videoData[id].current));
 
         nv('append', {'video_play': videoInfo.title});
         nebula.dom.document.trigger('nebula_playing_video', videoInfo);
@@ -3472,7 +3494,7 @@ function onPlayerStateChange(e){
 					if ( videoData[id].autoplay ){
 						engagedAction += ' (Autoplay)';
 					}
-					ga('send', 'event', 'Videos', engagedAction, videoInfo.title, {'nonInteraction': true});
+					ga('send', 'event', 'Videos', engagedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
 
 					nv('append', {'video_engaged': videoInfo.title});
 					videoData[id].engaged = true;
@@ -3482,7 +3504,7 @@ function onPlayerStateChange(e){
 		}, updateInterval);
     }
     if ( e.data === YT.PlayerState.ENDED ){
-        clearTimeout(youtubePlayProgress);
+        clearInterval(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoCompletions'], 1);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
         ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
@@ -3497,19 +3519,24 @@ function onPlayerStateChange(e){
 			endedAction += ' (Autoplay)';
 		}
 
-        ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].watched/1000), {'nonInteraction': true});
-
-        ga('send', 'timing', 'Videos', 'Ended', videoData[id].watched*1000, videoInfo.title); //Amount of time watched (can exceed video duration).
+        ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
+        ga('send', 'timing', 'Videos', 'Ended', videoData[id].current*1000, videoInfo.title);
         nv('append', {'video_ended': videoInfo.title});
         nebula.dom.document.trigger('nebula_ended_video', videoInfo);
     } else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
-        clearTimeout(youtubePlayProgress);
+        clearInterval(youtubePlayProgress);
         ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
         ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
         ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
         ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-        ga('send', 'event', 'Videos', 'Pause', videoInfo.title, Math.round(videoData[id].watched));
-        ga('send', 'timing', 'Videos', 'Paused (Watched)', videoData[id].watched*1000, videoInfo.title); //Amount of time watched, not the timestamp of when paused!
+
+		if ( !videoData[id].pausedYet ){
+			ga('send', 'event', 'Videos', 'First Pause', videoInfo.title, Math.round(videoData[id].current));
+			videoData[id].pausedYet = true;
+		}
+
+        ga('send', 'event', 'Videos', 'Paused', videoInfo.title, Math.round(videoData[id].current));
+        ga('send', 'timing', 'Videos', 'Paused', videoData[id].current*1000, videoInfo.title);
         nv('append', {'video_paused': videoInfo.title});
         nebula.dom.document.trigger('nebula_paused_video', videoInfo);
         pauseFlag = false;
@@ -3519,16 +3546,16 @@ function onPlayerStateChange(e){
 function nebulaVimeoTracking(){
 	//Load the Vimeo API script (froogaloop) remotely (with local backup)
 	if ( jQuery('iframe[src*="vimeo"]').length ){
-        jQuery.getScript('https://f.vimeocdn.com/js/froogaloop2.min.js').done(function(){
+        jQuery.getScript('https://player.vimeo.com/api/player.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'froogaloop (remote) could not be loaded.', {'nonInteraction': true});
-			nv('append', {'js_errors': 'froogaloop (remote) could not be loaded'});
-			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/froogaloop.min.js').done(function(){
+			ga('send', 'event', 'Error', 'JS Error', 'Vimeo player.js (remote) could not be loaded.', {'nonInteraction': true});
+			nv('append', {'js_errors': 'Vimeo player.js (remote) could not be loaded'});
+			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/player.js').done(function(){
 				createVimeoPlayers();
 			}).fail(function(){
-				ga('send', 'event', 'Error', 'JS Error', 'froogaloop (local) could not be loaded.', {'nonInteraction': true});
-				nv('append', {'js_errors': 'froogaloop (local) could not be loaded'});
+				ga('send', 'event', 'Error', 'JS Error', 'Vimeo player.js (local) could not be loaded.', {'nonInteraction': true});
+				nv('append', {'js_errors': 'Vimeo player.js (local) could not be loaded'});
 			});
 		});
 	}
@@ -3542,16 +3569,15 @@ function nebulaVimeoTracking(){
 				jQuery(this).attr('id', vimeoiframeID);
 			}
 
-			players.vimeo[vimeoiframeID] = $f(vimeoiframeID);
-			players.vimeo[vimeoiframeID].addEvent('ready', function(id){
-			    players.vimeo[id].addEvent('play', vimeoPlay);
-			    players.vimeo[id].addEvent('pause', vimeoPause);
-			    players.vimeo[id].addEvent('seek', vimeoSeek);
-			    players.vimeo[id].addEvent('finish', vimeoFinish);
-			    players.vimeo[id].addEvent('playProgress', vimeoPlayProgress);
+			players.vimeo[vimeoiframeID] = new Vimeo.Player(jQuery(this));
+			players.vimeo[vimeoiframeID].on('loaded', vimeoReady);
+		    players.vimeo[vimeoiframeID].on('play', vimeoPlay);
+		    players.vimeo[vimeoiframeID].on('timeupdate', vimeoTimeUpdate);
+		    players.vimeo[vimeoiframeID].on('pause', vimeoPause);
+		    players.vimeo[vimeoiframeID].on('seeked', vimeoSeeked);
+		    players.vimeo[vimeoiframeID].on('ended', vimeoEnded);
 
-			    nebula.dom.document.trigger('nebula_vimeo_players_created', id);
-			});
+		    nebula.dom.document.trigger('nebula_vimeo_players_created', vimeoiframeID);
 		});
 
 		if ( typeof videoProgress === 'undefined' ){
@@ -3559,66 +3585,78 @@ function nebulaVimeoTracking(){
 		}
 	}
 
-	function vimeoPlay(data, id){
-	    var videoTitle = id.replace(/-/g, ' ');
+	function vimeoReady(data){
+		videoData[data.id] = {
+			'platform': 'vimeo', //The platform the video is hosted using.
+			'player': players.vimeo[data.id], //The player ID of this video. Can access the API here.
+			'autoplay': jQuery(players.vimeo[data.id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
+			'current': 0, //The current position of the video. Units: Seconds
+			'percent': 0, //The percent of the current position. Multiply by 100 for actual percent.
+			'engaged': false, //Whether the viewer has watched enough of the video to be considered engaged.
+			'seeker': false, //Whether the viewer has seeked through the video at least once.
+			'seen': [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+			'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+			'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+			'pausedYet': false, //If this video has been paused yet by the user.
+		};
+
+		//Duration
+		players.vimeo[data.id].getDuration().then(function(duration){
+			videoData[data.id].duration = duration; //The total duration of the video. Units: Seconds
+		});
+
+		//Title
+		players.vimeo[data.id].getVideoTitle().then(function(title){
+			videoData[data.id].title = title; //The title of the video
+		});
+	}
+
+	function vimeoPlay(data){
+		var id = jQuery(this.element).attr('id');
+	    var videoTitle = videoData[id].title;
 	    ga('set', gaCustomMetrics['videoStarts'], 1);
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 	    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
 	    playAction = 'Play';
-		if ( !isInView(jQuery('#' + id)) ){
+		if ( !isInView(jQuery(this)) ){
 			playAction += ' (Not In View)';
 		}
 
-		if ( jQuery(players.vimeo[id].element).attr('src').indexOf('autoplay=1') > 0 ){
+		if ( jQuery(this).attr('src').indexOf('autoplay=1') > 0 ){
 			playAction += ' (Autoplay)';
 		}
 
-	    ga('send', 'event', 'Videos', playAction, videoTitle);
-
+	    ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(data.seconds));
 	    nv('append', {'video_play': videoTitle});
 	    nebula.dom.document.trigger('nebula_playing_video', id);
 	}
 
-	function vimeoPlayProgress(data, id){
-		var videoTitle = id.replace(/-/g, ' ');
-		if ( typeof videoData[id] === 'undefined' ){
-		    videoData[id] = {
-				'platform': 'vimeo', //The platform the video is hosted using.
-				'player': players.vimeo[id], //The player ID of this video. Can access the API here.
-				'autoplay': jQuery(players.vimeo[id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
-				'duration': data.duration, //The total duration of the video. Units: Seconds
-				'current': data.seconds, //The current position of the video. Units: Seconds
-				'percent': data.percent, //The percent of the current position. Multiply by 100 for actual percent.
-				'engaged': false, //Whether the viewer has watched enough of the video to be considered engaged.
-				'seeker': false, //Whether the viewer has seeked through the video at least once.
-				'seen': [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
-				'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-				'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-			};
-	    } else {
-			videoData[id].duration = data.duration;
-			videoData[id].current = data.seconds;
-			videoData[id].percent = data.percent;
+	function vimeoTimeUpdate(data){
+		var id = jQuery(this.element).attr('id');
+	    var videoTitle = videoData[id].title;
 
-			//Determine watched percent by adding current percents to an array, then count the array!
-			nowSeen = Math.ceil(data.percent*100);
-			if ( videoData[id].seen.indexOf(nowSeen) < 0 ){
-				videoData[id].seen.push(nowSeen);
-			}
-			videoData[id].watchedPercent = videoData[id].seen.length;
-			videoData[id].watched = (videoData[id].seen.length/100)*videoData[id].duration; //Roughly calculate time watched based on percent seen
-	    }
+		videoData[id].duration = data.duration;
+		videoData[id].current = data.seconds;
+		videoData[id].percent = data.percent;
+
+		//Determine watched percent by adding current percents to an array, then count the array!
+		nowSeen = Math.ceil(data.percent*100);
+		if ( videoData[id].seen.indexOf(nowSeen) < 0 ){
+			videoData[id].seen.push(nowSeen);
+		}
+		videoData[id].watchedPercent = videoData[id].seen.length;
+		videoData[id].watched = (videoData[id].seen.length/100)*videoData[id].duration; //Roughly calculate time watched based on percent seen
 
 		if ( videoData[id].watchedPercent > 25 && !videoData[id].engaged ){
-			if ( isInView(jQuery(players.vimeo[id].element)) ){
+			if ( isInView(jQuery(this.element)) ){
 				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
 
 				engagedAction = 'Engaged';
 				if ( videoData[id].autoplay ){
 					engagedAction += ' (Autoplay)';
 				}
-				ga('send', 'event', 'Videos', engagedAction, videoTitle, {'nonInteraction': true});
+				ga('send', 'event', 'Videos', engagedAction, videoTitle, Math.round(data.seconds), {'nonInteraction': true});
 
 				nv('append', {'video_engaged': videoTitle});
 				videoData[id].engaged = true;
@@ -3627,20 +3665,28 @@ function nebulaVimeoTracking(){
 		}
 	}
 
-	function vimeoPause(data, id){
-		var videoTitle = id.replace(/-/g, ' ');
+	function vimeoPause(data){
+		var id = jQuery(this.element).attr('id');
+		var videoTitle = videoData[id].title;
 		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
-		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
+		ga('set', gaCustomDimensions['videoPercentage'], Math.round(data.percent*100));
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'event', 'Videos', 'Pause', videoTitle, Math.round(videoData[id].watched));
-		ga('send', 'timing', 'Videos', 'Paused (Watched)', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched, not the timestamp of when paused!
+
+		if ( !videoData[id].pausedYet && !videoData[id].seeker ){ //Only capture first pause if they didn't seek
+			ga('send', 'event', 'Videos', 'First Pause', videoTitle, Math.round(data.seconds));
+			videoData[id].pausedYet = true;
+		}
+
+		ga('send', 'event', 'Videos', 'Paused', videoTitle, Math.round(data.seconds));
+		ga('send', 'timing', 'Videos', 'Paused', Math.round(data.seconds*1000), videoTitle);
 		nv('append', {'video_paused': videoTitle});
 		nebula.dom.document.trigger('nebula_paused_video', id);
 	}
 
-	function vimeoSeek(data, id){
-	    var videoTitle = id.replace(/-/g, ' ');
+	function vimeoSeeked(data){
+	    var id = jQuery(this.element).attr('id');
+		var videoTitle = videoData[id].title;
 	    ga('set', gaCustomDimensions['videoWatcher'], 'Seeker');
 	    ga('send', 'event', 'Videos', 'Seek', videoTitle + ' [to: ' + data.seconds + ']');
 	    nv('append', {'video_seeked': videoTitle});
@@ -3648,15 +3694,16 @@ function nebulaVimeoTracking(){
 	    nebula.dom.document.trigger('nebula_seeked_video', id);
 	}
 
-	function vimeoFinish(data, id){
-		var videoTitle = id.replace(/-/g, ' ');
+	function vimeoEnded(data){
+		var id = jQuery(this.element).attr('id');
+		var videoTitle = videoData[id].title;
 		ga('set', gaCustomMetrics['videoCompletions'], 1);
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 
 		endedAction = 'Ended';
-		if ( !isInView(jQuery(players.vimeo[id])) ){
+		if ( !isInView(jQuery(this.element)) ){
 			endedAction += ' (Not In View)';
 		}
 
@@ -3664,8 +3711,7 @@ function nebulaVimeoTracking(){
 			endedAction += ' (Autoplay)';
 		}
 
-		ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(videoData[id].watched), {'nonInteraction': true});
-
+		ga('send', 'event', 'Videos', endedAction, videoTitle, Math.round(data.seconds), {'nonInteraction': true});
 		ga('send', 'timing', 'Videos', 'Ended', Math.round(videoData[id].watched*1000), videoTitle); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 		nv('append', {'video_ended': videoTitle});
 		nebula.dom.document.trigger('nebula_ended_video', id);
@@ -3711,7 +3757,7 @@ function pauseAllVideos(force){
 		}
 
 		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
-			players.vimeo[vimeoiframeID].api('pause');
+			players.vimeo[vimeoiframeID].pause();
 		}
 	});
 }
