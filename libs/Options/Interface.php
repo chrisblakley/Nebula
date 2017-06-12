@@ -462,7 +462,7 @@
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[adblock_detect]" id="adblock_detect" value="1" <?php checked('1', !empty($nebula_options['adblock_detect'])); ?> /><label for="adblock_detect">Ad Block Detection</label>
 										<p class="nebula-help-text short-help form-text text-muted">Detect if visitors are using ad blocking software.(Default: <?php echo $this->user_friendly_default('adblock_detect'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">To track in Google Analytics, add a dimension index under the "Analytics" tab.</p>
+										<p class="nebula-help-text more-help form-text text-muted">It is strongly recommended to add a custom dimension for "Blocker" within the "Analytics" tab.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
@@ -929,14 +929,13 @@
 											<p class="option-keywords">location</p>
 										</div>
 
-										<div class="form-group" dependent-of="adblock_detect">
+										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Ad Blocker</div>
-												<input type="text" name="nebula_options[cd_adblocker]" id="cd_adblocker" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_adblocker']; ?>" />
+												<div class="input-group-addon">Blocker Detection</div>
+												<input type="text" name="nebula_options[cd_blocker]" id="cd_blocker" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_blocker']; ?>" />
 											</div>
-											<p class="dependent-note hidden">This option is dependent on Ad Block Detection being enabled.</p>
-											<p class="nebula-help-text short-help form-text text-muted">Detects if the user is blocking ads. Scope: Session</p>
-											<p class="nebula-help-text more-help form-text text-muted">This can be used even if not intending to serve ads on this site. It is important that this dimension is not set to the "hit" scope.</p>
+											<p class="nebula-help-text short-help form-text text-muted">Detects if the user is blocking resources such as ads or Google Analytics. Scope: Session</p>
+											<p class="nebula-help-text more-help form-text text-muted">Ad Blocker detection must be enabled for that resource detection to work! This can be used even if not intending to serve ads on this site. It is important that this dimension is not set to the "hit" scope.</p>
 											<p class="option-keywords"></p>
 										</div>
 

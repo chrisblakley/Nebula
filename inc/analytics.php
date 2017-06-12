@@ -12,11 +12,8 @@
 	<script>
 		window.GAready = false;
 
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/<?php echo ( nebula()->is_debug(1) )? 'analytics_debug.js' : 'analytics.js'; ?>','ga');
-
+		//Nebula uses the "alternative async tracking snippet": https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
+		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 		ga('create', '<?php echo nebula()->option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
 
 		<?php if ( nebula()->option('ga_displayfeatures') ): ?>
@@ -26,6 +23,24 @@
 		<?php if ( nebula()->option('ga_linkid') ): ?>
 			ga('require', 'linkid');
 		<?php endif; ?>
+
+		//Modify the payload if needed before sending data to Google Analytics
+		ga(function(tracker){
+			var originalSendHitTask = tracker.get('sendHitTask'); //Grab a reference to the default sendHitTask function.
+
+			tracker.set('sendHitTask', function(model){
+				//Always make sure events have the page location and title associated with them (in case of session timout)
+				if ( model.get('hitType') === 'event' ){
+					if ( !model.get('location') ){
+						//Send a new pageview if the event does not have contextual data.
+						//This could be due to the user resuming after a session timeout without going to a different page or reloading.
+						tracker.send('pageview');
+					}
+				}
+
+				originalSendHitTask(model); //Send the payload to Google Analytics
+			});
+		});
 
 		<?php
 			//Create various custom dimensions and custom metrics in Google Analytics, then store the index ("dimension3", "metric5", etc.) in Nebula Options.
@@ -57,7 +72,7 @@
 			weather: '<?php echo nebula()->option('cd_weather'); ?>',
 			temperature: '<?php echo nebula()->option('cd_temperature'); ?>',
 			publishYear: '<?php echo nebula()->option('cd_publishyear'); ?>',
-			adBlocker: '<?php echo nebula()->option('cd_adblocker'); ?>',
+			blocker: '<?php echo nebula()->option('cd_blocker'); ?>',
 			queryString: '<?php echo nebula()->option('cd_querystring'); ?>',
 			mqBreakpoint: '<?php echo nebula()->option('cd_mqbreakpoint'); ?>',
 			mqResolution: '<?php echo nebula()->option('cd_mqresolution'); ?>',
@@ -389,19 +404,18 @@
 
 		<?php if ( !nebula()->is_bot() && ( nebula()->option('adblock_detect') ) ): //Detect Ad Blockers (After pageview because asynchronous- uses GA event). ?>
 			jQuery.ajaxSetup({cache: true});
-
 			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
 				if ( nebula.session.flags ){
 					nebula.session.flags.adblock = 'false';
 				}
 			}).fail(function(){ <?php //Ad Blocker Detected ?>
 				jQuery('html').addClass('ad-blocker');
-				<?php if ( nebula()->option('cd_adblocker') ): //Scope: Session ?>
-					ga('set', gaCustomDimensions['adBlocker'], 'Ad Blocker Detected'); <?php //Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
+				<?php if ( nebula()->option('cd_blocker') ): //Scope: Session. Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
+					ga('set', gaCustomDimensions['blocker'], 'Ad Blocker');
 				<?php endif; ?>
 
 				if ( nebula.session.flags && nebula.session.flags.adblock !== 'true' ){
-					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.'); //Uses an event because it is asynchronous!
+					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
 					nebula.session.flags.adblock = 'true';
 				}
 			});
@@ -419,6 +433,7 @@
 			return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
 		}
 	</script>
+	<script async src='https://www.google-analytics.com/analytics.js'></script>
 <?php else: //If Tracking ID is empty: ?>
 	<script>
 		function ga(){return false;}

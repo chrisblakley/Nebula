@@ -88,18 +88,27 @@ jQuery(window).on('load', function(){
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
 
+	//https://developer.mozilla.org/en-US/docs/Web/API/PerformanceTiming
 	if ( typeof performance !== 'undefined' ){
 		setTimeout(function(){
-			var perceivedLoad = performance.timing.loadEventEnd-performance.timing.navigationStart;
-			var actualLoad = performance.timing.loadEventEnd-performance.timing.responseEnd;
-			ga('send', 'timing', 'Performance Timing', 'Perceived Load', Math.round(perceivedLoad), 'Navigation start to window load');
+			var serverSideLoad = performance.timing.responseEnd-performance.timing.requestStart;
+			window.performance.measure('Server-Side Load', 'requestStart', 'responseEnd');
+			ga('send', 'timing', 'Performance Timing', 'Server Response', Math.round(serverSideLoad), 'Request start until request end (includes PHP execution time)');
+
+			var frontEndLoad = performance.timing.loadEventEnd-performance.timing.domLoading;
+			window.performance.measure('Front End Load', 'domLoading', 'loadEventEnd');
+			ga('send', 'timing', 'Performance Timing', 'Front-end Load', Math.round(frontEndLoad), 'DOM loading until window load');
+
+			var actualLoad = performance.timing.loadEventEnd-performance.timing.fetchStart;
+			window.performance.measure('Actual Load', 'fetchStart', 'loadEventEnd');
 			ga('send', 'timing', 'Performance Timing', 'Actual Load', Math.round(actualLoad), 'Server response until window load');
 
-			nebula.dom.html.addClass('lt-per_' + perceivedLoad + 'ms');
-			nebula.dom.html.addClass('lt-act_' + actualLoad + 'ms');
+			var perceivedLoad = performance.timing.loadEventEnd-performance.timing.navigationStart;
+			window.performance.measure('Perceived Load', 'navigationStart', 'loadEventEnd');
+			ga('send', 'timing', 'Performance Timing', 'Perceived Load', Math.round(perceivedLoad), 'Previous page unload (or fetch start) until window load');
+
+			//console.debug( window.performance.getEntriesByType('measure') );
 		}, 0);
-	} else {
-		nebula.dom.html.addClass('lt_unavailable');
 	}
 
 	setTimeout(function(){
@@ -421,12 +430,56 @@ function initEventTracking(){
 		}
 
 		if ( !window.GAready ){
-			nebula.dom.document.trigger('nebula_ga_blocked');
+			jQuery(document).trigger('nebula_ga_blocked'); //Can't cache this document selector due to AJAX
 			nvData.is_ga_blocked = 1;
 			nv('send', nvData);
 
-			function ga(send, event, category, action, label){
-				if ( send === 'send' && event === 'event' ){
+			//Send Pageview
+			jQuery.ajax({
+				type: "POST",
+				url: nebula.site.ajax.url,
+				data: {
+					nonce: nebula.site.ajax.nonce,
+					action: 'nebula_ga_ajax',
+					fields: {
+						hitType: 'pageview',
+						location: window.location.href,
+						title: document.title,
+						ua: navigator.userAgent
+					},
+				},
+				timeout: 60000
+			});
+
+			//Handle event tracking
+			function ga(command, hitType, category, action, label, value, fieldsObject){
+				if ( command === 'send' && hitType === 'event' ){
+					var ni = 0;
+					if ( fieldsObject && fieldsObject.nonInteraction === 1 ){
+						ni = 1;
+					}
+
+					jQuery.ajax({
+						type: "POST",
+						url: nebula.site.ajax.url,
+						data: {
+							nonce: nebula.site.ajax.nonce,
+							action: 'nebula_ga_ajax',
+							fields: {
+								hitType: 'event',
+								category: category,
+								action: action,
+								label: label,
+								value: value,
+								ni: ni,
+								location: window.location.href,
+								title: document.title,
+								ua: navigator.userAgent
+							},
+						},
+						timeout: 60000
+					});
+
 					nv('append', {'ga_blocked_event': category + ' | ' + action + ' | ' + label});
 				}
 			}
@@ -618,8 +671,7 @@ function eventTracking(){
 	//AJAX Errors
 	nebula.dom.document.ajaxError(function(e, jqXHR, settings, exception){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		//ga('send', 'event', 'Error', 'AJAX Error', e.result + ' on: ' + settings.url, {'nonInteraction': true});
-		ga('send', 'exception', e.result, true);
+		ga('send', 'exception', {'exDescription': e.result, 'exFatal': true});
 		//nv('append', {'ajax_errors': e + ' - ' + jqXHR.status + ': ' + exception + ' (' + jqXHR.responseText + ') on: ' + settings.url}); //Figure out which of these is the most informative
 	});
 
@@ -826,11 +878,13 @@ function nv(action, data, callback){
 
 	if ( !action || !data || typeof data == 'function' ){
 		console.error('Action and Data Object are both required.');
+		ga('send', 'exception', {'exDescription': 'Action and Data Object are both required in nv()', 'exFatal': false});
 		return false; //Action and Data are both required.
 	}
 
 	if ( typeof callback == 'string' ){
 		console.error('Data must be passed as an object.');
+		ga('send', 'exception', {'exDescription': 'Data must be passed as an object in nv()', 'exFatal': false});
 		return false;
 	}
 
@@ -872,7 +926,7 @@ function nv(action, data, callback){
 			}
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
-			//Error
+			ga('send', 'exception', {'exDescription': 'AJAX error in nv(): ' + textStatus, 'exFatal': false});
 		},
 		timeout: 60000
 	});
@@ -934,7 +988,7 @@ function hubspot(mode, type, email, properties, callback){ //@todo "Nebula" 0: U
 				}
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown){
-				//Error
+				ga('send', 'exception', {'exDescription': 'AJAX error in hubspot(): ' + textStatus, 'exFatal': false});
 			},
 			timeout: 60000
 		});
@@ -1007,6 +1061,7 @@ function autocompleteSearch(element, types){
 
 	if ( types && !jQuery.isArray(types) ){
 		console.error('autocompleteSearch requires 2nd parameter to be an array.');
+		ga('send', 'exception', {'exDescription': 'autocompleteSearch requires 2nd parameter to be an array', 'exFatal': false});
 		return false;
 	}
 
@@ -1076,7 +1131,7 @@ function autocompleteSearch(element, types){
 						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
 						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 						debounce(function(){
-							ga('send', 'event', 'Internal Search', 'Autcomplete Error', request.term);
+							ga('send', 'exception', {'exDescription': 'Autocomplete AJAX error: ' + textStatus, 'exFatal': false});
 							nv('append', {'ajax_error': 'Autocomplete Search'});
 						}, 1500, 'autocomplete error buffer');
 						element.closest('form').removeClass('searching');
@@ -1259,7 +1314,7 @@ function advancedSearchPrep(startingAt, waitingText){
 					jQuery('#advanced-search-results').text('Error: ' + XMLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
 					haveAllEvents = 0;
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-					ga('send', 'event', 'Error', 'AJAX Error', 'Advanced Search AJAX');
+					ga('send', 'exception', {'exDescription': 'Advanced Search AJAX error: ' + textStatus, 'exFatal': false});
 					nv('append', {'ajax_errors': 'Advanced Search'});
 				},
 				timeout: 60000
@@ -1725,6 +1780,7 @@ function cf7Functions(){
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.detail.contactFormId);
+		ga('send', 'exception', {'exDescription': 'Invalid form submission for form ID ' + e.detail.contactFormID, 'exFatal': false});
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 		nv('increment', 'contact_funnel_submit_invalid');
 		nv('append', {'form_submission_error': 'Validation (' + e.detail.contactFormId + ')'});
@@ -1743,6 +1799,7 @@ function cf7Functions(){
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.detail.contactFormId);
+		ga('send', 'exception', {'exDescription': 'Spam form submission for form ID ' + e.detail.contactFormID, 'exFatal': false});
 		nv('increment', 'contact_funnel_submit_spam');
 		nv('append', {'form_submission_error': 'Spam (' + e.detail.contactFormId + ')'});
 	});
@@ -1753,6 +1810,7 @@ function cf7Functions(){
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Failed)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.detail.contactFormId);
+		ga('send', 'exception', {'exDescription': 'Mail failed to send for form ID ' + e.detail.contactFormID, 'exFatal': true});
 		nv('increment', 'contact_funnel_submit_failed');
 		nv('append', {'form_submission_error': 'Failed (' + e.detail.contactFormId + ')'});
 	});
@@ -2032,7 +2090,7 @@ function conditionalJSLoading(){
 			        }
 			    });
 			}).fail(function(){
-			    ga('send', 'event', 'Error', 'JS Error', 'Google Maps JS API script could not be loaded.', {'nonInteraction': true});
+			    ga('send', 'exception', {'exDescription': 'Google Maps JS API script could not be loaded', 'exFatal': false});
 			});
 		}
 	}
@@ -2043,7 +2101,7 @@ function conditionalJSLoading(){
 			chosenSelectOptions();
 		}).fail(function(){
 			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Error', 'JS Error', 'chosen.jquery.min.js could not be loaded.', {'nonInteraction': true});
+			ga('send', 'exception', {'exDescription': 'chosen.jquery.min.js could not be loaded', 'exFatal': false});
 			nv('append', {'js_errors': 'chosen.jquery.min.js could not be loaded'});
 		});
 		nebulaLoadCSS(nebula.site.resources.css.chosen);
@@ -2057,7 +2115,7 @@ function conditionalJSLoading(){
 			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
         }).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-            ga('send', 'event', 'Error', 'JS Error', 'jquery.dataTables.min.js could not be loaded', {'nonInteraction': true});
+            ga('send', 'exception', {'exDescription': 'jquery.dataTables.min.js could not be loaded', 'exFatal': false});
             nv('append', {'js_errors': 'jquery.dataTables.min.js could not be loaded'});
         });
     }
@@ -2066,7 +2124,7 @@ function conditionalJSLoading(){
 	if ( jQuery('[data-toggle="tooltip"]').length ){
 		jQuery.getScript(nebula.site.resources.js.tether).fail(function(){
             ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-            ga('send', 'event', 'Error', 'JS Error', 'tether.min.js could not be loaded', {'nonInteraction': true});
+            ga('send', 'exception', {'exDescription': 'tether.min.js could not be loaded', 'exFatal': false});
             nv('append', {'js_errors': 'tether.min.js could not be loaded'});
         });
 	}
@@ -2088,7 +2146,7 @@ function nebulaLoadCSS(url){
 		    document.createStyleSheet(url);
 	    } catch(e){
 		    ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		    ga('send', 'event', 'Error', 'CSS Error', url + ' could not be loaded', {'nonInteraction': true});
+		    ga('send', 'exception', {'exDescription': url + ' could not be loaded', 'exFatal': false});
 		    nv('append', {'css_errors': url + ' could not be loaded'});
 	    }
 	} else {
@@ -2125,7 +2183,7 @@ function nebulaAddressAutocomplete(autocompleteInput, name){
 				    });
 				}).fail(function(){
 					ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-					ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
+					ga('send', 'exception', {'exDescription': 'Google Maps Places script could not be loaded', 'exFatal': false});
 					nv('append', {'js_errors': 'Google Maps Places script could not be loaded'});
 				});
 			}, 100, 'google maps script load');
@@ -2265,7 +2323,7 @@ function requestPosition(){
 				callback: getCurrentPosition()
 			}); //End Google Maps load
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'Google Maps Places script could not be loaded.', {'nonInteraction': true});
+			ga('send', 'exception', {'exDescription': 'Google Maps Places script could not be loaded', 'exFatal': false});
 		});
 	} else {
 		getCurrentPosition();
@@ -2368,7 +2426,7 @@ function geoErrorCallback(error){
     nebula.dom.body.addClass('geo-error');
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
     ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-    ga('send', 'event', 'Geolocation', 'Error', geolocationErrorMessage, {'nonInteraction': true});
+    ga('send', 'exception', {'exDescription': 'Geolocation error: ' + geolocationErrorMessage, 'exFatal': false});
     nv('append', {'js_errors': geolocationErrorMessage});
 }
 
@@ -2509,11 +2567,11 @@ function errorMitigation(){
 				thisImage.prop('src', fallbackPNG);
 				thisImage.removeClass('svg');
 			}).fail(function() {
-				ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': true});
+				ga('send', 'exception', {'exDescription': 'Broken Image: ' + imagePath, 'exFatal': false});
 				nv('append', {'html_errors': 'Broken Image: ' + imagePath});
 			});
 		} else {
-			ga('send', 'event', 'Error', 'Broken Image', imagePath, {'nonInteraction': true});
+			ga('send', 'exception', {'exDescription': 'Broken Image: ' + imagePath, 'exFatal': false});
 			nv('append', {'html_errors': 'Broken Image: ' + imagePath});
 		}
 	});
@@ -3429,7 +3487,7 @@ function onYouTubeIframeAPIReady(e){
 function onPlayerError(e){
 	var videoInfo = e.target.getVideoData();
 	ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-	ga('send', 'event', 'Error', 'Youtube API', videoInfo.title + ' (Code: ' + e.data + ')', {'nonInteraction': true});
+	ga('send', 'exception', {'exDescription': 'Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
 	nv('append', {'js_errors': videoInfo.title + ' (Code: ' + e.data + ')'});
 }
 function onPlayerReady(e){
@@ -3544,17 +3602,17 @@ function onPlayerStateChange(e){
 }
 
 function nebulaVimeoTracking(){
-	//Load the Vimeo API script (froogaloop) remotely (with local backup)
+	//Load the Vimeo API script (player.js) remotely (with local backup)
 	if ( jQuery('iframe[src*="vimeo"]').length ){
         jQuery.getScript('https://player.vimeo.com/api/player.js').done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			ga('send', 'event', 'Error', 'JS Error', 'Vimeo player.js (remote) could not be loaded.', {'nonInteraction': true});
+			ga('send', 'exception', {'exDescription': 'Vimeo player.js (remote) could not be loaded', 'exFatal': false});
 			nv('append', {'js_errors': 'Vimeo player.js (remote) could not be loaded'});
 			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/player.js').done(function(){
 				createVimeoPlayers();
 			}).fail(function(){
-				ga('send', 'event', 'Error', 'JS Error', 'Vimeo player.js (local) could not be loaded.', {'nonInteraction': true});
+				ga('send', 'exception', {'exDescription': 'Vimeo player.js (local) could not be loaded', 'exFatal': false});
 				nv('append', {'js_errors': 'Vimeo player.js (local) could not be loaded'});
 			});
 		});
@@ -3823,6 +3881,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 		}
 		if ( errorCallback ){
 			instance.onerror = function(){
+				ga('send', 'exception', {'exDescription': 'Desktop Notification error', 'exFatal': false});
 				errorCallback();
 			};
 		}

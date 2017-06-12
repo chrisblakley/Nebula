@@ -279,7 +279,7 @@ if ( !trait_exists('Options') ){
 				'cd_temperature' => '',
 				'cd_publishyear' => '',
 				'cd_wordcount' => '',
-				'cd_adblocker' => '',
+				'cd_blocker' => '',
 				'cd_querystring' => '',
 				'cd_mqbreakpoint' => '',
 				'cd_mqresolution' => '',

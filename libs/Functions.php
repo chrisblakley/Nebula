@@ -2439,7 +2439,7 @@ trait Functions {
 
 	//Fix responsive oEmbeds
 	//Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
-	public function embed_oembed_html($html, $url, $attr, $post_id){
+	public function embed_oembed_html($html, $url, $attr, $post_id) {
 		//Enable the JS API for Youtube videos
 		if ( strstr($html, 'youtube.com/embed/') ){
 			$html = str_replace('feature=oembed', 'feature=oembed&enablejsapi=1', $html);

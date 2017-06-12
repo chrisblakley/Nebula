@@ -6,8 +6,8 @@ if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
 			//Sends events to Google Analytics via AJAX (used if GA is blocked via JavaScript)
-			add_action('wp_ajax_nebula_ga_event_ajax', array($this, 'event_ajax'));
-			add_action('wp_ajax_nopriv_nebula_ga_event_ajax', array($this, 'event_ajax'));
+			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
+			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
 		}
 
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier
@@ -111,21 +111,18 @@ if ( !trait_exists('Analytics') ){
 			$override = apply_filters('pre_ga_send_data', false, $data);
 			if ( $override !== false ){return $override;}
 
-			$result = wp_remote_get('https://ssl.google-analytics.com/collect?payload_data&' . http_build_query($data));
-			return $result;
+			//https://ga-dev-tools.appspot.com/hit-builder/
+			$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
+			return $response;
 		}
 
 		//Send Pageview Function for Server-Side Google Analytics
-		public function ga_send_pageview($hostname=null, $path=null, $title=null, $array=array()){
-			$override = apply_filters('pre_ga_send_pageview', false, $hostname, $path, $title, $array);
+		public function ga_send_pageview($location=null, $title=null, $array=array()){
+			$override = apply_filters('pre_ga_send_pageview', false, $location, $title, $array);
 			if ( $override !== false ){return $override;}
 
-			if ( empty($hostname) ){
-				$hostname = nebula()->url_components('hostname');
-			}
-
-			if ( empty($path) ){
-				$path = nebula()->url_components('path');
+			if ( empty($location) ){
+				$location = nebula()->requested_url();
 			}
 
 			if ( empty($title) ){
@@ -137,11 +134,11 @@ if ( !trait_exists('Analytics') ){
 			$data = array(
 				'v' => 1,
 				'tid' => nebula()->option('ga_tracking_id'),
-				'cid' => $this->parse_cookie(),
+				'cid' => $this->ga_parse_cookie(),
 				't' => 'pageview',
-				'dh' => $hostname, //Document Hostname "gearside.com"
-				'dp' => $path, //Path "/something"
-				'dt' => $title, //Title
+				'dl' => $location,
+				'dt' => $title,
+				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
 
@@ -150,9 +147,13 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Send Event Function for Server-Side Google Analytics
-		public function ga_send_event($category=null, $action=null, $label=null, $value=null, $ni=1, $array=array()){
+		public function ga_send_event($category=null, $action=null, $label=null, $value=0, $ni=1, $array=array()){
 			$override = apply_filters('pre_ga_send_event', false, $category, $action, $label, $value, $ni, $array);
 			if ( $override !== false ){return $override;}
+
+			if ( empty($value) ){
+				$value = 0;
+			}
 
 			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
@@ -166,8 +167,8 @@ if ( !trait_exists('Analytics') ){
 				'el' => $label, //Label
 				'ev' => $value, //Value
 				'ni' => $ni, //Non-Interaction
-				'dh' => nebula()->url_components('hostname'), //Document Hostname "gearside.com"
-				'dp' => nebula()->url_components('path'),
+				'dl' => nebula()->requested_url(),
+				'dt' => get_the_title(),
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
 
@@ -187,11 +188,11 @@ if ( !trait_exists('Analytics') ){
 			$defaults = array(
 				'v' => 1,
 				'tid' => nebula()->option('ga_tracking_id'),
-				'cid' => $this->parse_cookie(),
+				'cid' => $this->ga_parse_cookie(),
 				't' => '',
 				'ni' => 1,
-				'dh' => nebula()->url_components('hostname'), //Document Hostname "gearside.com"
-				'dp' => nebula()->url_components('path'),
+				'dl' => nebula()->requested_url(),
+				'dt' => get_the_title(),
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
 
@@ -205,11 +206,45 @@ if ( !trait_exists('Analytics') ){
 			}
 		}
 
-		public function ga_event_ajax(){
+		public function ga_ajax(){
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-			if ( !nebula()->is_bot() ){ //Is this conditional preventing this from working at times?
-				$this->ga_send_event(sanitize_text_field($_POST['data'][0]['category']), sanitize_text_field($_POST['data'][0]['action']), sanitize_text_field($_POST['data'][0]['label']), sanitize_text_field($_POST['data'][0]['value']), sanitize_text_field($_POST['data'][0]['ni']));
+			if ( !nebula()->is_bot() ){
+				echo 'inside ga ajax';
+
+				//Location and Title
+				$additional_fields = array(
+					'dl' => sanitize_text_field($_POST['fields']['location']),
+					'dt' => sanitize_text_field($_POST['fields']['title']),
+				);
+
+				//User Agent
+				if ( !empty($_POST['fields']['ua']) ){
+					$additional_fields['ua'] = $_POST['fields']['ua'];
+				}
+
+				//Custom Dimension
+				if ( nebula()->option('cd_blocker') ){
+					$additional_fields['cd' . str_replace('dimension', '', nebula()->option('cd_blocker'))] = 'Google Analytics Blocker';
+				}
+
+				//Pageview
+				if ( $_POST['fields']['hitType'] === 'pageview' ){
+					$this->ga_send_pageview(null, null, $additional_fields);
+				}
+
+				//Event
+				if ( $_POST['fields']['hitType'] === 'event' ){
+					$this->ga_send_event(
+						sanitize_text_field($_POST['fields']['category']),
+						sanitize_text_field($_POST['fields']['action']),
+						sanitize_text_field($_POST['fields']['label']),
+						sanitize_text_field($_POST['fields']['value']),
+						sanitize_text_field($_POST['fields']['ni']),
+						$additional_fields
+					);
+				}
 			}
+
 			wp_die();
 		}
 	}
