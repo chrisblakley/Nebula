@@ -857,7 +857,10 @@ if ( !trait_exists('Utilities') ){
 		public function ga_log_fatal_errors(){
 			$error = error_get_last();
 			if ( $error['type'] == E_ERROR ){
-				nebula()->ga_send_exception(strstr($error["message"], ' in /', true) . ' on line ' . $error["line"] . ' in ' . str_replace(get_template_directory(), '', $error["file"]), 1);
+				$message = strstr($error["message"], ' in /', true);
+				$file = str_replace(array(get_template_directory(), get_stylesheet_directory(), plugin_dir_path()), '', $error["file"]);
+
+				nebula()->ga_send_exception($message . ' on line ' . $error["line"] . ' in ' . $file, 1);
 			}
 		}
 	}
