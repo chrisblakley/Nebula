@@ -105,17 +105,6 @@ if ( !trait_exists('Analytics') ){
 			return 'https://ssl.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
 		}
 
-		//Send Data to Google Analytics
-		//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-		public function ga_send_data($data){
-			$override = apply_filters('pre_ga_send_data', false, $data);
-			if ( $override !== false ){return $override;}
-
-			//https://ga-dev-tools.appspot.com/hit-builder/
-			$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
-			return $response;
-		}
-
 		//Send Pageview Function for Server-Side Google Analytics
 		public function ga_send_pageview($location=null, $title=null, $array=array()){
 			$override = apply_filters('pre_ga_send_pageview', false, $location, $title, $array);
@@ -126,7 +115,7 @@ if ( !trait_exists('Analytics') ){
 			}
 
 			if ( empty($title) ){
-				$title = get_the_title();
+				$title = ( get_the_title() )? get_the_title() : '';
 			}
 
 			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
@@ -168,7 +157,7 @@ if ( !trait_exists('Analytics') ){
 				'ev' => $value, //Value
 				'ni' => $ni, //Non-Interaction
 				'dl' => nebula()->requested_url(),
-				'dt' => get_the_title(),
+				'dt' => ( get_the_title() )? get_the_title() : '',
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
 
@@ -192,7 +181,7 @@ if ( !trait_exists('Analytics') ){
 				't' => '',
 				'ni' => 1,
 				'dl' => nebula()->requested_url(),
-				'dt' => get_the_title(),
+				'dt' => ( get_the_title() )? get_the_title() : '',
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
 
@@ -204,6 +193,30 @@ if ( !trait_exists('Analytics') ){
 				trigger_error("ga_send_custom() requires an array of values. A Hit Type ('t') is required! See documentation here for accepted parameters: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters", E_USER_ERROR);
 				return;
 			}
+		}
+
+		//Send Pageview Function for Server-Side Google Analytics
+		public function ga_send_exception($message=null, $fatal=1, $array=array()){
+			$override = apply_filters('pre_ga_send_exception', false, $message, $fatal, $array);
+			if ( $override !== false ){return $override;}
+
+			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
+			$data = array(
+				'v' => 1,
+				'tid' => nebula()->option('ga_tracking_id'),
+				'cid' => $this->ga_parse_cookie(),
+				't' => 'exception',
+				'exd' => $message,
+				'exf' => $title,
+				'dl' => nebula()->requested_url(),
+				'dt' => ( get_the_title() )? get_the_title() : '',
+				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
+			);
+
+			$data = array_merge($data, $array);
+			$this->ga_send_data($data);
 		}
 
 		public function ga_ajax(){
@@ -246,6 +259,20 @@ if ( !trait_exists('Analytics') ){
 			}
 
 			wp_die();
+		}
+
+		//Send Data to Google Analytics
+		//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
+		public function ga_send_data($data){
+			$override = apply_filters('pre_ga_send_data', false, $data);
+			if ( $override !== false ){return $override;}
+
+			//https://ga-dev-tools.appspot.com/hit-builder/
+
+			//echo '<p>' . http_build_query($data) . '</p>';
+
+			$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
+			return $response;
 		}
 	}
 }

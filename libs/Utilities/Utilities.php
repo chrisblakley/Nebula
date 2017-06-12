@@ -23,6 +23,9 @@ if ( !trait_exists('Utilities') ){
 			$this->VisitorsHooks(); // Register Visitors hooks
 			$this->DeviceHooks(); // Register Device hooks
 			$this->SassHooks(); // Register Sass hooks
+
+			//Log fatal errors in Google Analytics as crashes
+			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
 		}
 
 		//Generate Nebula Session ID
@@ -847,6 +850,14 @@ if ( !trait_exists('Utilities') ){
 				default:
 					return $nebula_version_info;
 					break;
+			}
+		}
+
+		//Log fatal errors in Google Analytics as crashes
+		public function ga_log_fatal_errors(){
+			$error = error_get_last();
+			if ( $error['type'] == E_ERROR ){
+				nebula()->ga_send_exception(strstr($error["message"], ' in /', true) . ' on line ' . $error["line"] . ' in ' . str_replace(get_template_directory(), '', $error["file"]), 1);
 			}
 		}
 	}

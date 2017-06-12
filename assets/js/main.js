@@ -116,6 +116,9 @@ jQuery(window).on('load', function(){
 	}, 1000);
 }); //End Window Load
 
+
+
+
 /*==========================
  Window Resize
  ===========================*/
@@ -674,6 +677,11 @@ function eventTracking(){
 		ga('send', 'exception', {'exDescription': e.result, 'exFatal': true});
 		//nv('append', {'ajax_errors': e + ' - ' + jqXHR.status + ': ' + exception + ' (' + jqXHR.responseText + ') on: ' + settings.url}); //Figure out which of these is the most informative
 	});
+
+	//Window Errors
+	window.onerror = function (message, file, line) {
+		ga('send', 'exception', {'exDescription': message + ' at ' + line + ' of ' + file, 'exFatal': true});
+	}
 
 	//Capture Print Intent
 	if ( 'matchMedia' in window ){
