@@ -63,16 +63,16 @@ jQuery(window).on('load', function(){
 	initEventTracking();
 
 	//Navigation
-	dropdownWidthController(); //move to window load?
+	dropdownWidthController();
 	overflowDetector();
 
 	//Search
 	wpSearchInput();
-	mobileSearchPlaceholder(); //move to window load?
-	initAutocompleteSearch(); //move to window load?
-	advancedSearchTriggers(); //move to window load?
-	searchValidator(); //move to window load?
-	searchTermHighlighter(); //move to window load?
+	mobileSearchPlaceholder();
+	initAutocompleteSearch();
+	advancedSearchTriggers();
+	searchValidator();
+	searchTermHighlighter();
 
 	//Forms
 	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete'); //move to window load?
@@ -92,22 +92,22 @@ jQuery(window).on('load', function(){
 	if ( typeof performance !== 'undefined' ){
 		setTimeout(function(){
 			var serverSideLoad = performance.timing.responseEnd-performance.timing.requestStart;
-			window.performance.measure('Server-Side Load', 'requestStart', 'responseEnd');
-			ga('send', 'timing', 'Performance Timing', 'Server Response', Math.round(serverSideLoad), 'Request start until request end (includes PHP execution time)');
-
 			var frontEndLoad = performance.timing.loadEventEnd-performance.timing.domLoading;
-			window.performance.measure('Front End Load', 'domLoading', 'loadEventEnd');
-			ga('send', 'timing', 'Performance Timing', 'Front-end Load', Math.round(frontEndLoad), 'DOM loading until window load');
-
 			var actualLoad = performance.timing.loadEventEnd-performance.timing.fetchStart;
-			window.performance.measure('Actual Load', 'fetchStart', 'loadEventEnd');
-			ga('send', 'timing', 'Performance Timing', 'Actual Load', Math.round(actualLoad), 'Server response until window load');
-
 			var perceivedLoad = performance.timing.loadEventEnd-performance.timing.navigationStart;
-			window.performance.measure('Perceived Load', 'navigationStart', 'loadEventEnd');
+
+			ga('send', 'timing', 'Performance Timing', 'Server Response', Math.round(serverSideLoad), 'Request start until request end (includes PHP execution time)');
+			ga('send', 'timing', 'Performance Timing', 'Front-end Load', Math.round(frontEndLoad), 'DOM loading until window load');
+			ga('send', 'timing', 'Performance Timing', 'Actual Load', Math.round(actualLoad), 'Server response until window load');
 			ga('send', 'timing', 'Performance Timing', 'Perceived Load', Math.round(perceivedLoad), 'Previous page unload (or fetch start) until window load');
 
-			//console.debug( window.performance.getEntriesByType('measure') );
+			if ( typeof performance.measure !== 'undefined' ){
+				performance.measure('Server-Side Load', 'requestStart', 'responseEnd');
+				performance.measure('Front End Load', 'domLoading', 'loadEventEnd');
+				performance.measure('Actual Load', 'fetchStart', 'loadEventEnd');
+				performance.measure('Perceived Load', 'navigationStart', 'loadEventEnd');
+				//console.debug( performance.getEntriesByType('measure') );
+			}
 		}, 0);
 	}
 
@@ -680,7 +680,7 @@ function eventTracking(){
 
 	//Window Errors
 	window.onerror = function (message, file, line) {
-		ga('send', 'exception', {'exDescription': message + ' at ' + line + ' of ' + file, 'exFatal': true});
+		ga('send', 'exception', {'exDescription': message + ' at ' + line + ' of ' + file, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
 	}
 
 	//Capture Print Intent
@@ -770,94 +770,34 @@ function ecommerceTracking(){
 	});
 }
 
-//Detect scroll depth for engagement and more accurate bounce rate
+//Detect scroll depth
 function scrollDepth(){
-	scrollInfo = {
-		headerHeight: ( jQuery('#header-section').length )? jQuery('#header-section').height() : 250,
-		entryContent: jQuery('.entry-content'),
-		timer: 0,
-		startTime: new Date(),
-		totalTime: 0,
-		scrollDelay: 0,
-		maxScroll: -1,
-		isScroller: false,
-		beganReading: false,
-		endContent: false,
-		endPage: false
-	}
+	scrollReady = performance.now();
 
 	nebula.dom.window.on('scroll', function(){
-		if ( !scrollInfo.isScroller ){
-			scrollInfo.currentTime = new Date();
-			scrollInfo.initialScroll = scrollInfo.currentTime.getTime();
-			scrollInfo.isScroller = true;
-			scrollInfo.scrollDelay = (scrollInfo.initialScroll-scrollInfo.startTime)/1000;
-			ga('send', 'event', 'Scroll Depth', 'Began Scrolling', Math.round(scrollInfo.scrollDelay) + ' seconds (since pageload)', Math.round(scrollInfo.scrollDelay), {'nonInteraction': true});
-		}
+		once(function(){
+			scrollBegin = performance.now()-scrollReady;
+
+			if ( scrollBegin > 100 ){
+				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+				ga('send', 'event', 'Scroll Depth', 'Began Scrolling', '', Math.round(scrollBegin), {'nonInteraction': true});
+			}
+		}, 'begin scrolling');
 
 		debounce(function(){
-			scrollLocation(scrollInfo);
+			//If user has reached the bottom of the page
+			if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){
+				once(function(){
+					scrollEnd = performance.now()-(scrollBegin+scrollReady);
+
+					if ( scrollBegin > 100 && scrollEnd > 500 ){
+						ga('set', gaCustomDimensions['timestamp'], localTimestamp());
+						ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true});
+					}
+				}, 'end scrolling');
+			}
 		}, 100, 'scroll depth');
 	});
-}
-
-//Check the scroll location (Called from scrollDepth() function)
-function scrollLocation(scrollInfo){
-	scrollInfo.viewportBottom = nebula.dom.window.height()+nebula.dom.window.scrollTop();
-	scrollInfo.documentHeight = nebula.dom.document.height();
-
-	//When the user scrolls past the header
-	scrollInfo.becomesReaderAt = ( scrollInfo.entryContent.length )? scrollInfo.entryContent.offset().top : scrollInfo.headerHeight;
-	if ( scrollInfo.viewportBottom >= scrollInfo.becomesReaderAt && !scrollInfo.beganReading ){
-		scrollInfo.currentTime = new Date();
-		scrollInfo.readStartTime = scrollInfo.currentTime.getTime();
-		scrollInfo.beganReading = true;
-	}
-
-	//When the reader reaches the end of the entry-content
-	if ( scrollInfo.entryContent.length ){
-		if ( scrollInfo.readStartTime && scrollInfo.viewportBottom >= scrollInfo.entryContent.offset().top+scrollInfo.entryContent.innerHeight() && !scrollInfo.endContent ){
-			scrollInfo.currentTime = new Date();
-			scrollInfo.readEndTime = scrollInfo.currentTime.getTime();
-			scrollInfo.readTime = (scrollInfo.readEndTime-scrollInfo.readStartTime)/1000;
-
-			if ( Math.round(scrollInfo.readTime) > 0 ){
-				scrollInfo.nonInteractionScroll = true;
-				if ( scrollInfo.readTime < 8 ){
-					scrollInfo.readerType = 'Previewer';
-				} else if ( scrollInfo.readTime < 30 ){
-					scrollInfo.readerType = 'Scanner';
-				} else {
-					scrollInfo.readerType = 'Reader';
-					scrollInfo.nonInteractionScroll = false;
-					ga('set', gaCustomMetrics['engagedReaders'], 1);
-					nv('append', {'engaged_reader': window.location.href});
-					nebula.dom.document.trigger('nebula_engaged_reader');
-				}
-
-				ga('set', gaCustomDimensions['scrollDepth'], scrollInfo.readerType);
-				ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-				ga('send', 'event', 'Scroll Depth', 'Entry Content', scrollInfo.readerType + ': ' + Math.round(scrollInfo.readTime) + ' seconds (since reading began)', Math.round(scrollInfo.readTime), {'nonInteraction': scrollInfo.nonInteractionScroll}); //If the user has read the page, it is not a bounce.
-				ga('send', 'timing', 'Scroll Depth', 'Entry Content', Math.round(scrollInfo.readTime*1000), scrollInfo.readerType + ': Scrolled from top of entry-content to bottom');
-			}
-
-			scrollInfo.endContent = true;
-		}
-	}
-
-	//If user has hit the bottom of the page
-	if ( scrollInfo.initialScroll && scrollInfo.viewportBottom >= scrollInfo.documentHeight && !scrollInfo.endPage ){
-		scrollInfo.currentTime = new Date();
-		scrollInfo.endTime = scrollInfo.currentTime.getTime();
-		scrollInfo.totalTime = (scrollInfo.endTime-scrollInfo.initialScroll)/1000;
-		if ( Math.round(scrollInfo.totalTime) > 0 ){
-			ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-			ga('send', 'event', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime) + ' seconds (since initial scroll)', Math.round(scrollInfo.totalTime), {'nonInteraction': true});
-			ga('send', 'timing', 'Scroll Depth', 'Entire Page', Math.round(scrollInfo.totalTime*1000), 'Scrolled from top of page to bottom');
-		}
-
-		scrollInfo.endPage = true;
-	}
 }
 
 function isInView(element){
@@ -2949,8 +2889,7 @@ function nebulaTimer(uniqueID, action, name){
 	}
 
 	//Update the timing data!
-	currentDate = new Date();
-	currentTime = currentDate.getTime();
+	currentTime = performance.now();
 
 	if ( action === 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
 		nebulaTimings[uniqueID] = {};
@@ -2972,6 +2911,11 @@ function nebulaTimer(uniqueID, action, name){
 		if ( typeof name !== 'undefined' ){
 			nebulaTimings[uniqueID].lap[0].name = name;
 		}
+
+		//Add the time to User Timing API (if supported)
+		if ( typeof performance.measure !== 'undefined' ){
+			performance.mark(uniqueID + '_start');
+		}
 	} else {
 		lapNumber = nebulaTimings[uniqueID].lap.length;
 
@@ -2983,7 +2927,7 @@ function nebulaTimer(uniqueID, action, name){
 
 		//An "out" lap means the timing for this lap may not be associated directly with the action (Usually resetting for the next actual timed lap).
 		if ( action === 'start' ){
-			nebulaTimings[uniqueID].lap[lapNumber-1].out = true;
+			nebulaTimings[uniqueID].lap[lapNumber-1].out = true; //If another 'start' was sent, then the previous lap was an out lap
 		} else {
 			nebulaTimings[uniqueID].lap[lapNumber-1].out = false;
 		}
@@ -2999,12 +2943,25 @@ function nebulaTimer(uniqueID, action, name){
 			if ( typeof name !== 'undefined' ){
 				nebulaTimings[uniqueID].lap[lapNumber].name = name;
 			}
+
+			//Add the time to User Timing API (if supported)
+			if ( typeof performance.measure !== 'undefined' ){
+				var lapID = name || lapNumber;
+				performance.mark(uniqueID + '_lap-' + lapID);
+			}
 		}
 
 		//Return individual lap times unless 'end' is passed- then return total duration. Note: 'end' can not be updated more than once per uniqueID! Subsequent calls will return the total duration from first call.
 		if ( action === 'end' ){
+			//Add the time to User Timing API (if supported)
+			if ( typeof performance.measure !== 'undefined' ){
+				performance.mark(uniqueID + '_end');
+				performance.measure(uniqueID, uniqueID + '_start', uniqueID + '_end');
+			}
+
 			nebulaTimings[uniqueID].stopped = currentTime;
 			nebulaTimings[uniqueID].total = currentTime-nebulaTimings[uniqueID].started;
+			//@todo "Nebula" 0: Add all hot laps together (any non-"out" laps)
 			return nebulaTimings[uniqueID].total;
 		} else {
 			if ( !nebulaTimings[uniqueID].lap[lapNumber-1].out ){
@@ -3810,7 +3767,7 @@ function pauseAllVideos(force){
 			return false;
 		}
 
-		if ( (force || !jQuery(this).hasClass('ignore-visibility')) && players.youtube[youtubeiframeID].getPlayerState() === 1 ){
+		if ( (force || !jQuery(this).hasClass('ignore-visibility')) && typeof players.youtube[youtubeiframeID].pauseVideo === 'function' ){
 			players.youtube[youtubeiframeID].pauseVideo();
 		}
 	});
@@ -3822,7 +3779,7 @@ function pauseAllVideos(force){
 			return false;
 		}
 
-		if ( (force || !jQuery(this).hasClass('ignore-visibility')) ){
+		if ( (force || !jQuery(this).hasClass('ignore-visibility')) && typeof players.vimeo[vimeoiframeID].pause === 'function' ){
 			players.vimeo[vimeoiframeID].pause();
 		}
 	});
@@ -4052,14 +4009,16 @@ function mmenus(){
 
 //Main dropdown nav dynamic width controller
 function dropdownWidthController(){
-	jQuery('#primarynav .sub-menu').each(function(){
+/*
+	jQuery('#primarynav > .sub-menu').each(function(){
 		var bigWidth = 100;
-			if ( jQuery(this).children().width() > bigWidth ){
-				bigWidth = jQuery(this).children().width();
-			}
+		if ( jQuery(this).children().width() > bigWidth ){
+			bigWidth = jQuery(this).children().width();
+		}
 		jQuery(this).css('width', bigWidth+15 + 'px');
 	});
-} //end dropdownWidthController()
+*/
+}
 
 //Vertical subnav expanders
 function subnavExpanders(){
@@ -4072,7 +4031,7 @@ function subnavExpanders(){
     //Automatically expand subnav to show current page
     jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
     jQuery('.current-menu-item').children('.toplevelvert_expander').click();
-} //end subnavExpanders()
+}
 
 /*==========================
  Extension Functions

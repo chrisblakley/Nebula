@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.1.9
+	Version: 5.1.11
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -370,9 +370,9 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			li.menu-item {position: relative; display: inline-block; margin-right: 25px; padding: 0 5px;
 				&:last-child {margin-right: 0;}
 				a {display: block; @include link-colors(#fff, #aaa, #fff, #fff, #aaa); font-size: rem(11px); line-height: 30px;}
-				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; max-width: 250px; background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05); @include prefix((transition: opacity 0.25s));
+				ul.sub-menu {position: absolute; display: block; margin: 0; padding: 0 5px; left: -9999px; opacity: 0; /* max-width: 250px; */ background: #fff; border-left: 1px solid $secondary_color; box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.05); @include prefix((transition: opacity 0.25s));
 					li.menu-item {display: block; margin-right: auto; padding: 0;
-						a {display: block; font-size: rem(11px);}
+						a {display: block; font-size: rem(11px); white-space: nowrap;}
 					}
 				}
 				&:hover ul.sub-menu {left: 5px; opacity: 1;}
@@ -408,10 +408,10 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			&:last-child {margin-right: 0;}
 
 			a {display: block; font-size: rem(14px); margin-bottom: 8px; @include link-colors(#fff, #aaa, #fff, #fff, #aaa);} //Margin-bottom to allow cursor roll into sub-menu dropdown
-			ul.sub-menu {position: absolute; top: 15px; left: -9999px; max-width: 250px; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBackBig), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
+			ul.sub-menu {position: absolute; top: 15px; left: -9999px; /* max-width: 250px; */ margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBackBig), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
 				.no-js & {width: 400px;}
 				li {display: block; margin: 0;
-					a {display: block; padding: 5px; margin: 0; color: $primary_color;
+					a {display: block; padding: 5px; margin: 0; color: $primary_color; white-space: nowrap;
 						&:hover {background: $primary_color; color: #fff;}
 					}
 					ul.sub-menu {display: none;}
