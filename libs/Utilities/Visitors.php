@@ -9,7 +9,7 @@ if ( !trait_exists('Visitors') ){
 			add_action('init', array($this, 'register_table_names'));
 
 			//Nebula Visitor Admin Page
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				//Add Visitors menu in admin
 				add_action('admin_menu', array($this, 'admin_menu'));
 			}
@@ -836,7 +836,7 @@ if ( !trait_exists('Visitors') ){
 			$override = apply_filters('pre_nebula_vdb_controller', false);
 			if ( $override !== false ){return $override;}
 
-			if ( !nebula()->option('visitors_db') || nebula()->is_ajax_request() || nebula()->is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
+			if ( !nebula()->get_option('visitors_db') || nebula()->is_ajax_request() || nebula()->is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
 				return false; //Don't add bots to the DB
 			}
 
@@ -953,7 +953,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Create necessary columns by comparing passed data to existing columns
 		public function visitors_create_missing_columns($all_data){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				$existing_columns = nebula()->visitors_existing_columns(); //Returns an array of current table column names
 
 				$needed_columns = array();
@@ -1165,7 +1165,7 @@ if ( !trait_exists('Visitors') ){
 			}
 
 			//From DB (by matching GA CID)
-			if ( $check_db && nebula()->option('visitors_db') ){ //Only run if confirmed returning visitor
+			if ( $check_db && nebula()->get_option('visitors_db') ){ //Only run if confirmed returning visitor
 				$nebula_id_from_ga_cid = $this->get_previous_nebula_id_by_ga_cid();
 				if ( !empty($nebula_id_from_ga_cid) ){
 					$this->force_nebula_id_to_visitor($nebula_id_from_ga_cid);
@@ -1198,7 +1198,7 @@ if ( !trait_exists('Visitors') ){
 			}
 
 			//From DB
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				global $wpdb;
 
 				//Check for an old visitor with the same fingerprint
@@ -1247,7 +1247,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Check if the ga_cid exists, and if so use THAT nebula_id again
 		public function get_previous_nebula_id_by_ga_cid(){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				global $wpdb;
 
 				$nebula_id_from_matching_ga_cid = $wpdb->get_results($wpdb->prepare("SELECT nebula_id FROM " . $wpdb->nebula_visitors . " WHERE ga_cid = '%s'", nebula()->ga_parse_cookie())); //DB Query here.
@@ -1270,7 +1270,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Get all the visitor data at once as an object from the DB
 		public function get_all_visitor_data($storage_type=false, $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				//Get data from cache
 				if ( empty($alt_nebula_id) ){
 					$cached_visitor_data = wp_cache_get('nebula_visitor');
@@ -1341,7 +1341,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Retrieve User Data
 		public function ajax_get_visitor_data(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->get_option('visitors_db') ){ die('Permission Denied.'); }
 			$key = sanitize_text_field($_POST['data']);
 			echo json_encode($this->get_visitor_datapoint($key));
 			wp_die();
@@ -1349,7 +1349,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Get a single datapoint from the Nebula Visitors DB
 		public function get_visitor_datapoint($keys, $return_all=false, $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( !is_array($keys) ){
 					$keys = array($keys);
 				}
@@ -1379,7 +1379,7 @@ if ( !trait_exists('Visitors') ){
 		}
 
 		public function get_visitor_data($column){ //@TODO "Nebula" 0: Update to allow multiple datapoints to be accessed in one query.
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				$column = sanitize_key($column);
 
 				if ( $column == 'notes' ){
@@ -1409,7 +1409,7 @@ if ( !trait_exists('Visitors') ){
 		}
 
 		public function vague_visitor($data=array()){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				$data_to_send = array();
 				foreach ( $data as $column => $value ){
 					$existing_value = $this->get_visitor_data($column);
@@ -1427,7 +1427,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Update Visitor Data
 		public function ajax_update_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->get_option('visitors_db') ){ die('Permission Denied.'); }
 			$data = $_POST['data'];
 			echo json_encode($this->update_visitor_data($data));
 			wp_die();
@@ -1436,7 +1436,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Update the Nebula visitor data
 		public function update_visitor_data($data=array(), $update_db=true, $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( is_string($data) ){
 					$data = array($data);
 				}
@@ -1483,7 +1483,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Actually send the updated data to the database
 		public function send_all_to_cache_and_db($all_data, $alt_nebula_id=false){ //This does like 4 db queries...
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( empty($all_data) ){
 					trigger_error('nebula_vdb_send_all_to_cache_and_db() requires all data to be passed as a parameter!', E_USER_ERROR);
 					return false;
@@ -1568,7 +1568,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Append to Visitor Data
 		public function ajax_append_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->get_option('visitors_db') ){ die('Permission Denied.'); }
 			$data = $_POST['data']; //json_decode(stripslashes()); but its already an array... why?
 
 			echo json_encode($this->append_visitor_data($data));
@@ -1576,7 +1576,7 @@ if ( !trait_exists('Visitors') ){
 		}
 
 		public function append_visitor_data($data=array(), $update_db=true){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( !is_array($data) ){
 					trigger_error("nebula_vdb_append_visitor_data() expects data to be passed as an array of key => value pairs.", E_USER_ERROR);
 					return false;
@@ -1640,7 +1640,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Remove data from the Nebula Visitor DB
 		public function ajax_remove_datapoint(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->get_option('visitors_db') ){ die('Permission Denied.'); }
 
 			$this->remove_visitor_data($_POST['data']);
 			wp_die();
@@ -1648,7 +1648,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Remove data from the Nebula Visitor DB
 		public function remove_visitor_data($data, $update_db=true){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( is_string($data) ){
 					$this->update_visitor_data(array($data => false), false); //Remove the entire label
 				} else {
@@ -1682,7 +1682,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Increment Visitor Data
 		public function ajax_increment_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !nebula()->get_option('visitors_db') ){ die('Permission Denied.'); }
 			$data = $_POST['data'];
 			echo json_encode($this->increment_visitor_data($data));
 			wp_die();
@@ -1690,7 +1690,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Increment a datapoint in the Nebula Visitor DB
 		public function increment_visitor_data($datapoints=array(), $update_db=true){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( is_string($datapoints) ){
 					$datapoints = array($datapoints);
 				}
@@ -1722,7 +1722,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Build a set of data for a brand new visitor
 		public function build_new_visitor_data_object($new_data=array()){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				$defaults = array(
 					'nebula_id' => $this->get_appropriate_nebula_id(),
 					'ga_cid' => $this->ga_parse_cookie(), //Will be UUID on first visit then followed up with actual GA CID via AJAX (if available)
@@ -1833,7 +1833,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Insert visitor into table with all default detections
 		public function insert_visitor($data=array(), $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') && !empty($data) ){
+			if ( nebula()->get_option('visitors_db') && !empty($data) ){
 				//Primary table prep
 				$prepped_primary_data = $this->prep_primary_table_for_db($data);
 
@@ -1875,7 +1875,7 @@ if ( !trait_exists('Visitors') ){
 		//Update certain visitor data everytime.
 		//Pass the existing data array to this to append to it (otherwise a new array is created)... So probably don't want to call this without passing the parameter.
 		public function update_data_everytime($defaults=array()){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				//Avoid ternary operators to prevent overwriting existing data (like manual DB entries)
 
 				$cached_visitor_data = $this->get_all_visitor_data('cache'); //@todo "Nebula" 0: could we just use $defaults instead of the cache?
@@ -1890,7 +1890,7 @@ if ( !trait_exists('Visitors') ){
 							$defaults['is_multipage_visitor'] = '1';
 						}
 						$total_refreshes = ( array_key_exists('total_refreshes', $latest_data) )? $latest_data['total_refreshes'] : 0;
-						if ( nebula()->option('ga_tracking_id') && ($total_pageviews > 1 || $total_refreshes > 1) ){ //If GA is enabled and if more than 1 pageview then it's blocked
+						if ( nebula()->get_option('ga_tracking_id') && ($total_pageviews > 1 || $total_refreshes > 1) ){ //If GA is enabled and if more than 1 pageview then it's blocked
 							$defaults['is_ga_blocked'] = '1';
 						}
 					}
@@ -2066,7 +2066,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Calculate lead score
 		public function calculate_scores($data=null, $storage_type=false, $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( !empty($data) ){
 					$all_visitor_data = $data;
 				} else {
@@ -2209,7 +2209,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Determine the most identifiable characteristic of this visitor
 		public function most_identifiable_label($data=false, $storage_type=false, $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				if ( !empty($data) ){
 					$all_visitor_data = $data;
 				} else {
@@ -2344,7 +2344,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Check if this visitor is similar to a known visitor
 		public function similar_to_known($specific=false, $storage_type=false, $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				global $wpdb;
 
 				$all_visitor_data = $this->get_all_visitor_data($storage_type, $alt_nebula_id);
@@ -2371,7 +2371,7 @@ if ( !trait_exists('Visitors') ){
 		//Remove expired visitors from the DB
 		//This is only ran when Nebula Options are saved, and when *new* visitors are inserted.
 		public function remove_expired($force=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 
 				$nebula_visitor_remove_expired = get_transient('nebula_visitor_db_remove_expired');
 				if ( empty($nebula_visitor_remove_expired) || !empty($force) || nebula()->is_debug() ){
@@ -2393,7 +2393,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Lookup if this visitor is known
 		public function is_known($data=false, $alt_nebula_id=false){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				//Allow cached results by double-checking Nebula ID
 				if ( $alt_nebula_id == $this->get_appropriate_nebula_id() ){
 					$alt_nebula_id = false;
@@ -2433,7 +2433,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Query email address or Hubspot VID to see if the user is known
 		public function check_if_known($send_to_hubspot=true){
-			if ( nebula()->option('visitors_db') ){
+			if ( nebula()->get_option('visitors_db') ){
 				global $wpdb;
 
 				$nebula_id = get_nebula_id();
@@ -2458,7 +2458,7 @@ if ( !trait_exists('Visitors') ){
 		//Prepare Nebula Visitor data to be sent to Hubspot CRM
 		//This includes skipping empty fields, ignoring certain fields, and renaming others.
 		public function prep_data_for_hubspot_crm_delivery($data){
-			if ( nebula()->option('hubspot_api') ){
+			if ( nebula()->get_option('hubspot_api') ){
 				$data_for_hubspot = array();
 				if ( !empty($data['hubspot_vid']) ){
 					$data_for_hubspot['hubspot_vid'] = $data['hubspot_vid'];

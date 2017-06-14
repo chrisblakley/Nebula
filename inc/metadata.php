@@ -37,8 +37,8 @@
 <meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula()->sass_color('primary'); ?>">
 <meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula()->sass_color('primary'); ?>">
 
-<?php if ( nebula()->option('google_search_console_verification') ): ?>
-	<meta name="google-site-verification" content="<?php echo nebula()->option('google_search_console_verification'); ?>" />
+<?php if ( nebula()->get_option('google_search_console_verification') ): ?>
+	<meta name="google-site-verification" content="<?php echo nebula()->get_option('google_search_console_verification'); ?>" />
 <?php endif; ?>
 
 <meta name="description" content="<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); //Yoast appears to not use meta description... Move it back into the below conditional when Yoast brings it back ?>" />
@@ -56,19 +56,19 @@
 	<meta property="og:site_name" content="<?php echo get_bloginfo('name'); ?>" />
 
 	<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
-	<meta property="business:contact_data:phone_number" content="+<?php echo nebula()->option('phone_number'); ?>" />
-	<meta property="business:contact_data:fax_number" content="+<?php echo nebula()->option('fax_number'); ?>" />
-	<meta property="business:contact_data:street_address" content="<?php echo nebula()->option('street_address'); ?>" />
-	<meta property="business:contact_data:locality" content="<?php echo nebula()->option('locality'); ?>" />
-	<meta property="business:contact_data:region" content="<?php echo nebula()->option('region'); ?>" />
-	<meta property="business:contact_data:postal_code" content="<?php echo nebula()->option('postal_code'); ?>" />
-	<meta property="business:contact_data:country_name" content="<?php echo nebula()->option('country_name'); ?>" />
+	<meta property="business:contact_data:phone_number" content="+<?php echo nebula()->get_option('phone_number'); ?>" />
+	<meta property="business:contact_data:fax_number" content="+<?php echo nebula()->get_option('fax_number'); ?>" />
+	<meta property="business:contact_data:street_address" content="<?php echo nebula()->get_option('street_address'); ?>" />
+	<meta property="business:contact_data:locality" content="<?php echo nebula()->get_option('locality'); ?>" />
+	<meta property="business:contact_data:region" content="<?php echo nebula()->get_option('region'); ?>" />
+	<meta property="business:contact_data:postal_code" content="<?php echo nebula()->get_option('postal_code'); ?>" />
+	<meta property="business:contact_data:country_name" content="<?php echo nebula()->get_option('country_name'); ?>" />
 
 	<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): //Business hours of operation. ?>
-		<?php if ( nebula()->option('business_hours_' . $weekday . '_enabled') && nebula()->option('business_hours_' . $weekday . '_open') != '' && nebula()->option('business_hours_' . $weekday . '_close') != '' ) : ?>
+		<?php if ( nebula()->get_option('business_hours_' . $weekday . '_enabled') && nebula()->get_option('business_hours_' . $weekday . '_open') != '' && nebula()->get_option('business_hours_' . $weekday . '_close') != '' ) : ?>
 			<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
-			<meta property="business:hours:start" content="<?php echo nebula()->option('business_hours_' . $weekday . '_open'); ?>" />
-			<meta property="business:hours:end" content="<?php echo nebula()->option('business_hours_' . $weekday . '_close'); ?>" />
+			<meta property="business:hours:start" content="<?php echo nebula()->get_option('business_hours_' . $weekday . '_open'); ?>" />
+			<meta property="business:hours:end" content="<?php echo nebula()->get_option('business_hours_' . $weekday . '_close'); ?>" />
 		<?php endif; ?>
 	<?php endforeach; ?>
 
@@ -114,11 +114,11 @@
 <?php endif; ?>
 
 <?php //Facebook Metadata ?>
-<?php if ( nebula()->option('facebook_app_id') ): ?>
-	<meta property="fb:app_id" content="<?php echo nebula()->option('facebook_app_id'); ?>" />
+<?php if ( nebula()->get_option('facebook_app_id') ): ?>
+	<meta property="fb:app_id" content="<?php echo nebula()->get_option('facebook_app_id'); ?>" />
 <?php endif; ?>
 <?php if ( get_option('facebook_page_id') ): ?>
-	<meta property="fb:pages" content="<?php echo nebula()->option('facebook_page_id'); ?>" />
+	<meta property="fb:pages" content="<?php echo nebula()->get_option('facebook_page_id'); ?>" />
 <?php endif; ?>
 <?php if ( get_option('facebook_admin_ids') ): ?>
 	<meta property="fb:admins" content="<?php echo get_option('facebook_admin_ids'); ?>" />
@@ -144,10 +144,10 @@
 <?php endif; ?>
 <meta name="twitter:title" content="<?php the_title(); ?>" />
 <meta name="twitter:description" content="<?php echo nebula()->excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
-<?php if ( nebula()->option('twitter_user') ): ?>
-	<meta name="twitter:site" content="<?php echo nebula()->option('twitter_user'); ?>" />
+<?php if ( nebula()->get_option('twitter_user') ): ?>
+	<meta name="twitter:site" content="<?php echo nebula()->get_option('twitter_user'); ?>" />
 <?php endif; ?>
-<?php if ( nebula()->option('author_bios') && !empty($post) && get_the_author_meta('twitter', $post->post_author) ): ?>
+<?php if ( nebula()->get_option('author_bios') && !empty($post) && get_the_author_meta('twitter', $post->post_author) ): ?>
 	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $post->post_author); ?>" />
 <?php endif; ?>
 
@@ -162,12 +162,12 @@
 <?php endif; ?>
 
 <?php //Local/Geolocation Metadata ?>
-<meta name="geo.placename" content="<?php echo nebula()->option('locality'); ?>, <?php echo nebula()->option('region'); ?>" />
-<meta name="geo.position" content="<?php echo nebula()->option('latitude'); ?>;<?php echo nebula()->option('longitude'); ?>" />
+<meta name="geo.placename" content="<?php echo nebula()->get_option('locality'); ?>, <?php echo nebula()->get_option('region'); ?>" />
+<meta name="geo.position" content="<?php echo nebula()->get_option('latitude'); ?>;<?php echo nebula()->get_option('longitude'); ?>" />
 <meta name="geo.region" content="<?php echo get_bloginfo('language'); ?>" />
-<meta name="ICBM" content="<?php echo nebula()->option('latitude'); ?>, <?php echo nebula()->option('longitude'); ?>" />
-<meta property="place:location:latitude" content="<?php echo nebula()->option('latitude'); ?>" />
-<meta property="place:location:longitude" content="<?php echo nebula()->option('longitude'); ?>" />
+<meta name="ICBM" content="<?php echo nebula()->get_option('latitude'); ?>, <?php echo nebula()->get_option('longitude'); ?>" />
+<meta property="place:location:latitude" content="<?php echo nebula()->get_option('latitude'); ?>" />
+<meta property="place:location:longitude" content="<?php echo nebula()->get_option('longitude'); ?>" />
 
 <link rel="manifest" href="<?php echo nebula()->manifest_json_location(); //Manifest for progressive web app data ?>" />
 <link rel="profile" href="http://gmpg.org/xfn/11" />
@@ -180,43 +180,43 @@
 	//JSON-LD Examples: http://jsonld.com/
 	//Google Structured Data Testing Tool: https://search.google.com/structured-data/testing-tool
 
-	$company_type = ( nebula()->option('business_type') )? nebula()->option('business_type') : 'LocalBusiness';
+	$company_type = ( nebula()->get_option('business_type') )? nebula()->get_option('business_type') : 'LocalBusiness';
 ?>
 <script type="application/ld+json">
 	{
 		"@context": "http://schema.org/",
 		"@type": "<?php echo $company_type; ?>",
-		"name": "<?php echo ( nebula()->option('site_owner') )? nebula()->option('site_owner') : get_bloginfo('name'); ?>",
+		"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
 		"url": "<?php echo home_url('/'); ?>",
 		"address": {
 			"@type": "PostalAddress",
-			"streetAddress": "<?php echo nebula()->option('street_address'); ?>",
-			"addressLocality": "<?php echo nebula()->option('locality'); ?>",
-			"addressRegion": "<?php echo nebula()->option('region'); ?>",
-			"postalCode": "<?php echo nebula()->option('postal_code'); ?>",
-			"addressCountry": "<?php echo nebula()->option('country_name'); ?>"
+			"streetAddress": "<?php echo nebula()->get_option('street_address'); ?>",
+			"addressLocality": "<?php echo nebula()->get_option('locality'); ?>",
+			"addressRegion": "<?php echo nebula()->get_option('region'); ?>",
+			"postalCode": "<?php echo nebula()->get_option('postal_code'); ?>",
+			"addressCountry": "<?php echo nebula()->get_option('country_name'); ?>"
 		},
-		"telephone": "+<?php echo nebula()->option('phone_number'); ?>",
+		"telephone": "+<?php echo nebula()->get_option('phone_number'); ?>",
 
-		<?php if ( nebula()->option('latitude') ): ?>
+		<?php if ( nebula()->get_option('latitude') ): ?>
 			"geo": {
 				"@type": "GeoCoordinates",
-				"latitude": "<?php echo nebula()->option('latitude'); ?>",
-				"longitude": "<?php echo nebula()->option('longitude'); ?>"
+				"latitude": "<?php echo nebula()->get_option('latitude'); ?>",
+				"longitude": "<?php echo nebula()->get_option('longitude'); ?>"
 			},
-			"hasMap": "https://www.google.com/maps/place/<?php echo nebula()->option('latitude'); ?>,<?php echo nebula()->option('longitude'); ?>",
+			"hasMap": "https://www.google.com/maps/place/<?php echo nebula()->get_option('latitude'); ?>,<?php echo nebula()->get_option('longitude'); ?>",
 		<?php endif; ?>
 
 		<?php if ( $company_type !== 'Organization' && $company_type !== 'Corporation' ): ?>
 			<?php
 				$opening_hours_specification = '';
 				foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
-					if ( nebula()->option('business_hours_' . $weekday . '_enabled') && nebula()->option('business_hours_' . $weekday . '_open') != '' && nebula()->option('business_hours_' . $weekday . '_close') != '' ){
+					if ( nebula()->get_option('business_hours_' . $weekday . '_enabled') && nebula()->get_option('business_hours_' . $weekday . '_open') != '' && nebula()->get_option('business_hours_' . $weekday . '_close') != '' ){
 						$opening_hours_specification .= '{
 							"@type": "OpeningHoursSpecification",
 							"dayOfWeek": "' . $weekday . '",
-							"opens": "' . date('H:i', strtotime(nebula()->option('business_hours_' . $weekday . '_open'))) . '",
-							"closes": "' . date('H:i', strtotime(nebula()->option('business_hours_' . $weekday . '_close'))) . '"
+							"opens": "' . date('H:i', strtotime(nebula()->get_option('business_hours_' . $weekday . '_open'))) . '",
+							"closes": "' . date('H:i', strtotime(nebula()->get_option('business_hours_' . $weekday . '_close'))) . '"
 						},';
 					}
 				}
@@ -231,44 +231,44 @@
 		"contactPoint": {
 			"@type": "ContactPoint",
 
-			<?php if ( nebula()->option('phone_number') ): ?>
-				"telephone": "+<?php echo nebula()->option('phone_number'); ?>",
+			<?php if ( nebula()->get_option('phone_number') ): ?>
+				"telephone": "+<?php echo nebula()->get_option('phone_number'); ?>",
 			<?php else: ?>
 				"url": "<?php echo home_url(); ?>/contact",
 			<?php endif; ?>
 
-			"email": "<?php echo nebula()->option('contact_email'); ?>",
+			"email": "<?php echo nebula()->get_option('contact_email'); ?>",
 			"contactType": "customer service"
 		},
 
 		<?php
 			$company_same_as = '';
-			if ( nebula()->option('facebook_url') ){
-				$company_same_as .= '"' . nebula()->option('facebook_url') . '",';
+			if ( nebula()->get_option('facebook_url') ){
+				$company_same_as .= '"' . nebula()->get_option('facebook_url') . '",';
 			}
 
-			if ( nebula()->option('twitter_username') ){
+			if ( nebula()->get_option('twitter_username') ){
 				$company_same_as .= '"' . nebula()->twitter_url() . '",';
 			}
 
-			if ( nebula()->option('linkedin_url') ){
-				$company_same_as .= '"' . nebula()->option('linkedin_url') . '",';
+			if ( nebula()->get_option('linkedin_url') ){
+				$company_same_as .= '"' . nebula()->get_option('linkedin_url') . '",';
 			}
 
-			if ( nebula()->option('youtube_url') ){
-				$company_same_as .= '"' . nebula()->option('youtube_url') . '",';
+			if ( nebula()->get_option('youtube_url') ){
+				$company_same_as .= '"' . nebula()->get_option('youtube_url') . '",';
 			}
 
-			if ( nebula()->option('instagram_url') ){
-				$company_same_as .= '"' . nebula()->option('instagram_url') . '",';
+			if ( nebula()->get_option('instagram_url') ){
+				$company_same_as .= '"' . nebula()->get_option('instagram_url') . '",';
 			}
 
-			if ( nebula()->option('pinterest_url') ){
-				$company_same_as .= '"' . nebula()->option('pinterest_url') . '",';
+			if ( nebula()->get_option('pinterest_url') ){
+				$company_same_as .= '"' . nebula()->get_option('pinterest_url') . '",';
 			}
 
-			if ( nebula()->option('google_plus_url') ){
-				$company_same_as .= '"' . nebula()->option('google_plus_url') . '",';
+			if ( nebula()->get_option('google_plus_url') ){
+				$company_same_as .= '"' . nebula()->get_option('google_plus_url') . '",';
 			}
 		?>
 		<?php if ( !empty($company_same_as) ): ?>
@@ -286,7 +286,7 @@
 	}
 </script>
 
-<?php if ( is_author() && nebula()->option('author_bios') ): ?>
+<?php if ( is_author() && nebula()->get_option('author_bios') ): ?>
 	<script type="application/ld+json">
 		{
 			"@context": "http://schema.org/",
@@ -375,17 +375,17 @@
 			"datePublished": "<?php echo get_the_date('c'); ?>",
 			"dateModified": "<?php echo get_the_modified_date('c'); ?>",
 			"author": {
-				<?php if ( nebula()->option('author_bios') ): ?>
+				<?php if ( nebula()->get_option('author_bios') ): ?>
 					"@type": "Person",
 					"name": "<?php echo the_author_meta('display_name', $post->post_author); ?>"
 				<?php else: ?>
 					"@type": "Organization",
-					"name": "<?php echo nebula()->option('site_owner'); ?>"
+					"name": "<?php echo nebula()->get_option('site_owner'); ?>"
 				<?php endif; ?>
 			},
 			"publisher": {
 				"@type": "Organization",
-				"name": "<?php echo ( nebula()->option('site_owner') )? nebula()->option('site_owner') : get_bloginfo('name'); ?>",
+				"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
 				"logo": {
 					"@type": "ImageObject",
 					"url": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>"

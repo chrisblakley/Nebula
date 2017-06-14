@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Prototyping') ){
 	trait Prototyping {
 		public function hooks(){
-			if ( $this->option('prototype_mode') ){
+			if ( $this->get_option('prototype_mode') ){
 				add_action('wp_enqueue_scripts', array($this, 'enqueue_nebula_wireframing'));
 
 				//Set up redirects based on the ?phase query.
@@ -14,14 +14,14 @@ if ( !trait_exists('Prototyping') ){
 
 					$mt_settings['query'] = array(
 						'phase' => array(
-							'wireframe' => $this->option('wireframe_theme'), //Wireframe Theme
-							'staging' => $this->option('staging_theme'), //Staging Theme
-							'production' => $this->option('production_theme') //Production Theme
+							'wireframe' => $this->get_option('wireframe_theme'), //Wireframe Theme
+							'staging' => $this->get_option('staging_theme'), //Staging Theme
+							'production' => $this->get_option('production_theme') //Production Theme
 						)
 					);
 
-					$mt_settings['current'] = $this->option('production_theme'); //"Everything Else" theme
-					$mt_settings['ajax_all'] = ( $this->option('staging_theme') )? $this->option('staging_theme') : $this->option('production_theme'); //Theme for AJAX functions. Staging (if exists) or Production
+					$mt_settings['current'] = $this->get_option('production_theme'); //"Everything Else" theme
+					$mt_settings['ajax_all'] = ( $this->get_option('staging_theme') )? $this->get_option('staging_theme') : $this->get_option('production_theme'); //Theme for AJAX functions. Staging (if exists) or Production
 					$mt_settings['remember'] = array('query' => array('phase' => array('wireframe' => true, 'staging' => true)));
 					$mt_settings['override'] = array('query' => array('phase' => array('production' => true)));
 					update_option('jr_mt_settings', $mt_settings);
@@ -79,7 +79,7 @@ if ( !trait_exists('Prototyping') ){
 			if ( $this->dev_phase() ){
 				$permalink = ( $this->is_admin_page() )? home_url() : get_permalink();
 
-				if ( $this->dev_phase() != 'wireframe' && $this->option('wireframe_theme') ){
+				if ( $this->dev_phase() != 'wireframe' && $this->get_option('wireframe_theme') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-wireframe-activate',
@@ -88,7 +88,7 @@ if ( !trait_exists('Prototyping') ){
 					));
 				}
 
-				if ( $this->dev_phase() != 'staging' && $this->option('staging_theme') ){
+				if ( $this->dev_phase() != 'staging' && $this->get_option('staging_theme') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-staging-activate',
@@ -137,7 +137,7 @@ if ( !trait_exists('Prototyping') ){
 
 		//Top header for each component
 		public function fpo_component($component='Component', $icon='fa-cube', $open='-open'){
-			if ( !$this->option('prototype_mode') ){
+			if ( !$this->get_option('prototype_mode') ){
 				return false;
 			}
 
@@ -162,7 +162,7 @@ if ( !trait_exists('Prototyping') ){
 
 		//Top header for each component (with opening .fpo div)
 		public function fpo_component_start($component='Component', $icon='fa-cube'){
-			if ( !$this->option('prototype_mode') ){
+			if ( !$this->get_option('prototype_mode') ){
 				return false;
 			}
 			fpo_component($component, $icon, '');
@@ -171,7 +171,7 @@ if ( !trait_exists('Prototyping') ){
 
 		//Closes .fpo div (from fpo_component_start)
 		public function fpo_component_end(){
-			if ( !$this->option('prototype_mode') ){
+			if ( !$this->get_option('prototype_mode') ){
 				return false;
 			}
 			echo '</div><!-- /fpo -->';
@@ -179,7 +179,7 @@ if ( !trait_exists('Prototyping') ){
 
 		//Create a placeholder box as an FPO element
 		public function fpo($title='FPO', $description='', $width='100%', $height="250px", $bg='#ddd', $icon='', $styles='', $classes=''){
-			if ( !$this->option('prototype_mode') ){
+			if ( !$this->get_option('prototype_mode') ){
 				return false;
 			}
 
@@ -224,7 +224,7 @@ if ( !trait_exists('Prototyping') ){
 		//Placeholder background image
 		/* <div class="row" style="<?php fpo_bg_image(); ?>"> */
 		public function fpo_bg_image($type='none', $color='#aaa'){
-			if ( !$this->option('prototype_mode') ){
+			if ( !$this->get_option('prototype_mode') ){
 				return false;
 			}
 
@@ -246,7 +246,7 @@ if ( !trait_exists('Prototyping') ){
 
 		//Placeholder image... Consider deprecating this function
 		public function fpo_image($width='100%', $height='200px', $type='none', $color='#000', $styles='', $classes=''){
-			if ( !$this->option('prototype_mode') ){
+			if ( !$this->get_option('prototype_mode') ){
 				return false;
 			}
 
@@ -288,7 +288,7 @@ if ( !trait_exists('Prototyping') ){
 		}
 
 		public function fpo_text($text=''){
-			if ( !$this->option('prototype_mode') ){
+			if ( !$this->get_option('prototype_mode') ){
 				return false;
 			}
 

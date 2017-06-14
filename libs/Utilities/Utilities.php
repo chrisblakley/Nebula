@@ -31,7 +31,7 @@ if ( !trait_exists('Utilities') ){
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
 			$session_info = ( $this->is_debug() )? 'dbg.' : '';
-			$session_info .= ( $this->option('prototype_mode') )? 'prt.' : '';
+			$session_info .= ( $this->get_option('prototype_mode') )? 'prt.' : '';
 
 			if ( $this->is_client() ){
 				$session_info .= 'cli.';
@@ -67,8 +67,8 @@ if ( !trait_exists('Utilities') ){
 				$ip = $_SERVER['REMOTE_ADDR'];
 			}
 
-			if ( $this->option('notableiplist') ){
-				$notable_ip_lines = explode("\n", $this->option('notableiplist'));
+			if ( $this->get_option('notableiplist') ){
+				$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
 				foreach ( $notable_ip_lines as $line ){
 					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
 					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $ip)) || $ip_info[0] == $ip ){ //If regex pattern and matches IP, or if direct match
@@ -110,7 +110,7 @@ if ( !trait_exists('Utilities') ){
 			if ( $override !== false ){return $override;}
 
 			if ( empty($strict) ){
-				$devIPs = explode(',', $this->option('dev_ip'));
+				$devIPs = explode(',', $this->get_option('dev_ip'));
 				if ( !empty($devIPs) ){
 					foreach ( $devIPs as $devIP ){
 						$devIP = trim($devIP);
@@ -132,7 +132,7 @@ if ( !trait_exists('Utilities') ){
 				if ( !empty($current_user->user_email) ){
 					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
-					$devEmails = explode(',', $this->option('dev_email_domain'));
+					$devEmails = explode(',', $this->get_option('dev_email_domain'));
 					foreach ( $devEmails as $devEmail ){
 						if ( trim($devEmail) == $current_user_domain ){
 							return true;
@@ -152,7 +152,7 @@ if ( !trait_exists('Utilities') ){
 			if ( $override !== false ){return $override;}
 
 			if ( empty($strict) ){
-				$clientIPs = explode(',', $this->option('client_ip'));
+				$clientIPs = explode(',', $this->get_option('client_ip'));
 				if ( !empty($clientIPs) ){
 					foreach ( $clientIPs as $clientIP ){
 						$clientIP = trim($clientIP);
@@ -174,7 +174,7 @@ if ( !trait_exists('Utilities') ){
 					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
 					//Check if the current user's email domain matches any of the client email domains from Nebula Options
-					$clientEmails = explode(',', $this->option('client_email_domain'));
+					$clientEmails = explode(',', $this->get_option('client_email_domain'));
 					foreach ( $clientEmails as $clientEmail ){
 						if ( trim($clientEmail) == $current_user_domain ){
 							return true;
@@ -222,8 +222,8 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_is_site_live', false);
 			if ( $override !== false ){return $override;}
 
-			if ( $this->option('hostnames') ){
-				if ( strpos($this->option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){
+			if ( $this->get_option('hostnames') ){
+				if ( strpos($this->get_option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){
 					return true;
 				}
 				return false;
@@ -243,7 +243,7 @@ if ( !trait_exists('Utilities') ){
 		//Valid Hostname Regex
 		public function valid_hostname_regex($domains=null){
 			$domains = ( $domains )? $domains : array($this->url_components('domain'));
-			$settingsdomains = ( $this->option('hostnames') )? explode(',', $this->option('hostnames')) : array($this->url_components('domain'));
+			$settingsdomains = ( $this->get_option('hostnames') )? explode(',', $this->get_option('hostnames')) : array($this->url_components('domain'));
 			$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 			$fulldomains = preg_filter('/^/', '.*', $fulldomains);
 			$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com

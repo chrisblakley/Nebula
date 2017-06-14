@@ -230,7 +230,7 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			if ( empty($key) ){
-				$key = $this->option('google_browser_api_key');
+				$key = $this->get_option('google_browser_api_key');
 			}
 			if ( !empty($q) ){
 				$q = str_replace(' ', '+', $q);

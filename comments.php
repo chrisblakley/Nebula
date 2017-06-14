@@ -1,6 +1,6 @@
-<?php if ( nebula()->option('comments') ): ?>
+<?php if ( nebula()->get_option('comments') ): ?>
 	<div id="nebulacommentswrapper">
-		<?php if ( nebula()->option('disqus_shortname') ): ?>
+		<?php if ( nebula()->get_option('disqus_shortname') ): ?>
 			<div id="disqus_thread"></div>
 			<script type="text/javascript">
 				<?php //Note this is a manual implementation of Disqus; we are NOT using the WordPress plugin for implementation. ?>

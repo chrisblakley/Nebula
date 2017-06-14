@@ -5,6 +5,9 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
+			//Load abandonment tracking
+			add_action('nebula_head_open', array($this, 'ga_track_load_abandons')); //This is the earliest anything can be placed in the <head>
+
 			//Sends events to Google Analytics via AJAX (used if GA is blocked via JavaScript)
 			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
@@ -81,7 +84,7 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array(
 				'utmwv' => '5.3.8', //Tracking code version *** REQUIRED ***
-				'utmac' => nebula()->option('ga_tracking_id'), //Account string, appears on all requests *** REQUIRED ***
+				'utmac' => nebula()->get_option('ga_tracking_id'), //Account string, appears on all requests *** REQUIRED ***
 				'utmdt' => get_the_title(), //Page title, which is a URL-encoded string *** REQUIRED ***
 				'utmp' => nebula()->url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
 				'utmcc' => '__utma=' . $cookies['utma'] . ';+', //Cookie values. This request parameter sends all the cookies requested from the page. *** REQUIRED ***
@@ -122,7 +125,7 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
 				'v' => 1,
-				'tid' => nebula()->option('ga_tracking_id'),
+				'tid' => nebula()->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => 'pageview',
 				'dl' => $location,
@@ -148,7 +151,7 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
 				'v' => 1,
-				'tid' => nebula()->option('ga_tracking_id'),
+				'tid' => nebula()->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => 'event',
 				'ec' => $category, //Category (Required)
@@ -176,7 +179,7 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$defaults = array(
 				'v' => 1,
-				'tid' => nebula()->option('ga_tracking_id'),
+				'tid' => nebula()->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => '',
 				'ni' => 1,
@@ -204,7 +207,7 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
 				'v' => 1,
-				'tid' => nebula()->option('ga_tracking_id'),
+				'tid' => nebula()->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => 'exception',
 				'exd' => $message,
@@ -236,8 +239,8 @@ if ( !trait_exists('Analytics') ){
 				}
 
 				//Custom Dimension
-				if ( nebula()->option('cd_blocker') ){
-					$additional_fields['cd' . str_replace('dimension', '', nebula()->option('cd_blocker'))] = 'Google Analytics Blocker';
+				if ( nebula()->get_option('cd_blocker') ){
+					$additional_fields['cd' . str_replace('dimension', '', nebula()->get_option('cd_blocker'))] = 'Google Analytics Blocker';
 				}
 
 				//Pageview
@@ -273,6 +276,64 @@ if ( !trait_exists('Analytics') ){
 
 			$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
 			return $response;
+		}
+
+		//Load abandonment tracking
+		public function ga_track_load_abandons(){
+			?>
+			<script>
+				document.addEventListener("visibilitychange", newAbandonTracker);
+				window.onbeforeunload = newAbandonTracker;
+
+				function newAbandonTracker(e){
+					//Remove listeners so this can only trigger once
+					document.removeEventListener("visibilitychange", newAbandonTracker);
+					window.onbeforeunload = null;
+
+					loadAbandonLevel = 'Hard (Unload)';
+					if ( e.type == 'visibilitychange' ){
+						loadAbandonLevel = 'Soft (Visibility Change)';
+					}
+
+					navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
+						'tid=<?php echo nebula()->get_option('ga_tracking_id'); ?>', //Tracking ID
+						'cid=' + document.cookie.replace(/(?:(?:^|.*;)\s*_ga\s*\=\s*(?:\w+\.\d\.)([^;]*).*$)|^.*$/, '$1') || (Math.random()*Math.pow(2, 52)), //Client ID
+						'v=1', //Protocol Version
+						't=event', //Hit Type
+						'ec=Load Abandon', //Event Category
+						'ea=' + loadAbandonLevel, //Event Action
+						'el=Before window load', //Event Label
+						'ev=' + Math.round(performance.now()), //Event Value
+						'ni=1', //Non-Interaction Hit
+						'dr=<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : ''; ?>', //Document Referrer
+						'dl=' + window.location.href, //Document Location URL
+						'dt=' + document.title, //Document Title
+					].join('&'));
+
+					//User Timing
+					navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
+						'tid=<?php echo nebula()->get_option('ga_tracking_id'); ?>', //Tracking ID
+						'cid=' + document.cookie.replace(/(?:(?:^|.*;)\s*_ga\s*\=\s*(?:\w+\.\d\.)([^;]*).*$)|^.*$/, '$1') || (Math.random()*Math.pow(2, 52)), //Client ID
+						'v=1', //Protocol Version
+						't=timing', //Hit Type
+						'utc=Load Abandon', //Timing Category
+						'utv=' + loadAbandonLevel, //Timing Variable Name
+						'utt=' + Math.round(performance.now()), //Timing Time (milliseconds)
+						'utl=Before window load', //Timing Label
+						'dl=' + window.location.href, //Document Location URL
+						'dt=' + document.title, //Document Title
+					].join('&'));
+				}
+
+				//Remove abandonment listeners on window load
+				window.onload = function(){
+					document.removeEventListener("visibilitychange", newAbandonTracker);
+					if ( window.onbeforeunload === newAbandonTracker ){
+						window.onbeforeunload = null;
+					}
+				};
+			</script>
+			<?php
 		}
 	}
 }

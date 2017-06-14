@@ -6,7 +6,7 @@
 	}
 ?>
 
-<?php if ( nebula()->option('ga_tracking_id') ): //Universal Google Analytics ?>
+<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
 	<link rel="dns-prefetch" href="//www.google-analytics.com" />
 
 	<script>
@@ -14,13 +14,13 @@
 
 		//Nebula uses the "alternative async tracking snippet": https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-		ga('create', '<?php echo nebula()->option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
+		ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
 
-		<?php if ( nebula()->option('ga_displayfeatures') ): ?>
+		<?php if ( nebula()->get_option('ga_displayfeatures') ): ?>
 			ga('require', 'displayfeatures');
 		<?php endif; ?>
 
-		<?php if ( nebula()->option('ga_linkid') ): ?>
+		<?php if ( nebula()->get_option('ga_linkid') ): ?>
 			ga('require', 'linkid');
 		<?php endif; ?>
 
@@ -47,53 +47,53 @@
 			//Note: Ecommerce dimensions are added in nebula_ecommerce.php
 		?>
 		gaCustomDimensions = {
-			author: '<?php echo nebula()->option('cd_author'); ?>',
-			businessHours: '<?php echo nebula()->option('cd_businesshours'); ?>',
-			categories: '<?php echo nebula()->option('cd_categories'); ?>',
-			tags: '<?php echo nebula()->option('cd_tags'); ?>',
-			contactMethod: '<?php echo nebula()->option('cd_contactmethod'); ?>',
-			formTiming: '<?php echo nebula()->option('cd_formtiming'); ?>',
-			firstInteraction: '<?php echo nebula()->option('cd_firstinteraction'); ?>',
-			windowType: '<?php echo nebula()->option('cd_windowtype'); ?>',
-			geolocation: '<?php echo nebula()->option('cd_geolocation'); ?>',
-			geoAccuracy: '<?php echo nebula()->option('cd_geoaccuracy'); ?>',
-			geoName: '<?php echo nebula()->option('cd_geoname'); ?>',
-			relativeTime: '<?php echo nebula()->option('cd_relativetime'); ?>',
-			scrollDepth: '<?php echo nebula()->option('cd_scrolldepth'); ?>',
-			sessionID: '<?php echo nebula()->option('cd_sessionid'); ?>',
-			poi: '<?php echo nebula()->option('cd_notablepoi'); ?>',
-			role: '<?php echo nebula()->option('cd_role'); ?>',
-			timestamp: '<?php echo nebula()->option('cd_timestamp'); ?>',
-			userID: '<?php echo nebula()->option('cd_userid'); ?>',
-			fbID: '<?php echo nebula()->option('cd_fbid'); ?>',
-			videoWatcher: '<?php echo nebula()->option('cd_videowatcher'); ?>',
-			eventIntent: '<?php echo nebula()->option('cd_eventintent'); ?>',
-			wordCount: '<?php echo nebula()->option('cd_wordcount'); ?>',
-			weather: '<?php echo nebula()->option('cd_weather'); ?>',
-			temperature: '<?php echo nebula()->option('cd_temperature'); ?>',
-			publishYear: '<?php echo nebula()->option('cd_publishyear'); ?>',
-			blocker: '<?php echo nebula()->option('cd_blocker'); ?>',
-			queryString: '<?php echo nebula()->option('cd_querystring'); ?>',
-			mqBreakpoint: '<?php echo nebula()->option('cd_mqbreakpoint'); ?>',
-			mqResolution: '<?php echo nebula()->option('cd_mqresolution'); ?>',
-			mqOrientation: '<?php echo nebula()->option('cd_mqorientation'); ?>',
+			author: '<?php echo nebula()->get_option('cd_author'); ?>',
+			businessHours: '<?php echo nebula()->get_option('cd_businesshours'); ?>',
+			categories: '<?php echo nebula()->get_option('cd_categories'); ?>',
+			tags: '<?php echo nebula()->get_option('cd_tags'); ?>',
+			contactMethod: '<?php echo nebula()->get_option('cd_contactmethod'); ?>',
+			formTiming: '<?php echo nebula()->get_option('cd_formtiming'); ?>',
+			firstInteraction: '<?php echo nebula()->get_option('cd_firstinteraction'); ?>',
+			windowType: '<?php echo nebula()->get_option('cd_windowtype'); ?>',
+			geolocation: '<?php echo nebula()->get_option('cd_geolocation'); ?>',
+			geoAccuracy: '<?php echo nebula()->get_option('cd_geoaccuracy'); ?>',
+			geoName: '<?php echo nebula()->get_option('cd_geoname'); ?>',
+			relativeTime: '<?php echo nebula()->get_option('cd_relativetime'); ?>',
+			scrollDepth: '<?php echo nebula()->get_option('cd_scrolldepth'); ?>',
+			sessionID: '<?php echo nebula()->get_option('cd_sessionid'); ?>',
+			poi: '<?php echo nebula()->get_option('cd_notablepoi'); ?>',
+			role: '<?php echo nebula()->get_option('cd_role'); ?>',
+			timestamp: '<?php echo nebula()->get_option('cd_timestamp'); ?>',
+			userID: '<?php echo nebula()->get_option('cd_userid'); ?>',
+			fbID: '<?php echo nebula()->get_option('cd_fbid'); ?>',
+			videoWatcher: '<?php echo nebula()->get_option('cd_videowatcher'); ?>',
+			eventIntent: '<?php echo nebula()->get_option('cd_eventintent'); ?>',
+			wordCount: '<?php echo nebula()->get_option('cd_wordcount'); ?>',
+			weather: '<?php echo nebula()->get_option('cd_weather'); ?>',
+			temperature: '<?php echo nebula()->get_option('cd_temperature'); ?>',
+			publishYear: '<?php echo nebula()->get_option('cd_publishyear'); ?>',
+			blocker: '<?php echo nebula()->get_option('cd_blocker'); ?>',
+			queryString: '<?php echo nebula()->get_option('cd_querystring'); ?>',
+			mqBreakpoint: '<?php echo nebula()->get_option('cd_mqbreakpoint'); ?>',
+			mqResolution: '<?php echo nebula()->get_option('cd_mqresolution'); ?>',
+			mqOrientation: '<?php echo nebula()->get_option('cd_mqorientation'); ?>',
 		}
 
 		gaCustomMetrics = {
-			formImpressions: '<?php echo nebula()->option('cm_formimpressions'); ?>',
-			formStarts: '<?php echo nebula()->option('cm_formstarts'); ?>',
-			formSubmissions: '<?php echo nebula()->option('cm_formsubmissions'); ?>',
-			notableDownloads: '<?php echo nebula()->option('cm_notabledownloads'); ?>',
-			engagedReaders: '<?php echo nebula()->option('cm_engagedreaders'); ?>',
-			pageVisible: '<?php echo nebula()->option('cm_pagevisible'); ?>',
-			pageHidden: '<?php echo nebula()->option('cm_pagehidden'); ?>',
-			videoStarts: '<?php echo nebula()->option('cm_videostarts'); ?>',
-			videoPlaytime: '<?php echo nebula()->option('cm_videoplaytime'); ?>',
-			videoCompletions: '<?php echo nebula()->option('cm_videocompletions'); ?>',
-			autocompleteSearches: '<?php echo nebula()->option('cm_autocompletesearches'); ?>',
-			autocompleteSearchClicks: '<?php echo nebula()->option('cm_autocompletesearchclicks'); ?>',
-			wordCount: '<?php echo nebula()->option('cm_wordcount'); ?>',
-			maxScroll: '<?php echo nebula()->option('cm_maxscroll'); ?>',
+			formImpressions: '<?php echo nebula()->get_option('cm_formimpressions'); ?>',
+			formStarts: '<?php echo nebula()->get_option('cm_formstarts'); ?>',
+			formSubmissions: '<?php echo nebula()->get_option('cm_formsubmissions'); ?>',
+			notableDownloads: '<?php echo nebula()->get_option('cm_notabledownloads'); ?>',
+			engagedReaders: '<?php echo nebula()->get_option('cm_engagedreaders'); ?>',
+			pageVisible: '<?php echo nebula()->get_option('cm_pagevisible'); ?>',
+			pageHidden: '<?php echo nebula()->get_option('cm_pagehidden'); ?>',
+			videoStarts: '<?php echo nebula()->get_option('cm_videostarts'); ?>',
+			videoPlaytime: '<?php echo nebula()->get_option('cm_videoplaytime'); ?>',
+			videoCompletions: '<?php echo nebula()->get_option('cm_videocompletions'); ?>',
+			autocompleteSearches: '<?php echo nebula()->get_option('cm_autocompletesearches'); ?>',
+			autocompleteSearchClicks: '<?php echo nebula()->get_option('cm_autocompletesearchclicks'); ?>',
+			wordCount: '<?php echo nebula()->get_option('cm_wordcount'); ?>',
+			maxScroll: '<?php echo nebula()->get_option('cm_maxscroll'); ?>',
 		}
 
 		<?php
@@ -102,12 +102,12 @@
 
 				if ( is_singular() ){
 					//Article author
-					if ( nebula()->option('author_bios') && nebula()->option('cd_author') ){
+					if ( nebula()->get_option('author_bios') && nebula()->get_option('cd_author') ){
 						echo 'ga("set", gaCustomDimensions["author"], "' . get_the_author() . '");';
 					}
 
 					//Article's published year
-					if ( nebula()->option('cd_publishyear') ){
+					if ( nebula()->get_option('cd_publishyear') ){
 						echo 'ga("set", gaCustomDimensions["publishYear"], "' . get_the_date('Y') . '");';
 					}
 				}
@@ -125,7 +125,7 @@
 						$cat_list = '(No Categories)';
 					}
 					echo 'nebula.post.categories = "' . $cat_list . '";';
-					if ( nebula()->option('cd_categories') ){
+					if ( nebula()->get_option('cd_categories') ){
 						echo 'ga("set", gaCustomDimensions["categories"], "' . $cat_list . '");';
 					}
 
@@ -141,7 +141,7 @@
 						$tag_list = '(No Tags)';
 					}
 					echo 'nebula.post.tags = "' . $tag_list . '";';
-					if ( nebula()->option('cd_tags') && !is_front_page() ){
+					if ( nebula()->get_option('cd_tags') && !is_front_page() ){
 						echo 'ga("set", gaCustomDimensions["tags"], "' . $tag_list . '");';
 					}
 				}
@@ -149,7 +149,7 @@
 				//Word Count
 				$word_count = str_word_count(strip_tags($post->post_content));
 				if ( is_int($word_count) ){
-					if ( nebula()->option('cm_wordcount') ){
+					if ( nebula()->get_option('cm_wordcount') ){
 						echo 'ga("set", gaCustomMetrics["wordCount"], ' . $word_count . ');';
 					}
 					echo 'nebula.post.wordcount = ' . $word_count . ';';
@@ -166,7 +166,7 @@
 					} else {
 						$word_count_range = '2,000+ words';
 					}
-					if ( nebula()->option('cd_wordcount') ){
+					if ( nebula()->get_option('cd_wordcount') ){
 						echo 'ga("set", gaCustomDimensions["wordCount"], "' . $word_count_range . '");';
 					}
 				}
@@ -180,12 +180,12 @@
 				$business_open = 'Non-Business Hours';
 				echo 'nebula.user.client.businessopen = false;';
 			}
-			if ( nebula()->option('cd_businesshours') ){
+			if ( nebula()->get_option('cd_businesshours') ){
 				echo 'ga("set", gaCustomDimensions["businessHours"], "' . $business_open . '");';
 			}
 
 			//Relative time ("Late Morning", "Early Evening")
-			if ( nebula()->option('cd_relativetime') ){
+			if ( nebula()->get_option('cd_relativetime') ){
 				$relative_time = nebula()->relative_time();
 				$time_description = implode(' ', $relative_time['description']);
 				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
@@ -193,7 +193,7 @@
 			}
 
 			//Role
-			if ( nebula()->option('cd_role') ){
+			if ( nebula()->get_option('cd_role') ){
 				$usertype = '';
 				if ( is_user_logged_in() ){
 					$user_info = get_userdata(get_current_user_id());
@@ -235,7 +235,7 @@
 			}
 
 			//Session ID
-			if ( nebula()->option('cd_sessionid') ){
+			if ( nebula()->get_option('cd_sessionid') ){
 				echo 'nebula.session.id = "' . nebula()->nebula_session_id() . '";';
 				echo 'ga("set", gaCustomDimensions["sessionID"], nebula.session.id);';
 			}
@@ -243,19 +243,19 @@
 			//WordPress User ID
 			if ( is_user_logged_in() ){
 				$current_user = wp_get_current_user();
-				if ( $current_user && nebula()->option('cd_userid') ){
+				if ( $current_user && nebula()->get_option('cd_userid') ){
 					echo 'ga("set", gaCustomDimensions["userID"], "' . $current_user->ID . '");';
 					echo 'ga("set", "userId", ' . $current_user->ID . ');';
 				}
 			}
 
 			//User's local timestamp
-			if ( nebula()->option('cd_timestamp') ){
+			if ( nebula()->get_option('cd_timestamp') ){
 				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
 			}
 
 			//First visit timestamp
-			if ( nebula()->option('cd_firstinteraction') ){
+			if ( nebula()->get_option('cd_firstinteraction') ){
 				$first_session = nebula()->get_visitor_datapoint('first_session');
 				if ( !empty($first_session) ){
 					echo 'ga("set", gaCustomDimensions["firstInteraction"], "' . time() . '");';
@@ -263,11 +263,11 @@
 			}
 
 			//Weather Conditions
-			if ( nebula()->option('cd_weather') ){
+			if ( nebula()->get_option('cd_weather') ){
 				echo 'ga("set", gaCustomDimensions["weather"], "' . nebula()->weather('conditions') . '");';
 			}
 			//Temperature Range
-			if ( nebula()->option('cd_temperature') ){
+			if ( nebula()->get_option('cd_temperature') ){
 				$temp_round = floor(nebula()->weather('temperature')/5)*5;
 				$temp_round_celcius = round(($temp_round-32)/1.8);
 				$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F (' . strval($temp_round_celcius) . '°C - ' . strval($temp_round_celcius+2) . '°C)';
@@ -275,7 +275,7 @@
 			}
 
 			//Notable POI (IP Addresses)
-			if ( nebula()->option('cd_notablepoi') ){
+			if ( nebula()->get_option('cd_notablepoi') ){
 				echo 'ga("set", gaCustomDimensions["poi"], "' . nebula()->poi() . '");';
 			}
 		?>
@@ -382,8 +382,8 @@
 			events: ['click', 'auxclick', 'contextmenu']
 		});
 
-		<?php if ( nebula()->option('google_optimize_id') ): //Google Optimize ?>
-			ga('require', '<?php echo nebula()->option('google_optimize_id'); ?>');
+		<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
+			ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
 		<?php endif; ?>
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
@@ -402,7 +402,7 @@
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 
-		<?php if ( !nebula()->is_bot() && ( nebula()->option('adblock_detect') ) ): //Detect Ad Blockers (After pageview because asynchronous- uses GA event). ?>
+		<?php if ( !nebula()->is_bot() && ( nebula()->get_option('adblock_detect') ) ): //Detect Ad Blockers (After pageview because asynchronous- uses GA event). ?>
 			jQuery.ajaxSetup({cache: true});
 			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
 				if ( nebula.session.flags ){
@@ -410,7 +410,7 @@
 				}
 			}).fail(function(){ <?php //Ad Blocker Detected ?>
 				jQuery('html').addClass('ad-blocker');
-				<?php if ( nebula()->option('cd_blocker') ): //Scope: Session. Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
+				<?php if ( nebula()->get_option('cd_blocker') ): //Scope: Session. Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
 					ga('set', gaCustomDimensions['blocker'], 'Ad Blocker');
 				<?php endif; ?>
 
@@ -443,12 +443,12 @@
 	</script>
 <?php endif; ?>
 
-<?php if ( nebula()->option('adwords_remarketing_conversion_id') ): //Google AdWords Remarketing Tag ?>
+<?php if ( nebula()->get_option('adwords_remarketing_conversion_id') ): //Google AdWords Remarketing Tag ?>
 	<link rel="prefetch" href="//www.googleadservices.com/pagead/conversion.js" />
 
 	<script type="text/javascript">
 		/* <![CDATA[ */
-		var google_conversion_id = <?php echo nebula()->option('adwords_remarketing_conversion_id'); ?>;
+		var google_conversion_id = <?php echo nebula()->get_option('adwords_remarketing_conversion_id'); ?>;
 		var google_custom_params = window.google_tag_params;
 		var google_remarketing_only = true;
 		/* ]]> */
@@ -456,12 +456,12 @@
 	<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
 	<noscript>
 		<div style="display:inline;">
-			<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/<?php echo nebula()->option('adwords_remarketing_conversion_id'); ?>/?value=0&amp;guid=ON&amp;script=0"/>
+			<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/<?php echo nebula()->get_option('adwords_remarketing_conversion_id'); ?>/?value=0&amp;guid=ON&amp;script=0"/>
 		</div>
 	</noscript>
 <?php endif; ?>
 
-<?php if ( nebula()->option('facebook_custom_audience_pixel_id') ): //Facebook Custom Audience ?>
+<?php if ( nebula()->get_option('facebook_custom_audience_pixel_id') ): //Facebook Custom Audience ?>
 	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
 
 	<script>
@@ -471,19 +471,19 @@
 		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 		document,'script','//connect.facebook.net/en_US/fbevents.js');
 
-		<?php if ( nebula()->option('visitors_db') ): ?>
-			fbq('init', '<?php echo nebula()->option('facebook_custom_audience_pixel_id'); ?>', {
+		<?php if ( nebula()->get_option('visitors_db') ): ?>
+			fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>', {
 				em: '<?php echo nebula()->get_visitor_datapoint('email_address'); ?>',
 				fn: '<?php echo nebula()->get_visitor_datapoint('first_name'); ?>',
 				ln: '<?php echo nebula()->get_visitor_datapoint('last_name'); ?>',
 			});
 		<?php else: ?>
-			fbq('init', '<?php echo nebula()->option('facebook_custom_audience_pixel_id'); ?>');
+			fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>');
 		<?php endif; ?>
 
 		fbq('track', 'PageView');
 
 		<?php do_action('nebula_fbq_after_track_pageview'); //Hook into for adding more Facebook custom audience tracking. ?>
 	</script>
-	<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?php echo nebula()->option('facebook_custom_audience_pixel_id'); ?>&ev=PageView&noscript=1"/></noscript>
+	<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>&ev=PageView&noscript=1"/></noscript>
 <?php endif; ?>

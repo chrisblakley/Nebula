@@ -72,8 +72,8 @@ if ( !trait_exists('Ecommerce') ){
 		//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
 		public function woo_custom_ga_dimensions(){
 			//Set custom dimension for if the cart is empty or full
-			if ( $this->option('cd_woocart') ){
-				echo 'gaCustomDimensions.wooCart = "' . $this->option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
+			if ( $this->get_option('cd_woocart') ){
+				echo 'gaCustomDimensions.wooCart = "' . $this->get_option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
 				$cart_text = ( WC()->cart->get_cart_contents_count() >= 1 )? 'Full Cart (' . WC()->cart->get_cart_contents_count() . ')' : 'Empty Cart';
 				echo 'ga("set", gaCustomDimensions["wooCart"], "' . $cart_text . '");';
 			}
@@ -85,8 +85,8 @@ if ( !trait_exists('Ecommerce') ){
 
 			//Set custom dimension and send event on order received page.
 			if ( is_order_received_page() ){
-				if ( $this->option('cd_woocustomer') ){
-					echo 'gaCustomDimensions.wooCustomer = "' . $this->option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
+				if ( $this->get_option('cd_woocustomer') ){
+					echo 'gaCustomDimensions.wooCustomer = "' . $this->get_option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
 					echo 'ga("set", gaCustomDimensions["wooCustomer"], "Order Received");';
 				}
 				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
@@ -101,7 +101,7 @@ if ( !trait_exists('Ecommerce') ){
 
 		//Checkout visitor data
 		public function woocommerce_order_data($order_id){
-			if ( $this->option('visitors_db') ){
+			if ( $this->get_option('visitors_db') ){
 				$order = new WC_Order($order_id);
 
 				//Append order ID and product IDs
@@ -139,7 +139,7 @@ if ( !trait_exists('Ecommerce') ){
 				global $post;
 				$product = new WC_Product($post->ID);
 
-				$company_type = ( $this->option('business_type') )? $this->option('business_type') : 'LocalBusiness';
+				$company_type = ( $this->get_option('business_type') )? $this->get_option('business_type') : 'LocalBusiness';
 				?>
 				<script type="application/ld+json">
 					{
@@ -165,19 +165,19 @@ if ( !trait_exists('Ecommerce') ){
 							"availability": "<?php echo ( $product->is_in_stock() )? 'http://schema.org/InStock' : 'http://schema.org/OutOfStock'; ?>",
 							"seller": {
 								"@type": "<?php echo $company_type; ?>",
-								"name": "<?php echo ( nebula_option('site_owner') )? nebula_option('site_owner') : get_bloginfo('name'); ?>",
+								"name": "<?php echo ( $this->get_option('site_owner') )? $this->get_option('site_owner') : get_bloginfo('name'); ?>",
 								"image": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>",
-								"telephone": "+<?php echo nebula_option('phone_number'); ?>",
+								"telephone": "+<?php echo $this->get_option('phone_number'); ?>",
 								<?php if ( $company_type === 'LocalBusiness' ): ?>
 									"priceRange": "",
 								<?php endif; ?>
 								"address": {
 									"@type": "PostalAddress",
-									"streetAddress": "<?php echo nebula_option('street_address'); ?>",
-									"addressLocality": "<?php echo nebula_option('locality'); ?>",
-									"addressRegion": "<?php echo nebula_option('region'); ?>",
-									"postalCode": "<?php echo nebula_option('postal_code'); ?>",
-									"addressCountry": "<?php echo nebula_option('country_name'); ?>"
+									"streetAddress": "<?php echo $this->get_option('street_address'); ?>",
+									"addressLocality": "<?php echo $this->get_option('locality'); ?>",
+									"addressRegion": "<?php echo $this->get_option('region'); ?>",
+									"postalCode": "<?php echo $this->get_option('postal_code'); ?>",
+									"addressCountry": "<?php echo $this->get_option('country_name'); ?>"
 								}
 							}
 						}

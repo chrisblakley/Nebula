@@ -28,7 +28,7 @@ if ( !trait_exists('Sass') ){
 				return false;
 			}
 
-			if ( nebula()->option('scss') ){
+			if ( nebula()->get_option('scss') ){
 				// Nebula scss locations
 				$scss_locations = array(
 					'parent' => array(
@@ -90,7 +90,7 @@ if ( !trait_exists('Sass') ){
 			$override = apply_filters('pre_nebula_render_scss', false, $location_name, $location_paths, $force_all);
 			if ( $override !== false ){return $override;}
 
-			if ( nebula()->option('scss') && !empty($location_name) && !empty($location_paths) ){
+			if ( nebula()->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
 				//Require SCSSPHP
 				require_once(get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
 				$scss = new \Leafo\ScssPhp\Compiler();
@@ -104,7 +104,7 @@ if ( !trait_exists('Sass') ){
 				}
 
 				//Set compiling options
-				if ( nebula()->option('minify_css') && !nebula()->is_debug() ){
+				if ( nebula()->get_option('minify_css') && !nebula()->is_debug() ){
 					$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
 				} else {
 					$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
@@ -140,7 +140,7 @@ if ( !trait_exists('Sass') ){
 				}
 
 				//Combine Developer Stylesheets
-				if ( nebula()->option('dev_stylesheets') ){
+				if ( nebula()->get_option('dev_stylesheets') ){
 					$this->combine_dev_stylesheets($location_paths['directory'] . '/assets', $location_paths['uri'] . '/assets');
 				}
 
@@ -150,8 +150,8 @@ if ( !trait_exists('Sass') ){
 
 					//Skip file conditions (only if not forcing all)
 					if ( empty($force_all) ){
-						$is_wireframing_file = $file_path_info['filename'] == 'wireframing' && !nebula()->option('prototype_mode'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
-						$is_dev_file = $file_path_info['filename'] == 'dev' && !nebula()->option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
+						$is_wireframing_file = $file_path_info['filename'] == 'wireframing' && !nebula()->get_option('prototype_mode'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
+						$is_dev_file = $file_path_info['filename'] == 'dev' && !nebula()->get_option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
 						$is_admin_file = !nebula()->is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
 						if ( $is_wireframing_file || $is_dev_file || $is_admin_file ){
 							continue;

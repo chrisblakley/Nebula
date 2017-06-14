@@ -10,7 +10,7 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 }
 
 //Disable author archives to prevent ?author=1 from showing usernames.
-if ( !nebula()->option('author_bios') ){
+if ( !nebula()->get_option('author_bios') ){
 	wp_redirect(home_url('/') . '?s=about', 301);
 	http_response_code(403);
 	die();

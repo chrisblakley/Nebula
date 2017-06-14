@@ -173,7 +173,7 @@ if ( !trait_exists('Security') ){
 
 		//Check referrer for known spambots and blacklisted domains
 		public function domain_prevention(){
-			if ( $this->option('domain_blacklisting') ){
+			if ( $this->get_option('domain_blacklisting') ){
 				$blacklisted_domains = $this->get_domain_blacklist();
 
 				if ( count($blacklisted_domains) > 1 ){

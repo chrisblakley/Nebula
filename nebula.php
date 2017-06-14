@@ -98,7 +98,7 @@ if ( !class_exists('Nebula') ){
 				$this->EcommerceHooks(); // Register Ecommerce hooks
 			}
 
-			if ( nebula()->option('prototype_mode') ){
+			if ( nebula()->get_option('prototype_mode') ){
 				$this->PrototypingHooks(); // Register Prototyping hooks
 			}
 		}

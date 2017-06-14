@@ -128,7 +128,7 @@ if ( !trait_exists('Optimization') ){
 			$default_preconnects = array();
 
 			//Weather
-			if ( $this->option('weather') ){
+			if ( $this->get_option('weather') ){
 				$default_preconnects[] = '//query.yahooapis.com';
 			}
 

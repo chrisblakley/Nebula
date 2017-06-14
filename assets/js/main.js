@@ -672,10 +672,10 @@ function eventTracking(){
 	});
 
 	//AJAX Errors
-	nebula.dom.document.ajaxError(function(e, jqXHR, settings, exception){
+	nebula.dom.document.ajaxError(function(e, jqXHR, settings, thrownError){
 		ga('set', gaCustomDimensions['timestamp'], localTimestamp());
-		ga('send', 'exception', {'exDescription': e.result, 'exFatal': true});
-		//nv('append', {'ajax_errors': e + ' - ' + jqXHR.status + ': ' + exception + ' (' + jqXHR.responseText + ') on: ' + settings.url}); //Figure out which of these is the most informative
+		ga('send', 'exception', {'exDescription': 'AJAX Error (' + jqXHR.status + '): ' + thrownError + ' on ' + settings.url, 'exFatal': true});
+		//nv('append', {'ajax_errors': e + ' - ' + jqXHR.status + ': ' + thrownError + ' (' + jqXHR.responseText + ') on: ' + settings.url}); //Figure out which of these is the most informative
 	});
 
 	//Window Errors
@@ -702,20 +702,22 @@ function eventTracking(){
 
 	//Page Unload
 	window.onbeforeunload = function(){
-		//Check form abandonment object/array
-		if ( typeof formStarted !== 'undefined' ){
-			jQuery.each(formStarted, function(key, value){
-				if ( value === true ){
-					ga('send', 'event', 'CF7 Form', 'Abandon', key, {'nonInteraction': true});
-					var formTime = nebulaTimer(key, 'end');
-					ga('send', 'timing', 'CF7 Form', 'Form Abandon (ID: ' + key + ')', Math.round(formTime), 'Initial form focus until window unload (without successful submit)');
-					return false;
-				}
-			});
-		}
+		once(function(){
+			//Check form abandonment object/array
+			if ( typeof formStarted !== 'undefined' ){
+				jQuery.each(formStarted, function(key, value){
+					if ( value === true ){
+						ga('send', 'event', 'CF7 Form', 'Abandon', key, {'nonInteraction': true});
+						var formTime = nebulaTimer(key, 'end');
+						ga('send', 'timing', 'CF7 Form', 'Form Abandon (ID: ' + key + ')', Math.round(formTime), 'Initial form focus until window unload (without successful submit)');
+						return false;
+					}
+				});
+			}
 
-	    ga('send', 'timing', 'Time on Page', 'Unload after ' + Math.round(nebulaTimer('time_on_page', 'end')/1000) + ' seconds', nebulaTimer('time_on_page', 'end'), 'Seconds since DOM ready until window unload.'); //Time on Page
-	    nv('increment', 'page_exits'); //Increment exits (but more importantly updates duration)
+		    ga('send', 'timing', 'Time on Page', 'Unload after ' + Math.round(nebulaTimer('time_on_page', 'end')/1000) + ' seconds', nebulaTimer('time_on_page', 'end'), 'Seconds since DOM ready until window unload.'); //Time on Page
+		    nv('increment', 'page_exits'); //Increment exits (but more importantly updates duration)
+		}, 'unload');
 	}
 }
 
@@ -3569,17 +3571,11 @@ function onPlayerStateChange(e){
 function nebulaVimeoTracking(){
 	//Load the Vimeo API script (player.js) remotely (with local backup)
 	if ( jQuery('iframe[src*="vimeo"]').length ){
-        jQuery.getScript('https://player.vimeo.com/api/player.js').done(function(){
+        jQuery.getScript(nebula.site.resources.js.vimeo).done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			ga('send', 'exception', {'exDescription': 'Vimeo player.js (remote) could not be loaded', 'exFatal': false});
+			ga('send', 'exception', {'exDescription': 'Vimeo player.js could not be loaded', 'exFatal': false});
 			nv('append', {'js_errors': 'Vimeo player.js (remote) could not be loaded'});
-			jQuery.getScript(nebula.site.directory.template.uri + '/js/libs/player.js').done(function(){
-				createVimeoPlayers();
-			}).fail(function(){
-				ga('send', 'exception', {'exDescription': 'Vimeo player.js (local) could not be loaded', 'exFatal': false});
-				nv('append', {'js_errors': 'Vimeo player.js (local) could not be loaded'});
-			});
 		});
 	}
 

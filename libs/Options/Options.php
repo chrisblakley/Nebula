@@ -19,8 +19,8 @@ if ( !trait_exists('Options') ){
 		 ===========================*/
 
 		//Check for the option and return it or a fallback.
-		public function get_option($option, $fallback=false){return $this->option($option, $fallback);}
-		public function option($option, $fallback=false){
+		public function option($option, $fallback=false){return $this->get_option($option, $fallback);}
+		public function get_option($option, $fallback=false){
 			$nebula_options = get_option('nebula_options');
 
 			if ( empty($nebula_options[$option]) ){
@@ -87,7 +87,7 @@ if ( !trait_exists('Options') ){
 		//Get the full Twitter URL for a user
 		public function twitter_url($username=false){
 			if ( empty($username) ){
-				$username = $this->option('twitter_username');
+				$username = $this->get_option('twitter_username');
 			}
 
 			if ( !empty($username) ){
@@ -99,10 +99,10 @@ if ( !trait_exists('Options') ){
 
 		//Register the requested jQuery file
 		public function jquery(){
-			if ( $this->option('jquery_version') !== 'wordpress' && !$this->is_admin_page() ){
+			if ( $this->get_option('jquery_version') !== 'wordpress' && !$this->is_admin_page() ){
 				wp_deregister_script('jquery-core');
 
-				if ( $this->option('jquery_version') === 'latest' ){
+				if ( $this->get_option('jquery_version') === 'latest' ){
 					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', null, null, '3.2.1', false);
 				}
 			}
@@ -110,7 +110,7 @@ if ( !trait_exists('Options') ){
 
 		//Register or return the requested Bootstrap file.
 		public function bootstrap($file=false){
-			if ( $this->option('bootstrap_version') === 'bootstrap3' ){
+			if ( $this->get_option('bootstrap_version') === 'bootstrap3' ){
 				//Bootstrap 3 (IE8+ Support)
 				if ( $file === 'css' ){
 					return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
@@ -121,7 +121,7 @@ if ( !trait_exists('Options') ){
 				} else {
 					return 'v3';
 				}
-			} elseif ( $this->option('bootstrap_version') === 'bootstrap4a5' ){
+			} elseif ( $this->get_option('bootstrap_version') === 'bootstrap4a5' ){
 				//Bootstrap 4 alpha 5 (IE9+ Support)
 				if ( $file === 'css' ){
 					return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');

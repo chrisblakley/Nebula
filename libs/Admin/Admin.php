@@ -41,7 +41,7 @@ if ( !trait_exists('Admin') ){
 			add_filter('admin_body_class', array($this, 'admin_body_classes'));
 
 			//Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-			if ( !$this->option('admin_bar') ){ //If Admin Bar is disabled
+			if ( !$this->get_option('admin_bar') ){ //If Admin Bar is disabled
 				show_admin_bar(false);
 
 				add_action('wp_print_scripts', array($this, 'dequeue_admin_bar'), 9999);
@@ -62,12 +62,12 @@ if ( !trait_exists('Admin') ){
 			}
 
 			//Disable Wordpress Core update notifications in WP Admin
-			if ( !$this->option('wp_core_updates_notify') ){
+			if ( !$this->get_option('wp_core_updates_notify') ){
 				add_filter('pre_site_transient_update_core', '__return_null');
 			}
 
 			//Show update warning on Wordpress Core/Plugin update admin pages
-			if ( $this->option('plugin_update_warning') ){
+			if ( $this->get_option('plugin_update_warning') ){
 				if ( $pagenow === 'plugins.php' || $pagenow === 'update-core.php' ){
 					add_action('admin_notices', array($this, 'update_warning'));
 				}
@@ -98,7 +98,7 @@ if ( !trait_exists('Admin') ){
 			add_filter('login_headertitle', array($this, 'new_wp_login_title'));
 
 			//Nebula Admin Notices
-			if ( $this->option('admin_notices') ){
+			if ( $this->get_option('admin_notices') ){
 				add_action('admin_notices',  array($this, 'admin_notices'));
 			}
 
@@ -318,8 +318,8 @@ if ( !trait_exists('Admin') ){
 
 			//Check for important warnings for the Admin Bar
 			$nebula_warning_icon = '';
-			if ( $this->option('admin_notices') ){
-				if ( !$this->option('ga_tracking_id') ){
+			if ( $this->get_option('admin_notices') ){
+				if ( !$this->get_option('ga_tracking_id') ){
 					$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
 					$nebula_warning_description = 'Google Analytics tracking ID is currently not set!';
 					$nebula_warning_href = 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id';
@@ -333,7 +333,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check Prototype Mode
-				if ( !$this->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				if ( !$this->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 					$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
 					$nebula_warning_description = 'Prototype Mode is disabled, but Multiple Theme plugin is still active.';
 					$nebula_warning_href = 'plugins.php';
@@ -366,7 +366,7 @@ if ( !trait_exists('Admin') ){
 				));
 			}
 
-			if ( $this->option('scss') ){
+			if ( $this->get_option('scss') ){
 				$scss_last_processed = ( $this->get_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', $this->get_data('scss_last_processed')) : 'Never';
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
@@ -377,7 +377,7 @@ if ( !trait_exists('Admin') ){
 				));
 			}
 
-			if ( $this->option('visitors_db') ){
+			if ( $this->get_option('visitors_db') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-visitor-db',
@@ -387,7 +387,7 @@ if ( !trait_exists('Admin') ){
 				));
 			}
 
-			if ( $this->option('google_optimize_id') ){
+			if ( $this->get_option('google_optimize_id') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'google-optimize',
@@ -578,7 +578,7 @@ if ( !trait_exists('Admin') ){
 		//Custom login screen
 		public function login_ga(){
 			if ( empty($_POST['signed_request']) ){
-				echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $this->option('ga_tracking_id') . "', 'auto');</script>";
+				echo "<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', '" . $this->get_option('ga_tracking_id') . "', 'auto');</script>";
 			}
 		}
 
@@ -623,7 +623,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check for Google Analytics Tracking ID
-				if ( !$this->option('ga_tracking_id') ){
+				if ( !$this->get_option('ga_tracking_id') ){
 					echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!</p></div>';
 				}
 
@@ -638,7 +638,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check if all SCSS files were processed manually.
-				if ( $this->option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
+				if ( $this->get_option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
 					if ( $this->is_dev() || $this->is_client() ){
 						echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
 					} else {
@@ -647,7 +647,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//If Prototype mode is disabled, but Multiple Theme plugin is still activated
-				if ( !$this->option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				if ( !$this->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
 					echo '<div class="nebula-admin-notice error"><p><a href="plugins.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
 				}
 
@@ -673,7 +673,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
-				if ( $this->option('google_optimize_id') ){
+				if ( $this->get_option('google_optimize_id') ){
 					echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
 				}
 			}

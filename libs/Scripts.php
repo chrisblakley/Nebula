@@ -30,8 +30,8 @@ if ( !trait_exists('Scripts') ){
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, null);
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, null);
-			if ( $this->option('google_font_url') ){
-				wp_register_style('nebula-google_font', $this->option('google_font_url'), array(), null, 'all');
+			if ( $this->get_option('google_font_url') ){
+				wp_register_style('nebula-google_font', $this->get_option('google_font_url'), array(), null, 'all');
 			}
 			$this->bootstrap('css');
 			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
@@ -51,11 +51,11 @@ if ( !trait_exists('Scripts') ){
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.0/jquery.mmenu.all.js', 'defer', null, '6.1.0', true);
-			$this->register_script('nebula-froogaloop', 'https://f.vimeocdn.com/js/froogaloop2.min.js', null, null, null, true);
+			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true);
 			$this->register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js', 'defer', null, '1.4.0', true); //This is not enqueued or dependent because it is called via main.js only as needed.
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/js/jquery.dataTables.min.js', 'defer', null, '1.10.15', true); //Datatables is called via main.js only as needed.
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.jquery.min.js', 'defer', null, '1.7.0', true);
-			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.0/autotrack.js', 'async', null, '2.4.0', true);
+			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', 'async', null, '2.4.1', true);
 			$this->register_script('performance-timing', get_template_directory_uri() . '/assets/js/libs/performance-timing.js', 'defer', null, null, false);
 			$this->register_script('nebula-main', get_template_directory_uri() . '/assets/js/main.js', 'defer', array('nebula-bootstrap', 'jquery-core', 'nebula-jquery_ui'), null, true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), null, true);
@@ -105,20 +105,20 @@ if ( !trait_exists('Scripts') ){
 					'upload_dir' => $upload_dir['baseurl'],
 					'ecommerce' => false,
 					'options' => array(
-						'gaid' => $this->option('ga_tracking_id'),
-						'nebula_cse_id' => $this->option('cse_id'),
-						'nebula_google_browser_api_key' => $this->option('google_browser_api_key'),
-						'facebook_url' => $this->option('facebook_url'),
-						'facebook_app_id' => $this->option('facebook_app_id'),
-						'twitter_url' => $this->option('twitter_url'),
-						'google_plus_url' => $this->option('google_plus_url'),
-						'linkedin_url' => $this->option('linkedin_url'),
-						'youtube_url' => $this->option('youtube_url'),
-						'instagram_url' => $this->option('instagram_url'),
+						'gaid' => $this->get_option('ga_tracking_id'),
+						'nebula_cse_id' => $this->get_option('cse_id'),
+						'nebula_google_browser_api_key' => $this->get_option('google_browser_api_key'),
+						'facebook_url' => $this->get_option('facebook_url'),
+						'facebook_app_id' => $this->get_option('facebook_app_id'),
+						'twitter_url' => $this->get_option('twitter_url'),
+						'google_plus_url' => $this->get_option('google_plus_url'),
+						'linkedin_url' => $this->get_option('linkedin_url'),
+						'youtube_url' => $this->get_option('youtube_url'),
+						'instagram_url' => $this->get_option('instagram_url'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),
-						'visitors_db' => $this->option('visitors_db'),
-						'hubspot_api' => ( $this->option('hubspot_api') )? true : false,
+						'visitors_db' => $this->get_option('visitors_db'),
+						'hubspot_api' => ( $this->get_option('hubspot_api') )? true : false,
 					),
 					'resources' => array(
 						'css' => $nebula_styles,
@@ -190,7 +190,7 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_style('nebula-mmenu');
 			wp_enqueue_style('nebula-main');
 			wp_enqueue_style('nebula-font_awesome');
-			if ( $this->option('google_font_url') ){
+			if ( $this->get_option('google_font_url') ){
 				wp_enqueue_style('nebula-google_font');
 			}
 			wp_enqueue_style('nebula-jquery_ui');
@@ -199,7 +199,7 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_script('jquery-core');
 			wp_enqueue_script('nebula-jquery_ui');
 
-			if ( $this->option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				//wp_enqueue_script('nebula-modernizr_dev');
 				//wp_enqueue_script('nebula-modernizr_local'); //@todo "Nebula" 0: Switch this back to CDN when version 3 is on CDNJS
 			}

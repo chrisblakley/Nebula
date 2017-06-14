@@ -7,7 +7,7 @@ if ( !trait_exists('Dashboard') ){
 	trait Dashboard {
 		public function hooks(){
 			//Remove unnecessary Dashboard metaboxes
-			if ( $this->option('unnecessary_metaboxes') ){
+			if ( $this->get_option('unnecessary_metaboxes') ){
 				add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes' ));
 			}
 
@@ -26,13 +26,13 @@ if ( !trait_exists('Dashboard') ){
 			add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
 
 			//TODO manager metabox
-			if ( $this->option('todo_manager_metabox') && $this->is_dev() ){
+			if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
 				add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
 			}
 
 			//Developer Info Metabox
 			//If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
-			if ( $this->option('dev_info_metabox') && $this->is_dev() ){
+			if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
 				add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
 			}
 
@@ -69,7 +69,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener">' . home_url() . '</a></li>';
 
 			//Address
-			if ( $this->option('street_address') ){
+			if ( $this->get_option('street_address') ){
 				echo '<li><i class="fa fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/' . $this->full_address(1) . '" target="_blank" rel="noopener">' . $this->full_address() . '</a></li>';
 			}
 
@@ -186,25 +186,25 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
 
 			//Comments
-			if ( $this->option('comments') && $this->option('disqus_shortname') == '' ){
+			if ( $this->get_option('comments') && $this->get_option('disqus_shortname') == '' ){
 				$comments_count = wp_count_comments();
 				$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
 				echo '<li><i class="fa fa-fw fa-comments-o"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
 			} else {
-				if ( !$this->option('comments') ){
+				if ( !$this->get_option('comments') ){
 					echo '<li><i class="fa fa-fw fa-comments-o"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small></li>';
 				} else {
-					echo '<li><i class="fa fa-fw fa-comments-o"></i> Using <a href="https://' . $this->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener">Disqus comment system</a>.</li>';
+					echo '<li><i class="fa fa-fw fa-comments-o"></i> Using <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener">Disqus comment system</a>.</li>';
 				}
 			}
 
 			//Global Admin Bar
-			if ( !$this->option('admin_bar') ){
+			if ( !$this->get_option('admin_bar') ){
 				echo '<li><i class="fa fa-fw fa-bars"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options&tab=functions&option=admin_bar">Nebula Options</a>)</small></li>';
 			}
 
 			//Nebula Visitors DB
-			if ( $this->option('visitors_db') ){
+			if ( $this->get_option('visitors_db') ){
 				global $wpdb;
 				echo '<li><i class="fa fa-fw fa-database"></i> <a href="themes.php?page=nebula_visitors_data">Nebula Visitors DB</a> has <strong>' . $wpdb->get_var("select count(*) from " . $wpdb->prefix . 'nebula_visitors') . '</strong> rows.</li>';
 			}
@@ -300,7 +300,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li><i class="fa fa-fw fa-thumb-tack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
-			if ( $this->option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				//Device
 				if ( $this->is_desktop() ){
 					$battery_percentage = $this->get_visitor_datapoint('battery_percentage');
@@ -386,7 +386,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Weather
-			if ( $this->option('weather') ){
+			if ( $this->get_option('weather') ){
 				$ip_zip = '';
 				if ( $this->get_visitor_datapoint('zip_code') ){
 					$ip_zip = $this->get_visitor_datapoint('zip_code');
@@ -424,59 +424,59 @@ if ( !trait_exists('Dashboard') ){
 		//Administrative metabox content
 		public function dashboard_administrative(){
 			echo '<ul>';
-			if ( $this->option('hosting_url') ){
-				echo '<li><i class="fa fa-fw fa-hdd-o"></i> <a href="' . $this->option('hosting_url') . '" target="_blank" rel="noopener">Hosting</a></li>';
+			if ( $this->get_option('hosting_url') ){
+				echo '<li><i class="fa fa-fw fa-hdd-o"></i> <a href="' . $this->get_option('hosting_url') . '" target="_blank" rel="noopener">Hosting</a></li>';
 			}
 
-			if ( $this->option('cpanel_url') ){
-				echo '<li><i class="fa fa-fw fa-gears"></i> <a href="' . $this->option('cpanel_url') . '" target="_blank" rel="noopener">Server Control Panel</a></li>';
+			if ( $this->get_option('cpanel_url') ){
+				echo '<li><i class="fa fa-fw fa-gears"></i> <a href="' . $this->get_option('cpanel_url') . '" target="_blank" rel="noopener">Server Control Panel</a></li>';
 			}
 
-			if ( $this->option('registrar_url') ){
-				echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . $this->option('registrar_url') . '" target="_blank" rel="noopener">Domain Registrar</a></li>';
+			if ( $this->get_option('registrar_url') ){
+				echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . $this->get_option('registrar_url') . '" target="_blank" rel="noopener">Domain Registrar</a></li>';
 			}
 
-			if ( $this->option('ga_tracking_id') ){
+			if ( $this->get_option('ga_tracking_id') ){
 				echo '<li><i class="fa fa-fw fa-area-chart"></i> <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener">Google Analytics</a></li>';
 			}
 
-			if ( $this->option('google_optimize_id') ){
+			if ( $this->get_option('google_optimize_id') ){
 				echo '<li><i class="fa fa-fw fa-pie-chart"></i> <a href="https://optimize.google.com/optimize/home" target="_blank" rel="noopener">Google Optimize</a></li>';
 			}
 
 			echo '<li><i class="fa fa-fw fa-google"></i> <a href="https://www.google.com/webmasters/tools/home" target="_blank" rel="noopener">Google Search Console</a></li>';
 
-			if ( $this->option('adwords_remarketing_conversion_id') ){
+			if ( $this->get_option('adwords_remarketing_conversion_id') ){
 				echo '<li><i class="fa fa-fw fa-search-plus"></i> <a href="https://adwords.google.com/home/" target="_blank" rel="noopener">Google AdWords</a></li>';
 			}
 
-			if ( $this->option('facebook_custom_audience_pixel_id') ){
+			if ( $this->get_option('facebook_custom_audience_pixel_id') ){
 				echo '<li><i class="fa fa-fw fa-facebook-official"></i> <a href="https://www.facebook.com/ads/manager/account/campaigns" target="_blank" rel="noopener">Facebook Ads Manager</a></li>';
 			}
 
-			if ( $this->option('google_adsense_url') ){
+			if ( $this->get_option('google_adsense_url') ){
 				echo '<li><i class="fa fa-fw fa-money"></i> <a href="https://www.google.com/adsense" target="_blank" rel="noopener">Google AdSense</a></li>';
 			}
 
-			if ( $this->option('amazon_associates_url') ){
+			if ( $this->get_option('amazon_associates_url') ){
 				echo '<li><i class="fa fa-fw fa-amazon"></i> <a href="https://affiliate-program.amazon.com/home" target="_blank" rel="noopener">Amazon Associates</a></li>';
 			}
 
 			echo '<li><i class="fa fa-fw fa-building"></i> <a href="https://www.google.com/business/" target="_blank" rel="noopener">Google My Business</a></li>';
 
-			if ( $this->option('google_server_api_key') || $this->option('google_browser_api_key') ){
+			if ( $this->get_option('google_server_api_key') || $this->get_option('google_browser_api_key') ){
 				echo '<li><i class="fa fa-fw fa-code"></i> <a href="https://console.developers.google.com/iam-admin/projects" target="_blank" rel="noopener">Google APIs</a></li>';
 			}
 
-			if ( $this->option('cse_id') ){
+			if ( $this->get_option('cse_id') ){
 				echo '<li><i class="fa fa-fw fa-search"></i> <a href="https://cse.google.com/cse/all" target="_blank" rel="noopener">Google Custom Search</a></li>';
 			}
 
-			if ( $this->option('hubspot_api') || $this->option('hubspot_portal') ){
-				echo '<li><i class="fa fa-fw fa-users"></i> <a href="https://app.hubspot.com/reports-dashboard/' . $this->option('hubspot_portal') . '" target="_blank" rel="noopener">Hubspot</a></li>';
+			if ( $this->get_option('hubspot_api') || $this->get_option('hubspot_portal') ){
+				echo '<li><i class="fa fa-fw fa-users"></i> <a href="https://app.hubspot.com/reports-dashboard/' . $this->get_option('hubspot_portal') . '" target="_blank" rel="noopener">Hubspot</a></li>';
 			}
 
-			if ( $this->option('mention_url') ){
+			if ( $this->get_option('mention_url') ){
 				echo '<li><i class="fa fa-fw fa-star"></i> <a href="https://web.mention.com" target="_blank" rel="noopener">Mention</a></li>';
 			}
 
@@ -486,32 +486,32 @@ if ( !trait_exists('Dashboard') ){
 
 			echo '<h3>Social</h3>';
 			echo '<ul>';
-			if ( $this->option('facebook_url') ){
-				echo '<li><i class="fa fa-fw fa-facebook-square"></i> <a href="' . $this->option('facebook_url') . '" target="_blank" rel="noopener">Facebook</a></li>';
+			if ( $this->get_option('facebook_url') ){
+				echo '<li><i class="fa fa-fw fa-facebook-square"></i> <a href="' . $this->get_option('facebook_url') . '" target="_blank" rel="noopener">Facebook</a></li>';
 			}
 
-			if ( $this->option('twitter_username') ){
+			if ( $this->get_option('twitter_username') ){
 				echo '<li><i class="fa fa-fw fa-twitter-square"></i> <a href="' . $this->twitter_url() . '" target="_blank" rel="noopener">Twitter</a></li>';
 			}
 
-			if ( $this->option('linkedin_url') ){
-				echo '<li><i class="fa fa-fw fa-linkedin-square"></i> <a href="' . $this->option('linkedin_url') . '" target="_blank" rel="noopener">LinkedIn</a></li>';
+			if ( $this->get_option('linkedin_url') ){
+				echo '<li><i class="fa fa-fw fa-linkedin-square"></i> <a href="' . $this->get_option('linkedin_url') . '" target="_blank" rel="noopener">LinkedIn</a></li>';
 			}
 
-			if ( $this->option('youtube_url') ){
-				echo '<li><i class="fa fa-fw fa-youtube-square"></i> <a href="' . $this->option('youtube_url') . '" target="_blank" rel="noopener">Youtube</a></li>';
+			if ( $this->get_option('youtube_url') ){
+				echo '<li><i class="fa fa-fw fa-youtube-square"></i> <a href="' . $this->get_option('youtube_url') . '" target="_blank" rel="noopener">Youtube</a></li>';
 			}
 
-			if ( $this->option('instagram_url') ){
-				echo '<li><i class="fa fa-fw fa-instagram"></i> <a href="' . $this->option('instagram_url') . '" target="_blank" rel="noopener">Instagram</a></li>';
+			if ( $this->get_option('instagram_url') ){
+				echo '<li><i class="fa fa-fw fa-instagram"></i> <a href="' . $this->get_option('instagram_url') . '" target="_blank" rel="noopener">Instagram</a></li>';
 			}
 
-			if ( $this->option('google_plus_url') ){
-				echo '<li><i class="fa fa-fw fa-google-plus-square"></i> <a href="' . $this->option('google_plus_url') . '" target="_blank" rel="noopener">Google+</a></li>';
+			if ( $this->get_option('google_plus_url') ){
+				echo '<li><i class="fa fa-fw fa-google-plus-square"></i> <a href="' . $this->get_option('google_plus_url') . '" target="_blank" rel="noopener">Google+</a></li>';
 			}
 
-			if ( $this->option('disqus_shortname') ){
-				echo '<li><i class="fa fa-fw fa-comments-o"></i> <a href="https://' . $this->option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener">Disqus</a></li>';
+			if ( $this->get_option('disqus_shortname') ){
+				echo '<li><i class="fa fa-fw fa-comments-o"></i> <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener">Disqus</a></li>';
 			}
 
 			do_action('nebula_social_metabox');
@@ -737,7 +737,7 @@ if ( !trait_exists('Dashboard') ){
 
 				echo '<li><i class="fa fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
 
-				if ( $this->option('prototype_mode') ){
+				if ( $this->get_option('prototype_mode') ){
 					echo '<li><i class="fa fa-flag-checkered"></i> Production directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
 				} else {
 					echo '<li><i class="fa fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
@@ -751,15 +751,15 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fa fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			}
 
-			if ( $this->option('prototype_mode') ){
-				if ( $this->option('wireframe_theme') ){
-					$nebula_wireframe_size = $this->foldersize(get_theme_root() . '/' . $this->option('wireframe_theme'));
-					echo '<li title="' . $this->option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
+			if ( $this->get_option('prototype_mode') ){
+				if ( $this->get_option('wireframe_theme') ){
+					$nebula_wireframe_size = $this->foldersize(get_theme_root() . '/' . $this->get_option('wireframe_theme'));
+					echo '<li title="' . $this->get_option('wireframe_theme') . '"><i class="fa fa-flag-o"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
 				}
 
-				if ( $this->option('staging_theme') ){
-					$nebula_staging_size = $this->foldersize(get_theme_root() . '/' . $this->option('staging_theme'));
-					echo '<li title="' . $this->option('staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
+				if ( $this->get_option('staging_theme') ){
+					$nebula_staging_size = $this->foldersize(get_theme_root() . '/' . $this->get_option('staging_theme'));
+					echo '<li title="' . $this->get_option('staging_theme') . '"><i class="fa fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
 				}
 			}
 
@@ -812,7 +812,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Initial installation date
 			function initial_install_date(){
-				$nebula_initialized = nebula()->option('initialized'); //Keep this as nebula() because it is a nested function, so $this is scoped differently here.
+				$nebula_initialized = nebula()->get_option('initialized'); //Keep this as nebula() because it is a nested function, so $this is scoped differently here.
 				if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
 					$install_date = '<span title="' . human_time_diff($nebula_initialized) . ' ago" style="cursor: help;"><strong>' . date('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong></span>';
 				} else { //Use the last modified time of the admin page itself
@@ -833,12 +833,12 @@ if ( !trait_exists('Dashboard') ){
 
 			//Directory search
 			echo '<i id="searchprogress" class="fa fa-fw fa-search"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
-			if ( $this->option('prototype_mode') ){
+			if ( $this->get_option('prototype_mode') ){
 				echo '<option value="production">Production</option>';
-				if ( $this->option('staging_theme') ){
+				if ( $this->get_option('staging_theme') ){
 					echo '<option value="staging">Staging</option>';
 				}
-				if ( $this->option('wireframe_theme') ){
+				if ( $this->get_option('wireframe_theme') ){
 					echo '<option value="wireframe">Wireframe</option>';
 				}
 				echo '<option value="parent">Parent Theme</option>';
@@ -917,12 +917,12 @@ if ( !trait_exists('Dashboard') ){
 			} elseif ( $_POST['data'][0]['directory'] === 'child' ){
 				$dirpath = get_stylesheet_directory();
 			} elseif ( $_POST['data'][0]['directory'] === 'wireframe' ){
-				$dirpath = get_theme_root() . '/' . $this->option('wireframe_theme');
+				$dirpath = get_theme_root() . '/' . $this->get_option('wireframe_theme');
 			} elseif ( $_POST['data'][0]['directory'] === 'staging' ){
-				$dirpath = get_theme_root() . '/' . $this->option('staging_theme');
+				$dirpath = get_theme_root() . '/' . $this->get_option('staging_theme');
 			} elseif ( $_POST['data'][0]['directory'] === 'production' ){
-				if ( $this->option('production_theme') ){
-					$dirpath = get_theme_root() . '/' . $this->option('production_theme');
+				if ( $this->get_option('production_theme') ){
+					$dirpath = get_theme_root() . '/' . $this->get_option('production_theme');
 				} else {
 					$dirpath = get_stylesheet_directory();
 				}
